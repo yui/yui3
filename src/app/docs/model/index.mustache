@@ -27,10 +27,52 @@ While Model may be used as a standalone component, it's common to associate a Mo
 
 <h2>Using Model</h2>
 
+<h3>Quick Start</h3>
+
+<p>
+The quickest way to get up and running with Model is to create a new instance of the `Y.Model` class and pass in an object of key/value pairs representing attributes to set (note: creating ad-hoc attributes like this requires YUI 3.5.0 or higher).
+</p>
+
+<p>
+Here's how you might create a simple model representing a delicious pie (imagine you're building an online ordering system for a bakery):
+</p>
+
+```
+var applePie = new Y.Model({
+  slices: 6,       // number of slices in this pie
+  type  : 'apple'  // what type of pie this is
+});
+```
+
+<p>
+This creates a new `Y.Model` instance named `applePie`, with two attributes: `slices` and `type`, in addition to the [[#built-in attributes]] `id` and `clientId`, which are available on all models.
+</p>
+
+<p>
+Pass the name of an attribute to the model's `get()` function to get that attribute's value.
+</p>
+
+```
+applePie.get('slices'); // => 6
+applePie.get('type'); // => "apple"
+```
+
+<p>
+To change the value of an attribute, pass its name and new value to `set()`.
+</p>
+
+```
+applePie.set('slices', 5); // someone ate a slice!
+```
+
+<p>
+Read on to learn how to create custom model subclasses for representing more complex data and logic, or skip ahead to [[#Model Events]] or [[#Getting and Setting Attribute Values]] to learn more about how to take advantage of the useful state management functionality Model provides.
+</p>
+
 <h3>Extending `Y.Model`</h3>
 
 <p>
-The first step in creating a custom Model class is to extend `Y.Model`. This allows you to define the data attributes your Model class will manage, as well as helper methods, validators, and (optionally) a sync layer for your Model class.
+The ability to create ad-hoc models by instantiating `Y.Model` is convenient, but sometimes it can be useful to create a custom Model subclass by <em>extending</em> `Y.Model`. This allows you to declare the data attributes your Model class will manage up front, as well as specify default attribute values, helper methods, validators, and (optionally) a sync layer to help your Model class communicate with a storage API or a remote server.
 </p>
 
 <p>

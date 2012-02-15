@@ -121,6 +121,19 @@ NodeList._getTempNode = function(node) {
 };
 
 Y.mix(NodeList.prototype, {
+    _invoke: function(method, args, getter) {
+        var ret = (getter) ? [] : this;
+
+        this.each(function(node) {
+            var val = node[method].apply(node, args);
+            if (getter) {
+                ret.push(val);
+            }
+        });
+
+        return ret;
+    },
+
     /**
      * Retrieves the Node instance at the given index.
      * @method item

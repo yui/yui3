@@ -25,7 +25,7 @@
 
 <script type="text/javascript">  
 YUI({
-    filter: "raw",
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     logInclude: { TestRunner: true }
 }).use('transition', 'test', 'console', function (Y) {
     Y.namespace('Tests');

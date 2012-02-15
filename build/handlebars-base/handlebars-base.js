@@ -143,6 +143,8 @@ Handlebars.Utils = {
         // safe.
         if (string instanceof Handlebars.SafeString) {
             return string.toString();
+        } else if (string === false || !Lang.isValue(string)) {
+            return '';
         }
 
         // Unlike Handlebars' escaping implementation, Y.Escape.html() will
@@ -213,7 +215,7 @@ Handlebars.VM = {
   },
   noop: function() { return ""; },
   invokePartial: function(partial, name, context, helpers, partials, data) {
-    options = { helpers: helpers, partials: partials, data: data };
+    var options = { helpers: helpers, partials: partials, data: data };
 
     if(partial === undefined) {
       throw new Handlebars.Exception("The partial " + name + " could not be found");

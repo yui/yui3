@@ -166,6 +166,20 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
+    This tells `Y.Base` that it should create ad-hoc attributes for config
+    properties passed to Model's constructor. This makes it possible to
+    instantiate a model and set a bunch of attributes without having to subclass
+    `Y.Model` and declare all those attributes first.
+
+    @property _allowAdHocAttrs
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _allowAdHocAttrs: true,
+
+    /**
     Total hack to allow us to identify Model instances without using
     `instanceof`, which won't work when the instance was created in another
     window or YUI sandbox.
@@ -191,10 +205,14 @@ Y.Model = Y.extend(Model, Y.Base, {
     Destroys this model instance and removes it from its containing lists, if
     any.
 
-    If `options.remove` is `true`, then this method also delegates to the
-    `sync()` method to delete the model from the persistence layer, which is an
-    asynchronous action. Provide a _callback_ function to be notified of success
-    or failure.
+    The _callback_, if one is provided, will be called after the model is
+    destroyed.
+
+    If `options.remove` is `true`, then this method delegates to the `sync()`
+    method to delete the model from the persistence layer, which is an
+    asynchronous action. In this case, the _callback_ (if provided) will be
+    called after the sync layer indicates success or failure of the delete
+    operation.
 
     @method destroy
     @param {Object} [options] Sync options. It's up to the custom sync
@@ -202,10 +220,10 @@ Y.Model = Y.extend(Model, Y.Base, {
         any.
       @param {Boolean} [options.remove=false] If `true`, the model will be
         deleted via the sync layer in addition to the instance being destroyed.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {callback} [callback] Called after the model has been destroyed (and
+        deleted via the sync layer if `options.remove` is `true`).
       @param {Error|null} callback.err If an error occurred, this parameter will
-        contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+        contain the error. Otherwise _err_ will be `null`.
     @chainable
     **/
     destroy: function (options, callback) {
@@ -214,7 +232,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         // Allow callback as only arg.
         if (typeof options === 'function') {
             callback = options;
-            options  = {};
+            options  = null;
         }
 
         self.onceAfter('destroy', function () {
@@ -454,8 +472,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
-    A successful load operation will fire a `load` event, while an unsuccessful
-    load operation will fire an `error` event with the `src` value "load".
+    A successful save operation will fire a `save` event, while an unsuccessful
+    save operation will fire an `error` event with the `src` value "save".
 
     If the save operation succeeds and one or more of the attributes returned in
     the server's response differ from this model's current attributes, a
@@ -506,8 +524,8 @@ Y.Model = Y.extend(Model, Y.Base, {
                     self.fire(EVT_ERROR, facade);
                 } else {
                     // Lazy publish.
-                    if (!self._loadEvent) {
-                        self._loadEvent = self.publish(EVT_LOAD, {
+                    if (!self._saveEvent) {
+                        self._saveEvent = self.publish(EVT_SAVE, {
                             preventable: false
                         });
                     }

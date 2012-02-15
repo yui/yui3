@@ -19,27 +19,48 @@ A Model instance may exist in zero or more lists. All events fired by a model au
 <h3>Instantiating a Model List</h3>
 
 <p>
-Most of the classes in the App Framework are meant to be extended, but if your needs are simple and you don't plan to implement a custom sort comparator or sync layer for your lists, you can probably just instantiate `Y.ModelList` directly.
+Most of the classes in the App Framework are meant to be extended, but if your needs are simple and you don't plan to implement a custom sort comparator or sync layer for your lists, you can just instantiate `Y.ModelList` directly.
 </p>
 
 ```
-// Instantiate a new list that will contain instances of the Y.PieModel model
-// class.
+// Instantiate a new list and add some models to it.
+var list = new Y.ModelList();
+
+list.add([
+  {name: 'Model One', arbitraryData: 'foo'},
+  {name: 'Model Two', arbitraryData: 'bar'}
+]);
+```
+
+<p>
+If you already have existing `Y.Model` instances, you can add those instead of
+passing in new objects.
+</p>
+
+```
+var modelOne = new Y.Model({name: 'Model One', arbitraryData: 'foo'}),
+    modelTwo = new Y.Model({name: 'Model Two', arbitraryData: 'bar'});
+
+list.add([modelOne, modelTwo]);
+```
+
+<p>
+ModelList's `model` config parameter allows you to specify the default Model class the list should use to create a new model when you pass a plain object to `add()` or `create()`. For example, if you set `model` to `Y.PieModel` (which you can read more about in the <a href="../model/index.html">Model User Guide</a>), then the list will create new instances of that class instead of `Y.Model`.
+</p>
+
+```
 var list = new Y.ModelList({model: Y.PieModel});
+
+list.add([
+  {type: 'Pumpkin', slices: 6},
+  {type: 'Pecan', slices: 9}
+]);
 ```
-
-<p>
-The `model` config parameter configures the list to contain models that are instances of the `Y.PieModel` class (which you can read more about in the <a href="../model/index.html">Model User Guide</a>).
-</p>
-
-<p>
-You're not strictly required to provide a `model` class, but doing so will allow you to pass plain hashes of attributes to the list's `add()` and `create()` methods and have them automatically turned into model instances. If you don't specify a `model` class, you'll need to pass existing model instances to these methods.
-</p>
 
 <h3>Extending `Y.ModelList`</h3>
 
 <p>
-Extending the `Y.ModelList` class allows you to create a custom class in which you may provide a custom sort comparator function, sync layer, or other logic specific to your lists. This is optional, but is a great way to add custom functionality to a model list in an efficient and maintainable way.
+Extending the `Y.ModelList` class allows you to create a custom class in which you may provide a custom sort comparator function, sync layer, or other logic specific to your lists. This is optional, but is a great way to add custom functionality to a model list in an efficient and maintainable way as your application's needs become more complex.
 </p>
 
 <p>
@@ -110,7 +131,7 @@ pies.create(new Y.PieModel({type: 'pumpkin'}));
 ```
 
 <p>
-If your list's `model` property is set to a model class, then you can just pass attribute hashes to the `add()` and `create()` methods, and the list will automatically create new model instances for you.
+You may also pass plain object hashes to the `add()` and `create()` methods, and the list will automatically create new model instances for you using the Model class specified by the list's `model` property (which defaults to `Y.Model`).
 </p>
 
 ```
@@ -196,6 +217,32 @@ pies.item(0);
 
 // Find the index of a model instance within the list.
 pies.indexOf(pies.getById('1234'));
+```
+
+<h4>Filtering Models</h4>
+
+<p>
+The `filter()` method allows you to specify a custom callback function to select arbitrary models from the list based on your own criteria. It returns an array of models for which the callback function returns a truthy value.
+</p>
+
+```
+var applePies = pies.filter(function (pie) {
+  return pie.get('type') === 'apple';
+});
+
+// applePies is now an array of only apple pies.
+```
+
+<p>
+Pass `{asList: true}` as the first argument to `filter()` to get back a new ModelList containing the filtered models instead of a plain array.
+</p>
+
+```
+var applePiesList = pies.filter({asList: true}, function (pie) {
+  return pie.get('type') === 'apple';
+});
+
+// applePiesList is now a ModelList containing only apple pies.
 ```
 
 <h4>Removing Models</h4>

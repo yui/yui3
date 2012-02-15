@@ -18,6 +18,13 @@ The View class imposes little structure and provides only minimal functionality
 of its own: it's basically just an overridable API interface that helps you
 implement custom views.
 
+As of YUI 3.5.0, View allows ad-hoc attributes to be specified at instantiation
+time, so you don't need to subclass `Y.View` to add custom attributes. Just pass
+them to the constructor:
+
+    var view = new Y.View({foo: 'bar'});
+    view.get('foo'); // => "bar"
+
 @class View
 @constructor
 @extends Base
@@ -100,6 +107,22 @@ Y.View = Y.extend(View, Y.Base, {
     **/
     template: '',
 
+    // -- Protected Properties -------------------------------------------------
+
+    /**
+    This tells `Y.Base` that it should create ad-hoc attributes for config
+    properties passed to View's constructor. This makes it possible to
+    instantiate a view and set a bunch of attributes without having to subclass
+    `Y.View` and declare all those attributes first.
+
+    @property _allowAdHocAttrs
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _allowAdHocAttrs: true,
+
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         config || (config = {});
@@ -151,6 +174,7 @@ Y.View = Y.extend(View, Y.Base, {
 
     destructor: function () {
         this.detachEvents();
+        delete this._container;
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -288,6 +312,38 @@ Y.View = Y.extend(View, Y.Base, {
         container && container.remove(true);
     },
 
+    /**
+    Getter for the `container` attribute.
+
+    @method _getContainer
+    @param {Node|null} value Current attribute value.
+    @return {Node} Container node.
+    @protected
+    @since 3.5.0
+    **/
+    _getContainer: function (value) {
+        // This wackiness is necessary to enable fully lazy creation of the
+        // container node both when no container is specified and when one is
+        // specified via a valueFn.
+
+        if (!this._container) {
+            if (value) {
+                // Attach events to the container when it's specified via a
+                // valueFn, which won't fire the containerChange event.
+                this._container = value;
+                this.attachEvents();
+            } else {
+                // Create a default container and set that as the new attribute
+                // value. The `this._container` property prevents infinite
+                // recursion.
+                value = this._container = this.create();
+                this._set('container', value);
+            }
+        }
+
+        return value;
+    },
+
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
@@ -336,52 +392,29 @@ Y.View = Y.extend(View, Y.Base, {
         @writeOnce
         **/
         container: {
-            getter: function (value) {
-                if (!value && !this._container) {
-                    value = this._container = this.create();
-                    this._set('container', value);
-                }
-
-                return value;
-            },
-
+            getter   : '_getContainer',
             setter   : Y.one,
             writeOnce: true
-        },
-
-        /**
-        Model instance associated with this view instance.
-
-        This is entirely optional. There's no requirement that views be
-        associated with models, but if you do intend to associate your view with
-        a model, then specifying that model instance at instantiation time will
-        cause a reference to be stored here for convenience.
-
-        @attribute model
-        @type Model
-        @default null
-        **/
-        model: {
-            value: null
-        },
-
-        /**
-        ModelList instance associated with this view instance.
-
-        This is entirely optional. There's no requirement that views be
-        associated with model lists, but if you do intend to associate your view
-        with a model list, then specifying that list instance at instantiation
-        time will cause a reference to be stored here for convenience.
-
-        @attribute modelList
-        @type ModelList
-        @default null
-        **/
-        modelList: {
-            value: null
         }
-    }
+    },
+
+    /**
+    Properties that shouldn't be turned into ad-hoc attributes when passed to
+    View's constructor.
+
+    @property _NON_ATTRS_CFG
+    @type Array
+    @static
+    @protected
+    @since 3.5.0
+    **/
+    _NON_ATTRS_CFG: [
+        'containerTemplate',
+        'events',
+        'template'
+    ]
 });
+
 
 
 }, '@VERSION@' ,{requires:['base-build', 'node-event-delegate']});

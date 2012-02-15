@@ -1169,12 +1169,6 @@
             "base"
         ]
     }, 
-    "filelist": {
-        "requires": [
-            "file", 
-            "base"
-        ]
-    }, 
     "frame": {
         "requires": [
             "base", 

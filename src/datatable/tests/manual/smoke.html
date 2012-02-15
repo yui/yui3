@@ -1,0 +1,215 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style type="text/css">
+    body {
+        xbackground: #000;
+        font-size: 13px;
+    }
+    </style>
+</head>
+<body>
+    <button id="add">Add a row</button>
+    <button id="remove">Remove a row</button>
+    <button id="modify">Modify a row</button>
+    <button id="addcol">Add a column</button>
+    <button id="removecol">Remove a column</button>
+    <button id="modifycol">Modify a column</button>
+    <button id="modifywidth">Modify width</button>
+    <button id="sort">Sort</button>
+    <button id="showmessage">Show Message</button>
+    <button id="hidemessage">Hide Message</button>
+    <div class="wrapper yui3-skin-sam">
+        <div id="x"></div>
+    </div>
+
+    <p>
+        This is some content below the table.
+    </p>
+
+    <!--script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script-->
+    <script src="../../../../build/yui/yui.js"></script>
+    <!--script src="/dev/yui3/src/datatable/js/mutable.js"></script-->
+    <script>
+    YUI({
+        filter: 'raw'
+        /*
+        groups: {
+            datatable: {
+                patterns: {
+                    'datatable-': {
+                        configFn: function (meta) {
+                            meta.path = meta.module + '/' + meta.module + '.js';
+                        }
+                    }
+                },
+                //root: '/dev/yui/build/',
+                modules: {
+                    // Core
+                    'datatable-core': { requires: [
+                        'escape', 'view', 'model-list', 'dom-screen'
+                    ]},
+                    'datatable-body': { requires: [ 'view', 'classnamemanager' ]},
+                    'datatable-head': { requires: [ 'view', 'classnamemanager' ]},
+                    'datatable-base': { skinnable: true, requires: [
+                        'datatable-core', 'datatable-head', 'datatable-body',
+                        'base-build', 'widget'
+                    ]},
+
+                    // Features
+                    'datatable-mutable': { requires: [ 'datatable-base' ]},
+                    'datatable-column-widths': { requires: ['datatable-base'] },
+                    'datatable-scroll': { skinnable: true, requires: [
+                        'datatable-base', 'datatable-column-widths', 'dom-screen'
+                    ]}
+                }
+            }
+        }
+        */
+    }).use(
+        'datatable-scroll', 'datatable-sort', 'datatable-mutable',
+        'datatable-message',
+        'datasource-io', 'datatable-datasource', 'datasource-jsonschema', 
+        function (Y) {
+
+        var data = [], i;
+        for (i = 0; i < 50; ++i) {
+            data.push({
+                apples   : 'Apple '  + Math.round(Math.random() * 100),
+                bananas  : 'Banana ' + Math.round(Math.random() * 100),
+                carrots  : 'Carrot ' + Math.round(Math.random() * 100),
+                daikon   : 'Daikon ' + Math.round(Math.random() * 100),
+                eggs     : 'Egg '    + Math.round(Math.random() * 100),
+                fennel   : 'Fennel ' + Math.round(Math.random() * 100),
+                guacamole: 'Guac '   + Math.round(Math.random() * 100)
+            });
+        }
+
+        var start = new Date();
+
+        //debugger;
+        var table = new Y.DataTable({
+            data: data,
+            scrollable: 'xy',
+            //width: 500,
+            height: 300,
+            autoSync: true,
+            //sortable: true,
+            caption: 'Can you hear the caption?',
+            columns: [
+                {
+                    key: 'apples',
+                    label: 'Apples',
+                    cellTemplate: '<th class="{className}">{content}</th>',
+                    allowHTML: true,
+                    width: '150px',
+                    sortFn: function (a, b) {
+                        a = +a.get('apples').replace(/\D/g, ''),
+                        b = +b.get('apples').replace(/\D/g, '');
+
+                        return (a > b) ? 1 : (a < b) ? -1 : 0;
+                    }
+                },
+                { label: "Parent of B and C", children: [
+                    { key: 'bananas' },
+                    { key: 'carrots' }
+                ]},
+                { label: "Parent of D through G", children: [
+                    { label: 'Parent of D and E', children: [
+                        { key: 'daikon' },
+                        { key: 'eggs', xwidth: '200px' }
+                    ]},
+                    { label: 'Parent of F and G', children: [
+                        'fennel', 'guacamole'
+                    ]}
+                ]}
+            ]
+        });
+        var milestone = new Date();
+        //console.log('instantiation: ', milestone - start);
+
+        table.delegate('click', function (e) {
+            console.log(table.data.getByClientId(this.get('id')).toJSON());
+        }, '.yui3-datatable-data tr');
+/*
+        table.plug(Y.Plugin.DataTableDataSource, {
+            datasource: new Y.DataSource.IO({
+                source: "data.php?fields=author,title"
+            }).plug(Y.Plugin.DataSourceJSONSchema, {
+                schema: {
+                    resultListLocator: 'records',
+                    resultFields: ['author', 'title']
+                }
+            })
+        });
+*/
+
+        table.render('#x');
+
+
+        //console.log('render: ', new Date() - milestone, 'overall: ', new Date() - start);
+
+        //table.datasource.load();
+
+        Y.one('#add').on('click', function () {
+            table.addRow({
+                apples: 'Jan Comstock',
+                bananas: '1234',
+                carrots: 'The Diaries of Phil Collins',
+                daikon: 'What?',
+                eggs: 'scrambled',
+                fennel: 'raw, 2tbsp',
+                guacamole: 'For the chips!'
+            });
+        });
+
+        Y.one('#remove').on('click', function () {
+            table.removeRow(0);
+        });
+
+        Y.one('#modify').on('click', function () {
+            table.modifyRow(0, { daikon: 'MOAR DAIKON!' });
+        });
+
+        Y.one('#addcol').on('click', function () {
+            table.addColumn({
+                key: 'apples',
+                formatter: function (o) {
+                    return ('' + o.value).toUpperCase();
+                }
+            });
+        });
+
+        Y.one('#removecol').on('click', function () {
+            table.removeColumn([1,1]);
+        });
+
+        Y.one('#modifycol').on('click', function () {
+            table.modifyColumn(0, { formatter: function (o) {
+                return ('<strong>' + o.value).toLowerCase() + '</strong>';
+            }});
+        });
+
+        Y.one('#modifywidth').on('click', function () {
+            var width = table.get('width') || '500px',
+                unit  = (''+width).replace(/[0-9]/g, '');
+
+            table.set('width', Math.round(parseInt(width, 10) * 1.1) + unit);
+        });
+
+        Y.one('#sort').on('click', function () {
+            table.sort([{ daikon: -1 }, { bananas: -1 }]);
+        });
+
+        Y.one('#showmessage').on('click', function () {
+            table.showMessage('loadingMessage');
+        });
+
+        Y.one('#hidemessage').on('click', function () {
+            table.hideMessage();
+        });
+    });
+    </script>
+</body>
+</html>
