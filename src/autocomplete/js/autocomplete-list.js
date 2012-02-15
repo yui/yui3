@@ -326,6 +326,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     **/
     _bindList: function () {
         this._listEvents.concat([
+            Y.one('doc').after('click', this._afterDocClick, this),
             Y.on('windowresize', this._syncPosition, this),
 
             this.after({
@@ -582,6 +583,26 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+    Handles click events on the document. If the click is outside both the
+    input node and the bounding box, the list will be hidden.
+
+    @method _afterDocClick
+    @param {EventFacade} e
+    @protected
+    @since 3.5.0
+    **/
+    _afterDocClick: function (e) {
+        var boundingBox = this._boundingBox,
+            target      = e.target;
+
+        if (target !== this._inputNode && target !== boundingBox &&
+                !boundingBox.one(target.get('id'))) {
+
+            this.hide();
+        }
+    },
+
+    /**
     Handles `hoveredItemChange` events.
 
     @method _afterHoveredItemChange
@@ -683,12 +704,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _afterMouseOut: function () {
         this._mouseOverList = false;
         this._set(HOVERED_ITEM, null);
-
-        // This takes care of the edge case where the user right-clicks on a
-        // list item, then clicks elsewhere in the document.
-        if (!this._listFocused && !this._listInputFocused) {
-            this.hide();
-        }
     },
 
     /**
