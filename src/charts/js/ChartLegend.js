@@ -684,23 +684,3 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         background: {}
     }
 });
-
-/**
- * The Chart class is the basic application used to create a chart.
- *
- * @module charts
- * @class Chart
- * @constructor
- */
-function LegendChart(cfg)
-{
-    if(cfg.type != "pie")
-    {
-        return new Y.CartesianChartLegend(cfg);
-    }
-    else
-    {
-        return new Y.PieChartLegend(cfg);
-    }
-}
-Y.Chart = LegendChart;
