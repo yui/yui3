@@ -537,7 +537,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `activeItemChange` events.
 
     @method _afterActiveItemChange
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterActiveItemChange: function (e) {
@@ -574,7 +574,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `alwaysShowListChange` events.
 
     @method _afterAlwaysShowListChange
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterAlwaysShowListChange: function (e) {
@@ -585,7 +585,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `hoveredItemChange` events.
 
     @method _afterHoveredItemChange
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterHoveredItemChange: function (e) {
@@ -660,7 +660,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `mouseover` events.
 
     @method _afterMouseOver
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterMouseOver: function (e) {
@@ -677,7 +677,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `mouseout` events.
 
     @method _afterMouseOut
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterMouseOut: function () {
@@ -721,7 +721,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Delegated event handler for item `click` events.
 
     @method _onItemClick
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _onItemClick: function (e) {
@@ -737,7 +737,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Default `select` event handler.
 
     @method _defSelectFn
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _defSelectFn: function (e) {
