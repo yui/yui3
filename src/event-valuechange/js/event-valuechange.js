@@ -33,6 +33,7 @@ Usage:
 */
 
 var VALUE = 'value',
+    config, // defined at the end of this file
 
 // Just a simple namespace to make methods overridable.
 VC = {
@@ -273,7 +274,7 @@ VC = {
     },
 
     /**
-    Called when the `valueChange` event receives a new subscriber.
+    Called when the `valuechange` event receives a new subscriber.
 
     @method _onSubscribe
     @param {Node} node
@@ -304,7 +305,7 @@ VC = {
     },
 
     /**
-    Called when event-valuechange loses a subscriber.
+    Called when the `valuechange` event loses a subscriber.
 
     @method _onUnsubscribe
     @param {Node} node
@@ -339,8 +340,8 @@ Synthetic event that fires when the `value` property of an `<input>` or
 operation, or input method editor (IME) input event.
 
 Unlike the `onchange` event, this event fires when the value actually changes
-and not when the element loses focus. This event also reports IME and multi-
-stroke input more reliably than `oninput` or the various key events across
+and not when the element loses focus. This event also reports IME and
+multi-stroke input more reliably than `oninput` or the various key events across
 browsers.
 
 For performance reasons, only focused nodes are monitored for changes, so
@@ -355,19 +356,22 @@ programmatic value changes on nodes that don't have focus won't be detected.
         });
     });
 
-@event valueChange
+@event valuechange
 @param {String} prevVal Previous value prior to the latest change.
 @param {String} newVal New value after the latest change.
 @for YUI
 **/
 
-Y.Event.define('valueChange', {
+config = {
     detach: VC._onUnsubscribe,
     on    : VC._onSubscribe,
 
     publishConfig: {
         emitFacade: true
     }
-});
+};
+
+Y.Event.define('valuechange', config);
+Y.Event.define('valueChange', config); // deprecated, but supported for backcompat
 
 Y.ValueChange = VC;

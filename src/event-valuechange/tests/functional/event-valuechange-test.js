@@ -13,9 +13,9 @@ suite.add(new Y.Test.Case({
         ignore: {
             // IE doesn't simulate focus/blur events properly, so these tests
             // fail. Have to rely on manual testing.
-            'valueChange should stop polling on blur': ignoreFocus,
-            'valueChange should start polling on focus': ignoreFocus,
-            'valueChange should not report stale changes that occurred while a node was not focused': ignoreFocus
+            'valuechange should stop polling on blur': ignoreFocus,
+            'valuechange should start polling on focus': ignoreFocus,
+            'valuechange should not report stale changes that occurred while a node was not focused': ignoreFocus
         }
     },
 
@@ -34,10 +34,10 @@ suite.add(new Y.Test.Case({
         delete this.textInput;
     },
 
-    'valueChange event should start polling on mousedown and fire an event when the value changes': function () {
+    'valuechange event should start polling on mousedown and fire an event when the value changes': function () {
         var fired;
 
-        this.textInput.once('valueChange', function (e) {
+        this.textInput.once('valuechange', function (e) {
             fired = true;
 
             Assert.areSame('', e.prevVal);
@@ -52,10 +52,10 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
-    'valueChange should support textareas as well': function () {
+    'valuechange should support textareas as well': function () {
         var fired;
 
-        this.textArea.once('valueChange', function (e) {
+        this.textArea.once('valuechange', function (e) {
             fired = true;
 
             Assert.areSame('', e.prevVal);
@@ -70,10 +70,10 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
-    'valueChange should start polling on keydown': function () {
+    'valuechange should start polling on keydown': function () {
         var fired;
 
-        this.textInput.once('valueChange', function (e) {
+        this.textInput.once('valuechange', function (e) {
             fired = true;
         });
 
@@ -85,10 +85,10 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
-    'valueChange should stop polling on blur': function () {
+    'valuechange should stop polling on blur': function () {
         var fired;
 
-        this.textInput.on('valueChange', function (e) {
+        this.textInput.on('valuechange', function (e) {
             fired = true;
         });
 
@@ -108,10 +108,10 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
-    'valueChange should start polling on focus': function () {
+    'valuechange should start polling on focus': function () {
         var fired;
-        
-        this.textInput.once('valueChange', function (e) {
+
+        this.textInput.once('valuechange', function (e) {
             fired = true;
         });
 
@@ -123,13 +123,13 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
-    'valueChange should not report stale changes that occurred while a node was not focused': function () {
+    'valuechange should not report stale changes that occurred while a node was not focused': function () {
         var fired = false;
 
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'foo');
 
-        this.textInput.on('valueChange', function (e) {
+        this.textInput.on('valuechange', function (e) {
             fired = true;
         });
 
@@ -143,10 +143,10 @@ suite.add(new Y.Test.Case({
         }, 60);
     },
 
-    'valueChange should start polling on keyup for IME keystrokes': function () {
+    'valuechange should start polling on keyup for IME keystrokes': function () {
         var fired = false;
 
-        this.textInput.on('valueChange', function (e) {
+        this.textInput.on('valuechange', function (e) {
             fired = true;
         });
 
@@ -176,11 +176,11 @@ suite.add(new Y.Test.Case({
         }, 100);
     },
 
-    'valueChange should stop polling after timeout': function () {
+    'valuechange should stop polling after timeout': function () {
         var oldTimeout = Y.ValueChange.TIMEOUT,
             fired;
 
-        this.textInput.on('valueChange', function (e) {
+        this.textInput.on('valuechange', function (e) {
             fired = true;
         });
 
@@ -201,6 +201,21 @@ suite.add(new Y.Test.Case({
                     Y.ValueChange.TIMEOUT = oldTimeout;
                 }, 60);
             }, 71);
+        }, 60);
+    },
+
+    'valueChange should be an alias for valuechange for backcompat': function () {
+        var fired;
+
+        this.textInput.on('valueChange', function () {
+            fired = true;
+        });
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'monkeys');
+
+        this.wait(function () {
+            Assert.isTrue(fired, 'valueChange event should have fired');
         }, 60);
     }
 }));

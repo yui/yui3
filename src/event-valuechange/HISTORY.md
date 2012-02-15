@@ -1,6 +1,17 @@
 ValueChange Change History
 ==========================
 
+3.5.0
+-----
+
+* Changed the name of the synthetic event to "valuechange" (all lowercase) for
+  greater consistency with DOM event names. The older "valueChange" name will
+  continue to be supported indefinitely, but for consistency I recommend
+  switching to "valuechange".
+
+* Slight performance improvements.
+
+
 3.4.1
 -----
 
