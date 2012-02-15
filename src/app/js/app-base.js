@@ -234,10 +234,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     different scheme, host, or port.
 
     @method navigate
-    @param {String} url The fully-resolved URL that the app should dispatch to
-      its route handlers to fulfill the enhanced navigation "request", or use to
-      update `window.location` in non-HTML5 history capable browsers when
-      `serverRouting` is `true`.
+    @param {String} url The URL to navigate to. This must be of the same origin
+      as the current URL.
     @param {Object} [options] Additional options to configure the navigation.
       These are mixed into the `navigate` event facade.
         @param {Boolean} [options.replace] Whether or not the current history
