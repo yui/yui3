@@ -120,8 +120,9 @@
         <url>text/tests/functional/text-wordbreak.html</url>
         <url>transition/tests/transition.html</url>
         <url>widget/tests/widget.html</url>
-        <url>widget-parent/tests/parent-child.html</url>
+        <url>widget-anim/tests/widget-anim.html</url>
         <url>widget-buttons/tests/widget-buttons.html</url>
+        <url>widget-parent/tests/parent-child.html</url>
         <url>widget-position-align/tests/widget-position-align.html</url>
         <url>yql/tests/index.html</url>
         <url>yui/tests/array.html</url>
