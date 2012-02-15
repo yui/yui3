@@ -149,9 +149,7 @@ VC = {
     @static
     **/
     _startPolling: function (node, stamp, e, force) {
-        if (!stamp) {
-            stamp = Y.stamp(node);
-        }
+        stamp || (stamp = Y.stamp(node));
 
         // Don't bother continuing if we're already polling.
         if (!force && VC._intervals[stamp]) {
@@ -183,9 +181,7 @@ VC = {
     @static
     **/
     _stopPolling: function (node, stamp) {
-        if (!stamp) {
-            stamp = Y.stamp(node);
-        }
+        stamp || (stamp = Y.stamp(node));
 
         VC._intervals[stamp] = clearInterval(VC._intervals[stamp]);
         VC._stopTimeout(node, stamp);
@@ -203,10 +199,7 @@ VC = {
     @static
     **/
     _stopTimeout: function (node, stamp) {
-        if (!stamp) {
-            stamp = Y.stamp(node);
-        }
-
+        stamp || (stamp = Y.stamp(node));
         VC._timeouts[stamp] = clearTimeout(VC._timeouts[stamp]);
     },
 
@@ -327,7 +320,7 @@ VC = {
 
         notifier._handles.detach();
 
-        if (index !== -1) {
+        if (index > -1) {
             notifiers.splice(index, 1);
 
             if (!notifiers.length) {
