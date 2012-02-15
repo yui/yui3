@@ -1,11 +1,5 @@
 YUI.add('view', function(Y) {
 
-Y.Base._buildCfg.custom._NON_ATTRS_CFG = function(prop, r, s) {
-   if (s._NON_ATTRS_CFG) {
-       r._NON_ATTRS_CFG = (r._NON_ATTRS_CFG || []).concat(s._NON_ATTRS_CFG);
-   }
-}
-
 /**
 Represents a logical piece of an application's user interface, and provides a
 lightweight, overridable API for rendering content and handling delegated DOM
