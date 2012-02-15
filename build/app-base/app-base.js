@@ -209,11 +209,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
       not registered.
     **/
     getViewInfo: function (view) {
-        if (view instanceof View) {
-            return this._viewInfoMap[Y.stamp(view, true)];
+        if (Lang.isString(view)) {
+            return this.views[view];
         }
 
-        return this.views[view];
+        return view && this._viewInfoMap[Y.stamp(view, true)];
     },
 
     /**
@@ -478,6 +478,30 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
 
         view.removeTarget(this);
+    },
+
+    /**
+    Getter for the `viewContainer` attribute.
+
+    @method _getViewContainer
+    @param {Node|null} value Current attribute value.
+    @return {Node} View container node.
+    @protected
+    **/
+    _getViewContainer: function (value) {
+        // This wackiness is necessary to enable fully lazy creation of the
+        // container node both when no container is specified and when one is
+        // specified via a valueFn.
+
+        if (!value && !this._viewContainer) {
+            // Create a default container and set that as the new attribute
+            // value. The `this._viewContainer` property prevents infinite
+            // recursion.
+            value = this._viewContainer = this.create();
+            this._set('viewContainer', value);
+        }
+
+        return value;
     },
 
     /**
@@ -945,23 +969,28 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         @initOnly
         **/
         viewContainer: {
-            getter: function (value) {
-                if (!value && !this._viewContainer) {
-                    value = this._viewContainer = this.create();
-                    this._set('viewContainer', value);
-                }
-
-                return value;
-            },
-
+            getter   : '_getViewContainer',
             setter   : Y.one,
             value    : null,
             writeOnce: 'initOnly'
         }
     },
 
+    // TODO: Should these go on the `prototype`? Also Document these!
     CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
-    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views')
+    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views'),
+
+    /**
+    Properties that shouldn't be turned into ad-hoc attributes when passed to
+    App's constructor.
+
+    @property _NON_ATTRS_CFG
+    @type Array
+    @static
+    @protected
+    @since 3.5.0
+    **/
+    _NON_ATTRS_CFG: ['views']
 });
 
 // -- Namespace ----------------------------------------------------------------

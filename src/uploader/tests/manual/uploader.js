@@ -8,11 +8,14 @@ YUI({
 
 var myuploader = new Y.Uploader({contentBox: "#fileselection", 
                                  multipleFiles: true, 
-                                 uploadURL: "upload.php"});
+                                 uploadURL: "upload.php",
+                                 dragAndDropArea: "#droparea"
+                                });
 myuploader.render();
 
 myuploader.set("multipleFiles", true);
 myuploader.set("appendNewFiles", true);
+myuploader.set("simLimit", 3);
 
 var out = Y.one("#uploadinfo");
 

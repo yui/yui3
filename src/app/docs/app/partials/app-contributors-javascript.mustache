@@ -363,11 +363,6 @@ HomePageView = Y.Base.create('homePageView', Y.View, [], {
         this.publish('changeUser', {preventable: false});
     },
 
-    create: function (container) {
-        // Adds CSS class to the container node.
-        return Y.one(container).addClass('home-page');
-    },
-
     render: function () {
         // Retrieves just the `login` of the `User` model instance and applies
         // it to the HomePage Template.
@@ -375,7 +370,7 @@ HomePageView = Y.Base.create('homePageView', Y.View, [], {
             content = this.template(user.getAttrs(['login']));
 
         // Sets the resulting HTML as the contents of this view's container.
-        this.get('container').setContent(content);
+        this.get('container').addClass('home-page').setContent(content);
 
         return this;
     },
@@ -428,11 +423,6 @@ UserPageView = Y.Base.create('userPageView', Y.View, [], {
         delete this.repoListView;
     },
 
-    create: function (container) {
-        // Adds CSS class to the container node.
-        return Y.one(container).addClass('user-page');
-    },
-
     render: function () {
         // A document fragment is created to hold the resulting HTML created
         // from rendering the two sub-views.
@@ -442,7 +432,8 @@ UserPageView = Y.Base.create('userPageView', Y.View, [], {
         // then sets the fragment as the contents of this view's container.
         content.append(this.userView.render().get('container'));
         content.append(this.repoListView.render().get('container'));
-        this.get('container').setContent(content);
+
+        this.get('container').addClass('user-page').setContent(content);
 
         return this;
     }
@@ -477,11 +468,6 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
         delete this.contributorListView;
     },
 
-    create: function (container) {
-        // Adds CSS class to the container node.
-        return Y.one(container).addClass('repo-page');
-    },
-
     render: function () {
         // A document fragment is created to hold the resulting HTML created
         // from rendering the two sub-views.
@@ -491,7 +477,8 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
         // then sets the fragment as the contents of this view's container.
         content.append(this.repoView.render().get('container'));
         content.append(this.contributorListView.render().get('container'));
-        this.get('container').setContent(content);
+
+        this.get('container').addClass('repo-page').setContent(content);
 
         return this;
     }

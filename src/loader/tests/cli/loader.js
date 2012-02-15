@@ -1463,6 +1463,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-base-ie")) > -1, "Module (event-base-ie) not found in sorted array");
         },
+     "Testing event-contextmenu": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-contextmenu"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-contextmenu")) > -1, "Module (event-contextmenu) not found in sorted array");
+        },
      "Testing event-custom": function(data) {
             var loader = new Y.Loader({
                 require: ["event-custom"],

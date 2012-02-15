@@ -12,85 +12,85 @@ performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return $$[$0-1] 
+case 1: return $$[$0-1]; 
 break;
-case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]) 
+case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]); 
 break;
-case 3: this.$ = new yy.ProgramNode($$[$0]) 
+case 3: this.$ = new yy.ProgramNode($$[$0]); 
 break;
-case 4: this.$ = new yy.ProgramNode([]) 
+case 4: this.$ = new yy.ProgramNode([]); 
 break;
-case 5: this.$ = [$$[$0]] 
+case 5: this.$ = [$$[$0]]; 
 break;
-case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1] 
+case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 7: this.$ = new yy.InverseNode($$[$0-2], $$[$0-1], $$[$0]) 
+case 7: this.$ = new yy.InverseNode($$[$0-2], $$[$0-1], $$[$0]); 
 break;
-case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0]) 
+case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0]); 
 break;
-case 9: this.$ = $$[$0] 
+case 9: this.$ = $$[$0]; 
 break;
-case 10: this.$ = $$[$0] 
+case 10: this.$ = $$[$0]; 
 break;
-case 11: this.$ = new yy.ContentNode($$[$0]) 
+case 11: this.$ = new yy.ContentNode($$[$0]); 
 break;
-case 12: this.$ = new yy.CommentNode($$[$0]) 
+case 12: this.$ = new yy.CommentNode($$[$0]); 
 break;
-case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 15: this.$ = $$[$0-1] 
+case 15: this.$ = $$[$0-1]; 
 break;
-case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true) 
+case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true); 
 break;
-case 18: this.$ = new yy.PartialNode($$[$0-1]) 
+case 18: this.$ = new yy.PartialNode($$[$0-1]); 
 break;
-case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]) 
+case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]); 
 break;
 case 20: 
 break;
-case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]] 
+case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]]; 
 break;
-case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null] 
+case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null]; 
 break;
-case 23: this.$ = [[$$[$0-1]], $$[$0]] 
+case 23: this.$ = [[$$[$0-1]], $$[$0]]; 
 break;
-case 24: this.$ = [[$$[$0]], null] 
+case 24: this.$ = [[$$[$0]], null]; 
 break;
 case 25: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 26: this.$ = [$$[$0]] 
+case 26: this.$ = [$$[$0]]; 
 break;
-case 27: this.$ = $$[$0] 
+case 27: this.$ = $$[$0]; 
 break;
-case 28: this.$ = new yy.StringNode($$[$0]) 
+case 28: this.$ = new yy.StringNode($$[$0]); 
 break;
-case 29: this.$ = new yy.IntegerNode($$[$0]) 
+case 29: this.$ = new yy.IntegerNode($$[$0]); 
 break;
-case 30: this.$ = new yy.BooleanNode($$[$0]) 
+case 30: this.$ = new yy.BooleanNode($$[$0]); 
 break;
-case 31: this.$ = new yy.HashNode($$[$0]) 
+case 31: this.$ = new yy.HashNode($$[$0]); 
 break;
-case 32: $$[$0-1].push($$[$0]); this.$ = $$[$0-1] 
+case 32: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 33: this.$ = [$$[$0]] 
+case 33: this.$ = [$$[$0]]; 
 break;
-case 34: this.$ = [$$[$0-2], $$[$0]] 
+case 34: this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 35: this.$ = [$$[$0-2], new yy.StringNode($$[$0])] 
+case 35: this.$ = [$$[$0-2], new yy.StringNode($$[$0])]; 
 break;
-case 36: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])] 
+case 36: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])]; 
 break;
-case 37: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])] 
+case 37: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])]; 
 break;
-case 38: this.$ = new yy.IdNode($$[$0]) 
+case 38: this.$ = new yy.IdNode($$[$0]); 
 break;
 case 39: $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
-case 40: this.$ = [$$[$0]] 
+case 40: this.$ = [$$[$0]]; 
 break;
 }
 },

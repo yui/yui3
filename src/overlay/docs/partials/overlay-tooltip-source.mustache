@@ -1,0 +1,35 @@
+<style>
+{{>overlay-tooltip-css}}
+</style>
+
+<body>
+{{>overlay-tooltip-html}}
+<script>
+YUI().use('overlay', 'transition', function (Y) {
+
+    var tip = Y.one('#tooltip'),
+        tipIsShowing = false,
+        tipOffset = 20, // tooltip's distance from cursor
+        
+        // array for text to be displayed in tooltips
+        tipText = [
+            {'name': 'wrench', 'text': "Avoid dropping on toe."},
+            {'name': 'calipers', 'text': 'Dial calipers - very accurate!'},
+            {'name': 'drill', 'text': 'Variable-speed and cordless too.'},
+            {'name': 'ohm', 'text': 'Never test microwaves with a volt-ohm meter.'},
+            {'name': 'level', 'text': 'Unreliable in zero gravity conditions.'},
+            {'name': 'endwrench', 'text': '11/16 box-end wrench A.K.A spanner - (British)'},
+            {'name': 'knife', 'text': 'Wants to roll off table and stick in foot.'},
+            {'name': 'scissors', 'text': "Don't run with these."},
+            {'name': 'screwdriver', 'text': 'Not intended for garden weeding.'},
+            {'name': 'tape', 'text': 'Remove before cutting.'},
+            {'name': 'select', 'text': 'Covering select'}
+        ];
+
+{{>overlay-tooltip-js-instance}}
+{{>overlay-tooltip-js-handlers}}
+{{>overlay-tooltip-js-listeners}}
+
+});
+</script>
+</body>
