@@ -128,6 +128,7 @@
         <url>widget-position/tests/widget-position.html</url>
         <url>widget-position-align/tests/widget-position-align.html</url>
         <url>widget-position-constrain/tests/widget-position-constrain.html</url>
+        <url>widget-stack/tests/widget-stack.html</url>
         <url>yql/tests/index.html</url>
         <url>yui/tests/array.html</url>
         <url>yui/tests/object.html</url>
