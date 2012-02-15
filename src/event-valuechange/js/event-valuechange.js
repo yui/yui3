@@ -32,9 +32,7 @@ Usage:
 @static
 */
 
-var YArray = Y.Array,
-
-    VALUE = 'value',
+var VALUE = 'value',
 
 // Just a simple namespace to make methods overridable.
 VC = {
@@ -86,7 +84,7 @@ VC = {
         var domNode = node._node, // performance cheat; getValue() is a big hit when polling
             newVal  = domNode && domNode.value,
             prevVal = VC._history[stamp],
-            facade;
+            facade, i, len, notifiers;
 
         if (!domNode) {
             Y.log('_poll: node ' + stamp + ' disappeared; stopping polling.', 'warn', 'event-valuechange');
@@ -103,9 +101,11 @@ VC = {
                 prevVal: prevVal
             };
 
-            YArray.each(VC._notifiers[stamp], function (notifier) {
-                notifier.fire(facade);
-            });
+            notifiers = VC._notifiers[stamp];
+
+            for (i = 0, len = notifiers.length; i < len; ++i) {
+                notifiers[i].fire(facade);
+            }
 
             VC._refreshTimeout(node, stamp);
         }
@@ -323,7 +323,7 @@ VC = {
     _onUnsubscribe: function (node, subscription, notifier) {
         var stamp     = Y.stamp(node),
             notifiers = VC._notifiers[stamp],
-            index     = YArray.indexOf(notifiers, notifier);
+            index     = Y.Array.indexOf(notifiers, notifier);
 
         notifier._handles.detach();
 
