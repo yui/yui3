@@ -208,7 +208,9 @@ suite.add(new Y.Test.Case({
             '`navigate` event should fire when a pjax link is clicked': !html5,
             '`navigate` event should be preventable': !html5,
             '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
-            '`navigate` event should not fire when a modifier key is pressed': !html5
+            '`navigate` event should not fire when a modifier key is pressed': !html5,
+            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5,
+            '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5
         }
     },
 
