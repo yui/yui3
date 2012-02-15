@@ -21,6 +21,7 @@ suite.add(new Y.Test.Case({
     'A widget should be pluggable with Y.Plugin.WidgetAnim': function () {
         this.widget = new Y.Widget();
         this.widget.plug(Y.Plugin.WidgetAnim);
+        this.widget.render('#test');
 
         Assert.isObject(this.widget.hasPlugin('anim'), 'Widget does not have the "anim" plugin.');
         Assert.isInstanceOf(Y.Plugin.WidgetAnim, this.widget.anim, 'Widget does not contain a Y.Plugin.WidgetAnim instance.');

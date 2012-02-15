@@ -21,6 +21,7 @@ suite.add(new Y.Test.Case({
 
     'WidgetAutohide should add a `hideOn` attribute': function () {
         this.widget = new TestWidget();
+        this.widget.render('#test');
 
         Assert.isArray(this.widget.get('hideOn'), '`hideOn` is not an Array.');
     }
