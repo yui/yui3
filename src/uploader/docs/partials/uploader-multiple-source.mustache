@@ -109,7 +109,7 @@ function fileSelect (event) {
 			                fileData[key].id + "' class='progressbars'></div></td></tr>";
 			   Y.one("#filenames tbody").append(output);
 			  
-			   var progressBar = new Y.ProgressBar({id:"pb_" + fileData[key].id, layout : '<div class="{labelClass}"></div><div class="{sliderClass}"></div>'});
+			   var progressBar = new Y.ProgressBar({id:"pb_" + fileData[key].id, layout : '<div class="{labelClass}"></div><div class="{sliderClass}"></div>'}, label: {0: '', 100: 'Upload complete'});
 			       progressBar.render("#div_" + fileData[key].id);
 			       progressBar.set("progress", 0);
                
