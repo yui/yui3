@@ -39,11 +39,11 @@
         },
 
         {
-            "name"       : "nodelist",
-            "displayName": "NodeList",
+            "name"       : "ducks",
+            "displayName": "Using NodeList - Ducks",
             "description": "NodeList provides Node functionality for multiple nodes.",
-            "modules"    : ["node"],
-            "tags"       : ["dom", "node", "nodelist"],
+            "modules"    : ["node", "transition"],
+            "tags"       : ["dom", "node", "nodelist", "duck", "ducks", "shoot", "shooting", "move"],
 
             "hideTableOfContents": true
         },
