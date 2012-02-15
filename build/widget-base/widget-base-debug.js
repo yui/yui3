@@ -892,13 +892,15 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindDOM : function() {
-        var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT);
+        var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT),
+            focusHandle = Widget._hDocFocus,
+            mouseHandle = Widget._hDocMouseDown;
 
-        if (!Widget._hDocFocus) {
-            Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
-            Widget._hDocFocus.listeners = 1;
+        if (!focusHandle) {
+            focusHandle = Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
+            focusHandle.listeners = 1;
         } else {
-            Widget._hDocFocus.listeners++; 
+            focusHandle.listeners++; 
         }
 
         //	Fix for Webkit:
@@ -906,11 +908,11 @@ Y.extend(Widget, Y.Base, {
         //	down on it, so the "focused" attribute won't get set to the 
         //	correct value.
         if (WEBKIT){
-            if (!Widget._hDocMouseDown) {
-                Widget._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
-                Widget._hDocMouseDown.listeners = 1;
+            if (!mouseHandle) {
+                mouseHandle = Widget._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
+                mouseHandle.listeners = 1;
             } else {
-                Widget._hDocMouseDown.listeners++;
+                mouseHandle.listeners++;
             }
         }
     },
@@ -921,19 +923,24 @@ Y.extend(Widget, Y.Base, {
      */   
     _unbindDOM : function(boundingBox) {
 
-        if (Widget._hDocFocus && Widget._hDocFocus.listeners > 0) {
-            Widget._hDocFocus.listeners--;
-        } else if (Widget._hDocFocus){
-            Widget._hDocFocus.detach();
-            Widget._hDocFocus = null;
+        var focusHandle = Widget._hDocFocus,
+            mouseHandle = Widget._hMouseDown;
+
+        if (focusHandle) {
+            if (focusHandle.listeners > 0) {
+                focusHandle.listeners--;
+            } else {
+                focusHandle.detach();
+                Widget._hDocFocus = null;
+            }
         }
 
-        if (WEBKIT) {
-            if (Widget._hDocMouseDown && Widget._hDocMouseDown.listeners > 0) {
-                Widget._hDocMouseDown.listeners--;
-            } else if (Widget._hDocMouseDown){
-                Widget._hDocMouseDown.detach();
-                Widget._hDocMouseDown = null;
+        if (mouseHandle) {
+            if (mouseHandle.listeners > 0) {
+                mouseHandle.listeners--;
+            } else {
+                mouseHandle.detach();
+                Widget._hMouseDown = null;
             }
         }
     },
@@ -1063,13 +1070,21 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} evt The event facade for the DOM focus event
      */
     _onDocFocus: function (evt) {
-        var widget = Widget.getByNode(evt.target);
+        var widget = Widget.getByNode(evt.target),
+            activeWidget = Widget._active;
+
+        if (activeWidget && (activeWidget !== widget)) {
+            activeWidget._domFocus = false;
+            activeWidget._set(FOCUSED, false, {src:UI});
+
+            Widget._active = null;
+        }
+
         if (widget) {
-            Widget._active = widget;
             widget._domFocus = true;
             widget._set(FOCUSED, true, {src:UI});
-        } else if (Widget._active) {
-            Widget._active.set(FOCUSED, false, {src:UI});
+
+            Widget._active = widget;
         }
     },
 
