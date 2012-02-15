@@ -93,6 +93,14 @@
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
         <url>test/tests/objectassert.html</url>
+
+        <!--
+        Not included in automated tests because it triggers intentional
+        failures which would be flagged as build failures.
+
+        <url>test-console/tests/test-console.html</url>
+        -->
+
         <url>text/tests/functional/text-accentfold.html</url>
         <url>text/tests/functional/text-wordbreak.html</url>
         <url>widget/tests/widget.html</url>
