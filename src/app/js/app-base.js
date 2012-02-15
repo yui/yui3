@@ -24,12 +24,14 @@ Provides a top-level application component which manages navigation and views.
 //     needed if we have a `getView(name, create)` method, and already doing the
 //     above? We could do `app.getView('foo').destroy()` and it would be removed
 //     from the `_viewsInfoMap` as well.
+//
 
-var Lang     = Y.Lang,
+var Lang    = Y.Lang,
+    YObject = Y.Object,
+
     PjaxBase = Y.PjaxBase,
     Router   = Y.Router,
     View     = Y.View,
-    YObject  = Y.Object,
 
     win = Y.config.win,
 
@@ -503,6 +505,19 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
+    Gets the current full URL. When `html5` is false, the URL will first be
+    upgraded before it's returned.
+
+    @method _getURL
+    @return {String} URL.
+    @protected
+    **/
+    _getURL: function () {
+        var url = Y.getLocation().toString();
+        return this._html5 ? url : this._upgradeURL(url);
+    },
+
+    /**
     Provides the default value for the `html5` attribute.
 
     The value returned is dependent on the value of the `serverRouting`
@@ -605,13 +620,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // `serverRouting` is falsy because the server might not be able to
             // properly handle the request.
             Lang.isValue(options.force) || (options.force = true);
-
-            // Determine if the current history entry should be replaced. Since
-            // we've upgraded a hash-based URL to a full-path URL, we'll do the
-            // same for the current URL before comparing the two.
-            if (!Lang.isValue(options.replace)) {
-                options.replace = url === this._upgradeURL(this._getURL());
-            }
         }
 
         return PjaxBase.prototype._navigate.call(this, url, options);
