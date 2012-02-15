@@ -84,6 +84,7 @@
         <url>matrix/tests/matrix.html</url>
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
+        <url>overlay/tests/overlay.html</url>
         <url>parallel/tests/index.html</url>
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
