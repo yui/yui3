@@ -98,9 +98,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<td headers="{headers}" class="{className}">{content}</td>'
+    @default '<td {headers} class="{className}">{content}</td>'
     **/
-    CELL_TEMPLATE: '<td role="gridcell" headers="{headers}" class="{className}">{content}</td>',
+    CELL_TEMPLATE: '<td {headers} class="{className}">{content}</td>',
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation after
@@ -131,12 +131,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property ROW_TEMPLATE
     @type {HTML}
-    @default '<tr id="{clientId}" class="{rowClass}">{content}</tr>'
+    @default '<tr id="{rowId}" class="{rowClass}">{content}</tr>'
     **/
-    ROW_TEMPLATE :
-        '<tr role="row" id="{rowId}" class="{rowClass}">' +
-            '{content}' +
-        '</tr>',
+    ROW_TEMPLATE : '<tr id="{rowId}" class="{rowClass}">{content}</tr>',
 
     /**
     The object that serves as the source of truth for column and row data.
@@ -579,16 +576,19 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            i, len, col, key, token, tokenValues;
+            i, len, col, key, token, headers, tokenValues;
 
         for (i = 0, len = columns.length; i < len; ++i) {
-            col   = columns[i];
-            key   = col.key;
-            token = col._id;
+            col     = columns[i];
+            key     = col.key;
+            token   = col._id;
+            // Only include headers if there are more than one
+            headers = (col._headers || []).length > 1 ?
+                        'headers="' + col._headers.join(' ') + '"' : '';
 
             tokenValues = {
                 content  : '{' + token + '}',
-                headers  : (col._headers || []).join(' '),
+                headers  : headers,
                 className: this.getClassName('col', token) + ' ' +
                            (col.className || '') + ' ' +
                            this.getClassName('cell') +
