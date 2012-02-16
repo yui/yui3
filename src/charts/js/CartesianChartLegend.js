@@ -683,9 +683,10 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             size,
             w = this.get(WIDTH),
             h = this.get(HEIGHT),
-            gap = legend.get("styles").gap;
+            gap;
         if(legend && legend.get("includeInChartLayout"))
         {
+            gap = legend.get("styles").gap;
             position = legend.get(POSITION);
             if(position != EXTERNAL)
             {
@@ -711,6 +712,22 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             }
         }
         return box;
+    },
+
+    /**
+     * Destructor implementation for the CartesianChart class. Calls destroy on all axes, series, legend (if available) and the Graph instance.
+     * Removes the tooltip and overlay HTML elements.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var legend = this.get("legend");
+        if(legend)
+        {
+            legend.destroy(true);
+        }
     }
 }, {
     ATTRS: {

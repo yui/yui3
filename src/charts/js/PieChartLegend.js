@@ -81,6 +81,9 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
             graph.set(_Y, y);
             graph.set(WIDTH, dimension);
             graph.set(HEIGHT, dimension);
+        }
+        if(legend)
+        {
             legend.set(_X, legendX);
             legend.set(_Y, legendY);
             legend.set(WIDTH, legendWidth);

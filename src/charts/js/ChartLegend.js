@@ -516,15 +516,6 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         chart: {},
 
         /**
-         * An array of series to be represented by the legend instance. By default, the value is the same as the `Chart's` `seriesCollection`
-         * attribute. If the `seriesKeys` attribute has been explicitly set, the `seriesCollection` will be defined by it.
-         *
-         * @attribute seriesCollection
-         * @type Array
-         */
-        seriesCollection: {},
-
-        /**
          * Indicates the direction in relation of the legend's layout. 
          *
          * @attribute direction
