@@ -1,0 +1,256 @@
+<style>
+.gallery{
+    position: relative;
+    background: url({{{componentAssets}}}/images/background.png);
+    width: 665px;
+    height: 180px;
+    overflow: hidden;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-box-shadow: 0 0 45px #000 inset, 3px 0 6px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 0 0 45px #000 inset, 3px 0 6px rgba(0,0,0,0.8);
+    border: 4px solid #637073;
+    cursor: crosshair;
+    margin: 0.5em 0 0.8em;
+}
+
+.water{
+    position: absolute;
+    top: 114px;
+    left: 0;    
+    width: 677px;
+    height: 50px;
+}
+
+.water img{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.water .shadow {
+    left: 8px;
+    opacity: 0.5;
+    filter: alpha(opacity=30);
+}
+
+.duck-row {
+    position: absolute;
+    left: 10px;
+    top: 57px;
+    width: 670px;
+    padding: 0;
+    margin: 0;
+}
+
+ul.follower{ /* initial positioning of one row of ducks to follow the other during makeDucksSwim() */
+    left: 670px;
+}
+
+.duck-row li{
+    position: relative;
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    width: 133px;
+    height: 70px;
+    margin: 0 -4px 0 0;
+    vertical-align: bottom;
+}
+
+.duck-row li img{
+    position: absolute;
+    bottom: 7px;
+    left: 0;
+}
+
+/* the voice bubble of the ducks */
+.duck-row .squawk {
+    position: absolute;
+    top: -400px;
+    left: 50px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background-color: #ffe;
+    line-height: 1.2em;
+    border: solid 1px #cc8;
+    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+
+.duck-row .squawk .text{
+    padding: 0.2em 0.2em;
+    text-indent: 0.2em;
+    overflow: hidden;
+}
+
+.small-squawk-bubble{
+    position: absolute;
+    bottom: -4px;
+    left: -8px;
+    width: 4px;
+    height: 4px;
+    border: solid 1px #cc8;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background-color: #ffe;
+    font-size: 2px;
+}
+
+#button-reset{
+    margin-right: 2em;
+}
+
+#show-attitude{
+    margin-left: 8em;
+}
+
+.ducks-remain{
+    font-size: 150%;
+}
+</style>
+
+    <div class='gallery'>
+        <ul class="duck-row leader">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul class="duck-row follower">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <div class="water">
+            <img class="shadow" src="{{{componentAssets}}}/images/water-shadow.png"/>
+            <img src="{{{componentAssets}}}/images/water.png"/>
+        </div>
+    </div>
+    <button id="button-reset" class="yui3-button">Reset</button>
+    Ducks remaining: <span class="ducks-remain">10</span>
+    <input type="checkbox" id="show-attitude"/><label for="show-attitude">Show attitude</label>
+
+<script>
+YUI().use('node', 'transition', 'button', function(Y){
+
+    var ducks = Y.all('.duck-row li'),
+        duckRow = Y.all('.duck-row'),
+        ducksRemain = 10, // value for UI display
+        squawkTextIndex = 0, // index in the squawkTextArr to use next
+        squawkTextArr = [   // duck comments
+            '#@&~*Q!',
+            'Hey!?',
+            '911 on U!',
+            "U&nbsp;fly's&nbsp;down",
+            'duck&nbsp;pile!',
+            'Ricochets&nbsp;kill!',
+            'how&nbsp;sporting.',
+            "shoe's&nbsp;untied"
+        ];
+
+    // append in the content of each duck li since it's the same.
+    ducks.append('<img src="{{{componentAssets}}}/images/duck.png"/><div class="squawk"><div class="text">#@&~*Q!</div><div class="small-squawk-bubble"></div></div>');
+    
+    // give them all the set-up state class
+    ducks.addClass('set-up');
+    
+    // this makes the ducks move from right to left
+    // it also makes one row of 5 ducks follow the other, alternating position.
+    var makeDucksSwim = function() {
+        var leaderRow = Y.one('.leader'),
+        followerRow = Y.one('.follower');
+        leaderRow.transition({
+            easing: 'linear',
+            left: '-660px',
+            duration: 10
+        }, function(){ // when the row finishes its right to left transition...
+            // switch the follower and leader positions
+            followerRow.replaceClass('follower', 'leader');
+            leaderRow.replaceClass('leader', 'follower');
+            
+            // set the positions for the next makeDucksSwim()
+            Y.one('.follower').setStyle('left', '680px');
+            Y.one('.leader').setStyle('left', '10px');
+            
+            // if there are ducks remaining, make them swim again
+            if (ducksRemain > 0) {
+                makeDucksSwim();
+            }    
+        });
+        
+        // the 'follower row of ducks moves at the same rate for the same duration'
+        followerRow.transition({
+            easing: 'linear',
+            left: '10px',
+            duration: 10
+        });
+    }
+    makeDucksSwim(); // this initializes the ducks swimming
+    
+    // handles a click on a duck
+    // also handles the display of duck comments (squawks) 
+    var duckClick = function(e) {
+        var squawks;
+        
+        // makes the ducks appear to lay back when clicked
+        e.target.transition({
+            duration: 0.2,
+            height: '3px',
+            width: '133px'
+        });
+        
+        // clicked duck loses the 'set-up' class
+        e.currentTarget.removeClass('set-up');
+        
+        updateDucksRemain(); // update the number of ducks still set up
+        
+        squawks = Y.all('.duck-row .set-up .squawk'); // a NodeList of the squawks of set-up ducks
+        if (Y.one('#show-attitude')._node.checked) {  // only have ducks squawk if the checkbox is checked
+            // fill voice bubbles with next text string
+            Y.all('.duck-row .set-up .squawk .text').setContent(squawkTextArr[squawkTextIndex]);
+            
+            // increment the index
+            squawkTextIndex = (squawkTextIndex += 1) % (squawkTextArr.length);
+            squawks.transition({
+                top: {
+                    delay: 0.5,
+                    value: '0px', // drop squawks into position from hidden 
+                    duration: 0   // instant position change
+                },
+                opacity: { // fade out
+                    delay: 3.0,
+                    duration: 0.3,
+                    value: 0
+                } 
+            }, function(e){
+                // after squawks are faded out,
+                // move them to hidden position and set opacity to 1 again
+                squawks.setStyles({'top': '-400px', 'opacity': '1'});
+            });
+        }
+    };
+    
+    // this resets all ducks, ducks remaining counters, and row positions
+    // make the duck images full height
+    // start them swimming     
+    var reset = function() {
+        Y.all('.duck-row li img').setStyle('height', '55px');
+        Y.all('.duck-row li').addClass('set-up');
+        updateDucksRemain();
+        makeDucksSwim();
+    }
+    
+    // counts the ducks remaining, and updates the UI counter display
+    var updateDucksRemain = function() {
+        ducksRemain = Y.all('.gallery li.set-up').size();    
+        Y.one('.ducks-remain').setContent(ducksRemain);    
+    }
+    
+    // listeners
+    ducks.on('click', duckClick);
+    Y.one('#button-reset').on('click', reset);
+});
+</script>
