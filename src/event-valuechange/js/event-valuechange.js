@@ -88,7 +88,7 @@ VC = {
             facade, i, len, notifiers;
 
         if (!domNode) {
-            Y.log('_poll: node ' + stamp + ' disappeared; stopping polling.', 'warn', 'event-valuechange');
+            Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling.', 'warn', 'event-valuechange');
             VC._stopPolling(node, stamp);
             return;
         }
@@ -102,7 +102,10 @@ VC = {
                 prevVal: prevVal
             };
 
-            notifiers = VC._notifiers[stamp];
+            // FIXME: this is where everything falls apart, because it
+            // constrains us to only one delegated valuechange event per
+            // container node.
+            notifiers = VC._notifiers[e.container ? Y.stamp(e.container) : stamp];
 
             for (i = 0, len = notifiers.length; i < len; ++i) {
                 notifiers[i].fire(facade);
@@ -130,7 +133,7 @@ VC = {
             VC._stopPolling(node, stamp);
         }, VC.TIMEOUT);
 
-        Y.log('_refreshTimeout: ' + stamp, 'info', 'event-valuechange');
+        Y.log('_refreshTimeout: #' + node.get('id'), 'info', 'event-valuechange');
     },
 
     /**
@@ -169,7 +172,7 @@ VC = {
 
         VC._refreshTimeout(node, stamp, e);
 
-        Y.log('_startPolling: ' + stamp, 'info', 'event-valuechange');
+        Y.log('_startPolling: #' + node.get('id'), 'info', 'event-valuechange');
     },
 
     /**
@@ -187,7 +190,7 @@ VC = {
         VC._intervals[stamp] = clearInterval(VC._intervals[stamp]);
         VC._stopTimeout(node, stamp);
 
-        Y.log('_stopPolling: ' + stamp, 'info', 'event-valuechange');
+        Y.log('_stopPolling: #' + node.get('id'), 'info', 'event-valuechange');
     },
 
     /**
@@ -273,19 +276,53 @@ VC = {
         VC._startPolling(e.currentTarget, null, e);
     },
 
+    _onDelegate: function (container, sub, notifier, filter) {
+        var guid = Y.guid();
+
+        // Add a function to the notifier that we can use to find all nodes that
+        // pass the delegate filter.
+        notifier._getFilteredNodes = function () {
+            return container.all('*').filter(filter)
+        };
+
+        // Store the initial values for each descendant of the container node
+        // that passes the delegate filter.
+        notifier._getFilteredNodes().each(function (node) {
+            VC._history[Y.stamp(node)] = node.get(VALUE);
+        });
+
+        notifier._handles = Y.delegate({
+            blur     : VC._onBlur,
+            focus    : VC._onFocus,
+            keydown  : VC._onKeyDown,
+            keyup    : VC._onKeyUp,
+            mousedown: VC._onMouseDown
+        }, container, filter);
+
+        // Flag this notifier as a delegated event and keep track of the guid so
+        // we can look it up later.
+        notifier._delegated = true;
+        notifier._guid      = guid;
+
+        notifiers = VC._notifiers[guid] || (VC._notifiers[guid] = []);
+        notifiers.push(notifier);
+    },
+
     /**
     Called when the `valuechange` event receives a new subscriber.
 
     @method _onSubscribe
     @param {Node} node
-    @param {Subscription} subscription
+    @param {Subscription} sub
     @param {SyntheticEvent.Notifier} notifier
+    @param {Function|String} [filter] Filter function or selector string. Only
+        provided for delegate subscriptions.
     @protected
     @static
     **/
-    _onSubscribe: function (node, subscription, notifier) {
-        var stamp     = Y.stamp(node),
-            notifiers = VC._notifiers[stamp];
+    _onSubscribe: function (node, sub, notifier) {
+        var stamp = Y.stamp(node),
+            notifiers;
 
         VC._history[stamp] = node.get(VALUE);
 
@@ -297,10 +334,7 @@ VC = {
             mousedown: VC._onMouseDown
         });
 
-        if (!notifiers) {
-            notifiers = VC._notifiers[stamp] = [];
-        }
-
+        notifiers = VC._notifiers[stamp] || (VC._notifiers[stamp] = []);
         notifiers.push(notifier);
     },
 
@@ -325,10 +359,21 @@ VC = {
             notifiers.splice(index, 1);
 
             if (!notifiers.length) {
-                VC._stopPolling(node, stamp);
+                if (notifier._delegated) {
+                    notifier._getFilteredNodes().each(function (node) {
+                        var stamp = Y.stamp(node);
 
-                delete VC._notifiers[stamp];
-                delete VC._history[stamp];
+                        VC._stopPolling(node, stamp);
+                        delete VC._history[stamp];
+                    });
+
+                    delete VC._notifiers[notifier._guid];
+                } else {
+                    VC._stopPolling(node, stamp);
+
+                    delete VC._notifiers[stamp];
+                    delete VC._history[stamp];
+                }
             }
         }
     }
@@ -365,6 +410,9 @@ programmatic value changes on nodes that don't have focus won't be detected.
 config = {
     detach: VC._onUnsubscribe,
     on    : VC._onSubscribe,
+
+    delegate      : VC._onDelegate,
+    detachDelegate: VC._onUnsubscribe,
 
     publishConfig: {
         emitFacade: true

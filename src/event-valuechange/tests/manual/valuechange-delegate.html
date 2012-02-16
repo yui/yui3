@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>event-valuechange delegation test</title>
+</head>
+<body>
+
+<h1>event-valuechange delegation test</h1>
+
+<form id="container">
+    <p><input type="text" id="a" class="odd"></p>
+    <p><input type="text" id="b" class="even"></p>
+    <p><input type="text" id="c" class="odd"></p>
+
+    <p><textarea id="d" class="even"></textarea></p>
+    <p><textarea id="e" class="odd"></textarea></p>
+    <p><textarea id="f" class="even"></textarea></p>
+</form>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', 'node-event-delegate', function (Y) {
+
+    var form = Y.one('#container');
+
+    form.delegate('valuechange', function (e) {
+        Y.log('#' + e.currentTarget.get('id') + ' .odd: "' + e.prevVal + '" -> "' + e.newVal + '"');
+    }, '.odd');
+
+    form.delegate('valuechange', function (e) {
+        Y.log('#' + e.currentTarget.get('id') + ' .even: "' + e.prevVal + '" -> "' + e.newVal + '"');
+    }, '.even');
+
+    form.delegate('valuechange', function (e) {
+        Y.log('#' + e.currentTarget.get('id') + ' function: "' + e.prevVal + '" -> "' + e.newVal + '"');
+    }, function (node) {
+        return node.getAttribute('type') === 'text';
+    });
+});
+</script>
+</body>
+</html>
