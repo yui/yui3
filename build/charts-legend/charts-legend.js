@@ -685,9 +685,10 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             size,
             w = this.get(WIDTH),
             h = this.get(HEIGHT),
-            gap = legend.get("styles").gap;
+            gap;
         if(legend && legend.get("includeInChartLayout"))
         {
+            gap = legend.get("styles").gap;
             position = legend.get(POSITION);
             if(position != EXTERNAL)
             {
@@ -713,6 +714,22 @@ CartesianChartLegend = Y.Base.create("cartesianChartLegend", Y.CartesianChart, [
             }
         }
         return box;
+    },
+
+    /**
+     * Destructor implementation for the CartesianChart class. Calls destroy on all axes, series, legend (if available) and the Graph instance.
+     * Removes the tooltip and overlay HTML elements.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        var legend = this.get("legend");
+        if(legend)
+        {
+            legend.destroy(true);
+        }
     }
 }, {
     ATTRS: {
@@ -805,6 +822,9 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
             graph.set(_Y, y);
             graph.set(WIDTH, dimension);
             graph.set(HEIGHT, dimension);
+        }
+        if(legend)
+        {
             legend.set(_X, legendX);
             legend.set(_Y, legendY);
             legend.set(WIDTH, legendWidth);
@@ -1339,15 +1359,6 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          * @type Chart
          */
         chart: {},
-
-        /**
-         * An array of series to be represented by the legend instance. By default, the value is the same as the `Chart's` `seriesCollection`
-         * attribute. If the `seriesKeys` attribute has been explicitly set, the `seriesCollection` will be defined by it.
-         *
-         * @attribute seriesCollection
-         * @type Array
-         */
-        seriesCollection: {},
 
         /**
          * Indicates the direction in relation of the legend's layout. 
