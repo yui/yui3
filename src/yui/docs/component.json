@@ -125,6 +125,9 @@
                 }
             ]
         },
+        "create": {
+            "displayName": "Creating YUI Modules"
+        },
         "modules": {
             "displayName": "YUI Modules List",
             "hideTableOfContents": true,

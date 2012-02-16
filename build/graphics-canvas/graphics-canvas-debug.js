@@ -769,7 +769,7 @@ CanvasShape = function(cfg)
 
 CanvasShape.NAME = "canvasShape";
 
-Y.extend(CanvasShape, Y.BaseGraphic, Y.mix({
+Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -2547,7 +2547,7 @@ CanvasGraphic.ATTRS = {
     }
 };
 
-Y.extend(CanvasGraphic, Y.BaseGraphic, {
+Y.extend(CanvasGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *

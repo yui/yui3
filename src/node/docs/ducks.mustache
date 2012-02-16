@@ -1,0 +1,70 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates how to use a NodeList instance to work with multiple nodes.</p>
+</div>
+
+<div class="example">
+{{>ducks-source}}
+</div>
+
+<h2>Setting up the Node</h2>
+<p>First we need some HTML to work with.</p>
+```
+{{>ducks-simple-html}}
+```
+<h2>CSS</h2>
+<p>CSS to make boxes in horizontal row</p>
+```
+{{>ducks-simple-css}}
+```
+<p>
+<div class="example">
+{{>ducks-simple-source}}
+</div>
+</p>
+
+<h2>Geting a NodeList Instance</h2>
+<p>We will use the `all` method of our YUI instance to get a NodeList instance to work with.</p>
+```
+var boxes = Y.all('.box-row li');
+```
+
+<h2>Accessing NodeList Properties</h2>
+<p>As with Node, simple type of properties (strings, numbers, booleans) 
+pass directly to/from the underlying HTMLElement, however properties 
+representing HTMLElements return Node instances.</p>
+<p>In this example, we will listen for a `click` event to trigger the property change.</p>
+<p>Note that the context of the handler is set to the NodeList, so `this` 
+refers to our NodeList instance.  The `currentTarget` property of 
+the event object is set to the current Node instance.</p>
+```
+var handleBoxClick = function(e) {
+    // this === boxes, which is a NodeList
+    this.setContent('neener');
+    this.setStyle('backgroundColor', '#F4E6B8');
+
+    // e.currentTarget === .box-row li, just the one that was clicked
+    e.currentTarget.setContent('ouch!');        
+    e.currentTarget.setStyle('backgroundColor', '#fff');
+};    
+boxes.on('click', handleBoxClick);
+
+```
+
+<h2>Prefer `node.delegate()` over `nodelist.on()`</h2>
+
+<p>Sometimes you need to create individual subscriptions for each Node in a 
+NodeList (as is done in this example), but usually it's preferable to use 
+<a href="node-evt-delegation.html">event delegation</a>.</p>
+
+<h2>Complete Simple Box Example Source</h2>
+```
+{{>ducks-simple-source}}
+```
+<h2>Complete Ducks Example Source</h2>
+<p>
+This example uses <a href="node-evt-delegation.html">event delegation</a>.
+</p>
+```
+{{>ducks-source}}
+```
