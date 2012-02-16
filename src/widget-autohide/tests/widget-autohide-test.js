@@ -1,4 +1,4 @@
-YUI.add('widget-anim-test', function (Y) {
+YUI.add('widget-autohide-test', function (Y) {
 
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
@@ -6,7 +6,8 @@ var Assert      = Y.Assert,
     suite;
 
 // -- Suite --------------------------------------------------------------------
-suite = new Y.Test.Suite('Plugin.WidgetAnim');
+suite      = new Y.Test.Suite('WidgetAutohide');
+TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetAutohide]);
 
 // -- Lifecycle ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
@@ -18,18 +19,16 @@ suite.add(new Y.Test.Case({
         Y.one('#test').empty();
     },
 
-    'A widget should be pluggable with Y.Plugin.WidgetAnim': function () {
-        this.widget = new Y.Widget();
-        this.widget.plug(Y.Plugin.WidgetAnim);
+    'WidgetAutohide should add a `hideOn` attribute': function () {
+        this.widget = new TestWidget();
         this.widget.render('#test');
 
-        Assert.isObject(this.widget.hasPlugin('anim'), 'Widget does not have the "anim" plugin.');
-        Assert.isInstanceOf(Y.Plugin.WidgetAnim, this.widget.anim, 'Widget does not contain a Y.Plugin.WidgetAnim instance.');
+        Assert.isArray(this.widget.get('hideOn'), '`hideOn` is not an Array.');
     }
 }));
 
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
-    requires: ['widget-anim', 'test']
+    requires: ['widget-autohide', 'test']
 });

@@ -1,4 +1,4 @@
-YUI.add('widget-anim-test', function (Y) {
+YUI.add('widget-position-constrain-test', function (Y) {
 
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
@@ -6,7 +6,8 @@ var Assert      = Y.Assert,
     suite;
 
 // -- Suite --------------------------------------------------------------------
-suite = new Y.Test.Suite('Plugin.WidgetAnim');
+suite      = new Y.Test.Suite('WidgetPositionConstrain');
+TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetPosition, Y.WidgetPositionConstrain]);
 
 // -- Lifecycle ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
@@ -18,18 +19,16 @@ suite.add(new Y.Test.Case({
         Y.one('#test').empty();
     },
 
-    'A widget should be pluggable with Y.Plugin.WidgetAnim': function () {
-        this.widget = new Y.Widget();
-        this.widget.plug(Y.Plugin.WidgetAnim);
+    'WidgetPositionConstrain should add a `constrain` attribute': function () {
+        this.widget = new TestWidget({constrain: '#test'});
         this.widget.render('#test');
 
-        Assert.isObject(this.widget.hasPlugin('anim'), 'Widget does not have the "anim" plugin.');
-        Assert.isInstanceOf(Y.Plugin.WidgetAnim, this.widget.anim, 'Widget does not contain a Y.Plugin.WidgetAnim instance.');
+        Assert.areSame(Y.one('#test'), this.widget.get('constrain'), '`constrain` is not "#test" node.');
     }
 }));
 
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
-    requires: ['widget-anim', 'test']
+    requires: ['widget-position-constrain', 'test']
 });
