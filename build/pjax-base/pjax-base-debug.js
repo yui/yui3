@@ -87,7 +87,7 @@ PjaxBase.prototype = {
     @type RegExp
     @protected
     **/
-    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(.*)$/,
+    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
@@ -200,12 +200,27 @@ PjaxBase.prototype = {
             return false;
         }
 
+        var currentURL = this._getURL(),
+            hashlessURL, hash;
+
+        // Captures the `url`'s hash and returns a URL without that hash.
+        hashlessURL = url.replace(/(#.*)$/, function (u, h, i) {
+            hash = h;
+            return u.substring(i);
+        });
+
+        // When the specified `url` and current URL only differ by a hash
+        // fragment, the browser should handle this in-page navigation normally.
+        if (hash && hashlessURL === currentURL.replace(/#.*$/, '')) {
+            return false;
+        }
+
         options || (options = {});
         options.url = url;
 
         // When navigating to the same URL as the current URL, behave like a
         // browser and replace the history entry instead of creating a new one.
-        Lang.isValue(options.replace) || (options.replace = url === this._getURL());
+        Lang.isValue(options.replace) || (options.replace = url === currentURL);
 
         // The `navigate` event will only fire and therefore enhance the
         // navigation to the new URL in HTML5 history enabled browsers or when
@@ -321,8 +336,8 @@ PjaxBase.prototype = {
     @protected
     **/
     _resolveURL: function (url) {
-        var parts = url && url.match(this._regexURL),
-            origin, path, suffix;
+        var parts    = url && url.match(this._regexURL),
+            origin, path, query, hash, resolved;
 
         if (!parts) {
             return this._getURL();
@@ -330,7 +345,8 @@ PjaxBase.prototype = {
 
         origin = parts[1];
         path   = parts[2];
-        suffix = parts[3];
+        query  = parts[3];
+        hash   = parts[4];
 
         // Absolute and scheme-relative URLs are assumed to be fully-resolved.
         if (origin) {
@@ -339,10 +355,20 @@ PjaxBase.prototype = {
                 origin = Y.getLocation().protocol + origin;
             }
 
-            return origin + (path || '/') + (suffix + '');
+            return origin + (path || '/') + (query || '') + (hash || '');
         }
 
-        return this._getOrigin() + this._resolvePath(path) + (suffix || '');
+        // Will default to the current origin and current path.
+        resolved = this._getOrigin() + this._resolvePath(path);
+
+        // A path or query for the specified URL trumps the current URL's.
+        if (path || query) {
+            return resolved + (query || '') + (hash || '');
+        }
+
+        query = this._getQuery();
+
+        return resolved + (query ? ('?' + query) : '') + (hash || '');
     },
 
     // -- Protected Event Handlers ---------------------------------------------

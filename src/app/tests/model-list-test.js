@@ -41,20 +41,54 @@ modelListSuite.add(new Y.Test.Case({
     name: 'Attributes & Properties',
 
     setUp: function () {
-        this.list = new Y.ModelList({model: Y.Model});
+        this.list = new Y.ModelList();
     },
 
     tearDown: function () {
         delete this.list;
+        Y.CustomModel && delete Y.CustomModel;
+        Y.Foo && delete Y.Foo;
     },
 
     'ModelList instances should have an `_isYUIModelList` property': function () {
         Assert.isTrue(this.list._isYUIModelList);
     },
 
-    'ModelList instances should have a `model` property': function () {
-        Assert.isNull(new Y.ModelList().model);
+    'ModelList instances should have a `model` property that defaults to Y.Model': function () {
+        Assert.areSame(Y.Model, this.list.model);
+    },
+
+    '`model` property should be customizable on init': function () {
+        var CustomModel = Y.Base.create('customModel', Y.Model, []),
+            list = new Y.ModelList({model: CustomModel});
+
+        Assert.areSame(CustomModel, list.model);
+    },
+
+    '`model` property should evaluate a string to a namespaced class on `Y`': function () {
+        Y.CustomModel = Y.Base.create('customModel', Y.Model, []);
+
+        var CustomList = Y.Base.create('customList', Y.ModelList, [], {
+                model: 'CustomModel'
+            }),
+
+            list = new CustomList();
+
+        Assert.areSame(Y.CustomModel, list.model);
+    },
+
+    '`model` property should support deeply-nested names': function () {
+        Y.namespace('Foo.Bar').CustomModel = Y.Base.create('customModel', Y.Model, []);
+
+        var CustomList = Y.Base.create('customList', Y.ModelList, [], {
+                model: 'Foo.Bar.CustomModel'
+            }),
+
+            list = new CustomList();
+
+        Assert.areSame(Y.Foo.Bar.CustomModel, list.model);
     }
+
 }));
 
 // -- ModelList: Methods -------------------------------------------------------

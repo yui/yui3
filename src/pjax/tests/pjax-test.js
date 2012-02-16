@@ -208,7 +208,9 @@ suite.add(new Y.Test.Case({
             '`navigate` event should fire when a pjax link is clicked': !html5,
             '`navigate` event should be preventable': !html5,
             '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
-            '`navigate` event should not fire when a modifier key is pressed': !html5
+            '`navigate` event should not fire when a modifier key is pressed': !html5,
+            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5,
+            '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5
         }
     },
 
@@ -390,6 +392,46 @@ suite.add(new Y.Test.Case({
             currentTarget : Y.one('#link-full'),
             preventDefault: function () {}
         });
+    },
+
+    '`navigate` event should not fire for a hash URL that resolves to the current page': function () {
+        this.pjax.on('navigate', function (e) {
+            Assert.fail();
+        });
+
+        Assert.isFalse(this.pjax.navigate('#log'), 'navigate() did not return `false`.');
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-in-page'),
+            preventDefault: function () {}
+        });
+    },
+
+    '`navigate` event should fire for a hash-less URL that resolves to the current page': function () {
+        var called = 0;
+
+        this.pjax.on('navigate', function (e) {
+            called += 1;
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-full'),
+            preventDefault: function () {}
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-current'),
+            preventDefault: function () {}
+        });
+
+        Assert.isTrue(this.pjax.navigate(''), 'navigate() did not return `true`.');
+        Assert.areSame(3, called, '`navigate` did not fire 3 times.');
     }
 }));
 
