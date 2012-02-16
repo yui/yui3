@@ -1,0 +1,16 @@
+<script>
+YUI().use('node', function(Y){
+    var boxes = Y.all('.box-row li');
+
+    var handleBoxClick = function(e) {
+        // this === boxes, which is a NodeList
+        this.setContent('neener');
+        this.setStyle('backgroundColor', '#F4E6B8');
+    
+        // e.currentTarget === .box-row li, just the one that was clicked
+        e.currentTarget.setContent('ouch!');        
+        e.currentTarget.setStyle('backgroundColor', '#fff');
+    };    
+    boxes.on('click', handleBoxClick);
+});
+</script>

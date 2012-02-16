@@ -15,13 +15,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'widget-position-align-test': {
-            fullpath: 'widget-position-align-test.js',
-            requires: ['widget-position-align', 'test']
+        'widget-autohide-test': {
+            fullpath: 'widget-autohide-test.js',
+            requires: ['widget-autohide', 'test']
         }
     },
     useBrowserConsole: false
-}).use('widget-position-align-test', 'test-console', function (Y) {
+}).use('widget-autohide-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });
