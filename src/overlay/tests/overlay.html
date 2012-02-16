@@ -15,13 +15,13 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'widget-position-align-test': {
-            fullpath: 'widget-position-align-test.js',
-            requires: ['widget-position-align', 'test']
+        'overlay-test': {
+            fullpath: 'overlay-test.js',
+            requires: ['overlay', 'test']
         }
     },
     useBrowserConsole: false
-}).use('widget-position-align-test', 'test-console', function (Y) {
+}).use('overlay-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });
