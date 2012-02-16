@@ -126,6 +126,15 @@ suite.add(new Y.Test.Case({
 
         Y.Assert.areSame('200px', table.get('columns.a.width'));
         Y.Assert.areSame('300px', table.get('columns.b.width'));
+    },
+
+    "setColumnWidth should be chainable": function () {
+        var table = new Y.DataTable({
+            columns: ['a', { key: 'b', width: '100px' }],
+            data: [{ a: 'a', b: 'b' }]
+        });
+
+        Y.Assert.areSame(table, table.setColumnWidth('a', '100px'));
     }
 
 }));
