@@ -8,9 +8,9 @@
         "submodules": {
             "button-base": {
                 "requires": [
-                    "base",
                     "classnamemanager",
-                    "node"
+                    "node",
+                    "widget"
                 ]
             }, 
             "button-group": {
