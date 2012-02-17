@@ -245,7 +245,8 @@ Table.ATTRS = {
     **/
     recordset: {
         setter: '_setRecordset',
-        getter: '_getRecordset'
+        getter: '_getRecordset',
+        lazyAdd: false
     },
 
     /**
@@ -263,7 +264,8 @@ Table.ATTRS = {
     **/
     columnset: {
         setter: '_setColumnset',
-        getter: '_getColumnset'
+        getter: '_getColumnset',
+        lazyAdd: false
     }
 };
 
@@ -1201,9 +1203,11 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _setColumnset: function (val) {
-        if (val && val instanceof Y.Columnset) {
+        if (val && Y.Columnset && val instanceof Y.Columnset) {
             val = val.get('definitions');
         }
+
+        this.set('columns', val);
 
         return isArray(val) ? val : INVALID;
     },
@@ -1301,13 +1305,15 @@ Y.mix(Table.prototype, {
     _setRecordset: function (val) {
         var data;
 
-        if (val && val instanceof Y.Recordset) {
+        if (val && Y.Recordset && val instanceof Y.Recordset) {
             data = [];
             val.each(function (record) {
                 data.push(record.get('data'));
             });
             val = data;
         }
+
+        this.set('data', val);
 
         return val;
     },
