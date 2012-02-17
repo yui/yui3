@@ -20,7 +20,7 @@ suite.add(new Y.Test.Case({
             data: [{a:1}]
         });
 
-        Y.Assert.isInstanceOf(table, Y.DataTable);
+        Y.Assert.isInstanceOf(Y.DataTable, table);
         Y.Assert.isTrue(table.hasImpl(Y.DataTable.Scroll));
     },
 
