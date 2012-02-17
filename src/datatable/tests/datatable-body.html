@@ -13,7 +13,7 @@
 	<script>
 		YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
-            allowRollup: false,
+            allowRollup: false
 		}).use('test-console', 'datatable-body-tests', function (Y) {
 			
 			new Y.Test.Console().render();
