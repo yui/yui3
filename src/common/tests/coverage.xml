@@ -64,6 +64,7 @@
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
         <url>datatable/tests/datatable-base.html</url>
+        <url>datatable/tests/datatable-column-widths.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
@@ -109,6 +110,7 @@
         <url>parallel/tests/index.html</url>
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
+        <url>queue-promote/tests/queue-promote.html</url>
         <url>resize/tests/index.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>

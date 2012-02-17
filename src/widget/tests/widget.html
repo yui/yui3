@@ -4,6 +4,7 @@
     <title>Widget Test Suite</title>
 
     <script src="../../../build/yui/yui.js"></script>
+    <!--script src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui.js"></script-->
 
     <style type="text/css">
         #console .yui3-console-entry {
@@ -733,6 +734,91 @@
                 Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
 
                 w.destroy();
+            },
+            
+            "testFocusOnBoundingBox" : function() {
+
+                var w = this.createWidget({
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                w.render();
+                w.blur();
+
+                Y.Assert.isFalse(w.get("focused"), "Widget should not be focused here");
+
+                w.get("boundingBox").focus();
+
+                Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
+
+                w.destroy();
+            },
+
+            "testMultiWidgetFocus" : function() {
+
+                var w1 = this.createWidget({
+                    id:"one",
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                
+                w1.render();
+                w1.blur();
+
+                var w2 = this.createWidget({
+                    id:"two",
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+
+                w2.render();
+                w2.blur();
+                
+                var n1 = w1.get("contentBox").appendChild('<a href="#" id="clickme1">Click Me (widget 1)</a>');
+                var n2 = w2.get("contentBox").appendChild('<a href="#" id="clickme2">Click Me (widget 2)</a>');
+                var n3 = Y.one("body").insertBefore('<a href="#" id="clickme3">Click Me (non widget)</a>', Y.one("body").get("firstChild"));
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+
+                n1.focus();
+
+                Y.Assert.isTrue(w1.get("focused"), "Widget 1 should be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+
+                n2.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isTrue(w2.get("focused"), "Widget 2 should be focused here");
+
+                n3.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+                
+                w1.focus();
+                
+                Y.Assert.isTrue(w1.get("focused"), "Widget 1 should be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+                
+                w2.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isTrue(w2.get("focused"), "Widget 2 should be focused here");
+                
+                w1.blur();
+                w2.blur();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+               
+                w1.destroy();
+                w2.destroy();
+
+                n3.remove(true);
             }
         };
 
@@ -1678,21 +1764,23 @@
                     boundingBox: bb,
                     contentBox:  cb
                 } );
-        
+
                 Y.Assert.areEqual( "foo", w.getSkinName() );
             },
-        
+
             "getSkinName should return name from body or null": function () {
                 var w = new Y.Widget().render(),
                     body = Y.one( 'body' );
         
                 Y.Assert.areEqual( "sam", w.getSkinName() );
-        
+
                 body.removeClass( "yui3-skin-sam" );
-        
+
                 Y.Assert.isNull( w.getSkinName() );
-        
+
                 body.addClass( "yui3-skin-sam" );
+
+                w.destroy();
             },
 
             "getSkinName should return name from ancestor if both ancestor and body are classed": function () {
@@ -1702,6 +1790,8 @@
                 body.addClass( "yui3-skin-sam" );
         
                 Y.Assert.areEqual( "foo", w.getSkinName() );
+                
+                w.destroy();
             }
         }));
     
