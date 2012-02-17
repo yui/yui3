@@ -49,6 +49,7 @@ Button.prototype = {
     },
     
     _initAttributes: function(config) {
+        config.label = config.label || config.host.getContent(); //Todo: Is this the right place?
         Y.AttributeCore.call(this, Button.ATTRS, config);
     },
 
@@ -124,7 +125,6 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        value: 'default label',
         setter: '_uiSetLabel',
         getter: '_uiGetLabel',
         lazyAdd: false
@@ -159,6 +159,7 @@ Button.CLASS_NAMES = {
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
+
 // Export Button
 Y.ButtonBase = Button;
 function ButtonPlugin(config) {

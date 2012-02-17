@@ -8,6 +8,13 @@ YUI.add('button-group', function(Y) {
 * @since 3.5.0
 */
 
+var BOUNDING_BOX = "boundingBox",
+    CONTENT_BOX = "contentBox",
+    BUTTON_CLASS = "yui3-button",
+    BUTTON_SELECTED_CLASS = BUTTON_CLASS + "-selected",
+    SELECTOR = "button, input[type=button]",
+    CLICK_EVENT = "click";
+    
 /**
 * Creates a ButtonGroup
 *
@@ -16,12 +23,12 @@ YUI.add('button-group', function(Y) {
 * @param config {Object} Configuration object
 * @constructor
 */
-function ButtonGroup(config) {
+function ButtonGroup() {
     ButtonGroup.superclass.constructor.apply(this, arguments);
 }
 
-/* ButtonGroup extends the Base class */
-Y.extend(ButtonGroup, Y.Base, {
+/* ButtonGroup extends Widget */
+Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     
     /**
     * @method initializer
@@ -29,31 +36,44 @@ Y.extend(ButtonGroup, Y.Base, {
     * @param config {Object} Config object.
     * @private
     */
-    initializer: function(config){
+    initializer: function(){
+        // TODO: Nothing?
+    },
+    
+    renderUI: function() {
+        var ButtonFactory = Y.Plugin.Button.factory;
+        var buttonNodes = this.getButtons();
+        this._cb = this.get(CONTENT_BOX);
+        buttonNodes.each(function(node){
+            new ButtonFactory(node);
+        });
+    },
+    
+    bindUI: function() {
+        this._cb.delegate(CLICK_EVENT, this.handleClick, SELECTOR, this);
+    },
+    
+    handleClick: function(e){
         
-        this.buttons = new Y.ArrayList();
-
-        if (config.srcNodes){
-            if (Y.Lang.isString(config.srcNodes)){
-                config.srcNodes = Y.all(config.srcNodes);
-            }
-            
-            config.buttons = [];
-            config.srcNodes.each(function(node){
-                var button = new Y.Button({
-                    srcNode: node
-                }).render();
-                
-                config.buttons.push(button);
-            });
+        var bg = this;
+        var node = e.target;
+        var type = bg.get('type');
+        
+        if (type === 'push') {
+            // TODO: Nothing?  Then why have a push group.
+        }
+        else if (type === 'checkbox') {
+            var isSelected = node.hasClass(BUTTON_SELECTED_CLASS);
+            node.toggleClass(BUTTON_SELECTED_CLASS, !isSelected);
+            bg.fire('selectionChange');
+        }
+        else if (type === 'radio') {
+            bg.getButtons().removeClass(BUTTON_SELECTED_CLASS);
+            node.addClass(BUTTON_SELECTED_CLASS);
+            bg.fire('selectionChange');
         }
         
-        if (config.buttons) {
-            Y.Array.each(config.buttons, function(button){
-                this.addButton(button);
-            }, this);
-        }
-        
+        e.stopPropogation(); // Todo: Maybe?
     },
     
     /**
@@ -62,7 +82,7 @@ Y.extend(ButtonGroup, Y.Base, {
     * @public
     */
     getButtons: function() {
-        return this.buttons._items;
+        return this.get(CONTENT_BOX).all(SELECTOR);
     },
     
     /**
@@ -71,16 +91,15 @@ Y.extend(ButtonGroup, Y.Base, {
     * @public
     */
     getSelectedButtons: function() {
-
-        var selected = [], buttons;
-        buttons = this.buttons;
-
-        buttons.each(function(button){
-            if (button.get('selected')){
-                selected.push(button);
+        var buttons = this.getButtons();
+        var selected = [];
+        
+        buttons.each(function(node){
+            if (node.hasClass(BUTTON_SELECTED_CLASS)){
+                selected.push(node);                   
             }
         });
-
+        
         return selected;
     },
     
@@ -90,78 +109,40 @@ Y.extend(ButtonGroup, Y.Base, {
     * @public
     */
     getSelectedValues: function() {
-        var selected, values = [];
-        selected = this.getSelectedButtons();
-        Y.Array.each(selected, function(button){
-            values.push(button.getNode().get('value'));
+        var selected = this.getSelectedButtons();
+        var values = [];
+        
+        Y.Array.each(selected, function(node){
+            if (node.hasClass(BUTTON_SELECTED_CLASS)){
+                values.push(node.getContent());                   
+            }
         });
-
+        
         return values;
-    },
-    
-    /**
-    * @method addButton
-    * @description Assigns a Y.Button instance to this group
-    * @public
-    */
-    addButton: function(button){
-        var type = this.get('type');
-        
-        if (type === 'checkbox') {
-            button.set('type', 'checkbox');
-            button.get('contentBox').on('click', this._onCBButtonClick, this);
-        }
-        else if (type === 'radio') {
-            button.on('click', this._onRadioButtonClick, this);
-        }
-        
-        this.buttons.add(button);
-    },
-    
-    /**
-    * @method _onButtonClick
-    * @description Triggered when a button is clicked and this is a radio group
-    * @protected
-    */
-    _onRadioButtonClick: function(e) {
-        console.log('radio');
-        var clickedButton = e.target;
-        
-        if (!clickedButton.get('selected')) {
-            var selectedButtons = this.getSelectedButtons();
-            Y.Array.each(selectedButtons, function(button){
-                button.set('selected', false);
-            });
-            clickedButton.set('selected', true);
-
-            // Fire change event
-            this.fire('selectionChange');
-        }
-        else {
-            // TODO: anything?
-        }
-    },
-    
-    /**
-    * @method _onButtonClick
-    * @description Triggered when a button is clicked and this is a checkbox group
-    * @protected
-    */
-    _onCBButtonClick: function(e) {
-        var clickedButton = e.target;
-        clickedButton.set('selected', !clickedButton.get('selected'));
-        
-        // Fire change event
-        this.fire('selectionChange');
     }
     
 }, {
+    // Y.ScrollView static properties
+
+    /**
+     * The identity of the widget.
+     *
+     * @property NAME
+     * @type String
+     * @default 'buttongroup'
+     * @readOnly
+     * @protected
+     * @static
+     */
+    NAME: 'buttongroup',
+
     /** 
-    * Array of attributes
+    * Static property used to define the default attribute configuration of
+    * the Widget.
     *
     * @property ATTRS
-    * @type {Array}
-    * @private
+    * @type {Object}
+    * @protected
     * @static
     */
     ATTRS: {
@@ -172,20 +153,5 @@ Y.extend(ButtonGroup, Y.Base, {
     }
 });
 
-// -- Static Properties ----------------------------------------------------------
 
-/**
-* Name of this component.
-*
-* @property NAME
-* @type String
-* @static
-*/
-ButtonGroup.NAME = "buttongroup";
-
-
-// Export ButtonGroup
-Y.ButtonGroup = ButtonGroup;
-
-
-}, '@VERSION@' ,{requires:['button-base']});
+}, '@VERSION@' ,{requires:['button-base','widget']});
