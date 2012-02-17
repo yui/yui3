@@ -21,6 +21,10 @@ AutoComplete Change History
 * Added a workaround for an IE7 bug that would cause the result list to appear
   empty when it first becomes visible.
 
+* Fixed a bug that caused a scrollable result list to be hidden when the user
+  clicked and dragged on the scrollbar and then released the mouse button while
+  the cursor was outside the list region.
+
 
 3.4.1
 -----

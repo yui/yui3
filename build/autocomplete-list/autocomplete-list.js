@@ -328,6 +328,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     **/
     _bindList: function () {
         this._listEvents.concat([
+            Y.one('doc').after('click', this._afterDocClick, this),
             Y.on('windowresize', this._syncPosition, this),
 
             this.after({
@@ -539,7 +540,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `activeItemChange` events.
 
     @method _afterActiveItemChange
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterActiveItemChange: function (e) {
@@ -576,7 +577,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `alwaysShowListChange` events.
 
     @method _afterAlwaysShowListChange
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterAlwaysShowListChange: function (e) {
@@ -584,10 +585,30 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+    Handles click events on the document. If the click is outside both the
+    input node and the bounding box, the list will be hidden.
+
+    @method _afterDocClick
+    @param {EventFacade} e
+    @protected
+    @since 3.5.0
+    **/
+    _afterDocClick: function (e) {
+        var boundingBox = this._boundingBox,
+            target      = e.target;
+
+        if (target !== this._inputNode && target !== boundingBox &&
+                !boundingBox.one(target.get('id'))) {
+
+            this.hide();
+        }
+    },
+
+    /**
     Handles `hoveredItemChange` events.
 
     @method _afterHoveredItemChange
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterHoveredItemChange: function (e) {
@@ -662,7 +683,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `mouseover` events.
 
     @method _afterMouseOver
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterMouseOver: function (e) {
@@ -679,18 +700,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Handles `mouseout` events.
 
     @method _afterMouseOut
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _afterMouseOut: function () {
         this._mouseOverList = false;
         this._set(HOVERED_ITEM, null);
-
-        // This takes care of the edge case where the user right-clicks on a
-        // list item, then clicks elsewhere in the document.
-        if (!this._listFocused && !this._listInputFocused) {
-            this.hide();
-        }
     },
 
     /**
@@ -723,7 +738,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Delegated event handler for item `click` events.
 
     @method _onItemClick
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _onItemClick: function (e) {
@@ -739,7 +754,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     Default `select` event handler.
 
     @method _defSelectFn
-    @param {EventTarget} e
+    @param {EventFacade} e
     @protected
     **/
     _defSelectFn: function (e) {

@@ -1,0 +1,43 @@
+    var onMousemove = function (e) {
+        var i;
+        // loop through the tipText array looking for a match between
+        // the class name and the array literal `name`
+        for (i = 0; i < tipText.length; i += 1) {
+            if (e.currentTarget.hasClass(tipText[i].name)) {
+                // found a match, so set the content in the tooltip's body
+                tooltip.setStdModContent('body', tipText[i].text);
+                
+                // show the tooltip which is opacity 0 at this point
+                tooltip.show();
+                
+                // if it's not already showing, transition the opacity to 1
+                if (tipIsShowing === false) {
+                    tip.transition({
+                        duration: 0.2,
+                        delay: 0.5,
+                        opacity: {
+                            value: 1
+                        }
+                    }, function () {
+                        tipIsShowing = true; // after transition set to true
+                    });
+                    
+                    // this tracks the cursor position and sets the tooltip adjacent to it
+                    tooltip.set('xy', [(e.pageX + tipOffset), (e.pageY + tipOffset)]);
+                }
+                return;
+            }
+        }
+    }
+    
+    // mouseout handler that hides the tooltip
+    var onMouseout = function (e) {
+
+        // this check prevents hiding the tooltip 
+        // because the cursor moved over the tooltip itself
+        if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
+            tip.setStyle('opacity', '0');
+            tooltip.hide();
+            tipIsShowing = false;            
+        }
+    }

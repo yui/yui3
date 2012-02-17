@@ -65,9 +65,10 @@ function setUpACInstance() {
 
     // Helper method that synchronously simulates a valueChange event on the
     // inputNode.
-    this.simulateInput = function (value) {
+    this.simulateInput = function (value, ac) {
+        ac || (ac = this.ac);
         this.inputNode.set('value', value);
-        Y.ValueChange._poll(this.inputNode, Y.stamp(this.inputNode));
+        ac._onInputValueChange({newVal: value});
     };
 }
 
@@ -84,9 +85,10 @@ function setUpACListInstance() {
 
     // Helper method that synchronously simulates a valueChange event on the
     // inputNode.
-    this.simulateInput = function (value) {
+    this.simulateInput = function (value, ac) {
+        ac || (ac = this.ac);
         this.inputNode.set('value', value);
-        Y.ValueChange._poll(this.inputNode, Y.stamp(this.inputNode));
+        ac._onInputValueChange({newVal: value});
     };
 }
 

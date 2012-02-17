@@ -52,6 +52,19 @@ suite.add(new Y.Test.Case({
             "foo 0",
             template({bar: 0})
         );
+    },
+
+    '`false` should be considered empty': function () {
+        Assert.areSame('', H.render('{{value}}', {value: false}));
+    },
+
+    '`null` should be considered empty': function () {
+        Assert.areSame('', H.render('{{value}}', {value: null}));
+    },
+
+    '`undefined` should be considered empty': function () {
+        Assert.areSame('', H.render('{{value}}', {}));
+        Assert.areSame('', H.render('{{value}}', {value: undefined}));
     }
 }));
 

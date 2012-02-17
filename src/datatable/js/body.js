@@ -21,6 +21,8 @@ Supported properties of the column objects include:
   * `name` - Used for columns that don't relate to an attribute in the Model
     (`formatter` or `nodeFormatter` only) if the implementer wants a
     predictable name to refer to in their CSS.
+  * `cellTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells in this
+    column only.
   * `formatter` - Used to customize or override the content value from the
     Model.  These do not have access to the cell or row Nodes and should
     return string (HTML) content.
@@ -43,7 +45,7 @@ Column `formatter`s are passed an object (`o`) with the following properties:
   * `column` - The column configuration object for the current column.
   * `className` - Initially empty string to allow `formatter`s to add CSS 
     classes to the cell's `<td>`.
-  * `rowindex` - The zero-based row number.
+  * `rowIndex` - The zero-based row number.
   * `rowClass` - Initially empty string to allow `formatter`s to add CSS
     classes to the cell's containing row `<tr>`.
 
@@ -60,7 +62,7 @@ properties:
   * `data` - An object map of Model keys to their current values.
   * `record` - The Model instance.
   * `column` - The column configuration object for the current column.
-  * `rowindex` - The zero-based row number.
+  * `rowIndex` - The zero-based row number.
 
 They are expected to inject content into the cell's Node directly, including
 any "empty" cell content.  Each `nodeFormatter` will have access through the
@@ -96,9 +98,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<td headers="{headers}" class="{className}">{content}</td>'
+    @default '<td {headers} class="{className}">{content}</td>'
     **/
-    CELL_TEMPLATE: '<td role="gridcell" headers="{headers}" class="{className}">{content}</td>',
+    CELL_TEMPLATE: '<td {headers} class="{className}">{content}</td>',
 
     /**
     CSS class applied to even rows.  This is assigned at instantiation after
@@ -129,12 +131,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property ROW_TEMPLATE
     @type {HTML}
-    @default '<tr id="{clientId}" class="{rowClass}">{content}</tr>'
+    @default '<tr id="{rowId}" class="{rowClass}">{content}</tr>'
     **/
-    ROW_TEMPLATE :
-        '<tr role="row" id="{rowId}" class="{rowClass}">' +
-            '{content}' +
-        '</tr>',
+    ROW_TEMPLATE : '<tr id="{rowId}" class="{rowClass}">{content}</tr>',
 
     /**
     The object that serves as the source of truth for column and row data.
@@ -231,6 +230,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `name` - Used for columns that don't relate to an attribute in the Model
         (`formatter` or `nodeFormatter` only) if the implementer wants a
         predictable name to refer to in their CSS.
+      * `cellTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells in
+        this column only.
       * `formatter` - Used to customize or override the content value from the
         Model.  These do not have access to the cell or row Nodes and should
         return string (HTML) content.
@@ -257,7 +258,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `column` - The column configuration object for the current column.
       * `className` - Initially empty string to allow `formatter`s to add CSS 
         classes to the cell's `<td>`.
-      * `rowindex` - The zero-based row number.
+      * `rowIndex` - The zero-based row number.
       * `rowClass` - Initially empty string to allow `formatter`s to add CSS
         classes to the cell's containing row `<tr>`.
 
@@ -276,7 +277,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
       * `data` - An object map of Model keys to their current values.
       * `record` - The Model instance.
       * `column` - The column configuration object for the current column.
-      * `rowindex` - The zero-based row number.
+      * `rowIndex` - The zero-based row number.
 
     They are expected to inject content into the cell's Node directly, including
     any "empty" cell content.  Each `nodeFormatter` will have access through the
@@ -375,7 +376,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 var formatterData = {
                         data      : record.toJSON(),
                         record    : record,
-                        rowindex  : index
+                        rowIndex  : index
                     },
                     row = tbodyNode.rows[index],
                     i, len, col, key, cell, keep;
@@ -527,7 +528,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     record   : model,
                     className: '',
                     rowClass : '',
-                    rowindex : index
+                    rowIndex : index
                 };
 
                 if (typeof col.formatter === 'string') {
@@ -575,16 +576,19 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _createRowTemplate: function (columns) {
         var html         = '',
             cellTemplate = this.CELL_TEMPLATE,
-            i, len, col, key, token, tokenValues;
+            i, len, col, key, token, headers, tokenValues;
 
         for (i = 0, len = columns.length; i < len; ++i) {
-            col   = columns[i];
-            key   = col.key;
-            token = col._id;
+            col     = columns[i];
+            key     = col.key;
+            token   = col._id;
+            // Only include headers if there are more than one
+            headers = (col._headers || []).length > 1 ?
+                        'headers="' + col._headers.join(' ') + '"' : '';
 
             tokenValues = {
                 content  : '{' + token + '}',
-                headers  : (col._headers || []).join(' '),
+                headers  : headers,
                 className: this.getClassName('col', token) + ' ' +
                            (col.className || '') + ' ' +
                            this.getClassName('cell') +
@@ -596,7 +600,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 tokenValues.content = '';
             }
 
-            html += fromTemplate(cellTemplate, tokenValues);
+            html += fromTemplate(col.cellTemplate || cellTemplate, tokenValues);
         }
 
         this._rowTemplate = fromTemplate(this.ROW_TEMPLATE, {

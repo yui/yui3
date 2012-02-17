@@ -96,9 +96,6 @@ YUI.add('uploader-queue', function(Y) {
                currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
 
                this._registerUpload(currentFile);
-
-               console.log("Number of uploads: " + this.numberOfUploads);
-               console.log("Max uploads: " + this.get("simUploads"));
           }
         },
 
@@ -115,8 +112,6 @@ YUI.add('uploader-queue', function(Y) {
         },
 
         _uploadCompleteHandler : function (event) {
-                      
-           console.log("Upload complete!");
 
            this._unregisterUpload(event.target);
 
@@ -155,9 +150,6 @@ YUI.add('uploader-queue', function(Y) {
              uploadedTotal += value; 
           });
           
-          console.log("Total bytes uploaded: " + uploadedTotal);
-          console.log("Total bytes: " + this.totalBytes);
-
           var percentLoaded = Math.min(100, Math.round(10000*uploadedTotal/this.totalBytes) / 100);
 
           this.fire("totaluploadprogress", {bytesLoaded: uploadedTotal, 

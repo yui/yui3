@@ -86,7 +86,6 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                   this.fire("dragover");
                 break;
                 case "drop":
-                   console.log("Files have been dropped...");
 
                    var newfiles = event._event.dataTransfer.files,
                        parsedFiles = [];
@@ -163,7 +162,6 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      */
 
     _bindDropArea : function (event) {
-        console.log("Binding drop area");
         var ev = event || {};
 
         if (ev.prevVal != null) {
@@ -175,7 +173,6 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         var ddArea = this.get("dragAndDropArea");
 
         if (ddArea != null) {
-            console.log("Subscribing to drag-and-drop event");
             ddArea.on('drop', this._ddEventHandler, this);
             ddArea.on('dragenter', this._ddEventHandler, this);
             ddArea.on('dragover', this._ddEventHandler, this);
@@ -258,7 +255,6 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 		this.after("multipleFilesChange", this._setMultipleFiles, this);
         this.after("selectFilesButtonChange", this._bindSelectButton, this);
         this.after("dragAndDropAreaChange", this._bindDropArea, this);
-        console.log("Binding UI for file input...");
         this._fileInputField.on("change", this._updateFileList, this);
 	},
 

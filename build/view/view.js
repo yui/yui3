@@ -18,6 +18,13 @@ The View class imposes little structure and provides only minimal functionality
 of its own: it's basically just an overridable API interface that helps you
 implement custom views.
 
+As of YUI 3.5.0, View allows ad-hoc attributes to be specified at instantiation
+time, so you don't need to subclass `Y.View` to add custom attributes. Just pass
+them to the constructor:
+
+    var view = new Y.View({foo: 'bar'});
+    view.get('foo'); // => "bar"
+
 @class View
 @constructor
 @extends Base
@@ -99,6 +106,22 @@ Y.View = Y.extend(View, Y.Base, {
     @default ''
     **/
     template: '',
+
+    // -- Protected Properties -------------------------------------------------
+
+    /**
+    This tells `Y.Base` that it should create ad-hoc attributes for config
+    properties passed to View's constructor. This makes it possible to
+    instantiate a view and set a bunch of attributes without having to subclass
+    `Y.View` and declare all those attributes first.
+
+    @property _allowAdHocAttrs
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _allowAdHocAttrs: true,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
@@ -372,41 +395,26 @@ Y.View = Y.extend(View, Y.Base, {
             getter   : '_getContainer',
             setter   : Y.one,
             writeOnce: true
-        },
-
-        /**
-        Model instance associated with this view instance.
-
-        This is entirely optional. There's no requirement that views be
-        associated with models, but if you do intend to associate your view with
-        a model, then specifying that model instance at instantiation time will
-        cause a reference to be stored here for convenience.
-
-        @attribute model
-        @type Model
-        @default null
-        **/
-        model: {
-            value: null
-        },
-
-        /**
-        ModelList instance associated with this view instance.
-
-        This is entirely optional. There's no requirement that views be
-        associated with model lists, but if you do intend to associate your view
-        with a model list, then specifying that list instance at instantiation
-        time will cause a reference to be stored here for convenience.
-
-        @attribute modelList
-        @type ModelList
-        @default null
-        **/
-        modelList: {
-            value: null
         }
-    }
+    },
+
+    /**
+    Properties that shouldn't be turned into ad-hoc attributes when passed to
+    View's constructor.
+
+    @property _NON_ATTRS_CFG
+    @type Array
+    @static
+    @protected
+    @since 3.5.0
+    **/
+    _NON_ATTRS_CFG: [
+        'containerTemplate',
+        'events',
+        'template'
+    ]
 });
+
 
 
 }, '@VERSION@' ,{requires:['base-build', 'node-event-delegate']});
