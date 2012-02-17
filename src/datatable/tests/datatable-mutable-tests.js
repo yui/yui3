@@ -1,3 +1,5 @@
+YUI.add('datatable-mutable-tests', function(Y) {
+
 var suite = new Y.Test.Suite("datatable-mutable");
 
 suite.add(new Y.Test.Case({
@@ -452,3 +454,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datatable-mutable', 'test']});
