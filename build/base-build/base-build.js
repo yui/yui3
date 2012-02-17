@@ -13,7 +13,12 @@ YUI.add('base-build', function(Y) {
         L = Y.Lang,
         INITIALIZER = "initializer",
         DESTRUCTOR = "destructor",
-        build;
+        build,
+        arrayAggregator = function (prop, r, s) {
+            if (s[prop]) {
+                r[prop] = (r[prop] || []).concat(s[prop]);
+            }    
+        };
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
 
@@ -407,7 +412,8 @@ YUI.add('base-build', function(Y) {
                         }
                     }
                 }
-            }
+            },
+            _NON_ATTRS_CFG : arrayAggregator
         },
         aggregates : ["_PLUG", "_UNPLUG"]
     };

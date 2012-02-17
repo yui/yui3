@@ -245,7 +245,8 @@ Table.ATTRS = {
     **/
     recordset: {
         setter: '_setRecordset',
-        getter: '_getRecordset'
+        getter: '_getRecordset',
+        lazyAdd: false
     },
 
     /**
@@ -263,7 +264,8 @@ Table.ATTRS = {
     **/
     columnset: {
         setter: '_setColumnset',
-        getter: '_getColumnset'
+        getter: '_getColumnset',
+        lazyAdd: false
     }
 };
 
@@ -287,7 +289,7 @@ Y.mix(Table.prototype, {
     @type {HTML}
     @default '<table class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table role="presentation" class="{className}"/>',
+    TABLE_TEMPLATE  : '<table class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -441,7 +443,7 @@ Y.mix(Table.prototype, {
                 cols = cols[name[i]] && cols[name[i]].children;
             }
 
-            return (cols && cols[i]) || null;
+            return (cols && cols[name[i]]) || null;
         }
 
         return null;
@@ -1152,12 +1154,6 @@ Y.mix(Table.prototype, {
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
 
-            contentBox.setAttrs({
-                'role'         : 'grid',
-                'aria-readonly': true // until further notice
-            });
-
-
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
                 headerConfig: this._headerConfig,
@@ -1207,9 +1203,11 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _setColumnset: function (val) {
-        if (val && val instanceof Y.Columnset) {
+        if (val && Y.Columnset && val instanceof Y.Columnset) {
             val = val.get('definitions');
         }
+
+        this.set('columns', val);
 
         return isArray(val) ? val : INVALID;
     },
@@ -1307,13 +1305,15 @@ Y.mix(Table.prototype, {
     _setRecordset: function (val) {
         var data;
 
-        if (val && val instanceof Y.Recordset) {
+        if (val && Y.Recordset && val instanceof Y.Recordset) {
             data = [];
             val.each(function (record) {
                 data.push(record.get('data'));
             });
             val = data;
         }
+
+        this.set('data', val);
 
         return val;
     },
@@ -1366,13 +1366,7 @@ Y.mix(Table.prototype, {
                         className: this.getClassName('caption')
                     }));
 
-                captionId = Y.stamp(caption);
-
-                caption.set('id', captionId);
-
                 table.prepend(this._captionNode);
-
-                table.setAttribute('aria-describedby', captionId);
             }
 
             caption.setContent(htmlContent);
@@ -1381,8 +1375,6 @@ Y.mix(Table.prototype, {
             caption.remove(true);
 
             delete this._captionNode;
-
-            table.removeAttribute('aria-describedby');
         }
     },
 
@@ -1393,7 +1385,11 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetSummary: function (summary) {
-        this._tableNode.setAttribute('summary', summary || '');
+        if (summary) {
+            this._tableNode.setAttribute('summary', summary);
+        } else {
+            this._tableNode.removeAttribute('summary');
+        }
     },
 
     /**

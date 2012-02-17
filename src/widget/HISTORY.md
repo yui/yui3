@@ -11,6 +11,10 @@ Widget Change History
    bubbles don't end up changing state at both the source and the target. Broader
    fix needs to go into Event/EventTarget
 
+ * Optimized focus handler registration, by only registering a single document focus
+   listener and using Widget.getByNode to ship out handling to the specific widget
+   instance.
+
 3.4.1
 -----
 

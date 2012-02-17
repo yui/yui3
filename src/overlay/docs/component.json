@@ -18,6 +18,15 @@
             "hideTableOfContents": true
         },
         {
+            "name"       : "overlay-tooltip",
+            "displayName": "Simple Tooltip",
+            "description": "Shows how to create a simple tooltip incorporating the overlay shim feature.",
+            "modules"    : ["overlay"],
+            "tags"       : ["overlay", "tooltip", "shim"],
+
+            "hideTableOfContents": true
+        },
+        {
             "name"       : "overlay-align",
             "displayName": "Alignment Support",
             "description": "Shows how to use the Overlay's XY alignment support, to align the Overlay relative to another element, or to the viewport.",

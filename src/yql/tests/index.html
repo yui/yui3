@@ -17,27 +17,15 @@ var YUI_config = {
 
 
 YUI({
-    allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
     filter: YUI_config.gfilter,
     modules: {
         'yql-tests': {
             fullpath: './yql.js',
             requires: ['yql', 'test']
-        },
-        'test-console': {
-            fullpath : '../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../common/tests/assets/test-console.css',
-            type    : 'css'
         }
-        
     }
-}).use('yql-tests', 'test-console', 'test', function(Y) {
+}).use('yql-tests', 'test-console', function(Y) {
+    (new Y.Test.Console()).render('#log');
     Y.Test.Runner.run();
 });
 

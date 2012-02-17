@@ -7,6 +7,7 @@
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
+<div id="test"></div>
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
@@ -14,17 +15,6 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'test-console': {
-            fullpath : '../../common/tests/assets/test-console.js',
-            requires : ['console-filters'],
-            skinnable: true
-        },
-
-        'skin-sam-test-console': {
-            fullpath: '../../common/tests/assets/test-console.css',
-            type    : 'css'
-        },
-
         'widget-position-align-test': {
             fullpath: 'widget-position-align-test.js',
             requires: ['widget-position-align', 'test']
@@ -32,6 +22,7 @@ var Y = YUI({
     },
     useBrowserConsole: false
 }).use('widget-position-align-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });
 </script>
