@@ -1,0 +1,111 @@
+<style type="text/css" scoped>
+/* Hide overlay markup while loading, if js is enabled */
+.yui3-js-enabled .yui3-overlay-loading {
+    top:-1000em;
+    left:-1000em;
+    position:absolute;
+}
+
+
+/* Example Layout CSS */
+
+
+</style>
+
+<div class="intro">    
+    <p>This example demonstrates a lightweight and flexible setup for display
+    of tooltips.</p>
+    <p>This displays the tooltip adjacent to the cursor
+    and takes advantage of the shim capabilities of `Overlay`.
+    allowing the tooltip to properly display over `select` elements in IE.</p>
+</div>
+
+<div class="example">
+    {{>overlay-tooltip-source}}
+</div>
+
+<h2>Simple Tooltips</h2>
+
+
+
+<h3>The Tooltip Markup</h3>
+
+<p>We just need a div for the tooltip, and some elements that want to
+have tooltips.</p>
+
+```
+    <div id="tooltip"></div>
+    
+    <ul class="list">
+        <li class="wrench"><img src="{{{componentAssets}}}/img/wrench.png"/></li>
+        <li class="calipers"><img src="{{{componentAssets}}}/img/calipers.png"/></li>
+        <li class="drill"><img src="{{{componentAssets}}}/img/drill.png"/></li>
+        <li class="ohm"><img src="{{{componentAssets}}}/img/ohm.png"/></li>
+        <li class="level"><img src="{{{componentAssets}}}/img/level.png"/></li>
+    </ul>
+
+```
+
+<h3>Setting Up the YUI Instance</h3>
+
+<p>Create an instance of `Overlay` on the page. 
+</p>
+
+```
+YUI().use('overlay', 'transition' function(Y) {
+    // code will go here.
+});
+```
+<h3>Declare some variables</h3>
+
+<p>These variables include an array of strings for various tooltips.
+If a DOM element has a class matching one of the 'name' values in the tipText array, 
+and it will display the text value in its tooltip.
+Of course, it also has to have a listener attached as described below.
+</p>
+
+```
+{{>overlay-tooltip-js-vars}}
+```
+
+<h3>Instantiating The Tooltip</h3>
+
+<p>To create an overlay instance for the tooltip, 
+we use the overlay constructor `Y.Overlay`, specifying the source node
+as the selector of the tooltip element.
+</p>
+
+```
+{{>overlay-tooltip-js-instance}}
+```
+
+<h3>Event Handlers</h3>
+
+<p>
+Create event handlers for the mouse events 
+and place them above the listeners code.
+</p>
+```
+{{>overlay-tooltip-js-handlers}}
+```
+
+
+<h3>Event Listeners</h3>
+
+<p>
+Add listeners for mousemove and mouseout events 
+to whatever elements you want to have tooltips.
+Using mousemove instead of mouseover, and using a `delay` in the 'transition'
+makes the tooltip fade in adjacent to the cursor.
+See <a href="../event/index.html#delegation">event delegation</a> for efficient
+event subscribing to multiple elements.
+</p>
+
+```
+{{>overlay-tooltip-js-listeners}}
+
+```
+<h3>Complete Example Source</h3>
+```
+{{>overlay-tooltip-source}}
+```

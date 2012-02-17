@@ -39,6 +39,8 @@ Handlebars.Utils = {
         // safe.
         if (string instanceof Handlebars.SafeString) {
             return string.toString();
+        } else if (string === false || !Lang.isValue(string)) {
+            return '';
         }
 
         // Unlike Handlebars' escaping implementation, Y.Escape.html() will

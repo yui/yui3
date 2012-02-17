@@ -128,7 +128,7 @@
 </script>
 
 <script>
-YUI().use('event-focus', 'json', 'model', 'model-list', 'view', function (Y) {
+YUI({filter: 'raw'}).use('event-focus', 'json', 'model', 'model-list', 'view', function (Y) {
 
 var TodoAppView, TodoList, TodoModel, TodoView;
 
@@ -175,7 +175,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
     // Returns an array of all models in this list with the `done` attribute
     // set to `true`.
     done: function () {
-        return Y.Array.filter(this.toArray(), function (model) {
+        return this.filter(function (model) {
             return model.get('done');
         });
     },
@@ -183,7 +183,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
     // Returns an array of all models in this list with the `done` attribute
     // set to `false`.
     remaining: function () {
-        return Y.Array.filter(this.toArray(), function (model) {
+        return this.filter(function (model) {
             return !model.get('done');
         });
     }
@@ -287,8 +287,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         var view = new TodoView({model: e.model});
 
         this.get('container').one('#todo-list').append(
-            view.render()
-                .get('container')
+            view.render().get('container')
         );
     },
 
@@ -304,9 +303,9 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 
         // Destroy each removed TodoModel instance.
         Y.Array.each(done, function (todo) {
-            // Passing {'delete': true} to the todo model's `destroy()` method
+            // Passing {remove: true} to the todo model's `destroy()` method
             // tells it to delete itself from localStorage as well.
-            todo.destroy({'delete': true});
+            todo.destroy({remove: true});
         });
 
         // Finally, re-render the app view.
@@ -357,9 +356,10 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     }
 }, {
     ATTRS: {
-        // The container node is the wrapper for this view.  All the view's events
-        // will be delegated from the container. In this case, the #todo-app
-        // node already exists on the page, so we don't need to create it.
+        // The container node is the wrapper for this view. All the view's
+        // events will be delegated from the container. In this case, the
+        // #todo-app node already exists on the page, so we don't need to create
+        // it.
         container: {
             valueFn: function () {
                 return '#todo-app';
@@ -383,6 +383,9 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 // allow it to be edited and removed from the list.
 
 TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
+    // This customizes the HTML used for this view's container node.
+    containerTemplate: '<li class="todo-item"/>',
+
     // Delegated DOM events to handle this view's interactions.
     events: {
         // Toggle the "done" state of this todo item when the checkbox is
@@ -419,7 +422,10 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         // Re-render this view when the model changes, and destroy this view
         // when the model is destroyed.
         model.after('change', this.render, this);
-        model.after('destroy', this.destroy, this);
+
+        model.after('destroy', function () {
+            this.destroy({remove: true});
+        }, this);
     },
 
     render: function () {
@@ -472,18 +478,6 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     // Toggles the `done` state on this item's model.
     toggleDone: function () {
         this.get('model').toggleDone();
-    }
-}, {
-    ATTRS: {
-        // Specifying an HTML string as this view's container element causes
-        // that HTML to be automatically converted into an unattached Y.Node
-        // instance. The TodoAppView (above) will take care of appending it to
-        // the list.
-        container: {
-            valueFn: function () {
-                return Y.Node.create('<li class="todo-item"/>');
-            }
-        }
     }
 });
 
