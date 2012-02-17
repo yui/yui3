@@ -18,25 +18,44 @@
     <p><textarea id="f" class="even"></textarea></p>
 </form>
 
+<button id="unsubscribe">Unsubscribe</button>
+<button id="subscribe">Subscribe</button>
+
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', 'node-event-delegate', function (Y) {
 
-    var form = Y.one('#container');
+    var form   = Y.one('#container'),
+        events = [];
 
-    form.delegate('valuechange', function (e) {
-        Y.log('#' + e.currentTarget.get('id') + ' .odd: "' + e.prevVal + '" -> "' + e.newVal + '"');
-    }, '.odd');
+    function subscribe() {
+        events.push(form.delegate('valuechange', function (e) {
+            Y.log('#' + e.currentTarget.get('id') + ' .odd: "' + e.prevVal + '" -> "' + e.newVal + '"');
+        }, '.odd'));
 
-    form.delegate('valuechange', function (e) {
-        Y.log('#' + e.currentTarget.get('id') + ' .even: "' + e.prevVal + '" -> "' + e.newVal + '"');
-    }, '.even');
+        events.push(form.delegate('valuechange', function (e) {
+            Y.log('#' + e.currentTarget.get('id') + ' .even: "' + e.prevVal + '" -> "' + e.newVal + '"');
+        }, '.even'));
 
-    form.delegate('valuechange', function (e) {
-        Y.log('#' + e.currentTarget.get('id') + ' function: "' + e.prevVal + '" -> "' + e.newVal + '"');
-    }, function (node) {
-        return node.getAttribute('type') === 'text';
-    });
+        events.push(form.delegate('valuechange', function (e) {
+            Y.log('#' + e.currentTarget.get('id') + ' function: "' + e.prevVal + '" -> "' + e.newVal + '"');
+        }, function (node) {
+            return node.getAttribute('type') === 'text';
+        }));
+    }
+
+    function unsubscribe() {
+        Y.Array.each(events, function (e) {
+            e.detach();
+        });
+
+        events = [];
+    }
+
+    Y.one('#subscribe').on('click', subscribe);
+    Y.one('#unsubscribe').on('click', unsubscribe);
+
+    subscribe();
 });
 </script>
 </body>

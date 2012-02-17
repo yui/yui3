@@ -32,7 +32,9 @@ Usage:
 @static
 */
 
-var VALUE = 'value',
+var DATA_KEY = '_valuechange',
+    VALUE    = 'value',
+
     config, // defined at the end of this file
 
 // Just a simple namespace to make methods overridable.
@@ -62,12 +64,6 @@ VC = {
     **/
     TIMEOUT: 10000,
 
-    // -- Protected Static Properties ------------------------------------------
-    _history  : {},
-    _intervals: {},
-    _notifiers: {},
-    _timeouts : {},
-
     // -- Protected Static Methods ---------------------------------------------
 
     /**
@@ -75,43 +71,43 @@ VC = {
     node.
 
     @method _poll
-    @param {Node} node
-    @param {String} stamp
-    @param {EventFacade} e
+    @param {Node} node Node to poll.
+
+    @param {Object} options Options object.
+        @param {EventFacade} [options.e] Event facade of the event that
+            initiated the polling.
+
     @protected
     @static
     **/
-    _poll: function (node, stamp, e) {
+    _poll: function (node, options) {
         var domNode = node._node, // performance cheat; getValue() is a big hit when polling
             newVal  = domNode && domNode.value,
-            prevVal = VC._history[stamp],
-            facade, i, len, notifiers;
+            vcData  = node._data && node._data[DATA_KEY], // another perf cheat
+            facade, prevVal;
 
-        if (!domNode) {
-            Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling.', 'warn', 'event-valuechange');
-            VC._stopPolling(node, stamp);
+        if (!domNode || !vcData) {
+            Y.log('_poll: node #' + node.get('id') + ' disappeared; stopping polling and removing all notifiers.', 'warn', 'event-valuechange');
+            VC._stopPolling(node);
             return;
         }
 
+        prevVal = vcData.prevVal;
+
         if (newVal !== prevVal) {
-            VC._history[stamp] = newVal;
+            vcData.prevVal = newVal;
 
             facade = {
-                _event : e,
+                _event : options.e,
                 newVal : newVal,
                 prevVal: prevVal
             };
 
-            // FIXME: this is where everything falls apart, because it
-            // constrains us to only one delegated valuechange event per
-            // container node.
-            notifiers = VC._notifiers[e.container ? Y.stamp(e.container) : stamp];
+            Y.Object.each(vcData.notifiers, function (notifier) {
+                notifier.fire(facade);
+            });
 
-            for (i = 0, len = notifiers.length; i < len; ++i) {
-                notifiers[i].fire(facade);
-            }
-
-            VC._refreshTimeout(node, stamp);
+            VC._refreshTimeout(node);
         }
     },
 
@@ -119,18 +115,28 @@ VC = {
     Restarts the inactivity timeout for the specified node.
 
     @method _refreshTimeout
-    @param {Node} node
-    @param {String} stamp
+    @param {Node} node Node to refresh.
+    @param {SyntheticEvent.Notifier} notifier
     @protected
     @static
     **/
-    _refreshTimeout: function (node, stamp) {
-        VC._stopTimeout(node, stamp); // avoid dupes
+    _refreshTimeout: function (node, notifier) {
+        // The node may have been destroyed, so check that it still exists
+        // before trying to get its data. Otherwise an error will occur.
+        if (!node._node) {
+            Y.log('_stopPolling: node disappeared', 'info', 'event-valuechange');
+            return;
+        }
+
+        var vcData = node.getData(DATA_KEY);
+
+        VC._stopTimeout(node); // avoid dupes
 
         // If we don't see any changes within the timeout period (10 seconds by
         // default), stop polling.
-        VC._timeouts[stamp] = setTimeout(function () {
-            VC._stopPolling(node, stamp);
+        vcData.timeout = setTimeout(function () {
+            Y.log('timeout: #' + node.get('id'), 'info', 'event-valuechange');
+            VC._stopPolling(node, notifier);
         }, VC.TIMEOUT);
 
         Y.log('_refreshTimeout: #' + node.get('id'), 'info', 'event-valuechange');
@@ -139,56 +145,87 @@ VC = {
     /**
     Begins polling for changes to the `value` property of the specified node. If
     polling is already underway for the specified node, it will not be restarted
-    unless the _force_ parameter is `true`
+    unless the `force` option is `true`
 
     @method _startPolling
     @param {Node} node Node to watch.
-    @param {String} [stamp] Object stamp for the node. Will be generated if not
-        provided (provide it to improve performance).
-    @param {EventFacade} [e] Event facade of the event that initiated the
-        polling (if any).
-    @param {Boolean} [force=false] If `true`, polling will be restarted even if
-        we're already polling this node.
+    @param {SyntheticEvent.Notifier} notifier
+
+    @param {Object} options Options object.
+        @param {EventFacade} [options.e] Event facade of the event that
+            initiated the polling.
+        @param {Boolean} [options.force=false] If `true`, polling will be
+            restarted even if we're already polling this node.
+
     @protected
     @static
     **/
-    _startPolling: function (node, stamp, e, force) {
-        stamp || (stamp = Y.stamp(node));
+    _startPolling: function (node, notifier, options) {
+        var vcData = node.getData(DATA_KEY);
 
-        // Don't bother continuing if we're already polling.
-        if (!force && VC._intervals[stamp]) {
-            return;
+        if (!vcData) {
+            vcData = {prevVal: node.get(VALUE)};
+            node.setData(DATA_KEY, vcData);
         }
 
-        VC._stopPolling(node, stamp); // avoid dupes
+        vcData.notifiers || (vcData.notifiers = {});
+
+        // Don't bother continuing if we're already polling this node, unless
+        // `options.force` is true.
+        if (vcData.interval) {
+            if (options.force) {
+                VC._stopPolling(node, notifier); // restart polling, but avoid dupe polls
+            } else {
+                vcData.notifiers[Y.stamp(notifier)] = notifier;
+                return;
+            }
+        }
 
         // Poll for changes to the node's value. We can't rely on keyboard
         // events for this, since the value may change due to a mouse-initiated
         // paste event, an IME input event, or for some other reason that
         // doesn't trigger a key event.
-        VC._intervals[stamp] = setInterval(function () {
-            VC._poll(node, stamp, e);
+        vcData.notifiers[Y.stamp(notifier)] = notifier;
+
+        vcData.interval = setInterval(function () {
+            VC._poll(node, vcData, options);
         }, VC.POLL_INTERVAL);
 
-        VC._refreshTimeout(node, stamp, e);
-
         Y.log('_startPolling: #' + node.get('id'), 'info', 'event-valuechange');
+
+        VC._refreshTimeout(node, notifier);
     },
 
     /**
     Stops polling for changes to the specified node's `value` attribute.
 
     @method _stopPolling
-    @param {Node} node
-    @param {String} [stamp]
+    @param {Node} node Node to stop polling on.
+    @param {SyntheticEvent.Notifier} [notifier] Notifier to remove from the
+        node. If not specified, all notifiers will be removed.
     @protected
     @static
     **/
-    _stopPolling: function (node, stamp) {
-        stamp || (stamp = Y.stamp(node));
+    _stopPolling: function (node, notifier) {
+        // The node may have been destroyed, so check that it still exists
+        // before trying to get its data. Otherwise an error will occur.
+        if (!node._node) {
+            Y.log('_stopPolling: node disappeared', 'info', 'event-valuechange');
+            return;
+        }
 
-        VC._intervals[stamp] = clearInterval(VC._intervals[stamp]);
-        VC._stopTimeout(node, stamp);
+        var vcData = node.getData(DATA_KEY) || {};
+
+        clearInterval(vcData.interval);
+        delete vcData.interval;
+
+        VC._stopTimeout(node);
+
+        if (notifier) {
+            vcData.notifiers && delete vcData.notifiers[Y.stamp(notifier)];
+        } else {
+            vcData.notifiers = {};
+        }
 
         Y.log('_stopPolling: #' + node.get('id'), 'info', 'event-valuechange');
     },
@@ -198,13 +235,14 @@ VC = {
 
     @method _stopTimeout
     @param {Node} node
-    @param {String} [stamp]
     @protected
     @static
     **/
-    _stopTimeout: function (node, stamp) {
-        stamp || (stamp = Y.stamp(node));
-        VC._timeouts[stamp] = clearTimeout(VC._timeouts[stamp]);
+    _stopTimeout: function (node) {
+        var vcData = node.getData(DATA_KEY) || {};
+
+        clearTimeout(vcData.timeout);
+        delete vcData.timeout;
     },
 
     // -- Protected Static Event Handlers --------------------------------------
@@ -214,11 +252,12 @@ VC = {
 
     @method _onBlur
     @param {EventFacade} e
+    @param {SyntheticEvent.Notifier} notifier
     @protected
     @static
     **/
-    _onBlur: function (e) {
-        VC._stopPolling(e.currentTarget);
+    _onBlur: function (e, notifier) {
+        VC._stopPolling(e.currentTarget, notifier);
     },
 
     /**
@@ -226,14 +265,22 @@ VC = {
 
     @method _onFocus
     @param {EventFacade} e
+    @param {SyntheticEvent.Notifier} notifier
     @protected
     @static
     **/
-    _onFocus: function (e) {
-        var node = e.currentTarget;
+    _onFocus: function (e, notifier) {
+        var node   = e.currentTarget,
+            vcData = node.getData(DATA_KEY);
 
-        VC._history[Y.stamp(node)] = node.get(VALUE);
-        VC._startPolling(node, null, e);
+        if (!vcData) {
+            vcData = {};
+            node.setData(DATA_KEY, vcData);
+        }
+
+        vcData.prevVal = node.get(VALUE);
+
+        VC._startPolling(node, notifier, {e: e});
     },
 
     /**
@@ -241,11 +288,12 @@ VC = {
 
     @method _onKeyDown
     @param {EventFacade} e
+    @param {SyntheticEvent.Notifier} notifier
     @protected
     @static
     **/
-    _onKeyDown: function (e) {
-        VC._startPolling(e.currentTarget, null, e);
+    _onKeyDown: function (e, notifier) {
+        VC._startPolling(e.currentTarget, notifier, {e: e});
     },
 
     /**
@@ -253,14 +301,18 @@ VC = {
 
     @method _onKeyUp
     @param {EventFacade} e
+    @param {SyntheticEvent.Notifier} notifier
     @protected
     @static
     **/
-    _onKeyUp: function (e) {
+    _onKeyUp: function (e, notifier) {
         // These charCodes indicate that an IME has started. We'll restart
         // polling and give the IME up to 10 seconds (by default) to finish.
         if (e.charCode === 229 || e.charCode === 197) {
-            VC._startPolling(e.currentTarget, null, e, true);
+            VC._startPolling(e.currentTarget, notifier, {
+                e    : e,
+                force: true
+            });
         }
     },
 
@@ -269,43 +321,12 @@ VC = {
 
     @method _onMouseDown
     @param {EventFacade} e
+    @param {SyntheticEvent.Notifier} notifier
     @protected
     @static
     **/
-    _onMouseDown: function (e) {
-        VC._startPolling(e.currentTarget, null, e);
-    },
-
-    _onDelegate: function (container, sub, notifier, filter) {
-        var guid = Y.guid();
-
-        // Add a function to the notifier that we can use to find all nodes that
-        // pass the delegate filter.
-        notifier._getFilteredNodes = function () {
-            return container.all('*').filter(filter)
-        };
-
-        // Store the initial values for each descendant of the container node
-        // that passes the delegate filter.
-        notifier._getFilteredNodes().each(function (node) {
-            VC._history[Y.stamp(node)] = node.get(VALUE);
-        });
-
-        notifier._handles = Y.delegate({
-            blur     : VC._onBlur,
-            focus    : VC._onFocus,
-            keydown  : VC._onKeyDown,
-            keyup    : VC._onKeyUp,
-            mousedown: VC._onMouseDown
-        }, container, filter);
-
-        // Flag this notifier as a delegated event and keep track of the guid so
-        // we can look it up later.
-        notifier._delegated = true;
-        notifier._guid      = guid;
-
-        notifiers = VC._notifiers[guid] || (VC._notifiers[guid] = []);
-        notifiers.push(notifier);
+    _onMouseDown: function (e, notifier) {
+        VC._startPolling(e.currentTarget, notifier, {e: e});
     },
 
     /**
@@ -320,22 +341,49 @@ VC = {
     @protected
     @static
     **/
-    _onSubscribe: function (node, sub, notifier) {
-        var stamp = Y.stamp(node),
-            notifiers;
+    _onSubscribe: function (node, sub, notifier, filter) {
+        var _valuechange, callbacks;
 
-        VC._history[stamp] = node.get(VALUE);
-
-        notifier._handles = node.on({
+        callbacks = {
             blur     : VC._onBlur,
             focus    : VC._onFocus,
             keydown  : VC._onKeyDown,
             keyup    : VC._onKeyUp,
             mousedown: VC._onMouseDown
-        });
+        };
 
-        notifiers = VC._notifiers[stamp] || (VC._notifiers[stamp] = []);
-        notifiers.push(notifier);
+        // Store a utility object on the notifier to hold stuff that needs to be
+        // passed around to trigger event handlers, polling handlers, etc.
+        _valuechange = notifier._valuechange = {};
+
+        if (filter) {
+            // If a filter is provided, then this is a delegated subscription.
+            _valuechange.delegated = true;
+
+            // Add a function to the notifier that we can use to find all
+            // nodes that pass the delegate filter.
+            _valuechange.getNodes = function () {
+                return node.all('*').filter(filter);
+            };
+
+            // Store the initial values for each descendant of the container
+            // node that passes the delegate filter.
+            _valuechange.getNodes().each(function (child) {
+                if (!child.getData(DATA_KEY)) {
+                    child.setData(DATA_KEY, {prevVal: child.get(VALUE)});
+                }
+            });
+
+            notifier._handles = Y.delegate(callbacks, node, filter, null,
+                notifier);
+        } else {
+            // This is a normal (non-delegated) event subscription.
+            if (!node.getData(DATA_KEY)) {
+                node.setData(DATA_KEY, {prevVal: node.get(VALUE)});
+            }
+
+            notifier._handles = node.on(callbacks, null, null, notifier);
+        }
     },
 
     /**
@@ -349,32 +397,16 @@ VC = {
     @static
     **/
     _onUnsubscribe: function (node, subscription, notifier) {
-        var stamp     = Y.stamp(node),
-            notifiers = VC._notifiers[stamp],
-            index     = Y.Array.indexOf(notifiers, notifier);
+        var _valuechange = notifier._valuechange;
 
         notifier._handles.detach();
 
-        if (index > -1) {
-            notifiers.splice(index, 1);
-
-            if (!notifiers.length) {
-                if (notifier._delegated) {
-                    notifier._getFilteredNodes().each(function (node) {
-                        var stamp = Y.stamp(node);
-
-                        VC._stopPolling(node, stamp);
-                        delete VC._history[stamp];
-                    });
-
-                    delete VC._notifiers[notifier._guid];
-                } else {
-                    VC._stopPolling(node, stamp);
-
-                    delete VC._notifiers[stamp];
-                    delete VC._history[stamp];
-                }
-            }
+        if (_valuechange.delegated) {
+            _valuechange.getNodes().each(function (child) {
+                VC._stopPolling(child, notifier);
+            });
+        } else {
+            VC._stopPolling(node, notifier);
         }
     }
 };
@@ -411,7 +443,7 @@ config = {
     detach: VC._onUnsubscribe,
     on    : VC._onSubscribe,
 
-    delegate      : VC._onDelegate,
+    delegate      : VC._onSubscribe,
     detachDelegate: VC._onUnsubscribe,
 
     publishConfig: {
