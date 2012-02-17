@@ -48,6 +48,7 @@
         <url>datatable/tests/datatable-body.html</url>
         <url>datatable/tests/datatable-mutable.html</url>
         <url>datatable/tests/datatable-message.html</url>
+        <url>datatable/tests/datatable-scroll.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
