@@ -1,3 +1,5 @@
+YUI.add('datatable-body-tests', function(Y) {
+
 var suite = new Y.Test.Suite("datatable-body");
 
 suite.add(new Y.Test.Case({
@@ -45,3 +47,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datatable-base', 'test']});
