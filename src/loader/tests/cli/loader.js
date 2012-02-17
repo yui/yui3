@@ -1675,16 +1675,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("file")) > -1, "Module (file) not found in sorted array");
         },
-     "Testing filelist": function(data) {
-            var loader = new Y.Loader({
-                require: ["filelist"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("filelist")) > -1, "Module (filelist) not found in sorted array");
-        },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
                 require: ["frame"],
