@@ -443,7 +443,7 @@ Y.mix(Table.prototype, {
                 cols = cols[name[i]] && cols[name[i]].children;
             }
 
-            return (cols && cols[i]) || null;
+            return (cols && cols[name[i]]) || null;
         }
 
         return null;

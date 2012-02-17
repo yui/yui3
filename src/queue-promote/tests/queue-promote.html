@@ -2,23 +2,24 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" rel="stylesheet" href="assets/test.css">
 </head>
 <body class="yui3-skin-sam">
 
-<div id="log"></div>
+<div id='log'></div>
+
 <script src="../../../build/yui/yui.js"></script>
-<script src="arraylist-tests.js"></script>
+<script src="queue-promote-tests.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     useBrowserConsole: false,
     allowRollup: false
-}).use('test-console', 'arraylist-tests', function (Y) {
+}).use('test-console','queue-promote-tests', function (Y) {
 
-    new Y.Test.Console().render('#log');
+new Y.Test.Console().render('#log');
 
-    Y.Test.Runner.run();
+Y.Test.Runner.run();
+
 });
 </script>
 </body>
