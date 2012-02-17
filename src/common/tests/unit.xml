@@ -44,6 +44,10 @@
         <url>datasource/tests/datasource-xmlschema.html</url>
         <url>datatable/tests/datatable-base.html</url>
         <url>datatable/tests/datatable-column-widths.html</url>
+        <url>datatable/tests/datatable-head.html</url>
+        <url>datatable/tests/datatable-body.html</url>
+        <url>datatable/tests/datatable-mutable.html</url>
+        <url>datatable/tests/datatable-message.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
