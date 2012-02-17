@@ -553,26 +553,26 @@ YUI({
 
                 node.transition({
                     easing: 'ease-in',
-                    duration: 2,
+                    duration: 0.2,
                     opacity: {
                         value: 0,
-                        duration: 3 
+                        duration: 0.3 
                     },
                     height: 0,
                     width: 0
                 }, function(e) {
                     test.resume(function() { 
-                        Y.Assert.areEqual(20, parseInt(e.elapsedTime * 10));
+                        Y.Assert.areEqual(2, parseInt(e.elapsedTime * 10));
                     });
                 });
 
                 node.transition({
-                    duration: 1,
+                    duration: 0.1,
                     opacity: 0
                 }, function(e) {
                     test.resume(function() { 
                         Y.Assert.areEqual('0', node.getComputedStyle('opacity'));
-                        Y.Assert.areEqual(10, parseInt(e.elapsedTime * 10));
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
                         test.wait(2000);
                     });
                 });
@@ -786,51 +786,18 @@ YUI({
                 test.wait(3000);
             },
 
-/* deprecated
-            'transition:end should fire after longest duration': function() {
-                var node = Y.one('.demo'),
-                    test = this,
-
-                    config = {
-                    easing: 'ease-in',
-                    duration: 1,
-                    opacity: {
-                        value: 0,
-                        duration: 2
-                    },
-                    height: 0,
-                    width: 0
-                };
-
-                node.once('transition:end', function(e) {
-                    test.resume(function() { 
-                        Y.Assert.areEqual(2, parseInt(e.elapsedTime));
-                        Y.Assert.areSame(config, e.config);
-
-                        node.setStyle('height', '100px');
-                        node.setStyle('opacity', '1');
-                        Y.Assert.areEqual(1, node.getStyle('opacity'));
-                    });
-                });
-
-                node.transition(config);
-
-                test.wait(4000);
-            },
-*/
-
             'native transform should map to vendor prefix': function() {
                 var node = Y.one('.demo'),
                     test = this;
 
                 node.transition({
                     easing: 'ease',
-                    duration: 1,
+                    duration: 0.1,
                     height: 0,
                     transform: 'rotate(180deg)'
                 }, function(e) {
                     test.resume(function() { 
-                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
                         node.setStyle('height', '100px');
                         if (Y.UA.webkit) {
                             Y.Assert.areEqual('matrix(-1, 0.00000000000000012246467991473532, -0.00000000000000012246467991473532, -1, 0, 0)', node.getComputedStyle('WebkitTransform'));
@@ -855,12 +822,12 @@ YUI({
 
                 node.transition({
                     easing: 'ease',
-                    duration: 1,
+                    duration: 0.1,
                     height: 0
                 }, function(e) {
                     test.resume(function() { 
                         var node = Y.one('.demo');
-                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime * 10));
                         Y.Assert.areEqual('0px', node.getComputedStyle('height'));
                     });
                 });
