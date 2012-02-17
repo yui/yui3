@@ -891,9 +891,9 @@ Y.extend(Widget, Y.Base, {
      */
     _bindDOM : function() {
         var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT),
-            focusHandle = Widget._hDocFocus,
-            mouseHandle = Widget._hDocMouseDown;
+            focusHandle = Widget._hDocFocus;
 
+        // Shared listener across all Widgets.
         if (!focusHandle) {
             focusHandle = Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
             focusHandle.listeners = 1;
@@ -904,14 +904,10 @@ Y.extend(Widget, Y.Base, {
         //	Fix for Webkit:
         //	Document doesn't receive focus in Webkit when the user mouses 
         //	down on it, so the "focused" attribute won't get set to the 
-        //	correct value.
+        //	correct value. Keeping this instance based for now, potential better performance.
+        //  Otherwise we'll end up looking up widgets from the DOM on every mousedown.
         if (WEBKIT){
-            if (!mouseHandle) {
-                mouseHandle = Widget._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
-                mouseHandle.listeners = 1;
-            } else {
-                mouseHandle.listeners++;
-            }
+            this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
         }
     },
 
@@ -922,7 +918,7 @@ Y.extend(Widget, Y.Base, {
     _unbindDOM : function(boundingBox) {
 
         var focusHandle = Widget._hDocFocus,
-            mouseHandle = Widget._hMouseDown;
+            mouseHandle = this._hDocMouseDown;
 
         if (focusHandle) {
             if (focusHandle.listeners > 0) {
@@ -933,13 +929,8 @@ Y.extend(Widget, Y.Base, {
             }
         }
 
-        if (mouseHandle) {
-            if (mouseHandle.listeners > 0) {
-                mouseHandle.listeners--;
-            } else {
-                mouseHandle.detach();
-                Widget._hMouseDown = null;
-            }
+        if (WEBKIT && mouseHandle) {
+            mouseHandle.detach();
         }
     },
 
