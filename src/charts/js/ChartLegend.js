@@ -1,6 +1,9 @@
 /**
  * ChartLegend provides a legend for a chart.
  *
+ * @class ChartLegend
+ * @module charts
+ * @submodule charts-legend
  *
  */
 Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
@@ -680,42 +683,43 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          * Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`. Below are the default values:
          *
          *  <dl>
-         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a 
-         *      `Chart` instance this value is applied.</dd>
-         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied
-         *      when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
-         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied 
-         *      when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
+         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a `Chart` instance this value is applied.</dd>
+         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
+         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
          *      <dt>item</dt><dd>Set of style properties applied to the `items` of the `ChartLegend`.
-         *          <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>
-         *          <dt>vSpacing</dt><dd>Vertical distance, in pixels, between legend `items`.</dd>
-         *          <dt>label</dt><dd>Properties for the text of an `item`.
-         *              <dl>
-         *                  <dt>color</dt><dd>Color of the text. The default values is "#808080".</dd>
-         *                  <dt>fontSize</dt><dd>Font size for the text. The default value is "85%".</dd>
-         *              </dl>
-         *          </dd>
-         *          <dt>background</dt><dd>Properties for the `ChartLegend` background.
-         *                  <dt>fill</dt><dd>Properties for the background fill.
-         *                      <dl>
-         *                          <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
-         *                      </dl>
-         *                  </dd>
-         *                  <dt>stroke</dt><dd>Properties for the background stroke.
-         *                      <dl>
-         *                          <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
-         *                          <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
-         *                      </dl>
-         *                  </dd>
-         *          </dd>
-         *      </dd>
-         *      <dt>marker</dt><dd>Properties for the `item` markers.
          *          <dl>
-         *              <dt>width</dt><dd>Specifies the width of the markers.</dd>
-         *              <dt>height</dt><dd>Specifies the height of the markers.</dd>
+         *              <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>
+         *              <dt>vSpacing</dt><dd>Vertical distance, in pixels, between legend `items`.</dd>
+         *              <dt>label</dt><dd>Properties for the text of an `item`.
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color of the text. The default values is "#808080".</dd>
+         *                      <dt>fontSize</dt><dd>Font size for the text. The default value is "85%".</dd>
+         *                  </dl>
+         *              </dd>
+         *              <dt>marker</dt><dd>Properties for the `item` markers.
+         *                  <dl>
+         *                      <dt>width</dt><dd>Specifies the width of the markers.</dd>
+         *                      <dt>height</dt><dd>Specifies the height of the markers.</dd>
+         *                  </dl>
+         *              </dd>
          *          </dl>
          *      </dd>
-         *  </dl>
+         *      <dt>background</dt><dd>Properties for the `ChartLegend` background.
+         *          <dl>
+         *              <dt>fill</dt><dd>Properties for the background fill.
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
+         *                  </dl>
+         *              </dd>
+         *              <dt>stroke</dt><dd>Properties for the background stroke.
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
+         *                      <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
+         *                  </dl>
+         *              </dd>
+         *          </dl>
+         *      </dd>
+         * </dl>
          *
          * @attribute styles
          * @type Object
