@@ -71,27 +71,34 @@ suite.add(new Y.Test.Case({
     },
 
     "col width should be set from configuration": function () {
-        var cols;
+        var cols, cssText, width;
 
         this.withWidths.render();
 
         cols = this.withWidths._colgroupNode.all('col');
 
-        Y.Assert.isTrue(
-            /\bwidth:\s*100px/i.test(cols.item(0)._node.style.cssText));
+        cssText = cols.item(0)._node.style.cssText;
+        width = (cssText.match(/\bwidth:\s*(\d+)px/i) || [])[1];
+
+        // isString is sufficient to test that the regex matched numbers
+        Y.Assert.isString(width);
+
         Y.Assert.isFalse(/width/i.test(cols.item(1)._node.style.cssText));
-        Y.Assert.isTrue(
-            /\bwidth:\s*200px/i.test(cols.item(2)._node.style.cssText));
+
+        cssText = cols.item(2)._node.style.cssText;
+        width = (cssText.match(/\bwidth:\s*(\d+)px/i) || [])[1];
+
+        // isString is sufficient to test that the regex matched numbers
+        Y.Assert.isString(width);
     },
 
     "column changes should propagate to the <col>s": function () {
-        var cols;
+        var cols, width;
 
         this.withWidths.render();
 
         cols = this.withWidths._colgroupNode.all('col');
-
-        Y.Assert.areSame('100px', cols.item(0).getStyle('width').toLowerCase());
+        width = cols.item(0).getStyle('width');
 
         this.withWidths.set('columns', [
             { key: 'a', width: '200px' },
@@ -101,7 +108,7 @@ suite.add(new Y.Test.Case({
         cols = this.withWidths._colgroupNode.all('col');
 
         Y.Assert.areSame(2, cols.size());
-        Y.Assert.areSame('200px', cols.item(0).getStyle('width').toLowerCase());
+        Y.Assert.areNotEqual(width, cols.item(0).getStyle('width'));
     }
 
 }));
