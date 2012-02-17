@@ -6,6 +6,7 @@
 
 var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     INDEX = "index",
+    PREVINDEX = "prevIndex",
     SCROLL_X = "scrollX",
     SCROLL_Y = "scrollY",
     TOTAL = "total",
@@ -76,6 +77,28 @@ PaginatorPlugin.ATTRS = {
     },
     
     /**
+     * The active page number for a paged scrollview
+     *
+     * @attribute index
+     * @type {Number}
+     * @default 0
+     */
+    prevIndex: {
+        value: 0
+    },
+    
+    /**
+     * The active page number for a paged scrollview
+     *
+     * @attribute index
+     * @type {Number}
+     * @default 0
+     */
+    prevIndex: {
+        value: 0
+    },
+    
+    /**
      * The total number of pages
      *
      * @attribute total
@@ -100,20 +123,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             
         host = paginator._host = paginator.get('host');
         
-        /*--*/
-        if (host._forceHWTransforms) {
-            var cb = host.get(CONTENT_BOX);
-            var MAX_SLIDE_COUNT = 3;
-            var currentIndex = 0;
-            this.previousIndex = currentIndex;
-            this.slideNodes = host.get(CONTENT_BOX).all(this.get("selector"));
-            cb.empty(true);
-            // Now, fill it with the first set of items
-            for (var i=0; i < MAX_SLIDE_COUNT; i++) {
-                cb.append(this.slideNodes.item(currentIndex + i));
-            }
-        }
-        /*--*/
         
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
@@ -144,6 +153,24 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         this.set(TOTAL, pages.size());
 
         this._pgOff = offsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
+        
+        for(var i=3; i<this._pgOff.length; i++){
+            this._pgOff[i] = 600;
+        }
+        
+        
+        
+        /*--*/
+        var MAX_SLIDE_COUNT = 3;
+        var currentIndex = this.get(INDEX);
+        this.set(PREVINDEX, currentIndex);
+        this.slideNodes = pages;
+        cb.empty(true);
+        // Now, fill it with the first set of items
+        for (var i=0; i < MAX_SLIDE_COUNT; i++) {
+            cb.append(this.slideNodes.item(currentIndex + i));
+        }
+        /*--*/
     },
 
     /**
@@ -163,7 +190,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageCount = this.get(TOTAL);
 
         if (velocity) {
-
             if (inc && pageIndex < pageCount-1) {
                 this.set(INDEX, pageIndex+1);
             } else if (!inc && pageIndex > 0) {
@@ -212,11 +238,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              }
          }
          
-         host._flicking = false;
          if (e.details.length === 0){
              this.blah(e);
          }
-         
      },
 
      blah: function(e){
@@ -224,7 +248,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              host = this.get('host'),
              cb = host.get(CONTENT_BOX),
              currentIndex = this.get(INDEX),
-             previousIndex = this.previousIndex,
+             previousIndex = this.get(PREVINDEX),
              isForward = (previousIndex < currentIndex) ? true : false,
              cbChildren = cb.get('children'),
              slideNodes = this.slideNodes;
@@ -250,12 +274,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          if (cbChildren.size() > 3) {
              nodeToRemove = (isForward) ? cb.one('li:first-of-type') : cb.one('li:last-of-type');
              nodeToRemove.remove();
-             
-             this.scrollTo(1, 1000);
-             host.syncUI();
+             host.set('scrollX', 300);
          }
 //         this._calcOffsets();
-         this.previousIndex = currentIndex;
+         this.set(PREVINDEX, currentIndex);
      },
      
     /**
@@ -286,7 +308,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method next
      */
     next: function() {
-        var index = this.get(INDEX);  
+        var index = this.get(INDEX);
+        
         if(index < this.get(TOTAL)-1) {
             this.set(INDEX, index+1);
         }
