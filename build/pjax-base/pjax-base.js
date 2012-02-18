@@ -30,13 +30,16 @@ var win = Y.config.win,
     @event navigate
     @param {String} url The URL that the router will dispatch to its route
       handlers in order to fulfill the enhanced navigation "request".
+    @param {Boolean} [force=false] Whether the enhanced navigation should occur
+      even in browsers without HTML5 history.
+    @param {String} [hash] The hash-fragment (including "#") of the `url`. This
+      will be present when the `url` differs from the current URL only by its
+      hash and `navigateOnHash` has ben set to `true`.
     @param {Event} [originEvent] The event that caused the navigation. Usually
       this would be a click event from a "pjax" anchor element.
     @param {Boolean} [replace] Whether or not the current history entry will be
       replaced, or a new entry will be created. Will default to `true` if the
       specified `url` is the same as the current URL.
-    @param {Boolean} [force=false] Whether the enhanced navigation should occur
-      even in browsers without HTML5 history.
     **/
     EVT_NAVIGATE = 'navigate';
 
@@ -192,6 +195,7 @@ PjaxBase.prototype = {
           to `true` if the specified `url` is the same as the current URL.
         @param {Boolean} [options.force=false] Whether the enhanced navigation
           should occur even in browsers without HTML5 history.
+    @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
     @protected
     **/
     _navigate: function (url, options) {
@@ -200,8 +204,11 @@ PjaxBase.prototype = {
             return false;
         }
 
+        options || (options = {});
+        options.url = url;
+
         var currentURL = this._getURL(),
-            hashlessURL, hash;
+            hash, hashlessURL;
 
         // Captures the `url`'s hash and returns a URL without that hash.
         hashlessURL = url.replace(/(#.*)$/, function (u, h, i) {
@@ -209,14 +216,15 @@ PjaxBase.prototype = {
             return u.substring(i);
         });
 
-        // When the specified `url` and current URL only differ by a hash
-        // fragment, the browser should handle this in-page navigation normally.
         if (hash && hashlessURL === currentURL.replace(/#.*$/, '')) {
-            return false;
-        }
+            // When the specified `url` and current URL only differ by the hash,
+            // the browser should handle this in-page navigation normally.
+            if (!this.get('navigateOnHash')) {
+                return false;
+            }
 
-        options || (options = {});
-        options.url = url;
+            options.hash = hash;
+        }
 
         // When navigating to the same URL as the current URL, behave like a
         // browser and replace the history entry instead of creating a new one.
@@ -448,6 +456,22 @@ PjaxBase.ATTRS = {
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
         writeOnce: 'initOnly'
+    },
+
+    /**
+    Whether navigating to a hash-fragment identifier on the current page should
+    be enhanced and cause the `navigate` event to fire.
+
+    By default pjax allows the browser to perform its default action when a user
+    is navigating around a page by clicking <a href="#in-page">in-page links</a>
+    and does not attempt to interfere or enhance in-page navigation.
+
+    @attribute navigateOnHash
+    @type Boolean
+    @default false
+    **/
+    navigateOnHash: {
+        value: false
     },
 
     /**
