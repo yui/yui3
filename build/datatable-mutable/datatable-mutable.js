@@ -174,7 +174,7 @@ Y.mix(Mutable.prototype, {
     @chainable
     **/
     removeColumn: function (name) {
-        if (name) {
+        if (name !== undefined) {
             this.fire('removeColumn', {
                 column: name
             });
