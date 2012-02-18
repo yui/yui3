@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+    <body>
+        <button id="my-button">my button</button>
+        <button id="button-widget" disabled>button widget</button>
+
+        <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+        
+        YUI({
+            filter: 'raw'
+        }).use('cssbutton', 'widget', 'button-base', function(Y) {
+    
+            var button = Y.Plugin.Button.factory('#my-button', {
+                disabled: false,
+                label: 'custom label'
+            });
+            console.log(button.get('label'));
+            console.log(button.get('disabled'));
+            button.on('click', function(){
+                console.log('a');
+            });
+            /*-----*/
+            
+            var button2 = Y.Plugin.Button.factory({label: 'foo'});
+            Y.augment(button2, Y.Attribute);
+
+            button2.on('disabledChange', function(e) {
+                
+            });
+
+
+            button2.appendTo('body');
+            
+            button2.on('click', function(){
+                console.log('b');
+            });
+            
+            /*-----*/
+            
+            var button3 = new Y.Button({
+                srcNode: '#button-widget',
+                label: 'Disable >>'
+            });
+
+            button3.render();
+            console.log(button3.get('disabled'));
+            button3.on('click', function(){
+                button2.set('disabled', !button2.get('disabled'));
+                console.log('c');
+            });
+            /*-----*/
+            
+            var button4 = new Y.ToggleButton({
+                label: 'toggle'
+            });
+
+            button4.render();
+            button4.select();
+            button4.on('click', function(){
+                console.log('d');
+            });
+
+        });
+        </script>
+    </body>
+</html>

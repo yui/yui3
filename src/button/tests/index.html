@@ -14,6 +14,7 @@
         <script src="../../../build/yui/yui.js"></script>
         <script>
             YUI({
+                filter: 'RAW',
                 modules: {
                     'button-test': {
                         fullpath: 'button-test.js',
@@ -21,7 +22,7 @@
                     },
                     'button-group-test': {
                         fullpath: 'button-group-test.js',
-                        requires: ['button-group', 'test', 'node-event-simulate']
+                        requires: ['button-base', 'button-group', 'button-test']
                     }
                 }
             }).use('button-test', 'button-group-test', 'test-console', function (Y) {
