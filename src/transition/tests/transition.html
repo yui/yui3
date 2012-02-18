@@ -269,7 +269,7 @@ YUI({
 
                 node.setStyle('opacity', 0);
 
-                node.show({duration: 0.25}, function(e) {
+                node.show({duration: 0.2}, function(e) {
                     test.resume(function() {
                         Y.Assert.areEqual(2, parseInt(e.elapsedTime * 10));
                     });
