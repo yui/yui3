@@ -9,32 +9,24 @@
 <h1>event-valuechange manual tests</h1>
 
 <h2>valueChange</h2>
-<form>
-    <input type="text" class="valuechange">
-    <textarea class="valuechange"></textarea>
-</form>
+<input type="text" id="a" class="valuechange">
+<textarea id="b" class="valuechange"></textarea>
 
 <h2>input</h2>
-<form>
-    <input type="text" class="input">
-    <textarea class="input"></textarea>
-</form>
+<input type="text" class="input">
+<textarea class="input"></textarea>
 
 <h2>keyup</h2>
-<form>
-    <input type="text" class="keyup">
-    <textarea class="keyup"></textarea>
-</form>
+<input type="text" class="keyup">
+<textarea class="keyup"></textarea>
 
 <h2>keypress</h2>
-<form>
-    <input type="text" class="keypress">
-    <textarea class="keypress"></textarea>
-</form>
+<input type="text" class="keypress">
+<textarea class="keypress"></textarea>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({filter: 'raw'}).use('event-valuechange', function(Y) {
+var Y = YUI({filters: {'event-valuechange': 'debug'}}).use('event-valuechange', function(Y) {
     Y.all('.valuechange').on('valueChange', function (e) {
         Y.log("valueChange: from " + e.prevVal + " to " + e.newVal, 'info');
     });

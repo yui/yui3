@@ -45,7 +45,7 @@
     transition: 0.1s linear box-shadow;
 }
 
-input.yui3-button{
+input.yui3-button {
     height: 2em; /* Fixes height for <input> in firefox/opera */
 }
 
@@ -82,6 +82,7 @@ a.yui3-button {
 
 
 .yui3-button-disabled,
+.yui3-button[disabled],
 .yui3-button-disabled:hover,
 .yui3-button-disabled:active {
     cursor: default;

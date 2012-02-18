@@ -7,37 +7,45 @@ var Assert      = Y.Assert,
 // -- Suite --------------------------------------------------------------------
 suite = new Y.Test.Suite('ButtonGroup');
 
-// -- Methods ----------------------------------------------------------------
+
+// -- Basic ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
-        var button, buttons = [], i;
-        
-        // Create a few buttons
-        for(i=0; i < 5; i+=1) {
-            button = new Y.Button({
-                srcNode: Y.Node.create('<button>' + i + '</button>')
-            });
-            button.getNode().set('value', i);
-            buttons.push(button);
-        }
-
+        Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
         this.ButtonGroup = new Y.ButtonGroup({
-            buttons: buttons,
+            srcNode: '#group',
             type: 'checkbox'
-        });
+        }).render();
     },
     
     tearDown: function () {
-        Y.one('#container').empty();
+        Y.one('#container').empty(true);
     },
-
-    'ButtonGroup.getButtons() should return an array of Y.Buttons instances': function () {
+    
+    'ButtonGroup.getButtons() should return an array of Y.Node instances': function () {
         var ButtonGroup = this.ButtonGroup;
         var buttons = ButtonGroup.getButtons();
         
-        Assert.isInstanceOf(Y.Button, buttons[0]);
+        Assert.isInstanceOf(Y.Node, buttons.item(0));
+    }
+}));
+
+// -- CheckboxGroup ----------------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    setUp : function () {
+        Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
+        this.ButtonGroup = new Y.ButtonGroup({
+            srcNode: '#group',
+            type: 'checkbox'
+        }).render();
+    },
+    
+    tearDown: function () {
+        Y.one('#container').empty(true);
     },
     
     'ButtonGroup.getSelectedButtons() should return accurate counts of selected buttons': function () {
@@ -46,22 +54,23 @@ suite.add(new Y.Test.Case({
         
         // Ensure no buttons are selected
         Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
-        
+
         // Select specific buttons, and make sure the selected array jives
-        buttons[1].select();
+        buttons.item(0).simulate('click');
         Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
-                
-        buttons[2].select();
+            
+        buttons.item(1).simulate('click');
         Assert.areSame(2, ButtonGroup.getSelectedButtons().length);
         
-        buttons[3].select();
+        buttons.item(2).simulate('click');
         Assert.areSame(3, ButtonGroup.getSelectedButtons().length);
         
         // Unselect
-        buttons[2].unselect();
+        buttons.item(1).simulate('click');
         Assert.areSame(2, ButtonGroup.getSelectedButtons().length);
     },
     
+
     'ButtonGroup.getSelectedValues() should return values of selected buttons': function () {
         var ButtonGroup = this.ButtonGroup;
         var buttons = ButtonGroup.getButtons();
@@ -70,78 +79,57 @@ suite.add(new Y.Test.Case({
         Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
         
         // Select some buttons and ensure the array of values matches
-        buttons[1].select();
-        ArrayAssert.itemsAreEqual([1], ButtonGroup.getSelectedValues());
+        buttons.item(0).simulate('click');
+        ArrayAssert.itemsAreEqual(['A'], ButtonGroup.getSelectedValues());
         
-        buttons[3].select();
-        ArrayAssert.itemsAreEqual([1, 3], ButtonGroup.getSelectedValues());
+        buttons.item(2).simulate('click');
+        ArrayAssert.itemsAreEqual(['A', 'C'], ButtonGroup.getSelectedValues());
         
-        buttons[4].select();
-        ArrayAssert.itemsAreEqual([1, 3, 4], ButtonGroup.getSelectedValues());
+        buttons.item(1).simulate('click');
+        ArrayAssert.itemsAreEqual(['A', 'B', 'C'], ButtonGroup.getSelectedValues());
         
         // Unselect
-        buttons[3].unselect();
-        ArrayAssert.itemsAreEqual([1, 4], ButtonGroup.getSelectedValues());
-    },
-    
-    'ButtonGroup.addButton() should add an additional Y.Button instance to the array of buttons': function () {
-        var ButtonGroup = this.ButtonGroup;
-        
-        // Create a new button
-        var newButton = new Y.Button({
-            srcNode: Y.Node.create('<button>6</button>')
-        });
-        
-        Assert.areSame(5, ButtonGroup.getButtons().length);
-        
-        // Add the button, and assert the new length
-        ButtonGroup.addButton(newButton);
-        Assert.areSame(6, ButtonGroup.getButtons().length);
+        buttons.item(1).simulate('click');
+        ArrayAssert.itemsAreEqual(['A', 'C'], ButtonGroup.getSelectedValues());
     }
-    
 }));
 
-// -- Methods ----------------------------------------------------------------
+// -- RadioGroup ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Methods',
 
     setUp : function () {
-        var button, buttons = [], i;
-        
-        // Create a few buttons
-        for(i=0; i < 5; i+=1) {
-            button = new Y.Button({
-                srcNode: Y.Node.create('<button>' + i + '</button>')
-            });
-            button.getNode().set('value', i);
-            buttons.push(button);
-        }
-
+        Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
         this.ButtonGroup = new Y.ButtonGroup({
-            buttons: buttons,
+            srcNode: '#group',
             type: 'radio'
-        });
+        }).render();
     },
     
     tearDown: function () {
-        Y.one('#container').empty();
+        Y.one('#container').empty(true);
     },
     
-    'ButtonGroup type radio should only have 0 or 1 buttons selected': function () {
+    'ButtonGroup.getSelectedButtons() should return accurate counts of selected buttons': function () {
         var ButtonGroup = this.ButtonGroup;
         var buttons = ButtonGroup.getButtons();
-
-        Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
         
-        buttons[1].getNode().simulate('click');
+        // Ensure no buttons are selected
+        Assert.areSame(0, ButtonGroup.getSelectedButtons().length);
+
+        // Select specific buttons, and make sure the selected array jives
+        buttons.item(0).simulate('click');
+        Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
+            
+        buttons.item(1).simulate('click');
         Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
         
-        buttons[2].getNode().simulate('click');
-        buttons[3].getNode().simulate('click');
+        buttons.item(2).simulate('click');
         Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
     }
-    
 }));
+
+
 
 Y.Test.Runner.add(suite);
 

@@ -50,8 +50,8 @@ the following properties added to them:
 
   * `_colspan` - To supply the `<th>` attribute
   * `_rowspan` - To supply the `<th>` attribute
-  * `_parent`  - If the column is a child of another column, this points to
-    its parent column
+  * `_parent`  - (Added by DataTable) If the column is a child of another
+    column, this points to its parent column
   * `_yuid`    - (Added by DataTable) A unique YUI generated id used as the
     `<th>`'s 'id' for reference in the data `<td>`'s 'headers' attribute.
 
@@ -405,9 +405,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                             // Can't use .length because in 3+ rows, colspan
                             // needs to aggregate the colspans of children
                             parent._colspan += row[i]._colspan;
-
-                            // Assign the parent column for ease of navigation
-                            row[i]._parent = parent;
                         }
                     }
                     stack.pop();
