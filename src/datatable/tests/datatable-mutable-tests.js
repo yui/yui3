@@ -402,10 +402,124 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "removeColumn",
 
-    "": function () {
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: [ 'a', 'b', 'c', { children: [ 'd', 'e' ] } ],
+            data: [{ a: 1, b: 1, c: 1, d: 1, e: 1 }]
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "test removeColumn() does nothing": function () {
+        var table = this.table,
+            columns = table.get('columns');
+
+        table.removeColumn();
+
+        Y.Assert.areSame(columns, table.get('columns'));
+        Y.Assert.areSame(4, table.get('columns').length);
+        Y.Assert.isObject(table.getColumn('a'));
+    },
+
+    "test removeColumn(string)": function () {
+        var table = this.table;
+
+        table.removeColumn('a');
+
+        Y.Assert.areSame(3, table.get('columns').length);
+        Y.Assert.areSame(4, table._displayColumns.length);
+        Y.Assert.isNull(table.getColumn('a'));
+
+        table.removeColumn('d');
+
+        Y.Assert.areSame(3, table._displayColumns.length);
+        Y.Assert.isNull(table.getColumn('d'));
+    },
+
+    "test removeColumn(number)": function () {
+        var table = this.table;
+
+        table.removeColumn(0);
+
+        Y.Assert.areSame(3, table.get('columns').length);
+        Y.Assert.areSame(4, table._displayColumns.length);
+        Y.Assert.isNull(table.getColumn('a'));
+    },
+
+    "test removeColumn([number, number])": function () {
+        var table = this.table;
+
+        table.removeColumn([3, 0]);
+
+        Y.Assert.areSame(4, table.get('columns').length);
+        Y.Assert.areSame(4, table._displayColumns.length);
+        Y.Assert.isNull(table.getColumn('d'));
+        Y.Assert.isObject(table.getColumn([3, 0]));
+        Y.Assert.areSame('e', table.getColumn([3, 0]).key);
+    },
+
+    "removeColumn event should fire": function () {
+        var table = this.table,
+            onFired = false,
+            afterFired = false;
+
+        table.on('removeColumn', function () {
+            onFired = true;
+        });
+        table.after('removeColumn', function () {
+            afterFired = true;
+        });
+
+        table.removeColumn('a');
+
+        Y.Assert.isTrue(onFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "removeColumn event should have column config": function () {
+        var table = this.table,
+            column;
+
+        table.on('removeColumn', function (e) {
+            column = e.column;
+        });
+
+        table.removeColumn('a');
+
+        Y.Assert.areSame('a', column);
+    },
+
+    "removeColumn event should be preventable": function () {
+        var table = this.table;
+
+        table.on('removeColumn', function (e) {
+            e.preventDefault();
+        });
+
+        table.removeColumn('a');
+
+        Y.Assert.isObject(table.getColumn('a'));
+    },
+
+    "removeColumn event e.column modification should apply": function () {
+        var table = this.table;
+
+        table.on('removeColumn', function (e) {
+            e.column = 'a';
+        });
+
+        table.removeColumn('d');
+
+        Y.Assert.isNull(table.getColumn('a'));
+        Y.Assert.isObject(table.getColumn('d'));
+    },
+
+    "removeColumn should be chainable": function () {
+        Y.Assert.areSame(this.table, this.table.removeColumn('a'));
     }
-
-
 }));
 
 suite.add(new Y.Test.Case({
