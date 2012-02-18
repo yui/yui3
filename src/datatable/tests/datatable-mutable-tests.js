@@ -525,10 +525,213 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "moveColumn",
 
-    "": function () {
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: [ 'a', 'b', 'c', { children: [ 'd', 'e' ] } ],
+            data: [{ a: 1, b: 1, c: 1, d: 1, e: 1 }]
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "test moveColumn() does nothing": function () {
+        var table = this.table;
+
+        table.moveColumn();
+
+        Y.Assert.areSame('a', table.getColumn(0).key);
+        Y.Assert.areSame('b', table.getColumn(1).key);
+        Y.Assert.areSame('c', table.getColumn(2).key);
+        Y.Assert.areSame('d', table.getColumn([3, 0]).key);
+        Y.Assert.areSame('e', table.getColumn([3, 1]).key);
+    },
+
+    "test moveColumn(name) does nothing": function () {
+        var table = this.table;
+
+        table.moveColumn('c');
+
+        Y.Assert.areSame('a', table.getColumn(0).key);
+        Y.Assert.areSame('b', table.getColumn(1).key);
+        Y.Assert.areSame('c', table.getColumn(2).key);
+        Y.Assert.areSame('d', table.getColumn([3, 0]).key);
+        Y.Assert.areSame('e', table.getColumn([3, 1]).key);
+    },
+
+    "test moveColumn(string, number)": function () {
+        var table = this.table;
+
+        table.moveColumn('a', 2);
+
+        Y.Assert.areSame('b', table.getColumn(0).key);
+        Y.Assert.areSame('c', table.getColumn(1).key);
+        Y.Assert.areSame('a', table.getColumn(2).key);
+        Y.Assert.areSame('d', table.getColumn([3, 0]).key);
+        Y.Assert.areSame('e', table.getColumn([3, 1]).key);
+        Y.Assert.areSame(2, table.getColumn(3).children.length);
+
+        table.moveColumn('d', 0);
+
+        Y.Assert.areSame('d', table.getColumn(0).key);
+        Y.Assert.areSame('b', table.getColumn(1).key);
+        Y.Assert.areSame('c', table.getColumn(2).key);
+        Y.Assert.areSame('a', table.getColumn(3).key);
+        Y.Assert.areSame('e', table.getColumn([4, 0]).key);
+        Y.Assert.areSame(1, table.getColumn(4).children.length);
+    },
+
+    "test moveColumn(number, number)": function () {
+        var table = this.table;
+
+        table.moveColumn(0, 2);
+
+        Y.Assert.areSame('b', table.getColumn(0).key);
+        Y.Assert.areSame('c', table.getColumn(1).key);
+        Y.Assert.areSame('a', table.getColumn(2).key);
+        Y.Assert.areSame('d', table.getColumn([3, 0]).key);
+        Y.Assert.areSame('e', table.getColumn([3, 1]).key);
+        Y.Assert.areSame(2, table.getColumn(3).children.length);
+    },
+
+    "test moveColumn([number, number], number)": function () {
+        var table = this.table;
+
+        table.moveColumn([3, 1], 0);
+
+        Y.Assert.areSame('e', table.getColumn(0).key);
+        Y.Assert.areSame('a', table.getColumn(1).key);
+        Y.Assert.areSame('b', table.getColumn(2).key);
+        Y.Assert.areSame('c', table.getColumn(3).key);
+        Y.Assert.areSame('d', table.getColumn([4, 0]).key);
+        Y.Assert.areSame(1, table.getColumn(4).children.length);
+    },
+
+    "test moveColumn(string, [number, number])": function () {
+        var table = this.table;
+
+        table.moveColumn('b', [3, 1]);
+
+        Y.Assert.areSame('a', table.getColumn(0).key);
+        Y.Assert.areSame('c', table.getColumn(1).key);
+        Y.Assert.areSame('d', table.getColumn([2, 0]).key);
+        Y.Assert.areSame('b', table.getColumn([2, 1]).key);
+        Y.Assert.areSame('e', table.getColumn([2, 2]).key);
+        Y.Assert.areSame(3, table.getColumn(2).children.length);
+    },
+
+    "test moveColumn(number, [number, number])": function () {
+        var table = this.table;
+
+        table.moveColumn(1, [3, 1]);
+
+        Y.Assert.areSame('a', table.getColumn(0).key);
+        Y.Assert.areSame('c', table.getColumn(1).key);
+        Y.Assert.areSame('d', table.getColumn([2, 0]).key);
+        Y.Assert.areSame('b', table.getColumn([2, 1]).key);
+        Y.Assert.areSame('e', table.getColumn([2, 2]).key);
+        Y.Assert.areSame(3, table.getColumn(2).children.length);
+    },
+
+    "test moveColumn([number, number], [number, number])": function () {
+        var table = this.table;
+
+        table.moveColumn([3, 1], [3, 0]);
+
+        Y.Assert.areSame('a', table.getColumn(0).key);
+        Y.Assert.areSame('b', table.getColumn(1).key);
+        Y.Assert.areSame('c', table.getColumn(2).key);
+        Y.Assert.areSame('e', table.getColumn([3, 0]).key);
+        Y.Assert.areSame('d', table.getColumn([3, 1]).key);
+        Y.Assert.areSame(2, table.getColumn(3).children.length);
+    },
+
+    "moveColumn event should fire": function () {
+        var table = this.table,
+            onFired = false,
+            afterFired = false;
+
+        table.on('moveColumn', function () {
+            onFired = true;
+        });
+        table.after('moveColumn', function () {
+            afterFired = true;
+        });
+
+        table.moveColumn('a', 2);
+
+        Y.Assert.isTrue(onFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "moveColumn event should have column and index": function () {
+        var table = this.table,
+            column, index;
+
+        table.on('moveColumn', function (e) {
+            column = e.column;
+            index = e.index;
+        });
+
+        table.moveColumn('c', 3);
+
+        Y.Assert.areSame('c', column);
+        Y.Assert.areSame(3, index);
+    },
+
+    "moveColumn event should be preventable": function () {
+        var table = this.table;
+
+        table.on('moveColumn', function (e) {
+            e.preventDefault();
+        });
+
+        table.moveColumn('a', 2);
+
+        Y.Assert.areSame('a', table.getColumn(0).key);
+        Y.Assert.areSame('b', table.getColumn(1).key);
+        Y.Assert.areSame('c', table.getColumn(2).key);
+        Y.Assert.areSame('d', table.getColumn([3, 0]).key);
+        Y.Assert.areSame('e', table.getColumn([3, 1]).key);
+        Y.Assert.areSame(2, table.getColumn(3).children.length);
+    },
+
+    "moveColumn event e.column modification should apply": function () {
+        var table = this.table;
+
+        table.on('moveColumn', function (e) {
+            e.column = 'a';
+        });
+
+        table.moveColumn('b', 3);
+
+        Y.Assert.areSame('b', table.getColumn(0).key);
+        Y.Assert.areSame('c', table.getColumn(1).key);
+        Y.Assert.areSame('d', table.getColumn([2, 0]).key);
+        Y.Assert.areSame('e', table.getColumn([2, 1]).key);
+        Y.Assert.areSame('a', table.getColumn(3).key);
+    },
+
+    "moveColumn event e.index modification should apply": function () {
+        var table = this.table;
+
+        table.on('moveColumn', function (e) {
+            e.index = 0;
+        });
+
+        table.moveColumn('d', 2);
+
+        Y.Assert.areSame('d', table.getColumn(0).key);
+        Y.Assert.areSame('a', table.getColumn(1).key);
+        Y.Assert.areSame('b', table.getColumn(2).key);
+        Y.Assert.areSame('c', table.getColumn(3).key);
+        Y.Assert.areSame('e', table.getColumn([4, 0]).key);
+    },
+
+    "moveColumn should be chainable": function () {
+        Y.Assert.areSame(this.table, this.table.moveColumn('a', 2));
     }
-
-
 }));
 
 suite.add(new Y.Test.Case({
