@@ -1098,6 +1098,8 @@ Y.mix(Table.prototype, {
             } else {
                 keys[name] = 1;
             }
+
+            return name;
         }
 
         function process(cols, parent) {
