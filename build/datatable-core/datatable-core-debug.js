@@ -1120,6 +1120,8 @@ Y.mix(Table.prototype, {
 
                 if (parent) {
                     col._parent = parent;
+                } else {
+                    delete col._parent;
                 }
 
                 if (isArray(col.children)) {
