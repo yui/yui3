@@ -44,11 +44,11 @@ var getClassName = Y.ClassNameManager.getClassName,
     Transition = Y.Transition,
 
     NATIVE_TRANSITIONS = Transition.useNative,
-
+    
     _constrain = function (val, min, max) { 
         return Math.min(Math.max(val, min), max);
     };
-
+    
 /**
  * ScrollView provides a scrollable widget, supporting flick gestures, across both touch and mouse based devices. 
  *
@@ -60,6 +60,71 @@ var getClassName = Y.ClassNameManager.getClassName,
 function ScrollView() {
     ScrollView.superclass.constructor.apply(this, arguments);
 }
+
+ScrollView._testTranslateDims = function() {
+    if (!("_fixDims" in ScrollView)) {
+
+        var o = Y.Node.create("<div><div></div></div>"),
+            i = o.one("div");
+
+        o.setStyles({
+            left:"-10000px",
+            top:"-10000px",
+            width:"100px",
+            height:"1px",
+            padding: "0",
+            border: "0",
+            overflow:"hidden",
+            position:"absolute",
+            visibility:"hidden"    
+        });
+
+        i.setStyles({
+            width:"200px",
+            height:"1px",
+            padding: "0",
+            border: "0",
+            margin: "0",
+            position:"relative"
+        });
+
+        if (NATIVE_TRANSITIONS) {
+            i.setStyle("transform", "translateX(50px)");
+        } else {
+            i.setStyle("left", "50px");
+        }
+
+        Y.one("body").appendChild(o);
+
+        ScrollView._fixDims = (o.get("scrollWidth") === 250);
+    }
+    return ScrollView._fixDims; 
+};
+
+ScrollView._parseTransformCSS = function(val) {
+
+    var re = /matrix\(([\w,\s]*)\)/i,
+        t,
+        arr,
+        m;
+
+    m = val.match(re);
+
+    if (m && m[1]) {
+        arr = m[1].split(',');
+        if (arr && arr.length > 5) {            
+            t = {
+                x: parseInt(arr[4], 10),
+                y: parseInt(arr[5], 10)
+            };
+        }
+    }
+
+    return t;
+};
+
+ScrollView._MatrixConstructor = (typeof CSSMatrix !== "undefined") ? CSSMatrix : (typeof WebKitCSSMatrix !== "undefined") ? WebKitCSSMatrix : null;
+
 
 Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     
@@ -73,7 +138,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     initializer: function() {
         /**
          * Notification event fired at the end of a scroll transition
-         * 
+         *
          * @event scrollEnd
          * @param e {EventFacade} The default event facade.
          */
@@ -651,37 +716,55 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     */
     _getScrollDims: function() {
         var dims,
+            translation,
 
             // Ideally using CSSMatrix - don't think we have it normalized yet though.
             // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
             // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
 
-            origX = this.get(SCROLL_X),
-            origY = this.get(SCROLL_Y),
-
             cb = this.get(CONTENT_BOX),
-            bb = this.get(BOUNDING_BOX),
+            bb = this.get(BOUNDING_BOX);
 
-            HWTransform,
+        dims = [bb.get("offsetWidth"), bb.get("offsetHeight"), bb.get('scrollWidth'), bb.get('scrollHeight')];
 
-            TRANS = ScrollView._TRANSITION;
-
-        // TODO: Is this OK? Just in case it's called 'during' a transition.
-        if (NATIVE_TRANSITIONS) {
-            cb.setStyle(TRANS.DURATION, ZERO);
-            cb.setStyle(TRANS.PROPERTY, EMPTY);
+        if (ScrollView._testTranslateDims()) {
+            translation = this._getTranslation(cb);
+            dims[2] = dims[2] - translation.x;
+            dims[3] = dims[3] - translation.y;    
         }
 
-        HWTransform = this._forceHWTransforms;
-        this._forceHWTransforms = false;  // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
-
-        this._moveTo(cb, 0, 0);
-        dims = [bb.get("offsetWidth"), bb.get("offsetHeight"), bb.get('scrollWidth'), bb.get('scrollHeight')];
-        this._moveTo(cb, -1*origX, -1*origY);
-
-        this._forceHWTransforms = HWTransform;
-
         return dims;
+    },
+    
+    _getTranslation: function(node) {
+        var t = {
+            x:0,
+            y:0
+        },
+        tStr,
+        tParsed,
+        matrix,
+        MatrixConstructor = ScrollView._MatrixConstructor;
+
+        if (NATIVE_TRANSITIONS) {
+            tStr = node.getComputedStyle(Transition._VENDOR_PREFIX + "Transform");
+            if (Y.Lang.isString(tStr)) {
+                if (MatrixConstructor) {
+                    matrix = new MatrixConstructor(tStr);
+                    t.x = matrix.e;
+                    t.y = matrix.f;                    
+                } else {
+                    tParsed = ScrollView._parseTransformCSS(tStr);
+                    if (tParsed) {
+                        t = tParsed;
+                    }
+                }
+            };
+        } else {
+            t.x = node.get("offsetLeft");
+            t.y = node.get("offsetTop");
+        }
+        return t;
     },
 
     /**
@@ -839,7 +922,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
     _mousewheel: function(e) {
         var scrollY = this.get('scrollY'),
-            contentBox = this._cb,
             scrollOffset = 10, // 10px
             scrollToY = scrollY - (e.wheelDelta * scrollOffset);
 
