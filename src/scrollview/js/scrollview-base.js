@@ -103,7 +103,7 @@ ScrollView._testTranslateDims = function() {
 
 ScrollView._parseTransformCSS = function(val) {
 
-    var re = /matrix\(([\w,\s]*)\)/i,
+    var re = /matrix\((.*?)\)/i,
         t,
         arr,
         m;
