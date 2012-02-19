@@ -71,7 +71,7 @@ ScrollView._testTranslateDims = function() {
             left:"-10000px",
             top:"-10000px",
             width:"100px",
-            height:"1px",
+            height:"100px",
             padding: "0",
             border: "0",
             overflow:"hidden",
@@ -81,7 +81,7 @@ ScrollView._testTranslateDims = function() {
 
         i.setStyles({
             width:"200px",
-            height:"1px",
+            height:"200px",
             padding: "0",
             border: "0",
             margin: "0",
@@ -89,14 +89,18 @@ ScrollView._testTranslateDims = function() {
         });
 
         if (NATIVE_TRANSITIONS) {
-            i.setStyle("transform", "translateX(50px)");
+            i.setStyle("transform", "translate(-50px, -20px)");
         } else {
             i.setStyle("left", "50px");
+            i.setStyle("top", "-20px");
         }
 
         Y.one("body").appendChild(o);
 
-        ScrollView._fixDims = (o.get("scrollWidth") === 250);
+        Y.ScrollView._fixDims = {
+            fixX : (o.get("scrollWidth") === 150),
+            fixY : (o.get("scrollHeight") === 180)
+        }
     }
     return ScrollView._fixDims; 
 };
@@ -717,20 +721,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _getScrollDims: function() {
         var dims,
             translation,
-
-            // Ideally using CSSMatrix - don't think we have it normalized yet though.
-            // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e;
-            // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f;
-
+            fixDims = ScrollView._testTranslateDims(), 
             cb = this.get(CONTENT_BOX),
             bb = this.get(BOUNDING_BOX);
 
         dims = [bb.get("offsetWidth"), bb.get("offsetHeight"), bb.get('scrollWidth'), bb.get('scrollHeight')];
 
-        if (ScrollView._testTranslateDims()) {
+        if (fixDims.fixX || fixDims.fixY) {
             translation = this._getTranslation(cb);
-            dims[2] = dims[2] - translation.x;
-            dims[3] = dims[3] - translation.y;    
+            if (fixDims.fixX) {
+                dims[2] = dims[2] - translation.x;
+            }
+            if (fixDims.fixY) {
+                dims[3] = dims[3] - translation.y;
+            }
         }
 
         return dims;
