@@ -14,14 +14,6 @@ This content will be replaced by an instance of a Flash player.
 YUI({
     base: '../../../build/',
     filter: "raw",
-    modules:  {
-        swfdetect: {
-            path: "swfdetect/swfdetect.js"
-        },
-        swf: {
-            path: "swf/swf.js"
-        }
-    }
 }).use('node', 'event-custom', 'swfdetect', 'swf', function (Y) {
 
 var params = {version: "9.0.115",
