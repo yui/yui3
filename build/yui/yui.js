@@ -3543,7 +3543,6 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -8324,24 +8323,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbutton"
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "widget"
         ]
     }, 
-    "button-base": {
+    "button-core": {
         "requires": [
-            "base", 
+            "node", 
             "classnamemanager", 
-            "node"
+            "attribute-core"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base", 
-            "arraylist", 
-            "arraylist-add"
+            "button-plugin", 
+            "cssbutton", 
+            "widget"
+        ]
+    }, 
+    "button-plugin": {
+        "requires": [
+            "plugin", 
+            "button-core"
         ]
     }, 
     "cache": {
@@ -10302,7 +10307,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'd70dbaf27c1c1672482ca87e801fc233';
+YUI.Env[Y.version].md5 = '53d618fa9d1c8c03f603ea4566ee46c3';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
