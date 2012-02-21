@@ -86,7 +86,7 @@ Button.prototype = {
         node.addClass(Button.CLASS_NAMES.BUTTON);
         
         node.set('role', 'button'); //TODO: Only if it actually needs role='button'
-    }.
+    },
     
     /**
     * @method enable
