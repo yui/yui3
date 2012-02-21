@@ -1,3 +1,5 @@
+YUI.add('button', function(Y) {
+
 function ButtonWidget(config) {
     ButtonWidget.superclass.constructor.apply(this, arguments);
 }
@@ -108,3 +110,6 @@ Y.extend(ToggleButton, ButtonWidget,  {
 // Export
 Y.Button = ButtonWidget;
 Y.ToggleButton = ToggleButton;
+
+
+}, '@VERSION@' ,{requires:['button-core', 'widget']});

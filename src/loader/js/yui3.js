@@ -298,24 +298,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbutton"
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "widget"
         ]
     }, 
-    "button-base": {
+    "button-core": {
         "requires": [
-            "classnamemanager", 
             "node", 
-            "widget"
+            "classnamemanager", 
+            "attribute-core"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base", 
-            "arraylist", 
-            "arraylist-add"
+            "button-plugin", 
+            "cssbutton", 
+            "widget"
+        ]
+    }, 
+    "button-plugin": {
+        "requires": [
+            "plugin", 
+            "button-core"
         ]
     }, 
     "cache": {
@@ -2276,4 +2282,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '776f7db7fa82261c1120ee760ffa226f';
+YUI.Env[Y.version].md5 = '53d618fa9d1c8c03f603ea4566ee46c3';

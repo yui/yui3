@@ -8,7 +8,7 @@
 
 var BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
-    BUTTON_CLASS = "yui3-button",
+    BUTTON_CLASS = "yui3-button",  // TODO: Pull from ButtonCore
     BUTTON_SELECTED_CLASS = BUTTON_CLASS + "-selected",
     SELECTOR = "button, input[type=button]",
     CLICK_EVENT = "click";
@@ -35,13 +35,13 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     * @private
     */
     initializer: function(){
-        // TODO: Nothing?
+        this._cb = this.get(CONTENT_BOX);
     },
     
     renderUI: function() {
-        var ButtonFactory = Y.Plugin.Button.factory;
+        
+        var ButtonFactory = Y.Plugin.Button.createNode;
         var buttonNodes = this.getButtons();
-        this._cb = this.get(CONTENT_BOX);
         buttonNodes.each(function(node){
             new ButtonFactory(node);
         });
@@ -52,7 +52,6 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     },
     
     handleClick: function(e){
-        
         var bg = this;
         var node = e.target;
         var type = bg.get('type');
@@ -71,7 +70,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             bg.fire('selectionChange');
         }
         
-        e.stopPropogation(); // Todo: Maybe?
+        e.stopPropagation(); // Todo: Maybe?
     },
     
     /**
