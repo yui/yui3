@@ -251,19 +251,21 @@ Y.extend(Cache, Y.Base, {
      */
     _defAddFn: function(e) {
         var entries = this._entries,
-            max = this.get("max"),
-            entry = e.entry;
+            entry   = e.entry,
+            max     = this.get("max"),
+            pos;
 
-        // If uniqueKeys = true and item exists with this key remove it.
-        if(this.get("uniqueKeys")) {
+        // If uniqueKeys is true and item exists with this key, then remove it.
+        if (this.get("uniqueKeys")) {
             pos = this._position(e.entry.request);
-            if(LANG.isValue(pos)) {
-                entries.splice(pos,1);
+            if (LANG.isValue(pos)) {
+                entries.splice(pos, 1);
             }
         }
 
-        // If the cache at or over capacity, make room by removing stalest element (index=0)
-        while(max && entries.length>=max) {
+        // If the cache at or over capacity, make room by removing stalest
+        // element(s) starting at index-0.
+        while (max && entries.length >= max) {
             entries.shift();
         }
 
