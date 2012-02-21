@@ -426,6 +426,10 @@ YUI.add('dd-tests', function(Y) {
             dd.destroy();
         },
         test_window_scroll: function() {
+            if (Y.one('win').get('winHeight') < 200) {
+                //This should work in IE to resize the window.
+                window.resizeTo(500, 500);
+            }
             //Skip this test on mobile devices, they don't like the scrollTop settings to test against.
             if (Y.UA.mobile || Y.UA.android || Y.UA.webos || (Y.one('win').get('winHeight') < 200)) {
                 return true;
