@@ -254,10 +254,13 @@ Y.extend(Cache, Y.Base, {
             max = this.get("max"),
             entry = e.entry;
 
-        if(this.get("uniqueKeys") && (this.retrieve(e.entry.request))) {
-            entries.shift();
+        // If uniqueKeys = true and item exists with this key remove it.
+        if(this.get("uniqueKeys")) {
+            pos = this._position(e.entry.request);
+            if(LANG.isValue(pos)) {
+                entries.splice(pos,1);
+            }
         }
-
 
         // If the cache at or over capacity, make room by removing stalest element (index=0)
         while(max && entries.length>=max) {
