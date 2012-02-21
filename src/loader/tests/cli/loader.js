@@ -2859,19 +2859,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("view-node-map")) > -1, "Module (view-node-map) not found in sorted array");
         },
-     "Testing widget": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1, "Module (widget-base) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1, "Module (widget-htmlparser) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1, "Module (widget-uievents) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1, "Module (widget-skin) not found in sorted array");
-        },
      "Testing widget-anim": function(data) {
             var loader = new Y.Loader({
                 require: ["widget-anim"],
@@ -2892,26 +2879,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-autohide")) > -1, "Module (widget-autohide) not found in sorted array");
         },
-     "Testing widget-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-base"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1, "Module (widget-base) not found in sorted array");
-        },
-     "Testing widget-base-ie": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-base-ie"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-base-ie")) > -1, "Module (widget-base-ie) not found in sorted array");
-        },
      "Testing widget-buttons": function(data) {
             var loader = new Y.Loader({
                 require: ["widget-buttons"],
@@ -2931,26 +2898,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-child")) > -1, "Module (widget-child) not found in sorted array");
-        },
-     "Testing widget-htmlparser": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-htmlparser"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1, "Module (widget-htmlparser) not found in sorted array");
-        },
-     "Testing widget-locale": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-locale"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-locale")) > -1, "Module (widget-locale) not found in sorted array");
         },
      "Testing widget-modality": function(data) {
             var loader = new Y.Loader({
@@ -3002,16 +2949,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-position-constrain")) > -1, "Module (widget-position-constrain) not found in sorted array");
         },
-     "Testing widget-skin": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-skin"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1, "Module (widget-skin) not found in sorted array");
-        },
      "Testing widget-stack": function(data) {
             var loader = new Y.Loader({
                 require: ["widget-stack"],
@@ -3031,16 +2968,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-stdmod")) > -1, "Module (widget-stdmod) not found in sorted array");
-        },
-     "Testing widget-uievents": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-uievents"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1, "Module (widget-uievents) not found in sorted array");
         },
      "Testing yql": function(data) {
             var loader = new Y.Loader({
