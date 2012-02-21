@@ -399,7 +399,7 @@
         isTypeOf : function (expectedType, actualValue, message){
             Y.Assert._increment();
             if (typeof actualValue != expectedType){
-                throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expected, typeof actualValue);
+                throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expectedType, typeof actualValue);
             }
         }
     };

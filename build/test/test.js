@@ -130,7 +130,6 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
-
         
     Y.namespace("Test");
     
@@ -209,7 +208,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -1219,7 +1217,6 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
-
     /**
      * @module test
      */
@@ -1621,7 +1618,7 @@ YUI.add('test', function(Y) {
         isTypeOf : function (expectedType, actualValue, message){
             Y.Assert._increment();
             if (typeof actualValue != expectedType){
-                throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expected, typeof actualValue);
+                throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expectedType, typeof actualValue);
             }
         }
     };
@@ -1915,7 +1912,6 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
-
     /**
      * @module test
      */
@@ -2240,7 +2236,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     /**
      * @module test
      */
@@ -2349,7 +2344,6 @@ YUI.add('test', function(Y) {
 
         }     
     };
-
     /**
      * @module test
      */
@@ -2437,7 +2431,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     
     Y.namespace("Test.Format");
     
@@ -2667,7 +2660,6 @@ YUI.add('test', function(Y) {
         return "1.." + results.total + "\n" + serializeToTAP(results);
     };
         
-
     /**
      * @module test
      */
@@ -2712,7 +2704,6 @@ YUI.add('test', function(Y) {
 
 
   
-
 
     Y.namespace("Test");
     
@@ -2876,7 +2867,6 @@ YUI.add('test', function(Y) {
         }
     
     };
-
     /**
      * @module test
      */
@@ -3101,7 +3091,6 @@ YUI.add('test', function(Y) {
      * @static
      */
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
-
 /*Stub for future compatibility*/
 if (typeof YUITest == "undefined" || !YUITest) {
     YUITest = {
@@ -3111,7 +3100,6 @@ if (typeof YUITest == "undefined" || !YUITest) {
         CoverageFormat: Y.Coverage.Format
     };
 }
-
 
 
 }, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
