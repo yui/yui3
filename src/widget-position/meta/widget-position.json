@@ -1,9 +1,8 @@
 {
-    "widget-autohide": {
+    "widget-position": {
         "requires": [
             "base-build",
-            "event-key",
-            "event-outside",
+            "node-screen",
             "widget"
         ]
     }
