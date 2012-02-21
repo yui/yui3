@@ -380,6 +380,10 @@ YUI.Env.parseUA = function(subUA) {
                 m = ua.match(/MSIE\s([^;]*)/);
                 if (m && m[1]) {
                     o.ie = numberify(m[1]);
+                    m = ua.match(/IEMobile[^;]*/);
+                    if (m) {
+                        o.mobile = m[0];
+                    }
                 } else { // not opera, webkit, or ie
                     m = ua.match(/Gecko\/([^\s]*)/);
                     if (m) {
