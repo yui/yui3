@@ -8,7 +8,7 @@
 
 /**
  * Provides the base class for the YUI Cache utility.
- * 
+ *
  * @submodule cache-base
  */
 var LANG = Y.Lang,
@@ -283,17 +283,17 @@ Y.extend(Cache, Y.Base, {
         var entries = this._entries,
             details = e.details[0],
             pos;
-        
+
         //passed an item, flush only that
         if(details && LANG.isValue(details.request)) {
             pos = this._position(details.request);
-            
+
             if(LANG.isValue(pos)) {
                 entries.splice(pos,1);
-                
+
                 Y.log("Flushed cache item " + Y.dump(details.request), "info", "cache");
             }
-        } 
+        }
         //no item, flush everything
         else {
             this._entries = [];
@@ -319,7 +319,7 @@ Y.extend(Cache, Y.Base, {
         }
         return false;
     },
-    
+
     /**
      * Returns position of a request in the entries array, otherwise null.
      *
@@ -333,7 +333,7 @@ Y.extend(Cache, Y.Base, {
         var entries = this._entries,
             length = entries.length,
             i = length-1;
-        
+
         if((this.get("max") === null) || this.get("max") > 0) {
             // Loop through each cached entry starting from the newest
             for(; i >= 0; i--) {
@@ -343,7 +343,7 @@ Y.extend(Cache, Y.Base, {
                 }
             }
         }
-        
+
         return null;
     },
 
@@ -387,7 +387,7 @@ Y.extend(Cache, Y.Base, {
     flush: function(request) {
         this.fire("flush", { request: (LANG.isValue(request) ? request : null) });
     },
-    
+
     /**
      * Retrieves cached object for given request, if available, and refreshes
      * entry in the cache. Returns null if there is no cache match.
@@ -405,12 +405,12 @@ Y.extend(Cache, Y.Base, {
 
         if((length > 0) && ((this.get("max") === null) || (this.get("max") > 0))) {
             this.fire("request", {request: request});
-            
+
             pos = this._position(request);
-            
+
             if(LANG.isValue(pos)) {
                 entry = entries[pos];
-                
+
                 this.fire("retrieve", {entry: entry});
 
                 // Refresh the position of the cache hit
