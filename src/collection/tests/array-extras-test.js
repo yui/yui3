@@ -1,4 +1,4 @@
-YUI.add('collection-test', function (Y) {
+YUI.add('array-extras-test', function (Y) {
 
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
@@ -308,5 +308,5 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 }, '3.5.0', {
-    requires: ['collection', 'test']
+    requires: ['array-extras', 'test']
 });
