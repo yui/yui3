@@ -1,9 +1,7 @@
 {
-    "widget-autohide": {
+    "widget-stdmod": {
         "requires": [
             "base-build",
-            "event-key",
-            "event-outside",
             "widget"
         ]
     }

@@ -1,9 +1,8 @@
 {
-    "widget-autohide": {
+    "widget-parent": {
         "requires": [
+            "arraylist",
             "base-build",
-            "event-key",
-            "event-outside",
             "widget"
         ]
     }

@@ -1,9 +1,10 @@
 {
-    "widget-modality": {
+    "widget-stack": {
         "requires": [
             "base-build",
-            "event-outside",
             "widget"
-        ]
+        ],
+
+        "skinnable": true
     }
 }

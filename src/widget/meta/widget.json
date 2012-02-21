@@ -1,96 +1,62 @@
 {
     "widget": {
-        "use": ["widget-base", "widget-htmlparser", "widget-uievents", "widget-skin"],
-        "plugins": {
-            "widget-child": {
-                "requires": [
-                    "base-build",
-                    "widget"
-                ]
-            }, 
-            "widget-parent": {
-                "requires": [
-                    "base-build",
-                    "arraylist",
-                    "widget"
-                ]
-            },
-            "widget-position": {
-                "requires": [
-                    "base-build",
-                    "node-screen",
-                    "widget"
-                ]
-            },
-            "widget-position-align": {
-                "requires": [
-                    "widget-position"
-                ]
-            },
-            "widget-position-constrain": {
-                "requires": [
-                    "widget-position"
-                ]
-            },
-            "widget-stack": {
-                "requires": [
-                    "base-build",
-                    "widget"
-                ],
-                "skinnable": true
-            },
-            "widget-stdmod": {
-                "requires": [
-                    "base-build",
-                    "widget"
-                ]
-            },
-            "widget-base-ie": {
-                "requires": [
-                    "widget-base"
-                ],
-                "condition": {
-                   "trigger": "widget-base",
-                   "ua": "ie"
-                }
-            }
-        },
+        "use": [
+            "widget-base",
+            "widget-htmlparser",
+            "widget-skin",
+            "widget-uievents"
+        ],
 
         "submodules": {
             "widget-base": {
                 "requires": [
                     "attribute",
-                    "event-focus", 
                     "base-base",
                     "base-pluginhost",
+                    "classnamemanager",
+                    "event-focus",
                     "node-base",
-                    "node-style",
-                    "classnamemanager"
+                    "node-style"
                 ],
-        	   "skinnable": true
+
+               "skinnable": true
             },
+
+            "widget-base-ie": {
+                "condition": {
+                   "trigger": "widget-base",
+                   "ua"     : "ie"
+                },
+
+                "requires": [
+                    "widget-base"
+                ]
+            },
+
             "widget-htmlparser": {
                 "requires": [
                     "widget-base"
                 ]
             },
-            "widget-uievents": {
+
+            "widget-locale": {
                 "requires": [
-                    "widget-base",
-                    "node-event-delegate"
+                    "widget-base"
                 ]
             },
+
+            "widget-uievents": {
+                "requires": [
+                    "node-event-delegate",
+                    "widget-base"
+                ]
+            },
+
             "widget-skin": {
                 "requires": [
                     "widget-base"
                 ]
-            } 
+            }
         }
-    },
-
-    "widget-locale" : {
-    	"requires" : [
-    	    "widget-base"
-    	]
     }
 }
