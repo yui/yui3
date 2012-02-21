@@ -190,6 +190,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                             values.className += ' ' + col.className;
                         }
 
+                        if (col._first) {
+                            values.className += ' ' + this.getClassName('first', 'header');
+                        }
+
                         if (col._id) {
                             values.className +=
                                 ' ' + this.getClassName('col', col._id);
@@ -458,6 +462,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                     stack.pop();
                 }
             }
+        }
+
+        for (i = 0, len = columns.length; i < len; i += col._rowspan) {
+            col = columns[i][0];
+
+            col._first = true;
         }
 
         return columns;

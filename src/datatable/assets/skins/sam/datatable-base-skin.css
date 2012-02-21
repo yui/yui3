@@ -25,7 +25,7 @@
     white-space: nowrap;
 }
 .yui3-skin-sam .yui3-datatable-cell:first-child,
-.yui3-skin-sam .yui3-datatable-header:first-child {
+.yui3-skin-sam .yui3-datatable-first-header {
     border-left-width: 0px;
 }
 
