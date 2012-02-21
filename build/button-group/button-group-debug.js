@@ -1,13 +1,9 @@
 YUI.add('button-group', function(Y) {
 
-/*global Y
-*/
-
 /**
 * A Widget to create groups of buttons
 *
-* @module buttongroup
-* @main ButtonGroup
+* @module button-group
 * @since 3.5.0
 */
 
@@ -15,11 +11,8 @@ var BOUNDING_BOX    = "boundingBox",
     CONTENT_BOX     = "contentBox",
     SELECTOR        = "button, input[type=button]",
     CLICK_EVENT     = "click",
-    CLASS_NAMES     = {
-        base: "yui3-button",
-        selected: "yui3-button-selected"
-    };
-    
+    CLASS_NAMES     = Y.ButtonCore.CLASS_NAMES;
+
 /**
 * Creates a ButtonGroup
 *
@@ -42,7 +35,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     * @private
     */
     initializer: function(){
-        
+        // TODO: Nothing? Then remove
     },
     
     /**
@@ -68,6 +61,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     bindUI: function() {
         var group = this,
             cb = group.get(CONTENT_BOX);
+            
         cb.delegate(CLICK_EVENT, group._handleClick, SELECTOR, group);
     },
     
@@ -78,6 +72,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     */
     getButtons: function() {
         var cb = this.get(CONTENT_BOX);
+        
         return cb.all(SELECTOR);
     },
     
@@ -90,7 +85,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
         var group = this,
             selected = [],
             buttons = group.getButtons(),
-            selectedClass = ButtonGroup.CLASS_NAMES.selected;
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
         
         buttons.each(function(node){
             if (node.hasClass(selectedClass)){
@@ -111,7 +106,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             value,
             values = [],
             selected = group.getSelectedButtons(),
-            selectedClass = ButtonGroup.CLASS_NAMES.selected;
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
             
         Y.Array.each(selected, function(node){
             if (node.hasClass(selectedClass)){
@@ -133,7 +128,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             clickedNode = e.target,
             group = this,
             type = group.get('type'),
-            selectedClass = ButtonGroup.CLASS_NAMES.selected,
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED,
             isSelected = clickedNode.hasClass(selectedClass);
             
         // TODO: Anything for 'push' groups?

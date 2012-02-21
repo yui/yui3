@@ -56,8 +56,7 @@ ButtonPlugin.createNode = function(node, config) {
     return Y.one(node).plug(Y.Plugin.Button, config);
 };
 
-Y.Plugin.Button = ButtonPlugin;
+Y.namespace('Plugin').Button = ButtonPlugin;
 
 
-
-}, '@VERSION@' ,{requires:['button-core', 'plugin', 'oop']});
+}, '@VERSION@' ,{requires:['button-core','cssbutton']});
