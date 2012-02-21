@@ -114,9 +114,7 @@
         <url>resize/tests/index.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>
-        <url>test/tests/arrayassert.html</url>
-        <url>test/tests/mock.html</url>
-        <url>test/tests/objectassert.html</url>
+        <url>test/tests/index.html</url>
         <url>text/tests/functional/text-accentfold.html</url>
         <url>text/tests/functional/text-wordbreak.html</url>
         <url>transition/tests/transition.html</url>
