@@ -278,24 +278,30 @@
         ]
     }, 
     "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbutton"
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "widget"
         ]
     }, 
-    "button-base": {
+    "button-core": {
         "requires": [
-            "classnamemanager", 
             "node", 
-            "widget"
+            "classnamemanager", 
+            "attribute-core"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base", 
-            "arraylist", 
-            "arraylist-add"
+            "button-plugin", 
+            "cssbutton", 
+            "widget"
+        ]
+    }, 
+    "button-plugin": {
+        "requires": [
+            "plugin", 
+            "button-core"
         ]
     }, 
     "cache": {

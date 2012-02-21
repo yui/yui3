@@ -1,11 +1,11 @@
 function ButtonPlugin(config) {
     if (!this._initNode) { // hand off to factory when called without new 
-        return ButtonPlugin.factory(config);
+        return ButtonPlugin.createNode(config);
     }
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
 
-Y.extend(ButtonPlugin, Y.ButtonBase, {
+Y.extend(ButtonPlugin, Y.ButtonCore, {
     // TODO: point to method (_uiSetLabel, etc) instead of getter/setter
     _afterNodeGet: function (name) {
         var ATTRS = this.constructor.ATTRS,
@@ -33,7 +33,7 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
         // TODO: Anything?
     }
 }, {
-    ATTRS: Y.merge(Y.ButtonBase.ATTRS),
+    ATTRS: Y.merge(Y.ButtonCore.ATTRS),
     NAME: 'buttonPlugin',
     NS: 'button'
 });
@@ -41,7 +41,7 @@ Y.extend(ButtonPlugin, Y.ButtonBase, {
 // (node)
 // (node, config)
 // (config)
-ButtonPlugin.factory = function(node, config) {
+ButtonPlugin.createNode = function(node, config) {
     
     if (node && !config) {
         if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
