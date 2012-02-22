@@ -58,6 +58,22 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     ITEM_TEMPLATE: '<li/>',
     LIST_TEMPLATE: '<ul/>',
 
+    // Widget automatically attaches delegated event handlers to everything in
+    // Y.Node.DOM_EVENTS, including synthetic events. Since Widget's event
+    // delegation won't work for the synthetic valuechange event, and since
+    // it creates a name collision between the backcompat "valueChange" synth
+    // event alias and AutoCompleteList's "valueChange" event for the "value"
+    // attr, this hack is necessary in order to prevent Widget from attaching
+    // valuechange handlers.
+    UI_EVENTS: (function () {
+        var uiEvents = Y.merge(Y.Node.DOM_EVENTS);
+
+        delete uiEvents.valuechange;
+        delete uiEvents.valueChange;
+
+        return uiEvents;
+    }()),
+
     // -- Lifecycle Prototype Methods ------------------------------------------
     initializer: function () {
         var inputNode = this.get('inputNode');
