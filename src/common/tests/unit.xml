@@ -110,6 +110,7 @@
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>queue-promote/tests/queue-promote.html</url>
+        <url>querystring/tests/querystring.html</url>
         <url>resize/tests/index.html</url>
         <url>scrollview/tests/scrollview-list-unit-test.html</url>
         <url>slider/tests/slider.html</url>
