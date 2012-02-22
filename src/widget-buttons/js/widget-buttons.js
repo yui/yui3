@@ -10,6 +10,8 @@ var YArray  = Y.Array,
     YLang   = Y.Lang,
     YObject = Y.Object,
 
+    ButtonPlugin = Y.Plugin.Button,
+
     getClassName = Y.ClassNameManager.getClassName,
     isArray      = YLang.isArray,
     isNumber     = YLang.isNumber,
@@ -17,10 +19,6 @@ var YArray  = Y.Array,
 
 // TODOs:
 //
-// * Call into `Y.Node.button()` _always_ even if we already have a Y.Node:
-//   * Make sure to blacklist config first.
-//   * Pass along `name` from config.
-//   * Set `name` and `default` as Node data.
 // * Styling to add spacing between buttons?
 // * Clean up other TODOs :)
 //
@@ -127,6 +125,18 @@ WidgetButtons.HTML_PARSER = {
     }
 };
 
+/**
+The list of button configuration properties which are specific to
+`WidgetButtons` and should not be passed to `Y.Plugin.Button.createNode()`.
+
+@property NON_BUTTON_NODE_CFG
+@type Array
+@static
+**/
+WidgetButtons.NON_BUTTON_NODE_CFG = [
+    'action', 'classNames', 'context','events', 'isDefault', 'section'
+];
+
 WidgetButtons.prototype = {
     // -- Public Properties ----------------------------------------------------
 
@@ -164,7 +174,6 @@ WidgetButtons.prototype = {
     @type String
     @default "<span />"
     **/
-    // TODO: Should this be documented as protected?
     BUTTONS_TEMPLATE: '<span />',
 
     /**
@@ -175,7 +184,6 @@ WidgetButtons.prototype = {
     @default Y.WidgetStdMod.FOOTER
     @since 3.5.0
     **/
-    // TODO: Should this be documented as protected?
     DEFAULT_BUTTONS_SECTION: Y.WidgetStdMod.FOOTER,
 
     // -- Lifecycle Methods ----------------------------------------------------
@@ -234,14 +242,16 @@ WidgetButtons.prototype = {
     **/
     addButton: function (button, section, index) {
         var buttons = this.get('buttons'),
-            config, sectionButtons;
+            sectionButtons;
 
         if (!Y.instanceOf(button, Y.Node)) {
-            config = this._mergeButtonConfig(button);
-            button = this._createButton(config);
-
-            section || (section = config.section);
+            button = this._mergeButtonConfig(button);
+            section || (section = button.section);
         }
+
+        // Always passes through `_createButton()` to make sure the Node is
+        // decorated as a button-Node.
+        button = this._createButton(button);
 
         section || (section = this.DEFAULT_BUTTONS_SECTION);
         sectionButtons = buttons[section] || (buttons[section] = []);
@@ -359,30 +369,49 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Returns a button node based on the specified configuration.
+    Returns a button-Node based on the specified `button` or configuration.
 
     TODO: Add note about it binding events, and all that jazz.
 
     @method _createButton
-    @param {Object} config Button configuration object.
+    @param {Node|Object} button Button Node or configuration object.
     @return {Node} The button Node.
     @protected
     **/
-    _createButton: function (config) {
-        var classNames = YArray(config.classNames),
-            context    = config.context || this,
-            events     = config.events || 'click',
-            label      = config.label || config.value,
-            button;
+    _createButton: function (button) {
+        var buttonConfig, config, i, len, nonButtonNodeCfg;
 
-        button = new Y.Button(Y.merge(config, {label: label})).getNode();
-        button.setData('name', config.name);
+        if (Y.instanceOf(button, Y.Node)) {
+            return button.plug(ButtonPlugin);
+        }
+
+        // Merge `button` config with defaults and back-compat.
+        config = Y.merge({
+            context: this,
+            events : 'click',
+            label  : button.value
+        }, button);
+
+        buttonConfig     = Y.merge(config);
+        nonButtonNodeCfg = WidgetButtons.NON_BUTTON_NODE_CFG;
+
+        // Remove all non button-Node config props.
+        for (i = 0, len = nonButtonNodeCfg.length; i < len; i += 1) {
+            delete buttonConfig[nonButtonNodeCfg[i]];
+        }
+
+        // Create the buton-Node using the button-Node-only config.
+        button = ButtonPlugin.createNode(buttonConfig);
+
+        // Add any CSS classnames to the button Node.
+        YArray.each(YArray(config.classNames), button.addClass, button);
+
+        // Supports all types of crazy configs for event subscriptions.
+        button.on(config.events, config.action, config.context);
+
+        // Tags the Node with the configured `name` and `isDefault` setting.
+        button.setData('name', this._getButtonName(config));
         button.setData('default', this._getButtonDefault(config));
-
-        YArray.each(classNames, button.addClass, button);
-
-        // Supports all types of crazy configurations for event subscriptions.
-        button.on(events, config.action, context);
 
         return button;
     },
@@ -599,18 +628,20 @@ WidgetButtons.prototype = {
         function processButtons(buttonConfigs, currentSection) {
             if (!isArray(buttonConfigs)) { return; }
 
-            var i, len, button, buttonConfig, section;
+            var i, len, button, section;
 
             for (i = 0, len = buttonConfigs.length; i < len; i += 1) {
                 button  = buttonConfigs[i];
                 section = currentSection;
 
                 if (!Y.instanceOf(button, Y.Node)) {
-                    buttonConfig = this._mergeButtonConfig(button);
-                    button       = this._createButton(buttonConfig);
-
-                    section || (section = buttonConfig.section);
+                    button = this._mergeButtonConfig(button);
+                    section || (section = button.section);
                 }
+
+                // Always passes through `_createButton()` to make sure the Node
+                // is decorated as a button-Node.
+                button = this._createButton(button);
 
                 // Use provided `section` or fallback to the default section.
                 section || (section = defSection);
