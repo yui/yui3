@@ -99,10 +99,9 @@ WidgetButtons.ATTRS = {
     @default {}
     **/
     buttons: {
-        cloneDefaultValue: 'shallow',
-        getter           : '_getButtons',
-        setter           : '_setButtons',
-        value            : {}
+        getter: '_getButtons',
+        setter: '_setButtons',
+        value : {}
     }
 };
 
@@ -120,8 +119,8 @@ WidgetButtons.CLASS_NAMES = {
 };
 
 WidgetButtons.HTML_PARSER = {
-    buttons: function () {
-        return this._parseButtons();
+    buttons: function (srcNode) {
+        return this._parseButtons(srcNode);
     }
 };
 
@@ -576,15 +575,15 @@ WidgetButtons.prototype = {
     `HTML_PARSER` implementation for the `buttons` attribute.
 
     @method _parseButtons
-    @return {Object} `buttons` config object parsed from this widget's DOM.
+    @param {Node} srcNode This widget's srcNode to search for buttons.
+    @return {Object} `buttons` Config object parsed from this widget's DOM.
     @protected
     **/
-    _parseButtons: function () {
-        var buttonsConfig     = {},
+    _parseButtons: function (srcNode) {
+        var buttonsConfig     = null,
             buttonClassName   = WidgetButtons.CLASS_NAMES.button,
             buttonsClassName  = WidgetButtons.CLASS_NAMES.buttons,
             buttonsSelector   = '.' + buttonsClassName + ' .' + buttonClassName,
-            contentBox        = this.get('contentBox'),
             sections          = ['header', 'body', 'footer'],
             sectionClassNames = Y.WidgetStdMod.SECTION_CLASS_NAMES,
             i, len, section, sectionNode, buttons, sectionButtons;
@@ -596,7 +595,7 @@ WidgetButtons.prototype = {
 
         for (i = 0, len = sections.length; i < len; i += 1) {
             section     = sections[i];
-            sectionNode = contentBox.one('.' + sectionClassNames[section]);
+            sectionNode = srcNode.one('.' + sectionClassNames[section]);
             buttons     = sectionNode && sectionNode.all(buttonsSelector);
 
             if (!buttons || buttons.isEmpty()) { continue; }
@@ -604,6 +603,7 @@ WidgetButtons.prototype = {
             sectionButtons = [];
             buttons.each(addButtonToSection);
 
+            buttonsConfig || (buttonsConfig = {});
             buttonsConfig[section] = sectionButtons;
         }
 
