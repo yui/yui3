@@ -53,6 +53,7 @@
         <url>collection/tests/array-extras.html</url>
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
+        <url>cookie/tests/cookie.html</url>
         <url>dataschema/tests/dataschema.html</url>
         <url>datasource/tests/datasource-arrayschema.html</url>
         <url>datasource/tests/datasource-cache.html</url>
