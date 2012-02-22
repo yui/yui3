@@ -670,6 +670,7 @@ WidgetButtons.prototype = {
     **/
     _syncUIButtons: function () {
         this._uiSetButtons(this.get('buttons'));
+        this._uiSetVisibleButtons(this.get('visible'));
     },
 
     /**
@@ -754,6 +755,23 @@ WidgetButtons.prototype = {
     },
 
     /**
+    Focuses this widget's default button if there is one and this widget is
+    visible.
+
+    @method _uiSetVisibleButtons
+    @param {Boolean} visible Whether this widget is visible.
+    @protected
+    **/
+    _uiSetVisibleButtons: function (visible) {
+        if (!visible) { return; }
+
+        var defaultButton = this.getDefaultButton();
+        if (defaultButton) {
+            defaultButton.focus();
+        }
+    },
+
+    /**
     Removes the specified `button` to the buttons map, and nulls-out the default
     button if it is currently the default button.
 
@@ -822,11 +840,7 @@ WidgetButtons.prototype = {
     @protected
     **/
     _afterVisibleChangeButtons: function (e) {
-        var defaultButton = this.getDefaultButton();
-
-        if (defaultButton && e.newVal) {
-            defaultButton.focus();
-        }
+        this._uiSetVisibleButtons(e.newVal);
     }
 };
 
