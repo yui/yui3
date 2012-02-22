@@ -123,6 +123,8 @@ for (i in Y.Test.Runner) {
     }
 };
 
+Y.Test.Runner.once = Y.Test.Runner.subscribe;
+
 Y.Test.Runner.disableLogging = function() {
     Y.Test.Runner._log = false;
 };
