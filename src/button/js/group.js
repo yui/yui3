@@ -14,7 +14,7 @@ var CONTENT_BOX = "contentBox",
 * Creates a ButtonGroup
 *
 * @class ButtonGroup
-* @extends Base
+* @extends Widget
 * @param config {Object} Configuration object
 * @constructor
 */
