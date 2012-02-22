@@ -1195,7 +1195,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         node.appendChild(containerNode);
         dimension = textField.get("offsetHeight");
         padding = dimension - h;
-        left = w + padding;
+        left = w + padding + 2;
         textField.setStyle("left", left + PX);
         containerNode.setStyle("height", dimension + PX);
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
@@ -1247,18 +1247,18 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     {
         var styles = { 
             padding: {
-                top: 5,
-                right: 5,
-                bottom: 5,
-                left: 5
+                top: 8,
+                right: 8,
+                bottom: 8,
+                left: 9
             },
-            gap: 5,
+            gap: 10,
             hAlign: "center",
-            vAlign: "middle",
+            vAlign: "top",
             marker: this._getPlotDefaults(),
             item: {
-                hSpacing: 4,
-                vSpacing: 4,
+                hSpacing: 10,
+                vSpacing: 5,
                 label: {
                     color:"#808080",
                     fontSize:"85%"
