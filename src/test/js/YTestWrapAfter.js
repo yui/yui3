@@ -134,7 +134,7 @@ Y.Test.Runner.enableLogging = function() {
     Y.Test.Runner._log = true;
 };
 
-Y.Test.Runner.ignoreEmpty = true;
+Y.Test.Runner._ignoreEmpty = true;
 Y.Test.Runner._log = true;
 
 Y.Test.Runner.on = Y.Test.Runner.attach;
