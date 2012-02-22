@@ -301,7 +301,8 @@
     "button-plugin": {
         "requires": [
             "plugin", 
-            "button-core"
+            "button-core", 
+            "cssbutton"
         ]
     }, 
     "cache": {
