@@ -103,6 +103,7 @@
         <url>history/tests/functional/history-hash.html</url>
         -->
         <url>history/tests/functional/history-html5.html</url>
+        <url>imageloader/tests/imageloader.html</url>
         <url>intl/tests/intl.html</url>
         <url>json/tests/json.html</url>
         <!--url>jsonp/tests/jsonp.html</url>
