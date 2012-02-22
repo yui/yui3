@@ -701,6 +701,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_updateTransform: function()
 	{
 		var node = this.node,
+            offset,
             key,
 			transform,
 			transformOrigin,
@@ -760,7 +761,8 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
+            offset = (this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px").toString();
+            this._skew.offset = offset;
             this._skew.origin = tx + ", " + ty;
         }
         if(this._type != "path")
@@ -770,7 +772,23 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         node.style.left = x + "px";
         node.style.top =  y + "px";
     },
-	
+
+    /**
+     * Normalizes the skew offset values between -32767 and 32767.
+     *
+     * @method _getSkewOffsetValue
+     * @param {Number} val The value to normalize
+     * @return Number
+     * @private
+     */
+    _getSkewOffsetValue: function(val)
+    {
+        var sign = Y.MatrixUtil.sign(val),
+            absVal = Math.abs(Math.round(val));
+        val = Math.min(absVal, 32767) * sign;
+        return val;
+    },
+
 	/**
 	 * Storage for translateX
 	 *
@@ -951,7 +969,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_createGraphicNode: function(type)
 	{
 		type = type || this._type;
-		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
+		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="zoom:1;behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
 	},
 
 	/**
