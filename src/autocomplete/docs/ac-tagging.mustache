@@ -53,7 +53,6 @@ YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', f
   var inputNode = Y.one('#ac-input');
 
   inputNode.plug(Y.Plugin.AutoComplete, {
-    activateFirstItem: true,
     allowTrailingDelimiter: true,
     minQueryLength: 0,
     queryDelay: 0,
@@ -65,11 +64,7 @@ YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', f
     // that only displays tags that haven't already been selected.
     resultFilters: ['startsWith', function (query, results) {
       // Split the current input value into an array based on comma delimiters.
-      var selected = inputNode.ac.get('value').split(/\s*,\s*/);
-
-      // Pop the last item off the array, since it represents the current query
-      // and we don't want to filter it out.
-      selected.pop();
+      var selected = inputNode.get('value').split(/\s*,\s*/);
 
       // Convert the array into a hash for faster lookups.
       selected = Y.Array.hash(selected);
@@ -90,8 +85,12 @@ YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', f
 
   // After a tag is selected, send an empty query to update the list of tags.
   inputNode.ac.after('select', function () {
-    inputNode.ac.sendRequest('');
-    inputNode.ac.show();
+    // Send the query on the next tick to ensure that the input node's blur
+    // handler doesn't hide the result list right after we show it.
+    setTimeout(function () {
+      inputNode.ac.sendRequest('');
+      inputNode.ac.show();
+    }, 1);
   });
 });
 ```
