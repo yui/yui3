@@ -50,6 +50,21 @@
             },
             "editor-para": {
                 "requires": [
+                    "editor-para-base"
+                ]
+            },
+            "editor-para-ie": {
+                "condition": {
+                    "trigger": "editor-para",
+                    "ua": "ie",
+                    "when": "instead"
+                },
+                "requires": [
+                    "editor-para-base"
+                ]
+            },
+            "editor-para-base": {
+                "requires": [
                     "editor-base"
                 ]
             },
