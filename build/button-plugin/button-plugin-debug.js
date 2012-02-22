@@ -1,7 +1,7 @@
 YUI.add('button-plugin', function(Y) {
 
 function ButtonPlugin(config) {
-    if (!this._initNode) { // hand off to factory when called without new 
+    if (!this._initNode) { // hand off to factory when called without new
         return ButtonPlugin.createNode(config);
     }
     ButtonPlugin.superclass.constructor.apply(this, arguments);
@@ -15,7 +15,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
         if (fn) {
             return new Y.Do.AlterReturn('get ' + name, fn.call(this));
         }
-    },  
+    },
 
     _afterNodeSet: function (name, val) {
         var ATTRS = this.constructor.ATTRS,
@@ -31,6 +31,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
         Y.Do.after(this._afterNodeGet, node, 'get', this);
         Y.Do.after(this._afterNodeSet, node, 'set', this);
     },
+
     destroy: function(){
         // TODO: Anything?
     }
@@ -44,7 +45,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
 // (node, config)
 // (config)
 ButtonPlugin.createNode = function(node, config) {
-    
+
     if (node && !config) {
         if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
             config = node;
@@ -56,8 +57,7 @@ ButtonPlugin.createNode = function(node, config) {
     return Y.one(node).plug(Y.Plugin.Button, config);
 };
 
-Y.Plugin.Button = ButtonPlugin;
+Y.namespace('Plugin').Button = ButtonPlugin;
 
 
-
-}, '@VERSION@' ,{requires:['button-core', 'plugin', 'oop']});
+}, '@VERSION@' ,{requires:['button-core', 'cssbutton', 'node-pluginhost']});

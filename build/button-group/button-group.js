@@ -1,20 +1,17 @@
 YUI.add('button-group', function(Y) {
 
 /**
-* Allows Y.Button instances to be grouped together
+* A Widget to create groups of buttons
 *
-* @module buttongroup
-* @main ButtonGroup
+* @module button-group
 * @since 3.5.0
 */
 
-var BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox",
-    BUTTON_CLASS = "yui3-button",  // TODO: Pull from ButtonCore
-    BUTTON_SELECTED_CLASS = BUTTON_CLASS + "-selected",
-    SELECTOR = "button, input[type=button]",
-    CLICK_EVENT = "click";
-    
+var CONTENT_BOX = "contentBox",
+    SELECTOR    = "button, input[type=button]",
+    CLICK_EVENT = "click",
+    CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
+
 /**
 * Creates a ButtonGroup
 *
@@ -29,7 +26,7 @@ function ButtonGroup() {
 
 /* ButtonGroup extends Widget */
 Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
-    
+
     /**
     * @method initializer
     * @description Internal init() handler.
@@ -37,91 +34,116 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     * @private
     */
     initializer: function(){
-        this._cb = this.get(CONTENT_BOX);
+        // TODO: Nothing? Then remove
     },
-    
+
+    /**
+     * renderUI implementation
+     *
+     * Creates a visual representation of the widget based on existing parameters.
+     * @method renderUI
+     */
     renderUI: function() {
-        
-        var ButtonFactory = Y.Plugin.Button.createNode;
-        var buttonNodes = this.getButtons();
-        buttonNodes.each(function(node){
-            new ButtonFactory(node);
-        });
+        this.getButtons().plug(Y.Plugin.Button);
     },
-    
+
+    /**
+     * bindUI implementation
+     *
+     * Hooks up events for the widget
+     * @method bindUI
+     */
     bindUI: function() {
-        this._cb.delegate(CLICK_EVENT, this.handleClick, SELECTOR, this);
+        var group = this,
+            cb = group.get(CONTENT_BOX);
+
+        cb.delegate(CLICK_EVENT, group._handleClick, SELECTOR, group);
     },
-    
-    handleClick: function(e){
-        var bg = this;
-        var node = e.target;
-        var type = bg.get('type');
-        
-        if (type === 'push') {
-            // TODO: Nothing?  Then why have a push group.
-        }
-        else if (type === 'checkbox') {
-            var isSelected = node.hasClass(BUTTON_SELECTED_CLASS);
-            node.toggleClass(BUTTON_SELECTED_CLASS, !isSelected);
-            bg.fire('selectionChange');
-        }
-        else if (type === 'radio') {
-            bg.getButtons().removeClass(BUTTON_SELECTED_CLASS);
-            node.addClass(BUTTON_SELECTED_CLASS);
-            bg.fire('selectionChange');
-        }
-        
-        e.stopPropagation(); // Todo: Maybe?
-    },
-    
+
     /**
     * @method getButtons
     * @description Returns all Y.Buttons instances assigned to this group
     * @public
     */
     getButtons: function() {
-        return this.get(CONTENT_BOX).all(SELECTOR);
+        var cb = this.get(CONTENT_BOX);
+
+        return cb.all(SELECTOR);
     },
-    
+
     /**
     * @method getSelectedButtons
     * @description Returns all Y.Buttons instances that are selected
     * @public
     */
     getSelectedButtons: function() {
-        var buttons = this.getButtons();
-        var selected = [];
-        
+        var group = this,
+            selected = [],
+            buttons = group.getButtons(),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+
         buttons.each(function(node){
-            if (node.hasClass(BUTTON_SELECTED_CLASS)){
-                selected.push(node);                   
+            if (node.hasClass(selectedClass)){
+                selected.push(node);
             }
         });
-        
+
         return selected;
     },
-    
+
     /**
     * @method getSelectedValues
     * @description Returns the values of all Y.Button instances that are selected
     * @public
     */
     getSelectedValues: function() {
-        var selected = this.getSelectedButtons();
-        var values = [];
-        
+        var group = this,
+            value,
+            values = [],
+            selected = group.getSelectedButtons(),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+
         Y.Array.each(selected, function(node){
-            if (node.hasClass(BUTTON_SELECTED_CLASS)){
-                values.push(node.getContent());                   
+            if (node.hasClass(selectedClass)){
+                value = node.getContent();
+                values.push(value);
             }
         });
-        
+
         return values;
+    },
+
+    /**
+    * @method _handleClick
+    * @description A delegated click handler for when any button is clicked in the content box
+    * @private
+    */
+    _handleClick: function(e){
+        var buttons,
+            clickedNode = e.target,
+            group = this,
+            type = group.get('type'),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED,
+            isSelected = clickedNode.hasClass(selectedClass);
+
+        // TODO: Anything for 'push' groups?
+
+        if (type === 'checkbox') {
+            clickedNode.toggleClass(selectedClass, !isSelected);
+            group.fire('selectionChange');  // Payload? Attribute?
+        }
+        else if (type === 'radio') {
+            if (!isSelected) {
+                buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
+                buttons.removeClass(selectedClass);
+                clickedNode.addClass(selectedClass);
+                group.fire('selectionChange');  // Payload? Attribute?
+            }
+        }
     }
-    
+
 }, {
-    // Y.ScrollView static properties
+    // Y.ButtonGroup static properties
 
     /**
      * The identity of the widget.
@@ -135,7 +157,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      */
     NAME: 'buttongroup',
 
-    /** 
+    /**
     * Static property used to define the default attribute configuration of
     * the Widget.
     *
@@ -149,8 +171,17 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             writeOnce: 'initOnly',
             value: 'radio'
         }
-    }
+    },
+
+    /**
+     * List of class names used in the ButtonGroup's DOM
+     *
+     * @property CLASS_NAMES
+     * @type Object
+     * @static
+     */
+    CLASS_NAMES: CLASS_NAMES
 });
 
 
-}, '@VERSION@' ,{requires:['button-core','widget']});
+}, '@VERSION@' ,{requires:['button-plugin', 'widget']});

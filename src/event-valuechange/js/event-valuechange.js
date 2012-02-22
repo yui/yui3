@@ -82,6 +82,7 @@ VC = {
     **/
     _poll: function (node, options) {
         var domNode = node._node, // performance cheat; getValue() is a big hit when polling
+            event   = options.e,
             newVal  = domNode && domNode.value,
             vcData  = node._data && node._data[DATA_KEY], // another perf cheat
             facade, prevVal;
@@ -98,9 +99,11 @@ VC = {
             vcData.prevVal = newVal;
 
             facade = {
-                _event : options.e,
-                newVal : newVal,
-                prevVal: prevVal
+                _event       : event,
+                currentTarget: (event && event.currentTarget) || node,
+                newVal       : newVal,
+                prevVal      : prevVal,
+                target       : (event && event.target) || node
             };
 
             Y.Object.each(vcData.notifiers, function (notifier) {
@@ -124,7 +127,7 @@ VC = {
         // The node may have been destroyed, so check that it still exists
         // before trying to get its data. Otherwise an error will occur.
         if (!node._node) {
-            Y.log('_stopPolling: node disappeared', 'info', 'event-valuechange');
+            Y.log('_stopPolling: node disappeared', 'warn', 'event-valuechange');
             return;
         }
 
@@ -161,6 +164,11 @@ VC = {
     @static
     **/
     _startPolling: function (node, notifier, options) {
+        if (!node.test('input,textarea')) {
+            Y.log('_startPolling: aborting poll on #' + node.get('id') + ' -- not an input or textarea', 'warn', 'event-valuechange');
+            return;
+        }
+
         var vcData = node.getData(DATA_KEY);
 
         if (!vcData) {
@@ -342,7 +350,7 @@ VC = {
     @static
     **/
     _onSubscribe: function (node, sub, notifier, filter) {
-        var _valuechange, callbacks;
+        var _valuechange, callbacks, nodes;
 
         callbacks = {
             blur     : VC._onBlur,
@@ -363,7 +371,7 @@ VC = {
             // Add a function to the notifier that we can use to find all
             // nodes that pass the delegate filter.
             _valuechange.getNodes = function () {
-                return node.all('*').filter(filter);
+                return node.all('input,textarea').filter(filter);
             };
 
             // Store the initial values for each descendant of the container
@@ -378,6 +386,11 @@ VC = {
                 notifier);
         } else {
             // This is a normal (non-delegated) event subscription.
+
+            if (!node.test('input,textarea')) {
+                return;
+            }
+
             if (!node.getData(DATA_KEY)) {
                 node.setData(DATA_KEY, {prevVal: node.get(VALUE)});
             }
@@ -399,7 +412,7 @@ VC = {
     _onUnsubscribe: function (node, subscription, notifier) {
         var _valuechange = notifier._valuechange;
 
-        notifier._handles.detach();
+        notifier._handles && notifier._handles.detach();
 
         if (_valuechange.delegated) {
             _valuechange.getNodes().each(function (child) {

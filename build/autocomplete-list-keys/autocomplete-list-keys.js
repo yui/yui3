@@ -16,9 +16,7 @@ var KEY_DOWN  = 40,
     KEY_UP    = 38;
 
 function ListKeys() {
-    Y.before(this._unbindKeys, this, 'destructor');
     Y.before(this._bindKeys, this, 'bindUI');
-
     this._initKeys();
 }
 
@@ -36,8 +34,6 @@ ListKeys.prototype = {
         var keys        = {},
             keysVisible = {};
 
-        this._keyEvents = [];
-
         // Register keyboard command handlers. _keys contains handlers that will
         // always be called; _keysVisible contains handlers that will only be
         // called when the list is visible.
@@ -52,6 +48,10 @@ ListKeys.prototype = {
         this._keysVisible = keysVisible;
     },
 
+    destructor: function () {
+        this._unbindKeys();
+    },
+
     /**
     Binds keyboard events.
 
@@ -59,8 +59,7 @@ ListKeys.prototype = {
     @protected
     **/
     _bindKeys: function () {
-        this._keyEvents.push(this._inputNode.on('keydown', this._onInputKey,
-            this));
+        this._keyEvents = this._inputNode.on('keydown', this._onInputKey, this);
     },
 
     /**
@@ -70,9 +69,8 @@ ListKeys.prototype = {
     @protected
     **/
     _unbindKeys: function () {
-        while (this._keyEvents.length) {
-            this._keyEvents.pop().detach();
-        }
+        this._keyEvents && this._keyEvents.detach();
+        this._keyEvents = null;
     },
 
     // -- Protected Methods ----------------------------------------------------

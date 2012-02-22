@@ -7395,22 +7395,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "button-core": {
         "requires": [
-            "node", 
+            "attribute-core", 
             "classnamemanager", 
-            "attribute-core"
+            "node-base"
         ]
     }, 
     "button-group": {
         "requires": [
             "button-plugin", 
-            "cssbutton", 
             "widget"
         ]
     }, 
     "button-plugin": {
         "requires": [
-            "plugin", 
-            "button-core"
+            "button-core", 
+            "cssbutton", 
+            "node-pluginhost"
         ]
     }, 
     "cache": {
@@ -9369,7 +9369,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1014eebb4fc74cd6738d60b9511218f8';
+YUI.Env[Y.version].md5 = 'eb65e014369a8f8d7bea9e4ef4e486ed';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -286,22 +286,22 @@
     }, 
     "button-core": {
         "requires": [
-            "node", 
+            "attribute-core", 
             "classnamemanager", 
-            "attribute-core"
+            "node-base"
         ]
     }, 
     "button-group": {
         "requires": [
             "button-plugin", 
-            "cssbutton", 
             "widget"
         ]
     }, 
     "button-plugin": {
         "requires": [
-            "plugin", 
-            "button-core"
+            "button-core", 
+            "cssbutton", 
+            "node-pluginhost"
         ]
     }, 
     "cache": {

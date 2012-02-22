@@ -10,6 +10,7 @@
     "button-plugin": {
         "requires": [
             "button-core",
+            "cssbutton",
             "node-pluginhost"
         ]
     },
@@ -25,7 +26,6 @@
     "button-group": {
         "requires": [
             "button-plugin",
-            "cssbutton",
             "widget"
         ]
     },

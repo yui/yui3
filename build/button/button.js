@@ -13,7 +13,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
     CONTENT_TEMPLATE: null,
 
     bindUI: function() {
-        var button = this;
         this.after('labelChange', this._afterLabelChange);
         this.after('disabledChange', this._afterDisabledChange);
         this.after('selectedChange', this._afterSelectedChange);
@@ -38,10 +37,10 @@ Y.extend(ButtonWidget, Y.Widget,  {
         this._uiSetLabel(this.get('label'));
         this._uiSetDisabled(this.get('disabled'));
         this._uiSetSelected(this.get('selected'));
-    },
+    }
 
 }, {
-    NAME: 'button',
+    NAME: 'button'
 });
 
 ButtonWidget.ATTRS = {
@@ -112,4 +111,4 @@ Y.Button = ButtonWidget;
 Y.ToggleButton = ToggleButton;
 
 
-}, '@VERSION@' ,{requires:['button-core', 'widget']});
+}, '@VERSION@' ,{requires:['button-core', 'cssbutton', 'widget']});
