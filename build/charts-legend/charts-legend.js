@@ -849,7 +849,7 @@ Y.PieChart = PieChartLegend;
  * @class ChartLegend
  * @module charts
  * @submodule charts-legend
- *
+ * @extends Widget
  */
 Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     /**
@@ -1026,7 +1026,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     weight: strokeWeight
                 };
                 displayName = chart.getSeriesItems(series, i).category.value;
-                item = this.getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
+                item = this._getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1053,7 +1053,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this.getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1167,7 +1167,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      *      <dt>text</dt><dd></dd>
      *  </dl>
      *
-     * @method getLegendItem
+     * @method _getLegendItem
      * @param {Node} shapeProps Reference to the `node` attribute.
      * @param {String | Class} shapeClass The type of shape
      * @param {Object} fill Properties for the shape's fill
@@ -1177,8 +1177,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Number} height Total height of the legend item
      * @param {HTML | String} text Text for the legendItem
      * @return Object
+     * @private
      */
-    getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
+    _getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
     {
         var containerNode = Y.one(DOCUMENT.createElement("div")),
             textField = Y.one(DOCUMENT.createElement("span")),
