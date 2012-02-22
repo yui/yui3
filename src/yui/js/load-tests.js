@@ -44,16 +44,12 @@ add('load', '2', {
 }, 
     "trigger": "graphics"
 });
-// history-hash-ie
+// editor-para-ie
 add('load', '3', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
+    "name": "editor-para-ie", 
+    "trigger": "editor-para", 
+    "ua": "ie", 
+    "when": "instead"
 });
 // graphics-vml-default
 add('load', '4', {
@@ -78,11 +74,16 @@ add('load', '5', {
 }, 
     "trigger": "graphics"
 });
-// widget-base-ie
+// history-hash-ie
 add('load', '6', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
 });
 // transition-timer
 add('load', '7', {
@@ -142,8 +143,14 @@ add('load', '9', {
 }, 
     "trigger": "selector"
 });
-// event-base-ie
+// widget-base-ie
 add('load', '10', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// event-base-ie
+add('load', '11', {
     "name": "event-base-ie", 
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
@@ -152,7 +159,7 @@ add('load', '10', {
     "trigger": "node-base"
 });
 // dd-gestures
-add('load', '11', {
+add('load', '12', {
     "name": "dd-gestures", 
     "test": function(Y) {
     return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
@@ -160,13 +167,13 @@ add('load', '11', {
     "trigger": "dd-drag"
 });
 // scrollview-base-ie
-add('load', '12', {
+add('load', '13', {
     "name": "scrollview-base-ie", 
     "trigger": "scrollview-base", 
     "ua": "ie"
 });
 // graphics-canvas
-add('load', '13', {
+add('load', '14', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -178,7 +185,7 @@ add('load', '13', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '14', {
+add('load', '15', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,

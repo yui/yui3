@@ -13,7 +13,9 @@
             <ant antfile="build.frame.xml" target="@{target}"/>
             <ant antfile="build.link-base.xml" target="@{target}"/>
             <ant antfile="build.lists.xml" target="@{target}"/>
+            <ant antfile="build.para-base.xml" target="@{target}"/>
             <ant antfile="build.para.xml" target="@{target}"/>
+            <ant antfile="build.para-ie.xml" target="@{target}"/>
             <ant antfile="build.selection.xml" target="@{target}"/>
             <ant antfile="build.tab.xml" target="@{target}"/>
         </sequential>

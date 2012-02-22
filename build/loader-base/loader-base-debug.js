@@ -853,9 +853,12 @@ Y.Loader.prototype = {
                 self.require('yui-log', 'dump');
             }
         }
+        
 
         if (self.lang) {
-            self.require('intl-base', 'intl');
+            //Removed this so that when Loader is invoked
+            //it doesn't request what it doesn't need.
+            //self.require('intl-base', 'intl');
         }
 
     },
@@ -1585,7 +1588,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style['display'] === 'none') {
+        if (style && style['display'] === 'none') {
             ret = true;
         }
 

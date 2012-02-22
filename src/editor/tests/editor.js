@@ -304,11 +304,21 @@ YUI.add('editor-tests', function(Y) {
             editor.plug(Y.Plugin.EditorPara);
             Y.Assert.isInstanceOf(Y.Plugin.EditorPara, editor.editorPara, 'EditorPara was not plugged..');
             editor.render('#editor');
-            editor.set('content', '<br>');
+            editor.set('content', '<br><b>Test This</b>');
+
+            var inst = editor.getInstance();
 
             fireKey(editor, 13);
             fireKey(editor, 8);
             editor.editorPara._fixFirstPara();
+            editor.editorPara._onNodeChange({
+                changedNode: inst.one('b'),
+                changedType: 'enter-up'
+            });
+            editor.editorPara._onNodeChange({
+                changedNode: inst.one('br'),
+                changedType: 'enter'
+            });
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
             
@@ -370,29 +380,29 @@ YUI.add('editor-tests', function(Y) {
             editor.plug(Y.Plugin.EditorBidi);
             editor.render('#editor');
             Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
-            editor.focus(function() {
-                var inst = editor.getInstance();
-                var sel = new inst.EditorSelection();
-                var b = inst.one('b');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
-                sel.selectNode(b, true, true);
-                editor.execCommand('bidi');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
+            editor.focus(true);
 
-                sel.selectNode(b, true, true);
-                editor.execCommand('bidi');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
+            var inst = editor.getInstance();
+            var sel = new inst.EditorSelection();
+            var b = inst.one('b');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
+            sel.selectNode(b, true, true);
+            editor.execCommand('bidi');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
 
-                sel.selectNode(b, true, true);
-                editor.execCommand('bidi');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
-                
-                editor.editorBidi._afterMouseUp();
-                editor.editorBidi._afterNodeChange({
-                    changedType: 'end-up'
-                });
+            sel.selectNode(b, true, true);
+            editor.execCommand('bidi');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
 
+            sel.selectNode(b, true, true);
+            editor.execCommand('bidi');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
+            
+            editor.editorBidi._afterMouseUp();
+            editor.editorBidi._afterNodeChange({
+                changedType: 'end-up'
             });
+
         },
         _should: {
             fail: {

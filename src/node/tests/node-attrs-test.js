@@ -91,7 +91,7 @@ YUI.add('node-attrs-test', function(Y) {
         },
 
         'should return matching childNode length': function() {
-            ArrayAssert.itemsAreEqual(this._testNode._node.childNodes.length,
+            Assert.areEqual(this._testNode._node.childNodes.length,
                     this._testNode.get('childNodes').get('length').length);
         },
 

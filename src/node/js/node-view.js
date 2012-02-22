@@ -40,8 +40,20 @@ Y.mix(Y_Node.prototype, {
         return Y.DOM.getStyle(this._node, 'display') === 'none';
     },
 
+    /**
+     * Displays or hides the node.
+     * If the "transition" module is loaded, toggleView optionally
+     * animates the toggling of the node using either the default
+     * transition effect ('fadeIn'), or the given named effect.
+     * @method toggleView
+     * @for Node
+     * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
+     * @param {Function} [callback] An optional function to run after the transition completes.
+     * @chainable
+     */
     toggleView: function(on, callback) {
         this._toggleView.apply(this, arguments);
+        return this;
     },
 
     _toggleView: function(on, callback) {
@@ -122,5 +134,15 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'hide',
 
+    /**
+     * Displays or hides each node.
+     * If the "transition" module is loaded, toggleView optionally
+     * animates the toggling of the nodes using either the default
+     * transition effect ('fadeIn'), or the given named effect.
+     * @method toggleView
+     * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
+     * @param {Function} [callback] An optional function to run after the transition completes.
+     * @chainable
+     */
     'toggleView'
 ]);
