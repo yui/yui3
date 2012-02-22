@@ -7,7 +7,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
         this._host = this.get('boundingBox');
     },
 
-    BOUNDING_TEMPLATE: Y.ButtonBase.prototype.TEMPLATE,
+    BOUNDING_TEMPLATE: Y.ButtonCore.prototype.TEMPLATE,
     CONTENT_TEMPLATE: null,
 
     bindUI: function() {
@@ -44,7 +44,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
 ButtonWidget.ATTRS = {
     label: {
-        value: Y.ButtonBase.ATTRS.label.value
+        value: Y.ButtonCore.ATTRS.label.value
     },
 
     disabled: {
@@ -71,20 +71,15 @@ ButtonWidget.HTML_PARSER = {
     }
 };
 
-Y.mix(ButtonWidget.prototype, Y.ButtonBase.prototype);
-
-Y.Button = ButtonWidget;
-
-
-
+Y.mix(ButtonWidget.prototype, Y.ButtonCore.prototype);
 
 
 function ToggleButton(config) {
     ButtonWidget.superclass.constructor.apply(this, arguments);
 }
 
-// TODO: move to ButtonBase subclass to enable toggle plugin, widget, etc.
-Y.extend(ToggleButton, Y.Button,  {
+// TODO: move to ButtonCore subclass to enable toggle plugin, widget, etc.
+Y.extend(ToggleButton, ButtonWidget,  {
     trigger: 'click',
 
     select: function() {
@@ -110,4 +105,6 @@ Y.extend(ToggleButton, Y.Button,  {
     NAME: 'toggleButton'
 });
 
+// Export
+Y.Button = ButtonWidget;
 Y.ToggleButton = ToggleButton;

@@ -217,7 +217,7 @@ Y.mix(Mutable.prototype, {
                 this.get('autoSync'),
             models, model, i, len, args;
 
-        if (this.data) {
+        if (data && this.data) {
             models = this.data.add.apply(this.data, arguments);
 
             if (sync) {

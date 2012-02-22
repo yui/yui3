@@ -1,3 +1,5 @@
+YUI.add('button-core', function(Y) {
+
 /**
 * Provides an interface for working with button-like DOM nodes
 *
@@ -159,4 +161,7 @@ Button.CLASS_NAMES = {
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
 
 // Export Button
-Y.ButtonBase = Button;
+Y.ButtonCore = Button;
+
+
+}, '@VERSION@' ,{requires:['node']});

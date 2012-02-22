@@ -5,16 +5,14 @@
 <body>
 {{>overlay-tooltip-html}}
 <script>
-YUI().use('overlay', 'transition', function (Y) {
+YUI().use('overlay', 'event', 'widget-anim', function (Y) {
 
-    var tip = Y.one('#tooltip'),
-        tipIsShowing = false,
-        tipOffset = 20, // tooltip's distance from cursor
+    var fadeInStarted = false,
         
         // array for text to be displayed in tooltips
         tipText = [
             {'name': 'wrench', 'text': "Avoid dropping on toe."},
-            {'name': 'calipers', 'text': 'Dial calipers - very accurate!'},
+            {'name': 'calipers', 'text': 'Dial calipers: +- .001,<br>human hair .004'},
             {'name': 'drill', 'text': 'Variable-speed and cordless too.'},
             {'name': 'ohm', 'text': 'Never test microwaves with a volt-ohm meter.'},
             {'name': 'level', 'text': 'Unreliable in zero gravity conditions.'},

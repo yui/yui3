@@ -14,14 +14,14 @@ var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
-        'collection-test': {
-            fullpath: 'collection-test.js',
+        'array-extras-test': {
+            fullpath: 'array-extras-test.js',
             requires: [
-                'collection', 'test'
+                'array-extras', 'test'
             ]
         }
     }
-}).use('collection-test', 'test-console', function (Y) {
+}).use('array-extras-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
     Y.Test.Runner.run();
 });

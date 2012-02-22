@@ -28,7 +28,8 @@
         <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
-        <url>collection/tests/collection.html</url>
+        <url>collection/tests/array-invoke.html</url>
+        <url>collection/tests/array-extras.html</url>
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
         <url>dataschema/tests/dataschema.html</url>
@@ -115,12 +116,8 @@
         <url>stylesheet/tests/stylesheet.html</url>
         -->
         <url>substitute/tests/substitute.html</url>
-        <url>test/tests/arrayassert.html</url>
-        <url>test/tests/mock.html</url>
-        <url>test/tests/objectassert.html</url>
-        <!--
-        <url>test/tests/testformat.html</url>
-        -->
+        <url>test/tests/index.html</url>
+
         <!-- Not included in automated tests because it triggers intentional
              failures which would be flagged as build failures.
         <url>test-console/tests/test-console.html</url>

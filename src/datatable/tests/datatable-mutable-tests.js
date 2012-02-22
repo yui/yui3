@@ -737,36 +737,747 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "addRow",
 
-    "": function () {
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: [ 'a', 'b', 'c' ],
+            data: [{ a: 1, b: 1, c: 1 }]
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "addRow() should do nothing": function () {
+        var table = this.table,
+            count = table.data.size();
+
+        table.after('*:add', function () {
+            Y.Assert.fail("ModelList add event triggered");
+        });
+
+        table.addRow();
+
+        Y.Assert.areSame(count, table.data.size());
+    },
+
+    "addRow(data) should create a new Model in the data": function () {
+        var table = this.table,
+            count = table.data.size();
+
+        table.addRow({ a: 2, b: 2, c: 2 });
+
+        Y.Assert.areSame(count + 1, table.data.size());
+    },
+
+    "addRow(data) should fire the data's add event": function () {
+        var table = this.table,
+            beforeFired, afterFired;
+
+        table.on('*:add', function () {
+            beforeFired = true;
+        });
+        table.after('*:add', function () {
+            afterFired = true;
+        });
+
+        table.addRow({ a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "addRow(data, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('create', action);
+            syncCalled = true;
+        };
+
+        table.addRow({ a: 2, b: 2, c: 2 }, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "addRow(data) with autoSync:true should trigger Model sync": function () {
+        var table = this.table,
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('create', action);
+            syncCalled = true;
+        };
+
+        table.addRow({ a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "addRow(...) should be chainable": function () {
+        Y.Assert.areSame(this.table, this.table.addRow({ a: 2, b: 2, c: 2 }));
     }
-
-
 }));
 
 suite.add(new Y.Test.Case({
     name: "addRows",
 
-    "": function () {
-    }
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: [ 'a', 'b', 'c' ],
+            data: [{ a: 1, b: 1, c: 1 }]
+        });
+    },
 
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "addRows() should do nothing": function () {
+        var table = this.table,
+            count = table.data.size();
+
+        table.after('*:add', function () {
+            Y.Assert.fail("ModelList add event triggered");
+        });
+
+        table.addRows();
+
+        Y.Assert.areSame(count, table.data.size());
+    },
+
+    "addRows([data]) should create a new Model in the data": function () {
+        var table = this.table,
+            count = table.data.size();
+
+        table.addRows([
+            { a: 2, b: 2, c: 2 },
+            { a: 3, b: 3, c: 3 }
+        ]);
+
+        Y.Assert.areSame(count + 2, table.data.size());
+    },
+
+    "addRows([data]) should fire the data's add event": function () {
+        var table = this.table,
+            beforeFired, afterFired;
+
+        table.on('*:add', function () {
+            beforeFired = true;
+        });
+        table.after('*:add', function () {
+            afterFired = true;
+        });
+
+        table.addRows([
+            { a: 2, b: 2, c: 2 },
+            { a: 3, b: 3, c: 3 }
+        ]);
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "addRows([data], { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('create', action);
+            syncCalled = true;
+        };
+
+        table.addRows([
+            { a: 2, b: 2, c: 2 },
+            { a: 3, b: 3, c: 3 }
+        ], { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "addRows([data]) with autoSync:true should trigger Model sync": function () {
+        var table = this.table,
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('create', action);
+            syncCalled = true;
+        };
+
+        table.addRows([
+            { a: 2, b: 2, c: 2 },
+            { a: 3, b: 3, c: 3 }
+        ]);
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "addRows(...) should be chainable": function () {
+        Y.Assert.areSame(this.table, this.table.addRows([
+            { a: 2, b: 2, c: 2 },
+            { a: 3, b: 3, c: 3 }
+        ]));
+    }
 
 }));
 
 suite.add(new Y.Test.Case({
     name: "modifyRow",
 
-    "": function () {
-    }
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: [ 'a', 'b', 'c' ],
+            data: [{ id: 'item1', a: 1, b: 1, c: 1 }]
+        });
+    },
 
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "modifyRow() should do nothing": function () {
+        var table = this.table,
+            count = table.data.size();
+
+        table.after('*:change', function () {
+            Y.Assert.fail("ModelList change event triggered");
+        });
+
+        table.modifyRow();
+
+        Y.Assert.areSame(count, table.data.size());
+    },
+
+    "modifyRow(index, data) should change the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(0);
+
+        table.modifyRow(0, { a: 2, b: 2, c: 2 });
+
+        Y.Assert.areSame(2, model.get('a'));
+        Y.Assert.areSame(2, model.get('b'));
+        Y.Assert.areSame(2, model.get('c'));
+    },
+
+    "modifyRow(id, data) should change the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(0);
+
+        table.modifyRow(model.get('id'), { a: 2, b: 2, c: 2 });
+
+        Y.Assert.areSame(2, model.get('a'));
+        Y.Assert.areSame(2, model.get('b'));
+        Y.Assert.areSame(2, model.get('c'));
+    },
+
+    "modifyRow(clientId, data) should change the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(0);
+
+        table.modifyRow(model.get('clientId'), { a: 2, b: 2, c: 2 });
+
+        Y.Assert.areSame(2, model.get('a'));
+        Y.Assert.areSame(2, model.get('b'));
+        Y.Assert.areSame(2, model.get('c'));
+    },
+
+    "modifyRow(model, data) should change the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(0);
+
+        table.modifyRow(model, { a: 2, b: 2, c: 2 });
+
+        Y.Assert.areSame(2, model.get('a'));
+        Y.Assert.areSame(2, model.get('b'));
+        Y.Assert.areSame(2, model.get('c'));
+    },
+
+    "modifyRow(index, data) should fire the model's change event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:change', function () {
+            beforeFired = true;
+        });
+        table.after('*:change', function () {
+            afterFired = true;
+        });
+
+        table.modifyRow(0, { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "modifyRow(id, data) should fire the model's change event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:change', function () {
+            beforeFired = true;
+        });
+        table.after('*:change', function () {
+            afterFired = true;
+        });
+
+        table.modifyRow(model.get('id'), { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "modifyRow(clientId, data) should fire the model's model event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:change', function () {
+            beforeFired = true;
+        });
+        table.after('*:change', function () {
+            afterFired = true;
+        });
+
+        table.modifyRow(model.get('clientId'), { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "modifyRow(model, data) should fire the model's change event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:change', function () {
+            beforeFired = true;
+        });
+        table.after('*:change', function () {
+            afterFired = true;
+        });
+
+        table.modifyRow(model, { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "modifyRow(index, data, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(0, { a: 2, b: 2, c: 2 }, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(id, data, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(model.get('id'), { a: 2, b: 2, c: 2 }, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(clientId, data, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(model.get('clientId'), { a: 2, b: 2, c: 2 }, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(model, data, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(model, { a: 2, b: 2, c: 2 }, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(index, data) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(0, { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(id, data) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(model.get('id'), { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(clientId, data) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(model.get('clientId'), { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(model, data) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('update', action);
+            syncCalled = true;
+        };
+
+        table.modifyRow(model, { a: 2, b: 2, c: 2 });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "modifyRow(...) should be chainable": function () {
+        Y.Assert.areSame(this.table, this.table.modifyRow(0, { a: 2 }));
+    }
 
 }));
 
 suite.add(new Y.Test.Case({
     name: "removeRow",
 
-    "": function () {
-    }
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: [ 'a', 'b', 'c' ],
+            data: [
+                { id: 'item1', a: 1, b: 1, c: 1 },
+                { id: 'item2', a: 2, b: 2, c: 2 }
+            ]
+        });
+    },
 
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "removeRow() should do nothing": function () {
+        var table = this.table,
+            count = table.data.size();
+
+        table.after('*:delete', function () {
+            Y.Assert.fail("ModelList delete event triggered");
+        });
+
+        table.removeRow();
+
+        Y.Assert.areSame(count, table.data.size());
+    },
+
+    "removeRow(index) should delete the Model": function () {
+        var table = this.table,
+            model = table.data.item(1),
+            count = table.data.size();
+
+        table.removeRow(0);
+
+        Y.Assert.areSame(count - 1, table.data.size());
+        Y.Assert.areSame(model, table.data.item(0));
+    },
+
+    "removeRow(id) should delete the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(1),
+            count = table.data.size();
+
+        table.removeRow(table.data.item(0).get('id'));
+
+        Y.Assert.areSame(count - 1, table.data.size());
+        Y.Assert.areSame(model, table.data.item(0));
+    },
+
+    "removeRow(clientId) should delete the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(1),
+            count = table.data.size();
+
+        table.removeRow(table.data.item(0).get('clientId'));
+
+        Y.Assert.areSame(count - 1, table.data.size());
+        Y.Assert.areSame(model, table.data.item(0));
+    },
+
+    "removeRow(model) should delete the Model attributes": function () {
+        var table = this.table,
+            model = table.data.item(1),
+            count = table.data.size();
+
+        table.removeRow(table.data.item(0));
+
+        Y.Assert.areSame(count - 1, table.data.size());
+        Y.Assert.areSame(model, table.data.item(0));
+    },
+
+    "removeRow(index) should fire the data's remove event": function () {
+        var table = this.table,
+            beforeFired, afterFired;
+
+        table.on('*:remove', function () {
+            beforeFired = true;
+        });
+        table.after('*:remove', function () {
+            afterFired = true;
+        });
+
+        table.removeRow(0);
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "removeRow(id, data) should fire the data's remove event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:remove', function () {
+            beforeFired = true;
+        });
+        table.after('*:remove', function () {
+            afterFired = true;
+        });
+
+        table.removeRow(model.get('id'));
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "removeRow(clientId, data) should fire the data's remove event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:remove', function () {
+            beforeFired = true;
+        });
+        table.after('*:remove', function () {
+            afterFired = true;
+        });
+
+        table.removeRow(model.get('clientId'));
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "removeRow(model, data) should fire the data's remove event": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            beforeFired, afterFired;
+
+        table.on('*:remove', function () {
+            beforeFired = true;
+        });
+        table.after('*:remove', function () {
+            afterFired = true;
+        });
+
+        table.removeRow(model);
+
+        Y.Assert.isTrue(beforeFired);
+        Y.Assert.isTrue(afterFired);
+    },
+
+    "removeRow(index, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(0, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(id, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(model.get('id'), { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(clientId, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(model.get('clientId'), { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(model, { sync: true }) should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(model, { sync: true });
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(index) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(0);
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(id) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(model.get('id'));
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(clientId) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(model.get('clientId'));
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(model) with autoSync: true should trigger Model sync": function () {
+        var table = this.table,
+            model = table.data.item(0),
+            syncCalled;
+
+        table.set('autoSync', true);
+
+        table.data.model.prototype.sync = function (action) {
+            Y.Assert.areSame('delete', action);
+            syncCalled = true;
+        };
+
+        table.removeRow(model);
+
+        Y.Assert.isTrue(syncCalled);
+    },
+
+    "removeRow(...) should be chainable": function () {
+        Y.Assert.areSame(this.table, this.table.removeRow(0, { a: 2 }));
+    }
 
 }));
 

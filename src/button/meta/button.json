@@ -1,28 +1,32 @@
 {
+    "button-core": {
+        "requires": [
+            "node",
+            "classnamemanager",
+            "attribute-core"
+        ]
+    },
+    "button-plugin": {
+        "requires": [
+            "plugin",
+            "button-core"
+        ]
+    },
     "button": {
-        "use": [
-             "button-base",
-             "button-group",
-             "cssbutton"
-         ],
-        "submodules": {
-            "button-base": {
-                "requires": [
-                    "classnamemanager",
-                    "node",
-                    "widget"
-                ]
-            }, 
-            "button-group": {
-                "requires": [
-                    "button-base",
-                    "arraylist",
-                    "arraylist-add"
-                ]
-            }, 
-            "cssbutton": {
-                "type": "css"
-            }
-        }
+        "requires": [
+            "button-core",
+            "cssbutton",
+            "widget"
+        ]
+    },
+    "button-group": {
+        "requires": [
+            "button-plugin",
+            "cssbutton",
+            "widget"
+        ]
+    },
+    "cssbutton": {
+        "type": "css"
     }
 }

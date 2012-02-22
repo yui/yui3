@@ -2095,27 +2095,32 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
 };
 
 /**
- * <p>
- * Returns a string representing the type of the item passed in.
- * </p>
- *
- * <p>
- * Known issues:
- * </p>
- *
- * <ul>
- *   <li>
- *     <code>typeof HTMLElementCollection</code> returns function in Safari, but
- *     <code>Y.type()</code> reports object, which could be a good thing --
- *     but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
- *   </li>
- * </ul>
- *
- * @method type
- * @param o the item to test.
- * @return {string} the detected type.
- * @static
- */
+Returns one of the following strings, representing the type of the item passed
+in:
+
+ * "array"
+ * "boolean"
+ * "date"
+ * "error"
+ * "function"
+ * "null"
+ * "number"
+ * "object"
+ * "regexp"
+ * "string"
+ * "undefined"
+
+Known issues:
+
+ * `typeof HTMLElementCollection` returns function in Safari, but
+    `Y.Lang.type()` reports "object", which could be a good thing --
+    but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
+
+@method type
+@param o the item to test.
+@return {string} the detected type.
+@static
+**/
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
@@ -3543,7 +3548,6 @@ YUI.Env.aliases = {
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
@@ -3573,7 +3577,7 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"]
+    "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
 
 
@@ -7383,24 +7387,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbutton"
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "widget"
         ]
     }, 
-    "button-base": {
+    "button-core": {
         "requires": [
-            "classnamemanager", 
             "node", 
-            "widget"
+            "classnamemanager", 
+            "attribute-core"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base", 
-            "arraylist", 
-            "arraylist-add"
+            "button-plugin", 
+            "cssbutton", 
+            "widget"
+        ]
+    }, 
+    "button-plugin": {
+        "requires": [
+            "plugin", 
+            "button-core"
         ]
     }, 
     "cache": {
@@ -9213,35 +9223,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "widget-base", 
             "widget-htmlparser", 
-            "widget-uievents", 
-            "widget-skin"
+            "widget-skin", 
+            "widget-uievents"
         ]
     }, 
     "widget-anim": {
         "requires": [
-            "plugin", 
             "anim-base", 
+            "plugin", 
             "widget"
         ]
     }, 
     "widget-autohide": {
         "requires": [
-            "widget", 
-            "event-outside", 
             "base-build", 
-            "event-key"
-        ], 
-        "skinnable": false
+            "event-key", 
+            "event-outside", 
+            "widget"
+        ]
     }, 
     "widget-base": {
         "requires": [
             "attribute", 
-            "event-focus", 
             "base-base", 
             "base-pluginhost", 
+            "classnamemanager", 
+            "event-focus", 
             "node-base", 
-            "node-style", 
-            "classnamemanager"
+            "node-style"
         ], 
         "skinnable": true
     }, 
@@ -9282,16 +9291,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-modality": {
         "requires": [
-            "widget", 
+            "base-build", 
             "event-outside", 
-            "base-build"
-        ], 
-        "skinnable": false
+            "widget"
+        ]
     }, 
     "widget-parent": {
         "requires": [
-            "base-build", 
             "arraylist", 
+            "base-build", 
             "widget"
         ]
     }, 
@@ -9332,8 +9340,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-uievents": {
         "requires": [
-            "widget-base", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "widget-base"
         ]
     }, 
     "yql": {
@@ -9361,7 +9369,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '776f7db7fa82261c1120ee760ffa226f';
+YUI.Env[Y.version].md5 = '1014eebb4fc74cd6738d60b9511218f8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

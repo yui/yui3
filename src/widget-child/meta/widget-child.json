@@ -1,0 +1,8 @@
+{
+    "widget-child": {
+        "requires": [
+            "base-build",
+            "widget"
+        ]
+    }
+}

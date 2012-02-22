@@ -49,7 +49,8 @@
         <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
-        <url>collection/tests/collection.html</url>
+        <url>collection/tests/array-invoke.html</url>
+        <url>collection/tests/array-extras.html</url>
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
         <url>dataschema/tests/dataschema.html</url>
@@ -65,6 +66,7 @@
         <url>datasource/tests/datasource-xmlschema.html</url>
         <url>datatable/tests/datatable-base.html</url>
         <url>datatable/tests/datatable-column-widths.html</url>
+        <url>datatable/tests/datatable-mutable.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
@@ -114,9 +116,7 @@
         <url>resize/tests/index.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>
-        <url>test/tests/arrayassert.html</url>
-        <url>test/tests/mock.html</url>
-        <url>test/tests/objectassert.html</url>
+        <url>test/tests/index.html</url>
         <url>text/tests/functional/text-accentfold.html</url>
         <url>text/tests/functional/text-wordbreak.html</url>
         <url>transition/tests/transition.html</url>
