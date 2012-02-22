@@ -17,10 +17,10 @@ var YUITest = {
 
 Y.namespace('Test');
 
+
+//Using internal YUI methods here
 YUITest.Object = Y.Object;
-
 YUITest.Array = Y.Array;
-
 YUITest.Util = {
     mix: Y.mix,
     JSON: Y.JSON
@@ -3544,8 +3544,9 @@ YUITest.Wait = function (segment, delay) {
     this.delay = (typeof delay == "number" ? delay : 0);        
 };
 
-Y.Test = YUITest;
 
+//Setting up our aliases..
+Y.Test = YUITest;
 Y.Object.each(YUITest, function(item, name) {
     var name = name.replace('Test', '');
     Y.Test[name] = item;
@@ -3652,8 +3653,10 @@ var logEvent = function(event) {
             message = "Unexpected event " + event.type;
             message = "info";
     }
-
-    Y.log(message, messageType, "TestRunner");
+    
+    if (Y.Test.Runner._log) {
+        Y.log(message, messageType, "TestRunner");
+    }
 }
 
 var i, name;
@@ -3665,7 +3668,17 @@ for (i in Y.Test.Runner) {
     }
 };
 
+Y.Test.Runner.disableLogging = function() {
+    Y.Test.Runner._log = false;
+};
+
+Y.Test.Runner.enableLogging = function() {
+    Y.Test.Runner._log = true;
+};
+
 Y.Test.Runner.ignoreEmpty = true;
+Y.Test.Runner._log = true;
+
 Y.Test.Runner.on = Y.Test.Runner.attach;
 
 if (Y.config.win) {
