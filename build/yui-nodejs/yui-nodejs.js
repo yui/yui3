@@ -7410,7 +7410,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "button-plugin": {
         "requires": [
             "plugin", 
-            "button-core"
+            "button-core", 
+            "cssbutton"
         ]
     }, 
     "cache": {
@@ -9369,7 +9370,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1014eebb4fc74cd6738d60b9511218f8';
+YUI.Env[Y.version].md5 = '19480f13cadf93dd0950dd32c59df561';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

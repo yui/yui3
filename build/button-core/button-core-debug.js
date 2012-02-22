@@ -3,8 +3,7 @@ YUI.add('button-core', function(Y) {
 /**
 * Provides an interface for working with button-like DOM nodes
 *
-* @module button
-* @main button
+* @module button-core
 * @since 3.5.0
 */
 
@@ -39,56 +38,7 @@ Button.prototype = {
     TEMPLATE: '<button/>',
 
     constructor: Button,
-
-    enable: function() {
-        this.set('disabled', false);
-    },
-
-    disable: function() {
-        this.set('disabled', true);
-    },
     
-    _initAttributes: function(config) {
-        config.label = config.label || config.host.getContent(); //Todo: Is this the right place?
-        Y.AttributeCore.call(this, Button.ATTRS, config);
-    },
-
-    _initNode: function(config) {
-        if (config.srcNode) {
-            this._host = Y.one(config.srcNode);
-        } else {
-            this._host = Y.Node.create(this.TEMPLATE);
-        }
-    },
-
-    _uiSetLabel: function(value) {
-        var node = this._host,
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
-
-        node.set(attr, value);
-        return value;
-    },
-
-    _uiSetDisabled: function(value) {
-        var node = this.getNode();
-        node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
-        node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
-        return value;
-    },
-
-    _uiGetLabel: function() {
-        var node = this._host,
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
-            value;
-
-        value = node.get(attr);
-        return value;
-    },
-
-    getNode: function() {
-        return this._host;
-    },
-
     /**
     * @method initializer
     * @description Internal init() handler.
@@ -98,7 +48,32 @@ Button.prototype = {
     initializer: function(config) {
         this._initNode(config);
         this._initAttributes(config);
-        this.renderUI(config);
+        this._renderUI(config);
+    },
+    
+    /**
+    * @method _initNode
+    * @description 
+    * @param config {Object} Config object.
+    * @private
+    */
+    _initNode: function(config) {
+        if (config.srcNode) {
+            this._host = Y.one(config.srcNode);
+        } else {
+            this._host = Y.Node.create(this.TEMPLATE);
+        }
+    },
+    
+    /**
+    * @method _initAttributes
+    * @description 
+    * @param config {Object} Config object.
+    * @private
+    */
+    _initAttributes: function(config) {
+        config.label = config.label || config.host.getContent(); //Todo: Is this the right place?
+        Y.AttributeCore.call(this, Button.ATTRS, config);
     },
     
     /**
@@ -106,12 +81,79 @@ Button.prototype = {
     * @description Renders any UI/DOM elements for Button instances
     * @private
     */
-    renderUI: function(config) {
-        var node = this._host;
-        
+    _renderUI: function(config) {
+        var node = this.getNode();
+
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
-        node.set('role', 'button');
+        
+        node.set('role', 'button'); //TODO: Only if it actually needs role='button'
+    },
+    
+    /**
+    * @method enable
+    * @description 
+    * @public
+    */
+    enable: function() {
+        this.set('disabled', false);
+    },
+
+    /**
+    * @method disable
+    * @description 
+    * @public
+    */
+    disable: function() {
+        this.set('disabled', true);
+    },
+    
+    /**
+    * @method getNode
+    * @description 
+    * @public
+    */
+    getNode: function() {
+        return this._host;
+    },
+
+    /**
+    * @method _uiSetLabel
+    * @description 
+    * @private
+    */
+    _uiSetLabel: function(value) {
+        var node = this.getNode(),
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
+
+        node.set(attr, value);
+        return value;
+    },
+
+    /**
+    * @method _uiSetDisabled
+    * @description 
+    * @private
+    */
+    _uiSetDisabled: function(value) {
+        var node = this.getNode();
+        node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
+        node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+        return value;
+    },
+
+    /**
+    * @method _uiGetLabel
+    * @description 
+    * @private
+    */
+    _uiGetLabel: function() {
+        var node = this.getNode(),
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
+            value;
+
+        value = node.get(attr);
+        return value;
     }
 };
 
@@ -155,7 +197,8 @@ Button.NAME = "button";
 */
 Button.CLASS_NAMES = {
     BUTTON  : makeClassName(),
-    DISABLED: makeClassName('disabled')
+    DISABLED: makeClassName('disabled'),
+    SELECTED: makeClassName('selected')
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);

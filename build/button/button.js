@@ -112,4 +112,4 @@ Y.Button = ButtonWidget;
 Y.ToggleButton = ToggleButton;
 
 
-}, '@VERSION@' ,{requires:['button-core', 'widget']});
+}, '@VERSION@' ,{requires:['button-core','widget']});
