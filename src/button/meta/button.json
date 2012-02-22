@@ -1,17 +1,19 @@
 {
     "button-core": {
         "requires": [
-            "node",
+            "attribute-core",
             "classnamemanager",
-            "attribute-core"
+            "node-base"
         ]
     },
+
     "button-plugin": {
         "requires": [
-            "plugin",
-            "button-core"
+            "button-core",
+            "node-pluginhost"
         ]
     },
+
     "button": {
         "requires": [
             "button-core",
@@ -19,6 +21,7 @@
             "widget"
         ]
     },
+
     "button-group": {
         "requires": [
             "button-plugin",
@@ -26,6 +29,7 @@
             "widget"
         ]
     },
+
     "cssbutton": {
         "type": "css"
     }
