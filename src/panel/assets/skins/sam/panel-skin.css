@@ -38,8 +38,27 @@
     TODO: Add support for IE and W3C gradients
     */
 }
-.yui3-skin-sam .yui3-panel-content .yui3-widget-hd .yui3-widget-button-wrapper {
+.yui3-skin-sam .yui3-panel-content .yui3-widget-hd .yui3-widget-buttons {
     padding: 8px;
+}
+.yui3-skin-sam .yui3-panel-content .yui3-widget-hd .yui3-button-close {
+    text-indent: -9999px;
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
+    padding: 0;
+    vertical-align: top;
+    background-color: transparent;
+    background-image: url(sprite_icons.gif);
+    background-repeat: no-repeat;
+    background-position: 1px 1px;
+    border: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
 .yui3-skin-sam .yui3-panel-content .yui3-widget-bd {
     padding: 10px;

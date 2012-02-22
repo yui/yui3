@@ -4,8 +4,6 @@
             "button-plugin",
             "cssbutton",
             "widget-stdmod"
-        ],
-
-        "skinnable": true
+        ]
     }
 }

@@ -149,21 +149,7 @@ WidgetButtons.prototype = {
     @default {}
     @since 3.5.0
     **/
-    // TODO: Should this move to Y.Panel, or just CSS styling of it?
-    BUTTONS: {
-        close: {
-            action: function () {
-                this.hide();
-            },
-
-            classNames: [
-                getClassName('button', 'close')
-            ],
-
-            label  : 'Close',
-            section: Y.WidgetStdMod.HEADER
-        }
-    },
+    BUTTONS: {},
 
     /**
     Template which wraps all buttons of a section. This is useful for styling,

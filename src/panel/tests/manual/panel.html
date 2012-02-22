@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Panel Manual Test</title>
+
+    <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" />
+    <link rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css" />
+    <link rel="stylesheet" href="../../../../build/cssbase/base-min.css" />
+</head>
+<body class="yui3-skin-night">
+
+    <h1>Panel Manual Test</h1>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({
+        filter: 'raw',
+        skin  : 'night'
+    }).use('panel', 'transition', function (Y) {
+
+        var panel = new Y.Panel({
+            headerContent: 'Foo Panel',
+            bodyContent  : '<p>Some Panel content.</p>',
+            centered     : true,
+            width        : 251,
+
+            buttons: {
+                header: ['close'],
+                footer: [{label: 'foo'}]
+            }
+        });
+
+        panel.render().align();
+
+    });
+    </script>
+</body>
+</html>
