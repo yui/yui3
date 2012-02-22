@@ -101,11 +101,44 @@ YUI.add('general-tests', function(Y) {
         name: 'Suite/Case Tests',
         'test: suite with no name': function() {
             var s = new Y.Test.Suite();
-            Assert.isTrue((s.name.indexOf('testSuiteyui') === 0));
+            Assert.isTrue((s.name.indexOf('testSuite') === 0));
         },
         'test: case with no name': function() {
             var s = new Y.Test.Case();
-            Assert.isTrue((s.name.indexOf('testCaseyui') === 0));
+            Assert.isTrue((s.name.indexOf('testCase') === 0));
+        },
+        'test: callback': function() {
+            var fn = this.callback();
+        },
+        'test: assert': function() {
+            this.assert(true, 'Assert');
+        },
+        'test: assert no condition': function() {
+            this.assert();
+        },
+        'test: assert.fail': function() {
+            this.fail('Failed');
+        },
+        _should: {
+            fail: {
+                'test: assert.fail': true,
+                'test: assert no condition': true
+            }
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'EventTarget',
+        'test: attach': function() {
+            var tcase = Y.Test.Runner;
+            var noop = function() {};
+            var count = Y.Object.keys(tcase._handlers).length;
+            tcase.subscribe('foobar', noop);
+            var count2 = Y.Object.keys(tcase._handlers).length;
+            Assert.areEqual(count + 1, count2);
+            tcase.unsubscribe('foobar', noop);
+            var count3 = tcase._handlers.foobar.length;
+            Assert.areEqual(0, count3);
         }
     }));
 
@@ -232,13 +265,6 @@ YUI.add('general-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: 'Runner Tests',
-        'test: logging': function() {
-            Assert.isTrue(Y.Test.Runner._log);
-            Y.Test.Runner.disableLogging();
-            Assert.isFalse(Y.Test.Runner._log);
-            Y.Test.Runner.enableLogging();
-            Assert.isTrue(Y.Test.Runner._log);
-        },
         'test: set name': function() {
             var setName = 'YUI Test Suite',
                 name = Y.Test.Runner.getName();
