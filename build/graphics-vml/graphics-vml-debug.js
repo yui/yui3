@@ -30,6 +30,14 @@ function VMLDrawing() {}
  */
 VMLDrawing.prototype = {
     /**
+     * Used as value for rounding coordinates.
+     *
+     * @property _rounder
+     * @private
+     */
+    _rounder: 1000,
+
+    /**
      * Current x position of the drqwing.
      *
      * @property _currentX
@@ -63,9 +71,9 @@ VMLDrawing.prototype = {
             loX,
             hiY,
             loY;
-        x = Math.round(x);
-        y = Math.round(y);
-        this._path += ' c ' + Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y;
+        x = this._roundForCoordSize(x);
+        y = this._roundForCoordSize(y);
+        this._path += ' c ' + this._roundForCoordSize(cp1x) + ", " + this._roundForCoordSize(cp1y) + ", " + this._roundForCoordSize(cp2x) + ", " + this._roundForCoordSize(cp2y) + ", " + x + ", " + y;
         this._currentX = x;
         this._currentY = y;
         hiX = Math.max(x, Math.max(cp1x, cp2x));
@@ -155,7 +163,7 @@ VMLDrawing.prototype = {
         endAngle *= 65535;
         this._drawingComplete = false;
         this._trackSize(x + circum, y + circum);
-        this._path += " m " + (x + circum) + " " + (y + radius) + " ae " + (x + radius) + " " + (y + radius) + " " + radius + " " + radius + " " + startAngle + " " + endAngle;
+        this._path += " m " + this._roundForCoordSize(x + circum) + " " + this._roundForCoordSize(y + radius) + " ae " + this._roundForCoordSize(x + radius) + " " + this._roundForCoordSize(y + radius) + " " + this._roundForCoordSize(radius) + " " + this._roundForCoordSize(radius) + " " + startAngle + " " + endAngle;
         return this;
     },
     
@@ -170,13 +178,17 @@ VMLDrawing.prototype = {
      * @protected
      */
 	drawEllipse: function(x, y, w, h) {
+        this._trackSize(x + w, y + h);
         var startAngle = 0,
             endAngle = 360,
-            radius = w * 0.5,
-            yRadius = h * 0.5;
+            radius = this._roundForCoordSize(w * 0.5),
+            yRadius = this._roundForCoordSize(h * 0.5);
+        x = this._roundForCoordSize(x);
+        y = this._roundForCoordSize(y);
+        w = this._roundForCoordSize(w);
+        h = this._roundForCoordSize(h);
         endAngle *= 65535;
         this._drawingComplete = false;
-        this._trackSize(x + w, y + h);
         this._path += " m " + (x + w) + " " + (y + yRadius) + " ae " + (x + radius) + " " + (y + yRadius) + " " + radius + " " + yRadius + " " + startAngle + " " + endAngle;
         return this;
     },
@@ -218,23 +230,24 @@ VMLDrawing.prototype = {
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
         var diameter = radius * 2;
-        x = Math.round(x);
-        y = Math.round(y);
+        x = this._roundForCoordSize(x);
+        y = this._roundForCoordSize(y);
         yRadius = yRadius || radius;
-        radius = Math.round(radius);
-        yRadius = Math.round(yRadius);
+        radius = this._roundForCoordSize(radius);
+        yRadius = this._roundForCoordSize(yRadius);
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
-        startAngle *= -65535;
-        arc *= 65536;
+        startAngle = Math.round(startAngle * -65535);
+        arc = Math.round(arc * 65536);
         this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
         this._trackSize(diameter, diameter); 
         this._currentX = x;
         this._currentY = y;
         return this;
     },
+
 
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
@@ -257,7 +270,7 @@ VMLDrawing.prototype = {
         }
         this._path += ' l ';
         for (i = 0; i < len; ++i) {
-            this._path += ' ' + Math.round(args[i][0]) + ', ' + Math.round(args[i][1]);
+            this._path += " " + this._roundForCoordSize(args[i][0]) + ',' + this._roundForCoordSize(args[i][1]);
             this._trackSize.apply(this, args[i]);
             this._currentX = args[i][0];
             this._currentY = args[i][1];
@@ -277,7 +290,7 @@ VMLDrawing.prototype = {
         {
             this._path = "";
         }
-        this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
+        this._path += ' m ' + this._roundForCoordSize(x) + ', ' + this._roundForCoordSize(y);
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
@@ -317,13 +330,27 @@ VMLDrawing.prototype = {
         }
         if(!isNaN(w) && !isNaN(h))
         {
-            node.coordSize =  w + ', ' + h;
+            node.coordSize =  (w * this._rounder) + ', ' + (h * this._rounder);
+            node.coordOrigin = this._left + ", " + this._top;
             node.style.position = "absolute";
-            node.style.width = w + "px";
+            node.style.width = w  + "px";
             node.style.height = h + "px";
         }
         this._path = path;
         this._updateTransform();
+    },
+
+    /**
+     * Rounds coordiates data to map correctly to the coordsize for a shape.
+     *
+     * @method _roundForCoordSize
+     * @param {Number} val The value to be rounded.
+     * @return Number
+     * @protected
+     */
+    _roundForCoordSize: function(val)
+    {
+        return Math.round(val * this._rounder);
     },
 
     /**
@@ -1106,6 +1133,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_updateTransform: function()
 	{
 		var node = this.node,
+            offset,
             key,
 			transform,
 			transformOrigin,
@@ -1165,7 +1193,8 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
+            offset = (this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px").toString();
+            this._skew.offset = offset;
             this._skew.origin = tx + ", " + ty;
         }
         if(this._type != "path")
@@ -1175,7 +1204,23 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         node.style.left = x + "px";
         node.style.top =  y + "px";
     },
-	
+
+    /**
+     * Normalizes the skew offset values between -32767 and 32767.
+     *
+     * @method _getSkewOffsetValue
+     * @param {Number} val The value to normalize
+     * @return Number
+     * @private
+     */
+    _getSkewOffsetValue: function(val)
+    {
+        var sign = Y.MatrixUtil.sign(val),
+            absVal = Math.abs(Math.round(val));
+        val = Math.min(absVal, 32767) * sign;
+        return val;
+    },
+
 	/**
 	 * Storage for translateX
 	 *
@@ -1356,7 +1401,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_createGraphicNode: function(type)
 	{
 		type = type || this._type;
-		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
+		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="zoom:1;behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
 	},
 
 	/**
