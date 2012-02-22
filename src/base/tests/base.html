@@ -293,6 +293,34 @@ YUI({
             Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
         },
 
+        "test:nonAttrsCfg" : function() {
+            
+            function Ext1() {}
+            Ext1._NON_ATTRS_CFG = ["nonAttrA", "nonAttrB"];
+
+            function Ext2() {}
+            Ext2._NON_ATTRS_CFG = ["nonAttrC", "nonAttrD"];
+
+            var MyClass = Y.Base.create("myClass", Y.Base, [Ext1, Ext2], {
+                _allowAdHocAttrs: true
+            });
+
+            var myClass = new MyClass({
+                adHocAttr : "adHoc",
+                nonAttrA : 1,
+                nonAttrB : 2,
+                nonAttrC : 3,
+                nonAttrD : 4
+            });
+
+            Y.Assert.isUndefined(myClass.get("nonAttrA"), "nonAttrA should not have been configured");
+            Y.Assert.isUndefined(myClass.get("nonAttrB"), "nonAttrB should not have been configured");
+            Y.Assert.isUndefined(myClass.get("nonAttrC"), "nonAttrC should not have been configured");
+            Y.Assert.isUndefined(myClass.get("nonAttrD"), "nonAttrD should not have been configured");
+
+            Y.Assert.areEqual("adHoc", myClass.get("adHocAttr"), "Show have allows adHoc attrs");           
+        },
+
         "test:aggregates" : function() {
 
             function Ext1() {}
@@ -906,7 +934,7 @@ YUI({
             Y.Assert.isFalse(MyClass2.AGGREGATE_ONE === Ext1.AGGREGATE_ONE, "Ext1.AGGREGATE_ONE shouldn't have been copied over");
             Y.Assert.isFalse(MyClass2.AGGREGATE_ONE === Ext2.AGGREGATE_ONE, "Ext2.AGGREGATE_ONE shouldn't have been copied over");
         },
-
+        
         "test:extCfg-custom" : function() {
 
             function Ext1() {}

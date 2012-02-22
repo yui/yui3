@@ -1,9 +1,14 @@
-/*Stub for future compatibility*/
-if (typeof YUITest == "undefined" || !YUITest) {
-    YUITest = {
-        TestRunner:     Y.Test.Runner,
-        ResultsFormat:  Y.Test.Format,
-        TestFormat:     Y.Test.Format,
-        CoverageFormat: Y.Coverage.Format
-    };
-}
+/**
+ * YUI Test Framework
+ * @module yuitest
+ */
+
+/**
+ * The root namespace for YUI Test.
+ * @class YUITest
+ * @static
+ */
+
+var YUITest = {
+    version: "@VERSION@"
+};

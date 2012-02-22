@@ -1,6 +1,6 @@
 <div class="intro">
-    <p>The `event-valuechange` module adds a "valueChange" event that fires
-    when the `value` property of a text input element or textarea changes as
+    <p>The `event-valuechange` module adds a "valuechange" event that fires
+    when the `value` property of an `<input>` or `<textarea>` element changes as
     the result of a keystroke, mouse operation, or input method editor (IME)
     input event.</p>
 </div>
@@ -8,54 +8,60 @@
 <h2>What's the problem?</h2>
 
 <p>The input related events provided by browsers don't cleanly address the
-variety of ways users can modify an &lt;input&gt; or &lt;textarea&gt;'s
-`value`.  For example, users might change an input value by</p>
+variety of ways users can modify an `<input>` or `<textarea>`'s
+`value`.  For example, users might change an input value by:</p>
 
-<ol>
+<ul>
     <li>typing a simple character</li>
     <li>typing a multi-stroke character</li>
     <li>
         using an <a href="http://en.wikipedia.org/wiki/Input_method">Input
         Method Editor</a>
     </li>
-    <li>cutting from or pasting into the value with `ctrl+X` or `cmd+V`</li>
-    <li>cutting or pasting with a keyboard summoned context menu</li>
+    <li>cutting from or pasting into the value with `Ctrl+X` or `Cmd+V`</li>
+    <li>cutting or pasting with a keyboard-summoned context menu</li>
     <li>cutting or pasting from the right-click context menu.</li>
-</ol>
+</ul>
 
 <p>The ideal change event would fire when the value becomes <em>something it
 wasn't a moment ago</em>.</p>
 
-<p>The `valueChange` event provides more reliable input notifications than
+<p>The `valuechange` event provides more reliable input notifications than
 native events like `oninput` and `textInput`, particularly with changes that
 result from multiple-keystroke IME input.</p>
 
 ```
-commentTextarea.on('valueChange', updateLivePreview);
+commentTextarea.on('valuechange', updateLivePreview);
 ```
 
 <h2>How it works</h2>
 
-<p>`valueChange` subscriptions monitor the input's value using a variety of
-mechanisms including subscriptions to `blur` and various keyboard events, and a
+<p>`valuechange` subscriptions monitor the element's value using a variety of
+mechanisms including subscriptions to `focus` and various keyboard events, and a
 poll to catch the stragglers.  It seems like a lot of work, but it's the only
 way to be sure.</p>
 
-<p>The polling is only active when the input is focused, so the performance of your app should not be impacted.</p>
+<p>Polling is only active when the element is focused, and only one element is
+polled at a time, so the performance of your app should not be impacted.</p>
 
 <h2>Caveats</h2>
 
-<ol>
-    <li>`valueChange` does not (yet) support delegation</li>
+<ul>
     <li>
-        `valueChange` only supports subscription on text &lt;input&gt;s and
-        &lt;textarea&gt;s, though no steps are taken to ensure the subscribed
-        node is one of these.  If you subscribe to a different type of node,
+        <p>
+        `valuechange` only supports subscriptions on `<input>` and
+        `<textarea>` elements, although it doesn't prevent you from subscribing
+        on other types of elements.  If you subscribe on a different type of element
         and stuff breaks, you were warned.
+        </p>
     </li>
+
     <li>
-        `valueChange` does not capture `value` updates done in JavaScript
-        <em>unless the input is currently focused</em>.
-        `node.set('value', 'will probably not trigger valueChange');`
+        <p>
+        `valuechange` does not capture `value` updates done in JavaScript
+        <em>unless the input is currently focused and polling</em>. It's meant
+        to capture changes made by the user, not by other code. So:
+        `node.set('value', 'probably will not trigger valuechange');`
+        </p>
     </li>
-</ol>
+</ul>

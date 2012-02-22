@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+    <body>
+        <button id="my-button" class="yui3-button">my button</button>
+
+        <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+        
+        YUI({
+            filter: 'raw'
+        }).use('button-core', function(Y) {
+    
+            var button = Y.one('#my-button').plug(Y.Plugin.Button);
+            
+            button.on('click', function(){
+                console.log('a');
+            });
+
+        });
+        </script>
+    </body>
+</html>

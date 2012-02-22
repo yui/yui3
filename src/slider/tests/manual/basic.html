@@ -47,6 +47,15 @@ s.set('min', 10);
 
 s.render('#slider');
 
+s.on('railMouseDown', function (e) {
+    console.log(e);
+});
+
+s.rail.on(['mousedown', 'mouseup', 'click'], function (e) {
+    e.type;
+    console.log(e);
+});
+
 report.set('innerHTML',s.get('value'));
 
 Y.one('#size').on('click',function () {

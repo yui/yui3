@@ -7,6 +7,8 @@ Collection Change History
 * YUI now detects non-native ES5 shims added to native objects by other
   libraries and falls back to its own internal shims rather than relying on the
   potentially broken code from the other library.
+* Deprecated arraylist-add and arraylist-filter in favor of individual
+  subclass implementations or ModelList.
 
 
 3.4.1

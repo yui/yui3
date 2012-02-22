@@ -15,7 +15,7 @@
     event system.  It simplifies tasks like subscribing to button `click`s or
     canceling &lt;form&gt; `submit`s to, for example, allow sending data to the
     server via ajax.</p>
-    
+
     <p>In addition, the "Synthetic event" system supplies <em>entirely new</em>
     DOM events to subscribe to as well as fixing events that behave differently
     across browsers.  Implementers can create their own DOM events triggered by
@@ -44,7 +44,7 @@ button.on("click", function (e) {
 });
 ```
 
-<p><code>on(<em>type</em>, <em>callback</em>)</code> is the main 
+<p><code>on(<em>type</em>, <em>callback</em>)</code> is the main
 subscription method, and is available on every <a href="../node/">`Node`</a>
 and <a href="../node/#nodelist">`NodeList`</a>.</p>
 
@@ -59,7 +59,7 @@ button.on('click', function (e) {
 
     // Event properties that point to the DOM are also Node instances
     e.target.get('id'); // => 'readygo'
-    
+
     // Stop the event's default behavior
     e.preventDefault();
 
@@ -219,7 +219,7 @@ There's <a href="#more">a lot more you can do</a>, though, so read on!</p>
             <p>Supplies the infrastructure for creating new DOM events, "fixing"
             existing events with undesirable or inconsistent behavior, and
             <a href="synths.html">all sorts of other things</a>.</p>
-            
+
             <p>All of the modules below are synthetics.</p>
         </td>
     </tr>
@@ -322,7 +322,7 @@ There's <a href="#more">a lot more you can do</a>, though, so read on!</p>
     <tr>
         <td><a href="{{apiDocs}}/module_event-valuechange.html">`event-valuechange`</a></td>
         <td>
-            Adds a <a href="valuechange.html">"valueChange" event</a> that fires when input element text
+            Adds a <a href="valuechange.html">"valuechange" event</a> that fires when input element text
             changes (this is harder than you think).
         </td>
     </tr>
@@ -331,7 +331,7 @@ There's <a href="#more">a lot more you can do</a>, though, so read on!</p>
         <td>
             <a href="contextmenu.html">Fixes bugs and inconstancies</a> that can occur when the "contextmenu" event is fired via the keyboard.  <a href="contextmenu.html#the-value-of-the-contextmenu-synthetic-event">Adds sugar for working with the "contextmenu" event</a>.
         </td>
-    </tr>        
+    </tr>
 </tbody>
 </table>
 
@@ -808,7 +808,7 @@ Y.Event.define("tripleclick", {
         subscription._counter = 0;
         subscription._timer = null;
     },
-    
+
     ...
 });
 ```
@@ -1025,7 +1025,7 @@ nodelist.each(function (node) {
 
 <p>
     How to simulate user events like "click" or "keypress", what events can be
-    simulated, and some important caveats. 
+    simulated, and some important caveats.
     <a href="simulate.html">Read more...</a>
 </p>
 
@@ -1083,7 +1083,7 @@ nodelist.each(function (node) {
 <h3><a href="valuechange.html">Monitoring Changes to `<input>` and `<textarea>` Values</a></h3>
 
 <p>
-    Using the `valueChange` event to catch the moments when a user types, cuts,
+    Using the `valuechange` event to catch the moments when a user types, cuts,
     pastes, or otherwise alters the value in an input field.  No,
     `input.on('change', callback)` is not enough.
     <a href="valuechange.html">Read more...</a>
@@ -1642,22 +1642,22 @@ Y.mix(Y.Node.DOM_EVENTS, {
     <dt>[`e.touches`]</dt>
         <dd>
             <p>
-                An array of `Touch` objects, where each `Touch` object represents a finger 
-                currently touching the surface (regardless of the target of the current event). 
-                For example, if you have two fingers on the surface, this array would have two 
+                An array of `Touch` objects, where each `Touch` object represents a finger
+                currently touching the surface (regardless of the target of the current event).
+                For example, if you have two fingers on the surface, this array would have two
                 `Touch` objects, one for each finger.
             </p>
-            
+
             <p>
-                The common set of properties currently on a `Touch` object, which can be 
-                relied up across environments, are `target`, `clientX`, `clientY`, `pageX`, 
+                The common set of properties currently on a `Touch` object, which can be
+                relied up across environments, are `target`, `clientX`, `clientY`, `pageX`,
                 `pageY`, `screenX`, `screenY` and `identifier`.
-            </p>    
+            </p>
         </dd>
     <dt>[`e.targetTouches`]</dt>
         <dd>
             <p>
-                An array of `Touch` objects for every point of contact that is touching the 
+                An array of `Touch` objects for every point of contact that is touching the
                 surface, and started on the element that is the target of the current event.
             </p>
         </dd>
@@ -1666,10 +1666,10 @@ Y.mix(Y.Node.DOM_EVENTS, {
             <p>
                 An array of `Touch` objects representing all touches that changed in this event.
             </p>
-                
+
             <p>
-               This property is most useful in `touchEnd` events, to identify the set of touches 
-               which were removed from the surface, which resulted in the firing of the event. 
+               This property is most useful in `touchEnd` events, to identify the set of touches
+               which were removed from the surface, which resulted in the firing of the event.
             </p>
         </dd>
 </dl>
@@ -1679,7 +1679,7 @@ Y.mix(Y.Node.DOM_EVENTS, {
 <dl>
     <dt>[`e.scale`]</dt>
         <dd>
-            See Apple's documentation for <a href="http://developer.apple.com/library/safari/documentation/UserExperience/Reference/GestureEventClassReference/GestureEvent/GestureEvent.html#//apple_ref/javascript/instp/GestureEvent/scale">scale</a>. 
+            See Apple's documentation for <a href="http://developer.apple.com/library/safari/documentation/UserExperience/Reference/GestureEventClassReference/GestureEvent/GestureEvent.html#//apple_ref/javascript/instp/GestureEvent/scale">scale</a>.
         </dd>
     <dt>[`e.rotation`]</dt>
         <dd>

@@ -48,11 +48,13 @@ have tooltips.</p>
 
 <h3>Setting Up the YUI Instance</h3>
 
-<p>Create an instance of `Overlay` on the page. 
+<p>We'll use the `Overlay` module to provide shiming for correctly covering
+`<select>` elements in IE. We'll use `Event` for it's `onmouseleave` event, and
+`widget-anim` as a plugin to provide the fade-in for the tooltip.  
 </p>
 
 ```
-YUI().use('overlay', 'transition' function(Y) {
+YUI().use('overlay', 'event', 'widget-anim', function (Y) {
     // code will go here.
 });
 ```
@@ -60,8 +62,8 @@ YUI().use('overlay', 'transition' function(Y) {
 
 <p>These variables include an array of strings for various tooltips.
 If a DOM element has a class matching one of the 'name' values in the tipText array, 
-and it will display the text value in its tooltip.
-Of course, it also has to have a listener attached as described below.
+it will display the corresponding text value in its tooltip when the cursor moves
+over it.
 </p>
 
 ```
@@ -105,6 +107,17 @@ event subscribing to multiple elements.
 {{>overlay-tooltip-js-listeners}}
 
 ```
+<p>
+This example demonstrates how you can use the existing Overlay component
+to create a one-off Tooltip for your page.
+If you plan to re-use the Tooltip on multiple pages,
+or in a variety of use cases, it's a good idea to encapsulate
+all the code which makes a tooltip work into a reusable Widget class.
+The example,
+<a href="../widget/widget-tooltip.html">Creating a Simple Tooltip Widget With Extensions</a>,
+shows how you can create a reusable, flexible Tooltip class.
+</p>
+
 <h3>Complete Example Source</h3>
 ```
 {{>overlay-tooltip-source}}

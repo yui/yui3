@@ -1,63 +1,86 @@
 <link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
 <div class="intro">
-    <p>This example demonstrates how to retrieve and use a <code>Node</code> instance and access DOM properties.</p>
-    <p>Press the button to get or set the <code>FORM</code>'s <code>offsetWidth</code>.</p>
+    <p>This example demonstrates how to retrieve and use a `Node` instance 
+    and access DOM properties.</p>
+    <p>Press a button to get or set the `offsetWidth` of the `div` 
+    containing the corn image.</p>
 </div>
 
 <div class="example">
 {{>properties-source}}
+<div style="color:#aaa; display:block; font-size:90%; margin-top:1em;">Image derived from 
+<a href="http://www.flickr.com/photos/29278394@N00/3934433763/" target="_blank">
+"ear of corn"</a>, by normanack</div> 
 </div>
 
 <h2>Setting up the HTML</h2>
 
 ```
-<form id="demo" action="#">
-    <label>How wide is this form?</label>
-    <input name="width" size="2">
-    <input type="submit" value="Show Me">
-</form>
+    <div id="ruler"></div>
+    <div id="corn"></div>
+    <label>Width:</label>
+    <input id="input" size="2" value="510"> px
+    <button class="yui3-button btn-set">Set</button>
+
+    <button class="yui3-button btn-get">Get</button>
+    <label>Width:</label>
+    <span id="output"></span>
 ```
 
 <h2>Getting a Node Instance</h2>
-<p>The <code>Y.one</code> method accepts a Selector or HTML element and returns a Node instance.  Let's go ahead and set up some variables for the node's representing our HTML.</p>
+<p>The `Y.one` method accepts a Selector or HTML element and 
+returns a Node instance.  First we'll set up some variables 
+for the node's representing our HTML.</p>
 
 ```
-var form = Y.one('#demo'),
-    input = Y.one('#demo input[name=width]'),
-    button = Y.one('#demo input[type=submit]');
+var corn = Y.one('#corn'),
+    getButton = Y.one('.example .btn-get'),
+    setButton = Y.one('.example .btn-set'),
+    input = Y.one('.example #input'),
+    output = Y.one('.example #output');
 ```
 
 <h2>Accessing Node Properties</h2>
-<p>The properties of a node can be accessed via its <code>set</code> and <code>get</code> methods.</p>
-<p>In most cases, simple type of properties (strings, numbers, booleans) pass directly to/from the underlying DOM node, however properties representing other DOM nodes return <code>Node</code> or <code>NodeList</code> instances.</p>
+<p>The properties of a node can be accessed via its `set` and 
+`get` methods.</p>
+<p>In most cases, simple type of properties (strings, numbers, booleans) 
+pass directly to/from the underlying DOM node, however properties representing 
+other DOM nodes return `Node` or `NodeList` instances.</p>
 
 <h3>The Get Method</h3>
-<p>We can use the <code>get</code> method to read the <code>FORM</code> element's offsetWidth, which includes the style width, padding, and border.</p>
+<p>We can use the `get` method to read the `offsetWidth` of the `div` 
+containing the corn image, 
+which includes the style width, padding, and border.</p>
 
 ```
-width = form.get('offsetWidth');
+width = corn.get('offsetWidth');
 ```
 
 <h3>The Set Method</h3>
-<p>The <code>set</code> method allows us to update the value of the <code>INPUT</code> element with the value of the <code>FORM</code>'s <code>offsetWidth</code> property.</p>
+<p>The Set method can be used to set the value of objects
+</p>
+```
+input.set('value', 237);
+```
+
+<p>The `offsetWidth` property of an HTML element is read only, however YUI 
+makes this writeable.  This assures that the final `offsetWidth` 
+matches the value that is set, regardless of borders, padding, or box model.</p>
 
 ```
-input.set('value', width);
-```
-
-<h3>Setting the Offset Width</h3>
-<p>The <code>offsetWidth</code> property of an HTML element is read only, however YUI makes this writeable as well.  This assures that the final <code>offsetWidth</code> matches the value that is set, regardless of borders, padding, or box model.</p>
-
-```
-form.set('offsetWidth', value);
+corn.set('offsetWidth', value);
 ```
 
 <h2>Listening for Node Events</h2>
-<p>We will update the value of the <code>INPUT</code> when the <code>BUTTON</code> is pressed. The <code>FORM</code>'s default action can be suppressed using the incoming Event object's <code>preventDefault()</code> method.</p>
+<p>We will update the value `offsetWidth` property of the `div` 
+containing the corn image when the Set button is pressed. 
+</p>
 
 ```
-button.on('click', function(e) {
-    e.preventDefault();
+Y.one('.btn-set').on('click', function(e) {
+    ...
+    corn.set('offsetWidth', value);
+    ...
 };
 ```
 
