@@ -6,21 +6,7 @@
 * @since 3.5.0
 */
 
-/**
-* returns a properly formed yui class name
-*
-* @method
-* @param str {String} string to be appended at the end of class name
-* @return
-* @private
-*/
-function makeClassName(str) {
-    if (str) {
-        return Y.ClassNameManager.getClassName(Button.NAME, str);
-    } else {
-        return Y.ClassNameManager.getClassName(Button.NAME);
-    }
-}
+var getClassName = Y.ClassNameManager.getClassName;
 
 /**
 * Creates a button
@@ -45,7 +31,7 @@ Button.prototype = {
     disable: function() {
         this.set('disabled', true);
     },
-    
+
     _initAttributes: function(config) {
         config.label = config.label || config.host.getContent(); //Todo: Is this the right place?
         Y.AttributeCore.call(this, Button.ATTRS, config);
@@ -98,7 +84,7 @@ Button.prototype = {
         this._initAttributes(config);
         this.renderUI(config);
     },
-    
+
     /**
     * @method renderUI
     * @description Renders any UI/DOM elements for Button instances
@@ -106,15 +92,15 @@ Button.prototype = {
     */
     renderUI: function(config) {
         var node = this._host;
-        
+
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
         node.set('role', 'button');
     }
 };
 
-/** 
-* Attribute configuration. 
+/**
+* Attribute configuration.
 *
 * @property ATTRS
 * @type {Object}
@@ -144,7 +130,7 @@ Button.ATTRS = {
 */
 Button.NAME = "button";
 
-/** 
+/**
 * Array of static constants used to identify the classnames applied to the Button DOM objects
 *
 * @property CLASS_NAMES
@@ -152,8 +138,8 @@ Button.NAME = "button";
 * @static
 */
 Button.CLASS_NAMES = {
-    BUTTON  : makeClassName(),
-    DISABLED: makeClassName('disabled')
+    BUTTON  : getClassName('button'),
+    DISABLED: getClassName('button', 'disabled')
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);

@@ -6,13 +6,14 @@
 * @since 3.5.0
 */
 
-var BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox",
+var CONTENT_BOX = "contentBox",
     BUTTON_CLASS = "yui3-button",  // TODO: Pull from ButtonCore
     BUTTON_SELECTED_CLASS = BUTTON_CLASS + "-selected",
     SELECTOR = "button, input[type=button]",
-    CLICK_EVENT = "click";
-    
+    CLICK_EVENT = "click",
+
+    ButtonPlugin = Y.Plugin.Button;
+
 /**
 * Creates a ButtonGroup
 *
@@ -27,7 +28,7 @@ function ButtonGroup() {
 
 /* ButtonGroup extends Widget */
 Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
-    
+
     /**
     * @method initializer
     * @description Internal init() handler.
@@ -37,25 +38,22 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     initializer: function(){
         this._cb = this.get(CONTENT_BOX);
     },
-    
+
     renderUI: function() {
-        
-        var ButtonFactory = Y.Plugin.Button.createNode;
-        var buttonNodes = this.getButtons();
-        buttonNodes.each(function(node){
-            new ButtonFactory(node);
+        this.getButtons().each(function (node) {
+            ButtonPlugin.createNode(node);
         });
     },
-    
+
     bindUI: function() {
         this._cb.delegate(CLICK_EVENT, this.handleClick, SELECTOR, this);
     },
-    
+
     handleClick: function(e){
         var bg = this;
         var node = e.target;
         var type = bg.get('type');
-        
+
         if (type === 'push') {
             // TODO: Nothing?  Then why have a push group.
         }
@@ -69,10 +67,10 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             node.addClass(BUTTON_SELECTED_CLASS);
             bg.fire('selectionChange');
         }
-        
+
         e.stopPropagation(); // Todo: Maybe?
     },
-    
+
     /**
     * @method getButtons
     * @description Returns all Y.Buttons instances assigned to this group
@@ -81,7 +79,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     getButtons: function() {
         return this.get(CONTENT_BOX).all(SELECTOR);
     },
-    
+
     /**
     * @method getSelectedButtons
     * @description Returns all Y.Buttons instances that are selected
@@ -90,16 +88,16 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     getSelectedButtons: function() {
         var buttons = this.getButtons();
         var selected = [];
-        
+
         buttons.each(function(node){
             if (node.hasClass(BUTTON_SELECTED_CLASS)){
-                selected.push(node);                   
+                selected.push(node);
             }
         });
-        
+
         return selected;
     },
-    
+
     /**
     * @method getSelectedValues
     * @description Returns the values of all Y.Button instances that are selected
@@ -108,16 +106,16 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     getSelectedValues: function() {
         var selected = this.getSelectedButtons();
         var values = [];
-        
+
         Y.Array.each(selected, function(node){
             if (node.hasClass(BUTTON_SELECTED_CLASS)){
-                values.push(node.getContent());                   
+                values.push(node.getContent());
             }
         });
-        
+
         return values;
     }
-    
+
 }, {
     // Y.ScrollView static properties
 
@@ -133,7 +131,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      */
     NAME: 'buttongroup',
 
-    /** 
+    /**
     * Static property used to define the default attribute configuration of
     * the Widget.
     *
