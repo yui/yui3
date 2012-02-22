@@ -86,6 +86,7 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     }
 }, {
     ATTRS: {
+        // TODO: API Docs.
         buttons: {
             value: ['close']
         }

@@ -19,7 +19,7 @@ var YArray  = Y.Array,
 
 // TODOs:
 //
-// * Styling to add spacing between buttons?
+// * Styling to add spacing between buttons? This should be done in Panel's CSS.
 // * Clean up other TODOs :)
 //
 
