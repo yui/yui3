@@ -70,7 +70,7 @@ Button.prototype = {
     * @private
     */
     _initAttributes: function(config) {
-        config.label = config.label || config.host.getContent(); //Todo: Is this the right place?
+        config.label = config.label || config.host.getContent() || config.host.get('value'); //Todo: Is this the right place?
         Y.AttributeCore.call(this, Button.ATTRS, config);
     },
     
@@ -123,7 +123,6 @@ Button.prototype = {
     _uiSetLabel: function(value) {
         var node = this.getNode(),
             attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
-
         node.set(attr, value);
         return value;
     },
