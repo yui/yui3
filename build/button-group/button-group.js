@@ -17,7 +17,7 @@ var BOUNDING_BOX    = "boundingBox",
 * Creates a ButtonGroup
 *
 * @class ButtonGroup
-* @extends Base
+* @extends Widget
 * @param config {Object} Configuration object
 * @constructor
 */
