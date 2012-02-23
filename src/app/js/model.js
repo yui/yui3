@@ -668,9 +668,7 @@ Y.Model = Y.extend(Model, Y.Base, {
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
-      @param {Any} [callback.response] The server's response. This value will
-        be passed to the `parse()` method, which is expected to parse it and
-        return an attribute hash.
+      @param {Any} [callback.response] The server's response.
     **/
     sync: function (/* action, options, callback */) {
         var callback = YArray(arguments, 0, true).pop();
