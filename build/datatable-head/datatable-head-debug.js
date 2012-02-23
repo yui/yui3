@@ -42,6 +42,8 @@ Supported properties of the column objects include:
   * `key`       - If `label` is not specified, the `key` is used for content.
   * `children`  - Array of columns to appear below this column in the next
                   row.
+  * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells in this
+    column only.
   * `abbr`      - The content of the 'abbr' attribute of the `<th>`
   * `className` - Adds this string of CSS classes to the column header
 
@@ -50,8 +52,8 @@ the following properties added to them:
 
   * `_colspan` - To supply the `<th>` attribute
   * `_rowspan` - To supply the `<th>` attribute
-  * `_parent`  - If the column is a child of another column, this points to
-    its parent column
+  * `_parent`  - (Added by DataTable) If the column is a child of another
+    column, this points to its parent column
   * `_yuid`    - (Added by DataTable) A unique YUI generated id used as the
     `<th>`'s 'id' for reference in the data `<td>`'s 'headers' attribute.
 
@@ -81,10 +83,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" abbr="{abbr} colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" role="columnheader" {_headers}>{content}</th>'
+    @default '<th id="{_yuid}" {abbr} colspan="{_colspan}" rowspan="{_rowspan}" class="{className}">{content}</th>'
     **/
     CELL_TEMPLATE :
-        '<th id="{_yuid}" abbr="{abbr}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" role="columnheader" {_headers}>{content}</th>',
+        '<th id="{_yuid}" {abbr} colspan="{_colspan}" rowspan="{_rowspan}" class="{className}">{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -119,7 +121,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @default '<tr>{content}</tr>'
     **/
     ROW_TEMPLATE:
-        '<tr role="row">{content}</tr>',
+        '<tr>{content}</tr>',
 
 
     // -- Public methods ------------------------------------------------------
@@ -156,9 +158,9 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
         var thead    = this.get('container'),
             columns  = this.columns,
             defaults = {
-                abbr: '',
                 _colspan: 1,
-                _rowspan: 1
+                _rowspan: 1,
+                abbr: ''
             },
             i, len, j, jlen, col, html, content, values;
 
@@ -176,13 +178,20 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                             col, {
                                 className: this.getClassName('header'),
                                 content  : col.label || col.key ||
-                                           ("Column " + (j + 1)),
-                                headers  : ''
+                                           ("Column " + (j + 1))
                             }
                         );
 
+                        if (col.abbr) {
+                            values.abbr = 'abbr="' + col.abbr + '"';
+                        }
+
                         if (col.className) {
                             values.className += ' ' + col.className;
+                        }
+
+                        if (col._first) {
+                            values.className += ' ' + this.getClassName('first', 'header');
                         }
 
                         if (col._id) {
@@ -190,12 +199,8 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                                 ' ' + this.getClassName('col', col._id);
                         }
 
-                        if (col._parent) {
-                            values._headers =
-                                'headers="' + col._parent._headers.join(' ') + '"';
-                        }
-
-                        content += fromTemplate(this.CELL_TEMPLATE, values);
+                        content += fromTemplate(
+                            col.headerTemplate || this.CELL_TEMPLATE, values);
                     }
 
                     html += fromTemplate(this.ROW_TEMPLATE, {
@@ -335,6 +340,8 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
       * `children` - Array of columns to appear below this column in the next
                      row.
       * `abbr`     - The content of the 'abbr' attribute of the `<th>`
+      * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells
+        in this column only.
 
     The output structure is basically a simulation of the `<thead>` structure
     with arrays for rows and objects for cells.  Column objects have the
@@ -404,9 +411,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                             // Can't use .length because in 3+ rows, colspan
                             // needs to aggregate the colspans of children
                             parent._colspan += row[i]._colspan;
-
-                            // Assign the parent column for ease of navigation
-                            row[i]._parent = parent;
                         }
                     }
                     stack.pop();
@@ -458,6 +462,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                     stack.pop();
                 }
             }
+        }
+
+        for (i = 0, len = columns.length; i < len; i += col._rowspan) {
+            col = columns[i][0];
+
+            col._first = true;
         }
 
         return columns;

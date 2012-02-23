@@ -763,9 +763,12 @@ Y.Loader.prototype = {
                 self.require('yui-log', 'dump');
             }
         }
+        
 
         if (self.lang) {
-            self.require('intl-base', 'intl');
+            //Removed this so that when Loader is invoked
+            //it doesn't request what it doesn't need.
+            //self.require('intl-base', 'intl');
         }
 
     },
@@ -1495,7 +1498,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style['display'] === 'none') {
+        if (style && style['display'] === 'none') {
             ret = true;
         }
 
@@ -2294,15 +2297,23 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             
             if (m) {
                 group = (m.group && self.groups[m.group]) || NOT_FOUND;
+                
+                //Always assume it's async
+                if (group.async === false) {
+                    m.async = group.async;
+                }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                if (m.attributes) {
+                if (m.attributes || m.async === false) {
                     url = {
                         url: url,
-                        attributes: m.attributes
+                        async: m.async
                     };
+                    if (m.attributes) {
+                        url.attributes = m.attributes
+                    }
                 }
                 resolved[m.type].push(url);
                 resolved[m.type + 'Mods'].push(m);

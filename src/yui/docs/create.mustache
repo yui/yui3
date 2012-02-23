@@ -1,0 +1,206 @@
+<p>In this example we will show you our recommended approach to creating your own `YUI` modules.</p>
+
+<h2 id="what">What is a module?</h2>
+
+<p>A `YUI` module can be described as <em>"any code that can be separated to run on it's own"</em>.
+Many times, this code can be reusable in different ways.</p>
+
+<h3 id="define">How is a module defined?</h3>
+
+{{>add}}
+
+<h2 id="know">How does YUI know about a module?</h2>
+
+<p>`YUI` gives you a few options on how to tell it about your modules. The simpliest way is to include your modules
+on the page after the `YUI` seed file.</p>
+
+<h3 id="local">Local Modules</h3>
+
+<p>If all of your modules are wrapped in a valid `YUI.add` call, `YUI` will know about them just
+because they are on the page. The calls to `YUI.add` tell the `YUI` seed all that it needs to know
+about your modules and registers them with the system.</p>
+
+```
+<script src="/path/to/yui-min.js"></script>
+<script src="/path/to/my/module1.js"></script>
+<script src="/path/to/my/module2.js"></script>
+<script src="/path/to/my/module3.js"></script>
+```
+
+<p>Once available, they can be <em>used</em> as you would expect:</p>
+
+```
+YUI().use('module1', 'module2', 'module3', function(Y) {
+
+});
+```
+
+<h3 id="config">Configured Modules</h3>
+
+<p>The local use case may not be good for you if you have several modules that you would like `YUI` to know about.
+In this case, you would want to tell `YUI` about your modules so that it can fetch them when they are required.</p>
+
+<p>To do this, you need to use one of the <a href="index.html#config">various ways to configure</a> `YUI` and
+tell it about your modules.</p>
+
+<p>In this example, we will use the `YUI.GlobalConfig` to tell all `YUI` instances about our modules (Note: this must come <em>after</em> the YUI seed file in the page's source):</p>
+
+```
+YUI.GlobalConfig = {
+    modules: {
+        module1: '/path/to/my/module1.js',
+        module2: '/path/to/my/module2.js',
+        module3: {
+            fullpath: '/path/to/my/module3.js',
+            requires: [ 'node', 'event', 'dd', 'yql']
+        }
+    }
+};
+```
+
+<p>Now that we have told `YUI` about our modules, we can simply use them:</p>
+
+```
+YUI().use('module1', 'module2', 'module3', function(Y) {
+
+});
+```
+
+<p>The advantage of this approach is that we now have all of our modules information in one simple location
+that can be created by a build script and will be much easier to maintain.</p>
+
+<h3 id="structured">Structured Modules</h3>
+
+<p>In larger projects, you may need to structure your modules in a common way if you have multiple developers working
+on the code. In this case, you can follow `YUI`'s model on this and structure your code to get the most use
+out of Loader.</p>
+
+<p>When creating a module like the ones above, you can create your built files like this:</p>
+
+```terminal
+    ourmodules/
+        module1/
+            module1.js
+            module1-min.js
+            module1-debug.js
+        module2/
+            module2.js
+            module2-min.js
+            module2-debug.js
+        module3/
+            module3.js
+            module3-min.js
+            module3-debug.js
+```
+
+<p>Now that your files are structed in a parsable manner, `Loader` can handle them without much of a configuration.</p>
+
+<h4>Local Static Files</h4>
+
+```
+YUI.GlobalConfig: {
+    groups: {
+        ourmodules: {
+            base: '/ourmodules/',
+            modules: {
+                module1: {},
+                module2: {},
+                module3: {
+                    requires: [ 'node', 'event', 'dd', 'yql']
+                }
+            }
+        }
+    }
+};
+```
+
+<p>By default, when `Loader` is attempting to fetch a static module, it will create a url using a few config options:
+`base` and the `modulename` that was requested.</p>
+
+```terminal
+    /<base>/<modulename>/<modulename>(-<filter>).js
+    /ourmodules/module1/module1.js
+    /ourmodules/module2/module2.js
+```
+
+<p>Now when you `use` your modules, `Loader` will find them and load them dynamically.</p>
+
+<h4>Using a ComboHandler</h4>
+
+<p>There are several combo handlers for different languages, so we won't discuss them here. Basically
+a combo handler is an entry point on your server that accepts a query string of a list of files. The
+server then combines all those files and returns the output. This allows you to ask for multiple files
+but only use a few HTTP requests to fetch them.</p>
+
+<p>`YUI` has always had this support built in for it's core files, but you can have this with your modules too.
+Configuring `YUI` to use a custom combo handler is extremely easy, let's modify the above example to use a
+combo server that's located here: `/my-combo`</p>
+
+```
+YUI.GlobalConfig: {
+    groups: {
+        ourmodules: {
+            base: '/ourmodules/',
+            combine: true,
+            comboBase: '/my-combo?',
+            comboSep: ';', //Defaults to &
+            root: '',
+            modules: {
+                module1: {},
+                module2: {},
+                module3: {
+                    requires: [ 'node', 'event', 'dd', 'yql']
+                }
+            }
+        }
+    }
+};
+```
+
+<p>When `Loader` is attempting to fetch a set of combined modules, it will create a url using these config options:
+`root`, `comboBase`, `comboSep` and the `<modulename>`'s that were requested.</p>
+
+```terminal
+    <comboBase><root><modulename>/<modulename>(-<filter>).js<comboSep><root><modulename>/<modulename>(-<filter>).js
+    /my-combo?module1/module1.js&amp;module2/module2.js;/module2/module3.js
+```
+
+<p>Now you have a flexible, scalable and dynamic module loading system that will let you build large scale
+applications or simple websites.</p>
+
+<h2>Builder</h2>
+
+<p>If you want to dynamically create the `-min`, `-debug` files inside your project, take a look
+at our `Ant` based build system tool called <a href="https://github.com/yui/builder/">builder</a>.</p>
+
+<h2>Custom Aliases</h2>
+
+<p>`YUI` uses <em>aliases</em> under the hood as module "shortcuts", for example, when you `use` "node"
+`Loader` doesn't fetch a `node.js` file, it actually fetches several files under the hood that make up the "node"
+alias. You can use this too with your custom modules:</p>
+
+```
+YUI.GlobalConfig = {
+    groups: {
+        ourmodules: {
+            modules: {
+                all: {
+                    use: [ 'module1', 'module2', 'module3' ]
+                },
+                foo: {
+                    requires: [ 'all' ]
+                }
+            }
+        }
+    }
+};
+```
+
+<p>This will create an alias called `all` for the modules: `'module1', 'module2', 'module3'`. You can then
+`use` that module as you normally would. You can even use that module as a requirement for other modules.</p>
+
+```
+YUI().use('all');
+    //or
+YUI().use('foo');
+```

@@ -1,11 +1,10 @@
 {
     "widget-autohide": {
         "requires": [
-            "widget",
-            "event-outside",
             "base-build",
-            "event-key"
-        ], 
-        "skinnable": false
+            "event-key",
+            "event-outside",
+            "widget"
+        ]
     }
 }

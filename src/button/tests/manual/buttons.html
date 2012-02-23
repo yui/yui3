@@ -16,29 +16,24 @@
                 debug: true,
                 combo: false,
                 filter: 'raw'
-            }).use('button', 'console', function(Y){
+            }).use('button-group', 'console', function(Y){
                 
                 new Y.Console().render();
                 
                 var groupA = new Y.ButtonGroup({
-                    srcNodes: Y.all('.radioGroupA'),
+                    srcNode: '#groupA',
                     type: 'radio'
-                });
+                }).render();
                 
                 var groupB = new Y.ButtonGroup({
-                    srcNodes: Y.all('.radioGroupB'),
+                    srcNode: '#groupB',
                     type: 'radio'
-                });
+                }).render();
                 
                 var groupC = new Y.ButtonGroup({
+                    srcNode: '#groupC',
                     type: 'checkbox'
-                });
-                
-                Y.all('.cbGroup').each(function(node){
-                    groupC.addButton(new Y.Button({
-                        srcNode: node
-                    }));
-                });
+                }).render();
                 
                 groupA.on('selectionChange', function(){
                     Y.log('groupA - Currently selected: ' + this.getSelectedValues());
@@ -67,28 +62,34 @@
         <hr />
         
         <h2>Radio A</h2>
-        <input type='button' class='radioGroupA' value='1'>
-        <input type='button' class='radioGroupA' value='2'>
-        <input type='button' class='radioGroupA' value='3'>
-        <input type='button' class='radioGroupA' value='4'>
-        <input type='button' class='radioGroupA' value='5'>
-        <input type='button' class='radioGroupA' value='6'>
+        <div id='groupA'>
+            <input type='button' class='radioGroupA' value='1'>
+            <input type='button' class='radioGroupA' value='2'>
+            <input type='button' class='radioGroupA' value='3'>
+            <input type='button' class='radioGroupA' value='4'>
+            <input type='button' class='radioGroupA' value='5'>
+            <input type='button' class='radioGroupA' value='6'>
+        </div>
         
         <h2>Radio B</h2>
-        <input type='button' class='radioGroupB' value='1'>
-        <input type='button' class='radioGroupB' value='2'>
-        <input type='button' class='radioGroupB' value='3'>
-        <input type='button' class='radioGroupB' value='4'>
-        <input type='button' class='radioGroupB' value='5'>
-        <input type='button' class='radioGroupB' value='6'>
+        <div id='groupB'>
+            <input type='button' class='radioGroupB' value='1'>
+            <input type='button' class='radioGroupB' value='2'>
+            <input type='button' class='radioGroupB' value='3'>
+            <input type='button' class='radioGroupB' value='4'>
+            <input type='button' class='radioGroupB' value='5'>
+            <input type='button' class='radioGroupB' value='6'>
+        </div>
         
         <h2>Checkbox</h2>
-        <input type='button' class='cbGroup' value='a'>
-        <input type='button' class='cbGroup' value='b'>
-        <input type='button' class='cbGroup' value='c'>
-        <input type='button' class='cbGroup' value='d'>
-        <input type='button' class='cbGroup' value='e'>
-        <input type='button' class='cbGroup' value='f'>
+        <div id='groupC'>
+            <input type='button' class='cbGroup' value='a'>
+            <input type='button' class='cbGroup' value='b'>
+            <input type='button' class='cbGroup' value='c'>
+            <input type='button' class='cbGroup' value='d'>
+            <input type='button' class='cbGroup' value='e'>
+            <input type='button' class='cbGroup' value='f'>
+        </div>
         
     </body>
 </html>

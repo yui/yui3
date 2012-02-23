@@ -6,7 +6,13 @@
 .yui3-skin-night .yui3-datatable-table {
     border: 1px solid #323434;
     border-right: 0 none;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    /* IE7- don't support border-spacing, but separate is needed for more
+     * reliable dimension calculation for scrollable's header width sync,
+     * and it doesn't hurt to have the declaration here.
+     */
+    *border-collapse: collapse;
 	color:#8E8E8E;
     margin: 0;
     padding: 0;
@@ -21,14 +27,19 @@
 
 .yui3-skin-night .yui3-datatable-cell,
 .yui3-skin-night .yui3-datatable-header {
-    border-right: 1px solid #303030;/*  inner column border */
-    border-width: 0 1px 0 0;
+    border-left: 1px solid #303030;/*  inner column border */
+    border-width: 0 0 0 1px;
     font-size: inherit;
     margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/
     padding: 4px 10px 4px 10px; /* cell padding */
     white-space: nowrap;
 }
+.yui3-skin-night .yui3-datatable-cell:first-child,
+.yui3-skin-night .yui3-datatable-first-header {
+    border-left-width: 0;
+}
+
 .yui3-skin-night .yui3-datatable-header {
     /* header gradient */
     background-color:#3b3c3d;

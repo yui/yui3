@@ -126,6 +126,28 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame('foo', model.get('foo'));
     },
 
+    'Models should allow ad-hoc attributes': function () {
+        var created = new Date(),
+
+            model = new Y.Model({
+                foo: 'foo',
+                bar: {a: 'bar'},
+                baz: ['baz'],
+                quux: null,
+                zero: 0,
+                created: created
+            });
+
+        Assert.areSame('foo', model.get('foo'), 'ad-hoc foo attribute should be set');
+        Assert.areSame('bar', model.get('bar.a'), 'ad-hoc bar attribute should be set');
+        Assert.areSame('baz', model.get('baz')[0], 'ad-hoc baz attribute should be set');
+        Assert.isNull(model.get('quux'), 'ad-hoc quux attribute should be set');
+        Assert.areSame(0, model.get('zero'), 'ad-hoc zero attribute should be set');
+        Assert.areSame(created, model.get('created'), 'ad-hoc created attribute should be set');
+
+        ObjectAssert.ownsKeys(['foo', 'bar', 'baz', 'quux', 'zero', 'created'], model.getAttrs(), 'ad-hoc attributes should be returned by getAttrs()');
+    },
+
     'Custom id attribute should be settable at instantiation time': function () {
         var model;
 

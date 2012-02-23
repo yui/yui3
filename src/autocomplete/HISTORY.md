@@ -21,6 +21,17 @@ AutoComplete Change History
 * Added a workaround for an IE7 bug that would cause the result list to appear
   empty when it first becomes visible.
 
+* Fixed a bug that caused a scrollable result list to be hidden when the user
+  clicked and dragged on the scrollbar and then released the mouse button while
+  the cursor was outside the list region.
+
+* Fixed a bug that caused the list to disappear on mouseover if the input field
+  received focus before the AutoComplete widget was initialized
+  [Ticket #2531651]
+
+* Fixed a bug that could prevent results from being selected via mouse click
+  after a result was selected via the tab key. [Ticket #2531684]
+
 
 3.4.1
 -----

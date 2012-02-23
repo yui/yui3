@@ -33,6 +33,12 @@
 
     #log { margin-top: 4em; }
 
+    /* Scrollable result list */
+    .yui3-aclist-content {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
     .flickr {
         height: 32px;
         overflow: hidden;
@@ -164,7 +170,10 @@ new Y.Console({
 }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
 // -- AutoComplete setup -------------------------------------------------------
-var autoComplete = new Y.AutoComplete({inputNode: '#ac-input'});
+var autoComplete = new Y.AutoComplete({
+    inputNode     : '#ac-input',
+    scrollIntoView: true
+});
 
 // For easier debugging.
 Y.ac = autoComplete;

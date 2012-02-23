@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{yuiBuildUrl}}/cssreset/cssreset.css" type="text/css">
     <link rel="stylesheet" href="{{yuiBuildUrl}}/cssfonts/cssfonts.css" type="text/css">
     <link rel="stylesheet" href="{{yuiBuildUrl}}/cssgrids/cssgrids.css" type="text/css">
-
+    <script src="{{yuiSeedUrl}}"></script>
 <style>
 div.yui3-g {
     text-align:center;
@@ -18,241 +18,338 @@ body {
 }
 
 .content {
-    background:#424242;
-    border:dotted #999;
-    border-width:0 2px 2px;
-    color:#fff;
-    margin-right:10px; /* "column" gutters */
+    position: relative;
+    text-align: center;
+    border:solid #999;
+    border-width:1px;
+    color:#000;
+    margin: 15px 10px 15px 0; /*10px 10px 0 0; "column" gutters */
     padding:5px 2px;
+    background: url({{{componentAssets}}}/images/grid_text.png) repeat-x #F9F9F4;
+    z-index: 1;
 }
+.content label {
+    margin: 0 auto;
+    background-color: #FFFCE7;
+    padding: 1px 6px;
+    font-weight: bold;
+    font-family: courier;
+    -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+.snippet {
+    width: 100%;
+    height: 15em;
+    font-family: courier;
+}
+.yui3-selected {
+    background-color: #CED8EF;
+}
+h3 {
+    font-size: 190%;
+    margin: 0.5em 0;
+}
+
+
+/**** panel style ****/
+.yui3-skin-sam .yui3-panel .yui3-button{
+    margin: 0.3em 0.6em;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-hd{
+    font-weight: bold;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-bd{
+    text-align: center;
+    padding: 1.5em 1em 1.8em;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-ft{
+    border-radius: 0 0 3px 3px;
+    background-color: #F5F4F1;
+    border-top: solid 1px #EAE6DB;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content {
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #000;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    border-radius: 3px;
+    text-align: center;
+}
+.yui3-skin-sam .yui3-widget-mask {
+    opacity: 0.3 !important;
+}
+
+
 
 </style>
 
 </head>
-<body>
+<body class="yui3-skin-sam">
+<h3>Click on a row to see its code snippet</h3>
 <div class="yui3-g">
     <div class="yui3-u-1-2">
-        <div class="content">1/2</div>
+        <div class="content"><label>1/2</label></div>
     </div>
     <div class="yui3-u-1-2">
-        <div class="content">1/2</div>
+        <div class="content"><label>1/2</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-3-4">
-        <div class="content">3/4</div>
+        <div class="content"><label>3/4</label></div>
     </div>
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-3">
-        <div class="content">1/3</div>
+        <div class="content"><label>1/3</label></div>
     </div>
     <div class="yui3-u-1-3">
-        <div class="content">1/3</div>
+        <div class="content"><label>1/3</label></div>
     </div>
     <div class="yui3-u-1-3">
-        <div class="content">1/3</div>
+        <div class="content"><label>1/3</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-3">
-        <div class="content">1/3</div>
+        <div class="content"><label>1/3</label></div>
     </div>
     <div class="yui3-u-2-3">
-        <div class="content">2/3</div>
+        <div class="content"><label>2/3</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-5">
-        <div class="content">1/5</div>
+        <div class="content"><label>1/5</label></div>
     </div>
     <div class="yui3-u-2-5">
-        <div class="content">2/5</div>
+        <div class="content"><label>2/5</label></div>
     </div>
     <div class="yui3-u-2-5">
-        <div class="content">2/5</div>
+        <div class="content"><label>2/5</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-3-5">
-        <div class="content">3/5</div>
+        <div class="content"><label>3/5</label></div>
     </div>
     <div class="yui3-u-2-5">
-        <div class="content">2/5</div>
+        <div class="content"><label>2/5</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-6">
-        <div class="content">1/6</div>
+        <div class="content"><label>1/6</label></div>
     </div>
     <div class="yui3-u-5-6">
-        <div class="content">5/6</div>
+        <div class="content"><label>5/6</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-8">
-        <div class="content">1/8</div>
+        <div class="content"><label>1/8</label></div>
     </div>
     <div class="yui3-u-3-8">
-        <div class="content">3/8</div>
+        <div class="content"><label>3/8</label></div>
     </div>
     <div class="yui3-u-3-8">
-        <div class="content">3/8</div>
+        <div class="content"><label>3/8</label></div>
     </div>
     <div class="yui3-u-1-8">
-        <div class="content">1/8</div>
+        <div class="content"><label>1/8</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-3-8">
-        <div class="content">3/8</div>
+        <div class="content"><label>3/8</label></div>
     </div>
     <div class="yui3-u-5-8">
-        <div class="content">5/8</div>
+        <div class="content"><label>5/8</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-7-8">
-        <div class="content">7/8</div>
+        <div class="content"><label>7/8</label></div>
     </div>
     <div class="yui3-u-1-8">
-        <div class="content">1/8</div>
+        <div class="content"><label>1/8</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
     <div class="yui3-u-1-2">
-        <div class="content">1/2</div>
+        <div class="content"><label>1/2</label></div>
     </div>
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-1-8">
-        <div class="content">1/8</div>
+        <div class="content"><label>1/8</label></div>
     </div>
     <div class="yui3-u-1-2">
-        <div class="content">1/2</div>
+        <div class="content"><label>1/2</label></div>
     </div>
     <div class="yui3-u-1-8">
-        <div class="content">1/8</div>
+        <div class="content"><label>1/8</label></div>
     </div>
     <div class="yui3-u-1-4">
-        <div class="content">1/4</div>
+        <div class="content"><label>1/4</label></div>
     </div>
 </div>
 
 <div class="yui3-g">
     <div class="yui3-u-1-12">
-        <div class="content">1/12</div>
+        <div class="content"><label>1/12</label></div>
     </div>
     <div class="yui3-u-5-12">
-        <div class="content">5/12</div>
+        <div class="content"><label>5/12</label></div>
     </div>
     <div class="yui3-u-5-12">
-        <div class="content">5/12</div>
+        <div class="content"><label>5/12</label></div>
     </div>
     <div class="yui3-u-1-12">
-        <div class="content">1/12</div>
+        <div class="content"><label>1/12</label></div>
     </div>
 </div>
 
 <div class="yui3-g">
     <div class="yui3-u-7-12">
-        <div class="content">7/12</div>
+        <div class="content"><label>7/12</label></div>
     </div>
     <div class="yui3-u-5-12">
-        <div class="content">5/12</div>
+        <div class="content"><label>5/12</label></div>
     </div>
 </div>
 
 <div class="yui3-g">
     <div class="yui3-u-11-12">
-        <div class="content">11/12</div>
+        <div class="content"><label>11/12</label></div>
     </div>
     <div class="yui3-u-1-12">
-        <div class="content">1/12</div>
+        <div class="content"><label>1/12</label></div>
     </div>
 </div>
 
 <div class="yui3-g">
     <div class="yui3-u-1-24">
-        <div class="content">1/24</div>
+        <div class="content"><label>1/24</label></div>
     </div>
     <div class="yui3-u-5-24">
-        <div class="content">5/24</div>
+        <div class="content"><label>5/24</label></div>
     </div>
     <div class="yui3-u-7-24">
-        <div class="content">7/24</div>
+        <div class="content"><label>7/24</label></div>
     </div>
     <div class="yui3-u-11-24">
-        <div class="content">11/24</div>
+        <div class="content"><label>11/24</label></div>
     </div>
 </div>
 
 <div class="yui3-g">
     <div class="yui3-u-17-24">
-        <div class="content">17/24</div>
+        <div class="content"><label>17/24</label></div>
     </div>
     <div class="yui3-u-7-24">
-        <div class="content">7/24</div>
+        <div class="content"><label>7/24</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-19-24">
-        <div class="content">19/24</div>
+        <div class="content"><label>19/24</label></div>
     </div>
     <div class="yui3-u-5-24">
-        <div class="content">5/24</div>
+        <div class="content"><label>5/24</label></div>
     </div>
 </div>
 <div class="yui3-g">
     <div class="yui3-u-23-24">
-        <div class="content">23/24</div>
+        <div class="content"><label>23/24</label></div>
     </div>
     <div class="yui3-u-1-24">
-        <div class="content">1/24</div>
+        <div class="content"><label>1/24</label></div>
     </div>
 </div>
 </body>
+<script>
+YUI().use('node', 'panel', 'dd-plugin', function(Y){
+
+    var dialog = new Y.Panel({
+        headerContent: '<div>Code Snippet</div>',
+        bodyContent: '<textarea class="snippet"></textarea>',
+        width      : 500,
+        zIndex     : 6,
+        centered   : true,
+        modal      : true, // uncomment for modal behavior
+        srcNode    : '.snippet',
+        render     : true,
+        visible    : false,
+        plugins    : [Y.Plugin.Drag],
+        buttons: [
+            {
+                value  : 'OK',
+                section: Y.WidgetStdMod.FOOTER,
+                action : function (e) {
+                    dialog.hide();
+                }
+            }
+        ]
+    });
+
+    var showCode = function(e){
+        var snippet = Y.one('.snippet'),
+            html = '<div class="yui3-g">' + e.currentTarget.getContent() + '</div>';      
+
+        html = html.replace(/<label>|<\/label>/g, "");
+        snippet.set('value', html);
+        dialog.show();
+        snippet.select();
+        Y.all('.yui3-g').removeClass('yui3-selected');
+        e.currentTarget.addClass('yui3-selected');
+    }
+
+    Y.all('.yui3-g').on('click', showCode);
+
+});
+</script>
 </html>

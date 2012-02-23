@@ -4,7 +4,9 @@
     <macrodef name="build-submodules">
         <attribute name="target"/>
         <sequential>
-            <ant antfile="button-base.xml" target="@{target}"/>
+            <ant antfile="button.xml" target="@{target}"/>
+            <ant antfile="button-core.xml" target="@{target}"/>
+            <ant antfile="button-plugin.xml" target="@{target}"/>
             <ant antfile="button-group.xml" target="@{target}"/>
             <ant antfile="button-cssbutton.xml" target="@{target}"/>
         </sequential>

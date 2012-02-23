@@ -16,6 +16,7 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    
     /* Presentation */
     color: rgba(0,0,0, 0.80);
     *color: #444;
@@ -55,7 +56,6 @@ a.yui3-button {
     text-decoration:none;
 }
 
-
 .yui3-button:hover {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.15)));
     background-image: -webkit-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
@@ -65,7 +65,6 @@ a.yui3-button {
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#26000000', GradientType=0);
 }
-
 
 .yui3-button:active {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,0, 0.10)), to(rgba(0,0,0, 0.15)));
@@ -80,8 +79,8 @@ a.yui3-button {
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset, 0 2px 4px rgba(0,0,0, 0.30) inset;
 }
 
-
 .yui3-button-disabled,
+.yui3-button[disabled],
 .yui3-button-disabled:hover,
 .yui3-button-disabled:active {
     cursor: default;
@@ -96,30 +95,44 @@ a.yui3-button {
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
 }
 
-
 .yui3-button::-moz-focus-inner{
     padding: 0;
     border: 0;
 }
 
-
-/* sam button */
-.yui3-button-selected {
-    background-color: #345FCB;
-    color: #fff;    
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);    
+.yui3-button:-moz-focusring {
+    outline: thin dotted;
 }
-/* end sam button*/
 
+/* Sam */
+.yui3-skin-sam .yui3-button-selected {
+    background-color: #345FCB;
+    color: #fff;       
+    -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
+}
 
-/* night button */
+.yui3-skin-sam .yui3-button:-moz-focusring {
+    outline-color:  rgba(0, 0, 0, 0.85);
+}
+
+/* Night */
 .yui3-skin-night .yui3-button {
     background-color: #343536;
     color: #DCDCDC;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);    
+    -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
 }
+
 .yui3-skin-night .yui3-button-selected {
     background-color: #747576;
+    -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    -moz-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
-/*end night button*/
+
+.yui3-skin-night .yui3-button:-moz-focusring {
+    outline-color: rgba(255, 255, 255, 0.85);
+}

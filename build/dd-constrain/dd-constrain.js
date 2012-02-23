@@ -304,7 +304,7 @@ YUI.add('dd-constrain', function(Y) {
 	    * @method getRegion
 	    * @description Get the active region: viewport, node, custom region
 	    * @param {Boolean} inc Include the node's height and width
-	    * @return {Object}
+	    * @return {Object} The active region.
 	    */
 	    getRegion: function(inc) {
 	        var r = {}, oh = null, ow = null,
@@ -541,4 +541,4 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});

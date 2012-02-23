@@ -152,7 +152,7 @@ Y.mix(Mutable.prototype, {
     @chainable
     **/
     moveColumn: function (name, index) {
-        if (name && (isNumber(index) || isArray(index))) {
+        if (name !== undefined && (isNumber(index) || isArray(index))) {
             this.fire('moveColumn', {
                 column: name,
                 index: index
@@ -172,7 +172,7 @@ Y.mix(Mutable.prototype, {
     @chainable
     **/
     removeColumn: function (name) {
-        if (name) {
+        if (name !== undefined) {
             this.fire('removeColumn', {
                 column: name
             });
@@ -217,7 +217,7 @@ Y.mix(Mutable.prototype, {
                 this.get('autoSync'),
             models, model, i, len, args;
 
-        if (this.data) {
+        if (data && this.data) {
             models = this.data.add.apply(this.data, arguments);
 
             if (sync) {
@@ -452,12 +452,23 @@ Y.mix(Mutable.prototype, {
                 toCols = columns;
 
                 for (i = 0, len = toIndex.length - 1; toCols && i < len; ++i) {
-                    toCols = toCols[i] && toCols[i].children;
+                    toCols = toCols[toIndex[i]] && toCols[toIndex[i]].children;
                 }
 
                 if (toCols) {
+                    len = toCols.length;
                     fromCols.splice(fromIndex, 1);
-                    toCols.splice(toIndex[i], 1, column);
+                    toIndex = toIndex[i];
+
+                    if (len > toCols.lenth) {
+                        // spliced off the same array, so adjust destination
+                        // index if necessary
+                        if (fromIndex < toIndex) {
+                            toIndex--;
+                        }
+                    }
+
+                    toCols.splice(toIndex, 0, column);
 
                     this.set('columns', columns, { originEvent: e });
                 } else { Y.log('Column [' + e.column + '] could not be moved. Destination index invalid for moveColumn', 'warn', 'datatable');
