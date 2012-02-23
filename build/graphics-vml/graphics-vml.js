@@ -455,10 +455,39 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	{
 		var host = this,
             graphic = cfg.graphic;
-        host._graphic = graphic;
 		host.createNode();
+        if(graphic)
+        {
+            this._setGraphic(graphic);
+        }
         this._updateHandler();
 	},
+ 
+    /**
+     * Set the Graphic instance for the shape.
+     *
+     * @method _setGraphic
+     * @param {Graphic | Node | HTMLElement | String} render This param is used to determine the graphic instance. If it is a `Graphic` instance, it will be assigned
+     * to the `graphic` attribute. Otherwise, a new Graphic instance will be created and rendered into the dom element that the render represents.
+     * @private
+     */
+    _setGraphic: function(render)
+    {
+        var graphic;
+        if(render instanceof Y.VMLGraphic)
+        {
+		    this._graphic = render;
+        }
+        else
+        {
+            render = Y.one(render);
+            graphic = new Y.VMLGraphic({
+                render: render
+            });
+            graphic._appendShape(this);
+            this._graphic = graphic;
+        }
+    },
 
 	/**
 	 * Creates the dom node for the shape.

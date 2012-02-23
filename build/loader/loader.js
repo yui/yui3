@@ -3040,6 +3040,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
@@ -3049,6 +3054,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-position", 
             "widget-stack", 
             "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -4949,7 +4959,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6b41a1c98d674f2873f064d79c84ad15';
+YUI.Env[Y.version].md5 = '59efa05da77199ba44a2351b5cb77ba4';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
