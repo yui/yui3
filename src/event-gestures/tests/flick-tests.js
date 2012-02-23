@@ -25,8 +25,6 @@ YUI.add('flick-tests', function(Y) {
         },
         suite = new Y.Test.Suite('Flick Event Suite');
 
-    console.log(eventData);
-
     suite.add(new Y.Test.Case({
         name: 'flick',
         setUp: function() {
