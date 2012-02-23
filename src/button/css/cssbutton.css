@@ -16,7 +16,7 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
-    
+
     /* Presentation */
     color: rgba(0,0,0, 0.80);
     *color: #444;
@@ -79,8 +79,8 @@ a.yui3-button {
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset, 0 2px 4px rgba(0,0,0, 0.30) inset;
 }
 
-.yui3-button-disabled,
 .yui3-button[disabled],
+.yui3-button-disabled,
 .yui3-button-disabled:hover,
 .yui3-button-disabled:active {
     cursor: default;
@@ -105,16 +105,16 @@ a.yui3-button {
 }
 
 /* Sam */
+.yui3-skin-sam .yui3-button-primary,
 .yui3-skin-sam .yui3-button-selected {
     background-color: #345FCB;
-    color: #fff;       
+    color: #fff;
     -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
     -moz-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.17) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
 }
-
 .yui3-skin-sam .yui3-button:-moz-focusring {
-    outline-color:  rgba(0, 0, 0, 0.85);
+    outline-color: rgba(0, 0, 0, 0.85);
 }
 
 /* Night */
@@ -125,11 +125,9 @@ a.yui3-button {
     -moz-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) inset, 0 2px 0 rgba(255, 255, 255, 0.15) inset, 0 1px 2px rgba(0, 0, 0, 0.15);
 }
-
+.yui3-skin-night .yui3-button-primary,
 .yui3-skin-night .yui3-button-selected {
     background-color: #747576;
-    -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
-    -moz-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
