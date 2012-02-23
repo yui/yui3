@@ -198,9 +198,10 @@ WidgetButtons.prototype = {
         be merged with any defaults provided by a button with the same `name`
         defined on the `BUTTONS` property. The following are the possible
         configuration properties:
-      @param {Function} [button.action] The default handlers that should be
-        called when the button is clicked. **Note:** Specifying an `events`
-        configuration will most likely override this.
+      @param {Function|String} [button.action] The default handler that should
+        be called when the button is clicked. A String-name for a function that
+        exists on the `context` object can also be provided. **Note:**
+        Specifying an `events` configuration will most likely override this.
       @param {String|String[]} [button.classNames] Additional CSS class-names
         which would be added to the button node.
       @param {Object} [button.context=this] Context which any `events` or
@@ -364,7 +365,7 @@ WidgetButtons.prototype = {
     @protected
     **/
     _createButton: function (button) {
-        var buttonConfig, config, i, len, nonButtonNodeCfg;
+        var config, buttonConfig, nonButtonNodeCfg, i, len, action, context;
 
         if (Y.instanceOf(button, Y.Node)) {
             return button.plug(ButtonPlugin);
@@ -388,15 +389,24 @@ WidgetButtons.prototype = {
         // Create the buton-Node using the button-Node-only config.
         button = ButtonPlugin.createNode(buttonConfig);
 
-        // Add any CSS classnames to the button Node.
-        YArray.each(YArray(config.classNames), button.addClass, button);
+        context = config.context;
+        action  = config.action;
+
+        // Supports `action` as a String-name of a Function on the `context`
+        // object.
+        if (isString(action)) {
+            action = Y.bind(action, context);
+        }
 
         // Supports all types of crazy configs for event subscriptions.
-        button.on(config.events, config.action, config.context);
+        button.on(config.events, action, context);
 
         // Tags the Node with the configured `name` and `isDefault` setting.
         button.setData('name', this._getButtonName(config));
         button.setData('default', this._getButtonDefault(config));
+
+        // Add any CSS classnames to the button Node.
+        YArray.each(YArray(config.classNames), button.addClass, button);
 
         return button;
     },
