@@ -8,28 +8,48 @@
     <link rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css" />
     <link rel="stylesheet" href="../../../../build/cssbase/base-min.css" />
 </head>
-<body class="yui3-skin-night">
+<body class="yui3-skin-sam">
 
     <h1>Panel Manual Test</h1>
 
     <script src="../../../../build/yui/yui.js"></script>
     <script>
     YUI({
-        filter: 'raw',
-        skin  : 'night'
-    }).use('panel', 'transition', function (Y) {
+        skin  : 'sam',
+        filter: 'raw'
+    }).use('panel', function (Y) {
 
         var panel = new Y.Panel({
             headerContent: 'Foo Panel',
-            bodyContent  : '<p>Some Panel content.</p>',
+            bodyContent  : '<p>Looks like you want to save something.</p>',
             centered     : true,
-            width        : 251,
+            width        : 250,
 
             buttons: {
                 header: ['close'],
-                footer: [{label: 'foo'}]
+                footer: [
+                    {
+                        label : 'Cancel',
+                        action: 'hide'
+                    },
+
+                    {
+                        label    : 'Save',
+                        action   : 'onSave',
+                        isDefault: true
+                    }
+                ]
             }
         });
+
+        panel.onSave = function (e) {
+            Y.all(panel.get('buttons.footer')).set('disabled', true);
+            panel.set('bodyContent', '<p>Saving now…</p>');
+
+            setTimeout(function () {
+                panel.hide();
+            }, 750);
+        }
 
         panel.render().align();
 
