@@ -42,16 +42,9 @@
     padding: 8px;
 }
 .yui3-skin-sam .yui3-panel-content .yui3-widget-hd .yui3-button-close {
-    text-indent: -9999px;
-    width: 13px;
-    height: 13px;
-    line-height: 13px;
-    padding: 0;
-    vertical-align: top;
-    background-color: transparent;
-    background-image: url(sprite_icons.png);
-    background-repeat: no-repeat;
-    background-position: 1px 1px;
+    /* Reset */
+    background: transparent;
+    filter: none;
     border: none;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
@@ -59,6 +52,31 @@
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+
+    /* Structure */
+    width: 13px;
+    height: 13px;
+    padding: 0;
+    overflow: hidden;
+    vertical-align: top;
+    /* IE < 8 :( */
+    *font-size: 0;
+    *line-height: 0;
+    *letter-spacing: -1000px;
+    *color: #86A5EC;
+    *background: url(sprite_icons.png) no-repeat 1px 1px;
+}
+.yui3-skin-sam .yui3-panel-content .yui3-widget-hd .yui3-button-close:before {
+    content: url(sprite_icons.png);
+    display: inline-block;
+    text-align: center;
+    font-size: 0;
+    line-height: 0;
+    width: 13px;
+    margin: 1px 0 0 1px;
+}
+.yui3-skin-sam .yui3-panel-hidden .yui3-widget-hd .yui3-button-close {
+    display: none;
 }
 .yui3-skin-sam .yui3-panel-content .yui3-widget-bd {
     padding: 10px;
@@ -67,4 +85,8 @@
 	background: #EDF5FF;
 	padding: 8px;
     text-align: right;
+}
+
+.yui3-skin-sam .yui3-panel-content .yui3-widget-ft .yui3-button {
+    margin-left: 8px;
 }
