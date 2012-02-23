@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html>
-    <body>
+    <body class='yui3-skin-sam'>
         <button id="my-button">my button</button>
 
         <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
@@ -17,6 +17,9 @@
             console.log(button.get('label'));
             console.log(button.get('disabled'));
             button.on('click', function(){
+                button.set('disabled', true);
+                console.log(button.get('disabled'));
+                    button.set('label', 'disabled');
                 console.log('a');
             });
             
@@ -25,12 +28,11 @@
             
             
             var button2 = ButtonFactory({label: 'foo'});
-            Y.augment(button2, Y.Attribute);
+            Y.augment(button2, Y.AttributeCore);
 
             button2.on('disabledChange', function(e) {
                 
             });
-
 
             button2.appendTo('body');
             
