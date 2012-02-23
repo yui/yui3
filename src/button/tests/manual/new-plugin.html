@@ -14,13 +14,12 @@
             var button = ButtonFactory('#my-button', {
                 disabled: false
             });
-            console.log(button.get('label'));
-            console.log(button.get('disabled'));
+            Y.log(button.get('label'));
+            Y.log(button.get('disabled'));
             button.on('click', function(){
                 button.set('disabled', true);
-                console.log(button.get('disabled'));
-                    button.set('label', 'disabled');
-                console.log('a');
+                button.set('label', 'disabled');
+                Y.log(button.get('disabled'));
             });
             
             
@@ -37,7 +36,7 @@
             button2.appendTo('body');
             
             button2.on('click', function(){
-                console.log('b');
+                Y.log('b');
             });
 
         });
