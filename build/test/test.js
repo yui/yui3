@@ -2,12 +2,12 @@ YUI.add('test', function(Y) {
 
 /**
  * YUI Test Framework
- * @module yuitest
+ * @module test
  */
 
 /**
  * The root namespace for YUI Test.
- * @class YUITest
+ * @class Test
  * @static
  */
 
@@ -19,20 +19,20 @@ Y.namespace('Test');
 
 
 //Using internal YUI methods here
-YUITest.Object = Y.Object;
-YUITest.Array = Y.Array;
-YUITest.Util = {
+Test.Object = Y.Object;
+Test.Array = Y.Array;
+Test.Util = {
     mix: Y.mix,
     JSON: Y.JSON
 }
 
 /**
  * Simple custom event implementation.
- * @namespace YUITest
+ * @namespace Test
  * @class EventTarget
  * @constructor
  */
-YUITest.EventTarget = function(){
+Test.EventTarget = function(){
 
     /**
      * Event handlers for the various events.
@@ -45,10 +45,10 @@ YUITest.EventTarget = function(){
 
 };
     
-YUITest.EventTarget.prototype = {
+Test.EventTarget.prototype = {
 
     //restore prototype
-    constructor: YUITest.EventTarget,
+    constructor: Test.EventTarget,
             
     //-------------------------------------------------------------------------
     // Event Handling
@@ -146,11 +146,11 @@ YUITest.EventTarget.prototype = {
  * A test suite that can contain a collection of TestCase and TestSuite objects.
  * @param {String||Object} data The name of the test suite or an object containing
  *      a name property as well as setUp and tearDown methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestSuite
  * @constructor
  */
-YUITest.TestSuite = function (data) {
+Test.TestSuite = function (data) {
 
     /**
      * The name of the test suite.
@@ -185,19 +185,19 @@ YUITest.TestSuite = function (data) {
 
 };
     
-YUITest.TestSuite.prototype = {
+Test.TestSuite.prototype = {
     
     //restore constructor
-    constructor: YUITest.TestSuite,
+    constructor: Test.TestSuite,
     
     /**
      * Adds a test suite or test case to the test suite.
-     * @param {YUITest.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
+     * @param {Test.TestSuite||Test.TestCase} testObject The test suite or test case to add.
      * @return {Void}
      * @method add
      */
     add : function (testObject) {
-        if (testObject instanceof YUITest.TestSuite || testObject instanceof YUITest.TestCase) {
+        if (testObject instanceof Test.TestSuite || testObject instanceof Test.TestCase) {
             this.items.push(testObject);
         }
         return this;
@@ -229,10 +229,10 @@ YUITest.TestSuite.prototype = {
  * @param template An object containing any number of test methods, other methods,
  *                 an optional name, and anything else the test case needs.
  * @class TestCase
- * @namespace YUITest
+ * @namespace Test
  * @constructor
  */
-YUITest.TestCase = function (template) {
+Test.TestCase = function (template) {
     
     /**
      * Special rules for the test case. Possible subobjects
@@ -253,10 +253,10 @@ YUITest.TestCase = function (template) {
 
 };
         
-YUITest.TestCase.prototype = {  
+Test.TestCase.prototype = {  
 
     //restore constructor
-    constructor: YUITest.TestCase,
+    constructor: Test.TestCase,
     
     /**
      * Method to call from an async init method to
@@ -266,7 +266,7 @@ YUITest.TestCase.prototype = {
      * @return {Function} The function to call as a callback.
      */
     callback: function(){
-        return YUITest.TestRunner.callback.apply(YUITest.TestRunner,arguments);
+        return Test.TestRunner.callback.apply(Test.TestRunner,arguments);
     },
 
     /**
@@ -277,7 +277,7 @@ YUITest.TestCase.prototype = {
      * @method resume
      */
     resume : function (segment) {
-        YUITest.TestRunner.resume(segment);
+        Test.TestRunner.resume(segment);
     },
 
     /**
@@ -296,10 +296,10 @@ YUITest.TestCase.prototype = {
         actualDelay = (typeof actualDelay == "number" ? actualDelay : 10000);
     
 		if (typeof segment == "function"){
-            throw new YUITest.Wait(segment, actualDelay);
+            throw new Test.Wait(segment, actualDelay);
         } else {
-            throw new YUITest.Wait(function(){
-                YUITest.Assert.fail("Timeout: wait() called but resume() never called.");
+            throw new Test.Wait(function(){
+                Test.Assert.fail("Timeout: wait() called but resume() never called.");
             }, actualDelay);
         }
     },
@@ -309,26 +309,26 @@ YUITest.TestCase.prototype = {
     //-------------------------------------------------------------------------
 
     /**
-     * Asserts that a given condition is true. If not, then a YUITest.AssertionError object is thrown
+     * Asserts that a given condition is true. If not, then a Test.AssertionError object is thrown
      * and the test fails.
      * @method assert
      * @param {Boolean} condition The condition to test.
      * @param {String} message The message to display if the assertion fails.
      */
     assert : function (condition, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!condition){
-            throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Assertion failed."));
+            throw new Test.AssertionError(Test.Assert._formatMessage(message, "Assertion failed."));
         }    
     },
     
     /**
-     * Forces an assertion error to occur. Shortcut for YUITest.Assert.fail().
+     * Forces an assertion error to occur. Shortcut for Test.Assert.fail().
      * @method fail
      * @param {String} message (Optional) The message to display with the failure.
      */
     fail: function (message) {    
-        YUITest.Assert.fail(message);
+        Test.Assert.fail(message);
     },
     
     //-------------------------------------------------------------------------
@@ -371,11 +371,11 @@ YUITest.TestCase.prototype = {
 };
 /**
  * An object object containing test result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestFormat
  * @static
  */
-YUITest.TestFormat = function(){
+Test.TestFormat = function(){
     
     /* (intentionally not documented)
      * Basic XML escaping method. Replaces quotes, less-than, greater-than,
@@ -408,7 +408,7 @@ YUITest.TestFormat = function(){
          * @static
          */
         JSON: function(results) {
-            return YUITest.Util.JSON.stringify(results);
+            return Test.Util.JSON.stringify(results);
         },
         
         /**
@@ -617,12 +617,12 @@ YUITest.TestFormat = function(){
      * An object capable of sending test results to a server.
      * @param {String} url The URL to submit the results to.
      * @param {Function} format (Optiona) A function that outputs the results in a specific format.
-     *      Default is YUITest.TestFormat.XML.
+     *      Default is Test.TestFormat.XML.
      * @constructor
-     * @namespace YUITest
+     * @namespace Test
      * @class Reporter
      */
-    YUITest.Reporter = function(url, format) {
+    Test.Reporter = function(url, format) {
     
         /**
          * The URL to submit the data to.
@@ -636,7 +636,7 @@ YUITest.TestFormat = function(){
          * @type Function
          * @property format
          */
-        this.format = format || YUITest.TestFormat.XML;
+        this.format = format || Test.TestFormat.XML;
     
         /**
          * Extra fields to submit with the request.
@@ -663,10 +663,10 @@ YUITest.TestFormat = function(){
         this._iframe = null;
     };
     
-    YUITest.Reporter.prototype = {
+    Test.Reporter.prototype = {
     
         //restore missing constructor
-        constructor: YUITest.Reporter,
+        constructor: Test.Reporter,
     
         /**
          * Adds a field to the form that submits the results.
@@ -781,11 +781,11 @@ YUITest.TestFormat = function(){
     /**
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
-     * @namespace YUITest
+     * @namespace Test
      * @class TestRunner
      * @static
      */
-    YUITest.TestRunner = function(){
+    Test.TestRunner = function(){
 
         /*(intentionally not documented)
          * Determines if any of the array of test groups appears
@@ -859,13 +859,13 @@ YUITest.TestFormat = function(){
              * @type object
              * @property results
              */                
-            this.results = new YUITest.Results();
+            this.results = new Test.Results();
             
             //initialize results
-            if (testObject instanceof YUITest.TestSuite){
+            if (testObject instanceof Test.TestSuite){
                 this.results.type = "testsuite";
                 this.results.name = testObject.name;
-            } else if (testObject instanceof YUITest.TestCase){
+            } else if (testObject instanceof Test.TestCase){
                 this.results.type = "testcase";
                 this.results.name = testObject.name;
             }
@@ -903,16 +903,16 @@ YUITest.TestFormat = function(){
         function TestRunner(){
         
             //inherit from EventTarget
-            YUITest.EventTarget.call(this);
+            Test.EventTarget.call(this);
             
             /**
              * Suite on which to attach all TestSuites and TestCases to be run.
-             * @type YUITest.TestSuite
+             * @type Test.TestSuite
              * @property masterSuite
              * @static
              * @private
              */
-            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new Test.TestSuite("yuitests" + (new Date()).getTime());        
     
             /**
              * Pointer to the current node in the test tree.
@@ -992,7 +992,7 @@ YUITest.TestFormat = function(){
 
         }
         
-        TestRunner.prototype = YUITest.Util.mix(new YUITest.EventTarget(), {
+        TestRunner.prototype = Test.Util.mix(new Test.EventTarget(), {
             
             /**
             * If true, YUITest will not fire an error for tests with no Asserts.
@@ -1004,7 +1004,7 @@ YUITest.TestFormat = function(){
             _ignoreEmpty: false,
 
             //restore prototype
-            constructor: YUITest.TestRunner,
+            constructor: Test.TestRunner,
         
             //-------------------------------------------------------------------------
             // Constants
@@ -1090,7 +1090,7 @@ YUITest.TestFormat = function(){
             /**
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
-             * @param {YUITest.TestCase} testCase The test case to add.
+             * @param {Test.TestCase} testCase The test case to add.
              * @return {Void}
              * @static
              * @private
@@ -1115,7 +1115,7 @@ YUITest.TestFormat = function(){
             /**
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
-             * @param {YUITest.TestSuite} testSuite The test suite to add.
+             * @param {Test.TestSuite} testSuite The test suite to add.
              * @return {Void}
              * @static
              * @private
@@ -1128,9 +1128,9 @@ YUITest.TestFormat = function(){
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < testSuite.items.length; i++){
-                    if (testSuite.items[i] instanceof YUITest.TestSuite) {
+                    if (testSuite.items[i] instanceof Test.TestSuite) {
                         this._addTestSuiteToTestTree(node, testSuite.items[i]);
-                    } else if (testSuite.items[i] instanceof YUITest.TestCase) {
+                    } else if (testSuite.items[i] instanceof Test.TestCase) {
                         this._addTestCaseToTestTree(node, testSuite.items[i]);
                     }                   
                 }            
@@ -1152,9 +1152,9 @@ YUITest.TestFormat = function(){
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < this.masterSuite.items.length; i++){
-                    if (this.masterSuite.items[i] instanceof YUITest.TestSuite) {
+                    if (this.masterSuite.items[i] instanceof Test.TestSuite) {
                         this._addTestSuiteToTestTree(this._root, this.masterSuite.items[i]);
-                    } else if (this.masterSuite.items[i] instanceof YUITest.TestCase) {
+                    } else if (this.masterSuite.items[i] instanceof Test.TestCase) {
                         this._addTestCaseToTestTree(this._root, this.masterSuite.items[i]);
                     }                   
                 }            
@@ -1184,11 +1184,11 @@ YUITest.TestFormat = function(){
                         parentNode.results[node.testObject.name] = node.results;
                     }
                 
-                    if (node.testObject instanceof YUITest.TestSuite){
+                    if (node.testObject instanceof Test.TestSuite){
                         this._execNonTestMethod(node, "tearDown", false);
                         node.results.duration = (new Date()) - node._start;
                         this.fire({ type: this.TEST_SUITE_COMPLETE_EVENT, testSuite: node.testObject, results: node.results});
-                    } else if (node.testObject instanceof YUITest.TestCase){
+                    } else if (node.testObject instanceof Test.TestCase){
                         this._execNonTestMethod(node, "destroy", false);
                         node.results.duration = (new Date()) - node._start;
                         this.fire({ type: this.TEST_CASE_COMPLETE_EVENT, testCase: node.testObject, results: node.results});
@@ -1264,7 +1264,7 @@ YUITest.TestFormat = function(){
                     node.results.errors++;
                     event.error = ex;
                     event.methodName = methodName;
-                    if (testObject instanceof YUITest.TestCase){
+                    if (testObject instanceof Test.TestCase){
                         event.testCase = testObject;
                     } else {
                         event.testSuite = testSuite;
@@ -1278,7 +1278,7 @@ YUITest.TestFormat = function(){
             
             /**
              * Runs a test case or test suite, returning the results.
-             * @param {YUITest.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
+             * @param {Test.TestCase|Test.TestSuite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run
@@ -1304,11 +1304,11 @@ YUITest.TestFormat = function(){
                     
                     //figure out what to do
                     if (typeof testObject == "object" && testObject !== null){
-                        if (testObject instanceof YUITest.TestSuite){
+                        if (testObject instanceof Test.TestSuite){
                             this.fire({ type: this.TEST_SUITE_BEGIN_EVENT, testSuite: testObject });
                             node._start = new Date();
                             this._execNonTestMethod(node, "setUp" ,false);
-                        } else if (testObject instanceof YUITest.TestCase){
+                        } else if (testObject instanceof Test.TestCase){
                             this.fire({ type: this.TEST_CASE_BEGIN_EVENT, testCase: testObject });
                             node._start = new Date();
                             
@@ -1332,7 +1332,7 @@ YUITest.TestFormat = function(){
                         //some environments don't support setTimeout
                         if (typeof setTimeout != "undefined"){                    
                             setTimeout(function(){
-                                YUITest.TestRunner._run();
+                                Test.TestRunner._run();
                             }, 0);
                         } else {
                             this._run();
@@ -1385,15 +1385,15 @@ YUITest.TestFormat = function(){
                     segment.call(testCase, this._context);                    
                 
                     //if the test hasn't already failed and doesn't have any asserts...
-                    if(YUITest.Assert._getCount() == 0 && !this._ignoreEmpty){
-                        throw new YUITest.AssertionError("Test has no asserts.");
+                    if(Test.Assert._getCount() == 0 && !this._ignoreEmpty){
+                        throw new Test.AssertionError("Test has no asserts.");
                     }                                                        
                     //if it should fail, and it got here, then it's a fail because it didn't
                      else if (shouldFail){
-                        error = new YUITest.ShouldFail();
+                        error = new Test.ShouldFail();
                         failed = true;
                     } else if (shouldError){
-                        error = new YUITest.ShouldError();
+                        error = new Test.ShouldError();
                         failed = true;
                     }
                                
@@ -1406,12 +1406,12 @@ YUITest.TestFormat = function(){
                     }                    
                 
                     //figure out what type of error it was
-                    if (thrown instanceof YUITest.AssertionError) {
+                    if (thrown instanceof Test.AssertionError) {
                         if (!shouldFail){
                             error = thrown;
                             failed = true;
                         }
-                    } else if (thrown instanceof YUITest.Wait){
+                    } else if (thrown instanceof Test.Wait){
                     
                         if (typeof thrown.segment == "function"){
                             if (typeof thrown.delay == "number"){
@@ -1419,7 +1419,7 @@ YUITest.TestFormat = function(){
                                 //some environments don't support setTimeout
                                 if (typeof setTimeout != "undefined"){
                                     testCase.__yui_wait = setTimeout(function(){
-                                        YUITest.TestRunner._resumeTest(thrown.segment);
+                                        Test.TestRunner._resumeTest(thrown.segment);
                                     }, thrown.delay);
                                     this._waiting = true;
                                 } else {
@@ -1433,7 +1433,7 @@ YUITest.TestFormat = function(){
                     } else {
                         //first check to see if it should error
                         if (!shouldError) {                        
-                            error = new YUITest.UnexpectedError(thrown);
+                            error = new Test.UnexpectedError(thrown);
                             failed = true;
                         } else {
                             //check to see what type of data we have
@@ -1441,14 +1441,14 @@ YUITest.TestFormat = function(){
                                 
                                 //if it's a string, check the error message
                                 if (thrown.message != shouldError){
-                                    error = new YUITest.UnexpectedError(thrown);
+                                    error = new Test.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             } else if (typeof shouldError == "function"){
                             
                                 //if it's a function, see if the error is an instance of it
                                 if (!(thrown instanceof shouldError)){
-                                    error = new YUITest.UnexpectedError(thrown);
+                                    error = new Test.UnexpectedError(thrown);
                                     failed = true;
                                 }
                             
@@ -1457,7 +1457,7 @@ YUITest.TestFormat = function(){
                                 //if it's an object, check the instance and message
                                 if (!(thrown instanceof shouldError.constructor) || 
                                         thrown.message != shouldError.message){
-                                    error = new YUITest.UnexpectedError(thrown);
+                                    error = new Test.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             
@@ -1479,7 +1479,7 @@ YUITest.TestFormat = function(){
                 this._execNonTestMethod(node.parent, "tearDown", false);
                 
                 //reset the assert count
-                YUITest.Assert._reset();
+                Test.Assert._reset();
                 
                 //calculate duration
                 var duration = (new Date()) - node._start;
@@ -1503,7 +1503,7 @@ YUITest.TestFormat = function(){
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
                     setTimeout(function(){
-                        YUITest.TestRunner._run();
+                        Test.TestRunner._run();
                     }, 0);
                 } else {
                     this._run();
@@ -1575,7 +1575,7 @@ YUITest.TestFormat = function(){
                     //some environments don't support setTimeout
                     if (typeof setTimeout != "undefined"){                    
                         setTimeout(function(){
-                            YUITest.TestRunner._run();
+                            Test.TestRunner._run();
                         }, 0);              
                     } else {
                         this._run();
@@ -1642,7 +1642,7 @@ YUITest.TestFormat = function(){
              * @static
              */
             clear : function () {
-                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new Test.TestSuite("yuitests" + (new Date()).getTime());
             },
             
             /**
@@ -1762,12 +1762,12 @@ YUITest.TestFormat = function(){
                 options = options || {};
                 
                 //pointer to runner to avoid scope issues 
-                var runner  = YUITest.TestRunner,
+                var runner  = Test.TestRunner,
                     oldMode = options.oldMode;
                 
                 
                 //if there's only one suite on the masterSuite, move it up
-                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof YUITest.TestSuite){
+                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof Test.TestSuite){
                     this.masterSuite = this.masterSuite.items[0];
                 }                
                 
@@ -1794,12 +1794,12 @@ YUITest.TestFormat = function(){
 /**
  * The ArrayAssert object provides functions to test JavaScript array objects
  * for a variety of cases.
- * @namespace YUITest
+ * @namespace Test
  * @class ArrayAssert
  * @static
  */
  
-YUITest.ArrayAssert = {
+Test.ArrayAssert = {
 
     //=========================================================================
     // Private methods
@@ -1862,10 +1862,10 @@ YUITest.ArrayAssert = {
     contains : function (needle, haystack, 
                            message) {
         
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
 
         if (this._indexOf(haystack, needle) == -1){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
         }
     },
 
@@ -1881,12 +1881,12 @@ YUITest.ArrayAssert = {
      */
     containsItems : function (needles, haystack, 
                            message) {
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
 
         //begin checking values
         for (var i=0; i < needles.length; i++){
             if (this._indexOf(haystack, needles[i]) == -1){
-                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value " + needles[i] + " (" + (typeof needles[i]) + ") not found in array [" + haystack + "]."));
+                Test.Assert.fail(Test.Assert._formatMessage(message, "Value " + needles[i] + " (" + (typeof needles[i]) + ") not found in array [" + haystack + "]."));
             }
         }
     },
@@ -1903,14 +1903,14 @@ YUITest.ArrayAssert = {
     containsMatch : function (matcher, haystack, 
                            message) {
         
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
         //check for valid matcher
         if (typeof matcher != "function"){
             throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
         }
         
         if (!this._some(haystack, matcher)){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
         }
     },
 
@@ -1927,10 +1927,10 @@ YUITest.ArrayAssert = {
     doesNotContain : function (needle, haystack, 
                            message) {
         
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
 
         if (this._indexOf(haystack, needle) > -1){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
         }
     },
 
@@ -1947,11 +1947,11 @@ YUITest.ArrayAssert = {
     doesNotContainItems : function (needles, haystack, 
                            message) {
 
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
 
         for (var i=0; i < needles.length; i++){
             if (this._indexOf(haystack, needles[i]) > -1){
-                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                Test.Assert.fail(Test.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         }
 
@@ -1969,7 +1969,7 @@ YUITest.ArrayAssert = {
     doesNotContainMatch : function (matcher, haystack, 
                            message) {
         
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
       
         //check for valid matcher
         if (typeof matcher != "function"){
@@ -1977,7 +1977,7 @@ YUITest.ArrayAssert = {
         }
         
         if (this._some(haystack, matcher)){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
         }
     },
         
@@ -1993,20 +1993,20 @@ YUITest.ArrayAssert = {
      */
     indexOf : function (needle, haystack, index, message) {
     
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
 
         //try to find the value in the array
         for (var i=0; i < haystack.length; i++){
             if (haystack[i] === needle){
                 if (index != i){
-                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    Test.Assert.fail(Test.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
                 }
                 return;
             }
         }
         
         //if it makes it here, it wasn't found at all
-        YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
+        Test.Assert.fail(Test.Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
     },
         
     /**
@@ -2023,22 +2023,22 @@ YUITest.ArrayAssert = {
     itemsAreEqual : function (expected, actual, 
                            message) {
         
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
         
         //first make sure they're array-like (this can probably be improved)
         if (typeof expected != "object" || typeof actual != "object"){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value should be an array."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Value should be an array."));
         }
         
         //next check array length
         if (expected.length != actual.length){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length + "."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length + "."));
         }
        
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (expected[i] != actual[i]){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values in position " + i + " are not equal."), expected[i], actual[i]);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values in position " + i + " are not equal."), expected[i], actual[i]);
             }
         }
     },
@@ -2060,7 +2060,7 @@ YUITest.ArrayAssert = {
     itemsAreEquivalent : function (expected, actual, 
                            comparator, message) {
         
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
 
         //make sure the comparator is valid
         if (typeof comparator != "function"){
@@ -2069,13 +2069,13 @@ YUITest.ArrayAssert = {
         
         //first check array length
         if (expected.length != actual.length){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
         }
         
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (!comparator(expected[i], actual[i])){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
             }
         }
     },
@@ -2088,9 +2088,9 @@ YUITest.ArrayAssert = {
      * @static
      */
     isEmpty : function (actual, message) {        
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
         if (actual.length > 0){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should be empty."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should be empty."));
         }
     },    
     
@@ -2102,9 +2102,9 @@ YUITest.ArrayAssert = {
      * @static
      */
     isNotEmpty : function (actual, message) {        
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
         if (actual.length === 0){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should not be empty."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should not be empty."));
         }
     },    
     
@@ -2122,17 +2122,17 @@ YUITest.ArrayAssert = {
     itemsAreSame : function (expected, actual, 
                           message) {
         
-        YUITest.Assert._increment();     
+        Test.Assert._increment();     
 
         //first check array length
         if (expected.length != actual.length){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
         }
                     
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (expected[i] !== actual[i]){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values in position " + i + " are not the same."), expected[i], actual[i]);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values in position " + i + " are not the same."), expected[i], actual[i]);
             }
         }
     },
@@ -2154,14 +2154,14 @@ YUITest.ArrayAssert = {
         for (var i=haystack.length; i >= 0; i--){
             if (haystack[i] === needle){
                 if (index != i){
-                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    Test.Assert.fail(Test.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
                 }
                 return;
             }
         }
         
         //if it makes it here, it wasn't found at all
-        YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array."));        
+        Test.Assert.fail(Test.Assert._formatMessage(message, "Value doesn't exist in array."));        
     }
     
 };
@@ -2170,11 +2170,11 @@ YUITest.ArrayAssert = {
  * The Assert object provides functions to test JavaScript values against
  * known and expected results. Whenever a comparison (assertion) fails,
  * an error is thrown.
- * @namespace YUITest
+ * @namespace Test
  * @class Assert
  * @static
  */
-YUITest.Assert = {
+Test.Assert = {
 
     /**
      * The number of assertions performed.
@@ -2247,7 +2247,7 @@ YUITest.Assert = {
      * @static
      */
     fail : function (message) {
-        throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Test force-failed."));
+        throw new Test.AssertionError(Test.Assert._formatMessage(message, "Test force-failed."));
     },       
     
     /** 
@@ -2256,7 +2256,7 @@ YUITest.Assert = {
      * @static
      */
     pass : function (message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
     },       
     
     //-------------------------------------------------------------------------
@@ -2273,9 +2273,9 @@ YUITest.Assert = {
      * @static
      */
     areEqual : function (expected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (expected != actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values should be equal."), expected, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values should be equal."), expected, actual);
         }
     },
     
@@ -2290,9 +2290,9 @@ YUITest.Assert = {
      */
     areNotEqual : function (unexpected, actual, 
                          message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (unexpected == actual) {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be equal."), unexpected);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be equal."), unexpected);
         }
     },
     
@@ -2306,9 +2306,9 @@ YUITest.Assert = {
      * @static
      */
     areNotSame : function (unexpected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (unexpected === actual) {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be the same."), unexpected);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be the same."), unexpected);
         }
     },
 
@@ -2322,9 +2322,9 @@ YUITest.Assert = {
      * @static
      */
     areSame : function (expected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (expected !== actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values should be the same."), expected, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values should be the same."), expected, actual);
         }
     },    
     
@@ -2341,9 +2341,9 @@ YUITest.Assert = {
      * @static
      */
     isFalse : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (false !== actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be false."), false, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be false."), false, actual);
         }
     },
     
@@ -2356,9 +2356,9 @@ YUITest.Assert = {
      * @static
      */
     isTrue : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (true !== actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be true."), true, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be true."), true, actual);
         }
 
     },
@@ -2375,9 +2375,9 @@ YUITest.Assert = {
      * @static
      */
     isNaN : function (actual, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!isNaN(actual)){
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
         }    
     },
     
@@ -2389,9 +2389,9 @@ YUITest.Assert = {
      * @static
      */
     isNotNaN : function (actual, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (isNaN(actual)){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be NaN."), NaN);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be NaN."), NaN);
         }    
     },
     
@@ -2404,9 +2404,9 @@ YUITest.Assert = {
      * @static
      */
     isNotNull : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (actual === null) {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be null."), null);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be null."), null);
         }
     },
 
@@ -2419,9 +2419,9 @@ YUITest.Assert = {
      * @static
      */
     isNotUndefined : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual == "undefined") {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should not be undefined."), undefined);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should not be undefined."), undefined);
         }
     },
 
@@ -2434,9 +2434,9 @@ YUITest.Assert = {
      * @static
      */
     isNull : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (actual !== null) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be null."), null, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be null."), null, actual);
         }
     },
         
@@ -2449,9 +2449,9 @@ YUITest.Assert = {
      * @static
      */
     isUndefined : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "undefined") {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
         }
     },    
     
@@ -2467,7 +2467,7 @@ YUITest.Assert = {
      * @static
      */
     isArray : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         var shouldFail = false;
         if (Array.isArray){
             shouldFail = !Array.isArray(actual);
@@ -2475,7 +2475,7 @@ YUITest.Assert = {
             shouldFail = Object.prototype.toString.call(actual) != "[object Array]";
         }
         if (shouldFail){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be an array."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be an array."), actual);
         }    
     },
    
@@ -2487,9 +2487,9 @@ YUITest.Assert = {
      * @static
      */
     isBoolean : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "boolean"){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a Boolean."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a Boolean."), actual);
         }    
     },
    
@@ -2501,9 +2501,9 @@ YUITest.Assert = {
      * @static
      */
     isFunction : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!(actual instanceof Function)){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a function."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a function."), actual);
         }    
     },
    
@@ -2518,9 +2518,9 @@ YUITest.Assert = {
      * @static
      */
     isInstanceOf : function (expected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!(actual instanceof expected)){
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
         }
     },
     
@@ -2532,9 +2532,9 @@ YUITest.Assert = {
      * @static
      */
     isNumber : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "number"){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a number."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a number."), actual);
         }    
     },    
     
@@ -2546,9 +2546,9 @@ YUITest.Assert = {
      * @static
      */
     isObject : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!actual || (typeof actual != "object" && typeof actual != "function")){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be an object."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be an object."), actual);
         }
     },
     
@@ -2560,9 +2560,9 @@ YUITest.Assert = {
      * @static
      */
     isString : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "string"){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a string."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a string."), actual);
         }
     },
     
@@ -2575,9 +2575,9 @@ YUITest.Assert = {
      * @static
      */
     isTypeOf : function (expectedType, actualValue, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actualValue != expectedType){
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expectedType, typeof actualValue);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expectedType, typeof actualValue);
         }
     },
     
@@ -2601,7 +2601,7 @@ YUITest.Assert = {
      * @static
      */
     throwsError: function(expectedError, method, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         var error = false;
     
         try {
@@ -2635,14 +2635,14 @@ YUITest.Assert = {
             }
             
             if (error){
-                throw new YUITest.UnexpectedError(thrown);                    
+                throw new Test.UnexpectedError(thrown);                    
             } else {
                 return;
             }
         }
         
         //if it reaches here, the error wasn't thrown, which is a bad thing
-        throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Error should have been thrown."));
+        throw new Test.AssertionError(Test.Assert._formatMessage(message, "Error should have been thrown."));
     }
 
 };
@@ -2652,11 +2652,11 @@ YUITest.Assert = {
  * from which more specific assertion errors can be derived.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest
+ * @namespace Test
  * @class AssertionError
  * @constructor
  */ 
-YUITest.AssertionError = function (message){
+Test.AssertionError = function (message){
     
     /**
      * Error message. Must be duplicated to ensure browser receives it.
@@ -2673,10 +2673,10 @@ YUITest.AssertionError = function (message){
     this.name = "Assert Error";
 };
 
-YUITest.AssertionError.prototype = {
+Test.AssertionError.prototype = {
 
     //restore constructor
-    constructor: YUITest.AssertionError,
+    constructor: Test.AssertionError,
 
     /**
      * Returns a fully formatted error for an assertion failure. This should
@@ -2706,15 +2706,15 @@ YUITest.AssertionError.prototype = {
  * @param {String} message The message to display when the error occurs.
  * @param {Object} expected The expected value.
  * @param {Object} actual The actual value that caused the assertion to fail.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ComparisonFailure
  * @constructor
  */ 
-YUITest.ComparisonFailure = function (message, expected, actual){
+Test.ComparisonFailure = function (message, expected, actual){
 
     //call superclass
-    YUITest.AssertionError.call(this, message);
+    Test.AssertionError.call(this, message);
     
     /**
      * The expected value.
@@ -2739,11 +2739,11 @@ YUITest.ComparisonFailure = function (message, expected, actual){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.ComparisonFailure.prototype = new YUITest.AssertionError;
+//inherit from Test.AssertionError
+Test.ComparisonFailure.prototype = new Test.AssertionError;
 
 //restore constructor
-YUITest.ComparisonFailure.prototype.constructor = YUITest.ComparisonFailure;
+Test.ComparisonFailure.prototype.constructor = Test.ComparisonFailure;
 
 /**
  * Returns a fully formatted error for an assertion failure. This message
@@ -2751,17 +2751,17 @@ YUITest.ComparisonFailure.prototype.constructor = YUITest.ComparisonFailure;
  * @method getMessage
  * @return {String} A string describing the error.
  */
-YUITest.ComparisonFailure.prototype.getMessage = function(){
+Test.ComparisonFailure.prototype.getMessage = function(){
     return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
             "\nActual: " + this.actual + " (" + (typeof this.actual) + ")";
 };
 /**
  * An object object containing coverage result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class CoverageFormat
  * @static
  */
-YUITest.CoverageFormat = {
+Test.CoverageFormat = {
 
     /**
      * Returns the coverage report in JSON format. This is the straight
@@ -2769,10 +2769,10 @@ YUITest.CoverageFormat = {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method JSON
-     * @namespace YUITest.CoverageFormat
+     * @namespace Test.CoverageFormat
      */
     JSON: function(coverage){
-        return YUITest.Util.JSON.stringify(coverage);
+        return Test.Util.JSON.stringify(coverage);
     },
     
     /**
@@ -2783,7 +2783,7 @@ YUITest.CoverageFormat = {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method XdebugJSON
-     * @namespace YUITest.CoverageFormat
+     * @namespace Test.CoverageFormat
      */    
     XdebugJSON: function(coverage){
     
@@ -2794,7 +2794,7 @@ YUITest.CoverageFormat = {
             }
         }
 
-        return YUITest.Util.JSON.stringify(coverage);
+        return Test.Util.JSON.stringify(coverage);
     }
 
 };
@@ -2803,12 +2803,12 @@ YUITest.CoverageFormat = {
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
- * @namespace  YUITest
+ * @namespace Test
  * @class DateAssert
  * @static
  */
  
-YUITest.DateAssert = {
+Test.DateAssert = {
 
     /**
      * Asserts that a date's month, day, and year are equal to another date's.
@@ -2819,7 +2819,7 @@ YUITest.DateAssert = {
      * @static
      */
     datesAreEqual : function (expected, actual, message){
-        YUITest.Assert._increment();        
+        Test.Assert._increment();        
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
             
@@ -2839,10 +2839,10 @@ YUITest.DateAssert = {
             }                
             
             if (msg.length){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, msg), expected, actual);
             }
         } else {
-            throw new TypeError("YUITest.DateAssert.datesAreEqual(): Expected and actual values must be Date objects.");
+            throw new TypeError("Test.DateAssert.datesAreEqual(): Expected and actual values must be Date objects.");
         }
     },
 
@@ -2855,7 +2855,7 @@ YUITest.DateAssert = {
      * @static
      */
     timesAreEqual : function (expected, actual, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
             
@@ -2875,23 +2875,23 @@ YUITest.DateAssert = {
             }                
             
             if (msg.length){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, msg), expected, actual);
             }
         } else {
-            throw new TypeError("YUITest.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
+            throw new TypeError("Test.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
         }
     }
     
 };
 /**
  * Creates a new mock object.
- * @namespace YUITest
+ * @namespace Test
  * @class Mock
  * @constructor
  * @param {Object} template (Optional) An object whose methods
  *      should be stubbed out on the mock object.
  */
-YUITest.Mock = function(template){
+Test.Mock = function(template){
 
     //use blank object is nothing is passed in
     template = template || {};
@@ -2915,7 +2915,7 @@ YUITest.Mock = function(template){
             if (typeof template[name] == "function"){
                 mock[name] = function(name){
                     return function(){
-                        YUITest.Assert.fail("Method " + name + "() was called but was not expected to be.");
+                        Test.Assert.fail("Method " + name + "() was called but was not expected to be.");
                     };
                 }(name);
             }
@@ -2939,7 +2939,7 @@ YUITest.Mock = function(template){
  * @method expect
  * @static
  */ 
-YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
+Test.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
 
     //make sure there's a place to store the expectations
     if (!mock.__expectations) {
@@ -2963,8 +2963,8 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             
         //process arguments
         for (i=0; i < args.length; i++){
-             if (!(args[i] instanceof YUITest.Mock.Value)){
-                args[i] = YUITest.Mock.Value(YUITest.Assert.areSame, [args[i]], "Argument " + i + " of " + name + "() is incorrect.");
+             if (!(args[i] instanceof Test.Mock.Value)){
+                args[i] = Test.Mock.Value(Test.Assert.areSame, [args[i]], "Argument " + i + " of " + name + "() is incorrect.");
             }       
         }
     
@@ -2973,7 +2973,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             mock[name] = function(){   
                 try {
                     expectation.actualCallCount++;
-                    YUITest.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
+                    Test.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
                     for (var i=0, len=args.length; i < len; i++){
                         args[i].verify(arguments[i]);
                     }                
@@ -2985,7 +2985,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                     }
                 } catch (ex){
                     //route through TestRunner for proper handling
-                    YUITest.TestRunner._handleError(ex);
+                    Test.TestRunner._handleError(ex);
                 }
                 
                 return result;
@@ -2995,10 +2995,10 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             //method should fail if called when not expected
             mock[name] = function(){
                 try {
-                    YUITest.Assert.fail("Method " + name + "() should not have been called.");
+                    Test.Assert.fail("Method " + name + "() should not have been called.");
                 } catch (ex){
                     //route through TestRunner for proper handling
-                    YUITest.TestRunner._handleError(ex);
+                    Test.TestRunner._handleError(ex);
                 }                    
             };
         }
@@ -3016,23 +3016,23 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
  * @method verify
  * @static
  */ 
-YUITest.Mock.verify = function(mock){    
+Test.Mock.verify = function(mock){    
     try {
     
         for (var name in mock.__expectations){
             if (mock.__expectations.hasOwnProperty(name)){
                 var expectation = mock.__expectations[name];
                 if (expectation.method) {
-                    YUITest.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
+                    Test.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
                 } else if (expectation.property){
-                    YUITest.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
+                    Test.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
                 }                
             }
         }
 
     } catch (ex){
         //route through TestRunner for proper handling
-        YUITest.TestRunner._handleError(ex);
+        Test.TestRunner._handleError(ex);
     }
 };
 
@@ -3041,12 +3041,12 @@ YUITest.Mock.verify = function(mock){
  * @param {Function} method The function to call on the value.
  * @param {Array} originalArgs (Optional) Array of arguments to pass to the method.
  * @param {String} message (Optional) Message to display in case of failure.
- * @namespace YUITest.Mock
+ * @namespace Test.Mock
  * @class Value
  * @constructor
  */
-YUITest.Mock.Value = function(method, originalArgs, message){
-    if (this instanceof YUITest.Mock.Value){
+Test.Mock.Value = function(method, originalArgs, message){
+    if (this instanceof Test.Mock.Value){
         this.verify = function(value){
             var args = [].concat(originalArgs || []);
             args.push(value);
@@ -3054,7 +3054,7 @@ YUITest.Mock.Value = function(method, originalArgs, message){
             method.apply(null, args);
         };
     } else {
-        return new YUITest.Mock.Value(method, originalArgs, message);
+        return new Test.Mock.Value(method, originalArgs, message);
     }
 };
 
@@ -3064,7 +3064,7 @@ YUITest.Mock.Value = function(method, originalArgs, message){
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Any        = YUITest.Mock.Value(function(){});
+Test.Mock.Value.Any        = Test.Mock.Value(function(){});
 
 /**
  * Predefined matcher to match boolean values.
@@ -3072,7 +3072,7 @@ YUITest.Mock.Value.Any        = YUITest.Mock.Value(function(){});
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Boolean    = YUITest.Mock.Value(YUITest.Assert.isBoolean);
+Test.Mock.Value.Boolean    = Test.Mock.Value(Test.Assert.isBoolean);
 
 /**
  * Predefined matcher to match number values.
@@ -3080,7 +3080,7 @@ YUITest.Mock.Value.Boolean    = YUITest.Mock.Value(YUITest.Assert.isBoolean);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Number     = YUITest.Mock.Value(YUITest.Assert.isNumber);
+Test.Mock.Value.Number     = Test.Mock.Value(Test.Assert.isNumber);
 
 /**
  * Predefined matcher to match string values.
@@ -3088,7 +3088,7 @@ YUITest.Mock.Value.Number     = YUITest.Mock.Value(YUITest.Assert.isNumber);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.String     = YUITest.Mock.Value(YUITest.Assert.isString);
+Test.Mock.Value.String     = Test.Mock.Value(Test.Assert.isString);
 
 /**
  * Predefined matcher to match object values.
@@ -3096,7 +3096,7 @@ YUITest.Mock.Value.String     = YUITest.Mock.Value(YUITest.Assert.isString);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Object     = YUITest.Mock.Value(YUITest.Assert.isObject);
+Test.Mock.Value.Object     = Test.Mock.Value(Test.Assert.isObject);
 
 /**
  * Predefined matcher to match function values.
@@ -3104,16 +3104,16 @@ YUITest.Mock.Value.Object     = YUITest.Mock.Value(YUITest.Assert.isObject);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Function   = YUITest.Mock.Value(YUITest.Assert.isFunction);
+Test.Mock.Value.Function   = Test.Mock.Value(Test.Assert.isFunction);
 
 /**
  * The ObjectAssert object provides functions to test JavaScript objects
  * for a variety of cases.
- * @namespace YUITest
+ * @namespace Test
  * @class ObjectAssert
  * @static
  */
-YUITest.ObjectAssert = {
+Test.ObjectAssert = {
 
     /**
      * Asserts that an object has all of the same properties
@@ -3126,21 +3126,21 @@ YUITest.ObjectAssert = {
      * @deprecated
      */
     areEqual: function(expected, actual, message) {
-        YUITest.Assert._increment();         
+        Test.Assert._increment();         
         
-        var expectedKeys = YUITest.Object.keys(expected),
-            actualKeys = YUITest.Object.keys(actual);
+        var expectedKeys = Test.Object.keys(expected),
+            actualKeys = Test.Object.keys(actual);
         
         //first check keys array length
         if (expectedKeys.length != actualKeys.length){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Object should have " + expectedKeys.length + " keys but has " + actualKeys.length));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Object should have " + expectedKeys.length + " keys but has " + actualKeys.length));
         }
         
         //then check values
         for (var name in expected){
             if (expected.hasOwnProperty(name)){
                 if (expected[name] != actual[name]){
-                    throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
+                    throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
                 }            
             }
         }           
@@ -3156,7 +3156,7 @@ YUITest.ObjectAssert = {
      * @deprecated Use ownsOrInheritsKey() instead
      */    
     hasKey: function (propertyName, object, message) {
-        YUITest.ObjectAssert.ownsOrInheritsKey(propertyName, object, message);   
+        Test.ObjectAssert.ownsOrInheritsKey(propertyName, object, message);   
     },
     
     /**
@@ -3169,7 +3169,7 @@ YUITest.ObjectAssert = {
      * @deprecated Use ownsOrInheritsKeys() instead
      */    
     hasKeys: function (properties, object, message) {
-        YUITest.ObjectAssert.ownsOrInheritsKeys(properties, object, message);
+        Test.ObjectAssert.ownsOrInheritsKeys(properties, object, message);
     },
     
     /**
@@ -3181,9 +3181,9 @@ YUITest.ObjectAssert = {
      * @static
      */    
     inheritsKey: function (propertyName, object, message) {
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
         if (!(propertyName in object && !object.hasOwnProperty(propertyName))){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
         }     
     },
     
@@ -3196,10 +3196,10 @@ YUITest.ObjectAssert = {
      * @static
      */    
     inheritsKeys: function (properties, object, message) {
-        YUITest.Assert._increment();        
+        Test.Assert._increment();        
         for (var i=0; i < properties.length; i++){
             if (!(propertyName in object && !object.hasOwnProperty(properties[i]))){
-                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
             }      
         }
     },
@@ -3213,9 +3213,9 @@ YUITest.ObjectAssert = {
      * @static
      */    
     ownsKey: function (propertyName, object, message) {
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
         if (!object.hasOwnProperty(propertyName)){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
         }     
     },
     
@@ -3228,10 +3228,10 @@ YUITest.ObjectAssert = {
      * @static
      */    
     ownsKeys: function (properties, object, message) {
-        YUITest.Assert._increment();        
+        Test.Assert._increment();        
         for (var i=0; i < properties.length; i++){
             if (!object.hasOwnProperty(properties[i])){
-                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
             }      
         }
     },
@@ -3244,7 +3244,7 @@ YUITest.ObjectAssert = {
      * @static
      */    
     ownsNoKeys : function (object, message) {
-        YUITest.Assert._increment();  
+        Test.Assert._increment();  
         var count = 0,
             name;
         for (name in object){
@@ -3254,7 +3254,7 @@ YUITest.ObjectAssert = {
         }
         
         if (count !== 0){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Object owns " + count + " properties but should own none."));        
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Object owns " + count + " properties but should own none."));        
         }
 
     },
@@ -3268,9 +3268,9 @@ YUITest.ObjectAssert = {
      * @static
      */    
     ownsOrInheritsKey: function (propertyName, object, message) {
-        YUITest.Assert._increment();               
+        Test.Assert._increment();               
         if (!(propertyName in object)){
-            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
+            Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
         }    
     },
     
@@ -3283,10 +3283,10 @@ YUITest.ObjectAssert = {
      * @static
      */    
     ownsOrInheritsKeys: function (properties, object, message) {
-        YUITest.Assert._increment();  
+        Test.Assert._increment();  
         for (var i=0; i < properties.length; i++){
             if (!(properties[i] in object)){
-                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
+                Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
             }      
         }
     }    
@@ -3295,12 +3295,12 @@ YUITest.ObjectAssert = {
  * Convenience type for storing and aggregating
  * test result information.
  * @private
- * @namespace YUITest
+ * @namespace Test
  * @class Results
  * @constructor
  * @param {String} name The name of the test.
  */
-YUITest.Results = function(name){
+Test.Results = function(name){
 
     /**
      * Name of the test, test case, or test suite.
@@ -3354,11 +3354,11 @@ YUITest.Results = function(name){
 
 /**
  * Includes results from another results object into this one.
- * @param {YUITest.Results} result The results object to include.
+ * @param {Test.Results} result The results object to include.
  * @method include
  * @return {void}
  */
-YUITest.Results.prototype.include = function(results){
+Test.Results.prototype.include = function(results){
     this.passed += results.passed;
     this.failed += results.failed;
     this.ignored += results.ignored;
@@ -3370,15 +3370,15 @@ YUITest.Results.prototype.include = function(results){
  * a test is expected to throw an error but doesn't.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ShouldError
  * @constructor
  */ 
-YUITest.ShouldError = function (message){
+Test.ShouldError = function (message){
 
     //call superclass
-    YUITest.AssertionError.call(this, message || "This test should have thrown an error but didn't.");
+    Test.AssertionError.call(this, message || "This test should have thrown an error but didn't.");
     
     /**
      * The name of the error that occurred.
@@ -3389,25 +3389,25 @@ YUITest.ShouldError = function (message){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.ShouldError.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.ShouldError.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.ShouldError.prototype.constructor = YUITest.ShouldError;
+Test.ShouldError.prototype.constructor = Test.ShouldError;
 /**
  * ShouldFail is subclass of AssertionError that is thrown whenever
  * a test was expected to fail but did not.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
- * @extends YUITest.AssertionError
+ * @namespace Test 
+ * @extends Test.AssertionError
  * @class ShouldFail
  * @constructor
  */ 
-YUITest.ShouldFail = function (message){
+Test.ShouldFail = function (message){
 
     //call superclass
-    YUITest.AssertionError.call(this, message || "This test should fail but didn't.");
+    Test.AssertionError.call(this, message || "This test should fail but didn't.");
     
     /**
      * The name of the error that occurred.
@@ -3418,11 +3418,11 @@ YUITest.ShouldFail = function (message){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.ShouldFail.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.ShouldFail.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.ShouldFail.prototype.constructor = YUITest.ShouldFail;
+Test.ShouldFail.prototype.constructor = Test.ShouldFail;
 /**
  * UnexpectedError is subclass of AssertionError that is thrown whenever
  * an error occurs within the course of a test and the test was not expected
@@ -3430,15 +3430,15 @@ YUITest.ShouldFail.prototype.constructor = YUITest.ShouldFail;
  *
  * @param {Error} cause The unexpected error that caused this error to be 
  *                      thrown.
- * @namespace YUITest 
- * @extends YUITest.AssertionError
+ * @namespace Test 
+ * @extends Test.AssertionError
  * @class UnexpectedError
  * @constructor
  */  
-YUITest.UnexpectedError = function (cause){
+Test.UnexpectedError = function (cause){
 
     //call superclass
-    YUITest.AssertionError.call(this, "Unexpected error: " + cause.message);
+    Test.AssertionError.call(this, "Unexpected error: " + cause.message);
     
     /**
      * The unexpected error that occurred.
@@ -3463,11 +3463,11 @@ YUITest.UnexpectedError = function (cause){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.UnexpectedError.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.UnexpectedError.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.UnexpectedError.prototype.constructor = YUITest.UnexpectedError;
+Test.UnexpectedError.prototype.constructor = Test.UnexpectedError;
 /**
  * UnexpectedValue is subclass of Error that is thrown whenever
  * a value was unexpected in its scope. This typically means that a test
@@ -3476,15 +3476,15 @@ YUITest.UnexpectedError.prototype.constructor = YUITest.UnexpectedError;
  *
  * @param {String} message The message to display when the error occurs.
  * @param {Object} unexpected The unexpected value.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class UnexpectedValue
  * @constructor
  */ 
-YUITest.UnexpectedValue = function (message, unexpected){
+Test.UnexpectedValue = function (message, unexpected){
 
     //call superclass
-    YUITest.AssertionError.call(this, message);
+    Test.AssertionError.call(this, message);
     
     /**
      * The unexpected value.
@@ -3502,11 +3502,11 @@ YUITest.UnexpectedValue = function (message, unexpected){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.UnexpectedValue.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.UnexpectedValue.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.UnexpectedValue.prototype.constructor = YUITest.UnexpectedValue;
+Test.UnexpectedValue.prototype.constructor = Test.UnexpectedValue;
 
 /**
  * Returns a fully formatted error for an assertion failure. This message
@@ -3514,7 +3514,7 @@ YUITest.UnexpectedValue.prototype.constructor = YUITest.UnexpectedValue;
  * @method getMessage
  * @return {String} A string describing the error.
  */
-YUITest.UnexpectedValue.prototype.getMessage = function(){
+Test.UnexpectedValue.prototype.getMessage = function(){
     return this.message + "\nUnexpected: " + this.unexpected + " (" + (typeof this.unexpected) + ") ";
 };
 
@@ -3528,7 +3528,7 @@ YUITest.UnexpectedValue.prototype.getMessage = function(){
  * @constructor
  *
  */
-YUITest.Wait = function (segment, delay) {
+Test.Wait = function (segment, delay) {
     
     /**
      * The segment of code to run when the wait is over.
@@ -3553,7 +3553,7 @@ Y.Object.each(YUITest, function(item, name) {
     Y.Test[name] = item;
 });
 
-Y.Assert = YUITest.Assert;
+Y.Assert = Test.Assert;
 Y.Assert.Error = Y.Test.AssertionError;
 Y.Assert.ComparisonFailure = Y.Test.ComparisonFailure;
 Y.Assert.UnexpectedValue = Y.Test.UnexpectedValue;
