@@ -158,9 +158,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Without a _uiDimensionChange() call, the scrollview only 
         // scrolls partially due to the fact that styles added in the CSS
         // altered the height/width of the bounding box.
+        // TODO: Remove?
         if (!IE) {
             this.after('renderedChange', function(e) {
-                this._uiDimensionsChange();
+                //this._uiDimensionsChange();
             });
         }
     },
@@ -341,7 +342,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @type boolean
      * @protected
      */
-    _forceHWTransforms: Y.UA.webkit,
+    _forceHWTransforms: Y.UA.webkit ? true : false,
 
     /**
      * <p>Used to control whether or not ScrollView's internal
@@ -569,7 +570,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var duration = e.duration,
             easing = e.easing,
             val = e.newVal;
-
         if(e.src !== UI) {
             if (e.attrName == SCROLL_X) {
                 this._uiScrollTo(val, null, duration, easing);
@@ -625,7 +625,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * 
      */
     _uiScrollTo : function(x, y, duration, easing) {
-
         // TODO: This doesn't seem right. This is not UI logic. 
         duration = duration || this._snapToEdge ? 400 : 0;
         easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
@@ -975,7 +974,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @return {Number} The constrained value, if it exceeds min/max range
      */
     _setScroll : function(val, dim) {
-
         if (this._cDisabled) {
             val = Y.Attribute.INVALID_VALUE;
         } else {
@@ -1200,4 +1198,4 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
