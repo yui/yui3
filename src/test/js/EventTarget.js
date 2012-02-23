@@ -5,7 +5,7 @@
  * @class EventTarget
  * @constructor
  */
-Test.EventTarget = function(){
+YUITest.EventTarget = function(){
 
     /**
      * Event handlers for the various events.
@@ -18,10 +18,10 @@ Test.EventTarget = function(){
 
 };
     
-Test.EventTarget.prototype = {
+YUITest.EventTarget.prototype = {
 
     //restore prototype
-    constructor: Test.EventTarget,
+    constructor: YUITest.EventTarget,
             
     //-------------------------------------------------------------------------
     // Event Handling

@@ -8,10 +8,10 @@
  * @class ShouldError
  * @constructor
  */ 
-Test.ShouldError = function (message){
+YUITest.ShouldError = function (message){
 
     //call superclass
-    Test.AssertionError.call(this, message || "This test should have thrown an error but didn't.");
+    YUITest.AssertionError.call(this, message || "This test should have thrown an error but didn't.");
     
     /**
      * The name of the error that occurred.
@@ -22,8 +22,8 @@ Test.ShouldError = function (message){
     
 };
 
-//inherit from Test.AssertionError
-Test.ShouldError.prototype = new Test.AssertionError();
+//inherit from YUITest.AssertionError
+YUITest.ShouldError.prototype = new YUITest.AssertionError();
 
 //restore constructor
-Test.ShouldError.prototype.constructor = Test.ShouldError;
+YUITest.ShouldError.prototype.constructor = YUITest.ShouldError;

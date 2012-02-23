@@ -3,9 +3,9 @@ Y.namespace('Test');
 
 
 //Using internal YUI methods here
-Test.Object = Y.Object;
-Test.Array = Y.Array;
-Test.Util = {
+YUITest.Object = Y.Object;
+YUITest.Array = Y.Array;
+YUITest.Util = {
     mix: Y.mix,
     JSON: Y.JSON
 }

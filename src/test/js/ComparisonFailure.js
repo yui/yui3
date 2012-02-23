@@ -11,10 +11,10 @@
  * @class ComparisonFailure
  * @constructor
  */ 
-Test.ComparisonFailure = function (message, expected, actual){
+YUITest.ComparisonFailure = function (message, expected, actual){
 
     //call superclass
-    Test.AssertionError.call(this, message);
+    YUITest.AssertionError.call(this, message);
     
     /**
      * The expected value.
@@ -39,11 +39,11 @@ Test.ComparisonFailure = function (message, expected, actual){
     
 };
 
-//inherit from Test.AssertionError
-Test.ComparisonFailure.prototype = new Test.AssertionError;
+//inherit from YUITest.AssertionError
+YUITest.ComparisonFailure.prototype = new YUITest.AssertionError;
 
 //restore constructor
-Test.ComparisonFailure.prototype.constructor = Test.ComparisonFailure;
+YUITest.ComparisonFailure.prototype.constructor = YUITest.ComparisonFailure;
 
 /**
  * Returns a fully formatted error for an assertion failure. This message
@@ -51,7 +51,7 @@ Test.ComparisonFailure.prototype.constructor = Test.ComparisonFailure;
  * @method getMessage
  * @return {String} A string describing the error.
  */
-Test.ComparisonFailure.prototype.getMessage = function(){
+YUITest.ComparisonFailure.prototype.getMessage = function(){
     return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
             "\nActual: " + this.actual + " (" + (typeof this.actual) + ")";
 };

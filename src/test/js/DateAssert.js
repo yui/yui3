@@ -8,7 +8,7 @@
  * @static
  */
  
-Test.DateAssert = {
+YUITest.DateAssert = {
 
     /**
      * Asserts that a date's month, day, and year are equal to another date's.
@@ -19,7 +19,7 @@ Test.DateAssert = {
      * @static
      */
     datesAreEqual : function (expected, actual, message){
-        Test.Assert._increment();        
+        YUITest.Assert._increment();        
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
             
@@ -39,10 +39,10 @@ Test.DateAssert = {
             }                
             
             if (msg.length){
-                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, msg), expected, actual);
+                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
             }
         } else {
-            throw new TypeError("Test.DateAssert.datesAreEqual(): Expected and actual values must be Date objects.");
+            throw new TypeError("YUITest.DateAssert.datesAreEqual(): Expected and actual values must be Date objects.");
         }
     },
 
@@ -55,7 +55,7 @@ Test.DateAssert = {
      * @static
      */
     timesAreEqual : function (expected, actual, message){
-        Test.Assert._increment();
+        YUITest.Assert._increment();
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
             
@@ -75,10 +75,10 @@ Test.DateAssert = {
             }                
             
             if (msg.length){
-                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, msg), expected, actual);
+                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
             }
         } else {
-            throw new TypeError("Test.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
+            throw new TypeError("YUITest.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
         }
     }
     

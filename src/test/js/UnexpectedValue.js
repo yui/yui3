@@ -11,10 +11,10 @@
  * @class UnexpectedValue
  * @constructor
  */ 
-Test.UnexpectedValue = function (message, unexpected){
+YUITest.UnexpectedValue = function (message, unexpected){
 
     //call superclass
-    Test.AssertionError.call(this, message);
+    YUITest.AssertionError.call(this, message);
     
     /**
      * The unexpected value.
@@ -32,11 +32,11 @@ Test.UnexpectedValue = function (message, unexpected){
     
 };
 
-//inherit from Test.AssertionError
-Test.UnexpectedValue.prototype = new Test.AssertionError();
+//inherit from YUITest.AssertionError
+YUITest.UnexpectedValue.prototype = new YUITest.AssertionError();
 
 //restore constructor
-Test.UnexpectedValue.prototype.constructor = Test.UnexpectedValue;
+YUITest.UnexpectedValue.prototype.constructor = YUITest.UnexpectedValue;
 
 /**
  * Returns a fully formatted error for an assertion failure. This message
@@ -44,6 +44,6 @@ Test.UnexpectedValue.prototype.constructor = Test.UnexpectedValue;
  * @method getMessage
  * @return {String} A string describing the error.
  */
-Test.UnexpectedValue.prototype.getMessage = function(){
+YUITest.UnexpectedValue.prototype.getMessage = function(){
     return this.message + "\nUnexpected: " + this.unexpected + " (" + (typeof this.unexpected) + ") ";
 };

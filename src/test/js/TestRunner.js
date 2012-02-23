@@ -6,7 +6,7 @@
      * @class TestRunner
      * @static
      */
-    Test.TestRunner = function(){
+    YUITest.TestRunner = function(){
 
         /*(intentionally not documented)
          * Determines if any of the array of test groups appears
@@ -80,13 +80,13 @@
              * @type object
              * @property results
              */                
-            this.results = new Test.Results();
+            this.results = new YUITest.Results();
             
             //initialize results
-            if (testObject instanceof Test.TestSuite){
+            if (testObject instanceof YUITest.TestSuite){
                 this.results.type = "testsuite";
                 this.results.name = testObject.name;
-            } else if (testObject instanceof Test.TestCase){
+            } else if (testObject instanceof YUITest.TestCase){
                 this.results.type = "testcase";
                 this.results.name = testObject.name;
             }
@@ -124,16 +124,16 @@
         function TestRunner(){
         
             //inherit from EventTarget
-            Test.EventTarget.call(this);
+            YUITest.EventTarget.call(this);
             
             /**
              * Suite on which to attach all TestSuites and TestCases to be run.
-             * @type Test.TestSuite
+             * @type YUITest.TestSuite
              * @property masterSuite
              * @static
              * @private
              */
-            this.masterSuite = new Test.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
     
             /**
              * Pointer to the current node in the test tree.
@@ -213,7 +213,7 @@
 
         }
         
-        TestRunner.prototype = Test.Util.mix(new Test.EventTarget(), {
+        TestRunner.prototype = YUITest.Util.mix(new YUITest.EventTarget(), {
             
             /**
             * If true, YUITest will not fire an error for tests with no Asserts.
@@ -225,7 +225,7 @@
             _ignoreEmpty: false,
 
             //restore prototype
-            constructor: Test.TestRunner,
+            constructor: YUITest.TestRunner,
         
             //-------------------------------------------------------------------------
             // Constants
@@ -349,9 +349,9 @@
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < testSuite.items.length; i++){
-                    if (testSuite.items[i] instanceof Test.TestSuite) {
+                    if (testSuite.items[i] instanceof YUITest.TestSuite) {
                         this._addTestSuiteToTestTree(node, testSuite.items[i]);
-                    } else if (testSuite.items[i] instanceof Test.TestCase) {
+                    } else if (testSuite.items[i] instanceof YUITest.TestCase) {
                         this._addTestCaseToTestTree(node, testSuite.items[i]);
                     }                   
                 }            
@@ -373,9 +373,9 @@
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < this.masterSuite.items.length; i++){
-                    if (this.masterSuite.items[i] instanceof Test.TestSuite) {
+                    if (this.masterSuite.items[i] instanceof YUITest.TestSuite) {
                         this._addTestSuiteToTestTree(this._root, this.masterSuite.items[i]);
-                    } else if (this.masterSuite.items[i] instanceof Test.TestCase) {
+                    } else if (this.masterSuite.items[i] instanceof YUITest.TestCase) {
                         this._addTestCaseToTestTree(this._root, this.masterSuite.items[i]);
                     }                   
                 }            
@@ -405,11 +405,11 @@
                         parentNode.results[node.testObject.name] = node.results;
                     }
                 
-                    if (node.testObject instanceof Test.TestSuite){
+                    if (node.testObject instanceof YUITest.TestSuite){
                         this._execNonTestMethod(node, "tearDown", false);
                         node.results.duration = (new Date()) - node._start;
                         this.fire({ type: this.TEST_SUITE_COMPLETE_EVENT, testSuite: node.testObject, results: node.results});
-                    } else if (node.testObject instanceof Test.TestCase){
+                    } else if (node.testObject instanceof YUITest.TestCase){
                         this._execNonTestMethod(node, "destroy", false);
                         node.results.duration = (new Date()) - node._start;
                         this.fire({ type: this.TEST_CASE_COMPLETE_EVENT, testCase: node.testObject, results: node.results});
@@ -485,7 +485,7 @@
                     node.results.errors++;
                     event.error = ex;
                     event.methodName = methodName;
-                    if (testObject instanceof Test.TestCase){
+                    if (testObject instanceof YUITest.TestCase){
                         event.testCase = testObject;
                     } else {
                         event.testSuite = testSuite;
@@ -499,7 +499,7 @@
             
             /**
              * Runs a test case or test suite, returning the results.
-             * @param {Test.TestCase|Test.TestSuite} testObject The test case or test suite to run.
+             * @param {Test.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run
@@ -525,11 +525,11 @@
                     
                     //figure out what to do
                     if (typeof testObject == "object" && testObject !== null){
-                        if (testObject instanceof Test.TestSuite){
+                        if (testObject instanceof YUITest.TestSuite){
                             this.fire({ type: this.TEST_SUITE_BEGIN_EVENT, testSuite: testObject });
                             node._start = new Date();
                             this._execNonTestMethod(node, "setUp" ,false);
-                        } else if (testObject instanceof Test.TestCase){
+                        } else if (testObject instanceof YUITest.TestCase){
                             this.fire({ type: this.TEST_CASE_BEGIN_EVENT, testCase: testObject });
                             node._start = new Date();
                             
@@ -553,7 +553,7 @@
                         //some environments don't support setTimeout
                         if (typeof setTimeout != "undefined"){                    
                             setTimeout(function(){
-                                Test.TestRunner._run();
+                                YUITest.TestRunner._run();
                             }, 0);
                         } else {
                             this._run();
@@ -606,15 +606,15 @@
                     segment.call(testCase, this._context);                    
                 
                     //if the test hasn't already failed and doesn't have any asserts...
-                    if(Test.Assert._getCount() == 0 && !this._ignoreEmpty){
-                        throw new Test.AssertionError("Test has no asserts.");
+                    if(YUITest.Assert._getCount() == 0 && !this._ignoreEmpty){
+                        throw new YUITest.AssertionError("Test has no asserts.");
                     }                                                        
                     //if it should fail, and it got here, then it's a fail because it didn't
                      else if (shouldFail){
-                        error = new Test.ShouldFail();
+                        error = new YUITest.ShouldFail();
                         failed = true;
                     } else if (shouldError){
-                        error = new Test.ShouldError();
+                        error = new YUITest.ShouldError();
                         failed = true;
                     }
                                
@@ -627,12 +627,12 @@
                     }                    
                 
                     //figure out what type of error it was
-                    if (thrown instanceof Test.AssertionError) {
+                    if (thrown instanceof YUITest.AssertionError) {
                         if (!shouldFail){
                             error = thrown;
                             failed = true;
                         }
-                    } else if (thrown instanceof Test.Wait){
+                    } else if (thrown instanceof YUITest.Wait){
                     
                         if (typeof thrown.segment == "function"){
                             if (typeof thrown.delay == "number"){
@@ -640,7 +640,7 @@
                                 //some environments don't support setTimeout
                                 if (typeof setTimeout != "undefined"){
                                     testCase.__yui_wait = setTimeout(function(){
-                                        Test.TestRunner._resumeTest(thrown.segment);
+                                        YUITest.TestRunner._resumeTest(thrown.segment);
                                     }, thrown.delay);
                                     this._waiting = true;
                                 } else {
@@ -654,7 +654,7 @@
                     } else {
                         //first check to see if it should error
                         if (!shouldError) {                        
-                            error = new Test.UnexpectedError(thrown);
+                            error = new YUITest.UnexpectedError(thrown);
                             failed = true;
                         } else {
                             //check to see what type of data we have
@@ -662,14 +662,14 @@
                                 
                                 //if it's a string, check the error message
                                 if (thrown.message != shouldError){
-                                    error = new Test.UnexpectedError(thrown);
+                                    error = new YUITest.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             } else if (typeof shouldError == "function"){
                             
                                 //if it's a function, see if the error is an instance of it
                                 if (!(thrown instanceof shouldError)){
-                                    error = new Test.UnexpectedError(thrown);
+                                    error = new YUITest.UnexpectedError(thrown);
                                     failed = true;
                                 }
                             
@@ -678,7 +678,7 @@
                                 //if it's an object, check the instance and message
                                 if (!(thrown instanceof shouldError.constructor) || 
                                         thrown.message != shouldError.message){
-                                    error = new Test.UnexpectedError(thrown);
+                                    error = new YUITest.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             
@@ -700,7 +700,7 @@
                 this._execNonTestMethod(node.parent, "tearDown", false);
                 
                 //reset the assert count
-                Test.Assert._reset();
+                YUITest.Assert._reset();
                 
                 //calculate duration
                 var duration = (new Date()) - node._start;
@@ -724,7 +724,7 @@
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
                     setTimeout(function(){
-                        Test.TestRunner._run();
+                        YUITest.TestRunner._run();
                     }, 0);
                 } else {
                     this._run();
@@ -796,7 +796,7 @@
                     //some environments don't support setTimeout
                     if (typeof setTimeout != "undefined"){                    
                         setTimeout(function(){
-                            Test.TestRunner._run();
+                            YUITest.TestRunner._run();
                         }, 0);              
                     } else {
                         this._run();
@@ -863,7 +863,7 @@
              * @static
              */
             clear : function () {
-                this.masterSuite = new Test.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
             },
             
             /**
@@ -983,12 +983,12 @@
                 options = options || {};
                 
                 //pointer to runner to avoid scope issues 
-                var runner  = Test.TestRunner,
+                var runner  = YUITest.TestRunner,
                     oldMode = options.oldMode;
                 
                 
                 //if there's only one suite on the masterSuite, move it up
-                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof Test.TestSuite){
+                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof YUITest.TestSuite){
                     this.masterSuite = this.masterSuite.items[0];
                 }                
                 

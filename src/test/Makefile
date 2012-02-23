@@ -29,7 +29,7 @@ wrap:
 api:
 	./scripts/fix_docs.sh
 
-source: asserts core errors mock reporting wrap api
+source: asserts core errors mock reporting api wrap
 
 build:
 	ant all

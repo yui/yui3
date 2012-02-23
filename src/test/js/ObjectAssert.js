@@ -6,7 +6,7 @@
  * @class ObjectAssert
  * @static
  */
-Test.ObjectAssert = {
+YUITest.ObjectAssert = {
 
     /**
      * Asserts that an object has all of the same properties
@@ -19,21 +19,21 @@ Test.ObjectAssert = {
      * @deprecated
      */
     areEqual: function(expected, actual, message) {
-        Test.Assert._increment();         
+        YUITest.Assert._increment();         
         
-        var expectedKeys = Test.Object.keys(expected),
-            actualKeys = Test.Object.keys(actual);
+        var expectedKeys = YUITest.Object.keys(expected),
+            actualKeys = YUITest.Object.keys(actual);
         
         //first check keys array length
         if (expectedKeys.length != actualKeys.length){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Object should have " + expectedKeys.length + " keys but has " + actualKeys.length));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Object should have " + expectedKeys.length + " keys but has " + actualKeys.length));
         }
         
         //then check values
         for (var name in expected){
             if (expected.hasOwnProperty(name)){
                 if (expected[name] != actual[name]){
-                    throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
+                    throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values should be equal for property " + name), expected[name], actual[name]);
                 }            
             }
         }           
@@ -49,7 +49,7 @@ Test.ObjectAssert = {
      * @deprecated Use ownsOrInheritsKey() instead
      */    
     hasKey: function (propertyName, object, message) {
-        Test.ObjectAssert.ownsOrInheritsKey(propertyName, object, message);   
+        YUITest.ObjectAssert.ownsOrInheritsKey(propertyName, object, message);   
     },
     
     /**
@@ -62,7 +62,7 @@ Test.ObjectAssert = {
      * @deprecated Use ownsOrInheritsKeys() instead
      */    
     hasKeys: function (properties, object, message) {
-        Test.ObjectAssert.ownsOrInheritsKeys(properties, object, message);
+        YUITest.ObjectAssert.ownsOrInheritsKeys(properties, object, message);
     },
     
     /**
@@ -74,9 +74,9 @@ Test.ObjectAssert = {
      * @static
      */    
     inheritsKey: function (propertyName, object, message) {
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
         if (!(propertyName in object && !object.hasOwnProperty(propertyName))){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
         }     
     },
     
@@ -89,10 +89,10 @@ Test.ObjectAssert = {
      * @static
      */    
     inheritsKeys: function (properties, object, message) {
-        Test.Assert._increment();        
+        YUITest.Assert._increment();        
         for (var i=0; i < properties.length; i++){
             if (!(propertyName in object && !object.hasOwnProperty(properties[i]))){
-                Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
             }      
         }
     },
@@ -106,9 +106,9 @@ Test.ObjectAssert = {
      * @static
      */    
     ownsKey: function (propertyName, object, message) {
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
         if (!object.hasOwnProperty(propertyName)){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
         }     
     },
     
@@ -121,10 +121,10 @@ Test.ObjectAssert = {
      * @static
      */    
     ownsKeys: function (properties, object, message) {
-        Test.Assert._increment();        
+        YUITest.Assert._increment();        
         for (var i=0; i < properties.length; i++){
             if (!object.hasOwnProperty(properties[i])){
-                Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
             }      
         }
     },
@@ -137,7 +137,7 @@ Test.ObjectAssert = {
      * @static
      */    
     ownsNoKeys : function (object, message) {
-        Test.Assert._increment();  
+        YUITest.Assert._increment();  
         var count = 0,
             name;
         for (name in object){
@@ -147,7 +147,7 @@ Test.ObjectAssert = {
         }
         
         if (count !== 0){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Object owns " + count + " properties but should own none."));        
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Object owns " + count + " properties but should own none."));        
         }
 
     },
@@ -161,9 +161,9 @@ Test.ObjectAssert = {
      * @static
      */    
     ownsOrInheritsKey: function (propertyName, object, message) {
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
         if (!(propertyName in object)){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
         }    
     },
     
@@ -176,10 +176,10 @@ Test.ObjectAssert = {
      * @static
      */    
     ownsOrInheritsKeys: function (properties, object, message) {
-        Test.Assert._increment();  
+        YUITest.Assert._increment();  
         for (var i=0; i < properties.length; i++){
             if (!(properties[i] in object)){
-                Test.Assert.fail(Test.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
+                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
             }      
         }
     }    

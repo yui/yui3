@@ -8,7 +8,7 @@
  * @class AssertionError
  * @constructor
  */ 
-Test.AssertionError = function (message){
+YUITest.AssertionError = function (message){
     
     /**
      * Error message. Must be duplicated to ensure browser receives it.
@@ -25,10 +25,10 @@ Test.AssertionError = function (message){
     this.name = "Assert Error";
 };
 
-Test.AssertionError.prototype = {
+YUITest.AssertionError.prototype = {
 
     //restore constructor
-    constructor: Test.AssertionError,
+    constructor: YUITest.AssertionError,
 
     /**
      * Returns a fully formatted error for an assertion failure. This should
