@@ -72,16 +72,10 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     **/
     BUTTONS: {
         close: {
-            action: function () {
-                this.hide();
-            },
-
-            classNames: [
-                getClassName('button', 'close')
-            ],
-
-            label  : 'Close',
-            section: Y.WidgetStdMod.HEADER
+            label     : 'Close',
+            action    : 'hide',
+            section   : 'header',
+            classNames: getClassName('button', 'close')
         }
     }
 }, {
