@@ -95,6 +95,7 @@
         <url>event/tests/event-key.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/event-touch.html</url>
+        <url>event/tests/event-mousewheel.html</url>
         <url>event/tests/focusblur.html</url>
         <url>get/tests/get-coverage.html</url>
         <url>graphics/tests/graphics.html</url>
