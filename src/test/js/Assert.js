@@ -3,11 +3,11 @@
  * The Assert object provides functions to test JavaScript values against
  * known and expected results. Whenever a comparison (assertion) fails,
  * an error is thrown.
- * @namespace YUITest
+ * @namespace Test
  * @class Assert
  * @static
  */
-YUITest.Assert = {
+Test.Assert = {
 
     /**
      * The number of assertions performed.
@@ -80,7 +80,7 @@ YUITest.Assert = {
      * @static
      */
     fail : function (message) {
-        throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Test force-failed."));
+        throw new Test.AssertionError(Test.Assert._formatMessage(message, "Test force-failed."));
     },       
     
     /** 
@@ -89,7 +89,7 @@ YUITest.Assert = {
      * @static
      */
     pass : function (message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
     },       
     
     //-------------------------------------------------------------------------
@@ -106,9 +106,9 @@ YUITest.Assert = {
      * @static
      */
     areEqual : function (expected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (expected != actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values should be equal."), expected, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values should be equal."), expected, actual);
         }
     },
     
@@ -123,9 +123,9 @@ YUITest.Assert = {
      */
     areNotEqual : function (unexpected, actual, 
                          message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (unexpected == actual) {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be equal."), unexpected);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be equal."), unexpected);
         }
     },
     
@@ -139,9 +139,9 @@ YUITest.Assert = {
      * @static
      */
     areNotSame : function (unexpected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (unexpected === actual) {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be the same."), unexpected);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be the same."), unexpected);
         }
     },
 
@@ -155,9 +155,9 @@ YUITest.Assert = {
      * @static
      */
     areSame : function (expected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (expected !== actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values should be the same."), expected, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values should be the same."), expected, actual);
         }
     },    
     
@@ -174,9 +174,9 @@ YUITest.Assert = {
      * @static
      */
     isFalse : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (false !== actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be false."), false, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be false."), false, actual);
         }
     },
     
@@ -189,9 +189,9 @@ YUITest.Assert = {
      * @static
      */
     isTrue : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (true !== actual) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be true."), true, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be true."), true, actual);
         }
 
     },
@@ -208,9 +208,9 @@ YUITest.Assert = {
      * @static
      */
     isNaN : function (actual, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!isNaN(actual)){
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
         }    
     },
     
@@ -222,9 +222,9 @@ YUITest.Assert = {
      * @static
      */
     isNotNaN : function (actual, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (isNaN(actual)){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be NaN."), NaN);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be NaN."), NaN);
         }    
     },
     
@@ -237,9 +237,9 @@ YUITest.Assert = {
      * @static
      */
     isNotNull : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (actual === null) {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Values should not be null."), null);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Values should not be null."), null);
         }
     },
 
@@ -252,9 +252,9 @@ YUITest.Assert = {
      * @static
      */
     isNotUndefined : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual == "undefined") {
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should not be undefined."), undefined);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should not be undefined."), undefined);
         }
     },
 
@@ -267,9 +267,9 @@ YUITest.Assert = {
      * @static
      */
     isNull : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (actual !== null) {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be null."), null, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be null."), null, actual);
         }
     },
         
@@ -282,9 +282,9 @@ YUITest.Assert = {
      * @static
      */
     isUndefined : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "undefined") {
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
         }
     },    
     
@@ -300,7 +300,7 @@ YUITest.Assert = {
      * @static
      */
     isArray : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         var shouldFail = false;
         if (Array.isArray){
             shouldFail = !Array.isArray(actual);
@@ -308,7 +308,7 @@ YUITest.Assert = {
             shouldFail = Object.prototype.toString.call(actual) != "[object Array]";
         }
         if (shouldFail){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be an array."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be an array."), actual);
         }    
     },
    
@@ -320,9 +320,9 @@ YUITest.Assert = {
      * @static
      */
     isBoolean : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "boolean"){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a Boolean."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a Boolean."), actual);
         }    
     },
    
@@ -334,9 +334,9 @@ YUITest.Assert = {
      * @static
      */
     isFunction : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!(actual instanceof Function)){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a function."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a function."), actual);
         }    
     },
    
@@ -351,9 +351,9 @@ YUITest.Assert = {
      * @static
      */
     isInstanceOf : function (expected, actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!(actual instanceof expected)){
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
         }
     },
     
@@ -365,9 +365,9 @@ YUITest.Assert = {
      * @static
      */
     isNumber : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "number"){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a number."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a number."), actual);
         }    
     },    
     
@@ -379,9 +379,9 @@ YUITest.Assert = {
      * @static
      */
     isObject : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!actual || (typeof actual != "object" && typeof actual != "function")){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be an object."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be an object."), actual);
         }
     },
     
@@ -393,9 +393,9 @@ YUITest.Assert = {
      * @static
      */
     isString : function (actual, message) {
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actual != "string"){
-            throw new YUITest.UnexpectedValue(YUITest.Assert._formatMessage(message, "Value should be a string."), actual);
+            throw new Test.UnexpectedValue(Test.Assert._formatMessage(message, "Value should be a string."), actual);
         }
     },
     
@@ -408,9 +408,9 @@ YUITest.Assert = {
      * @static
      */
     isTypeOf : function (expectedType, actualValue, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (typeof actualValue != expectedType){
-            throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expectedType, typeof actualValue);
+            throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expectedType, typeof actualValue);
         }
     },
     
@@ -434,7 +434,7 @@ YUITest.Assert = {
      * @static
      */
     throwsError: function(expectedError, method, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         var error = false;
     
         try {
@@ -468,14 +468,14 @@ YUITest.Assert = {
             }
             
             if (error){
-                throw new YUITest.UnexpectedError(thrown);                    
+                throw new Test.UnexpectedError(thrown);                    
             } else {
                 return;
             }
         }
         
         //if it reaches here, the error wasn't thrown, which is a bad thing
-        throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Error should have been thrown."));
+        throw new Test.AssertionError(Test.Assert._formatMessage(message, "Error should have been thrown."));
     }
 
 };

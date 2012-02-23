@@ -3,15 +3,15 @@
  * a test is expected to throw an error but doesn't.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ShouldError
  * @constructor
  */ 
-YUITest.ShouldError = function (message){
+Test.ShouldError = function (message){
 
     //call superclass
-    YUITest.AssertionError.call(this, message || "This test should have thrown an error but didn't.");
+    Test.AssertionError.call(this, message || "This test should have thrown an error but didn't.");
     
     /**
      * The name of the error that occurred.
@@ -22,8 +22,8 @@ YUITest.ShouldError = function (message){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.ShouldError.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.ShouldError.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.ShouldError.prototype.constructor = YUITest.ShouldError;
+Test.ShouldError.prototype.constructor = Test.ShouldError;

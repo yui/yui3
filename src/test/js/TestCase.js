@@ -3,10 +3,10 @@
  * @param template An object containing any number of test methods, other methods,
  *                 an optional name, and anything else the test case needs.
  * @class TestCase
- * @namespace YUITest
+ * @namespace Test
  * @constructor
  */
-YUITest.TestCase = function (template) {
+Test.TestCase = function (template) {
     
     /**
      * Special rules for the test case. Possible subobjects
@@ -27,10 +27,10 @@ YUITest.TestCase = function (template) {
 
 };
         
-YUITest.TestCase.prototype = {  
+Test.TestCase.prototype = {  
 
     //restore constructor
-    constructor: YUITest.TestCase,
+    constructor: Test.TestCase,
     
     /**
      * Method to call from an async init method to
@@ -40,7 +40,7 @@ YUITest.TestCase.prototype = {
      * @return {Function} The function to call as a callback.
      */
     callback: function(){
-        return YUITest.TestRunner.callback.apply(YUITest.TestRunner,arguments);
+        return Test.TestRunner.callback.apply(Test.TestRunner,arguments);
     },
 
     /**
@@ -51,7 +51,7 @@ YUITest.TestCase.prototype = {
      * @method resume
      */
     resume : function (segment) {
-        YUITest.TestRunner.resume(segment);
+        Test.TestRunner.resume(segment);
     },
 
     /**
@@ -70,10 +70,10 @@ YUITest.TestCase.prototype = {
         actualDelay = (typeof actualDelay == "number" ? actualDelay : 10000);
     
 		if (typeof segment == "function"){
-            throw new YUITest.Wait(segment, actualDelay);
+            throw new Test.Wait(segment, actualDelay);
         } else {
-            throw new YUITest.Wait(function(){
-                YUITest.Assert.fail("Timeout: wait() called but resume() never called.");
+            throw new Test.Wait(function(){
+                Test.Assert.fail("Timeout: wait() called but resume() never called.");
             }, actualDelay);
         }
     },
@@ -83,26 +83,26 @@ YUITest.TestCase.prototype = {
     //-------------------------------------------------------------------------
 
     /**
-     * Asserts that a given condition is true. If not, then a YUITest.AssertionError object is thrown
+     * Asserts that a given condition is true. If not, then a Test.AssertionError object is thrown
      * and the test fails.
      * @method assert
      * @param {Boolean} condition The condition to test.
      * @param {String} message The message to display if the assertion fails.
      */
     assert : function (condition, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (!condition){
-            throw new YUITest.AssertionError(YUITest.Assert._formatMessage(message, "Assertion failed."));
+            throw new Test.AssertionError(Test.Assert._formatMessage(message, "Assertion failed."));
         }    
     },
     
     /**
-     * Forces an assertion error to occur. Shortcut for YUITest.Assert.fail().
+     * Forces an assertion error to occur. Shortcut for Test.Assert.fail().
      * @method fail
      * @param {String} message (Optional) The message to display with the failure.
      */
     fail: function (message) {    
-        YUITest.Assert.fail(message);
+        Test.Assert.fail(message);
     },
     
     //-------------------------------------------------------------------------

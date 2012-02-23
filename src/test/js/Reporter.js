@@ -3,12 +3,12 @@
      * An object capable of sending test results to a server.
      * @param {String} url The URL to submit the results to.
      * @param {Function} format (Optiona) A function that outputs the results in a specific format.
-     *      Default is YUITest.TestFormat.XML.
+     *      Default is Test.TestFormat.XML.
      * @constructor
-     * @namespace YUITest
+     * @namespace Test
      * @class Reporter
      */
-    YUITest.Reporter = function(url, format) {
+    Test.Reporter = function(url, format) {
     
         /**
          * The URL to submit the data to.
@@ -22,7 +22,7 @@
          * @type Function
          * @property format
          */
-        this.format = format || YUITest.TestFormat.XML;
+        this.format = format || Test.TestFormat.XML;
     
         /**
          * Extra fields to submit with the request.
@@ -49,10 +49,10 @@
         this._iframe = null;
     };
     
-    YUITest.Reporter.prototype = {
+    Test.Reporter.prototype = {
     
         //restore missing constructor
-        constructor: YUITest.Reporter,
+        constructor: Test.Reporter,
     
         /**
          * Adds a field to the form that submits the results.

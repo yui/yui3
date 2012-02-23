@@ -1,11 +1,11 @@
 
 /**
  * Simple custom event implementation.
- * @namespace YUITest
+ * @namespace Test
  * @class EventTarget
  * @constructor
  */
-YUITest.EventTarget = function(){
+Test.EventTarget = function(){
 
     /**
      * Event handlers for the various events.
@@ -18,10 +18,10 @@ YUITest.EventTarget = function(){
 
 };
     
-YUITest.EventTarget.prototype = {
+Test.EventTarget.prototype = {
 
     //restore prototype
-    constructor: YUITest.EventTarget,
+    constructor: Test.EventTarget,
             
     //-------------------------------------------------------------------------
     // Event Handling

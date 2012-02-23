@@ -3,12 +3,12 @@
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
- * @namespace  YUITest
+ * @namespace Test
  * @class DateAssert
  * @static
  */
  
-YUITest.DateAssert = {
+Test.DateAssert = {
 
     /**
      * Asserts that a date's month, day, and year are equal to another date's.
@@ -19,7 +19,7 @@ YUITest.DateAssert = {
      * @static
      */
     datesAreEqual : function (expected, actual, message){
-        YUITest.Assert._increment();        
+        Test.Assert._increment();        
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
             
@@ -39,10 +39,10 @@ YUITest.DateAssert = {
             }                
             
             if (msg.length){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, msg), expected, actual);
             }
         } else {
-            throw new TypeError("YUITest.DateAssert.datesAreEqual(): Expected and actual values must be Date objects.");
+            throw new TypeError("Test.DateAssert.datesAreEqual(): Expected and actual values must be Date objects.");
         }
     },
 
@@ -55,7 +55,7 @@ YUITest.DateAssert = {
      * @static
      */
     timesAreEqual : function (expected, actual, message){
-        YUITest.Assert._increment();
+        Test.Assert._increment();
         if (expected instanceof Date && actual instanceof Date){
             var msg = "";
             
@@ -75,10 +75,10 @@ YUITest.DateAssert = {
             }                
             
             if (msg.length){
-                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, msg), expected, actual);
+                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, msg), expected, actual);
             }
         } else {
-            throw new TypeError("YUITest.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
+            throw new TypeError("Test.DateAssert.timesAreEqual(): Expected and actual values must be Date objects.");
         }
     }
     

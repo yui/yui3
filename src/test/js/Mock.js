@@ -1,12 +1,12 @@
 /**
  * Creates a new mock object.
- * @namespace YUITest
+ * @namespace Test
  * @class Mock
  * @constructor
  * @param {Object} template (Optional) An object whose methods
  *      should be stubbed out on the mock object.
  */
-YUITest.Mock = function(template){
+Test.Mock = function(template){
 
     //use blank object is nothing is passed in
     template = template || {};
@@ -30,7 +30,7 @@ YUITest.Mock = function(template){
             if (typeof template[name] == "function"){
                 mock[name] = function(name){
                     return function(){
-                        YUITest.Assert.fail("Method " + name + "() was called but was not expected to be.");
+                        Test.Assert.fail("Method " + name + "() was called but was not expected to be.");
                     };
                 }(name);
             }
@@ -54,7 +54,7 @@ YUITest.Mock = function(template){
  * @method expect
  * @static
  */ 
-YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
+Test.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
 
     //make sure there's a place to store the expectations
     if (!mock.__expectations) {
@@ -78,8 +78,8 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             
         //process arguments
         for (i=0; i < args.length; i++){
-             if (!(args[i] instanceof YUITest.Mock.Value)){
-                args[i] = YUITest.Mock.Value(YUITest.Assert.areSame, [args[i]], "Argument " + i + " of " + name + "() is incorrect.");
+             if (!(args[i] instanceof Test.Mock.Value)){
+                args[i] = Test.Mock.Value(Test.Assert.areSame, [args[i]], "Argument " + i + " of " + name + "() is incorrect.");
             }       
         }
     
@@ -88,7 +88,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             mock[name] = function(){   
                 try {
                     expectation.actualCallCount++;
-                    YUITest.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
+                    Test.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
                     for (var i=0, len=args.length; i < len; i++){
                         args[i].verify(arguments[i]);
                     }                
@@ -100,7 +100,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                     }
                 } catch (ex){
                     //route through TestRunner for proper handling
-                    YUITest.TestRunner._handleError(ex);
+                    Test.TestRunner._handleError(ex);
                 }
                 
                 return result;
@@ -110,10 +110,10 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             //method should fail if called when not expected
             mock[name] = function(){
                 try {
-                    YUITest.Assert.fail("Method " + name + "() should not have been called.");
+                    Test.Assert.fail("Method " + name + "() should not have been called.");
                 } catch (ex){
                     //route through TestRunner for proper handling
-                    YUITest.TestRunner._handleError(ex);
+                    Test.TestRunner._handleError(ex);
                 }                    
             };
         }
@@ -131,23 +131,23 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
  * @method verify
  * @static
  */ 
-YUITest.Mock.verify = function(mock){    
+Test.Mock.verify = function(mock){    
     try {
     
         for (var name in mock.__expectations){
             if (mock.__expectations.hasOwnProperty(name)){
                 var expectation = mock.__expectations[name];
                 if (expectation.method) {
-                    YUITest.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
+                    Test.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
                 } else if (expectation.property){
-                    YUITest.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
+                    Test.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
                 }                
             }
         }
 
     } catch (ex){
         //route through TestRunner for proper handling
-        YUITest.TestRunner._handleError(ex);
+        Test.TestRunner._handleError(ex);
     }
 };
 
@@ -156,12 +156,12 @@ YUITest.Mock.verify = function(mock){
  * @param {Function} method The function to call on the value.
  * @param {Array} originalArgs (Optional) Array of arguments to pass to the method.
  * @param {String} message (Optional) Message to display in case of failure.
- * @namespace YUITest.Mock
+ * @namespace Test.Mock
  * @class Value
  * @constructor
  */
-YUITest.Mock.Value = function(method, originalArgs, message){
-    if (this instanceof YUITest.Mock.Value){
+Test.Mock.Value = function(method, originalArgs, message){
+    if (this instanceof Test.Mock.Value){
         this.verify = function(value){
             var args = [].concat(originalArgs || []);
             args.push(value);
@@ -169,7 +169,7 @@ YUITest.Mock.Value = function(method, originalArgs, message){
             method.apply(null, args);
         };
     } else {
-        return new YUITest.Mock.Value(method, originalArgs, message);
+        return new Test.Mock.Value(method, originalArgs, message);
     }
 };
 
@@ -179,7 +179,7 @@ YUITest.Mock.Value = function(method, originalArgs, message){
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Any        = YUITest.Mock.Value(function(){});
+Test.Mock.Value.Any        = Test.Mock.Value(function(){});
 
 /**
  * Predefined matcher to match boolean values.
@@ -187,7 +187,7 @@ YUITest.Mock.Value.Any        = YUITest.Mock.Value(function(){});
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Boolean    = YUITest.Mock.Value(YUITest.Assert.isBoolean);
+Test.Mock.Value.Boolean    = Test.Mock.Value(Test.Assert.isBoolean);
 
 /**
  * Predefined matcher to match number values.
@@ -195,7 +195,7 @@ YUITest.Mock.Value.Boolean    = YUITest.Mock.Value(YUITest.Assert.isBoolean);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Number     = YUITest.Mock.Value(YUITest.Assert.isNumber);
+Test.Mock.Value.Number     = Test.Mock.Value(Test.Assert.isNumber);
 
 /**
  * Predefined matcher to match string values.
@@ -203,7 +203,7 @@ YUITest.Mock.Value.Number     = YUITest.Mock.Value(YUITest.Assert.isNumber);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.String     = YUITest.Mock.Value(YUITest.Assert.isString);
+Test.Mock.Value.String     = Test.Mock.Value(Test.Assert.isString);
 
 /**
  * Predefined matcher to match object values.
@@ -211,7 +211,7 @@ YUITest.Mock.Value.String     = YUITest.Mock.Value(YUITest.Assert.isString);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Object     = YUITest.Mock.Value(YUITest.Assert.isObject);
+Test.Mock.Value.Object     = Test.Mock.Value(Test.Assert.isObject);
 
 /**
  * Predefined matcher to match function values.
@@ -219,4 +219,4 @@ YUITest.Mock.Value.Object     = YUITest.Mock.Value(YUITest.Assert.isObject);
  * @static
  * @type Function
  */
-YUITest.Mock.Value.Function   = YUITest.Mock.Value(YUITest.Assert.isFunction);
+Test.Mock.Value.Function   = Test.Mock.Value(Test.Assert.isFunction);

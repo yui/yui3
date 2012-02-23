@@ -2,12 +2,12 @@
  * Convenience type for storing and aggregating
  * test result information.
  * @private
- * @namespace YUITest
+ * @namespace Test
  * @class Results
  * @constructor
  * @param {String} name The name of the test.
  */
-YUITest.Results = function(name){
+Test.Results = function(name){
 
     /**
      * Name of the test, test case, or test suite.
@@ -61,11 +61,11 @@ YUITest.Results = function(name){
 
 /**
  * Includes results from another results object into this one.
- * @param {YUITest.Results} result The results object to include.
+ * @param {Test.Results} result The results object to include.
  * @method include
  * @return {void}
  */
-YUITest.Results.prototype.include = function(results){
+Test.Results.prototype.include = function(results){
     this.passed += results.passed;
     this.failed += results.failed;
     this.ignored += results.ignored;

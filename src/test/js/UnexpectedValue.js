@@ -6,15 +6,15 @@
  *
  * @param {String} message The message to display when the error occurs.
  * @param {Object} unexpected The unexpected value.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class UnexpectedValue
  * @constructor
  */ 
-YUITest.UnexpectedValue = function (message, unexpected){
+Test.UnexpectedValue = function (message, unexpected){
 
     //call superclass
-    YUITest.AssertionError.call(this, message);
+    Test.AssertionError.call(this, message);
     
     /**
      * The unexpected value.
@@ -32,11 +32,11 @@ YUITest.UnexpectedValue = function (message, unexpected){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.UnexpectedValue.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.UnexpectedValue.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.UnexpectedValue.prototype.constructor = YUITest.UnexpectedValue;
+Test.UnexpectedValue.prototype.constructor = Test.UnexpectedValue;
 
 /**
  * Returns a fully formatted error for an assertion failure. This message
@@ -44,6 +44,6 @@ YUITest.UnexpectedValue.prototype.constructor = YUITest.UnexpectedValue;
  * @method getMessage
  * @return {String} A string describing the error.
  */
-YUITest.UnexpectedValue.prototype.getMessage = function(){
+Test.UnexpectedValue.prototype.getMessage = function(){
     return this.message + "\nUnexpected: " + this.unexpected + " (" + (typeof this.unexpected) + ") ";
 };

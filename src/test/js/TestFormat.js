@@ -1,10 +1,10 @@
 /**
  * An object object containing test result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestFormat
  * @static
  */
-YUITest.TestFormat = function(){
+Test.TestFormat = function(){
     
     /* (intentionally not documented)
      * Basic XML escaping method. Replaces quotes, less-than, greater-than,
@@ -37,7 +37,7 @@ YUITest.TestFormat = function(){
          * @static
          */
         JSON: function(results) {
-            return YUITest.Util.JSON.stringify(results);
+            return Test.Util.JSON.stringify(results);
         },
         
         /**
