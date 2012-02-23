@@ -68,7 +68,7 @@
         -->
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
-	<url>editor/tests/editor.html</url>
+	    <url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
@@ -79,6 +79,7 @@
         <url>event/tests/focusblur.html</url>
         <url>event-custom/tests/customevent.html</url>
         <url>event-custom/tests/event-custom-base.html</url>
+        <url>event-gestures/tests/index.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
