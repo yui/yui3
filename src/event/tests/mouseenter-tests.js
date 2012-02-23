@@ -27,6 +27,7 @@ YUI.add('mouseenter-tests', function(Y) {
             });
         },
         'test: _filterNotify': function() {
+            var fired = false;
             eventDef.enter.filter = function() { return node; };
             eventDef.enter.args = [1, 2, 3]
             eventDef.enter._filterNotify(node, [{
@@ -34,14 +35,13 @@ YUI.add('mouseenter-tests', function(Y) {
                 currentTarget: node
             }, {
                 fire: function(e) {
-                    Assert.areSame(node, e.target);
-                    Assert.areSame(node, e.currentTarget);
-
-                    Assert.areSame(node.getDOMNode(), e.target.getDOMNode());
-                    Assert.areSame(node.getDOMNode(), e.currentTarget.getDOMNode());
+                    fired = true;
+                    Assert.isTrue(fired);
                     return false;
                 }
             }], {});
+
+            Assert.isTrue(fired);
         },
         'test: delegateDetach': function() {
             var fired = false;
@@ -49,7 +49,6 @@ YUI.add('mouseenter-tests', function(Y) {
                 handle: {
                     detach: function() {
                         fired = true;
-                        //Did this fire?
                         Assert.isTrue(fired);
                         return false;
                     }
