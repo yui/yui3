@@ -6,15 +6,15 @@
  * @param {String} message The message to display when the error occurs.
  * @param {Object} expected The expected value.
  * @param {Object} actual The actual value that caused the assertion to fail.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ComparisonFailure
  * @constructor
  */ 
-YUITest.ComparisonFailure = function (message, expected, actual){
+Test.ComparisonFailure = function (message, expected, actual){
 
     //call superclass
-    YUITest.AssertionError.call(this, message);
+    Test.AssertionError.call(this, message);
     
     /**
      * The expected value.
@@ -39,11 +39,11 @@ YUITest.ComparisonFailure = function (message, expected, actual){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.ComparisonFailure.prototype = new YUITest.AssertionError;
+//inherit from Test.AssertionError
+Test.ComparisonFailure.prototype = new Test.AssertionError;
 
 //restore constructor
-YUITest.ComparisonFailure.prototype.constructor = YUITest.ComparisonFailure;
+Test.ComparisonFailure.prototype.constructor = Test.ComparisonFailure;
 
 /**
  * Returns a fully formatted error for an assertion failure. This message
@@ -51,7 +51,7 @@ YUITest.ComparisonFailure.prototype.constructor = YUITest.ComparisonFailure;
  * @method getMessage
  * @return {String} A string describing the error.
  */
-YUITest.ComparisonFailure.prototype.getMessage = function(){
+Test.ComparisonFailure.prototype.getMessage = function(){
     return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
             "\nActual: " + this.actual + " (" + (typeof this.actual) + ")";
 };

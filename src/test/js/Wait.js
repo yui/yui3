@@ -9,7 +9,7 @@
  * @constructor
  *
  */
-YUITest.Wait = function (segment, delay) {
+Test.Wait = function (segment, delay) {
     
     /**
      * The segment of code to run when the wait is over.

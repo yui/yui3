@@ -5,15 +5,15 @@
  *
  * @param {Error} cause The unexpected error that caused this error to be 
  *                      thrown.
- * @namespace YUITest 
- * @extends YUITest.AssertionError
+ * @namespace Test 
+ * @extends Test.AssertionError
  * @class UnexpectedError
  * @constructor
  */  
-YUITest.UnexpectedError = function (cause){
+Test.UnexpectedError = function (cause){
 
     //call superclass
-    YUITest.AssertionError.call(this, "Unexpected error: " + cause.message);
+    Test.AssertionError.call(this, "Unexpected error: " + cause.message);
     
     /**
      * The unexpected error that occurred.
@@ -38,8 +38,8 @@ YUITest.UnexpectedError = function (cause){
     
 };
 
-//inherit from YUITest.AssertionError
-YUITest.UnexpectedError.prototype = new YUITest.AssertionError();
+//inherit from Test.AssertionError
+Test.UnexpectedError.prototype = new Test.AssertionError();
 
 //restore constructor
-YUITest.UnexpectedError.prototype.constructor = YUITest.UnexpectedError;
+Test.UnexpectedError.prototype.constructor = Test.UnexpectedError;

@@ -24,9 +24,12 @@ reporting:
 	cp $(YUITest)/web/Reporter.js ./js/
 
 wrap:
-	cp ./scripts/* ./js/
+	cp ./scripts/*.js ./js/
 
-source: asserts core errors mock reporting wrap
+api:
+	./scripts/fix_docs.sh
+
+source: asserts core errors mock reporting wrap api
 
 build:
 	ant all

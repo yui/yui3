@@ -4,11 +4,11 @@
  * A test suite that can contain a collection of TestCase and TestSuite objects.
  * @param {String||Object} data The name of the test suite or an object containing
  *      a name property as well as setUp and tearDown methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestSuite
  * @constructor
  */
-YUITest.TestSuite = function (data) {
+Test.TestSuite = function (data) {
 
     /**
      * The name of the test suite.
@@ -43,19 +43,19 @@ YUITest.TestSuite = function (data) {
 
 };
     
-YUITest.TestSuite.prototype = {
+Test.TestSuite.prototype = {
     
     //restore constructor
-    constructor: YUITest.TestSuite,
+    constructor: Test.TestSuite,
     
     /**
      * Adds a test suite or test case to the test suite.
-     * @param {YUITest.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
+     * @param {Test.TestSuite||Test.TestCase} testObject The test suite or test case to add.
      * @return {Void}
      * @method add
      */
     add : function (testObject) {
-        if (testObject instanceof YUITest.TestSuite || testObject instanceof YUITest.TestCase) {
+        if (testObject instanceof Test.TestSuite || testObject instanceof Test.TestCase) {
             this.items.push(testObject);
         }
         return this;

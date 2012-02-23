@@ -4,11 +4,11 @@
  * from which more specific assertion errors can be derived.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest
+ * @namespace Test
  * @class AssertionError
  * @constructor
  */ 
-YUITest.AssertionError = function (message){
+Test.AssertionError = function (message){
     
     /**
      * Error message. Must be duplicated to ensure browser receives it.
@@ -25,10 +25,10 @@ YUITest.AssertionError = function (message){
     this.name = "Assert Error";
 };
 
-YUITest.AssertionError.prototype = {
+Test.AssertionError.prototype = {
 
     //restore constructor
-    constructor: YUITest.AssertionError,
+    constructor: Test.AssertionError,
 
     /**
      * Returns a fully formatted error for an assertion failure. This should
