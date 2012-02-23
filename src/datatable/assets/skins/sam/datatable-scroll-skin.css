@@ -1,10 +1,26 @@
-.yui3-skin-sam .yui3-datatable-y-scroller .yui3-datatable-y-scroll-table {
+.yui3-skin-sam .yui3-datatable-scroll-columns {
+    border: 1px solid #cbcbcb;
+    border-bottom: 0 none;
+    border-collapse: separate;
+    /* IE7- don't support border-spacing, but separate is needed for more
+     * reliable dimension calculation for scrollable's header width sync,
+     * and it doesn't hurt to have the declaration here.
+     */
+    *border-collapse: collapse;
+    border-spacing: 0;
+    font-family: arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    border: 0 none;
 }
+
+.yui3-skin-sam .yui3-datatable-scroll-columns .yui3-datatable-header {
+    padding: 0;
+}
+
+.yui3-skin-sam .yui3-datatable-scroll-liner {
+    padding: 4px 10px;
+}
+
 .yui3-skin-sam .yui3-datatable-scrollable-x .yui3-datatable-x-scroller {
     border-right: 1px solid #cbcbcb;
     border-left: 1px solid #cbcbcb;
@@ -19,8 +35,7 @@
 }
 .yui3-skin-sam .yui3-datatable-y-scroller {
     border: 1px solid #cbcbcb;
-    border-top: 0 none;
 }
 .yui3-skin-sam .yui3-datatable-scrollable-y .yui3-datatable-table {
-    border-bottom: 0 none;
+    border: 0 none;
 }
