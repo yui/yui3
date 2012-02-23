@@ -3,6 +3,77 @@ YUI.add('general-tests', function(Y) {
     var Assert = Y.Assert,
         suite = new Y.Test.Suite('General Tests');
 
+            var simpleReport = {
+                passed: 2,
+                failed: 2,
+                ignored: 1,
+                total: 5,
+                type: "report",
+                name: "YUI Test Results",
+                duration: 500,
+
+                "Some Suite":{
+                    passed: 2,
+                    failed: 2,
+                    ignored: 1,
+                    total: 5,
+                    type: "testsuite",
+                    name: "Some Suite",
+                    duration: 356,
+
+                    "Some Tests": {
+                        passed: 2,
+                        failed: 2,
+                        ignored: 1,
+                        total: 5,
+                        type: "testcase",
+                        name: "Some Tests",
+                        duration: 250,
+
+                        test1:{
+                            result: "pass",
+                            message: "Test passed.",
+                            type: "test",
+                            name: "test1",
+                            duration: 25
+                        },
+
+                        test2:{
+                            result: "pass",
+                            message: "Test passed.",
+                            type: "test",
+                            name: "test2",
+                            duration: 30
+                        },
+
+                        test3:{
+                            result: "ignore",
+                            message: "Test ignored.",
+                            type: "test",
+                            name: "test3",
+                            duration: 35
+                        },
+
+                        test4:{
+                            result: "fail",
+                            message: "Test failed.",
+                            type: "test",
+                            name: "test4",
+                            duration: 45
+                        },
+
+                        test5:{
+                            result: "fail",
+                            message: "Test failed.",
+                            type: "test",
+                            name: "test5",
+                            duration: 50
+                        }
+                    }
+                }
+            };
+
+
 
     suite.add(new Y.Test.Case({
         name: 'Wait/Resume',
@@ -30,11 +101,44 @@ YUI.add('general-tests', function(Y) {
         name: 'Suite/Case Tests',
         'test: suite with no name': function() {
             var s = new Y.Test.Suite();
-            Assert.isTrue((s.name.indexOf('testSuiteyui') === 0));
+            Assert.isTrue((s.name.indexOf('testSuite') === 0));
         },
         'test: case with no name': function() {
             var s = new Y.Test.Case();
-            Assert.isTrue((s.name.indexOf('testCaseyui') === 0));
+            Assert.isTrue((s.name.indexOf('testCase') === 0));
+        },
+        'test: callback': function() {
+            var fn = this.callback();
+        },
+        'test: assert': function() {
+            this.assert(true, 'Assert');
+        },
+        'test: assert no condition': function() {
+            this.assert();
+        },
+        'test: assert.fail': function() {
+            this.fail('Failed');
+        },
+        _should: {
+            fail: {
+                'test: assert.fail': true,
+                'test: assert no condition': true
+            }
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'EventTarget',
+        'test: attach': function() {
+            var tcase = Y.Test.Runner;
+            var noop = function() {};
+            var count = Y.Object.keys(tcase._handlers).length;
+            tcase.subscribe('foobar', noop);
+            var count2 = Y.Object.keys(tcase._handlers).length;
+            Assert.areEqual(count + 1, count2);
+            tcase.unsubscribe('foobar', noop);
+            var count3 = tcase._handlers.foobar.length;
+            Assert.areEqual(0, count3);
         }
     }));
 
@@ -141,23 +245,26 @@ YUI.add('general-tests', function(Y) {
             var date1 = new Date('01/01/1999 16:16:16');
             DateAssert.timesAreEqual(date1, new Date('01/01/1999 12:12:12'));
         },
+        'test: should error for not passing dates': function() {
+            DateAssert.datesAreEqual(null, null);
+        },
+        'test: should error for not passing times': function() {
+            DateAssert.timesAreEqual(null, null);
+        },
         _should: {
             fail: {
                 'test: datesAreEqual() fail': true,
                 'test: timesAreEqual() fail': true
+            },
+            error: {
+                'test: should error for not passing dates': true,
+                'test: should error for not passing times': true
             }
         }
     }));
 
     suite.add(new Y.Test.Case({
         name: 'Runner Tests',
-        'test: logging': function() {
-            Assert.isTrue(Y.Test.Runner._log);
-            Y.Test.Runner.disableLogging();
-            Assert.isFalse(Y.Test.Runner._log);
-            Y.Test.Runner.enableLogging();
-            Assert.isTrue(Y.Test.Runner._log);
-        },
         'test: set name': function() {
             var setName = 'YUI Test Suite',
                 name = Y.Test.Runner.getName();
@@ -174,10 +281,80 @@ YUI.add('general-tests', function(Y) {
             Assert.isTrue(Y.Test.Runner.isRunning(), 'Running');
             Assert.isFalse(Y.Test.Runner.isWaiting(), 'Waiting');
         },
+        'test: getResults': function() {
+            var results = Y.Test.Runner.getResults();
+            Assert.isNull(results);
+        },
+        'test: clear': function() {
+            var suite = Y.Test.Runner.masterSuite;
+
+            Y.Test.Runner.clear();
+
+            Assert.isTrue((Y.Test.Runner.masterSuite.name.indexOf('yuitests') === 0));
+
+            Y.Test.Runner.masterSuite = suite;
+        },
+
+        'test: _getCount and reset': function() {
+                var asserts = Assert._asserts;
+
+            Assert.areEqual(asserts, Assert._getCount());
+            Assert._reset();
+            Assert.areEqual(0, Assert._getCount());
+            Assert._asserts = asserts;
+        },
         _should: {
             ignore: {
                 'test: ignore': true
             }
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Error Tests',
+        'test: Assert.Error': function() {
+            var e = new Y.Assert.Error('Assertion Error');
+            Assert.areEqual('Assert Error', e.name);
+            Assert.areEqual('Assert Error: Assertion Error', e.toString());
+            Assert.areEqual('Assert Error: Assertion Error', e.valueOf());
+            Assert.areEqual('Assertion Error', e.message);
+        },
+        'test: Assert.ComparisonFailure': function() {
+            var e = new Y.Assert.ComparisonFailure('ComparisonFailure Error', false, true);
+            Assert.areEqual('ComparisonFailure', e.name);
+            Assert.areEqual('ComparisonFailure: ComparisonFailure Error\nExpected: false (boolean)\nActual: true (boolean)', e.toString());
+            Assert.areEqual('ComparisonFailure: ComparisonFailure Error\nExpected: false (boolean)\nActual: true (boolean)', e.valueOf());
+            Assert.areEqual('ComparisonFailure Error', e.message);
+        },
+        'test: Assert.UnexpectedValue': function() {
+            var e = new Y.Assert.UnexpectedValue('UnexpectedValueError', false);
+            Assert.areEqual('UnexpectedValue', e.name);
+            Assert.areEqual('UnexpectedValue: UnexpectedValueError\nUnexpected: false (boolean) ', e.toString());
+            Assert.areEqual('UnexpectedValue: UnexpectedValueError\nUnexpected: false (boolean) ', e.valueOf());
+            Assert.areEqual('UnexpectedValueError', e.message);
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: 'Reporter',
+        'test: report': function() {
+            var url = "http://foobar.com/";
+            var reporter = new Y.Test.Reporter(url, Y.Test.Format.JSON);
+            reporter.addField('foo', 'bar');
+
+
+            var json = Y.Test.Format.JSON(simpleReport);
+            reporter.report(simpleReport, false);
+
+            Assert.isNotNull(reporter._form);
+            Assert.areEqual(url, reporter.url);
+            Assert.areEqual(json, reporter._form.results.value);
+            Assert.areEqual('bar', reporter._form.foo.value);
+
+            reporter.clearFields();
+
+            reporter.destroy();
+            Assert.isNull(reporter._form);
         }
     }));
 

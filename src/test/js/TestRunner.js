@@ -1,14 +1,36 @@
     
-    /*
+    /**
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
-     * @namespace Test
-     * @class Runner
+     * @namespace YUITest
+     * @class TestRunner
      * @static
      */
-    Y.Test.Runner = (function(){
+    YUITest.TestRunner = function(){
+
+        /*(intentionally not documented)
+         * Determines if any of the array of test groups appears
+         * in the given TestRunner filter.
+         * @param {Array} testGroups The array of test groups to
+         *      search for.
+         * @param {String} filter The TestRunner groups filter.
+         */
+        function inGroups(testGroups, filter){
+            if (!filter.length){
+                return true;
+            } else {                
+                if (testGroups){
+                    for (var i=0, len=testGroups.length; i < len; i++){
+                        if (filter.indexOf("," + testGroups[i] + ",") > -1){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
     
-        /* (intentionally not documented)
+        /**
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
@@ -18,59 +40,53 @@
          */
         function TestNode(testObject){
         
-            /* (intentionally not documented)
+            /**
              * The TestSuite, TestCase, or test function represented by this node.
              * @type Variant
              * @property testObject
              */
             this.testObject = testObject;
             
-            /* (intentionally not documented)
+            /**
              * Pointer to this node's first child.
              * @type TestNode
              * @property firstChild
              */        
             this.firstChild = null;
             
-            /* (intentionally not documented)
+            /**
              * Pointer to this node's last child.
              * @type TestNode
              * @property lastChild
              */        
             this.lastChild = null;
             
-            /* (intentionally not documented)
+            /**
              * Pointer to this node's parent.
              * @type TestNode
              * @property parent
              */        
             this.parent = null; 
        
-            /* (intentionally not documented)
+            /**
              * Pointer to this node's next sibling.
              * @type TestNode
              * @property next
              */        
             this.next = null;
             
-            /* (intentionally not documented)
+            /**
              * Test results for this test object.
              * @type object
              * @property results
              */                
-            this.results = {
-                passed : 0,
-                failed : 0,
-                total : 0,
-                ignored : 0,
-                duration: 0
-            };
+            this.results = new YUITest.Results();
             
             //initialize results
-            if (testObject instanceof Y.Test.Suite){
+            if (testObject instanceof YUITest.TestSuite){
                 this.results.type = "testsuite";
                 this.results.name = testObject.name;
-            } else if (testObject instanceof Y.Test.Case){
+            } else if (testObject instanceof YUITest.TestCase){
                 this.results.type = "testcase";
                 this.results.name = testObject.name;
             }
@@ -79,7 +95,7 @@
         
         TestNode.prototype = {
         
-            /* (intentionally not documented)
+            /**
              * Appends a new test object (TestSuite, TestCase, or test function name) as a child
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
@@ -107,17 +123,17 @@
          */
         function TestRunner(){
         
-            //inherit from EventProvider
-            TestRunner.superclass.constructor.apply(this,arguments);
+            //inherit from EventTarget
+            YUITest.EventTarget.call(this);
             
             /**
              * Suite on which to attach all TestSuites and TestCases to be run.
-             * @type Y.Test.Suite
+             * @type YUITest.TestSuite
              * @property masterSuite
              * @static
              * @private
              */
-            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
     
             /**
              * Pointer to the current node in the test tree.
@@ -173,27 +189,43 @@
              * @property _lastResults
              * @static
              */
-            this._lastResults = null;            
+            this._lastResults = null;       
             
-            //create events
-            var events = [
-                this.TEST_CASE_BEGIN_EVENT,
-                this.TEST_CASE_COMPLETE_EVENT,
-                this.TEST_SUITE_BEGIN_EVENT,
-                this.TEST_SUITE_COMPLETE_EVENT,
-                this.TEST_PASS_EVENT,
-                this.TEST_FAIL_EVENT,
-                this.TEST_IGNORE_EVENT,
-                this.COMPLETE_EVENT,
-                this.BEGIN_EVENT
-            ];
-            for (var i=0; i < events.length; i++){
-                this.on(events[i], this._logEvent, this, true);
-            }      
-       
+            /**
+             * Data object that is passed around from method to method.
+             * @type Object
+             * @private
+             * @property _data
+             * @static
+             */
+            this._context = null;
+            
+            /**
+             * The list of test groups to run. The list is represented
+             * by a comma delimited string with commas at the start and
+             * end.
+             * @type String
+             * @private
+             * @property _groups
+             * @static
+             */
+            this._groups = "";
+
         }
         
-        Y.extend(TestRunner, Y.Event.Target, {
+        TestRunner.prototype = YUITest.Util.mix(new YUITest.EventTarget(), {
+            
+            /**
+            * If true, YUITest will not fire an error for tests with no Asserts.
+            * @prop _ignoreEmpty
+            * @private
+            * @type Boolean
+            * @static
+            */
+            _ignoreEmpty: false,
+
+            //restore prototype
+            constructor: YUITest.TestRunner,
         
             //-------------------------------------------------------------------------
             // Constants
@@ -245,6 +277,13 @@
             TEST_FAIL_EVENT : "fail",
             
             /**
+             * Fires when a non-test method has an error.
+             * @event error
+             * @static
+             */        
+            ERROR_EVENT : "error",
+            
+            /**
              * Fires when a test has been ignored.
              * @event ignore
              * @static
@@ -263,116 +302,7 @@
              * @event begin
              * @static
              */        
-            BEGIN_EVENT : "begin",    
-            
-            //-------------------------------------------------------------------------
-            // Logging-Related Methods
-            //-------------------------------------------------------------------------
-    
-            
-            /**
-             * Disable logging via Y.log(). Test output will not be visible unless
-             * TestRunner events are subscribed to.
-             * @return {Void}
-             * @method disableLogging
-             * @static
-             */
-            disableLogging: function(){
-                this._log = false;
-            },    
-            
-            /**
-             * Enable logging via Y.log(). Test output is published and can be read via
-             * logreader.
-             * @return {Void}
-             * @method enableLogging
-             * @static
-             */
-            enableLogging: function(){
-                this._log = true;
-            },
-            
-            /**
-             * Logs TestRunner events using Y.log().
-             * @param {Object} event The event object for the event.
-             * @return {Void}
-             * @method _logEvent
-             * @private
-             * @static
-             */
-            _logEvent: function(event){
-                
-                //data variables
-                var message = "";
-                var messageType = "";
-                
-                switch(event.type){
-                    case this.BEGIN_EVENT:
-                        message = "Testing began at " + (new Date()).toString() + ".";
-                        messageType = "info";
-                        break;
-                        
-                    case this.COMPLETE_EVENT:
-                        message = Y.substitute("Testing completed at " +
-                            (new Date()).toString() + ".\n" +
-                            "Passed:{passed} Failed:{failed} " +
-                            "Total:{total} ({ignored} ignored)",
-                            event.results);
-                        messageType = "info";
-                        break;
-                        
-                    case this.TEST_FAIL_EVENT:
-                        message = event.testName + ": failed.\n" + event.error.getMessage();
-                        messageType = "fail";
-                        break;
-                        
-                    case this.TEST_IGNORE_EVENT:
-                        message = event.testName + ": ignored.";
-                        messageType = "ignore";
-                        break;
-                        
-                    case this.TEST_PASS_EVENT:
-                        message = event.testName + ": passed.";
-                        messageType = "pass";
-                        break;
-                        
-                    case this.TEST_SUITE_BEGIN_EVENT:
-                        message = "Test suite \"" + event.testSuite.name + "\" started.";
-                        messageType = "info";
-                        break;
-                        
-                    case this.TEST_SUITE_COMPLETE_EVENT:
-                        message = Y.substitute("Test suite \"" +
-                            event.testSuite.name + "\" completed" + ".\n" +
-                            "Passed:{passed} Failed:{failed} " +
-                            "Total:{total} ({ignored} ignored)",
-                            event.results);
-                        messageType = "info";
-                        break;
-                        
-                    case this.TEST_CASE_BEGIN_EVENT:
-                        message = "Test case \"" + event.testCase.name + "\" started.";
-                        messageType = "info";
-                        break;
-                        
-                    case this.TEST_CASE_COMPLETE_EVENT:
-                        message = Y.substitute("Test case \"" +
-                            event.testCase.name + "\" completed.\n" +
-                            "Passed:{passed} Failed:{failed} " +
-                            "Total:{total} ({ignored} ignored)",
-                            event.results);
-                        messageType = "info";
-                        break;
-                    default:
-                        message = "Unexpected event " + event.type;
-                        message = "info";
-                }
-            
-                //only log if required
-                if (this._log){
-                    Y.log(message, messageType, "TestRunner");
-                }
-            },
+            BEGIN_EVENT : "begin",                           
 
             //-------------------------------------------------------------------------
             // Test Tree-Related Methods
@@ -381,13 +311,13 @@
             /**
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
-             * @param {Test.Case} testCase The test case to add.
+             * @param {YUITest.TestCase} testCase The test case to add.
              * @return {Void}
              * @static
              * @private
              * @method _addTestCaseToTestTree
              */
-           _addTestCaseToTestTree : function (parentNode, testCase /*:Y.Test.Case*/){
+           _addTestCaseToTestTree : function (parentNode, testCase){
                 
                 //add the test suite
                 var node = parentNode.appendChild(testCase),
@@ -396,7 +326,7 @@
                 
                 //iterate over the items in the test case
                 for (prop in testCase){
-                    if ((prop.indexOf("test") === 0 || (prop.toLowerCase().indexOf("should") > -1 && prop.indexOf(" ") > -1 ))&& Y.Lang.isFunction(testCase[prop])){
+                    if ((prop.indexOf("test") === 0 || prop.indexOf(" ") > -1) && typeof testCase[prop] == "function"){
                         node.appendChild(prop);
                     }
                 }
@@ -406,22 +336,22 @@
             /**
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
-             * @param {Test.Suite} testSuite The test suite to add.
+             * @param {YUITest.TestSuite} testSuite The test suite to add.
              * @return {Void}
              * @static
              * @private
              * @method _addTestSuiteToTestTree
              */
-            _addTestSuiteToTestTree : function (parentNode, testSuite /*:Y.Test.Suite*/) {
+            _addTestSuiteToTestTree : function (parentNode, testSuite) {
                 
                 //add the test suite
                 var node = parentNode.appendChild(testSuite);
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < testSuite.items.length; i++){
-                    if (testSuite.items[i] instanceof Y.Test.Suite) {
+                    if (testSuite.items[i] instanceof YUITest.TestSuite) {
                         this._addTestSuiteToTestTree(node, testSuite.items[i]);
-                    } else if (testSuite.items[i] instanceof Y.Test.Case) {
+                    } else if (testSuite.items[i] instanceof YUITest.TestCase) {
                         this._addTestCaseToTestTree(node, testSuite.items[i]);
                     }                   
                 }            
@@ -443,9 +373,9 @@
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < this.masterSuite.items.length; i++){
-                    if (this.masterSuite.items[i] instanceof Y.Test.Suite) {
+                    if (this.masterSuite.items[i] instanceof YUITest.TestSuite) {
                         this._addTestSuiteToTestTree(this._root, this.masterSuite.items[i]);
-                    } else if (this.masterSuite.items[i] instanceof Y.Test.Case) {
+                    } else if (this.masterSuite.items[i] instanceof YUITest.TestCase) {
                         this._addTestCaseToTestTree(this._root, this.masterSuite.items[i]);
                     }                   
                 }            
@@ -465,24 +395,24 @@
              * @private
              */
             _handleTestObjectComplete : function (node) {
-                if (Y.Lang.isObject(node.testObject)){
+                var parentNode;
                 
-                    if (node.parent){
-                        node.parent.results.passed += node.results.passed;
-                        node.parent.results.failed += node.results.failed;
-                        node.parent.results.total += node.results.total;                
-                        node.parent.results.ignored += node.results.ignored;       
-                        //node.parent.results.duration += node.results.duration;
-                        node.parent.results[node.testObject.name] = node.results;
+                if (node && (typeof node.testObject == "object")) {
+                    parentNode = node.parent;
+                
+                    if (parentNode){
+                        parentNode.results.include(node.results); 
+                        parentNode.results[node.testObject.name] = node.results;
                     }
                 
-                    if (node.testObject instanceof Y.Test.Suite){
-                        node.testObject.tearDown();
+                    if (node.testObject instanceof YUITest.TestSuite){
+                        this._execNonTestMethod(node, "tearDown", false);
                         node.results.duration = (new Date()) - node._start;
-                        this.fire(this.TEST_SUITE_COMPLETE_EVENT, { testSuite: node.testObject, results: node.results});
-                    } else if (node.testObject instanceof Y.Test.Case){
+                        this.fire({ type: this.TEST_SUITE_COMPLETE_EVENT, testSuite: node.testObject, results: node.results});
+                    } else if (node.testObject instanceof YUITest.TestCase){
+                        this._execNonTestMethod(node, "destroy", false);
                         node.results.duration = (new Date()) - node._start;
-                        this.fire(this.TEST_CASE_COMPLETE_EVENT, { testCase: node.testObject, results: node.results});
+                        this.fire({ type: this.TEST_CASE_COMPLETE_EVENT, testCase: node.testObject, results: node.results});
                     }      
                 } 
             },                
@@ -511,18 +441,18 @@
                         this._handleTestObjectComplete(this._cur);
                         this._cur = this._cur.parent;
                     }
-
-                    this._handleTestObjectComplete(this._cur);               
                     
+                    this._handleTestObjectComplete(this._cur);               
+                        
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
                         this._cur.results.timestamp = (new Date()).toLocaleString();
                         this._cur.results.duration = (new Date()) - this._cur._start;   
                         this._lastResults = this._cur.results;
                         this._running = false;                         
-                        this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
+                        this.fire({ type: this.COMPLETE_EVENT, results: this._lastResults});
                         this._cur = null;
-                    } else {
+                    } else if (this._cur) {
                         this._cur = this._cur.next;                
                     }
                 }
@@ -531,8 +461,45 @@
             },
             
             /**
+             * Executes a non-test method (init, setUp, tearDown, destroy)
+             * and traps an errors. If an error occurs, an error event is
+             * fired.
+             * @param {Object} node The test node in the testing tree.
+             * @param {String} methodName The name of the method to execute.
+             * @param {Boolean} allowAsync Determines if the method can be called asynchronously.
+             * @return {Boolean} True if an async method was called, false if not.
+             * @method _execNonTestMethod
+             * @private
+             */
+            _execNonTestMethod: function(node, methodName, allowAsync){
+                var testObject = node.testObject,
+                    event = { type: this.ERROR_EVENT };
+                try {
+                    if (allowAsync && testObject["async:" + methodName]){
+                        testObject["async:" + methodName](this._context);
+                        return true;
+                    } else {
+                        testObject[methodName](this._context);
+                    }
+                } catch (ex){
+                    node.results.errors++;
+                    event.error = ex;
+                    event.methodName = methodName;
+                    if (testObject instanceof YUITest.TestCase){
+                        event.testCase = testObject;
+                    } else {
+                        event.testSuite = testSuite;
+                    }
+                    
+                    this.fire(event);
+                }  
+
+                return false;
+            },
+            
+            /**
              * Runs a test case or test suite, returning the results.
-             * @param {Test.Case|Test.Suite} testObject The test case or test suite to run.
+             * @param {YUITest.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run
@@ -557,20 +524,36 @@
                     var testObject = node.testObject;
                     
                     //figure out what to do
-                    if (Y.Lang.isObject(testObject)){
-                        if (testObject instanceof Y.Test.Suite){
-                            this.fire(this.TEST_SUITE_BEGIN_EVENT, { testSuite: testObject });
+                    if (typeof testObject == "object" && testObject !== null){
+                        if (testObject instanceof YUITest.TestSuite){
+                            this.fire({ type: this.TEST_SUITE_BEGIN_EVENT, testSuite: testObject });
                             node._start = new Date();
-                            testObject.setUp();
-                        } else if (testObject instanceof Y.Test.Case){
-                            this.fire(this.TEST_CASE_BEGIN_EVENT, { testCase: testObject });
+                            this._execNonTestMethod(node, "setUp" ,false);
+                        } else if (testObject instanceof YUITest.TestCase){
+                            this.fire({ type: this.TEST_CASE_BEGIN_EVENT, testCase: testObject });
                             node._start = new Date();
+                            
+                            //regular or async init
+                            /*try {
+                                if (testObject["async:init"]){
+                                    testObject["async:init"](this._context);
+                                    return;
+                                } else {
+                                    testObject.init(this._context);
+                                }
+                            } catch (ex){
+                                node.results.errors++;
+                                this.fire({ type: this.ERROR_EVENT, error: ex, testCase: testObject, methodName: "init" });
+                            }*/
+                            if(this._execNonTestMethod(node, "init", true)){
+                                return;
+                            }
                         }
                         
                         //some environments don't support setTimeout
                         if (typeof setTimeout != "undefined"){                    
                             setTimeout(function(){
-                                Y.Test.Runner._run();
+                                YUITest.TestRunner._run();
                             }, 0);
                         } else {
                             this._run();
@@ -599,7 +582,7 @@
                 }
                 
                 var testName = node.testObject;
-                var testCase /*:Y.Test.Case*/ = node.parent.testObject;
+                var testCase = node.parent.testObject;
             
                 //cancel other waits if available
                 if (testCase.__yui_wait){
@@ -608,7 +591,8 @@
                 }
 
                 //get the "should" test cases
-                var shouldFail = (testCase._should.fail || {})[testName];
+                var shouldFail = testName.indexOf("fail:") === 0 ||
+                                    (testCase._should.fail || {})[testName];
                 var shouldError = (testCase._should.error || {})[testName];
                 
                 //variable to hold whether or not the test failed
@@ -619,14 +603,18 @@
                 try {
                 
                     //run the test
-                    segment.apply(testCase);
-                    
+                    segment.call(testCase, this._context);                    
+                
+                    //if the test hasn't already failed and doesn't have any asserts...
+                    if(YUITest.Assert._getCount() == 0 && !this._ignoreEmpty){
+                        throw new YUITest.AssertionError("Test has no asserts.");
+                    }                                                        
                     //if it should fail, and it got here, then it's a fail because it didn't
-                    if (shouldFail){
-                        error = new Y.Assert.ShouldFail();
+                     else if (shouldFail){
+                        error = new YUITest.ShouldFail();
                         failed = true;
                     } else if (shouldError){
-                        error = new Y.Assert.ShouldError();
+                        error = new YUITest.ShouldError();
                         failed = true;
                     }
                                
@@ -639,20 +627,20 @@
                     }                    
                 
                     //figure out what type of error it was
-                    if (thrown instanceof Y.Assert.Error) {
+                    if (thrown instanceof YUITest.AssertionError) {
                         if (!shouldFail){
                             error = thrown;
                             failed = true;
                         }
-                    } else if (thrown instanceof Y.Test.Wait){
+                    } else if (thrown instanceof YUITest.Wait){
                     
-                        if (Y.Lang.isFunction(thrown.segment)){
-                            if (Y.Lang.isNumber(thrown.delay)){
+                        if (typeof thrown.segment == "function"){
+                            if (typeof thrown.delay == "number"){
                             
                                 //some environments don't support setTimeout
                                 if (typeof setTimeout != "undefined"){
                                     testCase.__yui_wait = setTimeout(function(){
-                                        Y.Test.Runner._resumeTest(thrown.segment);
+                                        YUITest.TestRunner._resumeTest(thrown.segment);
                                     }, thrown.delay);
                                     this._waiting = true;
                                 } else {
@@ -666,31 +654,31 @@
                     } else {
                         //first check to see if it should error
                         if (!shouldError) {                        
-                            error = new Y.Assert.UnexpectedError(thrown);
+                            error = new YUITest.UnexpectedError(thrown);
                             failed = true;
                         } else {
                             //check to see what type of data we have
-                            if (Y.Lang.isString(shouldError)){
+                            if (typeof shouldError == "string"){
                                 
                                 //if it's a string, check the error message
                                 if (thrown.message != shouldError){
-                                    error = new Y.Assert.UnexpectedError(thrown);
+                                    error = new YUITest.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
-                            } else if (Y.Lang.isFunction(shouldError)){
+                            } else if (typeof shouldError == "function"){
                             
                                 //if it's a function, see if the error is an instance of it
                                 if (!(thrown instanceof shouldError)){
-                                    error = new Y.Assert.UnexpectedError(thrown);
+                                    error = new YUITest.UnexpectedError(thrown);
                                     failed = true;
                                 }
                             
-                            } else if (Y.Lang.isObject(shouldError)){
+                            } else if (typeof shouldError == "object" && shouldError !== null){
                             
                                 //if it's an object, check the instance and message
                                 if (!(thrown instanceof shouldError.constructor) || 
                                         thrown.message != shouldError.message){
-                                    error = new Y.Assert.UnexpectedError(thrown);
+                                    error = new YUITest.UnexpectedError(thrown);
                                     failed = true;                                    
                                 }
                             
@@ -703,13 +691,16 @@
                 
                 //fire appropriate event
                 if (failed) {
-                    this.fire(this.TEST_FAIL_EVENT, { testCase: testCase, testName: testName, error: error });
+                    this.fire({ type: this.TEST_FAIL_EVENT, testCase: testCase, testName: testName, error: error });
                 } else {
-                    this.fire(this.TEST_PASS_EVENT, { testCase: testCase, testName: testName });
+                    this.fire({ type: this.TEST_PASS_EVENT, testCase: testCase, testName: testName });
                 }
                 
                 //run the tear down
-                testCase.tearDown();
+                this._execNonTestMethod(node.parent, "tearDown", false);
+                
+                //reset the assert count
+                YUITest.Assert._reset();
                 
                 //calculate duration
                 var duration = (new Date()) - node._start;
@@ -733,7 +724,7 @@
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
                     setTimeout(function(){
-                        Y.Test.Runner._run();
+                        YUITest.TestRunner._run();
                     }, 0);
                 } else {
                     this._run();
@@ -772,17 +763,19 @@
              * @return {Void}
              * @static
              * @private
-             * @method _runTest
+             * @name _runTest
              */
             _runTest : function (node) {
             
                 //get relevant information
-                var testName = node.testObject;
-                var testCase /*:Y.Test.Case*/ = node.parent.testObject;
-                var test = testCase[testName];
+                var testName = node.testObject,
+                    testCase = node.parent.testObject,
+                    test = testCase[testName],
                 
-                //get the "should" test cases
-                var shouldIgnore = (testCase._should.ignore || {})[testName];
+                    //get the "should" test cases
+                    shouldIgnore = testName.indexOf("ignore:") === 0 ||
+                                    !inGroups(testCase.groups, this._groups) ||
+                                    (testCase._should.ignore || {})[testName];   //deprecated
                 
                 //figure out if the test should be ignored or not
                 if (shouldIgnore){
@@ -792,18 +785,18 @@
                         result: "ignore",
                         message: "Test ignored",
                         type: "test",
-                        name: testName
+                        name: testName.indexOf("ignore:") === 0 ? testName.substring(7) : testName
                     };
                     
                     node.parent.results.ignored++;
                     node.parent.results.total++;
                 
-                    this.fire(this.TEST_IGNORE_EVENT, { testCase: testCase, testName: testName });
+                    this.fire({ type: this.TEST_IGNORE_EVENT,  testCase: testCase, testName: testName });
                     
                     //some environments don't support setTimeout
                     if (typeof setTimeout != "undefined"){                    
                         setTimeout(function(){
-                            Y.Test.Runner._run();
+                            YUITest.TestRunner._run();
                         }, 0);              
                     } else {
                         this._run();
@@ -815,7 +808,7 @@
                     node._start = new Date();
                 
                     //run the setup
-                    testCase.setUp();
+                    this._execNonTestMethod(node.parent, "setUp", false);
                     
                     //now call the body of the test
                     this._resumeTest(test);                
@@ -848,26 +841,6 @@
             },            
             
             //-------------------------------------------------------------------------
-            // Protected Methods
-            //-------------------------------------------------------------------------   
-        
-            /*
-             * Fires events for the TestRunner. This overrides the default fire()
-             * method from EventProvider to add the type property to the data that is
-             * passed through on each event call.
-             * @param {String} type The type of event to fire.
-             * @param {Object} data (Optional) Data for the event.
-             * @method fire
-             * @static
-             * @protected
-             */
-            fire : function (type, data) {
-                data = data || {};
-                data.type = type;
-                TestRunner.superclass.fire.call(this, type, data);
-            },
-            
-            //-------------------------------------------------------------------------
             // Public Methods
             //-------------------------------------------------------------------------   
         
@@ -890,7 +863,7 @@
              * @static
              */
             clear : function () {
-                this.masterSuite = new Y.Test.Suite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
             },
             
             /**
@@ -924,7 +897,7 @@
              */
             getResults: function(format){
                 if (!this._running && this._lastResults){
-                    if (Y.Lang.isFunction(format)){
+                    if (typeof format == "function"){
                         return format(this._lastResults);                    
                     } else {
                         return this._lastResults;
@@ -946,7 +919,7 @@
              */
             getCoverage: function(format){
                 if (!this._running && typeof _yuitest_coverage == "object"){
-                    if (Y.Lang.isFunction(format)){
+                    if (typeof format == "function"){
                         return format(_yuitest_coverage);                    
                     } else {
                         return _yuitest_coverage;
@@ -954,6 +927,29 @@
                 } else {
                     return null;
                 }            
+            },
+            
+            /**
+             * Used to continue processing when a method marked with
+             * "async:" is executed. This should not be used in test
+             * methods, only in init(). Each argument is a string, and
+             * when the returned function is executed, the arguments
+             * are assigned to the context data object using the string
+             * as the key name (value is the argument itself).
+             * @private
+             * @return {Function} A callback function.
+             */
+            callback: function(){
+                var names   = arguments,
+                    data    = this._context,
+                    that    = this;
+                    
+                return function(){
+                    for (var i=0; i < arguments.length; i++){
+                        data[names[i]] = arguments[i];
+                    }
+                    that._run();
+                };
             },
             
             /**
@@ -965,7 +961,7 @@
              * @static
              */
             resume : function (segment) {
-                if (Y.Test.Runner._waiting){
+                if (this._waiting){
                     this._resumeTest(segment || function(){});
                 } else {
                     throw new Error("resume() called without wait().");
@@ -974,26 +970,34 @@
         
             /**
              * Runs the test suite.
-             * @param {Boolean} oldMode (Optional) Specifies that the <= 2.8 way of
-             *      internally managing test suites should be used.             
+             * @param {Object|Boolean} options (Optional) Options for the runner:
+             *      <code>oldMode</code> indicates the TestRunner should work in the YUI <= 2.8 way
+             *      of internally managing test suites. <code>groups</code> is an array
+             *      of test groups indicating which tests to run.
              * @return {Void}
              * @method run
              * @static
              */
-            run : function (oldMode) {
+            run : function (options) {
+
+                options = options || {};
                 
                 //pointer to runner to avoid scope issues 
-                var runner = Y.Test.Runner;
+                var runner  = YUITest.TestRunner,
+                    oldMode = options.oldMode;
+                
                 
                 //if there's only one suite on the masterSuite, move it up
-                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof Y.Test.Suite){
+                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof YUITest.TestSuite){
                     this.masterSuite = this.masterSuite.items[0];
                 }                
-    
-                //build the test tree
+                
+                //determine if there are any groups to filter on
+                runner._groups = (options.groups instanceof Array) ? "," + options.groups.join(",") + "," : "";
+                
+                //initialize the runner
                 runner._buildTestTree();
-                            
-                //set when the test started
+                runner._context = {};
                 runner._root._start = new Date();
                 
                 //fire the begin event
@@ -1006,4 +1010,4 @@
         
         return new TestRunner();
         
-    })();
+    }();

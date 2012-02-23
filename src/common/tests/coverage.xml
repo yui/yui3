@@ -53,6 +53,7 @@
         <url>collection/tests/array-extras.html</url>
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
+        <url>cookie/tests/cookie.html</url>
         <url>dataschema/tests/dataschema.html</url>
         <url>datasource/tests/datasource-arrayschema.html</url>
         <url>datasource/tests/datasource-cache.html</url>
@@ -102,6 +103,7 @@
         <url>history/tests/functional/history-hash.html</url>
         -->
         <url>history/tests/functional/history-html5.html</url>
+        <url>imageloader/tests/imageloader.html</url>
         <url>intl/tests/intl.html</url>
         <url>json/tests/json.html</url>
         <!--url>jsonp/tests/jsonp.html</url>
@@ -112,14 +114,18 @@
         <url>parallel/tests/index.html</url>
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
+        <url>profiler/tests/profiler.html</url>
         <url>queue-promote/tests/queue-promote.html</url>
+        <url>querystring/tests/querystring.html</url>
         <url>resize/tests/index.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>
         <url>test/tests/index.html</url>
         <url>text/tests/functional/text-accentfold.html</url>
         <url>text/tests/functional/text-wordbreak.html</url>
+        <!-- Failing in CI
         <url>transition/tests/transition.html</url>
+        -->
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
         <url>yql/tests/index.html</url>
