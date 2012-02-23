@@ -4,7 +4,7 @@
  * @class CoverageFormat
  * @static
  */
-Test.CoverageFormat = {
+YUITest.CoverageFormat = {
 
     /**
      * Returns the coverage report in JSON format. This is the straight
@@ -15,7 +15,7 @@ Test.CoverageFormat = {
      * @namespace Test.CoverageFormat
      */
     JSON: function(coverage){
-        return Test.Util.JSON.stringify(coverage);
+        return YUITest.Util.JSON.stringify(coverage);
     },
     
     /**
@@ -37,7 +37,7 @@ Test.CoverageFormat = {
             }
         }
 
-        return Test.Util.JSON.stringify(coverage);
+        return YUITest.Util.JSON.stringify(coverage);
     }
 
 };

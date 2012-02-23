@@ -7,7 +7,7 @@
  * @constructor
  * @param {String} name The name of the test.
  */
-Test.Results = function(name){
+YUITest.Results = function(name){
 
     /**
      * Name of the test, test case, or test suite.
@@ -65,7 +65,7 @@ Test.Results = function(name){
  * @method include
  * @return {void}
  */
-Test.Results.prototype.include = function(results){
+YUITest.Results.prototype.include = function(results){
     this.passed += results.passed;
     this.failed += results.failed;
     this.ignored += results.ignored;

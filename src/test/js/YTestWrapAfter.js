@@ -7,7 +7,7 @@ Y.Object.each(YUITest, function(item, name) {
     Y.Test[name] = item;
 });
 
-Y.Assert = Test.Assert;
+Y.Assert = YUITest.Assert;
 Y.Assert.Error = Y.Test.AssertionError;
 Y.Assert.ComparisonFailure = Y.Test.ComparisonFailure;
 Y.Assert.UnexpectedValue = Y.Test.UnexpectedValue;

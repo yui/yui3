@@ -8,7 +8,7 @@
  * @class TestSuite
  * @constructor
  */
-Test.TestSuite = function (data) {
+YUITest.TestSuite = function (data) {
 
     /**
      * The name of the test suite.
@@ -43,19 +43,19 @@ Test.TestSuite = function (data) {
 
 };
     
-Test.TestSuite.prototype = {
+YUITest.TestSuite.prototype = {
     
     //restore constructor
-    constructor: Test.TestSuite,
+    constructor: YUITest.TestSuite,
     
     /**
      * Adds a test suite or test case to the test suite.
-     * @param {Test.TestSuite||Test.TestCase} testObject The test suite or test case to add.
+     * @param {Test.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
      * @return {Void}
      * @method add
      */
     add : function (testObject) {
-        if (testObject instanceof Test.TestSuite || testObject instanceof Test.TestCase) {
+        if (testObject instanceof YUITest.TestSuite || testObject instanceof YUITest.TestCase) {
             this.items.push(testObject);
         }
         return this;

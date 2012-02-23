@@ -17,6 +17,6 @@ for file in ./js/*; do
     sed -e's/{YUITest/{Test/g' $file > "$file.out"
     mv "$file.out" $file
 
-    sed -e's/YUITest\./Test\./g' $file > "$file.out"
-    mv "$file.out" $file
+    #sed -e's/YUITest\./Test\./g' $file > "$file.out"
+    #mv "$file.out" $file
 done;

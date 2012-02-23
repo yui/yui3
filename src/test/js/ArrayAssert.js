@@ -7,7 +7,7 @@
  * @static
  */
  
-Test.ArrayAssert = {
+YUITest.ArrayAssert = {
 
     //=========================================================================
     // Private methods
@@ -70,10 +70,10 @@ Test.ArrayAssert = {
     contains : function (needle, haystack, 
                            message) {
         
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
 
         if (this._indexOf(haystack, needle) == -1){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
         }
     },
 
@@ -89,12 +89,12 @@ Test.ArrayAssert = {
      */
     containsItems : function (needles, haystack, 
                            message) {
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
 
         //begin checking values
         for (var i=0; i < needles.length; i++){
             if (this._indexOf(haystack, needles[i]) == -1){
-                Test.Assert.fail(Test.Assert._formatMessage(message, "Value " + needles[i] + " (" + (typeof needles[i]) + ") not found in array [" + haystack + "]."));
+                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value " + needles[i] + " (" + (typeof needles[i]) + ") not found in array [" + haystack + "]."));
             }
         }
     },
@@ -111,14 +111,14 @@ Test.ArrayAssert = {
     containsMatch : function (matcher, haystack, 
                            message) {
         
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
         //check for valid matcher
         if (typeof matcher != "function"){
             throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
         }
         
         if (!this._some(haystack, matcher)){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
         }
     },
 
@@ -135,10 +135,10 @@ Test.ArrayAssert = {
     doesNotContain : function (needle, haystack, 
                            message) {
         
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
 
         if (this._indexOf(haystack, needle) > -1){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
         }
     },
 
@@ -155,11 +155,11 @@ Test.ArrayAssert = {
     doesNotContainItems : function (needles, haystack, 
                            message) {
 
-        Test.Assert._increment();               
+        YUITest.Assert._increment();               
 
         for (var i=0; i < needles.length; i++){
             if (this._indexOf(haystack, needles[i]) > -1){
-                Test.Assert.fail(Test.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         }
 
@@ -177,7 +177,7 @@ Test.ArrayAssert = {
     doesNotContainMatch : function (matcher, haystack, 
                            message) {
         
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
       
         //check for valid matcher
         if (typeof matcher != "function"){
@@ -185,7 +185,7 @@ Test.ArrayAssert = {
         }
         
         if (this._some(haystack, matcher)){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
         }
     },
         
@@ -201,20 +201,20 @@ Test.ArrayAssert = {
      */
     indexOf : function (needle, haystack, index, message) {
     
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
 
         //try to find the value in the array
         for (var i=0; i < haystack.length; i++){
             if (haystack[i] === needle){
                 if (index != i){
-                    Test.Assert.fail(Test.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
                 }
                 return;
             }
         }
         
         //if it makes it here, it wasn't found at all
-        Test.Assert.fail(Test.Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
+        YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
     },
         
     /**
@@ -231,22 +231,22 @@ Test.ArrayAssert = {
     itemsAreEqual : function (expected, actual, 
                            message) {
         
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
         
         //first make sure they're array-like (this can probably be improved)
         if (typeof expected != "object" || typeof actual != "object"){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Value should be an array."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value should be an array."));
         }
         
         //next check array length
         if (expected.length != actual.length){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length + "."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length + "."));
         }
        
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (expected[i] != actual[i]){
-                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values in position " + i + " are not equal."), expected[i], actual[i]);
+                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values in position " + i + " are not equal."), expected[i], actual[i]);
             }
         }
     },
@@ -268,7 +268,7 @@ Test.ArrayAssert = {
     itemsAreEquivalent : function (expected, actual, 
                            comparator, message) {
         
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
 
         //make sure the comparator is valid
         if (typeof comparator != "function"){
@@ -277,13 +277,13 @@ Test.ArrayAssert = {
         
         //first check array length
         if (expected.length != actual.length){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
         }
         
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (!comparator(expected[i], actual[i])){
-                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
+                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
             }
         }
     },
@@ -296,9 +296,9 @@ Test.ArrayAssert = {
      * @static
      */
     isEmpty : function (actual, message) {        
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
         if (actual.length > 0){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should be empty."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should be empty."));
         }
     },    
     
@@ -310,9 +310,9 @@ Test.ArrayAssert = {
      * @static
      */
     isNotEmpty : function (actual, message) {        
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
         if (actual.length === 0){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should not be empty."));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should not be empty."));
         }
     },    
     
@@ -330,17 +330,17 @@ Test.ArrayAssert = {
     itemsAreSame : function (expected, actual, 
                           message) {
         
-        Test.Assert._increment();     
+        YUITest.Assert._increment();     
 
         //first check array length
         if (expected.length != actual.length){
-            Test.Assert.fail(Test.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
+            YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Array should have a length of " + expected.length + " but has a length of " + actual.length));
         }
                     
         //begin checking values
         for (var i=0; i < expected.length; i++){
             if (expected[i] !== actual[i]){
-                throw new Test.ComparisonFailure(Test.Assert._formatMessage(message, "Values in position " + i + " are not the same."), expected[i], actual[i]);
+                throw new YUITest.ComparisonFailure(YUITest.Assert._formatMessage(message, "Values in position " + i + " are not the same."), expected[i], actual[i]);
             }
         }
     },
@@ -362,14 +362,14 @@ Test.ArrayAssert = {
         for (var i=haystack.length; i >= 0; i--){
             if (haystack[i] === needle){
                 if (index != i){
-                    Test.Assert.fail(Test.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
+                    YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));                    
                 }
                 return;
             }
         }
         
         //if it makes it here, it wasn't found at all
-        Test.Assert.fail(Test.Assert._formatMessage(message, "Value doesn't exist in array."));        
+        YUITest.Assert.fail(YUITest.Assert._formatMessage(message, "Value doesn't exist in array."));        
     }
     
 };
