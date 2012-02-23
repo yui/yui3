@@ -26,7 +26,7 @@ YUI({
 }).use('gesture-tests', 'flick-tests', function(Y) {
     
     (new Y.Test.Console()).render('#log');
-
+    Y.Test.Runner.setName('Event Gestures Test Suite');
     Y.Test.Runner.run();
     
 });
