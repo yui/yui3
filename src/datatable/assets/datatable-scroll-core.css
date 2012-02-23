@@ -1,4 +1,8 @@
 /* foundational CSS */
+.yui3-datatable-scrollable-y {
+    overflow-y: hidden;
+}
+
 .yui3-datatable-scrollable-y .yui3-datatable-content {
     /* To allow absolute positioning of fixed headers and virtual scrollbar */
     position: relative;
