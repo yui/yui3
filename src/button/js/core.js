@@ -42,8 +42,8 @@ Button.prototype = {
     * @private
     */
     _initNode: function(config) {
-        if (config.srcNode) {
-            this._host = Y.one(config.srcNode);
+        if (config.host) {
+            this._host = Y.one(config.host);
         } else {
             this._host = Y.Node.create(this.TEMPLATE);
         }
