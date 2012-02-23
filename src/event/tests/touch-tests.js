@@ -30,7 +30,6 @@ YUI.add('touch-tests', function(Y) {
             }, node.getDOMNode());
 
             this.event = event;
-            console.log(event);
         },
         'test: touch init': function() {
             var event = this.event;
