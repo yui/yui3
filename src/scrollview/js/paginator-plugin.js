@@ -117,13 +117,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method initializer
      */
-    initializer: function() {
-        var host,
-            paginator = this; // kweight
-            
-        host = paginator._host = paginator.get('host');
+    initializer: function() { 
+        var paginator = this;
         
-        
+        paginator._host = this.get('host');
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
@@ -146,22 +143,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageSelector = this.get("selector"),
             pages,
             offsets;
-
+            
         // Pre-calculate min/max values for each page
         pages = pageSelector ? cb.all(pageSelector) : cb.get("children");
-
+        
         this.set(TOTAL, pages.size());
-
-        this._pgOff = offsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
         
-        for(var i=3; i<this._pgOff.length; i++){
-            this._pgOff[i] = 600;
-        }
+        this._pageOffsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
         
-        
-        
-        /*--*/
-        var MAX_SLIDE_COUNT = 3;
+        /*-- TODO: cleanup*/
+        var MAX_SLIDE_COUNT = 3; // TODO: Make configurable
         var currentIndex = this.get(INDEX);
         this.set(PREVINDEX, currentIndex);
         this.slideNodes = pages;
@@ -172,7 +163,33 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
         /*--*/
     },
-
+    
+    /**
+     * TODO
+     *
+     * @method _getTargetOffset
+     * @protected
+     */
+    
+    _getTargetOffset: function(index) {
+        var previous = this.get(PREVINDEX),
+            current = this.get(INDEX),
+            forward = (previous < current) ? true : false,
+            pageOffsets = this._pageOffsets;
+        
+        if (forward) {
+            if (index > 1) {
+                return pageOffsets[2];
+            }
+            else {
+                return pageOffsets[1];
+            }
+        }
+        else {
+            return pageOffsets[0];
+        }
+    },
+    
     /**
      * Executed to respond to the flick event, by over-riding the default flickFrame animation. 
      * This is needed to determine if the next or prev page should be activated.
@@ -183,17 +200,15 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _flickFrame: function() {
         var host = this._host,
             velocity = host._currentVelocity,
-
             inc = velocity < 0,
-
             pageIndex = this.get(INDEX),
             pageCount = this.get(TOTAL);
 
         if (velocity) {
             if (inc && pageIndex < pageCount-1) {
-                this.set(INDEX, pageIndex+1);
+                this.next();
             } else if (!inc && pageIndex > 0) {
-                this.set(INDEX, pageIndex-1);
+                this.prev();
             }
         }
 
@@ -208,6 +223,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterRender: function(e) {
         var host = this._host;
+        
         host.get("boundingBox").addClass(host.getClassName("paged"));
     },
 
@@ -227,9 +243,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
                  if(host._scrolledForward && pageIndex < pageCount-1) {
-                     this.set(INDEX, pageIndex+1);
+                     this.next();
                  } else if (pageIndex > 0) {
-                     this.set(INDEX, pageIndex-1);
+                     this.prev();
                  } else {
                      this.snapToCurrent(trans.duration, trans.easing);
                  }
@@ -238,14 +254,21 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              }
          }
          
+         // TODO: Figure out a better method. Payload?
          if (e.details.length === 0){
-             this.blah(e);
+             this._manageDOM(); // TODO: Make configurable?
          }
      },
 
-     blah: function(e){
+     /**
+      * TODO
+      *
+      * @method _manageDOM
+      * @protected
+      */
+     _manageDOM: function(){
          var newSlide, addSlideMethod, nodeToRemove, 
-             host = this.get('host'),
+             host = this._host,
              cb = host.get(CONTENT_BOX),
              currentIndex = this.get(INDEX),
              previousIndex = this.get(PREVINDEX),
@@ -276,8 +299,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              nodeToRemove.remove();
              host.set('scrollX', 300);
          }
-//         this._calcOffsets();
-         this.set(PREVINDEX, currentIndex);
+         
+          // TODO: Find a better place for this
+          this.set(PREVINDEX, currentIndex);
      },
      
     /**
@@ -322,6 +346,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     prev: function() {
         var index = this.get(INDEX);
+        
         if(index > 0) {
             this.set(INDEX, index-1);
         }
@@ -336,11 +361,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param easing {String} The timing function to use in the animation
      */
     scrollTo: function(index, duration, easing) {
-        
         var host = this._host,
             vert = host._scrollsVertical,
             scrollAxis = (vert) ? SCROLL_Y : SCROLL_X, 
-            scrollVal = this._pgOff[index];
+            scrollVal = this._getTargetOffset(index);
             
         host.set(scrollAxis, scrollVal, {
             duration: duration,
@@ -358,9 +382,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     snapToCurrent: function(duration, easing) {
         var host = this._host,
             vert = host._scrollsVertical;
+            
         host._killTimer();
 
-        host.set((vert) ? SCROLL_Y : SCROLL_X, this._pgOff[this.get(INDEX)], {
+        host.set((vert) ? SCROLL_Y : SCROLL_X, this._getTargetOffset(this.get(INDEX)), {
             duration: duration,
             easing: easing
         });
