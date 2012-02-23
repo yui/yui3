@@ -1,7 +1,10 @@
 /**
  * ChartLegend provides a legend for a chart.
  *
- *
+ * @class ChartLegend
+ * @module charts
+ * @submodule charts-legend
+ * @extends Widget
  */
 Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     /**
@@ -120,13 +123,14 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             series,
             styles = this.get("styles"),
             padding = styles.padding,
+            itemStyles = styles.item,
             seriesStyles,
-            horizontalGap = styles.horizontalGap,
-            verticalGap = styles.verticalGap,
+            hSpacing = itemStyles.hSpacing,
+            vSpacing = itemStyles.vSpacing,
             hAlign = styles.hAlign,
             vAlign = styles.vAlign,
             marker = styles.marker,
-            labelStyles = styles.label,
+            labelStyles = itemStyles.label,
             displayName,
             layout = this._layout[this.get("direction")],
             i, 
@@ -143,8 +147,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             items = [],
             markerWidth = marker.width,
             markerHeight = marker.height,
-            totalWidth = 0 - horizontalGap,
-            totalHeight = 0 - verticalGap,
+            totalWidth = 0 - hSpacing,
+            totalHeight = 0 - vSpacing,
             maxWidth = 0,
             maxHeight = 0,
             itemWidth,
@@ -177,13 +181,13 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     weight: strokeWeight
                 };
                 displayName = chart.getSeriesItems(series, i).category.value;
-                item = this.getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
+                item = this._getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
                 maxHeight = Math.max(maxHeight, itemHeight);
-                totalWidth += itemWidth + horizontalGap;
-                totalHeight += itemHeight + verticalGap;
+                totalWidth += itemWidth + hSpacing;
+                totalHeight += itemHeight + vSpacing;
                 items.push(item);
             }
         }
@@ -204,13 +208,13 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this.getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
                 maxHeight = Math.max(maxHeight, itemHeight);
-                totalWidth += itemWidth + horizontalGap;
-                totalHeight += itemHeight + verticalGap;
+                totalWidth += itemWidth + hSpacing;
+                totalHeight += itemHeight + vSpacing;
                 items.push(item);
             }
         }
@@ -222,7 +226,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         }
         else
         {
-            layout._positionLegendItems.apply(this, [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, horizontalGap, verticalGap, hAlign, vAlign]);
+            layout._positionLegendItems.apply(this, [items, maxWidth, maxHeight, totalWidth, totalHeight, padding, hSpacing, vSpacing, hAlign, vAlign]);
             this._updateBackground(styles);
             this.fire("legendRendered");
         }
@@ -318,7 +322,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      *      <dt>text</dt><dd></dd>
      *  </dl>
      *
-     * @method getLegendItem
+     * @method _getLegendItem
      * @param {Node} shapeProps Reference to the `node` attribute.
      * @param {String | Class} shapeClass The type of shape
      * @param {Object} fill Properties for the shape's fill
@@ -328,8 +332,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Number} height Total height of the legend item
      * @param {HTML | String} text Text for the legendItem
      * @return Object
+     * @private
      */
-    getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
+    _getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
     {
         var containerNode = Y.one(DOCUMENT.createElement("div")),
             textField = Y.one(DOCUMENT.createElement("span")),
@@ -346,7 +351,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         node.appendChild(containerNode);
         dimension = textField.get("offsetHeight");
         padding = dimension - h;
-        left = w + padding;
+        left = w + padding + 2;
         textField.setStyle("left", left + PX);
         containerNode.setStyle("height", dimension + PX);
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
@@ -386,7 +391,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         var graphic = this.get("background").get("graphic");
         return graphic._getShapeClass.apply(graphic, arguments);
     },
-
+    
     /**
      * Returns the default hash for the `styles` attribute.
      *
@@ -398,21 +403,22 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     {
         var styles = { 
             padding: {
-                top: 5,
-                right: 5,
-                bottom: 5,
-                left: 5
+                top: 8,
+                right: 8,
+                bottom: 8,
+                left: 9
             },
-            gap: 5,
-            horizontalGap: 4,
-            verticalGap: 4,
+            gap: 10,
             hAlign: "center",
-            vAlign: "middle",
+            vAlign: "top",
             marker: this._getPlotDefaults(),
-            label: {
-                color:"#808080",
-                alpha: 1,
-                fontSize:"85%"
+            item: {
+                hSpacing: 10,
+                vSpacing: 5,
+                label: {
+                    color:"#808080",
+                    fontSize:"85%"
+                }
             },
             background: {
                 shape: "rect",
@@ -673,5 +679,51 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          * @type Rect
          */
         background: {}
+
+        /**
+         * Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`. Below are the default values:
+         *
+         *  <dl>
+         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a `Chart` instance this value is applied.</dd>
+         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
+         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
+         *      <dt>item</dt><dd>Set of style properties applied to the `items` of the `ChartLegend`.
+         *          <dl>
+         *              <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>
+         *              <dt>vSpacing</dt><dd>Vertical distance, in pixels, between legend `items`.</dd>
+         *              <dt>label</dt><dd>Properties for the text of an `item`.
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color of the text. The default values is "#808080".</dd>
+         *                      <dt>fontSize</dt><dd>Font size for the text. The default value is "85%".</dd>
+         *                  </dl>
+         *              </dd>
+         *              <dt>marker</dt><dd>Properties for the `item` markers.
+         *                  <dl>
+         *                      <dt>width</dt><dd>Specifies the width of the markers.</dd>
+         *                      <dt>height</dt><dd>Specifies the height of the markers.</dd>
+         *                  </dl>
+         *              </dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>background</dt><dd>Properties for the `ChartLegend` background.
+         *          <dl>
+         *              <dt>fill</dt><dd>Properties for the background fill.
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
+         *                  </dl>
+         *              </dd>
+         *              <dt>stroke</dt><dd>Properties for the background stroke.
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
+         *                      <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
+         *                  </dl>
+         *              </dd>
+         *          </dl>
+         *      </dd>
+         * </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });

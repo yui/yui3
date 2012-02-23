@@ -5765,7 +5765,7 @@ Lines.prototype = {
                 }
                 else
                 {
-                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY, 
                                                 dashLength, 
                                                 gapSpace);
                 }
@@ -5778,7 +5778,7 @@ Lines.prototype = {
             {
                 if(discontinuousType != "solid")
                 {
-                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                    this.drawDashedLine(path, lastValidX, lastValidY, nextX, nextY, 
                                                 discontinuousDashLength, 
                                                 discontinuousGapSpace);
                 }
@@ -5852,7 +5852,7 @@ Lines.prototype = {
      * @param {Number} gapSize	the size of gaps between dashes, in pixels
      * @private
      */
-    drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
+    drawDashedLine: function(path, xStart, yStart, xEnd, yEnd, dashSize, gapSize)
     {
         dashSize = dashSize || 10;
         gapSize = gapSize || 10;
@@ -5864,8 +5864,7 @@ Lines.prototype = {
             radians = Math.atan2(yDelta, xDelta),
             xCurrent = xStart,
             yCurrent = yStart,
-            i,
-            path = this._getGraphic();
+            i;
         xDelta = Math.cos(radians) * segmentLength;
         yDelta = Math.sin(radians) * segmentLength;
         
