@@ -245,17 +245,8 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _afterScrollCaptionChange: function (e) {
-        if (e.newVal) {
-            if (!e.prevVal) {
-                this._createScrollCaptionTable();
-
-                this._captionTable.prepend(this._captionNode);
-            }
-
-            this._syncYScrollNodeDims();
-            this._syncScrollbarHeight();
-        } else if (!e.newVal && e.prevVal) {
-            this._removeScrollCaptionTable();
+        if (this._xScroll || this._yScroll) {
+            this._syncScrollUI();
         }
     },
 
@@ -417,6 +408,22 @@ Y.mix(Scrollable.prototype, {
 
             this._scrollbarNode.setStyle('width',
                 Y.DOM.getScrollbarWidth() + 'px');
+        }
+    },
+
+    /**
+    Creates a separate table to contain the caption when the table is
+    configured to scroll vertically or horizontally.
+
+    @method _createScrollCaptionTable
+    @protected
+    **/
+    _createScrollCaptionTable: function () {
+        if (!this._captionTable) {
+            this._captionTable = Y.Node.create(
+                Y.Lang.sub(this._CAPTION_TABLE_TEMPLATE, {
+                    className: this.getClassName('caption', 'table')
+                }));
         }
     },
 
@@ -638,10 +645,10 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _removeScrollCaptionTable: function () {
-        if (this._scrollCaptionTable) {
-            this._scrollCaptionTable.remove().destroy(true);
+        if (this._captionTable) {
+            this._captionTable.remove().destroy(true);
 
-            delete this._scrollCaptionTable;
+            delete this._captionTable;
         }
     },
 
@@ -915,8 +922,7 @@ Y.mix(Scrollable.prototype, {
                 top = (fixedHeader.get('offsetHeight') +
                        fixedHeader.get('offsetTop')) + 'px';
             } else {
-                top =
-                    (scroller.get('offsetTop') +
+                top = (scroller.get('offsetTop') +
                     parseInt(scroller.getComputedStyle('borderTopWidth'), 10)) +
                     'px';
             }
@@ -976,12 +982,35 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _syncScrollUI: function () {
-        /*
-        this._uiSetDim('width', '');
-        this._tableNode.setStyle('width', '');
-        */
+        var updateCaptionWidth;
 
         this._uiSetScrollable();
+
+        if (this._yScroll || this._xScroll) {
+            if (this._captionNode) {
+                if (!this._captionTable) {
+                    this._createScrollCaptionTable();
+
+                    this.get('contentBox').prepend(this._captionTable);
+                }
+
+                if (!this._captionNode.get('parentNode')
+                        .compareTo(this._captionTable)) {
+                    this._captionTable.empty().insert(this._captionNode);
+                }
+
+                this._captionTable.setStyle('width', this.get('width') ||
+                    this._tableNode.get('offsetWidth') + 'px');
+            } else if (this._captionTable) {
+                this._removeScrollCaptionTable();
+            }
+        } else {
+            if (this._captionNode) {
+                this._tableNode.prepend(this._captionNode);
+            }
+
+            this._removeScrollCaptionTable();
+        }
 
         if (this._yScroll) {
             if (!this._yScrollNode) {
@@ -991,13 +1020,6 @@ Y.mix(Scrollable.prototype, {
                 this._tableNode
                     .replace(this._yScrollNode)
                     .appendTo(this._yScrollNode);
-
-                if (this._captionNode) {
-                    this._createScrollCaptionTable();
-
-                    this._captionTable.prepend(this._captionNode);
-                }
-
             }
 
             this._syncYScrollNodeDims();
@@ -1028,13 +1050,15 @@ Y.mix(Scrollable.prototype, {
                 this._removeScrollbar();
             }
         } else {
-            if (this._captionNode && !this._xScroll) {
-                this._tableNode.prepend(this._captionNode);
-                this._removeScrollCaptionTable();
-            }
             this._removeYScrollNode();
             this._removeYScrollHeader();
             this._removeScrollbar();
+        }
+
+        if (this._captionTable) {
+            this._captionTable.setStyle('width',
+                (this._xScrollNode || this._tableNode).get('offsetWidth') +
+                'px');
         }
 
         /*
@@ -1199,10 +1223,9 @@ Y.mix(Scrollable.prototype, {
             }
 
             scroller.setStyle('height',
-                    (this.get('boundingBox').get('clientHeight') -
-                         scroller.get('offsetTop') -
-                         (parseInt(scroller.getComputedStyle('borderTopWidth'), 10)|0) -
-                         (parseInt(scroller.getComputedStyle('borderBottomWidth'), 10)|0) + 'px'));
+                (this.get('boundingBox').get('clientHeight') -
+                 (scroller.get('offsetHeight') - scroller.get('clientHeight')) -
+                 scroller.get('offsetTop')) + 'px');
         }
     },
 
