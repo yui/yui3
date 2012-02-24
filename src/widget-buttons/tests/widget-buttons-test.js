@@ -36,6 +36,13 @@ suite.add(new Y.Test.Case({
         this.widget = new FailWidget();
     },
 
+    '`buttons` should default to an empty Object': function () {
+        this.widget = new TestWidget();
+
+        Assert.isObject(this.widget.get('buttons'), '`buttons` is not an Object.');
+        ObjectAssert.ownsNoKeys(this.widget.get('buttons'), '`buttons` was not an empty Object.');
+    },
+
     '`buttons` should be accessible within a subclass initializer': function () {
         var called = 0,
             SubclassWidget;
@@ -109,6 +116,12 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(Y.one('#test').contains(fooButton), 'Foo button was not removed.');
         Assert.areSame(Y.one('#test button'), this.widget.getButton('bar'), 'Bar button is rendered.');
         Assert.areSame(1, this.widget.get('buttons.header').length, 'Header contained more than 1 button.');
+    },
+
+    '`defaultButton` should default to `null`': function () {
+        this.widget = new TestWidget();
+
+        Assert.isNull(this.widget.get('defaultButton'), '`defaultButton` is not `null`.');
     },
 
     '`destory()` should remove all buttons': function () {
@@ -241,6 +254,38 @@ suite.add(new Y.Test.Case({
         Assert.areSame(baz, buttons.footer[0], '`baz` was no the first footer button.');
     },
 
+    '`buttons` should be settable to a new value': function () {
+        this.widget = new TestWidget({
+            buttons: [{name: 'foo', label: 'Foo'}],
+            render : '#test'
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
+        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
+
+        this.widget.set('buttons', [{name: 'foo', label: 'Bar'}]);
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
+        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
+        Assert.areSame('Bar', this.widget.getButton('foo').get('text'), '`foo` button did not have the label "Bar".');
+    },
+
+    '`buttons` should be settable to the same value': function () {
+        this.widget = new TestWidget({
+            buttons: [{name: 'foo', label: 'Foo'}],
+            render : '#test'
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
+        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
+
+        this.widget.set('buttons', this.widget.get('buttons'));
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
+        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
+        Assert.areSame('Foo', this.widget.getButton('foo').get('text'), 'Foo button was not rendered.');
+    },
+
     'Default `BUTTONS` should be usable by only providing their string name': function () {
         var PanelWidget = Y.Base.create('panelWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
             BUTTONS: {
@@ -339,12 +384,28 @@ suite.add(new Y.Test.Case({
         Assert.areSame('Bar', this.widget.getButton('foo').get('text'), '`foo` button does not have text "Foo".');
     },
 
-    'A button configured with a `isDefault` should be the default button': function () {
+    'A button with an `action` String should be called': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            buttons: [{name: 'foo', action: 'doSomething'}]
+        });
+
+        this.widget.doSomething = function (e) {
+            called += 1;
+        };
+
+        this.widget.getButton('foo').simulate('click');
+
+        Assert.areSame(1, called, '`action` was not called.');
+    },
+
+    'A button configured with a `isDefault` should be the `defaultButton`': function () {
         this.widget = new TestWidget({
             buttons: [{name: 'foo', isDefault: true}]
         });
 
-        Assert.areSame(this.widget.getButton('foo'), this.widget.getDefaultButton(), '`foo` is not the default button.');
+        Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
     },
 
     'Last button in should win when multiple `buttons` are `isDefault`': function () {
@@ -356,7 +417,7 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.areSame(2, this.widget.get('buttons.footer').length, 'Widget did not have 2 footer buttons.');
-        Assert.areSame(this.widget.getButton('bar'), this.widget.getDefaultButton(), '`bar` is not the default button.');
+        Assert.areSame(this.widget.getButton('bar'), this.widget.get('defaultButton'), '`bar` is not the `defaultButton`.');
     },
 
     '`isDefault` should only be considered when it is `true` or "true" (any case)': function () {
@@ -377,39 +438,76 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.areSame(9, this.widget.get('buttons.footer').length, 'Widget did not have 9 footer buttons.');
-        Assert.areSame(this.widget.getButton('zee'), this.widget.getDefaultButton(), '`zee` is not the default button.');
+        Assert.areSame(this.widget.getButton('zee'), this.widget.get('defaultButton'), '`zee` is not the `defaultButton`.');
     },
 
-    '`buttons` should be settable to a new value': function () {
+    '`defaultButton` should be read-only': function () {
+        var called = 0;
+
         this.widget = new TestWidget({
-            buttons: [{name: 'foo', label: 'Foo'}],
-            render : '#test'
+            buttons: [
+                {name: 'foo', isDefault: true},
+                {name: 'bar'}
+            ]
         });
 
-        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
-        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
+        this.widget.after('defaultButtonChange', function (e) {
+            called += 1;
+        });
 
-        this.widget.set('buttons', [{name: 'foo', label: 'Bar'}]);
+        Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
 
-        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
-        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
-        Assert.areSame('Bar', this.widget.getButton('foo').get('text'), '`foo` button did not have the label "Bar".');
+        this.widget.set('defaultButton', this.widget.getButton('bar'));
+
+        Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
+        Assert.areSame(0, called, '`defaultButtonChange` was called.');
     },
 
-    '`buttons` should be settable to the same value': function () {
+    '`defaultButton` should be updated when a new button that `isDefault` is added': function () {
+        var called = 0;
+
         this.widget = new TestWidget({
-            buttons: [{name: 'foo', label: 'Foo'}],
-            render : '#test'
+            after: {
+                defaultButtonChange: function (e) {
+                    called += 1;
+                }
+            }
         });
 
-        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
-        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
+        Assert.areSame(null, this.widget.get('defaultButton'), '`defaultButton` was not null.');
 
-        this.widget.set('buttons', this.widget.get('buttons'));
+        this.widget.addButton({
+            name     : 'foo',
+            isDefault: true
+        });
 
-        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Did not have 1 footer button.');
-        Assert.areSame(1, Y.all('#test button').size(), 'More than one button in the Widget.');
-        Assert.areSame('Foo', this.widget.getButton('foo').get('text'), 'Foo button was not rendered.');
+        Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
+        Assert.areSame(1, called, '`defaultButtonChange` was not called.');
+    },
+
+    '`defaultButton` should be updated when a new button that `isDefault` is added and receive visual styling': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            render: '#test',
+
+            after: {
+                defaultButtonChange: function (e) {
+                    called += 1;
+                }
+            }
+        });
+
+        Assert.areSame(null, this.widget.get('defaultButton'), '`defaultButton` was not null.');
+
+        this.widget.addButton({
+            name     : 'foo',
+            isDefault: true
+        });
+
+        Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
+        Assert.isTrue(this.widget.get('defaultButton').hasClass(Y.WidgetButtons.CLASS_NAMES.primary), '`defaultButton` does not have primary CSS class.');
+        Assert.areSame(1, called, '`defaultButtonChange` was not called.');
     }
 }));
 
@@ -526,6 +624,21 @@ suite.add(new Y.Test.Case({
         Assert.areSame(button, this.widget.getButton('foo'), '`foo` button was not retrievable by name.');
     },
 
+    '`getButton()` should return a button by name for a section': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [{name: 'foo', value: 'Foo1'}],
+                footer: [{name: 'foo', value: 'Foo2'}]
+            }
+        });
+
+        // Last `foo` wins.
+        Assert.areSame('Foo2', this.widget.getButton('foo').get('label'), 'Foo2 was not the main `foo` button.');
+
+        Assert.areSame('Foo2', this.widget.getButton('foo', 'footer').get('label'), 'Foo2 was not the `foo` footer button.');
+        Assert.areSame('Foo1', this.widget.getButton('foo', 'header').get('label'), 'Foo1 was not the `foo` header button.');
+    },
+
     '`getButton()` should return a button by index and section': function () {
         var fooButton, barButton;
 
@@ -548,17 +661,6 @@ suite.add(new Y.Test.Case({
         Assert.areSame(barButton, this.widget.getButton(0), '`getButton()` does not default to the footer section.');
     },
 
-    '`getDefaultButton()` should return the default button': function () {
-        this.widget = new TestWidget({
-            buttons: [{label: 'Foo', isDefault: true}]
-        });
-
-        var button = this.widget.get('buttons.footer')[0];
-
-        Assert.isNotUndefined(button, '`button` was `undefined`.');
-        Assert.areSame(button, this.widget.getDefaultButton(), '`button` was not the default button.');
-    },
-
     '`removeButton()` should remove a button from the colleciton and the DOM': function () {
         this.widget = new TestWidget({
             buttons: [{name: 'foo', label: 'Foo'}],
@@ -572,6 +674,25 @@ suite.add(new Y.Test.Case({
 
         Assert.isUndefined(this.widget.get('buttons.footer'), 'Footer buttons was not `undefined`.');
         Assert.areSame(0, this.widget.get('contentBox').all('.yui3-button').size(), 'Widget had a rendered button.');
+    },
+
+    '`removeButton()` should remove a button by name for a section': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [{name: 'foo', value: 'Foo1'}],
+                footer: [{name: 'foo', value: 'Foo2'}]
+            }
+        });
+
+        this.widget.removeButton('foo', 'header');
+        Assert.isUndefined(this.widget.get('buttons.header'), 'Header buttons were not empty.');
+
+        // Dup call on purpose.
+        this.widget.removeButton('foo', 'header');
+        Assert.isUndefined(this.widget.get('buttons.header'), 'Header buttons were not empty.');
+
+        this.widget.removeButton('foo');
+        Assert.isUndefined(this.widget.get('buttons.footer'), 'Footer buttons were not empty.');
     },
 
     '`removeButton()` should remove a button by `index` and default to the footer section': function () {

@@ -15,13 +15,8 @@ var YArray  = Y.Array,
     getClassName = Y.ClassNameManager.getClassName,
     isArray      = YLang.isArray,
     isNumber     = YLang.isNumber,
-    isString     = YLang.isString;
-
-// TODOs:
-//
-// * Styling to add spacing between buttons? This should be done in Panel's CSS.
-// * Clean up other TODOs :)
-//
+    isString     = YLang.isString,
+    isValue      = YLang.isValue;
 
 /**
 Provides header/body/footer button support for Widgets that use the
@@ -102,6 +97,25 @@ WidgetButtons.ATTRS = {
         getter: '_getButtons',
         setter: '_setButtons',
         value : {}
+    },
+
+    /**
+    The current default button as configured through this widget's `buttons`.
+
+    Anytime there are changes to this widget's `buttons`, the `defaultButton`
+    will be updated if ndeeded.
+
+    **Note:** If two or more buttons are configured to be the default button,
+    the last one wins.
+
+    @attribute defaultButton
+    @type Node
+    @default null
+    @readOnly
+    **/
+    defaultButton: {
+        readOnly: true,
+        value   : null
     }
 };
 
@@ -112,10 +126,10 @@ CSS class-names used by `WidgetButtons`.
 @type Object
 @static
 **/
-// TODO: Should this be `BUTTONS_CLASS_NAMES`?
 WidgetButtons.CLASS_NAMES = {
     button : getClassName('button'),
-    buttons: getClassName('widget', 'buttons')
+    buttons: getClassName('widget', 'buttons'),
+    primary: getClassName('button', 'primary')
 };
 
 WidgetButtons.HTML_PARSER = {
@@ -133,7 +147,7 @@ The list of button configuration properties which are specific to
 @static
 **/
 WidgetButtons.NON_BUTTON_NODE_CFG = [
-    'action', 'classNames', 'context','events', 'isDefault', 'section'
+    'action', 'classNames', 'context', 'events', 'isDefault', 'section'
 ];
 
 WidgetButtons.prototype = {
@@ -177,8 +191,12 @@ WidgetButtons.prototype = {
         Y.after(this._bindUIButtons, this, 'bindUI');
         Y.after(this._syncUIButtons, this, 'syncUI');
 
-        // Creates `name` -> `button` mapping and sets the `_defaultButton`.
+        // Creates `name` -> `button` mapping and sets the `defaultButton`.
         this._mapButtons(this.get('buttons'));
+        this._updateDefaultButton();
+
+        // Bound with `Y.bind()` to make more extensible.
+        this.after('buttonsChange', Y.bind('_afterButtonsChange', this));
     },
 
     destructor: function () {
@@ -263,32 +281,27 @@ WidgetButtons.prototype = {
     @param {Number|String} name The String-name or index of a button.
     @param {String} [section="footer"] The `WidgetStdMod` section
         (header/body/footer) where the button exists. Only applicable when
-        looking for a button by numerical index.
+        looking for a button by numerical index, or by button name scoped to a
+        particular section.
     @return {Node} The button node.
     @since 3.5.0
     **/
     getButton: function (name, section) {
-        var buttons;
+        if (!isValue(name)) { return; }
+
+        var map = this._buttonsMap,
+            buttons;
+
+        section || (section = this.DEFAULT_BUTTONS_SECTION);
 
         // Supports `getButton(1, 'header')` signature.
         if (isNumber(name)) {
             buttons = this.get('buttons');
-            section || (section = this.DEFAULT_BUTTONS_SECTION);
             return buttons[section] && buttons[section][name];
         }
 
-        return this._buttonsMap[name];
-    },
-
-    /**
-    Retrieves the default button.
-
-    @method getDefaultButton
-    @return {Node} The default button node.
-    @since 3.5.0
-    **/
-    getDefaultButton: function () {
-        return this._defaultButton;
+        // Looks up button by name or section:name.
+        return arguments.length > 1 ? map[section + ':' + name] : map[name];
     },
 
     /**
@@ -299,11 +312,14 @@ WidgetButtons.prototype = {
         `Y.Node` instance, index, or String name of a button.
     @param {String} [section="footer"] The `WidgetStdMod` section
         (header/body/footer) where the button exists. Only applicable when
-        removing a button by numerical index.
+        removing a button by numerical index, or by button name scoped to a
+        particular section.
     @chainable
     @since 3.5.0
     **/
     removeButton: function (button, section) {
+        if (!isValue(button)) { return; }
+
         var buttons = this.get('buttons'),
             index;
 
@@ -314,7 +330,9 @@ WidgetButtons.prototype = {
             button = buttons[section][index];
         } else {
             // Supports `button` being the String name.
-            isString(button) && (button = this._buttonsMap[button]);
+            if (isString(button)) {
+                button = this.getButton.apply(this, arguments);
+            }
 
             // Determines the `section` and `index` at which the button exists.
             YObject.some(buttons, function (sectionButtons, currentSection) {
@@ -327,15 +345,18 @@ WidgetButtons.prototype = {
             });
         }
 
-        // Remove button from `section` Array.
-        buttons[section].splice(index, 1);
+        // Button was found at an appropriate index.
+        if (button && index > -1) {
+            // Remove button from `section` Array.
+            buttons[section].splice(index, 1);
 
-        this.set('buttons', buttons, {
-            button : button,
-            section: section,
-            index  : index,
-            src    : 'remove'
-        });
+            this.set('buttons', buttons, {
+                button : button,
+                section: section,
+                index  : index,
+                src    : 'remove'
+            });
+        }
 
         return this;
     },
@@ -349,8 +370,8 @@ WidgetButtons.prototype = {
     @protected
     **/
     _bindUIButtons: function () {
-        // Bound with `bind()` to more more extensible.
-        this.after('buttonsChange', Y.bind('_afterButtonsChange', this));
+        // Bound with `Y.bind()` to make more extensible.
+        this.after('defaultButtonChange', Y.bind('_afterDefaultButtonChange', this));
         this.after('visibleChange', Y.bind('_afterVisibleChangeButtons', this));
     },
 
@@ -440,7 +461,13 @@ WidgetButtons.prototype = {
     Returns whether or not the specified `button` is configured to be default
     button.
 
-    TODO: Add note about using `Y.Node.getData()`.
+    When a button-Node is specified, the button's `getData()` method will be
+    used to determine if the button is configured to be the default. When a
+    button config object is specified, the `isDefault` prop will determine
+    whether the button is the default.
+
+    **Note:** `<button data-default="true"></button>` is supported via the
+    `button.getData('default')` API call.
 
     @method _getButtonDefault
     @param {Node|Object} button The button node or configuration Object.
@@ -461,7 +488,13 @@ WidgetButtons.prototype = {
     /**
     Returns the name of the specified `button`.
 
-    TODO: Add note about using `Y.Node.getData()` and `Y.Node.get('name')`.
+    When a button-Node is specified, the button's `getData('name')` method is
+    preferred, but will fallback to `get('name')`, and the result will determine
+    the button's name. When a button config object is specified, the `name` prop
+    will determine the button's name.
+
+    **Note:** `<button data-name="foo"></button>` is supported via the
+    `button.getData('name')` API call.
 
     @method _getButtonName
     @param {Node|Object} button The button node or configuration Object.
@@ -505,21 +538,31 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Adds the specified `button` to the buttons map (name => button), and set the
-    button as the default if it is configured as the default button.
+    Adds the specified `button` to the buttons map (both name => button and
+    section:name => button), and set the button as the default if it is
+    configured as the default button.
 
     **Note:** If two or more buttons are configured with the same `name` and/or
     configured to be the default button, the last one wins.
 
     @method _mapButton
     @param {Node} button The button node to map.
+    @param {String} section The `WidgetStdMod` section.
     @protected
     **/
-    _mapButton: function (button) {
-        var name      = this._getButtonName(button),
+    _mapButton: function (button, section) {
+        var map       = this._buttonsMap,
+            name      = this._getButtonName(button),
             isDefault = this._getButtonDefault(button);
 
-        this._buttonsMap[name] = button;
+        if (name) {
+            // name => button
+            map[name] = button;
+
+            // section:name => button
+            map[section + ':' + name] = button;
+        }
+
         isDefault && (this._defaultButton = button);
     },
 
@@ -539,8 +582,12 @@ WidgetButtons.prototype = {
         this._buttonsMap    = {};
         this._defaultButton = null;
 
-        YObject.each(buttons, function (sectionButtons) {
-            YArray.each(sectionButtons, this._mapButton, this);
+        YObject.each(buttons, function (sectionButtons, section) {
+            var i, len;
+
+            for (i = 0, len = sectionButtons.length; i < len; i += 1) {
+                this._mapButton(sectionButtons[i], section);
+            }
         }, this);
     },
 
@@ -666,6 +713,7 @@ WidgetButtons.prototype = {
     **/
     _syncUIButtons: function () {
         this._uiSetButtons(this.get('buttons'));
+        this._uiSetDefaultButton(this.get('defaultButton'));
         this._uiSetVisibleButtons(this.get('visible'));
     },
 
@@ -748,6 +796,24 @@ WidgetButtons.prototype = {
             // part of this Widget's `buttons`.
             buttonNodes.remove(true);
         }, this);
+
+        this.fire('contentUpdate');
+    },
+
+    /**
+    Adds the "yui3-button-primary" CSS class to the new `defaultButton` and
+    removes it from the old default button.
+
+    @method _uiSetDefaultButton
+    @param {Node} newButton The new `defaultButton`.
+    @param {Node} oldButton The old `defaultButton`.
+    @protected
+    **/
+    _uiSetDefaultButton: function (newButton, oldButton) {
+        var primaryClassName = WidgetButtons.CLASS_NAMES.primary;
+
+        newButton && newButton.addClass(primaryClassName);
+        oldButton && oldButton.removeClass(primaryClassName);
     },
 
     /**
@@ -761,7 +827,7 @@ WidgetButtons.prototype = {
     _uiSetVisibleButtons: function (visible) {
         if (!visible) { return; }
 
-        var defaultButton = this.getDefaultButton();
+        var defaultButton = this.get('defaultButton');
         if (defaultButton) {
             defaultButton.focus();
         }
@@ -775,17 +841,38 @@ WidgetButtons.prototype = {
     @param {Node} button The button node to remove from the buttons map.
     @protected
     **/
-    _unMapButton: function (button) {
+    _unMapButton: function (button, section) {
         var map  = this._buttonsMap,
-            name = this._getButtonName(button);
+            name = this._getButtonName(button),
+            sectionName;
 
         // Only delete the map entry if the specified `button` is mapped to it.
-        if (map[name] === button) {
-            delete map[name];
+        if (name) {
+            // name => button
+            map[name] === button && (delete map[name]);
+
+            // section:name => button
+            sectionName = section + ':' + name;
+            map[sectionName] === button && (delete map[sectionName]);
         }
 
         // Clear the default button if its the specified `button`.
         this._defaultButton === button && (this._defaultButton = null);
+    },
+
+    /**
+    Updates the `defaultButton` attribute if it needs to be updated by comparing
+    its current value with the protected `_defaultButton` property.
+
+    @method _updateDefaultButton
+    @protected
+    **/
+    _updateDefaultButton: function () {
+        var defaultButton = this._defaultButton;
+
+        if (this.get('defaultButton') !== defaultButton) {
+            this._set('defaultButton', defaultButton);
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -805,26 +892,43 @@ WidgetButtons.prototype = {
     _afterButtonsChange: function (e) {
         var button  = e.button,
             buttons = e.newVal,
+            section = e.section,
             src     = e.src;
 
         // Special cases `addButton()` to only set and insert the new button.
         if (src === 'add') {
-            this._mapButton(button);
-            this._uiInsertButton(button, e.section, e.index);
+            this._mapButton(button, section);
+            this._updateDefaultButton();
+            this._uiInsertButton(button, section, e.index);
 
             return;
         }
 
         // Special cases `removeButton()` to only remove the specified button.
         if (src === 'remove') {
-            this._unMapButton(button);
+            this._unMapButton(button, section);
+            this._updateDefaultButton();
             this._uiRemoveButton(button);
 
             return;
         }
 
         this._mapButtons(buttons);
+        this._updateDefaultButton();
         this._uiSetButtons(buttons);
+    },
+
+    /**
+    Handles this widget's `defaultButtonChange` event by adding the
+    "yui3-button-primary" CSS class to the new `defaultButton` and removing it
+    from the old default button.
+
+    @method _afterDefaultButtonChange
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterDefaultButtonChange: function (e) {
+        this._uiSetDefaultButton(e.newVal, e.prevVal);
     },
 
     /**
