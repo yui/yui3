@@ -140,5 +140,3 @@ a.yui3-button {
 .yui3-skin-night .yui3-button:-moz-focusring {
     outline-color: rgba(255, 255, 255, 0.85);
 }
-/* YUI CSS Detection Stamp */
-#yui3-css-stamp.cssbutton { display: none; }
