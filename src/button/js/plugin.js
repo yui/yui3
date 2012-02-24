@@ -1,7 +1,4 @@
 function ButtonPlugin(config) {
-    if (!this._initNode) { // hand off to factory when called without new
-        return ButtonPlugin.createNode(config);
-    }
     ButtonPlugin.superclass.constructor.apply(this, arguments);
 }
 
@@ -51,7 +48,6 @@ ButtonPlugin.createNode = function(node, config) {
         }
     }
     node = node || config && config.srcNode || Y.DOM.create(Y.Plugin.Button.prototype.TEMPLATE);
-
     return Y.one(node).plug(Y.Plugin.Button, config);
 };
 

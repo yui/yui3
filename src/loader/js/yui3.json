@@ -995,7 +995,23 @@
     }, 
     "editor-para": {
         "requires": [
+            "editor-para-base"
+        ]
+    }, 
+    "editor-para-base": {
+        "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-para-ie": {
+        "condition": {
+            "name": "editor-para-ie", 
+            "trigger": "editor-para", 
+            "ua": "ie", 
+            "when": "instead"
+        }, 
+        "requires": [
+            "editor-para-base"
         ]
     }, 
     "editor-selection": {

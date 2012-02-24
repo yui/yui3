@@ -264,7 +264,6 @@ YUI.add('objectassert-tests', function(Y) {
 
     }));
 
-
     suite.add(new Y.Test.Case({
 
         name : "Object Asserts",
