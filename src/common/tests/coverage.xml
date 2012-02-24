@@ -92,7 +92,11 @@
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-resize.html</url>
         <url>event/tests/event-contextmenu.html</url>
+        <url>event/tests/event-hover.html</url>
         <url>event/tests/event-key.html</url>
+        <url>event/tests/event-mouseenter.html</url>
+        <url>event/tests/event-mousewheel.html</url>
+        <url>event/tests/event-outside.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/event-touch.html</url>
         <url>event/tests/event-mouseenter.html</url>
