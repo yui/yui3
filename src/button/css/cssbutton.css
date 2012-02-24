@@ -22,7 +22,10 @@
     /* Presentation */
     color: rgba(0,0,0, 0.80);
     *color: #444; /*IE 6*/
+    border: none;
+    border: outset 1px #999\9;  /*IE 6/7/8*/
     background-color: #E6E6E6;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80ffffff', endColorstr='#00ffffff', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255,255,255, 0.30)), color-stop(40%, rgba(255,255,255, 0.15)), to(transparent));
     background-image: -webkit-linear-gradient(rgba(255,255,255, 0.30), rgba(255,255,255, 0.15) 40%, transparent);
     background-image: -moz-linear-gradient(top, rgba(255,255,255, 0.30), rgba(255,255,255, 0.15) 40%, transparent);
@@ -30,8 +33,6 @@
     background-image: -o-linear-gradient(rgba(255,255,255, 0.30), rgba(255,255,255, 0.15) 40%, transparent);
     background-image: linear-gradient(rgba(255,255,255, 0.30), rgba(255,255,255, 0.15) 40%, transparent);
     text-decoration: none;
-    border: none;
-    border: solid 1px #999\9;  /*IE 6/7/8*/
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -58,16 +59,19 @@ a.yui3-button {
 }
 
 .yui3-button:hover {
-    background-color: #DBDBDB\9;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#26000000', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.15)));
     background-image: -webkit-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -moz-linear-gradient(top, transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -ms-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -o-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
+    background-color:  #D6D6D6\0/; /*IE 8/9*/
 }
 
 .yui3-button:active {
+    border: inset 1px #999\9;  /*IE 6/7/8*/
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1A000000', endColorstr='#26000000', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,0, 0.10)), to(rgba(0,0,0, 0.15)));
     background-image: -webkit-linear-gradient(rgba(0,0,0, 0.10), rgba(0,0,0, 0.15));
     background-image: -moz-linear-gradient(top, rgba(0,0,0, 0.10), rgba(0,0,0, 0.15));
