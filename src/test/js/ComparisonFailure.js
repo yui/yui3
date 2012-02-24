@@ -6,7 +6,7 @@
  * @param {String} message The message to display when the error occurs.
  * @param {Object} expected The expected value.
  * @param {Object} actual The actual value that caused the assertion to fail.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ComparisonFailure
  * @constructor

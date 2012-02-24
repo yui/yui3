@@ -1,6 +1,6 @@
 /**
  * An object object containing coverage result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class CoverageFormat
  * @static
  */
@@ -12,7 +12,7 @@ YUITest.CoverageFormat = {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method JSON
-     * @namespace YUITest.CoverageFormat
+     * @namespace Test.CoverageFormat
      */
     JSON: function(coverage){
         return YUITest.Util.JSON.stringify(coverage);
@@ -26,7 +26,7 @@ YUITest.CoverageFormat = {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method XdebugJSON
-     * @namespace YUITest.CoverageFormat
+     * @namespace Test.CoverageFormat
      */    
     XdebugJSON: function(coverage){
     

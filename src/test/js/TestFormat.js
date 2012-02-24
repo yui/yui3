@@ -1,6 +1,6 @@
 /**
  * An object object containing test result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestFormat
  * @static
  */

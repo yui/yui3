@@ -30,7 +30,6 @@ YUI.add('touch-tests', function(Y) {
             }, node.getDOMNode());
 
             this.event = event;
-            console.log(event);
         },
         'test: touch init': function() {
             var event = this.event;
@@ -55,6 +54,11 @@ YUI.add('touch-tests', function(Y) {
             Assert.areSame(node, event.currentTarget);
             Assert.areSame(node.getDOMNode(), event._currentTarget);
 
+        },
+        _should: {
+            fail: {
+                'test: touch nodes': Y.UA.ie
+            }
         }
     }));
 

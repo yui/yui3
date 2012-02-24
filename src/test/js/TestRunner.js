@@ -2,7 +2,7 @@
     /**
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
-     * @namespace YUITest
+     * @namespace Test
      * @class TestRunner
      * @static
      */
@@ -311,7 +311,7 @@
             /**
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
-             * @param {YUITest.TestCase} testCase The test case to add.
+             * @param {Test.TestCase} testCase The test case to add.
              * @return {Void}
              * @static
              * @private
@@ -336,7 +336,7 @@
             /**
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
-             * @param {YUITest.TestSuite} testSuite The test suite to add.
+             * @param {Test.TestSuite} testSuite The test suite to add.
              * @return {Void}
              * @static
              * @private
@@ -499,7 +499,7 @@
             
             /**
              * Runs a test case or test suite, returning the results.
-             * @param {YUITest.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
+             * @param {Test.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run

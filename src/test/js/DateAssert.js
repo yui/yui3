@@ -3,7 +3,7 @@
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
- * @namespace  YUITest
+ * @namespace Test
  * @class DateAssert
  * @static
  */

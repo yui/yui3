@@ -5,7 +5,7 @@
      * @param {Function} format (Optiona) A function that outputs the results in a specific format.
      *      Default is YUITest.TestFormat.XML.
      * @constructor
-     * @namespace YUITest
+     * @namespace Test
      * @class Reporter
      */
     YUITest.Reporter = function(url, format) {

@@ -6,7 +6,7 @@
  *
  * @param {String} message The message to display when the error occurs.
  * @param {Object} unexpected The unexpected value.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class UnexpectedValue
  * @constructor

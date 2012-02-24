@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html>
-    <body>
+    <body class='yui3-skin-sam'>
         <button id="my-button" class="yui3-button">my button</button>
 
         <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
@@ -10,10 +10,12 @@
             filter: 'raw'
         }).use('button-core', function(Y) {
     
-            var button = Y.one('#my-button').plug(Y.Plugin.Button);
+            var button = new Y.ButtonCore({
+                host: Y.one('#my-button')
+            })
             
-            button.on('click', function(){
-                console.log('a');
+            button.getNode().on('click', function(){
+                Y.log('a');
             });
 
         });

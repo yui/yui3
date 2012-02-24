@@ -5,7 +5,7 @@
  *
  * @param {Error} cause The unexpected error that caused this error to be 
  *                      thrown.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends YUITest.AssertionError
  * @class UnexpectedError
  * @constructor
