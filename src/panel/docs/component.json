@@ -25,6 +25,15 @@
             "tags"       : ["panel", "transition"],
 
             "hideTableOfContents": true
+        },
+        {
+            "name"       : "dialog",
+            "displayName": "Creating a Reusable Dialog",
+            "description": "Shows how to create a dialog instance that can be reused for multiple messages and confirmations.",
+            "modules"    : ["panel"],
+            "tags"       : ["panel", "dialog", "message", "confirmation", "warning", "error", "success", "information", "info"],
+
+            "hideTableOfContents": true
         }
 	],
 

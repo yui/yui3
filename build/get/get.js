@@ -103,6 +103,9 @@ Y.Get = Get = {
     @property {Function} [options.onFailure] Callback to execute after a
         transaction fails, times out, or is aborted.
 
+    @property {Function} [options.onProgress] Callback to execute after each
+        individual request in a transaction either succeeds or fails.
+
     @property {Function} [options.onSuccess] Callback to execute after a
         transaction completes successfully with no errors. Note that in browsers
         that don't support the `error` event on CSS `<link>` nodes, a failed CSS
@@ -531,6 +534,12 @@ Y.Get = Get = {
             urls = [urls];
         }
 
+        options = Y.merge(this.options, options);
+
+        // Clone the attributes object so we don't end up modifying it by ref.
+        options.attributes = Y.merge(this.options.attributes,
+                options.attributes);
+
         for (i = 0, len = urls.length; i < len; ++i) {
             url = urls[i];
             req = {attributes: {}};
@@ -551,7 +560,6 @@ Y.Get = Get = {
             }
 
             Y.mix(req, options, false, null, 0, true);
-            Y.mix(req, this.options, false, null, 0, true);
 
             // If we didn't get an explicit type for this URL either in the
             // request options or the URL-specific options, try to determine
@@ -911,7 +919,7 @@ Transaction.prototype = {
         data = this._getEventData();
 
         if (errors) {
-            if (options.onTimeout && errors[errors.length - 1] === 'Timeout') {
+            if (options.onTimeout && errors[errors.length - 1].error === 'Timeout') {
                 options.onTimeout.call(thisObj, data);
             }
 

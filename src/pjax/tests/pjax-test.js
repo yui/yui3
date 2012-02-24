@@ -67,6 +67,7 @@ suite.add(new Y.Test.Case({
         ignore: {
             'Pjax param should be added when `addPjaxParam` is true': disableXHR || !html5,
             'Pjax param should be appended to an existing query string when `addPjaxParam` is true': disableXHR || !html5,
+            'Pjax param should be added before the fragment when `addPjaxParam` is true': disableXHR || !html5,
             'Pjax param should not be added when `addPjaxParam` is false': disableXHR || !html5
         }
     },
@@ -115,6 +116,21 @@ suite.add(new Y.Test.Case({
         });
 
         this.pjax.navigate('assets/page-full.html?foo=bar');
+        this.wait(1000);
+    },
+
+    'Pjax param should be added before the fragment when `addPjaxParam` is true': function () {
+        var test = this;
+
+        this.pjax.once('load', function (e) {
+            e.preventDefault();
+
+            test.resume(function () {
+                Assert.isTrue(/\.html\?pjax=1#foo$/.test(e.url), 'URL should contain a pjax param before fragment.');
+            });
+        });
+
+        this.pjax.navigate('assets/page-full.html#foo');
         this.wait(1000);
     },
 
@@ -167,6 +183,10 @@ suite.add(new Y.Test.Case({
         Assert.areSame('a.yui3-pjax', this.pjax.get('linkSelector'));
     },
 
+    '`navigateOnHash` should be false by default': function () {
+        Assert.isFalse(this.pjax.get('navigateOnHash'));
+    },
+
     '`scrollToTop` should be true by default': function () {
         Assert.isTrue(this.pjax.get('scrollToTop'));
     },
@@ -192,7 +212,10 @@ suite.add(new Y.Test.Case({
             '`navigate` event should fire when a pjax link is clicked': !html5,
             '`navigate` event should be preventable': !html5,
             '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
-            '`navigate` event should not fire when a modifier key is pressed': !html5
+            '`navigate` event should not fire when a modifier key is pressed': !html5,
+            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5,
+            '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5,
+            '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': !html5
         }
     },
 
@@ -374,6 +397,64 @@ suite.add(new Y.Test.Case({
             currentTarget : Y.one('#link-full'),
             preventDefault: function () {}
         });
+    },
+
+    '`navigate` event should not fire for a hash URL that resolves to the current page': function () {
+        this.pjax.on('navigate', function (e) {
+            Assert.fail();
+        });
+
+        Assert.isFalse(this.pjax.navigate('#log'), 'navigate() did not return `false`.');
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-in-page'),
+            preventDefault: function () {}
+        });
+    },
+
+    '`navigate` event should fire for a hash-less URL that resolves to the current page': function () {
+        var called = 0;
+
+        this.pjax.on('navigate', function (e) {
+            called += 1;
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-full'),
+            preventDefault: function () {}
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-current'),
+            preventDefault: function () {}
+        });
+
+        Assert.isTrue(this.pjax.navigate(''), 'navigate() did not return `true`.');
+        Assert.areSame(3, called, '`navigate` did not fire 3 times.');
+    },
+
+    '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': function () {
+        // Set `navigateOnHash`.
+        this.pjax.set('navigateOnHash', true);
+
+        this.pjax.on('navigate', function (e) {
+            Assert.isNotUndefined(e.hash, '`hash` is `undefined`.');
+        });
+
+        Assert.isTrue(this.pjax.navigate('#log'), 'navigate() did not return `true`.');
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-in-page'),
+            preventDefault: function () {}
+        });
     }
 }));
 
@@ -384,6 +465,10 @@ suite.add(new Y.Test.Case({
     _should: {
         ignore: {
             '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5
+        },
+
+        error: {
+            '`navigate()` should throw an error when the specified URL is not of the same origin': true
         }
     },
 
@@ -405,15 +490,57 @@ suite.add(new Y.Test.Case({
     },
 
     '`navigate()` should load the specified URL and fire a `load` event': function () {
-        var test = this;
+        var test = this,
+            didNavigate;
 
         this.pjax.once('load', function (e) {
             e.preventDefault();
             test.resume();
         });
 
-        this.pjax.navigate('assets/page-full.html');
+        didNavigate = this.pjax.navigate('assets/page-full.html');
+        Assert.areSame(true, didNavigate, '`navigate()` did not return `true`');
+
         this.wait(1000);
+    },
+
+    '`navigate()` should normalize the specified URL': function () {
+        var test  = this,
+            calls = 0;
+
+        function navigate(wackyURL) {
+            // Browser normalizes anchor href URLs.
+            var anchor        = Y.Node.create('<a href="' + wackyURL + '"></a>'),
+                normalizedURL = anchor.get('href');
+
+            test.pjax.navigate(wackyURL, {
+                force      : true,
+                expectedURL: normalizedURL
+            });
+        }
+
+        this.pjax.on('navigate', function (e) {
+            e.preventDefault();
+            calls += 1;
+            Assert.areSame(e.expectedURL, e.url);
+        });
+
+        navigate('assets/../assets/page-full.html');
+        navigate('/');
+        // navigate(''); // IE6 has an issue with this...
+        navigate('/foo/../');
+        navigate('/foo/..');
+        navigate(this.pjax._getOrigin());
+        navigate(this.pjax._getOrigin().replace(Y.getLocation().protocol, ''));
+
+        Assert.areSame(6, calls);
+    },
+
+    '`navigate()` should throw an error when the specified URL is not of the same origin': function () {
+        var didNavigate;
+
+        didNavigate = this.pjax.navigate('http://some.random.host.example.com/foo/bar/');
+        Assert.areSame(false, didNavigate, '`navigate()` did not return `false`');
     }
 }));
 

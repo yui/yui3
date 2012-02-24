@@ -41,7 +41,7 @@ YUI.add('core-tests', function(Y) {
         _should: {
             ignore: {
                 'getLocation() should return the location object': Y.UA.nodejs,
-                'getLocation() should return `undefined` when executing in node.js': !Y.UA.nodejs
+                'getLocation() should return `undefined` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)) //If there is a window object, ignore too
             }
         },
 
@@ -167,6 +167,11 @@ YUI.add('core-tests', function(Y) {
                 Assert.isObject(Y.Node, 'Node was not loaded');
             });
         },
+        /* TODO Find a better way to test this.
+        This test will fail since it's loading all modules.
+        Including test modules so the test will re-execute and
+        loop de loop..
+
         test_use_star: function() {
             var Assert = Y.Assert,
                 testY = YUI().use('*');
@@ -174,6 +179,7 @@ YUI.add('core-tests', function(Y) {
             Assert.isObject(testY.Test, 'Failed to load via use *');
             
         },
+        */
         test_one_submodule: function() {
             var Assert = Y.Assert;
             YUI({
@@ -221,27 +227,31 @@ YUI.add('core-tests', function(Y) {
             };
 
             YUI().use(function (Y) {
-              Y.config.logInclude = {
-                  logMe: true,
-                  butNotMe: false
-              };
+                Y.applyConfig({
+                    logInclude: {
+                        logMe: true,
+                        butNotMe: false
+                    }
+                });
 
-              Y.log('test logInclude logMe','info','logMe');
-              Assert.areEqual(last, 'logMe', 'logInclude (true) Failed');
-              last = undefined;
+                Y.log('test logInclude logMe','info','logMe');
+                Assert.areEqual(last, 'logMe', 'logInclude (true) Failed');
+                last = undefined;
 
-              Y.log('test logInclude butNotMe','info','butNotMe');
-              Assert.isUndefined(last, 'logInclude (false) Failed');
+                Y.log('test logInclude butNotMe','info','butNotMe');
+                Assert.isUndefined(last, 'logInclude (false) Failed');
 
-              Y.config.logInclude = '';
-              Y.config.logExclude = {
-                  excludeMe: true,
-                  butDontExcludeMe: false
-              };
-              Y.log('test logExclude excludeMe','info','excludeMe');
-              Assert.isUndefined(last, 'excludeInclude (true) Failed');
-              Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
-              Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
+                Y.applyConfig({
+                    logInclude: '',
+                    logExclude: {
+                        excludeMe: true,
+                        butDontExcludeMe: false
+                    }
+                });
+                Y.log('test logExclude excludeMe','info','excludeMe');
+                Assert.isUndefined(last, 'excludeInclude (true) Failed');
+                Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
+                Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
 
             });
             console.info = l;
@@ -297,10 +307,10 @@ YUI.add('core-tests', function(Y) {
                 Assert.isTrue(false, 'testY.foobar should not have ever fired.');
             };
 
-            YUI.applyTo(id, 'io.xdrReady', {}); //Should call
-            YUI.applyTo(id, 'io.xdrResponse', {}); //Does not exist
-            YUI.applyTo(id, 'foobar', {}); //Should not call
-            YUI.applyTo('1234567890', 'io.xdrReady', {}); //Should not call since instance id is invalid
+            YUI.applyTo(id, 'io.xdrReady', []); //Should call
+            YUI.applyTo(id, 'io.xdrResponse', []); //Does not exist
+            YUI.applyTo(id, 'foobar', []); //Should not call
+            YUI.applyTo('1234567890', 'io.xdrReady', []); //Should not call since instance id is invalid
         },
         test_global_config: function() {
             var Assert = Y.Assert,
@@ -418,6 +428,15 @@ YUI.add('core-tests', function(Y) {
             testY.destroy();
             Assert.isUndefined(testY.Env, 'Environment not destroyed');
             Assert.isUndefined(testY.config, 'Instance config not destroyed');
+        },
+        test_features: function() {
+            var Assert = Y.Assert,
+                testY = YUI(),
+                results = testY.Features.all('load', [testY]);
+
+            Assert.isString(results, 'Feature tests failed to return a string');
+            Assert.isTrue((results.length > 0), 'Feature tests failed to return results');
+            Assert.areEqual(testY.Object.keys(testY.Features.tests.load).length, results.split(';').length, 'Failed to return all results for Feature Tests');
         }
     });
 

@@ -8,12 +8,16 @@
 <h2>About YUI on Node.js</h2>
 
 <p><img src="{{componentAssets}}/nodejs.png" align="right" hspace="10" vspace="10" alt="Node.js Logo">
-    The core library will run on Node.js with no external dependencies. `Get.script`, `JSONP`, `YQL` &amp; `io`
+    The core library will run on Node.js with minimal external dependencies. `Get.script`, `JSONP`, `YQL` &amp; `io`
     along with our core infrastructure pieces (anything that doesn't require a DOM) will work out of the box.
+    The only dependency required to run YUI inside Node.js is Mikeal Roger's <a href="https://github.com/mikeal/request">Request</a>
+    library. It's used under the hood for `Y.Get` &amp; `Y.IO`.
+</p>
+<p>
     However, there is <strong>no DOM support</strong> included in our releases.
     This means that you can not do DOM manipulation on the server with this core system. With the introduction
     of `Y.Handlebars`, we are working very hard to allow Widget rendering on the server via strings instead of raw
-    DOM manipulation.
+    DOM manipulation. If you need DOM support, please look into our <a href="nodejs-dom.html">YUI, Node.js and DOM</a> example.
 </p>
 
 

@@ -97,6 +97,23 @@
     Base._ATTR_CFG_HASH = Y.Array.hash(Base._ATTR_CFG);
 
     /**
+     * The array of non-attribute configuration properties supported by this class. 
+     * 
+     * `Base` supports "on", "after", "plugins" and "bubbleTargets" properties, 
+     * which are not set up as attributes. 
+     *
+     * This property is primarily required so that when 
+     * <a href="#property__allowAdHocAttrs">`_allowAdHocAttrs`</a> is enabled by
+     * a class, non-attribute configurations don't get added as ad-hoc attributes.  
+     *
+     * @property _NON_ATTRS_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    Base._NON_ATTRS_CFG = BaseCore._NON_ATTRS_CFG.concat(["on", "after", "bubbleTargets"]);
+
+    /**
      * <p>
      * The string to be used to identify instances of 
      * this class, for example in prefixing events.
@@ -130,20 +147,41 @@
 
     Base.prototype = {
 
+        /**
+         * Internal construction logic for Base.
+         *
+         * @method _initBase
+         * @param {Object} config The constructor configuration object
+         * @private
+         */
         _initBase: function(cfg) {
             Y.log('init called', 'life', 'base');
 
-            this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;            
+            this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
 
             Y.BaseCore.prototype._initBase.call(this, cfg);
         },
 
+        /**
+         * Initializes Attribute 
+         * 
+         * @method _initAttribute
+         * @private
+         */
         _initAttribute: function(cfg) {
-            this._attrCfgHash = Base._ATTR_CFG_HASH;
-
             Attribute.call(this);
-
             this._yuievt.config.prefix = this._eventPrefix;
+        },
+
+        /**
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
+         * this class. 
+         * 
+         * @method _attrCfgHash
+         * @private
+         */
+        _attrCfgHash: function() {
+            return Base._ATTR_CFG_HASH;
         },
 
         /**

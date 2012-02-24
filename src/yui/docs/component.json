@@ -33,42 +33,48 @@
             "displayName": "Create Class Hierarchies with `extend`",
             "description": "Create Class Hierarchies with `extend`",
             "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "oop", "extend", "class"]
+            "tags"       : ["yui", "core", "oop", "extend", "class"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yui-augment",
             "displayName": "Compose Classes of Objects with `augment`",
             "description": "Creating a composition-based class structure using `augment`",
             "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "oop", "extend", "augment", "class"]
+            "tags"       : ["yui", "core", "oop", "extend", "augment", "class"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yui-mix",
             "displayName": "Add Behaviors to Objects with `mix`",
             "description": "Add behaviors to objects or static classes with `mix`",
             "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "oop", "extend", "augment", "mix", "class"]
+            "tags"       : ["yui", "core", "oop", "extend", "augment", "mix", "class"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yui-merge",
             "displayName": "Combine Data Sets with `merge`",
             "description": "Combine data sets and create shallow copies of objects with `merge`",
             "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "oop", "extend", "augment", "merge", "class"]
+            "tags"       : ["yui", "core", "oop", "extend", "augment", "merge", "class"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yui-isa",
             "displayName": "Check Data Types with `Lang`",
             "description": "Check data types with the `Lang Utilities`",
             "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "oop", "lang", "utility", "object", "helpers"]
+            "tags"       : ["yui", "core", "oop", "lang", "utility", "object", "helpers"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yui-ua",
             "displayName": "Browser Detection with `UA`",
             "description": "Get information about the current user agent with `UA`",
             "modules"    : ["yui"],
-            "tags"       : ["yui", "core", "oop", "lang", "utility", "browser", "user-agent", "helpers"]
+            "tags"       : ["yui", "core", "oop", "lang", "utility", "browser", "user-agent", "helpers"],
+            "hideTableOfContents": true
         },
         {
             "name"       : "yui-yui2",
@@ -118,6 +124,9 @@
                     "tags"       : ["yui", "core", "nodejs", "npm", "packaging"]
                 }
             ]
+        },
+        "create": {
+            "displayName": "Creating YUI Modules"
         },
         "modules": {
             "displayName": "YUI Modules List",

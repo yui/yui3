@@ -1,0 +1,38 @@
+    // handler that positions and shows the tooltip 
+    var onMousemove = function (e) {
+        var i;
+        if (tooltip.get('visible') === false) {
+            // while it's still hidden, move the tooltip adjacent to the cursor
+            tooltip.move([(e.pageX + 10), (e.pageY + 20)]);
+        }
+        if (fadeInStarted === false) {
+            // wait half a second, then show tooltip
+            setTimeout(function(){tooltip.show()}, 500);
+            
+            // while waiting to show tooltip, don't let other
+            // mousemoves try to show tooltip too.
+            fadeInStarted = true;
+            
+            // loop through the tipText array looking for a match between
+            // the class name and the array literal `name`
+            for (i = 0; i < tipText.length; i += 1) {
+                if (e.currentTarget.hasClass(tipText[i].name)) {
+
+                    // found a match, so set the content in the tooltip's body
+                    tooltip.setStdModContent('body', tipText[i].text);
+                    break;
+                }
+            }
+        }
+    }
+
+    // handler that hides the tooltip
+    var onMouseleave = function (e) {
+
+        // this check prevents hiding the tooltip 
+        // when the cursor moves over the tooltip itself
+        if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
+            tooltip.hide();
+            fadeInStarted = false;            
+        }
+    }

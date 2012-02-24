@@ -4,7 +4,8 @@ Gestures Change History
 3.5.0
 -----
 
-  * No changes.
+  * Chrome fixed ontouchstart in window bug. No need to caveat
+    the touch test for Chrome 6+.
 
 3.4.1
 -----

@@ -1,0 +1,184 @@
+{{>guide-examples-style}}
+
+<h2>Understanding the problem</h2>
+
+<p>You want to add a custom context menu to an element, so you add a "contextmenu" event listener to the element. That listener is going to do two basic things:</p>
+
+<ol>
+    <li>Prevent the display of the browser's context menu</li>
+    <li>Position your custom context menu over top of/relative to the target of the event</li>
+</ol>
+
+<p>The code will look something like this:</p>
+
+```
+function onContextmenu(e) {
+    e.preventDefault();
+
+    if (!contextmenu) {
+      contextmenu = new Y.Overlay({
+          bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
+          visible: false,
+          constrain: true
+      });
+      contextmenu.render(Y.one("body"));                    
+    }
+
+    contextmenu.set("xy", [e.pageX, e.pageY]);
+    contextmenu.show();
+}
+
+btn.on("contextmenu", onContextmenu);
+```
+<p>
+This code will work great if the "contextmenu" is triggered via the mouse. However, the "contextmenu" event is one of those device-independent events: can be triggered via the mouse, or the keyboard (on Windows using the Menu key, or the Shift + F10 shortcut). When it's triggered via the keyboard you will run into problems. Here's an overview of the obstacles and inconsistencies by browser + platform:
+</p>
+
+<h3>Internet Explorer</h3>
+
+<ul>
+    <li>When the user triggers the "contextmenu" event, the x and y coordinates of the event will be relative to the current position of the mouse cursor. Not useful since the event was fired via the keyboard and the mouse cursor could be anywhere on the screen.</li>
+    <li>When the user presses Shift + F10 IE's menubar will gain focus, with the first item ("File") highlighted. To fix that, you'll need to bind a "keydown" listener for Shift + F10 and call e.preventDefault(). That WILL prevent the menubar from gaining focus, but will also prevent the "contextmenu" event from firing when the user presses Shift + F10.</li>
+</ul>
+
+<h3>Firefox on Windows</h3>
+<ul>
+  <li>Shift + F10 won't fire the "contextmenu" event, but WILL trigger the display of the browser's context menu.</li>
+  <li>If the "contextmenu" event is triggered via the Menu key, the x and y coordinates will be close to the target's bottom left corner.</li>
+</ul>
+
+<h3>Chrome on Windows</h3>
+<ul>
+    <li>Both the Menu key and Shift + F10 fire the "contextmenu" event</li>
+    <li>If the "contextmenu" event is triggered via the Menu key, the x and y coordinates will be close to the target's bottom left corner.</li>
+</ul>
+
+<h3>Safari on the Mac</h3>
+<ul>
+    <li>No keyboard shortcut available for triggering the "contextmenu" event, unless the screen reader (VoiceOver) is running, in which case the shortcut is Shift + Ctrl + Alt + M.</li>
+    <li>When VoiceOver is running and the user presses Shift + Ctrl + Alt + M, the x and y coordinates will reference the center of the event target.</li>
+</ul>
+
+<p>Here's a working example. The following button has a custom context menu. Try to invoke it via the keyboard to see the problems yourself:</p>
+
+<style type="text/css">
+  
+  .contextmenu {
+      background: #ccc;
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+  }
+  
+  .contextmenu li {
+      white-space: nowrap;
+  }
+  
+</style>
+<button type="button" id="btn-1">I've got a context menu</button>
+<script type="text/javascript">
+
+    YUI().use("overlay", function (Y) {
+  
+      var btn = Y.one("#btn-1"), 
+          contextmenu;
+  
+      function onContextmenu(e) {
+          e.preventDefault();
+  
+          if (!contextmenu) {
+            contextmenu = new Y.Overlay({
+                bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
+                visible: false,
+                constrain: true
+            });
+            contextmenu.render(Y.one("body"));                    
+          }
+  
+          contextmenu.set("xy", [e.pageX, e.pageY]);
+          contextmenu.show();
+      }
+  
+      
+      btn.on("contextmenu", onContextmenu);
+  
+    });
+
+</script>
+
+
+<h2>The value of the "contextmenu" synthetic event</h2>
+
+<p>Returning to the task at hand, as a developer you just want to bind a single "contextmenu" event listener and have it do the right thing regardless of how the event was triggered. This is what the "contextmenu" synthetic event does; it fixes all the aforementioned problems and inconsistencies while maintaining the same signature as a standard "contextmenu" DOM event. Additionally, it provides two bits of sugar:</p>
+
+<ol>
+    <li>Prevents the display of the browser's context menu. (Since you're likely going to be doing that anyway.)</li>
+    <li>Follows Safari's model such that when the "contextmenu" event is fired via the keyboard, the x and y coordinates of the event will reference the center of the target.</li>
+</ol>
+
+<p>All that's required to use the "contextmenu" synthetic event is to add "event-contextmenu" to the use() statement.</p>
+
+```
+YUI().use("event-contextmenu", function (Y) {
+
+});
+```
+<p>Here's a working example: The following button has a custom context menu. On Windows the context menu can be invoked by pressing either Menu or using Shift + F10, on the Mac use Shift + Ctrl + Alt + M.</p>
+
+<button type="button" id="btn-2">I've got a context menu</button>
+<script type="text/javascript">
+
+    YUI().use("event-contextmenu", "overlay", function (Y) {
+  
+      var btn = Y.one("#btn-2"), 
+          contextmenu;
+  
+      function onContextmenu(e) {
+  
+          if (!contextmenu) {
+            contextmenu = new Y.Overlay({
+                bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
+                visible: false,
+                constrain: true
+            });
+            contextmenu.render(Y.one("body"));                    
+          }
+  
+          contextmenu.set("xy", [e.pageX, e.pageY]);
+          contextmenu.show();
+      }
+  
+      
+      btn.on("contextmenu", onContextmenu);
+  
+    });
+
+</script>
+<p>Here's the code for the example:</p>
+
+```
+YUI().use("event-contextmenu", "overlay", function (Y) {
+
+  var btn = Y.one("#btn-2"), 
+      contextmenu;
+
+  function onContextmenu(e) {
+
+      if (!contextmenu) {
+        contextmenu = new Y.Overlay({
+            bodyContent: "<ul class=\"contextmenu\"><li>Option 1</li><li>Option 2</li><li>Option 3</li></ul>",
+            visible: false,
+            constrain: true
+        });
+        contextmenu.render(Y.one("body"));                    
+      }
+
+      contextmenu.set("xy", [e.pageX, e.pageY]);
+      contextmenu.show();
+  }
+
+  
+  btn.on("contextmenu", onContextmenu);
+
+});
+```

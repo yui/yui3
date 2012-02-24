@@ -21,10 +21,6 @@ ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
     initializer: function () {
         this._bindUIACBase();
         this._syncUIACBase();
-    },
-
-    destructor: function () {
-        this._destructorACBase();
     }
 });
 
@@ -69,9 +65,10 @@ function setUpACInstance() {
 
     // Helper method that synchronously simulates a valueChange event on the
     // inputNode.
-    this.simulateInput = function (value) {
+    this.simulateInput = function (value, ac) {
+        ac || (ac = this.ac);
         this.inputNode.set('value', value);
-        Y.ValueChange._poll(this.inputNode, Y.stamp(this.inputNode));
+        ac._onInputValueChange({newVal: value});
     };
 }
 
@@ -88,9 +85,10 @@ function setUpACListInstance() {
 
     // Helper method that synchronously simulates a valueChange event on the
     // inputNode.
-    this.simulateInput = function (value) {
+    this.simulateInput = function (value, ac) {
+        ac || (ac = this.ac);
         this.inputNode.set('value', value);
-        Y.ValueChange._poll(this.inputNode, Y.stamp(this.inputNode));
+        ac._onInputValueChange({newVal: value});
     };
 }
 
@@ -142,6 +140,16 @@ baseSuite.add(new Y.Test.Case({
 
         ac = new ACBase({inputNode: '#ac'});
         Assert.areSame(this.inputNode, ac.get('inputNode'));
+    },
+
+    'destructor should detach events': function () {
+        var ac = new ACBase({inputNode: this.inputNode});
+        ac.destroy();
+
+        Assert.isUndefined(ac._acBaseEvents, '_acBaseEvents should be undefined');
+        Assert.isUndefined(ac._cache, '_cache should be undefined');
+        Assert.isUndefined(ac._inputNode, '_inputNode should be undefined');
+        Assert.isUndefined(ac._rawSource, '_rawSource should be undefined');
     }
 
     // Note: This test is temporarily commented out since it appears to cause
@@ -511,16 +519,22 @@ baseSuite.add(new Y.Test.Case({
     // See the "Built-in Sources" test case below for source and sourceType
     // tests.
 
-    'value attribute should update the inputNode value when set via the API, and should not trigger a query event': function () {
+    'value attribute should update the inputNode value and query attribute when set via the API, but should not fire a query event': function () {
         this.ac.on('query', function () {
-            Assert.fail('query was triggered');
+            Assert.fail('query event was triggered');
         });
 
         this.ac.set('value', 'foo');
         Assert.areSame('foo', this.inputNode.get('value'));
+        Assert.areSame('foo', this.ac.get('query'));
 
         this.ac.set('value', 'bar');
         Assert.areSame('bar', this.inputNode.get('value'));
+        Assert.areSame('bar', this.ac.get('query'));
+
+        this.ac.set('value', '');
+        Assert.areSame('', this.inputNode.get('value'));
+        Assert.isNull(this.ac.get('query'));
     },
 
     // -- Generic setters and validators ---------------------------------------
@@ -561,6 +575,20 @@ baseSuite.add(new Y.Test.Case({
         this.simulateInput('');
 
         Assert.areSame(2, fired);
+    },
+
+    'clear event should fire when the value attribute is cleared via the API': function () {
+        var fired = 0;
+
+        this.ac.on('clear', function (e) {
+            fired += 1;
+            Assert.areSame('foo', e.prevVal);
+        });
+
+        this.simulateInput('foo');
+        this.ac.set('value', '');
+
+        Assert.areSame(1, fired);
     },
 
     'clear event should be preventable': function () {

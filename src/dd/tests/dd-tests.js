@@ -35,9 +35,18 @@ YUI.add('dd-tests', function(Y) {
             });
         },
         _fakeStart = function(node) {
+            var noop = function() {};
+
             _resetCount();
             Y.DD.DDM._noShim = true;
             node._dragThreshMet = true;
+            node._handleMouseDownEvent({
+                button: 0,
+                target: node.get('node'),
+                currentTarget: node.get('node'),
+                preventDefault: noop,
+                halt: noop
+            });
             node.set('activeHandle', node.get('node'));                    
             node._setStartPosition(node.get('node').getXY());
             Y.DD.DDM.activeDrag = node;
@@ -49,6 +58,7 @@ YUI.add('dd-tests', function(Y) {
             node.end();
             node._handleMouseUp();
             Y.DD.DDM._noShim = false;
+            Y.DD.DDM.stopDrag();
         },
         _moveNode = function(node, num, flip) {
             if (flip) {
@@ -92,9 +102,27 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isNull(s, 'Shim: Node Instance');
         },
         test_drop_setup: function() {
-            drop = new Y.DD.Drop({ node: '#drop', data: { one: 1, two: 2, three: 3 } });
+            drop = new Y.DD.Drop({ node: '#drop', data: { one: 1, two: 2, three: 3 }, bubbles: Y.DD.DDM });
             Y.Assert.isInstanceOf(Y.DD.Drop, drop, 'drop: Drop Instance');
             Y.Assert.isTrue(drop.get('node').hasClass('yui3-dd-drop'), 'drop: Drop Instance ClassName');
+            drop.destroy();
+
+            var d = Y.one('#drop').plug(Y.Plugin.Drop, {
+                data: { one: 1, two: 2, three: 3 }
+            });
+
+            drop = Y.DD.DDM.getDrop('#drop');
+
+            var len = Y.DD.DDM.validDrops.length;
+            Y.DD.DDM._addValid(drop);
+            var len2 = Y.DD.DDM.validDrops.length;
+            Y.DD.DDM._removeValid(drop);
+            var len3 = Y.DD.DDM.validDrops.length;
+
+            Y.Assert.areSame(len, 0, 'There are active drops');
+            Y.Assert.areSame(len2, 1, 'Failed to register drops');
+            Y.Assert.areSame(len3, 0, 'There are active drops');
+
         },
         test_drop_setup_events: function() {
             Y.each(dd_events, function(v) {
@@ -103,7 +131,7 @@ YUI.add('dd-tests', function(Y) {
             });
         },
         test_drag_setup: function() {
-            dd = new Y.DD.Drag({ node: '#drag' });
+            dd = new Y.DD.Drag({ node: '#drag', bubbles: Y.DD.DDM });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
         },
@@ -120,6 +148,53 @@ YUI.add('dd-tests', function(Y) {
             Y.each(dd._yuievt.targets, function(v, k) {
                 Y.Assert.areSame(v, dd.target._yuievt.targets[k], 'bubbleTargets are not the same');
             });
+            
+        },
+        test_drag_invalids: function() {
+            var len = Y.Object.keys(dd._invalids).length;
+            dd.addInvalid('foo');
+            Y.Assert.areSame((len + 1), Y.Object.keys(dd._invalids).length, 'Failed to add to invalid list');
+            dd.removeInvalid('foo');
+            Y.Assert.areSame(len, Y.Object.keys(dd._invalids).length, 'Failed to remove from invalid list');
+            
+        },
+        test_drag_groups: function() {
+            Y.Assert.areSame(1, dd.get('groups').length, 'DD already in a group');
+            dd.addToGroup('foo');
+            Y.Assert.areSame(2, dd.get('groups').length, 'Failed to add DD to a group');
+            dd.removeFromGroup('foo');
+            Y.Assert.areSame(1, dd.get('groups').length, 'Failed to remove DD from a group');
+        },
+        test_drop_groups: function() {
+            Y.Assert.areSame(1, dd.target.get('groups').length, 'DD already in a group');
+            dd.target.addToGroup('foo');
+            Y.Assert.areSame(2, dd.target.get('groups').length, 'Failed to add DD to a group');
+            dd.target.removeFromGroup('foo');
+            Y.Assert.areSame(1, dd.target.get('groups').length, 'Failed to remove DD from a group');
+        },
+        test_drop_overs: function() {
+            dd.target._createShim();
+            dd.target._handleOverEvent();
+            var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
+            Y.Assert.areSame(999, zIndex, 'Failed to change zIndex of shim');
+
+            dd.target._handleOutEvent();
+            var zIndex = parseInt(dd.target.shim.getStyle('zIndex'), 0);
+            Y.Assert.areSame(1, zIndex, 'Failed to change zIndex of shim');
+            
+            dd.target.overTarget = true;
+            Y.DD.DDM.activeDrag = dd.target;
+            dd.target._handleOut(true);
+
+
+        },
+        test_drag_handles: function() {
+            Y.Assert.isNull(dd._handles, 'Drag has handles already');
+            dd.addHandle('foo');
+            Y.Assert.areSame(1, Y.Object.keys(dd._handles).length, 'Failed to add handle to dd');
+            dd.removeHandle('foo');
+            Y.Assert.areSame(0, Y.Object.keys(dd._handles).length, 'Failed to remove handle from dd');
+            Y.Assert.isObject(dd._handles, 'Handles is not an Object');
         },
         test_drag_drop_group_setup: function() {
             dd.destroy();
@@ -157,6 +232,13 @@ YUI.add('dd-tests', function(Y) {
                 var handle = dd.on(v, _handleCount);
                 Y.Assert.isInstanceOf(Y.EventHandle, handle, 'drag:handle [' + v + ']: Handle Instance');
             });
+        },
+        test_drag_move: function() {
+            Y.DD.DDM.useHash = true;
+            Y.DD.DDM.syncActiveShims();
+
+            //This test is mainly for code coverage, so that more DD code is touched.
+            _fakeMove(dd, moveCount);
         },
         /* This test is iffey on Chrome/IE9 and sometimes on FF. Removing until I find a better solution.
         test_drag_move: function() {
@@ -199,6 +281,18 @@ YUI.add('dd-tests', function(Y) {
                 Y.Assert.isInstanceOf(Y.EventHandle, handle, 'proxy:handle [' + v + ']: Handle Instance');
             });
         },
+        test_proxy_move: function() {
+            //This test is mainly for code coverage, so that all proxy code is touched.
+            _fakeMove(proxy, moveCount);
+            _resetCount();
+            Y.one('#drag').setStyles({ top: '', left: '' });
+            proxy.proxy.set('moveOnEnd', true);
+            proxy.proxy.set('cloneNode', true);
+            proxy.set('dragMode', 'intersect');
+            _fakeMove(proxy, moveCount);
+            _resetCount();
+            Y.one('#drag').setStyles({ top: '', left: '' });
+        },
         /* This test is iffey on Chrome/IE9 and sometimes on FF. Removing until I find a better solution.
         test_proxy_move: function() {
             _fakeMove(proxy, moveCount);
@@ -225,7 +319,23 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isFalse(drop.get('node').hasClass('yui3-dd-drop'), 'Drop: Drop Instance NO ClassName');
             Y.Assert.isTrue(drop.get('destroyed'), 'Drop: Destroyed Attribute');
         },
-        
+        test_constrain_region_setup: function() {
+            Y.one('#drag').setStyles({ top: '10px', left: '350px' });
+            dd = new Y.DD.Drag({
+                node: '#drag'
+            }).plug(Y.Plugin.DDConstrained, {
+                constrain2region: {
+                    top: 0,
+                    left: 0,
+                    bottom: 400,
+                    right: 400
+                }
+            });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
+            dd.destroy();
+        },
         test_constrain_node_setup: function() {
             Y.one('#drag').setStyles({ top: '10px', left: '950px' });
             dd = new Y.DD.Drag({
@@ -259,6 +369,52 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isInstanceOf(Y.Plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
         },
+        test_constrain_inregion: function() {
+            var inRegion = dd.con.inRegion();
+            Y.Assert.isFalse(inRegion, 'DD object is already in region, should not be');
+            //Move to region
+            var region = dd.con.getRegion()
+            dd.get('dragNode').setXY(region);
+            var inRegion = dd.con.inRegion();
+            Y.Assert.isTrue(inRegion, 'DD object is not in region');
+
+            //Move back out of region
+            Y.one('#drag').setStyles({ top: '-150px', left: '200px' });
+        },
+        test_tick_calc: function() {
+            var tick = Y.DD.DDM._calcTicks(15, 0, 10, 1, 100);
+            Y.Assert.areSame(10, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTicks(95, 0, 10, 1, 100);
+            Y.Assert.areSame(90, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTicks(-5, 0, 10, 1, 100);
+            Y.Assert.areSame(0, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTicks(150, 0, 10, 1, 100);
+            Y.Assert.areSame(140, tick, 'Failed to calculate tick');
+        },
+        test_tick_array: function() {
+            var ticks = [1, 25, 75, 100 ];
+            var tick = Y.DD.DDM._calcTickArray(15, ticks, 1, 150);
+            Y.Assert.areSame(25, tick, 'Failed to calculate tick');
+            
+            var tick = Y.DD.DDM._calcTickArray(2, ticks, 1, 150);
+            Y.Assert.areSame(1, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTickArray(2, [], 1, 150);
+            Y.Assert.areSame(2, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTickArray(2, [5], 1, 150);
+            Y.Assert.areSame(5, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTickArray(2, [5, 10], 1, 150);
+            Y.Assert.areSame(5, tick, 'Failed to calculate tick');
+
+            var tick = Y.DD.DDM._calcTickArray(25, [5, 10], 15, 5);
+            Y.Assert.areSame(10, tick, 'Failed to calculate tick');
+
+        },
         test_constrain_view_move: function() {
             var inRegion_before = dd.get('node').inViewportRegion();
 
@@ -270,8 +426,12 @@ YUI.add('dd-tests', function(Y) {
             dd.destroy();
         },
         test_window_scroll: function() {
+            if (Y.one('win').get('winHeight') < 200) {
+                //This should work in IE to resize the window.
+                window.resizeTo(500, 500);
+            }
             //Skip this test on mobile devices, they don't like the scrollTop settings to test against.
-            if (Y.UA.mobile || Y.UA.android || Y.UA.webos) {
+            if (Y.UA.mobile || Y.UA.android || Y.UA.webos || (Y.one('win').get('winHeight') < 200)) {
                 return true;
             }
             Y.one('body').setStyle('height', '3000px');
@@ -311,9 +471,10 @@ YUI.add('dd-tests', function(Y) {
             Y.one('#wrap').setStyle('display', 'none');
             Y.one('#del').setStyle('display', 'block');
             del = new Y.DD.Delegate({
-                cont: '#del',
+                container: '#del',
                 nodes: 'li',
-                invalid: '.disabled'
+                invalid: '.disabled',
+                target: true
             });
             Y.Assert.isInstanceOf(Y.DD.Delegate, del, 'del: Delegate Instance');
             Y.Assert.isInstanceOf(Y.DD.Drag, del.dd, 'del.dd: Drag Instance');
@@ -326,6 +487,7 @@ YUI.add('dd-tests', function(Y) {
             });
         },
         test_delegate_move: function() {
+            del._onMouseEnter();
             _resetCount();
             del.on('drag:end', function() {
                 Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
@@ -339,9 +501,11 @@ YUI.add('dd-tests', function(Y) {
                 currentTarget: Y.one('#del ul li')
             });
             _fakeMove(del.dd, moveCount);
+            del._onMouseLeave();
         },
         test_delegate_move2: function() {
             _resetCount();
+            del.dd.plug(Y.Plugin.DDProxy);
             del._delMouseDown({
                 currentTarget: Y.one('#del ul li:nth-child(4)')
             });
@@ -358,6 +522,11 @@ YUI.add('dd-tests', function(Y) {
                 currentTarget: Y.one('#del ul li:nth-child(6)')
             });
             Y.Assert.isFalse(mDown, 'Delegate mouseDown fired on a disabled item');
+        },
+        test_delegate_destroy: function() {
+            var del = Y.DD.DDM.getDelegate('#del');
+            del.destroy();
+            Y.Assert.isTrue(del.dd.get('destroyed'), 'DD was not destroyed');
         },
         test_css_gutter: function() {
             var gutter1 = '2px';
@@ -388,6 +557,54 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.areSame(3, obj.bottom, gutter1 + ' failed to parse bottom');
             Y.Assert.areSame(4, obj.left, gutter1 + ' failed to parse left');
 
+
+        },
+        test_swap_node_position: function() {
+            var xy1 = [ 100, 100],
+                xy2 = [ 200, 200],
+                n1 = Y.Node.create('<div>Foo1</div>'),
+                n2 = Y.Node.create('<div>Foo2</div>');
+
+            Y.one('body').append(n1);
+            Y.one('body').append(n2);
+
+            n1.setXY(xy1);
+            n2.setXY(xy2);
+
+            var xy11 = n1.getXY(),
+                xy21 = n2.getXY();
+
+            Y.Assert.areSame(xy1[0], xy11[0], 'Did not set position');
+            Y.Assert.areSame(xy2[0], xy21[0], 'Did not set position');
+    
+            Y.DD.DDM.swapPosition(n1, n2);
+
+            var xy12 = n1.getXY(),
+                xy22 = n2.getXY();
+
+            Y.Assert.areSame(xy1[0], xy22[0], 'Did not swap position');
+            Y.Assert.areSame(xy2[0], xy12[0], 'Did not swap position');
+
+            n1.remove();
+            n2.remove();
+        },
+        test_swap_node: function() {
+            var n1 = Y.Node.create('<div>Foo1</div>'),
+                n2 = Y.Node.create('<div>Foo2</div>'),
+                wrap = Y.Node.create('<div></div>');
+
+            
+
+            wrap.prepend(n1);
+            wrap.append(n2);
+            
+            Y.Assert.isTrue((n1.get('nextSibling') ? true : false), '1, Node has a sibling');
+            Y.Assert.isNull((n2.get('nextSibling')), '2, Node has a sibling');
+            Y.DD.DDM.swapNode(n1, n2);
+
+            Y.Assert.isTrue((n2.get('nextSibling') ? true : false), '3, Node has a sibling');
+            Y.Assert.isNull((n1.get('nextSibling')), '4, Node has a sibling');
+            
 
         }
     };

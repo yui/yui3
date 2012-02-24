@@ -1,133 +1,182 @@
-var ButtonGroup = function (config) {
-    
-    this.buttons = new Y.ArrayList();
-    
-    var ATTRS = {
-        selection : {
-            value : [],
-            getter: function(){
-                var selected = [];
-                this.buttons.each(function(button){
-                    if (button.get('selected')) {
-                        selected.push(button);
-                    }
-                });
-                
-                return selected;
+/**
+* A Widget to create groups of buttons
+*
+* @module button-group
+* @since 3.5.0
+*/
+
+var CONTENT_BOX = "contentBox",
+    SELECTOR    = "button, input[type=button]",
+    CLICK_EVENT = "click",
+    CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
+
+/**
+* Creates a ButtonGroup
+*
+* @class ButtonGroup
+* @extends Widget
+* @param config {Object} Configuration object
+* @constructor
+*/
+function ButtonGroup() {
+    ButtonGroup.superclass.constructor.apply(this, arguments);
+}
+
+/* ButtonGroup extends Widget */
+Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
+
+    /**
+    * @method initializer
+    * @description Internal init() handler.
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(){
+        // TODO: Nothing? Then remove
+    },
+
+    /**
+     * renderUI implementation
+     *
+     * Creates a visual representation of the widget based on existing parameters.
+     * @method renderUI
+     */
+    renderUI: function() {
+        this.getButtons().plug(Y.Plugin.Button);
+    },
+
+    /**
+     * bindUI implementation
+     *
+     * Hooks up events for the widget
+     * @method bindUI
+     */
+    bindUI: function() {
+        var group = this,
+            cb = group.get(CONTENT_BOX);
+
+        cb.delegate(CLICK_EVENT, group._handleClick, SELECTOR, group);
+    },
+
+    /**
+    * @method getButtons
+    * @description Returns all Y.Buttons instances assigned to this group
+    * @public
+    */
+    getButtons: function() {
+        var cb = this.get(CONTENT_BOX);
+
+        return cb.all(SELECTOR);
+    },
+
+    /**
+    * @method getSelectedButtons
+    * @description Returns all Y.Buttons instances that are selected
+    * @public
+    */
+    getSelectedButtons: function() {
+        var group = this,
+            selected = [],
+            buttons = group.getButtons(),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+
+        buttons.each(function(node){
+            if (node.hasClass(selectedClass)){
+                selected.push(node);
             }
-        },
+        });
+
+        return selected;
+    },
+
+    /**
+    * @method getSelectedValues
+    * @description Returns the values of all Y.Button instances that are selected
+    * @public
+    */
+    getSelectedValues: function() {
+        var group = this,
+            value,
+            values = [],
+            selected = group.getSelectedButtons(),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+
+        Y.Array.each(selected, function(node){
+            if (node.hasClass(selectedClass)){
+                value = node.getContent();
+                values.push(value);
+            }
+        });
+
+        return values;
+    },
+
+    /**
+    * @method _handleClick
+    * @description A delegated click handler for when any button is clicked in the content box
+    * @private
+    */
+    _handleClick: function(e){
+        var buttons,
+            clickedNode = e.target,
+            group = this,
+            type = group.get('type'),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED,
+            isSelected = clickedNode.hasClass(selectedClass);
+
+        // TODO: Anything for 'push' groups?
+
+        if (type === 'checkbox') {
+            clickedNode.toggleClass(selectedClass, !isSelected);
+            group.fire('selectionChange');  // Payload? Attribute?
+        }
+        else if (type === 'radio') {
+            if (!isSelected) {
+                buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
+                buttons.removeClass(selectedClass);
+                clickedNode.addClass(selectedClass);
+                group.fire('selectionChange');  // Payload? Attribute?
+            }
+        }
+    }
+
+}, {
+    // Y.ButtonGroup static properties
+
+    /**
+     * The identity of the widget.
+     *
+     * @property NAME
+     * @type String
+     * @default 'buttongroup'
+     * @readOnly
+     * @protected
+     * @static
+     */
+    NAME: 'buttongroup',
+
+    /**
+    * Static property used to define the default attribute configuration of
+    * the Widget.
+    *
+    * @property ATTRS
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ATTRS: {
         type: {
-            value: 'radio',
-            validator: function(val) {
-                return Y.Array.indexOf(['radio', 'checkbox'], val);
-            }
+            writeOnce: 'initOnly',
+            value: 'radio'
         }
-    };
+    },
 
-    this.addAttrs(ATTRS, config);
-
-    if (config.srcNodes){
-        if (Y.Lang.isString(config.srcNodes)){
-            config.srcNodes = Y.all(config.srcNodes);
-        }
-        config.buttons = [];
-        config.srcNodes.each(function(node){
-            config.srcNode = node;
-            config.buttons.push(new Y.Button(config));
-        });
-        
-        delete config.srcNodes;
-    }
-    
-    if (config.buttons) {
-        Y.Array.each(config.buttons, function(button){
-            this.addButton(button);
-        }, this);
-    }
-};
-
-ButtonGroup.prototype.getButtons = function() {
-    return this.buttons._items;
-};
-
-ButtonGroup.prototype.getSelectedButtons = function() {
-
-    var selected = [], buttons;
-    buttons = this.buttons;
-
-    buttons.each(function(button){
-        if (button.get('selected')){
-            selected.push(button);
-        }
-    });
-
-    return selected;
-};
-
-ButtonGroup.prototype.getSelectedValues = function() {
-    var selected, values = [];
-    selected = this.getSelectedButtons();
-    Y.Array.each(selected, function(button){
-        values.push(button.getNode().get('value'));
-    });
-    
-    return values;
-};
-
-ButtonGroup.prototype.addButton = function(button){
-    button.set('type', 'toggle');
-    
-    if (this.get('type') === 'radio') {
-        button.before('selectedChange', this._beforeButtonSelectedChange, this);
-    }
-    
-    //button.on('selectedChange', this._onButtonSelectedChange, this);
-    button.after('selectedChange', this._afterButtonSelectedChange, this);
-    
-    this.buttons.add(button);
-};
-
-// This is only fired if the group type is a radio
-ButtonGroup.prototype._beforeButtonSelectedChange = function(e) {
-    if (e.target.get('selected')) {
-        e.preventDefault();
-        return false;
-    }
-    else {
-        /* Nothing? */
-    }
-};
-
-ButtonGroup.prototype._onButtonSelectedChange = function(e) {
-
-};
-
-ButtonGroup.prototype._afterButtonSelectedChange = function(e) {
-    var fireChange, buttons;
-    
-    fireChange = false;
-    buttons = this.buttons;
-    
-    if (this.get('type') === 'radio') {
-        buttons.each(function(button){
-            if (buttons.indexOf(e.target) !== buttons.indexOf(button)) {
-                fireChange = true;
-                button.set('selected', false, {propagate:false});
-            }
-            else {
-                /* Nothing */
-            }
-        });
-    }
-    else if (this.get('type') === 'checkbox') {
-        fireChange = true;
-    }
-    
-    if (fireChange) {
-        this.fire('selectionChange');
-    }
-};
-
-Y.augment(ButtonGroup, Y.Attribute);
-
-Y.ButtonGroup = ButtonGroup;
+    /**
+     * List of class names used in the ButtonGroup's DOM
+     *
+     * @property CLASS_NAMES
+     * @type Object
+     * @static
+     */
+    CLASS_NAMES: CLASS_NAMES
+});

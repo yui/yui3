@@ -53,9 +53,35 @@ Plots.prototype = {
             marker,
             offsetWidth = w/2,
             offsetHeight = h/2,
+            xvalues,
+            yvalues,
             fillColors = null,
             borderColors = null,
-            graphOrder = this.get("graphOrder");
+            graphOrder = this.get("graphOrder"),
+            groupMarkers = this.get("groupMarkers");
+        if(groupMarkers)
+        {
+            xvalues = [];
+            yvalues = [];
+            for(; i < len; ++i)
+            {
+                xvalues.push(parseFloat(xcoords[i] - offsetWidth));
+                yvalues.push(parseFloat(ycoords[i] - offsetHeight));
+            }
+            this._createGroupMarker({
+                xvalues: xvalues,
+                yvalues: yvalues,
+                fill: style.fill,
+                border: style.border,
+                dimensions: {
+                    width: w,
+                    height: h
+                },
+                graphOrder: graphOrder,
+                shape: style.shape
+            });
+            return;
+        }
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -88,6 +114,36 @@ Plots.prototype = {
             marker = this.getMarker(style, graphOrder, i);
         }
         this._clearMarkerCache();
+    },
+
+    /**
+     * Pre-defined group shapes.
+     *
+     * @property _groupShapes
+     * @private
+     */
+    _groupShapes: {
+        circle: Y.CircleGroup,
+        rect: Y.RectGroup,
+        ellipse: Y.EllipseGroup,
+        diamond: Y.DiamondGroup
+    },
+
+    /**
+     * Returns the correct group shape class.
+     *
+     * @method _getGroupShape
+     * @param {Shape | String} shape Indicates which shape class. 
+     * @return Function
+     * @protected
+     */
+    _getGroupShape: function(shape)
+    {
+        if(Y_Lang.isString(shape))
+        {
+            shape = this._groupShapes[shape];
+        }
+        return shape;
     },
 
     /**
@@ -179,7 +235,7 @@ Plots.prototype = {
         }
         this._markers.push(marker);
         return marker;
-    },   
+    },
     
     /**
      * Creates a shape to be used as a marker.
@@ -211,6 +267,11 @@ Plots.prototype = {
      */
     _createMarkerCache: function()
     {
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
         if(this._markers && this._markers.length > 0)
         {
             this._markerCache = this._markers.concat();
@@ -221,7 +282,60 @@ Plots.prototype = {
         }
         this._markers = [];
     },
-    
+  
+    /**
+     * Draws a series of markers in a single shape instance.
+     *
+     * @method _createGroupMarkers
+     * @param {Object} styles Set of configuration properties used to create the markers.
+     * @protected
+     */
+    _createGroupMarker: function(styles)
+    {
+        var marker,
+            markers = this.get("markers"),
+            border = styles.border,
+            graphic,
+            cfg,
+            shape;
+        if(markers && markers.length > 0)
+        {
+            while(markers.length > 0)
+            {
+                marker = markers.shift();
+                marker.destroy();
+            }
+            this.set("markers", []);
+        }
+        //fix name differences between graphic layer
+        border.opacity = border.alpha;
+        cfg = {
+            id: this.get("chart").get("id") + "_" + styles.graphOrder,
+            stroke: border,
+            fill: styles.fill,
+            dimensions: styles.dimensions,
+            xvalues: styles.xvalues,
+            yvalues: styles.yvalues
+        };
+        cfg.fill.opacity = styles.fill.alpha;
+        shape = this._getGroupShape(styles.shape);
+        if(shape)
+        {
+            cfg.type = shape;
+        }
+        if(styles.hasOwnProperty("radius") && !isNaN(styles.radius))
+        {
+            cfg.dimensions.radius = styles.radius;
+        }
+        if(this._groupMarker)
+        {
+            this._groupMarker.destroy();
+        }
+        graphic = this.get("graphic");
+        graphic.set("autoDraw", true);
+        this._groupMarker = graphic.addShape(cfg);
+    },
+
     /**
      * Toggles visibility
      *
@@ -278,7 +392,7 @@ Plots.prototype = {
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var w,
                 h,

@@ -11,24 +11,28 @@
         <url>attribute/tests/attribute.html</url>
         <url>attribute/tests/attribute-core.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
-        <url>base/tests/base-core.html</url>
         <url>base/tests/base.html</url>
+        <url>base/tests/base-core.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
+        <!--
+        <url>charts/tests/axes.html</url>
+        -->
         <url>charts/tests/axesattrs.html</url>
         <url>charts/tests/charts.html</url>
         <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/graph.html</url>
         <url>charts/tests/pie.html</url>
-        <!--url>charts/tests/axes.html</url-->
         <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
-        <url>collection/tests/collection.html</url>
+        <url>collection/tests/array-invoke.html</url>
+        <url>collection/tests/array-extras.html</url>
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
+        <url>cookie/tests/cookie.html</url>
         <url>dataschema/tests/dataschema.html</url>
         <url>datasource/tests/datasource-arrayschema.html</url>
         <url>datasource/tests/datasource-cache.html</url>
@@ -40,6 +44,15 @@
         <url>datasource/tests/datasource-polling.html</url>
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
+        <url>datatable/tests/datatable-base.html</url>
+        <url>datatable/tests/datatable-body.html</url>
+        <url>datatable/tests/datatable-column-widths.html</url>
+        <url>datatable/tests/datatable-core.html</url>
+        <url>datatable/tests/datatable-head.html</url>
+        <url>datatable/tests/datatable-message.html</url>
+        <url>datatable/tests/datatable-mutable.html</url>
+        <url>datatable/tests/datatable-sort.html</url>
+        <url>datatable/tests/datatable-scroll.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
@@ -55,17 +68,24 @@
         -->
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
-	<url>editor/tests/editor.html</url>
+	    <url>editor/tests/editor.html</url>
         <url>escape/tests/functional/escape.html</url>
-        <url>event-custom/tests/customevent.html</url>
-        <url>event-custom/tests/event-custom-base.html</url>
-        <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
-        <url>event/tests/event-resize.html</url>
+        <url>event/tests/event-contextmenu.html</url>
+        <url>event/tests/event-hover.html</url>
         <url>event/tests/event-key.html</url>
+        <url>event/tests/event-outside.html</url>
+        <url>event/tests/event-resize.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
+        <url>event-custom/tests/customevent.html</url>
+        <url>event-custom/tests/event-custom-base.html</url>
+        <url>event-gestures/tests/index.html</url>
+        <url>event/tests/event-touch.html</url>
+        <url>event/tests/event-mouseenter.html</url>
+        <url>event/tests/event-mousewheel.html</url>
+        <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>handlebars/tests/handlebars.html</url>
@@ -75,47 +95,67 @@
         <url>history/tests/functional/history-hash.html</url>
         -->
         <url>history/tests/functional/history-html5.html</url>
+        <url>imageloader/tests/imageloader.html</url>
         <url>intl/tests/intl.html</url>
         <url>json/tests/json.html</url>
-        <!--url>jsonp/tests/jsonp.html</url>
-        <url>jsonp/tests/jsonp-url.html</url-->
-        <url>matrix/tests/matrix.html</url>
-        <url>node/tests/node.html</url>
-        <!--url>node-focusmanager/tests/focusmanager.html</url-->
-        <url>parallel/tests/index.html</url>
-        <url>pjax/tests/pjax.html</url>
-        <url>pluginhost/tests/plugins.html</url>
-        <url>slider/tests/slider.html</url>
-        <url>test/tests/arrayassert.html</url>
-        <url>test/tests/mock.html</url>
-        <url>test/tests/objectassert.html</url>
-        <url>text/tests/functional/text-accentfold.html</url>
-        <url>text/tests/functional/text-wordbreak.html</url>
-        <url>widget/tests/widget.html</url>
-        <url>widget-parent/tests/parent-child.html</url>
-        <url>yql/tests/index.html</url>
-        <url>oop/tests/oop.html</url>
-        <url>substitute/tests/substitute.html</url>
+        <!--
+        <url>jsonp/tests/jsonp-url.html</url>
+        -->
         <url>loader/tests/index.html</url>
         <url>loader/tests/index-full.html</url>
         <url>loader/tests/index-loader.html</url>
+        <url>matrix/tests/matrix.html</url>
+        <url>node/tests/node.html</url>
+        <!--
+        <url>node-focusmanager/tests/focusmanager.html</url>
+        -->
+        <url>oop/tests/oop.html</url>
+        <url>overlay/tests/overlay.html</url>
+        <url>panel/tests/unit-tests.html</url>
+        <url>parallel/tests/index.html</url>
+        <url>pjax/tests/pjax.html</url>
+        <url>pluginhost/tests/plugins.html</url>
+        <url>profiler/tests/profiler.html</url>
+        <url>queue-promote/tests/queue-promote.html</url>
+        <url>querystring/tests/querystring.html</url>
+        <url>resize/tests/index.html</url>
+        <url>scrollview/tests/scrollview-list-unit-test.html</url>
+        <url>slider/tests/slider.html</url>
+        <url>sortable/tests/index.html</url>
+        <!--
+        <url>stylesheet/tests/stylesheet.html</url>
+        -->
+        <url>substitute/tests/substitute.html</url>
+        <url>test/tests/index.html</url>
 
+        <!-- Not included in automated tests because it triggers intentional
+             failures which would be flagged as build failures.
+        <url>test-console/tests/test-console.html</url>
+        -->
+        <url>text/tests/functional/text-accentfold.html</url>
+        <url>text/tests/functional/text-wordbreak.html</url>
+        <!-- Failing in CI
+        <url>transition/tests/transition.html</url>
+        -->
+        <url>widget/tests/widget.html</url>
+        <url>widget-anim/tests/widget-anim.html</url>
+        <url>widget-autohide/tests/widget-autohide.html</url>
+        <url>widget-buttons/tests/widget-buttons.html</url>
+        <url>widget-modality/tests/widget-modality.html</url>
+        <url>widget-parent/tests/parent-child.html</url>
+        <url>widget-position/tests/widget-position.html</url>
+        <url>widget-position-align/tests/widget-position-align.html</url>
+        <url>widget-position-constrain/tests/widget-position-constrain.html</url>
+        <url>widget-stack/tests/widget-stack.html</url>
+        <url>widget-stdmod/tests/widget-stdmod.html</url>
+        <url>yql/tests/index.html</url>
         <url>yui/tests/array.html</url>
         <url>yui/tests/object.html</url>
         <url>yui/tests/lang.html</url>
+        <url>yui/tests/useragent.html</url>
         <url>yui/tests/index.html</url>
         <url>yui/tests/index-full.html</url>
         <url>yui/tests/index-loader.html</url>
-
         <url>yui-throttle/tests/index.html</url>
-
-        <url>scrollview/tests/scrollview-list-unit-test.html</url>
-        <url>panel/tests/unit-tests.html</url>
-        <url>widget-buttons/tests/widget-buttons.html</url>
-        <url>widget-position-align/tests/widget-position-align.html</url>
-        <!--
-        <url>test/tests/testformat.html</url>
-        <url>stylesheet/tests/stylesheet.html</url>
-        -->
     </tests>
 </yuitest>

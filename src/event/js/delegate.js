@@ -1,6 +1,6 @@
 /**
  * Adds event delegation support to the library.
- * 
+ *
  * @module event
  * @submodule event-delegate
  */
@@ -46,15 +46,16 @@ var toArray          = Y.Array,
  * @param args* 0..n additional arguments to pass on to the callback function.
  *              These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
- * @for YUI
+ * @static
+ * @for Event
  */
 function delegate(type, fn, el, filter) {
     var args     = toArray(arguments, 0, true),
         query    = isString(el) ? el : null,
         typeBits, synth, container, categories, cat, i, len, handles, handle;
 
-    // Support Y.delegate({ click: fnA, key: fnB }, context, filter, ...);
-    // and Y.delegate(['click', 'key'], fn, context, filter, ...);
+    // Support Y.delegate({ click: fnA, key: fnB }, el, filter, ...);
+    // and Y.delegate(['click', 'key'], fn, el, filter, ...);
     if (isObject(type)) {
         handles = [];
 
@@ -64,8 +65,8 @@ function delegate(type, fn, el, filter) {
                 handles.push(Y.delegate.apply(Y, args));
             }
         } else {
-            // Y.delegate({'click', fn}, context, filter) =>
-            // Y.delegate('click', fn, context, filter)
+            // Y.delegate({'click', fn}, el, filter) =>
+            // Y.delegate('click', fn, el, filter)
             args.unshift(null); // one arg becomes two; need to make space
 
             for (i in type) {
@@ -164,7 +165,7 @@ delegate.notifySub = function (thisObj, args, ce) {
         e = args[0] = new Y.DOMEventFacade(args[0], ce.el, ce);
 
         e.container = Y.one(ce.el);
-    
+
         for (i = 0, len = currentTarget.length; i < len && !e.stopped; ++i) {
             e.currentTarget = Y.one(currentTarget[i]);
 

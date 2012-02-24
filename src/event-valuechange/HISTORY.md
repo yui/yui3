@@ -1,55 +1,71 @@
 ValueChange Change History
 ==========================
 
+3.5.0
+-----
+
+* Changed the name of the synthetic event to "valuechange" (all lowercase) for
+  greater consistency with DOM event names. The older "valueChange" name will
+  continue to be supported indefinitely, but for consistency I recommend
+  switching to "valuechange".
+
+* Added support for delegated valuechange events. You can now use `delegate()`
+  to attach a valuechange event to a container node and be notified of changes
+  to any descendant that matches the specified delegation filter.
+
+* The valuechange event facade now includes `currentTarget` and `target`
+  properties like a good little synthetic event.
+
+
 3.4.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.4.0
 -----
 
-  * No changes.
+* No changes.
 
 
 3.3.0
 -----
 
-  * Focus is now used (in addition to keyboard and mouse events) as a sign that
-    we should begin polling for value changes. [Ticket #2529294]
+* Focus is now used (in addition to keyboard and mouse events) as a sign that
+  we should begin polling for value changes. [Ticket #2529294]
 
-  * If the value changes while an element is not focused, that change will no
-    longer be reported the next time polling is started (since it couldn't have
-    been user input).
+* If the value changes while an element is not focused, that change will no
+  longer be reported the next time polling is started (since it couldn't have
+  been user input).
 
 
 3.2.0
 -----
 
-  * Module renamed to `event-valuechange` and refactored to be a true synthetic
-    event.
+* Module renamed to `event-valuechange` and refactored to be a true synthetic
+  event.
 
-  * The `value` and `oldValue` event facade properties were renamed to `newVal`
-    and `prevVal` respectively, for consistency with other change event facades
-    throughout the library.
+* The `value` and `oldValue` event facade properties were renamed to `newVal`
+  and `prevVal` respectively, for consistency with other change event facades
+  throughout the library.
 
-  * Performance improvements.
+* Performance improvements.
 
 
 3.1.2
 -----
 
-  * No changes.
+* No changes.
 
 
 3.1.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.1.0
 -----
 
-  * Initial release as `value-change`.
+* Initial release as `value-change`.

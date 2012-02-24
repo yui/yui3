@@ -28,13 +28,16 @@ var win = Y.config.win,
     @event navigate
     @param {String} url The URL that the router will dispatch to its route
       handlers in order to fulfill the enhanced navigation "request".
+    @param {Boolean} [force=false] Whether the enhanced navigation should occur
+      even in browsers without HTML5 history.
+    @param {String} [hash] The hash-fragment (including "#") of the `url`. This
+      will be present when the `url` differs from the current URL only by its
+      hash and `navigateOnHash` has ben set to `true`.
     @param {Event} [originEvent] The event that caused the navigation. Usually
       this would be a click event from a "pjax" anchor element.
     @param {Boolean} [replace] Whether or not the current history entry will be
       replaced, or a new entry will be created. Will default to `true` if the
       specified `url` is the same as the current URL.
-    @param {Boolean} [force=false] Whether the enhanced navigation should occur
-      even in browsers without HTML5 history.
     **/
     EVT_NAVIGATE = 'navigate';
 
@@ -85,7 +88,7 @@ PjaxBase.prototype = {
     @type RegExp
     @protected
     **/
-    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(.*)$/,
+    _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function () {
@@ -190,6 +193,7 @@ PjaxBase.prototype = {
           to `true` if the specified `url` is the same as the current URL.
         @param {Boolean} [options.force=false] Whether the enhanced navigation
           should occur even in browsers without HTML5 history.
+    @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
     @protected
     **/
     _navigate: function (url, options) {
@@ -201,9 +205,28 @@ PjaxBase.prototype = {
         options || (options = {});
         options.url = url;
 
+        var currentURL = this._getURL(),
+            hash, hashlessURL;
+
+        // Captures the `url`'s hash and returns a URL without that hash.
+        hashlessURL = url.replace(/(#.*)$/, function (u, h, i) {
+            hash = h;
+            return u.substring(i);
+        });
+
+        if (hash && hashlessURL === currentURL.replace(/#.*$/, '')) {
+            // When the specified `url` and current URL only differ by the hash,
+            // the browser should handle this in-page navigation normally.
+            if (!this.get('navigateOnHash')) {
+                return false;
+            }
+
+            options.hash = hash;
+        }
+
         // When navigating to the same URL as the current URL, behave like a
         // browser and replace the history entry instead of creating a new one.
-        Lang.isValue(options.replace) || (options.replace = url === this._getURL());
+        Lang.isValue(options.replace) || (options.replace = url === currentURL);
 
         // The `navigate` event will only fire and therefore enhance the
         // navigation to the new URL in HTML5 history enabled browsers or when
@@ -236,7 +259,7 @@ PjaxBase.prototype = {
             slash = '/',
             i, len, normalized, segments, segment, stack;
 
-        if (!path) {
+        if (!path || path === slash) {
             return slash;
         }
 
@@ -283,11 +306,7 @@ PjaxBase.prototype = {
 
     /**
     Returns the normalized result of resolving the `path` against the current
-    path.
-
-    A host-relative `path` (one that begins with '/') is assumed to be resolved
-    and is returned as is. Falsy values for `path` will return just the current
-    path.
+    path. Falsy values for `path` will return just the current path.
 
     @method _resolvePath
     @param {String} path URL path to resolve.
@@ -302,7 +321,7 @@ PjaxBase.prototype = {
         // Path is host-relative and assumed to be resolved and normalized,
         // meaning silly paths like: '/foo/../bar/' will be returned as-is.
         if (path.charAt(0) === '/') {
-            return path;
+            return this._normalizePath(path);
         }
 
         return this._normalizePath(this._getRoot() + path);
@@ -323,8 +342,8 @@ PjaxBase.prototype = {
     @protected
     **/
     _resolveURL: function (url) {
-        var parts = url && url.match(this._regexURL),
-            origin, path, suffix;
+        var parts    = url && url.match(this._regexURL),
+            origin, path, query, hash, resolved;
 
         if (!parts) {
             return this._getURL();
@@ -332,7 +351,8 @@ PjaxBase.prototype = {
 
         origin = parts[1];
         path   = parts[2];
-        suffix = parts[3];
+        query  = parts[3];
+        hash   = parts[4];
 
         // Absolute and scheme-relative URLs are assumed to be fully-resolved.
         if (origin) {
@@ -341,10 +361,20 @@ PjaxBase.prototype = {
                 origin = Y.getLocation().protocol + origin;
             }
 
-            return origin + (path || '/') + (suffix + '');
+            return origin + (path || '/') + (query || '') + (hash || '');
         }
 
-        return this._getOrigin() + this._resolvePath(path) + (suffix || '');
+        // Will default to the current origin and current path.
+        resolved = this._getOrigin() + this._resolvePath(path);
+
+        // A path or query for the specified URL trumps the current URL's.
+        if (path || query) {
+            return resolved + (query || '') + (hash || '');
+        }
+
+        query = this._getQuery();
+
+        return resolved + (query ? ('?' + query) : '') + (hash || '');
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -424,6 +454,22 @@ PjaxBase.ATTRS = {
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
         writeOnce: 'initOnly'
+    },
+
+    /**
+    Whether navigating to a hash-fragment identifier on the current page should
+    be enhanced and cause the `navigate` event to fire.
+
+    By default pjax allows the browser to perform its default action when a user
+    is navigating around a page by clicking <a href="#in-page">in-page links</a>
+    and does not attempt to interfere or enhance in-page navigation.
+
+    @attribute navigateOnHash
+    @type Boolean
+    @default false
+    **/
+    navigateOnHash: {
+        value: false
     },
 
     /**

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- YUI 3 Uploader Build File -->
+
+<project name="File" default="local">
+    <description>Uploader Build File</description>
+
+    <target name="all">
+    	<ant antfile="file.xml" target="all" />
+    </target>
+
+</project>

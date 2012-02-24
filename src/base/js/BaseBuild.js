@@ -11,34 +11,27 @@
         L = Y.Lang,
         INITIALIZER = "initializer",
         DESTRUCTOR = "destructor",
-        build;
+        build,
+        arrayAggregator = function (prop, r, s) {
+            if (s[prop]) {
+                r[prop] = (r[prop] || []).concat(s[prop]);
+            }    
+        };
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
 
         var build = Base._build,
 
             builtClass = build._ctor(main, cfg),
-            buildCfg = build._cfg(main, cfg),
+            buildCfg = build._cfg(main, cfg, extensions),
 
             _mixCust = build._mixCust,
 
-            aggregates = buildCfg.aggregates,
-            custom = buildCfg.custom,
-
             dynamic = builtClass._yuibuild.dynamic,
 
-            i, l, val, extClass, extProto,
+            i, l, extClass, extProto,
             initializer,
             destructor;
-
-        if (dynamic && aggregates) {
-            for (i = 0, l = aggregates.length; i < l; ++i) {
-                val = aggregates[i];
-                if (main.hasOwnProperty(val)) {
-                    builtClass[val] = L.isArray(main[val]) ? [] : {};
-                }
-            }
-        }
 
         // Augment/Aggregate
         for (i = 0, l = extensions.length; i < l; i++) {
@@ -54,9 +47,9 @@
             // Prototype, old non-displacing augment
             Y.mix(builtClass, extClass, true, null, 1);
 
-             // Custom Statics
-            _mixCust(builtClass, extClass, aggregates, custom);
-            
+            // Custom Statics
+            _mixCust(builtClass, extClass, buildCfg);
+
             if (initializer) { 
                 extProto[INITIALIZER] = initializer;
             }
@@ -73,8 +66,8 @@
         }
 
         if (sx) {
-            Y.mix(builtClass, build._clean(sx, aggregates, custom), true);
-            _mixCust(builtClass, sx, aggregates, custom);
+            Y.mix(builtClass, build._clean(sx, buildCfg), true);
+            _mixCust(builtClass, sx, buildCfg);
         }
 
         builtClass.prototype.hasImpl = build._impl;
@@ -91,19 +84,43 @@
 
     Y.mix(build, {
 
-        _mixCust: function(r, s, aggregates, custom) {
+        _mixCust: function(r, s, cfg) {
+            
+            var aggregates, 
+                custom, 
+                statics,
+                aggr,
+                l,
+                i;
+                
+            if (cfg) {
+                aggregates = cfg.aggregates;
+                custom = cfg.custom;
+                statics = cfg.statics;
+            }
+
+            if (statics) {
+                Y.mix(r, s, true, statics);
+            }
 
             if (aggregates) {
-                Y.aggregate(r, s, true, aggregates);
+                for (i = 0, l = aggregates.length; i < l; i++) {
+                    aggr = aggregates[i];
+                    if (!r.hasOwnProperty(aggr) && s.hasOwnProperty(aggr)) {
+                        r[aggr] = L.isArray(s[aggr]) ? [] : {};
+                    }
+                    Y.aggregate(r, s, true, [aggr]);
+                }
             }
 
             if (custom) {
-                for (var j in custom) {
-                    if (custom.hasOwnProperty(j)) {
-                        custom[j](j, r, s);
+                for (i in custom) {
+                    if (custom.hasOwnProperty(i)) {
+                        custom[i](i, r, s);
                     }
                 }
             }
+            
         },
 
         _tmpl: function(main) {
@@ -151,16 +168,21 @@
             return builtClass;
         },
 
-        _cfg : function(main, cfg) {
+        _cfg : function(main, cfg, exts) {
             var aggr = [], 
                 cust = {},
+                statics = [],
                 buildCfg,
                 cfgAggr = (cfg && cfg.aggregates),
                 cfgCustBuild = (cfg && cfg.custom),
-                c = main;
+                cfgStatics = (cfg && cfg.statics),
+                c = main,
+                i, 
+                l;
 
+            // Prototype Chain
             while (c && c.prototype) {
-                buildCfg = c._buildCfg; 
+                buildCfg = c._buildCfg;
                 if (buildCfg) {
                     if (buildCfg.aggregates) {
                         aggr = aggr.concat(buildCfg.aggregates);
@@ -168,25 +190,55 @@
                     if (buildCfg.custom) {
                         Y.mix(cust, buildCfg.custom, true);
                     }
+                    if (buildCfg.statics) {
+                        statics = statics.concat(buildCfg.statics);
+                    }
                 }
                 c = c.superclass ? c.superclass.constructor : null;
+            }
+
+            // Exts
+            if (exts) {
+                for (i = 0, l = exts.length; i < l; i++) {
+                    c = exts[i];
+                    buildCfg = c._buildCfg;
+                    if (buildCfg) {
+                        if (buildCfg.aggregates) {
+                            aggr = aggr.concat(buildCfg.aggregates);
+                        }
+                        if (buildCfg.custom) {
+                            Y.mix(cust, buildCfg.custom, true);
+                        }
+                        if (buildCfg.statics) {
+                            statics = statics.concat(buildCfg.statics);
+                        }
+                    }                    
+                }
             }
 
             if (cfgAggr) {
                 aggr = aggr.concat(cfgAggr);
             }
+
             if (cfgCustBuild) {
                 Y.mix(cust, cfg.cfgBuild, true);
             }
 
+            if (cfgStatics) {
+                statics = statics.concat(cfgStatics);
+            }
+
             return {
                 aggregates: aggr,
-                custom: cust
+                custom: cust,
+                statics: statics
             };
         },
 
-        _clean : function(sx, aggregates, custom) {
-            var prop, i, l, sxclone = Y.merge(sx);
+        _clean : function(sx, cfg) {
+            var prop, i, l, sxclone = Y.merge(sx),
+                aggregates = cfg.aggregates,
+                custom = cfg.custom;
 
             for (prop in custom) {
                 if (sxclone.hasOwnProperty(prop)) {
@@ -247,13 +299,60 @@
     };
 
     /**
-     * <p>Creates a new class (constructor function) which extends the base class passed in as the second argument, 
-     * and mixes in the array of extensions provided.</p>
-     * <p>Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).</p>
-     * <p>Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).</p>
-     * <p>
+     * Creates a new class (constructor function) which extends the base class passed in as the second argument, 
+     * and mixes in the array of extensions provided.
      * 
-     * </p>
+     * Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).
+     * 
+     * Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).
+     * 
+     * **NOTE FOR COMPONENT DEVELOPERS**: Both the `base` class, and `extensions` can define static a `_buildCfg` 
+     * property, which acts as class creation meta-data, and drives how special static properties from the base 
+     * class, or extensions should be copied, aggregated or (custom) mixed into the newly created class.
+     * 
+     * The `_buildCfg` property is a hash with 3 supported properties: `statics`, `aggregates` and `custom`, e.g:
+     * 
+     *     // If the Base/Main class is the thing introducing the property:
+     * 
+     *     MyBaseClass._buildCfg = {
+     *     
+     *        // Static properties/methods to copy (Alias) to the built class.
+     *        statics: ["CopyThisMethod", "CopyThisProperty"],
+     * 
+     *        // Static props to aggregate onto the built class.
+     *        aggregates: ["AggregateThisProperty"],
+     * 
+     *        // Static properties which need custom handling (e.g. deep merge etc.)
+     *        custom: {
+     *           "CustomProperty" : function(property, Receiver, Supplier) {
+     *              ...
+     *              var triggers = Receiver.CustomProperty.triggers; 
+                    Receiver.CustomProperty.triggers = triggers.concat(Supplier.CustomProperty.triggers);
+     *              ...
+     *           }
+     *        }
+     *     };
+     * 
+     *     MyBaseClass.CopyThisMethod = function() {...}; 
+     *     MyBaseClass.CopyThisProperty = "foo";
+     *     MyBaseClass.AggregateThisProperty = {...};
+     *     MyBaseClass.CustomProperty = {
+     *        triggers: [...]
+     *     }
+     *
+     *     // Or, if the Extension is the thing introducing the property:
+     * 
+     *     MyExtension._buildCfg = {
+     *         statics : ...
+     *         aggregates : ...
+     *         custom : ...  
+     *     }    
+     * 
+     * This way, when users pass your base or extension class to `Y.Base.create` or `Y.Base.mix`, they don't need to
+     * know which properties need special handling. `Y.Base` has a buildCfg which defines `ATTRS` for custom mix handling
+     * (to protect the static config objects), and `Y.Widget` has a buildCfg which specifies `HTML_PARSER` for 
+     * straight up aggregation.
+     *
      * @method create
      * @static
      * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
@@ -311,7 +410,8 @@
                         }
                     }
                 }
-            }
+            },
+            _NON_ATTRS_CFG : arrayAggregator
         },
         aggregates : ["_PLUG", "_UNPLUG"]
     };

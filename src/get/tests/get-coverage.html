@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI Get Tests</title>
+    <link rel="stylesheet" href="../../../build/widget-base/assets/skins/sam/widget-base.css" charset="utf-8">
+    <link rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css" charset="utf-8">
+    <link rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css" charset="utf-8">
+    <link rel="stylesheet" href="../../../build/test-console/assets/skins/sam/test-console.css" charset="utf-8">
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<p>You need to run 'node delay.js' if you pass delay=true in the querystring. Otherwise tests will fail.</p>
+
+<!-- <script src="../../../build/yui/yui.js" charset="utf-8"></script> -->
+
+<script src="../../../build/yui-core/yui-core.js" charset="utf-8"></script>
+<script src="../../../build/yui-log/yui-log.js" charset="utf-8"></script>
+<script src="../../../build/yui-later/yui-later.js" charset="utf-8"></script>
+
+<script src="../../../build/get/get-coverage.js" charset="utf-8"></script>
+
+<script src="../../../build/loader/loader.js" charset="utf-8"></script>
+<script src="../../../build/features/features.js" charset="utf-8"></script>
+
+<!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
+<script src="../../../build/oop/oop.js" charset="utf-8"></script>
+<script src="../../../build/event-custom-base/event-custom-base.js" charset="utf-8"></script>
+<script src="../../../build/event-custom-complex/event-custom-complex.js" charset="utf-8"></script>
+<script src="../../../build/intl-base/intl-base.js" charset="utf-8"></script>
+<script src="../../../build/intl/intl.js" charset="utf-8"></script>
+<script src="../../../build/attribute-core/attribute-core.js" charset="utf-8"></script>
+<script src="../../../build/attribute-events/attribute-events.js" charset="utf-8"></script>
+<script src="../../../build/attribute-extras/attribute-extras.js" charset="utf-8"></script>
+<script src="../../../build/attribute-base/attribute-base.js" charset="utf-8"></script>
+<script src="../../../build/attribute-complex/attribute-complex.js" charset="utf-8"></script>
+<script src="../../../build/base-core/base-core.js" charset="utf-8"></script>
+<script src="../../../build/base-base/base-base.js" charset="utf-8"></script>
+<script src="../../../build/plugin/plugin.js" charset="utf-8"></script>
+<script src="../../../build/console/lang/console.js" charset="utf-8"></script>
+<script src="../../../build/dom-core/dom-core.js" charset="utf-8"></script>
+<script src="../../../build/dom-attrs/dom-attrs.js" charset="utf-8"></script>
+<script src="../../../build/dom-create/dom-create.js" charset="utf-8"></script>
+<script src="../../../build/dom-class/dom-class.js" charset="utf-8"></script>
+<script src="../../../build/dom-size/dom-size.js" charset="utf-8"></script>
+<script src="../../../build/dom-base/dom-base.js" charset="utf-8"></script>
+<script src="../../../build/selector-native/selector-native.js" charset="utf-8"></script>
+<script src="../../../build/selector-css2/selector-css2.js" charset="utf-8"></script>
+<script src="../../../build/selector/selector.js" charset="utf-8"></script>
+<script src="../../../build/dom-style/dom-style.js" charset="utf-8"></script>
+<script src="../../../build/dom-style-ie/dom-style-ie.js" charset="utf-8"></script>
+<script src="../../../build/dom-screen/dom-screen.js" charset="utf-8"></script>
+<script src="../../../build/pluginhost-base/pluginhost-base.js" charset="utf-8"></script>
+<script src="../../../build/pluginhost-config/pluginhost-config.js" charset="utf-8"></script>
+<script src="../../../build/node-core/node-core.js" charset="utf-8"></script>
+<script src="../../../build/node-base/node-base.js" charset="utf-8"></script>
+<script src="../../../build/node-style/node-style.js" charset="utf-8"></script>
+<script src="../../../build/node-event-delegate/node-event-delegate.js" charset="utf-8"></script>
+<script src="../../../build/event-base/event-base.js" charset="utf-8"></script>
+<script src="../../../build/event-base-ie/event-base-ie.js" charset="utf-8"></script>
+<script src="../../../build/event-synthetic/event-synthetic.js" charset="utf-8"></script>
+<script src="../../../build/event-focus/event-focus.js" charset="utf-8"></script>
+<script src="../../../build/base-pluginhost/base-pluginhost.js" charset="utf-8"></script>
+<script src="../../../build/classnamemanager/classnamemanager.js" charset="utf-8"></script>
+<script src="../../../build/event-delegate/event-delegate.js" charset="utf-8"></script>
+<script src="../../../build/widget-base/widget-base.js" charset="utf-8"></script>
+<script src="../../../build/widget-uievents/widget-uievents.js" charset="utf-8"></script>
+<script src="../../../build/widget-htmlparser/widget-htmlparser.js" charset="utf-8"></script>
+<script src="../../../build/widget-skin/widget-skin.js" charset="utf-8"></script>
+<script src="../../../build/substitute/substitute.js" charset="utf-8"></script>
+<script src="../../../build/console/console.js" charset="utf-8"></script>
+<script src="../../../build/console-filters/console-filters.js" charset="utf-8"></script>
+<script src="../../../build/test-console/test-console.js" charset="utf-8"></script>
+<script src="../../../build/event-simulate/event-simulate.js" charset="utf-8"></script>
+<script src="../../../build/json-stringify/json-stringify.js" charset="utf-8"></script>
+<script src="../../../build/test/test.js" charset="utf-8"></script>
+
+<script src="./get-test.js" charset="utf-8"></script>
+
+<script>
+var YUI_config = {
+    gconfig: true,
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+};
+
+var Y = YUI({
+    allowRollup: false,
+    filter: YUI_config.gfilter,
+    modules: {
+        'get-test': {
+            fullpath: './get-test.js',
+            requires: ['test', 'node']
+        }
+    }
+}).use('*', function(Y) {
+    if (/[?&]delay=true/.test(window.location.search)) {
+        // Hit the default 'node ./delay.js port'
+        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.hostname + ":" + "8014/");
+    }
+
+    Y.GetTests.add(Y.GetTests.BasicJS);
+    Y.GetTests.add(Y.GetTests.BasicCSS);
+    Y.GetTests.add(Y.GetTests.GetMethods);
+    Y.GetTests.add(Y.GetTests.TransactionBehavior);
+    Y.GetTests.add(Y.GetTests.TransactionMethods);
+    Y.GetTests.add(Y.GetTests.TransactionProperties);
+    Y.GetTests.add(Y.GetTests.Options);
+    Y.GetTests.add(Y.GetTests.Functional);
+
+    new Y.Test.Console().render('#log');
+
+    Y.Test.Runner.add(Y.GetTests);
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

@@ -1,133 +1,242 @@
+<style type="text/css">
+    .yui3-datatable table {
+        width: auto;
+    }
+
+    .yui3-datatable td, .yui3-datatable th {
+        border: 0 none;
+    }
+</style>
+
 <div class="intro component">
     <p>
         The DataTable widget is responsible for rendering columnar data into a
         highly customizable and fully accessible HTML table.  The core
         functionality of DataTable is to visualize structured data as a table.
-        A variety of Plugins can then be used to add features to the table such
-        as sorting and scrolling.
+        A variety of class extensions can then be used to add features to the
+        table such as sorting and scrolling.
     </p>
 </div>
 				
 {{>getting-started}}
-				
-<h2 id="using">Using DataTables</h2>
 
-<h3 id="basics">DataTable basics</h3>
+<div class="callout">
+    <h2 id="migration-intro">Upgrading from version 3.4.1 or older?</h2>
+
+    <p>
+        <strong>NOTE: As of version 3.5.0, DataTable and supporting module APIs
+        have been changed in backward incompatible ways.</strong>
+    </p>
+
+    <p>
+        If you are currently using DataTable version 3.4.1 or prior, please
+        read the <a href="migration.html">3.5.0+ Migration Guide</a> for tips
+        to avoid unpleasant surprises when you upgrade.
+    </p>
+</div>
+
+<h2 id="using">DataTable Basics</h2>
 
 <p>
     A basic DataTable is comprised of columns and rows. Define the columns you
-    want to display in your DataTable with the <code>columnset</code>
-    attribute. Rows are created for you based on the data you define using the
-    <code>recordset</code> attribute. Under the hood, the DataTable class uses
-    a Columnset instance and a Recordset instance to manage column and row data
-    properties.
+    want to display in your DataTable with the `columns` attribute. Rows are
+    created for you based on the data you provide to the `data` attribute.
+    Under the hood, the DataTable class uses a ModelList instance to manage the
+    row data properties.
 </p>
-                
-<h3 id="columns">Working with columns</h3>
 
-<p>
-    A <code>columnset</code> can be defined with a simple array of
-    <code>keys</code>. As long as these keys exist in your data, DataTable will
-    display these columns of data in the table. Note that your data may contain
-    other columns that are not displayed if they are not defined in the
-    <code>columnset</code> array. A Columnset will be created containing a
-    Column instance for each item in your array, with the <code>key</code>
-    values you provided.
-</p>
-                
 ```
-// Creates a Columnset with 3 Columns. "cost" is not rendered.
-var cols = ["id","name","price"];
-
-// Columns must match data parameter names
+// Columns must match data object property names
 var data = [
-    {id:"ga-3475", name:"gadget", price:"$6.99", cost:"$5.99"},
-    {id:"sp-9980", name:"sprocket", price:"$3.75", cost:"$3.25"},
-    {id:"wi-0650", name:"widget", price:"$4.25", cost:"$3.75"}
+    { id: "ga-3475", name: "gadget",   price: "$6.99", cost: "$5.99" },
+    { id: "sp-9980", name: "sprocket", price: "$3.75", cost: "$3.25" },
+    { id: "wi-0650", name: "widget",   price: "$4.25", cost: "$3.75" }
 ];
 
-// Creates a DataTable with 3 columns and 3 rows
-var table = new Y.DataTable.Base({
-    columnset: cols,
-    recordset: data
-}).render("#example");
+var table = new Y.DataTable({
+    columns: ["id", "name", "price"],
+    data: data,
+
+    // Optionally configure your table with a caption
+    caption: "My first DataTable!",
+
+    // and/or a summary (table attribute)
+    summary: "Example DataTable showing basic instantiation configuration"
+});
+
+table.render("#example1");
 ```
 
+<p>This code produces this table:</p>
+
+<div id="example1" class="yui3-skin-sam"></div>
+
+<script>
+YUI().use('datatable-base', function (Y) {
+    // Columns must match data object property names
+    var data = [
+        { id: "ga-3475", name: "gadget",   price: "$6.99", cost: "$5.99" },
+        { id: "sp-9980", name: "sprocket", price: "$3.75", cost: "$3.25" },
+        { id: "wi-0650", name: "widget",   price: "$4.25", cost: "$3.75" }
+    ];
+
+    var table = new Y.DataTable({
+        columns: ["id", "name", "price"],
+        data: data,
+        caption: "My first DataTable!",
+        summary: "Example DataTable showing basic instantiation configuration"
+    });
+
+    table.render("#example1");
+});
+</script>
+
+<h2 id="columns">Working with columns</h2>
+
 <p>
-    For greater flexibility, the <code>columnset</code> array accepts
-    configuration objects as well as simple column name strings.  When
-    identifying a column with a configuration object, use the <code>key</code>
-    property to reference the column name string.  Below are a few other
-    available column configurations.
+    The `columns` attribute takes an array of field names that correspond to
+    property names in the `data` objects.  These field names are called "keys".
+    As long as these keys exist in your data, DataTable will display these
+    columns in the table.  By default, the key is also used as the label of the
+    column header.
+</p>
+
+<h3 id="column-configs">Column Configurations</h3>
+
+<p>
+    For greater flexibility, columns can also be identified with configuration
+    objects.  When identifying a column with a configuration object, use the
+    `key` property to reference the associated data field (the string you would
+    have used to identify the column if you didn't need more configuration).
+    Otherwise, you can include any number of additional configuration
+    properties to customize how your data renders and behaves, depending on
+    which table extensions or plugins you have included.
 </p>
 
 <p>
-    Use the <code>label</code> attribute to customize the rendered column
-    header:
+    Some column configurations affect the table headers and others affect the
+    data cells.  The full list of configurations is listed in <a
+    href="#column-config">Appendix A</a> below.
 </p>
 
 ```
-// The label is the text that will be rendered in the table head
-var cols = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Name" },
-    { key: "price", label: "Price" }
-];
-```
-
-<p>
-    Use the `emptyCellValue` attribute to provide custom cell content when
-    there is no data for that cell in the `Recordset` or a `formatter` returns
-    `undefined`.  The default `emptyCellValue` is the empty string `""`.
-</p>
-
-```
-// The label is the text that will be rendered in the table head
-var cols = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Name" },
-    { key: "price", label: "Price", emptyCellValue: "<em>FREE!!!</em>" }
-];
-```
-
-<p>
-    Use the <code>abbr</code> attribute to set the screen-reader friendly
-    "abbr" on each TH element:
-</p>
-
-```
-// The attr attribute enhances the screen-reader experience
 var cols = [
     {
+        // The key relates this column to a data field
         key: "mfr-parts-database-id",
+
+        // The label is the text that will be rendered in the table head
         label: "Mfr Part ID",
+
+        // The abbr sets the <th>s abbr attribute
         abbr: "ID"
     },
     {
         key: "mfr-parts-database-name",
         label: "Mfr Part Name",
-        abbr: "Name"
+        abbr: "Name",
+
+        // Allows user clicks on the header to sort the table rows by the
+        // values in this column.  Requires the `datatable-sort` module.
+        sortable: true
     },
     {
         key: "mfr-parts-database-price",
         label: "Wholesale Price",
-        abbr: "Price"
+        abbr: "Price",
+
+        // The emptyCellValue provides default content for data cells if a data
+        // row has no value for this field
+        emptyCellValue: '<em>(not set)</em>',
+
+        // The allowHTML configuration permits markup in data values to pass
+        // directly into the data cell's innerHTML.
+        allowHTML: true,
+
+        sortable: true
     }
 ];
+
+var data = ...
+
+var table = new Y.DataTable({
+    columns: cols,
+    data   : data
+});
+
+table.render('#example2');
 ```
 
+<p>This code produces this table:</p>
+
+<div id="example2" class="yui3-skin-sam"></div>
+
+<script>
+YUI().use('datatable-sort', function (Y) {
+    var cols = [
+        {
+            key: "mfr-parts-database-id",
+            label: "Mfr Part ID",
+            abbr: "ID"
+        },
+        {
+            key: "mfr-parts-database-name",
+            label: "Mfr Part Name",
+            abbr: "Name",
+            sortable: true
+        },
+        {
+            key: "mfr-parts-database-price",
+            label: "Wholesale Price",
+            abbr: "Price",
+            emptyCellValue: '<em>(not set)</em>',
+            allowHTML: true,
+            sortable: true
+        }
+    ];
+
+    var data = [
+        { "mfr-parts-database-id": "ga-3475", "mfr-parts-database-name": "gadget",   "mfr-parts-database-price": "$6.99", cost: "$5.99" },
+        { "mfr-parts-database-id": "sp-9980", "mfr-parts-database-name": "sprocket", "mfr-parts-database-price": "$3.75", cost: "$3.25" },
+        { "mfr-parts-database-id": "wi-0650", "mfr-parts-database-name": "widget",   "mfr-parts-database-price": "", cost: "$3.75" },
+        { "mfr-parts-database-id": "nu-0001", "mfr-parts-database-name": "nut",      "mfr-parts-database-price": "$0.25", cost: "$3.75" }
+    ];
+
+    var table = new Y.DataTable({
+        columns: cols,
+        data: data
+    });
+
+    table.render("#example2");
+});
+</script>
+
+<h3 id="nested">Multi-row Headers</h3>
+
 <p>
-    Use the <code>children</code> attribute to created nested column headers.
-    Parent columns are for display purposes only, not associated with any data,
-    and should not have a <code>key</code> attribute of their own.
+    Use the `children` column configuration to created nested column headers.
+    The `children` configuration takes an array of column configurations, just
+    like the `columns` attribute itself. The columns defined in the `children`
+    property will have their header cells rendered below the parent column's
+    header in the next row.  Sibling columns without `children` will span rows.
 </p>
 
+<p>
+    Because columns that have children don't relate directly to the data in the
+    table rows, they should not have a `key` configured.  Instead, include a
+    `label` to provide the header's content.
+</p>
 ```
 var nestedCols = [
     {
+        // Important: Parent columns do NOT get a key...
+
+        // but DO get a label
         label: "Train Schedule",
-        children: [ // Use children to define nested relationships
-            { key: "track" },
+
+        // Pass an array of column configurations (strings or objects) as children
+        children: [
+            "track",
             {
                 label: "Route",
                 children: [
@@ -145,146 +254,342 @@ var data = [
     { track: "3", from: "Paris", to: "Zurich" }
 ];
 
-var table = new Y.DataTable.Base({
-    columnset: nestedCols,
-    recordset: data,
-    summary: "Train schedule",
+var table = new Y.DataTable({
+    columns: nestedCols,
+    data   : data,
     caption: "Table with nested column headers"
-}).render("#nested");
+}).render("#example3");
 ```
 
-<h3 id="data">Working with row data</h3>
-				
+<p>This code produces this table:</p>
+
+<div id="example3" class="yui3-skin-sam"></div>
+
+<script>
+YUI().use('datatable-base', function (Y) {
+var nestedCols = [
+    {
+        label: "Train Schedule",
+        children: [
+            "track",
+            {
+                label: "Route",
+                children: [ { key: "from" }, { key: "to" } ]
+            }
+        ]
+    }
+];
+
+var data = [
+    { track: "1", from: "Paris", to: "Amsterdam" },
+    { track: "2", from: "Paris", to: "London" },
+    { track: "3", from: "Paris", to: "Zurich" }
+];
+
+var table = new Y.DataTable({
+    columns: nestedCols,
+    data   : data,
+    caption: "Table with nested column headers"
+}).render("#example3");
+});
+</script>
+
+<h3 id="formatters">Formatting Cell Data</h3>
+
 <p>
-    Pass an array of data to the <code>recordset</code> attribute, and
-    DataTable will create a <code>Recordset</code> of <code>Record</code>
-    instances to populate the table. Note that you should only define columns
-    for data you want to display -- all other data is not displayed.
+    It's highly recommended to keep the data in the underlying `data` ModelList
+    as pure data, free from presentational concerns.  For example, use real
+    numbers, not numeric strings, and store link urls and labels either in
+    separate data fields or in a single data field, but as separate properties
+    of a value object.  This allows the data to be used for calculations such
+    as sorting or averaging.
+</p>
+
+<p>
+    In short, it is the role of the `data` attribute to hold data.  It is the
+    role of the `columns` configuration to decide how to display it.
+</p>
+
+<p>
+    Out of the box, DataTable provides three primary ways to customize how your
+    data is formatted for display in the table cell, all defined in the column
+    configuration:
+</p>
+
+<ol>
+    <li>`formatter` strings,</li>
+    <li>`formatter` functions, and</li>
+    <li>`nodeFormatter` functions
+</ol>
+
+```
+var cols = [
+
+    // It's ok to mix simple strings and configuration objects
+    'id',
+    'name',
+
+    {
+        label: 'formatter',
+        children: [
+
+        // 1. formatter strings
+        // These are used as templates, and use the field data to replace the {value} placeholder
+        {
+            key: 'price',
+            label: 'string',
+
+            formatter: '${value}',
+
+            emptyCellValue: '(not set)'
+        },
+    
+        // 2. formatter functions
+        // These can provide alternate content, add cell or row classes, refer
+        // to other data fields, etc (more below)
+        {
+            key: 'price',
+            label: 'function',
+
+            formatter: function (o) {
+                if (o.value > 3) {
+                    o.className += ' yellow-background';
+                    o.value *= 0.75;
+                }
+
+                return o.value ? '$' + o.value.toFixed(2) : '(not set)';
+            }
+        },
+
+        // 3. nodeFormatter functions
+        // These have access to the cell Node as well as all other DOM Nodes in the <tbody>
+        // Caveats apply; see below.
+        {
+            key: 'price',
+            label: 'nodeFormatter',
+
+            nodeFormatter: function (o) {
+                var content;
+
+                if (o.value > 4) {
+                    // Add a class to the <tr>
+                    o.cell.ancestor().addClass('red-text');
+                    o.value *= 0.75;
+                }
+
+                content = o.value ? ('$' + o.value.toFixed(2)) : '(not set)';
+
+                o.cell.setContent(content);
+            }
+        }
+    }
+];
+```
+
+<p>This code produces this table:</p>
+
+<div id="example4" class="yui3-skin-sam">
+    <style scoped>
+        .yui3-datatable .yui3-datatable-data .yellow-background {
+            background-color: #ffe;
+        }
+        .red-text td {
+            color: #900;
+        }
+    </style>
+</div>
+
+<script>
+YUI().use('datatable-base', function (Y) {
+    var cols = [
+        'id',
+        'name',
+        { label: 'formatter', children: [
+            { key: 'price', label: 'string',
+                formatter: '${value}', emptyCellValue: '(not set)' },
+            { key: 'price', label: 'function',
+                formatter: function (o) {
+                    if (o.value > 3) {
+                        o.className += ' yellow-background';
+                        o.value *= 0.75;
+                    }
+
+                    return o.value ? '$' + o.value.toFixed(2) : '(not set)';
+                }
+            }]
+        },
+        {
+            key: 'price',
+            label: 'nodeFormatter',
+            nodeFormatter: function (o) {
+                var content;
+
+                if (o.value > 4) {
+                    // Add a class to the <tr>
+                    o.cell.ancestor().addClass('red-text');
+                    o.value *= 0.75;
+                }
+
+                content = o.value ? ('$' + o.value.toFixed(2)) : '(not set)';
+
+                o.cell.setContent(content);
+            }
+        }
+    ];
+
+    var data = [
+            { id: "ga-3475", name: "gadget",   price: 6.99 },
+            { id: "sp-9980", name: "sprocket", price: 3.75 },
+            { id: "wi-0650", name: "widget" },
+            { id: "nu-0001", name: "nut",      price: 0.25 }
+    ];
+
+    var table = new Y.DataTable({
+        columns: cols,
+        data   : data
+    }).render("#example4");
+});
+</script>
+
+<h4 id="formatter-function">Setting content with `formatter` functions</h4>
+
+<p>
+    Set the cell content with column `formatter`s by returning the desired
+    content string from the function.  Alternately, just update `o.value` with
+    the new value in the object passed as an argument to the `formatter`.  When
+    updating `o.value` <em>do not include a return statement</em>.
+</p>
+
+<p>
+    `formatters` are very powerful because not only do they have access to the
+    record's value for that column's field, but they also receive the rest of
+    the record's data, the record Model instance itself, and the column
+    configuration object.  This allows you to include any extra configurations
+    in your column configuration that might be useful to customizing how cells
+    in the column are rendered.
 </p>
 
 ```
-// Creates a Recordset with 3 records
-var data = [
-    { id: "ga-3475", name: "gadget", price: "$6.99", cost: "$5.99"},
-    { id: "sp-9980", name: "sprocket", price: "$3.75", cost: "$3.25"},
-    { id: "wi-0650", name: "widget", price: "$4.25", cost: "$3.75"}
-];
+function currency(o) {
+    return Y.DataType.number.format(o.value, {
+        prefix            : o.column.currencySymbol     || '$',
+        decimalPlaces     : o.column.decimalPlaces      || 2,
+        decimalSeparator  : o.column.decimalSeparator   || '.',
+        thousandsSeparator: o.column.thousandsSeparator || ','
+    });
+}
 
-// Creates a DataTable with 3 columns and 3 rows ("cost" is not displayed)
-var table = new Y.DataTable.Base({
-    columnset: [ "id", "name", "price" ],
-    recordset: data
-}).render("#example");
+var cols = [
+    { key: "price", formatter: currency, decimalPlaces: 3 },
+    ...
 ```
 
 <p>
-    Data can be stored in one format but be displayed in a different format.
-    For instance, prices can be stored as numbers but be displayed as "$2.99",
-    and birthdays can be stored as date objects but be displayed as
-    "12/9/2009". Simple formatting can be defined with a string template on the
-    column definition.
+    See <a href="#formatter-props">Appendix B</a> for a list of all properties
+    passed to `formatter` functions.
 </p>
 
-```
-var cols = [ "id", "name", { key: "price", formatter: "\${value}" } ];
-
-var data = [
-    { id: "ga-3475", name: "gadget", price: 6.99 },
-    { id: "sp-9980", name: "sprocket", price: 3.75 },
-    { id: "wi-0650", name: "widget", price: 4.25 }
-];
-
-var table = new Y.DataTable.Base({
-    columnset: cols,
-    recordset: data,
-    caption: "Data formatting with string template"
-}).render("#template");
-```
+<h4 id="nodeformatters">Setting content with `nodeFormatter` functions</h4>
 
 <p>
-    When a calculation is needed, define a custom function that generates
-    markup for the cell. The custom formatter function receives an object with
-    the following properties:
+    Unlike `formatters` which can effectively default to the normal rendering
+    logic by leave `o.value` unchanged, `nodeFormatters` must assign content to
+    the cell themselves.  The cell's initial classes will be set up, but that's
+    it.  Everything else is your responsibility.
 </p>
 
-<table>
-<thead>
-    <tr>
-        <th>Property</th>
-        <th>Value</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td><code>tbody</code></td>
-        <td>The <code>&lt;tbody&gt;</code> node containing the cell.</td>
-    </tr>
-    <tr>
-        <td><code>tr</code></td>
-        <td>The <code>&lt;tr&gt;</code> node containing the cell.</td>
-    </tr>
-    <tr>
-        <td><code>td</code></td>
-        <td>The cell <code>&lt;td&gt;</code> node.  As of 3.4.1, this property
-        is <strong>not provided by default</strong>, but can be generated by the
-        <a href="{{apiDocs}}/classes/DataTable.html#methods_createCell">createCell</a>
-        method.</td>
-    </tr>
-    <tr>
-        <td><code>value</code></td>
-        <td>Usually the value stored in the <code>Record</code> for the column.  This is the default content that will be displayed.</td>
-    </tr>
-    <tr>
-        <td><code>record</code></td>
-        <td>The <code>Record</code> instance containing the data for all cells in the row.</td>
-    </tr>
-    <tr>
-        <td><code>data</code></td>
-        <td>The raw data collection from the <code>Record</code> instance.</td>
-    </tr>
-    <tr>
-        <td><code>rowindex</code></td>
-        <td>The row number of the <code>&lt;tr&gt;</code> node containing the cell (zero based).</td>
-    </tr>
-    <tr>
-        <td><code>column</code></td>
-        <td>The <code>Column</code> instance for the cell's column.</td>
-    </tr>
-    <tr>
-        <td><code>classnames</code></td>
-        <td>The classname corresponding to the ID of the cell's column.</td>
-    </tr>
-    <tr>
-        <td><code>headers</code></td>
-        <td>The Array of IDs from all <code>&lt;th&gt;</code>s corresponding to the cell (mostly relevant to nested headers).</td>
-    </tr>
-</tbody>
-</table>
+<p>
+    <strong>`nodeFormatter`s should return `false`</strong>.
+    <a href="formatter-vs-nodeformatter">See below</a> for details.
+</p>
 
-```
-// The custom formatter function recieves an object
-var calculate = function (o) {
-    var cost  = o.record.getValue("cost"),
-        price = o.record.getValue("price");
+<p>
+    While there are <a href="#formatter-vs-nodeformatter">few scenarios that
+    require `nodeFormatter`s</a>, they do have the benefits of having the Node
+    API for constructing more complex DOM subtrees and the ability to access
+    all nodes in the `<tbody>`. This means they can reference, and even modify,
+    cells in other rows.
+</p>
 
-    return "$" + (price - cost).toFixed(2);
-};
+<p>
+    Like `formatters`, `nodeFormatters` are provided with the data field value,
+    the record data, the record Model instance, and the column configuration
+    object.
+</p>
+    
+<p>
+    See <a href="#nodeformatter-props">Appendix C</a> for a list of all
+    properties passed to `nodeFormatter` functions.
+</p>
 
-// Assign the custom formatter in the column definition
-var cols = [ "id", "name", { key: "profit", formatter: calculate } ];
+<h4 id="formatter-vs-nodeformatter">Why `formatter` and `nodeFormatter`?</h4>
 
-var data = [
-    { id: "ga-3475", name: "gadget", price: 6.99, cost: 4.99 },
-    { id: "sp-9980", name: "sprocket", price: 3.75, cost: 2.75 },
-    { id: "wi-0650", name: "widget", price: 4.25, cost: 3.25 }
-];
+<p>
+    For good rendering performance and memory management, DataTable creates
+    table content by assembling `innerHTML` strings from templates, with
+    `{placeholder}` tokens replaced with your data.  However, this means that
+    the Nodes don't exist yet when a column's `formatter`s are applied.
+</p>
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
-    recordset: data,
-    caption: "Data formatting with custom function"
-}).render("#function");
-```
+<p>
+    To minimize the need to create Nodes for each cell, the default rendering
+    logic supports the addition of cell classes as well as row classes via
+    `formatter` functions.  Event subscriptions should be
+    <a href="http://yuilibrary.com/yui/docs/event/delegation.html">delegated</a>
+    from the DataTable instance itself using the
+    <a href="http://yuilibrary.com/yui/docs/api/classes/DataTable.html#method_delegate">`delegate()` method</a>.
+</p>
+
+<p>
+    On the rare occasion that you <em>must</em> use Nodes to supply the cell
+    data, DataTable allows a second pass over the generated DOM elements once
+    the initial string concatenation has been completed and the full HTML
+    content created.
+</p>
+
+<p>
+    It is important to note that `nodeFormatters` will necessarily create a
+    Node instance for each cell in that column, which will increase the memory
+    footprint of your application.  If the Node instance wrappers around the
+    DOM elements don't need to be maintained beyond the life of the
+    `nodeFormatter`, return `false` to remove them from the internal object
+    cache.  <strong>This will not remove the rendered DOM, but it will remove
+    event subscriptions made on those Nodes</strong>.
+</p>
+
+<p>
+    In general, `nodeFormatter`s should only be used if absolutely necessary,
+    and should <em>always return `false`</em>.
+</p>
+
+<h4 id="formatters-vs-empty">Formatters vs. `emptyCellValue`</h4>
+
+<p>
+    The `emptyCellValue` configuration is useful to provide fallback content in
+    the case of missing or empty column data, but it interacts with each type of
+    formatter differently.
+</p>
+
+<p>
+    String formatters will only be applied if the field data for that cell is
+    not `undefined`.  This allows the `emptyCellValue` to populate the cell.
+</p>
+
+<p>
+    Function formatters are applied before the return value or (potentially
+    altered) `o.value` property is tested for `undefined` or the empty string.
+    In either of these cases, the `emptyCellValue` populates the cell.
+</p>
+
+<p>
+    Finally, the `emptyCellValue` configuration is ignored by columns configured with
+    `nodeFormatter`s.
+</p>
+
+
+<h2 id="data">Getting Row Data</h2>
+
+<!-- TODO: describe data as array, data as ModelList instance, assigned and dynamic recordTypes -->
 
 <p>
     Integrate with the <a href="../datasource/">DataSource</a> data abstraction
@@ -296,7 +601,7 @@ var table = new Y.DataTable.Base({
 var cols = [
     "Title",
     "Phone",
-    { key: "Rating.AverageRating", label: "Rating" }
+    "Rating"
 ];
 
 var myDataSource = new Y.DataSource.Get({
@@ -306,12 +611,19 @@ var myDataSource = new Y.DataSource.Get({
 myDataSource.plug(Y.Plugin.DataSourceJSONSchema, {
     schema: {
         resultListLocator: "query.results.Result",
-        resultFields: [ "Title", "Phone", "Rating.AverageRating" ]
+        resultFields: [
+            "Title",
+            "Phone",
+            {
+                key: "Rating",
+                locator: "Rating.AverageRating"
+            }
+        ]
     }
 }),
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
+var table = new Y.DataTable({
+    columns: cols,
     summary: "Pizza places near 98089"
 });
 
@@ -358,8 +670,8 @@ myDataSource
         max: 3
     });
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
+var table = new Y.DataTable({
+    columns: cols,
     summary: "Pizza places near 98089",
     caption: "Table with JSON data from YQL"
 });
@@ -397,8 +709,8 @@ myDataSource.plug(Y.Plugin.DataSourceXMLSchema, {
     }
 });
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
+var table = new Y.DataTable({
+    columns: cols,
     summary: "Chinese restaurants near 98089",
     caption: "Table with XML data from same-domain script"
 });
@@ -422,10 +734,13 @@ myDataSource.setInterval(5000, {
 <h3 id="sorting">Column sorting</h3>
 
 <p>
-    Column sorting functionality can be added with the DataTableSort plugin
-    (provided by the <code>datatable-sort</code> module, or in the
-    <code>datatable</code> rollup module). Indicate which columns are sortable
-    by setting <code>sortable: true</code> in your column definitions.
+    Column sorting functionality can be added with the `datatable-sort` module
+    (included in the `datatable` rollup module).
+    Enable sorting for all columns by setting `sortable` to true during
+    instantiation.  Alternately, pass `sortable` an array of column keys to
+    enable sortability of those specific columns, `false` to disable sorting,
+    or the string "auto" (the default) to determine which columns to make
+    sortable by reading the `sortable` property from the column configurations.
 </p>
 
 ```
@@ -441,12 +756,13 @@ var data = [
     { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
 ];
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
-    recordset: data,
+// Alternately, include sortable: true or sortable: ["Company", "Contact"]
+// in the DataTable configuration
+var table = new Y.DataTable({
+    columns: cols,
+    data: data,
     summary: "Contacts list",
-    caption: "Table with simple column sorting",
-    plugins: [ Y.Plugin.DataTableSort ]
+    caption: "Table with simple column sorting"
 }).render("#sort");
 ```
 
@@ -458,13 +774,15 @@ var table = new Y.DataTable.Base({
 </p>
 
 <p>
-    Scrolling functionality can be added with the DataTableScroll plugin
-    (provided by the <code>datatable-scroll</code> module or in the
-    <code>datatable</code> rollup module). Horizontal scrolling is enabled by
-    setting a <code>width</code> attribute value; fixed header vertical
-    scrolling is enabled by setting a <code>height</code> attribute value; and
-    xy-scrolling is enabled by setting both <code>width</code> and
-    <code>height</code> values.
+    Scrolling functionality can be added with the `datatable-scroll` module
+    (included in the `datatable` rollup module).  Scrolling is enabled by the
+    `scrollable` attribute, which accepts values "x", "y", "xy", `true` (same
+    as "xy"), or `false` (the default).
+</p>
+
+<p>
+    Note, vertical scrolling also requires the table's `height` attribute to be
+    set, and horizontal scrolling requires the `width` to be set.
 </p>
 
 ```
@@ -480,17 +798,12 @@ var data = [
     { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
 ];
 
-var table = new Y.DataTable.Base({
-    columnset: cols,
-    recordset: data,
-});
-
-table
-    .plug(Y.Plugin.DataTableScroll, {
-        width: "300px",
-        height: "200px"
-    })
-    .render("#scroll");
+var table = new Y.DataTable({
+    columns: cols,
+    data: data,
+    scrollable: "y",
+    height: "300px"
+}).render("#scroll");
 ```
 
 <h2 id="knownissues">Known Issues</h2>
@@ -507,3 +820,256 @@ table
     </li>
 </ul>
 
+<h2 id="column-config">Appendix A: Column Configurations</h2>
+
+<p>
+    The properties below are supported in the column configuration objects
+    passed in the `columns` attribute array.
+</p>
+
+<div id="column-config-table" class="yui3-skin-sam">
+    <table>
+    <thead>
+        <tr>
+            <th scope="col">Configuration</th>
+            <th scope="col">Description</th>
+            <th scope="col">Module</th>
+            <th scope="col">readOnly</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>key</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>children</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>abbr</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>headerTemplate</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>cellTemplate</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>formatter</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>nodeFormatter</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>emptyCellValue</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>allowHTML</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>className</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>sortable</td>
+            <td></td>
+            <td>`datatable-sort`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>sortFn</td>
+            <td></td>
+            <td>`datatable-sort`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>sortDir</td>
+            <td></td>
+            <td>`datatable-sort`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>width</td>
+            <td></td>
+            <td>`datatable-column-widths`</td>
+            <td>no</td>
+        </tr>
+        <tr>
+            <td>_yuid</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>YES</td>
+        </tr>
+        <tr>
+            <td>_id</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>YES</td>
+        </tr>
+        <tr>
+            <td>_colspan</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>YES</td>
+        </tr>
+        <tr>
+            <td>_rowspan</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>YES</td>
+        </tr>
+        <tr>
+            <td>_parent</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>YES</td>
+        </tr>
+        <tr>
+            <td>_headers</td>
+            <td></td>
+            <td>`datatable-base`</td>
+            <td>YES</td>
+        </tr>
+    </tbody>
+    </table>
+</div>
+
+<h2 id="formatter-props">Appendix B: Formatter Argument Properties</h2>
+
+<p>
+    The properties below are found on the object passed to `formatter`
+    functions defined in a column configuration.  See
+    <a href="#nodeformatter-props">Appendix C</a> for the object properties
+    passed to `nodeFormatter`s.
+</p>
+
+<div id="formatter-props-table" class="yui3-skin-sam">
+    <table>
+    <thead>
+        <tr>
+            <th scope="col">Property</th>
+            <th scope="col">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`value`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`data`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`record`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`column`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`className`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`rowIndex`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`rowClass`</td>
+            <td></td>
+        </tr>
+    </tbody>
+    </table>
+</div>
+
+<h2 id="nodeformatter-props">Appendix C: nodeFormatter Argument Properties</h2>
+
+<p>
+    The properties below are found on the object passed to `nodeFormatter`
+    functions defined in a column configuration.  See
+    <a href="#formatter-props">Appendix B</a> for the object properties
+    passed to `formatter`s.
+</p>
+
+<div id="nodeformatter-props-table" class="yui3-skin-sam">
+    <table>
+    <thead>
+        <tr>
+            <th scope="col">Property</th>
+            <th scope="col">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`value`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`td`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`cell`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`data`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`record`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`column`</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>`rowIndex`</td>
+            <td></td>
+        </tr>
+    </tbody>
+    </table>
+</div>

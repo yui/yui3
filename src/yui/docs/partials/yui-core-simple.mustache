@@ -1,0 +1,14 @@
+    <span>
+        Box 1
+    </span>
+    
+    <span class="bob">
+        Box 2
+    </span>
+
+<script>
+    YUI().use('node', function(Y){
+        // change the style of just the DOM node with the class "bob"
+        Y.one('.bob').setStyle('backgroundColor', '#FFD7AA');
+    });
+</script>

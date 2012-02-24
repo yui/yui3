@@ -170,6 +170,23 @@ YUI.add('get-test', function (Y) {
             this.wait();
         },
 
+        'test: single script timeout callback': function() {
+            var test = this;
+
+            var trans = Y.Get.script(path("bogus.js"), {
+                timeout: 1,
+                onTimeout: function(e) {
+                    Assert.areSame('Timeout', e.errors[0].error, 'Failure message is not a timeout message');
+                },
+                onFailure: function(e) {
+                    Assert.areSame('Timeout', e.errors[0].error, 'Failure message is not a timeout message');
+                },
+                onSuccess: function() {
+                    Assert.fail('onSuccess should not be called');
+                }
+            });
+        },
+
         'test: single script success, end': function() {
             var test = this;
             var counts = {
@@ -946,6 +963,25 @@ YUI.add('get-test', function (Y) {
             // Need delay.js always available to test this reliably. Leaving out for now
         },
 
+        'scripts should be automatically purged after 20 nodes by default': function () {
+            var test = this,
+                urls = [],
+                i;
+
+            for (i = 0; i < 30; ++i) {
+                urls.push(path('a.js'));
+            }
+
+            Y.Get.script(urls, {attributes: {'class': 'purge-test'}}, function (err, tx) {
+                test.resume(function () {
+                    var count = Y.all('script.purge-test').size();
+                    Y.assert(count > 0 && count < 20, 'there should be fewer than 20 scripts on the page (actual: ' + count + ')');
+                });
+            });
+
+            this.wait();
+        },
+
         'test: purgethreshold' : function() {
             var test    = this;
             var nodes   = [];
@@ -1007,7 +1043,7 @@ YUI.add('get-test', function (Y) {
             this.nb = Y.Node.create('<div class="get_test_b">get_test_b</div>');
             this.nc = Y.Node.create('<div class="get_test_c">get_test_c</div>');
 
-            naa = this.na;
+            var naa = this.na;
 
             var b = Y.Node.one("body");
             b.append(this.na);

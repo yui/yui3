@@ -1,15 +1,28 @@
 <style scoped>
 /* custom styles for this example */
-.dt-example {margin:1em;}
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
 
 /* css to counter global site css */
-.dt-example th {text-transform:none;}
-.dt-example table {width:auto;}
-.dt-example caption {display:table-caption;}
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
 </style>
 
 <div class="intro">
-    <p>The DataTable widget displays data in a tabular format. Use plugins and extensions to add features and functionality to the `Y.DataTable.Base` class.</p>
+    <p>
+        The DataTable widget displays data in a tabular format. Use plugins and
+        extensions to add features and functionality to the `Y.DataTable` class.
+    </p>
 </div>
 
 <div class="example yui3-skin-sam">
@@ -19,48 +32,118 @@
 <h2>Simple DataTable Use Cases</h2>
 
 ```
-<div id="example" class="yui3-skin-sam"></div>
+<div class="example yui3-skin-sam">
+    <div id="simple"></div>
+
+    <div id="labels"></div>
+</div>
 ```
 
 
-<p>A basic table can be rendered into a given container by passing in a simple array of columns and an array of data objects into the constructor. As long as the columns map directly to the keys of the data objects, the table will be generated automatically from the data provided.</p>
+<p>
+    A basic table can be rendered into a given container by passing in a simple
+    array of columns and an array of data objects into the constructor. As long
+    as the columns map directly to the keys of the data objects, the table will
+    be generated automatically from the data provided.
+</p>
 
 ```
-YUI().use("datatable-base", function(Y) {
-    var cols = ["id","name","price"],
-    data = [
-        {id:"ga-3475", name:"gadget", price:"$6.99"},
-        {id:"sp-9980", name:"sprocket", price:"$3.75"},
-        {id:"wi-0650", name:"widget", price:"$4.25"}
-    ],
-    dt = new Y.DataTable.Base({
-        columnset: cols,
-        recordset: data,
+YUI().use("datatable", function (Y) {
+
+    // A table from data with keys that work fine as column names
+    var simple = new Y.DataTable({
+        columns: ["id", "name", "price"],
+        data   : [
+            { id: "ga_3475", name: "gadget",   price: "$6.99" },
+            { id: "sp_9980", name: "sprocket", price: "$3.75" },
+            { id: "wi_0650", name: "widget",   price: "$4.25" }
+        ],
         summary: "Price sheet for inventory parts",
         caption: "Example table with simple columns"
-    }).render("#example");
+    });
+    
+    simple.render("#simple");
+
 });
 ```
 
-<p>Your column definitions may be an array of object literals in order to support any number of configurations that are supported by the `Y.Column` class. For instance, you may wish to define a `label` that will be displayed in each column header. Use the `key` property to define where data for the column will be coming from.</p>
+<p>
+    Your column definitions may also be objects if additional column
+    configuration is needed.  For example, the following column definitions
+    include header labels and set the `<th>`'s `abbr` attribute.  Use the `key`
+    property to relate a column to its corresponding data field.
+</p>
+
 
 ```
-YUI().use("datatable-base", function(Y) {
-    var cols = [
-        { key: "mfr_parts_database_id", label: "Mfr Part ID", abbr: "ID"},
-        { key: "mfr_parts_database_name", label: "Mfr Part Name", abbr: "Name"},
-        { key: "mfr_parts_database_price", label: "Wholesale Price", abbr: "Price"}
-    ],
-    data = [
-        { mfr_parts_database_id: "ga_3475", mfr_parts_database_name: "gadget", mfr_parts_database_price: "$6.99"},
-        { mfr_parts_database_id: "sp_9980", mfr_parts_database_name: "sprocket", mfr_parts_database_price: "$3.75"},
-        { mfr_parts_database_id: "wi_0650", mfr_parts_database_name: "widget", mfr_parts_database_price: "$4.25"}
-    ],
-    dt = new Y.DataTable.Base({
-        columnset: cols,
-        recordset: data,
+YUI().use("datatable", function(Y) {
+
+    // Data with less user friendly field names
+    var data = [
+        {
+            mfr_parts_database_id   : "ga_3475",
+            mfr_parts_database_name : "gadget",
+            mfr_parts_database_price: "$6.99"
+        },
+        {
+            mfr_parts_database_id   : "sp_9980",
+            mfr_parts_database_name : "sprocket",
+            mfr_parts_database_price: "$3.75"
+        },
+        {
+            mfr_parts_database_id   : "wi_0650",
+            mfr_parts_database_name : "widget",
+            mfr_parts_database_price: "$4.25"
+        }
+    ];
+
+    // Column definitions that use configured header labels, abbrs.
+    // Use "key" to identify which data field has its content.
+    var columnDef = [
+        {
+            key  : "mfr_parts_database_id",
+            label: "Mfr Part ID",
+            abbr : "ID"
+        },
+        {
+            key  : "mfr_parts_database_name",
+            label: "Mfr Part Name",
+            abbr : "Name"
+        },
+        {
+            key  : "mfr_parts_database_price",
+            label: "Wholesale Price",
+            abbr : "Price"
+        }
+    ];
+
+    var withColumnLabels = new Y.DataTable({
+        columns: columnDef,
+        data   : data,
         summary: "Price sheet for inventory parts",
         caption: "These columns have labels and abbrs"
-    }).render("#example");
+    }).render('#labels');
+
+});
+```
+
+<h3>Lighten the module payload</h3>
+
+<p>
+    The `datatable` module includes a number of features not used in this
+    example.  For a smaller module payload, use the `datatable-base` module.
+</p>
+
+```
+// datatable-base includes only basic table rendering, but in this case,
+// that's enough.
+YUI().use("datatable-base", function (Y) {
+
+    // A table from data with keys that work fine as column names
+    var simple = new Y.DataTable({
+        columns: ["id", "name", "price"],
+        data   : [ ... ]
+    }).render("#simple");
+
 });
 ```

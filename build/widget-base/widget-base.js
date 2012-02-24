@@ -426,8 +426,8 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Destructor lifecycle implementation for the Widget class. Purges events attached
-     * to the bounding box (and all child nodes) and removes the Widget from the 
-     * list of registered widgets.
+     * to the bounding box and content box, removes them from the DOM and removes 
+     * the Widget from the list of registered widgets.
      *
      * @method destructor
      * @protected
@@ -462,7 +462,7 @@ Y.extend(Widget, Y.Base, {
      * from proceeding.
      * </p>
      * @method destroy
-     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are removd and destroyed. Defaults to false due to potentially high run-time cost. 
+     * @param destroyAllNodes {Boolean} If true, all nodes contained within the Widget are removed and destroyed. Defaults to false due to potentially high run-time cost. 
      * @return {Widget} A reference to this object
      * @chainable
      */
@@ -888,17 +888,23 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindDOM : function() {
-        var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT);
+        var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT),
+            focusHandle = Widget._hDocFocus;
 
-        // TODO: Perf Optimization: Use Widget.getByNode delegation, to get by 
-        // with just one _onDocFocus subscription per sandbox, instead of one per widget
-        this._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
+        // Shared listener across all Widgets.
+        if (!focusHandle) {
+            focusHandle = Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
+            focusHandle.listeners = 1;
+        } else {
+            focusHandle.listeners++; 
+        }
 
         //	Fix for Webkit:
         //	Document doesn't receive focus in Webkit when the user mouses 
         //	down on it, so the "focused" attribute won't get set to the 
-        //	correct value.
-        if (WEBKIT) {
+        //	correct value. Keeping this instance based for now, potential better performance.
+        //  Otherwise we'll end up looking up widgets from the DOM on every mousedown.
+        if (WEBKIT){
             this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
         }
     },
@@ -908,12 +914,21 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */   
     _unbindDOM : function(boundingBox) {
-        if (this._hDocFocus) {
-            this._hDocFocus.detach();
+
+        var focusHandle = Widget._hDocFocus,
+            mouseHandle = this._hDocMouseDown;
+
+        if (focusHandle) {
+            if (focusHandle.listeners > 0) {
+                focusHandle.listeners--;
+            } else {
+                focusHandle.detach();
+                Widget._hDocFocus = null;
+            }
         }
 
-        if (WEBKIT && this._hDocMouseDown) {
-            this._hDocMouseDown.detach();
+        if (WEBKIT && mouseHandle) {
+            mouseHandle.detach();
         }
     },
 
@@ -1042,8 +1057,22 @@ Y.extend(Widget, Y.Base, {
      * @param {EventFacade} evt The event facade for the DOM focus event
      */
     _onDocFocus: function (evt) {
-        this._domFocus = this.get(BOUNDING_BOX).contains(evt.target); // contains() checks invoking node also
-        this._set(FOCUSED, this._domFocus, { src: UI });
+        var widget = Widget.getByNode(evt.target),
+            activeWidget = Widget._active;
+
+        if (activeWidget && (activeWidget !== widget)) {
+            activeWidget._domFocus = false;
+            activeWidget._set(FOCUSED, false, {src:UI});
+
+            Widget._active = null;
+        }
+
+        if (widget) {
+            widget._domFocus = true;
+            widget._set(FOCUSED, true, {src:UI});
+
+            Widget._active = widget;
+        }
     },
 
     /**
@@ -1204,4 +1233,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
