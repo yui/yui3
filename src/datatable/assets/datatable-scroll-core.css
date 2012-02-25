@@ -8,6 +8,11 @@
     *position: relative;
 }
 
+.yui3-datatable-scrollable-y .yui3-datatable-x-scroller {
+    *overflow-y: hidden;
+    *position: relative;
+}
+
 .yui3-datatable-scrollable-y .yui3-datatable-content {
     /* To allow absolute positioning of fixed headers and virtual scrollbar */
     position: relative;
@@ -29,6 +34,10 @@
     overflow-x: hidden;
     overflow-y: scroll;
     z-index: 1;
+}
+
+.yui3-datatable-scrollable-x .yui3-datatable-caption-table {
+    width: 100%;
 }
 
 .yui3-datatable-scrollbar {

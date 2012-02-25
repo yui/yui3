@@ -197,6 +197,17 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _afterScrollableChange: function (e) {
+        var scroller = this._xScrollNode;
+
+        if (this._xScroll && scroller) {
+            if (this._yScroll && !this._yScrollNode) {
+                scroller.setStyle('paddingRight',
+                    Y.DOM.getScrollbarWidth() + 'px');
+            } else if (!this._yScroll && this._yScrollNode) {
+                scroller.setStyle('paddingRight', '');
+            }
+        }
+
         this._syncScrollUI();
     },
 
@@ -388,6 +399,8 @@ Y.mix(Scrollable.prototype, {
                 Y.Lang.sub(this._CAPTION_TABLE_TEMPLATE, {
                     className: this.getClassName('caption', 'table')
                 }));
+
+            this._captionTable.empty();
         }
 
         return this._captionTable;
@@ -676,62 +689,6 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Splits or merges the table for X and Y scrolling depending on the current
-    widget state.  If the table needs to be split, but is already, does nothing.
-
-    @method _syncScrollUI
-    @protected
-    **/
-    _syncScrollUI: function () {
-        this._uiSetScrollable();
-
-        if (this._xScroll && this._yScroll) {
-            this._syncScrollCaptionUI();
-            this._syncXYScrollUI();
-        } else if (this._xScroll) {
-            this._disableYScrolling();
-            this._syncScrollCaptionUI();
-            this._syncXScrollUI();
-        } else if (this._yScroll) {
-            this._disableXScrolling();
-            this._syncScrollCaptionUI();
-            this._syncYScrollUI();
-        } else {
-            this._disableScrolling();
-        }
-    },
-
-    /*
-        if (
-        if (this._yScroll || this._xScroll) {
-            this._uiSetDim('width', '');
-        }
-
-        this._syncScrollCaptionUI();
-
-        this._syncXScrollUI();
-
-        this._syncYScrollUI();
-
-        if (this._yScroll || this._xScroll) {
-            if (this._captionTable) {
-                width = (this._xScrollNode || this._tableNode)
-                        .get('offsetWidth') + 'px';
-
-                this._captionTable.setStyle('width', width);
-            }
-
-            this._uiSetDim('width', this.get('width'));
-
-            if (this._scrollbarNode) {
-                this._syncScrollbarHeight();
-                this._syncScrollbarPosition();
-            }
-        }
-    },
-    */
-
-    /**
     Splits the caption from the data `<table>` if the table is configured to
     scroll.  If not, rejoins the caption to the data `<table>` if it needs to
     be.
@@ -843,32 +800,70 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
+    Wraps the table for X and Y scrolling, if necessary, if the `scrollable`
+    attribute is set.  Synchronizes dimensions and DOM placement of all
+    scrolling related nodes.
+
+    @method _syncScrollUI
+    @protected
+    **/
+    _syncScrollUI: function () {
+        var x = this._xScroll,
+            y = this._yScroll;
+
+        this._uiSetScrollable();
+
+        if (x || y) {
+            if ((this.get('width') || '').slice(-1) === '%') {
+                this._bindScrollResize();
+            } else {
+                this._unbindScrollResize();
+            }
+
+            this._syncScrollCaptionUI();
+        } else {
+            this._disableScrolling();
+        }
+
+        if (x) {
+            if (!y) {
+                this._disableYScrolling();
+            }
+
+            this._syncXScrollUI(y);
+        }
+
+        if (y) {
+            if (!x) {
+                this._disableXScrolling();
+            }
+
+            this._syncYScrollUI(x);
+        }
+    },
+
+    /**
     Wraps the table in a scrolling `<div>` of the configured width for "x"
     scrolling.
 
     @method _syncXScrollUI
+    @param {Boolean} xy True if the table is configured with scrollable ="xy"
     @protected
     **/
-    _syncXScrollUI: function () {
-        var boundingBox = this.get('boundingBox'),
-            scroller    = this._xScrollNode,
-            table       = this._tableNode,
-            width       = this.get('width'),
-            captionTable = this._captionTable,
+    _syncXScrollUI: function (xy) {
+        var scroller     = this._xScrollNode,
+            table        = this._tableNode,
+            width        = this.get('width'),
+            bbWidth      = this.get('boundingBox').get('offsetWidth'),
+            scrollbarWidth = Y.DOM.getScrollbarWidth(),
             borderWidth, tableWidth;
-
-        if (width.slice(-1) === '%') {
-            this._bindScrollResize();
-        } else {
-            this._unbindScrollResize();
-        }
-
-        if (captionTable) {
-            captionTable.setStyle('width', width);
-        }
 
         if (!scroller) {
             scroller = this._createXScrollNode();
+
+            if (xy) {
+                scroller.setStyle('paddingRight', scrollbarWidth + 'px');
+            }
 
             table.wrap(scroller);
         }
@@ -876,24 +871,28 @@ Y.mix(Scrollable.prototype, {
         // Can't use offsetHeight - clientHeight because IE6 returns
         // clientHeight of 0 intially.
         borderWidth =
-            (parseInt(scroller.getComputedStyle('borderLeftWidth'), 10)|0) +
-            (parseInt(scroller.getComputedStyle('borderRightWidth'), 10)|0);
+            (parseInt(scroller.getComputedStyle('borderLeftWidth'), 10) | 0) +
+            (parseInt(scroller.getComputedStyle('borderRightWidth'), 10) | 0);
 
-        table.setStyle('width', '');
+        if (xy) {
+            // xy scrollers need padding to make room for the virtual scrollbar
+            borderWidth += scrollbarWidth;
+        }
+
         scroller.setStyle('width', '');
         this._uiSetDim('width', '');
 
+        // Lock the table's unconstrained width to avoid configured column
+        // widths being ignored
+        table.setStyle('width', '');
         tableWidth = table.get('offsetWidth');
-
-        // Lock the table width to avoid configured column widths being ignored
         table.setStyle('width', tableWidth + 'px');
 
         this._uiSetDim('width', width);
 
         // Can't use 100% width because the borders add additional width
         // TODO: Cache the border widths, though it won't prevent a reflow
-        scroller.setStyle('width',
-            (boundingBox.get('offsetWidth') - borderWidth) + 'px');
+        scroller.setStyle('width', (bbWidth - borderWidth) + 'px');
 
         // expand the table to fill the assigned width if it doesn't
         // already overflow the configured width
@@ -904,36 +903,17 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Wraps the table in vertically and horizontally scrolling `<div>`s for "xy"
-    scrolling.
-
-    @method _syncXYScrollUI
-    @protected
-    **/
-    _syncXYScrollUI: function () {
-        /*
-        var boundingBox = this.get('boundingBox'),
-            xScroller   = this._xScrollNode,
-            yScroller   = this._yScrollNode,
-            fixedHeader = this._yScrollHeader,
-            scrollbar   = this._scrollbarNode,
-            table       = this._tableNode,
-            width       = this.get('width'),
-            borderWidth;
-            */
-
-    },
-
-    /**
     Wraps the table in a scrolling `<div>` of the configured height (accounting
     for the caption if there is one) if "y" scrolling is enabled.  Otherwise,
     unwraps the table if necessary.
 
     @method _syncYScrollUI
+    @param {Boolean} xy True if the table is configured with scrollable = "xy"
     @protected
     **/
-    _syncYScrollUI: function () {
+    _syncYScrollUI: function (xy) {
         var scroller     = this._yScrollNode,
+            xScroller    = this._xScrollNode,
             fixedHeader  = this._yScrollHeader,
             scrollbar    = this._scrollbarNode,
             table        = this._tableNode,
@@ -943,9 +923,7 @@ Y.mix(Scrollable.prototype, {
             contentBox   = this.get('contentBox'),
             width        = this.get('width');
 
-        table.setStyle('width', '');
-
-        if (captionTable) {
+        if (captionTable && !xy) {
             captionTable.setStyle('width', width || '100%');
         }
 
@@ -953,13 +931,24 @@ Y.mix(Scrollable.prototype, {
             scroller = this._createYScrollNode();
 
             table.wrap(scroller);
+        }
 
+        if (!xy) {
+            table.setStyle('width', '');
         }
 
         this._uiSetYScrollHeight(boundingBox.get('offsetHeight'));
-        this._uiSetYScrollWidth(width);
 
-        if (captionTable) {
+        if (xy) {
+            // For xy scrolling tables, the table should expand freely within
+            // the x scroller
+            scroller.setStyle('width',
+                (table.get('offsetWidth') + Y.DOM.getScrollbarWidth()) +'px');
+        } else {
+            this._uiSetYScrollWidth(width);
+        }
+
+        if (captionTable && !xy) {
             captionTable.setStyle('width', scroller.get('offsetWidth') + 'px');
         }
 
@@ -967,7 +956,11 @@ Y.mix(Scrollable.prototype, {
         if (thead && !fixedHeader) {
             fixedHeader = this._createYScrollHeader();
 
-            contentBox.prepend(fixedHeader);
+            if (xy) {
+                xScroller.prepend(fixedHeader);
+            } else {
+                contentBox.prepend(fixedHeader);
+            }
 
             this._syncScrollHeaders();
         }
@@ -985,7 +978,7 @@ Y.mix(Scrollable.prototype, {
 
             this._syncScrollColumnWidths();
             this._uiSetScrollbarHeight();
-            this._uiSetScrollbarPosition();
+            this._uiSetScrollbarPosition(xy ? xScroller : scroller);
         }
     },
 
@@ -1031,29 +1024,22 @@ Y.mix(Scrollable.prototype, {
     headers or the data table.
 
     @method _uiSetScrollbarPosition
+    @param {Node} scroller Reference node to position the scrollbar over
     @protected
     **/
-    _uiSetScrollbarPosition: function () {
+    _uiSetScrollbarPosition: function (scroller) {
         var scrollbar   = this._scrollbarNode,
-            scroller    = this._xScrollNode || this._yScrollNode,
-            fixedHeader = this._yScrollHeader,
-            scrollbarWidth = Y.DOM.getScrollbarWidth(),
-            top;
+            fixedHeader = this._yScrollHeader;
 
-        if (scrollbar && scroller) {
-            if (fixedHeader) {
-                top = (fixedHeader.get('offsetHeight') +
-                       fixedHeader.get('offsetTop')) + 'px';
-            } else {
-                top = (scroller.get('offsetTop') +
-                    parseInt(scroller.getComputedStyle('borderTopWidth'), 10)) +
-                    'px';
-            }
-
+        if (scrollbar && scroller && fixedHeader) {
             scrollbar.setStyles({
-                top : top,
-                left: (scroller.get('offsetWidth') - scrollbarWidth -
-                      parseInt(scroller.getComputedStyle('borderRightWidth'), 10)) + 'px'
+                top : (fixedHeader.get('offsetHeight') +
+                       scroller.get('offsetTop') +
+                       (parseInt(scroller.getComputedStyle('borderTopWidth'), 10)|0)) + 'px',
+
+                left: (scroller.get('offsetWidth') -
+                       Y.DOM.getScrollbarWidth() -
+                       (parseInt(scroller.getComputedStyle('borderRightWidth'), 10)|0)) + 'px'
             });
         }
     },
@@ -1097,12 +1083,6 @@ Y.mix(Scrollable.prototype, {
             scrollbarWidth = Y.DOM.getScrollbarWidth();
 
             if (width) {
-                if (width.slice(-1) === '%') {
-                    this._bindScrollResize();
-                } else {
-                    this._unbindScrollResize();
-                }
-
                 // Assumes no table border
                 borderWidth = scroller.get('offsetWidth') -
                               scroller.get('clientWidth') -
@@ -1129,8 +1109,6 @@ Y.mix(Scrollable.prototype, {
                 scroller.setStyle('width', width);
                 //this._uiSetDim('width', width);
             } else {
-                this._unbindScrollResize();
-
                 // Allow the table to expand naturally
                 table.setStyle('width', '');
                 scroller.setStyle('width', '');
