@@ -466,8 +466,9 @@ Y.mix(Scrollable.prototype, {
         this._removeScrollCaptionTable();
         this._disableXScrolling();
         this._disableYScrolling();
+        this._unbindScrollResize();
 
-        this._tableNode.setStyle('width', this.get('width'));
+        this._uiSetWidth(this.get('width'));
     },
 
     /**
@@ -852,11 +853,18 @@ Y.mix(Scrollable.prototype, {
         var boundingBox = this.get('boundingBox'),
             scroller    = this._xScrollNode,
             table       = this._tableNode,
+            width       = this.get('width'),
             captionTable = this._captionTable,
             borderWidth, tableWidth;
 
+        if (width.slice(-1) === '%') {
+            this._bindScrollResize();
+        } else {
+            this._unbindScrollResize();
+        }
+
         if (captionTable) {
-            captionTable.setStyle('width', this.get('width'));
+            captionTable.setStyle('width', width);
         }
 
         if (!scroller) {
@@ -880,7 +888,7 @@ Y.mix(Scrollable.prototype, {
         // Lock the table width to avoid configured column widths being ignored
         table.setStyle('width', tableWidth + 'px');
 
-        this._uiSetDim('width', this.get('width'));
+        this._uiSetDim('width', width);
 
         // Can't use 100% width because the borders add additional width
         // TODO: Cache the border widths, though it won't prevent a reflow
