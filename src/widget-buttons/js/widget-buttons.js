@@ -22,11 +22,12 @@ var YArray  = Y.Array,
 Provides header/body/footer button support for Widgets that use the
 `WidgetStdMod` extension.
 
-Widget extension that makes it easy to declaratively configure a widget's
-buttons. This adds a `buttons` attribute along with button- accessor and mutator
-methods.
+This Widget extension that makes it easy to declaratively configure a widget's
+buttons. It adds a `buttons` attribute along with button- accessor and mutator
+methods. All button nodes have the `Y.Plugin.Button` plugin applied.
 
-TODO: Add note about HTML_PARSER feature.
+This extension also includes `HTML_PARSER` support to seed a widget's `buttons`
+from those which already exist in its DOM.
 
 @class WidgetButtons
 @extensionfor Widget
@@ -45,6 +46,7 @@ WidgetButtons.ATTRS = {
 
     The collection is an Object which contains an Array of `Y.Node`s for every
     `WidgetStdMod` section (header, body, footer) which has one or more buttons.
+    All button nodes have the `Y.Plugin.Button` plugin applied.
 
     This attribute is very flexible in the values it will accept. `buttons` can
     be specified as a single Array, or an Object of Arrays keyed to a particular
@@ -60,8 +62,9 @@ WidgetButtons.ATTRS = {
     A button can be specified as a `Y.Node`, config Object, or String name for a
     predefined button on the `BUTTONS` prototype property. When a config Object
     is provided, it will be merged with any defaults provided by a button with
-    the same `name` defined on the `BUTTONS` property. See `addButton()` for the
-    detailed list of configuration properties.
+    the same `name` defined on the `BUTTONS` property.
+
+    See `addButton()` for the detailed list of configuration properties.
 
     @example
         {
@@ -72,14 +75,14 @@ WidgetButtons.ATTRS = {
                 {
                     name  : 'cancel',
                     label : 'Cancel',
-                    action: function (e) {
-                        this.hide();
-                    }
+                    action: 'hide'
                 },
 
                 {
-                    name  : 'okay',
-                    label : 'Okay',
+                    name     : 'okay',
+                    label    : 'Okay',
+                    isDefault: true,
+
                     events: {
                         click: function (e) {
                             this.hide();
@@ -102,8 +105,16 @@ WidgetButtons.ATTRS = {
     /**
     The current default button as configured through this widget's `buttons`.
 
-    Anytime there are changes to this widget's `buttons`, the `defaultButton`
-    will be updated if ndeeded.
+    A button can be configured as the default button in the following ways:
+
+      * As a config Object with an `isDefault` property:
+        `{label: 'Okay', isDefault: true}`.
+
+      * As a node with a `data-default` attribute:
+        `<button data-default="true">Okay</button>`.
+
+    This attribute is **read-only**; anytime there are changes to this widget's
+    `buttons`, the `defaultButton` will be updated if needed.
 
     **Note:** If two or more buttons are configured to be the default button,
     the last one wins.
@@ -112,6 +123,7 @@ WidgetButtons.ATTRS = {
     @type Node
     @default null
     @readOnly
+    @since 3.5.0
     **/
     defaultButton: {
         readOnly: true,
@@ -145,6 +157,7 @@ The list of button configuration properties which are specific to
 @property NON_BUTTON_NODE_CFG
 @type Array
 @static
+@since 3.5.0
 **/
 WidgetButtons.NON_BUTTON_NODE_CFG = [
     'action', 'classNames', 'context', 'events', 'isDefault', 'section'
@@ -154,7 +167,10 @@ WidgetButtons.prototype = {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Collection of predefined buttons mapped from name => config.
+    Collection of predefined buttons mapped by name => config.
+
+    These button configurations will serve as defaults for any button added to a
+    widget's `buttons` which has the same `name`.
 
     See `addButton()` for a list of possible configuration values.
 
@@ -166,12 +182,13 @@ WidgetButtons.prototype = {
     BUTTONS: {},
 
     /**
-    Template which wraps all buttons of a section. This is useful for styling,
-    by default it will have the CSS class: "yui3-widget-buttons".
+    The HTML template to use when creating the node which wraps all buttons of a
+    section. By default it will have the CSS class: "yui3-widget-buttons".
 
     @property BUTTONS_TEMPLATE
     @type String
     @default "<span />"
+    @since 3.5.0
     **/
     BUTTONS_TEMPLATE: '<span />',
 
@@ -184,6 +201,27 @@ WidgetButtons.prototype = {
     @since 3.5.0
     **/
     DEFAULT_BUTTONS_SECTION: Y.WidgetStdMod.FOOTER,
+
+    // -- Protected Properties -------------------------------------------------
+
+    /**
+    A map of this widget's `buttons`, both name => button and
+    section:name => button.
+
+    @property _buttonsMap
+    @type Object
+    @protected
+    @since 3.5.0
+    **/
+
+    /**
+    Internal reference to this widget's default button.
+
+    @property _defaultButton
+    @type Node
+    @protected
+    @since 3.5.0
+    **/
 
     // -- Lifecycle Methods ----------------------------------------------------
 
@@ -209,19 +247,23 @@ WidgetButtons.prototype = {
     /**
     Adds a button to this widget.
 
+    The new button node will have the `Y.Plugin.Button` plugin applied, be added
+    to this widget's `buttons`, and rendered in the specified `section` at the
+    `index` (or end of the section).
+
     @method addButton
     @param {Node|Object|String} button The button to add. This can be a `Y.Node`
         instance, config Object, or String name for a predefined button on the
         `BUTTONS` prototype property. When a config Object is provided, it will
         be merged with any defaults provided by a button with the same `name`
         defined on the `BUTTONS` property. The following are the possible
-        configuration properties:
+        configuration properties beyond what is accepted by `Y.Plugin.Button`:
       @param {Function|String} [button.action] The default handler that should
         be called when the button is clicked. A String-name for a function that
         exists on the `context` object can also be provided. **Note:**
-        Specifying an `events` configuration will most likely override this.
-      @param {String|String[]} [button.classNames] Additional CSS class-names
-        which would be added to the button node.
+        Specifying a set of `events` will override this setting.
+      @param {String|String[]} [button.classNames] Additional CSS classes to add
+        to the button node.
       @param {Object} [button.context=this] Context which any `events` or
         `action` should be called with. Defaults to `this`, the widget.
         **Note:** `e.target` will access the button node in the event handlers.
@@ -230,7 +272,7 @@ WidgetButtons.prototype = {
         this value is passed as the first argument to `on()`.
       @param {Boolean} [button.isDefault=false] Whether the button is the
         default button.
-      @param {String} [button.label] The visible text/content displayed in the
+      @param {String} [button.label] The visible text/value displayed in the
         button.
       @param {String} [button.name] A name which can later be used to reference
         this button. If a button is defined on the `BUTTONS` property with this
@@ -253,8 +295,8 @@ WidgetButtons.prototype = {
             section || (section = button.section);
         }
 
-        // Always passes through `_createButton()` to make sure the Node is
-        // decorated as a button-Node.
+        // Always passes through `_createButton()` to make sure the node is
+        // decorated as a button.
         button = this._createButton(button);
 
         section || (section = this.DEFAULT_BUTTONS_SECTION);
@@ -275,13 +317,13 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Retrieves a button.
+    Returns a button node from this widget's `buttons`.
 
     @method getButton
-    @param {Number|String} name The String-name or index of a button.
+    @param {Number|String} name The String-name or index of the button.
     @param {String} [section="footer"] The `WidgetStdMod` section
         (header/body/footer) where the button exists. Only applicable when
-        looking for a button by numerical index, or by button name scoped to a
+        looking for a button by numerical index, or by name but scoped to a
         particular section.
     @return {Node} The button node.
     @since 3.5.0
@@ -307,12 +349,14 @@ WidgetButtons.prototype = {
     /**
     Removes a button from this widget.
 
+    The button will be removed to this widget's `buttons` and its DOM.
+
     @method removeButton
     @param {Node|Number|String} button The button to remove. This can be a
         `Y.Node` instance, index, or String name of a button.
     @param {String} [section="footer"] The `WidgetStdMod` section
         (header/body/footer) where the button exists. Only applicable when
-        removing a button by numerical index, or by button name scoped to a
+        removing a button by numerical index, or by name but scoped to a
         particular section.
     @chainable
     @since 3.5.0
@@ -376,18 +420,22 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Returns a button-Node based on the specified `button` or configuration.
+    Returns a button node based on the specified `button` or configuration.
 
-    TODO: Add note about it binding events, and all that jazz.
+    The button node will either be created via `Y.Plugin.Button.createNode()`,
+    or when `button` is specified as a node already, it will by `plug()`ed with
+    `Y.Plugin.Button`.
 
     @method _createButton
-    @param {Node|Object} button Button Node or configuration object.
-    @return {Node} The button Node.
+    @param {Node|Object} button Button node or configuration object.
+    @return {Node} The button node.
     @protected
+    @since 3.5.0
     **/
     _createButton: function (button) {
         var config, buttonConfig, nonButtonNodeCfg, i, len, action, context;
 
+        // Plug and return an existing Y.Node instance.
         if (Y.instanceOf(button, Y.Node)) {
             return button.plug(ButtonPlugin);
         }
@@ -402,12 +450,12 @@ WidgetButtons.prototype = {
         buttonConfig     = Y.merge(config);
         nonButtonNodeCfg = WidgetButtons.NON_BUTTON_NODE_CFG;
 
-        // Remove all non button-Node config props.
+        // Remove all non-button Node config props.
         for (i = 0, len = nonButtonNodeCfg.length; i < len; i += 1) {
             delete buttonConfig[nonButtonNodeCfg[i]];
         }
 
-        // Create the buton-Node using the button-Node-only config.
+        // Create the button node using the button Node-only config.
         button = ButtonPlugin.createNode(buttonConfig);
 
         context = config.context;
@@ -422,25 +470,26 @@ WidgetButtons.prototype = {
         // Supports all types of crazy configs for event subscriptions.
         button.on(config.events, action, context);
 
-        // Tags the Node with the configured `name` and `isDefault` setting.
+        // Tags the button with the configured `name` and `isDefault` setting.
         button.setData('name', this._getButtonName(config));
         button.setData('default', this._getButtonDefault(config));
 
-        // Add any CSS classnames to the button Node.
+        // Add any CSS classnames to the button node.
         YArray.each(YArray(config.classNames), button.addClass, button);
 
         return button;
     },
 
     /**
-    Returns the buttons container for the specified section, and will create it
-    if it does not already exist.
+    Returns the buttons container for the specified `section`, and will create
+    it if it does not already exist.
 
     @method _getButtonContainer
     @param {String} section The `WidgetStdMod` section (header/body/footer).
     @return {Node} The buttons container node for the specified `section`.
     @protected
     @see BUTTONS_TEMPLATE
+    @since 3.5.0
     **/
     _getButtonContainer: function (section) {
         var buttonsClassName = WidgetButtons.CLASS_NAMES.buttons,
@@ -458,10 +507,10 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Returns whether or not the specified `button` is configured to be default
-    button.
+    Returns whether or not the specified `button` is configured to be the
+    default button.
 
-    When a button-Node is specified, the button's `getData()` method will be
+    When a button node is specified, the button's `getData()` method will be
     used to determine if the button is configured to be the default. When a
     button config object is specified, the `isDefault` prop will determine
     whether the button is the default.
@@ -473,6 +522,7 @@ WidgetButtons.prototype = {
     @param {Node|Object} button The button node or configuration Object.
     @return {Boolean} Whether the button is configured to be the default button.
     @protected
+    @since 3.5.0
     **/
     _getButtonDefault: function (button) {
         var isDefault = Y.instanceOf(button, Y.Node) ?
@@ -488,7 +538,7 @@ WidgetButtons.prototype = {
     /**
     Returns the name of the specified `button`.
 
-    When a button-Node is specified, the button's `getData('name')` method is
+    When a button node is specified, the button's `getData('name')` method is
     preferred, but will fallback to `get('name')`, and the result will determine
     the button's name. When a button config object is specified, the `name` prop
     will determine the button's name.
@@ -500,6 +550,7 @@ WidgetButtons.prototype = {
     @param {Node|Object} button The button node or configuration Object.
     @return {String} The name of the button.
     @protected
+    @since 3.5.0
     **/
     _getButtonName: function (button) {
         var name;
@@ -514,8 +565,9 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Getter for the `buttons` attribute. Returns a copy of the `buttons` object
-    so the original state cannot be modified by callers of `get('buttons')`.
+    Getter for the `buttons` attribute. A copy of the `buttons` object is
+    returned so the stored state cannot be modified by the callers of
+    `get('buttons')`.
 
     This will recreate a copy of the `buttons` object, and each section Array.
     **Note:** The button nodes are *not* copied/cloned.
@@ -524,6 +576,7 @@ WidgetButtons.prototype = {
     @param {Object} buttons The widget's current `buttons` state.
     @return {Object} A copy of the widget's current `buttons` state.
     @protected
+    @since 3.5.0
     **/
     _getButtons: function (buttons) {
         var buttonsCopy = {};
@@ -549,6 +602,7 @@ WidgetButtons.prototype = {
     @param {Node} button The button node to map.
     @param {String} section The `WidgetStdMod` section.
     @protected
+    @since 3.5.0
     **/
     _mapButton: function (button, section) {
         var map       = this._buttonsMap,
@@ -567,8 +621,9 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Adds the specified `buttons` to the buttons map (name => button), and set
-    the a button as the default if one is configured as the default button.
+    Adds the specified `buttons` to the buttons map (both name => button and
+    section:name => button), and set the a button as the default if one is
+    configured as the default button.
 
     **Note:** This will clear all previous button mappings and null-out any
     previous default button! If two or more buttons are configured with the same
@@ -577,6 +632,7 @@ WidgetButtons.prototype = {
     @method _mapButtons
     @param {Node[]} buttons The button nodes to map.
     @protected
+    @since 3.5.0
     **/
     _mapButtons: function (buttons) {
         this._buttonsMap    = {};
@@ -593,12 +649,14 @@ WidgetButtons.prototype = {
 
     /**
     Merges the specified `config` with the predefined configuration for a button
-    with the same name on the `BUTTONS` property.
+    with the same name on the `BUTTONS` property. A new config Object is
+    returned so the specified `config` is not modified.
 
     @method _mergeButtonConfig
     @param {Object|String} config Button configuration object, or String name.
     @return {Object} A button configuration object merged with any defaults.
     @protected
+    @since 3.5.0
     **/
     _mergeButtonConfig: function (config) {
         config = isString(config) ? {name: config} : Y.merge(config);
@@ -617,10 +675,15 @@ WidgetButtons.prototype = {
     /**
     `HTML_PARSER` implementation for the `buttons` attribute.
 
+    To determine a button node's name its `data-name` and `name` attribute are
+    examined. Whether the button should be the default is determined by its
+    `data-default` attribute.
+
     @method _parseButtons
     @param {Node} srcNode This widget's srcNode to search for buttons.
-    @return {Object} `buttons` Config object parsed from this widget's DOM.
+    @return {null|Object} `buttons` Config object parsed from this widget's DOM.
     @protected
+    @since 3.5.0
     **/
     _parseButtons: function (srcNode) {
         var buttonsConfig     = null,
@@ -658,11 +721,16 @@ WidgetButtons.prototype = {
     and returns a new `buttons` Object which is stored as the new state; leaving
     the original, specified `config` unmodified.
 
+    The button nodes will either be created via `Y.Plugin.Button.createNode()`,
+    or when a button is already a Node already, it will by `plug()`ed with
+    `Y.Plugin.Button`.
+
     @method _setButtons
     @param {Array|Object} config The `buttons` configuration to process.
     @return {Object} The processed `buttons` Object which represents the new
         state.
     @protected
+    @since 3.5.0
     **/
     _setButtons: function (config) {
         var defSection = this.DEFAULT_BUTTONS_SECTION,
@@ -682,8 +750,8 @@ WidgetButtons.prototype = {
                     section || (section = button.section);
                 }
 
-                // Always passes through `_createButton()` to make sure the Node
-                // is decorated as a button-Node.
+                // Always passes through `_createButton()` to make sure the node
+                // is decorated as a button.
                 button = this._createButton(button);
 
                 // Use provided `section` or fallback to the default section.
@@ -726,6 +794,7 @@ WidgetButtons.prototype = {
     @param {String} section The `WidgetStdMod` section (header/body/footer).
     @param {Number} index Index at which the `button` should be positioned.
     @protected
+    @since 3.5.0
     **/
     _uiInsertButton: function (button, section, index) {
         var buttonsClassName = WidgetButtons.CLASS_NAMES.button,
@@ -742,6 +811,7 @@ WidgetButtons.prototype = {
     @method _uiRemoveButton
     @param {Node} button The button to remove and destroy.
     @protected
+    @since 3.5.0
     **/
     _uiRemoveButton: function (button) {
         button.remove(true);
@@ -759,6 +829,7 @@ WidgetButtons.prototype = {
     @method _uiSetButtons
     @param {Object} buttons The current `buttons` state to visually represent.
     @protected
+    @since 3.5.0
     **/
     _uiSetButtons: function (buttons) {
         var buttonClassName = WidgetButtons.CLASS_NAMES.button;
@@ -776,7 +847,7 @@ WidgetButtons.prototype = {
                 // moved to their new index. New buttons will be added to the
                 // current `buttonContainer`.
                 if (buttonIndex > -1) {
-                    // Remove button from existing buttons NodeList since its in
+                    // Remove button from existing buttons nodeList since its in
                     // the DOM already.
                     buttonNodes.splice(buttonIndex, 1);
 
@@ -808,6 +879,7 @@ WidgetButtons.prototype = {
     @param {Node} newButton The new `defaultButton`.
     @param {Node} oldButton The old `defaultButton`.
     @protected
+    @since 3.5.0
     **/
     _uiSetDefaultButton: function (newButton, oldButton) {
         var primaryClassName = WidgetButtons.CLASS_NAMES.primary;
@@ -817,12 +889,13 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Focuses this widget's default button if there is one and this widget is
+    Focuses this widget's `defaultButton` if there is one and this widget is
     visible.
 
     @method _uiSetVisibleButtons
     @param {Boolean} visible Whether this widget is visible.
     @protected
+    @since 3.5.0
     **/
     _uiSetVisibleButtons: function (visible) {
         if (!visible) { return; }
@@ -834,12 +907,13 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Removes the specified `button` to the buttons map, and nulls-out the default
-    button if it is currently the default button.
+    Removes the specified `button` to the buttons map, and nulls-out the
+    `defaultButton` if it is currently the default button.
 
     @method _unMapButton
     @param {Node} button The button node to remove from the buttons map.
     @protected
+    @since 3.5.0
     **/
     _unMapButton: function (button, section) {
         var map  = this._buttonsMap,
@@ -866,6 +940,7 @@ WidgetButtons.prototype = {
 
     @method _updateDefaultButton
     @protected
+    @since 3.5.0
     **/
     _updateDefaultButton: function () {
         var defaultButton = this._defaultButton;
@@ -881,7 +956,7 @@ WidgetButtons.prototype = {
     Handles this widget's `buttonsChange` event which fires anytime the
     `buttons` attribute is modified.
 
-    **Note:** This method special cases the `buttons` modifications caused by
+    **Note:** This method special-cases the `buttons` modifications caused by
     `addButton()` and `removeButton()`, both of which set the `src` property on
     the event facade to `add` and `remove` respectively.
 
@@ -926,6 +1001,7 @@ WidgetButtons.prototype = {
     @method _afterDefaultButtonChange
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _afterDefaultButtonChange: function (e) {
         this._uiSetDefaultButton(e.newVal, e.prevVal);
@@ -938,6 +1014,7 @@ WidgetButtons.prototype = {
     @method _afterVisibleChangeButtons
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _afterVisibleChangeButtons: function (e) {
         this._uiSetVisibleButtons(e.newVal);
