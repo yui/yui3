@@ -1085,6 +1085,88 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(1, onCalled);
         Assert.areSame(0, afterCalled);
+    },
+
+    '`contentUpdate` should fire when the buttons change in the DOM': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}]
+        });
+
+        this.widget.on('contentUpdate', function (e) {
+            called += 1;
+        });
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 1 button.');
+        Assert.areSame('Foo', this.widget.get('contentBox').all('.yui3-button').item(0).get('label'), 'The button was not labeled: "Foo".');
+
+        this.widget.set('buttons', [{label: 'Bar'}]);
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 1 button.');
+        Assert.areSame('Bar', this.widget.get('contentBox').all('.yui3-button').item(0).get('label'), 'The button was not labeled: "Bar".');
+        Assert.areSame(1, called, '`contentUpdate` was not fired.');
+    },
+
+    '`contentUpdate` should fire when a button is added': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}]
+        });
+
+        this.widget.on('contentUpdate', function (e) {
+            called += 1;
+        });
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 1 button.');
+
+        this.widget.addButton({label: 'Bar'});
+
+        Assert.areSame(2, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 2 buttons.');
+        Assert.areSame(1, called, '`contentUpdate` was not fired.');
+    },
+
+    '`contentUpdate` should fire when a button is removed': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}]
+        });
+
+        this.widget.on('contentUpdate', function (e) {
+            called += 1;
+        });
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 1 button.');
+
+        this.widget.removeButton(0, 'footer');
+
+        Assert.areSame(0, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget has buttons.');
+        Assert.areSame(1, called, '`contentUpdate` was not fired.');
+    },
+
+    '`contentUpdate` should not fire when the buttons in the DOM do not actually change': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}]
+        });
+
+        this.widget.on('contentUpdate', function (e) {
+            called += 1;
+        });
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 1 button.');
+
+        this.widget.set('buttons', this.widget.get('buttons'));
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-button').size(), 'The widget did not have 1 button.');
+        Assert.areSame(0, called, '`contentUpdate` was fired.');
     }
 }));
 
