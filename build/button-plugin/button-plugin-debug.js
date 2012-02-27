@@ -42,6 +42,7 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
 // (node, config)
 // (config)
 ButtonPlugin.createNode = function(node, config) {
+    var template;
 
     if (node && !config) {
         if (! (node.nodeType || node.getDOMNode || typeof node == 'string')) {
@@ -49,7 +50,11 @@ ButtonPlugin.createNode = function(node, config) {
             node = config.srcNode;
         }
     }
-    node = node || config && config.srcNode || Y.DOM.create(Y.Plugin.Button.prototype.TEMPLATE);
+
+    config   = config || {};
+    template = config.template || Y.Plugin.Button.prototype.TEMPLATE;
+    node     = node || config.srcNode || Y.DOM.create(template);
+
     return Y.one(node).plug(Y.Plugin.Button, config);
 };
 

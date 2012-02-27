@@ -32,6 +32,9 @@ AutoComplete Change History
 * Fixed a bug that could prevent results from being selected via mouse click
   after a result was selected via the tab key. [Ticket #2531684]
 
+* Fixed a bug that prevented the list from being re-aligned when the window was
+  resized.
+
 
 3.4.1
 -----

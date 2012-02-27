@@ -2,12 +2,12 @@ YUI.add('editor-para-base', function(Y) {
 
 
     /**
-     * Plugin for Editor to paragraph auto wrapping and correction.
-     * @class Plugin.EditorPara
+     * Base Plugin for Editor to paragraph auto wrapping and correction.
+     * @class Plugin.EditorParaBase
      * @extends Base
      * @constructor
      * @module editor
-     * @submodule editor-para
+     * @submodule editor-para-base
      */
 
 

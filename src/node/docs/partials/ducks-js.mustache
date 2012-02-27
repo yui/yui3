@@ -1,35 +1,6 @@
-<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
-<div class="intro">
-    <p>This example demonstrates how to use multiple NodeList features to build a simple game.</p>
-</div>
+<script>
+YUI().use('transition', 'button', function (Y) {
 
-<div class="example">
-{{>ducks-source}}
-</div>
-
-
-
-<h2>The HTML</h2>
-```
-{{>ducks-html}}
-```
-
-<h2>YUI Instance</h2>
-<p>
-The `use` statement doesn't include `node` because it's loaded as a requirement of transition.
-</p>
-```
-YUI().use('transition', 'button', function(Y){
-    // code goes here
-});
-```
-
-<h2>Setting Vars</h2>
-<p>
-The variable `ducks` is used for easily manipulating all the ducks at once.
-We'll display various duck comments from the array `squawkTextArr` on a rotating basis. 
-</p>
-```
     var ducks = Y.all('.duck-row li'),
         ducksRemaining = 10, // value for UI display
         squawkTextIndex = 0, // index in the squawkTextArr to use next
@@ -43,37 +14,13 @@ We'll display various duck comments from the array `squawkTextArr` on a rotating
             'how&nbsp;sporting.',
             "shoe's&nbsp;untied"
         ];
-```
 
-<h2>Initializing the Ducks</h2>
-<p>
-Repetitive markup is added with the `.append()` method to all the ducks in the `NodeList`.
-This keeps the original markup simple and clear.
-</p>
-```
     // append the same content for each duck <li>
-    ducks.append('<img src="../assets/node/images/duck.png"/><div class="squawk"><div class="text">#@&~*Q!</div><div class="small-squawk-bubble"></div></div>');
-```
-<p>
-All the ducks in the `NodeList` are given the `set-up` class with the `.addClass()` method.
-This class is found on any duck that has the state of being set up, as opposed to being knocked down.
-</p>
-```    
+    ducks.append('<img src="{{{componentAssets}}}/images/duck.png"/><div class="squawk"><div class="text">#@&~*Q!</div><div class="small-squawk-bubble"></div></div>');
+    
     // give them all the set-up state class
     ducks.addClass('set-up');
-```
-<p>
-This state could be a Boolean property, but it's handy as a class, 
-because a `NodeList` can be made containing the squawks of all "set up" ducks in this way, 
-`squawks = Y.all('.duck-row .set-up .squawk');` 
-as we'll see in the `makeDucksSquawk` function.
-</p>
-
-<h2>Making the Ducks Swim</h2>
-<p>
-This uses `transition` to make the ducks swim right to left 
-</p>
-```
+    
     // this makes the ducks move from right to left.
     // When the duck on the far left disappears from view,
     // it's added to the far right end of the row.
@@ -103,12 +50,7 @@ This uses `transition` to make the ducks swim right to left
         });       
     }
     makeDucksSwim(); // this initializes the ducks swimming
-```
-
-<h2>Click Event Handler</h2>
-<p>
-</p>
-```
+    
     // handles a click on a duck
     var duckClick = function(e) {
         var squawks;
@@ -125,15 +67,10 @@ This uses `transition` to make the ducks swim right to left
         
         // the clicked duck will no longer have the 'set-up' class/state
         e.currentTarget.removeClass('set-up');
-        makeDucksSquawk(); // makes the ducks squawk
+        makeDucksSquawk();
         updateDucksRemaining(); // update the number of ducks still set up
     };
-```
-
-<h2>Squawking Ducks</h2>
-<p>
-</p>
-```
+    
     // this makes the duck's squawks show and hide and get various text
     var makeDucksSquawk = function(){    
         squawks = Y.all('.duck-row .set-up .squawk'); // a NodeList of the squawks of set-up ducks
@@ -161,10 +98,7 @@ This uses `transition` to make the ducks swim right to left
             });
         }
     }
-```
-
-<h2>Reset and Ducks Remaining</h2>
-```
+    
     // This resets all ducks, "ducks remaining" counters, and row position
     // make the duck images full height
     // start them swimming     
@@ -180,24 +114,9 @@ This uses `transition` to make the ducks swim right to left
         ducksRemaining = Y.all('.gallery li.set-up').size();    
         Y.one('.ducks-remain').setContent(ducksRemaining);    
     }
-```
-<h2>Prefer `node.delegate()` over `nodelist.on()`</h2>
-
-<p>Sometimes you need to create individual subscriptions for each Node in a 
-NodeList, but usually it's preferable to use 
-<a href="node-evt-delegation.html">event delegation</a> as shown in this example.</p>
-
-<h2>Listeners</h2>
-<p>
-
-</p>
-```
+    
     // listeners
     Y.one('.duck-row').delegate('click', duckClick, 'li');
     Y.one('#button-reset').on('click', reset);
-```
-
-<h2>Complete Ducks Example Source</h2>
-```
-{{>ducks-source}}
-```
+});
+</script>
