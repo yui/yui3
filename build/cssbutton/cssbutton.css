@@ -5,10 +5,11 @@
     zoom: 1;
     font-size: 100%;
     *+font-size: 90%;
-    margin: 5px;
-    padding: 1em;
+    margin: 0;
+    padding: 0 1em;
     *+margin: 2px; /*IE 6/7*/
-    line-height:normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
+    line-height: normal;
+    line-height: 2;
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
