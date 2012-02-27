@@ -892,6 +892,13 @@ Y.mix(Scrollable.prototype, {
 
         // Lock the table's unconstrained width to avoid configured column
         // widths being ignored
+        if (Y.UA.ie && Y.UA.ie < 8) {
+            // Have to assign a style and trigger a reflow to allow the
+            // subsequent clearing of width + reflow to expand the table to
+            // natural width in IE 6
+            table.setStyle('width', width);
+            table.get('offsetWidth');
+        }
         table.setStyle('width', '');
         tableWidth = table.get('offsetWidth');
         table.setStyle('width', tableWidth + 'px');
@@ -1042,13 +1049,10 @@ Y.mix(Scrollable.prototype, {
                 this._tbodyNode.get('scrollHeight') + 'px');
 
             scrollbar.setStyle('height', 
-                (scroller.get('clientHeight') +
-                // Because the fixedHeader has borders (FF 10- have rounding
-                // issues without) for x scroll, but no borders for xy
-                // scroll, but the fixedHeaders overlay the yScrollNode.
-                // FIXME: if you can
-                 styleDim(fixedHeader, 'borderTopWidth') -
-                 fixedHeader.get('offsetHeight')) + 'px');
+                (parseFloat(scroller.getComputedStyle('height')) -
+                 parseFloat(fixedHeader.getComputedStyle('height'))) + 'px');
+                //(scroller.get('clientHeight') -
+                 //fixedHeader.get('offsetHeight')) + 'px');
         }
     },
 
@@ -1061,17 +1065,31 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _uiSetScrollbarPosition: function (scroller) {
-        var scrollbar   = this._scrollbarNode,
-            fixedHeader = this._yScrollHeader;
+        var xScroller     = this._xScrollNode,
+            yScroller     = this._yScrollNode,
+            outerScroller = xScroller || yScroller,
+            scrollbar     = this._scrollbarNode,
+            fixedHeader   = this._yScrollHeader,
+            top;
 
-        if (scrollbar && scroller && fixedHeader) {
+        if (scrollbar && outerScroller && fixedHeader) {
+            // Using getCS instead of offsetHeight because FF uses fractional
+            // values, but reports ints to offsetHeight, so offsetHeight is
+            // unreliable.  It is probably fine to use offsetHeight in this case
+            // but this was left in place after fixing an off-by-1px issue in
+            // FF 10- by fixing the caption font style so FF picked it up.
+            top = parseFloat(fixedHeader.getComputedStyle('height')) +
+                  outerScroller.get('offsetTop');
+
+            if (!xScroller) {
+                top += styleDim(yScroller, 'borderTopWidth');
+            }
+
             scrollbar.setStyles({
-                top : (fixedHeader.get('offsetHeight') +
-                       scroller.get('offsetTop')) + 'px',
-
-                left: (scroller.get('offsetWidth') -
+                top : top + 'px',
+                left: (outerScroller.get('offsetWidth') -
                        Y.DOM.getScrollbarWidth() -
-                       styleDim(scroller, 'borderRightWidth')) + 'px'
+                       styleDim(outerScroller, 'borderRightWidth')) + 'px'
             });
         }
     },
