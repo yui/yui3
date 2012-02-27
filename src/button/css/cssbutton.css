@@ -61,7 +61,6 @@ a.yui3-button {
     background-image: -ms-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -o-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
-    background-color:  #D6D6D6\0/; /*IE 8/9*/
 }
 
 .yui3-button:active {
