@@ -91,6 +91,46 @@ suite.add(new Y.Test.Case({
         Assert.areSame(fooButton, this.widget.getButton('foo'), 'Button in markup was not used.');
     },
 
+    '`buttons` parsed from a `srcNode` should inherit any defaults': function () {
+        var PanelWidget = Y.Base.create('panelWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
+            BUTTONS: {
+                foo: {
+                    label : 'Bar',
+                    action: 'onFoo'
+                }
+            }
+        });
+
+        var markup = '' +
+            '<div>' +
+                '<div class="yui3-widget-hd">' +
+                    '<span class="yui3-widget-buttons">' +
+                        '<button class="yui3-button" name="foo">Foo</button>' +
+                    '</span>' +
+                '</div>' +
+            '</div>';
+
+        Y.one('#test').append(markup);
+
+        var fooButton = Y.one('#test button[name=foo]'),
+            called    = 0;
+
+        this.widget = new PanelWidget({
+            srcNode: '#test div'
+        });
+
+        this.widget.onFoo = function (e) {
+            called += 1;
+        };
+
+        Assert.areSame(fooButton, this.widget.getButton('foo'), 'Button in markup was not used.');
+        Assert.areSame('Foo', fooButton.get('text'), 'Foo button had its text changed.');
+
+        fooButton.simulate('click');
+
+        Assert.areSame(1, called, 'onFoo default action was not called.');
+    },
+
     '`buttons` parsed from a `srcNode` should be overridden by user-provided `buttons`': function () {
         var markup = '' +
             '<div>' +

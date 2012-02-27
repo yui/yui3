@@ -18,14 +18,23 @@
     <script src="../../../../build/yui/yui.js"></script>
     <script>
     YUI({filter: 'raw'}).use('base-build', 'widget', 'widget-buttons', function (Y) {
-        Y.TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons]);
+        Y.TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
+            BUTTONS: {
+                foo: {
+                    label: 'Baz',
+                    action: function () {
+                        alert('yay!');
+                    }
+                }
+            }
+        });
 
         var testWidget = new Y.TestWidget({
             srcNode: '#awesome-widget',
             render : true
         });
 
-        testWidget.getButton('foo').set('text', 'Bar').set('disabled', true);
+        // testWidget.getButton('foo').set('text', 'Bar');
         testWidget.addButton({label: 'Eric'}, 'header', 0);
     });
     </script>

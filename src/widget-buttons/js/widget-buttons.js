@@ -301,6 +301,8 @@ WidgetButtons.prototype = {
       @param {Object} [button.context=this] Context which any `events` or
         `action` should be called with. Defaults to `this`, the widget.
         **Note:** `e.target` will access the button node in the event handlers.
+      @param {Boolean} [button.disabled=false] Whether the button should be
+        disabled.
       @param {String|Object} [button.events="click"] Event name, or set of
         events and handlers to bind to the button node. **See:** `Y.Node.on()`,
         this value is passed as the first argument to `on()`.
@@ -313,6 +315,8 @@ WidgetButtons.prototype = {
         same name, its configuration properties will be merged in as defaults.
       @param {String} [button.section] The `WidgetStdMod` section (header, body,
         footer) where the button should be added.
+      @param {Node} [button.srcNode] An existing Node to use for the button, by
+        default a new &lt;button&gt; node will be created.
     @param {String} [section="footer"] The `WidgetStdMod` section
         (header/body/footer) where the button should be added. This takes
         precedence over the `button.section` configuration property.
@@ -750,9 +754,26 @@ WidgetButtons.prototype = {
             sectionClassNames = Y.WidgetStdMod.SECTION_CLASS_NAMES,
             i, len, section, sectionNode, buttons, sectionButtons;
 
-        // Hoisted this support function out of the for-loop.
-        function addButtonToSection(button) {
-            sectionButtons.push(button);
+        // Creates a button config object for every button node found and adds
+        // it to the section. This way each button configuration can be merged
+        // with any defaults provided by predefined `BUTTONS`.
+        function addButtonToSection(sectionButtons, button) {
+            var tagName = button.get('tagName').toLowerCase(),
+                label   = button.get(tagName === 'input' ? 'value' : 'text'),
+                config;
+
+            // Makes sure the button's current values override any defaults.
+            config = {
+                name     : this._getButtonName(button),
+                disabled : !!button.get('disabled'),
+                isDefault: this._getButtonDefault(button),
+                srcNode  : button
+            };
+
+            // Label should only be considered when not an empty string.
+            label && (config.label = label);
+
+            sectionButtons.push(config);
         }
 
         for (i = 0, len = sections.length; i < len; i += 1) {
@@ -763,7 +784,7 @@ WidgetButtons.prototype = {
             if (!buttons || buttons.isEmpty()) { continue; }
 
             sectionButtons = [];
-            buttons.each(addButtonToSection);
+            buttons.each(Y.bind(addButtonToSection, this, sectionButtons));
 
             buttonsConfig || (buttonsConfig = {});
             buttonsConfig[section] = sectionButtons;
