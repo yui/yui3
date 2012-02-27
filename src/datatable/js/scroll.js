@@ -826,6 +826,7 @@ Y.mix(Scrollable.prototype, {
 
         this._uiSetScrollable();
 
+        // TODO: Probably should split this up into syncX, syncY, and syncXY
         if (x || y) {
             if ((this.get('width') || '').slice(-1) === '%') {
                 this._bindScrollResize();
@@ -836,6 +837,10 @@ Y.mix(Scrollable.prototype, {
             this._syncScrollCaptionUI();
         } else {
             this._disableScrolling();
+        }
+
+        if (this._yScrollHeader) {
+            this._yScrollHeader.setStyle('display', 'none');
         }
 
         if (x) {
@@ -911,7 +916,12 @@ Y.mix(Scrollable.prototype, {
         // already overflow the configured width
         if ((scroller.get('offsetWidth') - borderWidth) > tableWidth) {
             // Assumes the wrapped table doesn't have borders
-            table.setStyle('width', '100%');
+            if (xy) {
+                table.setStyle('width', (scroller.get('offsetWidth') -
+                     borderWidth - scrollbarWidth) + 'px');
+            } else {
+                table.setStyle('width', '100%');
+            }
         }
     },
 
@@ -994,11 +1004,14 @@ Y.mix(Scrollable.prototype, {
         }
 
         if (fixedHeader) {
+            this._syncScrollColumnWidths();
+
             fixedHeader.setStyles({
                 top: (yScroller.get('offsetTop') +
                       styleDim(yScroller, 'borderTopWidth')) + 'px',
                 left: styleDim(yScroller, 'borderLeftWidth') + 'px',
-                width: yScroller.get('clientWidth') + scrollbarWidth + 'px'
+                width: yScroller.get('clientWidth') + scrollbarWidth + 'px',
+                display: ''
             });
 
             if (!scrollbar) {
@@ -1009,7 +1022,6 @@ Y.mix(Scrollable.prototype, {
                 contentBox.prepend(scrollbar);
             }
 
-            this._syncScrollColumnWidths();
             this._uiSetScrollbarHeight();
             this._uiSetScrollbarPosition(outerScroller);
         }
