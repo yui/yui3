@@ -882,13 +882,11 @@ Y.mix(Scrollable.prototype, {
         borderWidth = styleDim(scroller, 'borderLeftWidth') +
                       styleDim(scroller, 'borderRightWidth');
 
-        if (xy) {
-            // xy scrollers need padding to make room for the virtual scrollbar
-            borderWidth += scrollbarWidth;
-        }
-
         scroller.setStyle('width', '');
         this._uiSetDim('width', '');
+        if (xy && this._yScrollNode) {
+            this._yScrollNode.setStyle('width', '');
+        }
 
         // Lock the table's unconstrained width to avoid configured column
         // widths being ignored
@@ -1079,11 +1077,8 @@ Y.mix(Scrollable.prototype, {
             // but this was left in place after fixing an off-by-1px issue in
             // FF 10- by fixing the caption font style so FF picked it up.
             top = parseFloat(fixedHeader.getComputedStyle('height')) +
+                  styleDim(scroller, 'borderTopWidth') +
                   outerScroller.get('offsetTop');
-
-            if (!xScroller) {
-                top += styleDim(yScroller, 'borderTopWidth');
-            }
 
             scrollbar.setStyles({
                 top : top + 'px',
