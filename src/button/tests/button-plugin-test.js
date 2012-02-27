@@ -37,7 +37,7 @@ YUI.add('button-plugin-test', function (Y) {
             Assert.isInstanceOf(Y.Node, button);
             Assert.areSame(newLabel, node.getContent());
             Assert.isTrue(node.get('disabled'));
-         },
+        },
 
         'Y.Plugin.Button.createNode(srcNode) should return a Y.Node instance with Button functionality': function () {
             var oldLabel = this.label;
@@ -57,7 +57,7 @@ YUI.add('button-plugin-test', function (Y) {
             Assert.isInstanceOf(Y.Node, button);
             Assert.areSame(newLabel, node.getContent());
             Assert.isTrue(node.get('disabled'));
-         },
+        },
 
         'Y.Plugin.Button.createNode(srcNode, config) should return a Y.Node instance with Button functionality': function () {
             var oldLabel = this.label;
@@ -78,7 +78,7 @@ YUI.add('button-plugin-test', function (Y) {
             Assert.isInstanceOf(Y.Node, button);
             Assert.areSame(newLabel, node.getContent());
             Assert.isTrue(node.get('disabled'));
-         },
+        },
 
         'Y.Plugin.Button.createNode(config) should return a Y.Node instance with Button functionality': function () {
             var oldLabel = this.label;
@@ -100,7 +100,16 @@ YUI.add('button-plugin-test', function (Y) {
             Assert.isInstanceOf(Y.Node, button);
             Assert.areSame(newLabel, node.getContent());
             Assert.isTrue(node.get('disabled'));
-         }
+        },
+
+        'Y.Plugin.Button.createNode(config) should return a Y.Node with the specified `template` element': function () {
+            var anchorButton = Y.Plugin.Button.createNode({template: '<a href="#foo" />'});
+
+            anchorButton.appendTo('#container');
+
+            Assert.areSame('a', anchorButton.get('tagName').toLowerCase(), '`anchorButton` was not an <a>.');
+            Assert.areSame('#foo', anchorButton.getAttribute('href'), '`anchorButton` did not have href "#foo".');
+        }
 
     }));
 
