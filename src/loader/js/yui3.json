@@ -2089,12 +2089,10 @@
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
