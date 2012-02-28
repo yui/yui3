@@ -293,7 +293,7 @@ WidgetButtons.prototype = {
         `BUTTONS` prototype property. When a config Object is provided, it will
         be merged with any defaults provided by a button with the same `name`
         defined on the `BUTTONS` property. The following are the possible
-        configuration properties beyond what is accepted by `Y.Plugin.Button`:
+        configuration properties beyond what Node plugins accept by default:
       @param {Function|String} [button.action] The default handler that should
         be called when the button is clicked. A String name of a Function that
         exists on the `context` object can also be provided. **Note:**
@@ -319,6 +319,9 @@ WidgetButtons.prototype = {
         footer) where the button should be added.
       @param {Node} [button.srcNode] An existing Node to use for the button, by
         default a new &lt;button&gt; node will be created.
+      @param {String} [button.template] A specific template to use when creating
+        a new button node (e.g. "&lt;a /&gt;"). **Note:** Specifying a `srcNode`
+        will overide this.
     @param {String} [section="footer"] The `WidgetStdMod` section
         (header/body/footer) where the button should be added. This takes
         precedence over the `button.section` configuration property.
