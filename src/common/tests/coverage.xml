@@ -136,6 +136,7 @@
         -->
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
+        <url>widget-buttons/tests/widget-buttons.html</url>
         <url>yql/tests/index.html</url>
         <url>oop/tests/oop.html</url>
         <url>substitute/tests/substitute.html</url>
