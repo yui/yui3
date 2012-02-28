@@ -232,7 +232,7 @@ VMLGraphic.ATTRS = {
     }
 };
 
-Y.extend(VMLGraphic, Y.BaseGraphic, {
+Y.extend(VMLGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *

@@ -45,7 +45,7 @@
         <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/graph.html</url>
         <url>charts/tests/pie.html</url>
-        <!--url>charts/tests/axes.html</url-->
+        <url>charts/tests/legend.html</url>
         <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>

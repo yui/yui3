@@ -566,7 +566,7 @@ SVGShape = function(cfg)
 
 SVGShape.NAME = "svgShape";
 
-Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
+Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -587,12 +587,42 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic;
 		host.createNode(); 
-		host._graphic = cfg.graphic;
-		host._updateHandler();
+		if(graphic)
+        {
+            host._setGraphic(graphic);
+        }
+        host._updateHandler();
 	},
-   
+ 
+    /**
+     * Set the Graphic instance for the shape.
+     *
+     * @method _setGraphic
+     * @param {Graphic | Node | HTMLElement | String} render This param is used to determine the graphic instance. If it is a `Graphic` instance, it will be assigned
+     * to the `graphic` attribute. Otherwise, a new Graphic instance will be created and rendered into the dom element that the render represents.
+     * @private
+     */
+    _setGraphic: function(render)
+    {
+        var graphic;
+        if(render instanceof Y.SVGGraphic)
+        {
+		    this._graphic = render;
+        }
+        else
+        {
+            render = Y.one(render);
+            graphic = new Y.SVGGraphic({
+                render: render
+            });
+            graphic._appendShape(this);
+            this._graphic = graphic;
+        }
+    },
+
 	/**
 	 * Add a class name to each node.
 	 *
@@ -2318,7 +2348,7 @@ SVGGraphic.ATTRS = {
     }
 };
 
-Y.extend(SVGGraphic, Y.BaseGraphic, {
+Y.extend(SVGGraphic, Y.GraphicBase, {
     /**
      * Storage for `x` attribute.
      *
