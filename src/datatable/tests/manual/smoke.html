@@ -5,7 +5,20 @@
     <style type="text/css">
     body {
         xbackground: #000;
+        font-family: arial, sans-serif;
         font-size: 13px;
+    }
+    #log {
+        background: #fff;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 300px;
+        border: 2px ridge;
+        padding: 10px;
+    }
+    #log p {
+        margin: 1em 0;
     }
     </style>
 </head>
@@ -20,6 +33,9 @@
     <button id="sort">Sort</button>
     <button id="showmessage">Show Message</button>
     <button id="hidemessage">Hide Message</button>
+
+    <!--div id="log"></div-->
+
     <div class="wrapper yui3-skin-sam">
         <div id="x"></div>
     </div>
@@ -33,6 +49,9 @@
     <!--script src="/dev/yui3/src/datatable/js/mutable.js"></script-->
     <script>
     YUI({
+        filters: {
+            'datatable-scroll': 'debug'
+        },
         filter: 'raw'
         /*
         groups: {
@@ -74,7 +93,7 @@
         function (Y) {
 
         var data = [], i;
-        for (i = 0; i < 50; ++i) {
+        for (i = 0; i < 10; ++i) {
             data.push({
                 apples   : 'Apple '  + Math.round(Math.random() * 100),
                 bananas  : 'Banana ' + Math.round(Math.random() * 100),
@@ -92,16 +111,19 @@
         var table = new Y.DataTable({
             data: data,
             scrollable: 'xy',
-            //width: 500,
-            height: 300,
-            autoSync: true,
-            //sortable: true,
+            width: '100%',
+            //width: '750px',
+            //width: '500px',
+            height: '250px',
+            //autoSync: true,
+            //sortable: ['carrots'],
             caption: 'Can you hear the caption?',
             columns: [
                 {
                     key: 'apples',
                     label: 'Apples',
-                    cellTemplate: '<th class="{className}">{content}</th>',
+                    //headerTemplate: '<th class="{className}" rowspan="{_rowspan}" colspan="{_colspan}" scope="col"><strong>{content}</strong></th>',
+                    //cellTemplate: '<th class="{className}" scope="row">{content}</th>',
                     allowHTML: true,
                     width: '150px',
                     sortFn: function (a, b) {
@@ -129,9 +151,12 @@
         var milestone = new Date();
         //console.log('instantiation: ', milestone - start);
 
+        /*
         table.delegate('click', function (e) {
             console.log(table.data.getByClientId(this.get('id')).toJSON());
         }, '.yui3-datatable-data tr');
+        */
+
 /*
         table.plug(Y.Plugin.DataTableDataSource, {
             datasource: new Y.DataSource.IO({
@@ -144,6 +169,13 @@
             })
         });
 */
+
+        /*
+        var log = Y.one('#log');
+        Y.on('yui:log', function (e) {
+            log.append('<p>' + e.msg + '</p>');
+        });
+        */
 
         table.render('#x');
 
@@ -196,6 +228,7 @@
                 unit  = (''+width).replace(/[0-9]/g, '');
 
             table.set('width', Math.round(parseInt(width, 10) * 1.1) + unit);
+            //console.log('width is ', table.get('width'));
         });
 
         Y.one('#sort').on('click', function () {

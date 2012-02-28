@@ -1,6 +1,6 @@
 <div class="intro">
     <p>This example demonstrates how to respond to DOM events from a Node instance.</p>
-    <p>Clicking the box will report some event details.</p>
+    <p>Clicking one of the elements will report some event details.</p>
 </div>
 
 <div class="example">
@@ -10,31 +10,44 @@
 <h2>Setting up the HTML</h2>
 <p>First we need some HTML to work with.</p>
 ```
-<div id="demo">
-    <p><em>lorem</em> <code>ipsum</code> <strong>dolor</strong> <span>sit</span></p>
-    <div id="event-result"></div>
+<div id="container">
+    <p>
+        <em>emphasis</em> <code>code</code> <strong>strong</strong> <a>anchor</a> 
+        <img src="{{{componentAssets}}}/images/birds.png" align="middle"/>
+    </p>
 </div>
+<div id="event-result">Click an element above to see its event data.</div>
+
 ```
 <h2>Creating the Event Handler</h2>
-<p>Next we will create a handler to run when the event is fired. In our handler we will update the node with some of the properties of the event.</p>
+<p>Next we'll create a handler to run when the event is fired. In our handler 
+we'll update the `#event-result` node with some data available through the event.</p>
 ```
     var onClick = function(e) {
         var type = e.type,
-            currentTarget = e.currentTarget, // #demo
-            target = e.target; // #demo or a descendant
-
+            currentTarget = e.currentTarget, // #container
+            target = e.target; // #container or a descendant
+            
         Y.one('#event-result').setContent('<dl>' +
-            '<dt>type</dt><dd>' + e.type + '</dd>' +
-            '<dt>target</dt><dd>' + target.get('tagName') + '</dd>' +
-            '<dt>currentTarget</dt><dd>' + currentTarget.get('tagName') +
-                '#' + currentTarget.get('id') + '</dd></dl>');
+            '<dt>Event Type: </dt>' + 
+                '<dd>' + e.type + '</dd>' +
+            '<dt>Target Tag Name: </dt>' + 
+                '<dd>' + target.get('tagName') + '</dd>' +
+            '<dt>Color of Target's Font: </dt>' + 
+                '<dd class="dd-color" style="background-color:' + target.getStyle('color') + ';">' + '</dd>' +
+            '<dt>CurrentTarget Tag Name & Id: </dt>' + 
+                '<dd>' + currentTarget.get('tagName') + '#' + currentTarget.get('id') + '</dd>' +
+            '</dl>');
     };
 ```
 
 <h2>Listening for Events</h2>
-<p>We can assign our handler to all of the items by using the <code>all</code> method to get a NodeList instance and using the <code>on</code> method to subscribe to the event.</p>
+<p>We can assign our handler to the container of the objects by using the `Y.one`.
+Clicking on any object in the container will bubble the event to the container. 
+We're using the 'on' method to subscribe to the click and dblclick events.</p>
 ```
-Y.one('#demo').on('click', onClick);
+Y.one('#container').on('click', onClick);
+Y.one('#container').on('dblclick', onClick);
 ```
 
 <h2>Complete Example Source</h2>
