@@ -287,9 +287,9 @@ Y.mix(Table.prototype, {
 
     @property TABLE_TEMPLATE
     @type {HTML}
-    @default '<table class="{className}"/>'
+    @default '<table cellspacing="0" class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table class="{className}"/>',
+    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a

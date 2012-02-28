@@ -153,10 +153,10 @@ Y.mix(Scrollable.prototype, {
 
     @property _Y_SCROLL_HEADER_TEMPLATE
     @type {HTML}
-    @value '<table role="presentation" aria-hidden="true" class="{className}"></table>'
+    @value '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>'
     @protected
     **/
-    _Y_SCROLL_HEADER_TEMPLATE: '<table role="presentation" aria-hidden="true" class="{className}"></table>',
+    _Y_SCROLL_HEADER_TEMPLATE: '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>',
 
     /**
     Template for the `<div>` that is used to contain the rows when the table is
@@ -164,10 +164,10 @@ Y.mix(Scrollable.prototype, {
 
     @property _Y_SCROLLER_TEMPLATE
     @type {HTML}
-    @value '<div class="{className}"></div>'
+    @value '<div class="{className}"><div class="{scrollerClassName}"></div></div>'
     @protected
     **/
-    _Y_SCROLLER_TEMPLATE: '<div class="{className}"></div>',
+    _Y_SCROLLER_TEMPLATE: '<div class="{className}"><div class="{scrollerClassName}"></div></div>',
 
     /**
     Adds padding to the last cells in the fixed header for vertically scrolling
@@ -180,7 +180,7 @@ Y.mix(Scrollable.prototype, {
     _addScrollbarPadding: function () {
         var fixedHeader = this._yScrollHeader,
             headerClass = '.' + this.getClassName('header'),
-            scrollbarWidth, rows, header, i, len, liner;
+            scrollbarWidth, rows, header, i, len;
 
         if (fixedHeader) {
             scrollbarWidth = Y.DOM.getScrollbarWidth() + 'px';
@@ -463,14 +463,22 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _createYScrollNode: function () {
+        var scrollerClass;
+
         if (!this._yScrollNode) {
-            this._yScrollNode = Y.Node.create(
+            scrollerClass = this.getClassName('y', 'scroller');
+
+            this._yScrollContainer = Y.Node.create(
                 Y.Lang.sub(this._Y_SCROLLER_TEMPLATE, {
-                    className: this.getClassName('y','scroller')
+                    className: this.getClassName('y','scroller','container'),
+                    scrollerClassName: scrollerClass
                 }));
+
+            this._yScrollNode = this._yScrollContainer
+                .one('.' + scrollerClass);
         }
 
-        return this._yScrollNode;
+        return this._yScrollContainer;
     },
 
     /**
@@ -879,7 +887,9 @@ Y.mix(Scrollable.prototype, {
         if (!scroller) {
             scroller = this._createXScrollNode();
 
-            table.wrap(scroller);
+            // Not using table.wrap() because IE went all crazy, wrapping the
+            // table in the last td in the table itself.
+            table.replace(scroller).appendTo(scroller);
         }
 
         // Can't use offsetHeight - clientHeight because IE6 returns
@@ -889,8 +899,8 @@ Y.mix(Scrollable.prototype, {
 
         scroller.setStyle('width', '');
         this._uiSetDim('width', '');
-        if (xy && this._yScrollNode) {
-            this._yScrollNode.setStyle('width', '');
+        if (xy && this._yScrollContainer) {
+            this._yScrollContainer.setStyle('width', '');
         }
 
         // Lock the table's unconstrained width to avoid configured column
@@ -935,7 +945,8 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _syncYScrollUI: function (xy) {
-        var yScroller    = this._yScrollNode,
+        var yScroller    = this._yScrollContainer,
+            yScrollNode  = this._yScrollNode,
             xScroller    = this._xScrollNode,
             fixedHeader  = this._yScrollHeader,
             scrollbar    = this._scrollbarNode,
@@ -956,7 +967,9 @@ Y.mix(Scrollable.prototype, {
         if (!yScroller) {
             yScroller = this._createYScrollNode();
 
-            table.wrap(yScroller);
+            yScrollNode = this._yScrollNode;
+
+            table.replace(yScroller).appendTo(yScrollNode);
         }
 
         outerScroller = xy ? xScroller : yScroller;
@@ -971,8 +984,9 @@ Y.mix(Scrollable.prototype, {
             height -= scrollbarWidth;
         }
 
-        yScroller.setStyle('height', (height - outerScroller.get('offsetTop') -
-            // because IE6 is returning clientHeight 0 initially *grumble*
+        yScrollNode.setStyle('height',
+            (height - outerScroller.get('offsetTop') -
+            // because IE6 is returning clientHeight 0 initially
             styleDim(outerScroller, 'borderTopWidth') -
             styleDim(outerScroller, 'borderBottomWidth')) + 'px');
 
@@ -981,7 +995,7 @@ Y.mix(Scrollable.prototype, {
             // For xy scrolling tables, the table should expand freely within
             // the x scroller
             yScroller.setStyle('width',
-                (table.get('offsetWidth') + scrollbarWidth) +'px');
+                (table.get('offsetWidth') + scrollbarWidth) + 'px');
         } else {
             this._uiSetYScrollWidth(width);
         }
@@ -994,11 +1008,7 @@ Y.mix(Scrollable.prototype, {
         if (thead && !fixedHeader) {
             fixedHeader = this._createYScrollHeader();
 
-            if (xy) {
-                xScroller.prepend(fixedHeader);
-            } else {
-                contentBox.prepend(fixedHeader);
-            }
+            yScroller.prepend(fixedHeader);
 
             this._syncScrollHeaders();
         }
@@ -1006,13 +1016,10 @@ Y.mix(Scrollable.prototype, {
         if (fixedHeader) {
             this._syncScrollColumnWidths();
 
-            fixedHeader.setStyles({
-                top: (yScroller.get('offsetTop') +
-                      styleDim(yScroller, 'borderTopWidth')) + 'px',
-                left: styleDim(yScroller, 'borderLeftWidth') + 'px',
-                width: yScroller.get('clientWidth') + scrollbarWidth + 'px',
-                display: ''
-            });
+            fixedHeader.setStyle('display', '');
+            // This might need to come back if FF has issues
+            //fixedHeader.setStyle('width', '100%');
+                //(yScroller.get('clientWidth') + scrollbarWidth) + 'px');
 
             if (!scrollbar) {
                 scrollbar = this._createScrollbar();
@@ -1061,8 +1068,6 @@ Y.mix(Scrollable.prototype, {
             scrollbar.setStyle('height', 
                 (parseFloat(scroller.getComputedStyle('height')) -
                  parseFloat(fixedHeader.getComputedStyle('height'))) + 'px');
-                //(scroller.get('clientHeight') -
-                 //fixedHeader.get('offsetHeight')) + 'px');
         }
     },
 
@@ -1075,28 +1080,25 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _uiSetScrollbarPosition: function (scroller) {
-        var xScroller     = this._xScrollNode,
-            yScroller     = this._yScrollNode,
-            outerScroller = xScroller || yScroller,
-            scrollbar     = this._scrollbarNode,
+        var scrollbar     = this._scrollbarNode,
             fixedHeader   = this._yScrollHeader,
             top;
 
-        if (scrollbar && outerScroller && fixedHeader) {
-            // Using getCS instead of offsetHeight because FF uses fractional
-            // values, but reports ints to offsetHeight, so offsetHeight is
-            // unreliable.  It is probably fine to use offsetHeight in this case
-            // but this was left in place after fixing an off-by-1px issue in
-            // FF 10- by fixing the caption font style so FF picked it up.
-            top = parseFloat(fixedHeader.getComputedStyle('height')) +
-                  styleDim(scroller, 'borderTopWidth') +
-                  outerScroller.get('offsetTop');
-
+        if (scrollbar && scroller && fixedHeader) {
             scrollbar.setStyles({
-                top : top + 'px',
-                left: (outerScroller.get('offsetWidth') -
+                // Using getCS instead of offsetHeight because FF uses
+                // fractional values, but reports ints to offsetHeight, so
+                // offsetHeight is unreliable.  It is probably fine to use
+                // offsetHeight in this case but this was left in place after
+                // fixing an off-by-1px issue in FF 10- by fixing the caption
+                // font style so FF picked it up.
+                top: (parseFloat(fixedHeader.getComputedStyle('height')) +
+                      styleDim(scroller, 'borderTopWidth') +
+                      scroller.get('offsetTop')) + 'px',
+
+                left: (scroller.get('offsetWidth') -
                        Y.DOM.getScrollbarWidth() -
-                       styleDim(outerScroller, 'borderRightWidth')) + 'px'
+                       styleDim(scroller, 'borderRightWidth')) + 'px'
             });
         }
     },
@@ -1113,7 +1115,7 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _uiSetYScrollWidth: function (width) {
-        var scroller = this._yScrollNode,
+        var scroller = this._yScrollContainer,
             table    = this._tableNode,
             tableWidth, borderWidth, scrollerWidth, scrollbarWidth;
 
@@ -1124,7 +1126,7 @@ Y.mix(Scrollable.prototype, {
                 // Assumes no table border
                 borderWidth = scroller.get('offsetWidth') -
                               scroller.get('clientWidth') -
-                              scrollbarWidth;
+                              scrollbarWidth; // added back at the end
 
                 // The table's rendered width might be greater than the
                 // configured width
@@ -1143,9 +1145,8 @@ Y.mix(Scrollable.prototype, {
                 // Expand the scroll node width if the table can't fit.
                 // Otherwise, reassign the scroller a pixel width that
                 // accounts for the borders.
-                width = (tableWidth + scrollbarWidth) + 'px';
-                scroller.setStyle('width', width);
-                //this._uiSetDim('width', width);
+                scroller.setStyle('width',
+                    (tableWidth + scrollbarWidth) + 'px');
             } else {
                 // Allow the table to expand naturally
                 table.setStyle('width', '');

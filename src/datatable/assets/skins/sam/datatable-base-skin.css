@@ -9,7 +9,7 @@
      * reliable dimension calculation for scrollable's header width sync,
      * and it doesn't hurt to have the declaration here.
      */
-    *border-collapse: collapse;
+    /**border-collapse: collapse;*/
     border: 1px solid #cbcbcb;
 }
 

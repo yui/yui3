@@ -3,27 +3,35 @@
     _overflow-x: hidden;
     _position: relative;
 }
-.yui3-datatable-scrollable-y {
-    _overflow-y: hidden;
-    _position: relative;
-}
 
+.yui3-datatable-scrollable-y,
 .yui3-datatable-scrollable-y .yui3-datatable-x-scroller {
     _overflow-y: hidden;
     _position: relative;
 }
 
+.yui3-datatable-y-scroller-container {
+    overflow-x: hidden;
+    position: relative;
+}
+
 .yui3-datatable-scrollable-y .yui3-datatable-content {
-    /* To allow absolute positioning of fixed headers and virtual scrollbar */
+    /* To allow absolute positioning of virtual scrollbar */
     position: relative;
 }
 
 .yui3-skin-sam .yui3-datatable-scroll-columns {
     position: absolute;
+    width: 100%;
     z-index: 2;
 }
 
-.yui3-datatable-scrollable-x .yui3-datatable-x-scroller {
+.yui3-datatable-y-scroller,
+.yui3-datatable-scrollable-x .yui3-datatable-caption-table {
+    width: 100%;
+}
+
+.yui3-datatable-x-scroller {
     position: relative;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -34,10 +42,6 @@
     overflow-x: hidden;
     overflow-y: scroll;
     z-index: 1;
-}
-
-.yui3-datatable-scrollable-x .yui3-datatable-caption-table {
-    width: 100%;
 }
 
 .yui3-datatable-scrollbar {

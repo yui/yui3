@@ -8,12 +8,7 @@
     border-right: 0 none;
     border-collapse: separate;
     border-spacing: 0;
-    /* IE7- don't support border-spacing, but separate is needed for more
-     * reliable dimension calculation for scrollable's header width sync,
-     * and it doesn't hurt to have the declaration here.
-     */
-    *border-collapse: collapse;
-	color:#8E8E8E;
+	color: #8E8E8E;
     margin: 0;
     padding: 0;
 }
