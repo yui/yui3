@@ -522,7 +522,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         chart: {},
 
         /**
-         * Indicates the direction in relation of the legend's layout. 
+         * Indicates the direction in relation of the legend's layout. The `direction` of the legend is determined by its
+         * `position` value.
          *
          * @attribute direction
          * @type String
@@ -532,7 +533,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
        
         /**
-         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. 
+         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and
+         * `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.
          *
          * @attribute position
          * @type String
