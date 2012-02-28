@@ -548,7 +548,31 @@ suite.add(new Y.Test.Case({
         Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
         Assert.isTrue(this.widget.get('defaultButton').hasClass(Y.WidgetButtons.CLASS_NAMES.primary), '`defaultButton` does not have primary CSS class.');
         Assert.areSame(1, called, '`defaultButtonChange` was not called.');
-    }
+    },
+
+    '`defaultButton` should be updated when a button that is the default is removed': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            buttons: [
+                {
+                    name     : 'foo',
+                    isDefault: true
+                }
+            ]
+        });
+
+        this.widget.after('defaultButtonChange', function (e) {
+            called += 1;
+        });
+
+        Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
+
+        this.widget.removeButton('foo');
+
+        Assert.areSame(null, this.widget.get('defaultButton'), '`defaultButton` was not null.');
+        Assert.areSame(1, called, '`defaultButtonChange` was not called.');
+    },
 }));
 
 // -- Methods ------------------------------------------------------------------
