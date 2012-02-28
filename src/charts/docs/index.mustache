@@ -168,6 +168,11 @@ var mychart = new Y.Chart({
                     <td>Indicates the the `Chart` instance will fire `marker` or `planar` events. The default value is marker.</td>
                 </tr>
                 <tr>
+                    <td>`legend`</td>
+                    <td>`Object`</td>
+                    <td>Provides a legend for a `Chart`.</td>
+                </tr>
+                <tr>
                     <td>`seriesCollection`</td>
                     <td>`Array`</td><td>Collection of series to appear on the chart. This can be an array of Series instances or object literals used to construct the appropriate series.
                     </td>
@@ -333,7 +338,7 @@ var myDataValues = [
     <h3 id="usingaxes">Using the `axes` Attribute</h3>
     <p>The `axes` attribute allows you to specify axes to be used in the chart. The `axes` attribute contains a hash of either `Axis` instances or
     object literals containing information that the `Chart` will use to create axes. The most common use case is to use object literals. Below are the attributes available:
-
+    </p>
     <table>
 	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
 	<tr><td>`alwaysShowZero`</td><td>`Boolean`</td><td>Ensures that zero appears on a `NumericAxis` when `minimum` and `maximum` are not explicitly set.</td></tr>
@@ -359,7 +364,7 @@ var myDataValues = [
 
     <h3 id="referenceseriesandaxis">Referencing Series and Axis Instances</h3>
     <p>Sometimes you'll want to update an axis or a series after a chart has been instantiatied. This can be done with the `Chart`'s `getAxisByKey` and
-    `getSeries` methods. The `getAxisByKey` method looks up and returns an `Axis` instance based on its a key reference.</h4>
+    `getSeries` methods. The `getAxisByKey` method looks up and returns an `Axis` instance based on its a key reference.</p></h4>
 <h4>Using `getAxisByKey`</h4>
 ```
 var leftAxis = mychart.getAxisByKey("values");
@@ -379,6 +384,71 @@ var mySeries = mychart.getSeries(0);
 mySeries.set("visible", false);
 ```
 
+    <h3 id="usinglegend">Using the `legend` Attribute</h3>
+    <p>The `legend` attribute allows you to define a legend for your `Chart` instance. The `legend` is an object containing the attributes necessary for defining and
+    styling the legend. Below is a list of the available attributes.</p>
+    <table>
+	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+    <tr><td>chart</td><td>`Chart`</td><td>Reference to the `Chart` instance.</td></tr>
+    <tr><td>direction</td><td>`String`</td><td>Indicates the direction in relation of the legend's layout. The `direction` of the legend is determined by its `position` value.</td></tr>
+    <tr><td>position</td><td>`String`</td><td>Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and 
+    `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.</td></tr>
+    <tr><td>width</td><td>`Number`</td><td>The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included 
+    in the layout of the `Chart` that it references. Under this circumstance, `width` is always `readOnly`. When the legend is rendered in its own dom element, the 
+    `readOnly` status is determined by the  direction of the legend. If the `position` is `left` or `right` or the `direction` is `vertical`, width is `readOnly`. 
+    If the position is `top` or `bottom` or the `direction` is `horizontal`, width can be explicitly set. If width is not explicitly set, the width will be determined 
+    by the width of the legend's parent element.</td></tr>
+    <tr><td>height</td><td>`Number`</td><td>The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included 
+    in the layout of the `Chart` that it references. Under this circumstance, `height` is always `readOnly`. When the legend is rendered in its own dom element, the 
+    `readOnly` status is determined by the direction of the legend. If the `position` is `top` or `bottom` or the `direction` is `horizontal`, height is `readOnly`. 
+    If the position is `left` or `right` or the `direction` is `vertical`, height can be explicitly set. If height is not explicitly set, the height will be determined 
+    by the width of the legend's parent element.</td></tr>
+    <tr><td>x</td><td>`Number`</td><td>Indicates the x position of legend.</td></tr>
+    <tr><td>y</td><td>`Number`</td><td>Indicates the y position of legend.</td></tr>
+    <tr><td>styles</td><td>`Object`</td><td>
+    Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`. Below are the default values:
+      <dl>
+          <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a `Chart` instance this value is applied.</dd>
+          <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
+          <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
+          <dt>item</dt><dd>Set of style properties applied to the `items` of the `ChartLegend`.
+              <dl>
+                  <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>
+                  <dt>vSpacing</dt><dd>Vertical distance, in pixels, between legend `items`.</dd>
+                  <dt>label</dt><dd>Properties for the text of an `item`.
+                      <dl>
+                          <dt>color</dt><dd>Color of the text. The default values is "#808080".</dd>
+                          <dt>fontSize</dt><dd>Font size for the text. The default value is "85%".</dd>
+                      </dl>
+                  </dd>
+                  <dt>marker</dt><dd>Properties for the `item` markers.
+                      <dl>
+                          <dt>width</dt><dd>Specifies the width of the markers.</dd>
+                          <dt>height</dt><dd>Specifies the height of the markers.</dd>
+                      </dl>
+                  </dd>
+              </dl>
+          </dd>
+          <dt>styles</dt><dd>Properties for the `ChartLegend` background.
+              <dl>
+                  <dt>fill</dt><dd>Properties for the background fill.
+                      <dl>
+                          <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
+                      </dl>
+                  </dd>
+                  <dt>stroke</dt><dd>Properties for the background stroke.
+                      <dl>
+                          <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
+                          <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
+                      </dl>
+                  </dd>
+              </dl>
+          </dd>
+     </dl>
+    </td></tr>
+    </table>
+
+</h3>
 <h2 id="issues">Known Issues</h2>
 <ul class="spaced">
     <li>

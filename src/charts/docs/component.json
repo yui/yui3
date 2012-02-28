@@ -117,6 +117,14 @@
 			"modules" : ["charts"],
 			"tags" : ["charts"],
             		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-legend",
+			"displayName" : "Create Chart with a Legend",
+			"description" : "Shows how to add a legend to a chart.",
+			"modules" : ["charts-legend"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
 		}
 	]	
 }
