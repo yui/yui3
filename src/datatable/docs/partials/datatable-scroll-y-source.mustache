@@ -1,0 +1,12 @@
+    table = new Y.DataTable({
+        caption: "Y axis scrolling table",
+        columns: [
+            { key: "STATE",     label: "State" },
+            { key: "TOTAL_POP", label: "Total Population" }
+        ],
+        data: state_census_data,
+        scrollable: "y",
+        height:"200px"
+    });
+
+    table.render('#scrolling-y');
