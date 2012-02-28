@@ -10240,12 +10240,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
@@ -10343,7 +10341,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '59efa05da77199ba44a2351b5cb77ba4';
+YUI.Env[Y.version].md5 = '2a0527e1e605660269dba8f89ae24eba';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

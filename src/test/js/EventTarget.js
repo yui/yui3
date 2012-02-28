@@ -1,7 +1,7 @@
 
 /**
  * Simple custom event implementation.
- * @namespace YUITest
+ * @namespace Test
  * @class EventTarget
  * @constructor
  */

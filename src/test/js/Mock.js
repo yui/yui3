@@ -1,6 +1,6 @@
 /**
  * Creates a new mock object.
- * @namespace YUITest
+ * @namespace Test
  * @class Mock
  * @constructor
  * @param {Object} template (Optional) An object whose methods
@@ -156,7 +156,7 @@ YUITest.Mock.verify = function(mock){
  * @param {Function} method The function to call on the value.
  * @param {Array} originalArgs (Optional) Array of arguments to pass to the method.
  * @param {String} message (Optional) Message to display in case of failure.
- * @namespace YUITest.Mock
+ * @namespace Test.Mock
  * @class Value
  * @constructor
  */

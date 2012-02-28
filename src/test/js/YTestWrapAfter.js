@@ -15,6 +15,7 @@ Y.Mock = Y.Test.Mock;
 Y.ObjectAssert = Y.Test.ObjectAssert;
 Y.ArrayAssert = Y.Test.ArrayAssert;
 Y.DateAssert = Y.Test.DateAssert;
+Y.Test.ResultsFormat = Y.Test.TestFormat;
 
 /**
  * Asserts that a given condition is true. If not, then a Y.Assert.Error object is thrown
@@ -133,7 +134,7 @@ Y.Test.Runner.enableLogging = function() {
     Y.Test.Runner._log = true;
 };
 
-Y.Test.Runner.ignoreEmpty = true;
+Y.Test.Runner._ignoreEmpty = true;
 Y.Test.Runner._log = true;
 
 Y.Test.Runner.on = Y.Test.Runner.attach;

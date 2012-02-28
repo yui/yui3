@@ -27,6 +27,20 @@ suite.add(new Y.Test.Case({
         delete this.toggleButton;
     },
 
+    'Changing the label atrribute should trigger labelChange': function () {
+        var button = this.button;
+        var eventsTriggered = 0;
+        
+        button.on('labelChange', function(){
+            eventsTriggered+=1;
+        });
+        
+        Assert.areEqual(0, eventsTriggered);
+        
+        button.set('label', 'foobar');
+        Assert.areEqual(1, eventsTriggered);
+    },
+    
     'ToggleButton should have `toggle` role': function () {
         var button = this.button;
         var toggleButton = this.toggleButton;

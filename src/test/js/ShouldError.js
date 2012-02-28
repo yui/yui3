@@ -3,7 +3,7 @@
  * a test is expected to throw an error but doesn't.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ShouldError
  * @constructor

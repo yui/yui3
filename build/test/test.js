@@ -2,12 +2,12 @@ YUI.add('test', function(Y) {
 
 /**
  * YUI Test Framework
- * @module yuitest
+ * @module test
  */
 
 /**
  * The root namespace for YUI Test.
- * @class YUITest
+ * @class Test
  * @static
  */
 
@@ -28,7 +28,7 @@ YUITest.Util = {
 
 /**
  * Simple custom event implementation.
- * @namespace YUITest
+ * @namespace Test
  * @class EventTarget
  * @constructor
  */
@@ -146,7 +146,7 @@ YUITest.EventTarget.prototype = {
  * A test suite that can contain a collection of TestCase and TestSuite objects.
  * @param {String||Object} data The name of the test suite or an object containing
  *      a name property as well as setUp and tearDown methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestSuite
  * @constructor
  */
@@ -192,7 +192,7 @@ YUITest.TestSuite.prototype = {
     
     /**
      * Adds a test suite or test case to the test suite.
-     * @param {YUITest.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
+     * @param {Test.TestSuite||YUITest.TestCase} testObject The test suite or test case to add.
      * @return {Void}
      * @method add
      */
@@ -229,7 +229,7 @@ YUITest.TestSuite.prototype = {
  * @param template An object containing any number of test methods, other methods,
  *                 an optional name, and anything else the test case needs.
  * @class TestCase
- * @namespace YUITest
+ * @namespace Test
  * @constructor
  */
 YUITest.TestCase = function (template) {
@@ -371,7 +371,7 @@ YUITest.TestCase.prototype = {
 };
 /**
  * An object object containing test result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class TestFormat
  * @static
  */
@@ -619,7 +619,7 @@ YUITest.TestFormat = function(){
      * @param {Function} format (Optiona) A function that outputs the results in a specific format.
      *      Default is YUITest.TestFormat.XML.
      * @constructor
-     * @namespace YUITest
+     * @namespace Test
      * @class Reporter
      */
     YUITest.Reporter = function(url, format) {
@@ -781,7 +781,7 @@ YUITest.TestFormat = function(){
     /**
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
-     * @namespace YUITest
+     * @namespace Test
      * @class TestRunner
      * @static
      */
@@ -996,11 +996,12 @@ YUITest.TestFormat = function(){
             
             /**
             * If true, YUITest will not fire an error for tests with no Asserts.
-            * @prop ignoreEmpty
+            * @prop _ignoreEmpty
+            * @private
             * @type Boolean
             * @static
             */
-            ignoreEmpty: false,
+            _ignoreEmpty: false,
 
             //restore prototype
             constructor: YUITest.TestRunner,
@@ -1089,7 +1090,7 @@ YUITest.TestFormat = function(){
             /**
              * Adds a test case to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test case to as a child.
-             * @param {YUITest.TestCase} testCase The test case to add.
+             * @param {Test.TestCase} testCase The test case to add.
              * @return {Void}
              * @static
              * @private
@@ -1114,7 +1115,7 @@ YUITest.TestFormat = function(){
             /**
              * Adds a test suite to the test tree as a child of the specified node.
              * @param {TestNode} parentNode The node to add the test suite to as a child.
-             * @param {YUITest.TestSuite} testSuite The test suite to add.
+             * @param {Test.TestSuite} testSuite The test suite to add.
              * @return {Void}
              * @static
              * @private
@@ -1277,7 +1278,7 @@ YUITest.TestFormat = function(){
             
             /**
              * Runs a test case or test suite, returning the results.
-             * @param {YUITest.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
+             * @param {Test.TestCase|YUITest.TestSuite} testObject The test case or test suite to run.
              * @return {Object} Results of the execution with properties passed, failed, and total.
              * @private
              * @method _run
@@ -1384,7 +1385,7 @@ YUITest.TestFormat = function(){
                     segment.call(testCase, this._context);                    
                 
                     //if the test hasn't already failed and doesn't have any asserts...
-                    if(YUITest.Assert._getCount() == 0 && !this.ignoreEmpty){
+                    if(YUITest.Assert._getCount() == 0 && !this._ignoreEmpty){
                         throw new YUITest.AssertionError("Test has no asserts.");
                     }                                                        
                     //if it should fail, and it got here, then it's a fail because it didn't
@@ -1793,7 +1794,7 @@ YUITest.TestFormat = function(){
 /**
  * The ArrayAssert object provides functions to test JavaScript array objects
  * for a variety of cases.
- * @namespace YUITest
+ * @namespace Test
  * @class ArrayAssert
  * @static
  */
@@ -2169,7 +2170,7 @@ YUITest.ArrayAssert = {
  * The Assert object provides functions to test JavaScript values against
  * known and expected results. Whenever a comparison (assertion) fails,
  * an error is thrown.
- * @namespace YUITest
+ * @namespace Test
  * @class Assert
  * @static
  */
@@ -2651,7 +2652,7 @@ YUITest.Assert = {
  * from which more specific assertion errors can be derived.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest
+ * @namespace Test
  * @class AssertionError
  * @constructor
  */ 
@@ -2705,7 +2706,7 @@ YUITest.AssertionError.prototype = {
  * @param {String} message The message to display when the error occurs.
  * @param {Object} expected The expected value.
  * @param {Object} actual The actual value that caused the assertion to fail.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ComparisonFailure
  * @constructor
@@ -2756,7 +2757,7 @@ YUITest.ComparisonFailure.prototype.getMessage = function(){
 };
 /**
  * An object object containing coverage result formatting methods.
- * @namespace YUITest
+ * @namespace Test
  * @class CoverageFormat
  * @static
  */
@@ -2768,7 +2769,7 @@ YUITest.CoverageFormat = {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method JSON
-     * @namespace YUITest.CoverageFormat
+     * @namespace Test.CoverageFormat
      */
     JSON: function(coverage){
         return YUITest.Util.JSON.stringify(coverage);
@@ -2782,7 +2783,7 @@ YUITest.CoverageFormat = {
      * @param {Object} coverage The coverage report object.
      * @return {String} A JSON-formatted string of coverage data.
      * @method XdebugJSON
-     * @namespace YUITest.CoverageFormat
+     * @namespace Test.CoverageFormat
      */    
     XdebugJSON: function(coverage){
     
@@ -2802,7 +2803,7 @@ YUITest.CoverageFormat = {
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
- * @namespace  YUITest
+ * @namespace Test
  * @class DateAssert
  * @static
  */
@@ -2884,7 +2885,7 @@ YUITest.DateAssert = {
 };
 /**
  * Creates a new mock object.
- * @namespace YUITest
+ * @namespace Test
  * @class Mock
  * @constructor
  * @param {Object} template (Optional) An object whose methods
@@ -3040,7 +3041,7 @@ YUITest.Mock.verify = function(mock){
  * @param {Function} method The function to call on the value.
  * @param {Array} originalArgs (Optional) Array of arguments to pass to the method.
  * @param {String} message (Optional) Message to display in case of failure.
- * @namespace YUITest.Mock
+ * @namespace Test.Mock
  * @class Value
  * @constructor
  */
@@ -3108,7 +3109,7 @@ YUITest.Mock.Value.Function   = YUITest.Mock.Value(YUITest.Assert.isFunction);
 /**
  * The ObjectAssert object provides functions to test JavaScript objects
  * for a variety of cases.
- * @namespace YUITest
+ * @namespace Test
  * @class ObjectAssert
  * @static
  */
@@ -3294,7 +3295,7 @@ YUITest.ObjectAssert = {
  * Convenience type for storing and aggregating
  * test result information.
  * @private
- * @namespace YUITest
+ * @namespace Test
  * @class Results
  * @constructor
  * @param {String} name The name of the test.
@@ -3353,7 +3354,7 @@ YUITest.Results = function(name){
 
 /**
  * Includes results from another results object into this one.
- * @param {YUITest.Results} result The results object to include.
+ * @param {Test.Results} result The results object to include.
  * @method include
  * @return {void}
  */
@@ -3369,7 +3370,7 @@ YUITest.Results.prototype.include = function(results){
  * a test is expected to throw an error but doesn't.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class ShouldError
  * @constructor
@@ -3398,7 +3399,7 @@ YUITest.ShouldError.prototype.constructor = YUITest.ShouldError;
  * a test was expected to fail but did not.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends YUITest.AssertionError
  * @class ShouldFail
  * @constructor
@@ -3429,7 +3430,7 @@ YUITest.ShouldFail.prototype.constructor = YUITest.ShouldFail;
  *
  * @param {Error} cause The unexpected error that caused this error to be 
  *                      thrown.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends YUITest.AssertionError
  * @class UnexpectedError
  * @constructor
@@ -3475,7 +3476,7 @@ YUITest.UnexpectedError.prototype.constructor = YUITest.UnexpectedError;
  *
  * @param {String} message The message to display when the error occurs.
  * @param {Object} unexpected The unexpected value.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends AssertionError
  * @class UnexpectedValue
  * @constructor
@@ -3560,6 +3561,7 @@ Y.Mock = Y.Test.Mock;
 Y.ObjectAssert = Y.Test.ObjectAssert;
 Y.ArrayAssert = Y.Test.ArrayAssert;
 Y.DateAssert = Y.Test.DateAssert;
+Y.Test.ResultsFormat = Y.Test.TestFormat;
 
 /**
  * Asserts that a given condition is true. If not, then a Y.Assert.Error object is thrown
@@ -3678,7 +3680,7 @@ Y.Test.Runner.enableLogging = function() {
     Y.Test.Runner._log = true;
 };
 
-Y.Test.Runner.ignoreEmpty = true;
+Y.Test.Runner._ignoreEmpty = true;
 Y.Test.Runner._log = true;
 
 Y.Test.Runner.on = Y.Test.Runner.attach;

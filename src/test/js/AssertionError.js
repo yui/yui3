@@ -4,7 +4,7 @@
  * from which more specific assertion errors can be derived.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest
+ * @namespace Test
  * @class AssertionError
  * @constructor
  */ 
