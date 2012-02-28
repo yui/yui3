@@ -291,6 +291,17 @@ var myDataValues = [
         </dl>
         The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
         will also need to override the tooltip's `setTextFunction` method to accept an html string.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this method used `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which your custom `markerLabelFunction` is dependent on `innerHTML` to format your text. You will need to either change them to work with `appendChild` or
+        update the tooltip's `setFunction` method to accept an html string. 
+        ```
+        tooltip: {
+            setTextFunction: function(textField, val) {
+                textField.innerHTML = val;
+            }
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
     </td></tr>
 	<tr><td>`node`</td><td>`HTMLElement`</td><td>Reference (read-only) to the actual dom node of the tooltip.</td></tr>
 	<tr><td>`planarEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on planar events.</td></tr>
@@ -311,6 +322,17 @@ var myDataValues = [
         </dl>
         The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
         will also need to override the tooltip's `setTextFunction` method to accept an html string.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this method used `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which your custom `planarLabelFunction` is dependent on `innerHTML` to format your text. You will need to either change them to work with `appendChild` or
+        update the tooltip's `setFunction` method to accept an html string. 
+        ```
+        tooltip: {
+            setTextFunction: function(textField, val) {
+                textField.innerHTML = val;
+            }
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
     </td></tr>
     <tr><td>setTextFunction</td><td>`Function`</td><td>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
     has the following signature:
@@ -351,10 +373,30 @@ var myDataValues = [
 	    <li>decimalPlaces</li>
 	    <li>suffix</li>
 	</ul></td></tr>
-	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format axis labels for display. The return value is added to the `Axis` with `appendChild`.</td></tr>
+	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format axis labels for display. The return value is added to the `Axis` with `appendChild`.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this method used `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which your custom `labelFunction` is dependent on `innerHTML` to format your text. You will need to either change them to work with `appendChild` or
+        update the Axis' `appendLabelFunction` method to accept an html string. 
+        ```
+        appendLabelFunction: function(textField, val) {
+            textField.innerHTML = val;
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
+    </td></tr>
 	<tr><td>`appendLabelFunction`</td><td>`Function`</td><td>Function used to add the output of the `labelFunction` to the `Axis` using `appendChild`. This attribute can be overridden
     as needed.</td></tr>
-    <tr><td>`title`</td><td>`String`</td><td>Optional attribute that allows for specification of an axis title. The value of this attribute is added to the `Axis` with `appendChild`.</td></tr>
+    <tr><td>`title`</td><td>`String`</td><td>Optional attribute that allows for specification of an axis title. The value of this attribute is added to the `Axis` with `appendChild`.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this attribute was added to the DOM using `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which the value of the `title` attribute is dependent on `innerHTML` to format your text. You will need to either change the value to an HTMLElement that can be 
+        added with `appendChild` or update the Axis' `appendTitleFunction` method to accept an html string. 
+        ```
+        appendTitleFunction: function(textField, val) {
+            textField.innerHTML = val;
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
+    </td></tr>
     <tr><td>`appendTitleFunction`</td><td>`Function`</td><td>Function used to add the `title` attribute to the `Axis` using `appendChild`. This attribute can be overridden as needed.</td></tr>
     <tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
 	<tr><td>`minimum`</td><td>`Object`</td><td>The minimum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
@@ -451,6 +493,25 @@ mySeries.set("visible", false);
 </h3>
 <h2 id="issues">Known Issues</h2>
 <ul class="spaced">
+    <li>
+        <p>
+        Custom formatting for tooltip's and axis title and labels has been updated for 3.5.0 and higher to prevent potential security vectors. This may cause backward 
+        compatibility issues when upgrading from 3.4.x and below under the following circumstances:
+            <ul>
+                <li>If you have written a custom `labelFunction` for your axis that is dependent upon `innerHTML` for formatting, the current implementation will need
+                to be changed so that it will work with `appendChild`. Alternatively, there is a newly created `appendLabelFunction` attribute that can be overridden
+                to use `innerHTML`. More information can be found under the labelFunction section <a href="#usingaxes">here</a>.</li>
+                <li>If you are dependent on `innerHTML` to format the value of an Axis `title`, you will need to pass in an HTMLElement that can be added using `appendChild`.
+                Alternatively, there is a newly created `appendTitleFunction` attribute that can be overridden to use `innerHTML`. More information can be found under
+                the title section <a href="#usingaxes">here</a>.</li>
+                <li>If you are using the `tooltip` attribute's `markerLabelFunction` or `planarLabelFunction` to add custom formatting to a chart's tooltip. You will need
+                to update it so that is not dependent on `innerHTML`. The <a href="charts-customizedtooltip.html">Customize a Chart's Tooltip</a> example has been 
+                updated to demonstrate the correct way to construct a custom tooltip function. Alternatively, there is a newly created `setTextFunction` property of the 
+                `tooltip` attribute that can be overridden to use `innerHTML`. More information can be found under the markerLabelFunction and planarLabelFunction sections
+                <a href="#usingtooltip">here</a>.
+            </ul>
+        </p>
+    </li>
     <li>
         <p>
         Charts load slowly in android devices. Performance optimizations will need to be added in a future release. 
