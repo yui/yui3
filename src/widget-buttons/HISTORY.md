@@ -4,14 +4,85 @@ Widget Buttons Change History
 3.5.0
 -----
 
+  * [!] WidgetButtons has been completely rewritten, back-compat for common
+    usage has been maintained. The new version is _much more_ robust.
+    [Tickets #2531366, #2531624, #2531043]
+
+  * [!] The `buttons` attribute is handled in an _extremely_ flexible manner.
+    It supports being a single Array, or an Object of Arrays keyed to a
+    particular section.
+
+    The `buttons` collection will be normalized into an Object which contains an
+    Array of `Y.Node`s for every `WidgetStdMod` section (header, body, footer)
+    which has one or more buttons. The structure will end up looking like this:
+
+        {
+            header: [...],
+            footer: [...]
+        }
+
+    A button can be specified as a Y.Node, config Object, or String name for a
+    predefined button on the `BUTTONS` prototype property. When a config Object
+    is provided, it will be merged with any defaults provided by a button with
+    the same `name` defined on the `BUTTONS` property. [Ticket #2531365]
+
+  * [!] All button nodes have the `Y.Plugin.Button` plugin applied.
+
+  * [!] The HTML structure for buttons has been optimized to:
+
+        <span class="yui3-widget-butons>
+            <button class="yui3-button">Foo</button>
+        </span>
+
+    The above structure will appear in each `WidgetStdMod` section
+    (header/body/footer) which contains buttons. [Ticket #2531367]
+
   * Fixed issue with multiplying subscriptions to `buttonsChange` event. The
     event handler was itself subscripting _again_ to the event causing an
-    ever-increasing number of subscriptions all doing the same work.
+    ever-increasing number of subscriptions all doing the same work. Now
+    WidgetButtons will always clean up its event subscriptions.
     [Ticket #2531449]
 
-  * Configurations of named button types, e.g. "close", are now merged with the
-    user-provided configuration allowing overriding of the default options for
-    the named button.
+  * Added support for predefining `BUTTONS` on the prototype. `BUTTONS` is
+    Collection of predefined buttons mapped by name -> config. These button
+    configurations will serve as defaults for any button added to a widget's
+    buttons which have the same `name`. [Ticket #2531680]
+
+  * Added an `HTML_PARSER` implementation for the `buttons` attribute. This
+    allows the initial value for a widget's `buttons` to be seeded from its DOM.
+
+  * A button can be configured with a `context` object (which defaults to the
+    widget instance), which will be used as the `this` object when calling a
+    button's `action` or `events` handlers. [Ticket #2531166]
+
+  * Buttons now support multiple `events` which can be specified in place of an
+    `action`. The follow are equivalent:
+
+        var buttonConfigWithEvents = {
+            label: 'Foo',
+            events: {
+                click: function (e) {
+                    this.hide();
+                }
+            }
+        };
+
+        var buttonConfigWithAction = {
+            label : 'Foo',
+            action: 'hide'
+        };
+
+    A button's `action` can now be specified as the String name of a function
+    which is hosted on the `context` object. [Ticket #2531363]
+
+  * Added the notion of a default button. A widget's `defaultButton` will have
+    the "yui3-button-primary" CSS class added to it, and will be focused when
+    the widget is shown.
+
+  * Updated the `addButton()` method and added other accessor/mutator methods:
+    `getButton()` and `removeButton()`.
+
+  * Buttons can now be added to a widget's body, not just the header and footer.
 
 3.4.1
 -----
