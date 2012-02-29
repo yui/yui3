@@ -75,7 +75,7 @@ Y.mix(Y_DOM, {
 
     /**
      * Provides a normalized attribute interface. 
-     * @method getAttibute
+     * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 

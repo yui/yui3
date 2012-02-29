@@ -25,6 +25,9 @@ build/autocomplete-sources/assets/autocomplete-list-core.css
 build/datatable-body/assets/
 build/datatable-core/assets/
 build/datatable-head/assets/
+build/datatable-column-widths/assets/
+build/datatable-mutable/assets/
+build/datatable-datasource/assets/
 build/datatable-base/assets/datatable-scroll-core.css
 build/datatable-base/assets/datatable-sort-core.css
 build/datatable-base/assets/skins/night/datatable-scroll-skin.css
@@ -34,6 +37,9 @@ build/datatable-base/assets/skins/sam/datatable-sort-skin.css
 build/datatable-base/assets/datatable-message-core.css
 build/datatable-base/assets/skins/night/datatable-message-skin.css
 build/datatable-base/assets/skins/sam/datatable-message-skin.css
+build/datatable-base/assets/skins/sam/*.png
+build/datatable-base/assets/skins/night/*.png
+build/datatable-base/assets/skins/night/sort-arrow-sprite-ie.png
 build/datatable-scroll/assets/skins/sam/datatable-message.css
 build/datatable-scroll/assets/skins/night/datatable-message.css
 build/datatable-scroll/assets/skins/sam/datatable-message-skin.css
@@ -44,8 +50,8 @@ build/datatable-scroll/assets/skins/night/datatable-base-skin.css
 build/datatable-scroll/assets/skins/night/datatable-sort-skin.css
 build/datatable-scroll/assets/skins/sam/datatable-base-skin.css
 build/datatable-scroll/assets/skins/sam/datatable-sort-skin.css
-build/datatable-scroll/assets/skins/sam/dt-arrow-dn.png
-build/datatable-scroll/assets/skins/sam/dt-arrow-up.png
+build/datatable-scroll/assets/skins/sam/*.png
+build/datatable-scroll/assets/skins/night/*.png
 build/datatable-scroll/assets/datatable-message-core.css
 build/datatable-scroll/assets/skins/sam/datatable-message.css
 build/datatable-scroll/assets/skins/night/datatable-message.css
@@ -69,8 +75,5 @@ build/datatable-message/assets/skins/night/datatable-sort-skin.css
 build/datatable-message/assets/skins/sam/datatable-base-skin.css
 build/datatable-message/assets/skins/sam/datatable-scroll-skin.css
 build/datatable-message/assets/skins/sam/datatable-sort-skin.css
-build/datatable-message/assets/skins/sam/dt-arrow-dn.png
-build/datatable-message/assets/skins/sam/dt-arrow-up.png
-build/datatable-column-widths/assets/
-build/datatable-mutable/assets/
-build/datatable-datasource/assets/
+build/datatable-message/assets/skins/sam/*.png
+build/datatable-message/assets/skins/night/*.png
