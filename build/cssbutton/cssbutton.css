@@ -1,15 +1,12 @@
 .yui3-button {
     /* Structure */
     display: inline-block;
-    *display: inline; /*IE 6*/
+    *display: inline; /*IE 6/7*/
     zoom: 1;
-    font-size: 100%;
-    *+font-size: 90%;
-    margin: 0;
-    padding: 0 1em;
-    *+margin: 2px; /*IE 6/7*/
-    line-height: normal;
-    line-height: 2;
+    font-size: 100%; 
+    *font-size: 90%; /*IE 6/7 - To reduce IE's oversized button text*/
+    padding: 1em;
+    line-height:normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
@@ -20,8 +17,9 @@
     user-select: none;
 
     /* Presentation */
-    color: rgba(0,0,0, 0.80);
-    *color: #444; /*IE 6*/
+    color: #444; /* rgba not supported (IE 8) */
+    color: rgba(0, 0, 0, 0.80); /* rgba supported */
+    *color: #444; /* IE 6 & 7 */
     border: none;
     border: outset 1px #999\9;  /*IE 6/7/8*/
     background-color: #E6E6E6;
@@ -62,7 +60,6 @@ a.yui3-button {
     background-image: -ms-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -o-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
-    background-color:  #D6D6D6\0/; /*IE 8/9*/
 }
 
 .yui3-button:active {
@@ -95,11 +92,13 @@ a.yui3-button {
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
 }
 
+/* Firefox: Get rid of the inner focus border */
 .yui3-button::-moz-focus-inner{
     padding: 0;
     border: 0;
 }
 
+/* Firefox: Add a border around a focused button */
 .yui3-button:-moz-focusring {
     outline: thin dotted;
 }
