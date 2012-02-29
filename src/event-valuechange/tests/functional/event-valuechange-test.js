@@ -24,8 +24,7 @@ suite.add(new Y.Test.Case({
         this.textArea  = Y.Node.create('<textarea></textarea>');
         this.textInput = Y.Node.create('<input type="text">');
 
-        Y.one('#test').append(this.textArea)
-            .append(this.textInput);
+        Y.one('#test').append(this.textArea).append(this.textInput);
     },
 
     tearDown: function () {
@@ -34,54 +33,52 @@ suite.add(new Y.Test.Case({
     },
 
     'valuechange event should start polling on mousedown and fire an event when the value changes': function () {
-        var fired;
+        var test = this;
 
         this.textInput.once('valuechange', function (e) {
-            fired = true;
-
-            Assert.areSame('', e.prevVal);
-            Assert.areSame('foo', e.newVal);
+            test.resume(function () {
+                Assert.areSame('', e.prevVal, 'prevVal should be ""');
+                Assert.areSame('foo', e.newVal, 'newVal should be "foo"');
+                Assert.areSame(test.textInput, e.currentTarget, 'currentTarget should be the input node');
+                Assert.areSame(test.textInput, e.target, 'target should be the input node');
+            });
         });
 
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'foo');
 
-        this.wait(function () {
-            Assert.isTrue(fired);
-        }, 60);
+        this.wait(200);
     },
 
     'valuechange should support textareas as well': function () {
-        var fired;
+        var test = this;
 
         this.textArea.once('valuechange', function (e) {
-            fired = true;
-
-            Assert.areSame('', e.prevVal);
-            Assert.areSame('foo', e.newVal);
+            test.resume(function () {
+                Assert.areSame('', e.prevVal, 'prevVal should be ""');
+                Assert.areSame('foo', e.newVal, 'newVal should be "foo"');
+                Assert.areSame(test.textArea, e.currentTarget, 'currentTarget should be the textarea node');
+                Assert.areSame(test.textArea, e.target, 'target should be the textarea node');
+            });
         });
 
         this.textArea.simulate('mousedown');
         this.textArea.set('value', 'foo');
 
-        this.wait(function () {
-            Assert.isTrue(fired);
-        }, 60);
+        this.wait(200);
     },
 
     'valuechange should start polling on keydown': function () {
-        var fired;
+        var test = this;
 
         this.textInput.once('valuechange', function (e) {
-            fired = true;
+            test.resume();
         });
 
         this.textInput.simulate('keydown');
         this.textInput.set('value', 'foo');
 
-        this.wait(function () {
-            Assert.isTrue(fired);
-        }, 60);
+        this.wait(200);
     },
 
     'valuechange should stop polling on blur': function () {
@@ -103,23 +100,21 @@ suite.add(new Y.Test.Case({
 
             this.wait(function () {
                 Assert.isFalse(fired);
-            }, 60);
-        }, 60);
+            }, 200);
+        }, 200);
     },
 
     'valuechange should start polling on focus': function () {
-        var fired;
+        var test = this;
 
         this.textInput.once('valuechange', function (e) {
-            fired = true;
+            test.resume();
         });
 
         this.textInput.simulate('focus');
         this.textInput.set('value', 'foo');
 
-        this.wait(function () {
-            Assert.isTrue(fired);
-        }, 60);
+        this.wait(200);
     },
 
     'valuechange should not report stale changes that occurred while a node was not focused': function () {
@@ -139,7 +134,7 @@ suite.add(new Y.Test.Case({
 
         this.wait(function () {
             Assert.isFalse(fired);
-        }, 60);
+        }, 200);
     },
 
     'valuechange should start polling on keyup for IME keystrokes': function () {
@@ -170,9 +165,9 @@ suite.add(new Y.Test.Case({
 
                 this.wait(function () {
                     Assert.isTrue(fired);
-                }, 100);
-            }, 100);
-        }, 100);
+                }, 200);
+            }, 200);
+        }, 200);
     },
 
     'valuechange should stop polling after timeout': function () {
@@ -204,18 +199,16 @@ suite.add(new Y.Test.Case({
     },
 
     'valueChange should be an alias for valuechange for backcompat': function () {
-        var fired;
+        var test = this;
 
         this.textInput.on('valueChange', function () {
-            fired = true;
+            test.resume();
         });
 
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'monkeys');
 
-        this.wait(function () {
-            Assert.isTrue(fired, 'valueChange event should have fired');
-        }, 60);
+        this.wait(200);
     }
 }));
 
@@ -250,15 +243,17 @@ suite.add(new Y.Test.Case({
 
         this.container.delegate('valuechange', function (e) {
             test.resume(function () {
-                Assert.areSame('', e.prevVal);
-                Assert.areSame('foo', e.newVal);
+                Assert.areSame('', e.prevVal, 'prevVal should be ""');
+                Assert.areSame('foo', e.newVal, 'newVal should be "foo"');
+                Assert.areSame('input', e.currentTarget.get('nodeName').toLowerCase(), 'currentTarget should be the input node');
+                Assert.areSame('input', e.target.get('nodeName').toLowerCase(), 'target should be the input node');
             });
         }, '.odd');
 
         this.a.simulate('mousedown');
         this.a.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'delegation should be supported on textareas': function () {
@@ -266,15 +261,17 @@ suite.add(new Y.Test.Case({
 
         this.container.delegate('valuechange', function (e) {
             test.resume(function () {
-                Assert.areSame('', e.prevVal);
-                Assert.areSame('foo', e.newVal);
+                Assert.areSame('', e.prevVal, 'prevVal should be ""');
+                Assert.areSame('foo', e.newVal, 'newVal should be "foo"');
+                Assert.areSame('textarea', e.currentTarget.get('nodeName').toLowerCase(), 'currentTarget should be the textarea node');
+                Assert.areSame('textarea', e.target.get('nodeName').toLowerCase(), 'target should be the textarea node');
             });
         }, '.even');
 
         this.f.simulate('mousedown');
         this.f.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'delegate filters should work properly': function () {
@@ -293,7 +290,7 @@ suite.add(new Y.Test.Case({
         this.b.simulate('mousedown');
         this.b.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'multiple delegated handlers should be supported': function () {
@@ -323,7 +320,7 @@ suite.add(new Y.Test.Case({
 
         this.wait(function () {
             ArrayAssert.itemsAreSame(['one', 'two', 'three'], calls, 'delegated handlers should all be called in the correct order');
-        }, 100);
+        }, 200);
     }
 }));
 

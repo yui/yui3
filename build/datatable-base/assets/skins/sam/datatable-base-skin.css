@@ -3,13 +3,19 @@
     margin: 0;
     padding: 0;
     font-family: arial, sans-serif;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    /* IE7- don't support border-spacing, but separate is needed for more
+     * reliable dimension calculation for scrollable's header width sync,
+     * and it doesn't hurt to have the declaration here.
+     */
+    /**border-collapse: collapse;*/
     border: 1px solid #cbcbcb;
 }
 
 .yui3-skin-sam .yui3-datatable-caption {
     color: #000;
-    font: normal italic 85%/1 arial, sans-serif;
+    font: italic 85%/1 arial, sans-serif;
     padding: 1em 0;
     text-align: center;
 }
@@ -25,7 +31,7 @@
     white-space: nowrap;
 }
 .yui3-skin-sam .yui3-datatable-cell:first-child,
-.yui3-skin-sam .yui3-datatable-header:first-child {
+.yui3-skin-sam .yui3-datatable-first-header {
     border-left-width: 0px;
 }
 

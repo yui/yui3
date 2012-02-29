@@ -247,7 +247,8 @@ Table.ATTRS = {
     **/
     recordset: {
         setter: '_setRecordset',
-        getter: '_getRecordset'
+        getter: '_getRecordset',
+        lazyAdd: false
     },
 
     /**
@@ -265,7 +266,8 @@ Table.ATTRS = {
     **/
     columnset: {
         setter: '_setColumnset',
-        getter: '_getColumnset'
+        getter: '_getColumnset',
+        lazyAdd: false
     }
 };
 
@@ -287,9 +289,9 @@ Y.mix(Table.prototype, {
 
     @property TABLE_TEMPLATE
     @type {HTML}
-    @default '<table class="{className}"/>'
+    @default '<table cellspacing="0" class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table class="{className}"/>',
+    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -1073,7 +1075,8 @@ Y.mix(Table.prototype, {
     columns, subsequent appearances will have their `_id` appended with an
     incrementing number (e.g. if column "foo" is included in the `columns`
     attribute twice, the first will get `_id` of "foo", and the second an `_id`
-    of "foo1").
+    of "foo1").  Columns that are children of other columns will have the
+    `_parent` property added, assigned the column object to which they belong.
 
     The result is an object map with column keys as the property name and the
     corresponding column object as the associated value.
@@ -1087,8 +1090,22 @@ Y.mix(Table.prototype, {
         var map  = {},
             keys = {};
         
-        function process(cols) {
-            var i, len, col, key, yuid, id;
+        function genId(name) {
+            // Sanitize the name for use in generated CSS classes.
+            // TODO: is there more to do for other uses of _id?
+            name = name.replace(/\s+/, '-');
+
+            if (keys[name]) {
+                name += (keys[name]++);
+            } else {
+                keys[name] = 1;
+            }
+
+            return name;
+        }
+
+        function process(cols, parent) {
+            var i, len, col, key, yuid;
 
             for (i = 0, len = cols.length; i < len; ++i) {
                 col = cols[i];
@@ -1101,8 +1118,19 @@ Y.mix(Table.prototype, {
 
                 yuid = Y.stamp(col);
 
+                if (parent) {
+                    col._parent = parent;
+                } else {
+                    delete col._parent;
+                }
+
                 if (isArray(col.children)) {
-                    process(col.children);
+                    // Allow getColumn for parent columns if they have a name
+                    if (col.name) {
+                        map[genId(col.name)] = col;
+                    }
+
+                    process(col.children, col);
                 } else {
                     key = col.key;
 
@@ -1113,22 +1141,10 @@ Y.mix(Table.prototype, {
                     // Unique id based on the column's configured name or key,
                     // falling back to the yuid.  Duplicates will have a counter
                     // added to the end.
-                    id = col.name || col.key || col._yuid;
-
-                    // Sanitize the _id for use in generated CSS classes.
-                    // TODO: is there more to do for other uses of _id?
-                    id = id.replace(/\s+/, '-');
-
-                    if (keys[id]) {
-                        id += (keys[id]++);
-                    } else {
-                        keys[id] = 1;
-                    }
-
-                    col._id = id;
+                    col._id = genId(col.name || col.key || col._yuid);
 
                     //TODO: named columns can conflict with keyed columns
-                    map[id] = col;
+                    map[col._id] = col;
                 }
             }
         }
@@ -1201,9 +1217,11 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _setColumnset: function (val) {
-        if (val && val instanceof Y.Columnset) {
+        if (val && Y.Columnset && val instanceof Y.Columnset) {
             val = val.get('definitions');
         }
+
+        this.set('columns', val);
 
         return isArray(val) ? val : INVALID;
     },
@@ -1301,13 +1319,15 @@ Y.mix(Table.prototype, {
     _setRecordset: function (val) {
         var data;
 
-        if (val && val instanceof Y.Recordset) {
+        if (val && Y.Recordset && val instanceof Y.Recordset) {
             data = [];
             val.each(function (record) {
                 data.push(record.get('data'));
             });
             val = data;
         }
+
+        this.set('data', val);
 
         return val;
     },
@@ -1394,6 +1414,8 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetWidth: function (width) {
+        var table = this._tableNode;
+
         if (isNumber(width)) {
             // DEF_UNIT from Widget
             width += this.DEF_UNIT;
@@ -1401,7 +1423,16 @@ Y.mix(Table.prototype, {
 
         if (isString(width)) {
             this._uiSetDim('width', width);
-            this._tableNode.setStyle('width', width);
+
+            if (width) {
+                // Table width needs to account for borders
+                width = (this.get('boundingBox').get('offsetWidth') -
+                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
+                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
+                 'px';
+            }
+
+            table.setStyle('width', width);
         }
     },
 

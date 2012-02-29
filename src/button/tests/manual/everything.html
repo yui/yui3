@@ -14,16 +14,19 @@
                 
                 new Y.Console().render();
                 
-                Y.log('A ninja button called ' + new Y.Button({label:'Bruce Lee'}).getNode().getContent());
-
+                var ButtonFactory = Y.Plugin.Button.factory;
+                var ToggleFactory = Y.ToggleButton;
+                
+                Y.log('A ninja button called ' + new ButtonFactory({label:'Bruce Lee'}).getContent());
+                
                 /*
                     Just a basic test with a listener
                 */
-                var button = new Y.Button({
+                var button = new ButtonFactory({
                     srcNode: Y.one('#event')
                 });
                 
-                button.getNode().on("click", function(e){
+                button.on("click", function(e){
                     Y.log("click");
                 });
                 
@@ -31,21 +34,20 @@
                 /*
                     A 'toggle' button listening for the selectedChange event
                 */
-                var button2 = new Y.Button({
+                var button2 = new ToggleFactory({
                     srcNode: Y.one('#toggle'),
-                    type: 'toggle',
                     on: {
                         selectedChange:function(){
                            Y.log('selectedChange');
                         }
                     }
-                });
+                }).render();
 
                 /*
                     A 'link' button
                     Preferably, the user would just apply a yui3-button style to an <a> element and not use JS
                 */
-                var button3 = new Y.Button({
+                var button3 = new ButtonFactory({
                     srcNode: Y.one('#link')
                 });
 
@@ -58,27 +60,11 @@
                 /*
                     A disabled button
                 */
-                var button4 = new Y.Button({
+                var button4 = new ButtonFactory({
                     srcNode: Y.one('#disabled'),
                     disabled: true
                 });
 
-
-
-
-
-
-                /*
-                    A group of radio-like buttons
-                */
-                var buttonGroup = new Y.ButtonGroup({
-                    srcNodes: Y.all('.group'),
-                    type: 'radio'
-                });
-
-                buttonGroup.after('selectionChange', function(e){
-                    Y.log('buttonGroup selection changed');
-                });
 
 
 
@@ -101,6 +87,22 @@
 
 
 
+                /*
+                    A group of radio-like buttons
+                */
+                var buttonGroup = new Y.ButtonGroup({
+                    srcNodes: Y.all('.group'),
+                    type: 'radio'
+                });
+
+                buttonGroup.after('selectionChange', function(e){
+                    Y.log('buttonGroup selection changed');
+                });
+
+
+
+
+
 
 
 
@@ -112,26 +114,31 @@
                     Y.Buttons adds nothing useful for the gernator buttons, so just add the class and a listener.
                 */
                 Y.all('.generator').addClass('yui3-button').on('click', function(e){
-                    var button, type, config;
+                    var button, type, config, Factory;
                     
                     type = e.target.getAttribute('data-type');
+                    srcNode = Y.Node.create('<button>' + type + '</button>');
+                    Y.one('#generated').append(srcNode);
                     
                     config = {
-                        label: type
+                        label: type,
+                        disabled: false,
+                        srcNode: srcNode
                     };
                     
                     if (type === 'disabled') {
-                        config.type = 'push';
+                        Factory = Y.Button;
                         config.disabled = true;
                     }
-                    else {
-                        config.type = type;
+                    else if (type === 'push') {
+                        Factory = Y.Button;
+                    }
+                    else if (type === 'toggle') {
+                        Factory = Y.ToggleButton;
                     }
                     
-                    config.srcNode = Y.Node.create('<button>' + config.label + '</button>');
-                    button = new Y.Button(config);
-                    
-                    Y.one('#generated').append(button.getNode());
+                    button = new Factory(config);
+                    button.render();
                 });
                 
             });

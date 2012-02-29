@@ -168,6 +168,11 @@ var mychart = new Y.Chart({
                     <td>Indicates the the `Chart` instance will fire `marker` or `planar` events. The default value is marker.</td>
                 </tr>
                 <tr>
+                    <td>`legend`</td>
+                    <td>`Object`</td>
+                    <td>Provides a legend for a `Chart`.</td>
+                </tr>
+                <tr>
                     <td>`seriesCollection`</td>
                     <td>`Array`</td><td>Collection of series to appear on the chart. This can be an array of Series instances or object literals used to construct the appropriate series.
                     </td>
@@ -286,6 +291,17 @@ var myDataValues = [
         </dl>
         The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
         will also need to override the tooltip's `setTextFunction` method to accept an html string.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this method used `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which your custom `markerLabelFunction` is dependent on `innerHTML` to format your text. You will need to either change them to work with `appendChild` or
+        update the tooltip's `setFunction` method to accept an html string. 
+        ```
+        tooltip: {
+            setTextFunction: function(textField, val) {
+                textField.innerHTML = val;
+            }
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
     </td></tr>
 	<tr><td>`node`</td><td>`HTMLElement`</td><td>Reference (read-only) to the actual dom node of the tooltip.</td></tr>
 	<tr><td>`planarEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on planar events.</td></tr>
@@ -306,6 +322,17 @@ var myDataValues = [
         </dl>
         The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
         will also need to override the tooltip's `setTextFunction` method to accept an html string.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this method used `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which your custom `planarLabelFunction` is dependent on `innerHTML` to format your text. You will need to either change them to work with `appendChild` or
+        update the tooltip's `setFunction` method to accept an html string. 
+        ```
+        tooltip: {
+            setTextFunction: function(textField, val) {
+                textField.innerHTML = val;
+            }
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
     </td></tr>
     <tr><td>setTextFunction</td><td>`Function`</td><td>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
     has the following signature:
@@ -333,7 +360,7 @@ var myDataValues = [
     <h3 id="usingaxes">Using the `axes` Attribute</h3>
     <p>The `axes` attribute allows you to specify axes to be used in the chart. The `axes` attribute contains a hash of either `Axis` instances or
     object literals containing information that the `Chart` will use to create axes. The most common use case is to use object literals. Below are the attributes available:
-
+    </p>
     <table>
 	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
 	<tr><td>`alwaysShowZero`</td><td>`Boolean`</td><td>Ensures that zero appears on a `NumericAxis` when `minimum` and `maximum` are not explicitly set.</td></tr>
@@ -346,10 +373,30 @@ var myDataValues = [
 	    <li>decimalPlaces</li>
 	    <li>suffix</li>
 	</ul></td></tr>
-	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format axis labels for display. The return value is added to the `Axis` with `appendChild`.</td></tr>
+	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format axis labels for display. The return value is added to the `Axis` with `appendChild`.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this method used `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which your custom `labelFunction` is dependent on `innerHTML` to format your text. You will need to either change them to work with `appendChild` or
+        update the Axis' `appendLabelFunction` method to accept an html string. 
+        ```
+        appendLabelFunction: function(textField, val) {
+            textField.innerHTML = val;
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
+    </td></tr>
 	<tr><td>`appendLabelFunction`</td><td>`Function`</td><td>Function used to add the output of the `labelFunction` to the `Axis` using `appendChild`. This attribute can be overridden
     as needed.</td></tr>
-    <tr><td>`title`</td><td>`String`</td><td>Optional attribute that allows for specification of an axis title. The value of this attribute is added to the `Axis` with `appendChild`.</td></tr>
+    <tr><td>`title`</td><td>`String`</td><td>Optional attribute that allows for specification of an axis title. The value of this attribute is added to the `Axis` with `appendChild`.
+        <p><strong>*NOTE:</strong> Previous to 3.5.0, this attribute was added to the DOM using `innerHTML`. The functionality was changed to prevent potential security vectors. If you have current implementations 
+        in which the value of the `title` attribute is dependent on `innerHTML` to format your text. You will need to either change the value to an HTMLElement that can be 
+        added with `appendChild` or update the Axis' `appendTitleFunction` method to accept an html string. 
+        ```
+        appendTitleFunction: function(textField, val) {
+            textField.innerHTML = val;
+        }
+        ```
+        If you use such a strategy, please ensure your content is safe.</p>
+    </td></tr>
     <tr><td>`appendTitleFunction`</td><td>`Function`</td><td>Function used to add the `title` attribute to the `Axis` using `appendChild`. This attribute can be overridden as needed.</td></tr>
     <tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
 	<tr><td>`minimum`</td><td>`Object`</td><td>The minimum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
@@ -359,7 +406,7 @@ var myDataValues = [
 
     <h3 id="referenceseriesandaxis">Referencing Series and Axis Instances</h3>
     <p>Sometimes you'll want to update an axis or a series after a chart has been instantiatied. This can be done with the `Chart`'s `getAxisByKey` and
-    `getSeries` methods. The `getAxisByKey` method looks up and returns an `Axis` instance based on its a key reference.</h4>
+    `getSeries` methods. The `getAxisByKey` method looks up and returns an `Axis` instance based on its a key reference.</p></h4>
 <h4>Using `getAxisByKey`</h4>
 ```
 var leftAxis = mychart.getAxisByKey("values");
@@ -379,8 +426,92 @@ var mySeries = mychart.getSeries(0);
 mySeries.set("visible", false);
 ```
 
+    <h3 id="usinglegend">Using the `legend` Attribute</h3>
+    <p>The `legend` attribute allows you to define a legend for your `Chart` instance. The `legend` is an object containing the attributes necessary for defining and
+    styling the legend. Below is a list of the available attributes.</p>
+    <table>
+	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+    <tr><td>chart</td><td>`Chart`</td><td>Reference to the `Chart` instance.</td></tr>
+    <tr><td>direction</td><td>`String`</td><td>Indicates the direction in relation of the legend's layout. The `direction` of the legend is determined by its `position` value.</td></tr>
+    <tr><td>position</td><td>`String`</td><td>Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and 
+    `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.</td></tr>
+    <tr><td>width</td><td>`Number`</td><td>The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included 
+    in the layout of the `Chart` that it references. Under this circumstance, `width` is always `readOnly`. When the legend is rendered in its own dom element, the 
+    `readOnly` status is determined by the  direction of the legend. If the `position` is `left` or `right` or the `direction` is `vertical`, width is `readOnly`. 
+    If the position is `top` or `bottom` or the `direction` is `horizontal`, width can be explicitly set. If width is not explicitly set, the width will be determined 
+    by the width of the legend's parent element.</td></tr>
+    <tr><td>height</td><td>`Number`</td><td>The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included 
+    in the layout of the `Chart` that it references. Under this circumstance, `height` is always `readOnly`. When the legend is rendered in its own dom element, the 
+    `readOnly` status is determined by the direction of the legend. If the `position` is `top` or `bottom` or the `direction` is `horizontal`, height is `readOnly`. 
+    If the position is `left` or `right` or the `direction` is `vertical`, height can be explicitly set. If height is not explicitly set, the height will be determined 
+    by the width of the legend's parent element.</td></tr>
+    <tr><td>x</td><td>`Number`</td><td>Indicates the x position of legend.</td></tr>
+    <tr><td>y</td><td>`Number`</td><td>Indicates the y position of legend.</td></tr>
+    <tr><td>styles</td><td>`Object`</td><td>
+    Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`. Below are the default values:
+      <dl>
+          <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a `Chart` instance this value is applied.</dd>
+          <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
+          <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
+          <dt>item</dt><dd>Set of style properties applied to the `items` of the `ChartLegend`.
+              <dl>
+                  <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>
+                  <dt>vSpacing</dt><dd>Vertical distance, in pixels, between legend `items`.</dd>
+                  <dt>label</dt><dd>Properties for the text of an `item`.
+                      <dl>
+                          <dt>color</dt><dd>Color of the text. The default values is "#808080".</dd>
+                          <dt>fontSize</dt><dd>Font size for the text. The default value is "85%".</dd>
+                      </dl>
+                  </dd>
+                  <dt>marker</dt><dd>Properties for the `item` markers.
+                      <dl>
+                          <dt>width</dt><dd>Specifies the width of the markers.</dd>
+                          <dt>height</dt><dd>Specifies the height of the markers.</dd>
+                      </dl>
+                  </dd>
+              </dl>
+          </dd>
+          <dt>styles</dt><dd>Properties for the `ChartLegend` background.
+              <dl>
+                  <dt>fill</dt><dd>Properties for the background fill.
+                      <dl>
+                          <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
+                      </dl>
+                  </dd>
+                  <dt>stroke</dt><dd>Properties for the background stroke.
+                      <dl>
+                          <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
+                          <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
+                      </dl>
+                  </dd>
+              </dl>
+          </dd>
+     </dl>
+    </td></tr>
+    </table>
+
+</h3>
 <h2 id="issues">Known Issues</h2>
 <ul class="spaced">
+    <li>
+        <p>
+        Custom formatting for tooltip's and axis title and labels has been updated for 3.5.0 and higher to prevent potential security vectors. This may cause backward 
+        compatibility issues when upgrading from 3.4.x and below under the following circumstances:
+            <ul>
+                <li>If you have written a custom `labelFunction` for your axis that is dependent upon `innerHTML` for formatting, the current implementation will need
+                to be changed so that it will work with `appendChild`. Alternatively, there is a newly created `appendLabelFunction` attribute that can be overridden
+                to use `innerHTML`. More information can be found under the labelFunction section <a href="#usingaxes">here</a>.</li>
+                <li>If you are dependent on `innerHTML` to format the value of an Axis `title`, you will need to pass in an HTMLElement that can be added using `appendChild`.
+                Alternatively, there is a newly created `appendTitleFunction` attribute that can be overridden to use `innerHTML`. More information can be found under
+                the title section <a href="#usingaxes">here</a>.</li>
+                <li>If you are using the `tooltip` attribute's `markerLabelFunction` or `planarLabelFunction` to add custom formatting to a chart's tooltip. You will need
+                to update it so that is not dependent on `innerHTML`. The <a href="charts-customizedtooltip.html">Customize a Chart's Tooltip</a> example has been 
+                updated to demonstrate the correct way to construct a custom tooltip function. Alternatively, there is a newly created `setTextFunction` property of the 
+                `tooltip` attribute that can be overridden to use `innerHTML`. More information can be found under the markerLabelFunction and planarLabelFunction sections
+                <a href="#usingtooltip">here</a>.
+            </ul>
+        </p>
+    </li>
     <li>
         <p>
         Charts load slowly in android devices. Performance optimizations will need to be added in a future release. 

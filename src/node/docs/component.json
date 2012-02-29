@@ -39,9 +39,19 @@
         },
 
         {
+            "name"       : "nodelist",
+            "displayName": "Using NodeList - Simple",
+            "description": "NodeList provides Node functionality for manipulating multiple nodes at once.",
+            "modules"    : ["node", "transition"],
+            "tags"       : ["dom", "node", "nodelist"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name"       : "ducks",
-            "displayName": "Using NodeList - Ducks",
-            "description": "NodeList provides Node functionality for multiple nodes.",
+            "displayName": "Using NodeList - Ducks Game",
+            "description": "How to use multiple NodeList features to build a simple game.",
             "modules"    : ["node", "transition"],
             "tags"       : ["dom", "node", "nodelist", "duck", "ducks", "shoot", "shooting", "move"],
 

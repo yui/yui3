@@ -96,7 +96,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 config.position = pos;
                 config.styles = dh.styles;
                 axis = new axisClass(config);
-                axis.on("axisRendered", Y.bind(this._axisRendered, this));
+                axis.on("axisRendered", Y.bind(this._itemRendered, this));
                 this._axes[i] = axis;
             }
         }
@@ -280,11 +280,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _sizeChanged: function(e)
     {
-        var graph = this.get("graph");
-        if(graph)
-        {
-            graph.set(e.attrName, e.newVal);
-        }
+        this._redraw();
     },
 
     /**
@@ -295,11 +291,15 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
      */
     _redraw: function()
     {
-        var graph = this.get("graph");
+        var graph = this.get("graph"),
+            w = this.get("width"),
+            h = this.get("height"),
+            dimension;
         if(graph)
         {
-            graph.set("width", this.get("width"));
-            graph.set("height", this.get("height"));
+            dimension = Math.min(w, h);
+            graph.set("width", dimension);
+            graph.set("height", dimension);
         }
     },
     

@@ -6,47 +6,24 @@
 
 <body class="yui3-skin-sam">
 <h1>dump Tests</h1>
-<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<div id="log"></div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'dump-tests': {
+            fullpath: './dump-tests.js',
+            requires: [ 'dump', 'test' ]
+        }
+    }
+}).use('dump-tests', "test-console", function(Y) {
+    (new Y.Test.Console()).render('#log');
 
-(function() {
-    YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
-        allowRollup: false,
-        logExclude: {Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
-    }).use("dump", "test", "console", "event-custom", function(Y) {
-
-        var button = Y.one('#btnRun'),
-            Assert = Y.Assert,
-            ObjectAssert = Y.ObjectAssert;
-
-        // Set up the page
-        button.set("disabled", false);
-        Y.on("click", function() {
-            Y.Test.Runner.run();
-        }, button);
-
-        var myConsole = new Y.Console().render();
- 
-        var testdump= new Y.Test.Case({
-            name: "dump tests",
-        
-            test_dump: function() {
-                Assert.areEqual("0", Y.Lang.dump(0));
-                Assert.areEqual("null", Y.Lang.dump(null));
-                Assert.areEqual("false", Y.Lang.dump(false));
-                // Other types tested in substitute
-            }
-
-        });
-
-        Y.Test.Runner.setName("Dump");
-        Y.Test.Runner.add(testdump);
-        Y.Test.Runner.run();
-    });
-})();
+    Y.Test.Runner.run();
+});
 </script>
 </body>
 </html>
