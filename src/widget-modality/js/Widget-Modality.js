@@ -198,8 +198,7 @@ var WIDGET       = 'widget',
 
         // *** Instance Members *** //
 
-        _maskNode   : WidgetModal._GET_MASK(),
-        _uiHandlesModal  : null,
+        _uiHandlesModal: null,
 
 
         /**
@@ -247,7 +246,7 @@ var WIDGET       = 'widget',
             //account for this, so we are doing UA sniffing here. This should be replaced
             //with an updated featuretest later.
             if (!supportsPosFixed || Y.UA.ios || Y.UA.android) {
-                Y.on('scroll', this._resyncMask);
+                Y.on('scroll', this._resyncMask, this);
             }
         },
 
@@ -310,9 +309,9 @@ var WIDGET       = 'widget',
          * @param {boolean} Whether the widget is visible or not
          */
         _uiSetHostVisibleModal : function (visible) {
-            var stack       = WidgetModal.STACK,
-                maskNode    = this.get('maskNode'),
-                isModal     = this.get('modal'),
+            var stack    = WidgetModal.STACK,
+                maskNode = this.get('maskNode'),
+                isModal  = this.get('modal'),
                 topModal, index;
 
             if (visible) {
@@ -328,7 +327,7 @@ var WIDGET       = 'widget',
                 //this._attachUIHandlesModal();
                 this._repositionMask(this);
                 this._uiSetHostZIndexModal(this.get(Z_INDEX));
-                WidgetModal._GET_MASK().show();
+                maskNode.show();
 
                 if (isModal) {
                     //this._attachUIHandlesModal();
@@ -497,9 +496,9 @@ var WIDGET       = 'widget',
          */
         _repositionMask: function(nextElem) {
 
-            var currentModal    = this.get('modal'),
-                nextModal       = nextElem.get('modal'),
-                maskNode        = this.get('maskNode'),
+            var currentModal = this.get('modal'),
+                nextModal    = nextElem.get('modal'),
+                maskNode     = this.get('maskNode'),
                 bb, bbParent;
 
             //if this is modal and host is not modal
@@ -531,12 +530,12 @@ var WIDGET       = 'widget',
          * @private
          */
         _resyncMask: function (e) {
-            var o = e.currentTarget,
-            offsetX = o.get('docScrollX'),
-            offsetY = o.get('docScrollY'),
-            w = o.get('innerWidth') || o.get('winWidth'),
-            h = o.get('innerHeight') || o.get('winHeight'),
-            mask = WidgetModal._GET_MASK();
+            var o       = e.currentTarget,
+                offsetX = o.get('docScrollX'),
+                offsetY = o.get('docScrollY'),
+                w       = o.get('innerWidth') || o.get('winWidth'),
+                h       = o.get('innerHeight') || o.get('winHeight'),
+                mask    = this.get('maskNode');
 
             mask.setStyles({
                 "top": offsetY + "px",
