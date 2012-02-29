@@ -1,0 +1,62 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+<p>This example shows how to add a legend to a `Chart`.</p>
+</div>
+<div class="example">
+{{>charts-legend-source}}
+</div>
+<h3>Adding a legend to a `Chart` instance</h3>
+
+<p>When a chart has multiple series, a legend can allow the user to identify each series more easily. The `charts` module includes a `charts-legend` submodule. Specifying
+`charts-legend` in you use statement allows you to add a legend to a `Chart` instance. A legend is added to a chart through the `legend` attribute. This attribute is an
+object containing value pairs for the attributes of a legend. All available attributes for the `legend` are outlined <a href="index.html#usinglegend">here</a>. In the 
+example below, we will add a legend to a chart instance.</p>
+
+```
+YUI().use('charts-legend', function (Y) 
+{ 
+    var myDataValues = [ 
+        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+    ];
+
+    var myChart = new Y.Chart({
+                        legend: {
+                            position: "right",
+                            width: 300,
+                            height: 300,
+                            styles: {
+                                hAlign: "center",
+                                hSpacing: 4
+                            }
+                        },
+                        axes: {
+                            category: {
+                                keys: ["date"],
+                                type: "category",
+                                styles: {
+                                    label: {
+                                        rotation: -90
+                                    }
+                                }
+                            }
+                        },
+                        categoryKey: "date",
+                        dataProvider:myDataValues, 
+                        horizontalGridlines: true,
+                        verticalGridlines: true,
+                        render:"#mychart"
+                    });
+    
+});
+```

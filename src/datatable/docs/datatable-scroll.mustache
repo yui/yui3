@@ -19,19 +19,101 @@
 </style>
 
 <div class="intro">
-    <p>Datatables can be made to scroll along the x and y axes. The `datatable-scroll` module enables this functionality.</p>
+    <p>
+        Datatables can be made to scroll along the x and y axes. Include 
+        "`datatable-scroll`" in your `use()` line to enable the feature.
+    </p>
 
-    <p>The `scrollable` attribute along with the `width` and `height` attributes trigger scrolling along the respective axis.  Set `scrollable` to "x" and set the `width` to enable horizontal scrolling.  Or set `scrollable` to "y" and set the `height` to enable vertical scrolling.  Or set `scrollable` to "xy" and set both `height` and `width` to enable scrolling along both axes.</p>
-
-    <p><strong>Note:</strong> Scrolling is not currently supported on the Android WebKit browser.
+    <p>
+        This example shows the basic scrolling configurations available.
+    </p>
+    
+    <p>
+        <strong>Note:</strong> Scrolling is not currently supported on the
+        Android WebKit browser.
+    </p>
 </div>
 
+<h3> Vertically Scrolling Table</h3>
 <div class="example yui3-skin-sam">
-    {{>datatable-scroll-source}}
+    <div id="scrolling-y" class="yui3-skin-sam tableDemo"></div>
 </div>
+
+<p>
+    Enable vertical scrolling by setting `scrollable` to "y" and assigning the
+    `height`.
+</p>
+
+```
+YUI().use('datatable-scroll', function (Y) {
+    var state_census_data = [ ... ],
+        table;
+
+{{>datatable-scroll-y-source}}
+});
+```
+
+<h3>Horizontally Scrolling Table</h3>
+<div class="example yui3-skin-sam">
+    <div id="scrolling-x" class="tableDemo"></div>
+</div>
+
+<p>
+    Enable horizontal scrolling by setting `scrollable` to "x" and assigning
+    the `width`.
+</p>
+```
+YUI().use('datatable-scroll', function (Y) {
+    var state_census_data = [ ... ],
+        table;
+
+{{>datatable-scroll-x-source}}
+});
+```
+
+<h3>Fully Scrolling Datatable</h3>
+<div class="example yui3-skin-sam">
+    <div id="scrolling-xy" class="tableDemo"></div>
+</div>
+
+<p>
+    Enable scrolling along both axes by setting `scrollable` to `true` or "xy"
+    and assigning both `height` and `width`.
+</p>
+
+```
+YUI().use('datatable-scroll', function (Y) {
+    var state_census_data = [ ... ],
+        table;
+
+{{>datatable-scroll-xy-source}}
+});
+```
+
+<h3>Using Percentage Widths</h3>
+<div class="example yui3-skin-sam">
+    <div id="scrolling-100pct" class="tableDemo"></div>
+</div>
+<p>
+    Scrolling DataTables support percentage `width`s.  The table above is
+    configured to scroll vertically with a `width` of "100%".
+</p>
+
+```
+YUI().use('datatable-scroll', function (Y) {
+    var state_census_data = [ ... ],
+        table;
+
+{{>datatable-scroll-pct-source}}
+});
+```
 
 <h3>The Data</h3>
-<p>This is the data that will be used for each example table. The keys in each tables' `columns` will correspond with the keys in the data.</p>
+
+<p>
+    This is the data that is used for each example table. The keys in each
+    tables' `columns` correspond with the keys in the data.
+</p>
 
 ```
 var sampleData = [
@@ -43,37 +125,33 @@ var sampleData = [
 ];
 ```
 
-<h3>Instantiation &amp; Configuration</h3>
-<p>The `datatable-scroll` module adds support for scrollability.</p>
+<h3>Setting scrolling direction and dimensions</h3>
 
-```
-YUI().use('datatable-scroll', function (Y) {
-   ...
-});
-```
+<p>
+    The values of `scrollable` and the respective dimensional attribute
+    determine the scrolling direction(s) of each datatable instance.
+</p>
 
-<p>Configure the DataTable to limit the rendered table dimensions by `height` or `width`.</p>
+<p>Other things to consider are:</p>
 
-<p>The first table will be configured to scroll on both X and Y axes by setting `scrollable` to `true` (aka "xy") and setting both `height` and `width`.</p>
-
-```
-var dtScrollingXY = new Y.DataTable({
-    columns: sampleCols,
-    data: sampleData,
-    scrollable: true,
-    width: "300px",
-    height: "100px",
-    caption: "X and Y axis scrolling table"
-}).render("#scrolling-xy");
-```
-
-<h3>Setting a scrolling direction</h3>
-<p>The values of `scrollable` and the respective dimensional attribute determines the scrolling directions on that particular datatable instance.</p>
-
-<h5>Notes</h5>
 <ol>
-    <li>If a DataTable is configured with `scrollable` of "y", but the `height` is not set, it will be made scrollable. Likewise for "x" and `width`.</li>
-    <li>If the data in the DataTable will fit within the given dimensions without scrolling, scrolling will be disabled.  If the table columns or data change in such a way to exceed the configured dimensions, scrolling will automatically be enabled.</li>
+    <li>
+        If a DataTable is configured with `scrollable` of "y", but the `height`
+        is not set, it will <strong>not</strong> be made scrollable. Likewise
+        for "x" and `width`.  The respective dimension attribute is required.
+    </li>
+    <li>
+        If the configured `width` of an "x" or "xy" scrolling table is wider
+        than necessary to fit the data, the table width will be expanded to
+        the assigned `width`.
+    </li>
+    <li>
+        If a DataTable is configured with `scrollable` of "y", but the `width`
+        attribute is also set, DataTable will attempt to make the table that
+        wide.  But if the table data doesn't fit within the configured width,
+        the table will expand naturally to fit the data.
+    </li>
+
 </ol>
 
 <h3>Full Code Listing</h3>
@@ -81,3 +159,7 @@ var dtScrollingXY = new Y.DataTable({
 ```
 {{>datatable-scroll-source}}
 ```
+
+<script>
+{{>datatable-scroll-source}}
+</script>

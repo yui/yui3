@@ -1426,12 +1426,15 @@ Y.mix(Table.prototype, {
         if (isString(width)) {
             this._uiSetDim('width', width);
 
-            // Table width needs to account for borders
-            table.setStyle('width',
-                (this.get('boundingBox').get('offsetWidth') -
+            if (width) {
+                // Table width needs to account for borders
+                width = (this.get('boundingBox').get('offsetWidth') -
                  (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
                  (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
-                 'px');
+                 'px';
+            }
+
+            table.setStyle('width', width);
         }
     },
 
