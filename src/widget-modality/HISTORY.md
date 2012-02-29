@@ -8,6 +8,11 @@ Widget Modality Change History
     with `{modal: false}`; previously the initialization logic did not run in
     this case. [Ticket #2531401]
 
+  * Fixed destruction lifecycle bug. The mask is now removed when no modal
+    widgets are visible on the page. This also fixed an issue with multiple
+    modal widget and their `visible` attribute.
+    [Ticket #2531484, #2531821, #2531812]
+
 3.4.1
 -----
 
