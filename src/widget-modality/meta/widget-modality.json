@@ -4,6 +4,8 @@
             "base-build",
             "event-outside",
             "widget"
-        ]
+        ],
+
+        "skinnable": true
     }
 }
