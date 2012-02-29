@@ -26,6 +26,7 @@
         <url>charts/tests/graph.html</url>
         <url>charts/tests/pie.html</url>
         <url>charts/tests/seriestests.html</url>
+        <url>charts/tests/legend.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/array-invoke.html</url>
@@ -73,7 +74,9 @@
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-contextmenu.html</url>
+        <url>event/tests/event-hover.html</url>
         <url>event/tests/event-key.html</url>
+        <url>event/tests/event-outside.html</url>
         <url>event/tests/event-resize.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
@@ -81,6 +84,7 @@
         <url>event-custom/tests/event-custom-base.html</url>
         <url>event-gestures/tests/index.html</url>
         <url>event/tests/event-touch.html</url>
+        <url>event/tests/event-mouseenter.html</url>
         <url>event/tests/event-mousewheel.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>get/tests/get.html</url>

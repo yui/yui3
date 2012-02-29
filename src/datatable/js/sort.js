@@ -198,9 +198,9 @@ Y.mix(Sortable.prototype, {
 
     @property SORTABLE_HEADER_TEMPLATE
     @type {HTML}
-    @value '<div class="{className}" title="{title}" role="button"></div>'
+    @value '<a class="{className}" title="{title}" role="button"><span role="presentation" class="{indicatorClass}"></span></a>'
     **/
-    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" title="{title}" role="button"></div>',
+    SORTABLE_HEADER_TEMPLATE: '<a class="{className}" title="{title}" role="button"><span role="presentation" class="{indicatorClass}"></span></a>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -330,10 +330,10 @@ Y.mix(Sortable.prototype, {
     **/
     _bindSortUI: function () {
         this.after(['sortableChange', 'sortByChange', 'columnsChange'],
-            this._uiSetSortable);
+            Y.bind('_uiSetSortable', this));
 
         if (this._theadNode) {
-            this._sortHandle = this._theadNode.delegate('click',
+            this._sortHandle = this.delegate('click',
                 Y.rbind('_onUITriggerSort', this),
                 '.' + this.getClassName('sortable', 'column'));
         }
@@ -518,31 +518,21 @@ Y.mix(Sortable.prototype, {
     @protected
     **/
     _onUITriggerSort: function (e) {
-        var id = e.currentTarget.get('id'),
+        var id = e.currentTarget.getAttribute('data-yui3-col-id'),
             config = {},
             dir    = 1,
-            column;
+            column = id && this.getColumn(id);
 
         e.preventDefault();
 
         // TODO: if (e.ctrlKey) { /* subsort */ }
-        if (id) {
-            Y.Array.each(this._displayColumns, function (col) {
-                if (id === col._yuid) {
-                    column = col._id;
-                    // Flip current sortDir or default to 1 (asc)
-                    dir    = -(col.sortDir|0) || 1;
-                }
+        if (column) {
+            config[id] = -(column.sortDir|0) || 1;
+
+            this.fire('sort', {
+                originEvent: e,
+                sortBy: [config]
             });
-
-            if (column) {
-                config[column] = dir;
-
-                this.fire('sort', {
-                    originEvent: e,
-                    sortBy: [config]
-                });
-            }
         }
     },
 
@@ -717,6 +707,7 @@ Y.mix(Sortable.prototype, {
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
             linerClass    = this.getClassName('sort', 'liner'),
+            indicatorClass= this.getClassName('sort', 'indicator'),
             i, len, col, node, content, title;
 
         this.get('boundingBox').toggleClass(
@@ -724,6 +715,7 @@ Y.mix(Sortable.prototype, {
             columns.length);
 
         // TODO: this.head.render() + decorate cells?
+        this._theadNode.all('.' + indicatorClass).remove().destroy(true);
         this._theadNode.all('.' + sortableClass)
             .removeClass(sortableClass)
             .removeClass(ascClass)
@@ -757,10 +749,11 @@ Y.mix(Sortable.prototype, {
                 });
 
                 Y.Node.create(Y.Lang.sub(this.SORTABLE_HEADER_TEMPLATE, {
-                        className: linerClass,
-                        title    : title
+                        className     : linerClass,
+                        indicatorClass: indicatorClass,
+                        title         : title
                     }))
-                    .append(node.get('childNodes').toFrag())
+                    .prepend(node.get('childNodes').toFrag())
                     .appendTo(node);
             }
         }

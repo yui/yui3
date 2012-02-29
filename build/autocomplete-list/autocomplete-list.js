@@ -345,7 +345,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _bindList: function () {
         this._listEvents.concat([
             Y.one('doc').after('click', this._afterDocClick, this),
-            Y.on('windowresize', this._syncPosition, this),
+            Y.one('win').after('windowresize', this._syncPosition, this),
 
             this.after({
                 mouseover: this._afterMouseOver,
@@ -884,4 +884,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true, after:['autocomplete-sources'], lang:['en']});
+}, '@VERSION@' ,{lang:['en'], skinnable:true, after:['autocomplete-sources'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});

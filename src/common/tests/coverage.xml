@@ -45,7 +45,7 @@
         <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/graph.html</url>
         <url>charts/tests/pie.html</url>
-        <!--url>charts/tests/axes.html</url-->
+        <url>charts/tests/legend.html</url>
         <url>charts/tests/seriestests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
@@ -92,9 +92,14 @@
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-resize.html</url>
         <url>event/tests/event-contextmenu.html</url>
+        <url>event/tests/event-hover.html</url>
         <url>event/tests/event-key.html</url>
+        <url>event/tests/event-mouseenter.html</url>
+        <url>event/tests/event-mousewheel.html</url>
+        <url>event/tests/event-outside.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/event-touch.html</url>
+        <url>event/tests/event-mouseenter.html</url>
         <url>event/tests/event-mousewheel.html</url>
         <url>event/tests/focusblur.html</url>
         <url>get/tests/get-coverage.html</url>
@@ -131,6 +136,7 @@
         -->
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
+        <url>widget-buttons/tests/widget-buttons.html</url>
         <url>yql/tests/index.html</url>
         <url>oop/tests/oop.html</url>
         <url>substitute/tests/substitute.html</url>

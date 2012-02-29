@@ -1958,6 +1958,98 @@ YUI.add('dom-core-test', function(Y) {
     }));
 
     Y.Test.Runner.add( new Y.Test.Case({
+        name: 'Y.DOM.getId',
+
+        'should get the id from the DIV': function() {
+            var element = document.createElement('div'),
+                id = 'test-id';
+
+            element.id = id;
+            Assert.areEqual(id, Y.DOM.getId(element));
+        },
+
+        'should get the id from the new form element': function() {
+            var element = document.createElement('form'),
+                id = 'test-form-id';
+            element.id = id;
+            Assert.areEqual(id, Y.DOM.getId(element));
+        },
+
+        'should get the id from the new form element (setAttribute)': function() {
+            var element = document.createElement('form'),
+                id = 'test-form-id';
+            element.setAttribute('id', id);
+            Assert.areEqual(id, Y.DOM.getId(element));
+        },
+
+        'should get the id from the new form element rather than the named input': function() {
+            var element = document.createElement('form'),
+                input = document.createElement('input'),
+                id = 'test-form-id';
+            input.name = 'id';
+            element.id = id;
+            Assert.areEqual(id, Y.DOM.getId(element));
+        },
+
+        'should get the id from the new form rather than the named input (setAttribute)': function() {
+            var element = document.createElement('form'),
+                input = document.createElement('input'),
+                id = 'test-form-id';
+            input.name = 'id';
+            element.setAttribute('id', id);
+            Assert.areEqual(id, Y.DOM.getId(element));
+        },
+
+        'should get the id from the form rather than the named input': function() {
+            var element = document.getElementsByTagName('form')[0];
+            Assert.areEqual('test-names', Y.DOM.getId(element));
+        }
+    }));
+
+    Y.Test.Runner.add( new Y.Test.Case({
+        name: 'Y.DOM.setId',
+
+        'should set the id on the DIV': function() {
+            var element = document.createElement('div'),
+                id = 'test-id';
+
+            Y.DOM.setId(element, id);
+            Assert.areEqual(id, element.id);
+        },
+
+        'should set the id on the FORM': function() {
+            var element = document.createElement('form'),
+                id = 'test-id';
+
+            Y.DOM.setId(element, id);
+            Assert.areEqual(id, element.id);
+        },
+
+        'should set the id on the FORM with a named INPUT': function() {
+            var element = document.createElement('form'),
+                input = document.createElement('input'),
+                id = 'test-id';
+
+            input.name = 'id';
+            input.value = 'foo';
+            Y.DOM.setId(element, id);
+            Assert.areEqual(id, element.id);
+            Assert.areEqual(id, Y.DOM.getId(element));
+        },
+
+        'should set the id on the FORM with an INPUT id === "id"': function() {
+            var element = document.createElement('form'),
+                input = document.createElement('input'),
+                id = 'test-id';
+
+            input.id = 'id';
+            Y.DOM.setId(element, id);
+            Assert.areEqual(id, element.id);
+            Assert.areEqual(id, Y.DOM.getId(element));
+        }
+    }));
+
+    Y.Test.Runner.add( new Y.Test.Case({
         name: 'Y.DOM.generateID',
 
         'should generate an ID': function() {

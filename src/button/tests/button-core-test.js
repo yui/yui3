@@ -7,7 +7,7 @@ YUI.add('button-core-test', function (Y) {
     suite = new Y.Test.Suite('Buttons');
 
     suite.add(new Y.Test.Case({
-        name: 'button plugin factory',
+        name: 'button core',
 
         setUp : function () {
             Y.one("#container").setContent('<button id="testButton">Hello</button>');
@@ -98,11 +98,47 @@ YUI.add('button-core-test', function (Y) {
             button.set('label', 'somethingElse');
             Assert.areEqual(2, eventsTriggered);
         },
+    }));
     
+    suite.add(new Y.Test.Case({
+        name: 'misc button core',
+
+        setUp : function () {
+
+        },
+    
+        tearDown: function () {
+            Y.one('#container').empty(true);
+        },
+        
         'Creating an unattached button should create a Y.ButtonCore instance': function () {
             var button = new Y.ButtonCore({label:'foo'});
             Assert.areEqual(button.get('label'), 'foo');
             Assert.isInstanceOf(Y.ButtonCore, button);
+        },
+    
+        'Modifying the label of a nested button structure should not modify the non-label elements': function () {
+            Y.one("#container").setContent('<button id="testButton">**<span class="yui3-button-label">Hello</span>**</button>');
+            var button = new Y.ButtonCore({
+                host: Y.one("#testButton")
+            });
+            var node = button.getNode();
+            
+            Assert.areEqual(node.get('text'), '**Hello**');
+            button.set('label', button.get('label') + ' World');
+            Assert.areEqual(button.get('label'), 'Hello World');
+            Assert.areEqual(node.get('text'), '**Hello World**');
+        },
+    
+        'modifying the `label` attribute should work properly on <input> elements': function () {
+            Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+            var button = new Y.ButtonCore({
+                host: Y.one("#testButton")
+            });
+            
+            Assert.areEqual(button.get('label'), 'foo');
+            button.set('label', 'bar');
+            Assert.areEqual(button.get('label'), 'bar');
         }
     
     }));
