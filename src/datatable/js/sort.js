@@ -198,9 +198,9 @@ Y.mix(Sortable.prototype, {
 
     @property SORTABLE_HEADER_TEMPLATE
     @type {HTML}
-    @value '<div class="{className}" title="{title}" role="button"></div>'
+    @value '<a class="{className}" title="{title}" role="button"><span role="presentation" class="{indicatorClass}"></span></a>'
     **/
-    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" title="{title}" role="button"></div>',
+    SORTABLE_HEADER_TEMPLATE: '<a class="{className}" title="{title}" role="button"><span role="presentation" class="{indicatorClass}"></span></a>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -707,6 +707,7 @@ Y.mix(Sortable.prototype, {
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
             linerClass    = this.getClassName('sort', 'liner'),
+            indicatorClass= this.getClassName('sort', 'indicator'),
             i, len, col, node, content, title;
 
         this.get('boundingBox').toggleClass(
@@ -714,6 +715,7 @@ Y.mix(Sortable.prototype, {
             columns.length);
 
         // TODO: this.head.render() + decorate cells?
+        this._theadNode.all('.' + indicatorClass).remove().destroy(true);
         this._theadNode.all('.' + sortableClass)
             .removeClass(sortableClass)
             .removeClass(ascClass)
@@ -747,10 +749,11 @@ Y.mix(Sortable.prototype, {
                 });
 
                 Y.Node.create(Y.Lang.sub(this.SORTABLE_HEADER_TEMPLATE, {
-                        className: linerClass,
-                        title    : title
+                        className     : linerClass,
+                        indicatorClass: indicatorClass,
+                        title         : title
                     }))
-                    .append(node.get('childNodes').toFrag())
+                    .prepend(node.get('childNodes').toFrag())
                     .appendTo(node);
             }
         }
