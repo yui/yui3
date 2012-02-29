@@ -5,11 +5,10 @@
     zoom: 1;
     font-size: 100%;
     *+font-size: 90%;
-    margin: 0;
-    padding: 0 1em;
+    margin: 5px;
+    padding: 1em;
     *+margin: 2px; /*IE 6/7*/
-    line-height: normal;
-    line-height: 2;
+    line-height:normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
@@ -62,7 +61,6 @@ a.yui3-button {
     background-image: -ms-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -o-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
-    background-color:  #D6D6D6\0/; /*IE 8/9*/
 }
 
 .yui3-button:active {
