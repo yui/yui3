@@ -77,7 +77,6 @@ IO.prototype = {
         var io = this, i, len;
 
         io.cfg = config || {};
-        io.defaultTransport('xhr');
 
         Y.augment(io, Y.EventTarget);
         for (i = 0, len = EVENTS.length; i < len; ++i) {
@@ -112,8 +111,8 @@ IO.prototype = {
             form = config.form && config.form.upload ? 'iframe' : null,
             use = alt || form;
 
-        transaction = use ? Y.merge(this.customTransport(use), transaction) :
-                            Y.merge(this.defaultTransport(), transaction);
+        transaction = use ? Y.merge(Y.IO.customTransport(use), transaction) :
+                            Y.merge(Y.IO.defaultTransport(), transaction);
 
         if (transaction.notify) {
             config.notify = function (e, t, c) { io.notify(e, t, c); };
