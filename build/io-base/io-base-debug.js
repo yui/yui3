@@ -79,7 +79,6 @@ IO.prototype = {
         var io = this, i, len;
 
         io.cfg = config || {};
-        io.defaultTransport('xhr');
 
         Y.augment(io, Y.EventTarget);
         for (i = 0, len = EVENTS.length; i < len; ++i) {
@@ -114,8 +113,8 @@ IO.prototype = {
             form = config.form && config.form.upload ? 'iframe' : null,
             use = alt || form;
 
-        transaction = use ? Y.merge(this.customTransport(use), transaction) :
-                            Y.merge(this.defaultTransport(), transaction);
+        transaction = use ? Y.merge(Y.IO.customTransport(use), transaction) :
+                            Y.merge(Y.IO.defaultTransport(), transaction);
 
         if (transaction.notify) {
             config.notify = function (e, t, c) { io.notify(e, t, c); };
@@ -891,16 +890,49 @@ Y.io.header = function(name, value) {
 Y.IO = IO;
 // Map of all IO instances created.
 Y.io._map = {};
+var XHR = win && win.XMLHttpRequest,
+    XDR = win && win.XDomainRequest,
+    AX = win && win.ActiveXObject;
 
-var _default,
-    XHR = win && win.XMLHttpRequest,
-    XDR = win && win.XDomainRequest;
 
-Y.mix(Y.IO.prototype, {
+Y.mix(Y.IO, {
+    /**
+    * The ID of the default IO transport, defaults to `xhr`
+    * @property _default
+    * @type {String}
+    * @static
+    */
+    _default: 'xhr',
+    /**
+    *
+    * @method defaultTransport
+    * @static
+    * @param {String} [id] The transport to set as the default, if empty a new transport is created.
+    * @return {Object} The transport object with a `send` method
+    */
+    defaultTransport: function(id) {
+        if (id) {
+            Y.log('Setting default IO to: ' + id, 'info', 'io');
+            Y.IO._default = id;
+        } else {  
+            var o = {
+                c: Y.IO.transports[Y.IO._default](),
+                notify: Y.IO._default === 'xhr' ? false : true
+            };
+            Y.log('Creating default transport: ' + Y.IO._default, 'info', 'io');
+            return o;
+        }
+    },
+    /**
+    * An object hash of custom transports available to IO
+    * @property transports
+    * @type {Object}
+    * @static
+    */
     transports: {
         xhr: function () {
             return XHR ? new XMLHttpRequest() :
-                ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : null;
+                AX ? new ActiveXObject('Microsoft.XMLHTTP') : null;
         },
         xdr: function () {
             return XDR ? new XDomainRequest() : null;
@@ -909,23 +941,29 @@ Y.mix(Y.IO.prototype, {
         flash: null,
         nodejs: null
     },
-    defaultTransport: function(id) {
-        if (id) {
-            _default = id;
-        }
-        else {
-            return {
-                c: this.transports[_default](),
-                notify: _default === 'xhr' ? false : true
-            };
-        }
-    },
+    /**
+    * Create a custom transport of type and return it's object
+    * @method customTransport
+    * @param {String} id The id of the transport to create.
+    * @static
+    */
     customTransport: function(id) {
-        var o = { c: this.transports[id]() };
+        var o = { c: Y.IO.transports[id]() };
 
         o[(id === 'xdr' || id === 'flash') ? 'xdr' : 'notify'] = true;
         return o;
-    },
+    }
+});
+
+Y.mix(Y.IO.prototype, {
+    /**
+    * Fired from the notify method of the transport which in turn fires
+    * the event on the IO object.
+    * @method notify
+    * @param {String} event The name of the event
+    * @param {Object} transaction The transaction object
+    * @param {Object} config The configuration object for this transaction
+    */
     notify: function(event, transaction, config) {
         var io = this;
 
@@ -940,7 +978,6 @@ Y.mix(Y.IO.prototype, {
         }
     }
 });
-
 
 
 

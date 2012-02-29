@@ -6,14 +6,15 @@
 </head>
 <body class="yui3-skin-sam">
 
+<div id="log"></div>
+
 <script src="../../../build/yui/yui.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
-    allowRollup: false,
-    useBrowserConsole: false
-}).use('console', 'test', 'io-base', function (Y) {
-    var myConsole = new Y.Console().render(),
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+}).use('test-console', 'test', 'io-base', function (Y) {
+
+    (new Y.Test.Console()).render('log'),
         smoketest = new Y.Test.Case({
             name: "IO Smoke Test",
             "Y.IO should not be null": function () {
@@ -21,8 +22,10 @@ YUI({
                 Y.Assert.areNotSame(io, null);
             }
         }),
-        suite = new Y.Test.Suite({name:"IO Smoke Test Suite"});
+        suite = new Y.Test.Suite("IO Smoke Test Suite");
+
     suite.add(smoketest);
+
     Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
