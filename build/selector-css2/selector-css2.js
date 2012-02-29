@@ -147,9 +147,11 @@ var PARENT_NODE = 'parentNode',
                                 if (test[0] === 'tagName' && !Selector._isXML) {
                                     value = value.toUpperCase();    
                                 }
-                                // use getAttribute for non-standard attributes
-                                if (value === undefined && tmpNode.getAttribute) {
-                                    value = tmpNode.getAttribute(test[0]);
+                                if (typeof value != 'string' && value !== undefined && value.toString) {
+                                    value = value.toString(); // coerce for comparison
+                                } else if (value === undefined && tmpNode.getAttribute) {
+                                    // use getAttribute for non-standard attributes
+                                    value = tmpNode.getAttribute(test[0], 2); // 2 === force string for IE
                                 }
                             }
 
