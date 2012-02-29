@@ -330,10 +330,10 @@ Y.mix(Sortable.prototype, {
     **/
     _bindSortUI: function () {
         this.after(['sortableChange', 'sortByChange', 'columnsChange'],
-            this._uiSetSortable);
+            Y.bind('_uiSetSortable', this));
 
         if (this._theadNode) {
-            this._sortHandle = this._theadNode.delegate('click',
+            this._sortHandle = this.delegate('click',
                 Y.rbind('_onUITriggerSort', this),
                 '.' + this.getClassName('sortable', 'column'));
         }
@@ -518,31 +518,21 @@ Y.mix(Sortable.prototype, {
     @protected
     **/
     _onUITriggerSort: function (e) {
-        var id = e.currentTarget.get('id'),
+        var id = e.currentTarget.getAttribute('data-yui3-col-id'),
             config = {},
             dir    = 1,
-            column;
+            column = id && this.getColumn(id);
 
         e.preventDefault();
 
         // TODO: if (e.ctrlKey) { /* subsort */ }
-        if (id) {
-            Y.Array.each(this._displayColumns, function (col) {
-                if (id === col._yuid) {
-                    column = col._id;
-                    // Flip current sortDir or default to 1 (asc)
-                    dir    = -(col.sortDir|0) || 1;
-                }
+        if (column) {
+            config[id] = -(column.sortDir|0) || 1;
+
+            this.fire('sort', {
+                originEvent: e,
+                sortBy: [config]
             });
-
-            if (column) {
-                config[column] = dir;
-
-                this.fire('sort', {
-                    originEvent: e,
-                    sortBy: [config]
-                });
-            }
         }
     },
 
