@@ -99,6 +99,7 @@ YUI.add('button-plugin-test', function (Y) {
             Assert.areSame(node, button);
             Assert.isInstanceOf(Y.Node, button);
             Assert.areSame(newLabel, node.getContent());
+            Assert.areSame(newLabel, button.get('label'));
             Assert.isTrue(node.get('disabled'));
         },
 
