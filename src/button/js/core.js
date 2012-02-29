@@ -111,13 +111,15 @@ Button.prototype = {
     * @description Getter for a button's 'label' ATTR
     * @private
     */
-    _getLabel: function() {
-        var parent = this.getNode(),
-            node = this._getLabelNode(parent),
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML',
-            label = node.get(attr);
-            
-        return label;
+    _getLabel: function () {
+        var node    = this.getNode(),
+            tagName = node.get('tagName').toLowerCase();
+
+        if (tagName === 'input') {
+            return node.get('value');
+        }
+
+        return (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
     },
     
     /**
