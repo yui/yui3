@@ -9,10 +9,12 @@
             	],
                 "lang" : [
                     "de",
-                    "en", 
+                    "en",
                     "fr",
                     "ja",
-                    "ru"
+                    "pt-BR",
+                    "ru",
+                    "zh-HANT-TW"
                 ],
                 "skinnable": true
 			}
