@@ -96,7 +96,10 @@ function Widget(config) {
     widget._strs = {};
     widget._cssPrefix = constructor.CSS_PREFIX || _getClassName(constructor.NAME.toLowerCase());
 
-    Widget.superclass.constructor.apply(widget, arguments);
+    // We need a config for HTML_PARSER to work.
+    config = config || {};
+
+    Widget.superclass.constructor.call(widget, config);
 
     render = widget.get(RENDER);
 

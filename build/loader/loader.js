@@ -829,6 +829,14 @@ Y.Loader.prototype = {
                     } else if (i == 'modules') {
                         // add a hash of module definitions
                         oeach(val, self.addModule, self);
+                    } else if (i === 'aliases') {
+                        oeach(val, function(use, name) {
+                            YUI.Env.aliases[name] = use;
+                            self.addModule({
+                                name: name,
+                                use: use
+                            });
+                        });
                     } else if (i == 'gallery') {
                         this.groups.gallery.update(val);
                     } else if (i == 'yui2' || i == '2in3') {
@@ -3040,6 +3048,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
@@ -3049,6 +3062,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-position", 
             "widget-stack", 
             "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -3269,9 +3287,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-column-widths", 
             "datatable-message", 
             "datatable-mutable", 
-            "datatable-scroll", 
-            "datatable-datasource", 
-            "datatable-sort"
+            "datatable-sort", 
+            "datatable-datasource"
         ]
     }, 
     "datatable-base": {
@@ -4947,7 +4964,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0b05d13503b96fb4416c85768948201f';
+YUI.Env[Y.version].md5 = 'b575fba2d7f91120c0ebd6ac7f661df7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

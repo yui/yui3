@@ -15,6 +15,13 @@ Widget Change History
    listener and using Widget.getByNode to ship out handling to the specific widget
    instance.
 
+ * Widget will now default to an empty object config, if one isn't passed in, 
+   so that HTML_PARSER can work with a static ATTRS srcNode definition.
+
+   It's not possible to address this just at the HTML_PARSER level, since the config 
+   object gets used by reference, so we need to make sure everything is updating the
+   config object which is passed to Base's initialization chain.
+
 3.4.1
 -----
 

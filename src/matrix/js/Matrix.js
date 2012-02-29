@@ -4,6 +4,7 @@
  *
  * @class Matrix
  * @constructor
+ * @module matrix
  */
 var Matrix = function(config) {
     this.init(config);
@@ -69,7 +70,7 @@ Matrix.prototype = {
     /**
      * Parses a string and returns an array of transform arrays.
      *
-     * @method applyCSSText
+     * @method getTransformArray 
      * @param {String} val A css transform string
      * @return Array
      */
