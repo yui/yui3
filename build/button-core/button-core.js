@@ -39,7 +39,7 @@ Button.prototype = {
 
     /**
     * @method _initNode
-    * @description
+    * @description Node initializer
     * @param config {Object} Config object.
     * @private
     */
@@ -53,13 +53,13 @@ Button.prototype = {
 
     /**
     * @method _initAttributes
-    * @description
+    * @description  Attribute initializer
     * @param config {Object} Config object.
     * @private
     */
     _initAttributes: function(config) {
         var host = this._host,
-            node = this._getLabelNode(host);
+            node = host.one('.' + Button.CLASS_NAMES.LABEL) || host;
             
         config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, Button.ATTRS, config);
@@ -68,6 +68,7 @@ Button.prototype = {
     /**
     * @method renderUI
     * @description Renders any UI/DOM elements for Button instances
+    * @param config {Object} Config object.
     * @private
     */
     _renderUI: function(config) {
@@ -83,8 +84,8 @@ Button.prototype = {
     },
 
     /**
-    * @method enable
-    * @description
+    * @method enable    
+    * @description Sets the Button's disabled DOM attribute to false
     * @public
     */
     enable: function() {
@@ -93,6 +94,7 @@ Button.prototype = {
 
     /**
     * @method disable
+    * @description Sets the Button's disabled DOM attribute to true
     * @public
     */
     disable: function() {
@@ -115,33 +117,42 @@ Button.prototype = {
     */
     _getLabel: function () {
         var node    = this.getNode(),
-            tagName = node.get('tagName').toLowerCase();
+            tagName = node.get('tagName').toLowerCase(),
+            label;
 
         if (tagName === 'input') {
-            return node.get('value');
+            label = node.get('value');
         }
-
-        return (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
+        else {
+            label = (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
+        }
+        
+        return label;
     },
     
     /**
     * @method _uiSetLabel
     * @description Setter for a button's 'label' ATTR
+    * @param label {string}
     * @private
     */
-    _setLabel: function(value) {
-        var parent = this.getNode(),
-            node = this._getLabelNode(parent),
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML';
-            
-        node.set(attr, value);
-        
-        return value;
+    _setLabel: function (label) {
+        var node    = this.getNode(),
+            tagName = node.get('tagName').toLowerCase();
+
+        if (tagName === 'input') {
+            node.set('value', label);
+        } else {
+            (node.one('.' + Button.CLASS_NAMES.LABEL) || node).set('text', label);
+        }
+
+        return label;
     },
 
     /**
     * @method _setDisabled
     * @description Setter for the 'disabled' ATTR
+    * @param value {boolean}
     * @private
     */
     _setDisabled: function(value) {
@@ -151,15 +162,6 @@ Button.prototype = {
         node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
         
         return value;
-    },
-    
-    /**
-    * @method _getLabelNode
-    * @description Utility method to obtain a button's label node
-    * @private
-    */
-    _getLabelNode: function(node) {
-        return node.one('.' + Button.CLASS_NAMES.LABEL) || node;
     }
 };
 
@@ -199,13 +201,14 @@ Button.NAME = "button";
 *
 * @property CLASS_NAMES
 * @type {Array}
+* @private
 * @static
 */
 Button.CLASS_NAMES = {
     BUTTON  : getClassName('button'),
     DISABLED: getClassName('button', 'disabled'),
     SELECTED: getClassName('button', 'selected'),
-    LABEL: getClassName('button', 'label')
+    LABEL   : getClassName('button', 'label')
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
