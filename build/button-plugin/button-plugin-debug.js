@@ -1,7 +1,13 @@
 YUI.add('button-plugin', function(Y) {
 
 /**
+* A Button Plugin
 *
+* @module button-plugin
+* @since 3.5.0
+*/
+
+/**
 * @class ButtonPlugin
 * @param config {Object} Configuration object
 * @constructor
@@ -56,11 +62,11 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
     },
 
     /**
-    * @method _afterNodeGet
+    * @method destroy
     * @private
     */
     destroy: function(){
-        // TODO: Anything?
+        // Nothing to do, but things are happier with it here
     }
     
 }, {
@@ -97,8 +103,10 @@ Y.extend(ButtonPlugin, Y.ButtonCore, {
 
 /**
 * @method createNode
+* @description A factory that plugs a Y.Node instance with Y.Plugin.Button
 * @param node {Object}
 * @param config {Object}
+* @returns {Object} A plugged Y.Node instance
 * @public
 */
 ButtonPlugin.createNode = function(node, config) {
