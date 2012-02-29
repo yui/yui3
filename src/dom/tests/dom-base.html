@@ -12,7 +12,6 @@
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 }).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
-Y.Selector.useNative = 'false';
     new Y.Test.Console().render();
     Y.Test.Runner.masterSuite.name = 'Dom Test Suite';
     Y.Test.Runner.run();
