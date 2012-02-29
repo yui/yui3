@@ -113,13 +113,17 @@ Button.prototype = {
     */
     _getLabel: function () {
         var node    = this.getNode(),
-            tagName = node.get('tagName').toLowerCase();
+            tagName = node.get('tagName').toLowerCase(),
+            label;
 
         if (tagName === 'input') {
-            return node.get('value');
+            label = node.get('value');
         }
-
-        return (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
+        else {
+            label = (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
+        }
+        
+        return label;
     },
     
     /**

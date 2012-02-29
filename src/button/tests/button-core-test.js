@@ -128,6 +128,17 @@ YUI.add('button-core-test', function (Y) {
             button.set('label', button.get('label') + ' World');
             Assert.areEqual(button.get('label'), 'Hello World');
             Assert.areEqual(node.get('text'), '**Hello World**');
+        },
+    
+        'modifying the `label` attribute should work properly on <input> elements': function () {
+            Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+            var button = new Y.ButtonCore({
+                host: Y.one("#testButton")
+            });
+            
+            Assert.areEqual(button.get('label'), 'foo');
+            button.set('label', 'bar');
+            Assert.areEqual(button.get('label'), 'bar');
         }
     
     }));
