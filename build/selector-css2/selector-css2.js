@@ -441,6 +441,10 @@ var PARENT_NODE = 'parentNode',
         getters: {
             href: function(node, attr) {
                 return Y.DOM.getAttribute(node, attr);
+            },
+
+            id: function(node, attr) {
+                return Y.DOM.getId(node);
             }
         }
     };
