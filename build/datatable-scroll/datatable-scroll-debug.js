@@ -1127,7 +1127,7 @@ Y.mix(Scrollable.prototype, {
             if (width) {
                 // Assumes no table border
                 borderWidth = scroller.get('offsetWidth') -
-                              scroller.get('clientWidth') -
+                              scroller.get('clientWidth') +
                               scrollbarWidth; // added back at the end
 
                 // The table's rendered width might be greater than the
