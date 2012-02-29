@@ -330,10 +330,13 @@
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
-            "fr",
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "calendar-base", 
@@ -343,10 +346,13 @@
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
-            "fr",
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "widget", 
