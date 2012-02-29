@@ -282,6 +282,27 @@ Y.mix(Scrollable.prototype, {
         }
     },
 
+    /* (not an API doc comment on purpose)
+    Reacts to the sort event (if the table is also sortable) by updating the
+    fixed header classes to match the data table's headers.
+
+    THIS IS A HACK that will be removed immediately after the 3.5.0 release.
+    If you're reading this and the current version is greater than 3.5.0, I
+    should be publicly scolded.
+    */
+    _afterScrollSort: function (e) {
+        var headers, headerClass;
+
+        if (this._yScroll && this._yScrollHeader) {
+            headerClass = '.' + this.getClassName('header');
+            headers = this._theadNode.all(headerClass);
+
+            this._yScrollHeader.all(headerClass).each(function (header, i) {
+                header.set('className', headers.item(i).get('className'));
+            });
+        }
+    },
+
     /**
     Reacts to changes in the width of scrolling tables by expanding the width of
     the `<div>` wrapping the data table for horizontally scrolling tables or
@@ -348,7 +369,11 @@ Y.mix(Scrollable.prototype, {
             columnsChange: Y.bind('_afterScrollColumnsChange', this),
             heightChange : Y.bind('_afterScrollHeightChange', this),
             widthChange  : Y.bind('_afterScrollWidthChange', this),
-            captionChange: Y.bind('_afterScrollCaptionChange', this)
+            captionChange: Y.bind('_afterScrollCaptionChange', this),
+            // FIXME: this is a last minute hack to work around the fact that
+            // DT doesn't use a tableView to render table content that can be
+            // replaced with a scrolling table view.  This must be removed asap!
+            sort         : Y.bind('_afterScrollSort', this)
         });
 
         this.after(['dataChange', '*:add', '*:remove', '*:reset', '*:change'],
