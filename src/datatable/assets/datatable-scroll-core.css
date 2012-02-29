@@ -31,6 +31,15 @@
     width: 100%;
 }
 
+.yui3-datatable-y-scroller .yui3-datatable-columns {
+    /*
+    Still needed for dimension calculation, but visibility 0 hides from
+    screen readers.
+    */
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
 .yui3-datatable-x-scroller {
     position: relative;
     overflow-x: scroll;
@@ -42,6 +51,7 @@
     overflow-x: hidden;
     overflow-y: scroll;
     z-index: 1;
+    -webkit-overflow-scrolling: touch;
 }
 
 .yui3-datatable-scrollbar {
@@ -55,4 +65,8 @@
     position: absolute;
     width: 1px;
     visibility: hidden;
+}
+
+.yui3-datatable-header {
+    -webkit-text-size-adjust: none;
 }

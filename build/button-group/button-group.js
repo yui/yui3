@@ -8,7 +8,7 @@ YUI.add('button-group', function(Y) {
 */
 
 var CONTENT_BOX = "contentBox",
-    SELECTOR    = "button, input[type=button]",
+    SELECTOR    = "button, input[type=button], input[type=reset], input[type=submit]",
     CLICK_EVENT = "click",
     CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
 
@@ -28,30 +28,18 @@ function ButtonGroup() {
 Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 
     /**
-    * @method initializer
-    * @description Internal init() handler.
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(){
-        // TODO: Nothing? Then remove
-    },
-
-    /**
-     * renderUI implementation
-     *
-     * Creates a visual representation of the widget based on existing parameters.
      * @method renderUI
+     * @description Creates a visual representation of the widget based on existing parameters.
+     * @public
      */
     renderUI: function() {
         this.getButtons().plug(Y.Plugin.Button);
     },
 
     /**
-     * bindUI implementation
-     *
-     * Hooks up events for the widget
      * @method bindUI
+     * @description Hooks up events for the widget
+     * @public
      */
     bindUI: function() {
         var group = this,
@@ -116,6 +104,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     /**
     * @method _handleClick
     * @description A delegated click handler for when any button is clicked in the content box
+    * @param e {Object} An event object
     * @private
     */
     _handleClick: function(e){
@@ -149,7 +138,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * The identity of the widget.
      *
      * @property NAME
-     * @type String
+     * @type {String}
      * @default 'buttongroup'
      * @readOnly
      * @protected
@@ -177,7 +166,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * List of class names used in the ButtonGroup's DOM
      *
      * @property CLASS_NAMES
-     * @type Object
+     * @type {Object}
      * @static
      */
     CLASS_NAMES: CLASS_NAMES
