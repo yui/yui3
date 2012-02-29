@@ -1425,7 +1425,7 @@ Y.mix(Table.prototype, {
             this._uiSetDim('width', width);
 
             // Table width needs to account for borders
-            table.setStyle('width',
+            table.setStyle('width', !width ? '' :
                 (this.get('boundingBox').get('offsetWidth') -
                  (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
                  (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
