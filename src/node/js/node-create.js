@@ -132,6 +132,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Replaces the node's current content with the content.
      * @method setContent
+     * @deprecated Use setHTML
      * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
      * @chainable
      */
@@ -143,6 +144,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns the node's current content (e.g. innerHTML)
      * @method getContent
+     * @deprecated Use getHTML
      * @return {String} The current content
      */
     getContent: function(content) {
@@ -202,13 +204,24 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 
     /** Called on each Node instance
       * @method setContent
-      * @see Node.setContent
+      * @deprecated Use setHTML
       */
     'setContent',
 
     /** Called on each Node instance
       * @method getContent
-      * @see Node.getContent
+      * @deprecated Use getHTML
       */
-    'getContent'
+    'getContent',
+
+    /** Called on each Node instance
+      * @method setContent
+      * @see Node.setHTML
+      */
+    'setHTML',
+
+    /** Called on each Node instance
+      * @method getHTML
+      */
+    'getHTML'
 ]);
