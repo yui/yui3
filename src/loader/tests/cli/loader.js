@@ -1971,6 +1971,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-form")) > -1, "Module (io-form) not found in sorted array");
         },
+     "Testing io-nodejs": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-nodejs"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-nodejs")) > -1, "Module (io-nodejs) not found in sorted array");
+        },
      "Testing io-queue": function(data) {
             var loader = new Y.Loader({
                 require: ["io-queue"],

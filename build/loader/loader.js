@@ -4141,6 +4141,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
+    "io-nodejs": {
+        "condition": {
+            "name": "io-nodejs", 
+            "trigger": "io-base", 
+            "ua": "nodejs"
+        }, 
+        "requires": [
+            "io-base"
+        ]
+    }, 
     "io-queue": {
         "requires": [
             "io-base", 
@@ -4965,7 +4975,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b5d7080800d7be1405ea2ecaaaba4655';
+YUI.Env[Y.version].md5 = '0008b90d315dd1fd405bb70bf7505468';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
