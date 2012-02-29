@@ -1,23 +1,23 @@
-<div id="writeInitial">
+<form id="writeInitial">
     <p>Construct o1, setting initial values for both foo and bar in the constructor: </p>
     <label>foo: <input type="text" value="Initial Foo" class="fooVal"></label>
     <label>bar: <input type="text" value="Initial Bar" class="barVal"></label>
-    <button type="button" class="do">Initial Values</button>
+    <button type="submit" class="do">Initial Values</button>
     <div class="example-out"></div>
-</div>
-<div id="writeAgain">
+</form>
+<form id="writeAgain">
     <p>Try setting values again, after they've been set once: </p>
     <label>foo: <input type="text" value="Set Foo Again" class="fooVal"></label>
     <label>bar: <input type="text" value="Set Bar Again" class="barVal"></label>
-    <button type="button" class="do">Set Again</button>
+    <button type="submit" class="do">Set Again</button>
     <div class="example-out"></div>
-</div>
-<div id="writeInternally">
+</form>
+<form id="writeInternally">
     <p>Call a MyClass method, which sets foo internally (using _set): </p>
     <label>foo: <input type="text" value="Set Foo Internally" class="fooVal"></label>
-    <button type="button" class="do">Set Internal</button>
+    <button type="submit" class="do">Set Internal</button>
     <div class="example-out"></div>
-</div>
+</form>
 
 <script type="text/javascript">
 YUI().use("node", "attribute", "escape", function(Y) {
@@ -70,8 +70,10 @@ YUI().use("node", "attribute", "escape", function(Y) {
 
     var o1;
 
-    Y.on("click", function() {
+    Y.on("submit", function(e) {
 
+        e.preventDefault();
+    
         var fooVal = Y.one("#writeInitial .fooVal").get("value");
         var barVal = Y.one("#writeInitial .barVal").get("value");
 
@@ -82,9 +84,11 @@ YUI().use("node", "attribute", "escape", function(Y) {
 
         displayValues(o1, "Attempt to set initial values in constructor", "#writeInitial .example-out");
 
-    }, "#writeInitial .do");
+    }, "#writeInitial");
 
-    Y.on("click", function() {
+    Y.on("submit", function(e) {
+
+        e.preventDefault();
 
         if (o1) {
             var fooVal = Y.one("#writeAgain .fooVal").get("value");
@@ -97,9 +101,11 @@ YUI().use("node", "attribute", "escape", function(Y) {
             displayValues(o1, "Attempt to set values again, using set", "#writeAgain .example-out");
         }
 
-    }, "#writeAgain .do");
+    }, "#writeAgain");
 
-    Y.on("click", function() {
+    Y.on("submit", function(e) {
+
+        e.preventDefault();
 
         if (o1) {
             var val = Y.one("#writeInternally .fooVal").get("value");
@@ -109,6 +115,6 @@ YUI().use("node", "attribute", "escape", function(Y) {
             displayValues(o1, "Set the value of foo (readOnly) internally", "#writeInternally .example-out");
         }
 
-    }, "#writeInternally .do");
+    }, "#writeInternally");
 });
 </script>
