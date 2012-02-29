@@ -47,8 +47,8 @@
             },
 
             tearDown : function () {
-                delete this.firstcalendar;
-                delete this.secondcalendar;
+               delete this.firstcalendar;
+               delete this.secondcalendar;
                Y.one('#firstcontainer').remove();
                Y.one('#secondcontainer').remove();
             },
@@ -110,7 +110,6 @@
                 Y.Assert.areEqual("7", Y.one("#firstcontainer").one(".calendar_col8.yui3-calendar-nextmonth-day").getContent());
             },
 
-
             testTwoCalendars : function () {
                 var cfg1 = {
                     contentBox: "#firstcontainer",
@@ -150,8 +149,7 @@
                 var calendarid = this.firstcalendar._calendarId;
                 Y.one("#" + calendarid + "_pane_0_6_15").simulate("click");
 
-                var currentDate = this.firstcalendar.get("selectedDates")[0];
-                
+                var currentDate = this.firstcalendar.get("selectedDates")[0];              
                 Y.Assert.areEqual(currentDate.getFullYear(), 2011);
                 Y.Assert.areEqual(currentDate.getMonth(), 11);
                 Y.Assert.areEqual(currentDate.getDate(), 15);
@@ -161,21 +159,20 @@
               Y.one("#" + calendarid + "_pane_0_8_31").simulate("click");
 
                 currentDate = this.firstcalendar.get("selectedDates")[0];
-                
                 Y.Assert.areEqual(currentDate.getFullYear(), 2011);
                 Y.Assert.areEqual(currentDate.getMonth(), 11);
                 Y.Assert.areEqual(currentDate.getDate(), 31);
-               
+              
                // Click to advance the month
-             Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+               Y.one(".yui3-calendarnav-nextmonth").simulate("click");
                // Click on a date in the new month
              Y.one("#" + calendarid + "_pane_0_8_17").simulate("click");  
 
-                currentDate = this.firstcalendar.get("selectedDates")[0];
-                
+                currentDate = this.firstcalendar.get("selectedDates")[0];             
                 Y.Assert.areEqual(currentDate.getFullYear(), 2012);
                 Y.Assert.areEqual(currentDate.getMonth(), 0);
                 Y.Assert.areEqual(currentDate.getDate(), 17);
+                
             },
 
             testMultiplePanes : function () {

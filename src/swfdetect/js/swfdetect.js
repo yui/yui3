@@ -3,7 +3,7 @@
  * @module swfdetect
  */
 
-// shortcuts
+// Shortcuts and helper methods
 var version = 0,
 	uA = Y.UA,
 	lG = Y.Lang,
@@ -59,6 +59,14 @@ else if(uA.ie) {
     } catch (e2) {}
     }
 }
+
+/** Create a calendar view to represent a single or multiple
+  * month range of dates, rendered as a grid with date and
+  * weekday labels.
+  * 
+  * @class SWFDetect
+  * @constructor
+  */
 
 		
 Y.SWFDetect = {

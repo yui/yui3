@@ -819,6 +819,36 @@
                 w2.destroy();
 
                 n3.remove(true);
+            },
+
+            "testWidgetOnFocus" : function() {
+
+                var test = this,
+                    gotFocus = false;
+
+                var widget = this.createWidget({
+                    height:100,
+                    width:100,
+                    tabIndex:0,
+                    render:true
+                });
+
+                widget.on("focus", function() {
+                    gotFocus = true;
+                });
+
+                widget.focus();
+
+                widget.destroy(true);
+
+                Y.Assert.isTrue(gotFocus, "widget.on('focus') wasn't invoked");
+            },
+
+            _should: {
+                ignore: {
+                    testWidgetOnFocus: true // Ignore until 2531734, 2531335 are fixed.
+                }
+            
             }
         };
 

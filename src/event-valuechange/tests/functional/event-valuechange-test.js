@@ -47,7 +47,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'valuechange should support textareas as well': function () {
@@ -65,7 +65,7 @@ suite.add(new Y.Test.Case({
         this.textArea.simulate('mousedown');
         this.textArea.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'valuechange should start polling on keydown': function () {
@@ -78,7 +78,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('keydown');
         this.textInput.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'valuechange should stop polling on blur': function () {
@@ -100,8 +100,8 @@ suite.add(new Y.Test.Case({
 
             this.wait(function () {
                 Assert.isFalse(fired);
-            }, 100);
-        }, 100);
+            }, 200);
+        }, 200);
     },
 
     'valuechange should start polling on focus': function () {
@@ -114,7 +114,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('focus');
         this.textInput.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'valuechange should not report stale changes that occurred while a node was not focused': function () {
@@ -134,7 +134,7 @@ suite.add(new Y.Test.Case({
 
         this.wait(function () {
             Assert.isFalse(fired);
-        }, 100);
+        }, 200);
     },
 
     'valuechange should start polling on keyup for IME keystrokes': function () {
@@ -165,9 +165,9 @@ suite.add(new Y.Test.Case({
 
                 this.wait(function () {
                     Assert.isTrue(fired);
-                }, 100);
-            }, 100);
-        }, 100);
+                }, 200);
+            }, 200);
+        }, 200);
     },
 
     'valuechange should stop polling after timeout': function () {
@@ -208,7 +208,7 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('mousedown');
         this.textInput.set('value', 'monkeys');
 
-        this.wait(100);
+        this.wait(200);
     }
 }));
 
@@ -253,7 +253,7 @@ suite.add(new Y.Test.Case({
         this.a.simulate('mousedown');
         this.a.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'delegation should be supported on textareas': function () {
@@ -271,7 +271,7 @@ suite.add(new Y.Test.Case({
         this.f.simulate('mousedown');
         this.f.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'delegate filters should work properly': function () {
@@ -290,7 +290,7 @@ suite.add(new Y.Test.Case({
         this.b.simulate('mousedown');
         this.b.set('value', 'foo');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'multiple delegated handlers should be supported': function () {
@@ -320,7 +320,7 @@ suite.add(new Y.Test.Case({
 
         this.wait(function () {
             ArrayAssert.itemsAreSame(['one', 'two', 'three'], calls, 'delegated handlers should all be called in the correct order');
-        }, 100);
+        }, 200);
     }
 }));
 
