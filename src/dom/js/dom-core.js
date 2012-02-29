@@ -43,8 +43,8 @@ Y_DOM = {
 
     getId: function(node) {
         var id;
-        // IE < 8 returns HTMLElement from FORM when INPUT name === "id"
-        // and HTMLCollection when INPUT id === "id"
+        // HTMLElement returned from FORM when INPUT name === "id"
+        // IE < 8: HTMLCollection returned when INPUT id === "id"
         // via both getAttribute and form.id 
         if (node.id && !node.id.tagName && !node.id.item) {
             id = node.id;
