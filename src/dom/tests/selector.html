@@ -577,6 +577,19 @@ onload = function() {
             'should find custom element by tag and class': function() {
                 var node = Y.Selector.query('foo.custom-foo', null, true);
                 Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should support multiple :not pseudos': function() {
+                Assert.areEqual(1, Y.Selector.query('tr:not(.class1):not(.class2)').length);
+            },
+
+            'should support boolean custom attribute via quoted attr': function() {
+                var node = document.createElement('div');
+                node.setAttribute('foo', true);
+
+                document.body.appendChild(node);
+                Assert.areEqual(1, Y.Selector.query('[foo="true"]').length);
+                document.body.removeChild(node);
             }
         });
 
@@ -682,6 +695,13 @@ onload = function() {
     <div id="foo:bar"></div>
 
     <foo class="custom-foo"></foo>
+    <table>
+        <tbody>
+            <tr class="class1"></tr>
+            <tr class="class1 class2"></tr>
+            <tr></tr>
+        </tbody>
+    </table>
 
 </body>
 </html>
