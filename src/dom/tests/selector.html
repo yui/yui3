@@ -21,7 +21,7 @@ document.createElement('foo'); // enable custom element for IE native querySelec
 onload = function() {
 
     var SELECTOR_MODULE = 'selector-css3';
-    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'console', 'test', 'dom-deprecated', function(Y) {
+    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -116,7 +116,7 @@ onload = function() {
             }
         };
 
-        new Y.Console({height:'50em'}).render();
+        new Y.Test.Console({height:'50em'}).render();
 
         var suite = new Y.Test.Suite("Selector Suite");
         var Selector = Y.Selector;
@@ -481,7 +481,7 @@ onload = function() {
 
             'should run scoped query when form has input with name="id"': function() {
                 Assert.areEqual(1, Y.Selector.query('label', document.getElementById('test-inputs')).length);
-                Assert.areEqual(1, Y.Selector.query('label', document.getElementsByTagName('form')[0]).length);
+                Assert.areEqual(1, Y.Selector.query('label', document.getElementsByTagName('form')[1]).length);
             },
 
             testAncestor: function() {
@@ -647,7 +647,7 @@ onload = function() {
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo" disabled id="disabled-button">
         <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
-        <input name="id" value="foo">
+        <input name="id" class="not-button" value="test-input-name">
         <select>
             <option>foo</option>
             <option selected>bar</option>
