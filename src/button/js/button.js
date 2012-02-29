@@ -51,7 +51,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     /**
      * @method syncUI
-     * @description
+     * @description Updates button attributes
      */
     syncUI: function() {
         var button = this;
@@ -62,7 +62,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     /**
     * @method _setSelected
-    * @description
     * @private
     */
     _setSelected: function(value) {
@@ -71,7 +70,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     /**
     * @method _afterLabelChange
-    * @description
     * @private
     */
     _afterLabelChange: function(e) {
@@ -80,7 +78,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     /**
     * @method _afterDisabledChange
-    * @description
     * @private
     */
     _afterDisabledChange: function(e) {
@@ -89,7 +86,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     /**
     * @method _afterSelectedChange
-    * @description
     * @private
     */
     _afterSelectedChange: function(e) {
@@ -135,8 +131,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
     },
 
     /**
-    * TODO
-    *
     * @property HTML_PARSER
     * @type {Object}
     * @protected

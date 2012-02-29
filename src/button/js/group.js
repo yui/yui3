@@ -136,7 +136,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * The identity of the widget.
      *
      * @property NAME
-     * @type String
+     * @type {String}
      * @default 'buttongroup'
      * @readOnly
      * @protected
@@ -164,7 +164,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
      * List of class names used in the ButtonGroup's DOM
      *
      * @property CLASS_NAMES
-     * @type Object
+     * @type {Object}
      * @static
      */
     CLASS_NAMES: CLASS_NAMES
