@@ -192,7 +192,7 @@ Y.mix(Y_DOM.VALUE_GETTERS, {
         if (options && options.length) {
             // TODO: implement multipe select
             if (node.multiple) {
-            } else {
+            } else if (node.selectedIndex > -1) {
                 val = Y_DOM.getValue(options[node.selectedIndex]);
             }
         }

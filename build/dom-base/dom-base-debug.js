@@ -195,7 +195,7 @@ Y.mix(Y_DOM.VALUE_GETTERS, {
             // TODO: implement multipe select
             if (node.multiple) {
                 Y.log('multiple select normalization not implemented', 'warn', 'DOM');
-            } else {
+            } else if (node.selectedIndex > -1) {
                 val = Y_DOM.getValue(options[node.selectedIndex]);
             }
         }
