@@ -13,6 +13,8 @@ Widget Modality Change History
     modal widget and their `visible` attribute.
     [Ticket #2531484, #2531821, #2531812]
 
+  * Moved mask-related styles/skins out of Panel and into WidgetModality.
+
 3.4.1
 -----
 
