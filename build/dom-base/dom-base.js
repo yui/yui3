@@ -400,9 +400,12 @@ Y.mix(Y.DOM, {
                     ret = nodes[0].nextSibling;
                 } else {
                     nodes[0].parentNode.removeChild(nodes[0]); 
-                     ret = Y_DOM._nl2frag(nodes, doc);
+                    ret = Y_DOM._nl2frag(nodes, doc);
                 }
+            } else { // return multiple nodes as a fragment
+                 ret = Y_DOM._nl2frag(nodes, doc);
             }
+
         }
 
         return ret;
