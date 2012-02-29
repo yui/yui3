@@ -479,6 +479,11 @@ onload = function() {
                 //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), $('~ p', Y.DOM.byId('demo-first-child')), '#demo-first-child ~ div');
             },
 
+            'should run scoped query when form has input with name="id"': function() {
+                Assert.areEqual(1, Y.Selector.query('label', document.getElementById('test-inputs')).length);
+                Assert.areEqual(1, Y.Selector.query('label', document.getElementsByTagName('form')[0]).length);
+            },
+
             testAncestor: function() {
                 var node = Y.DOM.byId('demo-first-child');
                 Assert.isNull(Y.Selector.ancestor(node, 'p'));
@@ -487,8 +492,8 @@ onload = function() {
                 Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
             },
 
-            testChecked: function() {
-                Assert.areEqual(4, Y.all('#test-inputs :checked').size(), "Y.all('#test-inputs :checked').size()");
+            'should return all checked inputs': function() {
+                Assert.areEqual(4, Y.Selector.query('#test-inputs :checked', null).length);
             },
 
             'should apply function for filter test': function() {
@@ -630,6 +635,9 @@ onload = function() {
         <span>span</span>
     </div>
     <a id="href-test" href="foo.html">foo</a>
+    <form>
+        <input name="id" value="input-named-id">
+    </form>
     <form id="test-inputs">
         <label for="checkbox-unchecked" id="label-checkbox-unchecked">label</label>
         <input type="checkbox" id="checkbox-unchecked" class="not-button">
@@ -639,6 +647,7 @@ onload = function() {
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo" disabled id="disabled-button">
         <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
+        <input name="id" value="foo">
         <select>
             <option>foo</option>
             <option selected>bar</option>
