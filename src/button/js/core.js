@@ -37,7 +37,7 @@ Button.prototype = {
 
     /**
     * @method _initNode
-    * @description
+    * @description Node initializer
     * @param config {Object} Config object.
     * @private
     */
@@ -51,13 +51,13 @@ Button.prototype = {
 
     /**
     * @method _initAttributes
-    * @description
+    * @description  Attribute initializer
     * @param config {Object} Config object.
     * @private
     */
     _initAttributes: function(config) {
         var host = this._host,
-            node = node.one('.' + Button.CLASS_NAMES.LABEL) || node;
+            node = host.one('.' + Button.CLASS_NAMES.LABEL) || host;
             
         config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, Button.ATTRS, config);
@@ -66,6 +66,7 @@ Button.prototype = {
     /**
     * @method renderUI
     * @description Renders any UI/DOM elements for Button instances
+    * @param config {Object} Config object.
     * @private
     */
     _renderUI: function(config) {
@@ -81,8 +82,8 @@ Button.prototype = {
     },
 
     /**
-    * @method enable
-    * @description
+    * @method enable    
+    * @description Sets the Button's disabled DOM attribute to false
     * @public
     */
     enable: function() {
@@ -91,6 +92,7 @@ Button.prototype = {
 
     /**
     * @method disable
+    * @description Sets the Button's disabled DOM attribute to true
     * @public
     */
     disable: function() {
@@ -129,6 +131,7 @@ Button.prototype = {
     /**
     * @method _uiSetLabel
     * @description Setter for a button's 'label' ATTR
+    * @param label {string}
     * @private
     */
     _setLabel: function (label) {
@@ -147,6 +150,7 @@ Button.prototype = {
     /**
     * @method _setDisabled
     * @description Setter for the 'disabled' ATTR
+    * @param value {boolean}
     * @private
     */
     _setDisabled: function(value) {
@@ -195,13 +199,14 @@ Button.NAME = "button";
 *
 * @property CLASS_NAMES
 * @type {Array}
+* @private
 * @static
 */
 Button.CLASS_NAMES = {
     BUTTON  : getClassName('button'),
     DISABLED: getClassName('button', 'disabled'),
     SELECTED: getClassName('button', 'selected'),
-    LABEL: getClassName('button', 'label')
+    LABEL   : getClassName('button', 'label')
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
