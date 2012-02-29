@@ -2134,7 +2134,8 @@
             "base-build", 
             "event-outside", 
             "widget"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-parent": {
         "requires": [
