@@ -565,4 +565,4 @@ var WIDGET       = 'widget',
 
 
 
-}, '@VERSION@' ,{requires:['widget','event-outside','base-build']});
+}, '@VERSION@' ,{requires:['base-build', 'event-outside', 'widget'], skinnable:true});
