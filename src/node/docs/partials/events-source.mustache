@@ -1,24 +1,83 @@
-<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
-<div id="demo">
-    <p><em>lorem</em> <code>ipsum</code> <strong>dolor</strong> <span>sit</span></p>
-    <div id="event-result">Click anywhere in the box to see some event data.</div>
+<style>
+#container{
+    font-size: 200%;
+    cursor: pointer;
+    padding: 0 0.5em;
+    margin-bottom: 0.3em;
+    border-bottom: solid 1px #ccc;
+    text-align: center;
+}
+
+#container em{
+    color: red;
+    font-weight: bold;
+    font-size: 130%;
+}
+
+#container strong{
+    color: green;
+    font-weight: bold;
+    font-family: arial black;
+}
+
+#container code{
+    background-color: #000;
+    color: #CEFFA2;
+    padding: 0.3em;
+    font-weight: bold;
+}
+
+#container a{
+    color: #00f;
+    padding: 0.3em;
+    text-decoration: underline;
+    font-family: verdana;
+}
+
+.example .dd-color{
+    height: 1em;
+    width: 3em;
+}
+
+.example dt{
+    font-weight: normal;
+    color: #999999;
+}
+
+.example dd{
+    margin: 0 1.5em 0.3em;
+}
+
+.example dl{
+    margin: 0;
+}
+</style>
+
+<div id="container">
+    <p> <em>emphasis</em> <code>code</code> <strong>strong</strong> <a>anchor</a> <img src="{{{componentAssets}}}/images/birds.png" align="middle"/></p>
 </div>
+<div id="event-result">Click an element above to see its event data.</div>
 
 <script type="text/javascript">
 YUI().use('node', function(Y) {
     var onClick = function(e) {
         var type = e.type,
-            currentTarget = e.currentTarget, // #demo
-            target = e.target; // #demo or a descendant
+            currentTarget = e.currentTarget, // #container
+            target = e.target; // #container or a descendant
             
         Y.one('#event-result').setContent('<dl>' +
-            '<dt>type</dt><dd>' + e.type + '</dd>' +
-            '<dt>target</dt><dd>' + target.get('tagName') + '</dd>' +
-            '<dt>currentTarget</dt><dd>' + currentTarget.get('tagName') +
-                '#' + currentTarget.get('id') + '</dd></dl>');
+            '<dt>Event Type: </dt>' + 
+                '<dd>' + e.type + '</dd>' +
+            '<dt>Target Tag Name: </dt>' + 
+                '<dd>' + target.get('tagName') + '</dd>' +
+            '<dt>Color of Target\'s Font: </dt>' + 
+                '<dd class="dd-color" style="background-color:' + target.getStyle('color') + ';">' + '</dd>' +
+            '<dt>CurrentTarget Tag Name & Id: </dt>' + 
+                '<dd>' + currentTarget.get('tagName') + '#' + currentTarget.get('id') + '</dd>' +
+            '</dl>');
     };
 
-    Y.one('#demo').on('click', onClick);
+    Y.one('#container').on('click', onClick);
+    Y.one('#container').on('dblclick', onClick);
 });
 </script>
-

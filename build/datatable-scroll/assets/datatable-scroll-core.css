@@ -1,30 +1,57 @@
 /* foundational CSS */
-.yui3-datatable-scrollable-y .yui3-datatable-content {
-    /*
-    To allow offsetTop calculation for assigning height to the scrolling div
-    */
+.yui3-datatable-scrollable-x {
+    _overflow-x: hidden;
+    _position: relative;
+}
+
+.yui3-datatable-scrollable-y,
+.yui3-datatable-scrollable-y .yui3-datatable-x-scroller {
+    _overflow-y: hidden;
+    _position: relative;
+}
+
+.yui3-datatable-y-scroller-container {
+    overflow-x: hidden;
     position: relative;
 }
 
-.yui3-datatable-scrollable-x .yui3-datatable-x-scroller {
-    overflow-x: auto;
-    overflow-y: hidden;
+.yui3-datatable-scrollable-y .yui3-datatable-content {
+    /* To allow absolute positioning of virtual scrollbar */
+    position: relative;
+}
+
+.yui3-skin-sam .yui3-datatable-scroll-columns {
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
+
+.yui3-datatable-y-scroller,
+.yui3-datatable-scrollable-x .yui3-datatable-caption-table {
     width: 100%;
 }
 
+.yui3-datatable-x-scroller {
+    position: relative;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
 .yui3-datatable-scrollable-y .yui3-datatable-y-scroller {
+    position: relative;
     overflow-x: hidden;
     overflow-y: scroll;
+    z-index: 1;
 }
 
-.yui3-datatable-virtual-scrollbar {
+.yui3-datatable-scrollbar {
     position: absolute;
-    right: -1px;
     overflow-x: hidden;
     overflow-y: scroll;
+    z-index: 2;
 }
 
-.yui3-datatable-virtual-scrollbar div {
+.yui3-datatable-scrollbar div {
     position: absolute;
     width: 1px;
     visibility: hidden;

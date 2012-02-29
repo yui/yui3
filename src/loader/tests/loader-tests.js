@@ -985,6 +985,24 @@ YUI.add('loader-tests', function(Y) {
             
             test.wait();
             
+        },
+        'test: aliases config option': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                aliases: {
+                    dav: [ 'node' ],
+                    davglass: [ 'dav' ]
+                },
+                require: [ 'davglass' ]
+            });
+
+            var out = loader.resolve(true);
+
+            Assert.isTrue(out.js.length >= 1);
+            Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
+            Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
+
         }
     });
 

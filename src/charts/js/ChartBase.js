@@ -193,6 +193,22 @@ ChartBase.ATTRS = {
 
 ChartBase.prototype = {
     /**
+     * Handler for itemRendered event.
+     *
+     * @method _itemRendered
+     * @param {Object} e Event object.
+     * @private
+     */
+    _itemRendered: function(e)
+    {
+        this._itemRenderQueue = this._itemRenderQueue.splice(1 + Y.Array.indexOf(this._itemRenderQueue, e.currentTarget), 1);
+        if(this._itemRenderQueue.length < 1)
+        {
+            this._redraw();
+        }
+    },
+
+    /**
      * Default value function for the `Graph` attribute.
      *
      * @method _getGraph
@@ -389,7 +405,7 @@ ChartBase.prototype = {
      */
     initializer: function()
     {
-        this._axesRenderQueue = [];
+        this._itemRenderQueue = [];
         this.after("dataProviderChange", this._dataProviderChangeHandler);
     },
 
@@ -411,9 +427,18 @@ ChartBase.prototype = {
         }
         this._redraw();
     },
-   
+  
     /**
-     * @property bindUI
+     * @method syncUI
+     * @private
+     */
+    syncUI: function()
+    {
+        this._redraw();
+    },
+
+    /**
+     * @method bindUI
      * @private
      */
     bindUI: function()
@@ -635,6 +660,10 @@ ChartBase.prototype = {
                     axis = axes[i];
                     if(axis instanceof Y.Axis)
                     {
+                        if(axis.get("position") != "none")
+                        {
+                            this._addToAxesRenderQueue(axis);
+                        }
                         axis.set("dataProvider", dataProvider);
                     }
                 }

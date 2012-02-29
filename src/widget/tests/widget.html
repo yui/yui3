@@ -1743,6 +1743,46 @@
                 Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
 
                 w.destroy();
+            },
+            
+            "testHTMLParserWithEmptyConfig" : function() {
+
+                // See http://yuilibrary.com/projects/yui3/ticket/2531501
+                
+                // User wanted to have a Widget with a statically defined srcNode (a rare use case), 
+                // which meant there was no need to pass a config object to the widget constructor, 
+                // bringing out a logic issue, when using html parser and no config                
+
+                var markup = Y.Node.create('<div id="staticSrcNode"><h1>My Label</h1><ul><li>Item1</li><li>Item2</li></ul></div>');
+                Y.Node.one("body").append(markup);
+                
+                function StaticSrcNodeWidget() {
+                    StaticSrcNodeWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(StaticSrcNodeWidget, MyCustomWidget, null, {
+                    ATTRS : {
+                        srcNode : {
+                            value: "#staticSrcNode"
+                        }
+                    },
+                    NAME : "staticSrcNodeWidget"
+                })
+
+                var w = new StaticSrcNodeWidget();
+
+                Y.Assert.areEqual("My Label", w.get("label"), "label not picked up from markup");
+                Y.Assert.areEqual("h1", w.get("titleNode").get("tagName").toLowerCase(), "titleNode not picked up from markup");
+
+                Y.Assert.areEqual(2, w.get("listNodes").size(), "listNodes count does not match markup");
+
+                Y.Assert.areSame("li", w.get("listNodes").item(0).get("tagName").toLowerCase(), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("li", w.get("listNodes").item(1).get("tagName").toLowerCase(), "listNode 1 not picked up from markup");
+
+                Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
             }
 
         }));

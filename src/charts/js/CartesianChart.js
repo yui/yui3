@@ -200,14 +200,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     /**
      * Queue of axes instances that will be updated. This method is used internally to determine when all axes have been updated.
      *
-     * @property _axesRenderQueue
+     * @property _itemRenderQueue
      * @type Array
      * @private
      */
-    _axesRenderQueue: null,
+    _itemRenderQueue: null,
 
     /**
-     * Adds an `Axis` instance to the `_axesRenderQueue`.
+     * Adds an `Axis` instance to the `_itemRenderQueue`.
      *
      * @method _addToAxesRenderQueue
      * @param {Axis} axis An `Axis` instance.
@@ -215,13 +215,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _addToAxesRenderQueue: function(axis)
     {
-        if(!this._axesRenderQueue)
+        if(!this._itemRenderQueue)
         {
-            this._axesRenderQueue = [];
+            this._itemRenderQueue = [];
         }
-        if(Y.Array.indexOf(this._axesRenderQueue, axis) < 0)
+        if(Y.Array.indexOf(this._itemRenderQueue, axis) < 0)
         {
-            this._axesRenderQueue.push(axis);
+            this._itemRenderQueue.push(axis);
         }
     },
 
@@ -593,7 +593,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         axisClass = this._getAxisClass(dh.type);
                         axis = new axisClass(config);
-                        axis.after("axisRendered", Y.bind(this._axisRendered, this));
+                        axis.after("axisRendered", Y.bind(this._itemRendered, this));
                     }
                 }
 
@@ -1073,22 +1073,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
-     * Handler for axisRendered event.
-     *
-     * @method _axisRendered
-     * @param {Object} e Event object.
-     * @private
-     */
-    _axisRendered: function(e)
-    {
-        this._axesRenderQueue = this._axesRenderQueue.splice(1 + Y.Array.indexOf(this._axesRenderQueue, e.currentTarget), 1);
-        if(this._axesRenderQueue.length < 1)
-        {
-            this._redraw();
-        }
-    },
-
-    /**
      * Handler for sizeChanged event.
      *
      * @method _sizeChanged
@@ -1279,10 +1263,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         this._callLater = false;
         var w = this.get("width"),
             h = this.get("height"),
-            leftAxesWidth = 0,
-            rightAxesWidth = 0,
-            topAxesHeight = 0,
-            bottomAxesHeight = 0,
+            leftPaneWidth = 0,
+            rightPaneWidth = 0,
+            topPaneHeight = 0,
+            bottomPaneHeight = 0,
             leftAxesCollection = this.get("leftAxesCollection"),
             rightAxesCollection = this.get("rightAxesCollection"),
             topAxesCollection = this.get("topAxesCollection"),
@@ -1313,8 +1297,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             l = leftAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                leftAxesXCoords.unshift(leftAxesWidth);
-                leftAxesWidth += leftAxesCollection[i].get("width");
+                leftAxesXCoords.unshift(leftPaneWidth);
+                leftPaneWidth += leftAxesCollection[i].get("width");
             }
         }
         if(rightAxesCollection)
@@ -1324,8 +1308,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             i = 0;
             for(i = l - 1; i > -1; --i)
             {
-                rightAxesWidth += rightAxesCollection[i].get("width");
-                rightAxesXCoords.unshift(w - rightAxesWidth);
+                rightPaneWidth += rightAxesCollection[i].get("width");
+                rightAxesXCoords.unshift(w - rightPaneWidth);
             }
         }
         if(topAxesCollection)
@@ -1334,8 +1318,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             l = topAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                topAxesYCoords.unshift(topAxesHeight);
-                topAxesHeight += topAxesCollection[i].get("height");
+                topAxesYCoords.unshift(topPaneHeight);
+                topPaneHeight += topAxesCollection[i].get("height");
             }
         }
         if(bottomAxesCollection)
@@ -1344,17 +1328,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             l = bottomAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                bottomAxesHeight += bottomAxesCollection[i].get("height");
-                bottomAxesYCoords.unshift(h - bottomAxesHeight);
+                bottomPaneHeight += bottomAxesCollection[i].get("height");
+                bottomAxesYCoords.unshift(h - bottomPaneHeight);
             }
         }
         
-        graphWidth = w - (leftAxesWidth + rightAxesWidth);
-        graphHeight = h - (bottomAxesHeight + topAxesHeight);
-        graphRect.left = leftAxesWidth;
-        graphRect.top = topAxesHeight;
-        graphRect.bottom = h - bottomAxesHeight;
-        graphRect.right = w - rightAxesWidth;
+        graphWidth = w - (leftPaneWidth + rightPaneWidth);
+        graphHeight = h - (bottomPaneHeight + topPaneHeight);
+        graphRect.left = leftPaneWidth;
+        graphRect.top = topPaneHeight;
+        graphRect.bottom = h - bottomPaneHeight;
+        graphRect.right = w - rightPaneWidth;
         if(!allowContentOverflow)
         {
             topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);
@@ -1362,7 +1346,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
             rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
             
-            diff = topOverflow - topAxesHeight;
+            diff = topOverflow - topPaneHeight;
             if(diff > 0)
             {
                 graphRect.top = topOverflow;
@@ -1377,7 +1361,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
 
-            diff = bottomOverflow - bottomAxesHeight;
+            diff = bottomOverflow - bottomPaneHeight;
             if(diff > 0)
             {
                 graphRect.bottom = h - bottomOverflow;
@@ -1392,7 +1376,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
 
-            diff = leftOverflow - leftAxesWidth;
+            diff = leftOverflow - leftPaneWidth;
             if(diff > 0)
             {
                 graphRect.left = leftOverflow;
@@ -1407,7 +1391,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
 
-            diff = rightOverflow - rightAxesWidth;
+            diff = rightOverflow - rightPaneWidth;
             if(diff > 0)
             {
                 graphRect.right = w - rightOverflow;

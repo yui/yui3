@@ -287,9 +287,9 @@ Y.mix(Table.prototype, {
 
     @property TABLE_TEMPLATE
     @type {HTML}
-    @default '<table class="{className}"/>'
+    @default '<table cellspacing="0" class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table class="{className}"/>',
+    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -1414,6 +1414,8 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetWidth: function (width) {
+        var table = this._tableNode;
+
         if (isNumber(width)) {
             // DEF_UNIT from Widget
             width += this.DEF_UNIT;
@@ -1421,7 +1423,16 @@ Y.mix(Table.prototype, {
 
         if (isString(width)) {
             this._uiSetDim('width', width);
-            this._tableNode.setStyle('width', width);
+
+            if (width) {
+                // Table width needs to account for borders
+                width = (this.get('boundingBox').get('offsetWidth') -
+                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
+                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
+                 'px';
+            }
+
+            table.setStyle('width', width);
         }
     },
 
