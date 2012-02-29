@@ -431,10 +431,9 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
       setter: function (val) {
 
         var newDate = this._normalizeDate(val),
-            newTopDate = ydate.addMonths(newDate, this._paneNumber - 1),
-            minDate = this.get("minimumDate"),
-            maxDate = this.get("maximumDate");
-
+            newTopDate = ydate.addMonths(newDate, this._paneNumber - 1);
+        var minDate = this.get("minimumDate");
+        var maxDate = this.get("maximumDate");
             if ((minDate == null || ydate.isGreaterOrEqual(newDate, minDate)) && 
                 (maxDate == null || ydate.isGreaterOrEqual(maxDate, newTopDate))) {
                 return newDate;
@@ -498,7 +497,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
           return newMaxDate;
         }
         else {
-          return this._normalizeDate(val);
+          return val;
         }
       }
     }

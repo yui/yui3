@@ -817,7 +817,12 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * set to noon.
      */
     _normalizeDate : function (date) {
-       return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);  
+      if (date != null) {
+       return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
+      }
+      else {
+       return null;
+      }  
     },
 
 
@@ -1573,6 +1578,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         var newDate = this._normalizeDate(val);
         if (ydate.areEqual(newDate, this.get('date'))) {
             return this.get('date');
+        }
+        else {
+            return newDate;
         }
       }
       },
