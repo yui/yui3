@@ -316,7 +316,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     /**
     Handles changes in the source's columns attribute.  Redraws the table data.
 
-    @method _afterColumnChange
+    @method _afterColumnsChange
     @param {EventFacade} e The `columnsChange` event object
     @protected
     **/
