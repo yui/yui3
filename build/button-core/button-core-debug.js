@@ -77,7 +77,7 @@ Button.prototype = {
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
         
-        if (tagName !== 'button' && tagName != 'input') {
+        if (tagName !== 'button' && tagName !== 'input') {
             node.set('role', 'button');   
         }
     },
@@ -109,16 +109,19 @@ Button.prototype = {
     },
     
     /**
-    * @method _uiGetLabel
+    * @method _getLabel
     * @description Getter for a button's 'label' ATTR
     * @private
     */
-    _uiGetLabel: function() {
-        var parent = this.getNode(),
-            node = this._getLabelNode(parent),
-            value = this._getLabel(node);
-            
-        return value;
+    _getLabel: function () {
+        var node    = this.getNode(),
+            tagName = node.get('tagName').toLowerCase();
+
+        if (tagName === 'input') {
+            return node.get('value');
+        }
+
+        return (node.one('.' + Button.CLASS_NAMES.LABEL) || node).get('text');
     },
     
     /**
@@ -126,7 +129,7 @@ Button.prototype = {
     * @description Setter for a button's 'label' ATTR
     * @private
     */
-    _uiSetLabel: function(value) {
+    _setLabel: function(value) {
         var parent = this.getNode(),
             node = this._getLabelNode(parent),
             attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML';
@@ -137,11 +140,11 @@ Button.prototype = {
     },
 
     /**
-    * @method _uiSetDisabled
+    * @method _setDisabled
     * @description Setter for the 'disabled' ATTR
     * @private
     */
-    _uiSetDisabled: function(value) {
+    _setDisabled: function(value) {
         var node = this.getNode();
         
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
@@ -157,18 +160,6 @@ Button.prototype = {
     */
     _getLabelNode: function(node) {
         return node.one('.' + Button.CLASS_NAMES.LABEL) || node;
-    },
-    
-    /**
-    * @method _getLabel
-    * @description Utility method to obtain a button's label text
-    * @private
-    */
-    _getLabel: function(node) {
-        var attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML',
-            label = node.get(attr);
-        
-        return label;
     }
 };
 
@@ -182,14 +173,14 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        setter: '_uiSetLabel',
-        getter: '_uiGetLabel',
+        setter: '_setLabel',
+        getter: '_getLabel',
         lazyAdd: false
     },
 
     disabled: {
         value: false,
-        setter: '_uiSetDisabled',
+        setter: '_setDisabled',
         lazyAdd: false
     }
 };
