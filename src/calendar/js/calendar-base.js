@@ -316,22 +316,23 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @return {boolean} Returns true if the given number is in the given list.
      */
     _isNumInList : function (num, strList) {
-      if (strList == "all") {
-          return true;
-      }
-      else {
-        var elements = strList.split(",");
-
-        for (var val = 0, len = elements.length; val < len; val++) {
-            var range = elements[val].split("-");
-            if (range.length == 2 && num >= parseInt(range[0], 10) && num <= parseInt(range[1], 10)) {
-                return true;
-            }
-            else if (range.length == 1 && (parseInt(elements[val], 10) == num)) {
-                return true;
-            }
+        if (strList == "all") {
+            return true;
         }
-        return false;   
+        else {
+            var elements = strList.split(","),
+                i = elements.length;
+
+            while (i--) {
+                var range = elements[i].split("-");
+                if (range.length == 2 && num >= parseInt(range[0], 10) && num <= parseInt(range[1], 10)) {
+                    return true;
+                }
+                else if (range.length == 1 && (parseInt(elements[i], 10) == num)) {
+                    return true;
+                }
+            }
+            return false;   
         }
     },
 
