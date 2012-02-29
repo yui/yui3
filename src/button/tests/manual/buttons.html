@@ -35,7 +35,9 @@
                     type: 'checkbox'
                 }).render();
                 
-                groupA.on('selectionChange', function(){
+                groupA.on('selectionChange', function(e){
+                    var button = e.target.getSelectedButtons()[0];
+                    button.set('label', button.get('label') + "+");
                     Y.log('groupA - Currently selected: ' + this.getSelectedValues());
                     //console.log(groupB.getBar());
                 });
@@ -63,32 +65,32 @@
         
         <h2>Radio A</h2>
         <div id='groupA'>
-            <input type='button' class='radioGroupA' value='1'>
-            <input type='button' class='radioGroupA' value='2'>
-            <input type='button' class='radioGroupA' value='3'>
-            <input type='button' class='radioGroupA' value='4'>
-            <input type='button' class='radioGroupA' value='5'>
-            <input type='button' class='radioGroupA' value='6'>
+            <button>**<span class='yui3-button-label'>1</span>**</button>
+            <input type='button' value='2'>
+            <input type='reset' value='3'>
+            <input type='submit' value='4'>
+            <input type='button' value='5'>
+            <input type='button' value='6'>
         </div>
         
         <h2>Radio B</h2>
         <div id='groupB'>
-            <input type='button' class='radioGroupB' value='1'>
-            <input type='button' class='radioGroupB' value='2'>
-            <input type='button' class='radioGroupB' value='3'>
-            <input type='button' class='radioGroupB' value='4'>
-            <input type='button' class='radioGroupB' value='5'>
-            <input type='button' class='radioGroupB' value='6'>
+            <input type='button' value='1'>
+            <input type='button' value='2'>
+            <input type='button' value='3'>
+            <input type='button' value='4'>
+            <input type='button' value='5'>
+            <input type='button' value='6'>
         </div>
         
         <h2>Checkbox</h2>
         <div id='groupC'>
-            <input type='button' class='cbGroup' value='a'>
-            <input type='button' class='cbGroup' value='b'>
-            <input type='button' class='cbGroup' value='c'>
-            <input type='button' class='cbGroup' value='d'>
-            <input type='button' class='cbGroup' value='e'>
-            <input type='button' class='cbGroup' value='f'>
+            <input type='button' value='a'>
+            <input type='button' value='b'>
+            <input type='button' value='c'>
+            <input type='button' value='d'>
+            <input type='button' value='e'>
+            <input type='button' value='f'>
         </div>
         
     </body>
