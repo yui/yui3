@@ -25,7 +25,7 @@
     padding-bottom:10px;
 }
 
-.yui3-skin-sam .yui3-calendar-header-label h4 {
+.yui3-skin-sam .yui3-calendar-header-label {
     margin: 0;
     font-size: 1em;
     font-weight: bold;
@@ -43,6 +43,7 @@
     text-align:center;
 }
 
+
 .yui3-skin-sam .yui3-calendar-day:hover {
     background: #0066CC;
     color: #FFFFFF;
@@ -55,7 +56,7 @@
 }
 
 .yui3-skin-sam .yui3-calendar-weekday {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .yui3-skin-sam .yui3-calendar-prevmonth-day, .yui3-skin-sam .yui3-calendar-nextmonth-day {
@@ -63,12 +64,26 @@
 }
 
 .yui3-skin-sam .yui3-calendar-day {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .yui3-skin-sam .yui3-calendar-day-selected {
-	background-color: #B3D4FF;
-	color: #000000;
-
+    background-color: #B3D4FF;
+    color: #000000;
 }
 
+.yui3-skin-sam .yui3-calendar-day-highlighted {
+    background-color: #DCDEF5;
+}
+
+.yui3-skin-sam .yui3-calendar-header-label {
+    text-align: center;
+}
+
+.yui3-skin-sam .yui3-calendar-left-grid {
+   margin-right:1em;
+}
+
+.yui3-skin-sam .yui3-calendar-right-grid {
+   margin-left:1em;
+}

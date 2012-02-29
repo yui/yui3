@@ -28,6 +28,7 @@ var getCN                 = Y.ClassNameManager.getClassName,
     CAL_NEXTMONTH_DAY     = getCN(CALENDAR, 'nextmonth-day'),
     CAL_ANCHOR            = getCN(CALENDAR, 'anchor'),
     CAL_PANE              = getCN(CALENDAR, 'pane'),
+    CAL_STATUS            = getCN(CALENDAR, 'status'),
     L           = Y.Lang,
     node        = Y.Node,
     create      = node.create,
@@ -154,6 +155,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
    * @method renderUI
    */  
   renderUI : function () {
+
       var contentBox = this.get('contentBox');
       contentBox.appendChild(this._initCalendarHTML(this.get('date')));
         if (this.get('showPrevMonth')) {
@@ -164,6 +166,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
       this._renderCustomRules();
       this._renderSelectedDates();
+
+    this.get("boundingBox").setAttribute("aria-labelledby", this._calendarId + "_header");
+
   },
   /**
    * bindUI implementation
@@ -178,6 +183,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this.after('showNextMonthChange', this._afterShowNextMonthChange);
     this.after('headerRendererChange', this._afterHeaderRendererChange);
     this.after('customRendererChange', this._afterCustomRendererChange);
+    this.after('enabledDatesRuleChange', this._afterCustomRendererChange);
+    this.after('disabledDatesRuleChange', this._afterCustomRendererChange);
+    this.after('focusedChange', this._afterFocusedChange);
     this._bindCalendarEvents();
   },
 
@@ -196,6 +204,13 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       if (this.get('showNextMonth')) {
            this._afterShowNextMonthChange();
       }
+  },
+
+
+  _afterFocusedChange : function (ev) {
+    if (ev.newVal) {
+       CalendarBase.updateStatus("Calendar with two month panes, currently set to " + ydate.format(this.get("date"), {format:"%B %Y"}));
+    }
   },
 
     /**
@@ -307,9 +322,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
           return true;
       }
       else {
-        var elements = strList.split(","),
-            val;
-        for (val in elements) {
+        var elements = strList.split(",");
+
+        for (var val = 0, len = elements.length; val < len; val++) {
             var range = elements[val].split("-");
             if (range.length == 2 && num >= parseInt(range[0], 10) && num <= parseInt(range[1], 10)) {
                 return true;
@@ -651,8 +666,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                 var matchingRules = this._getRulesForDate(date);
                 if (matchingRules.length > 0) {
                     var dateNode = this._dateToNode(date);
-                    if ((enRule && !(iOf(matchingRules, enRule) >= 0)) ||
-                        (disRule && (iOf(matchingRules, disRule) >= 0))) {
+                    if ((enRule && iOf(matchingRules, enRule) < 0) || (!enRule && disRule && iOf(matchingRules, disRule) >= 0)) {
                             dateNode.addClass(SELECTION_DISABLED);
                         }
                         
@@ -660,6 +674,10 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                         this._storedDateCells[dateNode.get("id")] = dateNode.cloneNode(true);
                         this._filterFunction (date, dateNode, matchingRules);
                     }
+                }
+                else if (enRule) {
+                   var dateNode = this._dateToNode(date);
+                   dateNode.addClass(SELECTION_DISABLED);
                 }
                 },
              this);
@@ -996,7 +1014,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */ 
   _afterHeaderRendererChange : function () {
-    var headerCell = this.get('contentBox').one("." + CAL_HD).one("h4");
+    var headerCell = this.get('contentBox').one("." + CAL_HD);
     headerCell.setContent(this._updateCalendarHeader(this.get('date')));
   },
 
@@ -1006,6 +1024,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */ 
     _afterCustomRendererChange : function () {
+        this._restoreModifiedCells();
         this._renderCustomRules();
     },
 
@@ -1019,7 +1038,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
   _afterDateChange : function () {
     
     var contentBox = this.get('contentBox'),
-        headerCell = contentBox.one("." + CAL_HD).one("h4"),
+        headerCell = contentBox.one("." + CAL_HD).one("." + CAL_HD_LABEL),
         calendarPanes = contentBox.all("." + CAL_GRID),
         currentDate = this.get("date"),
         counter = 0;
@@ -1059,6 +1078,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     var calString = '',
         // Get a list of short weekdays from the internationalization package, or else use default English ones.
         weekdays = this.get('strings.very_short_weekdays') || ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        fullweekdays = this.get('strings.weekdays') || ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         // Get the first day of the week from the internationalization package, or else use Sunday as default.
         firstday = this.get('strings.first_weekday') || 0,
         // Compute the cutoff column of the masked calendar table, based on the start date and the first day of week.
@@ -1077,7 +1097,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       for (var day = firstday; day <= firstday + 6; day++) {
                partials["weekday_row"] += 
                   substitute(CalendarBase.WEEKDAY_TEMPLATE,
-                       {weekdayname: weekdays[day%7]});
+                       {weekdayname: weekdays[day%7],
+                        full_weekdayname: fullweekdays[day%7]});
       }
         
         // Populate the partial template for the weekday row container with the weekday row cells
@@ -1131,8 +1152,13 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                                                        {calday_row: v});
       });
 
-            // Populate the calendar grid id
+      // Populate the calendar grid id
       partials["calendar_pane_id"] = pane_id;
+
+      // Populate the calendar pane tabindex
+      partials["calendar_pane_tabindex"] = this.get("tabIndex");
+      partials["pane_arialabel"] = ydate.format(baseDate, {format:"%B %Y"});
+
 
       // Generate final output by substituting class names.
           var output = substitute(substitute (CalendarBase.CALENDAR_GRID_TEMPLATE, partials),
@@ -1167,6 +1193,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
   
        // Hide the pane before making DOM changes to speed them up
          pane.setStyle("visibility", "hidden");
+         pane.setAttribute("aria-label", ydate.format(newDate, {format:"%B %Y"}));
   
        // Go through all columns, and flip their visibility setting based on whether they are within the unmasked range.
          for (var column = 0; column <= 12; column++) {
@@ -1278,7 +1305,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */ 
     _initCalendarHeader : function (baseDate) {
       return substitute(substitute(CalendarBase.HEADER_TEMPLATE, 
-                                 {calheader: this._updateCalendarHeader(baseDate)}), 
+                                 {calheader: this._updateCalendarHeader(baseDate),
+                                  calendar_id: this._calendarId}), 
                       CalendarBase.CALENDAR_STRINGS);
     },
 
@@ -1297,8 +1325,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         
         // Generate the template for the header   
         partials["header_template"] =  this._initCalendarHeader(baseDate);
-            partials["calendar_id"] = this._calendarId;
-      
+        partials["calendar_id"] = this._calendarId;
+
           partials["body_template"] = substitute(substitute (CalendarBase.CONTENT_TEMPLATE, partials),
                                              CalendarBase.CALENDAR_STRINGS);
  
@@ -1338,7 +1366,24 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     calendar_dayanchor_class  : CAL_ANCHOR,
     calendar_pane_class       : CAL_PANE,
     calendar_right_grid_class : CAL_RIGHT_GRID,
-    calendar_left_grid_class  : CAL_LEFT_GRID
+    calendar_left_grid_class  : CAL_LEFT_GRID,
+    calendar_status_class     : CAL_STATUS
+  },
+
+  ARIA_STATUS_TEMPLATE: '<div role="status" aria-atomic="true" class="{calendar_status_class}"></div>',
+
+  AriaStatus : null,
+
+  updateStatus : function (statusString) {
+
+    if (!CalendarBase.AriaStatus) {
+      CalendarBase.AriaStatus = create(
+                             substitute (CalendarBase.ARIA_STATUS_TEMPLATE, 
+                                         CalendarBase.CALENDAR_STRINGS));
+      Y.one("body").append(CalendarBase.AriaStatus);
+    }
+
+      CalendarBase.AriaStatus.set("text", statusString);
   },
 
    /**
@@ -1365,7 +1410,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     */  
   ONE_PANE_TEMPLATE: '<div class="yui3-g {calendar_pane_class}" id="{calendar_id}">' +  
                               '{header_template}' +
-                            '<div class="yui3-u-1 yui3-calendar-main-grid">' +
+                            '<div class="yui3-u-1">' +
                               '{calendar_grid_template}' +
                             '</div>' +
                  '</div>',
@@ -1422,7 +1467,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @protected
     * @static
     */    
-  CALENDAR_GRID_TEMPLATE: '<table class="{calendar_grid_class}" id="{calendar_pane_id}">' + 
+  CALENDAR_GRID_TEMPLATE: '<table class="{calendar_grid_class}" id="{calendar_pane_id}" role="grid" aria-readonly="true" aria-label="{pane_arialabel}" tabindex="{calendar_pane_tabindex}">' + 
                            '<thead>' +
                         '{weekday_row_template}' +
                            '</thead>' +
@@ -1439,10 +1484,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @static
     */   
   HEADER_TEMPLATE: '<div class="yui3-g {calendar_hd_class}">' + 
-                         '<div class="yui3-u {calendar_hd_label_class}">' + 
-                          '<h4>' +
+                         '<div class="yui3-u {calendar_hd_label_class}" id="{calendar_id}_header" aria-role="heading">' + 
                               '{calheader}' +
-                          '</h4>' +
                          '</div>' +
                    '</div>',
 
@@ -1453,7 +1496,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @protected
     * @static
     */ 
-  WEEKDAY_ROW_TEMPLATE: '<tr class="{calendar_weekdayrow_class}">' + 
+  WEEKDAY_ROW_TEMPLATE: '<tr class="{calendar_weekdayrow_class}" role="row">' + 
                            '{weekday_row}' +
               '</tr>',
 
@@ -1464,7 +1507,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @protected
     * @static
     */ 
-  CALDAY_ROW_TEMPLATE: '<tr class="{calendar_row_class}">' + 
+  CALDAY_ROW_TEMPLATE: '<tr class="{calendar_row_class}" role="row">' + 
                  '{calday_row}' + 
               '</tr>',
 
@@ -1475,7 +1518,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @protected
     * @static
     */ 
-  WEEKDAY_TEMPLATE: '<th class="{calendar_weekday_class}">{weekdayname}</th>',
+  WEEKDAY_TEMPLATE: '<th class="{calendar_weekday_class}" role="columnheader" aria-label="{full_weekdayname}">{weekdayname}</th>',
 
    /**
     * A template for a single cell with a calendar day.
@@ -1484,7 +1527,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @protected
     * @static
     */ 
-  CALDAY_TEMPLATE: '<td class="{calendar_col_class} {calendar_day_class} {calendar_col_visibility_class}" id="{calendar_day_id}">' +
+  CALDAY_TEMPLATE: '<td class="{calendar_col_class} {calendar_day_class} {calendar_col_visibility_class}" id="{calendar_day_id}" role="gridcell">' +
                        '{day_content}' + 
                    '</td>',
 
@@ -1510,6 +1553,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @static
     */  
   ATTRS: {
+    tabIndex: {
+      value: 1
+    },
     /**
      * The date corresponding to the current calendar view. Always
      * normalized to the first of the month that contains the date
