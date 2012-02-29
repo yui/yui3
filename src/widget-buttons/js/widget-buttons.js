@@ -289,9 +289,10 @@ WidgetButtons.prototype = {
     @param {Node|Object|String} button The button to add. This can be a `Y.Node`
         instance, config Object, or String name for a predefined button on the
         `BUTTONS` prototype property. When a config Object is provided, it will
-        be merged with any defaults provided by a button with the same `name`
-        defined on the `BUTTONS` property. The following are the possible
-        configuration properties beyond what Node plugins accept by default:
+        be merged with any defaults provided by any `srcNode` and/or a button
+        with the same `name` defined on the `BUTTONS` property. The following
+        are the possible configuration properties beyond what Node plugins
+        accept by default:
       @param {Function|String} [button.action] The default handler that should
         be called when the button is clicked. A String name of a Function that
         exists on the `context` object can also be provided. **Note:**
@@ -315,8 +316,10 @@ WidgetButtons.prototype = {
         same name, its configuration properties will be merged in as defaults.
       @param {String} [button.section] The `WidgetStdMod` section (header, body,
         footer) where the button should be added.
-      @param {Node} [button.srcNode] An existing Node to use for the button, by
-        default a new &lt;button&gt; node will be created.
+      @param {Node} [button.srcNode] An existing Node to use for the button,
+        default values will be seeded from this node, but are overriden by any
+        values specified in the config object. By default a new &lt;button&gt;
+        node will be created.
       @param {String} [button.template] A specific template to use when creating
         a new button node (e.g. "&lt;a /&gt;"). **Note:** Specifying a `srcNode`
         will overide this.
@@ -710,9 +713,9 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Merges the specified `config` with the predefined configuration for a button
-    with the same name on the `BUTTONS` property. A new config object is
-    returned so the specified `config` is not modified.
+    Returns a copy of the specified `config` object merged with any defaults
+    provided by a `srcNode` and/or a predefined configuration for a button
+    with the same `name` on the `BUTTONS` property.
 
     @method _mergeButtonConfig
     @param {Object|String} config Button configuration object, or string name.
@@ -722,12 +725,35 @@ WidgetButtons.prototype = {
     @since 3.5.0
     **/
     _mergeButtonConfig: function (config) {
+        var buttonConfig, defConfig, name, button, tagName, label;
+
+        // Makes sure `config` is an Object and a copy of the specified value.
         config = isString(config) ? {name: config} : Y.merge(config);
 
-        var name      = this._getButtonName(config),
-            defConfig = this.BUTTONS && this.BUTTONS[name];
+        // Seeds default values from the button node, if there is one.
+        if (config.srcNode) {
+            button  = config.srcNode;
+            tagName = button.get('tagName').toLowerCase();
+            label   = button.get(tagName === 'input' ? 'value' : 'text');
 
-        // Merge button `config` with defaults.
+            // Makes sure the button's current values override any defaults.
+            buttonConfig = {
+                disabled : !!button.get('disabled'),
+                isDefault: this._getButtonDefault(button),
+                name     : this._getButtonName(button)
+            };
+
+            // Label should only be considered when not an empty string.
+            label && (buttonConfig.label = label);
+
+            // Merge `config` with `buttonConfig` values.
+            Y.mix(config, buttonConfig, false, null, 0, true);
+        }
+
+        name      = this._getButtonName(config);
+        defConfig = this.BUTTONS && this.BUTTONS[name];
+
+        // Merge `config` with predefined default values.
         if (defConfig) {
             Y.mix(config, defConfig, false, null, 0, true);
         }
@@ -760,23 +786,8 @@ WidgetButtons.prototype = {
         // Creates a button config object for every button node found and adds
         // it to the section. This way each button configuration can be merged
         // with any defaults provided by predefined `BUTTONS`.
-        function addButtonToSection(sectionButtons, button) {
-            var tagName = button.get('tagName').toLowerCase(),
-                label   = button.get(tagName === 'input' ? 'value' : 'text'),
-                config;
-
-            // Makes sure the button's current values override any defaults.
-            config = {
-                name     : this._getButtonName(button),
-                disabled : !!button.get('disabled'),
-                isDefault: this._getButtonDefault(button),
-                srcNode  : button
-            };
-
-            // Label should only be considered when not an empty string.
-            label && (config.label = label);
-
-            sectionButtons.push(config);
+        function addButtonToSection(button) {
+            this.push({srcNode: button});
         }
 
         for (i = 0, len = sections.length; i < len; i += 1) {
@@ -787,7 +798,7 @@ WidgetButtons.prototype = {
             if (!buttons || buttons.isEmpty()) { continue; }
 
             sectionButtons = [];
-            buttons.each(Y.bind(addButtonToSection, this, sectionButtons));
+            buttons.each(addButtonToSection, sectionButtons);
 
             buttonsConfig || (buttonsConfig = {});
             buttonsConfig[section] = sectionButtons;

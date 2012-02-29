@@ -21,7 +21,7 @@ document.createElement('foo'); // enable custom element for IE native querySelec
 onload = function() {
 
     var SELECTOR_MODULE = 'selector-css3';
-    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'console', 'test', 'dom-deprecated', function(Y) {
+    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -116,7 +116,7 @@ onload = function() {
             }
         };
 
-        new Y.Console({height:'50em'}).render();
+        new Y.Test.Console({height:'50em'}).render();
 
         var suite = new Y.Test.Suite("Selector Suite");
         var Selector = Y.Selector;
@@ -479,6 +479,11 @@ onload = function() {
                 //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), $('~ p', Y.DOM.byId('demo-first-child')), '#demo-first-child ~ div');
             },
 
+            'should run scoped query when form has input with name="id"': function() {
+                Assert.areEqual(1, Y.Selector.query('label', document.getElementById('test-inputs')).length);
+                Assert.areEqual(1, Y.Selector.query('label', document.getElementsByTagName('form')[1]).length);
+            },
+
             testAncestor: function() {
                 var node = Y.DOM.byId('demo-first-child');
                 Assert.isNull(Y.Selector.ancestor(node, 'p'));
@@ -487,8 +492,8 @@ onload = function() {
                 Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
             },
 
-            testChecked: function() {
-                Assert.areEqual(4, Y.all('#test-inputs :checked').size(), "Y.all('#test-inputs :checked').size()");
+            'should return all checked inputs': function() {
+                Assert.areEqual(4, Y.Selector.query('#test-inputs :checked', null).length);
             },
 
             'should apply function for filter test': function() {
@@ -572,6 +577,19 @@ onload = function() {
             'should find custom element by tag and class': function() {
                 var node = Y.Selector.query('foo.custom-foo', null, true);
                 Assert.areEqual(document.getElementsByTagName('foo')[0], node);
+            },
+
+            'should support multiple :not pseudos': function() {
+                Assert.areEqual(1, Y.Selector.query('tr:not(.class1):not(.class2)').length);
+            },
+
+            'should support boolean custom attribute via quoted attr': function() {
+                var node = document.createElement('div');
+                node.setAttribute('foo', true);
+
+                document.body.appendChild(node);
+                Assert.areEqual(1, Y.Selector.query('[foo="true"]').length);
+                document.body.removeChild(node);
             }
         });
 
@@ -630,6 +648,9 @@ onload = function() {
         <span>span</span>
     </div>
     <a id="href-test" href="foo.html">foo</a>
+    <form>
+        <input name="id" value="input-named-id">
+    </form>
     <form id="test-inputs">
         <label for="checkbox-unchecked" id="label-checkbox-unchecked">label</label>
         <input type="checkbox" id="checkbox-unchecked" class="not-button">
@@ -639,6 +660,7 @@ onload = function() {
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo" disabled id="disabled-button">
         <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
+        <input name="id" class="not-button" value="test-input-name">
         <select>
             <option>foo</option>
             <option selected>bar</option>
@@ -673,6 +695,13 @@ onload = function() {
     <div id="foo:bar"></div>
 
     <foo class="custom-foo"></foo>
+    <table>
+        <tbody>
+            <tr class="class1"></tr>
+            <tr class="class1 class2"></tr>
+            <tr></tr>
+        </tbody>
+    </table>
 
 </body>
 </html>
