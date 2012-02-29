@@ -58,7 +58,10 @@ Button.prototype = {
     * @private
     */
     _initAttributes: function(config) {
-        config.label = config.label || config.host.getContent() || config.host.get('value'); //Todo: Is this the right place?
+        var host = this._host,
+            node = this._getLabelNode(host);
+            
+        config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, Button.ATTRS, config);
     },
 
@@ -68,12 +71,15 @@ Button.prototype = {
     * @private
     */
     _renderUI: function(config) {
-        var node = this.getNode();
+        var node = this.getNode(),
+            tagName = node.get('tagName').toLowerCase();
 
         // Set some default node attributes
         node.addClass(Button.CLASS_NAMES.BUTTON);
-
-        node.set('role', 'button'); //TODO: Only if it actually needs role='button'
+        
+        if (tagName !== 'button' && tagName != 'input') {
+            node.set('role', 'button');   
+        }
     },
 
     /**
@@ -87,7 +93,6 @@ Button.prototype = {
 
     /**
     * @method disable
-    * @description
     * @public
     */
     disable: function() {
@@ -96,49 +101,74 @@ Button.prototype = {
 
     /**
     * @method getNode
-    * @description
+    * @description Gets the host node
     * @public
     */
     getNode: function() {
         return this._host;
     },
-
+    
+    /**
+    * @method _uiGetLabel
+    * @description Getter for a button's 'label' ATTR
+    * @private
+    */
+    _uiGetLabel: function() {
+        var parent = this.getNode(),
+            node = this._getLabelNode(parent),
+            value = this._getLabel(node);
+            
+        return value;
+    },
+    
     /**
     * @method _uiSetLabel
-    * @description
+    * @description Setter for a button's 'label' ATTR
     * @private
     */
     _uiSetLabel: function(value) {
-        var node = this.getNode(),
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text';
+        var parent = this.getNode(),
+            node = this._getLabelNode(parent),
+            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML';
+            
         node.set(attr, value);
+        
         return value;
     },
 
     /**
     * @method _uiSetDisabled
-    * @description
+    * @description Setter for the 'disabled' ATTR
     * @private
     */
     _uiSetDisabled: function(value) {
         var node = this.getNode();
+        
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
         node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
+        
         return value;
     },
-
+    
     /**
-    * @method _uiGetLabel
-    * @description
+    * @method _getLabelNode
+    * @description Utility method to obtain a button's label node
     * @private
     */
-    _uiGetLabel: function() {
-        var node = this.getNode(),
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'text',
-            value;
-
-        value = node.get(attr);
-        return value;
+    _getLabelNode: function(node) {
+        return node.one('.' + Button.CLASS_NAMES.LABEL) || node;
+    },
+    
+    /**
+    * @method _getLabel
+    * @description Utility method to obtain a button's label text
+    * @private
+    */
+    _getLabel: function(node) {
+        var attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML',
+            label = node.get(attr);
+        
+        return label;
     }
 };
 
@@ -183,7 +213,8 @@ Button.NAME = "button";
 Button.CLASS_NAMES = {
     BUTTON  : getClassName('button'),
     DISABLED: getClassName('button', 'disabled'),
-    SELECTED: getClassName('button', 'selected')
+    SELECTED: getClassName('button', 'selected'),
+    LABEL: getClassName('button', 'label')
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
