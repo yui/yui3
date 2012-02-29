@@ -6,7 +6,7 @@
 */
 
 var CONTENT_BOX = "contentBox",
-    SELECTOR    = "button, input[type=button]",
+    SELECTOR    = "button, input[type=button], input[type=reset], input[type=submit]",
     CLICK_EVENT = "click",
     CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
 
