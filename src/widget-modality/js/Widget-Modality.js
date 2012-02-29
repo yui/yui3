@@ -192,7 +192,8 @@ var WIDGET       = 'widget',
         },
 
         destructor: function () {
-            this._detachUIHandlesModal();
+            // Hack to remove this thing from the STACK.
+            this._uiSetHostVisibleModal(false);
         },
 
         // *** Instance Members *** //
