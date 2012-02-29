@@ -145,7 +145,7 @@ var Selector = {
 
         if (node) {
             // enforce for element scoping
-            if (node.nodeType !== 9) { // avoid documentElement 
+            if (node.nodeType === 1) { // Elements only
                 id = Y.DOM.getId(node);
 
                 if (!id) {
