@@ -57,7 +57,7 @@ Button.prototype = {
     */
     _initAttributes: function(config) {
         var host = this._host,
-            node = this._getLabelNode(host);
+            node = node.one('.' + Button.CLASS_NAMES.LABEL) || node;
             
         config.label = config.label || this._getLabel(node);
         Y.AttributeCore.call(this, Button.ATTRS, config);
@@ -131,14 +131,17 @@ Button.prototype = {
     * @description Setter for a button's 'label' ATTR
     * @private
     */
-    _setLabel: function(value) {
-        var parent = this.getNode(),
-            node = this._getLabelNode(parent),
-            attr = (node.get('tagName').toLowerCase() === 'input') ? 'value' : 'innerHTML';
-            
-        node.set(attr, value);
-        
-        return value;
+    _setLabel: function (label) {
+        var node    = this.getNode(),
+            tagName = node.get('tagName').toLowerCase();
+
+        if (tagName === 'input') {
+            node.set('value', label);
+        } else {
+            (node.one('.' + Button.CLASS_NAMES.LABEL) || node).set('text', label);
+        }
+
+        return label;
     },
 
     /**
@@ -153,15 +156,6 @@ Button.prototype = {
         node.toggleClass(Button.CLASS_NAMES.DISABLED, value);
         
         return value;
-    },
-    
-    /**
-    * @method _getLabelNode
-    * @description Utility method to obtain a button's label node
-    * @private
-    */
-    _getLabelNode: function(node) {
-        return node.one('.' + Button.CLASS_NAMES.LABEL) || node;
     }
 };
 
