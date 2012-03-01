@@ -6368,7 +6368,7 @@ Plots.prototype = {
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         for(; i < len; ++i)
@@ -6386,7 +6386,7 @@ Plots.prototype = {
             }
             if(borderColors)
             {
-                style.border.colors = borderColors[i % borderColors.length];
+                style.border.color = borderColors[i % borderColors.length];
             }
 
             style.x = left;
@@ -6858,7 +6858,7 @@ Histogram.prototype = {
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         if(this.get("direction") == "vertical")
         {
@@ -6932,7 +6932,7 @@ Histogram.prototype = {
                     }
                     if(borderColors)
                     {
-                        style.border.colors = borderColors[i % borderColors.length];
+                        style.border.color = borderColors[i % borderColors.length];
                     }
                     marker = this.getMarker(style, graphOrder, i);
                 }
@@ -9267,7 +9267,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
@@ -9608,7 +9608,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         if(totalHeight > this.get("height"))
