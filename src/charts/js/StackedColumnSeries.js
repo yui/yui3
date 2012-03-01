@@ -58,7 +58,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
