@@ -8,13 +8,8 @@ var YUITest = require('yuitest'),
     YUI = require(dir).YUI,
     json;
 
-var str = fs.readFileSync(path.join(__dirname, '../modules.js'), 'utf8');
+var modules = require(path.join(__dirname, '../modules'));
 
-str = str.replace('};', '}');
-str = str.split('\n');
-str[0] = '{';
-
-var modules = JSON.parse(str.join('\n'));
 Object.keys(modules).forEach(function(name) {
     modules[name].fullpath = path.join(__dirname, '../', modules[name].fullpath);
 });
