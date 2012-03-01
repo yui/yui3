@@ -165,9 +165,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
-     * TODO
+     * Return the offset value where scrollview should scroll to.
+     * Neccesary because index # doesn't nessecarily map up to location in the DOM because of this._manageDOM()
      *
      * @method _getTargetOffset
+     * @param index {Number}
+     * @returns {Number}
      * @protected
      */
     
@@ -219,6 +222,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * After host render handler
      *
      * @method _afterRender
+     * @param {Event.Facade}
      * @protected
      */
     _afterRender: function(e) {
@@ -261,8 +265,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      },
 
      /**
-      * TODO
+      * Manages adding & removing slides from the DOM, to improve performance & memory usage
       *
+      * @since 3.5.0
       * @method _manageDOM
       * @protected
       */
@@ -300,7 +305,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              host.set('scrollX', 300);
          }
          
-          // TODO: Find a better place for this
+          // TODO: Find a better place for this?
           this.set(PREVINDEX, currentIndex);
      },
      
@@ -308,6 +313,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * index attr change handler
      *
      * @method _afterIndexChange
+     * @param {Event.Facade}
      * @protected
      */
     _afterIndexChange: function(e) {
@@ -320,6 +326,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Update the UI based on the current page index
      *
      * @method _uiIndex
+     * @param index {Number}
      * @protected
      */
     _uiIndex: function(index) {
