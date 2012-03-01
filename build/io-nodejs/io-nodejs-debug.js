@@ -1,6 +1,6 @@
 YUI.add('io-nodejs', function(Y) {
 
-/*global Buffer: false, clearInterval: false, clearTimeout: false, console: false, exports: false, global: false, module: false, process: false, querystring: false, require: false, setInterval: false, setTimeout: false, __filename: false, __dirname: false */   
+/*global Y: false, Buffer: false, clearInterval: false, clearTimeout: false, console: false, exports: false, global: false, module: false, process: false, querystring: false, require: false, setInterval: false, setTimeout: false, __filename: false, __dirname: false */   
 
     /**
     * Passthru to the NodeJS <a href="https://github.com/mikeal/request">request</a> module.
@@ -58,58 +58,73 @@ YUI.add('io-nodejs', function(Y) {
         });
     */
 
-    Y.IO.transports.nodejs = function() {
-        // Return an object that has a send method.  IO
-        // will route the prepared request data to this
-        // method with arguments: the transaction object,
-        // uri, and the configuration object.
+    var flatten = function(o) {
+        var str = [];
+        Object.keys(o).forEach(function(name) {
+            str.push(name + ': ' + o[name]);
+        });
+        return str.join('\n');
+    };
 
+    Y.IO.transports.nodejs = function() {
         return {
             send: function (transaction, uri, config) {
 
                 Y.log('Starting Request Transaction', 'info', 'io');
                 config.notify('start', transaction, config);
-                
+                config.method = config.method || 'GET';
+
                 var rconf = {
                     method: config.method,
                     uri: uri
                 };
+                if (config.data) {
+                    rconf.body = config.data;
+                }
+                if (config.headers) {
+                    rconf.headers = config.headers;
+                }
                 if (config.timeout) {
                     rconf.timeout = config.timeout;
                 }
                 if (config.request) {
                     Y.mix(rconf, config.request);
                 }
-
+                Y.log('Initiating ' + rconf.method + ' request to: ' + rconf.uri, 'info', 'io');
                 Y.IO.request(rconf, function(err, data) {
                     Y.log('Request Transaction Complete', 'info', 'io');
 
-                    if (data && data.statusCode !== 200) {
-                        err = {
-                            statusCode: data.statusCode,
-                            code: data.statusCode + ' - ' + data.body,
-                            message: data.body
-                        };
-                    }
-
                     if (err) {
                         Y.log('An IO error occurred', 'warn', 'io');
-                        transaction.errorCode = err.code;
+                        transaction.c = err;
                         config.notify(((err.code === 'ETIMEDOUT') ? 'timeout' : 'failure'), transaction, config);
                         return;
                     }
                     if (data) {
                         transaction.c = {
+                            status: data.statusCode,
                             statusCode: data.statusCode,
                             headers: data.headers,
                             responseText: data.body,
-                            responseXML: null
+                            responseXML: null,
+                            getResponseHeader: function(name) {
+                                return this.headers[name];
+                            },
+                            getAllResponseHeaders: function() {
+                                return flatten(this.headers);
+                            }
                         };
                     }
                     Y.log('Request Transaction Complete', 'info', 'io');
-                    config.notify('success', transaction, config);
+
                     config.notify('complete', transaction, config);
+                    config.notify(((data && data.statusCode === 200) ? 'success' : 'failure'), transaction, config);
                 });
+                
+                var ret = {
+                    io: transaction
+                };
+                return ret;
             }
         };
     };
