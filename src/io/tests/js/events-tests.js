@@ -9,7 +9,6 @@ YUI.add('events-tests', function(Y) {
             this.success = ['start', 'complete', 'success', 'end'],
             this.compare = function() {
                 for (var i=0; i < 4; i++) {
-                    Y.log(actual[i]);
                     Y.Assert.areSame(t.success[i], actual[i]);
                 }
             };
@@ -37,11 +36,10 @@ YUI.add('events-tests', function(Y) {
             this.failure = ['start', 'complete', 'failure', 'end'],
             this.compare = function() {
                 for (var i=0; i < 4; i++) {
-                    Y.log(actual[i]);
                     Y.Assert.areSame(t.failure[i], actual[i]);
                 }
             };
-            Y.io('404.html', {
+            Y.io(Y.IO.URLS.non, {
                 on: {
                     start: function() {
                         actual.push('start');
@@ -93,7 +91,6 @@ YUI.add('events-tests', function(Y) {
             var actual = [], t = this;
             this.failure = ['start', 'complete', 'failure', 'end'],
             this.compare = function() {
-                Y.log(t.status);
                 for (var i=0; i < 4; i++) {
                     Y.Assert.areSame(t.failure[i], actual[i]);
                 }
@@ -122,7 +119,6 @@ YUI.add('events-tests', function(Y) {
             var actual = [], t = this;
             this.success = ['start', 'complete', 'end'],
             this.compare = function() {
-                Y.log(t.status);
                 for (var i=0; i < 3; i++) {
                     Y.Assert.areSame(t.success[i], actual[i]);
                 }

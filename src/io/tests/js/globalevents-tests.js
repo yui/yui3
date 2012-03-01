@@ -24,7 +24,6 @@ YUI.add('globalevents-tests', function(Y) {
             };
             this.resolve = function() {
                 for (var i=0; i < 4; i++) {
-                    Y.log(t.a1[i]);
                     Y.Assert.areSame(t.a1[i], t.a0[i]);
                 }
             };
@@ -67,7 +66,6 @@ YUI.add('globalevents-tests', function(Y) {
             };
             this.resolve = function() {
                 for (var i=0; i < 4; i++) {
-                    Y.log(t.a2[i]);
                     Y.Assert.areSame(t.a2[i], t.a0[i]);
                 }
             };

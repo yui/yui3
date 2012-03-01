@@ -100,7 +100,6 @@ YUI.add('requests-tests', function(Y) {
                 if (t.headers) {
                     Y.Assert.areSame(200, t.status);
                     Y.Assert.isString(t.headers);
-                    Y.log(t.headers);
                 }
             };
 
