@@ -32,3 +32,7 @@ var testModules = {
         "requires": ["io-base", "test"]
     }
 };
+
+if (typeof exports !== 'undefined') {
+    module.exports = testModules;
+}
