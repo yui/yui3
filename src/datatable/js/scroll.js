@@ -156,7 +156,7 @@ Y.mix(Scrollable.prototype, {
     @value '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>'
     @protected
     **/
-    _Y_SCROLL_HEADER_TEMPLATE: '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>',
+    _Y_SCROLL_HEADER_TEMPLATE: '<table cellspacing="0" aria-hidden="true" class="{className}"></table>',
 
     /**
     Template for the `<div>` that is used to contain the rows when the table is
@@ -471,9 +471,6 @@ Y.mix(Scrollable.prototype, {
                 Y.Lang.sub(this._Y_SCROLL_HEADER_TEMPLATE, {
                     className: this.getClassName('scroll','columns')
                 }));
-
-            // Needed for IE which creates an empty <tbody> in the table
-            fixedHeader.empty();
         }
 
         return fixedHeader;
@@ -823,10 +820,7 @@ Y.mix(Scrollable.prototype, {
 
             // Prevent duplicate IDs and assign ARIA attributes to hide
             // from screen readers
-            fixedHeader.all('*')
-                .removeAttribute('id')
-                .setAttribute('role', 'presentation')
-                .setAttribute('aria-hidden', true);
+            fixedHeader.all('[id]').removeAttribute('id');
 
             fixedHeader.all('.' + this.getClassName('header'))
                 .each(function (header) {
