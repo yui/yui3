@@ -51,6 +51,10 @@ Widget Buttons Change History
   * Added an `HTML_PARSER` implementation for the `buttons` attribute. This
     allows the initial value for a widget's `buttons` to be seeded from its DOM.
 
+  * A widget's `buttons` now persist after header/body/footer content updates.
+    Option 2 of the follow scenario has been implemented:
+    http://jsfiddle.net/ericf/EXR52/
+
   * A button can be configured with a `context` object (which defaults to the
     widget instance), which will be used as the `this` object when calling a
     button's `action` or `events` handlers. [Ticket #2531166]
