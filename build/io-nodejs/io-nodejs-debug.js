@@ -118,7 +118,7 @@ YUI.add('io-nodejs', function(Y) {
                     Y.log('Request Transaction Complete', 'info', 'io');
 
                     config.notify('complete', transaction, config);
-                    config.notify(((data && data.statusCode === 200) ? 'success' : 'failure'), transaction, config);
+                    config.notify(((data && (data.statusCode >= 200 && data.statusCode <= 299)) ? 'success' : 'failure'), transaction, config);
                 });
                 
                 var ret = {
