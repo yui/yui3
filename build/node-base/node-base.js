@@ -228,7 +228,10 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Replaces the node's current content with the content.
+     * Note that this passes to innerHTML and is not escaped.
+     * Use Y.Ecape.html() to escape HTML, or use set('text') to add as text.
      * @method setContent
+     * @deprecated Use setHTML
      * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
      * @chainable
      */
@@ -240,6 +243,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns the node's current content (e.g. innerHTML)
      * @method getContent
+     * @deprecated Use getHTML
      * @return {String} The current content
      */
     getContent: function(content) {
@@ -249,6 +253,8 @@ Y.mix(Y_Node.prototype, {
 
 /**
  * Replaces the node's current html content with the content provided.
+ * Note that this passes to innerHTML and is not escaped.
+ * Use Y.Ecape.html() to escape HTML, or use set('text') to add as text.
  * @method setHTML
  * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
  * @chainable
@@ -298,16 +304,30 @@ Y.NodeList.importMethod(Y.Node.prototype, [
     'prepend',
 
     /** Called on each Node instance
+      * Note that this passes to innerHTML and is not escaped.
+      * Use Y.Ecape.html() to escape HTML, or use set('text') to add as text.
       * @method setContent
-      * @see Node.setContent
+      * @deprecated Use setHTML
       */
     'setContent',
 
     /** Called on each Node instance
       * @method getContent
-      * @see Node.getContent
+      * @deprecated Use getHTML
       */
-    'getContent'
+    'getContent',
+
+    /** Called on each Node instance
+      * @method setHTML
+      * Note that this passes to innerHTML and is not escaped.
+      * Use Y.Ecape.html() to escape HTML, or use set('text') to add as text.
+      */
+    'setHTML',
+
+    /** Called on each Node instance
+      * @method getHTML
+      */
+    'getHTML'
 ]);
 /**
  * @module node
