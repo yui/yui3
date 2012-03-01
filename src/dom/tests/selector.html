@@ -484,6 +484,10 @@ onload = function() {
                 Assert.areEqual(1, Y.Selector.query('label', document.getElementsByTagName('form')[1]).length);
             },
 
+            'should run scoped query when root has ID with special chars': function() {
+                Assert.areEqual(1, Y.Selector.query('span', document.getElementsByTagName('code')[0]).length);
+            },
+
             testAncestor: function() {
                 var node = Y.DOM.byId('demo-first-child');
                 Assert.isNull(Y.Selector.ancestor(node, 'p'));
@@ -702,6 +706,9 @@ onload = function() {
             <tr></tr>
         </tbody>
     </table>
+    <code id="(0:0-178~690#2+21[255], <1>92)">
+        <span>foo</span>
+    </code>
 
 </body>
 </html>
