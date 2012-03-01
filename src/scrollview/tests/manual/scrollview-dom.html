@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>ScrollView Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
+        
+        <style>
+        #scrollview-bounding {
+            xborder:dotted 2px orange;
+            height:500px;
+        }
+
+        #scrollview-content {
+            white-space:nowrap;
+        }
+
+        #scrollview-content li{
+            display:inline-block;
+            width:298px;
+            height:298px;
+            border:1px solid red;
+            color:black;
+            font-size:40px;
+            opacity: 0.5;
+            background-image: -webkit-linear-gradient(top, red, white, blue);
+            text-align:center;
+        }​
+        </style>
+        
+        <script type="text/javascript" charset="utf-8">
+        YUI({
+            debug: true,
+            filter:"raw"
+        }).use('scrollview-base', 'scrollview-paginator', function(Y) {
+
+            for (var j=0; j<100; j++){
+                Y.one("#scrollview-content ul").append("<li>" + j + "</li>");
+            }
+
+            var scrollView = new Y.ScrollView({
+                id: "scrollview",
+                srcNode : '#scrollview-content',
+                width: "300px"
+            });
+
+            scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li'
+            });
+
+            scrollView.render();
+            
+            console.log(scrollView.pages._pgOff);
+        });
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+        <div>
+            <div id="scrollview-content">
+                <ul></ul>
+            </div>
+        </div>
+    </body>
+</html>

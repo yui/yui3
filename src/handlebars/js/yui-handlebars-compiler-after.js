@@ -26,7 +26,13 @@ Handlebars.logger.log = function (level, message) {
 };
 
 /**
-Compiles and renders a Handlebars template string.
+Compiles and renders a Handlebars template string in a single step.
+
+If you'll be using a template more than once, it's more efficient to compile it
+into a function once using `compile()`, and then render it whenever you need to
+by simply executing the compiled function. However, if you only need to compile
+and render a template once, `render()` is a handy shortcut for doing both in a
+single step.
 
 @example
 
