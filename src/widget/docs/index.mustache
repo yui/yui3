@@ -44,8 +44,13 @@ the same `Attribute`, `Event.Provider` and `Plugin.Host` support as <a href="../
     the infrastructure to hide progressively enhanced markup to avoid flashes of unstyled content.</dd>
 
     <dt><strong>String Localization</strong></dt>
-    <dd>The `strings` attribute provides client-side string localization support, which when used with the <a href="../intl/index.html">Internationalization</a> utility
-    allows localized strings for your widget to be shipped separately from the core code.</dd>
+
+    <dd>
+        The `strings` attribute provides a consistent API for string management in all Widgets. 
+        Widget developers can define strings for their widget in an external language bundle when packaging their
+        widgets as a YUI module, and use the Internationalization utility to pull in strings for a given locale 
+        as demonstrated in the <a href="../intl/intl-basic.html">Language Resource Bundles</a> example. 
+    </dd>
 </ul>
 
 <h3 id="attributes">Basic Attributes</h3>
@@ -63,7 +68,7 @@ the same `Attribute`, `Event.Provider` and `Plugin.Host` support as <a href="../
     <tr><td>`visible`</td><td>Flag, indicating whether or not the widget is visible. `Widget` marks the bounding box with a "hidden" class. The hidden implementation is left to the CSS delivered by the specific widget class (viz. whether or not the widget uses visibility, display or off screen positioning to actually hide the widget).</td></tr>
     <tr><td>`height`</td><td>String with units, or a number, representing the height of the widget. If a number is provided, the default unit, defined by `Widget`'s `DEF_UNIT`, property is used. The height is applied to the bounding box.</td></tr>
     <tr><td>`width`</td><td>String with units, or a number, representing the width of the widget. If a number is provided, the default unit, defined by `Widget`'s `DEF_UNIT`, property is used. The width is applied to the bounding box.</td></tr>
-    <tr><td>`strings`</td><td>The collection of strings used to label elements of the widget's UI.</td></tr>
+    <tr><td>`strings`</td><td>The collection of strings used to label elements of the widget's UI. These should ideally be packaged separately from the Widget code, as discussed in the <a href="../intl/intl-basic.html">Language Resource Bundles</a> example.</td></tr>
 </table>
 
 <h3 id="rendering">Rendering Methods</h3>
