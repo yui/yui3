@@ -44,7 +44,7 @@
 
         panel.onSave = function (e) {
             Y.all(panel.get('buttons.footer')).set('disabled', true);
-            panel.set('bodyContent', '<p>Saving now…</p>');
+            panel.set('headerContent', 'Saving…');
 
             setTimeout(function () {
                 panel.hide();

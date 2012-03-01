@@ -203,7 +203,8 @@ Hosted as a property of the `delegate` method (e.g. `Y.delegate.compileFilter`).
 **/
 delegate.compileFilter = Y.cached(function (selector) {
     return function (target, e) {
-        return selectorTest(target._node, selector, e.currentTarget._node);
+        return selectorTest(target._node, selector,
+            (e.currentTarget === e.target) ? null : e.currentTarget._node);
     };
 });
 
@@ -243,7 +244,7 @@ delegate._applyFilter = function (filter, args, ce) {
     if (isString(filter)) {
         while (target) {
             isContainer = (target === container);
-            if (selectorTest(target, filter, (isContainer ?null: container))) {
+            if (selectorTest(target, filter, (isContainer ? null: container))) {
                 match.push(target);
             }
 
