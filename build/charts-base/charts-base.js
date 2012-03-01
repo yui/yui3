@@ -12068,6 +12068,7 @@ ChartBase.prototype = {
         {
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
+            Y.delegate("touchstart", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
             Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
             Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
             Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
@@ -12078,10 +12079,25 @@ ChartBase.prototype = {
         else if(interactionType == "planar")
         {
             this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
+            this._overlay.on("touchstart", Y.bind(this._planarEventDispatcher, this));
             this.on("mouseout", this.hideTooltip);
         }
         if(tt)
         {
+            this.on("markerEvent:touchstart", Y.bind(function(e) {
+                var marker = e.series.get("markers")[e.seriesIndex];
+                if(this._activeMarker && marker === this._activeMarker)
+                {
+                    this._activeMarker = null;
+                    this.hideTooltip(e);
+                }
+                else
+                {
+
+                    this._activeMarker = marker;
+                    tt.markerEventHandler.apply(this, [e]);
+                }
+            }, this));
             if(hideEvent && showEvent && hideEvent == showEvent)
             {
                 this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
@@ -12452,6 +12468,7 @@ ChartBase.prototype = {
                 markerEventHandler: function(e)
                 {
                     var tt = this.get("tooltip"),
+                    msg;
                     msg = tt.markerLabelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 },
@@ -12509,10 +12526,17 @@ ChartBase.prototype = {
             i = 0,
             len = seriesArray.length,
             axis,
+            categoryValue,
+            seriesValue,
             series;
         if(categoryAxis)
         {
-            msg.appendChild(DOCUMENT.createTextNode(categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")])));
+            categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            if(Y_Lang.isString(categoryValue))
+            {
+                categoryValue = DOCUMENT.createTextNode(categoryValue);
+            }
+            msg.appendChild(categoryValue);
         }
 
         for(; i < len; ++i)
@@ -12522,8 +12546,15 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
+                seriesValue =  axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]);
                 msg.appendChild(DOCUMENT.createElement("br"));
-                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")])));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+                msg.appendChild(DOCUMENT.createTextNode(": "));
+                if(Y_Lang.isString(seriesValue))
+                {
+                    seriesValue = DOCUMENT.createTextNode(seriesValue);
+                }
+                msg.appendChild(seriesValue);
             }
         }
         return msg;
@@ -12555,12 +12586,24 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = DOCUMENT.createElement("div");
-        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
-        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        var msg = DOCUMENT.createElement("div"),
+            categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
+            seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(categoryValue))
+        {
+            categoryValue = DOCUMENT.createTextNode(categoryValue);
+        }
+        msg.appendChild(categoryValue);
         msg.appendChild(DOCUMENT.createElement("br"));
-        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
-        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(seriesValue))
+        {
+            seriesValue = DOCUMENT.createTextNode(seriesValue);
+        }
+        msg.appendChild(seriesValue);
         return msg; 
     },
 
@@ -15044,4 +15087,4 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 });
 
 
-}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'widget', 'widget-position', 'widget-stack', 'graphics']});
+}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'event-touch', 'widget', 'widget-position', 'widget-stack', 'graphics']});

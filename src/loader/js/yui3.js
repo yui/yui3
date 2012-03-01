@@ -397,6 +397,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
+            "event-touch", 
             "widget", 
             "widget-position", 
             "widget-stack", 
@@ -2303,4 +2304,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b575fba2d7f91120c0ebd6ac7f661df7';
+YUI.Env[Y.version].md5 = 'fd42bcd041dfedc705daf9499b6c7e6f';
