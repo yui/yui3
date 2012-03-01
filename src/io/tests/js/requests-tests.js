@@ -11,7 +11,7 @@ YUI.add('requests-tests', function(Y) {
                 Y.Assert.areSame(200, t.status);
             };
 
-            Y.io(IO_URLS.get, {
+            Y.io(Y.IO.URLS.get, {
                 on: { success: function(i, o, a) {
                         t.status = o.status;
                         t.resume(t.handler);
@@ -34,7 +34,7 @@ YUI.add('requests-tests', function(Y) {
                     }
                 }
             };
-            Y.io(IO_URLS.get + '?hello=world&foo=bar', cb);
+            Y.io(Y.IO.URLS.get + '?hello=world&foo=bar', cb);
             this.wait(null, 1000);
         }
     }));
@@ -55,7 +55,7 @@ YUI.add('requests-tests', function(Y) {
                     }
                 }
             };
-            Y.io(IO_URLS.delete + '?hello=world&foo=bar', cb);
+            Y.io(Y.IO.URLS.delete + '?hello=world&foo=bar', cb);
             this.wait(null, 1000);
         }
     }));
@@ -77,7 +77,7 @@ YUI.add('requests-tests', function(Y) {
                 }
             };
 
-            Y.io(IO_URLS.get, {
+            Y.io(Y.IO.URLS.get, {
                 method: 'HEAD',
                 on: { complete: function(i, o, a) {
                         t.status = o.status;
@@ -104,7 +104,7 @@ YUI.add('requests-tests', function(Y) {
                 }
             };
 
-            Y.io(IO_URLS.get, {
+            Y.io(Y.IO.URLS.get, {
                 method: 'OPTIONS',
                 on: { complete: function(i, o, a) {
                         t.status = o.status;
@@ -126,7 +126,7 @@ YUI.add('requests-tests', function(Y) {
                 Y.Assert.areSame('world&bar', t.response, 'POST message and response do not match.');
             };
 
-            Y.io(IO_URLS.post, {
+            Y.io(Y.IO.URLS.post, {
                 method: 'POST',
                 data: 'hello=world&foo=bar',
                 on: { success: function(i, o, a) {
@@ -146,7 +146,7 @@ YUI.add('requests-tests', function(Y) {
 
             };
 
-            Y.io(IO_URLS.post, {
+            Y.io(Y.IO.URLS.post, {
                 method: 'POST',
                 on: { success: function(i, o, a) {
                         t.response =+ o.responseText;

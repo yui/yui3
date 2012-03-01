@@ -1,4 +1,8 @@
 var testModules = {
+    "io-urls": {
+        "fullpath": "./urls.js",
+        "requires": [ "io" ]
+    },
     "header-tests": {
         "fullpath": "./js/header-tests.js",
         "requires": ["io", "test"]

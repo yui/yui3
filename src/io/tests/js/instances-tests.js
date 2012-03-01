@@ -6,7 +6,7 @@ YUI.add('instances-tests', function(Y) {
         name: 'Static Instance of Y.IO',
 
         'test: static': function() {
-            var static = Y.io(IO_URLS.get + '?test=static', {});
+            var static = Y.io(Y.IO.URLS.get + '?test=static', {});
 
             Y.Assert.areEqual('io:0', static.io._uid);
         }
