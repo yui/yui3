@@ -5,8 +5,8 @@
     zoom: 1;
     font-size: 100%; 
     *font-size: 90%; /*IE 6/7 - To reduce IE's oversized button text*/
-    padding: 1em;
-    line-height:normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
+    padding: 0.4em 1em 0.45em;
+    line-height: normal;
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
@@ -50,6 +50,10 @@ a.yui3-button {
     color: rgba(0,0,0, 0.80);
     color: #444;
     text-decoration:none;
+}
+
+input.yui3-button {
+    line-height: normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
 }
 
 .yui3-button:hover {
