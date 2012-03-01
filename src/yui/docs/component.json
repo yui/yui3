@@ -122,6 +122,13 @@
                     "description": "Packaging a YUI script with npm",
                     "modules"    : ["yui"],
                     "tags"       : ["yui", "core", "nodejs", "npm", "packaging"]
+                },
+                {
+                    "name"       : "nodejs-io",
+                    "displayName": "Using Y.io in Node.js",
+                    "description": "Using Y.io in Node.js",
+                    "modules"    : ["yui", "io"],
+                    "tags"       : ["yui", "core", "nodejs", "io"]
                 }
             ]
         },
