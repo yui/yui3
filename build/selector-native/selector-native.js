@@ -23,6 +23,13 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
 var Selector = {
     useNative: true,
 
+    _escapeId: function(id) {
+        if (id) {
+            id = id.replace(/([:\[\]\(\)#\.'<>+~"])/g,'\\$1');
+        }
+        return id;
+    },
+
     _compare: ('sourceIndex' in Y.config.doc.documentElement) ?
         function(nodeA, nodeB) {
             var a = nodeA.sourceIndex,
@@ -147,7 +154,7 @@ var Selector = {
         if (node) {
             // enforce for element scoping
             if (node.nodeType === 1) { // Elements only
-                id = Y.DOM.getId(node);
+                id = Y.Selector._escapeId(Y.DOM.getId(node));
 
                 if (!id) {
                     id = Y.guid();
@@ -225,7 +232,7 @@ var Selector = {
                 }
                 root = root || node[OWNER_DOCUMENT];
 
-                id = Y.DOM.getId(node);
+                id = Y.Selector._escapeId(Y.DOM.getId(node));
                 if (!id) {
                     id = Y.guid();
                     Y.DOM.setId(node, id);
