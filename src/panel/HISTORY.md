@@ -26,6 +26,10 @@ Panel Change History
 
   * Moved mask-related styles/skins to `WidgetModality`.
 
+  * See also WidgetButtons' change history.
+
+  * See also WidgetModality's change history.
+
 3.4.1
 -----
 

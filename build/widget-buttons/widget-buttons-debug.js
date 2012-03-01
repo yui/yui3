@@ -13,6 +13,8 @@ var YArray  = Y.Array,
     YObject = Y.Object,
 
     ButtonPlugin = Y.Plugin.Button,
+    Widget       = Y.Widget,
+    WidgetStdMod = Y.WidgetStdMod,
 
     getClassName = Y.ClassNameManager.getClassName,
     isArray      = YLang.isArray,
@@ -38,7 +40,7 @@ from those which already exist in its DOM.
 function WidgetButtons() {
     // Require `Y.WidgetStdMod`.
     if (!this._stdModNode) {
-        Y.error('WidgetStdMod must be added to the Widget before WidgetButtons.');
+        Y.error('WidgetStdMod must be added to a Widget before WidgetButtons.');
     }
 
     // Has to be setup before the `initializer()`.
@@ -47,7 +49,7 @@ function WidgetButtons() {
 
 WidgetButtons.ATTRS = {
     /**
-    Collection containing this widget's buttons.
+    Collection containing a widget's buttons.
 
     The collection is an Object which contains an Array of `Y.Node`s for every
     `WidgetStdMod` section (header, body, footer) which has one or more buttons.
@@ -70,6 +72,10 @@ WidgetButtons.ATTRS = {
     the same `name` defined on the `BUTTONS` property.
 
     See `addButton()` for the detailed list of configuration properties.
+
+    For convenience, a widget's buttons will always persist and remain rendered
+    after header/body/footer content updates. Buttons should be removed by
+    updating this attribute or using the `removeButton()` method.
 
     @example
         {
@@ -147,7 +153,7 @@ CSS classes used by `WidgetButtons`.
 **/
 WidgetButtons.CLASS_NAMES = {
     button : getClassName('button'),
-    buttons: Y.Widget.getClassName('buttons'),
+    buttons: Widget.getClassName('buttons'),
     primary: getClassName('button', 'primary')
 };
 
@@ -208,7 +214,7 @@ WidgetButtons.prototype = {
     @default Y.WidgetStdMod.FOOTER
     @since 3.5.0
     **/
-    DEFAULT_BUTTONS_SECTION: Y.WidgetStdMod.FOOTER,
+    DEFAULT_BUTTONS_SECTION: WidgetStdMod.FOOTER,
 
     // -- Protected Properties -------------------------------------------------
 
@@ -273,7 +279,8 @@ WidgetButtons.prototype = {
 
     The new button node will have the `Y.Plugin.Button` plugin applied, be added
     to this widget's `buttons`, and rendered in the specified `section` at the
-    specified `index` (or end of the section).
+    specified `index` (or end of the section). If the section does not exist, it
+    will be created.
 
     This fires the `buttonsChange` event and adds the following properties to
     the event facade:
@@ -396,7 +403,8 @@ WidgetButtons.prototype = {
 
     The button will be removed from this widget's `buttons` and its DOM. Any
     event subscriptions on the button which were created by this widget will be
-    detached.
+    detached. If the content section becomes empty after removing the button
+    node, then the section will also be removed.
 
     This fires the `buttonsChange` event and adds the following properties to
     the event facade:
@@ -475,9 +483,17 @@ WidgetButtons.prototype = {
     @since 3.4.0
     **/
     _bindUIButtons: function () {
-        // Bound with `Y.bind()` to make more extensible.
-        this.after('defaultButtonChange', Y.bind('_afterDefaultButtonChange', this));
-        this.after('visibleChange', Y.bind('_afterVisibleChangeButtons', this));
+        // Event handlers are bound with `bind()` to make them more extensible.
+
+        var afterContentChange = Y.bind('_afterContentChangeButtons', this);
+
+        this.after({
+            defaultButtonChange: Y.bind('_afterDefaultButtonChange', this),
+            visibleChange      : Y.bind('_afterVisibleChangeButtons', this),
+            headerContentChange: afterContentChange,
+            bodyContentChange  : afterContentChange,
+            footerContentChange: afterContentChange
+        });
     },
 
     /**
@@ -545,29 +561,35 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Returns the buttons container for the specified `section`, and will create
-    it if it does not already exist.
+    Returns the buttons container for the specified `section`, passing a truthy
+    value for `create` will create the node if it does not already exist.
+
+    **Note:** It is up to the caller to properly insert the returned container
+    node into the content section.
 
     @method _getButtonContainer
     @param {String} section The `WidgetStdMod` section (header/body/footer).
+    @param {Boolean} create Whether the buttons container should be created if
+        it does not already exist.
     @return {Node} The buttons container node for the specified `section`.
     @protected
     @see BUTTONS_TEMPLATE
     @since 3.5.0
     **/
-    _getButtonContainer: function (section) {
-        var buttonsClassName = WidgetButtons.CLASS_NAMES.buttons,
-            sectionNode      = this.getStdModNode(section),
-            container;
+    _getButtonContainer: function (section, create) {
+        var sectionClassName = WidgetStdMod.SECTION_CLASS_NAMES[section],
+            buttonsClassName = WidgetButtons.CLASS_NAMES.buttons,
+            contentBox       = this.get('contentBox'),
+            containerSelector, container;
 
-        // Search for an existing buttons container within the section node.
-        container = sectionNode && sectionNode.one('.' + buttonsClassName);
+        // Search for an existing buttons container within the section.
+        containerSelector = '.' + sectionClassName + ' .' + buttonsClassName;
+        container         = contentBox.one(containerSelector);
 
         // Create the `container` if it doesn't already exist.
-        if (!container) {
+        if (!container && create) {
             container = Y.Node.create(this.BUTTONS_TEMPLATE);
             container.addClass(buttonsClassName);
-            this.setStdModContent(section, container, 'after');
         }
 
         return container;
@@ -777,34 +799,29 @@ WidgetButtons.prototype = {
     @since 3.5.0
     **/
     _parseButtons: function (srcNode) {
-        var buttonsConfig     = null,
-            buttonClassName   = WidgetButtons.CLASS_NAMES.button,
-            buttonsClassName  = WidgetButtons.CLASS_NAMES.buttons,
-            buttonsSelector   = '.' + buttonsClassName + ' .' + buttonClassName,
-            sections          = ['header', 'body', 'footer'],
-            sectionClassNames = Y.WidgetStdMod.SECTION_CLASS_NAMES,
-            i, len, section, sectionNode, buttons, sectionButtons;
+        var buttonSelector = '.' + WidgetButtons.CLASS_NAMES.button,
+            sections       = ['header', 'body', 'footer'],
+            buttonsConfig  = null;
 
-        // Creates a button config object for every button node found and adds
-        // it to the section. This way each button configuration can be merged
-        // with any defaults provided by predefined `BUTTONS`.
-        function addButtonToSection(button) {
-            this.push({srcNode: button});
-        }
+        YArray.each(sections, function (section) {
+            var container = this._getButtonContainer(section),
+                buttons   = container && container.all(buttonSelector),
+                sectionButtons;
 
-        for (i = 0, len = sections.length; i < len; i += 1) {
-            section     = sections[i];
-            sectionNode = srcNode.one('.' + sectionClassNames[section]);
-            buttons     = sectionNode && sectionNode.all(buttonsSelector);
-
-            if (!buttons || buttons.isEmpty()) { continue; }
+            if (!buttons || buttons.isEmpty()) { return; }
 
             sectionButtons = [];
-            buttons.each(addButtonToSection, sectionButtons);
+
+            // Creates a button config object for every button node found and
+            // adds it to the section. This way each button configuration can be
+            // merged with any defaults provided by predefined `BUTTONS`.
+            buttons.each(function (button) {
+                sectionButtons.push({srcNode: button});
+            });
 
             buttonsConfig || (buttonsConfig = {});
             buttonsConfig[section] = sectionButtons;
-        }
+        }, this);
 
         return buttonsConfig;
     },
@@ -881,7 +898,10 @@ WidgetButtons.prototype = {
 
     /**
     Inserts the specified `button` node into this widget's DOM at the specified
-    `section` and `index` and fires the `contentUpdate` event.
+    `section` and `index` and updates the section content.
+
+    The section and button container nodes will be created if they do not
+    already exist.
 
     @method _uiInsertButton
     @param {Node} button The button node to insert into this widget's DOM.
@@ -892,33 +912,40 @@ WidgetButtons.prototype = {
     **/
     _uiInsertButton: function (button, section, index) {
         var buttonsClassName = WidgetButtons.CLASS_NAMES.button,
-            buttonContainer  = this._getButtonContainer(section),
+            buttonContainer  = this._getButtonContainer(section, true),
             sectionButtons   = buttonContainer.all('.' + buttonsClassName);
 
         // Inserts the button node at the correct index.
         buttonContainer.insertBefore(button, sectionButtons.item(index));
 
-        this.fire('contentUpdate');
+        // Adds the button container to the section content.
+        this.setStdModContent(section, buttonContainer, 'after');
     },
 
     /**
     Removes the button node from this widget's DOM and detaches any event
-    subscriptions on the button that were created by this widget. The
-    `contentUpdate` event will be fired unless `{silent: true}` is passed as the
+    subscriptions on the button that were created by this widget. The section
+    content will be updated unless `{preserveContent: true}` is passed in the
     `options`.
+
+    By default the button container node will be removed when this removes the
+    last button of the specified `section`; and if no other content remains in
+    the section node, it will also be removed.
 
     @method _uiRemoveButton
     @param {Node} button The button to remove and destroy.
+    @param {String} section The `WidgetStdMod` section (header/body/footer).
     @param {Object} [options] Additional options.
-      @param {Boolean} [options.silent=false] Whether the `contentUpdate` event
-        should be fired.
+      @param {Boolean} [options.preserveContent=false] Whether the section
+        content should be updated.
     @protected
     @since 3.5.0
     **/
-    _uiRemoveButton: function (button, options) {
+    _uiRemoveButton: function (button, section, options) {
         var yuid    = Y.stamp(button, this),
             handles = this._buttonsHandles,
-            handle  = handles[yuid];
+            handle  = handles[yuid],
+            buttonContainer, buttonClassName;
 
         handle && handle.detach();
         delete handles[yuid];
@@ -926,14 +953,26 @@ WidgetButtons.prototype = {
         button.remove();
 
         options || (options = {});
-        if (!options.silent) {
-            this.fire('contentUpdate');
+
+        // Remove the button container and section nodes if needed.
+        if (!options.preserveContent) {
+            buttonContainer = this._getButtonContainer(section);
+            buttonClassName = WidgetButtons.CLASS_NAMES.button;
+
+            // Only matters if we have a button container which is empty.
+            if (buttonContainer &&
+                    buttonContainer.all('.' + buttonClassName).isEmpty()) {
+
+                buttonContainer.remove();
+                this._updateContentButtons(section);
+            }
         }
     },
 
     /**
     Sets the current `buttons` state to this widget's DOM by rendering the
-    specified collection of `buttons`.
+    specified collection of `buttons` and updates the contents of each section
+    as needed.
 
     Button nodes which already exist in the DOM will remain intact, or will be
     moved if they should be in a new position. Old button nodes which are no
@@ -941,8 +980,8 @@ WidgetButtons.prototype = {
     and any event subscriptions on the button which were created by this widget
     will be detached.
 
-    If the button nodes in this widget's DOM actually change, then the
-    `contentUpdate` event will be fired.
+    If the button nodes in this widget's DOM actually change, then each content
+    section will be updated (or removed) appropriately.
 
     @method _uiSetButtons
     @param {Object} buttons The current `buttons` state to visually represent.
@@ -951,16 +990,24 @@ WidgetButtons.prototype = {
     **/
     _uiSetButtons: function (buttons) {
         var buttonClassName = WidgetButtons.CLASS_NAMES.button,
-            buttonsUpdated  = false;
+            sections        = ['header', 'body', 'footer'];
 
-        YObject.each(buttons, function (sectionButtons, section) {
-            var buttonContainer = this._getButtonContainer(section),
-                buttonNodes     = buttonContainer.all('.' + buttonClassName),
-                i, len, button, buttonIndex;
+        YArray.each(sections, function (section) {
+            var sectionButtons  = buttons[section] || [],
+                numButtons      = sectionButtons.length,
+                buttonContainer = this._getButtonContainer(section, numButtons),
+                buttonsUpdated  = false,
+                oldNodes, i, button, buttonIndex;
 
-            for (i = 0, len = sectionButtons.length; i < len; i += 1) {
+            // When there's no button container, there are no new buttons or old
+            // buttons that we have to deal with for this section.
+            if (!buttonContainer) { return; }
+
+            oldNodes = buttonContainer.all('.' + buttonClassName);
+
+            for (i = 0; i < numButtons; i += 1) {
                 button      = sectionButtons[i];
-                buttonIndex = buttonNodes ? buttonNodes.indexOf(button) : -1;
+                buttonIndex = oldNodes ? oldNodes.indexOf(button) : -1;
 
                 // Buttons already rendered in the Widget should remain there or
                 // moved to their new index. New buttons will be added to the
@@ -968,7 +1015,7 @@ WidgetButtons.prototype = {
                 if (buttonIndex > -1) {
                     // Remove button from existing buttons nodeList since its in
                     // the DOM already.
-                    buttonNodes.splice(buttonIndex, 1);
+                    oldNodes.splice(buttonIndex, 1);
 
                     // Check that the button is at the right position, if not,
                     // move it to its new position.
@@ -984,19 +1031,26 @@ WidgetButtons.prototype = {
                 }
             }
 
-            // Removes the old button nodes which are no longer part of this
-            // widget's `buttons`.
-            buttonNodes.each(function (button) {
-                this._uiRemoveButton(button, {silent: true});
+            // Safely removes the old button nodes which are no longer part of
+            // this widget's `buttons`.
+            oldNodes.each(function (button) {
+                this._uiRemoveButton(button, section, {preserveContent: true});
                 buttonsUpdated = true;
             }, this);
-        }, this);
 
-        // Fire `contentUpdate` when we _actually_ updated the buttons in this
-        // widget's DOM.
-        if (buttonsUpdated) {
-            this.fire('contentUpdate');
-        }
+            // Remove leftover empty button containers and updated the StdMod
+            // content area.
+            if (numButtons === 0) {
+                buttonContainer.remove();
+                this._updateContentButtons(section);
+                return;
+            }
+
+            // Adds the button container to the section content.
+            if (buttonsUpdated) {
+                this.setStdModContent(section, buttonContainer, 'after');
+            }
+        }, this);
     },
 
     /**
@@ -1084,6 +1138,28 @@ WidgetButtons.prototype = {
         }
     },
 
+    /**
+    Updates the content attribute which corresponds to the specified `section`.
+
+    The method updates the section's content to its current `childNodes`
+    (text and/or HTMLElement), or will null-out its contents if the section is
+    empty. It also specifies a `src` of `buttons` on the change event facade.
+
+    @method _updateContentButtons
+    @param {String} section The `WidgetStdMod` section (header/body/footer) to
+        update.
+    @protected
+    @since 3.5.0
+    **/
+    _updateContentButtons: function (section) {
+        // `childNodes` return text nodes and HTMLElements.
+        var sectionContent = this.getStdModNode(section).get('childNodes');
+
+        // Updates the section to its current contents, or null if it is empty.
+        this.set(section + 'Content', sectionContent.isEmpty() ? null :
+            sectionContent, {src: 'buttons'});
+    },
+
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
@@ -1125,7 +1201,7 @@ WidgetButtons.prototype = {
 
             this._unMapButton(button, section);
             this._updateDefaultButton();
-            this._uiRemoveButton(button);
+            this._uiRemoveButton(button, section);
 
             return;
         }
@@ -1133,6 +1209,30 @@ WidgetButtons.prototype = {
         this._mapButtons(buttons);
         this._updateDefaultButton();
         this._uiSetButtons(buttons);
+    },
+
+    /**
+    Handles this widget's `headerContentChange`, `bodyContentChange`,
+    `footerContentChange` events by making sure the `buttons` remain rendered
+    after changes to the content areas.
+
+    These events are very chatty, so extra caution is taken to avoid doing extra
+    work or getting into an infinite loop.
+
+    @method _afterContentChangeButtons
+    @param {EventFacade} e
+    @protected
+    @since 3.5.0
+    **/
+    _afterContentChangeButtons: function (e) {
+        var src     = e.src,
+            pos     = e.stdModPosition,
+            replace = !pos || pos === WidgetStdMod.REPLACE;
+
+        // Only do work when absolutely necessary.
+        if (replace && src !== 'buttons' && src !== Widget.UI_SRC) {
+            this._uiSetButtons(this.get('buttons'));
+        }
     },
 
     /**
