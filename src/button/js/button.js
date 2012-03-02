@@ -46,7 +46,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
         var button = this;
         button.after('labelChange', button._afterLabelChange);
         button.after('disabledChange', button._afterDisabledChange);
-        button.after('selectedChange', button._afterSelectedChange);
     },
 
     /**
@@ -57,15 +56,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
         var button = this;
         button._setLabel(button.get('label'));
         button._setDisabled(button.get('disabled'));
-        button._setSelected(button.get('selected'));
-    },
-
-    /**
-    * @method _setSelected
-    * @private
-    */
-    _setSelected: function(value) {
-        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set('aria-pressed', value); // TODO should support aria-checked (if applicable)
     },
 
     /**
@@ -82,14 +72,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
     */
     _afterDisabledChange: function(e) {
         this._setDisabled(e.newVal);
-    },
-
-    /**
-    * @method _afterSelectedChange
-    * @private
-    */
-    _afterSelectedChange: function(e) {
-        this._setSelected(e.newVal);
     }
 
 }, {
@@ -123,10 +105,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
         disabled: {
             value: false
-        },
-
-        selected: {
-            value: false
         }
     },
 
@@ -144,10 +122,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
         disabled: function(node) {
             return node.getDOMNode().disabled;
-        },
-
-        selected: function(node) {
-            return node.hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
         }
     },
 
@@ -191,6 +165,27 @@ Y.extend(ToggleButton, ButtonWidget,  {
         ToggleButton.superclass.bindUI.call(button);
         button.get('contentBox').set('role', 'toggle');
         button.get('contentBox').on(button.trigger, button.toggle, button);
+        button.after('selectedChange', button._afterSelectedChange);
+    },
+
+    /**
+     * bindUI implementation
+     *
+     * Hooks up events for the widget
+     * @method bindUI
+     */
+    syncUI: function() {
+        var button = this;
+        ToggleButton.superclass.syncUI.call(button);
+        button._setSelected(button.get('selected'));
+    },
+
+    /**
+    * @method _setSelected
+    * @private
+    */
+    _setSelected: function(value) {
+        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set('aria-pressed', value); // TODO should support aria-checked (if applicable)
     },
 
     /**
@@ -219,10 +214,45 @@ Y.extend(ToggleButton, ButtonWidget,  {
     toggle: function() {
         var button = this;
         button.set('selected', !button.get('selected'));
+    },
+    
+    /**
+    * @method _afterSelectedChange
+    * @private
+    */
+    _afterSelectedChange: function(e) {
+        this._setSelected(e.newVal);
     }
 
 }, {
-    NAME: 'toggleButton'
+    NAME: 'toggleButton',
+    
+    /**
+    * Static property used to define the default attribute configuration of
+    * the Widget.
+    *
+    * @property ATTRS
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ATTRS: {
+        selected: {
+            value: false
+        }
+    },
+    
+    /**
+    * @property HTML_PARSER
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    HTML_PARSER: {
+        selected: function(node) {
+            return node.hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
+        }
+    }
 });
 
 // Export
