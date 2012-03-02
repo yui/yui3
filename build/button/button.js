@@ -7,7 +7,9 @@ YUI.add('button', function(Y) {
 * @since 3.5.0
 */
 
-var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
+var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
+    ARIA_STATES = Y.ButtonCore.ARIA_STATES,
+    ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
 
 /**
 * Creates a ButtonWidget
@@ -48,7 +50,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
         var button = this;
         button.after('labelChange', button._afterLabelChange);
         button.after('disabledChange', button._afterDisabledChange);
-        button.after('selectedChange', button._afterSelectedChange);
     },
 
     /**
@@ -59,15 +60,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
         var button = this;
         button._setLabel(button.get('label'));
         button._setDisabled(button.get('disabled'));
-        button._setSelected(button.get('selected'));
-    },
-
-    /**
-    * @method _setSelected
-    * @private
-    */
-    _setSelected: function(value) {
-        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set('aria-pressed', value); // TODO should support aria-checked (if applicable)
     },
 
     /**
@@ -84,14 +76,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
     */
     _afterDisabledChange: function(e) {
         this._setDisabled(e.newVal);
-    },
-
-    /**
-    * @method _afterSelectedChange
-    * @private
-    */
-    _afterSelectedChange: function(e) {
-        this._setSelected(e.newVal);
     }
 
 }, {
@@ -125,10 +109,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
         disabled: {
             value: false
-        },
-
-        selected: {
-            value: false
         }
     },
 
@@ -146,10 +126,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
         disabled: function(node) {
             return node.getDOMNode().disabled;
-        },
-
-        selected: function(node) {
-            return node.hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
         }
     },
 
@@ -178,53 +154,166 @@ function ToggleButton(config) {
 }
 
 // TODO: move to ButtonCore subclass to enable toggle plugin, widget, etc.
-/* ButtonWidget extends ButtonWidget */
+/* ToggleButton extends ButtonWidget */
 Y.extend(ToggleButton, ButtonWidget,  {
     trigger: 'click',
-
+    
+    initializer: function (config) {
+        var button = this,
+            type = button.get('type'),
+            attrName = (type === "checkbox" ? 'checked' : 'pressed'),
+            defaultState = config[attrName] || false;
+        
+        button.addAttr(attrName, {
+            value: defaultState,
+            setter: '_setSelected',
+            getter: '_getSelected'
+        });
+        
+        // @TODO Get these out of the initializer
+        button.after('selectedChange', button._afterSelectedChange);
+        button._set('selected', defaultState);
+    },
+    
     /**
-     * bindUI implementation
-     *
-     * Hooks up events for the widget
      * @method bindUI
+     * @description Hooks up events for the widget
      */
     bindUI: function() {
-        var button = this;
+        var button = this,
+            cb = button.get('contentBox'),
+            type = this.get('type'),
+            ROLES = ToggleButton.ARIA_ROLES,
+            role = (type === 'checkbox' ? ROLES.CHECKBOX : ROLES.TOGGLE);
+        
         ToggleButton.superclass.bindUI.call(button);
-        button.get('contentBox').set('role', 'toggle');
-        button.get('contentBox').on(button.trigger, button.toggle, button);
+        
+        cb.set('role', role);
+        cb.on(button.trigger, button.toggle, button);
     },
 
     /**
-    * @method select
-    * @description
-    * @public
+     * @method bindUI
+     * @description Syncs the UI for the widget
+     */
+    syncUI: function() {
+        ToggleButton.superclass.syncUI.call(this);
+    },
+    
+    /**
+    * @method _setSelected
+    * @private
     */
-    select: function() {
-        this.set('selected', true);
+    _setSelected: function(value) {
+        var STATES = ToggleButton.ARIA_STATES;
+        
+        if (this.get('type') === 'checkbox') {
+            ariaState = STATES.CHECKED;
+        }
+        else {
+            ariaState = STATES.PRESSED;
+        }
+        
+        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set(ariaState, value);
     },
 
     /**
-    * @method unselect
-    * @description
-    * @public
+    * @method _getSelected
+    * @private
     */
-    unselect: function() {
-        this.set('selected', false);
+    _getSelected: function(value) {
+        return this.get('contentBox').hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
     },
 
+    /**
+    * @method _afterSelectedChange
+    * @private
+    */
+    _afterSelectedChange: function(e) {
+        this._setSelected(e.newVal);
+    },
+    
     /**
     * @method toggle
-    * @description
+    * @description Toggles the selected/pressed/checked state of a ToggleButton
     * @public
     */
     toggle: function() {
         var button = this;
-        button.set('selected', !button.get('selected'));
+        button._set('selected', !button.get('selected'));
     }
 
 }, {
-    NAME: 'toggleButton'
+    
+    /**
+    * The identity of the widget.
+    *
+    * @property NAME
+    * @type {String}
+    * @default 'buttongroup'
+    * @readOnly
+    * @protected
+    * @static
+    */
+    NAME: 'toggleButton',
+    
+    /**
+    * Static property used to define the default attribute configuration of
+    * the Widget.
+    *
+    * @property ATTRS
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ATTRS: {
+        type: {
+            value: 'toggle',
+            writeOnce: 'initOnly'
+        },
+        selected: {
+            value: false,
+            readOnly: true
+        }
+    },
+    
+    /**
+    * @property HTML_PARSER
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    HTML_PARSER: {
+        selected: function(node) {
+            return node.hasClass(CLASS_NAMES.SELECTED);
+        }
+    },
+    
+    /**
+    * @property ARIA_STATES
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ARIA_STATES: ARIA_STATES,
+
+    /**
+    * @property ARIA_ROLES
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ARIA_ROLES: ARIA_ROLES,
+
+    /**
+     * List of class names used in the ButtonGroup's DOM
+     *
+     * @property CLASS_NAMES
+     * @type Object
+     * @static
+     */
+    CLASS_NAMES: CLASS_NAMES
+    
 });
 
 // Export

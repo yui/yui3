@@ -211,6 +211,17 @@ Button.CLASS_NAMES = {
     LABEL   : getClassName('button', 'label')
 };
 
+Button.ARIA_STATES = {
+    PRESSED : 'aria-pressed',
+    CHECKED : 'aria-checked'
+};
+
+Button.ARIA_ROLES = {
+    BUTTON  : 'button',
+    CHECKBOX: 'checkbox',
+    TOGGLE  : 'toggle'
+};
+
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
 
 // Export Button
