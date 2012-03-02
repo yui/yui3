@@ -668,9 +668,7 @@ Y.Model = Y.extend(Model, Y.Base, {
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
-      @param {Any} [callback.response] The server's response. This value will
-        be passed to the `parse()` method, which is expected to parse it and
-        return an attribute hash.
+      @param {Any} [callback.response] The server's response.
     **/
     sync: function (/* action, options, callback */) {
         var callback = YArray(arguments, 0, true).pop();
@@ -688,6 +686,16 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     If you've specified a custom attribute name in the `idAttribute` property,
     the default `id` attribute will not be included in the returned object.
+
+    Note: This method is named `toJSON()`, but it returns an object, not a JSON
+    string. We know that. It's not because we're idiots who are incapable of
+    naming things. It's because the method name "toJSON" and the object return
+    type are specified in the ECMAScript 5 standard. Adhering to this standard
+    allows you to stringify a model by doing `JSON.stringify(model)` if you want
+    to. Please don't file a bug telling us we're idiots. We'll just sigh, cry a
+    little, and mark the bug invalid.
+
+    See <http://es5.github.com/#x15.12.3>.
 
     @method toJSON
     @return {Object} Copy of this model's attributes.

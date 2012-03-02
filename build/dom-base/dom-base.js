@@ -74,7 +74,7 @@ Y.mix(Y_DOM, {
 
     /**
      * Provides a normalized attribute interface. 
-     * @method getAttibute
+     * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
@@ -192,7 +192,7 @@ Y.mix(Y_DOM.VALUE_GETTERS, {
         if (options && options.length) {
             // TODO: implement multipe select
             if (node.multiple) {
-            } else {
+            } else if (node.selectedIndex > -1) {
                 val = Y_DOM.getValue(options[node.selectedIndex]);
             }
         }
@@ -400,11 +400,12 @@ Y.mix(Y.DOM, {
                     ret = nodes[0].nextSibling;
                 } else {
                     nodes[0].parentNode.removeChild(nodes[0]); 
-                     ret = Y_DOM._nl2frag(nodes, doc);
+                    ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
                  ret = Y_DOM._nl2frag(nodes, doc);
             }
+
         }
 
         return ret;

@@ -3,34 +3,35 @@ YUI().use('button', function(Y){
     // A basic push button
     var pushButton = new Y.Button({
         srcNode:'#myButton'
-    });
+    }).render();
     
     
     // A disabled button
     var disabledButton = new Y.Button({
         srcNode:'#myDisabledButton',
         disabled: true
-    });
+    }).render();
     
     
     // An event button, listening for a click
     var eventButton = new Y.Button({
         srcNode:'#myEventButton'
-    });
+    }).render();
     
-    eventButton.getNode().on('click', function(){
-        alert('I was clicked!');
+    eventButton.on('click', function(){
+        var button = this;
+        var label = button.get('label');
+        alert("'" + label + "' was clicked");
     });
-    
     
     // A toggle button with a state change listener
-    var toggleButton = new Y.Button({
+    var toggleButton = new Y.ToggleButton({
         srcNode:'#myToggleButton',
-        type: 'toggle',
         after: {
             'selectedChange': function () {
                 var button = this;
                 var selected = button.get('selected');
+                
                 if (selected) {
                     button.set('label', 'Toggle Button: Selected');
                 }
@@ -39,5 +40,6 @@ YUI().use('button', function(Y){
                 }
             }
         }
-    });
+    }).render();
+    
 });

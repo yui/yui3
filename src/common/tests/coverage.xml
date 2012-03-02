@@ -87,12 +87,20 @@
         <url>event-custom/tests/customevent.html</url>
         <url>event-custom/tests/event-custom-base.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
+        <url>event-gestures/tests/index.html</url>
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-resize.html</url>
         <url>event/tests/event-contextmenu.html</url>
+        <url>event/tests/event-hover.html</url>
         <url>event/tests/event-key.html</url>
+        <url>event/tests/event-mouseenter.html</url>
+        <url>event/tests/event-mousewheel.html</url>
+        <url>event/tests/event-outside.html</url>
         <url>event/tests/event-synthetic.html</url>
+        <url>event/tests/event-touch.html</url>
+        <url>event/tests/event-mouseenter.html</url>
+        <url>event/tests/event-mousewheel.html</url>
         <url>event/tests/focusblur.html</url>
         <url>get/tests/get-coverage.html</url>
         <url>graphics/tests/graphics.html</url>
@@ -114,7 +122,9 @@
         <url>parallel/tests/index.html</url>
         <url>pjax/tests/pjax.html</url>
         <url>pluginhost/tests/plugins.html</url>
+        <url>profiler/tests/profiler.html</url>
         <url>queue-promote/tests/queue-promote.html</url>
+        <url>querystring/tests/querystring.html</url>
         <url>resize/tests/index.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>
@@ -126,6 +136,7 @@
         -->
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
+        <url>widget-buttons/tests/widget-buttons.html</url>
         <url>yql/tests/index.html</url>
         <url>oop/tests/oop.html</url>
         <url>substitute/tests/substitute.html</url>

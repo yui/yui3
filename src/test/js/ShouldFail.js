@@ -3,7 +3,7 @@
  * a test was expected to fail but did not.
  *
  * @param {String} message The message to display when the error occurs.
- * @namespace YUITest 
+ * @namespace Test 
  * @extends YUITest.AssertionError
  * @class ShouldFail
  * @constructor

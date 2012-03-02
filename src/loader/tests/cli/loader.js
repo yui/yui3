@@ -591,6 +591,26 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("charts")) > -1, "Module (charts) not found in sorted array");
         },
+     "Testing charts-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["charts-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("charts-base")) > -1, "Module (charts-base) not found in sorted array");
+        },
+     "Testing charts-legend": function(data) {
+            var loader = new Y.Loader({
+                require: ["charts-legend"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("charts-legend")) > -1, "Module (charts-legend) not found in sorted array");
+        },
      "Testing classnamemanager": function(data) {
             var loader = new Y.Loader({
                 require: ["classnamemanager"],
@@ -1950,6 +1970,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-form")) > -1, "Module (io-form) not found in sorted array");
+        },
+     "Testing io-nodejs": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-nodejs"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-nodejs")) > -1, "Module (io-nodejs) not found in sorted array");
         },
      "Testing io-queue": function(data) {
             var loader = new Y.Loader({

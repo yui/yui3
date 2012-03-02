@@ -1,4 +1,4 @@
-<div class="attrs">
+<form id="changeValue" class="attrs" action="#">
     <div class="header">Enter a new value and click the "Change Value" button:</div>
     <div class="body">
         <p>
@@ -14,9 +14,9 @@
         <p><label for="newVal">New Value</label>: <input type="text" id="newVal" /></p>
     </div>
     <div class="footer">
-        <button type="button" id="changeValue">Change Value</button>
+        <button type="submit">Change Value</button>
     </div>
-</div>
+</form>
 
 <div id="example-out"></div>
 
@@ -77,13 +77,15 @@ YUI().use("node", "attribute", "escape", function(Y) {
 
     var attrOpts = attrSel.get("options");
 
-    function updateVal() {
+    function updateVal(e) {
+        e.preventDefault();
+        
         var selIndex = attrSel.get("selectedIndex");
         var attr = attrOpts.item(selIndex).get("value");
         o1.set(attr, newValTxt.get("value"));
     }
 
-    Y.on("click", updateVal, "#changeValue");
+    Y.on("submit", updateVal, "#changeValue");
 
     function populateCurrentValue() {
         var selIndex = attrSel.get("selectedIndex");

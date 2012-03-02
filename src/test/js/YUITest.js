@@ -1,11 +1,11 @@
 /**
  * YUI Test Framework
- * @module yuitest
+ * @module test
  */
 
 /**
  * The root namespace for YUI Test.
- * @class YUITest
+ * @class Test
  * @static
  */
 

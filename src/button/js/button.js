@@ -51,49 +51,45 @@ Y.extend(ButtonWidget, Y.Widget,  {
 
     /**
      * @method syncUI
-     * @description
+     * @description Updates button attributes
      */
     syncUI: function() {
         var button = this;
-        button._uiSetLabel(button.get('label'));
-        button._uiSetDisabled(button.get('disabled'));
-        button._uiSetSelected(button.get('selected'));
+        button._setLabel(button.get('label'));
+        button._setDisabled(button.get('disabled'));
+        button._setSelected(button.get('selected'));
     },
 
     /**
-    * @method _uiSetSelected
-    * @description
+    * @method _setSelected
     * @private
     */
-    _uiSetSelected: function(value) {
+    _setSelected: function(value) {
         this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set('aria-pressed', value); // TODO should support aria-checked (if applicable)
     },
 
     /**
     * @method _afterLabelChange
-    * @description
     * @private
     */
     _afterLabelChange: function(e) {
-        this._uiSetLabel(e.newVal);
+        this._setLabel(e.newVal);
     },
 
     /**
     * @method _afterDisabledChange
-    * @description
     * @private
     */
     _afterDisabledChange: function(e) {
-        this._uiSetDisabled(e.newVal);
+        this._setDisabled(e.newVal);
     },
 
     /**
     * @method _afterSelectedChange
-    * @description
     * @private
     */
     _afterSelectedChange: function(e) {
-        this._uiSetSelected(e.newVal);
+        this._setSelected(e.newVal);
     }
 
 }, {
@@ -135,8 +131,6 @@ Y.extend(ButtonWidget, Y.Widget,  {
     },
 
     /**
-    * TODO
-    *
     * @property HTML_PARSER
     * @type {Object}
     * @protected
@@ -145,7 +139,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
     HTML_PARSER: {
         label: function(node) {
             this._host = node; // TODO: remove
-            return this._uiGetLabel();
+            return this._getLabel();
         },
 
         disabled: function(node) {

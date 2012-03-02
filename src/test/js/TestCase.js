@@ -3,7 +3,7 @@
  * @param template An object containing any number of test methods, other methods,
  *                 an optional name, and anything else the test case needs.
  * @class TestCase
- * @namespace YUITest
+ * @namespace Test
  * @constructor
  */
 YUITest.TestCase = function (template) {

@@ -260,4 +260,4 @@ if (Y.Lang.isFunction(Y.DataTable)) {
 }
 
 
-}, '@VERSION@' ,{requires:['datatable-base'], lang:['en'], skinnable:true});
+}, '@VERSION@' ,{requires:['datatable-base'], skinnable:true, lang:['en']});

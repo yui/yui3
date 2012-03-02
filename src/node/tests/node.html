@@ -1815,12 +1815,31 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(html, node._node.innerHTML.toLowerCase());
         },
 
+        'should insert html into nodelist': function() {
+            var html = 'baz',
+                node = Y.Node.create('<div><p>foo</p><p>bar</p></div>'),
+                nodes = node.all('p');
+
+            nodes.setHTML(html);
+            Assert.areEqual('baz', nodes._nodes[0].innerHTML.toLowerCase());
+            Assert.areEqual('baz', nodes._nodes[1].innerHTML.toLowerCase());
+        },
+
         'should get html from div': function() {
             var html = '<p>foo</p>',
                 node = Y.Node.create('<div/>');
 
             node.setHTML(html);
             Assert.areEqual(html, node.getHTML().toLowerCase());
+        },
+
+        'should get html from nodelist': function() {
+            var html = 'baz',
+                node = Y.Node.create('<div><p>foo</p><p>bar</p></div>'),
+                nodes = node.all('p');
+
+            nodes.setHTML(html);
+            ArrayAssert.itemsAreEqual(['baz', 'baz'], nodes.getHTML());
         }
     }));
 

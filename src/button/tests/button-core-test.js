@@ -7,11 +7,13 @@ YUI.add('button-core-test', function (Y) {
     suite = new Y.Test.Suite('Buttons');
 
     suite.add(new Y.Test.Case({
-        name: 'button plugin factory',
+        name: 'button core',
 
         setUp : function () {
             Y.one("#container").setContent('<button id="testButton">Hello</button>');
-            this.button = Y.one("#testButton").plug(Y.Plugin.Button);
+            this.button = new Y.ButtonCore({
+                host: Y.one("#testButton")
+            });
         },
     
         tearDown: function () {
@@ -21,25 +23,27 @@ YUI.add('button-core-test', function (Y) {
 
         'Disabling a button should set the `disable` attribute to `true`': function () {
             var button = this.button;
+            var node = button.getNode();
         
             Assert.isFalse(button.get('disabled'));
-            Assert.isFalse(button.hasClass('yui3-button-disabled'));
-        
+            Assert.isFalse(node.hasClass('yui3-button-disabled'));
+            
             button.set('disabled', true);
             Assert.isTrue(button.get('disabled'));
-            Assert.isTrue(button.hasClass('yui3-button-disabled'));
+            Assert.isTrue(node.hasClass('yui3-button-disabled'));
         },
 
         'Enabling a button should set the `disabled` attribute to `false`': function () {
             var button = this.button;
-        
-            button.set('disabled', true);
+            var node = button.getNode();
+            
+            button.disable();
             Assert.isTrue(button.get('disabled'));
-            Assert.isTrue(button.hasClass('yui3-button-disabled'));
+            Assert.isTrue(node.hasClass('yui3-button-disabled'));
         
-            button.set('disabled', false);
+            button.enable();
             Assert.isFalse(button.get('disabled'));
-            Assert.isFalse(button.hasClass('yui3-button-disabled'));
+            Assert.isFalse(node.hasClass('yui3-button-disabled'));
         },
 
         'Changing the label should change the `label` attribute of a button': function () {
@@ -53,11 +57,12 @@ YUI.add('button-core-test', function (Y) {
     
         'Changing the label should change the `innerHTML` value of a button node': function () {
             var button = this.button;
+            var node = button.getNode();
             var defaultText = Y.ButtonCore.ATTRS.label.value;
             var newText = 'foobar';
         
             button.set('label', newText);
-            Assert.areEqual(newText, button.get('innerHTML'));
+            Assert.areEqual(newText, node.get('innerHTML'));
         },
     
         'Changing the `disabled` attribute should fire a `disabledChange` event': function () {
@@ -92,6 +97,48 @@ YUI.add('button-core-test', function (Y) {
             Assert.areEqual(1, eventsTriggered);
             button.set('label', 'somethingElse');
             Assert.areEqual(2, eventsTriggered);
+        },
+    }));
+    
+    suite.add(new Y.Test.Case({
+        name: 'misc button core',
+
+        setUp : function () {
+
+        },
+    
+        tearDown: function () {
+            Y.one('#container').empty(true);
+        },
+        
+        'Creating an unattached button should create a Y.ButtonCore instance': function () {
+            var button = new Y.ButtonCore({label:'foo'});
+            Assert.areEqual(button.get('label'), 'foo');
+            Assert.isInstanceOf(Y.ButtonCore, button);
+        },
+    
+        'Modifying the label of a nested button structure should not modify the non-label elements': function () {
+            Y.one("#container").setContent('<button id="testButton">**<span class="yui3-button-label">Hello</span>**</button>');
+            var button = new Y.ButtonCore({
+                host: Y.one("#testButton")
+            });
+            var node = button.getNode();
+            
+            Assert.areEqual(node.get('text'), '**Hello**');
+            button.set('label', button.get('label') + ' World');
+            Assert.areEqual(button.get('label'), 'Hello World');
+            Assert.areEqual(node.get('text'), '**Hello World**');
+        },
+    
+        'modifying the `label` attribute should work properly on <input> elements': function () {
+            Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+            var button = new Y.ButtonCore({
+                host: Y.one("#testButton")
+            });
+            
+            Assert.areEqual(button.get('label'), 'foo');
+            button.set('label', 'bar');
+            Assert.areEqual(button.get('label'), 'bar');
         }
     
     }));
