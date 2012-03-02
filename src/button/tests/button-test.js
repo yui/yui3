@@ -136,6 +136,30 @@ suite.add(new Y.Test.Case({
         
         button.set('checked', false);
         Assert.isFalse(button.get('checked'));
+    },
+    
+    'Toggle buttons should have proper ARIA data': function () {
+        var button = this.toggleButton;
+        var cb = button.get('contentBox');
+        
+        Assert.areSame('toggle', cb.get('role'));
+        Assert.areSame('false', cb.get('aria-pressed'));
+        
+        cb.simulate('click');
+        
+        Assert.areSame('true', cb.get('aria-pressed'));
+    },
+    
+    'Toggle buttons should have proper ARIA data': function () {
+        var button = this.checkButton;
+        var cb = button.get('contentBox');
+        
+        Assert.areSame('checkbox', cb.get('role'));
+        Assert.areSame('false', cb.get('aria-checked'));
+        
+        cb.simulate('click');
+        
+        Assert.areSame('true', cb.get('aria-checked'));
     }
 }));
 

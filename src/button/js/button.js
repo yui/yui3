@@ -164,7 +164,8 @@ Y.extend(ToggleButton, ButtonWidget,  {
         var button = this,
             cb = button.get('contentBox'),
             type = this.get('type'),
-            role = (type === 'checkbox' ? 'checkbox' : 'toggle');
+            ROLES = ToggleButton.ARIA_ROLES,
+            role = (type === 'checkbox' ? ROLES.CHECKBOX : ROLES.TOGGLE);
         
         ToggleButton.superclass.bindUI.call(button);
         
@@ -207,12 +208,13 @@ Y.extend(ToggleButton, ButtonWidget,  {
     * @private
     */
     _setSelected: function(value) {
+        var STATES = ToggleButton.ARIA_STATES;
         
         if (this.get('type') === 'checkbox') {
-            ariaState = 'aria-checked';
+            ariaState = STATES.CHECKED;
         }
         else {
-            ariaState = 'aria-pressed';
+            ariaState = STATES.PRESSED;
         }
         
         this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set(ariaState, value);
@@ -278,7 +280,10 @@ Y.extend(ToggleButton, ButtonWidget,  {
         selected: function(node) {
             return node.hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
         }
-    }
+    },
+    
+    ARIA_STATES: Y.ButtonCore.ARIA_STATES,
+    ARIA_ROLES: Y.ButtonCore.ARIA_ROLES
 });
 
 // Export
