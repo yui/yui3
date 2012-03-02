@@ -34,6 +34,7 @@
             
             CheckboxGroup.on('selectionChange', function(e){
                 console.log(this.getSelectedValues());
+                console.log(e.originEvent.target.get('id'));
                 console.log('CheckboxGroup - selectionChange');
             });
             
@@ -56,7 +57,7 @@
         <hr>
         <div id="checkboxGroup">
             <p>Checkbox</p>
-            <button>A</button>
+            <button id='asd'>A</button>
             <button>B</button>
             <button>C</button>
         </div>

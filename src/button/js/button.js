@@ -5,7 +5,9 @@
 * @since 3.5.0
 */
 
-var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
+var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
+    ARIA_STATES = Y.ButtonCore.ARIA_STATES,
+    ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
 
 /**
 * Creates a ButtonWidget
@@ -155,10 +157,8 @@ Y.extend(ToggleButton, ButtonWidget,  {
     trigger: 'click',
 
     /**
-     * bindUI implementation
-     *
-     * Hooks up events for the widget
      * @method bindUI
+     * @description Hooks up events for the widget
      */
     bindUI: function() {
         var button = this,
@@ -175,10 +175,8 @@ Y.extend(ToggleButton, ButtonWidget,  {
     },
 
     /**
-     * bindUI implementation
-     *
-     * Hooks up events for the widget
      * @method bindUI
+     * @description Syncs the UI for the widget
      */
     syncUI: function(config) {
         var button = this,
@@ -238,7 +236,7 @@ Y.extend(ToggleButton, ButtonWidget,  {
     
     /**
     * @method toggle
-    * @description
+    * @description Toggles the selected/pressed/checked state of a ToggleButton
     * @public
     */
     toggle: function() {
@@ -248,6 +246,16 @@ Y.extend(ToggleButton, ButtonWidget,  {
 
 }, {
     
+    /**
+    * The identity of the widget.
+    *
+    * @property NAME
+    * @type {String}
+    * @default 'buttongroup'
+    * @readOnly
+    * @protected
+    * @static
+    */
     NAME: 'toggleButton',
     
     /**
@@ -278,12 +286,35 @@ Y.extend(ToggleButton, ButtonWidget,  {
     */
     HTML_PARSER: {
         selected: function(node) {
-            return node.hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
+            return node.hasClass(CLASS_NAMES.SELECTED);
         }
     },
     
-    ARIA_STATES: Y.ButtonCore.ARIA_STATES,
-    ARIA_ROLES: Y.ButtonCore.ARIA_ROLES
+    /**
+    * @property ARIA_STATES
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ARIA_STATES: ARIA_STATES,
+
+    /**
+    * @property ARIA_ROLES
+    * @type {Object}
+    * @protected
+    * @static
+    */
+    ARIA_ROLES: ARIA_ROLES,
+
+    /**
+     * List of class names used in the ButtonGroup's DOM
+     *
+     * @property CLASS_NAMES
+     * @type Object
+     * @static
+     */
+    CLASS_NAMES: CLASS_NAMES
+    
 });
 
 // Export
