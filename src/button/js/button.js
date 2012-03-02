@@ -56,8 +56,8 @@ Y.extend(ButtonWidget, Y.Widget,  {
      */
     syncUI: function() {
         var button = this;
-        button._setLabel(button.get('label'));
-        button._setDisabled(button.get('disabled'));
+        button._uiSetLabel(button.get('label'));
+        button._uiSetDisabled(button.get('disabled'));
     },
 
     /**
@@ -65,7 +65,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
     * @private
     */
     _afterLabelChange: function(e) {
-        this._setLabel(e.newVal);
+        this._uiSetLabel(e.newVal);
     },
 
     /**
@@ -73,7 +73,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
     * @private
     */
     _afterDisabledChange: function(e) {
-        this._setDisabled(e.newVal);
+        this._uiSetDisabled(e.newVal);
     }
 
 }, {
