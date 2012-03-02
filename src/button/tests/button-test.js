@@ -74,12 +74,12 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(cb.hasClass('yui3-button-selected'));
     },
     
-    'Select toggling a button should fire selectedChange': function () {
+    'Select toggling a button should fire pressedChange': function () {
         var toggleButton = this.toggleButton;
         var cb = toggleButton.get('contentBox');
         var eventsTriggered = 0;
         
-        toggleButton.on('selectedChange', function(){
+        toggleButton.on('pressedChange', function(){
             eventsTriggered+=1;
         });
         
@@ -182,13 +182,11 @@ suite.add(new Y.Test.Case({
         });
         
         Assert.isTrue(button.get('pressed'));
-        Assert.isTrue(button.get('selected'));
         Assert.isUndefined(button.get('checked'));
         
         button.toggle();
 
         Assert.isFalse(button.get('pressed'));
-        Assert.isFalse(button.get('selected'));
         Assert.isUndefined(button.get('checked'));
     },
     
@@ -201,13 +199,11 @@ suite.add(new Y.Test.Case({
         });
         
         Assert.isTrue(button.get('checked'));
-        Assert.isTrue(button.get('selected'));
         Assert.isUndefined(button.get('pressed'));
         
         button.toggle();
 
         Assert.isFalse(button.get('checked'));
-        Assert.isFalse(button.get('selected'));
         Assert.isUndefined(button.get('pressed'));
     }
 }));
