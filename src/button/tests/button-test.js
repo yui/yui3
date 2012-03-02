@@ -27,6 +27,9 @@ suite.add(new Y.Test.Case({
     },
     
     tearDown: function () {
+        this.button.destroy();
+        this.toggleButton.destroy();
+        this.checkButton.destroy();
         delete this.button;
         delete this.toggleButton;
         delete this.checkButton;
