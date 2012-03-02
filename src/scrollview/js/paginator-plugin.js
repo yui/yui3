@@ -113,7 +113,7 @@ PaginatorPlugin.ATTRS = {
 
 Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     
-    optimizeDOM: false,
+    optimizeMemory: true,
     _pageOffsets: null,
     _pageNodes: null,
     
@@ -124,7 +124,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     initializer: function(config) { 
         var paginator = this,
-            optimizeDOM = config.optimizeDOM || optimizeDOM;
+            optimizeMemory = config.optimizeMemory || optimizeMemory;
         
         paginator._host = paginator.get('host');
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
@@ -133,7 +133,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.afterHostEvent('render', paginator._afterRender);
         paginator.after('indexChange', paginator._afterIndexChange);
         
-        paginator.optimizeDOM = optimizeDOM;
+        paginator.optimizeMemory = optimizeMemory;
     },
 
     /**
@@ -149,7 +149,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             vert = host._scrollsVertical,
             size = (vert) ? host._scrollHeight : host._scrollWidth,
             pageSelector = this.get("selector"),
-            optimizeDOM = this.optimizeDOM,
+            optimizeMemory = this.optimizeMemory,
             currentIndex = this.get(INDEX),
             pages,
             offsets;
@@ -161,7 +161,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         
         this._pageOffsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
         
-        if (optimizeDOM) {
+        if (optimizeMemory) {
             this.set(PREVINDEX, currentIndex);
             this._pageNodes = pages;
             cb.empty(true);
@@ -188,10 +188,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             current = this.get(INDEX),
             forward = (previous < current) ? true : false,
             pageOffsets = this._pageOffsets,
-            optimizeDOM = this.optimizeDOM,
+            optimizeMemory = this.optimizeMemory,
             offset;
         
-        if (optimizeDOM) {
+        if (optimizeMemory) {
             if (forward) {
                 if (index > 1) {
                     offset = pageOffsets[2];
@@ -261,7 +261,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              pageIndex = this.get(INDEX),
              pageCount = this.get(TOTAL),
              trans = PaginatorPlugin.SNAP_TO_CURRENT,
-             optimizeDOM = this.optimizeDOM;
+             optimizeMemory = this.optimizeMemory;
              
          if(e.onGestureMoveEnd && !host._flicking) {
              if(host._scrolledHalfway) {
@@ -278,7 +278,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          }
          
          if (!e.onGestureMoveEnd){
-             if (optimizeDOM) {
+             if (optimizeMemory) {
               this._manageDOM();
              }
              
