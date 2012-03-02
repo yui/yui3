@@ -42,7 +42,7 @@ var toArray          = Y.Array,
  * @param fn {Function} the callback function to execute.  This function
  *              will be provided the event object for the delegated event.
  * @param el {String|node} the element that is the delegation container
- * @param spec {string|Function} a selector that must match the target of the
+ * @param filter {string|Function} a selector that must match the target of the
  *              event or a function to test target and its parents for a match
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
