@@ -188,7 +188,7 @@ IO.prototype = {
         ];
 
         if (!emitFacade) {
-            if (eventName === EVENTS[0] || eventName === EVENTS[2] && args) {
+            if (eventName === EVENTS[0] || eventName === EVENTS[2]) {
                 if (args) {
                     params.push(args);
                 }

@@ -928,6 +928,21 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(1, visibleCalled, '`visibleChange` was not called only 1 time.');
         Assert.areSame(1, focusCalled, '`focus` was not called only 1 time.');
+    },
+
+    'Updating section content should not remove a button': function () {
+        this.widget = new TestWidget({
+            render : '#test',
+            buttons: [{label: 'Foo'}]
+        });
+
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-widget-ft .yui3-button').size(), 'Footer does not contain 1 button.');
+
+        this.widget.set('footerContent', '<p>Bar</p>');
+
+        Assert.areSame('Bar', this.widget.get('contentBox').one('.yui3-widget-ft p').get('text'), 'New footer content was not added.');
+        Assert.areSame(1, this.widget.get('contentBox').all('.yui3-widget-ft .yui3-button').size(), 'Footer does not contain 1 button.');
+        Assert.areSame('Foo', this.widget.getButton(0).get('label'), 'Button did not have the label "Foo".');
     }
 }));
 
@@ -968,7 +983,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
 
         Assert.areNotSame(buttons, this.widget.get('buttons'), '`buttons` was not re-created.');
-        Assert.isNotNull(this.widget.getStdModNode('footer').one('.yui3-button'), 'Footer button was not removed.');
+        Assert.isNull(this.widget.get('contentBox').one('.yui3-widget-ft .yui3-button'), 'Footer button was not removed.');
 
         Assert.areSame(1, this.widget.get('buttons.header').length, 'Widget header did not have a button.');
     },
@@ -1031,7 +1046,7 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(1, called, '`buttonsChange` did not fire.');
         Assert.isUndefined(this.widget.get('buttons.header'), 'Button was not removed from `buttons`.');
-        Assert.isFalse(this.widget.getStdModNode('footer').contains(button), 'Footer button wasnot removed.');
+        Assert.isFalse(this.widget.get('contentBox').contains(button), 'Footer button was not removed.');
     },
 
     '`buttonsChange` should be preventable': function () {

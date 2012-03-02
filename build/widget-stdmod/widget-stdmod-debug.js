@@ -307,8 +307,6 @@ YUI.add('widget-stdmod', function(Y) {
             if (L.isValue(this.get(HEADER_CONTENT))) { this._renderStdMod(STD_HEADER); }
             if (L.isValue(this.get(BODY_CONTENT))) { this._renderStdMod(STD_BODY); }
             if (L.isValue(this.get(FOOTER_CONTENT))) { this._renderStdMod(STD_FOOTER); }
-
-
         },
 
         /**
@@ -456,7 +454,7 @@ YUI.add('widget-stdmod', function(Y) {
         _uiSetStdMod : function(section, content, where) {
             // Using isValue, so that "" is valid content
             if (L.isValue(content)) {
-                var node = this.getStdModNode(section) || this._renderStdMod(section);
+                var node = this.getStdModNode(section, true);
 
                 this._addStdModContent(node, content, where);
 
@@ -688,15 +686,29 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Returns the node reference for the given section. Note: The DOM is not queried for the node reference. The reference
-         * stored by the widget instance is returned if set.
-         *
-         * @method getStdModNode
-         * @param {String} section The section whose node reference is required. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
-         * @return {Node} The node reference for the section, or null if not set.
-         */
-        getStdModNode : function(section) {
-            return this[section + NODE_SUFFIX] || null;
+        Returns the node reference for the specified `section`.
+
+        **Note:** The DOM is not queried for the node reference. The reference
+        stored by the widget instance is returned if it was set. Passing a
+        truthy for `forceCreate` will create the section node if it does not
+        already exist.
+
+        @method getStdModNode
+        @param {String} section The section whose node reference is required.
+            Either `WidgetStdMod.HEADER`, `WidgetStdMod.BODY`, or
+            `WidgetStdMod.FOOTER`.
+        @param {Boolean} forceCreate Whether the section node should be created
+            if it does not already exist.
+        @return {Node} The node reference for the `section`, or null if not set.
+        **/
+        getStdModNode : function(section, forceCreate) {
+            var node = this[section + NODE_SUFFIX] || null;
+
+            if (!node && forceCreate) {
+                node = this._renderStdMod(section);
+            }
+
+            return node;
         },
 
         /**

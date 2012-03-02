@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
     <title>YUI focus/blur synth Tests</title>
@@ -9,17 +9,19 @@
 <body class="yui3-skin-sam">
 
     <div id="container">
-        <button id="button-1">Click Me!</button>
-        <a id="anchor-1" href="http://www.yahoo.com">Click Me!</a>
-        <input type="text" id="text-1">
+        <div class="not-focusable">
+            <button id="button-1">Click Me!</button>
+            <a id="anchor-1" href="http://www.yahoo.com">Click Me!</a>
+            <input type="text" id="text-1">
+        </div>
     </div>
 
     <script>
         YUI({
+            //lazyEventFacade: true,
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
-            allowRollup: false,
-            lazyEventFacade: true
-        }).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
+            allowRollup: false
+        }).use('console', 'test', 'event', 'event-simulate', 'node-event-delegate', 'window-focus', function (Y) {
 
             var Assert = Y.Assert;
 
@@ -248,6 +250,30 @@
                     } else {
                         Y.log("Window is not focused.", "warn", "TestRunner");
                     }
+                },
+
+                "test delegating with filter matching non-focusable elements": function () {
+                    var button       = Y.one('#button-1'),
+                        container    = Y.one('#container'),
+                        notFocusable = Y.one('.not-focusable'),
+                        called, handle;
+
+                    if (Y.isWindowInFocus()) {
+                        handle = container.delegate('focus', function (e) {
+                            called = true;
+                            Assert.areSame(button, e.target);
+                            Assert.areSame(notFocusable, e.currentTarget);
+                            Assert.areSame(notFocusable, this);
+                            Assert.areSame(container, e.container);
+                        }, '.not-focusable');
+
+                        Y.one('#button-1').focus();
+
+                        handle.detach();
+
+                        Assert.isTrue(called);
+                    }
+
                 }
 
             }));

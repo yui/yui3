@@ -6,11 +6,8 @@ YUI.add('instances-tests', function(Y) {
         name: 'Static Instance of Y.IO',
 
         'test: static': function() {
-            var instance1 = new Y.IO(),
-                static1 = Y.io(IO_URLS.get + '?test=static', {});
-
-            //I think this should be `areNotEqual`
-            Y.Assert.areEqual(instance1._uid, static1.io._uid);
+            var s = Y.io(Y.IO.URLS.get + '?test=static', {});
+            Y.Assert.areEqual('io:0', s.io._uid || s.io.uid);
         }
     }));
 
@@ -30,7 +27,7 @@ YUI.add('instances-tests', function(Y) {
 
         'test: is an Object': function() {
             var instance1 = new Y.IO();
-            
+
             Y.Assert.isObject(instance1);
         }
     }));
@@ -40,7 +37,7 @@ YUI.add('instances-tests', function(Y) {
 
         'test: instanceOf': function() {
             var instance1 = new Y.IO();
-            
+
             Y.Assert.isInstanceOf(Y.IO, instance1);
         }
     }));
