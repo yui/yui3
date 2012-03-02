@@ -52,10 +52,6 @@ a.yui3-button {
     text-decoration:none;
 }
 
-input.yui3-button {
-    line-height: normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
-}
-
 .yui3-button:hover {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#26000000', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.15)));
