@@ -697,7 +697,9 @@
                 try {
                     Y.one('win').focus();
                     if (this.getInstance()) {
-                        this.getInstance().one('win').focus();
+                        if (this.getInstance().one('win')) {
+                            this.getInstance().one('win').focus();
+                        }
                     }
                 } catch (ierr) {
                     Y.log('Frame focus failed', 'warn', 'frame');
@@ -713,7 +715,9 @@
                     Y.one('win').focus();
                     Y.later(100, this, function() {
                         if (this.getInstance()) {
-                            this.getInstance().one('win').focus();
+                            if (this.getInstance().one('win')) {
+                                this.getInstance().one('win').focus();
+                            }
                         }
                         if (fn === true) {
                             this._handleFocus();
