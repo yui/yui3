@@ -150,7 +150,7 @@ function ToggleButton(config) {
 }
 
 // TODO: move to ButtonCore subclass to enable toggle plugin, widget, etc.
-/* ButtonWidget extends ButtonWidget */
+/* ToggleButton extends ButtonWidget */
 Y.extend(ToggleButton, ButtonWidget,  {
     trigger: 'click',
 
@@ -161,10 +161,15 @@ Y.extend(ToggleButton, ButtonWidget,  {
      * @method bindUI
      */
     bindUI: function() {
-        var button = this;
+        var button = this,
+            cb = button.get('contentBox'),
+            type = this.get('type'),
+            role = (type === 'checkbox' ? 'checkbox' : 'toggle');
+        
         ToggleButton.superclass.bindUI.call(button);
-        button.get('contentBox').set('role', 'toggle');
-        button.get('contentBox').on(button.trigger, button.toggle, button);
+        
+        cb.set('role', role);
+        cb.on(button.trigger, button.toggle, button);
         button.after('selectedChange', button._afterSelectedChange);
     },
 
@@ -174,38 +179,61 @@ Y.extend(ToggleButton, ButtonWidget,  {
      * Hooks up events for the widget
      * @method bindUI
      */
-    syncUI: function() {
-        var button = this;
+    syncUI: function(config) {
+        var button = this,
+            type = this.get('type');
+            
         ToggleButton.superclass.syncUI.call(button);
         button._setSelected(button.get('selected'));
+        button._setType(button.get('type'));
     },
 
+    /**
+    * @method _setType
+    * @private
+    */
+    _setType: function(type) {
+        var name = (type === "checkbox" ? 'checked' : 'pressed');
+        this.addAttr(name, {
+            value: false,
+            setter: '_setSelected',
+            getter: '_getSelected',
+            validator: Y.Lang.isBoolean
+        });
+    },
+    
     /**
     * @method _setSelected
     * @private
     */
     _setSelected: function(value) {
-        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set('aria-pressed', value); // TODO should support aria-checked (if applicable)
+        
+        if (this.get('type') === 'checkbox') {
+            ariaState = 'aria-checked';
+        }
+        else {
+            ariaState = 'aria-pressed';
+        }
+        
+        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set(ariaState, value);
     },
 
     /**
-    * @method select
-    * @description
-    * @public
+    * @method _getSelected
+    * @private
     */
-    select: function() {
-        this.set('selected', true);
+    _getSelected: function(value) {
+        return this.get('contentBox').hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
     },
 
     /**
-    * @method unselect
-    * @description
-    * @public
+    * @method _afterSelectedChange
+    * @private
     */
-    unselect: function() {
-        this.set('selected', false);
+    _afterSelectedChange: function(e) {
+        this._setSelected(e.newVal);
     },
-
+    
     /**
     * @method toggle
     * @description
@@ -213,18 +241,11 @@ Y.extend(ToggleButton, ButtonWidget,  {
     */
     toggle: function() {
         var button = this;
-        button.set('selected', !button.get('selected'));
-    },
-    
-    /**
-    * @method _afterSelectedChange
-    * @private
-    */
-    _afterSelectedChange: function(e) {
-        this._setSelected(e.newVal);
+        button._set('selected', !button.get('selected'));
     }
 
 }, {
+    
     NAME: 'toggleButton',
     
     /**
@@ -237,8 +258,13 @@ Y.extend(ToggleButton, ButtonWidget,  {
     * @static
     */
     ATTRS: {
+        type: {
+            value: 'toggle',
+            writeOnce: 'initOnly'
+        },
         selected: {
-            value: false
+            value: false,
+            readOnly: true
         }
     },
     
