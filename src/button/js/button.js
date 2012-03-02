@@ -155,7 +155,24 @@ function ToggleButton(config) {
 /* ToggleButton extends ButtonWidget */
 Y.extend(ToggleButton, ButtonWidget,  {
     trigger: 'click',
-
+    
+    initializer: function (config) {
+        var button = this,
+            type = button.get('type'),
+            attrName = (type === "checkbox" ? 'checked' : 'pressed'),
+            defaultState = config[attrName] || false;
+        
+        button.addAttr(attrName, {
+            value: defaultState,
+            setter: '_setSelected',
+            getter: '_getSelected'
+        });
+        
+        // @TODO Get these out of the initializer
+        button.after('selectedChange', button._afterSelectedChange);
+        button._set('selected', defaultState);
+    },
+    
     /**
      * @method bindUI
      * @description Hooks up events for the widget
@@ -171,34 +188,14 @@ Y.extend(ToggleButton, ButtonWidget,  {
         
         cb.set('role', role);
         cb.on(button.trigger, button.toggle, button);
-        button.after('selectedChange', button._afterSelectedChange);
     },
 
     /**
      * @method bindUI
      * @description Syncs the UI for the widget
      */
-    syncUI: function(config) {
-        var button = this,
-            type = this.get('type');
-            
-        ToggleButton.superclass.syncUI.call(button);
-        button._setSelected(button.get('selected'));
-        button._setType(button.get('type'));
-    },
-
-    /**
-    * @method _setType
-    * @private
-    */
-    _setType: function(type) {
-        var name = (type === "checkbox" ? 'checked' : 'pressed');
-        this.addAttr(name, {
-            value: false,
-            setter: '_setSelected',
-            getter: '_getSelected',
-            validator: Y.Lang.isBoolean
-        });
+    syncUI: function() {
+        ToggleButton.superclass.syncUI.call(this);
     },
     
     /**

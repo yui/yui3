@@ -55,9 +55,8 @@ suite.add(new Y.Test.Case({
     },
     
     'Selecting a toggleButton should add class `yui3-button-selected`': function () {
-        var button = this.button;
-        var toggleButton = this.toggleButton;
-        var cb = toggleButton.get('contentBox');
+        var button = this.toggleButton;
+        var cb = button.get('contentBox');
         
         Assert.isFalse(cb.hasClass('yui3-button-selected'));
         
@@ -146,11 +145,11 @@ suite.add(new Y.Test.Case({
         Assert.areSame('false', cb.get('aria-pressed'));
         
         cb.simulate('click');
-        
+        //button.set('pressed', true);
         Assert.areSame('true', cb.get('aria-pressed'));
     },
     
-    'Toggle buttons should have proper ARIA data': function () {
+    'Checkbox buttons should have proper ARIA data': function () {
         var button = this.checkButton;
         var cb = button.get('contentBox');
         
@@ -163,6 +162,55 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+// -- Config tests ----------------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'button widget',
+
+    setUp : function () {
+
+    },
+    
+    tearDown: function () {
+        Y.one("#container").empty(true);
+    },
+    
+    'Passing `pressed=true` in with the config will default the button to a `pressed` state': function() {
+        Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+        var button = new Y.ToggleButton({
+            host: Y.one("#testButton"),
+            pressed: true
+        });
+        
+        Assert.isTrue(button.get('pressed'));
+        Assert.isTrue(button.get('selected'));
+        Assert.isUndefined(button.get('checked'));
+        
+        button.toggle();
+
+        Assert.isFalse(button.get('pressed'));
+        Assert.isFalse(button.get('selected'));
+        Assert.isUndefined(button.get('checked'));
+    },
+    
+    'Passing `checked=true` in with the config will default the button to a `checked` state': function() {
+        Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+        var button = new Y.ToggleButton({
+            host: Y.one("#testButton"),
+            checked: true,
+            type: 'checkbox'
+        });
+        
+        Assert.isTrue(button.get('checked'));
+        Assert.isTrue(button.get('selected'));
+        Assert.isUndefined(button.get('pressed'));
+        
+        button.toggle();
+
+        Assert.isFalse(button.get('checked'));
+        Assert.isFalse(button.get('selected'));
+        Assert.isUndefined(button.get('pressed'));
+    }
+}));
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
