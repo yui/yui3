@@ -488,6 +488,23 @@
         ], 
         "type": "css"
     }, 
+    "cssgrids-base": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-units": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "requires": [
+            "cssgrids-base"
+        ], 
+        "type": "css"
+    }, 
     "cssreset": {
         "type": "css"
     }, 

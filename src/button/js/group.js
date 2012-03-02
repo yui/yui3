@@ -117,14 +117,14 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 
         if (type === 'checkbox') {
             clickedNode.toggleClass(selectedClass, !isSelected);
-            group.fire('selectionChange');  // Payload? Attribute?
+            group.fire('selectionChange', {originEvent: e});
         }
         else if (type === 'radio') {
             if (!isSelected) {
                 buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
                 buttons.removeClass(selectedClass);
                 clickedNode.addClass(selectedClass);
-                group.fire('selectionChange');  // Payload? Attribute?
+                group.fire('selectionChange', {originEvent: e});
             }
         }
     }

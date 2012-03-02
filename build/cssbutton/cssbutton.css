@@ -6,7 +6,6 @@
     font-size: 100%; 
     *font-size: 90%; /*IE 6/7 - To reduce IE's oversized button text*/
     padding: 0.4em 1em 0.45em;
-    line-height: normal;
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
@@ -52,10 +51,7 @@ a.yui3-button {
     text-decoration:none;
 }
 
-input.yui3-button {
-    line-height: normal !important; /* Normalize for all browsers because of Firefox Bug #349259 */
-}
-
+.yui3-button-hover,
 .yui3-button:hover {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#26000000', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.15)));
@@ -66,6 +62,7 @@ input.yui3-button {
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
 }
 
+.yui3-button-active,
 .yui3-button:active {
     border: inset 1px #999\9;  /*IE 6/7/8*/
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1A000000', endColorstr='#26000000', GradientType=0);
