@@ -58,8 +58,8 @@ Y.extend(ButtonWidget, Y.Widget,  {
      */
     syncUI: function() {
         var button = this;
-        button._setLabel(button.get('label'));
-        button._setDisabled(button.get('disabled'));
+        button._uiSetLabel(button.get('label'));
+        button._uiSetDisabled(button.get('disabled'));
     },
 
     /**
@@ -67,7 +67,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
     * @private
     */
     _afterLabelChange: function(e) {
-        this._setLabel(e.newVal);
+        this._uiSetLabel(e.newVal);
     },
 
     /**
@@ -75,7 +75,7 @@ Y.extend(ButtonWidget, Y.Widget,  {
     * @private
     */
     _afterDisabledChange: function(e) {
-        this._setDisabled(e.newVal);
+        this._uiSetDisabled(e.newVal);
     }
 
 }, {
@@ -156,23 +156,26 @@ function ToggleButton(config) {
 // TODO: move to ButtonCore subclass to enable toggle plugin, widget, etc.
 /* ToggleButton extends ButtonWidget */
 Y.extend(ToggleButton, ButtonWidget,  {
+    
     trigger: 'click',
+    selectedAttrName: '',
     
     initializer: function (config) {
         var button = this,
             type = button.get('type'),
-            attrName = (type === "checkbox" ? 'checked' : 'pressed'),
-            defaultState = config[attrName] || false;
+            selectedAttrName = (type === "checkbox" ? 'checked' : 'pressed'),
+            selectedState = config[selectedAttrName] || false;
         
-        button.addAttr(attrName, {
-            value: defaultState,
-            setter: '_setSelected',
-            getter: '_getSelected'
+        // Create the checked/pressed attribute
+        button.addAttr(selectedAttrName, {
+            value: selectedState
         });
         
-        // @TODO Get these out of the initializer
-        button.after('selectedChange', button._afterSelectedChange);
-        button._set('selected', defaultState);
+        button.selectedAttrName = selectedAttrName;
+    },
+    
+    destructor: function () {
+        delete this.selectedAttrName;
     },
     
     /**
@@ -180,16 +183,13 @@ Y.extend(ToggleButton, ButtonWidget,  {
      * @description Hooks up events for the widget
      */
     bindUI: function() {
-        var button = this,
-            cb = button.get('contentBox'),
-            type = this.get('type'),
-            ROLES = ToggleButton.ARIA_ROLES,
-            role = (type === 'checkbox' ? ROLES.CHECKBOX : ROLES.TOGGLE);
+         var button = this,
+             cb = button.get('contentBox');
         
         ToggleButton.superclass.bindUI.call(button);
         
-        cb.set('role', role);
         cb.on(button.trigger, button.toggle, button);
+        button.after(button.selectedAttrName + 'Change', button._afterSelectedChange);
     },
 
     /**
@@ -197,40 +197,36 @@ Y.extend(ToggleButton, ButtonWidget,  {
      * @description Syncs the UI for the widget
      */
     syncUI: function() {
-        ToggleButton.superclass.syncUI.call(this);
+        var button = this,
+            cb = button.get('contentBox'),
+            type = button.get('type'),
+            ROLES = ToggleButton.ARIA_ROLES,
+            role = (type === 'checkbox' ? ROLES.CHECKBOX : ROLES.TOGGLE),
+            selectedAttrName = button.selectedAttrName;
+
+        ToggleButton.superclass.syncUI.call(button);
+        
+        cb.set('role', role);
+        button._uiSetSelected(button.get(selectedAttrName));
+    },
+    
+    _afterSelectedChange: function(e){
+        this._uiSetSelected(e.newVal);
     },
     
     /**
-    * @method _setSelected
+    * @method _uiSetSelected
     * @private
     */
-    _setSelected: function(value) {
-        var STATES = ToggleButton.ARIA_STATES;
+    _uiSetSelected: function(value) {
+        var button = this,
+            cb = button.get('contentBox'),
+            STATES = ToggleButton.ARIA_STATES,
+            type = button.get('type'),
+            ariaState = (type === 'checkbox' ? STATES.CHECKED : STATES.PRESSED);
         
-        if (this.get('type') === 'checkbox') {
-            ariaState = STATES.CHECKED;
-        }
-        else {
-            ariaState = STATES.PRESSED;
-        }
-        
-        this.get('contentBox').toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value).set(ariaState, value);
-    },
-
-    /**
-    * @method _getSelected
-    * @private
-    */
-    _getSelected: function(value) {
-        return this.get('contentBox').hasClass(ButtonWidget.CLASS_NAMES.SELECTED);
-    },
-
-    /**
-    * @method _afterSelectedChange
-    * @private
-    */
-    _afterSelectedChange: function(e) {
-        this._setSelected(e.newVal);
+        cb.toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value);
+        cb.set(ariaState, value);
     },
     
     /**
@@ -240,7 +236,7 @@ Y.extend(ToggleButton, ButtonWidget,  {
     */
     toggle: function() {
         var button = this;
-        button._set('selected', !button.get('selected'));
+        button._set(button.selectedAttrName, !button.get(button.selectedAttrName));
     }
 
 }, {
@@ -270,10 +266,6 @@ Y.extend(ToggleButton, ButtonWidget,  {
         type: {
             value: 'toggle',
             writeOnce: 'initOnly'
-        },
-        selected: {
-            value: false,
-            readOnly: true
         }
     },
     
@@ -284,7 +276,10 @@ Y.extend(ToggleButton, ButtonWidget,  {
     * @static
     */
     HTML_PARSER: {
-        selected: function(node) {
+        checked: function(node) {
+            return node.hasClass(CLASS_NAMES.SELECTED);
+        },
+        pressed: function(node) {
             return node.hasClass(CLASS_NAMES.SELECTED);
         }
     },
