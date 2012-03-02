@@ -12,6 +12,11 @@ Event Infrastructure Change History
     the `event` virtual rollup in accordance with the docs.
   * 'key' event does a better job parsing character filters. Uses `e.which`
     instead of `e.keyCode` or `e.charCode`.
+  * node.delegate('focus', fn, '.not-focusable') now works.  Properly supports
+    delegation where the filter matches non-focusable parent nodes of the
+    focused target. Same for blur. [#2531334] (`event-focus`)
+  * node.delegate('focus', fn, filterThatMatchesNode); node.focus(); now
+    works. [#2531734]
 
 3.4.1
 -----
