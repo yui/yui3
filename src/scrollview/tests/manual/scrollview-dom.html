@@ -47,12 +47,11 @@
             });
 
             scrollView.plug(Y.Plugin.ScrollViewPaginator, {
-                selector: 'li'
+                selector: 'li',
+                optimizeDOM: true
             });
 
             scrollView.render();
-            
-            console.log(scrollView.pages._pgOff);
         });
         </script>
     </head>
