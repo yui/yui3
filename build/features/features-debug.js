@@ -293,8 +293,23 @@ add('load', '14', {
     "trigger": "scrollview-base", 
     "ua": "ie"
 });
-// graphics-canvas
+// app-transitions-native
 add('load', '15', {
+    "name": "app-transitions-native", 
+    "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+    "trigger": "app-transitions"
+});
+// graphics-canvas
+add('load', '16', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -306,7 +321,7 @@ add('load', '15', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '16', {
+add('load', '17', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
