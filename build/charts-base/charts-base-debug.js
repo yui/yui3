@@ -4165,7 +4165,11 @@ NumericAxis.ATTRS = {
     labelFunction: { 
         value: function(val, format)
         {
-            return this.formatLabel.apply(this, arguments);
+            if(format)
+            {
+                return Y.DataType.Number.format(val, format);
+            }
+            return val;
         }
     },
 
@@ -5017,7 +5021,12 @@ TimeAxis.ATTRS =
     labelFunction: {
         value: function(val, format)
         {
-            return this.formatLabel.apply(this, arguments);
+            val = Y.DataType.Date.parse(val);
+            if(format)
+            {
+                return Y.DataType.Date.format(val, {format:format});
+            }
+            return val;
         }
     },
 
@@ -11677,6 +11686,26 @@ ChartBase.ATTRS = {
     },
     
     /**
+     * Sets the aria description for the chart.
+     *
+     * @attribute ariaDescription
+     * @type String
+     */
+    ariaDescription: {
+        value: "Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.",
+
+        setter: function(val)
+        {
+            if(this._description)
+            {
+                this._description.setContent("");
+                this._description.appendChild(DOCUMENT.createTextNode(val));
+            }
+            return val;
+        }
+    },
+    
+    /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
      *  <dl>
@@ -12117,7 +12146,7 @@ ChartBase.prototype = {
         cb._node.setAttribute("aria-describedby", id);
         cb.set("tabIndex", 0);
         description.set("id", id);
-        description.appendChild(DOCUMENT.createTextNode("Use the arrow keys to explore the chart."));
+        description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
         liveRegion.set("id", "live-region");
         liveRegion.set("role", "status");
         cb.appendChild(description);
@@ -14394,6 +14423,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 {
                     seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;
                 }
+                this._itemIndex = -1;
             }
             else
             {
@@ -14405,8 +14435,18 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         else
         {
-            seriesIndex = seriesIndex && seriesIndex > -1 ? seriesIndex : 0;
-            series = this.getSeries(parseInt(seriesIndex, 10));
+            if(seriesIndex > -1)
+            {
+                msg = "";
+                series = this.getSeries(parseInt(seriesIndex, 10));
+            }
+            else
+            {
+                seriesIndex = 0;
+                this._seriesIndex = seriesIndex;
+                series = this.getSeries(parseInt(seriesIndex, 10));
+                msg = "This is the " + series.get("valueDisplayName") + " series.";
+            }
             dataLength = series._dataLength ? series._dataLength : 0;
             if(key === 37)
             {
@@ -14420,8 +14460,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             items = this.getSeriesItems(series, itemIndex);
             categoryItem = items.category;
             valueItem = items.value;
-            msg = "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
-            if(categoryItem && valueItem)
+            msg += "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
+            if(categoryItem && valueItem && categoryItem.value && valueItem.value)
             {
                 msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
                 msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
@@ -15304,6 +15344,26 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     }
 }, {
     ATTRS: {
+        /**
+         * Sets the aria description for the chart.
+         *
+         * @attribute ariaDescription
+         * @type String
+         */
+        ariaDescription: {
+            value: "Use the left and right keys to navigate through items in the chart.",
+
+            setter: function(val)
+            {
+                if(this._description)
+                {
+                    this._description.setContent("");
+                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                }
+                return val;
+            }
+        },
+        
         /**
          * Axes to appear in the chart. 
          *
