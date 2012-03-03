@@ -88,6 +88,38 @@ YUI.add('button-group-test', function (Y) {
             // Unselect
             buttons.item(1).simulate('click');
             ArrayAssert.itemsAreEqual(['A', 'C'], ButtonGroup.getSelectedValues());
+        },
+        
+        'Selecting a button should trigger selectionChange': function () {
+            var ButtonGroup = this.ButtonGroup;
+            var buttons = ButtonGroup.getButtons();
+            var eventsTriggered = 0;
+
+            ButtonGroup.on('selectionChange', function(){
+                eventsTriggered+=1;
+            });
+
+            Assert.areEqual(0, eventsTriggered);
+            
+            buttons.item(0).simulate('click');
+            Assert.areEqual(1, eventsTriggered);
+            
+            buttons.item(1).simulate('click');
+            Assert.areEqual(2, eventsTriggered);
+            
+            buttons.item(1).simulate('click');
+            Assert.areEqual(3, eventsTriggered);
+        },
+        
+        'Selecting a button in a group should provide an originEvent': function () {
+            var ButtonGroup = this.ButtonGroup;
+            var buttons = ButtonGroup.getButtons();
+            
+            ButtonGroup.on('selectionChange', function(e){
+                Assert.areSame(buttons.item(0).get('text'), e.originEvent.target.get('text'));
+            });
+            
+            buttons.item(0).simulate('click');
         }
     }));
 
