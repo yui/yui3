@@ -114,12 +114,7 @@ TimeAxis.ATTRS =
     labelFunction: {
         value: function(val, format)
         {
-            val = Y.DataType.Date.parse(val);
-            if(format)
-            {
-                return Y.DataType.Date.format(val, {format:format});
-            }
-            return val;
+            return this.formatLabel.apply(this, arguments);
         }
     },
 
@@ -135,6 +130,24 @@ TimeAxis.ATTRS =
 };
 
 Y.extend(TimeAxis, Y.AxisType, {
+    /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        val = Y.DataType.Date.parse(val);
+        if(format)
+        {
+            return Y.DataType.Date.format(val, {format:format});
+        }
+        return val;
+    },
+
     /**
      * Constant used to generate unique id.
      *

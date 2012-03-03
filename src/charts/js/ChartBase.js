@@ -9,6 +9,22 @@ function ChartBase() {}
 
 ChartBase.ATTRS = {
     /**
+     * Sets the `aria-label` for the chart.
+     *
+     * @attribute ariaLabel
+     * @type String
+     */
+    ariaLabel: {
+        value: "Chart Application",
+
+        setter: function(val)
+        {
+            this.get("contentBox").setAttribute("ariaLabel", val);
+            return val;
+        }
+    },
+    
+    /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
      *  <dl>
@@ -406,6 +422,8 @@ ChartBase.prototype = {
     initializer: function()
     {
         this._itemRenderQueue = [];
+        this._seriesIndex = -1;
+        this._itemIndex = -1;
         this.after("dataProviderChange", this._dataProviderChangeHandler);
     },
 
@@ -415,17 +433,64 @@ ChartBase.prototype = {
      */
     renderUI: function()
     {
-        var tt = this.get("tooltip");
+        var tt = this.get("tooltip"),
+            cb = this.get("contentBox");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
-        this.get("contentBox").setStyle("position", "absolute");
+        cb.setStyle("position", "absolute");
         this._addAxes();
         this._addSeries();
         if(tt && tt.show)
         {
             this._addTooltip();
         }
+        this._setAriaElements(cb);
         this._redraw();
+    },
+   
+    /**
+     * Creates an aria `live-region`, `aria-label` and `aria-describedby` for the Chart.
+     *
+     * @method _setAriaElements
+     * @param {Node} cb Reference to the Chart's `contentBox` attribute.
+     * @private
+     */
+    _setAriaElements: function(cb)
+    {
+        var description = this._getAriaOffscreenNode(),
+            id = this.get("id") + "_description",
+            liveRegion = this._getAriaOffscreenNode();
+        cb.set("role", "img");
+        cb._node.setAttribute("aria-label", this.get("ariaLabel"));
+        cb._node.setAttribute("aria-describedby", id);
+        cb.set("tabIndex", 0);
+        description.set("id", id);
+        description.appendChild(DOCUMENT.createTextNode("Use the arrow keys to explore the chart."));
+        liveRegion.set("id", "live-region");
+        liveRegion.set("role", "status");
+        cb.appendChild(description);
+        cb.appendChild(liveRegion);
+        this._description = description;
+        this._liveRegion = liveRegion;
+    },
+
+    /**
+     * Sets a node offscreen for use as aria-description or aria-live-regin.
+     *
+     * @method _setOffscreen
+     * @return Node 
+     * @private
+     */
+    _getAriaOffscreenNode: function()  
+    {
+        var node = Y.one(DOCUMENT.createElement("div"));
+        node.setStyle("position", "absolute");
+        node.setStyle("height", "1px"); 
+        node.setStyle("width", "1px"); 
+        node.setStyle("overflow", "hidden");
+        node.setStyle("clip", "rect(1px 1px 1px 1px)"); 
+        node.setStyle("clip", "rect(1px, 1px, 1px, 1px)");
+        return node;
     },
   
     /**
@@ -454,6 +519,18 @@ ChartBase.prototype = {
             i = 0,
             len,
             markerClassName = "." + SERIES_MARKER;
+        Y.on("keydown", Y.bind(function(e) {
+            var key = e.keyCode,
+                numKey = parseFloat(key),
+                msg;
+            if(numKey > 36 && numKey < 41)
+            {
+                e.halt();
+                msg = this._getAriaMessage(numKey);
+                this._liveRegion.setContent("");
+                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
+            }
+        }, this), this.get("contentBox"));
         if(interactionType == "marker")
         {
             hideEvent = tt.hideEvent;
@@ -651,6 +728,8 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
+        this._seriesIndex = -1;
+        this._itemIndex = -1;
         if(axes)
         {
             for(i in axes)
