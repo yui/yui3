@@ -394,6 +394,26 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 }, {
     ATTRS: {
         /**
+         * Sets the aria description for the chart.
+         *
+         * @attribute ariaDescription
+         * @type String
+         */
+        ariaDescription: {
+            value: "Use the left and right keys to navigate through items in the chart.",
+
+            setter: function(val)
+            {
+                if(this._description)
+                {
+                    this._description.setContent("");
+                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                }
+                return val;
+            }
+        },
+        
+        /**
          * Axes to appear in the chart. 
          *
          * @attribute axes

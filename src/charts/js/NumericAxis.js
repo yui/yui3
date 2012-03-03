@@ -41,7 +41,11 @@ NumericAxis.ATTRS = {
     labelFunction: { 
         value: function(val, format)
         {
-            return this.formatLabel.apply(this, arguments);
+            if(format)
+            {
+                return Y.DataType.Number.format(val, format);
+            }
+            return val;
         }
     },
 

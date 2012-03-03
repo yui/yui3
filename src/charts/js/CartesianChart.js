@@ -1588,6 +1588,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 {
                     seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;
                 }
+                this._itemIndex = -1;
             }
             else
             {
@@ -1599,8 +1600,18 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         else
         {
-            seriesIndex = seriesIndex && seriesIndex > -1 ? seriesIndex : 0;
-            series = this.getSeries(parseInt(seriesIndex, 10));
+            if(seriesIndex > -1)
+            {
+                msg = "";
+                series = this.getSeries(parseInt(seriesIndex, 10));
+            }
+            else
+            {
+                seriesIndex = 0;
+                this._seriesIndex = seriesIndex;
+                series = this.getSeries(parseInt(seriesIndex, 10));
+                msg = "This is the " + series.get("valueDisplayName") + " series.";
+            }
             dataLength = series._dataLength ? series._dataLength : 0;
             if(key === 37)
             {
@@ -1614,8 +1625,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             items = this.getSeriesItems(series, itemIndex);
             categoryItem = items.category;
             valueItem = items.value;
-            msg = "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
-            if(categoryItem && valueItem)
+            msg += "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
+            if(categoryItem && valueItem && categoryItem.value && valueItem.value)
             {
                 msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
                 msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 

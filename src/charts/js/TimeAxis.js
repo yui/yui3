@@ -114,7 +114,12 @@ TimeAxis.ATTRS =
     labelFunction: {
         value: function(val, format)
         {
-            return this.formatLabel.apply(this, arguments);
+            val = Y.DataType.Date.parse(val);
+            if(format)
+            {
+                return Y.DataType.Date.format(val, {format:format});
+            }
+            return val;
         }
     },
 

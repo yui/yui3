@@ -25,6 +25,26 @@ ChartBase.ATTRS = {
     },
     
     /**
+     * Sets the aria description for the chart.
+     *
+     * @attribute ariaDescription
+     * @type String
+     */
+    ariaDescription: {
+        value: "Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.",
+
+        setter: function(val)
+        {
+            if(this._description)
+            {
+                this._description.setContent("");
+                this._description.appendChild(DOCUMENT.createTextNode(val));
+            }
+            return val;
+        }
+    },
+    
+    /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
      *  <dl>
@@ -465,7 +485,7 @@ ChartBase.prototype = {
         cb._node.setAttribute("aria-describedby", id);
         cb.set("tabIndex", 0);
         description.set("id", id);
-        description.appendChild(DOCUMENT.createTextNode("Use the arrow keys to explore the chart."));
+        description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
         liveRegion.set("id", "live-region");
         liveRegion.set("role", "status");
         cb.appendChild(description);
