@@ -5,7 +5,9 @@
  * @module charts
  * @main charts
  */
-var DOCUMENT = Y.config.doc,
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
     LeftAxisLayout,

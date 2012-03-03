@@ -453,25 +453,64 @@ ChartBase.prototype = {
             interactionType = this.get("interactionType"),
             i = 0,
             len,
-            markerClassName = "." + SERIES_MARKER;
+            markerClassName = "." + SERIES_MARKER,
+            isTouch = ((WINDOW && ("ontouchstart" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6));
         if(interactionType == "marker")
         {
+            //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
+            if(isTouch)
+            {
+                Y.delegate("touchend", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                //hide active tooltip if the chart is touched
+                Y.on("touchend", Y.bind(function(e) {
+                    e.halt(true);
+                    if(this._activeMarker)
+                    {
+                        this._activeMarker = null;
+                        this.hideTooltip(e);
+                    }
+                }, this));
+            }
+            else
+            {
+                Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
+            }
         }
         else if(interactionType == "planar")
         {
-            this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
-            this.on("mouseout", this.hideTooltip);
+            if(isTouch)
+            {
+                this._overlay.on("touchend", Y.bind(this._planarEventDispatcher, this));
+            }
+            else
+            {
+                this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
+                this.on("mouseout", this.hideTooltip);
+            }
         }
         if(tt)
         {
+            this.on("markerEvent:touchend", Y.bind(function(e) {
+                var marker = e.series.get("markers")[e.index];
+                if(this._activeMarker && marker === this._activeMarker)
+                {
+                    this._activeMarker = null;
+                    this.hideTooltip(e);
+                }
+                else
+                {
+
+                    this._activeMarker = marker;
+                    tt.markerEventHandler.apply(this, [e]);
+                }
+            }, this));
             if(hideEvent && showEvent && hideEvent == showEvent)
             {
                 this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
@@ -515,8 +554,9 @@ ChartBase.prototype = {
             seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
             items = this.getSeriesItems(series, index),
-            pageX = e.pageX,
-            pageY = e.pageY,
+            isTouch = e && e.hasOwnProperty("changedTouches"),
+            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,
+            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             x = pageX - cb.getX(),
             y = pageY - cb.getY();
         if(type == "mouseenter")
@@ -528,7 +568,7 @@ ChartBase.prototype = {
             type = "mouseout";
         }
         series.updateMarkerState(type, index);
-        e.halt();
+        e.halt(true);
         /**
          * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseover event.
          * 
@@ -842,6 +882,7 @@ ChartBase.prototype = {
                 markerEventHandler: function(e)
                 {
                     var tt = this.get("tooltip"),
+                    msg;
                     msg = tt.markerLabelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 },
@@ -899,10 +940,17 @@ ChartBase.prototype = {
             i = 0,
             len = seriesArray.length,
             axis,
+            categoryValue,
+            seriesValue,
             series;
         if(categoryAxis)
         {
-            msg.appendChild(DOCUMENT.createTextNode(categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")])));
+            categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            if(Y_Lang.isString(categoryValue))
+            {
+                categoryValue = DOCUMENT.createTextNode(categoryValue);
+            }
+            msg.appendChild(categoryValue);
         }
 
         for(; i < len; ++i)
@@ -912,8 +960,15 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
+                seriesValue =  axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]);
                 msg.appendChild(DOCUMENT.createElement("br"));
-                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")])));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+                msg.appendChild(DOCUMENT.createTextNode(": "));
+                if(Y_Lang.isString(seriesValue))
+                {
+                    seriesValue = DOCUMENT.createTextNode(seriesValue);
+                }
+                msg.appendChild(seriesValue);
             }
         }
         return msg;
@@ -945,12 +1000,24 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = DOCUMENT.createElement("div");
-        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
-        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        var msg = DOCUMENT.createElement("div"),
+            categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
+            seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(categoryValue))
+        {
+            categoryValue = DOCUMENT.createTextNode(categoryValue);
+        }
+        msg.appendChild(categoryValue);
         msg.appendChild(DOCUMENT.createElement("br"));
-        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
-        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(seriesValue))
+        {
+            seriesValue = DOCUMENT.createTextNode(seriesValue);
+        }
+        msg.appendChild(seriesValue);
         return msg; 
     },
 

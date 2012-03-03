@@ -55,8 +55,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            pageX = e.pageX,
-            pageY = e.pageY,
+            isTouch = e && e.hasOwnProperty("changedTouches"),
+            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,
+            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             posX = pageX - bb.getX(),
             posY = pageY - bb.getY(),
             offset = {
@@ -81,6 +82,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             markerPlane,
             len,
             coords;
+        e.halt(true);
         if(direction == "horizontal")
         {
             catAxis = "x";
