@@ -10349,6 +10349,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
             "file", 
@@ -10529,7 +10530,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b4573605dceffdd6870aa329be998eff';
+YUI.Env[Y.version].md5 = 'c3b5046f844ecffa41fb14784dbd4d12';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

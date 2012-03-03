@@ -206,13 +206,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
       }
   },
 
-
-  _afterFocusedChange : function (ev) {
-    if (ev.newVal) {
-       CalendarBase.updateStatus("Calendar with two month panes, currently set to " + ydate.format(this.get("date"), {format:"%B %Y"}));
-    }
-  },
-
     /**
      * An internal utility method that generates a list of selected dates 
      * from the hash storage.
@@ -264,7 +257,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */
     _renderSelectedDate : function (oDate) {
         if (this._isDateVisible(oDate)) {
-            this._dateToNode(oDate).addClass(CAL_DAY_SELECTED);
+            this._dateToNode(oDate).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
         }
     },
 
@@ -278,7 +271,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */
     _renderUnselectedDate : function (oDate) {
         if (this._isDateVisible(oDate)) {
-            this._dateToNode(oDate).removeClass(CAL_DAY_SELECTED);
+            this._dateToNode(oDate).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
         }
     },
 
@@ -610,7 +603,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */
     _clearSelection : function (noevent) {
         this._selectedDates = {};
-        this.get("contentBox").all("." + CAL_DAY_SELECTED).removeClass(CAL_DAY_SELECTED);
+        this.get("contentBox").all("." + CAL_DAY_SELECTED).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
         if (!noevent) {
           this._fireSelectionChange();
         }
@@ -654,7 +647,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      */
     _renderCustomRules : function () {
 
-        this.get("contentBox").all("." + CAL_DAY + ",." + CAL_NEXTMONTH_DAY).removeClass(SELECTION_DISABLED);
+        this.get("contentBox").all("." + CAL_DAY + ",." + CAL_NEXTMONTH_DAY).removeClass(SELECTION_DISABLED).setAttribute("aria-disabled", false);
         
         if (!isEmpty(this._rules)) {
         var enRule = this.get("enabledDatesRule"),
@@ -668,7 +661,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                 if (matchingRules.length > 0) {
                     var dateNode = this._dateToNode(date);
                     if ((enRule && iOf(matchingRules, enRule) < 0) || (!enRule && disRule && iOf(matchingRules, disRule) >= 0)) {
-                            dateNode.addClass(SELECTION_DISABLED);
+                            dateNode.addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
                         }
                         
                     if (L.isFunction(this._filterFunction)) {
@@ -678,7 +671,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
                 }
                 else if (enRule) {
                    var dateNode = this._dateToNode(date);
-                   dateNode.addClass(SELECTION_DISABLED);
+                   dateNode.addClass(SELECTION_DISABLED).setAttribute("aria-disabled", true);
                 }
                 },
              this);
@@ -692,13 +685,13 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
   _renderSelectedDates : function () {
-    this.get("contentBox").all("." + CAL_DAY_SELECTED).removeClass(CAL_DAY_SELECTED);
+    this.get("contentBox").all("." + CAL_DAY_SELECTED).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
     
         for (var paneNum = 0; paneNum < this._paneNumber; paneNum++) {
         var paneDate = ydate.addMonths(this.get("date"), paneNum);
         var dateArray = this._getSelectedDatesInMonth(paneDate);
         each(dateArray, function (date) {
-            this._dateToNode(date).addClass(CAL_DAY_SELECTED);
+            this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("ari-selected", true);
                         },
              this);
       }
@@ -1376,6 +1369,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     calendar_status_class     : CAL_STATUS
   },
 
+  /*
+
   ARIA_STATUS_TEMPLATE: '<div role="status" aria-atomic="true" class="{calendar_status_class}"></div>',
 
   AriaStatus : null,
@@ -1391,6 +1386,8 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 
       CalendarBase.AriaStatus.set("text", statusString);
   },
+
+  */
 
    /**
     * The main content template for calendar.
@@ -1533,7 +1530,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     * @protected
     * @static
     */ 
-  CALDAY_TEMPLATE: '<td class="{calendar_col_class} {calendar_day_class} {calendar_col_visibility_class}" id="{calendar_day_id}" role="gridcell">' +
+  CALDAY_TEMPLATE: '<td class="{calendar_col_class} {calendar_day_class} {calendar_col_visibility_class}" id="{calendar_day_id}" role="gridcell" tabindex="-1">' +
                        '{day_content}' + 
                    '</td>',
 
