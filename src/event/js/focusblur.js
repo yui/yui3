@@ -79,7 +79,6 @@ function define(type, proxy, directEvent) {
 
         _notify: function (e, container) {
             var currentTarget = e.currentTarget,
-                                // document.get('ownerDocument') returns null
                 notifierData  = currentTarget.getData(nodeDataKey),
                 axisNodes     = currentTarget.ancestors(),
                 doc           = currentTarget.get('ownerDocument'),
