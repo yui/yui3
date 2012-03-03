@@ -42,7 +42,7 @@ When a template is rendered, expressions are evaluated and replaced with data. [
 Here's a simple template that creates a list of links:
 </p>
 
-```
+```handlebars
 <script id="list-template" type="text/x-handlebars-template">
     <p>YUI is brought to you by:</p>
 
@@ -135,7 +135,7 @@ A basic Handlebars expression starts with `\{{`, contains some text, and ends wi
 A simple Handlebars expression looks like this:
 </p>
 
-```
+```handlebars
 <h1>\{{title}}</h1>
 ```
 
@@ -177,7 +177,7 @@ Here's the default context used for the examples in the rest of this section:
 You can change the context using a [[#block expressions|block expression]]. Inside the block, the context will be set to the value referenced in the block's opening tag.
 </p>
 
-```
+```handlebars
 <div class="header">
     \{{#site}}
         <h1><a href="\{{url}}">\{{title}}</a></h1>
@@ -203,7 +203,7 @@ The special expression `\{{.}}` always evaluates to the current context, sort of
 Using blocks to change the context is optional. Expressions can reference deeply-nested properties using dot notation:
 </p>
 
-```
+```handlebars
 <div class="content">
     <h2>\{{article.title}}</h2>
 </div>
@@ -213,7 +213,7 @@ Using blocks to change the context is optional. Expressions can reference deeply
 The special expression `../` references the current context's parent scope.
 </p>
 
-```
+```handlebars
 <div class="content">
     \{{#article}}
         <h2><a href="\{{../site.url}}/article/\{{id}}">\{{title}}</a></h2>
@@ -247,7 +247,7 @@ The following example uses the [[#built-in block helpers|built-in]] `each` helpe
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <ul>
                 \{{#each gadgets}}
                     <li>\{{name}}</li>
@@ -285,7 +285,7 @@ The following example uses the [[#built-in block helpers|built-in]] `each` helpe
 The `each` helper is so useful that Handlebars will actually use it as the default helper if you create a block expression with an identifier that points to an array value. So we could also write the template above like this and get the same result:
 </p>
 
-```
+```handlebars
 <ul>
 \{{#gadgets}}
     <li>\{{name}}</li>
@@ -329,7 +329,7 @@ In order to prevent templates from becoming bogged down with logic that should b
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <h1>Currently online</h1>
 
                 \{{#if users}}
@@ -387,7 +387,7 @@ If we empty the `users` array and re-render the template, the list won't be incl
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <h1>Currently online</h1>
 
                 \{{#if users}}
@@ -433,7 +433,7 @@ We can add an `else` block to display an informative message when no users are o
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <h1>Currently online</h1>
 
                 \{{#if users}}
@@ -460,12 +460,7 @@ We can add an `else` block to display an informative message when no users are o
                 ```
                 <h1>Currently online</h1>
 
-                <ul>
-                    <li>Ryan Grove</li>
-                    <li>Eric Ferraiuolo</li>
-                    <li>Lucas Smith</li>
-                    <li>Dav Glass</li>
-                </ul>
+                <p>Nobody's here!</p>
                 ```
             </td>
         </tr>
@@ -490,7 +485,7 @@ The `unless` block helper does exactly the opposite of the `if` helper: it rende
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <h1>Currently online</h1>
 
                 \{{#unless users}}
@@ -522,7 +517,12 @@ The `unless` block helper does exactly the opposite of the `if` helper: it rende
                 ```
                 <h1>Currently online</h1>
 
-                <p>Nobody's here!</p>
+                <ul>
+                    <li>Ryan Grove</li>
+                    <li>Eric Ferraiuolo</li>
+                    <li>Lucas Smith</li>
+                    <li>Dav Glass</li>
+                </ul>
                 ```
             </td>
         </tr>
@@ -535,29 +535,29 @@ The `unless` block helper does exactly the opposite of the `if` helper: it rende
 An expression beginning with `\{{!` is treated as a comment and won't show up in the rendered output.
 </p>
 
-<pre class="code">
+```handlebars
 \{{! I'm a Handlebars comment! I won't show up in rendered output. }}
-&lt;!-- I'm an HTML comment! I will show up in rendered output. --&gt;
-</pre>
+<!-- I'm an HTML comment! I will show up in rendered output. -->
+```
 
 <p>
 Multi-line comments work too.
 </p>
 
-<pre class="code">
+```handlebars
 \{{!
     I'm a multi-line comment!
 }}
-</pre>
+```
 
 <p>
 Unfortunately, Handlebars doesn't ignore expressions inside comments, so you can't actually comment out an expression.
 </p>
 
-<pre class="code">
-&lt;!-- This won't work (it'll leave a trailing "}}" behind) --&gt;
+```handlebars
+<!-- This won't work (it'll leave a trailing "}}" behind) -->
 \{{! \{{expression}} }}
-</pre>
+```
 
 <h4>Partial Expressions</h4>
 
@@ -579,7 +579,7 @@ Helper functions are functions that are registered with the Handlebars runtime u
 A helper function can accept parameters and even entire blocks of template content. Here's how you might call a simple inline helper to render an HTML link, passing in the link text and URL:
 </p>
 
-```
+```handlebars
 \{{link "Handlebars docs" "http://handlebarsjs.com"}}
 ```
 
@@ -587,11 +587,11 @@ A helper function can accept parameters and even entire blocks of template conte
 Block helpers have a slightly different syntax, using an opening and closing tag to delimit an entire block of template content. The helper name is specified in the opening and closing tags of the block:
 </p>
 
-<pre class="code">
+```handlebars
 \{{#list contents}}
     \{{link text url}}
 \{{/list}}
-</pre>
+```
 
 <p>
 Many of Handlebars' own features are implemented as [[#Built-in Block Helpers]].
@@ -628,7 +628,7 @@ We can use this helper to render the following template:
 <strong>Template Source</strong>
 </p>
 
-```
+```handlebars
 <ul>
     <li>\{{{link "Pie" "http://pieisgood.org/"}}}</li>
     <li>\{{{link kittens.text kittens.url}}}</li>
@@ -704,7 +704,7 @@ Y.Handlebars.registerHelper('link', function (options) {
 In the template, pass hash arguments as key/value pairs delimited by `=` and separated by a space. Keys must be simple identifiers. Values may be literal values (strings, bools, integers) or references to data properties.
 </p>
 
-```
+```handlebars
 <ul>
     <li>\{{link text="Pie" url="http://pieisgood.org/"}}</li>
     <li>\{{link text=kittens.text url=kittens.url}}</li>
@@ -727,7 +727,7 @@ Y.Handlebars.registerHelper('link', function (text, options) {
 });
 ```
 
-```
+```handlebars
 <ul>
     <li>\{{link "Pie" url="http://pieisgood.org/"}}</li>
     <li>\{{link kittens.text url=kittens.url}}</li>
@@ -782,7 +782,7 @@ Y.Handlebars.registerHelper('gamera', function (options) {
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <p>Gamera is really neat!</p>
 
                 \{{#gamera}}
@@ -850,7 +850,7 @@ The `each` helper iterates over an array. The block will be rendered once for ea
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <h1>Bands Ryan likes</h1>
 
                 <ul>
@@ -894,7 +894,7 @@ The `each` helper iterates over an array. The block will be rendered once for ea
 If you create a block expression with an identifier that points to an array value, Handlebars will automatically use the `each` helper to iterate over that array, so we could rewrite the template above like this and get the same result:
 </p>
 
-```
+```handlebars
 <h1>Bands Ryan likes</h1>
 
 <ul>
@@ -934,7 +934,7 @@ The `with` block helper renders the given block in a different context. This can
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <p class="author">
                 \{{#with author}}
                     \{{firstName}} \{{lastName}}
@@ -969,7 +969,7 @@ The `with` block helper renders the given block in a different context. This can
 If you create an expression with an identifier that points to an object value, Handlebars will automatically use the `with` helper to render the block in the context of that object, so we could rewrite the template above like this and get the same result:
 </p>
 
-```
+```handlebars
 <p class="author">
 \{{#author}}
     \{{firstName}} \{{lastName}}
@@ -1009,7 +1009,7 @@ Y.Handlebars.registerPartial('footer', '<p>Copyright (c) 2012 by Me.</p>');
     <tbody>
         <tr>
             <td width="33%">
-                ```
+                ```handlebars
                 <div>
                   \{{> header}}
 
@@ -1049,7 +1049,7 @@ Y.Handlebars.registerPartial('footer', '<p>Copyright (c) 2012 by Me.</p>');
 When you plan to compile and render Handlebars templates on the client, the easiest way to deliver templates to the browser is to include them in the HTML page inside a `<script>` element with the attribute `type="text/x-handlebars-template"`. The browser won't recognize this type, so it won't try to execute the contents of the `<script>` node.
 </p>
 
-```
+```handlebars
 <script id="list-template" type="text/x-handlebars-template">
     <p>YUI is brought to you by:</p>
 
@@ -1229,15 +1229,15 @@ Next, install the Handlebars npm module. Note that this program is maintained by
 </p>
 
 ```terminal
-npm install -g handlebars
+$ npm install -g handlebars
 ```
 
 <p>
 Now you can run the `handlebars` executable to precompile a template into JavaScript code.
 </p>
 
-```
-handlebars my-template.handlebars -f precompiled-template.js
+```terminal
+$ handlebars my-template.handlebars -f precompiled-template.js
 ```
 
 <p>

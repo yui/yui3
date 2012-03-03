@@ -1,5 +1,6 @@
 <style>
 .example #corn{
+    position: relative;
     background: url({{{componentAssets}}}/images/corn.jpg);
     width: 232px;
     height: 181px;
@@ -9,7 +10,7 @@
     border: none;
 }
 .example #ruler{
-    width: 656px;
+    width: 650px;
     height: 42px;
     background: url("{{{componentAssets}}}/images/ruler_ticks.png") repeat-x scroll -1px 24px #DDCEB7;
 }
@@ -22,18 +23,32 @@
 #input {
     height: 1.6em;
 }
+#output{
+    position: absolute;
+    top: -40px;
+    width: 100px;
+    right: -49px;
+    text-align: center;
+    cursor: pointer;
+}
+#output em{
+    color: #FF0000;
+    font-size: 150%;
+    font-style: normal;
+    line-height: 1.7em;
+}
 </style>
 
 <body>
     <div id="ruler"></div>
-    <div id="corn"></div>
+    <div id="corn">
+        <div id="output">? px<br><em>|</em></div>        
+    </div>
     <label>Width:</label>
     <input id="input" size="2" value="550"> px
     <button class="yui3-button btn-set">Set</button>
 
     <button class="yui3-button btn-get">Get</button>
-    <label>Width:</label>
-    <span id="output"></span> px
 <script>
 YUI().use('node', 'button', function(Y) {
     var corn = Y.one('#corn'),
@@ -43,20 +58,23 @@ YUI().use('node', 'button', function(Y) {
         output = Y.one('.example #output');
         
 
-    Y.one('.btn-get').on('click', function(e) {
+    var getWidth = function(){
        var width = corn.get('offsetWidth');
-       output.setContent(width); // display width near the get button
-    });
+       output.setContent(width + 'px<br><em>|</em>'); // display width near the get button
+    }
+    
+    getButton.on('click', getWidth);
+    output.on('click', getWidth);
 
 
-    Y.one('.btn-set').on('click', function(e) {
+    setButton.on('click', function(e) {
         var value = input.get('value'),
             width = corn.get('offsetWidth');
         if (value == '') {
             input.set('value', width);
         } else if (!isNaN(parseInt(value))) { // if the value in the input is a number
             corn.set('offsetWidth', value);
-            output.setContent(''); // clear out the value near the get button
+            output.setContent('? ' + 'px<br><em>|</em>'); // clear out the value near the get button
         }
     });
 });

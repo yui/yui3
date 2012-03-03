@@ -136,7 +136,7 @@ Button.prototype = {
     * @param label {string}
     * @private
     */
-    _setLabel: function (label) {
+    _uiSetLabel: function (label) {
         var node    = this.getNode(),
             tagName = node.get('tagName').toLowerCase();
 
@@ -150,12 +150,12 @@ Button.prototype = {
     },
 
     /**
-    * @method _setDisabled
+    * @method _uiSetDisabled
     * @description Setter for the 'disabled' ATTR
     * @param value {boolean}
     * @private
     */
-    _setDisabled: function(value) {
+    _uiSetDisabled: function(value) {
         var node = this.getNode();
         
         node.getDOMNode().disabled = value; // avoid rerunning setter when this === node
@@ -175,14 +175,14 @@ Button.prototype = {
 */
 Button.ATTRS = {
     label: {
-        setter: '_setLabel',
+        setter: '_uiSetLabel',
         getter: '_getLabel',
         lazyAdd: false
     },
 
     disabled: {
         value: false,
-        setter: '_setDisabled',
+        setter: '_uiSetDisabled',
         lazyAdd: false
     }
 };
@@ -209,6 +209,17 @@ Button.CLASS_NAMES = {
     DISABLED: getClassName('button', 'disabled'),
     SELECTED: getClassName('button', 'selected'),
     LABEL   : getClassName('button', 'label')
+};
+
+Button.ARIA_STATES = {
+    PRESSED : 'aria-pressed',
+    CHECKED : 'aria-checked'
+};
+
+Button.ARIA_ROLES = {
+    BUTTON  : 'button',
+    CHECKBOX: 'checkbox',
+    TOGGLE  : 'toggle'
 };
 
 Y.mix(Button.prototype, Y.AttributeCore.prototype);
