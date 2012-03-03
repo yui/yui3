@@ -2,6 +2,7 @@
     "app": {
         "use": [
             "app-base",
+            "app-transitions",
             "model",
             "model-list",
             "router",
@@ -14,7 +15,25 @@
             },
 
             "app-transitions": {
-                "requires": ["app-base", "parallel", "transition"]
+                "requires": ["app-base"]
+            },
+
+            "app-transitions-css": {
+                "type": "css"
+            },
+
+            "app-transitions-native": {
+                "condition": {
+                    "trigger": "app-transitions",
+                    "test"   : "app-transitions-test.js"
+                },
+
+                "requires" : [
+                    "app-transitions",
+                    "app-transitions-css",
+                    "parallel",
+                    "transition"
+                ]
             },
 
             "controller": {

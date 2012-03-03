@@ -1,4 +1,3 @@
-<!doctype html>
 <html>
 <head>
 <title>ImageLoader Unit Tests</title>
@@ -87,7 +86,7 @@ YUI({
 }).use('imageloader-tests', 'test-console', function (Y) {
 
     (new Y.Test.Console()).render('#log');
-    
+
     // note, image group onload tasks, such as starting the time limit timer, are set up at domready time, meaning the timeLimit test can be affected by when the TestRunner starts
     Y.on('domready', function() {
         Y.Test.Runner.run();
