@@ -5,12 +5,12 @@
 	import com.yahoo.util.YUIBridge;
 	
 	import flash.display.Loader;
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.DataEvent;
 	import flash.events.Event;
-	import flash.events.FocusEvent;
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
 	import flash.events.KeyboardEvent;
@@ -25,25 +25,29 @@
 	import flash.net.URLVariables;
 	import flash.ui.Keyboard;
 	import flash.utils.Dictionary; 
-
-
+	import flash.utils.setTimeout;
+	import flash.filters.GlowFilter;
 
 	[SWF(backgroundColor=0xFFFFFF)]
 
 	/**
 	 * The base FlashUploader class for YUI 3.5 FlashUploader.
 	 * 
+	 * @class FlashUploader
 	 * @author Allen Rabinovich
+	 * 
 	 */
 
 	public class FlashUploader extends Sprite {
 
-	//--------------------------------------
-	//  Constructor
-	//--------------------------------------
-
+  /**
+   * Instantiates FlashUploader
+   * @constructor
+   */  
 		public function FlashUploader()
 		{
+			trace("Adding activate event");
+
             fileList = {};
             filesInProgress = {};
 			singleFile = new FileReference();
@@ -52,18 +56,64 @@
 			yuiBridge = new YUIBridge(this.stage);
 			yuiBridge.addCallbacks ({clearFileList:clearFileList, upload:upload,cancel:cancel,setAllowMultipleFiles:setAllowMultipleFiles,setSimUploadLimit:setSimUploadLimit,setFileFilters:setFileFilters,enable:enable, disable:disable});
 
+			/*
+			_accProps.silent = false;
+			_accProps.name = "Upload button";
+			_accProps.description = "Upload button";
+
+			this.accessibilityProperties = _accProps;
+        
+            function updateAccessibility():void {
+               trace("Accactive?", Accessibility.active);
+               if(Accessibility.active) {
+                   Accessibility.updateProperties();
+               }
+            }
+
+            setTimeout(updateAccessibility, 2000); 
+      		*/
+
+
+      		this.buttonGlow.color = 0x819DEB;
+      		this.buttonGlow.inner = true;
+      		this.buttonGlow.blurX = this.buttonGlow.blurY = 4;
+      		this.buttonGlow.knockout = true;
 
 			this.renderAsTransparent();
 		}
+ 
+
+	 	private function transparentStageResize (evt:Event) : void {
+		 		buttonSprite.width = buttonSprite.stage.stageWidth;
+		 		buttonSprite.height = buttonSprite.stage.stageHeight;
+		 	}
+
+		private function keyboardEventHandler (evt : KeyboardEvent) : void {
+		 		trace("key received: " + evt.keyCode);
+		 		switch (evt.keyCode) {
+		 			case 9:
+		 			   if (evt.shiftKey) {
+		 			   	 trace("tabback");
+		 			   	 this.yuiBridge.sendEvent({type:"tabback"});
+		 			   }
+		 			   else {
+		 			   trace("tabforward");
+		 			   this.yuiBridge.sendEvent({type:"tabforward"});
+		 			   }
+		 			   this.buttonSprite.filters = [];
+		 			   break;
+		 			case 32: 
+		 			case 13:
+		 			   if (this.enabled) {
+			 			   this.handleMouseClick(new MouseEvent("mousevent"));
+			 		   }
+			 		   break;
+		 		}
+		 	}
 
 
 		private function renderAsTransparent () : void {
 		
-		 	function transparentStageResize (evt:Event) : void {
-		 		buttonSprite.width = buttonSprite.stage.stageWidth;
-		 		buttonSprite.height = buttonSprite.stage.stageHeight;
-		 	}
-		 	
 			buttonSprite.graphics.beginFill(0xffffff, 0);
 			buttonSprite.graphics.drawRect(0,0,5,5);
 			buttonSprite.width = this.stage.stageWidth;
@@ -73,8 +123,10 @@
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.tabChildren = false;
 			
-			this.stage.addEventListener(Event.RESIZE, transparentStageResize);
-			
+			this.stage.addEventListener(Event.RESIZE, this.transparentStageResize);
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyboardEventHandler);
+			trace("1.0");
+
 			this.buttonMode = true;
 			this.useHandCursor = true;
 			this.enable();
@@ -90,6 +142,9 @@
 	    //--------------------------------------------------------------------------
 
 	    private var buttonSprite:Sprite = new Sprite();
+	    private var buttonGlow:GlowFilter = new GlowFilter();
+
+	    private var enabled:Boolean = true;
 
 		private var allowMultiple:Boolean = false;
 		private var filterArray:Array;
@@ -164,19 +219,27 @@
 
 		public function enable () : void {
 
+
+
+				this.enabled = true;
 				this.addEventListener(MouseEvent.CLICK, handleMouseClick);
 			
 				this.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				this.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+				this.stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+				//this.sbroot.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, handleMouseUp);
 				this.addEventListener(MouseEvent.ROLL_OVER, handleRollOver);
 				this.addEventListener(MouseEvent.ROLL_OUT, handleRollOut);
 		}
 		
 		public function disable () : void {
+			    this.enabled = false;
 				this.removeEventListener(MouseEvent.CLICK, handleMouseClick);
-			
+
 				this.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				this.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+				this.stage.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);				
+				//this.sbroot.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, handleMouseUp);
 				this.removeEventListener(MouseEvent.ROLL_OVER, handleRollOver);
 				this.removeEventListener(MouseEvent.ROLL_OUT, handleRollOut);
 		}
@@ -253,7 +316,7 @@
 			yuiBridge.sendEvent(newEvent);
 		}
 
-		private function handleMouseUp (event:MouseEvent) : void {
+		private function handleMouseUp (event:*) : void {
 			var newEvent:Object = new Object();
 			newEvent.type = "mouseup";
 			yuiBridge.sendEvent(newEvent);

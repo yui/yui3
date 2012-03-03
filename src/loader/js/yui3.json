@@ -2070,6 +2070,7 @@
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
             "file", 
