@@ -41,11 +41,7 @@ NumericAxis.ATTRS = {
     labelFunction: { 
         value: function(val, format)
         {
-            if(format)
-            {
-                return Y.DataType.Number.format(val, format);
-            }
-            return val;
+            return this.formatLabel.apply(this, arguments);
         }
     },
 
@@ -69,6 +65,23 @@ NumericAxis.ATTRS = {
 
 Y.extend(NumericAxis, Y.AxisType,
 {
+    /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        if(format)
+        {
+            return Y.DataType.Number.format(val, format);
+        }
+        return val;
+    },
+
     /**
      * Returns the sum of all values per key.
      *
