@@ -67,6 +67,9 @@
     visibility: hidden;
 }
 
+/* Removed because it prevented cmd + zoom resizing in Chrome (at least) */
+/*
 .yui3-datatable-header {
     -webkit-text-size-adjust: none;
 }
+*/
