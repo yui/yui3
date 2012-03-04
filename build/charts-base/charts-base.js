@@ -12567,7 +12567,7 @@ ChartBase.prototype = {
         {
             cb.removeChild(oldNode);
         }
-        tt.node.setAttribute("id", id);
+        tt.node.set("id", id);
         tt.node.setStyle("visibility", "hidden");
         cb.appendChild(tt.node);
     },
@@ -12654,8 +12654,8 @@ ChartBase.prototype = {
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 }
             };
-        node.setAttribute("id", this.get("id") + "_tooltip");
         node = Y.one(node);
+        node.set("id", this.get("id") + "_tooltip");
         node.setStyle("fontSize", "85%");
         node.setStyle("opacity", "0.83");
         node.setStyle("position", "absolute");
@@ -14364,6 +14364,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             seriesCollection = this.get("seriesCollection"),
             axesCollection = this._axesCollection,
             tooltip = this.get("tooltip").node;
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
         len = seriesCollection ? seriesCollection.length : 0;
         for(; i < len; ++i)
         {
@@ -14386,10 +14396,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(tooltip)
         {
+            tooltip.empty();
             tooltip.remove(true);
         }
         if(this._overlay)
         {
+            this._overlay.empty();
             this._overlay.remove(true);
         }
     },
@@ -14404,6 +14416,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     _getAriaMessage: function(key)
     {
         var msg = "",
+            series,
+            items,
             categoryItem,
             valueItem,
             seriesIndex = this._seriesIndex,
@@ -15304,6 +15318,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     {
         var msg = "",
             categoryItem,
+            items,
+            series,
             valueItem,
             seriesIndex = 0,
             itemIndex = this._itemIndex,
