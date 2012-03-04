@@ -1,5 +1,7 @@
 .yui3-skin-night .yui3-datatable-sortable-column {
     cursor: pointer;
+    padding-right: 25px;
+    position: relative;
 }
 
 .yui3-skin-night .yui3-datatable-columns .yui3-datatable-sorted,
@@ -46,13 +48,6 @@
         rgba(255,255,255, 0.1) 40%,
         rgba(255,255,255, 0.01) 80%,
         transparent);
-}
-
-.yui3-skin-night .yui3-datatable-sort-liner {
-    display: block;
-    height: 100%;
-    padding-right: 15px;
-    position: relative;
 }
 
 .yui3-skin-night .yui3-datatable-sort-indicator {
