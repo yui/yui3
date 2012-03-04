@@ -65,7 +65,7 @@ Histogram.prototype = {
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         if(this.get("direction") == "vertical")
         {
@@ -139,7 +139,7 @@ Histogram.prototype = {
                     }
                     if(borderColors)
                     {
-                        style.border.colors = borderColors[i % borderColors.length];
+                        style.border.color = borderColors[i % borderColors.length];
                     }
                     marker = this.getMarker(style, graphOrder, i);
                 }
