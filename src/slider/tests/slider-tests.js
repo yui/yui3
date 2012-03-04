@@ -23,11 +23,12 @@ Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     }
 };
 // END   copied this from event-key-test.js to add tests for changing value by keyboard
-Y.Node.prototype.simulate = function (type) {
+Y.Node.prototype.simulate = function (type, config) {
     var simulate = Y.Event.simulate,
-        el       = this._node;
+        args     = [this._node, type].concat(Y.Array(arguments, 1, true));
+
     if(type) {
-        simulate(el, type);
+        simulate.apply(Y.Event, args);
     } 
 };
 
@@ -527,6 +528,56 @@ suite.add( new Y.Test.Case({
     }
 }));
 
+suite.add( new Y.Test.Case({
+    name: "Keyboard",
+
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "clicking on the rail should move the thumb": function () {
+        var slider = new Y.Slider({
+                length: '350px',
+                min   : 0,
+                max   : 100,
+                value : 50
+            }),
+            position, fired, railRegion, where;
+
+        function thumbPosition() {
+            return parseInt(slider.thumb.getStyle('left'), 10);
+        }
+
+        slider.render( "#testbed" );
+
+        railRegion = slider.rail.get('region');
+        where = {
+            clientX: railRegion.left + Math.floor(railRegion.width / 2),
+            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+        };
+
+        Y.Assert.areNotSame(0, thumbPosition());
+
+        slider.set('value', 0);
+
+        Y.Assert.areSame(0, thumbPosition());
+
+        slider.on('railMouseDown', function (e) {
+            fired = true;
+        });
+
+        slider.rail.simulate('mousedown', where);
+        slider.rail.simulate('mouseup', where);
+        slider.rail.simulate('click', where);
+
+        Y.Assert.isTrue(fired);
+        Y.Assert.isTrue( (thumbPosition() > 0) );
+    }
+}));
 
 suite.add( new Y.Test.Case({
     name: "Keyboard",
@@ -662,19 +713,6 @@ suite.add( new Y.Test.Case({
     }
 }));
 
-
-suite.add( new Y.Test.Case({
-    name: "Runtime expectations",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
 
 /*
 suite.add( new Y.Test.Case({

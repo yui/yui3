@@ -147,9 +147,11 @@ var PARENT_NODE = 'parentNode',
                                 if (test[0] === 'tagName' && !Selector._isXML) {
                                     value = value.toUpperCase();    
                                 }
-                                // use getAttribute for non-standard attributes
-                                if (value === undefined && tmpNode.getAttribute) {
-                                    value = tmpNode.getAttribute(test[0]);
+                                if (typeof value != 'string' && value !== undefined && value.toString) {
+                                    value = value.toString(); // coerce for comparison
+                                } else if (value === undefined && tmpNode.getAttribute) {
+                                    // use getAttribute for non-standard attributes
+                                    value = tmpNode.getAttribute(test[0], 2); // 2 === force string for IE
                                 }
                             }
 
@@ -388,17 +390,17 @@ var PARENT_NODE = 'parentNode',
                 selector = selector.replace(Selector._re.esc, '\uE000');
             }
 
-            attrs = selector.match(Selector._re.attr);
             pseudos = selector.match(Selector._re.pseudos);
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, '\uE001');
-            }
 
             if (pseudos) {
                 selector = selector.replace(Selector._re.pseudos, '\uE002');
             }
 
+            attrs = selector.match(Selector._re.attr);
+
+            if (attrs) {
+                selector = selector.replace(Selector._re.attr, '\uE001');
+            }
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
@@ -441,6 +443,10 @@ var PARENT_NODE = 'parentNode',
         getters: {
             href: function(node, attr) {
                 return Y.DOM.getAttribute(node, attr);
+            },
+
+            id: function(node, attr) {
+                return Y.DOM.getId(node);
             }
         }
     };

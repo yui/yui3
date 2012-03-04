@@ -46,12 +46,12 @@ Get Utility Change History
   on script or link nodes. Most browsers support this on script nodes, but only
   Firefox 9+ currently supports this on link nodes.
 
-* CSS load completion is now detected reliably in WebKit browsers and in older
-  versions of Firefox, which don't support the `load` event on link nodes.
-  Unfortunately, while our workaround makes it possible to detect when loading
-  is complete, we still can't detect whether it completed successfully or
-  with an error, so in these browsers CSS resources are always assumed to have
-  loaded successfully.
+* CSS load completion is now detected reliably in older versions of
+  WebKit (<535.24) and Firefox (<9), which don't support the `load` event on
+  link nodes. Unfortunately, while our workaround makes it possible to detect
+  when loading is complete, we still can't detect whether it completed
+  successfully or with an error, so in these browsers CSS resources are always
+  assumed to have loaded successfully.
 
 * Added a `Y.Get.load()` method, which allows you to load both CSS and JS
   resources in a single transaction.

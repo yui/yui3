@@ -33,6 +33,8 @@ var Lang    = Y.Lang,
     Router   = Y.Router,
     View     = Y.View,
 
+    getClassName = Y.ClassNameManager.getClassName,
+
     win = Y.config.win,
 
     App;
@@ -152,11 +154,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // The resulting hodgepodge of metadata is then stored as the instance's
         // `views` object, and no one's objects were harmed in the making.
-        this.views = views;
-
+        this.views        = views;
         this._viewInfoMap = {};
 
-        this.after('activeViewChange', this._afterActiveViewChange);
+        // Using `bind()` to aid extensibility.
+        this.after('activeViewChange', Y.bind('_afterActiveViewChange', this));
 
         // PjaxBase will bind click events when `html5` is `true`, so this just
         // forces the binding when `serverRouting` and `html5` are both falsy.
@@ -273,10 +275,12 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         container.addClass(App.CSS_CLASS);
         viewContainer.addClass(App.VIEWS_CSS_CLASS);
 
+        // Prevents needless shuffling around of nodes and maintains DOM order.
         if (activeView && !viewContainer.contains(activeViewContainer)) {
             viewContainer.appendChild(activeViewContainer);
         }
 
+        // Prevents needless shuffling around of nodes and maintains DOM order.
         if (!container.contains(viewContainer) && !areSame) {
             container.appendChild(viewContainer);
         }
@@ -981,8 +985,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     // TODO: Should these go on the `prototype`? Also Document these!
-    CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
-    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views'),
+    CSS_CLASS      : getClassName('app'),
+    VIEWS_CSS_CLASS: getClassName('app', 'views'),
 
     /**
     Properties that shouldn't be turned into ad-hoc attributes when passed to

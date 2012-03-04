@@ -9,6 +9,7 @@ YUI.add('event-focus', function(Y) {
 var Event    = Y.Event,
     YLang    = Y.Lang,
     isString = YLang.isString,
+    arrayIndex = Y.Array.indexOf,
     useActivate = YLang.isFunction(
         Y.DOM.create('<p onbeforeactivate=";"/>').onbeforeactivate);
 
@@ -30,98 +31,191 @@ function define(type, proxy, directEvent) {
         },
 
         _proxy: function (e, notifier, delegate) {
-            var node       = e.target,
-                notifiers  = node.getData(nodeDataKey),
-                yuid       = Y.stamp(e.currentTarget._node),
-                defer      = (useActivate || e.target !== e.currentTarget),
-                sub        = notifier.handle.sub,
-                filterArgs = [node, e].concat(sub.args || []),
+            var target        = e.target,
+                currentTarget = e.currentTarget,
+                notifiers     = target.getData(nodeDataKey),
+                yuid          = Y.stamp(currentTarget._node),
+                defer         = (useActivate || target !== currentTarget),
                 directSub;
                 
-            notifier.currentTarget = (delegate) ? node : e.currentTarget;
-            notifier.container     = (delegate) ? e.currentTarget : null;
+            notifier.currentTarget = (delegate) ? target : currentTarget;
+            notifier.container     = (delegate) ? currentTarget : null;
 
-            if (!sub.filter || sub.filter.apply(node, filterArgs)) {
-                // Maintain a list to handle subscriptions from nested
-                // containers div#a>div#b>input #a.on(focus..) #b.on(focus..),
-                // use one focus or blur subscription that fires notifiers from
-                // #b then #a to emulate bubble sequence.
-                if (!notifiers) {
-                    notifiers = {};
-                    node.setData(nodeDataKey, notifiers);
+            // Maintain a list to handle subscriptions from nested
+            // containers div#a>div#b>input #a.on(focus..) #b.on(focus..),
+            // use one focus or blur subscription that fires notifiers from
+            // #b then #a to emulate bubble sequence.
+            if (!notifiers) {
+                notifiers = {};
+                target.setData(nodeDataKey, notifiers);
 
-                    // only subscribe to the element's focus if the target is
-                    // not the current target (
-                    if (defer) {
-                        directSub = Event._attach(
-                            [directEvent, this._notify, node._node]).sub;
-                        directSub.once = true;
-                    }
+                // only subscribe to the element's focus if the target is
+                // not the current target (
+                if (defer) {
+                    directSub = Event._attach(
+                        [directEvent, this._notify, target._node]).sub;
+                    directSub.once = true;
                 }
+            } else {
+                // In old IE, defer is always true.  In capture-phase browsers,
+                // The delegate subscriptions will be encountered first, which
+                // will establish the notifiers data and direct subscription
+                // on the node.  If there is also a direct subscription to the
+                // node's focus/blur, it should not call _notify because the
+                // direct subscription from the delegate sub(s) exists, which
+                // will call _notify.  So this avoids _notify being called
+                // twice, unnecessarily.
+                defer = true;
+            }
 
-                if (!notifiers[yuid]) {
-                    notifiers[yuid] = [];
-                }
+            if (!notifiers[yuid]) {
+                notifiers[yuid] = [];
+            }
 
-                notifiers[yuid].push(notifier);
+            notifiers[yuid].push(notifier);
 
-                if (!defer) {
-                    this._notify(e);
-                }
+            if (!defer) {
+                this._notify(e);
             }
         },
 
         _notify: function (e, container) {
-            var node        = e.currentTarget,
-                notifiers   = node.getData(nodeDataKey),
-                              // document.get('ownerDocument') returns null
-                doc         = node.get('ownerDocument') || node,
-                target      = node,
-                nots        = [],
-                notifier, i, len;
+            var currentTarget = e.currentTarget,
+                notifierData  = currentTarget.getData(nodeDataKey),
+                axisNodes     = currentTarget.ancestors(),
+                doc           = currentTarget.get('ownerDocument'),
+                delegates     = [],
+                                // Used to escape loops when there are no more
+                                // notifiers to consider
+                count         = notifierData ?
+                                    Y.Object.keys(notifierData).length :
+                                    0,
+                target, notifiers, notifier, yuid, match, tmp, i, len, sub, ret;
 
-            if (notifiers) {
-                // Walk up the parent axis until the origin node, 
-                while (target && target !== doc) {
-                    nots.push.apply(nots, notifiers[Y.stamp(target)] || []);
-                    target = target.get('parentNode');
-                }
-                nots.push.apply(nots, notifiers[Y.stamp(doc)] || []);
+            // clear the notifications list (mainly for delegation)
+            currentTarget.clearData(nodeDataKey);
 
-                for (i = 0, len = nots.length; i < len; ++i) {
-                    notifier = nots[i];
-                    e.currentTarget = nots[i].currentTarget;
+            // Order the delegate subs by their placement in the parent axis
+            axisNodes.push(currentTarget);
+            // document.get('ownerDocument') returns null
+            // which we'll use to prevent having duplicate Nodes in the list
+            if (doc) {
+                axisNodes.unshift(doc);
+            }
 
-                    if (notifier.container) {
-                        e.container = notifier.container;
+            // ancestors() returns the Nodes from top to bottom
+            axisNodes._nodes.reverse();
+
+            // Store the count for step 2
+            tmp = count;
+            axisNodes.some(function (node) {
+                var yuid      = Y.stamp(node),
+                    notifiers = notifierData[yuid],
+                    i, len;
+
+                if (notifiers) {
+                    count--;
+                    for (i = 0, len = notifiers.length; i < len; ++i) {
+                        if (notifiers[i].handle.sub.filter) {
+                            delegates.push(notifiers[i]);
+                        }
                     }
-
-                    notifier.fire(e);
                 }
 
-                // clear the notifications list (mainly for delegation)
-                node.clearData(nodeDataKey);
+                return !count;
+            });
+            count = tmp;
+
+            // Walk up the parent axis, notifying direct subscriptions and
+            // testing delegate filters.
+            while (count && (target = axisNodes.shift())) {
+                yuid = Y.stamp(target);
+
+                notifiers = notifierData[yuid];
+
+                if (notifiers) {
+                    for (i = 0, len = notifiers.length; i < len; ++i) {
+                        notifier = notifiers[i];
+                        sub      = notifier.handle.sub;
+                        match    = true;
+
+                        e.currentTarget = target;
+
+                        if (sub.filter) {
+                            match = sub.filter.apply(target,
+                                [target, e].concat(sub.args || []));
+
+                            // No longer necessary to test against this
+                            // delegate subscription for the nodes along
+                            // the parent axis.
+                            delegates.splice(
+                                arrayIndex(delegates, notifier), 1);
+                        }
+
+                        if (match) {
+                            // undefined for direct subs
+                            e.container = notifier.container;
+                            ret = notifier.fire(e);
+                        }
+
+                        if (ret === false || e.stopped === 2) {
+                            break;
+                        }
+                    }
+                    
+                    delete notifiers[yuid];
+                    count--;
+                }
+
+                if (e.stopped !== 2) {
+                    // delegates come after subs targeting this specific node
+                    // because they would not normally report until they'd
+                    // bubbled to the container node.
+                    for (i = 0, len = delegates.length; i < len; ++i) {
+                        notifier = delegates[i];
+                        sub = notifier.handle.sub;
+
+                        if (sub.filter.apply(target,
+                            [target, e].concat(sub.args || []))) {
+
+                            e.container = notifier.container;
+                            e.currentTarget = target;
+                            ret = notifier.fire(e);
+                        }
+
+                        if (ret === false || e.stopped === 2) {
+                            break;
+                        }
+                    }
+                }
+
+                if (e.stopped) {
+                    break;
+                }
             }
         },
 
         on: function (node, sub, notifier) {
-            sub.onHandle = this._attach(node._node, notifier);
+            sub.handle = this._attach(node._node, notifier);
         },
 
         detach: function (node, sub) {
-            sub.onHandle.detach();
+            sub.handle.detach();
         },
 
         delegate: function (node, sub, notifier, filter) {
             if (isString(filter)) {
-                sub.filter = Y.delegate.compileFilter(filter);
+                sub.filter = function (target) {
+                    return Y.Selector.test(target._node, filter,
+                        node === target ? null : node._node);
+                };
             }
 
-            sub.delegateHandle = this._attach(node._node, notifier, true);
+            sub.handle = this._attach(node._node, notifier, true);
         },
 
         detachDelegate: function (node, sub) {
-            sub.delegateHandle.detach();
+            sub.handle.detach();
         }
     }, true);
 }

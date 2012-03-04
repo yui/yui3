@@ -1,8 +1,1323 @@
+<style scoped>
+.handlebars-code pre.code {
+    height: 100%;
+    margin: 0;
+}
+
+.handlebars-code td,
+.handlebars-code th {
+    background: #fff;
+    padding: 0 0 0 12px;
+}
+
+.handlebars-code td:first-child,
+.handlebars-code th:first-child { padding-left: 0; }
+</style>
+
 <div class="intro">
 <p>
-Handlebars is a simple template language inspired by Mustache. This is a YUI port of the <a href="https://github.com/wycats/handlebars.js">original Handlebars project</a>.
+Handlebars is a simple template language inspired by <a href="http://mustache.github.com/">Mustache</a>. This component is a YUI port of the <a href="https://github.com/wycats/handlebars.js">original Handlebars project</a>.
+</p>
+
+<p>
+This guide covers the YUI port of Handlebars, which differs from the original Handlebars in only [[#Differences From Original Handlebars|a few minor ways]] and is kept closely in sync with the original. The official Handlebars documentation can be found at <a href="http://handlebarsjs.com/">handlebarsjs.com</a>.
 </p>
 </div>
 
 {{>getting-started}}
 
+<h2>Using Handlebars</h2>
+
+<h3>Quick Start</h3>
+
+<p>
+A Handlebars template is just some text that contains Handlebars [[#basic expressions|expressions]] like `\{{foo}}`. The text can be plain text, HTML, or anything else, although in most cases Handlebars is used to generate HTML. Handlebars doesn't actually care what format the document is, so it can be used for a wide variety of tasks.
+</p>
+
+<p>
+When a template is rendered, expressions are evaluated and replaced with data. [[#Block expressions]] can be used for iteration, simple if/else branching, and executing [[#helper functions]], but otherwise Handlebars is completely logic-less. This makes it ideal for separating content from functionality.
+</p>
+
+<p>
+Here's a simple template that creates a list of links:
+</p>
+
+```handlebars
+<script id="list-template" type="text/x-handlebars-template">
+    <p>YUI is brought to you by:</p>
+
+    <ul>
+        \{{#items}}
+            <li><a href="\{{url}}">\{{name}}</a></li>
+        \{{/items}}
+    </ul>
+</script>
+```
+
+<p>
+Wrapping the template in a `<script>` element with `type="text/x-handlebars-template"` is an easy way to put it in an HTML page and later render it on the client. The browser won't recognize the `text/x-handlebars-template` type, so it won't try to execute the script. When we're ready, we can extract the template and render it using `Y.Handlebars`. This is much more maintainable than storing templates in JavaScript strings.
+</p>
+
+```
+<script>
+YUI().use('handlebars', 'node-base', function (Y) {
+    // Extract the template string and compile it into a reusable function.
+    var source   = Y.one('#list-template').get('text'),
+        template = Y.Handlebars.compile(source),
+        html;
+
+    // Render the template to HTML using the specified data.
+    html = template({
+        items: [
+            {name: 'pie', url: 'http://pieisgood.org/'},
+            {name: 'mountain dew', url: 'http://www.mountaindew.com/'},
+            {name: 'kittens', url: 'http://www.flickr.com/search/?q=kittens'},
+            {name: 'rainbows', url: 'http://www.youtube.com/watch?v=OQSNhk5ICTI'}
+        ]
+    });
+
+    // Append the rendered template to the page.
+    Y.one('body').append(html);
+});
+</script>
+```
+
+<p>
+Once rendered and appended to the page, the output looks like this:
+</p>
+
+<div class="example">
+    <p>YUI is brought to you by:</p>
+
+    <ul>
+        <li><a href="http://pieisgood.org/">pie</a></li>
+        <li><a href="http://www.mountaindew.com/">mountain dew</a></li>
+        <li><a href="http://www.flickr.com/search/?q=kittens">kittens</a></li>
+        <li><a href="http://www.youtube.com/watch?v=OQSNhk5ICTI">rainbows</a></li>
+    </ul>
+</div>
+
+<p>
+You can re-render the template at any time simply by executing the stored `template` function again and passing in new data. Templates only need to be parsed once, which makes rendering a template multiple times very fast.
+</p>
+
+```
+// Re-render the template with new data. No need to parse the template again.
+var html = template({
+    items: [
+        {name: 'caffeine', url: 'http://en.wikipedia.org/wiki/Caffeine'},
+        {name: 'git', url: 'http://git-scm.com/'},
+        {name: 'numberwang', url: 'http://www.youtube.com/watch?v=qjOZtWZ56lc'}
+    ]
+});
+```
+
+<p>
+Alternatively, if you only need to render something once, you can use the convenient <a href="{{apiDocs}}/classes/Handlebars.html#method_render">`render()`</a> method to parse and render a template in a single step.
+</p>
+
+```
+// Parse and render a template in a single step.
+var html = Y.Handlebars.render(source, {
+    // ... data ...
+});
+```
+
+<h3>Template Syntax</h3>
+
+<h4>Basic Expressions</h4>
+
+<p>
+A basic Handlebars expression starts with `\{{`, contains some text, and ends with `}}`. These delimiters are often referred to as "mustaches", since they look a little bit like fancy mustaches if you turn your head sideways, squint a bit, and use your imagination. When a template is rendered, Handlebars will replace expressions with rendered data.
+</p>
+
+<p>
+A simple Handlebars expression looks like this:
+</p>
+
+```handlebars
+<h1>\{{title}}</h1>
+```
+
+<p>
+This tells Handlebars, "If there's a [[#helper functions|helper function]] named 'title', execute it and insert its return value here. Otherwise, look up the value of the `title` property in the current [[#contexts & paths|context]] and insert it here". The expression will be replaced with the referenced value, or an empty string if there's no helper function named "title" and the current context's `title` property is falsy, an empty array, or doesn't exist.
+</p>
+
+<h5>HTML Escaping</h5>
+
+<p>
+By default, content rendered using a double-mustache expression like `\{{foo}}` will automatically be HTML-escaped for safety. To render unescaped HTML output, use a triple-mustache expression like `\{{{foo}}}`. Only use a triple-mustache expression for content you trust! Never use it to render unfiltered user input.
+</p>
+
+<h5>Contexts &amp; Paths</h5>
+
+<p>
+All expressions are evaluated relative to the current <strong>context</strong>. The default context for a template is the data object passed in when the template is rendered.
+</p>
+
+<p>
+Here's the default context used for the examples in the rest of this section:
+</p>
+
+```
+{
+    site: {
+        title: 'AwesomeBlog',
+        url: 'http://blog.example.com'
+    },
+
+    article: {
+        id: 1,
+        title: 'My blog is awesome'
+    }
+}
+```
+
+<p>
+You can change the context using a [[#block expressions|block expression]]. Inside the block, the context will be set to the value referenced in the block's opening tag.
+</p>
+
+```handlebars
+<div class="header">
+    \{{#site}}
+        <h1><a href="\{{url}}">\{{title}}</a></h1>
+    \{{/site}}
+</div>
+
+<div class="content">
+    \{{#article}}
+        <h2>\{{title}}</h2>
+    \{{/article}}
+</div>
+```
+
+<p>
+Certain [[#Built-in Block Helpers|block helpers]] also change the context within the block. For example, when iterating over an array of items using `\{{#each items}} ... \{{/each}}` or `\{{#items}} ... \{{/items}}`, the context inside the block will be set to the current item.
+</p>
+
+<p>
+The special expression `\{{.}}` always evaluates to the current context, sort of like `this` in JavaScript. In fact, `\{{.}}` and `\{{this}}` do exactly the same thing! This is especially useful when iterating over an array of strings, since it allows you to output each string value.
+</p>
+
+<p>
+Using blocks to change the context is optional. Expressions can reference deeply-nested properties using dot notation:
+</p>
+
+```handlebars
+<div class="content">
+    <h2>\{{article.title}}</h2>
+</div>
+```
+
+<p>
+The special expression `../` references the current context's parent scope.
+</p>
+
+```handlebars
+<div class="content">
+    \{{#article}}
+        <h2><a href="\{{../site.url}}/article/\{{id}}">\{{title}}</a></h2>
+    \{{/article}}
+</div>
+```
+
+<p>
+Note that `../` references the parent scope, but not necessarily the previous level in the context hierarchy. Block helpers can invoke a block with any context, so a purely hierarchical reference wouldn't make much sense.
+</p>
+
+<h4>Block Expressions</h4>
+
+<p>
+Block expressions are used to change the current context or to execute helper functions that accept a block of content and perform an action on that content before rendering it. A block expression starts with an opening tag prefixed by `#`, contains some content, and ends with a closing tag prefixed by `/`, similar to an HTML element.
+</p>
+
+<p>
+The following example uses the [[#built-in block helpers|built-in]] `each` helper to iterate over an array named `gadgets` and render the block's content in the context of each item in the array.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <ul>
+                \{{#each gadgets}}
+                    <li>\{{name}}</li>
+                \{{/each}}
+                </ul>
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    gadgets: [
+                        {name: 'iPhone'},
+                        {name: 'Android'},
+                        {name: 'Windows Phone'}
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <ul>
+                    <li>iPhone</li>
+                    <li>Android</li>
+                    <li>Windows Phone</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+The `each` helper is so useful that Handlebars will actually use it as the default helper if you create a block expression with an identifier that points to an array value. So we could also write the template above like this and get the same result:
+</p>
+
+```handlebars
+<ul>
+\{{#gadgets}}
+    <li>\{{name}}</li>
+\{{/gadgets}}
+</ul>
+```
+
+<p>
+If a block expression refers to an empty array, a falsy value, or a value that doesn't exist in the current context, the block's contents won't be rendered.
+</p>
+
+<p>
+A block expression that refers to a non-array value such as an object or string will change the context to that value inside the block. See [[#Contexts & Paths]] for an example of this.
+</p>
+
+<h4>Conditionals</h4>
+
+<p>
+Handlebars includes two [[#built-in block helpers]] that provide simple conditional branching: `if` and `unless`.
+</p>
+
+<h5>if</h5>
+
+<p>
+The `if` block helper accepts a single parameter, which may be either a literal value or a reference to a value. If the value is truthy and not an empty array, the contents of the block will be rendered. If an optional `else` block is provided, its contents will be rendered if the value is falsy or an empty array. Inside an `if` or `else` block, the context remains the same as it was outside the block.
+</p>
+
+<p>
+In order to prevent templates from becoming bogged down with logic that should be implemented in another layer of the application, the `if` helper only supports simple true/false logic based on a single value. It doesn't support comparisons or logical operators like `&&` and `||`.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <h1>Currently online</h1>
+
+                \{{#if users}}
+                    <ul>
+                    \{{#users}}
+                        <li>\{{.}}</li>
+                    \{{/users}}
+                    </ul>
+                \{{/if}}
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    users: [
+                        'Ryan Grove',
+                        'Eric Ferraiuolo',
+                        'Lucas Smith',
+                        'Dav Glass'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <h1>Currently online</h1>
+
+                <ul>
+                    <li>Ryan Grove</li>
+                    <li>Eric Ferraiuolo</li>
+                    <li>Lucas Smith</li>
+                    <li>Dav Glass</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+If we empty the `users` array and re-render the template, the list won't be included in the output.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <h1>Currently online</h1>
+
+                \{{#if users}}
+                    <ul>
+                    \{{#users}}
+                        <li>\{{.}}</li>
+                    \{{/users}}
+                    </ul>
+                \{{/if}}
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    users: []
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <h1>Currently online</h1>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+We can add an `else` block to display an informative message when no users are online.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <h1>Currently online</h1>
+
+                \{{#if users}}
+                    <ul>
+                    \{{#users}}
+                        <li>\{{.}}</li>
+                    \{{/users}}
+                    </ul>
+                \{{else}}
+                    <p>Nobody's here!</p>
+                \{{/if}}
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    users: []
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <h1>Currently online</h1>
+
+                <p>Nobody's here!</p>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>unless</h5>
+
+<p>
+The `unless` block helper does exactly the opposite of the `if` helper: it renders the contents of the block if the provided value is falsy or an empty array.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <h1>Currently online</h1>
+
+                \{{#unless users}}
+                    <p>Nobody's here!</p>
+                \{{else}}
+                    <ul>
+                    \{{#users}}
+                        <li>\{{.}}</li>
+                    \{{/users}}
+                    </ul>
+                \{{/unless}}
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    users: [
+                        'Ryan Grove',
+                        'Eric Ferraiuolo',
+                        'Lucas Smith',
+                        'Dav Glass'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <h1>Currently online</h1>
+
+                <ul>
+                    <li>Ryan Grove</li>
+                    <li>Eric Ferraiuolo</li>
+                    <li>Lucas Smith</li>
+                    <li>Dav Glass</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>Comment Expressions</h4>
+
+<p>
+An expression beginning with `\{{!` is treated as a comment and won't show up in the rendered output.
+</p>
+
+```handlebars
+\{{! I'm a Handlebars comment! I won't show up in rendered output. }}
+<!-- I'm an HTML comment! I will show up in rendered output. -->
+```
+
+<p>
+Multi-line comments work too.
+</p>
+
+```handlebars
+\{{!
+    I'm a multi-line comment!
+}}
+```
+
+<p>
+Unfortunately, Handlebars doesn't ignore expressions inside comments, so you can't actually comment out an expression.
+</p>
+
+```handlebars
+<!-- This won't work (it'll leave a trailing "}}" behind) -->
+\{{! \{{expression}} }}
+```
+
+<h4>Partial Expressions</h4>
+
+<p>
+An expression like `\{{> partialName}}` will render the named partial template at that position in the output, inheriting the current data context. A partial is a reusable template that's registered using the <a href="{{apiDocs}}/classes/Handlebars.html#method_registerPartial">`registerPartial()`</a> method.
+</p>
+
+<p>
+See the [[#Partials]] section of this guide for more details on creating and using partials.
+</p>
+
+<h3>Helper Functions</h3>
+
+<p>
+Helper functions are functions that are registered with the Handlebars runtime using the <a href="{{apiDocs}}/classes/Handlebars.html#method_registerHelper">`registerHelper()`</a> method and can then be called from within a template at render-time. They can be used to transform text; implement iteration, branching logic, and other control flows; and perform a variety of other tasks.
+</p>
+
+<p>
+A helper function can accept parameters and even entire blocks of template content. Here's how you might call a simple inline helper to render an HTML link, passing in the link text and URL:
+</p>
+
+```handlebars
+\{{link "Handlebars docs" "http://handlebarsjs.com"}}
+```
+
+<p>
+Block helpers have a slightly different syntax, using an opening and closing tag to delimit an entire block of template content. The helper name is specified in the opening and closing tags of the block:
+</p>
+
+```handlebars
+\{{#list contents}}
+    \{{link text url}}
+\{{/list}}
+```
+
+<p>
+Many of Handlebars' own features are implemented as [[#Built-in Block Helpers]].
+</p>
+
+<p>
+Helper functions are executed when a template is rendered, not when it's compiled. This allows helper functions to take advantage of the state of the rendering environment (since a template may have been pre-compiled somewhere else), and to return different content even when the same template is rendered multiple times.
+</p>
+
+<h4>Defining Custom Helpers</h4>
+
+<p>
+To define a custom helper function, call the <a href="{{apiDocs}}/classes/Handlebars.html#method_registerHelper">`registerHelper()`</a> method and provide a name and a function to execute when the helper is called. The function may accept any number of arguments from the template, which may be provided either as literal values or as references to data properties. The final argument passed to the function will always be an `options` object (more on this [[#hash arguments|later]]).
+</p>
+
+<h5>Basic Helpers</h5>
+
+<p>
+Here's a simple helper that takes two parameters and spits out an HTML link.
+</p>
+
+```
+// Register a \{{{link}}} helper for creating HTML links.
+Y.Handlebars.registerHelper('link', function (text, url) {
+    return '<a href="' + url + '">' + text + '</a>';
+});
+```
+
+<p>
+We can use this helper to render the following template:
+</p>
+
+<p style="margin-bottom: -1em;">
+<strong>Template Source</strong>
+</p>
+
+```handlebars
+<ul>
+    <li>\{{{link "Pie" "http://pieisgood.org/"}}}</li>
+    <li>\{{{link kittens.text kittens.url}}}</li>
+</ul>
+```
+
+<p style="margin-bottom: -1em;">
+<strong>Data</strong>
+</p>
+
+```
+{
+    kittens: {
+        text: "Kittens",
+        url : "http://www.flickr.com/search/?q=kittens"
+    }
+}
+```
+
+<p style="margin-bottom: -1em;">
+<strong>Output</strong>
+</p>
+
+```
+<ul>
+    <li><a href="http://pieisgood.org/">Pie</a></li>
+    <li><a href="http://www.flickr.com/search/?q=kittens">Kittens</a></li>
+</ul>
+```
+
+<p>
+Notice the use of the triple-mustache for the `\{{{link}}}` expressions? That was necessary in order to prevent the helper's return value from being HTML-escaped. As an alternative to using a triple-mustache, we could modify the helper to return an instance of `Y.Handlebars.SafeString`, which will bypass HTML escaping even when used with a double-mustache expression.
+</p>
+
+```
+// Register a \{{link}} helper for creating HTML links. The return value of this
+// helper will never be automatically HTML-escaped, so the helper does its own
+// internal escaping.
+Y.Handlebars.registerHelper('link', function (text, url) {
+    text = Y.Escape.html(text);
+    url  = Y.Escape.html(url);
+
+    return new Y.Handlebars.SafeString('<a href="' + url + '">' + text + '</a>');
+});
+```
+
+<p>
+Now we can simply use `\{{link "Text" "http://example.com/"}}` to call the helper, and we don't need to worry about escaping in the template itself since we know the helper will take care of it.
+</p>
+
+<h5>Hash Arguments</h5>
+
+<p>
+In the example above, we created a helper that accepts two unnamed arguments. This works fine for simple helpers, but for a helper that needs to accept a lot of arguments, it can quickly become painful to remember which arguments go where, and what each one means. Luckily, Handlebars supports a special syntax for calling a helper function with a hash of named parameters.
+</p>
+
+<p>
+The final argument passed to a helper function is always a special `options` object. The `options.hash` property is an object hash that contains any named parameters that were passed from the template.
+</p>
+
+```
+// Register a \{{link}} helper that accepts a hash of named parameters instead
+// of individual arguments.
+Y.Handlebars.registerHelper('link', function (options) {
+    var text = Y.Escape.html(options.hash.text),
+        url  = Y.Escape.html(options.hash.url);
+
+    return new Y.Handlebars.SafeString('<a href="' + url + '">' + text + '</a>');
+});
+```
+
+<p>
+In the template, pass hash arguments as key/value pairs delimited by `=` and separated by a space. Keys must be simple identifiers. Values may be literal values (strings, bools, integers) or references to data properties.
+</p>
+
+```handlebars
+<ul>
+    <li>\{{link text="Pie" url="http://pieisgood.org/"}}</li>
+    <li>\{{link text=kittens.text url=kittens.url}}</li>
+</ul>
+```
+
+<p>
+A helper function can even accept a combination of standard arguments and hash arguments.
+</p>
+
+```
+// Register a \{{link}} helper that accepts a combination of standard args and
+// hash arguments.
+Y.Handlebars.registerHelper('link', function (text, options) {
+    var url = Y.Escape.html(options.hash.url);
+
+    text = Y.Escape.html(text);
+
+    return new Y.Handlebars.SafeString('<a href="' + url + '">' + text + '</a>');
+});
+```
+
+```handlebars
+<ul>
+    <li>\{{link "Pie" url="http://pieisgood.org/"}}</li>
+    <li>\{{link kittens.text url=kittens.url}}</li>
+</ul>
+```
+
+<h5>Block Helpers</h5>
+
+<p>
+A block helper works similarly to a basic helper, with a couple of differences:
+</p>
+
+<ul>
+    <li>
+        <p>
+        The `options` object passed to a block helper function contains an `fn` property, which is a function that accepts a context as an argument and returns a string containing the rendered contents of the block.
+        </p>
+    </li>
+
+    <li>
+        <p>
+        The `options` object passed to a block helper function also contains an `inverse` property. This is a function that accepts a context just like the `fn` property, except that it renders the block following an `else` statement. If there isn't an `else` statement, the `inverse` function will be a noop.
+        </p>
+    </li>
+
+    <li>
+        <p>
+        The return value of a block helper is not automatically HTML-escaped, but the return value of `options.fn()` <em>is</em> automatically escaped. This ensures that block helpers don't return double-escaped content.
+        </p>
+    </li>
+</ul>
+
+<p>
+Here's a simple block helper that wraps its contents in a `<p>` element:
+</p>
+
+```
+Y.Handlebars.registerHelper('gamera', function (options) {
+    return '<p class="' + this.animal + '">' + options.fn(this) + '</p>';
+});
+```
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <p>Gamera is really neat!</p>
+
+                \{{#gamera}}
+                    He is made of \{{animal}} meat!
+                \{{/gamera}}
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    animal: 'turtle'
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <p>Gamera is a really neat!</p>
+
+                <p class="turtle">
+                    He is made of turtle meat!
+                </p>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+Here's how Handlebars implements its own [[#if|`if`]] block helper. The `options.inverse()` function makes it possible to render the contents of an `else` block if one is provided.
+</p>
+
+```
+Y.Handlebars.registerHelper('if', function (condition, options) {
+    if (condition) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+```
+
+<h4>Built-in Block Helpers</h4>
+
+<p>
+Handlebars provides several built-in block helpers that are always available to templates.
+</p>
+
+<h5>each</h5>
+
+<p>
+The `each` helper iterates over an array. The block will be rendered once for each item, and its context will be set to the current item.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <h1>Bands Ryan likes</h1>
+
+                <ul>
+                \{{#each bands}}
+                    <li>\{{.}}</li>
+                \{{/each}}
+                </ul>
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    bands: [
+                        'The Dandy Warhols',
+                        'The Brian Jonestown Massacre',
+                        'The Black Keys',
+                        'Black Rebel Motorcycle Club'
+                    ]
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <h1>Bands Ryan likes</h1>
+
+                <ul>
+                    <li>The Dandy Warhols</li>
+                    <li>The Brian Jonestown Massacre</li>
+                    <li>The Black Keys</li>
+                    <li>Black Rebel Motorcycle Club</li>
+                </ul>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+If you create a block expression with an identifier that points to an array value, Handlebars will automatically use the `each` helper to iterate over that array, so we could rewrite the template above like this and get the same result:
+</p>
+
+```handlebars
+<h1>Bands Ryan likes</h1>
+
+<ul>
+\{{#bands}}
+    <li>\{{.}}</li>
+\{{/bands}}
+</ul>
+```
+
+<h5>if</h5>
+
+<p>
+See the [[#if|Conditionals]] section of this guide for details on the `if` block helper.
+</p>
+
+<h5>unless</h5>
+
+<p>
+See the [[#unless|Conditionals]] section of this guide for details on the `unless` block helper.
+</p>
+
+<h5>with</h5>
+
+<p>
+The `with` block helper renders the given block in a different context. This can save you some typing in a template that will render a lot of namespaced data.
+</p>
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <p class="author">
+                \{{#with author}}
+                    \{{firstName}} \{{lastName}}
+                \{{/with}}
+                </p>
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                    author: {
+                        firstName: 'Ryan',
+                        lastName: 'Grove'
+                    }
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <p class="author">
+                    Ryan Grove
+                </p>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+If you create an expression with an identifier that points to an object value, Handlebars will automatically use the `with` helper to render the block in the context of that object, so we could rewrite the template above like this and get the same result:
+</p>
+
+```handlebars
+<p class="author">
+\{{#author}}
+    \{{firstName}} \{{lastName}}
+\{{/author}}
+</p>
+```
+
+<h3>Partials</h3>
+
+<p>
+A partial is like a mini-template that can be called from a larger template. Partials are often used to render frequently-used chunks of content, such as a header, footer, or a common view of some data.
+</p>
+
+<p>
+Partials are registered with Handlebars through the <a href="{{apiDocs}}/classes/Handlebars.html#method_registerPartial">`registerPartial()`</a> method. Once registered, a partial can be referenced from a template using an expression like `\{{> partialName }}`. Partials may be registered as string templates or as compiled template functions.
+</p>
+
+<p>
+A partial will inherit the current context of the position at which it's included.
+</p>
+
+```
+// Register a couple of reusable partials.
+Y.Handlebars.registerPartial('header', '<h1>{{title}}</h1>');
+Y.Handlebars.registerPartial('footer', '<p>Copyright (c) 2012 by Me.</p>');
+```
+
+<table class="handlebars-code">
+    <thead>
+        <tr>
+            <th>Template Source</th>
+            <th>Data</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td width="33%">
+                ```handlebars
+                <div>
+                  \{{> header}}
+
+                  <p>Mustaches are awesome!</p>
+
+                  \{{> footer}}
+                </div>
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                {
+                  title: 'My Page About Mustaches'
+                }
+                ```
+            </td>
+
+            <td width="33%">
+                ```
+                <div>
+                  <h1>My Page About Mustaches</h1>
+
+                  <p>Mustaches are awesome!</p>
+
+                  <p>Copyright (c) 2012 by Me.</p>
+                </div>
+                ```
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Delivering Templates to the Browser</h3>
+
+<p>
+When you plan to compile and render Handlebars templates on the client, the easiest way to deliver templates to the browser is to include them in the HTML page inside a `<script>` element with the attribute `type="text/x-handlebars-template"`. The browser won't recognize this type, so it won't try to execute the contents of the `<script>` node.
+</p>
+
+```handlebars
+<script id="list-template" type="text/x-handlebars-template">
+    <p>YUI is brought to you by:</p>
+
+    <ul>
+        \{{#items}}
+            <li><a href="\{{url}}">\{{name}}</a></li>
+        \{{/items}}
+    </ul>
+</script>
+```
+
+<p>
+This makes it easy and convenient to maintain your templates right alongside the HTML in which they'll be rendered, which is much nicer than storing them in big ugly strings inside your JavaScript files.
+</p>
+
+<p>
+When you're ready to render a template, just pull its text out of the `<script>` node, render it, and append the resulting HTML to the page wherever you want it.
+</p>
+
+```
+// Extract the template string and compile it into a reusable function.
+var source   = Y.one('#list-template').get('text'),
+    template = Y.Handlebars.compile(source),
+    html;
+
+// Render the template to HTML using the specified data.
+html = template({
+    items: [
+        {name: 'pie', url: 'http://pieisgood.org/'},
+        {name: 'mountain dew', url: 'http://www.mountaindew.com/'},
+        {name: 'kittens', url: 'http://www.flickr.com/search/?q=kittens'},
+        {name: 'rainbows', url: 'http://www.youtube.com/watch?v=OQSNhk5ICTI'}
+    ]
+});
+
+// Append the rendered template to the page.
+Y.one('body').append(html);
+```
+
+<h3>Compiling and Rendering Templates</h3>
+
+<p>
+Handlebars templates must be compiled before they can be rendered. One benefit of this is that a template only needs to be compiled once, and it can then be rendered multiple times without being recompiled. Templates can even be [[#precompiling templates|precompiled]] on the server or on the command line and then rendered on the client for optimal performance.
+</p>
+
+<p>
+To compile a template string, pass it to the <a href="{{apiDocs}}/classes/Handlebars.html#method_compile">`Y.Handlebars.compile()`</a> method. You'll get back a function.
+</p>
+
+```
+// Compile a template into a reusable function.
+var template = Y.Handlebars.compile('My favorite food is \{{food}}.');
+```
+
+<p>
+When you're ready to render the template, execute the function and pass in some data. You'll get back a rendered string.
+</p>
+
+```
+// Render a previously compiled template.
+var output = template({food: 'pie'});
+// => "My favorite food is pie.";
+```
+
+<p>
+You can re-render the template at any time just by calling the function again. You can even pass in completely different data.
+</p>
+
+```
+// Re-render a previously compiled template.
+output = template({food: 'cheesecake'});
+// => "My favorite food is cheesecake."
+```
+
+<p>
+If you don't plan to use a template more than once, you can compile and render it in a single step with <a href="{{apiDocs}}/classes/Handlebars.html#method_render">`Y.Handlebars.render()`</a>.
+</p>
+
+```
+// Compile and render a template in a single step.
+output = Y.Handlebars.render('My favorite food is \{{food}}.', {food: 'pie'});
+// => "My favorite food is pie."
+```
+
+<h3>Precompiling Templates</h3>
+
+<p>
+Since Handlebars templates can be compiled and rendered in separate steps, it's possible to precompile a template for use later. You can precompile a template into raw JavaScript on the server or even on the command line, serve this precompiled JavaScript template to the client, and then render it on the client using any data the client has at its disposal.
+</p>
+
+<p>
+The main benefit of precompilation is performance. Not only does the client not need to go through the compile step, you don't even have to load the Handlebars compiler on the client! All the client needs in order to render a precompiled template is a very small (about 1KB minified and gzipped) piece of JavaScript provided by the `handlebars-base` module.
+</p>
+
+<h5>On the Server</h5>
+
+<p>
+To precompile Handlebars templates on the server using <a href="http://nodejs.org/">Node.js</a>, first install the YUI <a href="http://npmjs.org/">npm</a> module by running the following in a terminal from the directory that contains your server application (this assumes you already have Node and npm installed):
+</p>
+
+```terminal
+$ npm install yui
+```
+
+<p>
+This will install the `yui` npm module in the current directory and make it available to your application.
+</p>
+
+<p>
+Next, in your application code, call the <a href="{{apiDocs}}/classes/Handlebars.html#method_precompile">`precompile()`</a> method to precompile a Handlebars template. It will return a string containing JavaScript code.
+</p>
+
+```
+// Load the YUI Handlebars module.
+var Handlebars = require('yui/handlebars').Handlebars;
+
+// Precompile a template string (pass any string you like here).
+var precompiled = Handlebars.precompile('My favorite food is \{{food}}.');
+```
+
+<p>
+The `precompiled` variable will contain a string of JavaScript code that looks something like this:
+</p>
+
+```
+function (Handlebars,depth0,helpers,partials,data) {\n  helpers = helpers || Handlebars.helpers;\n  var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;\n\n\n  buffer += "My favorite food is ";\n  foundHelper = helpers.food;\n  stack1 = foundHelper || depth0.food;\n  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }\n  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "food", { hash: {} }); }\n  buffer += escapeExpression(stack1) + ".";\n  return buffer;}
+```
+
+<p>
+You can now serve this precompiled JS to the client in whatever way makes the most sense for your application. On the client, load the `handlebars-base` YUI module and pass the precompiled template to the <a href="{{apiDocs}}/classes/Handlebars.html#method_template">`Y.Handlebars.template()`</a> method to convert it into a renderable template function.
+</p>
+
+<p>
+Here's a simple <a href="http://expressjs.com/">Express</a> app that precompiles a template on the server and renders it on the client:
+</p>
+
+```
+#!/usr/bin/env node
+var Handlebars  = require('yui/handlebars').Handlebars,
+    app         = require('express').createServer(),
+
+    precompiled = Handlebars.precompile('My favorite food is \{{food}}.');
+
+app.get('/', function (req, res) {
+    res.send(
+        '<html><body>' +
+            '<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>' +
+            '<script>' +
+                'YUI().use("handlebars-base", "node", function (Y) {' +
+                    'var template = Y.Handlebars.template(' + precompiled + ');' +
+                    'Y.one("body").append(template({food: "pie"}));' +
+                '});' +
+            '</script>' +
+        '</body></html>'
+    );
+});
+
+app.listen(7000);
+```
+
+<p>
+To see this simple server in action, save it to a file, install Express and YUI by running `npm i express yui`, then execute the file with Node.js and browse to <a href="http://localhost:7000/" target="_blank">http://localhost:7000/</a>.
+</p>
+
+<h5>On the Command Line</h5>
+
+<p>
+The original Handlebars project provides a Node.js-based Handlebars command-line application that can be installed via npm and used to precompile Handlebars template files. Since the precompiled templates produced by the original Handlebars are compatible with YUI Handlebars, this is a great way to precompile your Handlebars templates manually or as part of a build process.
+</p>
+
+<p>
+First, you'll need to install <a href="http://nodejs.org/">Node.js</a> and <a href="http://npmjs.org/">npm</a> if you haven't already. See their respective websites for instructions.
+</p>
+
+<p>
+Next, install the Handlebars npm module. Note that this program is maintained by the maintainers of the <a href="https://github.com/wycats/handlebars.js">original Handlebars project</a>, so there's a chance it could change or break compatibility with YUI Handlebars without notice.
+</p>
+
+```terminal
+$ npm install -g handlebars
+```
+
+<p>
+Now you can run the `handlebars` executable to precompile a template into JavaScript code.
+</p>
+
+```terminal
+$ handlebars my-template.handlebars -f precompiled-template.js
+```
+
+<p>
+This will compile a template to a JavaScript file which you can load on your page. You could render it like this:
+</p>
+
+```
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>My Favorite Food</title>
+
+<body>
+<div id="content"></div>
+
+<script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>
+<script>
+YUI().use('handlebars-base', 'get', 'node', function (Y) {
+    // Create a global Handlebars variable that points to Y.Handlebars. This is
+    // necessary for compatibility with precompiled templates generated by the
+    // original Handlebars project.
+    window.Handlebars = Y.Handlebars;
+
+    // Load the precompiled template JS onto the page.
+    Y.Get.js('precompiled-template.js', function (err) {
+        if (err) {
+            Y.error('Template failed to load: ' + err);
+            return;
+        }
+
+        // Render the template and insert its output into the page.
+        var output = Y.Handlebars.templates['my-template']({food: 'pie'});
+        Y.one('#content').append(output);
+    });
+});
+</script>
+</body>
+```
+
+<h2>Differences From Original Handlebars</h2>
+
+<p>
+The YUI Handlebars component is mostly just a YUI wrapper around the <a href="https://github.com/wycats/handlebars.js">original Handlebars code</a>. It's kept closely in sync with the latest code from the upstream Handlebars project, and our intent is to ensure that YUI Handlebars and original Handlebars can be used interchangeably to render the same templates. To see what upstream Handlebars version YUI uses, inspect `Y.Handlebars.VERSION`.
+</p>
+
+<p>
+YUI Handlebars differs from the original Handlebars in the following minor ways:
+</p>
+
+<ul>
+    <li>
+        <p>
+        YUI Handlebars is a first-class YUI module intended to be loaded via `YUI().use()` or as a dependency of a module created via `YUI.add()`. Like all YUI modules, it adds its API to the `Y` namespace, so the YUI Handlebars object is `Y.Handlebars` instead of the global `Handlebars` namespace used by the original Handlebars.
+        </p>
+    </li>
+
+    <li>
+        <p>
+        YUI Handlebars uses YUI's own `Y.Escape.html()` method to escape HTML, and the `Y.Lang.isEmpty()` and `Y.Lang.isArray()` methods to determine whether a value is empty or an array.
+        </p>
+    </li>
+
+    <li>
+        <p>
+        In escaped expressions like `\{{foo}}`, YUI Handlebars escapes all `&` characters, even when they're part of an existing HTML entity like `&amp;`. Original Handlebars doesn't double-escape existing HTML entities.
+        </p>
+
+        <p>
+        This change was made to ensure consistency and safety&mdash;this way you always know that all the contents of a value rendered by an escaped expression will truly be escaped, even if that means some characters will be double-escaped. This is especially important in cases where double-escaping is desired, such as when attempting to display the literal string `&amp;` in a code example or documentation (like this user guide!).
+        </p>
+    </li>
+
+    <li>
+        <p>
+        The `Y.Handlebars.log()` function and the `log` helper call `Y.log()` under the hood. The log implementation in original Handlebars is a noop that's meant to be overridden.
+        </p>
+    </li>
+
+    <li>
+        <p>
+        YUI Handlebars appends a "-yui" suffix to the `Y.Handlebars.VERSION` property.
+        </p>
+    </li>
+</ul>

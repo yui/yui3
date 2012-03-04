@@ -1,3 +1,6 @@
+Charts
+====
+
 The Charts module provides a JavaScript API for visualizing data in a variety of formats across all A-grade browsers. Based on 
 device and browser capabilities, Charts leverages SVG, HTML Canvas and VML to render its graphical elements.
 

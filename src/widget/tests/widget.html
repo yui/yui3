@@ -4,6 +4,7 @@
     <title>Widget Test Suite</title>
 
     <script src="../../../build/yui/yui.js"></script>
+    <!--script src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui.js"></script-->
 
     <style type="text/css">
         #console .yui3-console-entry {
@@ -733,6 +734,114 @@
                 Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
 
                 w.destroy();
+            },
+            
+            "testFocusOnBoundingBox" : function() {
+
+                var w = this.createWidget({
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                w.render();
+                w.blur();
+
+                Y.Assert.isFalse(w.get("focused"), "Widget should not be focused here");
+
+                w.get("boundingBox").focus();
+
+                Y.Assert.isTrue(w.get("focused"), "Widget should be focused here");
+
+                w.destroy();
+            },
+
+            "testMultiWidgetFocus" : function() {
+
+                var w1 = this.createWidget({
+                    id:"one",
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+                
+                w1.render();
+                w1.blur();
+
+                var w2 = this.createWidget({
+                    id:"two",
+                    tabIndex:3,
+                    height:100,
+                    width:100
+                });
+
+                w2.render();
+                w2.blur();
+                
+                var n1 = w1.get("contentBox").appendChild('<a href="#" id="clickme1">Click Me (widget 1)</a>');
+                var n2 = w2.get("contentBox").appendChild('<a href="#" id="clickme2">Click Me (widget 2)</a>');
+                var n3 = Y.one("body").insertBefore('<a href="#" id="clickme3">Click Me (non widget)</a>', Y.one("body").get("firstChild"));
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+
+                n1.focus();
+
+                Y.Assert.isTrue(w1.get("focused"), "Widget 1 should be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+
+                n2.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isTrue(w2.get("focused"), "Widget 2 should be focused here");
+
+                n3.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+                
+                w1.focus();
+                
+                Y.Assert.isTrue(w1.get("focused"), "Widget 1 should be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+                
+                w2.focus();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isTrue(w2.get("focused"), "Widget 2 should be focused here");
+                
+                w1.blur();
+                w2.blur();
+
+                Y.Assert.isFalse(w1.get("focused"), "Widget 1 should not be focused here");
+                Y.Assert.isFalse(w2.get("focused"), "Widget 2 should not be focused here");
+               
+                w1.destroy();
+                w2.destroy();
+
+                n3.remove(true);
+            },
+
+            "testWidgetOnFocus" : function() {
+
+                var test = this,
+                    gotFocus = false;
+
+                var widget = this.createWidget({
+                    height:100,
+                    width:100,
+                    tabIndex:0,
+                    render:true
+                });
+
+                widget.on("focus", function() {
+                    gotFocus = true;
+                });
+
+                widget.focus();
+
+                widget.destroy(true);
+
+                Y.Assert.isTrue(gotFocus, "widget.on('focus') wasn't invoked");
             }
         };
 
@@ -1657,6 +1766,46 @@
                 Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
 
                 w.destroy();
+            },
+            
+            "testHTMLParserWithEmptyConfig" : function() {
+
+                // See http://yuilibrary.com/projects/yui3/ticket/2531501
+                
+                // User wanted to have a Widget with a statically defined srcNode (a rare use case), 
+                // which meant there was no need to pass a config object to the widget constructor, 
+                // bringing out a logic issue, when using html parser and no config                
+
+                var markup = Y.Node.create('<div id="staticSrcNode"><h1>My Label</h1><ul><li>Item1</li><li>Item2</li></ul></div>');
+                Y.Node.one("body").append(markup);
+                
+                function StaticSrcNodeWidget() {
+                    StaticSrcNodeWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(StaticSrcNodeWidget, MyCustomWidget, null, {
+                    ATTRS : {
+                        srcNode : {
+                            value: "#staticSrcNode"
+                        }
+                    },
+                    NAME : "staticSrcNodeWidget"
+                })
+
+                var w = new StaticSrcNodeWidget();
+
+                Y.Assert.areEqual("My Label", w.get("label"), "label not picked up from markup");
+                Y.Assert.areEqual("h1", w.get("titleNode").get("tagName").toLowerCase(), "titleNode not picked up from markup");
+
+                Y.Assert.areEqual(2, w.get("listNodes").size(), "listNodes count does not match markup");
+
+                Y.Assert.areSame("li", w.get("listNodes").item(0).get("tagName").toLowerCase(), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("li", w.get("listNodes").item(1).get("tagName").toLowerCase(), "listNode 1 not picked up from markup");
+
+                Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
             }
 
         }));
@@ -1678,21 +1827,23 @@
                     boundingBox: bb,
                     contentBox:  cb
                 } );
-        
+
                 Y.Assert.areEqual( "foo", w.getSkinName() );
             },
-        
+
             "getSkinName should return name from body or null": function () {
                 var w = new Y.Widget().render(),
                     body = Y.one( 'body' );
         
                 Y.Assert.areEqual( "sam", w.getSkinName() );
-        
+
                 body.removeClass( "yui3-skin-sam" );
-        
+
                 Y.Assert.isNull( w.getSkinName() );
-        
+
                 body.addClass( "yui3-skin-sam" );
+
+                w.destroy();
             },
 
             "getSkinName should return name from ancestor if both ancestor and body are classed": function () {
@@ -1702,6 +1853,8 @@
                 body.addClass( "yui3-skin-sam" );
         
                 Y.Assert.areEqual( "foo", w.getSkinName() );
+                
+                w.destroy();
             }
         }));
     

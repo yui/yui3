@@ -111,7 +111,7 @@ These attributes are provided by `CalendarBase`, which is the core foundation fo
       </td>
     </tr>
     <tr>
-      <td>`headerFormat`</td>
+      <td>`headerRenderer`</td>
       <td>`"%B %Y"`</td>
       <td>
         The formatting for the header of the Calendar. This attribute can be either a String with the formatting tokens used by the `strftime` specification, or a callback function that will receive a `Date` object as an argument and output a `String`.
@@ -143,14 +143,14 @@ These attributes are provided by `Calendar`, which is the complete implementatio
       </td>
     </tr>
     <tr>
-      <td>`startDate`</td>
+      <td>`minimumDate`</td>
       <td>`null`</td>
       <td>
         Specification for the earliest month which the Calendar will display. In a multi-pane calendar, this is the earliest month that will appear in the first pane.
       </td>
     </tr>
     <tr>
-      <td>`endDate`</td>
+      <td>`maximumDate`</td>
       <td>`null`</td>
       <td>
         Specification for the latest month which the Calendar will display. In a multi-pane calendar, this is the latest month that will appear in the last pane.

@@ -26,7 +26,6 @@ YUI.add('resize-tests', function(Y) {
             node._handleMouseUp();
             Y.DD.DDM._noShim = false;
             Y.DD.DDM.stopDrag();
-            node.actXY = [];
         },
         _moveNode = function(node, num, flip) {
             if (flip) {
@@ -44,7 +43,8 @@ YUI.add('resize-tests', function(Y) {
             _fakeStart(node);
             _moveNodeAll(node, max, flip);
             _fakeEnd(node);
-        };
+        },
+        activeHandle;
     
 
     var template = {
@@ -72,6 +72,13 @@ YUI.add('resize-tests', function(Y) {
                 handles: 't, tr, r, br, b, bl, l, tl'
             });
             resize.plug(Y.Plugin.ResizeProxy);
+            resize.plug(Y.Plugin.ResizeConstrained, {
+                constrain: 'body',
+                preserveRatio: true
+            });
+            resize.on('resize:start', function() {
+                activeHandle = resize.get('activeHandle');
+            });
             Assert.isInstanceOf(Y.Base, resize);
             Assert.isInstanceOf(Y.Resize, resize);
 
@@ -87,53 +94,60 @@ YUI.add('resize-tests', function(Y) {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-t'));
             _fakeMove(node, 10);
-
+            Assert.areSame('t', activeHandle);
         },
         'test: moving right': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-r'));
             _fakeMove(node, 10);
+            Assert.areSame('r', activeHandle);
 
         },
         'test: moving bottom': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-b'));
             _fakeMove(node, 10);
+            Assert.areSame('b', activeHandle);
 
         },
         'test: moving left': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-l'));
             _fakeMove(node, 10);
+            Assert.areSame('l', activeHandle);
 
         },
         'test: moving tr': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-tr'));
             _fakeMove(node, 10);
+            Assert.areSame('tr', activeHandle);
 
         },
         'test: moving tl': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-tl'));
             _fakeMove(node, 10);
+            Assert.areSame('tl', activeHandle);
 
         },
         'test: moving br': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-br'));
             _fakeMove(node, 10);
+            Assert.areSame('br', activeHandle);
 
         },
         'test: moving bl': function() {
             var node = resize.delegate.dd;
             node.set('node', Y.one('.yui3-resize-handles-wrapper .yui3-resize-handle-bl'));
             _fakeMove(node, 10);
+            Assert.areSame('bl', activeHandle);
 
         },
         'test: destroy': function() {
             resize.destroy();
-            //Assert.isTrue(resize.get('destroyed'));
+            Assert.isTrue(resize.get('destroyed'));
         }
     };
 

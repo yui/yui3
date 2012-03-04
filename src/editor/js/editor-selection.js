@@ -890,7 +890,9 @@
         * @return {EditorSelection}
         */
         remove: function() {
-            this._selection.removeAllRanges();
+            if (this._selection && this._selection.removeAllRanges) {
+                this._selection.removeAllRanges();
+            }
             return this;
         },
         /**

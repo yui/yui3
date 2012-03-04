@@ -3,8 +3,8 @@ YUI.add('arraylist-add', function(Y) {
 /**
  * Collection utilities beyond what is provided in the YUI core
  * @module collection
- * @main collection
  * @submodule arraylist-add
+ * @deprecated Use ModelList or a custom ArrayList subclass
  */
 
 /*
@@ -22,6 +22,7 @@ Y.mix(Y.ArrayList.prototype, {
      * which the item should be inserted.
      * @return {ArrayList} the instance.
      * @for ArrayList
+     * @deprecated Use ModelList or a custom ArrayList subclass
      * @chainable
      */
     add: function(item, index) {
@@ -48,6 +49,7 @@ Y.mix(Y.ArrayList.prototype, {
      * @param { Function } comparator optional a/b function to test equivalence.
      * @return {ArrayList} the instance.
      * @for ArrayList
+     * @deprecated Use ModelList or a custom ArrayList subclass
      * @chainable
      */
     remove: function(needle, all, comparator) {
@@ -73,6 +75,7 @@ Y.mix(Y.ArrayList.prototype, {
      * @param { mixed } b other item to test equivalance.
      * @return { Boolean } true if items are deemed equivalent.
      * @for ArrayList
+     * @deprecated Use ModelList or a custom ArrayList subclass
      */
     itemsAreEqual: function(a, b) {
         return a === b;

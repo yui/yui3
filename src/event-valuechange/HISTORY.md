@@ -9,7 +9,12 @@ ValueChange Change History
   continue to be supported indefinitely, but for consistency I recommend
   switching to "valuechange".
 
-* Slight performance improvements.
+* Added support for delegated valuechange events. You can now use `delegate()`
+  to attach a valuechange event to a container node and be notified of changes
+  to any descendant that matches the specified delegation filter.
+
+* The valuechange event facade now includes `currentTarget` and `target`
+  properties like a good little synthetic event.
 
 
 3.4.1

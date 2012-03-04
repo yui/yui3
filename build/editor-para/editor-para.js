@@ -4,7 +4,7 @@ YUI.add('editor-para', function(Y) {
     /**
      * Plugin for Editor to paragraph auto wrapping and correction.
      * @class Plugin.EditorPara
-     * @extends Base
+     * @extends Plugin.EditorParaBase
      * @constructor
      * @module editor
      * @submodule editor-para
@@ -17,30 +17,7 @@ YUI.add('editor-para', function(Y) {
     FIRST_P = BODY + ' > p', P = 'p', BR = '<br>', FC = 'firstChild', LI = 'li';
 
 
-    Y.extend(EditorPara, Y.Base, {
-        /**
-        * Utility method to create an empty paragraph when the document is empty.
-        * @private
-        * @method _fixFirstPara
-        */
-        _fixFirstPara: function() {
-            var host = this.get(HOST), inst = host.getInstance(), sel, n,
-                body = inst.config.doc.body,
-                html = body.innerHTML,
-                col = ((html.length) ? true : false);
-
-            if (html === BR) {
-                html = '';
-                col = false;
-            }
-
-            body.innerHTML = '<' + P + '>' + html + inst.EditorSelection.CURSOR + '</' + P + '>';
-
-            n = inst.one(FIRST_P);
-            sel = new inst.EditorSelection();
-
-            sel.selectNode(n, true, col);
-        },
+    Y.extend(EditorPara, Y.Plugin.EditorParaBase, {
         /**
         * nodeChange handler to handle fixing an empty document.
         * @private
@@ -98,16 +75,6 @@ YUI.add('editor-para', function(Y) {
                     }
                     break;
                 case 'enter':
-                    if (Y.UA.ie) {
-                        if (e.changedNode.test('br')) {
-                            e.changedNode.remove();
-                        } else if (e.changedNode.test('p, span')) {
-                            var b = e.changedNode.one('br.yui-cursor');
-                            if (b) {
-                                b.remove();
-                            }
-                        }
-                    }
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
                         if (e.changedEvent.shiftKey) {
@@ -294,45 +261,6 @@ YUI.add('editor-para', function(Y) {
             }
             
         },
-        /**
-        * Performs a block element filter when the Editor is first ready
-        * @private
-        * @method _afterEditorReady
-        */
-        _afterEditorReady: function() {
-            var host = this.get(HOST), inst = host.getInstance(), btag;
-            if (inst) {
-                inst.EditorSelection.filterBlocks();
-                btag = inst.EditorSelection.DEFAULT_BLOCK_TAG;
-                FIRST_P = BODY + ' > ' + btag;
-                P = btag;
-            }
-        },
-        /**
-        * Performs a block element filter when the Editor after an content change
-        * @private
-        * @method _afterContentChange
-        */
-        _afterContentChange: function() {
-            var host = this.get(HOST), inst = host.getInstance();
-            if (inst && inst.EditorSelection) {
-                inst.EditorSelection.filterBlocks();
-            }
-        },
-        /**
-        * Performs block/paste filtering after paste.
-        * @private
-        * @method _afterPaste
-        */
-        _afterPaste: function() {
-            var host = this.get(HOST), inst = host.getInstance(),
-                sel = new inst.EditorSelection();
-
-            Y.later(50, host, function() {
-                inst.EditorSelection.filterBlocks();
-            });
-            
-        },
         initializer: function() {
             var host = this.get(HOST);
             if (host.editorBR) {
@@ -341,11 +269,6 @@ YUI.add('editor-para', function(Y) {
             }
 
             host.on(NODE_CHANGE, Y.bind(this._onNodeChange, this));
-            host.after('ready', Y.bind(this._afterEditorReady, this));
-            host.after('contentChange', Y.bind(this._afterContentChange, this));
-            if (Y.Env.webkit) {
-                host.after('dom:paste', Y.bind(this._afterPaste, this));
-            }
         }
     }, {
         /**
@@ -373,4 +296,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});

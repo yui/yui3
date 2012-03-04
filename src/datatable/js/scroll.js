@@ -33,6 +33,11 @@ var YLang = Y.Lang,
 
     Scrollable;
 
+// Returns the numeric value portion of the computed style, defaulting to 0
+function styleDim(node, style) {
+    return parseInt(node.getComputedStyle(style), 10) | 0;
+}
+
 Y.DataTable.Scrollable = Scrollable = function () {};
 
 Scrollable.ATTRS = {
@@ -40,12 +45,12 @@ Scrollable.ATTRS = {
     Activates or deactivates scrolling in the table.  Acceptable values are:
 
      * `false` - (default) Scrolling is disabled.
-     * `true` or 'xy' - If `height` is set, vertical scrolling will be activated, if
-                `width` is set, horizontal scrolling will be activated.
-     * 'x' - Activate horizontal scrolling only. Requires the `width` attribute is
-             also set.
-     * 'y' - Activate vertical scrolling only. Requires the `height` attribute is
-             also set.
+     * `true` or 'xy' - If `height` is set, vertical scrolling will be
+       activated, if `width` is set, horizontal scrolling will be activated.
+     * 'x' - Activate horizontal scrolling only. Requires the `width` attribute
+       is also set.
+     * 'y' - Activate vertical scrolling only. Requires the `height` attribute
+       is also set.
 
     @attribute scrollable
     @type {String|Boolean}
@@ -95,9 +100,9 @@ Y.mix(Scrollable.prototype, {
         return this;
     },
 
-    //----------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Protected properties and methods
-    //----------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     /**
     Template for the `<table>` that is used to fix the caption in place when
@@ -111,7 +116,18 @@ Y.mix(Scrollable.prototype, {
     _CAPTION_TABLE_TEMPLATE: '<table class="{className}" role="presentation"></table>',
 
     /**
-    Template for the virtual scrollbar needed in "xy" scrolling setups.
+    Template used to create sizable element liners around header content to
+    synchronize fixed header column widths.
+
+    @property _SCROLL_LINER_TEMPLATE
+    @type {HTML}
+    @value '<div class="{className}"></div>'
+    @protected
+    **/
+    _SCROLL_LINER_TEMPLATE: '<div class="{className}"></div>',
+
+    /**
+    Template for the virtual scrollbar needed in "y" and "xy" scrolling setups.
 
     @property _SCROLLBAR_TEMPLATE
     @type {HTML}
@@ -132,65 +148,49 @@ Y.mix(Scrollable.prototype, {
     _X_SCROLLER_TEMPLATE: '<div class="{className}"></div>',
 
     /**
+    Template for the `<table>` used to contain the fixed column headers for
+    vertically scrolling tables.
+
+    @property _Y_SCROLL_HEADER_TEMPLATE
+    @type {HTML}
+    @value '<table cellspacing="0" role="presentation" aria-hidden="true" class="{className}"></table>'
+    @protected
+    **/
+    _Y_SCROLL_HEADER_TEMPLATE: '<table cellspacing="0" aria-hidden="true" class="{className}"></table>',
+
+    /**
     Template for the `<div>` that is used to contain the rows when the table is
     vertically scrolling.
 
     @property _Y_SCROLLER_TEMPLATE
     @type {HTML}
-    @value '<div class="{className}"><table class="{tableClassName}" role="presentation"></table></div>'
+    @value '<div class="{className}"><div class="{scrollerClassName}"></div></div>'
     @protected
     **/
-    _Y_SCROLLER_TEMPLATE: '<div class="{className}"><table class="{tableClassName}" role="presentation"></table></div>',
-    /**
-    Creates a vertical scrollbar absolutely positioned over the right edge of the 
-    `_xScrollNode` to relay scrolling to the `_xScrollNode` (masked) below.
-    Without this, the `_yScrollNode`'s scrollbar would not be visible until the
-    `_xScrollNode` was scrolled to the far right.
-
-    @method _addVirtualScrollbar
-    @protected
-    **/
-    _addVirtualScrollbar: function () {
-        var scroller       = this._yScrollNode,
-            scrollbarWidth = Y.DOM.getScrollbarWidth() + 'px',
-            scrollbar      = Y.Node.create(
-                Y.Lang.sub(this._SCROLLBAR_TEMPLATE, {
-                    className: this.getClassName('virtual', 'scrollbar')
-                }));
-
-        this._scrollbarNode = scrollbar;
-
-        scrollbar.setStyles({
-            height: scroller.get('clientHeight') + 'px',
-            width : scrollbarWidth,
-            bottom : scrollbarWidth
-        });
-
-        scrollbar.one('div')
-            .setStyle('height', scroller.get('scrollHeight') + 'px');
-
-        this._virtualScrollHandle = new Y.EventHandle([
-            scrollbar.on('scroll', Y.rbind('_syncVirtualScroll', this)),
-            scroller.on('scroll', Y.rbind('_syncVirtualScroll', this))
-        ]);
-
-        this.get('contentBox').appendChild(scrollbar);
-    },
+    _Y_SCROLLER_TEMPLATE: '<div class="{className}"><div class="{scrollerClassName}"></div></div>',
 
     /**
-    Relays changes in the table structure or content to trigger a reflow of the
-    scrolling setup.
+    Adds padding to the last cells in the fixed header for vertically scrolling
+    tables.  This padding is equal in width to the scrollbar, so can't be
+    relegated to a stylesheet.
 
-    @method _afterContentChange
-    @param {EventFacade} e The relevant change event (ignored)
+    @method _addScrollbarPadding
     @protected
     **/
-    _afterContentChange: function (e) {
-        this._mergeXScrollContent();
-        this._mergeYScrollContent();
+    _addScrollbarPadding: function () {
+        var fixedHeader = this._yScrollHeader,
+            headerClass = '.' + this.getClassName('header'),
+            scrollbarWidth, rows, header, i, len;
 
-        this._uiSetWidth(this.get('width'));
-        this._syncScrollUI();
+        if (fixedHeader) {
+            scrollbarWidth = Y.DOM.getScrollbarWidth() + 'px';
+            rows = fixedHeader.all('tr');
+
+            for (i = 0, len = rows.size(); i < len; i += +header.get('rowSpan')) {
+                header = rows.item(i).all(headerClass).pop();
+                header.setStyle('paddingRight', scrollbarWidth);
+            }
+        }
     },
 
     /**
@@ -202,19 +202,154 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _afterScrollableChange: function (e) {
-        this._uiSetScrollable();
+        var scroller = this._xScrollNode;
+
+        if (this._xScroll && scroller) {
+            if (this._yScroll && !this._yScrollNode) {
+                scroller.setStyle('paddingRight',
+                    Y.DOM.getScrollbarWidth() + 'px');
+            } else if (!this._yScroll && this._yScrollNode) {
+                scroller.setStyle('paddingRight', '');
+            }
+        }
+
         this._syncScrollUI();
     },
 
     /**
-    Syncs the scrolling structure if the table is configured to scroll vertically.
+    Reacts to changes in the `caption` attribute by adding, removing, or
+    syncing the caption table when the table is set to scroll.
+
+    @method _afterScrollCaptionChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
+    _afterScrollCaptionChange: function (e) {
+        if (this._xScroll || this._yScroll) {
+            this._syncScrollUI();
+        }
+    },
+
+    /**
+    Reacts to changes in the `columns` attribute of vertically scrolling tables
+    by refreshing the fixed headers, scroll container, and virtual scrollbar
+    position.
+
+    @method _afterScrollColumnsChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
+    _afterScrollColumnsChange: function (e) {
+        if (this._xScroll || this._yScroll) {
+            if (this._yScroll && this._yScrollHeader) {
+                this._syncScrollHeaders();
+            }
+
+            this._syncScrollUI();
+        }
+    },
+
+    /**
+    Reacts to changes in vertically scrolling table's `data` ModelList by
+    synchronizing the fixed column header widths and virtual scrollbar height.
+
+    @method _afterScrollDataChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
+    _afterScrollDataChange: function (e) {
+        if (this._xScroll || this._yScroll) {
+            this._syncScrollUI();
+        }
+    },
+
+    /**
+    Reacts to changes in the `height` attribute of vertically scrolling tables
+    by updating the height of the `<div>` wrapping the data table and the
+    virtual scrollbar.  If `scrollable` was set to "y" or "xy" but lacking a
+    declared `height` until the received change, `_syncScrollUI` is called to
+    create the fixed headers etc.
 
     @method _afterScrollHeightChange
     @param {EventFacade} e The relevant change event (ignored)
     @protected
     **/
     _afterScrollHeightChange: function (e) {
-        this._yScroll && this._syncScrollUI();
+        if (this._yScroll) {
+            this._syncScrollUI();
+        }
+    },
+
+    /* (not an API doc comment on purpose)
+    Reacts to the sort event (if the table is also sortable) by updating the
+    fixed header classes to match the data table's headers.
+
+    THIS IS A HACK that will be removed immediately after the 3.5.0 release.
+    If you're reading this and the current version is greater than 3.5.0, I
+    should be publicly scolded.
+    */
+    _afterScrollSort: function (e) {
+        var headers, headerClass;
+
+        if (this._yScroll && this._yScrollHeader) {
+            headerClass = '.' + this.getClassName('header');
+            headers = this._theadNode.all(headerClass);
+
+            this._yScrollHeader.all(headerClass).each(function (header, i) {
+                header.set('className', headers.item(i).get('className'));
+            });
+        }
+    },
+
+    /**
+    Reacts to changes in the width of scrolling tables by expanding the width of
+    the `<div>` wrapping the data table for horizontally scrolling tables or
+    upding the position of the virtual scrollbar for vertically scrolling
+    tables.
+
+    @method _afterScrollWidthChange
+    @param {EventFacade} e The relevant change event (ignored)
+    @protected
+    **/
+    _afterScrollWidthChange: function (e) {
+        if (this._xScroll || this._yScroll) {
+            this._syncScrollUI();
+        }
+    },
+
+    /**
+    Binds virtual scrollbar interaction to the `_yScrollNode`'s `scrollTop` and
+    vice versa.
+
+    @method _bindScrollbar
+    @protected
+    **/
+    _bindScrollbar: function () {
+        var scrollbar = this._scrollbarNode,
+            scroller  = this._yScrollNode;
+
+        if (scrollbar && scroller && !this._scrollbarEventHandle) {
+            this._scrollbarEventHandle = new Y.Event.Handle([
+                scrollbar.on('scroll', this._syncScrollPosition, this, 'virtual'),
+                scroller.on('scroll', this._syncScrollPosition, this)
+            ]);
+        }
+    },
+
+    /**
+    Binds to the window resize event to update the vertical scrolling table
+    headers and wrapper `<div>` dimensions.
+
+    @method _bindScrollResize
+    @protected
+    **/
+    _bindScrollResize: function () {
+        if (!this._scrollResizeHandle) {
+            // TODO: sync header widths and scrollbar position.  If the height
+            // of the headers has changed, update the scrollbar dims as well.
+            this._scrollResizeHandle = Y.on('resize',
+                this._syncScrollUI, null, this);
+        }
     },
 
     /**
@@ -228,34 +363,77 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _bindScrollUI: function () {
-        this.after([
-            'dataChange',
-            'columnsChange',
-            'captionChange',
-            'heightChange'],
-            Y.bind('_afterContentChange', this));
+        this.after({
+            columnsChange: Y.bind('_afterScrollColumnsChange', this),
+            heightChange : Y.bind('_afterScrollHeightChange', this),
+            widthChange  : Y.bind('_afterScrollWidthChange', this),
+            captionChange: Y.bind('_afterScrollCaptionChange', this),
+            // FIXME: this is a last minute hack to work around the fact that
+            // DT doesn't use a tableView to render table content that can be
+            // replaced with a scrolling table view.  This must be removed asap!
+            sort         : Y.bind('_afterScrollSort', this)
+        });
 
-        this.data.after([
-            'add', 'remove', 'reset', '*:change'],
-            Y.bind('_afterContentChange', this));
+        this.after(['dataChange', '*:add', '*:remove', '*:reset', '*:change'],
+            Y.bind('_afterScrollDataChange', this));
     },
 
     /**
-    Calculates the height of the div containing the vertically scrolling rows.
-    The height is produced by subtracting the `offsetHeight` of the scrolling
-    `<div>` from the `clientHeight` of the `contentBox`.
+    Clears the lock and timer used to manage synchronizing the scroll position
+    between the vertical scroll container and the virtual scrollbar.
 
-    @method _calcScrollHeight
+    @method _clearScrollLock
     @protected
     **/
-    _calcScrollHeight: function () {
-        var scrollNode = this._yScrollNode;
+    _clearScrollLock: function () {
+        if (this._scrollLock) {
+            this._scrollLock.cancel();
+            delete this._scrollLock;
+        }
+    },
 
-        return this.get('contentBox').get('clientHeight') -
-               scrollNode.get('offsetTop') -
-               // To account for padding and borders of the scroll div
-               scrollNode.get('offsetHeight') +
-               scrollNode.get('clientHeight');
+    /**
+    Creates a virtual scrollbar from the `_SCROLLBAR_TEMPLATE`, assigning it to
+    the `_scrollbarNode` property.
+
+    @method _createScrollbar
+    @return {Node} The created Node
+    @protected
+    **/
+    _createScrollbar: function () {
+        var scrollbar = this._scrollbarNode;
+
+        if (!scrollbar) {
+            scrollbar = this._scrollbarNode = Y.Node.create(
+                Y.Lang.sub(this._SCROLLBAR_TEMPLATE, {
+                    className: this.getClassName('scrollbar')
+                }));
+
+            scrollbar.setStyle('width', Y.DOM.getScrollbarWidth() + 'px');
+        }
+
+        return scrollbar;
+    },
+
+    /**
+    Creates a separate table to contain the caption when the table is
+    configured to scroll vertically or horizontally.
+
+    @method _createScrollCaptionTable
+    @return {Node} The created Node
+    @protected
+    **/
+    _createScrollCaptionTable: function () {
+        if (!this._captionTable) {
+            this._captionTable = Y.Node.create(
+                Y.Lang.sub(this._CAPTION_TABLE_TEMPLATE, {
+                    className: this.getClassName('caption', 'table')
+                }));
+
+            this._captionTable.empty();
+        }
+
+        return this._captionTable;
     },
 
     /**
@@ -263,6 +441,7 @@ Y.mix(Scrollable.prototype, {
     by the `_X_SCROLLER_TEMPLATE`.
 
     @method _createXScrollNode
+    @return {Node} The created Node
     @protected
     **/
     _createXScrollNode: function () {
@@ -272,6 +451,29 @@ Y.mix(Scrollable.prototype, {
                     className: this.getClassName('x','scroller')
                 }));
         }
+
+        return this._xScrollNode;
+    },
+
+    /**
+    Populates the `_yScrollHeader` property by creating the `<table>` Node
+    described by the `_Y_SCROLL_HEADER_TEMPLATE`.
+
+    @method _createYScrollHeader
+    @return {Node} The created Node
+    @protected
+    **/
+    _createYScrollHeader: function () {
+        var fixedHeader = this._yScrollHeader;
+
+        if (!fixedHeader) {
+            fixedHeader = this._yScrollHeader = Y.Node.create(
+                Y.Lang.sub(this._Y_SCROLL_HEADER_TEMPLATE, {
+                    className: this.getClassName('scroll','columns')
+                }));
+        }
+
+        return fixedHeader;
     },
 
     /**
@@ -279,62 +481,76 @@ Y.mix(Scrollable.prototype, {
     by the `_Y_SCROLLER_TEMPLATE`.
 
     @method _createYScrollNode
+    @return {Node} The created Node
     @protected
     **/
     _createYScrollNode: function () {
+        var scrollerClass;
+
         if (!this._yScrollNode) {
-            this._yScrollNode = Y.Node.create(
+            scrollerClass = this.getClassName('y', 'scroller');
+
+            this._yScrollContainer = Y.Node.create(
                 Y.Lang.sub(this._Y_SCROLLER_TEMPLATE, {
-                    className: this.getClassName('y','scroller'),
-                    tableClassName: this.getClassName('y', 'scroll', 'table')
+                    className: this.getClassName('y','scroller','container'),
+                    scrollerClassName: scrollerClass
                 }));
+
+            this._yScrollNode = this._yScrollContainer
+                .one('.' + scrollerClass);
         }
+
+        return this._yScrollContainer;
     },
 
     /**
-    Assigns style widths to all columns based on their current `offsetWidth`s.
-    This faciliates creating a clone of the `<colgroup>` so column widths are
-    the same after the table is split in to header and data tables.
+    Removes the nodes used to create horizontal and vertical scrolling and
+    rejoins the caption to the main table if needed.
 
-    @method _fixColumnWidths
+    @method _disableScrolling
     @protected
     **/
-    _fixColumnWidths: function () {
-        var tbody     = this._tbodyNode,
-            table     = tbody.get('parentNode'),
-            firstRow  = tbody.one('tr'),
-            cells     = firstRow && firstRow.all('td'),
-            scrollbar = Y.DOM.getScrollbarWidth(),
-            widths    = [], i, len, cell;
+    _disableScrolling: function () {
+        this._removeScrollCaptionTable();
+        this._disableXScrolling();
+        this._disableYScrolling();
+        this._unbindScrollResize();
 
-        if (cells) {
-            // The thead and tbody need to be in the same table to accurately
-            // calculate column widths.
-            this._tableNode.appendChild(this._tbodyNode);
+        this._uiSetWidth(this.get('width'));
+    },
 
-            i = cells.size() - 1;
-            cell = cells.item(i);
+    /**
+    Removes the nodes used to allow horizontal scrolling.
 
-            // FIXME? This may be fragile if the table has a fixed width and
-            // increasing the size of the last column would push the overall
-            // width beyond the configured width.
-            // bump up the width of the last column to account for the scrollbar.
-            this._setColumnWidth(i,
-                (cell.get('offsetWidth') + scrollbar) + 'px');
+    @method _disableXScrolling
+    @protected
+    **/
+    _disableXScrolling: function () {
+        this._removeXScrollNode();
+    },
 
-            // Avoid assignment without scrollbar adjustment
-            cells.pop();
+    /**
+    Removes the nodes used to allow vertical scrolling.
 
-            // Two passes so assigned widths don't cause subsequent width changes
-            // which would cost reflows.
-            widths = cells.get('offsetWidth');
+    @method _disableYScrolling
+    @protected
+    **/
+    _disableYScrolling: function () {
+        this._removeYScrollHeader();
+        this._removeYScrollNode();
+        this._removeScrollbar();
+    },
 
-            for (i = 0, len = widths.length; i < len; ++i) {
-                this._setColumnWidth(i, widths[i] + 'px');
-            }
+    /**
+    Cleans up external event subscriptions.
 
-            table.appendChild(this._tbodyNode);
-        }
+    @method destructor
+    @protected
+    **/
+    destructor: function () {
+        this._unbindScrollbar();
+        this._unbindScrollResize();
+        this._clearScrollLock();
     },
 
     /**
@@ -356,104 +572,82 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Merges the caption and content tables back into one table if they are split.
+    Removes the table used to house the caption when the table is scrolling.
 
-    @method _mergeXScrollContent
+    @method _removeScrollCaptionTable
     @protected
     **/
-    _mergeXScrollContent: function () {
-        var scrollNode = this._xScrollNode,
-            captionTable;
-
-        this.get('boundingBox').removeClass(this.getClassName('scrollable', 'x'));
-
-        if (scrollNode) {
+    _removeScrollCaptionTable: function () {
+        if (this._captionTable) {
             if (this._captionNode) {
-                captionTable = this._captionNode && this._captionNode.ancestor(
-                    '.' + this.getClassName('caption', 'table'));
-
-                this._tableNode.insertBefore(this._captionNode,
-                    this._tableNode.get('firstChild'));
-
-                if (captionTable) {
-                    captionTable.remove().destroy(true);
-                }
-
+                this._tableNode.prepend(this._captionNode);
             }
 
-            scrollNode.replace(scrollNode.get('childNodes').toFrag());
+            this._captionTable.remove().destroy(true);
 
-            this._xScrollNode = null;
-
-            if (this._scrollbarNode) {
-                this._virtualScrollHandle.detach();
-                this._virtualScrollHandle = null;
-
-                this._scrollbarNode.remove().destroy(true);
-                this._scrollbarNode = null;
-            }
+            delete this._captionTable;
         }
     },
 
     /**
-    Merges the header and data tables back into one table if they are split.
+    Removes the `<div>` wrapper used to contain the data table when the table
+    is horizontally scrolling.
 
-    @method _mergeYScrollContent
+    @method _removeXScrollNode
     @protected
     **/
-    _mergeYScrollContent: function () {
-        this.get('boundingBox').removeClass(this.getClassName('scrollable', 'y'));
+    _removeXScrollNode: function () {
+        var scroller = this._xScrollNode;
 
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
+
+            delete this._yScrollNode;
+        }
+    },
+
+    /**
+    Removes the `<table>` used to contain the fixed column headers when the
+    table is vertically scrolling.
+
+    @method _removeYScrollHeader
+    @protected
+    **/
+    _removeYScrollHeader: function () {
+        if (this._yScrollHeader) {
+            this._yScrollHeader.remove().destroy(true);
+
+            delete this._yScrollHeader;
+        }
+    },
+
+    /**
+    Removes the `<div>` wrapper used to contain the data table when the table
+    is vertically scrolling.
+
+    @method _removeYScrollNode
+    @protected
+    **/
+    _removeYScrollNode: function () {
         if (this._yScrollNode) {
-            this._tableNode.append(this._tbodyNode);
-
             this._yScrollNode.remove().destroy(true);
-            this._yScrollNode = null;
 
-            this._removeHeaderScrollPadding();
-        }
-
-        this._uiSetColumns();
-    },
-
-    /**
-    Removes the additional padding added to the last cells in each header row to
-    allow the scrollbar to fit below.
-
-    @method _removeHeaderScrollPadding
-    @protected
-    **/
-    _removeHeaderScrollPadding: function () {
-        var rows = this._theadNode.all('> tr').getDOMNodes(),
-            cell, i, len;
-
-        // The last cell in all rows of the table headers
-        for (i = 0, len = rows.length; i < len; i += (cell.rowSpan || 1)) {
-            cell = Y.one(rows[i].cells[rows[i].cells.length - 1])
-                .setStyle('paddingRight', '');
+            delete this._yScrollNode;
         }
     },
 
     /**
-    Adds additional padding to the current amount of right padding on each row's
-    last cell to account for the width of the scrollbar below.
+    Removes the virtual scrollbar used by scrolling tables.
 
-    @method _setHeaderScrollPadding
+    @method _removeScrollbar
     @protected
     **/
-    _setHeaderScrollPadding: function () {
-        var rows = this._theadNode.all('> tr').getDOMNodes(),
-            padding, cell, i, len;
+    _removeScrollbar: function () {
+        if (this._scrollbarNode) {
+            this._scrollBarNode.remove().destroy(true);
 
-        cell = Y.one(rows[0].cells[rows[0].cells.length - 1]);
-
-        padding = (Y.DOM.getScrollbarWidth() +
-                   parseInt(cell.getComputedStyle('paddingRight'), 10)) + 'px';
-
-        // The last cell in all rows of the table headers
-        for (i = 0, len = rows.length; i < len; i += (cell.rowSpan || 1)) {
-            cell = Y.one(rows[i].cells[rows[i].cells.length - 1])
-                .setStyle('paddingRight', padding);
+            delete this._scrollBarNode;
         }
     },
 
@@ -499,214 +693,363 @@ Y.mix(Scrollable.prototype, {
     },
 
     /**
-    Clones the fixed (see `_fixColumnWidths` method) `<colgroup>` for use by the
-    table in the vertical scrolling container.  The last column's width is reduced
-    by the width of the scrollbar (which is offset by additional padding on the
-    last header cell(s) in the header table - see `_setHeaderScrollPadding`).
+    Keeps the virtual scrollbar and the scrolling `<div>` wrapper around the
+    data table in vertically scrolling tables in sync.
 
-    @method _setYScrollColWidths
+    @method _syncScrollPosition
+    @param {DOMEventFacade} e The scroll event
+    @param {String} [source] The string "virtual" if the event originated from
+                        the virtual scrollbar
     @protected
     **/
-    _setYScrollColWidths: function () {
-        var scrollNode = this._yScrollNode,
-            table      = scrollNode && scrollNode.one('> table'),
-            // hack to account for right border
-            colgroup, lastCol;
+    _syncScrollPosition: function (e, source) {
+        var scrollbar = this._scrollbarNode,
+            scroller  = this._yScrollNode;
 
-        if (table) {
-            scrollNode.all('colgroup,col').remove();
-            colgroup = this._colgroupNode.cloneNode(true);
-            colgroup.set('id', Y.stamp(colgroup));
-
-            // Browsers with proper support for column widths need the
-            // scrollbar width subtracted from the last column.
-            if (!Y.Features.test('table', 'badColWidth')) {
-                lastCol = colgroup.all('col').pop();
-
-                // Subtract the scrollbar width added to the last col
-                lastCol.setStyle('width',
-                    (parseInt(lastCol.getStyle('width'), 10) - 1 -
-                    Y.DOM.getScrollbarWidth()) + 'px');
+        if (scrollbar && scroller) {
+            if (this._scrollLock && this._scrollLock.source !== source) {
+                return;
             }
 
-            table.insertBefore(colgroup, table.one('> thead, > tfoot, > tbody'));
+            this._clearScrollLock();
+            this._scrollLock = Y.later(300, this, this._clearScrollLock);
+            this._scrollLock.source = source;
+
+            if (source === 'virtual') {
+                scroller.set('scrollTop', scrollbar.get('scrollTop'));
+            } else {
+                scrollbar.set('scrollTop', scroller.get('scrollTop'));
+            }
         }
     },
 
     /**
-    Splits the data table from its caption if it has one and wraps the table in
-    a horizontally scrollable container `<div>`.
+    Splits the caption from the data `<table>` if the table is configured to
+    scroll.  If not, rejoins the caption to the data `<table>` if it needs to
+    be.
 
-    @method _splitXScrollContent
+    @method _syncScrollCaptionUI
     @protected
     **/
-    _splitXScrollContent: function () {
-        var captionTable;
+    _syncScrollCaptionUI: function () {
+        var caption      = this._captionNode,
+            table        = this._tableNode,
+            captionTable = this._captionTable,
+            id;
 
-        this._createXScrollNode();
+        if (caption) {
+            id = caption.getAttribute('id');
 
-        this._tableNode.wrap(this._xScrollNode);
+            if (!captionTable) {
+                captionTable = this._createScrollCaptionTable();
 
-        if (this._yScrollNode) {
-            this._xScrollNode.append(this._yScrollNode);
-        }
+                this.get('contentBox').prepend(captionTable);
+            }
 
-        if (this._captionNode) {
-            captionTable = Y.Node.create(
-                Y.Lang.sub(this._CAPTION_TABLE_TEMPLATE, {
-                    className: this.getClassName('caption', 'table')
-                }));
+            if (!caption.get('parentNode').compareTo(captionTable)) {
+                captionTable.empty().insert(caption);
 
-            captionTable.setStyle('width', this.get('width'));
-            captionTable.insertBefore(this._captionNode,
-                captionTable.get('firstChild'));
+                if (!id) {
+                    id = Y.stamp(caption);
+                    caption.setAttribute('id', id);
+                }
 
-            this.get('contentBox').insertBefore(captionTable, this._xScrollNode);
+                table.setAttribute('aria-describedby', id);
+            }
+        } else if (captionTable) {
+            this._removeScrollCaptionTable();
         }
     },
 
     /**
-    Splits the unified table with headers and data into two tables, the latter
-    contained within a vertically scrollable container `<div>`.
+    Assigns widths to the fixed header columns to match the columns in the data
+    table.
 
-    @method _splitYScrollContent
+    @method _syncScrollColumnWidths
     @protected
     **/
-    _splitYScrollContent: function () {
-        var table = this._tableNode,
-            scrollNode = this._yScrollTable,
-            scrollTable, width;
-            
-        this.get('boundingBox').addClass(this.getClassName('scrollable','y'));
+    _syncScrollColumnWidths: function () {
+        var widths = [];
 
-        if (!scrollNode) {
-            // I don't want to take into account the added paddingRight done in
-            // _setHeaderScrollPadding for the data cells that will be
-            // scrolling below
-            this._fixColumnWidths();
-
-            this._setHeaderScrollPadding();
-
-            // lock the header table width in case the removal of the tbody would
-            // allow the table to shrink (such as when the tbody data causes a
-            // browser horizontal scrollbar).
-            width = parseInt(table.getComputedStyle('width'), 10);
-            table.setStyle('width', width + 'px');
-
-            this._createYScrollNode();
-            scrollNode  = this._yScrollNode;
-            scrollTable = scrollNode.one('table');
-            
-            scrollTable.append(this._tbodyNode);
-
-            table.insert(scrollNode, 'after');
-
-            scrollNode.setStyles({
-                height: this._calcScrollHeight() + 'px',
-                        // FIXME: Lazy hack to account for scroll node borders
-                width : (width - 2) + 'px'
+        if (this._theadNode && this._yScrollHeader) {
+            // Capture dims and assign widths in two passes to avoid reflows for
+            // each access of clientWidth/getComputedStyle
+            this._theadNode.all('.' + this.getClassName('header'))
+                .each(function (header) {
+                    widths.push(
+                        // FIXME: IE returns the col.style.width from
+                        // getComputedStyle even if the column has been
+                        // compressed below that width, so it must use
+                        // clientWidth. FF requires getComputedStyle because it
+                        // uses fractional widths that round up to an overall
+                        // cell/table width 1px greater than the data table's
+                        // cell/table width, resulting in misaligned columns or
+                        // fixed header bleed through. I can't think of a
+                        // *reasonable* way to capture the correct width without
+                        // a sniff.  Math.min(cW - p, getCS(w)) was imperfect
+                        // and punished all browsers, anyway.
+                        (Y.UA.ie && Y.UA.ie < 8) ?
+                            (header.get('clientWidth') -
+                             styleDim(header, 'paddingLeft') -
+                             styleDim(header, 'paddingRight')) + 'px' :
+                            header.getComputedStyle('width'));
             });
 
-            scrollTable.setStyle('width', scrollNode.get('clientWidth') + 'px');
+            this._yScrollHeader.all('.' + this.getClassName('scroll', 'liner'))
+                .each(function (liner, i) {
+                    liner.setStyle('width', widths[i]);
+                });
         }
-
-        this._setYScrollColWidths();
     },
 
     /**
-    Splits or merges the table for X and Y scrolling depending on the current
-    widget state.  If the table needs to be split, but is already, does nothing.
+    Creates matching headers in the fixed header table for vertically scrolling
+    tables and synchronizes the column widths.
+
+    @method _syncScrollHeaders
+    @protected
+    **/
+    _syncScrollHeaders: function () {
+        var fixedHeader   = this._yScrollHeader,
+            linerTemplate = this._SCROLL_LINER_TEMPLATE,
+            linerClass    = this.getClassName('scroll', 'liner');
+
+        if (this._theadNode && fixedHeader) {
+            fixedHeader.empty().appendChild(
+                this._theadNode.cloneNode(true));
+
+            // Prevent duplicate IDs and assign ARIA attributes to hide
+            // from screen readers
+            fixedHeader.all('[id]').removeAttribute('id');
+
+            fixedHeader.all('.' + this.getClassName('header'))
+                .each(function (header) {
+                    var liner = Y.Node.create(Y.Lang.sub(linerTemplate, {
+                            className: linerClass
+                        }));
+
+                    liner.appendChild(header.get('childNodes').toFrag());
+
+                    header.appendChild(liner);
+                }, this);
+
+            this._syncScrollColumnWidths();
+
+            this._addScrollbarPadding();
+        }
+    },
+
+    /**
+    Wraps the table for X and Y scrolling, if necessary, if the `scrollable`
+    attribute is set.  Synchronizes dimensions and DOM placement of all
+    scrolling related nodes.
 
     @method _syncScrollUI
     @protected
     **/
     _syncScrollUI: function () {
-        var cBox        = this.get('contentBox'),
-            node        = this._yScrollNode || cBox,
-            table       = node.one('table');
-
-        this._uiSetDim('width', '');
-        this._tableNode.setStyle('width', '');
+        var x = this._xScroll,
+            y = this._yScroll;
 
         this._uiSetScrollable();
 
-        if (this._yScroll) {
-            // Only split the table if the content is longer than the height
-            if (table.get('scrollHeight') > node.get('clientHeight')) {
-                this._splitYScrollContent();
+        // TODO: Probably should split this up into syncX, syncY, and syncXY
+        if (x || y) {
+            if ((this.get('width') || '').slice(-1) === '%') {
+                this._bindScrollResize();
             } else {
-                this._mergeYScrollContent();
+                this._unbindScrollResize();
             }
+
+            this._syncScrollCaptionUI();
         } else {
-            this._mergeYScrollContent();
+            this._disableScrolling();
         }
 
-        if (this._xScroll) {
-            // Only split the table if the content is wider than the config width
-            if (table.get('scrollWidth') > parseInt(this.get('width'), 10)) {
-                this._splitXScrollContent();
-
-                if (this._yScrollNode) {
-                    this._yScrollNode.setStyle('height',
-                        (this._yScrollNode.get('offsetHeight') -
-                         Y.DOM.getScrollbarWidth()) + 'px');
-
-                    // Only add virtual scrollbar if the OS+browser renders
-                    // scrollbars.
-                    if (Y.DOM.getScrollbarWidth()) {
-                        this._addVirtualScrollbar();
-                    }
-                }
-            } else {
-                this._mergeXScrollContent();
-            }
-        } else {
-            this._mergeXScrollContent();
+        if (this._yScrollHeader) {
+            this._yScrollHeader.setStyle('display', 'none');
         }
 
-        this._uiSetDim('width', this.get('width'));
+        if (x) {
+            if (!y) {
+                this._disableYScrolling();
+            }
+
+            this._syncXScrollUI(y);
+        }
+
+        if (y) {
+            if (!x) {
+                this._disableXScrolling();
+            }
+
+            this._syncYScrollUI(x);
+        }
     },
 
     /**
-    Keeps the `_yScrollNode` scroll position in sync with the `_scrollbarNode`
-    in an "xy" scroll configuration.
+    Wraps the table in a scrolling `<div>` of the configured width for "x"
+    scrolling.
 
-    @method _syncVirtualScroll
-    @param {DOMEventFacade} e The scroll event
-    @param {Object} details subscription details, including which of the two
-        scrolling elements is being scrolled
+    @method _syncXScrollUI
+    @param {Boolean} xy True if the table is configured with scrollable ="xy"
     @protected
     **/
-    _syncVirtualScroll: function (e) {
-        var move = (e.currentTarget === this._scrollbarNode) ?
-                    this._yScrollNode : this._scrollbarNode;
+    _syncXScrollUI: function (xy) {
+        var scroller     = this._xScrollNode,
+            table        = this._tableNode,
+            width        = this.get('width'),
+            bbWidth      = this.get('boundingBox').get('offsetWidth'),
+            scrollbarWidth = Y.DOM.getScrollbarWidth(),
+            borderWidth, tableWidth;
 
-        move.set('scrollTop', e.currentTarget.get('scrollTop'));
+        if (!scroller) {
+            scroller = this._createXScrollNode();
+
+            // Not using table.wrap() because IE went all crazy, wrapping the
+            // table in the last td in the table itself.
+            table.replace(scroller).appendTo(scroller);
+        }
+
+        // Can't use offsetHeight - clientHeight because IE6 returns
+        // clientHeight of 0 intially.
+        borderWidth = styleDim(scroller, 'borderLeftWidth') +
+                      styleDim(scroller, 'borderRightWidth');
+
+        scroller.setStyle('width', '');
+        this._uiSetDim('width', '');
+        if (xy && this._yScrollContainer) {
+            this._yScrollContainer.setStyle('width', '');
+        }
+
+        // Lock the table's unconstrained width to avoid configured column
+        // widths being ignored
+        if (Y.UA.ie && Y.UA.ie < 8) {
+            // Have to assign a style and trigger a reflow to allow the
+            // subsequent clearing of width + reflow to expand the table to
+            // natural width in IE 6
+            table.setStyle('width', width);
+            table.get('offsetWidth');
+        }
+        table.setStyle('width', '');
+        tableWidth = table.get('offsetWidth');
+        table.setStyle('width', tableWidth + 'px');
+
+        this._uiSetDim('width', width);
+
+        // Can't use 100% width because the borders add additional width
+        // TODO: Cache the border widths, though it won't prevent a reflow
+        scroller.setStyle('width', (bbWidth - borderWidth) + 'px');
+
+        // expand the table to fill the assigned width if it doesn't
+        // already overflow the configured width
+        if ((scroller.get('offsetWidth') - borderWidth) > tableWidth) {
+            // Assumes the wrapped table doesn't have borders
+            if (xy) {
+                table.setStyle('width', (scroller.get('offsetWidth') -
+                     borderWidth - scrollbarWidth) + 'px');
+            } else {
+                table.setStyle('width', '100%');
+            }
+        }
     },
 
     /**
-    Overrides the default Widget `_uiSetWidth` to assign the width to either
-    the table or the `contentBox` (for horizontal scrolling) in addition to the
-    native behavior of setting the width of the `boundingBox`.
+    Wraps the table in a scrolling `<div>` of the configured height (accounting
+    for the caption if there is one) if "y" scrolling is enabled.  Otherwise,
+    unwraps the table if necessary.
 
-    @method _uiSetWidth
-    @param {String|Number} width CSS width value or number of pixels
+    @method _syncYScrollUI
+    @param {Boolean} xy True if the table is configured with scrollable = "xy"
     @protected
     **/
-    _uiSetWidth: function (width) {
-        var scrollable = this._xScrollNode || this._yScrollNode;
+    _syncYScrollUI: function (xy) {
+        var yScroller    = this._yScrollContainer,
+            yScrollNode  = this._yScrollNode,
+            xScroller    = this._xScrollNode,
+            fixedHeader  = this._yScrollHeader,
+            scrollbar    = this._scrollbarNode,
+            table        = this._tableNode,
+            thead        = this._theadNode,
+            captionTable = this._captionTable,
+            boundingBox  = this.get('boundingBox'),
+            contentBox   = this.get('contentBox'),
+            width        = this.get('width'),
+            height       = boundingBox.get('offsetHeight'),
+            scrollbarWidth = Y.DOM.getScrollbarWidth(),
+            outerScroller;
 
-        if (isNumber(width)) {
-            width += this.DEF_UNIT;
+        if (captionTable && !xy) {
+            captionTable.setStyle('width', width || '100%');
         }
 
-        if (scrollable) {
-            this._mergeXScrollContent();
-            this._mergeYScrollContent();
-            this._syncScrollUI();
+        if (!yScroller) {
+            yScroller = this._createYScrollNode();
+
+            yScrollNode = this._yScrollNode;
+
+            table.replace(yScroller).appendTo(yScrollNode);
+        }
+
+        outerScroller = xy ? xScroller : yScroller;
+
+        if (!xy) {
+            table.setStyle('width', '');
+        }
+
+        // Set the scroller height
+        if (xy) {
+            // Account for the horizontal scrollbar in the overall height
+            height -= scrollbarWidth;
+        }
+
+        yScrollNode.setStyle('height',
+            (height - outerScroller.get('offsetTop') -
+            // because IE6 is returning clientHeight 0 initially
+            styleDim(outerScroller, 'borderTopWidth') -
+            styleDim(outerScroller, 'borderBottomWidth')) + 'px');
+
+        // Set the scroller width
+        if (xy) {
+            // For xy scrolling tables, the table should expand freely within
+            // the x scroller
+            yScroller.setStyle('width',
+                (table.get('offsetWidth') + scrollbarWidth) + 'px');
         } else {
-            this._uiSetDim('width', width);
-            this._tableNode.setStyle('width', width);
+            this._uiSetYScrollWidth(width);
+        }
+
+        if (captionTable && !xy) {
+            captionTable.setStyle('width', yScroller.get('offsetWidth') + 'px');
+        }
+
+        // Allow headerless scrolling
+        if (thead && !fixedHeader) {
+            fixedHeader = this._createYScrollHeader();
+
+            yScroller.prepend(fixedHeader);
+
+            this._syncScrollHeaders();
+        }
+
+        if (fixedHeader) {
+            this._syncScrollColumnWidths();
+
+            fixedHeader.setStyle('display', '');
+            // This might need to come back if FF has issues
+            //fixedHeader.setStyle('width', '100%');
+                //(yScroller.get('clientWidth') + scrollbarWidth) + 'px');
+
+            if (!scrollbar) {
+                scrollbar = this._createScrollbar();
+
+                this._bindScrollbar();
+
+                contentBox.prepend(scrollbar);
+            }
+
+            this._uiSetScrollbarHeight();
+            this._uiSetScrollbarPosition(outerScroller);
         }
     },
 
@@ -720,10 +1063,146 @@ Y.mix(Scrollable.prototype, {
     @protected
     **/
     _uiSetScrollable: function () {
-        // Initially add classes.  These may be purged by _syncScrollUI.
         this.get('boundingBox')
             .toggleClass(this.getClassName('scrollable','x'), this._xScroll)
             .toggleClass(this.getClassName('scrollable','y'), this._yScroll);
+    },
+
+    /**
+    Updates the virtual scrollbar's height to avoid overlapping with the fixed
+    headers.
+
+    @method _uiSetScrollbarHeight
+    @protected
+    **/
+    _uiSetScrollbarHeight: function () {
+        var scrollbar   = this._scrollbarNode,
+            scroller    = this._yScrollNode,
+            fixedHeader = this._yScrollHeader;
+
+        if (scrollbar && scroller && fixedHeader) {
+            scrollbar.get('firstChild').setStyle('height',
+                this._tbodyNode.get('scrollHeight') + 'px');
+
+            scrollbar.setStyle('height', 
+                (parseFloat(scroller.getComputedStyle('height')) -
+                 parseFloat(fixedHeader.getComputedStyle('height'))) + 'px');
+        }
+    },
+
+    /**
+    Updates the virtual scrollbar's placement to avoid overlapping the fixed
+    headers or the data table.
+
+    @method _uiSetScrollbarPosition
+    @param {Node} scroller Reference node to position the scrollbar over
+    @protected
+    **/
+    _uiSetScrollbarPosition: function (scroller) {
+        var scrollbar     = this._scrollbarNode,
+            fixedHeader   = this._yScrollHeader,
+            top;
+
+        if (scrollbar && scroller && fixedHeader) {
+            scrollbar.setStyles({
+                // Using getCS instead of offsetHeight because FF uses
+                // fractional values, but reports ints to offsetHeight, so
+                // offsetHeight is unreliable.  It is probably fine to use
+                // offsetHeight in this case but this was left in place after
+                // fixing an off-by-1px issue in FF 10- by fixing the caption
+                // font style so FF picked it up.
+                top: (parseFloat(fixedHeader.getComputedStyle('height')) +
+                      styleDim(scroller, 'borderTopWidth') +
+                      scroller.get('offsetTop')) + 'px',
+
+                left: (scroller.get('offsetWidth') -
+                       Y.DOM.getScrollbarWidth() -
+                       styleDim(scroller, 'borderRightWidth')) + 'px'
+            });
+        }
+    },
+
+    /**
+    Assigns the width of the `<div>` wrapping the data table in vertically
+    scrolling tables.
+
+    If the table can't compress to the specified width, the container is
+    expanded accordingly.
+
+    @method _uiSetYScrollWidth
+    @param {String} width The CSS width to attempt to set
+    @protected
+    **/
+    _uiSetYScrollWidth: function (width) {
+        var scroller = this._yScrollContainer,
+            table    = this._tableNode,
+            tableWidth, borderWidth, scrollerWidth, scrollbarWidth;
+
+        if (scroller && table) {
+            scrollbarWidth = Y.DOM.getScrollbarWidth();
+
+            if (width) {
+                // Assumes no table border
+                borderWidth = scroller.get('offsetWidth') -
+                              scroller.get('clientWidth') +
+                              scrollbarWidth; // added back at the end
+
+                // The table's rendered width might be greater than the
+                // configured width
+                scroller.setStyle('width', width);
+
+                // Have to subtract the border width from the configured width
+                // because the scroller's width will need to be reduced by the
+                // border width as well during the width reassignment below.
+                scrollerWidth = scroller.get('clientWidth') - borderWidth;
+
+                // Assumes no table borders
+                table.setStyle('width', scrollerWidth + 'px');
+
+                tableWidth = table.get('offsetWidth');
+
+                // Expand the scroll node width if the table can't fit.
+                // Otherwise, reassign the scroller a pixel width that
+                // accounts for the borders.
+                scroller.setStyle('width',
+                    (tableWidth + scrollbarWidth) + 'px');
+            } else {
+                // Allow the table to expand naturally
+                table.setStyle('width', '');
+                scroller.setStyle('width', '');
+
+                scroller.setStyle('width',
+                    (table.get('offsetWidth') + scrollbarWidth) + 'px');
+            }
+        }
+    },
+
+    /**
+    Detaches the scroll event subscriptions used to maintain scroll position
+    parity between the scrollable `<div>` wrapper around the data table and the
+    virtual scrollbar for vertically scrolling tables.
+
+    @method _unbindScrollbar
+    @protected
+    **/
+    _unbindScrollbar: function () {
+        if (this._scrollbarEventHandle) {
+            this._scrollbarEventHandle.detach();
+        }
+    },
+
+    /**
+    Detaches the resize event subscription used to maintain column parity for
+    vertically scrolling tables with percentage widths.
+
+    @method _unbindScrollResize
+    @protected
+    **/
+    _unbindScrollResize: function () {
+        if (this._scrollResizeHandle) {
+            this._scrollResizeHandle.detach();
+            delete this._scrollResizeHandle;
+        }
     }
 
     /**
@@ -734,7 +1213,7 @@ Y.mix(Scrollable.prototype, {
     @default undefined (not initially set)
     @private
     **/
-    //_xScroll,
+    //_xScroll: null,
 
     /**
     Indicates vertical table scrolling is enabled.
@@ -744,7 +1223,17 @@ Y.mix(Scrollable.prototype, {
     @default undefined (not initially set)
     @private
     **/
-    //_yScroll,
+    //_yScroll: null,
+
+    /**
+    Fixed column header `<table>` Node for vertical scrolling tables.
+
+    @property _yScrollHeader
+    @type {Node}
+    @default undefined (not initially set)
+    @protected
+    **/
+    //_yScrollHeader: null,
 
     /**
     Overflow Node used to contain the data rows in a vertically scrolling table.
@@ -754,7 +1243,7 @@ Y.mix(Scrollable.prototype, {
     @default undefined (not initially set)
     @protected
     **/
-    //_yScrollNode
+    //_yScrollNode: null,
 
     /**
     Overflow Node used to contain the table headers and data in a horizontally
@@ -765,7 +1254,7 @@ Y.mix(Scrollable.prototype, {
     @default undefined (not initially set)
     @protected
     **/
-    //_xScrollNode
+    //_xScrollNode: null
 }, true);
 
 Y.Base.mix(Y.DataTable, [Scrollable]);

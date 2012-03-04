@@ -1,160 +1,158 @@
 YUI.add('button-group', function(Y) {
 
 /**
-* Allows Y.Button instances to be grouped together
+* A Widget to create groups of buttons
 *
-* @module ButtonGroup
-* @main ButtonGroup
+* @module button-group
 * @since 3.5.0
 */
+
+var CONTENT_BOX = "contentBox",
+    SELECTOR    = "button, input[type=button], input[type=reset], input[type=submit]",
+    CLICK_EVENT = "click",
+    CLASS_NAMES = Y.ButtonCore.CLASS_NAMES;
 
 /**
 * Creates a ButtonGroup
 *
 * @class ButtonGroup
-* @extends Base
+* @extends Widget
 * @param config {Object} Configuration object
 * @constructor
 */
-function ButtonGroup(config) {
+function ButtonGroup() {
     ButtonGroup.superclass.constructor.apply(this, arguments);
 }
 
-/* ButtonGroup extends the Base class */
-Y.extend(ButtonGroup, Y.Base, {
-    
+/* ButtonGroup extends Widget */
+Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
+
     /**
-    * @method initializer
-    * @description Internal init() handler.
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config){
-        
-        this.buttons = new Y.ArrayList();
-
-        if (config.srcNodes){
-            if (Y.Lang.isString(config.srcNodes)){
-                config.srcNodes = Y.all(config.srcNodes);
-            }
-            config.buttons = [];
-            config.srcNodes.each(function(node){
-                config.srcNode = node;
-                config.buttons.push(new Y.Button(config));
-            });
-
-            delete config.srcNodes;
-        }
-        
-        if (config.buttons) {
-            Y.Array.each(config.buttons, function(button){
-                this.addButton(button);
-            }, this);
-        }
-        
+     * @method renderUI
+     * @description Creates a visual representation of the widget based on existing parameters.
+     * @public
+     */
+    renderUI: function() {
+        this.getButtons().plug(Y.Plugin.Button);
     },
-    
+
+    /**
+     * @method bindUI
+     * @description Hooks up events for the widget
+     * @public
+     */
+    bindUI: function() {
+        var group = this,
+            cb = group.get(CONTENT_BOX);
+
+        cb.delegate(CLICK_EVENT, group._handleClick, SELECTOR, group);
+    },
+
     /**
     * @method getButtons
     * @description Returns all Y.Buttons instances assigned to this group
     * @public
     */
     getButtons: function() {
-        return this.buttons._items;
+        var cb = this.get(CONTENT_BOX);
+
+        return cb.all(SELECTOR);
     },
-    
+
     /**
     * @method getSelectedButtons
     * @description Returns all Y.Buttons instances that are selected
     * @public
     */
     getSelectedButtons: function() {
+        var group = this,
+            selected = [],
+            buttons = group.getButtons(),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
 
-        var selected = [], buttons;
-        buttons = this.buttons;
-
-        buttons.each(function(button){
-            if (button.get('selected')){
-                selected.push(button);
+        buttons.each(function(node){
+            if (node.hasClass(selectedClass)){
+                selected.push(node);
             }
         });
 
         return selected;
     },
-    
+
     /**
     * @method getSelectedValues
     * @description Returns the values of all Y.Button instances that are selected
     * @public
     */
     getSelectedValues: function() {
-        var selected, values = [];
-        selected = this.getSelectedButtons();
-        Y.Array.each(selected, function(button){
-            values.push(button.getNode().get('value'));
+        var group = this,
+            value,
+            values = [],
+            selected = group.getSelectedButtons(),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+
+        Y.Array.each(selected, function(node){
+            if (node.hasClass(selectedClass)){
+                value = node.getContent();
+                values.push(value);
+            }
         });
 
         return values;
     },
-    
+
     /**
-    * @method addButton
-    * @description Assigns a Y.Button instance to this group
-    * @public
+    * @method _handleClick
+    * @description A delegated click handler for when any button is clicked in the content box
+    * @param e {Object} An event object
+    * @private
     */
-    addButton: function(button){
-        var type = this.get('type');
+    _handleClick: function(e){
+        var buttons,
+            clickedNode = e.target,
+            group = this,
+            type = group.get('type'),
+            selectedClass = ButtonGroup.CLASS_NAMES.SELECTED,
+            isSelected = clickedNode.hasClass(selectedClass);
+
+        // TODO: Anything for 'push' groups?
+
         if (type === 'checkbox') {
-            button.set('type', 'checkbox');
-            button.on('click', this._onCBButtonClick, this);
+            clickedNode.toggleClass(selectedClass, !isSelected);
+            group.fire('selectionChange', {originEvent: e});
         }
         else if (type === 'radio') {
-            button.on('click', this._onRadioButtonClick, this);
+            if (!isSelected) {
+                buttons = group.getButtons(); // Todo: getSelectedButtons()? Need it to return an arraylist then.
+                buttons.removeClass(selectedClass);
+                clickedNode.addClass(selectedClass);
+                group.fire('selectionChange', {originEvent: e});
+            }
         }
-        
-        this.buttons.add(button);
-    },
-    
-    /**
-    * @method _onButtonClick
-    * @description Triggered when a button is clicked and this is a radio group
-    * @protected
-    */
-    _onRadioButtonClick: function(e) {
-        var clickedButton = e.target;
-        
-        if (!clickedButton.get('selected')) {
-            var selectedButtons = this.getSelectedButtons();
-            Y.Array.each(selectedButtons, function(button){
-                button.unselect();
-            });
-            clickedButton.select();
-
-            // Fire change event
-            this.fire('selectionChange');
-        }
-        else {
-            // TODO: anything?
-        }
-    },
-    
-    /**
-    * @method _onButtonClick
-    * @description Triggered when a button is clicked and this is a checkbox group
-    * @protected
-    */
-    _onCBButtonClick: function(e) {
-        // Fire change event
-        this.fire('selectionChange');
     }
-    
+
 }, {
-    /** 
-    * Array of attributes
+    // Y.ButtonGroup static properties
+
+    /**
+     * The identity of the widget.
+     *
+     * @property NAME
+     * @type {String}
+     * @default 'buttongroup'
+     * @readOnly
+     * @protected
+     * @static
+     */
+    NAME: 'buttongroup',
+
+    /**
+    * Static property used to define the default attribute configuration of
+    * the Widget.
     *
     * @property ATTRS
-    * @type {Array}
-    * @private
+    * @type {Object}
+    * @protected
     * @static
     */
     ATTRS: {
@@ -162,23 +160,17 @@ Y.extend(ButtonGroup, Y.Base, {
             writeOnce: 'initOnly',
             value: 'radio'
         }
-    }
+    },
+
+    /**
+     * List of class names used in the ButtonGroup's DOM
+     *
+     * @property CLASS_NAMES
+     * @type {Object}
+     * @static
+     */
+    CLASS_NAMES: CLASS_NAMES
 });
 
-// -- Static Properties ----------------------------------------------------------
 
-/**
-* Name of this component.
-*
-* @property NAME
-* @type String
-* @static
-*/
-ButtonGroup.NAME = "buttongroup";
-
-
-// Export ButtonGroup
-Y.ButtonGroup = ButtonGroup;
-
-
-}, '@VERSION@' ,{requires:['button-base']});
+}, '@VERSION@' ,{requires:['button-plugin', 'widget']});

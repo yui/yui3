@@ -881,7 +881,8 @@
                         DE: "MyNewDEVal",
                         complex: "MyNewComplexVal",
                         initialized:true,
-                        destroyed:false
+                        destroyed:false,
+                        initOnly: undefined
                     };
 
                     Y.Assert.areEqual(expectedVals.A, h.get("A"));
@@ -1421,7 +1422,8 @@
                         PassThrough: "MyPassThrough",
                         Z: "MYZ",
                         initialized:true,
-                        destroyed:false
+                        destroyed:false,
+                        initOnly: undefined
                     };
 
                     Y.Assert.areEqual(expectedVals.A, h.get("A"));

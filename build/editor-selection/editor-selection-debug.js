@@ -892,7 +892,9 @@ YUI.add('editor-selection', function(Y) {
         * @return {EditorSelection}
         */
         remove: function() {
-            this._selection.removeAllRanges();
+            if (this._selection && this._selection.removeAllRanges) {
+                this._selection.removeAllRanges();
+            }
             return this;
         },
         /**
@@ -1017,4 +1019,4 @@ YUI.add('editor-selection', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});

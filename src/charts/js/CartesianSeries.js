@@ -315,6 +315,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 		this.set("ycoords", ycoords);
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
+        this._dataLength = dataLength;
     },
 
     /**

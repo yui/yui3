@@ -1,0 +1,15 @@
+    table = new Y.DataTable({
+        caption: "X axis scrolling table",
+        columns: [
+            { key: "ANSI" },
+            { key: "STATE",           label:"State" },
+            { key: "TOTAL_POP",       label:"Total Population" },
+            { key: "LAND_AREA",       label:"Land Area" },
+            { key: "POP_PER_SQ_MILE", label:"Pop/Square Mile" }
+        ],
+        data: state_census_data.slice(0, 7), // truncated for the example
+        scrollable: "x",
+        width: "250px"
+    });
+
+    table.render('#scrolling-x');

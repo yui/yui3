@@ -172,14 +172,15 @@ var sectionInput = Y.one("#section");
 
 // This should work, since the StandardModule widget has settable 
 // header/body/footer sections
-Y.on("click", function(e) {
+Y.on("submit", function(e) {
+    e.preventDefault();
 
     var content = Y.Escape.html(contentInput.get("value"));
     var section = sectionInput.get("value");
 
     stdmod.setStdModContent(section, content);
 
-}, "#setContent");
+}, "#widget1-example");
 ```
 
 <p>To verify that no unrequested features are added, we also attempt to move the instance using the `move` method, which is not part of the base Widget class, and would be added by the `WidgetPosition` extension. This verifies that the other example classes we'll create, which do create new classes which use `WidgetPosition`, have not modified the base Widget class.</p>
@@ -243,13 +244,15 @@ positionable.move(xy[0], xy[1]);
 
 ```
 // This should work, since Positionable has basic XY Positioning support
-Y.on("click", function(e) {
+Y.on("submit", function(e) {
+    e.preventDefault();
+    
     var x = parseInt(xInput.get("value"));
     var y = parseInt(yInput.get("value"));
 
     positionable.move(x,y);
 
-}, "#move");
+}, "#widget2-example");
 ```
 
 <p>And, as with the `StandardModule` class, we should not be allowed to invoke any methods from an extension which we didn't request:</p>

@@ -849,7 +849,7 @@ Y.PieChart = PieChartLegend;
  * @class ChartLegend
  * @module charts
  * @submodule charts-legend
- *
+ * @extends Widget
  */
 Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     /**
@@ -1026,7 +1026,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     weight: strokeWeight
                 };
                 displayName = chart.getSeriesItems(series, i).category.value;
-                item = this.getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
+                item = this._getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1053,7 +1053,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this.getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1167,7 +1167,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      *      <dt>text</dt><dd></dd>
      *  </dl>
      *
-     * @method getLegendItem
+     * @method _getLegendItem
      * @param {Node} shapeProps Reference to the `node` attribute.
      * @param {String | Class} shapeClass The type of shape
      * @param {Object} fill Properties for the shape's fill
@@ -1177,8 +1177,9 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Number} height Total height of the legend item
      * @param {HTML | String} text Text for the legendItem
      * @return Object
+     * @private
      */
-    getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
+    _getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
     {
         var containerNode = Y.one(DOCUMENT.createElement("div")),
             textField = Y.one(DOCUMENT.createElement("span")),
@@ -1195,7 +1196,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         node.appendChild(containerNode);
         dimension = textField.get("offsetHeight");
         padding = dimension - h;
-        left = w + padding;
+        left = w + padding + 2;
         textField.setStyle("left", left + PX);
         containerNode.setStyle("height", dimension + PX);
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
@@ -1247,18 +1248,18 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     {
         var styles = { 
             padding: {
-                top: 5,
-                right: 5,
-                bottom: 5,
-                left: 5
+                top: 8,
+                right: 8,
+                bottom: 8,
+                left: 9
             },
-            gap: 5,
+            gap: 10,
             hAlign: "center",
-            vAlign: "middle",
+            vAlign: "top",
             marker: this._getPlotDefaults(),
             item: {
-                hSpacing: 4,
-                vSpacing: 4,
+                hSpacing: 10,
+                vSpacing: 5,
                 label: {
                     color:"#808080",
                     fontSize:"85%"
@@ -1366,7 +1367,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         chart: {},
 
         /**
-         * Indicates the direction in relation of the legend's layout. 
+         * Indicates the direction in relation of the legend's layout. The `direction` of the legend is determined by its
+         * `position` value.
          *
          * @attribute direction
          * @type String
@@ -1376,7 +1378,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
        
         /**
-         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. 
+         * Indicates the position and direction of the legend. Possible values are `left`, `top`, `right` and `bottom`. Values of `left` and
+         * `right` values have a `direction` of `vertical`. Values of `top` and `bottom` values have a `direction` of `horizontal`.
          *
          * @attribute position
          * @type String
