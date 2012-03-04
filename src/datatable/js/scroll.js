@@ -812,7 +812,9 @@ Y.mix(Scrollable.prototype, {
     _syncScrollHeaders: function () {
         var fixedHeader   = this._yScrollHeader,
             linerTemplate = this._SCROLL_LINER_TEMPLATE,
-            linerClass    = this.getClassName('scroll', 'liner');
+            linerClass    = this.getClassName('scroll', 'liner'),
+            headerClass   = this.getClassName('header'),
+            headers       = this._theadNode.all('.' + headerClass);
 
         if (this._theadNode && fixedHeader) {
             fixedHeader.empty().appendChild(
@@ -822,16 +824,24 @@ Y.mix(Scrollable.prototype, {
             // from screen readers
             fixedHeader.all('[id]').removeAttribute('id');
 
-            fixedHeader.all('.' + this.getClassName('header'))
-                .each(function (header) {
-                    var liner = Y.Node.create(Y.Lang.sub(linerTemplate, {
+            fixedHeader.all('.' + headerClass).each(function (header, i) {
+                var liner = Y.Node.create(Y.Lang.sub(linerTemplate, {
                             className: linerClass
-                        }));
+                        })),
+                    refHeader = headers.item(i);
 
-                    liner.appendChild(header.get('childNodes').toFrag());
+                // Can't assign via skin css because sort (and potentially
+                // others) might override the padding values.
+                liner.setStyle('padding',
+                    refHeader.getComputedStyle('paddingTop') + ' ' +
+                    refHeader.getComputedStyle('paddingRight') + ' ' +
+                    refHeader.getComputedStyle('paddingBottom') + ' ' +
+                    refHeader.getComputedStyle('paddingLeft'));
 
-                    header.appendChild(liner);
-                }, this);
+                liner.appendChild(header.get('childNodes').toFrag());
+
+                header.appendChild(liner);
+            }, this);
 
             this._syncScrollColumnWidths();
 
@@ -1100,8 +1110,7 @@ Y.mix(Scrollable.prototype, {
     **/
     _uiSetScrollbarPosition: function (scroller) {
         var scrollbar     = this._scrollbarNode,
-            fixedHeader   = this._yScrollHeader,
-            top;
+            fixedHeader   = this._yScrollHeader;
 
         if (scrollbar && scroller && fixedHeader) {
             scrollbar.setStyles({
