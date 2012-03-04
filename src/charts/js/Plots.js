@@ -88,7 +88,7 @@ Plots.prototype = {
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         for(; i < len; ++i)
@@ -106,7 +106,7 @@ Plots.prototype = {
             }
             if(borderColors)
             {
-                style.border.colors = borderColors[i % borderColors.length];
+                style.border.color = borderColors[i % borderColors.length];
             }
 
             style.x = left;

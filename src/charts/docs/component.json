@@ -125,6 +125,14 @@
 			"modules" : ["charts-legend"],
 			"tags" : ["charts"],
             		"hideTableOfContents": true
+		},
+		{
+			"name" : "charts-groupmarkers",
+			"displayName" : "Group Marker Chart",
+			"description" : "Shows how to render multiple data points in a singe marker.",
+			"modules" : ["charts"],
+			"tags" : ["charts"],
+            		"hideTableOfContents": true
 		}
 	]	
 }
