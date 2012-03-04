@@ -196,29 +196,26 @@ function define(type, proxy, directEvent) {
         },
 
         on: function (node, sub, notifier) {
-            sub.onHandle = this._attach(node._node, notifier);
+            sub.handle = this._attach(node._node, notifier);
         },
 
         detach: function (node, sub) {
-            sub.onHandle.detach();
+            sub.handle.detach();
         },
 
         delegate: function (node, sub, notifier, filter) {
-            // For sort during notification phase.  Delegate subs should
-            // notify in subscription order when the fake bubble path is walked.
-            Y.stamp(notifier);
-
             if (isString(filter)) {
                 sub.filter = function (target) {
-                    return Y.Selector.test(target._node, filter);
+                    return Y.Selector.test(target._node, filter,
+                        node === target ? null : node._node);
                 };
             }
 
-            sub.delegateHandle = this._attach(node._node, notifier, true);
+            sub.handle = this._attach(node._node, notifier, true);
         },
 
         detachDelegate: function (node, sub) {
-            sub.delegateHandle.detach();
+            sub.handle.detach();
         }
     }, true);
 }
