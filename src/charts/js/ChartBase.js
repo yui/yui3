@@ -906,7 +906,7 @@ ChartBase.prototype = {
         {
             cb.removeChild(oldNode);
         }
-        tt.node.setAttribute("id", id);
+        tt.node.set("id", id);
         tt.node.setStyle("visibility", "hidden");
         cb.appendChild(tt.node);
     },
@@ -993,8 +993,8 @@ ChartBase.prototype = {
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 }
             };
-        node.setAttribute("id", this.get("id") + "_tooltip");
         node = Y.one(node);
+        node.set("id", this.get("id") + "_tooltip");
         node.setStyle("fontSize", "85%");
         node.setStyle("opacity", "0.83");
         node.setStyle("position", "absolute");

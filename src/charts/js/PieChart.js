@@ -353,6 +353,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     {
         var msg = "",
             categoryItem,
+            items,
+            series,
             valueItem,
             seriesIndex = 0,
             itemIndex = this._itemIndex,

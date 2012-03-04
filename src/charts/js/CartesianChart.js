@@ -1529,6 +1529,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             seriesCollection = this.get("seriesCollection"),
             axesCollection = this._axesCollection,
             tooltip = this.get("tooltip").node;
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
         len = seriesCollection ? seriesCollection.length : 0;
         for(; i < len; ++i)
         {
@@ -1551,10 +1561,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(tooltip)
         {
+            tooltip.empty();
             tooltip.remove(true);
         }
         if(this._overlay)
         {
+            this._overlay.empty();
             this._overlay.remove(true);
         }
     },
@@ -1569,6 +1581,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     _getAriaMessage: function(key)
     {
         var msg = "",
+            series,
+            items,
             categoryItem,
             valueItem,
             seriesIndex = this._seriesIndex,
