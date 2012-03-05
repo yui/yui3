@@ -968,7 +968,7 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isNotNull(node1, 'Failed to load module 1');
                     Assert.isNotNull(node2, 'Failed to load module 2');
                     Assert.isNotNull(node3, 'Failed to load module 3');
-
+                    
                     if (Y.Get._env.async) {
                         //This browser supports the async property, check it
                         Assert.isFalse(node1.async, 'Async flag on node1 was set incorrectly');
@@ -976,9 +976,15 @@ YUI.add('loader-tests', function(Y) {
                         Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
                     } else {
                         //The async attribute is still
-                        Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
-                        Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
-                        Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                        if (Y.UA.ie && Y.UA.ie > 8) {
+                            Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
+                            Assert.isUndefined(node1.async, 'Async flag on node1 was set incorrectly');
+                            Assert.isUndefined(node2.async, 'Async flag on node2 was set incorrectly');
+                        } else {
+                            Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
+                            Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
+                            Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                        }
                     }
                 });
             });
