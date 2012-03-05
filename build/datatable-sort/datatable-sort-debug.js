@@ -757,7 +757,7 @@ Y.mix(Sortable.prototype, {
             columns.length);
 
         for (i = 0, len = columns.length; i < len; ++i) {
-            sortableCols[columns[i]._yuid] = columns[i];
+            sortableCols[columns[i].id] = columns[i];
         }
 
         // TODO: this.head.render() + decorate cells?
@@ -789,7 +789,7 @@ Y.mix(Sortable.prototype, {
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col  = columns[i];
-            node = this._theadNode.one('#' + col._yuid);
+            node = this._theadNode.one('#' + col.id);
             desc = col.sortDir === -1;
 
             if (node) {
@@ -815,7 +815,7 @@ Y.mix(Sortable.prototype, {
                 node.setAttribute('title', title);
                 // To combat VoiceOver from reading the sort title as the
                 // column header
-                node.setAttribute('aria-labelledby', col._yuid);
+                node.setAttribute('aria-labelledby', col.id);
                 node.setAttribute('tabindex', 0);
             }
         }
@@ -855,4 +855,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@' ,{requires:['datatable-base'], lang:['en']});
+}, '@VERSION@' ,{lang:['en'], requires:['datatable-base']});

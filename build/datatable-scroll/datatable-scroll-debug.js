@@ -1283,4 +1283,4 @@ Y.mix(Scrollable.prototype, {
 Y.Base.mix(Y.DataTable, [Scrollable]);
 
 
-}, '@VERSION@' ,{requires:['datatable-base', 'dom-screen'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['datatable-base', 'dom-screen']});
