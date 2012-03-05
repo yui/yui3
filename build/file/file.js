@@ -209,7 +209,7 @@ YUI.add('file', function(Y) {
     */  
         cancelUpload: function () {
          if (this.get("html5")) {
-            xhr.abort();
+            this.get('xhr').abort();
          }
          else if (this.get("uploader")) {
            this.get("uploader").callSWF("cancel", [this.get("id")]);
