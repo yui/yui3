@@ -47,34 +47,29 @@
     <label>Width:</label>
     <input id="input" size="2" value="550"> px
     <button class="yui3-button btn-set">Set</button>
-
     <button class="yui3-button btn-get">Get</button>
 <script>
 YUI().use('node', 'button', function(Y) {
     var corn = Y.one('#corn'),
-        getButton = Y.one('.example .btn-get'),
-        setButton = Y.one('.example .btn-set'),
         input = Y.one('.example #input'),
         output = Y.one('.example #output');
-        
 
     var getWidth = function(){
        var width = corn.get('offsetWidth');
        output.setContent(width + 'px<br><em>|</em>'); // display width near the get button
     }
     
-    getButton.on('click', getWidth);
-    output.on('click', getWidth);
+    Y.one('.example .btn-get').on('click', getWidth);
+    output.on('click', getWidth); // also allows getting width by clicking on ruler width label 
 
-
-    setButton.on('click', function(e) {
+    Y.one('.example .btn-set').on('click', function(e) {
         var value = input.get('value'),
             width = corn.get('offsetWidth');
         if (value == '') {
             input.set('value', width);
         } else if (!isNaN(parseInt(value))) { // if the value in the input is a number
             corn.set('offsetWidth', value);
-            output.setContent('? ' + 'px<br><em>|</em>'); // clear out the value near the get button
+            output.setContent('? ' + 'px<br><em>|</em>'); // clear out the width label on the ruler
         }
     });
 });
