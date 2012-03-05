@@ -101,6 +101,12 @@ YUI.add('editor-base', function(Y) {
         */
         _resolveChangedNode: function(n) {
             var inst = this.getInstance(), lc, lc2, found;
+            if (n && n.test(BODY)) {
+                var sel = new inst.EditorSelection();
+                if (sel && sel.anchorNode) {
+                    n = sel.anchorNode;
+                }
+            }
             if (inst && n && n.test('html')) {
                 lc = inst.one(BODY).one(LAST_CHILD);
                 while (!found) {
@@ -156,6 +162,7 @@ YUI.add('editor-base', function(Y) {
             }
 
             e.changedNode = this._resolveChangedNode(e.changedNode);
+
 
             /*
             * @TODO
@@ -898,4 +905,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'editor-selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'editor-selection']});

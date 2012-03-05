@@ -183,6 +183,10 @@ suite.add(new Y.Test.Case({
         Assert.areSame('a.yui3-pjax', this.pjax.get('linkSelector'));
     },
 
+    '`navigateOnHash` should be false by default': function () {
+        Assert.isFalse(this.pjax.get('navigateOnHash'));
+    },
+
     '`scrollToTop` should be true by default': function () {
         Assert.isTrue(this.pjax.get('scrollToTop'));
     },
@@ -208,7 +212,10 @@ suite.add(new Y.Test.Case({
             '`navigate` event should fire when a pjax link is clicked': !html5,
             '`navigate` event should be preventable': !html5,
             '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
-            '`navigate` event should not fire when a modifier key is pressed': !html5
+            '`navigate` event should not fire when a modifier key is pressed': !html5,
+            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5,
+            '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5,
+            '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': !html5
         }
     },
 
@@ -388,6 +395,64 @@ suite.add(new Y.Test.Case({
             button        : 1,
             metaKey       : true,
             currentTarget : Y.one('#link-full'),
+            preventDefault: function () {}
+        });
+    },
+
+    '`navigate` event should not fire for a hash URL that resolves to the current page': function () {
+        this.pjax.on('navigate', function (e) {
+            Assert.fail();
+        });
+
+        Assert.isFalse(this.pjax.navigate('#log'), 'navigate() did not return `false`.');
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-in-page'),
+            preventDefault: function () {}
+        });
+    },
+
+    '`navigate` event should fire for a hash-less URL that resolves to the current page': function () {
+        var called = 0;
+
+        this.pjax.on('navigate', function (e) {
+            called += 1;
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-full'),
+            preventDefault: function () {}
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-current'),
+            preventDefault: function () {}
+        });
+
+        Assert.isTrue(this.pjax.navigate(''), 'navigate() did not return `true`.');
+        Assert.areSame(3, called, '`navigate` did not fire 3 times.');
+    },
+
+    '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': function () {
+        // Set `navigateOnHash`.
+        this.pjax.set('navigateOnHash', true);
+
+        this.pjax.on('navigate', function (e) {
+            Assert.isNotUndefined(e.hash, '`hash` is `undefined`.');
+        });
+
+        Assert.isTrue(this.pjax.navigate('#log'), 'navigate() did not return `true`.');
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-in-page'),
             preventDefault: function () {}
         });
     }

@@ -1,0 +1,52 @@
+<p>
+`YUI.add()` is a static method that registers a reusable module&mdash;essentially, it adds a module to the set of modules available to be attached to a YUI instance via the `use()` method.
+</p>
+
+<p>
+Defining a reusable YUI module is as simple as providing a name and a callback function to `YUI.add()`.
+</p>
+
+```
+YUI.add('my-module', function (Y) {
+   // Write your module code here, and make your module available on the Y
+   // object if desired.
+   Y.MyModule = {
+       sayHello: function () {
+           console.log('Hello!');
+       }
+   };
+});
+```
+
+<p>
+Note that there are no parentheses after `YUI` when calling `YUI.add()` as there are when calling `YUI().use()`. This is because `add()` is a static method of the global `YUI` object, not a method on a specific YUI instance. Modules are registered globally via `add()` and are later attached to a specific YUI instance via `use()`.
+</p>
+
+<p>
+The `add()` method accepts two optional arguments after the callback function: a module version string and a config object. The most useful option in the config object is `requires`, which allows you to specify an array of other YUI modules that your module requires. YUI will then be sure to load these dependencies before executing your module.
+</p>
+
+```
+YUI.add('my-module', function (Y) {
+   // ...
+}, '0.0.1', {
+    requires: ['node', 'event']
+});
+```
+
+<p>
+After your module has been added via `YUI.add()`, you can specify its name in a `use()` call to attach it to a YUI instance.
+</p>
+
+```
+YUI().use('my-module', function (Y) {
+    // The Y instance here is the same Y instance that was passed into
+    // my-module's add() callback, so the Y.MyModule object that was created
+    // there is now available here as well.
+    Y.MyModule.sayHello();
+});
+```
+
+<p>
+A module's `add()` callback isn't executed until that module is attached to a YUI instance via `use()`. Each time a module is attached via `use()`, the module's `add()` callback will be executed, and will receive as an argument the same YUI instance that will later be passed to the `use()` callback.
+</p>

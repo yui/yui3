@@ -11,7 +11,13 @@ YUI({
 
   var myuploader = new Y.UploaderFlash({contentBox: selectButton, 
                                         multipleFiles: true, 
-                                        uploadURL: "http://localhost/myyui/src/uploader/tests/manual/upload.php"});
+                                        uploadURL: "http://localhost/myyui/src/uploader/tests/manual/upload.php",
+                                        swfURL: "assets/flashuploader.swf",
+                                        tabElements: {from: "#prevElement",
+                                                      to: "#uploadButton"}
+                                       });
+
+  console.log(myuploader.get("swfURL"));
 
   myuploader.render();
 

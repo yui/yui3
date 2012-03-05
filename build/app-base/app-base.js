@@ -26,12 +26,16 @@ Provides a top-level application component which manages navigation and views.
 //     needed if we have a `getView(name, create)` method, and already doing the
 //     above? We could do `app.getView('foo').destroy()` and it would be removed
 //     from the `_viewsInfoMap` as well.
+//
 
-var Lang     = Y.Lang,
+var Lang    = Y.Lang,
+    YObject = Y.Object,
+
     PjaxBase = Y.PjaxBase,
     Router   = Y.Router,
     View     = Y.View,
-    YObject  = Y.Object,
+
+    getClassName = Y.ClassNameManager.getClassName,
 
     win = Y.config.win,
 
@@ -152,11 +156,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // The resulting hodgepodge of metadata is then stored as the instance's
         // `views` object, and no one's objects were harmed in the making.
-        this.views = views;
-
+        this.views        = views;
         this._viewInfoMap = {};
 
-        this.after('activeViewChange', this._afterActiveViewChange);
+        // Using `bind()` to aid extensibility.
+        this.after('activeViewChange', Y.bind('_afterActiveViewChange', this));
 
         // PjaxBase will bind click events when `html5` is `true`, so this just
         // forces the binding when `serverRouting` and `html5` are both falsy.
@@ -168,26 +172,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     // TODO: `destructor` to destory the `activeView`?
 
     // -- Public Methods -------------------------------------------------------
-
-    /**
-    Creates and returns this apps's container node from the specified selector
-    string, DOM element, or existing `Y.Node` instance. This method is called
-    internally when the app is initialized.
-
-    This node is also stamped with the CSS class specified by
-    `Y.App.Base.CSS_CLASS`.
-
-    By default, the created node is _not_ added to the DOM automatically.
-
-    @method create
-    @param {String|Node|HTMLElement} container Selector string, `Y.Node`
-        instance, or DOM element to use as the container node.
-    @return {Node} Node instance of the created container node.
-    **/
-    create: function () {
-        var container = View.prototype.create.apply(this, arguments);
-        return container && container.addClass(App.CSS_CLASS);
-    },
 
     /**
     Creates and returns a new view instance using the provided `name` to look up
@@ -219,27 +203,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Creates and returns this app's view-container node from the specified
-    selector string, DOM element, or existing `Y.Node` instance. This method is
-    called internally when the app is initialized.
-
-    This node is also stamped with the CSS class specified by
-    `Y.App.Base.VIEWS_CSS_CLASS`.
-
-    By default, the created node will appended to the `container` node by the
-    `render()` method.
-
-    @method createViewContainer
-    @param {String|Node|HTMLElement} viewContainer Selector string, `Y.Node`
-        instance, or DOM element to use as the view-container node.
-    @return {Node} Node instance of the created view-container node.
-    **/
-    createViewContainer: function (viewContainer) {
-        viewContainer = Y.one(viewContainer);
-        return viewContainer && viewContainer.addClass(App.VIEWS_CSS_CLASS);
-    },
-
-    /**
     Returns the metadata associated with a view instance or view name defined on
     the `views` object.
 
@@ -250,11 +213,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
       not registered.
     **/
     getViewInfo: function (view) {
-        if (view instanceof View) {
-            return this._viewInfoMap[Y.stamp(view, true)];
+        if (Lang.isString(view)) {
+            return this.views[view];
         }
 
-        return this.views[view];
+        return view && this._viewInfoMap[Y.stamp(view, true)];
     },
 
     /**
@@ -275,10 +238,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     different scheme, host, or port.
 
     @method navigate
-    @param {String} url The fully-resolved URL that the app should dispatch to
-      its route handlers to fulfill the enhanced navigation "request", or use to
-      update `window.location` in non-HTML5 history capable browsers when
-      `serverRouting` is `true`.
+    @param {String} url The URL to navigate to. This must be of the same origin
+      as the current URL.
     @param {Object} [options] Additional options to configure the navigation.
       These are mixed into the `navigate` event facade.
         @param {Boolean} [options.replace] Whether or not the current history
@@ -313,10 +274,15 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             activeViewContainer = activeView && activeView.get('container'),
             areSame             = container.compareTo(viewContainer);
 
+        container.addClass(App.CSS_CLASS);
+        viewContainer.addClass(App.VIEWS_CSS_CLASS);
+
+        // Prevents needless shuffling around of nodes and maintains DOM order.
         if (activeView && !viewContainer.contains(activeViewContainer)) {
             viewContainer.appendChild(activeViewContainer);
         }
 
+        // Prevents needless shuffling around of nodes and maintains DOM order.
         if (!container.contains(viewContainer) && !areSame) {
             container.appendChild(viewContainer);
         }
@@ -501,7 +467,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // some event subscriptions are made on elements other than the
             // View's `container`.
         } else {
-            view.destroy();
+            view.destroy({remove: true});
 
             // TODO: The following should probably happen automagically from
             // `destroy()` being called! Possibly `removeTarget()` as well.
@@ -516,6 +482,43 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
 
         view.removeTarget(this);
+    },
+
+    /**
+    Getter for the `viewContainer` attribute.
+
+    @method _getViewContainer
+    @param {Node|null} value Current attribute value.
+    @return {Node} View container node.
+    @protected
+    **/
+    _getViewContainer: function (value) {
+        // This wackiness is necessary to enable fully lazy creation of the
+        // container node both when no container is specified and when one is
+        // specified via a valueFn.
+
+        if (!value && !this._viewContainer) {
+            // Create a default container and set that as the new attribute
+            // value. The `this._viewContainer` property prevents infinite
+            // recursion.
+            value = this._viewContainer = this.create();
+            this._set('viewContainer', value);
+        }
+
+        return value;
+    },
+
+    /**
+    Gets the current full URL. When `html5` is false, the URL will first be
+    upgraded before it's returned.
+
+    @method _getURL
+    @return {String} URL.
+    @protected
+    **/
+    _getURL: function () {
+        var url = Y.getLocation().toString();
+        return this._html5 ? url : this._upgradeURL(url);
     },
 
     /**
@@ -621,13 +624,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // `serverRouting` is falsy because the server might not be able to
             // properly handle the request.
             Lang.isValue(options.force) || (options.force = true);
-
-            // Determine if the current history entry should be replaced. Since
-            // we've upgraded a hash-based URL to a full-path URL, we'll do the
-            // same for the current URL before comparing the two.
-            if (!Lang.isValue(options.replace)) {
-                options.replace = url === this._upgradeURL(this._getURL());
-            }
         }
 
         return PjaxBase.prototype._navigate.call(this, url, options);
@@ -970,32 +966,41 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         When `viewContainer` is overridden by a subclass or passed as a config
         option at instantiation time, it may be provided as a selector string,
         DOM element, or a `Y.Node` instance (having the `viewContainer` and the
-        `container` be the same node is also supported). During initialization,
-        the app's `createViewContainer()` method will be called to convert the
-        view container into a `Y.Node` instance if it isn't one already and
-        stamp it with the CSS class: `"yui3-app-views"`.
+        `container` be the same node is also supported).
 
-        The app's `render()` method will append the view container to the app's
-        `container` node if it isn't already, and any `activeView` will be
-        appended to this node if it isn't already.
+        The app's `render()` method will stamp the view container with the CSS
+        class `yui3-app-views` and append it to the app's `container` node if it
+        isn't already, and any `activeView` will be appended to this node if it
+        isn't already.
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default `Y.Node.create("<div/>")`
+        @default Y.Node.create("<div/>")
         @initOnly
         **/
         viewContainer: {
-            valueFn: function () {
-                return Y.Node.create('<div/>');
-            },
-
-            setter   : 'createViewContainer',
+            getter   : '_getViewContainer',
+            setter   : Y.one,
+            value    : null,
             writeOnce: 'initOnly'
         }
     },
 
-    CSS_CLASS      : Y.ClassNameManager.getClassName('app'),
-    VIEWS_CSS_CLASS: Y.ClassNameManager.getClassName('app', 'views')
+    // TODO: Should these go on the `prototype`? Also Document these!
+    CSS_CLASS      : getClassName('app'),
+    VIEWS_CSS_CLASS: getClassName('app', 'views'),
+
+    /**
+    Properties that shouldn't be turned into ad-hoc attributes when passed to
+    App's constructor.
+
+    @property _NON_ATTRS_CFG
+    @type Array
+    @static
+    @protected
+    @since 3.5.0
+    **/
+    _NON_ATTRS_CFG: ['views']
 });
 
 // -- Namespace ----------------------------------------------------------------

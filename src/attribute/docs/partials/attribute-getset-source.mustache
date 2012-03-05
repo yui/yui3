@@ -7,21 +7,27 @@
         </ul>
         <div class="fields">
             <p>
-                <label for="x">x:</label>
-                <input type="text" name="x" id="x" />
-                <button type="button" class="action" id="setX">Set</button>
-                <span id="xhint" class="hint"></span>
+                <form action="#"  id="setX" class="action">
+                    <label for="x">x:</label>
+                    <input type="text" name="x" id="x" />
+                    <button type="submit">Set</button>
+                    <span id="xhint" class="hint"></span>
+                </form>
             </p>
             <p>
-                <label for="y">y:</label>
-                <input type="text" name="y" id="y" />
-                <button type="button" class="action" id="setY">Set</button>
-                <span id="yhint" class="hint"></span>
+                <form action="#" id="setY" class="action">
+                    <label for="y">y:</label>
+                    <input type="text" name="y" id="y" />
+                    <button type="submit">Set</button>
+                    <span id="yhint" class="hint"></span>
+                </form>
             </p>
             <p>
-                <label for="color">color:</label>
-                <input type="text" name="color" id="color" />
-                <button type="button" class="action" id="setColor">Set</button>
+                <form action="#" id="setColor" class="action">
+                    <label for="color">color:</label>
+                    <input type="text" name="color" id="color" />
+                    <button type="submit">Set</button>
+                </form>
             </p>
         </div>
     </div>
@@ -231,9 +237,7 @@ YUI().use("node", "attribute", function(Y) {
         colorTxt.set("value", box.get("color"));
     }
 
-    // Bind DOM events for Form Controls
-
-    // Use event delegation for the action button clicks
+    // Use event delegation for the action button clicks, and form submissions
     Y.delegate("click", function(e) {
 
         // Get Node target from the event object
@@ -247,15 +251,6 @@ YUI().use("node", "attribute", function(Y) {
             case "setXY":
                 box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
                 break;
-            case "setX":
-                box.set("x", parseInt(xTxt.get("value")));
-                break;
-            case "setY":
-                box.set("y", parseInt(yTxt.get("value")));
-                break;
-            case "setColor":
-                box.set("color", Y.Lang.trim(colorTxt.get("value")));
-                break;
             case "setAll":
                 box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
                 box.set("color", Y.Lang.trim(colorTxt.get("value")));
@@ -268,6 +263,33 @@ YUI().use("node", "attribute", function(Y) {
         }
 
     }, "#attrs", "button.action");
+    
+    Y.delegate("submit", function(e) {
+
+        e.preventDefault();
+
+        // Get Node target from the event object
+
+        // We already know it's a button which has an action because
+        // of our selector (button.action), so all we need to do is 
+        // route it based on the id.
+        var id = e.currentTarget.get("id");
+
+        switch (id) {
+            case "setX":
+                box.set("x", parseInt(xTxt.get("value")));
+                break;
+            case "setY":
+                box.set("y", parseInt(yTxt.get("value")));
+                break;
+            case "setColor":
+                box.set("color", Y.Lang.trim(colorTxt.get("value")));
+                break;
+            default:
+                break;
+        }
+
+    }, "#attrs", "form.action");
 
     // Bind listeners to provide min, max unconstrained value hints for x, y
     // (focus/blur doesn't bubble, so bind individual listeners)

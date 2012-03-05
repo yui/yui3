@@ -44,7 +44,7 @@ by the YUI constuctor.
 @constructor
 @global
 @uses EventTarget
-@param o* {Object} 0..n optional configuration objects.  these values
+@param [o]* {Object} 0..n optional configuration objects.  these values
 are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
 properties.
 */
@@ -76,7 +76,7 @@ properties.
                 @static
                 @example
 
-                    
+
                     YUI.GlobalConfig = {
                         filter: 'debug'
                     };
@@ -95,7 +95,7 @@ properties.
             if (YUI.GlobalConfig) {
                 Y.applyConfig(YUI.GlobalConfig);
             }
-            
+
             /**
                 YUI_config is a page-level config.  It is applied to all
                 instances created on the page.  This is applied after
@@ -106,12 +106,12 @@ properties.
                 @type {Object}
                 @example
 
-                    
+
                     //Single global var to include before YUI seed file
                     YUI_config = {
                         filter: 'debug'
                     };
-                    
+
                     YUI().use('node', function(Y) {
                         //debug files used here
                     });
@@ -255,6 +255,7 @@ proto = {
             config = this.config,
             mods = config.modules,
             groups = config.groups,
+            aliases = config.aliases,
             loader = this.Env._loader;
 
         for (name in o) {
@@ -262,6 +263,8 @@ proto = {
                 attr = o[name];
                 if (mods && name == 'modules') {
                     clobber(mods, attr);
+                } else if (aliases && name == 'aliases') {
+                    clobber(aliases, attr);
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
@@ -430,17 +433,18 @@ proto = {
         }
 
         Y.constructor = YUI;
-        
+
         // configuration defaults
         Y.config = Y.config || {
-            win: win,
-            doc: doc,
-            debug: true,
-            useBrowserConsole: true,
-            throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true
+            debug: true,
+            doc: doc,
+            fetchCSS: true,
+            throwFail: true,
+            useBrowserConsole: true,
+            useNativeES5: true,
+            win: win
         };
 
         //Register the CSS stamp element
@@ -454,7 +458,7 @@ proto = {
         Y.config.lang = Y.config.lang || 'en-US';
 
         Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
-        
+
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';
         }
@@ -738,10 +742,12 @@ with any configuration info required for the module.
      *   asynchronously.
      *
      * @method use
-     * @param modules* {String} 1-n modules to bind (uses arguments array).
-     * @param *callback {Function} callback function executed when
+     * @param modules* {String|Array} 1-n modules to bind (uses arguments array).
+     * @param [callback] {Function} callback function executed when
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
+     * @param callback.Y {YUI} The `YUI` instance created for this sandbox
+     * @param callback.data {Object} Object data returned from `Loader`.
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -827,7 +833,7 @@ with any configuration info required for the module.
             }
         }
     },
-    
+
     /**
     * This private method is called from the `use` method queue. To ensure that only one set of loading
     * logic is performed at a time.
@@ -1062,24 +1068,24 @@ with any configuration info required for the module.
 
          // creates Y.property.package
          Y.namespace("property.package");
-    
+
     Dots in the input string cause `namespace` to create nested objects for
     each token. If any part of the requested namespace already exists, the
     current object will be left in place.  This allows multiple calls to
     `namespace` to preserve existing namespaced properties.
-    
+
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
     Be careful with namespace tokens. Reserved words may work in some browsers
     and not others. For instance, the following will fail in some browsers
     because the supported version of JavaScript reserves the word "long":
-    
+
          Y.namespace("really.long.nested.namespace");
 
-    <em>Note: If you pass multiple arguments to create multiple namespaces, only 
+    <em>Note: If you pass multiple arguments to create multiple namespaces, only
     the last one created is returned from this function.</em>
-    
+
     @method namespace
     @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
@@ -1223,7 +1229,7 @@ with any configuration info required for the module.
             YUI[prop] = proto[prop];
         }
     }
-    
+
     /**
 Static method on the Global YUI object to apply a config to all YUI instances.
 It's main use case is "mashups" where several third party scripts are trying to write to
@@ -1254,7 +1260,7 @@ overwriting other scripts configs.
     YUI().use('davglass', function(Y) {
         //Module davglass will be available here..
     });
-    
+
     */
     YUI.applyConfig = function(o) {
         if (!o) {
@@ -1487,7 +1493,7 @@ overwriting other scripts configs.
  * </dl>
  * You can also define a custom filter, which must be an object literal
  * containing a search expression and a replace string:
- * 
+ *
  *      myFilter: {
  *          'searchExp': "-min\\.js",
  *          'replaceStr': "-debug.js"
@@ -1611,19 +1617,39 @@ overwriting other scripts configs.
  * for the module.  See `Loader.addModule` for the supported module
  * metadata fields.  Also see groups, which provides a way to
  * configure the base and combo spec for a set of modules.
- * 
+ *
  *      modules: {
  *          mymod1: {
  *              requires: ['node'],
- *              fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ *              fullpath: '/mymod1/mymod1.js'
  *          },
  *          mymod2: {
  *              requires: ['mymod1'],
- *              fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
- *          }
+ *              fullpath: '/mymod2/mymod2.js'
+ *          },
+ *          mymod3: '/js/mymod3.js',
+ *          mycssmod: '/css/mycssmod.css'
  *      }
  *
+ *
  * @property modules
+ * @type object
+ */
+
+/**
+ * Aliases are dynamic groups of modules that can be used as
+ * shortcuts.
+ *
+ *      YUI({
+ *          aliases: {
+ *              davglass: [ 'node', 'yql', 'dd' ],
+ *              mine: [ 'davglass', 'autocomplete']
+ *          }
+ *      }).use('mine', function(Y) {
+ *          //Node, YQL, DD &amp; AutoComplete available here..
+ *      });
+ *
+ * @property aliases
  * @type object
  */
 
@@ -1631,7 +1657,7 @@ overwriting other scripts configs.
  * A hash of module group definitions.  It for each group you
  * can specify a list of modules and the base path and
  * combo spec to use when dynamically loading the modules.
- * 
+ *
  *      groups: {
  *          yui2: {
  *              // specify whether or not this group has a combo service
@@ -1642,17 +1668,17 @@ overwriting other scripts configs.
  *
  *              // The maxURLLength for this server
  *              maxURLLength: 500,
- * 
+ *
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
- * 
+ *
  *              // the path to the combo service
  *              comboBase: 'http://yui.yahooapis.com/combo?',
- * 
+ *
  *              // a fragment to prepend to the path attribute when
  *              // when building combo urls
  *              root: '2.8.0r4/build/',
- * 
+ *
  *              // the module definitions
  *              modules:  {
  *                  yui2_yde: {
@@ -1665,7 +1691,7 @@ overwriting other scripts configs.
  *              }
  *          }
  *      }
- * 
+ *
  * @property groups
  * @type object
  */
@@ -1779,6 +1805,17 @@ overwriting other scripts configs.
  * @deprecated no longer used
  */
 
+/**
+ * Whether or not YUI should use native ES5 functionality when available for
+ * features like `Y.Array.each()`, `Y.Object()`, etc. When `false`, YUI will
+ * always use its own fallback implementations instead of relying on ES5
+ * functionality, even when it's available.
+ *
+ * @method useNativeES5
+ * @type Boolean
+ * @default true
+ * @since 3.5.0
+ */
 YUI.add('yui-base', function(Y) {
 
 /*
@@ -1825,13 +1862,15 @@ NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 // -- Protected Methods --------------------------------------------------------
 
 /**
-Returns _true_ if the given function appears to be implemented in native code,
-_false_ otherwise. This isn't guaranteed to be 100% accurate and won't work for
-anything other than functions, but it can be useful for determining whether
-a function like `Array.prototype.forEach` is native or a JS shim provided by
-another library.
+Returns `true` if the given function appears to be implemented in native code,
+`false` otherwise. Will always return `false` -- even in ES5-capable browsers --
+if the `useNativeES5` YUI config option is set to `false`.
 
-There's a great article by @kangax discussing the flaws with this technique:
+This isn't guaranteed to be 100% accurate and won't work for anything other than
+functions, but it can be useful for determining whether a function like
+`Array.prototype.forEach` is native or a JS shim provided by another library.
+
+There's a great article by @kangax discussing certain flaws with this technique:
 <http://perfectionkills.com/detecting-built-in-host-methods/>
 
 While his points are valid, it's still possible to benefit from this function
@@ -1842,13 +1881,13 @@ other libraries.
 
 @method _isNative
 @param {Function} fn Function to test.
-@return {Boolean} _true_ if _fn_ appears to be native, _false_ otherwise.
+@return {Boolean} `true` if _fn_ appears to be native, `false` otherwise.
 @static
 @protected
 @since 3.5.0
 **/
 L._isNative = function (fn) {
-    return !!(fn && NATIVE_FN_REGEX.test(fn));
+    return !!(Y.config.useNativeES5 && fn && NATIVE_FN_REGEX.test(fn));
 };
 
 // -- Public Methods -----------------------------------------------------------
@@ -2079,27 +2118,32 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
 };
 
 /**
- * <p>
- * Returns a string representing the type of the item passed in.
- * </p>
- *
- * <p>
- * Known issues:
- * </p>
- *
- * <ul>
- *   <li>
- *     <code>typeof HTMLElementCollection</code> returns function in Safari, but
- *     <code>Y.type()</code> reports object, which could be a good thing --
- *     but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
- *   </li>
- * </ul>
- *
- * @method type
- * @param o the item to test.
- * @return {string} the detected type.
- * @static
- */
+Returns one of the following strings, representing the type of the item passed
+in:
+
+ * "array"
+ * "boolean"
+ * "date"
+ * "error"
+ * "function"
+ * "null"
+ * "number"
+ * "object"
+ * "regexp"
+ * "string"
+ * "undefined"
+
+Known issues:
+
+ * `typeof HTMLElementCollection` returns function in Safari, but
+    `Y.Lang.type()` reports "object", which could be a good thing --
+    but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
+
+@method type
+@param o the item to test.
+@return {string} the detected type.
+@static
+**/
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
@@ -2272,17 +2316,31 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
 @method indexOf
 @param {Array} array Array to search.
 @param {Any} value Value to search for.
+@param {Number} [from=0] The index at which to begin the search.
 @return {Number} Index of the item strictly equal to _value_, or `-1` if not
-  found.
+    found.
 @static
 **/
-YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value) {
-    // TODO: support fromIndex
-    return Native.indexOf.call(array, value);
-} : function (array, value) {
-    for (var i = 0, len = array.length; i < len; ++i) {
-        if (i in array && array[i] === value) {
-            return i;
+YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value, from) {
+    return Native.indexOf.call(array, value, from);
+} : function (array, value, from) {
+    // http://es5.github.com/#x15.4.4.14
+    var len = array.length;
+
+    from = +from || 0;
+    from = (from > 0 || -1) * Math.floor(Math.abs(from));
+
+    if (from < 0) {
+        from += len;
+
+        if (from < 0) {
+            from = 0;
+        }
+    }
+
+    for (; from < len; ++from) {
+        if (from in array && array[from] === value) {
+            return from;
         }
     }
 
@@ -2475,9 +2533,7 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject,
-
-    win = Y.config.win;
+    isObject = Y.Lang.isObject;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2536,11 +2592,15 @@ in both Safari and MobileSafari browsers:
 @since 3.5.0
 **/
 Y.getLocation = function () {
-    // The reference to the `window` object created outside this function's
-    // scope is safe to hold on to, but it is not safe to do so with the
-    // `location` object. The WebKit engine used in Safari and MobileSafari will
-    // "disconnect" the `location` object from the `window` when a page is
-    // restored from back/forward history cache.
+    // It is safer to look this up every time because yui-base is attached to a
+    // YUI instance before a user's config is applied; i.e. `Y.config.win` does
+    // not point the correct window object when this file is loaded.
+    var win = Y.config.win;
+
+    // It is not safe to hold a reference to the `location` object outside the
+    // scope in which it is being used. The WebKit engine used in Safari and
+    // MobileSafari will "disconnect" the `location` object from the `window`
+    // when a page is restored from back/forward history cache.
     return win && win.location;
 };
 
@@ -3509,17 +3569,16 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","model","model-list","router","view"],
+    "app": ["app-base","app-transitions","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-mutable","datatable-scroll","datatable-datasource","datatable-sort"],
+    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3543,7 +3602,7 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"]
+    "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
 
 

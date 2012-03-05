@@ -27,7 +27,7 @@
                 var push = new Y.Button({
                     label: 'Click to select',
                     srcNode: Y.one('#push')
-                });
+                }).render();
                 push.on('click', function(e){
                     push.set('selected', true);
                     Y.log('click push')
@@ -41,16 +41,15 @@
                     })
                 })
                 
-                var toggle = new Y.Button({
+                var toggle = new Y.ToggleButton({
                     label: 'Click to toggle',
-                    srcNode: '#toggle',
-                    type: 'toggle'
-                });
+                    srcNode: '#toggle'
+                }).render();
                 
                 var disabled = new Y.Button({
                     srcNode: '#disabled',
                     disabled: true
-                });
+                }).render();
                 
                 toggle.on('click', function(e){
                     Y.log('click toggle')

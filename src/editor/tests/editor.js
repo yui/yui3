@@ -72,6 +72,51 @@ YUI.add('editor-tests', function(Y) {
             var n = iframe.get('node');
             var e = Y.one('#editor iframe');
             Y.Assert.areSame(n, e, 'iframe node getter failed');
+            
+            iframe._fixIECursors();
+
+            iframe.delegate('click', function() {});
+
+            var id = iframe.get('id');
+            Y.Assert.isTrue((id.indexOf('iframe-yui') === 0));
+
+        },
+        'test: _DOMPaste': function() {
+            var OT = 'ORIGINAL_TARGET',
+            fired = false;
+            
+            var inst = iframe.getInstance(),
+            win = inst.config.win;
+
+            inst.config.win = {
+                clipboardData: {
+                    getData: function() {
+                        return 'foobar'
+                    }
+                }
+            };
+            iframe.on('dom:paste', function(e) {
+                fired = true;
+                Y.Assert.areSame(e.clipboardData.data, 'foobar');
+                Y.Assert.areSame(e.clipboardData.getData(), 'foobar');
+            });
+            iframe._DOMPaste({
+                _event: {
+                    originalTarget: OT,
+                    target: OT,
+                    currentTarget: OT,
+                    clipboardData: {
+                        getData: function() {
+                            return 'foobar'
+                        }
+                    }
+                }
+            });
+
+            Y.Assert.isTrue(fired);
+
+            inst.config.win = win;
+
         },
         test_frame_destroy: function() {
             iframe.destroy();
@@ -249,6 +294,30 @@ YUI.add('editor-tests', function(Y) {
             Y.Assert.isTrue(editor.getContent().indexOf('This is a test') > -1, 'Failed to insert content');
             Y.Assert.isTrue(editor.getContent().indexOf('This is another test') > -1, 'Failed to insert content');
             Y.Assert.isTrue(html.indexOf('<div>') > -1, 'Failed to wrap the content');
+
+        },
+        'test: EditorSelection': function() {
+            
+            var inst = editor.getInstance(),
+                sel = new inst.EditorSelection(),
+                html = '<b>Foobar</b>',
+                node = inst.Node.create(html);
+
+            var n = sel._wrap(node, 'span');
+            Y.Assert.areSame('foobar', n.innerHTML.toLowerCase());
+            Y.Assert.areSame('span', n.tagName.toLowerCase());
+            
+            var a = sel.anchorNode;
+            sel.anchorNode = node;
+
+            sel.replace('Foobar', 'davglass');
+
+            //sel.remove();
+
+            sel.anchorNode = a;
+
+            Y.Assert.areSame('EditorSelection Object', sel.toString());
+
         },
         test_execCommands: function() {
             editor.focus(true);
@@ -261,17 +330,54 @@ YUI.add('editor-tests', function(Y) {
             */
             var inst = editor.getInstance();
             var cmds = Y.Plugin.ExecCommand.COMMANDS;
+            var b = cmds.bidi;
             Y.each(cmds, function(val, cmd) {
-                if (cmd !== 'bidi') { //Bidi execCommand tested later
+                if (cmd !== 'bidi') {
                     editor.execCommand(cmd, '<b>Foo</b>');
                 }
             });
+            
+            var hc = inst.EditorSelection.hasCursor;
+            inst.EditorSelection.hasCursor = function() { return true };
+
+            Y.each(cmds, function(val, cmd) {
+                if (cmd !== 'bidi' && cmd != 'insertandfocus') {
+                    editor.execCommand(cmd, '<b>Foo</b>');
+                }
+            });
+            inst.EditorSelection.hasCursor = hc;
+            editor.execCommand('insertandfocus', '<b>Foo</b>');
+
+            editor.frame._execCommand('bold', '');
+
+
+            var SEL = inst.EditorSelection;
+            inst.EditorSelection = function() {
+                var sel = new SEL();
+                sel.isCollapsed = false;
+                return sel;
+            };
+
+            for (var i in SEL) {
+                inst.EditorSelection[i] = SEL[i];
+            }
+
+            editor.execCommand('insertorderedlist', '');
+
+            inst.EditorSelection = SEL;
+
         },
         test_window: function() {
             Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow')), Y.Node.getDOMNode(editor.getInstance().one('win')), 'Window object is not right');
         },
         test_doc: function() {
             Y.Assert.areEqual(Y.Node.getDOMNode(Y.one('#editor iframe').get('contentWindow.document')), Y.Node.getDOMNode(editor.getInstance().one('doc')), 'Document object is not right');
+        },
+        'test: selection.remove()': function() {
+            var inst = editor.getInstance(),
+                sel = new inst.EditorSelection();
+
+            sel.remove();
         },
         test_destroy: function() {
             editor.destroy();
@@ -304,11 +410,29 @@ YUI.add('editor-tests', function(Y) {
             editor.plug(Y.Plugin.EditorPara);
             Y.Assert.isInstanceOf(Y.Plugin.EditorPara, editor.editorPara, 'EditorPara was not plugged..');
             editor.render('#editor');
-            editor.set('content', '<br>');
+            editor.set('content', '<br><b>Test This</b>');
+
+            var inst = editor.getInstance();
+
+            var str = '<b>foo</b>';
+            var out = editor.frame.exec._wrapContent(str);
+            Y.Assert.areEqual('<p><b>foo</b></p>', out);
+
+            var out = editor.frame.exec._wrapContent(str, true);
+            Y.Assert.areEqual('<b>foo</b><br>', out);
 
             fireKey(editor, 13);
             fireKey(editor, 8);
             editor.editorPara._fixFirstPara();
+            editor.editorPara._afterPaste();
+            editor.editorPara._onNodeChange({
+                changedNode: inst.one('b'),
+                changedType: 'enter-up'
+            });
+            editor.editorPara._onNodeChange({
+                changedNode: inst.one('br'),
+                changedType: 'enter'
+            });
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor iframe'), null, 'Third Frame was not destroyed');
             
@@ -370,35 +494,46 @@ YUI.add('editor-tests', function(Y) {
             editor.plug(Y.Plugin.EditorBidi);
             editor.render('#editor');
             Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
-            editor.focus(function() {
-                var inst = editor.getInstance();
-                var sel = new inst.EditorSelection();
-                var b = inst.one('b');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
-                sel.selectNode(b, true, true);
-                editor.execCommand('bidi');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
+            editor.focus(true);
 
-                sel.selectNode(b, true, true);
-                editor.execCommand('bidi');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
+            var inst = editor.getInstance();
+            var sel = new inst.EditorSelection();
+            var b = inst.one('b');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
+            sel.selectNode(b, true, true);
+            editor.execCommand('bidi');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
 
-                sel.selectNode(b, true, true);
-                editor.execCommand('bidi');
-                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
-                
-                editor.editorBidi._afterMouseUp();
-                editor.editorBidi._afterNodeChange({
-                    changedType: 'end-up'
-                });
+            sel.selectNode(b, true, true);
+            editor.execCommand('bidi');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
 
+            sel.selectNode(b, true, true);
+            editor.execCommand('bidi');
+            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
+            
+            editor.editorBidi._afterMouseUp();
+            editor.editorBidi._afterNodeChange({
+                changedType: 'end-up'
             });
+
+            var out = Y.Plugin.EditorBidi.blockParent(inst.one('body').get('firstChild.firstChild'));
+            Y.Assert.isTrue(out.test('p'));
+
+            var out = Y.Plugin.EditorBidi.addParents([inst.one('body').get('firstChild')]);
+            Y.Assert.areEqual(1, out.length);
+            Y.Assert.isTrue(out[0].test('p'));
+
         },
         _should: {
             fail: {
-                test_selection_methods: (Y.UA.ie ? true : false)
+                test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
+                test_execCommands: (Y.UA.webkit ? true : false)
+
             },
             error: { //These tests should error
+                test_selection_methods: (Y.UA.webkit ? true : false),
+                test_execCommands: (Y.UA.webkit ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true

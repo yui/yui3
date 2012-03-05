@@ -63,12 +63,36 @@ Table.ATTRS = {
     Strings are converted to objects, so `columns: ['first', 'last']` becomes
     `columns: [{ key: 'first' }, { key: 'last' }]`.
 
-    DataTable.Core only concerns itself with the `key` property of columns.
+    DataTable.Core only concerns itself with a few properties of columns.
     All other properties are for use by the `headerView`, `bodyView`,
     `footerView`, and any class extensions or plugins on the final class or
     instance. See the descriptions of the view classes and feature class
     extensions and plugins for details on the specific properties they read or
     add to column definitions.
+
+    The properties that are referenced or assigned are:
+
+    * `key` - Used to identify the record field/attribute containing content for
+      this column.  Also used to create a default Model if no `recordType` or
+      `data` are provided during construction.  If `name` is not specified, this
+      is assigned to the `_id` property (with added incrementer if the key is
+      used by multiple columns).
+    * `children` - Traversed to initialize nested column objects
+    * `name` - Used in place of, or in addition to, the `key`.  Useful for
+      columns that aren't bound to a field/attribute in the record data.  This
+      is assigned to the `_id` property.
+    * `id` - For backward compatibility.  Implementers can specify the id of
+      the header cell.  This should be avoided, if possible, to avoid the
+      potential for creating DOM elements with duplicate IDs.
+    * `field` - For backward compatibility.  Implementers should use `name`.
+    * `_id` - Assigned unique-within-this-instance id for a column.  By order
+      of preference, assumes the value of `name`, `key`, `id`, or `_yuid`.
+      This is used by the `bodyView` and `headerView` as well as feature module
+      as a means to identify a specific column without ambiguity (such as
+      multiple columns using the same `key`.
+    * `_yuid` - Guid stamp assigned to the column object.
+    * `_parent` - Assigned to all child columns, referencing their parent
+      column.
 
     @attribute columns
     @type {Object[]|String[]}
@@ -247,7 +271,8 @@ Table.ATTRS = {
     **/
     recordset: {
         setter: '_setRecordset',
-        getter: '_getRecordset'
+        getter: '_getRecordset',
+        lazyAdd: false
     },
 
     /**
@@ -265,7 +290,8 @@ Table.ATTRS = {
     **/
     columnset: {
         setter: '_setColumnset',
-        getter: '_getColumnset'
+        getter: '_getColumnset',
+        lazyAdd: false
     }
 };
 
@@ -287,9 +313,9 @@ Y.mix(Table.prototype, {
 
     @property TABLE_TEMPLATE
     @type {HTML}
-    @default '<table class="{className}"/>'
+    @default '<table cellspacing="0" class="{className}"/>'
     **/
-    TABLE_TEMPLATE  : '<table role="presentation" class="{className}"/>',
+    TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
 
     /**
     HTML template used to create table's `<tbody>` if configured with a
@@ -443,7 +469,7 @@ Y.mix(Table.prototype, {
                 cols = cols[name[i]] && cols[name[i]].children;
             }
 
-            return (cols && cols[i]) || null;
+            return (cols && cols[name[i]]) || null;
         }
 
         return null;
@@ -1068,11 +1094,13 @@ Y.mix(Table.prototype, {
     keys to the returned map. There is no limit to the levels of nesting.
 
     All columns are assigned a `_yuid` stamp and `_id` property corresponding
-    to the column's configured `name` or `key` property.  If the same `name` or
-    `key` appears in multiple columns, subsequent appearances will have their
-    `_id` appended with an incrementing number (e.g. if column "foo" is
-    included in the `columns` attribute twice, the first will get `_id` of
-    "foo", and the second an `_id` of "foo1").
+    to the column's configured `name` or `key` property with any spaces
+    replaced with dashes.  If the same `name` or `key` appears in multiple
+    columns, subsequent appearances will have their `_id` appended with an
+    incrementing number (e.g. if column "foo" is included in the `columns`
+    attribute twice, the first will get `_id` of "foo", and the second an `_id`
+    of "foo1").  Columns that are children of other columns will have the
+    `_parent` property added, assigned the column object to which they belong.
 
     The result is an object map with column keys as the property name and the
     corresponding column object as the associated value.
@@ -1086,8 +1114,22 @@ Y.mix(Table.prototype, {
         var map  = {},
             keys = {};
         
-        function process(cols) {
-            var i, len, col, key, yuid, id;
+        function genId(name) {
+            // Sanitize the name for use in generated CSS classes.
+            // TODO: is there more to do for other uses of _id?
+            name = name.replace(/\s+/, '-');
+
+            if (keys[name]) {
+                name += (keys[name]++);
+            } else {
+                keys[name] = 1;
+            }
+
+            return name;
+        }
+
+        function process(cols, parent) {
+            var i, len, col, key, yuid;
 
             for (i = 0, len = cols.length; i < len; ++i) {
                 col = cols[i];
@@ -1100,8 +1142,31 @@ Y.mix(Table.prototype, {
 
                 yuid = Y.stamp(col);
 
+                // For backward compatibility
+                if (!col.id) {
+                    // Implementers can shoot themselves in the foot by setting
+                    // this config property to a non-unique value
+                    col.id = yuid;
+                }
+                if (col.field) {
+                    // Field is now known as "name" to avoid confusion with data
+                    // fields or schema.resultFields
+                    col.name = col.field;
+                }
+
+                if (parent) {
+                    col._parent = parent;
+                } else {
+                    delete col._parent;
+                }
+
                 if (isArray(col.children)) {
-                    process(col.children);
+                    // Allow getColumn for parent columns if they have a name
+                    if (col.name) {
+                        map[genId(col.name)] = col;
+                    }
+
+                    process(col.children, col);
                 } else {
                     key = col.key;
 
@@ -1112,18 +1177,10 @@ Y.mix(Table.prototype, {
                     // Unique id based on the column's configured name or key,
                     // falling back to the yuid.  Duplicates will have a counter
                     // added to the end.
-                    id = col.name || col.key || col._yuid;
-
-                    if (keys[id]) {
-                        id += (keys[id]++);
-                    } else {
-                        keys[id] = 1;
-                    }
-
-                    col._id = id;
+                    col._id = genId(col.name || col.key || col.id);
 
                     //TODO: named columns can conflict with keyed columns
-                    map[id] = col;
+                    map[col._id] = col;
                 }
             }
         }
@@ -1148,12 +1205,6 @@ Y.mix(Table.prototype, {
             // _viewConfig is the prototype for _headerConfig et al.
             this._viewConfig.columns   = this.get('columns');
             this._viewConfig.modelList = this.data;
-
-            contentBox.setAttrs({
-                'role'         : 'grid',
-                'aria-readonly': true // until further notice
-            });
-
 
             this.fire('renderTable', {
                 headerView  : this.get('headerView'),
@@ -1202,9 +1253,11 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _setColumnset: function (val) {
-        if (val && val instanceof Y.Columnset) {
+        if (val && Y.Columnset && val instanceof Y.Columnset) {
             val = val.get('definitions');
         }
+
+        this.set('columns', val);
 
         return isArray(val) ? val : INVALID;
     },
@@ -1302,13 +1355,15 @@ Y.mix(Table.prototype, {
     _setRecordset: function (val) {
         var data;
 
-        if (val && val instanceof Y.Recordset) {
+        if (val && Y.Recordset && val instanceof Y.Recordset) {
             data = [];
             val.each(function (record) {
                 data.push(record.get('data'));
             });
             val = data;
         }
+
+        this.set('data', val);
 
         return val;
     },
@@ -1361,13 +1416,7 @@ Y.mix(Table.prototype, {
                         className: this.getClassName('caption')
                     }));
 
-                captionId = Y.stamp(caption);
-
-                caption.set('id', captionId);
-
                 table.prepend(this._captionNode);
-
-                table.setAttribute('aria-describedby', captionId);
             }
 
             caption.setContent(htmlContent);
@@ -1376,8 +1425,6 @@ Y.mix(Table.prototype, {
             caption.remove(true);
 
             delete this._captionNode;
-
-            table.removeAttribute('aria-describedby');
         }
     },
 
@@ -1388,7 +1435,11 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetSummary: function (summary) {
-        this._tableNode.setAttribute('summary', summary || '');
+        if (summary) {
+            this._tableNode.setAttribute('summary', summary);
+        } else {
+            this._tableNode.removeAttribute('summary');
+        }
     },
 
     /**
@@ -1399,6 +1450,8 @@ Y.mix(Table.prototype, {
     @protected
     **/
     _uiSetWidth: function (width) {
+        var table = this._tableNode;
+
         if (isNumber(width)) {
             // DEF_UNIT from Widget
             width += this.DEF_UNIT;
@@ -1406,7 +1459,15 @@ Y.mix(Table.prototype, {
 
         if (isString(width)) {
             this._uiSetDim('width', width);
-            this._tableNode.setStyle('width', width);
+
+            // Table width needs to account for borders
+            table.setStyle('width', !width ? '' :
+                (this.get('boundingBox').get('offsetWidth') -
+                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
+                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
+                 'px');
+
+            table.setStyle('width', width);
         }
     },
 

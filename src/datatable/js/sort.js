@@ -85,7 +85,8 @@ var YLang     = Y.Lang,
     isArray   = YLang.isArray,
     isObject  = YLang.isObject,
 
-    toArray     = Y.Array,
+    toArray = Y.Array,
+    sub     = YLang.sub,
 
     dirMap = {
         asc : 1,
@@ -154,11 +155,7 @@ Sortable.ATTRS = {
     @type {Object}
     @default (strings for current lang configured in the YUI instance config)
     **/
-    strings: {
-        valueFn: function () {
-            return Y.Intl.get('datatable-sort');
-        }
-    }
+    strings: {}
 };
 
 Y.mix(Sortable.prototype, {
@@ -194,6 +191,16 @@ Y.mix(Sortable.prototype, {
             sortBy: fields || this.get('sortBy')
         }));
     },
+
+    /**
+    Template for the node that will wrap the header content for sortable
+    columns.
+
+    @property SORT_INDICATOR_TEMPLATE
+    @type {HTML}
+    @value '<span class="{className}"></span>'
+    **/
+    SORT_INDICATOR_TEMPLATE: '<span class="{className}"></span>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -253,6 +260,24 @@ Y.mix(Sortable.prototype, {
     //--------------------------------------------------------------------------
     // Protected properties and methods
     //--------------------------------------------------------------------------
+    /**
+    Creates the element that is responsible for displaying the sort arrow, and
+    inserts it into the provided node.
+
+    @method _addSortIndicator
+    @param {Node} header The node to decorate with the sort indicator
+    @protected
+    **/
+    _addSortIndicator: function (header) {
+        var className = this.getClassName('sort', 'indicator');
+
+        if (!header.one('.' + className)) {
+            header.append(Y.Lang.sub(this.SORT_INDICATOR_TEMPLATE, {
+                className: className
+            }));
+        }
+    },
+
     /**
     Sorts the `data` ModelList based on the new `sortBy` configuration.
 
@@ -323,15 +348,15 @@ Y.mix(Sortable.prototype, {
     **/
     _bindSortUI: function () {
         this.after(['sortableChange', 'sortByChange', 'columnsChange'],
-            this._uiSetSortable);
+            Y.bind('_uiSetSortable', this));
 
         if (this._theadNode) {
-            this._sortHandle = this._theadNode.delegate('click',
+            this._sortHandle = this.delegate(['click','keypress'],
                 Y.rbind('_onUITriggerSort', this),
                 '.' + this.getClassName('sortable', 'column'));
         }
     },
-            
+
     /**
     Sets the `sortBy` attribute from the `sort` event's `e.sortBy` value.
 
@@ -424,6 +449,8 @@ Y.mix(Sortable.prototype, {
 
         this._initSortFn();
 
+        this._initSortStrings();
+
         this.after({
             renderHeader  : Y.bind('_renderSortable', this),
             dataChange    : Y.bind('_afterSortDataChange', this),
@@ -489,6 +516,18 @@ Y.mix(Sortable.prototype, {
     },
 
     /**
+    Add the sort related strings to the `strings` map.
+    
+    @method _initSortStrings
+    @protected
+    **/
+    _initSortStrings: function () {
+        // Not a valueFn because other class extensions will want to add to it
+        this.set('strings', Y.mix((this.get('strings') || {}), 
+            Y.Intl.get('datatable-sort')));
+    },
+
+    /**
     Fires the `sort` event in response to user clicks on sortable column
     headers.
 
@@ -497,31 +536,43 @@ Y.mix(Sortable.prototype, {
     @protected
     **/
     _onUITriggerSort: function (e) {
-        var id = e.currentTarget.get('id'),
-            config = {},
-            dir    = 1,
-            column;
+        var id = e.currentTarget.getAttribute('data-yui3-col-id'),
+            sortBy = e.shiftKey ? this.get('sortBy') : [{}],
+            column = id && this.getColumn(id),
+            i, len;
 
+        if (e.type === 'keydown' && e.keyCode !== 32) {
+            return;
+        }
+
+        // In case a headerTemplate injected a link
+        // TODO: Is this overreaching?
         e.preventDefault();
 
-        // TODO: if (e.ctrlKey) { /* subsort */ }
-        if (id) {
-            Y.Array.each(this._displayColumns, function (col) {
-                if (id === col._yuid) {
-                    column = col._id;
-                    // Flip current sortDir or default to 1 (asc)
-                    dir    = -(col.sortDir|0) || 1;
+        if (column) {
+            if (e.shiftKey) {
+                for (i = 0, len = sortBy.length; i < len; ++i) {
+                    if (id === sortBy[i] || Math.abs(sortBy[i][id] === 1)) {
+                        if (!isObject(sortBy[i])) {
+                            sortBy[i] = {};
+                        }
+
+                        sortBy[i][id] = -(column.sortDir|0) || 1;
+                        break;
+                    }
                 }
-            });
 
-            if (column) {
-                config[column] = dir;
-
-                this.fire('sort', {
-                    originEvent: e,
-                    sortBy: [config]
-                });
+                if (i >= len) {
+                    sortBy.push(column._id);
+                }
+            } else {
+                sortBy[0][id] = -(column.sortDir|0) || 1;
             }
+
+            this.fire('sort', {
+                originEvent: e,
+                sortBy: sortBy
+            });
         }
     },
 
@@ -695,43 +746,75 @@ Y.mix(Sortable.prototype, {
             sortableClass = this.getClassName('sortable', 'column'),
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
-            linerClass    = this.getClassName('sort', 'liner'),
-            i, len, col, node, content;
+            indicatorClass= this.getClassName('sort', 'indicator'),
+            sortableCols  = {},
+            i, len, col, node, title, desc;
 
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
             columns.length);
 
-        // TODO: this.head.render() + decorate cells?
-        this._theadNode.all('.' + sortableClass)
-            .removeClass(sortableClass)
-            .removeClass(ascClass)
-            .removeClass(descClass)
-            .each(function (th) {
-                var liner = th.one('.' + linerClass);
+        for (i = 0, len = columns.length; i < len; ++i) {
+            sortableCols[columns[i].id] = columns[i];
+        }
 
-                if (liner) {
-                    liner.replace(liner.get('childNodes').toFrag());
+        // TODO: this.head.render() + decorate cells?
+        this._theadNode.all('.' + sortableClass).each(function (node) {
+            var col = sortableCols[node.get('id')],
+                indicator;
+
+            if (col) {
+                if (!col.sortDir) {
+                    node .removeClass(ascClass)
+                        .removeClass(descClass)
+                        .removeAttribute('title');
                 }
-            });
+            } else {
+                indicator = node.one('.' + indicatorClass);
+
+                node.removeClass(sortableClass)
+                    .removeClass(ascClass)
+                    .removeClass(descClass)
+                    .removeAttribute('title')
+                    .removeAttribute('tabindex')
+                    .removeAttribute('aria-sort');
+
+                if (indicator) {
+                    indicator.remove().destroy(true);
+                }
+            }
+        });
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col  = columns[i];
-            node = this._theadNode.one('#' + col._yuid);
+            node = this._theadNode.one('#' + col.id);
+            desc = col.sortDir === -1;
 
             if (node) {
                 node.addClass(sortableClass);
+
+                this._addSortIndicator(node);
+
                 if (col.sortDir) {
                     node.addClass(ascClass);
 
-                    if (col.sortDir === -1) {
-                        node.addClass(descClass);
-                    }
+                    node.toggleClass(descClass, desc);
+
+                    node.setAttribute('aria-sort', desc ?
+                        'descending' : 'ascending');
                 }
 
-                Y.Node.create('<div class="' + linerClass + '"></div>')
-                    .append(node.get('childNodes').toFrag())
-                    .appendTo(node);
+                title = sub(this.getString(
+                    (col.sortDir === 1) ? 'reverseSortBy' : 'sortBy'), {
+                        column: col.abbr || col.label ||
+                                col.key  || ('column ' + i)
+                });
+
+                node.setAttribute('title', title);
+                // To combat VoiceOver from reading the sort title as the
+                // column header
+                node.setAttribute('aria-labelledby', col.id);
+                node.setAttribute('tabindex', 0);
             }
         }
     },

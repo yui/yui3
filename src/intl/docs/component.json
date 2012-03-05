@@ -6,6 +6,7 @@
 
     "tags": ["intl", "utility"],
     "use" : ["intl"],
+    "apiPath": "/classes/Intl.html",
     
     "examples": [
         {

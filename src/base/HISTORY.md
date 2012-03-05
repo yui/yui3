@@ -52,6 +52,19 @@ Base Change History
 
     "base-build" : Y.Base.build/create/mix mixin
 
+  * Extended Base.create/mix support for _buildCfg, to Extensions, mainly so that
+    extensions can define a whitelist of statics which need to be copied to the 
+    main class.
+
+    e.g.
+
+    MyExtension._buildCfg = {
+       aggregates:["newPropsToAggregate"...],
+       custom: {
+           newPropsToCustomMix
+       },
+       statics: ["newPropsToCopy"]
+    };
 
 3.4.1
 -----

@@ -1,0 +1,115 @@
+<div id="mychart"></div>
+<script type="text/javascript">
+
+		var getData = function()
+			{
+				var MONTHSPERYEAR = 12,
+                    bigArray = new Array(),
+					tempObj = new Object(),
+					i = 1,
+                    end = 18,
+					month,
+					year = 2009,
+                    years,
+					expensesValue = 8000;
+				for(;i <= end; i++)
+				{
+					expensesValue = Math.floor(expensesValue * .9);
+					if(i > 12)
+                    {
+                        month = i % MONTHSPERYEAR
+                        if(month === 0)
+                        {
+                            month = 12;
+                        }
+                        if(month === 1)
+                        {
+                            year += 1;
+                        }
+                    }
+                    else
+                    {
+                        month = i;
+                    }
+					bigArray = bigArray.concat(getMonthOfDates(month, getNumberOfDays(month, year), year, expensesValue))
+				}
+				return bigArray;
+            }
+			function getNumberOfDays(mon, year)
+			{
+				if(mon == 4 || mon == 6 || mon == 9 || mon ==11)
+				{
+					return 30;
+				}
+				if(mon == 2)
+				{
+					return year%4==0?29:28;
+				}
+				return 31;
+			}
+
+			function getMonthOfDates(mon, max, year, value)
+			{
+
+				var month = new Array();
+                dValue = value;
+				for(var i = 1; i <= max; i++)
+				{
+					var obj = new Object();
+					obj.date = new Date(mon + "/" + i + "/" + year).valueOf();
+				    obj.date = obj.date.toString();	
+                    obj.date = parseInt(obj.date, 10);
+                    var div = ((Math.random()*5))
+					var cont = (Math.random() * 101) * div;
+					obj.revenue = (cont + Math.floor((Math.random() * 101))).toFixed(2);
+					dValue = dValue - 1;
+					obj.expenses = (cont + Math.floor((Math.random() * 101))).toFixed(2);
+					month[month.length] = obj;
+				}
+				return month;
+			}
+
+(function() {
+    //set canvas as the defaultGraphicEngine
+    YUI({
+        filter: "raw",
+        defaultGraphicEngine: "canvas"
+    }).use('charts', function (Y) 
+    {
+        var myDataValues = getData(); 
+       
+        //style the series
+        var myseries = [
+            {
+                styles: {
+                    line: {
+                        weight: 1
+                    }
+                }
+            },
+            {
+                styles: {
+                    line: {
+                        weight: 1
+                    }
+                }
+            }
+
+        ];
+
+        //instantiate chart with interactionType of planar and groupMarkers set to true
+        var mychart = new Y.Chart({
+                interactionType:"planar", 
+                groupMarkers:true, 
+                dataProvider:myDataValues, 
+                categoryType:"time", 
+                categoryKey:"date", 
+                render:"#mychart", 
+                seriesCollection: myseries,
+                width:800, 
+                height:400
+            });
+            
+    });
+})();
+</script>

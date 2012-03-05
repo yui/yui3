@@ -13,12 +13,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     renderUI: function()
     {
-        var tt = this.get("tooltip"),
+        var cb = this.get("contentBox"),
+            tt = this.get("tooltip"),
             overlay,
             overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
-        this.get("contentBox").setStyle("position", "absolute");
+        cb.setStyle("position", "absolute");
         this._addAxes();
         this._addGridlines();
         this._addSeries();
@@ -39,6 +40,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
+        this._setAriaElements(cb);
         this._redraw();
     },
 
@@ -55,8 +57,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            pageX = e.pageX,
-            pageY = e.pageY,
+            isTouch = e && e.hasOwnProperty("changedTouches"),
+            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,
+            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             posX = pageX - bb.getX(),
             posY = pageY - bb.getY(),
             offset = {
@@ -81,6 +84,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             markerPlane,
             len,
             coords;
+        e.halt(true);
         if(direction == "horizontal")
         {
             catAxis = "x";
@@ -200,14 +204,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     /**
      * Queue of axes instances that will be updated. This method is used internally to determine when all axes have been updated.
      *
-     * @property _axesRenderQueue
+     * @property _itemRenderQueue
      * @type Array
      * @private
      */
-    _axesRenderQueue: null,
+    _itemRenderQueue: null,
 
     /**
-     * Adds an `Axis` instance to the `_axesRenderQueue`.
+     * Adds an `Axis` instance to the `_itemRenderQueue`.
      *
      * @method _addToAxesRenderQueue
      * @param {Axis} axis An `Axis` instance.
@@ -215,13 +219,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _addToAxesRenderQueue: function(axis)
     {
-        if(!this._axesRenderQueue)
+        if(!this._itemRenderQueue)
         {
-            this._axesRenderQueue = [];
+            this._itemRenderQueue = [];
         }
-        if(Y.Array.indexOf(this._axesRenderQueue, axis) < 0)
+        if(Y.Array.indexOf(this._itemRenderQueue, axis) < 0)
         {
-            this._axesRenderQueue.push(axis);
+            this._itemRenderQueue.push(axis);
         }
     },
 
@@ -593,7 +597,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                     {
                         axisClass = this._getAxisClass(dh.type);
                         axis = new axisClass(config);
-                        axis.after("axisRendered", Y.bind(this._axisRendered, this));
+                        axis.after("axisRendered", Y.bind(this._itemRendered, this));
                     }
                 }
 
@@ -1073,22 +1077,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
-     * Handler for axisRendered event.
-     *
-     * @method _axisRendered
-     * @param {Object} e Event object.
-     * @private
-     */
-    _axisRendered: function(e)
-    {
-        this._axesRenderQueue = this._axesRenderQueue.splice(1 + Y.Array.indexOf(this._axesRenderQueue, e.currentTarget), 1);
-        if(this._axesRenderQueue.length < 1)
-        {
-            this._redraw();
-        }
-    },
-
-    /**
      * Handler for sizeChanged event.
      *
      * @method _sizeChanged
@@ -1279,10 +1267,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         this._callLater = false;
         var w = this.get("width"),
             h = this.get("height"),
-            leftAxesWidth = 0,
-            rightAxesWidth = 0,
-            topAxesHeight = 0,
-            bottomAxesHeight = 0,
+            leftPaneWidth = 0,
+            rightPaneWidth = 0,
+            topPaneHeight = 0,
+            bottomPaneHeight = 0,
             leftAxesCollection = this.get("leftAxesCollection"),
             rightAxesCollection = this.get("rightAxesCollection"),
             topAxesCollection = this.get("topAxesCollection"),
@@ -1313,8 +1301,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             l = leftAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                leftAxesXCoords.unshift(leftAxesWidth);
-                leftAxesWidth += leftAxesCollection[i].get("width");
+                leftAxesXCoords.unshift(leftPaneWidth);
+                leftPaneWidth += leftAxesCollection[i].get("width");
             }
         }
         if(rightAxesCollection)
@@ -1324,8 +1312,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             i = 0;
             for(i = l - 1; i > -1; --i)
             {
-                rightAxesWidth += rightAxesCollection[i].get("width");
-                rightAxesXCoords.unshift(w - rightAxesWidth);
+                rightPaneWidth += rightAxesCollection[i].get("width");
+                rightAxesXCoords.unshift(w - rightPaneWidth);
             }
         }
         if(topAxesCollection)
@@ -1334,8 +1322,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             l = topAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                topAxesYCoords.unshift(topAxesHeight);
-                topAxesHeight += topAxesCollection[i].get("height");
+                topAxesYCoords.unshift(topPaneHeight);
+                topPaneHeight += topAxesCollection[i].get("height");
             }
         }
         if(bottomAxesCollection)
@@ -1344,17 +1332,17 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             l = bottomAxesCollection.length;
             for(i = l - 1; i > -1; --i)
             {
-                bottomAxesHeight += bottomAxesCollection[i].get("height");
-                bottomAxesYCoords.unshift(h - bottomAxesHeight);
+                bottomPaneHeight += bottomAxesCollection[i].get("height");
+                bottomAxesYCoords.unshift(h - bottomPaneHeight);
             }
         }
         
-        graphWidth = w - (leftAxesWidth + rightAxesWidth);
-        graphHeight = h - (bottomAxesHeight + topAxesHeight);
-        graphRect.left = leftAxesWidth;
-        graphRect.top = topAxesHeight;
-        graphRect.bottom = h - bottomAxesHeight;
-        graphRect.right = w - rightAxesWidth;
+        graphWidth = w - (leftPaneWidth + rightPaneWidth);
+        graphHeight = h - (bottomPaneHeight + topPaneHeight);
+        graphRect.left = leftPaneWidth;
+        graphRect.top = topPaneHeight;
+        graphRect.bottom = h - bottomPaneHeight;
+        graphRect.right = w - rightPaneWidth;
         if(!allowContentOverflow)
         {
             topOverflow = this._getTopOverflow(leftAxesCollection, rightAxesCollection);
@@ -1362,7 +1350,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             leftOverflow = this._getLeftOverflow(bottomAxesCollection, topAxesCollection);
             rightOverflow = this._getRightOverflow(bottomAxesCollection, topAxesCollection);
             
-            diff = topOverflow - topAxesHeight;
+            diff = topOverflow - topPaneHeight;
             if(diff > 0)
             {
                 graphRect.top = topOverflow;
@@ -1377,7 +1365,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
 
-            diff = bottomOverflow - bottomAxesHeight;
+            diff = bottomOverflow - bottomPaneHeight;
             if(diff > 0)
             {
                 graphRect.bottom = h - bottomOverflow;
@@ -1392,7 +1380,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
 
-            diff = leftOverflow - leftAxesWidth;
+            diff = leftOverflow - leftPaneWidth;
             if(diff > 0)
             {
                 graphRect.left = leftOverflow;
@@ -1407,7 +1395,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
             }
 
-            diff = rightOverflow - rightAxesWidth;
+            diff = rightOverflow - rightPaneWidth;
             if(diff > 0)
             {
                 graphRect.right = w - rightOverflow;
@@ -1541,6 +1529,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             seriesCollection = this.get("seriesCollection"),
             axesCollection = this._axesCollection,
             tooltip = this.get("tooltip").node;
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
         len = seriesCollection ? seriesCollection.length : 0;
         for(; i < len; ++i)
         {
@@ -1563,12 +1561,96 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(tooltip)
         {
+            tooltip.empty();
             tooltip.remove(true);
         }
         if(this._overlay)
         {
+            this._overlay.empty();
             this._overlay.remove(true);
         }
+    },
+
+    /**
+     * Returns the appropriate message based on the key press.
+     *
+     * @method _getAriaMessage
+     * @param {Number} key The keycode that was pressed.
+     * @return String
+     */
+    _getAriaMessage: function(key)
+    {
+        var msg = "",
+            series,
+            items,
+            categoryItem,
+            valueItem,
+            seriesIndex = this._seriesIndex,
+            itemIndex = this._itemIndex,
+            seriesCollection = this.get("seriesCollection"),
+            len = seriesCollection.length,
+            dataLength;
+        if(key % 2 === 0)
+        {
+            if(len > 1)
+            {
+                if(key === 38)
+                {
+                    seriesIndex = seriesIndex < 1 ? len - 1 : seriesIndex - 1;
+                }
+                else if(key === 40)
+                {
+                    seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;
+                }
+                this._itemIndex = -1;
+            }
+            else
+            {
+                seriesIndex = 0;
+            }
+            this._seriesIndex = seriesIndex;
+            series = this.getSeries(parseInt(seriesIndex, 10));
+            msg = "This is the " + series.get("valueDisplayName") + " series. Move the left and right arrows to navigate through the series items.";
+        }
+        else
+        {
+            if(seriesIndex > -1)
+            {
+                msg = "";
+                series = this.getSeries(parseInt(seriesIndex, 10));
+            }
+            else
+            {
+                seriesIndex = 0;
+                this._seriesIndex = seriesIndex;
+                series = this.getSeries(parseInt(seriesIndex, 10));
+                msg = "This is the " + series.get("valueDisplayName") + " series.";
+            }
+            dataLength = series._dataLength ? series._dataLength : 0;
+            if(key === 37)
+            {
+                itemIndex = itemIndex > 0 ? itemIndex - 1 : dataLength - 1;
+            }
+            else if(key === 39)
+            {
+                itemIndex = itemIndex >= dataLength - 1 ? 0 : itemIndex + 1;
+            }
+            this._itemIndex = itemIndex;
+            items = this.getSeriesItems(series, itemIndex);
+            categoryItem = items.category;
+            valueItem = items.value;
+            msg += "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
+            if(categoryItem && valueItem && categoryItem.value && valueItem.value)
+            {
+                msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
+                msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
+            }
+            else
+            {
+                msg += "No data available.";
+            }
+        }
+        return msg;
     }
 }, {
     ATTRS: {

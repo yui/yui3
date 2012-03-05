@@ -44,7 +44,7 @@ by the YUI constuctor.
 @constructor
 @global
 @uses EventTarget
-@param o* {Object} 0..n optional configuration objects.  these values
+@param [o]* {Object} 0..n optional configuration objects.  these values
 are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
 properties.
 */
@@ -76,7 +76,7 @@ properties.
                 @static
                 @example
 
-                    
+
                     YUI.GlobalConfig = {
                         filter: 'debug'
                     };
@@ -95,7 +95,7 @@ properties.
             if (YUI.GlobalConfig) {
                 Y.applyConfig(YUI.GlobalConfig);
             }
-            
+
             /**
                 YUI_config is a page-level config.  It is applied to all
                 instances created on the page.  This is applied after
@@ -106,12 +106,12 @@ properties.
                 @type {Object}
                 @example
 
-                    
+
                     //Single global var to include before YUI seed file
                     YUI_config = {
                         filter: 'debug'
                     };
-                    
+
                     YUI().use('node', function(Y) {
                         //debug files used here
                     });
@@ -255,6 +255,7 @@ proto = {
             config = this.config,
             mods = config.modules,
             groups = config.groups,
+            aliases = config.aliases,
             loader = this.Env._loader;
 
         for (name in o) {
@@ -262,6 +263,8 @@ proto = {
                 attr = o[name];
                 if (mods && name == 'modules') {
                     clobber(mods, attr);
+                } else if (aliases && name == 'aliases') {
+                    clobber(aliases, attr);
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
@@ -430,17 +433,18 @@ proto = {
         }
 
         Y.constructor = YUI;
-        
+
         // configuration defaults
         Y.config = Y.config || {
-            win: win,
-            doc: doc,
-            debug: true,
-            useBrowserConsole: true,
-            throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true
+            debug: true,
+            doc: doc,
+            fetchCSS: true,
+            throwFail: true,
+            useBrowserConsole: true,
+            useNativeES5: true,
+            win: win
         };
 
         //Register the CSS stamp element
@@ -454,7 +458,7 @@ proto = {
         Y.config.lang = Y.config.lang || 'en-US';
 
         Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
-        
+
         if (!filter || (!('mindebug').indexOf(filter))) {
             filter = 'min';
         }
@@ -740,10 +744,12 @@ with any configuration info required for the module.
      *   asynchronously.
      *
      * @method use
-     * @param modules* {String} 1-n modules to bind (uses arguments array).
-     * @param *callback {Function} callback function executed when
+     * @param modules* {String|Array} 1-n modules to bind (uses arguments array).
+     * @param [callback] {Function} callback function executed when
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
+     * @param callback.Y {YUI} The `YUI` instance created for this sandbox
+     * @param callback.data {Object} Object data returned from `Loader`.
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -830,7 +836,7 @@ with any configuration info required for the module.
             }
         }
     },
-    
+
     /**
     * This private method is called from the `use` method queue. To ensure that only one set of loading
     * logic is performed at a time.
@@ -1076,24 +1082,24 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
          // creates Y.property.package
          Y.namespace("property.package");
-    
+
     Dots in the input string cause `namespace` to create nested objects for
     each token. If any part of the requested namespace already exists, the
     current object will be left in place.  This allows multiple calls to
     `namespace` to preserve existing namespaced properties.
-    
+
     If the first token in the namespace string is "YAHOO", the token is
     discarded.
 
     Be careful with namespace tokens. Reserved words may work in some browsers
     and not others. For instance, the following will fail in some browsers
     because the supported version of JavaScript reserves the word "long":
-    
+
          Y.namespace("really.long.nested.namespace");
 
-    <em>Note: If you pass multiple arguments to create multiple namespaces, only 
+    <em>Note: If you pass multiple arguments to create multiple namespaces, only
     the last one created is returned from this function.</em>
-    
+
     @method namespace
     @param  {String} namespace* namespaces to create.
     @return {Object}  A reference to the last namespace object created.
@@ -1237,7 +1243,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             YUI[prop] = proto[prop];
         }
     }
-    
+
     /**
 Static method on the Global YUI object to apply a config to all YUI instances.
 It's main use case is "mashups" where several third party scripts are trying to write to
@@ -1268,7 +1274,7 @@ overwriting other scripts configs.
     YUI().use('davglass', function(Y) {
         //Module davglass will be available here..
     });
-    
+
     */
     YUI.applyConfig = function(o) {
         if (!o) {
@@ -1501,7 +1507,7 @@ overwriting other scripts configs.
  * </dl>
  * You can also define a custom filter, which must be an object literal
  * containing a search expression and a replace string:
- * 
+ *
  *      myFilter: {
  *          'searchExp': "-min\\.js",
  *          'replaceStr': "-debug.js"
@@ -1625,19 +1631,39 @@ overwriting other scripts configs.
  * for the module.  See `Loader.addModule` for the supported module
  * metadata fields.  Also see groups, which provides a way to
  * configure the base and combo spec for a set of modules.
- * 
+ *
  *      modules: {
  *          mymod1: {
  *              requires: ['node'],
- *              fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ *              fullpath: '/mymod1/mymod1.js'
  *          },
  *          mymod2: {
  *              requires: ['mymod1'],
- *              fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
- *          }
+ *              fullpath: '/mymod2/mymod2.js'
+ *          },
+ *          mymod3: '/js/mymod3.js',
+ *          mycssmod: '/css/mycssmod.css'
  *      }
  *
+ *
  * @property modules
+ * @type object
+ */
+
+/**
+ * Aliases are dynamic groups of modules that can be used as
+ * shortcuts.
+ *
+ *      YUI({
+ *          aliases: {
+ *              davglass: [ 'node', 'yql', 'dd' ],
+ *              mine: [ 'davglass', 'autocomplete']
+ *          }
+ *      }).use('mine', function(Y) {
+ *          //Node, YQL, DD &amp; AutoComplete available here..
+ *      });
+ *
+ * @property aliases
  * @type object
  */
 
@@ -1645,7 +1671,7 @@ overwriting other scripts configs.
  * A hash of module group definitions.  It for each group you
  * can specify a list of modules and the base path and
  * combo spec to use when dynamically loading the modules.
- * 
+ *
  *      groups: {
  *          yui2: {
  *              // specify whether or not this group has a combo service
@@ -1656,17 +1682,17 @@ overwriting other scripts configs.
  *
  *              // The maxURLLength for this server
  *              maxURLLength: 500,
- * 
+ *
  *              // the base path for non-combo paths
  *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
- * 
+ *
  *              // the path to the combo service
  *              comboBase: 'http://yui.yahooapis.com/combo?',
- * 
+ *
  *              // a fragment to prepend to the path attribute when
  *              // when building combo urls
  *              root: '2.8.0r4/build/',
- * 
+ *
  *              // the module definitions
  *              modules:  {
  *                  yui2_yde: {
@@ -1679,7 +1705,7 @@ overwriting other scripts configs.
  *              }
  *          }
  *      }
- * 
+ *
  * @property groups
  * @type object
  */
@@ -1793,6 +1819,17 @@ overwriting other scripts configs.
  * @deprecated no longer used
  */
 
+/**
+ * Whether or not YUI should use native ES5 functionality when available for
+ * features like `Y.Array.each()`, `Y.Object()`, etc. When `false`, YUI will
+ * always use its own fallback implementations instead of relying on ES5
+ * functionality, even when it's available.
+ *
+ * @method useNativeES5
+ * @type Boolean
+ * @default true
+ * @since 3.5.0
+ */
 YUI.add('yui-base', function(Y) {
 
 /*
@@ -1839,13 +1876,15 @@ NATIVE_FN_REGEX = /\{\s*\[(?:native code|function)\]\s*\}/i;
 // -- Protected Methods --------------------------------------------------------
 
 /**
-Returns _true_ if the given function appears to be implemented in native code,
-_false_ otherwise. This isn't guaranteed to be 100% accurate and won't work for
-anything other than functions, but it can be useful for determining whether
-a function like `Array.prototype.forEach` is native or a JS shim provided by
-another library.
+Returns `true` if the given function appears to be implemented in native code,
+`false` otherwise. Will always return `false` -- even in ES5-capable browsers --
+if the `useNativeES5` YUI config option is set to `false`.
 
-There's a great article by @kangax discussing the flaws with this technique:
+This isn't guaranteed to be 100% accurate and won't work for anything other than
+functions, but it can be useful for determining whether a function like
+`Array.prototype.forEach` is native or a JS shim provided by another library.
+
+There's a great article by @kangax discussing certain flaws with this technique:
 <http://perfectionkills.com/detecting-built-in-host-methods/>
 
 While his points are valid, it's still possible to benefit from this function
@@ -1856,13 +1895,13 @@ other libraries.
 
 @method _isNative
 @param {Function} fn Function to test.
-@return {Boolean} _true_ if _fn_ appears to be native, _false_ otherwise.
+@return {Boolean} `true` if _fn_ appears to be native, `false` otherwise.
 @static
 @protected
 @since 3.5.0
 **/
 L._isNative = function (fn) {
-    return !!(fn && NATIVE_FN_REGEX.test(fn));
+    return !!(Y.config.useNativeES5 && fn && NATIVE_FN_REGEX.test(fn));
 };
 
 // -- Public Methods -----------------------------------------------------------
@@ -2093,27 +2132,32 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
 };
 
 /**
- * <p>
- * Returns a string representing the type of the item passed in.
- * </p>
- *
- * <p>
- * Known issues:
- * </p>
- *
- * <ul>
- *   <li>
- *     <code>typeof HTMLElementCollection</code> returns function in Safari, but
- *     <code>Y.type()</code> reports object, which could be a good thing --
- *     but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
- *   </li>
- * </ul>
- *
- * @method type
- * @param o the item to test.
- * @return {string} the detected type.
- * @static
- */
+Returns one of the following strings, representing the type of the item passed
+in:
+
+ * "array"
+ * "boolean"
+ * "date"
+ * "error"
+ * "function"
+ * "null"
+ * "number"
+ * "object"
+ * "regexp"
+ * "string"
+ * "undefined"
+
+Known issues:
+
+ * `typeof HTMLElementCollection` returns function in Safari, but
+    `Y.Lang.type()` reports "object", which could be a good thing --
+    but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
+
+@method type
+@param o the item to test.
+@return {string} the detected type.
+@static
+**/
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
@@ -2286,17 +2330,31 @@ This method wraps the native ES5 `Array.indexOf()` method if available.
 @method indexOf
 @param {Array} array Array to search.
 @param {Any} value Value to search for.
+@param {Number} [from=0] The index at which to begin the search.
 @return {Number} Index of the item strictly equal to _value_, or `-1` if not
-  found.
+    found.
 @static
 **/
-YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value) {
-    // TODO: support fromIndex
-    return Native.indexOf.call(array, value);
-} : function (array, value) {
-    for (var i = 0, len = array.length; i < len; ++i) {
-        if (i in array && array[i] === value) {
-            return i;
+YArray.indexOf = Lang._isNative(Native.indexOf) ? function (array, value, from) {
+    return Native.indexOf.call(array, value, from);
+} : function (array, value, from) {
+    // http://es5.github.com/#x15.4.4.14
+    var len = array.length;
+
+    from = +from || 0;
+    from = (from > 0 || -1) * Math.floor(Math.abs(from));
+
+    if (from < 0) {
+        from += len;
+
+        if (from < 0) {
+            from = 0;
+        }
+    }
+
+    for (; from < len; ++from) {
+        if (from in array && array[from] === value) {
+            return from;
         }
     }
 
@@ -2489,9 +2547,7 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject,
-
-    win = Y.config.win;
+    isObject = Y.Lang.isObject;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2550,11 +2606,15 @@ in both Safari and MobileSafari browsers:
 @since 3.5.0
 **/
 Y.getLocation = function () {
-    // The reference to the `window` object created outside this function's
-    // scope is safe to hold on to, but it is not safe to do so with the
-    // `location` object. The WebKit engine used in Safari and MobileSafari will
-    // "disconnect" the `location` object from the `window` when a page is
-    // restored from back/forward history cache.
+    // It is safer to look this up every time because yui-base is attached to a
+    // YUI instance before a user's config is applied; i.e. `Y.config.win` does
+    // not point the correct window object when this file is loaded.
+    var win = Y.config.win;
+
+    // It is not safe to hold a reference to the `location` object outside the
+    // scope in which it is being used. The WebKit engine used in Safari and
+    // MobileSafari will "disconnect" the `location` object from the `window`
+    // when a page is restored from back/forward history cache.
     return win && win.location;
 };
 
@@ -3523,17 +3583,16 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","model","model-list","router","view"],
+    "app": ["app-base","app-transitions","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-mutable","datatable-scroll","datatable-datasource","datatable-sort"],
+    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3557,7 +3616,7 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"]
+    "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
 
 
@@ -4091,9 +4150,11 @@ Y.Get = Get = {
 
             // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
-            // and Firefox 9+. Note that IE versions <9 fire the DOM 0 "onload"
-            // event, but not "load". All versions of IE fire "onload".
-            cssLoad: !!(ua.gecko ? ua.gecko >= 9 : !ua.webkit),
+            // Firefox 9+, and WebKit 535.24+. Note that IE versions <9 fire the
+            // DOM 0 "onload" event, but not "load". All versions of IE fire
+            // "onload".
+            cssLoad: (!ua.gecko && !ua.webkit) ||
+                ua.gecko >= 9 || ua.webkit >= 535.24,
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -4909,8 +4970,14 @@ Y.mix(Y.namespace('Features'), {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.py */
 var add = Y.Features.add;
-// graphics-canvas-default
+// io-nodejs
 add('load', '0', {
+    "name": "io-nodejs", 
+    "trigger": "io-base", 
+    "ua": "nodejs"
+});
+// graphics-canvas-default
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4922,7 +4989,7 @@ add('load', '0', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '1', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -4941,7 +5008,7 @@ add('load', '1', {
     "trigger": "autocomplete-list"
 });
 // graphics-svg
-add('load', '2', {
+add('load', '3', {
     "name": "graphics-svg", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4953,19 +5020,15 @@ add('load', '2', {
 }, 
     "trigger": "graphics"
 });
-// history-hash-ie
-add('load', '3', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
+// editor-para-ie
+add('load', '4', {
+    "name": "editor-para-ie", 
+    "trigger": "editor-para", 
+    "ua": "ie", 
+    "when": "instead"
 });
 // graphics-vml-default
-add('load', '4', {
+add('load', '5', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4975,7 +5038,7 @@ add('load', '4', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '5', {
+add('load', '6', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4987,14 +5050,19 @@ add('load', '5', {
 }, 
     "trigger": "graphics"
 });
-// widget-base-ie
-add('load', '6', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+// history-hash-ie
+add('load', '7', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
 });
 // transition-timer
-add('load', '7', {
+add('load', '8', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5010,7 +5078,7 @@ add('load', '7', {
     "trigger": "transition"
 });
 // dom-style-ie
-add('load', '8', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5041,7 +5109,7 @@ add('load', '8', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '9', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5051,8 +5119,14 @@ add('load', '9', {
 }, 
     "trigger": "selector"
 });
+// widget-base-ie
+add('load', '11', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
 // event-base-ie
-add('load', '10', {
+add('load', '12', {
     "name": "event-base-ie", 
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
@@ -5061,21 +5135,36 @@ add('load', '10', {
     "trigger": "node-base"
 });
 // dd-gestures
-add('load', '11', {
+add('load', '13', {
     "name": "dd-gestures", 
     "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
     "trigger": "dd-drag"
 });
 // scrollview-base-ie
-add('load', '12', {
+add('load', '14', {
     "name": "scrollview-base-ie", 
     "trigger": "scrollview-base", 
     "ua": "ie"
 });
+// app-transitions-native
+add('load', '15', {
+    "name": "app-transitions-native", 
+    "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+    "trigger": "app-transitions"
+});
 // graphics-canvas
-add('load', '13', {
+add('load', '16', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5087,7 +5176,7 @@ add('load', '13', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '14', {
+add('load', '17', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -6206,6 +6295,14 @@ Y.Loader.prototype = {
                     } else if (i == 'modules') {
                         // add a hash of module definitions
                         oeach(val, self.addModule, self);
+                    } else if (i === 'aliases') {
+                        oeach(val, function(use, name) {
+                            YUI.Env.aliases[name] = use;
+                            self.addModule({
+                                name: name,
+                                use: use
+                            });
+                        });
                     } else if (i == 'gallery') {
                         this.groups.gallery.update(val);
                     } else if (i == 'yui2' || i == '2in3') {
@@ -6228,9 +6325,12 @@ Y.Loader.prototype = {
                 self.require('yui-log', 'dump');
             }
         }
+        
 
         if (self.lang) {
-            self.require('intl-base', 'intl');
+            //Removed this so that when Loader is invoked
+            //it doesn't request what it doesn't need.
+            //self.require('intl-base', 'intl');
         }
 
     },
@@ -6960,7 +7060,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style['display'] === 'none') {
+        if (style && style['display'] === 'none') {
             ret = true;
         }
 
@@ -7759,15 +7859,23 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             
             if (m) {
                 group = (m.group && self.groups[m.group]) || NOT_FOUND;
+                
+                //Always assume it's async
+                if (group.async === false) {
+                    m.async = group.async;
+                }
 
                 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                if (m.attributes) {
+                if (m.attributes || m.async === false) {
                     url = {
                         url: url,
-                        attributes: m.attributes
+                        async: m.async
                     };
+                    if (m.attributes) {
+                        url.attributes = m.attributes
+                    }
                 }
                 resolved[m.type].push(url);
                 resolved[m.type + 'Mods'].push(m);
@@ -7910,6 +8018,42 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         resCombos = null;
 
         return resolved;
+    },
+    /**
+    Shortcut to calculate, resolve and load all modules.
+
+        var loader = new Y.Loader({
+            ignoreRegistered: true,
+            modules: {
+                mod: {
+                    path: 'mod.js'
+                }
+            },
+            requires: [ 'mod' ]
+        });
+        loader.load(function() {
+            console.log('All modules have loaded..');
+        });
+
+
+    @method load
+    @param {Callback} cb Executed after all load operations are complete
+    */
+    load: function(cb) {
+        if (!cb) {
+            Y.log('No callback supplied to load()', 'error', 'loader');
+            return;
+        }
+        var self = this,
+            out = self.resolve(true);
+        
+        self.data = out;
+
+        self.onEnd = function() {
+            cb.apply(self.context || self, arguments);
+        };
+
+        self.insert();
     }
 };
 
@@ -8093,6 +8237,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -8109,7 +8254,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app-transitions": {
         "requires": [
-            "app-base", 
+            "app-base"
+        ]
+    }, 
+    "app-transitions-css": {
+        "type": "css"
+    }, 
+    "app-transitions-native": {
+        "condition": {
+            "name": "app-transitions-native", 
+            "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+            "trigger": "app-transitions"
+        }, 
+        "requires": [
+            "app-transitions", 
+            "app-transitions-css", 
             "parallel", 
             "transition"
         ]
@@ -8320,24 +8488,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbutton"
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "widget"
         ]
     }, 
-    "button-base": {
+    "button-core": {
         "requires": [
-            "base", 
+            "attribute-core", 
             "classnamemanager", 
-            "node"
+            "node-base"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base", 
-            "arraylist", 
-            "arraylist-add"
+            "button-plugin", 
+            "widget"
+        ]
+    }, 
+    "button-plugin": {
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "node-pluginhost"
         ]
     }, 
     "cache": {
@@ -8366,9 +8540,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "calendar-base", 
@@ -8378,9 +8556,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "widget", 
@@ -8403,15 +8585,26 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
+            "event-touch", 
             "widget", 
             "widget-position", 
             "widget-stack", 
             "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -8503,6 +8696,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "optional": [
             "cssreset", 
             "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-base": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-units": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "requires": [
+            "cssgrids-base"
         ], 
         "type": "css"
     }, 
@@ -8630,10 +8840,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
-            "datatable-scroll", 
-            "datatable-datasource", 
-            "datatable-sort"
+            "datatable-sort", 
+            "datatable-datasource"
         ]
     }, 
     "datatable-base": {
@@ -8678,6 +8888,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "view", 
             "classnamemanager"
         ]
+    }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
     }, 
     "datatable-mutable": {
         "requires": [
@@ -8887,7 +9106,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "dd-gestures", 
             "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
             "trigger": "dd-drag"
         }, 
@@ -9048,7 +9267,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "editor-para": {
         "requires": [
+            "editor-para-base"
+        ]
+    }, 
+    "editor-para-base": {
+        "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-para-ie": {
+        "condition": {
+            "name": "editor-para-ie", 
+            "trigger": "editor-para", 
+            "ua": "ie", 
+            "when": "instead"
+        }, 
+        "requires": [
+            "editor-para-base"
         ]
     }, 
     "editor-selection": {
@@ -9109,6 +9344,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "requires": [
             "node-base"
+        ]
+    }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "dom-screen"
         ]
     }, 
     "event-custom": {
@@ -9222,12 +9463,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "file": {
         "requires": [
+            "file-flash", 
+            "file-html5"
+        ]
+    }, 
+    "file-flash": {
+        "requires": [
             "base"
         ]
     }, 
-    "filelist": {
+    "file-html5": {
         "requires": [
-            "file", 
             "base"
         ]
     }, 
@@ -9459,6 +9705,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "io-base", 
             "node-base"
+        ]
+    }, 
+    "io-nodejs": {
+        "condition": {
+            "name": "io-nodejs", 
+            "trigger": "io-base", 
+            "ua": "nodejs"
+        }, 
+        "requires": [
+            "io-base"
         ]
     }, 
     "io-queue": {
@@ -10099,15 +10355,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "uploader-flash"
         ]
     }, 
+    "uploader-deprecated": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
+    }, 
     "uploader-flash": {
         "requires": [
             "swf", 
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
-            "file", 
+            "file-flash", 
             "uploader-queue"
         ]
     }, 
@@ -10116,7 +10381,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "node-event-simulate", 
             "substitute", 
-            "file", 
+            "file-html5", 
             "uploader-queue"
         ]
     }, 
@@ -10140,35 +10405,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "widget-base", 
             "widget-htmlparser", 
-            "widget-uievents", 
-            "widget-skin"
+            "widget-skin", 
+            "widget-uievents"
         ]
     }, 
     "widget-anim": {
         "requires": [
-            "plugin", 
             "anim-base", 
+            "plugin", 
             "widget"
         ]
     }, 
     "widget-autohide": {
         "requires": [
-            "widget", 
-            "event-outside", 
             "base-build", 
-            "event-key"
-        ], 
-        "skinnable": false
+            "event-key", 
+            "event-outside", 
+            "widget"
+        ]
     }, 
     "widget-base": {
         "requires": [
             "attribute", 
-            "event-focus", 
             "base-base", 
             "base-pluginhost", 
+            "classnamemanager", 
+            "event-focus", 
             "node-base", 
-            "node-style", 
-            "classnamemanager"
+            "node-style"
         ], 
         "skinnable": true
     }, 
@@ -10184,12 +10448,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
@@ -10209,16 +10471,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-modality": {
         "requires": [
-            "widget", 
+            "base-build", 
             "event-outside", 
-            "base-build"
+            "widget"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-parent": {
         "requires": [
-            "base-build", 
             "arraylist", 
+            "base-build", 
             "widget"
         ]
     }, 
@@ -10259,8 +10521,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-uievents": {
         "requires": [
-            "widget-base", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "widget-base"
         ]
     }, 
     "yql": {
@@ -10288,7 +10550,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1cab8b7f30e8353fcfa963884e842e30';
+YUI.Env[Y.version].md5 = '4cf046fbf0f29c9bdf1aadccc3ed4325';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

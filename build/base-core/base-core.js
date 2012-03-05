@@ -83,14 +83,41 @@ YUI.add('base-core', function(Y) {
     BaseCore._ATTR_CFG_HASH = Y.Array.hash(BaseCore._ATTR_CFG);
 
     /**
-     * <p>
+     * The array of non-attribute configuration properties supported by this class. 
+     * 
+     * For example `BaseCore` defines a "plugins" configuration property which 
+     * should not be set up as an attribute. This property is primarily required so 
+     * that when <a href="#property__allowAdHocAttrs">`_allowAdHocAttrs`</a> is enabled by a class, 
+     * non-attribute configuration properties don't get added as ad-hoc attributes.  
+     *
+     * @property _NON_ATTRS_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    BaseCore._NON_ATTRS_CFG = ["plugins"];
+
+    /**
+     * This property controls whether or not instances of this class should
+     * allow users to add ad-hoc attributes through the constructor configuration 
+     * hash.
+     *
+     * AdHoc attributes are attributes which are not defined by the class, and are 
+     * not handled by the MyClass._NON_ATTRS_CFG  
+     * 
+     * @property _allowAdHocAttrs
+     * @type boolean
+     * @default undefined (false)
+     * @protected
+     */
+
+    /**
      * The string to be used to identify instances of this class.
-     * </p>
-     * <p>
+     * 
      * Classes extending BaseCore, should define their own
      * static NAME property, which should be camelCase by
      * convention (e.g. MyClass.NAME = "myClass";).
-     * </p>
+     *
      * @property NAME
      * @type String
      * @static
@@ -282,7 +309,7 @@ YUI.add('base-core', function(Y) {
         /**
          * A helper method used when processing ATTRS across the class hierarchy during 
          * initialization. Returns a disposable object with the attributes defined for 
-         * the provided class, extracted from the set of all attributes passed in .
+         * the provided class, extracted from the set of all attributes passed in.
          *
          * @method _filterAttrCfs
          * @private
@@ -312,6 +339,36 @@ YUI.add('base-core', function(Y) {
         },
 
         /**
+         * @method _filterAdHocAttrs
+         * @private
+         *
+         * @param {Object} allAttrs The set of all attribute configurations for this instance. 
+         * Attributes will be removed from this set, if they belong to the filtered class, so
+         * that by the time all classes are processed, allCfgs will be empty.
+         * @param {Object} userVals The config object passed in by the user, from which adhoc attrs are to be filtered.
+         * @return {Object} The set of adhoc attributes passed in, in the form
+         * of an object with attribute name/configuration pairs.
+         */
+        _filterAdHocAttrs : function(allAttrs, userVals) {
+            var adHocs,
+                nonAttrs = this._nonAttrs,
+                attr;
+
+            if (userVals) {
+                adHocs = {};
+                for (attr in userVals) {
+                    if (!allAttrs[attr] && !nonAttrs[attr] && userVals.hasOwnProperty(attr)) {
+                        adHocs[attr] = {
+                            value:userVals[attr]
+                        };
+                    }
+                }
+            }
+
+            return adHocs;
+        },
+
+        /**
          * A helper method used by _getClasses and _getAttrCfgs, which determines both
          * the array of classes and aggregate set of attribute configurations
          * across the class hierarchy for the instance.
@@ -321,6 +378,10 @@ YUI.add('base-core', function(Y) {
          */
         _initHierarchyData : function() {
             var c = this.constructor,
+                i,
+                l,
+                nonAttrsCfg,
+                nonAttrs = (this._allowAdHocAttrs) ? {} : null,
                 classes = [],
                 attrs = [];
 
@@ -332,10 +393,21 @@ YUI.add('base-core', function(Y) {
                 if (c.ATTRS) {
                     attrs[attrs.length] = c.ATTRS;
                 }
+
+                if (this._allowAdHocAttrs) {
+                    nonAttrsCfg = c._NON_ATTRS_CFG; 
+                    if (nonAttrsCfg) {
+                        for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
+                            nonAttrs[nonAttrsCfg[i]] = true;
+                        }
+                    }
+                }
+
                 c = c.superclass ? c.superclass.constructor : null;
             }
 
             this._classes = classes;
+            this._nonAttrs = nonAttrs;
             this._attrs = this._aggregateAttrs(attrs);
         },
 
@@ -443,9 +515,10 @@ YUI.add('base-core', function(Y) {
                 extProto,
                 exts,
                 classes = this._getClasses(),
-                attrCfgs = this._getAttrCfgs();
+                attrCfgs = this._getAttrCfgs(),
+                cl = classes.length - 1;
 
-            for (ci = classes.length-1; ci >= 0; ci--) {
+            for (ci = cl; ci >= 0; ci--) {
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
@@ -458,6 +531,10 @@ YUI.add('base-core', function(Y) {
                 }
 
                 this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
+
+                if (this._allowAdHocAttrs && ci === cl) {                
+                    this.addAttrs(this._filterAdHocAttrs(attrCfgs, userVals), userVals, lazy);
+                }
 
                 // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
                 // referencing string literals). Not using it in apply, again, for performance "." is faster. 

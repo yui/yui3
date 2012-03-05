@@ -166,6 +166,20 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
+    This tells `Y.Base` that it should create ad-hoc attributes for config
+    properties passed to Model's constructor. This makes it possible to
+    instantiate a model and set a bunch of attributes without having to subclass
+    `Y.Model` and declare all those attributes first.
+
+    @property _allowAdHocAttrs
+    @type Boolean
+    @default true
+    @protected
+    @since 3.5.0
+    **/
+    _allowAdHocAttrs: true,
+
+    /**
     Total hack to allow us to identify Model instances without using
     `instanceof`, which won't work when the instance was created in another
     window or YUI sandbox.
@@ -191,21 +205,25 @@ Y.Model = Y.extend(Model, Y.Base, {
     Destroys this model instance and removes it from its containing lists, if
     any.
 
-    If `options['delete']` is `true`, then this method also delegates to the
-    `sync()` method to delete the model from the persistence layer, which is an
-    asynchronous action. Provide a _callback_ function to be notified of success
-    or failure.
+    The _callback_, if one is provided, will be called after the model is
+    destroyed.
+
+    If `options.remove` is `true`, then this method delegates to the `sync()`
+    method to delete the model from the persistence layer, which is an
+    asynchronous action. In this case, the _callback_ (if provided) will be
+    called after the sync layer indicates success or failure of the delete
+    operation.
 
     @method destroy
     @param {Object} [options] Sync options. It's up to the custom sync
         implementation to determine what options it supports or requires, if
         any.
-      @param {Boolean} [options.delete=false] If `true`, the model will be
+      @param {Boolean} [options.remove=false] If `true`, the model will be
         deleted via the sync layer in addition to the instance being destroyed.
-    @param {callback} [callback] Called when the sync operation finishes.
+    @param {callback} [callback] Called after the model has been destroyed (and
+        deleted via the sync layer if `options.remove` is `true`).
       @param {Error|null} callback.err If an error occurred, this parameter will
-        contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+        contain the error. Otherwise _err_ will be `null`.
     @chainable
     **/
     destroy: function (options, callback) {
@@ -214,28 +232,28 @@ Y.Model = Y.extend(Model, Y.Base, {
         // Allow callback as only arg.
         if (typeof options === 'function') {
             callback = options;
-            options  = {};
+            options  = null;
         }
 
-        function finish(err) {
-            if (!err) {
-                YArray.each(self.lists.concat(), function (list) {
-                    list.remove(self, options);
-                });
+        self.onceAfter('destroy', function () {
+            function finish(err) {
+                if (!err) {
+                    YArray.each(self.lists.concat(), function (list) {
+                        list.remove(self, options);
+                    });
+                }
 
-                Model.superclass.destroy.call(self);
+                callback && callback.apply(null, arguments);
             }
 
-            callback && callback.apply(null, arguments);
-        }
+            if (options && (options.remove || options['delete'])) {
+                self.sync('delete', options, finish);
+            } else {
+                finish();
+            }
+        });
 
-        if (options && options['delete']) {
-            this.sync('delete', options, finish);
-        } else {
-            finish();
-        }
-
-        return this;
+        return Model.superclass.destroy.call(self);
     },
 
     /**
@@ -454,8 +472,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     operation, which is an asynchronous action. Specify a _callback_ function to
     be notified of success or failure.
 
-    A successful load operation will fire a `load` event, while an unsuccessful
-    load operation will fire an `error` event with the `src` value "load".
+    A successful save operation will fire a `save` event, while an unsuccessful
+    save operation will fire an `error` event with the `src` value "save".
 
     If the save operation succeeds and one or more of the attributes returned in
     the server's response differ from this model's current attributes, a
@@ -506,8 +524,8 @@ Y.Model = Y.extend(Model, Y.Base, {
                     self.fire(EVT_ERROR, facade);
                 } else {
                     // Lazy publish.
-                    if (!self._loadEvent) {
-                        self._loadEvent = self.publish(EVT_LOAD, {
+                    if (!self._saveEvent) {
+                        self._saveEvent = self.publish(EVT_SAVE, {
                             preventable: false
                         });
                     }
@@ -650,9 +668,7 @@ Y.Model = Y.extend(Model, Y.Base, {
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         falsy.
-      @param {Any} [callback.response] The server's response. This value will
-        be passed to the `parse()` method, which is expected to parse it and
-        return an attribute hash.
+      @param {Any} [callback.response] The server's response.
     **/
     sync: function (/* action, options, callback */) {
         var callback = YArray(arguments, 0, true).pop();
@@ -670,6 +686,16 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     If you've specified a custom attribute name in the `idAttribute` property,
     the default `id` attribute will not be included in the returned object.
+
+    Note: This method is named `toJSON()`, but it returns an object, not a JSON
+    string. We know that. It's not because we're idiots who are incapable of
+    naming things. It's because the method name "toJSON" and the object return
+    type are specified in the ECMAScript 5 standard. Adhering to this standard
+    allows you to stringify a model by doing `JSON.stringify(model)` if you want
+    to. Please don't file a bug telling us we're idiots. We'll just sigh, cry a
+    little, and mark the bug invalid.
+
+    See <http://es5.github.com/#x15.12.3>.
 
     @method toJSON
     @return {Object} Copy of this model's attributes.

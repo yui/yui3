@@ -1,27 +1,25 @@
-.yui3-skin-night .yui3-datatable-y-scroller .yui3-datatable-y-scroll-table {
+.yui3-skin-sam .yui3-datatable-scroll-columns {
+    border-collapse: separate;
+    border-spacing: 0;
+	font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
     margin: 0;
     padding: 0;
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    border: 0 none;
+    top: 0;
+    left: 0;
 }
-.yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-x-scroller {
-    border-right: 1px solid #303030;
-    border-left: 1px solid #303030;
+
+.yui3-skin-sam .yui3-datatable-scroll-columns .yui3-datatable-header {
+    padding: 0;
 }
-.yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-table {
-    border-right: 0 none;
-    border-left: 0 none;
-}
-.yui3-skin-night .yui3-datatable-scrollable-x .yui3-datatable-y-scroller {
-    border-bottom: 0 none;
-    border-left: 0 none;
-}
-.yui3-skin-night .yui3-datatable-y-scroller {
+
+.yui3-skin-sam .yui3-datatable-x-scroller,
+.yui3-skin-sam .yui3-datatable-y-scroller-container {
     border: 1px solid #303030;
     border-left-color: #323434;
-    border-top: 0 none;
 }
-.yui3-skin-night .yui3-datatable-scrollable-y .yui3-datatable-table {
-    border-bottom: 0 none;
+
+.yui3-skin-sam .yui3-datatable-scrollable-x .yui3-datatable-y-scroller-container,
+.yui3-skin-sam .yui3-datatable-x-scroller .yui3-datatable-table,
+.yui3-skin-sam .yui3-datatable-y-scroller .yui3-datatable-table {
+    border: 0 none;
 }

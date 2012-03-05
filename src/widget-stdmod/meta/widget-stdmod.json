@@ -1,0 +1,8 @@
+{
+    "widget-stdmod": {
+        "requires": [
+            "base-build",
+            "widget"
+        ]
+    }
+}

@@ -36,6 +36,12 @@ A beta version of View was first introduced in YUI 3.4.0. If you're using View i
     The `container` attribute now treats string values as CSS selectors. Previously, it assumed string values represented raw HTML. To get the same functionality as the old behavior, pass your HTML string through `Y.Node.create()` before passing it to `container`. For example, `new Y.View({container: '<div/>'})` becomes `new Y.View({container: Y.Node.create('<div/>')})`.
     </p>
   </li>
+
+  <li>
+    <p>
+    Destroying a view no longer also destroys the view's container node by default. To destroy a view's container node when destroying the view, pass `{remove: true}` to the view's `destroy()` method.
+    </p>
+  </li>
 </ul>
 
 <h2>Using View</h2>
@@ -238,6 +244,18 @@ The following properties are meaningful to View classes and subclasses.
   </thead>
   <tbody>
     <tr>
+      <td>`containerTemplate`</td>
+      <td>`'<div/>'`</td>
+      <td>
+        <p>
+        HTML template for this view's container element. This will be used to
+        create the container if no custom container is specified when the view
+        is created.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
       <td>`events`</td>
       <td>`{}`</td>
       <td>
@@ -303,40 +321,20 @@ View classes and subclasses provide the following attributes.
         </p>
       </td>
     </tr>
-
-    <tr>
-      <td>`model`</td>
-      <td>`null`</td>
-      <td>
-        <p>
-        A <a href="../model/index.html">Model</a> instance that you want to associate with the view instance. This is most useful when set at or after instantiation time.
-        </p>
-
-        <p>
-        This attribute is entirely optional. There's no requirement that views be associated with models, but if you do intend to associate your view with a model, then specifying that model instance at instantiation time will cause a reference to be stored here for convenience.
-        </p>
-
-        <p>
-        For more information, see [[#Associating a View with a Model or Model List]].
-        </p>
-      </td>
-    </tr>
-
-    <tr>
-      <td>`modelList`</td>
-      <td>`null`</td>
-      <td>
-        <p>
-        A <a href="../model-list/index.html">Model List</a> instance that you want to associate with the view instance. This is most useful when set at or after instantiation time.
-        </p>
-
-        <p>
-        Like the `model` attribute, the `modelList` attribute is entirely optional, and is provided for convenience only. For more information, see [[#Associating a View with a Model or Model List]].
-        </p>
-      </td>
-    </tr>
   </tbody>
 </table>
+
+<p>
+Views also support ad-hoc attributes, meaning you can simply pass an object hash to a view's constructor and attributes will automatically be created for the keys you specify.
+</p>
+
+```
+// Instantiate a view and setting some ad-hoc attributes.
+var view = new Y.View({foo: 'foo', bar: 'bar'});
+
+view.get('foo'); // => "foo"
+view.get('bar'); // => "bar"
+```
 
 <h3>Handling DOM Events</h3>
 
@@ -497,6 +495,10 @@ var pies        = new Y.PieList(),
 // When we add a pie to the list, the view will be re-rendered.
 pies.add({type: 'banana cream'});
 ```
+
+<p>
+The `model` and `modelList` attributes are really just ad-hoc attributes that are created on demand, so using "model" and "modelList" as the names is just a convention and not a baked-in requirement. Feel free to store your models and model lists under different attribute names if you want.
+</p>
 
 <h2>View Extensions</h2>
 

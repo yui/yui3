@@ -136,7 +136,7 @@
          *
          * @method hasPlugin
          * @param {String} ns The plugin's namespace
-         * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
+         * @return {Plugin} Returns a truthy value (the plugin instance) if present, or undefined if not.
          */
         hasPlugin : function(ns) {
             return (this._plugins[ns] && this[ns]);

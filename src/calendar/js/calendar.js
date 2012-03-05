@@ -9,15 +9,23 @@
  * @module calendar
  */
 
-var getCN            = Y.ClassNameManager.getClassName,
-    CALENDAR         = 'calendar',
-    CAL_HD           = getCN(CALENDAR, 'header'),
-    CAL_DAY_SELECTED = getCN(CALENDAR, 'day-selected'),
+var getCN             = Y.ClassNameManager.getClassName,
+    CALENDAR          = 'calendar',
+    KEY_DOWN          = 40,
+    KEY_UP            = 38,
+    KEY_LEFT          = 37,
+    KEY_RIGHT         = 39,
+    KEY_ENTER         = 13,
+    KEY_SPACE         = 32,
+    CAL_HD            = getCN(CALENDAR, 'header'),
+    CAL_DAY_SELECTED  = getCN(CALENDAR, 'day-selected'),
+    CAL_DAY_HILITED   = getCN(CALENDAR, 'day-highlighted'),
     CAL_DAY           = getCN(CALENDAR, 'day'),
     CAL_PREVMONTH_DAY = getCN(CALENDAR, 'prevmonth-day'),
     CAL_NEXTMONTH_DAY = getCN(CALENDAR, 'nextmonth-day'),
-    ydate            = Y.DataType.Date,
-    delegate         = Y.delegate,
+    CAL_GRID          = getCN(CALENDAR, 'grid'),
+    ydate             = Y.DataType.Date,
+    delegate          = Y.delegate,
     CAL_PANE          = getCN(CALENDAR, 'pane'),
     os                = Y.UA.os;
 
@@ -35,6 +43,10 @@ function Calendar(config) {
 }
 
 Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
+
+    _keyEvents: [],
+
+    _highlightedDateNode: null,
 
   /**
    * A property tracking the last selected date on the calendar, for the
@@ -77,7 +89,170 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         pane       = contentBox.one("." + CAL_PANE);
     pane.on("selectstart", function (ev) { ev.preventDefault();});
     pane.delegate("click", this._clickCalendar, "." + CAL_DAY, this);
+    pane.delegate("keydown", this._keydownCalendar, "." + CAL_GRID, this);
+    pane.delegate("focus", this._focusCalendarGrid, "." + CAL_GRID, this);
+    pane.delegate("focus", this._focusCalendarCell, "." + CAL_DAY, this);
+    pane.delegate("blur", this._blurCalendarGrid, "." + CAL_GRID + ",." + CAL_DAY, this);
   },
+
+  /**
+   * Highlights a specific date node with keyboard highlight class
+   * @method _highlightDateNode
+   * @param oDate {Date} Date corresponding the node to be highlighted
+   * @protected
+   */   
+  _highlightDateNode : function (oDate) {
+    this._unhighlightCurrentDateNode();
+    var newNode = this._dateToNode(oDate);
+    newNode.focus();
+    newNode.addClass(CAL_DAY_HILITED);
+    //this._highlightedDateNode.set("tabIndex", -1);
+
+
+  },
+
+  /**
+   * Unhighlights a specific date node currently highlighted with keyboard highlight class
+   * @method _unhighlightDateNode
+   * @protected
+   */   
+  _unhighlightCurrentDateNode : function () {
+    if (this._highlightedDateNode) {
+      this._highlightedDateNode.removeClass(CAL_DAY_HILITED);
+    }
+  },
+
+  /**
+   * Returns the grid number for a specific calendar grid (for multi-grid templates)
+   * @method _getGridNumber
+   * @param gridNode {Node} Node corresponding to a specific grid
+   * @protected
+   */   
+  _getGridNumber : function (gridNode) {
+    var idParts = gridNode.get("id").split("_").reverse();
+        return parseInt(idParts[0], 10);
+  },
+
+  /**
+   * Handler for loss of focus of calendar grid
+   * @method _blurCalendarGrid
+   * @protected
+   */   
+   _blurCalendarGrid : function (ev) {
+      this._unhighlightCurrentDateNode();
+   },
+
+
+  /**
+   * Handler for gain of focus of calendar cell
+   * @method _focusCalendarCell
+   * @protected
+   */ 
+   _focusCalendarCell : function (ev) {
+       this._highlightedDateNode = ev.target;
+   },
+
+  /**
+   * Handler for gain of focus of calendar grid
+   * @method _focusCalendarGrid
+   * @protected
+   */ 
+   _focusCalendarGrid : function (ev) {
+       this._highlightedDateNode = null;
+   },
+
+  /**
+   * Handler for keyboard press on a calendar grid
+   * @method _keydownCalendar
+   * @protected
+   */ 
+   _keydownCalendar : function (ev) {
+    var gridNum = this._getGridNumber(ev.target),
+        curDate = this._highlightedDateNode == null ? null : this._nodeToDate(this._highlightedDateNode),
+        keyCode = ev.keyCode,
+        dayNum = 0,
+        dir = '';
+
+
+        switch(keyCode) {
+          case KEY_DOWN: 
+            dayNum = 7;
+            dir = 's';
+          break;
+          case KEY_UP: 
+            dayNum = -7
+            dir = 'n';
+          break;
+          case KEY_LEFT: 
+            dayNum = -1;
+            dir = 'w';
+          break;
+          case KEY_RIGHT:
+            dayNum = 1;
+            dir = 'e';
+          break;
+          case KEY_SPACE: case KEY_ENTER:
+            if (this._highlightedDateNode) {
+            var selMode = this.get("selectionMode");
+            if (selMode === "single" && !this._highlightedDateNode.hasClass(CAL_DAY_SELECTED)) {
+                this._clearSelection(true);
+                this._addDateToSelection(curDate);
+            }
+            else if (selMode === "multiple" || selMode === "multiple-sticky") {
+                if (this._highlightedDateNode.hasClass(CAL_DAY_SELECTED)) {
+                  this._removeDateFromSelection(curDate);
+                }
+                else {
+                  this._addDateToSelection(curDate);
+                }
+             }
+            }
+          break;
+        }
+
+      if (curDate == null) {
+             curDate = ydate.addMonths(this.get("date"), gridNum);
+             dayNum = 0;
+      }
+ 
+
+        if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
+              ev.preventDefault();
+          var newDate = ydate.addDays(curDate, dayNum),
+              startDate = this.get("date"),
+              endDate = ydate.addMonths(this.get("date"), this._paneNumber - 1),
+              lastPaneDate = new Date(endDate);
+              endDate.setDate(ydate.daysInMonth(endDate));
+          
+          if (ydate.isInRange(newDate, startDate, endDate)) {
+/*
+              var paneShift = (newDate.getMonth() - curDate.getMonth()) % 10;
+
+
+              if (paneShift != 0) {
+                var newGridNum = gridNum + paneShift,
+                    contentBox = this.get('contentBox'),
+                    newPane = contentBox.one("#" + this._calendarId + "_pane_" + newGridNum);
+                    newPane.focus();
+              }
+*/
+              this._highlightDateNode(newDate);
+          }
+          else if (ydate.isGreater(startDate, newDate)) {
+            if (!ydate.isGreaterOrEqual(this.get("minimumDate"), startDate)) {
+                 this.set("date", ydate.addMonths(startDate, -1));
+                 this._highlightDateNode(newDate);
+            }
+          }
+          else if (ydate.isGreater(newDate, endDate)) {
+            if (!ydate.isGreaterOrEqual(lastPaneDate, this.get("maximumDate"))) {
+                 this.set("date", ydate.addMonths(startDate, 1));
+                 this._highlightDateNode(newDate);
+            }
+          }
+
+        }
+   },
 
   /**
    * Handles the calendar clicks based on selection mode.
@@ -227,12 +402,12 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     *
     * @property NAME
     * @type String
-    * @default 'Calendar'
+    * @default 'calendar'
     * @readOnly
     * @protected
     * @static
     */  
-  NAME: "Calendar",
+  NAME: "calendar",
 
    /**
     * Static property used to define the default attribute configuration of
@@ -274,13 +449,13 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
      */
     date: {
       value: new Date(),
+      lazyAdd: false,
       setter: function (val) {
 
         var newDate = this._normalizeDate(val),
-            newTopDate = ydate.addMonths(newDate, this._paneNumber - 1),
-            minDate = this.get("minimumDate"),
-            maxDate = this.get("maximumDate");
-
+            newTopDate = ydate.addMonths(newDate, this._paneNumber - 1);
+        var minDate = this.get("minimumDate");
+        var maxDate = this.get("maximumDate");
             if ((minDate == null || ydate.isGreaterOrEqual(newDate, minDate)) && 
                 (maxDate == null || ydate.isGreaterOrEqual(maxDate, newTopDate))) {
                 return newDate;
@@ -318,7 +493,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
           return newMinDate;
         }
         else {
-          return val;
+          return this._normalizeDate(val);
         }
       }
     },

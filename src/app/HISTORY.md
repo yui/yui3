@@ -14,6 +14,13 @@ App Framework Change History
   callback function on success or failure. Old-style synchronous `validate()`
   methods will still work, but are deprecated. [Ticket #2531218]
 
+* Model now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.Model` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a model instance with "foo" and "bar"
+  attributes:
+
+          var model = new Y.Model({foo: 'foo', bar: 'bar'});
+
 * `load()` now fires a `load` event after the operation completes successfully,
   or an `error` event on failure. The `load()` callback (if provided) will still
   be called in both cases. [Ticket #2531207]
@@ -25,10 +32,25 @@ App Framework Change History
 * Options passed to `set()` and `setAttrs()` are now correctly merged into the
   event facade of the `change` event. [Ticket #2531492]
 
+* Model's `destroy` event is now fully preventable (previously it was possible
+  for the model to be deleted even if the `destroy` event was prevented by a
+  subscriber in the `on` phase).
+
 ### ModelList
 
-* Added a `filter()` method that returns a filtered array of models. [Ticket
-  #2531250]
+* ModelList's `model` property is now set to `Y.Model` by default. Since
+  `Y.Model` now supports ad-hoc attributes, this makes it much easier to create
+  and populate a ModelList without doing any subclassing:
+
+          var list = new Y.ModelList();
+
+          list.add([
+              {foo: 'bar'},
+              {baz: 'quux'}
+          ]);
+
+* Added a `filter()` method that returns a filtered array of models or,
+  optionally, a new ModelList containing the filtered models. [Ticket #2531250]
 
 * Added a `create` event that fires when a model is created/updated via the
   `create()` method, but before that model has actually been saved and added to
@@ -111,6 +133,25 @@ App Framework Change History
   Previously, it assumed string values represented raw HTML. To get the same
   functionality as the old behavior, pass your HTML string through
   `Y.Node.create()` before passing it to `container`.
+
+* [!] Destroying a view no longer also destroys the view's container node by
+  default. To destroy a view's container node when destroying the view, pass
+  `{remove: true}` to the view's `destroy()` method. [Ticket #2531689]
+
+* View now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.View` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a view instance with "foo" and "bar"
+  attributes:
+
+          var view = new Y.View({foo: 'foo', bar: 'bar'});
+
+* Added a `containerTemplate` property that contains an HTML template used to
+  create a container node when one isn't specified. Defaults to "<div/>".
+
+* When no `container` node is specified at instantiation time, the container
+  won't be created until it's needed. `create()` is now only used to create a
+  default container; it's never called when a custom container node is
+  specified.
 
 * Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
   subclass to provide a static `getByNode()` method that returns the nearest
