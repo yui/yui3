@@ -109,7 +109,7 @@ Y.mix(DataTableSort, {
          * @type {Object}
          */
         strings: {
-            valueFn: function () { return Y.Intl.get('datatable-sort'); }
+            valueFn: function () { return Y.Intl.get('datatable-sort-deprecated'); }
         }
     }
 });

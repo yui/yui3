@@ -1,13 +1,13 @@
 {
-    "datatable": {
+    "datatable-deprecated": {
         "use": [
-            "datatable-base",
-            "datatable-datasource",
-            "datatable-sort",
-            "datatable-scroll"
+            "datatable-base-deprecated",
+            "datatable-datasource-deprecated",
+            "datatable-sort-deprecated",
+            "datatable-scroll-deprecated"
         ],
         "submodules": {
-            "datatable-base": {
+            "datatable-base-deprecated": {
                 "requires": [
                     "recordset-base",
                     "widget",
@@ -16,24 +16,24 @@
                 ],
                 "skinnable": true
             },
-            "datatable-datasource": {
+            "datatable-datasource-deprecated": {
                 "requires": [
-                    "datatable-base",
+                    "datatable-base-deprecated",
                     "plugin",
                     "datasource-local"
                 ]
             },
-            "datatable-sort": {
+            "datatable-sort-deprecated": {
                 "requires": [
-                    "datatable-base",
+                    "datatable-base-deprecated",
                     "plugin",
                     "recordset-sort"
                 ],
                 "lang": ["en"]
             },
-			"datatable-scroll": {
+			"datatable-scroll-deprecated": {
 				"requires": [
-					"datatable-base",
+					"datatable-base-deprecated",
 					"plugin"
 				]
 			}

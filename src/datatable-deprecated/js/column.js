@@ -195,8 +195,8 @@ Y.extend(Column, Y.Widget, {
     * @return {String}
     * @private
     */
-    _defaultKey: function(key) {
-        return key || Y.guid();
+    _defaultKey: function() {
+        return Y.guid();
     },
 
     /**
@@ -206,8 +206,8 @@ Y.extend(Column, Y.Widget, {
     * @return {String}
     * @private
     */
-    _defaultField: function(field) {
-        return field || this.get("key");
+    _defaultField: function() {
+        return this.get("key");
     },
 
     /**
@@ -217,8 +217,8 @@ Y.extend(Column, Y.Widget, {
     * @return {String}
     * @private
     */
-    _defaultLabel: function(label) {
-        return label || this.get("key");
+    _defaultLabel: function() {
+        return this.get("key");
     },
 
     /**
