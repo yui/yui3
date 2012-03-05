@@ -198,11 +198,11 @@ Y.mix(Sortable.prototype, {
     Template for the node that will wrap the header content for sortable
     columns.
 
-    @property SORT_INDICATOR_TEMPLATE
+    @property SORTABLE_HEADER_TEMPLATE
     @type {HTML}
-    @value '<span class="{className}"></span>'
+    @value '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>'
     **/
-    SORT_INDICATOR_TEMPLATE: '<span class="{className}"></span>',
+    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -262,24 +262,6 @@ Y.mix(Sortable.prototype, {
     //--------------------------------------------------------------------------
     // Protected properties and methods
     //--------------------------------------------------------------------------
-    /**
-    Creates the element that is responsible for displaying the sort arrow, and
-    inserts it into the provided node.
-
-    @method _addSortIndicator
-    @param {Node} header The node to decorate with the sort indicator
-    @protected
-    **/
-    _addSortIndicator: function (header) {
-        var className = this.getClassName('sort', 'indicator');
-
-        if (!header.one('.' + className)) {
-            header.append(Y.Lang.sub(this.SORT_INDICATOR_TEMPLATE, {
-                className: className
-            }));
-        }
-    },
-
     /**
     Sorts the `data` ModelList based on the new `sortBy` configuration.
 
@@ -748,9 +730,10 @@ Y.mix(Sortable.prototype, {
             sortableClass = this.getClassName('sortable', 'column'),
             ascClass      = this.getClassName('sorted'),
             descClass     = this.getClassName('sorted', 'desc'),
+            linerClass    = this.getClassName('sort', 'liner'),
             indicatorClass= this.getClassName('sort', 'indicator'),
             sortableCols  = {},
-            i, len, col, node, title, desc;
+            i, len, col, node, liner, title, desc;
 
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
@@ -762,24 +745,25 @@ Y.mix(Sortable.prototype, {
 
         // TODO: this.head.render() + decorate cells?
         this._theadNode.all('.' + sortableClass).each(function (node) {
-            var col = sortableCols[node.get('id')],
+            var col       = sortableCols[node.get('id')],
+                liner     = node.one('.' + linerClass),
                 indicator;
 
             if (col) {
                 if (!col.sortDir) {
-                    node .removeClass(ascClass)
-                        .removeClass(descClass)
-                        .removeAttribute('title');
+                    node.removeClass(ascClass)
+                        .removeClass(descClass);
                 }
             } else {
-                indicator = node.one('.' + indicatorClass);
-
                 node.removeClass(sortableClass)
                     .removeClass(ascClass)
-                    .removeClass(descClass)
-                    .removeAttribute('title')
-                    .removeAttribute('tabindex')
-                    .removeAttribute('aria-sort');
+                    .removeClass(descClass);
+
+                if (liner) {
+                    liner.replace(liner.get('childNodes').toFrag());
+                }
+
+                indicator = node.one('.' + indicatorClass);
 
                 if (indicator) {
                     indicator.remove().destroy(true);
@@ -793,9 +777,9 @@ Y.mix(Sortable.prototype, {
             desc = col.sortDir === -1;
 
             if (node) {
-                node.addClass(sortableClass);
+                liner = node.one('.' + linerClass);
 
-                this._addSortIndicator(node);
+                node.addClass(sortableClass);
 
                 if (col.sortDir) {
                     node.addClass(ascClass);
@@ -804,6 +788,18 @@ Y.mix(Sortable.prototype, {
 
                     node.setAttribute('aria-sort', desc ?
                         'descending' : 'ascending');
+                }
+
+                if (!liner) {
+                    liner = Y.Node.create(Y.Lang.sub(
+                        this.SORTABLE_HEADER_TEMPLATE, {
+                            className: linerClass,
+                            indicatorClass: indicatorClass
+                        }));
+
+                    liner.prepend(node.get('childNodes').toFrag());
+
+                    node.append(liner);
                 }
 
                 title = sub(this.getString(
@@ -816,7 +812,6 @@ Y.mix(Sortable.prototype, {
                 // To combat VoiceOver from reading the sort title as the
                 // column header
                 node.setAttribute('aria-labelledby', col.id);
-                node.setAttribute('tabindex', 0);
             }
         }
     },
@@ -855,4 +850,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['datatable-base']});
+}, '@VERSION@' ,{requires:['datatable-base'], lang:['en']});
