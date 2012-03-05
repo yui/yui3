@@ -26,7 +26,9 @@
  *                     (Applies to each iterative execution of callback)</li>
  * <li><code>iterations</code> -- Number of times to repeat the callback.
  * <li><code>until</code> -- Repeat the callback until this function returns
- *                         true.  This setting trumps iterations.</li>
+ *                         true.  This setting trumps iterations.  Note that
+ *                         the until function is tested before the timeout 
+ *                         delay.</li>
  * <li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from
  *                        executing the next callback in the Queue after
  *                        the callback completes.</li>
@@ -262,7 +264,7 @@ Y.extend(Queue, Y.EventTarget, {
             callback = this.next())
         {
             cont = (callback.timeout < 0) ?
-                this._execute(callback) :
+                this._execute(callback, true) :
                 this._schedule(callback);
         }
 
@@ -286,7 +288,8 @@ Y.extend(Queue, Y.EventTarget, {
      * @return {Boolean} whether the run loop should continue
      * @protected
      */
-    _execute : function (callback) {
+     
+    _execute : function (callback, isSynchronous) {
         callback._running = true;
         this._running = this._running || true;
         
@@ -295,7 +298,17 @@ Y.extend(Queue, Y.EventTarget, {
 
         var cont = this._running && callback.autoContinue;
 
-        this._running = callback._running = false;
+        callback._running = false;
+        if (isObject(this._running) && isSynchronous) {
+            // Do nothing.
+            // This case occurs when a synchronous callback task is followed
+            // by an asynchronous task. So "this._running" will be the timer
+            // object from the asynchronous task and will utimately be cleared
+            // by that task.  Setting it to false in this case would allow "run" 
+            // pick up an extra execution of the asynchronous task.
+        } else {
+            this._running = false;
+        }
 
         return cont;
     },
@@ -555,4 +568,4 @@ Y.extend(Queue, Y.EventTarget, {
         return this._q.length;
     }
 });
-         
+
