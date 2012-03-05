@@ -861,7 +861,11 @@ Y.mix(Scrollable.prototype, {
     **/
     _syncScrollUI: function () {
         var x = this._xScroll,
-            y = this._yScroll;
+            y = this._yScroll,
+            xScroller  = this._xScrollNode,
+            yScroller  = this._yScrollNode,
+            scrollLeft = xScroller && xScroller.get('scrollLeft'),
+            scrollTop  = yScroller && yScroller.get('scrollTop');
 
         this._uiSetScrollable();
 
@@ -896,6 +900,14 @@ Y.mix(Scrollable.prototype, {
             }
 
             this._syncYScrollUI(x);
+        }
+
+        // Restore scroll position
+        if (scrollLeft && this._xScrollNode) {
+            this._xScrollNode.set('scrollLeft', scrollLeft);
+        }
+        if (scrollTop && this._yScrollNode) {
+            this._yScrollNode.set('scrollTop', scrollTop);
         }
     },
 
@@ -1271,4 +1283,4 @@ Y.mix(Scrollable.prototype, {
 Y.Base.mix(Y.DataTable, [Scrollable]);
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['datatable-base', 'dom-screen']});
+}, '@VERSION@' ,{requires:['datatable-base', 'dom-screen'], skinnable:true});
