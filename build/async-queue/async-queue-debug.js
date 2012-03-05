@@ -1,5 +1,6 @@
 YUI.add('async-queue', function(Y) {
 
+
 /**
  * <p>AsyncQueue allows you create a chain of function callbacks executed
  * via setTimeout (or synchronously) that are guaranteed to run in order.
@@ -19,7 +20,9 @@ YUI.add('async-queue', function(Y) {
  *
  * <ul>
  * <li><code>fn</code> -- The callback function</li>
- * <li><code>context</code> -- The execution context for the callbackFn.</li>
+ * <li><code>context</code> -- The execution context for the callbackFn. 
+ *                        Specify "callback" to use the callback's 
+ *                        configuration object as it's execution context.</li>
  * <li><code>args</code> -- Arguments to pass to callbackFn.</li>
  * <li><code>timeout</code> -- Millisecond delay before executing callbackFn.
  *                     (Applies to each iterative execution of callback)</li>
@@ -29,6 +32,8 @@ YUI.add('async-queue', function(Y) {
  * <li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from
  *                        executing the next callback in the Queue after
  *                        the callback completes.</li>
+ * <li><code>alwaysPause</code> -- "true" pauses the queue before every 
+ *                        callback execution.</li>
  * <li><code>id</code> -- Name that can be used to get, promote, get the
  *                        indexOf, or delete this callback.</li>
  * </ul>
@@ -127,6 +132,19 @@ Y.extend(Queue, Y.EventTarget, {
             'remove'  : { defaultFn : this._defRemoveFn,  emitFacade: true }
         });
     },
+    
+    /**
+     * Modifies the queue.defaults configuration as a chainable function.
+     * 
+     * @method config
+     * @param config {Object} See above for appropriate keys.
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
+     */
+    config: function (config) {
+        this.defaults = Y.merge(this.defaults, config);
+        return this;
+    },
 
     /**
      * Returns the next callback needing execution.  If a callback is
@@ -197,6 +215,12 @@ Y.extend(Queue, Y.EventTarget, {
                 if (!wrapper._running) {
                     wrapper.iterations--;
                 }
+                if (wrapper.context === 'callback') {
+                    wrapper.context = wrapper;
+                }
+                if (wrapper.alwaysPause) {
+                    this.pause();
+                }
                 if (isFunction(wrapper.fn)) {
                     wrapper.fn.apply(wrapper.context || Y,
                                      Y.Array(wrapper.args));
@@ -205,7 +229,23 @@ Y.extend(Queue, Y.EventTarget, {
             
         return Y.mix(wrapper, config);
     },
-
+        
+    /**
+     * Breaks out of a queue's iteration loop.
+     *
+     * @method iterationBreak
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
+     */
+    
+    iterationBreak : function (timeout) {
+        if (this._q.length) {
+            this._q[0].until = function () {return true;};
+        }
+        return this.run();
+    },
+    
+    
     /**
      * Sets the queue in motion.  All queued callbacks will be executed in
      * order unless pause() or stop() is called or if one of the callbacks is
@@ -249,8 +289,9 @@ Y.extend(Queue, Y.EventTarget, {
      * @protected
      */
     _execute : function (callback) {
-        this._running = callback._running = true;
-
+        callback._running = true;
+        this._running = this._running || true;
+        
         callback.iterations--;
         this.fire(EXECUTE, { callback: callback });
 
@@ -516,6 +557,7 @@ Y.extend(Queue, Y.EventTarget, {
         return this._q.length;
     }
 });
+         
 
 
 

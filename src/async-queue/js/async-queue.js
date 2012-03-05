@@ -130,6 +130,19 @@ Y.extend(Queue, Y.EventTarget, {
             'remove'  : { defaultFn : this._defRemoveFn,  emitFacade: true }
         });
     },
+    
+    /**
+     * Modifies the queue.defaults configuration as a chainable function.
+     * 
+     * @method config
+     * @param config {Object} See above for appropriate keys.
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
+     */
+    config: function (config) {
+        this.defaults = Y.merge(this.defaults, config);
+        return this;
+    },
 
     /**
      * Returns the next callback needing execution.  If a callback is
@@ -214,7 +227,23 @@ Y.extend(Queue, Y.EventTarget, {
             
         return Y.mix(wrapper, config);
     },
-
+        
+    /**
+     * Breaks out of a queue's iteration loop.
+     *
+     * @method iterationBreak
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
+     */
+    
+    iterationBreak : function (timeout) {
+        if (this._q.length) {
+            this._q[0].until = function () {return true;};
+        }
+        return this.run();
+    },
+    
+    
     /**
      * Sets the queue in motion.  All queued callbacks will be executed in
      * order unless pause() or stop() is called or if one of the callbacks is

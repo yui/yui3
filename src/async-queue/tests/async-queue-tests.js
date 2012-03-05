@@ -296,6 +296,35 @@ suite.add(new Y.Test.Case({
 
         this.wait();
     },
+    
+    test_iterationBreak: function () {
+        var results = '',
+            self = this,
+            q = new Y.AsyncQueue(
+                function () { results += 'A'; },
+                {
+                    fn: function () {
+                        results += 'B';
+                        if (results.length === 3) {
+                            this.iterationBreak();
+                        }
+                    },
+                    iterations : 10
+                },
+                function () { results += 'C'; }
+            );
+        
+        setTimeout(function () {
+            self.resume(function () {
+                Y.Assert.areSame('ABBC',results);
+            });
+        },100);
+
+        q.run();
+
+        this.wait();
+        
+    },
 
     test_stop : function () {
         var results = "",
