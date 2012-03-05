@@ -335,7 +335,7 @@ Y.mix(Sortable.prototype, {
             Y.bind('_uiSetSortable', this));
 
         if (this._theadNode) {
-            this._sortHandle = this.delegate(['click','keypress'],
+            this._sortHandle = this.delegate(['click','keydown'],
                 Y.rbind('_onUITriggerSort', this),
                 '.' + this.getClassName('sortable', 'column'));
         }
