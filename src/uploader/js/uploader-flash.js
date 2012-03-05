@@ -10,7 +10,10 @@
 
 
 var  substitute  = Y.substitute,
-     UploaderQueue = Y.Uploader.Queue;
+     UploaderQueue = Y.Uploader.Queue,
+     getCN                 = Y.ClassNameManager.getClassName,
+     UPLOADER              = 'uploader',
+     SELECT_FILES          = getCN(UPLOADER, 'selectfiles-button');
 
 
     /**
@@ -59,6 +62,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     */
 	_swfContainerId: null,
 
+
+
+    _buttonState: "up",
+    _buttonFocus: false,
+
     // Y.UploaderFlash prototype
 
     /**
@@ -72,13 +80,15 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 		// Assign a unique id for the SWF container
 		this._swfContainerId = Y.guid("uploader");
 
-		// Publish available events
-		this.publish("fileselect");
-		this.publish("uploadprogress");
-		this.publish("totaluploadprogress");
-		this.publish("uploadcomplete");
-		this.publish("alluploadscomplete");
-		this.publish("uploaderror");
+        // Publish available events
+        this.publish("fileselect");
+        this.publish("uploadstart");
+        this.publish("fileuploadstart");
+        this.publish("uploadprogress");
+        this.publish("totaluploadprogress");
+        this.publish("uploadcomplete");
+        this.publish("alluploadscomplete");
+        this.publish("uploaderror");
 
 	},
 
@@ -92,7 +102,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
 	_uploadEventHandler : function (event) {
 	
-	switch (event.type) {
+    switch (event.type) {
+                case "file:uploadstart":
+                   this.fire("fileuploadstart", event);
+                break;
                 case "file:uploadprogress":
                    this.fire("uploadprogress", event);
                 break;
@@ -107,8 +120,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                 break;
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
-                break;
-    }	
+    }   
 
 	},
 
@@ -195,7 +207,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
 	renderUI : function () {
 	   var contentBox = this.get('contentBox');
-	   contentBox.append(this.get("selectFilesButton"));
+       var selFilesButton = this.get("selectFilesButton");
+       selFilesButton.setStyles({width: "100%", height: "100%"});
+
+	   contentBox.append(selFilesButton);
 	   contentBox.append(Y.Node.create(substitute(UploaderFlash.FLASH_CONTAINER, 
 		                                          {swfContainerId: this._swfContainerId})));
 	   var flashContainer = Y.one("#" + this._swfContainerId);
@@ -226,7 +241,80 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 		}, this);
         
 		this._swfReference.on("fileselect", this._updateFileList, this);
+
+        this.after("tabElementsChange", this._attachTabElements);
+        this._attachTabElements();
+
+        this._swfReference.on("mouseenter", function () {
+            this._setButtonClass("hover", true);
+            if (this._buttonState == "down") {
+                this._setButtonClass("active", true);
+            }
+        }, this);
+        this._swfReference.on("mouseleave", function () {
+            this._setButtonClass("hover", false);
+            this._setButtonClass("active", false);
+            
+        }, this);
+        this._swfReference.on("mousedown", function () {
+            this._buttonState = "down";
+            this._setButtonClass("active", true);
+        }, this);
+        this._swfReference.on("mouseup", function () {
+            console.log("mouseUP!");
+            this._buttonState = "up";
+            this._setButtonClass("active", false);
+        }, this);
+        this._swfReference.on("click", function () {
+            this._buttonFocus = true;
+            this._setButtonClass("focus", true);
+        }, this);
 	},
+
+    _setButtonClass : function (state, add) {
+        if (add) {
+            this.get("selectFilesButton").addClass(this.get("buttonClassNames")[state]);
+        }
+        else {
+            this.get("selectFilesButton").removeClass(this.get("buttonClassNames")[state]);
+        }
+    },
+
+    _attachTabElements : function () {
+        if (this.get("tabElements") != null) {
+            var fromElement = Y.one(this.get("tabElements").from);
+            var toElement = Y.one(this.get("tabElements").to);
+
+            fromElement.on("keydown", function (ev) { 
+                                                      if (ev.keyCode == 9 && !ev.shiftKey) {
+                                                          ev.preventDefault();
+                                                          this._swfReference._swf.setAttribute("tabindex", 0); 
+                                                          this._swfReference._swf.setAttribute("role", "button");
+                                                          this._swfReference._swf.setAttribute("aria-label", this.get("selectButtonLabel"));
+                                                          this._swfReference._swf.focus();
+                                                          this._buttonFocus = true;
+                                                          this._setButtonClass("focus", true);
+
+                                                      }
+                                                    }, this);
+            toElement.on("keydown", function (ev) { 
+                                                      if (ev.keyCode == 9 && ev.shiftKey) {
+                                                          ev.preventDefault();
+                                                          this._swfReference._swf.setAttribute("tabindex", 0); 
+                                                          this._swfReference._swf.setAttribute("role", "button");
+                                                          this._swfReference._swf.setAttribute("aria-label", this.get("selectButtonLabel"));
+                                                          this._swfReference._swf.focus();
+                                                          this._buttonFocus = true;
+                                                          this._setButtonClass("focus", true);
+                                                      }
+                                                    }, this);
+
+            this._swfReference.on("tabback", function (ev) {fromElement.focus();}, this);
+            this._swfReference.on("tabforward", function (ev) {toElement.focus();}, this);
+
+            this._swfReference._swf.on("blur", function (ev) {this._buttonFocus = false; this._setButtonClass("focus", false);}, this);
+        }
+    },
 
 
    /**
@@ -242,24 +330,20 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 	upload : function (file, url, postvars) {
         
         var uploadURL = url || this.get("uploadURL"),
-            postVars = postvars || this.get("postVarsPerFile");
+            postVars = postvars || this.get("postVarsPerFile"),
+            fileId = file.get("id");
 
-		if (file instanceof Y.File) {
-		   this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
-	                                            errorAction: "restart",
-	                                            fileList: [file],
-	                                            uploadURL: uploadURL,
-	                                            perFileParameters: postVars
-	                                            });
-	       this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
+            postVars = postVars.hasOwnProperty(fileId) ? postVars[fileId] : postVars;
 
-	       this._uploaderQueue.set("fileFieldName", this.get("fileFieldName"));
+        if (file instanceof Y.File) {
+           
+            file.on("uploadstart", this._uploadStartHandler, this);
+            file.on("uploadprogress", this._uploadProgressHandler, this);
+            file.on("uploadcomplete", this._uploadCompleteHandler, this);
+            file.on("uploaderror", this._uploadErrorHandler, this);
 
-	       this._uploaderQueue.startUpload();
-		}
+            file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
+        }
 	},
 
    /**
@@ -271,34 +355,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
   	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
 	uploadAll : function (url, postvars) {
-
-        // Starting upload of all selected files.
-        console.log("Starting upload of all selected files");
-        var uploadURL = url || this.get("uploadURL"),
-            postVars = postvars || this.get("postVarsPerFile");
-
-
-           // Creating a new upload queue with the current file list
-        console.log("Creating a new instance of upload queue");
-		   this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
-	                                            errorAction: "restart",
-	                                            fileList: this.get("fileList"),
-	                                            uploadURL: uploadURL,
-	                                            perFileParameters: postVars
-	                                           });
-
-           // Subscribing to events
-        console.log("Subscribing to uploaderqueue's events");
-	       this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
-
-	       this._uploaderQueue.set("fileFieldName", this.get("fileFieldName"));
-
-           // Starting the upload.
-        console.log("Starting upload in the queue");
-	       this._uploaderQueue.startUpload();		
+        this.uploadThese(this.get("fileList"), url, postvars);
 	},
 
    /**
@@ -314,23 +371,21 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile");
 
-		    this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
-	                                            errorAction: "restart",
-	                                            fileList: files,
-	                                            uploadURL: uploadURL,
-	                                            perFileParameters: postVars
-	                                           });
-
-	       this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
-	       this._uploaderQueue.on("uploaderror", this._uploadEventHandler, this);
-
-	       this._uploaderQueue.set("fileFieldName", this.get("fileFieldName"));
-
-
-	       this._uploaderQueue.startUpload();
+           this._uploaderQueue = new UploaderQueue({simUploads: this.get("simLimit"), 
+                                                errorAction: this.get("errorAction"),
+                                                fileList: files,
+                                                uploadURL: uploadURL,
+                                                perFileParameters: postVars
+                                               });
+           this._uploaderQueue.on("uploadstart", this._uploadEventHandler, this);
+           this._uploaderQueue.on("uploadprogress", this._uploadEventHandler, this);
+           this._uploaderQueue.on("totaluploadprogress", this._uploadEventHandler, this);
+           this._uploaderQueue.on("uploadcomplete", this._uploadEventHandler, this);
+           this._uploaderQueue.on("alluploadscomplete", this._uploadEventHandler, this);
+           this._uploaderQueue.on("uploaderror", this._uploadEventHandler, this);
+           this._uploaderQueue.startUpload();  
+           
+           this.fire("uploadstart"); 
 	}
 },
 
@@ -345,6 +400,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @static
     */
 	FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; width:100%; height:100%'></div>",
+
+    SELECT_FILES_BUTTON: "<button type='button' class='yui3-button'>{selectButtonLabel}</button>",
 
     /**
      * The identity of the widget.
@@ -369,6 +426,26 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
 	ATTRS: {
 
+        buttonClassNames: {
+            value: {
+                "hover": "yui3-button-hover",
+                "active": "yui3-button-active",
+                "disabled": "yui3-button-disabled",
+                "focus": "yui3-button-selected"
+            }
+        },
+
+        selectButtonLabel: {
+            value: "Select Files"
+        },
+
+        errorAction: {
+            value: "continue",
+            validator: function (val, name) {
+                 return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           
+             }
+        },
+
         /**
          * The widget that serves as the &lquot;Select Files&rquot; control for the file uploader
          * 
@@ -378,7 +455,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default A standard HTML button.
          */
 		selectFilesButton : {
-			value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
+			valueFn: function () {
+                return Y.Node.create(substitute(Y.UploaderFlash.SELECT_FILES_BUTTON, {selectButtonLabel: this.get("selectButtonLabel")}));
+            }
 		},
 
         /**
@@ -498,6 +577,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          */
         swfURL: {
         	value: "assets/flashuploader.swf"
+        },
+
+        tabElements: {
+            value: null
         }
 	}
 });

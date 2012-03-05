@@ -348,6 +348,8 @@ Y_Node.DEFAULT_GETTER = function(name) {
 };
 
 Y.mix(Y_Node.prototype, {
+    DATA_PREFIX: 'data-',
+
     /**
      * The method called when outputting Node instances as strings
      * @method toString
@@ -790,67 +792,6 @@ Y.mix(Y_Node.prototype, {
         },
 
 
-    /**
-    * @method getData
-    * @description Retrieves arbitrary data stored on a Node instance.
-    * This is not stored with the DOM node.
-    * @param {string} name Optional name of the data field to retrieve.
-    * If no name is given, all data is returned.
-    * @return {any | Object} Whatever is stored at the given field,
-    * or an object hash of all fields.
-    */
-    getData: function(name) {
-        var ret;
-        this._data = this._data || {};
-        if (arguments.length) {
-            ret = this._data[name];
-        } else {
-            ret = this._data;
-        }
-
-        return ret;
-
-    },
-
-    /**
-    * @method setData
-    * @description Stores arbitrary data on a Node instance.
-    * This is not stored with the DOM node.
-    * @param {string} name The name of the field to set. If no name
-    * is given, name is treated as the data and overrides any existing data.
-    * @param {any} val The value to be assigned to the field.
-    * @chainable
-    */
-    setData: function(name, val) {
-        this._data = this._data || {};
-        if (arguments.length > 1) {
-            this._data[name] = val;
-        } else {
-            this._data = name;
-        }
-
-       return this;
-    },
-
-    /**
-    * @method clearData
-    * @description Clears stored data.
-    * @param {string} name The name of the field to clear. If no name
-    * is given, all data is cleared.
-    * @chainable
-    */
-    clearData: function(name) {
-        if ('_data' in this) {
-            if (name) {
-                delete this._data[name];
-            } else {
-                delete this._data;
-            }
-        }
-
-        return this;
-    },
-
     hasMethod: function(method) {
         var node = this._node;
         return !!(node && method in node &&
@@ -1008,6 +949,19 @@ NodeList._getTempNode = function(node) {
 };
 
 Y.mix(NodeList.prototype, {
+    _invoke: function(method, args, getter) {
+        var ret = (getter) ? [] : this;
+
+        this.each(function(node) {
+            var val = node[method].apply(node, args);
+            if (getter) {
+                ret.push(val);
+            }
+        });
+
+        return ret;
+    },
+
     /**
      * Retrieves the Node instance at the given index.
      * @method item
@@ -1167,68 +1121,6 @@ Y.mix(NodeList.prototype, {
         }
 
         return this;
-    },
-
-    _prepEvtArgs: function(type, fn, context) {
-        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
-        var args = Y.Array(arguments, 0, true);
-
-        if (args.length < 2) { // type only (event hash) just add nodes
-            args[2] = this._nodes;
-        } else {
-            args.splice(2, 0, this._nodes);
-        }
-
-        args[3] = context || this; // default to NodeList instance as context
-
-        return args;
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * @method on
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @param {Object} context The context to call the handler with.
-     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
-     * when the event fires.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    on: function(type, fn, context) {
-        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an one-time event listener to each Node bound to the NodeList.
-     * @method once
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    once: function(type, fn, context) {
-        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * The handler is called only after all on() handlers are called
-     * and the event is not prevented.
-     * @method after
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    after: function(type, fn, context) {
-        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**
@@ -1580,7 +1472,6 @@ Y.Node.importMethod(Y.DOM, [
      * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
      * @for Node
-     * @for NodeList
      * @chainable
      * @param {string} name The attribute name
      * @param {string} value The value to set
@@ -1591,7 +1482,6 @@ Y.Node.importMethod(Y.DOM, [
      * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
      * @for Node
-     * @for NodeList
      * @param {string} name The attribute name
      * @return {string} The attribute value
      */

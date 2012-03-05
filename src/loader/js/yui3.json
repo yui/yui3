@@ -64,6 +64,7 @@
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -80,7 +81,21 @@
     }, 
     "app-transitions": {
         "requires": [
-            "app-base", 
+            "app-base"
+        ]
+    }, 
+    "app-transitions-css": {
+        "type": "css"
+    }, 
+    "app-transitions-native": {
+        "condition": {
+            "name": "app-transitions-native", 
+            "test": "app-transitions-test.js", 
+            "trigger": "app-transitions"
+        }, 
+        "requires": [
+            "app-transitions", 
+            "app-transitions-css", 
             "parallel", 
             "transition"
         ]
@@ -278,24 +293,30 @@
         ]
     }, 
     "button": {
-        "use": [
-            "button-base", 
-            "button-group", 
-            "cssbutton"
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "widget"
         ]
     }, 
-    "button-base": {
+    "button-core": {
         "requires": [
-            "base", 
+            "attribute-core", 
             "classnamemanager", 
-            "node"
+            "node-base"
         ]
     }, 
     "button-group": {
         "requires": [
-            "button-base", 
-            "arraylist", 
-            "arraylist-add"
+            "button-plugin", 
+            "widget"
+        ]
+    }, 
+    "button-plugin": {
+        "requires": [
+            "button-core", 
+            "cssbutton", 
+            "node-pluginhost"
         ]
     }, 
     "cache": {
@@ -324,9 +345,13 @@
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "calendar-base", 
@@ -336,9 +361,13 @@
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "widget", 
@@ -361,16 +390,26 @@
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
+            "event-touch", 
             "widget", 
             "widget-position", 
             "widget-stack", 
-            "graphics", 
-            "escape"
+            "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -462,6 +501,23 @@
         "optional": [
             "cssreset", 
             "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-base": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-units": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "requires": [
+            "cssgrids-base"
         ], 
         "type": "css"
     }, 
@@ -589,10 +645,10 @@
             "datatable-body", 
             "datatable-base", 
             "datatable-column-widths", 
+            "datatable-message", 
             "datatable-mutable", 
-            "datatable-scroll", 
-            "datatable-datasource", 
-            "datatable-sort"
+            "datatable-sort", 
+            "datatable-datasource"
         ]
     }, 
     "datatable-base": {
@@ -638,6 +694,15 @@
             "classnamemanager"
         ]
     }, 
+    "datatable-message": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base"
+        ], 
+        "skinnable": true
+    }, 
     "datatable-mutable": {
         "requires": [
             "datatable-base"
@@ -656,8 +721,7 @@
             "en"
         ], 
         "requires": [
-            "datatable-base", 
-            "recordset-sort"
+            "datatable-base"
         ], 
         "skinnable": true
     }, 
@@ -981,7 +1045,23 @@
     }, 
     "editor-para": {
         "requires": [
+            "editor-para-base"
+        ]
+    }, 
+    "editor-para-base": {
+        "requires": [
             "editor-base"
+        ]
+    }, 
+    "editor-para-ie": {
+        "condition": {
+            "name": "editor-para-ie", 
+            "trigger": "editor-para", 
+            "ua": "ie", 
+            "when": "instead"
+        }, 
+        "requires": [
+            "editor-para-base"
         ]
     }, 
     "editor-selection": {
@@ -1039,6 +1119,12 @@
         }, 
         "requires": [
             "node-base"
+        ]
+    }, 
+    "event-contextmenu": {
+        "requires": [
+            "event-synthetic", 
+            "dom-screen"
         ]
     }, 
     "event-custom": {
@@ -1152,12 +1238,6 @@
     }, 
     "file": {
         "requires": [
-            "base"
-        ]
-    }, 
-    "filelist": {
-        "requires": [
-            "file", 
             "base"
         ]
     }, 
@@ -1350,6 +1430,16 @@
         "requires": [
             "io-base", 
             "node-base"
+        ]
+    }, 
+    "io-nodejs": {
+        "condition": {
+            "name": "io-nodejs", 
+            "trigger": "io-base", 
+            "ua": "nodejs"
+        }, 
+        "requires": [
+            "io-base"
         ]
     }, 
     "io-queue": {
@@ -1981,6 +2071,7 @@
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
             "file", 
@@ -2016,35 +2107,34 @@
         "use": [
             "widget-base", 
             "widget-htmlparser", 
-            "widget-uievents", 
-            "widget-skin"
+            "widget-skin", 
+            "widget-uievents"
         ]
     }, 
     "widget-anim": {
         "requires": [
-            "plugin", 
             "anim-base", 
+            "plugin", 
             "widget"
         ]
     }, 
     "widget-autohide": {
         "requires": [
-            "widget", 
-            "event-outside", 
             "base-build", 
-            "event-key"
-        ], 
-        "skinnable": false
+            "event-key", 
+            "event-outside", 
+            "widget"
+        ]
     }, 
     "widget-base": {
         "requires": [
             "attribute", 
-            "event-focus", 
             "base-base", 
             "base-pluginhost", 
+            "classnamemanager", 
+            "event-focus", 
             "node-base", 
-            "node-style", 
-            "classnamemanager"
+            "node-style"
         ], 
         "skinnable": true
     }, 
@@ -2060,12 +2150,10 @@
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
@@ -2085,16 +2173,16 @@
     }, 
     "widget-modality": {
         "requires": [
-            "widget", 
+            "base-build", 
             "event-outside", 
-            "base-build"
+            "widget"
         ], 
-        "skinnable": false
+        "skinnable": true
     }, 
     "widget-parent": {
         "requires": [
-            "base-build", 
             "arraylist", 
+            "base-build", 
             "widget"
         ]
     }, 
@@ -2135,8 +2223,8 @@
     }, 
     "widget-uievents": {
         "requires": [
-            "widget-base", 
-            "node-event-delegate"
+            "node-event-delegate", 
+            "widget-base"
         ]
     }, 
     "yql": {

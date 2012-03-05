@@ -1,7 +1,7 @@
 /**
 Extends IO to provide an alternate, Flash transport, for making
 cross-domain requests.
-@module io-base
+@module io
 @submodule io-xdr
 @for IO
 **/

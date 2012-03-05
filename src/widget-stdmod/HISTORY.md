@@ -1,6 +1,12 @@
 Widget Std Mod Change History
 =============================
 
+3.5.0
+-----
+
+  * Added `forceCreate` option to `getStdModNode()` method which, if true, will
+    create the section node if it does not already exist. [Ticket #2531214]
+
 3.4.1
 -----
 

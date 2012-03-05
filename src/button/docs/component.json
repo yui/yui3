@@ -1,10 +1,10 @@
 {
     "name"       : "button",
     "displayName": "Button",
-    "description": "",
+    "description": "The Button component is a light-weight, Y.Base wrapper around DOM elements you'd like treated like a button.",
     "author"     : "drgath",
 
-    "tags": ["button"],
+    "tags": ["widget", "button"],
     "use" : ["button"],
 
     "examples": [

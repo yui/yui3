@@ -4,6 +4,10 @@
 <title>Node Test Suite</title>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="node-data-test.js"></script>
+<script type="text/javascript" src="node-attrs-test.js"></script>
+<script type="text/javascript" src="node-traversal-test.js"></script>
+<script type="text/javascript" src="nodelist-test.js"></script>
 
 <style type="text/css">
 body {
@@ -73,6 +77,15 @@ button {
 .yui3-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
     background: #700;
     color: #fff;
+}
+
+#yui-log {
+    background: #fff;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30em;
+    z-index:10;
 }
 </style>
 
@@ -175,13 +188,13 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-deprecated', 'anim', 'console', 'test', 'node-event-simulate', 'node-load', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("Node Tests");
 
     Y.Test.Runner.setName('Node Tests');
-    new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
+    new Y.Test.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -190,7 +203,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
     var $ = Y.Selector.query;
 
     suite.add( new Y.Test.Case({
-        name: 'Y.Node Instance',
+        name: 'Y.one',
 
         'should cache node': function() {
             var node = Y.Node.create('<div id="test-caching" />');
@@ -207,39 +220,48 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areNotEqual(Y.one('#test-caching2'), node);
         },
 
-        test_get: function() {
-            var node = Y.one('#test-nodes'),
-                nodes = Y.all('#test-nodes *');
+        'should return null from empty string input': function() {
+            Assert.isNull(Y.one(''));
+        },
 
-            // return null 
-            Y.one("a[href$='?t=5']");
-            Assert.isNull(Y.one(''), 'Y.one("")');
-            Assert.isNull(Y.one(null), 'Y.one(null)');
-            Assert.isNull(Y.one('#fake-id li'), 'Y.one("#fake-id li") === null');
-            Assert.isNull(Y.one('#fake-id'), 'Y.one("#fake-id") === null');
-            Assert.isNull(Y.one('#fake-id li'), 'Y.one("#fake-id li") === null');
+        'should return null from null input': function() {
+            Assert.isNull(Y.one(null));
+        },
 
-            // return zero length collection
-            Assert.isTrue((Y.all('') instanceof Y.NodeList), 'Y.all("") instanceof NodeList');
-            Assert.isTrue((Y.all('null') instanceof Y.NodeList), 'Y.all("null") instanceof NodeList');
-            Assert.isTrue((Y.all('#foo *') instanceof Y.NodeList), 'Y.all("#foo *") === null');
+        'should return null for non-existant id': function() {
+            Assert.isNull(Y.one('#fake-id'));
+        },
 
-            // return 1 
-            Assert.areEqual(byId('test-nodes').id, Y.one('#test-nodes').get('id'), 'Y.one("#test-nodes")');
-            Assert.areEqual(byId('test-nodes'), Y.Node.getDOMNode(Y.one('#test-nodes')), 'Y.one("#test-nodes")');
-            Assert.areEqual(byId('test-nodes'), Y.Node.getDOMNode(Y.one('#test-nodes')), 'Y.one("#test-nodes")');
-            Assert.areEqual('test-nodes', Y.one('#test-nodes').get('id'), 'Y.one("#test-nodes").get("id")');
-            Assert.areEqual(node, Y.one('#test-nodes'), 'node === Y.one("#test-nodes")');
+        'should return null for element descendant of non-existant id': function() {
+            Assert.isNull(Y.one('#fake-id li'));
+        },
 
-            Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[0],
+        'should find matching element by id': function() {
+            Assert.areEqual('test-nodes', Y.one('#test-nodes')._node.id);
+
+        },
+
+        'should return the correct element from the iframe document': function() {
+            var frameDoc = Y.one('iframe').get('contentWindow.document');
+            Assert.areEqual('iframe foo', Y.Lang.trim(frameDoc.one('#demo li')._node.innerHTML));
+        },
+
+
+        'should find id descendant of class selector': function() {
+            Assert.areEqual(document.getElementById('test-text-value'),
+                    Y.one('doc').one('.test-class #test-text-value')._node);
+        },
+
+        'should find element by selector': function() {
+            Assert.areEqual(document.getElementById('test-nodes').getElementsByTagName('li')[0],
                     Y.Node.getDOMNode(Y.one('#test-nodes li:first-child')), 'Y.one("#test-nodes")');
 
-            Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
+            Assert.areEqual(document.getElementById('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.one('#test-nodes li:nth-child(2)')), 'Y.one("#test-nodes:nth-child(2)")');
 
-            Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
+            Assert.areEqual(document.getElementById('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.one('#test-nodes li:nth-child(2)')), 'Y.one("#test-nodes:nth-child(2)")');
-            Assert.areEqual(byId('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
+            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
 
             var firstChild = Y.one('body :first-child');
             Y.one('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
@@ -247,149 +269,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             Y.one('body').removeChild(Y.one('body :first-child'));
             Assert.areEqual(Y.Selector.query('body :first-child', null, true), Y.one('body :first-child')._node, "body :first-child === #test-append");
-
-            // return more than 1
-            ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.one("#test-select option")');
-            Assert.areEqual(3, Y.all('#test-select option').size(), 'Y.one("#test-select option").size()');
-            Assert.areEqual(2, Y.all('form').size(), 'Y.one("form").size()');
-            Assert.areEqual('FORM', Y.all('form').item(1).get('tagName'), 'Y.one("form").item(1)');
-
-            Assert.areEqual(3, Y.all('.bar').size(), 'Y.one(".bar")');
-            Assert.areNotEqual(nodes, Y.all('#test-nodes *'), 'nodes === Y.all("#test-nodes")');
-            Assert.areEqual(nodes.size(), Y.all('#test-nodes *').size(), 'nodes.size() === Y.all("#test-nodes").size()'); 
-
-            ArrayAssert.itemsAreEqual(Y.Selector.query('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
-
-            // Firefox fails due to Firebug pollutes document.queryAll but not document.getElementsByTagName
-            //ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
-
-            ArrayAssert.itemsAreEqual(Y.Selector.query('input[name]'), Y.all(Y.Selector.query('input[name]'))._nodes, "Y.all(Y.Selector.query('input[name]'))");
-
-            ArrayAssert.itemsAreEqual(Y.Selector.query('.foo'), Y.all(Y.Selector.query('.foo'))._nodes, "Y.all(Y.Selector.query('.foo'))");
-
-            var frameDoc = Y.one('iframe').get('contentWindow.document');
-            Assert.areEqual('iframe foo', Y.Lang.trim(frameDoc.one('#demo li').get('innerHTML')),
-                "frameDoc.one('#demo li').get('innerHTML')");
-
-            ArrayAssert.itemsAreEqual([document.body], Y.all(document.body)._nodes, "Y.all(document.body)");
-            Assert.areSame(Y.one('doc'), Y.one('doc'), "Y.one('doc') === Y.one('doc')");
-
-            Assert.areEqual(byId('test-text-value'),
-                    Y.one('doc').one('.test-class #test-text-value')._node,
-                    "Y.one('doc').one('.test-class #test-text-value')");
         },
 
-        test_each: function() {
-            var count = 0,
-                nodes = Y.all('#test-nodes *'),
-                index;
-
-            nodes.each(function(node, i, list) {
-                count++;
-                index = i;
-                Assert.areEqual(nodes, list, 'nodes === instance');
-                Assert.isTrue(node instanceof Y.Node, 'node instanceof Y.Node');
-                Assert.areEqual(node, this, 'this === node');
-            });
-
-            Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
-            Assert.areEqual(nodes.size() - 1, index, 'nodes.size() - 1 === index');
-        },
-
-        test_some: function() {
-            var nodes = Y.all('#test-nodes *'),
-                index, instance, isNode;
-
-            Assert.isTrue(nodes.some(function(node, i, list) {
-                return true;
-            }), 'nodes.some(function() { return true; })');
-
-            Assert.isFalse(nodes.some(function(node, i, list) {
-            }), 'nodes.some(function() {})');
-
-        },
-
-        test_indexOf: function() {
-            Assert.areEqual(0, Y.all('body').indexOf(Y.one('body')),
-                "Y.all('body').indexOf(Y.one('body'))");
-
-            Assert.areEqual(0, Y.all('div').indexOf(Y.one(document.getElementsByTagName('div')[0])),
-                "Y.all('div').indexOf(Y.one(document.getElementsByTagName('div')[0]))");
-
-            Assert.areEqual(-1, Y.all('div').indexOf(Y.one('#test-')),
-                "Y.all('div').indexOf(Y.one('#test-'))");
-
-            Assert.areEqual(-1, Y.all('div').indexOf(Y.one('#test-form')),
-                "Y.all('div').indexOf(Y.one('#test-form'))");
-
-        },
-
-        test_getters: function() {
-            var id = 'test-nodes',
-                element = byId(id),
-                node = Y.one('#' + id),
-                nodes = Y.all('#' + id + ' *');
-
-
-            Assert.areEqual(null, node.get(''), 'node.get("") === null');
-            Assert.areEqual(null, node.get('fake'), 'node.get("fake") === null');
-
-            Assert.areEqual(null, node.get('nodeValue'), 'nodeValue === null');
-
-            Assert.areEqual('DIV', node.get('nodeName'), 'nodeName === "DIV"');
-            Assert.areEqual('UL', nodes.get('nodeName')[0], 'nodeName === "UL"');
-            Assert.areEqual('LI', nodes.get('nodeName')[nodes.size() - 1], 'nodeName === "LI"');
-
-            Assert.areEqual(element.firstChild.nextSibling.nodeName, node.get('firstChild').get('nextSibling').get('nodeName'), 'node.firstChild.nextSibling.nodeName"');
-            Assert.areEqual(element.lastChild.nodeName, node.get('lastChild').get('nodeName'), 'lastChild.nodeName"');
-            Assert.areEqual(9, node.get('ownerDocument').get('nodeType'), 'node.ownerDocument.nodeType ===  9');
-
-            Assert.areEqual('test-nodes', nodes.get('parentNode').get('id')[0], 'nodes.get(parentNode)[0].get("id") === test-nodes');
-            Assert.areEqual(element.firstChild.nodeType, node.get('firstChild').get('nodeType'), 'firstChild.get("nodeType")');
-            Assert.areEqual(element.offsetWidth, node.get('offsetWidth'), 'offsetWidth === node.offsetWidth');
-            Assert.areEqual(element.offsetParent.tagName, node.get('offsetParent').get('tagName'), 'offsetParent.tagName === offsetParent.tagName');
-
-            Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
-
-            Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
-
-            var textContainer = Y.Node.create('<div>foo</div>');
-            Assert.areEqual('foo', textContainer.get('text'), "textContainer.get('text')");
-
-            textContainer.set('text', 'bar');
-            Assert.areEqual('bar', textContainer.get('text'), "textContainer.set('text', 'bar')");
-            
-            ArrayAssert.itemsAreEqual($('#test-select option'),
-                    Y.NodeList.getDOMNodes(Y.one('#test-select').get('options')),
-                    'Y.one("#test-select.get("options")');
-
-            Assert.areEqual(2, node.get('children').size(), 'get("children")');
-
-            Assert.areEqual(0, Y.one('#test-empty-children').get('children').size(), "Y.one('#test-empty-children').get('children')");
-            Assert.areEqual(8, Y.all('#' + id + ' li').size(), 'Y.all("#test-nodes li.size()")');
-
-            // size() is deprecated on Node
-            //Assert.areEqual(1, Y.one('#' + id + ' li').size(), 'Y.one("#test-nodes li.size()")');
-
-            Assert.areEqual(byId('test-nodes').childNodes.length, node.get('childNodes').size(), 'node.get("childNodes").size()');
-            
-            Assert.areEqual(byId('test-nodes').childNodes.length, node.get('childNodes').get('tagName').length, 'node.get("childNodes")');
-            ArrayAssert.itemsAreEqual(byId('test-nodes').childNodes.length, node.get('childNodes').get('length').length, "node.get('childNodes').get('length')");
-            Assert.areEqual(element.lastChild.nodeName, node.get('lastChild.nodeName'), 'node.get("lastChild.nodeName")');
-            Assert.areEqual(element.lastChild.previousSibling.nodeName, node.get('lastChild').get('previousSibling').get('nodeName'), 'node.lastChild.previousSibling.nodeName');
-            Assert.areEqual('test', Y.one('#test-prop').get('firstChild.nextSibling.firstChild.nodeValue'),
-                    'node.get("firstChild.nextSibling.firstChild.nodeValue")');
-
-
-            Assert.areEqual(byId('test-prop').tabIndex, Y.one('#test-prop').get('tabIndex'), 'Y.one("#test-prop").get("tabIndex")');
-            Assert.areEqual(byId('doc').tabIndex, Y.one('#doc').get('tabIndex'), 'Y.one("#doc".get("tabIndex"))');
-            Assert.areEqual(byId('link-1').tabIndex, Y.one('#link-1').get('tabIndex'), 'Y.one("#link1".get("tabIndex"))');
-            Assert.areEqual(byId('link-2').tabIndex, Y.one('#link-2').get('tabIndex'), 'Y.one("#link1".get("tabIndex"))');
-
-            Assert.areEqual(undefined, Y.one('form').get('childNodes')._nodes.item, 'convert live list to static');
-            Assert.isTrue(Y.all('input').get('parentNode') instanceof Y.NodeList, "Y.all('input').get('parentNode')");
-        },
-            
         test_create: function() {
             var id = 'test-nodes',
                 element = byId(id),
@@ -472,8 +353,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(1, Y.one('#test-select')._node.selectedIndex,
                     "Y.one('#test-select').set('selectedIndex', 1)");
 
-
-
             Y.one('#test-select').set('value', 1);
             Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
             Y.one('#test-select').set('value', 'baz');
@@ -554,7 +433,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             Assert.areEqual(node.get('parentNode'), node.ancestor('div'));
             Assert.areEqual(node, node.ancestor('div', true));
-            Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
 
             Assert.isTrue(Y.one(document.body).inDoc(document));
             Assert.isTrue(node.inDoc(), 'node.inDoc()');
@@ -1199,32 +1077,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.isTrue(Y.all('.nomatch').isEmpty());
         },
 
-        test_siblings: function() {
-            var parent = Y.one('#test-nodes > ol'),
-                children = parent.get('children');
-
-            ArrayAssert.itemsAreEqual(
-                [children.item(0)._node, children.item(1)._node, children.item(3)._node],
-                children.item(2).siblings()._nodes,
-                "children.item(2).siblings()"
-            );
-
-            ArrayAssert.itemsAreEqual(
-                [children.item(0)._node, children.item(1)._node, children.item(3)._node],
-                children.item(2).siblings('li')._nodes,
-                "children.item(2).siblings('li')"
-            );
-
-            children.addClass('bar');
-            children.item(1).removeClass('bar');
-
-            ArrayAssert.itemsAreEqual(
-                [children.item(0)._node, children.item(3)._node],
-                children.item(2).siblings('li.bar')._nodes,
-                "children.item(2).siblings('li.bar')"
-            );
-        },
-
         test_swap: function() {
             var elements = Y.DOM.byId('test-swap').getElementsByTagName('li'),
                 nodes = Y.all('#test-swap li');
@@ -1289,35 +1141,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Y.one('head').append(html);
             Assert.areEqual('100px', Y.one('body').getStyle('height'),
                 "Y.one('head').append(" + html + ")");
-        },
-
-        test_ancestor: function() {
-            var node = Y.one('#test-table div div').ancestor('td');
-
-            Y.Assert.areEqual(byId('test-td'), node._node,
-               "Y.one('#test-table div').ancestor('td'))"); 
-
-            node = Y.Node.create('<div><div><table><tbody><tr></tr><tr></tr><tr><td><div><div class="inner"></div></div></td></tr></tbody></table></div></div>');
-            var inner = node.one('.inner');
-            inner.ancestor('td');
-        },
-
-        test_ancestors: function() {
-            var node = document.createElement('node'),
-                nodelist;
-
-            node.className = 'foo';
-            document.body.appendChild(node);
-            nodelist = Y.one(node).ancestors();
-            ArrayAssert.itemsAreEqual([document.documentElement, document.body], nodelist._nodes);
-
-            nodelist = Y.one(node).ancestors('.foo', true);
-            ArrayAssert.itemsAreEqual([node], nodelist._nodes);
-
-            nodelist = Y.one(node).ancestors('body', true);
-            ArrayAssert.itemsAreEqual([document.body], nodelist._nodes);
-
-            document.body.removeChild(node);
         },
 
         test_nodelistEvent: function() {
@@ -1734,125 +1557,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual('EM', node2.get('tagName'));
         },
 
-        'should fire the handler once': function() {
-            var i = 0,
-                test = this,
-                nodelist = Y.all('body');
-
-            nodelist.once('click', function() {
-                i++;
-                Assert.areEqual(1, i);
-            });
-
-            nodelist.item(0).simulate('click');
-            nodelist.item(0).simulate('click');
-
-            i = 0;
-            nodelist.onceAfter('click', function () {
-                i++;
-                Assert.areEqual(1, i);
-            });
-
-            nodelist.item(0).simulate('click');
-            nodelist.item(0).simulate('click');
-        },
-
-        'should pop the nodelist': function() {
-            var nodes = Y.all('div'),
-                node = nodes.pop();
-            
-            Assert.areEqual(Y.all('div').item(Y.all('div').size() - 1), node);
-            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
-        },
-
-        'should shift the nodelist': function() {
-            var nodes = Y.all('div'),
-                node = nodes.shift();
-            
-            Assert.areEqual(Y.one('div'), node);
-            Assert.areEqual(Y.all('div').size() - 1, nodes.size());
-        },
-
-        'should push the node on nodelist': function() {
-            var nodes = Y.all('div'),
-                node = Y.one(document.createElement('div'));
-            
-            Assert.areEqual(nodes.size() + 1, nodes.push(node));
-            Assert.areEqual(nodes.item(nodes.size() - 1), node);
-            Assert.areEqual(node._node, nodes._nodes[nodes.size() - 1]);
-        },
-
-        'should unshift the node on nodelist': function() {
-            var nodes = Y.all('div'),
-                size = nodes.size(),
-                node = Y.one(document.createElement('div'));
-            
-            nodes.unshift(node);
-            Assert.areEqual(size + 1, nodes.size());
-            Assert.areEqual(nodes.item(0), node);
-            Assert.areEqual(node._node, nodes._nodes[0]);
-        },
-
-        'should unshift the dom node on nodelist': function() {
-            var nodes = Y.all('div'),
-                size = nodes.size(),
-                node = document.createElement('div');
-            
-            nodes.unshift(node);
-            Assert.areEqual(size + 1, nodes.size());
-            Assert.areEqual(nodes.item(0), Y.one(node));
-            Assert.areEqual(node, nodes._nodes[0]);
-        },
-
-        'should concat the nodelists': function() {
-            var nodelist1 = Y.all('div'),
-                nodelist2 = Y.all('li'),
-                nodelist3 = nodelist1.concat(nodelist2);
-            
-            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(nodelist2._nodes), nodelist3._nodes);
-        },
-
-        'should concat the nodes': function() {
-            var nodelist1 = Y.all('div');
-                nodelist2 = nodelist1.concat(Y.one('ul'), Y.one('li'));
-            
-            ArrayAssert.itemsAreEqual(nodelist1._nodes.concat(Y.one('ul')._node, Y.one('li')._node), nodelist2._nodes);
-        },
-
-        'should return nodelist from empty concat': function() {
-            var nodelist = Y.Node.create('<div></div>').get('childNodes');
-            ArrayAssert.itemsAreEqual([], nodelist.concat()._nodes);
-        },
-
-        'should return nodelist from empty slice': function() {
-            var nodelist = Y.Node.create('<div></div>').get('childNodes');
-            ArrayAssert.itemsAreEqual([], nodelist.slice()._nodes);
-        },
-
-        'should return nodelist from empty splice': function() {
-            var nodelist = Y.Node.create('<div></div>').get('childNodes');
-            ArrayAssert.itemsAreEqual([], nodelist.splice()._nodes);
-        },
-
-        'should slice the nodes': function() {
-            var nodelist1 = Y.all('div');
-                nodelist2 = nodelist1.slice(1, 4);
-                nodelist3 = nodelist1.slice(0, 3);
-            
-            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
-            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(0, 3), nodelist3._nodes);
-        },
-
-        'should splice the nodes': function() {
-            var nodelist1 = Y.all('div'),
-                nodes = Y.all('div')._nodes,
-                spliced1 = nodes.splice(1, 2),
-                spliced2 = nodelist1.splice(1, 2)._nodes;
-
-            ArrayAssert.itemsAreEqual(nodes, nodelist1._nodes);
-            ArrayAssert.itemsAreEqual(spliced1, spliced2);
-        },
-
         'should empty the node': function() {
             var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>');
             node.empty();
@@ -2040,359 +1744,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
     })); 
 
     Y.Test.Runner.add(new Y.Test.Case({
-        name: 'Y.Node.ancestor',
-
-        'should return the parent node': function() {
-            Assert.areEqual(document.documentElement,
-                    Y.one(document.body).ancestor()._node);
-        },
-
-        'should return the same node': function() {
-            Assert.areEqual(document.body,
-                    Y.one(document.body).ancestor('body', true)._node);
-        },
-
-        'should return the matching ancestor': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    return node._node.tagName === 'BODY';
-                };
-
-            Assert.areEqual(document.body, Y.one(node).ancestor(fn)._node);
-        },
-
-        'should return the matching ancestor via selector': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.areEqual(document.body, Y.one(node).ancestor('body')._node);
-        },
-
-        'should return the matching ancestor (test self match)': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    return node.get('tagName') === 'EM';
-                };
-
-            Assert.areEqual(node, Y.one(node).ancestor(fn, true)._node);
-        },
-
-        'should return the matching ancestor (test self match) via selector': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.areEqual(node, Y.one(node).ancestor('em', true)._node);
-        },
-
-        'should return the matching ancestor (test self not matched)': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    return node.get('tagName') === 'BODY';
-                };
-
-            Assert.areEqual(document.body, Y.one(node).ancestor(fn, true)._node);
-        },
-
-        'should return the matching ancestor (test self not matched) via selector': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.areEqual(document.body, Y.one(node).ancestor('body', true)._node);
-        },
-
-        'should stop when the stop function returns true': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-            };
-
-            Assert.isNull(Y.one(node).ancestor(fn, null, stopFn));
-        },
-
-        'should stop when the stop function returns true as 2nd arg': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-            };
-
-            Assert.isNull(Y.one(node).ancestor(fn, stopFn));
-        },
-
-        'should stop when the stop function returns true via selector': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.isNull(Y.one(node).ancestor('body', null, '#test-ancestor-stop'));
-        },
-
-        'should stop when the stop function returns true via selector as 2nd arg': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.isNull(Y.one(node).ancestor('body', '#test-ancestor-stop'));
-        },
-
-        'should find ancestor before stop': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-            };
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor(fn, null, stopFn)._node.id);
-        },
-
-        'should find ancestor before stop fn as 2nd arg': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-            };
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor(fn, stopFn)._node.id);
-        },
-
-        'should find ancestor before stop via selector': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-                };
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor(fn, null, 'body')._node.id);
-        },
-
-        'should find ancestor before stop via selector as 2nd arg': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-                };
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor(fn, 'body')._node.id);
-        },
-
-        'should find ancestor via selector before stop via selector': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor('#test-ancestor-stop', null, 'body')._node.id);
-        },
-
-        'should find ancestor when both test and stop return true': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-            };
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor(fn, null, stopFn)._node.id);
-        },
-
-        'should find ancestor when testFn and stop via selector both pass': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-                };
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor(fn, null, '#test-ancestor-stop')._node.id);
-        },
-
-        'should find ancestor when test and stop via selector both pass': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0];
-
-            Assert.areEqual('test-ancestor-stop',
-                    Y.one(node).ancestor('#test-ancestor-stop', null, '#test-ancestor-stop')._node.id);
-        }
-    }));
-
-    Y.Test.Runner.add(new Y.Test.Case({
-        name: 'Y.DOM.ancestors',
-
-        'should return an array of one (documentElement)': function() {
-            ArrayAssert.itemsAreEqual([document.documentElement],
-                    Y.one(document.body).ancestors()._nodes);
-        },
-
-        'should include the starting node': function() {
-            var node = document.createElement('div');
-            document.body.appendChild(node);
-            ArrayAssert.itemsAreEqual([document.documentElement, document.body, node],
-                    Y.one(node).ancestors(null, true)._nodes);
-
-            document.body.removeChild(node);
-        },
-
-        'should omit the starting node': function() {
-            var node = document.createElement('div');
-            document.body.appendChild(node);
-            ArrayAssert.itemsAreEqual([document.documentElement, document.body],
-                    Y.one(node).ancestors()._nodes);
-
-            document.body.removeChild(node);
-        },
-
-        'should return the matching ancestors': function() {
-            var node = document.createElement('div'),
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName !== 'HTML';
-                };
-
-            document.body.appendChild(node);
-            ArrayAssert.itemsAreEqual([document.body], Y.one(node).ancestors(fn)._nodes);
-            document.body.removeChild(node);
-        },
-
-        'should return the matching ancestors via selector': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            ArrayAssert.itemsAreEqual([document.body], Y.one(node).ancestors(':not(html)')._nodes);
-            document.body.removeChild(node);
-        },
-
-        'should return the matching ancestors (test self match)': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'EM';
-                };
-
-            ArrayAssert.itemsAreEqual([node], Y.one(node).ancestors(fn, true)._nodes);
-        },
-
-        'should return the matching ancestors (test self not matched)': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-                };
-
-            ArrayAssert.itemsAreEqual([document.body], Y.one(node).ancestors(fn, true)._nodes);
-        },
-
-        'should stop when the stop function returns true': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-            };
-
-            ArrayAssert.itemsAreEqual([], Y.one(node).ancestors(fn, null, stopFn)._nodes);
-        },
-
-        'should find ancestor before stop': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'DIV';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-            };
-
-            ArrayAssert.itemsAreEqual([
-                    node.parentNode.parentNode.parentNode,
-                    node.parentNode.parentNode,
-                    node.parentNode
-                ],
-                Y.one(node).ancestors(fn, null, stopFn)._nodes);
-        },
-
-        'should find ancestor when both test and stop return true': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'DIV';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'DIV';
-            };
-
-            Assert.areEqual(1,
-                    Y.one(node).ancestors(fn, null, stopFn).size());
-        },
-
-        'should stop when the stop function returns true as 2nd arg': function() {
-            var root = document.getElementById('test-element-by-axis'),
-                node = root.getElementsByTagName('EM')[0],
-                fn = function(node) {
-                    node = node._node;
-                    return node.tagName === 'BODY';
-                },
-
-                stopFn = function(node) {
-                    node = node._node;
-                    return node.id === 'test-ancestor-stop';
-            };
-
-            Assert.areEqual(0, Y.one(node).ancestors(fn, stopFn).size());
-        }
-    }));
-
-    Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.Node.insert',
 
         'insert should fail silently given null input': function() {
@@ -2464,12 +1815,31 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(html, node._node.innerHTML.toLowerCase());
         },
 
+        'should insert html into nodelist': function() {
+            var html = 'baz',
+                node = Y.Node.create('<div><p>foo</p><p>bar</p></div>'),
+                nodes = node.all('p');
+
+            nodes.setHTML(html);
+            Assert.areEqual('baz', nodes._nodes[0].innerHTML.toLowerCase());
+            Assert.areEqual('baz', nodes._nodes[1].innerHTML.toLowerCase());
+        },
+
         'should get html from div': function() {
             var html = '<p>foo</p>',
                 node = Y.Node.create('<div/>');
 
             node.setHTML(html);
             Assert.areEqual(html, node.getHTML().toLowerCase());
+        },
+
+        'should get html from nodelist': function() {
+            var html = 'baz',
+                node = Y.Node.create('<div><p>foo</p><p>bar</p></div>'),
+                nodes = node.all('p');
+
+            nodes.setHTML(html);
+            ArrayAssert.itemsAreEqual(['baz', 'baz'], nodes.getHTML());
         }
     }));
 

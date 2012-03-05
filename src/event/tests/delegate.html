@@ -85,7 +85,7 @@
 				
 				name: "Event Delegate Tests",
 				
-				test_simple_delegate_for_anchors: function(){
+				test_simple_delegate_for_anchors: function() {
 					
 					var foo = false, t, ct, boundEl;
 					
@@ -744,6 +744,47 @@
 				
 			})); 
 			
+            suite.add(new Y.Test.Case({
+                name: "Y.delegate.compileFilter",
+
+                "Y.delegate.compileFilter should return a function": function () {
+                    Y.Assert.isFunction(Y.delegate.compileFilter('.test'));
+                },
+
+                "filter should return true for matching descendant": function () {
+                    var filter = Y.delegate.compileFilter('em'),
+                        container = Y.one('#container'),
+                        em = Y.one('#container em');
+
+                    Y.Assert.isTrue(filter(em, {
+                        target: em,
+                        currentTarget: container
+                    }));
+                },
+
+                "filter should return false if no descendant matches": function () {
+                    var filter = Y.delegate.compileFilter('em'),
+                        container = Y.one('#list-2'),
+                        em = Y.one('#container em');
+
+                    Y.Assert.isFalse(filter(em, {
+                        target: em,
+                        currentTarget: container
+                    }));
+                },
+
+                "filter should return true if the currentTarget is the target and it matches": function () {
+                    // Bug #2531734
+                    var filter = Y.delegate.compileFilter('div'),
+                        container = Y.one('#container');
+
+                    Y.Assert.isTrue(filter(container, {
+                        target: container,
+                        currentTarget: container
+                    }));
+                }
+            }));
+
             suite.add(new Y.Test.Case({
                 name: "Bugs",
 

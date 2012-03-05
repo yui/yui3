@@ -9,6 +9,42 @@ function ChartBase() {}
 
 ChartBase.ATTRS = {
     /**
+     * Sets the `aria-label` for the chart.
+     *
+     * @attribute ariaLabel
+     * @type String
+     */
+    ariaLabel: {
+        value: "Chart Application",
+
+        setter: function(val)
+        {
+            this.get("contentBox").setAttribute("ariaLabel", val);
+            return val;
+        }
+    },
+    
+    /**
+     * Sets the aria description for the chart.
+     *
+     * @attribute ariaDescription
+     * @type String
+     */
+    ariaDescription: {
+        value: "Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.",
+
+        setter: function(val)
+        {
+            if(this._description)
+            {
+                this._description.setContent("");
+                this._description.appendChild(DOCUMENT.createTextNode(val));
+            }
+            return val;
+        }
+    },
+    
+    /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
      *  <dl>
@@ -42,7 +78,8 @@ ChartBase.ATTRS = {
      *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
      *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
      *  </dl>
-     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
      *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
      *  <dl>
@@ -61,7 +98,16 @@ ChartBase.ATTRS = {
      *  </dl>
      *  </dd>
      *  </dl>
-     *  The method returns an html string which is written into the DOM using `innerHTML`. 
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
+     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  </dd>
+     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
+     *  has the following signature:
+     *  <dl>
+     *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
+     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a
+     *      string.</dd>
+     *  </dl>
      *  </dd>
      *  </dl>
      * @attribute tooltip
@@ -159,10 +205,45 @@ ChartBase.ATTRS = {
      */
     graph: {
         valueFn: "_getGraph"
-   }
+    },
+
+    /**
+     * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+     *
+     * @attribute groupMarkers
+     * @type Boolean
+     */
+    groupMarkers: {
+        value: false,
+
+        setter: function(val)
+        {
+            if(this.get("graph"))
+            {
+                this.get("graph").set("groupMarkers", val);
+            }
+            return val;
+        }
+    }
 };
 
 ChartBase.prototype = {
+    /**
+     * Handler for itemRendered event.
+     *
+     * @method _itemRendered
+     * @param {Object} e Event object.
+     * @private
+     */
+    _itemRendered: function(e)
+    {
+        this._itemRenderQueue = this._itemRenderQueue.splice(1 + Y.Array.indexOf(this._itemRenderQueue, e.currentTarget), 1);
+        if(this._itemRenderQueue.length < 1)
+        {
+            this._redraw();
+        }
+    },
+
     /**
      * Default value function for the `Graph` attribute.
      *
@@ -172,7 +253,10 @@ ChartBase.prototype = {
      */
     _getGraph: function()
     {
-        var graph = new Y.Graph({chart:this});
+        var graph = new Y.Graph({
+            chart:this,
+            groupMarkers: this.get("groupMarkers")    
+        });
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
@@ -357,7 +441,9 @@ ChartBase.prototype = {
      */
     initializer: function()
     {
-        this._axesRenderQueue = [];
+        this._itemRenderQueue = [];
+        this._seriesIndex = -1;
+        this._itemIndex = -1;
         this.after("dataProviderChange", this._dataProviderChangeHandler);
     },
 
@@ -367,21 +453,77 @@ ChartBase.prototype = {
      */
     renderUI: function()
     {
-        var tt = this.get("tooltip");
+        var tt = this.get("tooltip"),
+            cb = this.get("contentBox");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
-        this.get("contentBox").setStyle("position", "absolute");
+        cb.setStyle("position", "absolute");
         this._addAxes();
         this._addSeries();
         if(tt && tt.show)
         {
             this._addTooltip();
         }
+        this._setAriaElements(cb);
         this._redraw();
     },
    
     /**
-     * @property bindUI
+     * Creates an aria `live-region`, `aria-label` and `aria-describedby` for the Chart.
+     *
+     * @method _setAriaElements
+     * @param {Node} cb Reference to the Chart's `contentBox` attribute.
+     * @private
+     */
+    _setAriaElements: function(cb)
+    {
+        var description = this._getAriaOffscreenNode(),
+            id = this.get("id") + "_description",
+            liveRegion = this._getAriaOffscreenNode();
+        cb.set("role", "img");
+        cb._node.setAttribute("aria-label", this.get("ariaLabel"));
+        cb._node.setAttribute("aria-describedby", id);
+        cb.set("tabIndex", 0);
+        description.set("id", id);
+        description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
+        liveRegion.set("id", "live-region");
+        liveRegion.set("role", "status");
+        cb.appendChild(description);
+        cb.appendChild(liveRegion);
+        this._description = description;
+        this._liveRegion = liveRegion;
+    },
+
+    /**
+     * Sets a node offscreen for use as aria-description or aria-live-regin.
+     *
+     * @method _setOffscreen
+     * @return Node 
+     * @private
+     */
+    _getAriaOffscreenNode: function()  
+    {
+        var node = Y.one(DOCUMENT.createElement("div"));
+        node.setStyle("position", "absolute");
+        node.setStyle("height", "1px"); 
+        node.setStyle("width", "1px"); 
+        node.setStyle("overflow", "hidden");
+        node.setStyle("clip", "rect(1px 1px 1px 1px)"); 
+        node.setStyle("clip", "rect(1px, 1px, 1px, 1px)");
+        return node;
+    },
+  
+    /**
+     * @method syncUI
+     * @private
+     */
+    syncUI: function()
+    {
+        this._redraw();
+    },
+
+    /**
+     * @method bindUI
      * @private
      */
     bindUI: function()
@@ -396,25 +538,76 @@ ChartBase.prototype = {
             interactionType = this.get("interactionType"),
             i = 0,
             len,
-            markerClassName = "." + SERIES_MARKER;
+            markerClassName = "." + SERIES_MARKER,
+            isTouch = ((WINDOW && ("ontouchstart" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+        Y.on("keydown", Y.bind(function(e) {
+            var key = e.keyCode,
+                numKey = parseFloat(key),
+                msg;
+            if(numKey > 36 && numKey < 41)
+            {
+                e.halt();
+                msg = this._getAriaMessage(numKey);
+                this._liveRegion.setContent("");
+                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
+            }
+        }, this), this.get("contentBox"));
         if(interactionType == "marker")
         {
+            //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
+            if(isTouch)
+            {
+                Y.delegate("touchend", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                //hide active tooltip if the chart is touched
+                Y.on("touchend", Y.bind(function(e) {
+                    e.halt(true);
+                    if(this._activeMarker)
+                    {
+                        this._activeMarker = null;
+                        this.hideTooltip(e);
+                    }
+                }, this));
+            }
+            else
+            {
+                Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
+            }
         }
         else if(interactionType == "planar")
         {
-            this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
-            this.on("mouseout", this.hideTooltip);
+            if(isTouch)
+            {
+                this._overlay.on("touchend", Y.bind(this._planarEventDispatcher, this));
+            }
+            else
+            {
+                this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
+                this.on("mouseout", this.hideTooltip);
+            }
         }
         if(tt)
         {
+            this.on("markerEvent:touchend", Y.bind(function(e) {
+                var marker = e.series.get("markers")[e.index];
+                if(this._activeMarker && marker === this._activeMarker)
+                {
+                    this._activeMarker = null;
+                    this.hideTooltip(e);
+                }
+                else
+                {
+
+                    this._activeMarker = marker;
+                    tt.markerEventHandler.apply(this, [e]);
+                }
+            }, this));
             if(hideEvent && showEvent && hideEvent == showEvent)
             {
                 this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
@@ -458,8 +651,9 @@ ChartBase.prototype = {
             seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
             items = this.getSeriesItems(series, index),
-            pageX = e.pageX,
-            pageY = e.pageY,
+            isTouch = e && e.hasOwnProperty("changedTouches"),
+            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,
+            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             x = pageX - cb.getX(),
             y = pageY - cb.getY();
         if(type == "mouseenter")
@@ -594,6 +788,8 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
+        this._seriesIndex = -1;
+        this._itemIndex = -1;
         if(axes)
         {
             for(i in axes)
@@ -603,6 +799,10 @@ ChartBase.prototype = {
                     axis = axes[i];
                     if(axis instanceof Y.Axis)
                     {
+                        if(axis.get("position") != "none")
+                        {
+                            this._addToAxesRenderQueue(axis);
+                        }
                         axis.set("dataProvider", dataProvider);
                     }
                 }
@@ -646,7 +846,7 @@ ChartBase.prototype = {
         if(msg)
         {
             tt.visible = true;
-            node.set("innerHTML", msg);
+            tt.setTextFunction(node, msg);
             node.setStyle("top", y + "px");
             node.setStyle("left", x + "px");
             node.setStyle("visibility", "visible");
@@ -706,7 +906,7 @@ ChartBase.prototype = {
         {
             cb.removeChild(oldNode);
         }
-        tt.node.setAttribute("id", id);
+        tt.node.set("id", id);
         tt.node.setStyle("visibility", "hidden");
         cb.appendChild(tt.node);
     },
@@ -728,6 +928,7 @@ ChartBase.prototype = {
             props = {
                 markerLabelFunction:"markerLabelFunction",
                 planarLabelFunction:"planarLabelFunction",
+                setTextFunction:"setTextFunction",
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
@@ -771,6 +972,7 @@ ChartBase.prototype = {
     {
         var node = DOCUMENT.createElement("div"),
             tt = {
+                setTextFunction: this._setText,
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
                 show: true,
@@ -791,8 +993,8 @@ ChartBase.prototype = {
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 }
             };
-        node.setAttribute("id", this.get("id") + "_tooltip");
         node = Y.one(node);
+        node.set("id", this.get("id") + "_tooltip");
         node.setStyle("fontSize", "85%");
         node.setStyle("opacity", "0.83");
         node.setStyle("position", "absolute");
@@ -831,15 +1033,22 @@ ChartBase.prototype = {
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
     {
-        var msg = "",
+        var msg = DOCUMENT.createElement("div"),
             valueItem,
             i = 0,
             len = seriesArray.length,
             axis,
+            categoryValue,
+            seriesValue,
             series;
         if(categoryAxis)
         {
-            msg += categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            if(Y_Lang.isString(categoryValue))
+            {
+                categoryValue = DOCUMENT.createTextNode(categoryValue);
+            }
+            msg.appendChild(categoryValue);
         }
 
         for(; i < len; ++i)
@@ -849,7 +1058,15 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
-                msg += "<br/><span>" + valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
+                seriesValue =  axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]);
+                msg.appendChild(DOCUMENT.createElement("br"));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+                msg.appendChild(DOCUMENT.createTextNode(": "));
+                if(Y_Lang.isString(seriesValue))
+                {
+                    seriesValue = DOCUMENT.createTextNode(seriesValue);
+                }
+                msg.appendChild(seriesValue);
             }
         }
         return msg;
@@ -881,10 +1098,24 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = categoryItem.displayName +
-        ":&nbsp;" + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-        "<br/>" + valueItem.displayName + 
-        ":&nbsp;" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        var msg = DOCUMENT.createElement("div"),
+            categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
+            seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(categoryValue))
+        {
+            categoryValue = DOCUMENT.createTextNode(categoryValue);
+        }
+        msg.appendChild(categoryValue);
+        msg.appendChild(DOCUMENT.createElement("br"));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(seriesValue))
+        {
+            seriesValue = DOCUMENT.createTextNode(seriesValue);
+        }
+        msg.appendChild(seriesValue);
         return msg; 
     },
 
@@ -911,6 +1142,33 @@ ChartBase.prototype = {
                 }
             }
         }
+    },
+    
+    /**
+     * Updates the content of text field. This method writes a value into a text field using 
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     *
+     * @method _setText
+     * @param label {HTMLElement} label to be updated
+     * @param val {String} value with which to update the label
+     * @private
+     */
+    _setText: function(textField, val)
+    { 
+        textField.setContent("");
+        if(Y_Lang.isNumber(val))
+        {
+            val = val + "";
+        }
+        else if(!val)
+        {
+            val = "";
+        }
+        if(IS_STRING(val))
+        {
+            val = DOCUMENT.createTextNode(val);
+        }
+        textField.appendChild(val);
     }
 };
 Y.ChartBase = ChartBase;

@@ -7,7 +7,6 @@
 
     <target name="all">
     	<ant antfile="file.xml" target="all" />
-    	<!--<ant antfile="filelist.xml" target="all" />-->
     </target>
 
 </project>

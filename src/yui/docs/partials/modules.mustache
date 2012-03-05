@@ -44,7 +44,7 @@
       </tr>
       <tr>
           <td>`app`</td>
-          <td>Alias module for: `app-base, model, model-list, router, view`</td>
+          <td>Alias module for: `app-base, app-transitions, model, model-list, router, view`</td>
       </tr>
       <tr>
           <td>`app-base`</td>
@@ -168,7 +168,11 @@
       </tr>
       <tr>
           <td>`button`</td>
-          <td>Alias module for: `button-base, button-group, cssbutton`</td>
+          <td>Provides an interface for working with button-like DOM nodes</td>
+      </tr>
+      <tr>
+          <td>`ButtonGroup`</td>
+          <td>Allows Y.Button instances to be grouped together</td>
       </tr>
       <tr>
           <td>`cache`</td>
@@ -300,23 +304,43 @@
       </tr>
       <tr>
           <td>`datatable`</td>
-          <td>Alias module for: `datatable-base, datatable-datasource, datatable-sort, datatable-scroll`</td>
+          <td>Alias module for: `datatable-core, datatable-head, datatable-body, datatable-base, datatable-column-widths, datatable-message, datatable-mutable, datatable-sort, datatable-datasource`</td>
       </tr>
       <tr>
           <td>`datatable-base`</td>
-          <td>Provides the base DataTable implementation, which can be extended to add</td>
+          <td>A Widget for displaying tabular data.  The base implementation of DataTable</td>
+      </tr>
+      <tr>
+          <td>`datatable-body`</td>
+          <td>View class responsible for rendering the `<tbody>` section of a table. Used as</td>
+      </tr>
+      <tr>
+          <td>`datatable-column-widths`</td>
+          <td>Adds basic, programmatic column width support to DataTable. Note, this does not</td>
+      </tr>
+      <tr>
+          <td>`datatable-core`</td>
+          <td>The core implementation of the `DataTable` and `DataTable.Base` Widgets.</td>
       </tr>
       <tr>
           <td>`datatable-datasource`</td>
           <td>Plugs DataTable with DataSource integration.</td>
       </tr>
       <tr>
+          <td>`datatable-head`</td>
+          <td>View class responsible for rendering the `<thead>` section of a table. Used as</td>
+      </tr>
+      <tr>
+          <td>`datatable-mutable`</td>
+          <td>Adds mutation convenience methods to `Y.DataTable` (or other built class).</td>
+      </tr>
+      <tr>
           <td>`datatable-scroll`</td>
-          <td>Extends DataTable base to enable x,y, and xy scrolling.</td>
+          <td>Adds the ability to make the table rows scrollable while preserving the header</td>
       </tr>
       <tr>
           <td>`datatable-sort`</td>
-          <td>Plugs DataTable with sorting functionality.</td>
+          <td>Adds support for sorting the table data by API methods `table.sort(...)` or</td>
       </tr>
       <tr>
           <td>`datatype`</td>
@@ -555,6 +579,10 @@
           <td>Contains the core of YUI's feature test architecture.</td>
       </tr>
       <tr>
+          <td>`File`</td>
+          <td>The File class provides a wrapper for a file pointer, either through an HTML5 </td>
+      </tr>
+      <tr>
           <td>`frame`</td>
           <td>Creates a wrapper around an iframe. It loads the content either from a local</td>
       </tr>
@@ -621,6 +649,10 @@
       <tr>
           <td>`intl`</td>
           <td>Provides utilities to support the management of localized resources (strings and formatting patterns).</td>
+      </tr>
+      <tr>
+          <td>`io`</td>
+          <td>Alias module for: `io-base, io-xdr, io-form, io-upload-iframe, io-queue`</td>
       </tr>
       <tr>
           <td>`io-base`</td>
@@ -964,7 +996,19 @@
       </tr>
       <tr>
           <td>`uploader`</td>
-          <td>The Uploader widget is a tool for uploading files to the server.</td>
+          <td>Provides UI for selecting multiple files and functionality for </td>
+      </tr>
+      <tr>
+          <td>`uploader-flash`</td>
+          <td>This module provides a UI for file selection and multiple file upload capability using</td>
+      </tr>
+      <tr>
+          <td>`uploader-html5`</td>
+          <td>This module provides a UI for file selection and multiple file upload capability using</td>
+      </tr>
+      <tr>
+          <td>`uploader-queue`</td>
+          <td>The class manages a queue of files that should be uploaded to the server.</td>
       </tr>
       <tr>
           <td>`view`</td>
@@ -976,7 +1020,7 @@
       </tr>
       <tr>
           <td>`widget`</td>
-          <td>Alias module for: `widget-base, widget-htmlparser, widget-uievents, widget-skin`</td>
+          <td>Alias module for: `widget-base, widget-htmlparser, widget-skin, widget-uievents`</td>
       </tr>
       <tr>
           <td>`widget-anim`</td>

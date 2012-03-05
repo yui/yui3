@@ -253,7 +253,7 @@ YUI.add('frame', function(Y) {
             inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
             inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
-            inst._use = inst.use;
+            inst.__use = inst.use;
             inst.use = Y.bind(this.use, this);
             this._iframe.setStyles({
                 visibility: 'inherit'
@@ -531,7 +531,7 @@ YUI.add('frame', function(Y) {
 
                 });
             }
-            inst._use.apply(inst, args);
+            inst.__use.apply(inst, args);
         },
         /**
         * @method delegate
@@ -671,7 +671,11 @@ YUI.add('frame', function(Y) {
             if (Y.UA.ie && Y.UA.ie < 9) {
                 try {
                     Y.one('win').focus();
-                    this.getInstance().one('win').focus();
+                    if (this.getInstance()) {
+                        if (this.getInstance().one('win')) {
+                            this.getInstance().one('win').focus();
+                        }
+                    }
                 } catch (ierr) {
                 }
                 if (fn === true) {
@@ -684,7 +688,11 @@ YUI.add('frame', function(Y) {
                 try {
                     Y.one('win').focus();
                     Y.later(100, this, function() {
-                        this.getInstance().one('win').focus();
+                        if (this.getInstance()) {
+                            if (this.getInstance().one('win')) {
+                                this.getInstance().one('win').focus();
+                            }
+                        }
                         if (fn === true) {
                             this._handleFocus();
                         }
@@ -710,7 +718,9 @@ YUI.add('frame', function(Y) {
             });
             if (Y.UA.gecko) {
                 try {
-                    this._instance.config.doc.designMode = 'on';
+                    if (this.getInstance()) {
+                        this.getInstance().config.doc.designMode = 'on';
+                    }
                 } catch (e) { }
                 this.focus();
             }           

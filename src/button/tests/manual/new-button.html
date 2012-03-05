@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+    <body class='yui3-skin-sam'>
+        <button id="button-widget">button widget</button>
+        <button id="button-disabled">disabled?</button>
+        <style>
+            html, body{
+            }
+        </style>
+        <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+        
+        YUI({
+            filter: 'raw'
+        }).use('button', function(Y) {
+    
+            var button = new Y.Button({
+                srcNode: '#button-widget',
+                label: 'Disable >>'
+            }).render();
+            
+            var button2 = new Y.Button({
+                srcNode: '#button-disabled'
+            }).render();
+            
+            button.on('click', function(){
+                button2.set('disabled', !button2.get('disabled'));
+            });
+            /*-----*/
+            
+            var button3 = new Y.ToggleButton({
+                label: 'checkbox',
+                type: 'checkbox',
+                checked: true
+            }).render();
+            
+            button3.on('click', function(){
+                Y.log('button3 clicked');
+            });
+            
+            var button4 = new Y.ToggleButton({
+                label: 'toggle'
+            }).render();
+            
+            button4.on('click', function(){
+                //button3.set('checked', !button3.get('checked'));
+                Y.log('button4 clicked');
+            });
+
+        });
+        </script>
+    </body>
+</html>

@@ -315,6 +315,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 		this.set("ycoords", ycoords);
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
+        this._dataLength = dataLength;
     },
 
     /**
@@ -471,6 +472,29 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     {
         var total = this.get("valueAxis").getTotalByKey(this.get("valueKey"));
         return total;
+    },
+
+    /**
+     * Destructor implementation for the CartesianSeries class. Calls destroy on all Graphic instances.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor: function()
+    {
+        if(this._path)
+        {
+            this._path.destroy();
+        }
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.destroy();
+            this._lineGraphic = null;
+        }
+        if(this.get("graphic"))
+        {
+            this.get("graphic").destroy();
+        }   
     }
 }, {
     ATTRS: {
@@ -488,7 +512,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._xDisplayName = Y.Escape.html(val);
+                this._xDisplayName = val.toString();
                 return val;
             }
         },
@@ -507,7 +531,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
             setter: function(val)
             {
-                this._yDisplayName = Y.Escape.html(val);
+                this._yDisplayName = val.toString();
                 return val;
             }
         },
@@ -639,7 +663,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         xKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -653,7 +677,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         yKey: {
             setter: function(val)
             {
-                return Y.Escape.html(val);
+                return val.toString();
             }
         },
 
@@ -784,6 +808,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          */
         direction: {
             value: "horizontal"
+        },
+
+        /**
+         * Indicates whether or not markers for a series will be grouped and rendered in a single complex shape instance.
+         *
+         * @attribute groupMarkers
+         * @type Boolean
+         */
+        groupMarkers: {
+            getter: function()
+            {
+                if(this._groupMarkers === undefined)
+                {
+                    return this.get("graph").get("groupMarkers");
+                }
+                else
+                {
+                    return this._groupMarkers;
+                }
+            },
+
+            setter: function(val)
+            {
+                this._groupMarkers = val;
+                return val;
+            }
         }
     }
 });

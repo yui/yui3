@@ -1,26 +1,81 @@
-<form id="demo" action="#">
+<style>
+.example #corn{
+    position: relative;
+    background: url({{{componentAssets}}}/images/corn.jpg);
+    width: 232px;
+    height: 181px;
+    -moz-box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
+    margin: 2px 0 1em;
+    border: none;
+}
+.example #ruler{
+    width: 650px;
+    height: 42px;
+    background: url("{{{componentAssets}}}/images/ruler_ticks.png") repeat-x scroll -1px 24px #DDCEB7;
+}
+.example .yui3-button {
+    margin: 0 0.2em;
+}
+.example .btn-get{
+    margin-left: 4em;
+}
+#input {
+    height: 1.6em;
+}
+#output{
+    position: absolute;
+    top: -40px;
+    width: 100px;
+    right: -49px;
+    text-align: center;
+    cursor: pointer;
+}
+#output em{
+    color: #FF0000;
+    font-size: 150%;
+    font-style: normal;
+    line-height: 1.7em;
+}
+</style>
+
+<body>
+    <div id="ruler"></div>
+    <div id="corn">
+        <div id="output">? px<br><em>|</em></div>        
+    </div>
     <label>Width:</label>
-    <input name="width" size="2">
-    <input type="submit" value="Run">
-</form>
+    <input id="input" size="2" value="550"> px
+    <button class="yui3-button btn-set">Set</button>
 
-<script type="text/javascript">
-YUI().use('node', function(Y) {
-    var form = Y.one('#demo'),
-        input = Y.one('#demo input[name=width]'),
-        button = Y.one('#demo input[type=submit]');
+    <button class="yui3-button btn-get">Get</button>
+<script>
+YUI().use('node', 'button', function(Y) {
+    var corn = Y.one('#corn'),
+        getButton = Y.one('.example .btn-get'),
+        setButton = Y.one('.example .btn-set'),
+        input = Y.one('.example #input'),
+        output = Y.one('.example #output');
+        
 
-    form.on('submit', function(e) {
-       e.preventDefault(); // keep the form from submitting
+    var getWidth = function(){
+       var width = corn.get('offsetWidth');
+       output.setContent(width + 'px<br><em>|</em>'); // display width near the get button
+    }
+    
+    getButton.on('click', getWidth);
+    output.on('click', getWidth);
 
-       var value = input.get('value'),
-            width = form.get('offsetWidth');
 
-       if (value == '') {
-           input.set('value', width);
-       } else if (!isNaN(parseInt(value))) {
-            form.set('offsetWidth', value);
-       }
+    setButton.on('click', function(e) {
+        var value = input.get('value'),
+            width = corn.get('offsetWidth');
+        if (value == '') {
+            input.set('value', width);
+        } else if (!isNaN(parseInt(value))) { // if the value in the input is a number
+            corn.set('offsetWidth', value);
+            output.setContent('? ' + 'px<br><em>|</em>'); // clear out the value near the get button
+        }
     });
 });
 </script>

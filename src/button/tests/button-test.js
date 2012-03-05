@@ -7,174 +7,36 @@ var Assert      = Y.Assert,
 // -- Suite --------------------------------------------------------------------
 suite = new Y.Test.Suite('Buttons');
 
-// -- Methods ----------------------------------------------------------------
+
+// -- Widget ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
-    name: 'Methods',
+    name: 'button widget',
 
     setUp : function () {
-        Y.one('#container').append('<button id="foo">Test label</button>');
-        
-        this.buttonA = new Y.Button({
-            srcNode : '#foo',
-            type : 'toggle'
-        });
-    },
-    
-    tearDown: function () {
-        Y.one('#container').empty(true);
-    },
-
-    'button.getNode() should return a Y.Node instance': function () {
-        var node = this.buttonA.getNode();
-        Assert.isInstanceOf(Y.Node, node);
-    },
-
-    'button.simulate(click) should make `selected` attribute = true and `yui3-button-selected` class': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        button.set('type', 'toggle');
-        
-        // Ensure the button is unselected by default
-        Assert.isFalse(button.get('selected'));
-        Assert.isFalse(node.hasClass('yui3-button-selected'));
-        
-        // Simulate the button click
-        node.simulate('click');
-        
-        // Now make sure it is selected and has all the approriate attributes
-        Assert.isTrue(button.get('selected'));
-        Assert.isTrue(node.hasClass('yui3-button-selected'));
-        Assert.areSame('true', node.get('aria-pressed'));
-    },
-    
-    'button.select() should set the `selected` attribute to `true`': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        Assert.isFalse(button.get('selected'));
-        Assert.isFalse(node.hasClass('yui3-button-selected'));
-        
-        button.select();
-        Assert.isTrue(button.get('selected'));
-        Assert.isTrue(node.hasClass('yui3-button-selected'));
-    },
-
-    'button.unselect() should set the `selected` attribute to `false`': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        button.select();
-        Assert.isTrue(button.get('selected'));
-        Assert.isTrue(node.hasClass('yui3-button-selected'));
-        
-        button.unselect();
-        Assert.isFalse(button.get('selected'));
-        Assert.isFalse(node.hasClass('yui3-button-selected'));
-    },
-
-    'button.disable() should set the `disable` attribute to `true`': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        Assert.isFalse(button.get('disabled'));
-        Assert.isFalse(node.hasClass('yui3-button-disabled'));
-        
-        button.disable();
-        Assert.isTrue(button.get('disabled'));
-        Assert.isTrue(node.hasClass('yui3-button-disabled'));
-    },
-
-    'button.enable() should set the `disabled` attribute to `false`': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        button.disable();
-        Assert.isTrue(button.get('disabled'));
-        Assert.isTrue(node.hasClass('yui3-button-disabled'));
-        
-        button.enable();
-        Assert.isFalse(button.get('disabled'));
-        Assert.isFalse(node.hasClass('yui3-button-disabled'));
-    }
-
-    
-}));
-
-// -- Rendering ----------------------------------------------------------------
-suite.add(new Y.Test.Case({
-    name: 'Render',
-
-    setUp : function () {
-        Y.one('#container').append('<button id="foo">Test label</button>');
-        Y.one('#container').append('<a id="bar">Test label</button>');
-        
-        this.buttonA = new Y.Button({
-            srcNode : '#foo',
-            type: 'toggle'
-        });
-        
-        this.buttonB = new Y.Button({
-            srcNode : '#bar'
-        });
-    },
-    
-    tearDown: function () {
-        Y.one('#container').empty();
-    },
-    
-    'button should have `yui3-button` class': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        Assert.isTrue(node.hasClass('yui3-button'));
-    },
-    
-    'buttonA should have `toggle` role': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        Assert.areEqual('toggle', node.get('role'));
-    },
-    
-    'buttonB should have `button` role': function () {
-        var button = this.buttonB;
-        var node = button.getNode();
-        
-        Assert.areEqual('button', node.get('role'));
-    },
-    
-    'button focus/blur events should toggle yui3-button-focused': function () {
-        var button = this.buttonA;
-        var node = button.getNode();
-        
-        Assert.isFalse(node.hasClass('yui3-button-focused'));
-        
-        node.focus();
-        Assert.isTrue(node.hasClass('yui3-button-focused'));
-        
-        node.blur();
-        Assert.isFalse(node.hasClass('yui3-button-focused'));
-    }
-}));
-
-// -- Attributes ----------------------------------------------------------------
-suite.add(new Y.Test.Case({
-    name: 'Attributes',
-    
-    setUp : function () {
-        Y.one('#container').append('<button id="foo">Test label</button>');
+        Y.one("#container").setContent('<button id="testButton">Hello</button><button id="testToggleButton">Hello</button><button id="testCheckButton">Hello</button>');
         this.button = new Y.Button({
-            srcNode : '#foo'
-        });
+            srcNode: '#testButton'
+        }).render();
+        this.toggleButton = new Y.ToggleButton({
+            srcNode: '#testToggleButton'
+        }).render();
+        this.checkButton = new Y.ToggleButton({
+            srcNode: '#testCheckButton',
+            type: 'checkbox'
+        }).render();
     },
     
     tearDown: function () {
-        Y.one('#container').empty();
+        this.button.destroy();
+        this.toggleButton.destroy();
+        this.checkButton.destroy();
+        delete this.button;
+        delete this.toggleButton;
+        delete this.checkButton;
     },
 
-    'setting label attribute should fire labelChange': function () {
+    'Changing the label atrribute should trigger labelChange': function () {
         var button = this.button;
-        var node = button.getNode();
         var eventsTriggered = 0;
         
         button.on('labelChange', function(){
@@ -183,163 +45,171 @@ suite.add(new Y.Test.Case({
         
         Assert.areEqual(0, eventsTriggered);
         
-        button.set('label', 'a');
+        button.set('label', 'foobar');
         Assert.areEqual(1, eventsTriggered);
-        
-        button.set('label', 'b');
-        Assert.areEqual(2, eventsTriggered);
     },
     
-    'setting label attribute should fire disabledChange': function () {
+    'ToggleButton should have `toggle` role': function () {
         var button = this.button;
-        var node = button.getNode();
+        var toggleButton = this.toggleButton;
+        
+        var role = toggleButton.get('contentBox').get('role');
+        Assert.areEqual('toggle', role);
+    },
+    
+    'Selecting a toggleButton should add class `yui3-button-selected`': function () {
+        var button = this.toggleButton;
+        var cb = button.get('contentBox');
+        
+        Assert.isFalse(cb.hasClass('yui3-button-selected'));
+        
+        cb.simulate('click');
+        Assert.isTrue(cb.hasClass('yui3-button-selected'));
+
+        // Simulate the button click
+        cb.simulate('click');
+        Assert.isFalse(cb.hasClass('yui3-button-selected'));
+
+        cb.simulate('click');
+        Assert.isTrue(cb.hasClass('yui3-button-selected'));
+        
+        cb.simulate('click');
+        Assert.isFalse(cb.hasClass('yui3-button-selected'));
+    },
+    
+    'Select toggling a button should fire pressedChange': function () {
+        var toggleButton = this.toggleButton;
+        var cb = toggleButton.get('contentBox');
         var eventsTriggered = 0;
         
-        button.on('disabledChange', function(){
+        toggleButton.on('pressedChange', function(){
             eventsTriggered+=1;
         });
         
         Assert.areEqual(0, eventsTriggered);
         
-        button.set('disabled', true);
+        cb.simulate('click');
         Assert.areEqual(1, eventsTriggered);
         
-        button.set('disabled', false);
+        cb.simulate('click');
         Assert.areEqual(2, eventsTriggered);
     },
     
-    'setting label attribute should fire selectedChange': function () {
+    'disable() should set the disabled attribute to true': function () {
         var button = this.button;
-        var node = button.getNode();
-        var eventsTriggered = 0;
         
-        button.on('selectedChange', function(){
-            eventsTriggered+=1;
-        });
-        
-        Assert.areEqual(0, eventsTriggered);
-        
-        button.set('selected', true);
-        Assert.areEqual(1, eventsTriggered);
-        
-        button.set('selected', false);
-        Assert.areEqual(2, eventsTriggered);
-    },
-    
-    'setting label attribute should fire typeChange': function () {
-        var button = this.button;
-        var node = button.getNode();
-        var eventsTriggered = 0;
-        
-        button.on('typeChange', function(){
-            eventsTriggered+=1;
-        });
-        
-        Assert.areEqual(0, eventsTriggered);
-        
-        button.set('type', 'toggle');
-        Assert.areEqual(1, eventsTriggered);
-        
-        button.set('type', 'push');
-        Assert.areEqual(2, eventsTriggered);
-    },
-    
-    'setting label attribute should set innerHTML': function () {
-        var label;
-        var button = this.button;
-        var node = button.getNode();
-        
-            
-        label = 'foobar';
-        
-        button.set('label', label);
-        Assert.areEqual(label, button.get('label'));
-        Assert.areEqual(label, node.getContent());
-        
-        button.set('label', label);
-        Assert.areEqual(label, button.get('label'));
-        Assert.areEqual(label, node.getContent());
-    },
-    
-    'setting disabled=`true` attribute should add class `yui3-button-disabled`': function () {
-        var button = this.button;
-        var node = button.getNode();
-        
-        // Ensure button is enabled by default
         Assert.isFalse(button.get('disabled'));
-        Assert.isFalse(node.hasClass('yui3-button-disabled'));
-        
-        // Disable button
-        button.set('disabled', true);
-        
-        // Ensure button is disabled
+
+        button.disable();
         Assert.isTrue(button.get('disabled'));
-        Assert.isTrue(node.hasClass('yui3-button-disabled'));
     },
     
-    'setting disabled=`false` attribute should remove class `yui3-button-disabled`': function () {
+    'enable() should set the disabled attribute to false': function () {
         var button = this.button;
-        var node = button.getNode();
         
-        // Disable button
-        button.set('disabled', true);
-        
-        // Ensure button is disabled
-        Assert.isTrue(button.get('disabled'));
-        Assert.isTrue(node.hasClass('yui3-button-disabled'));
-        
-        // Disable button
-        button.set('disabled', false);
-        
-        // Ensure button is enabled
         Assert.isFalse(button.get('disabled'));
-        Assert.isFalse(node.hasClass('yui3-button-disabled'));
+
+        button.disable();
+        Assert.isTrue(button.get('disabled'));
+        
+        button.enable();
+        Assert.isFalse(button.get('disabled'));
     },
     
-    'setting type=`toggle` attribute should make button toggle-able': function () {
-        var button = this.button;
-        var node = button.getNode();
+    'Setting `pressed` should toggle the `pressed` attribute': function () {
+        var button = this.toggleButton;
         
-        // Ensure button is unselected by default
-        Assert.isFalse(button.get('selected'));
+        Assert.isFalse(button.get('pressed'));
+
+        button.set('pressed', true);
+        Assert.isTrue(button.get('pressed'));
         
-        // Ensure it is a push button
-        Assert.areSame('push', button.get('type'));
+        button.set('pressed', false);
+        Assert.isFalse(button.get('pressed'));
+    },
+    
+    'Setting `checked` should toggle the `checked` attribute': function () {
+        var button = this.checkButton;
         
-        // Click and check selected state (false)
-        node.simulate('click');
-        Assert.isFalse(button.get('selected'));
+        Assert.isFalse(button.get('checked'));
+
+        button.set('checked', true);
+        Assert.isTrue(button.get('checked'));
         
-        // Click and check selected state (false)
-        node.simulate('click');
-        Assert.isFalse(button.get('selected'));
+        button.set('checked', false);
+        Assert.isFalse(button.get('checked'));
+    },
+    
+    'Toggle buttons should have proper ARIA data': function () {
+        var button = this.toggleButton;
+        var cb = button.get('contentBox');
         
-        // Set to toggle
-        button.set('type', 'toggle');
-        Assert.areSame('toggle', button.get('type'));
+        Assert.areSame('toggle', cb.get('role'));
+        Assert.areSame('false', cb.get('aria-pressed'));
         
-        // Click and check selected state (true)
-        node.simulate('click');
-        Assert.isTrue(button.get('selected'));
+        cb.simulate('click');
+        //button.set('pressed', true);
+        Assert.areSame('true', cb.get('aria-pressed'));
+    },
+    
+    'Checkbox buttons should have proper ARIA data': function () {
+        var button = this.checkButton;
+        var cb = button.get('contentBox');
         
-        // Click and check selected state (false)
-        node.simulate('click');
-        Assert.isFalse(button.get('selected'));
+        Assert.areSame('checkbox', cb.get('role'));
+        Assert.areSame('false', cb.get('aria-checked'));
         
-        // Set back to type='push'
-        button.set('type', 'push');
-        Assert.areSame('push', button.get('type'));
+        cb.simulate('click');
         
-        // Click and check selected state (false)
-        node.simulate('click');
-        Assert.isFalse(button.get('selected'));
-        
-        // Click and check selected state (false)
-        node.simulate('click');
-        Assert.isFalse(button.get('selected'));
+        Assert.areSame('true', cb.get('aria-checked'));
     }
 }));
 
+// -- Config tests ----------------------------------------------------------------
+suite.add(new Y.Test.Case({
+    name: 'button widget',
+
+    setUp : function () {
+
+    },
+    
+    tearDown: function () {
+        Y.one("#container").empty(true);
+    },
+    
+    'Passing `pressed=true` in with the config will default the button to a `pressed` state': function() {
+        Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+        var button = new Y.ToggleButton({
+            host: Y.one("#testButton"),
+            pressed: true
+        });
+        
+        Assert.isTrue(button.get('pressed'));
+        Assert.isUndefined(button.get('checked'));
+        
+        button.toggle();
+
+        Assert.isFalse(button.get('pressed'));
+        Assert.isUndefined(button.get('checked'));
+    },
+    
+    'Passing `checked=true` in with the config will default the button to a `checked` state': function() {
+        Y.one("#container").setContent('<input type="button" id="testButton" value="foo">');
+        var button = new Y.ToggleButton({
+            host: Y.one("#testButton"),
+            checked: true,
+            type: 'checkbox'
+        });
+        
+        Assert.isTrue(button.get('checked'));
+        Assert.isUndefined(button.get('pressed'));
+        
+        button.toggle();
+
+        Assert.isFalse(button.get('checked'));
+        Assert.isUndefined(button.get('pressed'));
+    }
+}));
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {

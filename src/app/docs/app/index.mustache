@@ -1,6 +1,6 @@
 <div class="intro">
 <p>
-The YUI App Framework is a rollup of the <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, <a href="../router/index.html">Router</a>, and <a href="../view/index.html">View</a> components, combined to form a simple MVC-style framework for writing single-page JavaScript applications.
+The YUI App Framework is a rollup of the [[#app-component|App]], <a href="../model/index.html">Model</a>, <a href="../model-list/index.html">Model List</a>, <a href="../router/index.html">Router</a>, and <a href="../view/index.html">View</a> components, combined to form a simple MVC-style framework for writing single-page JavaScript applications.
 </p>
 
 <p>
@@ -34,7 +34,7 @@ The `app` module is a rollup module consisting of the following individual compo
       <td style="white-space: nowrap;">`app-base`</td>
       <td>
         <p>
-        Provides a top-level application component which manages navigation and views This gives you a foundation and structure on which to build your application; it combines robust URL navigation with powerful routing and flexible view management.
+        Provides a top-level application component which manages navigation and views. This gives you a foundation and structure on which to build your application; it combines robust URL navigation with powerful routing and flexible view management.
         </p>
       </td>
     </tr>
@@ -84,15 +84,15 @@ The `app` module is a rollup module consisting of the following individual compo
 <h2>App Component</h2>
 
 <p>
-App is a high-level component that builds upon several other components in the App Framework, it is composed of <a href="../view/index.html">View</a>, <a href="../router/index.html">Router</a>, and <a href="../pjax/index.html">Pjax</a>. This combination creates a solid foundation and structure on which to build your application. It connects together robust URL navigation with powerful routing and flexible view management.
+App is a high-level component that builds upon other components in the App Framework. The App component is composed of <a href="../router/index.html">Router</a> and <a href="../view/index.html">View</a>, and also the <a href="../pjax/index.html">Pjax</a> utility. This combination creates a solid foundation and structure on which to build your application. It connects together robust URL navigation with powerful routing and flexible view management.
 </p>
 
 <p>
-The goal of the App component is to provide you a place to organize and connect-together the parts of your application from the top-level. App implements infrastructural pieces which are common to all apps — such as managing views and the navigation between pages — allowing you to focus on the specifics of <em>your</em> app.
+The goal of the App component is to provide you a place to organize and connect together the parts of your application. App implements infrastructural pieces which are common to all apps — such as managing views and the navigation between pages — allowing you to focus on the specifics of <em>your</em> app.
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It will allow for richer interactions without compromising standard browser behavior, URLs, or SEO. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enable you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
 </p>
 
 <p>
@@ -126,7 +126,7 @@ In the following example, we are including both the `app-base` and `app-transiti
 ```
 YUI().use('app-base', 'app-transitions', function (Y) {
     // This will create two YUI Apps, `basicApp` will not have transitions,
-    // but `fancyApp` will have transitions support included and turn them on.
+    // but `fancyApp` will have transitions support included and turn itself on.
     var basicApp = new Y.App.Base(),
         fancyApp = new Y.App({transitions: true});
 });
@@ -145,7 +145,9 @@ When constructing a new `Y.App` instance you can provide a config object with in
 <dl>
   <dt>`views`</dt>
   <dd>
+    <p>
     Hash of view-name to metadata used to declaratively describe an application's views and their relationship with the app and its other views. The views specified here will override any defaults provided by the `views` object on the `prototype`. See the [[#App Properties]] and [[#Declaring Views]] sections for more details.
+    </p>
   </dd>
 </dl>
 
@@ -156,8 +158,9 @@ Here's an example that defines some `views` at instantiation time:
 ```
 var app = new Y.App({
     views: {
-        home: {preserve: true},
-        users: {parent: 'home'}
+        home : {preserve: true},
+        users: {preserve: true},
+        user : {parent: 'users'}
     }
 });
 ```
@@ -165,7 +168,7 @@ var app = new Y.App({
 <h3>App Properties</h3>
 
 <p>
-The following properties are meaningful to App classes and subclasses. In addition to these, <a href="../view/index.html#view-properties">View's properties</a> are also applicable because App mixes-in `Y.View`.
+The following properties are meaningful to App classes and subclasses. In addition to these, <a href="../view/index.html#view-properties">View's properties</a> are also applicable `Y.View` is part of App's composition.
 </p>
 
 <table>
@@ -272,7 +275,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
           <dt>`undefined`</dt>
           <dd>
             <p>
-            The best form of URLs will be chosen based on the capabilities of the browser. Given no information about the server environment a balanced approach to routing and navigation is chosen. See [[#Routing Coordination with Server]] for more details.
+            The best form of URLs will be chosen based on the capabilities of the browser. Given no information about the server environment, a balanced approach to routing and navigation is chosen. See [[#Routing Coordination with Server]] for more details.
             </p>
           </dd>
 
@@ -290,7 +293,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
           <dt>`false`</dt>
           <dd>
             <p>
-            The server is <em>not</em> capable of properly handling requests to all full-path URLs the app can produce, therefore all routing will be handled by this App instance.
+            The server is <em>not</em> capable of properly handling requests to all full-path URLs the app can produce, therefore <em>all</em> routing will be handled by this App instance.
             </p>
 
             <p>
@@ -306,23 +309,23 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
       <td>`<div>` Node</td>
       <td>
         <p>
-        The node into which this app's views will be rendered. This node's contents are fully-managed by this app instance.
+        The node into which this app's `views` will be rendered when they become the `activeView`.
         </p>
 
         <p>
-        The view container node serves as the container to hold the app's `activeView`. Each time the `activeView` is set via `showView()`, the contents of this node will be replaced by the new active view's `container` node.
+        The view container node serves as the container to hold the app's `activeView`. Each time the `activeView` is set via `showView()`, the previous view will be removed from this node, and the new active view's `container` node will be appended.
         </p>
 
         <p>
-        The default view container is `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time.
+        The default view container is a `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time.
         </p>
 
         <p>
-        When `viewContainer` is overridden by a subclass or passed as a config option at instantiation time, it may be provided as a selector string, DOM element, or a `Y.Node` instance (having the `viewContainer` and the `container` be the same node is also supported). During initialization, the app's `createViewContainer()` method will be called to convert the view container into a `Y.Node` instance if it isn't one already and stamp it with the CSS class: `"yui3-app-views"`.
+        When `viewContainer` is overridden by a subclass or passed as a config option at instantiation time, it may be provided as a selector string, DOM element, or a `Y.Node` instance. Using the same node as the `viewContainer` and the `container` is also supported.
         </p>
 
         <p>
-        The app's `render()` method will append the view container to the app's `container` node if it isn't already, and any `activeView` will be set as its contents. See [[#Rendering an App]] for more details.
+        The app's `render()` method will stamp the view container with the CSS class "yui3-app-views" and append the view container to the app's `container` node if it isn't there already. Any `activeView` will be appended to the view container node if it isn't there already.
         </p>
       </td>
     </tr>
@@ -468,29 +471,36 @@ One benefit of extending `Y.App` is that you can easily add default views, route
 </p>
 
 ```
+// Create a Y.CustomApp class that extends Y.App.
 Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
     // Default registered views inherited by all CustomApp instances.
     views: {
-        home: {preserve: true},
-        user: {parent: 'home'}
+        home : {preserve: true},
+        users: {preserve: true},
+        user : {parent: 'users'}
     },
 
     // Default route handlers inherited by all CustomApp instances.
 
-    home: function (req) {
-        // Handle the '/' route here.
+    handleHome: function (req) {
+        // Handle the "/" route here.
     },
 
-    user: function (req) {
-        // Handle the '/users/:name/' route here.
+    handleUsers: function (req) {
+        // Handle the "/users/" route here.
+    },
+
+    handleUser: function (req) {
+        // Handle the "/users/:name/" route here.
     }
 }, {
     ATTRS: {
         // Share these routes with all CustomApp instances.
         routes: {
             value: [
-                {path: '/',             callback: 'home'},
-                {path: '/users/:name/', callback: 'user'}
+                {path: '/',             callback: 'handleHome'},
+                {path: '/users/',       callback: 'handleUsers'}
+                {path: '/users/:name/', callback: 'handleUser'}
             ]
         }
     }
@@ -498,9 +508,10 @@ Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
 
 // Create a CustomApp instance that inherits the defaults and adds to them.
 var app = new Y.CustomApp({
-    // Register an additional view.
+    // Register an additional view. The `home`, `users`, and `user` views will
+    // also be inherited.
     views: {
-        about: {parent: 'home'}
+        about: {preserve: true}
     }
 });
 
@@ -511,7 +522,7 @@ app.route('/about/', function (req) {
 ```
 
 <p>
-Now all instances of `Y.CustomApp` will inherit all the custom defaults and can add to or override them. The `app` instance created here will handle the `/` and `/users/:name/` routes in addition to its own `/about/` route, and will show the associated view that has been registered with the app.
+Now all instances of `Y.CustomApp` will inherit all the custom defaults and can add to or override them. The `app` instance created here will handle the `"/"`, `"/users/"`, and `"/users/:name/"` routes in addition to its own `"/about/"` route.
 </p>
 
 <p>
@@ -526,11 +537,125 @@ Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/ap
 }}
 
 <h3>Rendering an App</h3>
-{{! TODO:
 
-  * Note about View's `container` attribute, and App's CSS classes.
+<p>
+App inherits both its `container` attribute and `render()` method from View. Unlike <a href="../view/index.html#rendering-a-view">View's empty `render()` implementation</a>, App provides a default implementation which appends the `activeView` (if there is one) to the `viewContainer` node which itself is appended to the `container` node.
+</p>
 
-}}
+<p>
+The basic usage of your app's `render()` method is to call it at least once, usually after you instantiate your app, this ensures the proper DOM structure is setup to handle rendering the app's [[#View Management|views]].
+</p>
+
+```
+var app = new Y.App();
+app.render();
+```
+
+<p>
+This results in the HTML of the page looking like this:
+</p>
+
+```
+<body class="yui3-app">
+    ...
+    <div class="yui3-app-views"></div>
+</body>
+```
+
+<p>
+By default, an app's `container` node will be the `<body>` element and its `viewContainer` node will be a new `<div>`.
+</p>
+
+<p>
+<strong>Note:</strong> The `"yui3-app"` and `"yui3-app-views"` CSS classes are added to the `container` and `viewContainer` respectively — this happens when the app is rendered.
+</p>
+
+<h4>Specifying Container Nodes</h4>
+
+<p>
+When constructing a new App instance you can specify values for the app's `container` and `viewContainer` attributes, and they can even reference the same node.
+</p>
+
+```
+var app = new Y.App({
+    container    : '#wrapper',
+    viewContainer: '#wrapper'
+});
+
+app.render();
+```
+
+<p>
+Assuming that a `<div id="wrapper">` node already exists on the page, this uses a CSS selector string to reference the node, assigns it to both containers, and results in the following HTML:
+</p>
+
+```
+<div id="wrapper" class="yui3-app yui3-app-views">
+    ...
+</div>
+```
+
+<p>
+If you specify a `container` that is not already within the markup of the page, you'll need to manually append it to an element that is:
+</p>
+
+```
+var app = new Y.App({
+    container: Y.Node.create('<div id="fancy-app" />')
+});
+
+app.render().get('container').appendTo('body');
+```
+
+<p>
+This results in the HTML of the page looking like this:
+</p>
+
+```
+<body>
+    ...
+    <div id="fancy-app" class="yui3-app">
+        <div class="yui3-app-views"></div>
+    </div>
+</body>
+```
+
+<p>
+Refer to App's API Docs for more details about <a href="{{apiDocs}}/classes/App.html#attr_container">`container`</a> and <a href="/classes/App.html#attr_viewContainer">`viewContainer`</a> attributes.
+</p>
+
+<h4>Overriding `render()`</h4>
+
+<p>
+You may override the `render()` method to customize how the app renders itself, particularly if you are creating an App subclass.
+</p>
+
+<p>
+<strong>Note:</strong> You should expect that the `viewContainer`'s contents will be modified by the app for the purpose of rendering the `activeView` when it changes; and ideally your `render()` method should also return `this` at the end to allow chaining, but that's up to you.
+</p>
+
+<p>
+The following provides a templates for how you could subclass `Y.App` and implement a custom `render()` method while still preserving its default behavior:
+</p>
+
+```
+Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
+    render: function () {
+        // This calls the superclass' (Y.App) implementation of the `render()`
+        // method to preserve the default behavior.
+        Y.CustomApp.superclass.render.apply(this, arguments);
+
+        // Provide your custom rendering logic here.
+
+        // Returns this `Y.CustomApp` instance to allow for chaining.
+        return this;
+    }
+});
+```
+
+<p>
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()` method</a>.
+</p>
 
 <h3>View Management</h3>
 
@@ -545,28 +670,31 @@ The `views` property of an App class allows you to specify a mapping of view-nam
 </p>
 
 <p>
-You can setup this views mapping on both App classes and instances. Every App instance will receive its own copy of a `views` object, any `views` metadata defined at the class-level will be used as defaults—merged with the `views` specificed during instantiation time.
+You can setup this views mapping on both App subclasses and instances. Every App instance will receive its own copy of a `views` object, any `views` metadata defined at the class-level will be used as defaults and merged with any `views` specified during instantiation time.
 </p>
 
 <p>
-The follow example shows the creation of an App subclass, `CustomApp`, which has a couple default views defined, and an instance of `CustomApp` which defines another view and overrides some of the defaults.
+The follow example shows the creation of an App subclass, `CustomApp`, which has a few default views defined, and an instance of `CustomApp` which defines another view and overrides some of the defaults.
 </p>
 
 ```
+// Create a Y.CustomApp class that extends Y.App.
 Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
     // Default registered views inherited by all CustomApp instances.
     views: {
-        home: {preserve: true},
-        user: {parent: 'home'}
+        home : {preserve: true},
+        users: {preserve: true},
+        user : {parent: 'users'}
     }
 });
 
+// Create a CustomApp instance that inherits the defaults and adds to them.
 var app = new Y.CustomApp({
     // Additional view metadata to be merged with the defaults.
     views: {
         home : {preserve: false},
         user : {preserve: false},
-        about: {parent: 'home'}
+        about: {preserve: true}
     }
 });
 ```
@@ -585,7 +713,7 @@ Y.log(app.getViewInfo('user').parent);    // => 'home'
 Y.log(app.getViewInfo('user').preserve);  // => false
 
 // The specified "about" view was registered.
-Y.log(app.getViewInfo('about').parent);   // => 'home'
+Y.log(app.getViewInfo('about').preserve); // => true
 ```
 
 <p>
@@ -595,7 +723,7 @@ See the [[#App Properties]] section above for more details on what metadata can 
 <h4>Switching the Active View</h4>
 {{! TODO:
 
-  * Fancy diagram showing header/body/footer screen-regions with the body highlighted. What about an iPhone to pump mobile!
+  * Fancy diagram showing header/body/footer screen-regions with the body highlighted. What about an iPhone to pump mobile! Use Omnigraffle!
 
   * Expand on docs for `showView()` method.
 
@@ -610,7 +738,7 @@ When decomposing an application into discrete user-interfaces, it is natural to 
 </p>
 
 <p>
-Working in concert with an App's registered `views`, the `showView()` method will take a specified view and make it the app's main content by setting it as the `activeView`, bubbling its events to the app, rendering it inside the app's `viewContainer`, and properly disposing of any previous active view.
+Working in concert with an app's registered `views`, the `showView()` method will take a specified view and make it the app's `activeView`. This view will be "attached" to the app by rendering it inside the app's `viewContainer` and any custom events fired by the view will bubble to the app. Any previously active view will be "detached" from the app, removed from the DOM, and either preserved for later use or properly destroyed.
 </p>
 
 <p>
@@ -618,15 +746,23 @@ The following example is the most basic "Hello World" app:
 </p>
 
 ```
+// Creates a new App and View instance.
 var app  = new Y.App(),
     view = new Y.View();
 
+// Overrides the view's `render()` method to render text into its `container`.
 view.render = function () {
     this.get('container').set('text', 'Hello World!');
     return this;
 };
 
+// Renders the `app` and `view`, then sets the view as the app's `activeView`.
 app.render().showView(view.render());
+
+// Verify that `view` is now the `activeView`, and that the view's `container`
+// is now rendered within the app's `viewContainer`.
+Y.log(app.get('activeView') === view);                           // => true
+Y.log(app.get('viewContainer').contains(view.get('container'))); // => true
 ```
 
 <p>
@@ -635,6 +771,7 @@ This results in the HTML of the page looking like this:
 
 ```
 <body class="yui3-app">
+    ...
     <div class="yui3-app-views">
         <div>Hello World!</div>
     </div>
@@ -642,58 +779,73 @@ This results in the HTML of the page looking like this:
 ```
 
 <p>
-This example app can <em>easily</em> become more dynamic and include URL routing. By creating a `Person` model and a reusable `HelloView`, the app can dynamically switch between outputting "Hello World!" and "Hello [name]!" where the "name" is the path segment in the URL.
+This example app can <em>easily</em> become dynamic and have the ability to say hello to someone by name. By creating a reusable `HelloView` class the app can dynamically switch between outputting "Hello World!" and "Hello [name]!" where the "name" is a path segment in the URL.
 </p>
 
 ```
-Y.Person = Y.Base.create('person', Y.Model, [], {}, {
-    ATTRS: {
-        name: {}
-    }
-});
-
+// Creates a HelloView which can say hello to someone named, or to the World
+// if a name is not specified.
 Y.HelloView = Y.Base.create('helloView', Y.View, [], {
     render: function () {
-        var person = this.get('model'),
-            name   = person && person.get('name');
-
+        var name = this.get('name');
         this.get('container').set('text', 'Hello ' + (name || 'World') + '!');
         return this;
     }
+}, {
+    ATTRS: {
+        name: {value: null}
+    }
 });
 
+// Creates a new App instance and registers the HelloView.
 var app = new Y.App({
     views: {
         hello: {type: 'HelloView'}
     }
 });
 
+// Adds a route handler for "/" to show the HelloView.
 app.route('/', function (req) {
+    // Sets the `activeView` to a new instance of a `Y.HelloView` by just
+    // passing "hello", the name of the registered view.
     this.showView('hello');
 });
 
+// Adds a route handler for "/:name" to show the HelloView with a `name`.
 app.route('/:name', function (req) {
-    this.showView('hello', {
-        model: new Y.Person(req.params)
-    });
+    // The name which we want to say hello to is specified on `req.params`.
+    var name = req.params.name;
+    // Sets the `activeView` to a new instance of a `Y.HelloView`, but here
+    // we are also passing a config object which the new view instance will
+    // be constructed with, and it contains the name which we'll say hello to.
+    this.showView('hello', {name: name});
 });
 
-app.render().save('/ericf');
+// Renders the app, then saves a new history entry for "/eric" which will
+// dispatch the "/:name" route handler.
+app.render().save('/eric');
 ```
 
 <p>
 
 <p>
-This results in the URL being updated to either `"/ericf"` or `"/#/ericf"` depending on whether the browser is capable of HTML5 history, and the HTML of the page looking like this:
+This results in the URL being updated to either `"/eric"` or `"/#/eric"` depending on whether the browser is capable of HTML5 history, and the HTML of the page looking like this:
 </p>
 
 ```
 <body class="yui3-app">
+    ...
     <div class="yui3-app-views">
-        <div>Hello ericf!</div>
+        <div>Hello eric!</div>
     </div>
 </body>
 ```
+
+
+
+<p>
+Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/classes/App.html#method_showView">`showView()` method</a>.
+</p>
 
 <h3>Navigating Between "Pages"</h3>
 {{! TODO:
@@ -707,5 +859,9 @@ This results in the URL being updated to either `"/ericf"` or `"/#/ericf"` depen
 <h3>Progressively-Enhanced Apps</h3>
 
 <h3>Client-Only Apps</h3>
+
+<h2>App Extensions</h2>
+
+<h3>`Y.App.Transitions`</h3>
 
 <h2>Apps vs. Widgets</h2>

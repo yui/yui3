@@ -1,6 +1,35 @@
 Panel Change History
 ====================
 
+3.5.0
+-----
+
+  * Panel now hosts the a default "close" button which can be included more
+    easily then before. This button has advanced styling which will render the
+    button with the text [Close] when it's in the footer, and with the icon [x]
+    when it's in the header. [Ticket #2531680]
+
+        // Panel with close button in header.
+        var panel = new Y.Panel({
+            buttons: ['close']
+        });
+
+        // Panel with close button in footer.
+        var otherPanel = new Y.Panel({
+            buttons: {
+                footer: ['close']
+            }
+        });
+
+  * Panel's skins now uses `.yui3-panel` instead of `.yui3-panel-content` for
+    its CSS selectors where possible. [Ticket #2531623]
+
+  * Moved mask-related styles/skins to `WidgetModality`.
+
+  * See also WidgetButtons' change history.
+
+  * See also WidgetModality's change history.
+
 3.4.1
 -----
 

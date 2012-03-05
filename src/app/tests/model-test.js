@@ -55,7 +55,7 @@ modelSuite.add(new Y.Test.Case({
         Y.Mock.verify(mock);
     },
 
-    'destroy() should delete the model if the `delete` option is truthy': function () {
+    'destroy() should delete the model if the `remove` option is truthy': function () {
         var calls   = 0,
             mock    = Y.Mock(),
             model   = new Y.Model();
@@ -70,13 +70,13 @@ modelSuite.add(new Y.Test.Case({
 
             Assert.areSame('delete', action, 'sync action should be "delete"');
             Assert.isObject(options, 'options should be an object');
-            Assert.isTrue(options['delete'], 'options.delete should be true');
+            Assert.isTrue(options.remove, 'options.delete should be true');
             Assert.isFunction(callback, 'callback should be a function');
 
             callback();
         };
 
-        model.destroy({'delete': true}, mock.callback);
+        model.destroy({remove: true}, mock.callback);
         Y.Mock.verify(mock);
     },
 
@@ -124,6 +124,28 @@ modelSuite.add(new Y.Test.Case({
     'Attributes should be settable at instantiation time': function () {
         var model = new this.TestModel({foo: 'foo'});
         Assert.areSame('foo', model.get('foo'));
+    },
+
+    'Models should allow ad-hoc attributes': function () {
+        var created = new Date(),
+
+            model = new Y.Model({
+                foo: 'foo',
+                bar: {a: 'bar'},
+                baz: ['baz'],
+                quux: null,
+                zero: 0,
+                created: created
+            });
+
+        Assert.areSame('foo', model.get('foo'), 'ad-hoc foo attribute should be set');
+        Assert.areSame('bar', model.get('bar.a'), 'ad-hoc bar attribute should be set');
+        Assert.areSame('baz', model.get('baz')[0], 'ad-hoc baz attribute should be set');
+        Assert.isNull(model.get('quux'), 'ad-hoc quux attribute should be set');
+        Assert.areSame(0, model.get('zero'), 'ad-hoc zero attribute should be set');
+        Assert.areSame(created, model.get('created'), 'ad-hoc created attribute should be set');
+
+        ObjectAssert.ownsKeys(['foo', 'bar', 'baz', 'quux', 'zero', 'created'], model.getAttrs(), 'ad-hoc attributes should be returned by getAttrs()');
     },
 
     'Custom id attribute should be settable at instantiation time': function () {

@@ -121,6 +121,19 @@ NodeList._getTempNode = function(node) {
 };
 
 Y.mix(NodeList.prototype, {
+    _invoke: function(method, args, getter) {
+        var ret = (getter) ? [] : this;
+
+        this.each(function(node) {
+            var val = node[method].apply(node, args);
+            if (getter) {
+                ret.push(val);
+            }
+        });
+
+        return ret;
+    },
+
     /**
      * Retrieves the Node instance at the given index.
      * @method item
@@ -280,68 +293,6 @@ Y.mix(NodeList.prototype, {
         }
 
         return this;
-    },
-
-    _prepEvtArgs: function(type, fn, context) {
-        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
-        var args = Y.Array(arguments, 0, true);
-
-        if (args.length < 2) { // type only (event hash) just add nodes
-            args[2] = this._nodes;
-        } else {
-            args.splice(2, 0, this._nodes);
-        }
-
-        args[3] = context || this; // default to NodeList instance as context
-
-        return args;
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * @method on
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @param {Object} context The context to call the handler with.
-     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
-     * when the event fires.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    on: function(type, fn, context) {
-        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an one-time event listener to each Node bound to the NodeList.
-     * @method once
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    once: function(type, fn, context) {
-        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * The handler is called only after all on() handlers are called
-     * and the event is not prevented.
-     * @method after
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    after: function(type, fn, context) {
-        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**

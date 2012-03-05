@@ -1,10 +1,10 @@
 /**
- * Mixes keyboard support into AutoCompleteList. By default, this module is not
- * loaded for iOS and Android devices.
- *
- * @module autocomplete
- * @submodule autocomplete-list-keys
- */
+Mixes keyboard support into AutoCompleteList. By default, this module is not
+loaded for iOS and Android devices.
+
+@module autocomplete
+@submodule autocomplete-list-keys
+**/
 
  // keyCode constants.
 var KEY_DOWN  = 40,
@@ -14,9 +14,7 @@ var KEY_DOWN  = 40,
     KEY_UP    = 38;
 
 function ListKeys() {
-    Y.before(this._unbindKeys, this, 'destructor');
     Y.before(this._bindKeys, this, 'bindUI');
-
     this._initKeys();
 }
 
@@ -24,17 +22,15 @@ ListKeys.prototype = {
     // -- Lifecycle Methods ----------------------------------------------------
 
     /**
-     * Initializes keyboard command mappings.
-     *
-     * @method _initKeys
-     * @protected
-     * @for AutoCompleteList
-     */
+    Initializes keyboard command mappings.
+
+    @method _initKeys
+    @protected
+    @for AutoCompleteList
+    **/
     _initKeys: function () {
         var keys        = {},
             keysVisible = {};
-
-        this._keyEvents = [];
 
         // Register keyboard command handlers. _keys contains handlers that will
         // always be called; _keysVisible contains handlers that will only be
@@ -50,37 +46,39 @@ ListKeys.prototype = {
         this._keysVisible = keysVisible;
     },
 
-    /**
-     * Binds keyboard events.
-     *
-     * @method _bindKeys
-     * @protected
-     */
-    _bindKeys: function () {
-        this._keyEvents.push(this._inputNode.on('keydown', this._onInputKey,
-            this));
+    destructor: function () {
+        this._unbindKeys();
     },
 
     /**
-     * Unbinds keyboard events.
-     *
-     * @method _unbindKeys
-     * @protected
-     */
+    Binds keyboard events.
+
+    @method _bindKeys
+    @protected
+    **/
+    _bindKeys: function () {
+        this._keyEvents = this._inputNode.on('keydown', this._onInputKey, this);
+    },
+
+    /**
+    Unbinds keyboard events.
+
+    @method _unbindKeys
+    @protected
+    **/
     _unbindKeys: function () {
-        while (this._keyEvents.length) {
-            this._keyEvents.pop().detach();
-        }
+        this._keyEvents && this._keyEvents.detach();
+        this._keyEvents = null;
     },
 
     // -- Protected Methods ----------------------------------------------------
 
     /**
-     * Called when the down arrow key is pressed.
-     *
-     * @method _keyDown
-     * @protected
-     */
+    Called when the down arrow key is pressed.
+
+    @method _keyDown
+    @protected
+    **/
     _keyDown: function () {
         if (this.get('visible')) {
             this._activateNextItem();
@@ -90,11 +88,11 @@ ListKeys.prototype = {
     },
 
     /**
-     * Called when the enter key is pressed.
-     *
-     * @method _keyEnter
-     * @protected
-     */
+    Called when the enter key is pressed.
+
+    @method _keyEnter
+    @protected
+    **/
     _keyEnter: function (e) {
         var item = this.get('activeItem');
 
@@ -107,21 +105,21 @@ ListKeys.prototype = {
     },
 
     /**
-     * Called when the escape key is pressed.
-     *
-     * @method _keyEsc
-     * @protected
-     */
+    Called when the escape key is pressed.
+
+    @method _keyEsc
+    @protected
+    **/
     _keyEsc: function () {
         this.hide();
     },
 
     /**
-     * Called when the tab key is pressed.
-     *
-     * @method _keyTab
-     * @protected
-     */
+    Called when the tab key is pressed.
+
+    @method _keyTab
+    @protected
+    **/
     _keyTab: function (e) {
         var item;
 
@@ -138,11 +136,11 @@ ListKeys.prototype = {
     },
 
     /**
-     * Called when the up arrow key is pressed.
-     *
-     * @method _keyUp
-     * @protected
-     */
+    Called when the up arrow key is pressed.
+
+    @method _keyUp
+    @protected
+    **/
     _keyUp: function () {
         this._activatePrevItem();
     },
@@ -150,12 +148,12 @@ ListKeys.prototype = {
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     * Handles <code>inputNode</code> key events.
-     *
-     * @method _onInputKey
-     * @param {EventTarget} e
-     * @protected
-     */
+    Handles `inputNode` key events.
+
+    @method _onInputKey
+    @param {EventTarget} e
+    @protected
+    **/
     _onInputKey: function (e) {
         var handler,
             keyCode = e.keyCode;

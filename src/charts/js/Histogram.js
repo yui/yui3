@@ -51,14 +51,21 @@ Histogram.prototype = {
             xMarkerPlaneLeft,
             xMarkerPlaneRight,
             yMarkerPlaneTop,
-            yMarkerPlaneBottom;
+            yMarkerPlaneBottom,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         if(this.get("direction") == "vertical")
         {
@@ -112,29 +119,54 @@ Histogram.prototype = {
             {
                 top = config.top;
                 left = config.left;
-                style[setSizeKey] = setSize;
-                style[calculatedSizeKey] = config.calculatedSize;
-                style.x = left;
-                style.y = top;
 
-                if(fillColors)
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions[setSizeKey][i] = setSize;
+                    dimensions[calculatedSizeKey][i] = config.calculatedSize;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.colors = borderColors[i % borderColors.length];
+                    style[setSizeKey] = setSize;
+                    style[calculatedSizeKey] = config.calculatedSize;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
+
             }
-            else
+            else if(!groupMarkers)
             {
                 this._markers.push(null);
             }
         }
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
     
     /**

@@ -1,0 +1,10 @@
+{
+    "widget-stack": {
+        "requires": [
+            "base-build",
+            "widget"
+        ],
+
+        "skinnable": true
+    }
+}

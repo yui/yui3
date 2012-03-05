@@ -44,14 +44,21 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
-            totalWidth = len * w;
+            totalWidth = len * w,
+            dimensions = {
+                width: [],
+                height: []
+            },
+            xvalues = [],
+            yvalues = [],
+            groupMarkers = this.get("groupMarkers");
         if(Y_Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
@@ -133,26 +140,50 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             if(!isNaN(h) && h > 0)
             {
                 left -= w/2;
-                style.width = w;
-                style.height = h;
-                style.x = left;
-                style.y = top;
-                if(fillColors)
+                if(groupMarkers)
                 {
-                    style.fill.color = fillColors[i % fillColors.length];
+                    dimensions.width[i] = w;
+                    dimensions.height[i] = h;
+                    xvalues.push(left);
+                    yvalues.push(top);
                 }
-                if(borderColors)
+                else
                 {
-                    style.border.color = borderColors[i % borderColors.length];
+                    style.width = w;
+                    style.height = h;
+                    style.x = left;
+                    style.y = top;
+                    if(fillColors)
+                    {
+                        style.fill.color = fillColors[i % fillColors.length];
+                    }
+                    if(borderColors)
+                    {
+                        style.border.color = borderColors[i % borderColors.length];
+                    }
+                    marker = this.getMarker(style, graphOrder, i);
                 }
-                marker = this.getMarker(style, graphOrder, i);
             }
-            else
+            else if(!groupMarkers)
             {
-                this._markers.push(null);
+               this._markers.push(null);
             }
         }
-        this._clearMarkerCache();
+        if(groupMarkers)
+        {
+            this._createGroupMarker({
+                fill: style.fill,
+                border: style.border,
+                dimensions: dimensions,
+                xvalues: xvalues,
+                yvalues: yvalues,
+                shape: style.shape
+            });
+        }
+        else
+        {
+            this._clearMarkerCache();
+        }
     },
 
     /**
@@ -165,7 +196,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
      */
     updateMarkerState: function(type, i)
     {
-        if(this._markers[i])
+        if(this._markers && this._markers[i])
         {
             var styles,
                 markerStyles,

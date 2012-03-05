@@ -17,6 +17,19 @@ CategoryAxis.NAME = "categoryAxis";
 Y.extend(CategoryAxis, Y.AxisType,
 {
     /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        return val;
+    },
+
+    /**
      * Object storing key data.
      *
      * @property _indices
@@ -202,7 +215,7 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             value = keys[key][index];
         }
-        return Y.Escape.html(value);
+        return value;
     },
    
     /**
@@ -227,7 +240,36 @@ Y.extend(CategoryAxis, Y.AxisType,
         {
             label = data[l - (i + 1)];
         }   
-        return Y.Escape.html(label.toString());
+        return label;
+    },
+
+    /**
+     * Returns a string corresponding to the first label on an 
+     * axis.
+     *
+     * @method getMinimumValue
+     * @return String
+     */
+    getMinimumValue: function()
+    {
+        var data = this.get("data"),
+            label = data[0];
+        return label;
+    },
+
+    /**
+     * Returns a string corresponding to the last label on an 
+     * axis.
+     *
+     * @method getMaximumValue
+     * @return String
+     */
+    getMaximumValue: function()
+    {
+        var data = this.get("data"),
+            len = data.length - 1,
+            label = data[len];
+        return label;
     }
 });
 

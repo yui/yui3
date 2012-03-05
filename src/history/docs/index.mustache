@@ -183,7 +183,7 @@ history.addValue('sloths', 'slow', {merge: false});
 ```
 
 <p>
-The <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like `add()` and `addValue()`, except that they replace the current browser history entry instead of adding a new entry. 
+The <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="{{apiDocs}}/classes/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like `add()` and `addValue()`, except that they replace the current browser history entry instead of adding a new entry.
 </p>
 
 ```
@@ -556,5 +556,9 @@ The table below provides a quick reference to help you translate API events from
 
   <li>
   <strong>In Internet Explorer 6 and 7, the page titles displayed for history entries in the browser's history dropdown menu are not correct.</strong> Instead of showing the title of each document, it shows part of the URL of each page.
+  </li>
+
+  <li>
+  <strong>Internet Explorer (all versions) replaces the current history entry when the hash portion of the URL is manually edited in the URL bar</strong> instead of adding a new history entry as other browsers do. There's unfortunately nothing YUI can do to detect or work around this.
   </li>
 </ul>

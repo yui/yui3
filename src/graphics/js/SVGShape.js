@@ -19,7 +19,7 @@ SVGShape = function(cfg)
 
 SVGShape.NAME = "svgShape";
 
-Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
+Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -40,12 +40,42 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic;
 		host.createNode(); 
-		host._graphic = cfg.graphic;
-		host._updateHandler();
+		if(graphic)
+        {
+            host._setGraphic(graphic);
+        }
+        host._updateHandler();
 	},
-   
+ 
+    /**
+     * Set the Graphic instance for the shape.
+     *
+     * @method _setGraphic
+     * @param {Graphic | Node | HTMLElement | String} render This param is used to determine the graphic instance. If it is a `Graphic` instance, it will be assigned
+     * to the `graphic` attribute. Otherwise, a new Graphic instance will be created and rendered into the dom element that the render represents.
+     * @private
+     */
+    _setGraphic: function(render)
+    {
+        var graphic;
+        if(render instanceof Y.SVGGraphic)
+        {
+		    this._graphic = render;
+        }
+        else
+        {
+            render = Y.one(render);
+            graphic = new Y.SVGGraphic({
+                render: render
+            });
+            graphic._appendShape(this);
+            this._graphic = graphic;
+        }
+    },
+
 	/**
 	 * Add a class name to each node.
 	 *
@@ -188,7 +218,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
 		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
-		if(id)
+        if(id)
 		{
 			node.setAttribute("id", id);
 		}
@@ -320,6 +350,7 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 			opacity,
 			color,
 			stopNode,
+            newStop,
 			isNumber = Y_LANG.isNumber,
 			graphic = this._graphic,
 			type = fill.type, 
@@ -690,99 +721,58 @@ Y.extend(SVGShape, Y.BaseGraphic, Y.mix({
 	 */
 	getBounds: function()
 	{
-	    var type = this._type,
-            wt,
-            bounds = {},
-            matrix = this._normalizedMatrix,
-            a = matrix.a,
-            b = matrix.b,
-            c = matrix.c,
-            d = matrix.d,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            w = this.get("width"),
-            h = this.get("height"),
-            //The svg path element does not have x and y coordinates. Shapes based on path use translate to "fake" x and y. As a
-            //result, these values will show up in the transform matrix and should not be used in any conversion formula.
-            left = type == "path" ? 0 : this.get("x"), 
-            top = type == "path" ? 0 : this.get("y"), 
-            right = left + w,
-            bottom = top + h,
-			stroke = this.get("stroke"),
-            //[x1, y1]
-            x1 = (a * left + c * top + dx), 
-            y1 = (b * left + d * top + dy),
-            //[x2, y2]
-            x2 = (a * right + c * top + dx),
-            y2 = (b * right + d * top + dy),
-            //[x3, y3]
-            x3 = (a * left + c * bottom + dx),
-            y3 = (b * left + d * bottom + dy),
-            //[x4, y4]
-            x4 = (a * right + c * bottom + dx),
-            y4 = (b * right + d * bottom + dy);
-        bounds.left = Math.min(x3, Math.min(x1, Math.min(x2, x4)));
-        bounds.right = Math.max(x3, Math.max(x1, Math.max(x2, x4)));
-        bounds.top = Math.min(y2, Math.min(y4, Math.min(y3, y1)));
-        bounds.bottom = Math.max(y2, Math.max(y4, Math.max(y3, y1)));
-        //if there is a stroke, extend the bounds to accomodate
+		var type = this._type,
+            stroke = this.get("stroke"),
+			w = this.get("width"),
+			h = this.get("height"),
+			x = type == "path" ? 0 : this.get("x"),
+			y = type == "path" ? 0 : this.get("y"),
+            wt = 0;
         if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
-            bounds.left -= wt;
-            bounds.right += wt;
-            bounds.top -= wt;
-            bounds.bottom += wt;
 		}
-        return bounds;
+        w = (x + w + wt) - (x - wt); 
+        h = (y + h + wt) - (y - wt);
+        x -= wt;
+        y -= wt;
+		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 
     /**
-     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
-     *
-     * @method _getRotatedCornerX
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
-     */
-    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
-    {
-        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
-    },
-
-    /**
-     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
-     *
-     * @method _getRotatedCornerY
-     * @param {Number} x original x-coordinate of corner
-     * @param {Number} y original y-coordinate of corner
-     * @param {Number} tox transform origin x-coordinate of rotation
-     * @param {Number} toy transform origin y-coordinate of rotation
-     * @param {Number} cosRadians cosine (in radians) of rotation
-     * @param {Number} sinRadians sin (in radians) or rotation
-     * @return Number
-     * @private
-     */
-    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
-    {
-        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
-    },
-
-    /**
-     * Destroys the instance.
+     * Destroys the shape instance.
      *
      * @method destroy
      */
     destroy: function()
     {
-        if(this._graphic && this._graphic._contentNode)
+        var graphic = this.get("graphic");
+        if(graphic)
         {
-            this._graphic._contentNode.removeChild(this.node);
+            graphic.removeShape(this);
+        }
+        else
+        {
+            this._destroy();
+        }
+    },
+
+    /**
+     *  Implementation for shape destruction
+     *
+     *  @method destroy
+     *  @protected
+     */
+    _destroy: function()
+    {
+        if(this.node)
+        {
+            Y.Event.purgeElement(this.node, true);
+            if(this.node.parentNode)
+            {
+                this.node.parentNode.removeChild(this.node);
+            }
+            this.node = null;
         }
     }
  }, Y.SVGDrawing.prototype));

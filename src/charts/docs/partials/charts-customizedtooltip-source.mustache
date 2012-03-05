@@ -21,9 +21,18 @@
             },
             markerLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
             {
-                var msg = "<span style=\"text-decoration:underline\">" + valueItem.displayName + " for " + 
-                categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
-                "</span><br/><div style=\"margin-top:5px;font-weight:bold\">" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}]) + "</div>";
+                var msg = document.createElement("div"),
+                    underlinedTextBlock = document.createElement("span"),
+                    boldTextBlock = document.createElement("div");
+                underlinedTextBlock.style.textDecoration = "underline";
+                boldTextBlock.style.marginTop = "5px";
+                boldTextBlock.style.fontWeight = "bold";
+                underlinedTextBlock.appendChild(document.createTextNode(valueItem.displayName + " for " + 
+                                                categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")])));
+                boldTextBlock.appendChild(document.createTextNode(valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}])));   
+                msg.appendChild(underlinedTextBlock);
+                msg.appendChild(document.createElement("br"));
+                msg.appendChild(boldTextBlock); 
                 return msg; 
             }
         };

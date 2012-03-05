@@ -22,7 +22,6 @@ YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', f
       ];
 
   inputNode.plug(Y.Plugin.AutoComplete, {
-    activateFirstItem: true,
     allowTrailingDelimiter: true,
     minQueryLength: 0,
     queryDelay: 0,
@@ -55,8 +54,12 @@ YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', f
 
   // After a tag is selected, send an empty query to update the list of tags.
   inputNode.ac.after('select', function () {
-    inputNode.ac.sendRequest('');
-    inputNode.ac.show();
+    // Send the query on the next tick to ensure that the input node's blur
+    // handler doesn't hide the result list right after we show it.
+    setTimeout(function () {
+      inputNode.ac.sendRequest('');
+      inputNode.ac.show();
+    }, 1);
   });
 });
 </script>

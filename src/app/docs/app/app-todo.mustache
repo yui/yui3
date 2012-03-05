@@ -14,6 +14,20 @@
 {{>app-todo-source}}
 </div>
 
+<h2>Disclaimer</h2>
+
+<p>
+Ironically, this example complexifies a very simple application in order to demonstrate concepts you might actually use to simplify a complex application. In reality, this little todo app is so conceptually simple that it probably doesn't need to be broken into discrete components, but its inherent conceptual simplicity makes it convenient for explaining how models, model lists, and views work.
+</p>
+
+<p>
+In other words, this example is not meant to be a recommendation for how to implement a todo app; it's meant to be a demonstration of how models and views fit together to define application logic. Also, our lawyers advised us that we were legally required to provide a todo example, so we had no choice in the matter. I swear.
+</p>
+
+<p>
+For a slightly more realistic use case demonstrating how the App Framework can make a complex task simpler instead of a simple task more complex, take a look at the <a href="app-contributors.html">GitHub Contributors</a> example.
+</p>
+
 <h2>HTML</h2>
 
 <p>First we'll create the HTML shell for our todo app.</p>
@@ -228,12 +242,12 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
 
     // This tells the list to use a localStorage sync provider (which we'll
     // create below) to load the list of todo items.
-    sync : LocalStorageSync('todo'),
+    sync: LocalStorageSync('todo'),
 
     // Returns an array of all models in this list with the `done` attribute
     // set to `true`.
     done: function () {
-        return Y.Array.filter(this.toArray(), function (model) {
+        return this.filter(function (model) {
             return model.get('done');
         });
     },
@@ -241,7 +255,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
     // Returns an array of all models in this list with the `done` attribute
     // set to `false`.
     remaining: function () {
-        return Y.Array.filter(this.toArray(), function (model) {
+        return this.filter(function (model) {
             return !model.get('done');
         });
     }
@@ -344,8 +358,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         var view = new TodoView({model: e.model});
 
         this.get('container').one('#todo-list').append(
-            view.render()
-                .get('container')
+            view.render().get('container')
         );
     },
 
@@ -361,9 +374,9 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 
         // Destroy each removed TodoModel instance.
         Y.Array.each(done, function (todo) {
-            // Passing {'delete': true} to the todo model's `destroy()` method
+            // Passing {remove: true} to the todo model's `destroy()` method
             // tells it to delete itself from localStorage as well.
-            todo.destroy({'delete': true});
+            todo.destroy({remove: true});
         });
 
         // Finally, re-render the app view.
@@ -414,9 +427,10 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     }
 }, {
     ATTRS: {
-        // The container node is the wrapper for this view.  All the view's events
-        // will be delegated from the container. In this case, the #todo-app
-        // node already exists on the page, so we don't need to create it.
+        // The container node is the wrapper for this view. All the view's
+        // events will be delegated from the container. In this case, the
+        // #todo-app node already exists on the page, so we don't need to create
+        // it.
         container: {
             valueFn: function () {
                 return '#todo-app';
@@ -442,6 +456,9 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 <div class="scrollable">
 ```
 TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
+    // This customizes the HTML used for this view's container node.
+    containerTemplate: '<li class="todo-item"/>',
+
     // Delegated DOM events to handle this view's interactions.
     events: {
         // Toggle the "done" state of this todo item when the checkbox is
@@ -478,7 +495,10 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         // Re-render this view when the model changes, and destroy this view
         // when the model is destroyed.
         model.after('change', this.render, this);
-        model.after('destroy', this.destroy, this);
+
+        model.after('destroy', function () {
+            this.destroy({remove: true});
+        }, this);
     },
 
     render: function () {
@@ -531,18 +551,6 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     // Toggles the `done` state on this item's model.
     toggleDone: function () {
         this.get('model').toggleDone();
-    }
-}, {
-    ATTRS: {
-        // Specifying an HTML string as this view's container element causes
-        // that HTML to be automatically converted into an unattached Y.Node
-        // instance. The TodoAppView (above) will take care of appending it to
-        // the list.
-        container: {
-            valueFn: function () {
-                return Y.Node.create('<li class="todo-item"/>');
-            }
-        }
     }
 });
 ```

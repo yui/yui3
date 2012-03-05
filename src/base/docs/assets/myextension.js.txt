@@ -66,14 +66,14 @@
             // When naming, you need to be aware of over-writing methods on the main class, since these
             // methods get augmented onto the built class
         },
-        
+
         _myExtensionProtectedMethod : function() {
             // A new protected/private method the extension provides
             
             // When naming, you need to be aware of over-writing methods on the main class, since these
             // methods get augmented onto the built class
-        }
-    
+        },
+
         _doSomethingAfterMainClassMethod : function() {
             // Custom behavior
         },

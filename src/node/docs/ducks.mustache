@@ -1,0 +1,203 @@
+<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
+<div class="intro">
+    <p>This example demonstrates how to use multiple NodeList features to build a simple game.</p>
+</div>
+
+<div class="example">
+{{>ducks-source}}
+</div>
+
+
+
+<h2>The HTML</h2>
+```
+{{>ducks-html}}
+```
+
+<h2>YUI Instance</h2>
+<p>
+The `use` statement doesn't include `node` because it's loaded as a requirement of transition.
+</p>
+```
+YUI().use('transition', 'button', function(Y){
+    // code goes here
+});
+```
+
+<h2>Setting Vars</h2>
+<p>
+The variable `ducks` is used for easily manipulating all the ducks at once.
+We'll display various duck comments from the array `squawkTextArr` on a rotating basis. 
+</p>
+```
+    var ducks = Y.all('.duck-row li'),
+        ducksRemaining = 10, // value for UI display
+        squawkTextIndex = 0, // index in the squawkTextArr to use next
+        squawkTextArr = [   // duck comments
+            '#@&~*Q!',
+            'Hey!?',
+            '911 on U!',
+            "U&nbsp;fly's&nbsp;down",
+            'duck&nbsp;pile!',
+            'Ricochets&nbsp;kill!',
+            'how&nbsp;sporting.',
+            "shoe's&nbsp;untied"
+        ];
+```
+
+<h2>Initializing the Ducks</h2>
+<p>
+Repetitive markup is added with the `.append()` method to all the ducks in the `NodeList`.
+This keeps the original markup simple and clear.
+</p>
+```
+    // append the same content for each duck <li>
+    ducks.append('<img src="../assets/node/images/duck.png"/><div class="squawk"><div class="text">#@&~*Q!</div><div class="small-squawk-bubble"></div></div>');
+```
+<p>
+All the ducks in the `NodeList` are given the `set-up` class with the `.addClass()` method.
+This class is found on any duck that has the state of being set up, as opposed to being knocked down.
+</p>
+```    
+    // give them all the set-up state class
+    ducks.addClass('set-up');
+```
+<p>
+This state could be a Boolean property, but it's handy as a class, 
+because a `NodeList` can be made containing the squawks of all "set up" ducks in this way, 
+`squawks = Y.all('.duck-row .set-up .squawk');` 
+as we'll see in the `makeDucksSquawk` function.
+</p>
+
+<h2>Making the Ducks Swim</h2>
+<p>
+This uses `transition` to make the ducks swim right to left 
+</p>
+```
+    // this makes the ducks move from right to left.
+    // When the duck on the far left disappears from view,
+    // it's added to the far right end of the row.
+    var makeDucksSwim = function () {
+        var frontDuck;
+        
+        // move the duck row to the left one duck space over 2 seconds
+        Y.one('.duck-row').transition({
+            easing: 'linear',
+            left: '-119px',
+            duration: 2
+        }, function () { // when the row finishes its right to left transition...
+            // remove the first duck on the left
+            // which has trasitioned out of view
+            frontDuck = Y.one('.duck-row li').remove();
+
+            // append the removed first duck onto the right end
+            Y.one('.duck-row').appendChild(frontDuck);
+
+            // set the position for the next makeDucksSwim()
+            Y.one('.duck-row').setStyle('left', '10px');
+
+            // if there are ducks remaining, make them swim again
+            if (ducksRemaining > 0) {
+                makeDucksSwim();
+            }
+        });       
+    }
+    makeDucksSwim(); // this initializes the ducks swimming
+```
+
+<h2>Click Event Handler</h2>
+<p>
+</p>
+```
+    // handles a click on a duck
+    var duckClick = function(e) {
+        var squawks;
+        
+        // remove the squawk belonging to the duck that was clicked
+        e.currentTarget.one('.squawk').setStyles({'top': '-400px', 'opacity': '1'});
+        
+        // makes the ducks appear to lay back when clicked
+        e.target.transition({
+            duration: 0.2,
+            height: '3px',
+            width: '133px'
+        });
+        
+        // the clicked duck will no longer have the 'set-up' class/state
+        e.currentTarget.removeClass('set-up');
+        makeDucksSquawk(); // makes the ducks squawk
+        updateDucksRemaining(); // update the number of ducks still set up
+    };
+```
+
+<h2>Squawking Ducks</h2>
+<p>
+</p>
+```
+    // this makes the duck's squawks show and hide and get various text
+    var makeDucksSquawk = function(){    
+        squawks = Y.all('.duck-row .set-up .squawk'); // a NodeList of the squawks of set-up ducks
+        if (Y.one('#show-attitude')._node.checked) {  // only have ducks squawk if the checkbox is checked
+            // fill voice bubbles with next text string
+            Y.all('.duck-row .set-up .squawk .text').setContent(squawkTextArr[squawkTextIndex]);
+            
+            // increment the index to get the next squawk text
+            squawkTextIndex = (squawkTextIndex += 1) % (squawkTextArr.length);
+            squawks.transition({
+                top: {
+                    delay: 0.5,
+                    value: '0px', // drop squawks into position from hidden 
+                    duration: 0   // instant position change
+                },
+                opacity: { // fade out
+                    delay: 3.0,
+                    duration: 0.3,
+                    value: 0
+                } 
+            }, function(e){
+                // after squawks are faded out,
+                // move them to hidden position and set opacity to 1 again
+                squawks.setStyles({'top': '-400px', 'opacity': '1'});
+            });
+        }
+    }
+```
+
+<h2>Reset and Ducks Remaining</h2>
+```
+    // This resets all ducks, "ducks remaining" counters, and row position
+    // make the duck images full height
+    // start them swimming     
+    var reset = function() {
+        Y.all('.duck-row li img').setStyle('height', '55px');
+        Y.all('.duck-row li').addClass('set-up');
+        updateDucksRemaining();
+        makeDucksSwim();
+    }
+    
+    // counts the ducks remaining, and updates the UI counter display
+    var updateDucksRemaining = function() {
+        ducksRemaining = Y.all('.gallery li.set-up').size();    
+        Y.one('.ducks-remain').setContent(ducksRemaining);    
+    }
+```
+<h2>Prefer `node.delegate()` over `nodelist.on()`</h2>
+
+<p>Sometimes you need to create individual subscriptions for each Node in a 
+NodeList, but usually it's preferable to use 
+<a href="node-evt-delegation.html">event delegation</a> as shown in this example.</p>
+
+<h2>Listeners</h2>
+<p>
+
+</p>
+```
+    // listeners
+    Y.one('.duck-row').delegate('click', duckClick, 'li');
+    Y.one('#button-reset').on('click', reset);
+```
+
+<h2>Complete Ducks Example Source</h2>
+```
+{{>ducks-source}}
+```

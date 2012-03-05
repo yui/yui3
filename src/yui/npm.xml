@@ -16,7 +16,7 @@
         </copy>
 
         <copy file="../../package.json" tofile="${outdir}/package.json"/>
-        <copy file="./scripts/npm_package_shim.js" tofile="${outdir}/package.js"/>
+        <copy file="./scripts/npm_package_shim.js" tofile="${outdir}/index.js"/>
         
         <echo level="info">Running Node.js package script</echo>
         <exec executable="node" failonerror="true" searchpath="true" resolveexecutable="true">

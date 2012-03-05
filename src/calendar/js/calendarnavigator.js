@@ -92,9 +92,9 @@ CalendarNavigator.CALENDARNAV_STRINGS = {
     * @protected
     * @static
     */ 
-CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {prev_month_class}" style="width:15px;">' + 
-                                                   "&#9668;" +
-                                                '</div>';
+CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<a class="yui3-u {prev_month_class}" role="button" aria-label="{prev_month_arialabel}" tabindex="{control_tabindex}">' + 
+                                                   "<span>&lt;</span>" +
+                                                '</a>';
    /**
     * The template for the calendar navigator next month control.
     * @property NEXT_MONTH_CONTROL_TEMPLATE
@@ -103,9 +103,9 @@ CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {prev_month_
     * @protected
     * @static
     */ 
-CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE = '<div class="yui3-u {next_month_class}" style="width:15px;">' + 
-                                                   "&#9658;" +
-                                                '</div>';
+CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE = '<a class="yui3-u {next_month_class}" role="button" aria-label="{next_month_arialabel}" tabindex="{control_tabindex}">' + 
+                                                   "<span>&gt;</span>" +
+                                                '</a>';
 
 
 Y.extend(CalendarNavigator, Y.Plugin.Base, {
@@ -200,6 +200,10 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
      */
     _initNavigationControls : function() {
             var host = this.get(HOST);
+            CalendarNavigator.CALENDARNAV_STRINGS["control_tabindex"] = host.get("tabIndex");
+            CalendarNavigator.CALENDARNAV_STRINGS["prev_month_arialabel"] = "Go to previous month";
+            CalendarNavigator.CALENDARNAV_STRINGS["next_month_arialabel"] = "Go to next month";
+
             var headerCell = host.get(CONTENT_BOX).one("." + CAL_HD);
             headerCell.prepend(this._renderPrevControls(host));
             headerCell.append(this._renderNextControls(host));

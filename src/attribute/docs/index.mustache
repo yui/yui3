@@ -105,6 +105,8 @@ o.set("attrB", "Hello World!");
 
             <p>If both the value and valueFn properties are defined, the value returned by valueFn has precedence over the value property, 
             unless it returns undefined, in which case the value property is used.</p>
+
+            <p>The valueFn is passed the name of the attribute, allowing users to share valueFn implementations across attributes if required.</p>
             </td>
         </tr>
         <tr>
@@ -117,6 +119,9 @@ o.set("attrB", "Hello World!");
                 <p>The function will be passed the currently stored value of the attribute as the first argument and the name
                 of the attribute as the second argument. If configured, the value returned by this function will be 
                 the value returned to the user.</p>
+                
+                <p>Attribute also supports the ability to return sub-attribute values (`get('a.b.c')`). The getter implications for 
+                this are discussed in the <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a> section.</p>
             </td>
         </tr>
         <tr>
@@ -132,6 +137,10 @@ o.set("attrB", "Hello World!");
 
                 <p>The getter and setter can be used to normalize values on input/output for the user while storing the 
                 value in a format most effective for internal operation.</p>
+                
+                <p>Attribute also supports the ability to set sub-attribute values (`set('a.b.c', 10)`). The setter 
+                implications for this are discussed in the  <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a>  
+                section.</p>
             </td>
         </tr>
         <tr>
@@ -148,6 +157,10 @@ o.set("attrB", "Hello World!");
                 <p>If validation is a potentially expensive task and contains code which would be repeated in a `setter` (for example, converting a string to a Node reference),
                 you can combine validation into the `setter` function, by returning `Attribute.INVALID_VALUE` from a `setter` if it 
                 encounters an invalid value.</p>
+                
+                <p>Attribute also supports the ability to set sub-attribute values (set('a.b.c', 10)). The 'validator' 
+                implications for this are discussed in the  <a href="#subattrs-gsv">Getters, Setters, Validators and Sub Attributes</a>  
+                section.</p>
             </td>
         </tr>
         <tr>
@@ -186,10 +199,14 @@ o.set("attrB", "Hello World!");
                 <p>
                 Whether or not to delay initialization of the attribute until the first call to get/set it. 
                 This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through 
-                the `<a href="{{apiDocs}}/Attribute.html#method_addAttrs">addAttrs</a>` method.
+                the <a href="{{apiDocs}}/Attribute.html#method_addAttrs">`addAttrs`</a> method.
                 </p>
-                <p><strong>NOTE:</strong> When extending Base, all attributes are added lazily, so this flag can be used to over-ride
+                <p>When extending Base, all attributes are added lazily, so this flag can be used to over-ride
                 lazyAdd behavior for specific attributes.</p>
+                <p><strong>The only reason you should need to disable `lazyAdd` is if your setter is doing more
+                than normalizing the attribute value</strong>. For example if your setter is storing some other state, in `this._someProp`, which is being used
+                by other parts of your component. In this case, since you're not getting or setting the attribute to access `this._someProp`, 
+                it won't get set up lazily, until someone actually calls `get` or `set` for the related attribute.</p>
             </td>
         </tr>
         <tr>
@@ -423,10 +440,50 @@ var lbl = o.get("strings.ui.accept_label");
 
 ```
 
+<h3 id="subattrs-gsv">Getters, Setters, Validators and Sub Attributes</h3> 
 
-<p>It should be noted that getter, setter and validator attribute configuration functions are 
-only defined for the top level attribute (`"strings"` in this case) and will be invoked 
-when getting/setting sub attribute values. What this means is that getters and setters should always 
-return the massaged value for the top level attribute (e.g. `"strings"`), and not the sub attribute 
-value being set (e.g. `"strings.ui.accept_label"`). The sub attribute being set is passes as the second argument to 
-the getter/setter/validator, so that it can fork for sub attribute handling if required.</p>
+<p>Getter, setter and validator attribute configuration functions are only defined for the top level 
+attribute (`"strings"` in this case) and will be invoked when getting/setting sub attribute values. 
+What this means is that getters and setters should always return the massaged value for the top level 
+attribute (e.g. `"strings"`), and not the sub attribute value being set (e.g. `"strings.ui.accept_label"`). 
+The sub attribute being set is passed in as the second argument to the getter/setter/validator, so that it 
+can fork for sub attribute handling if required.</p>
+
+<p>For example:</p>
+
+```
+this.addAttr("strings", {
+    getter : function(val, fullName) {
+
+        // 'fullName' is "strings.errors.e4500"
+        // 'val' is the whole strings hash: { ui : {...}, errors : {...}}.
+
+        // 'path' is ["strings", "errors", "e4500"]
+        var path = fullName.split(".");
+
+        if (path.length > 1) {
+            
+            // Someone's asking for a sub-attribute value
+
+            // Maybe we want to do some special normalization just for this use case.
+            // For example, return a default error message instead of undefined.
+
+            path.shift();
+
+            if (path[0] == "errors") {
+                var leafValue = Y.Object.getValue(val, path);
+
+                if (leafValue === undefined) {
+                    Y.Object.setValue(val, path, "Unknown Error");
+                }
+            }
+        }
+
+        // In either case (sub attribute or not) val is always the full hash for the 'strings' attribute.
+        return val;
+    }
+});
+
+```
+
+

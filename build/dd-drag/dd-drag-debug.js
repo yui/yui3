@@ -1018,13 +1018,13 @@ YUI.add('dd-drag', function(Y) {
             node.detachAll('mouseup');
             node.detachAll('dragstart');
             node.detachAll(Drag.START_EVENT);
-            this.mouseXY = null;
-            this.deltaXY = null;
-            this.startXY = null;
-            this.nodeXY = null;
-            this.lastXY = null;
-            this.actXY = null;
-            this.realXY = null;
+            this.mouseXY = [];
+            this.deltaXY = [];
+            this.startXY = [];
+            this.nodeXY = [];
+            this.lastXY = [];
+            this.actXY = [];
+            this.realXY = [];
         },
         /**
         * @method start

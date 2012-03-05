@@ -2,7 +2,7 @@
      * The File class provides a wrapper for a file pointer, either through an HTML5 
      * implementation or as a reference to a file pointer stored in Flash. The File wrapper 
      * also implements the mechanics for uploading a file and tracking its progress.
-     * @module File
+     * @module file
      */     
     /**
      * The class provides a wrapper for a file pointer.
@@ -66,8 +66,6 @@
         
         _swfEventHandler: function (event) {
           if (event.id === this.get("id")) {
-          console.log("FE:::" + event.id + ":::" + this.get("id") + ":::" + event.type);
-          console.log(event);
           switch (event.type) {
             case "uploadstart":
                  this.fire("uploadstart", {uploader: this.get("uploader")});
@@ -125,6 +123,7 @@
                    break;
 
                 case "error":
+                   var xhr = this.get("xhr");
                    Y.log("An error has occurred: " + status + ", " + statusText);
                    this.fire("uploaderror", {originEvent: event,
                                                   status: xhr.status,
@@ -154,11 +153,8 @@
 
         startUpload: function(url, parameters, fileFieldName) {
          
-         console.log("Starting upload of file " + this.get("id"));
          if (this.get("html5")) {
-            console.log("We are using html5 upload method");
             this._set("bytesUploaded", 0);
-            //console.log ("Initializing xhr");
 
                  this._set("xhr", new XMLHttpRequest());
                  this._set("boundEventHandler", Bind(this._uploadEventHandler, this));
@@ -169,14 +165,9 @@
                      xhrupload = this.get("xhr").upload,
                      boundEventHandler = this.get("boundEventHandler");
 
-         //   console.log ("Appending data to xhr");
-     
             Y.each(parameters, function (value, key) {uploadData.append(key, value);});
             uploadData.append(fileField, this.get("file"));
-            
-          //  console.log ("Adding event listeners");
 
-             
              xhrupload.addEventListener ("progress", boundEventHandler, false);
              xhrupload.addEventListener ("error", boundEventHandler, false);
              xhrupload.addEventListener ("abort", boundEventHandler, false);
@@ -184,26 +175,19 @@
              xhr.addEventListener ("load", boundEventHandler, false); 
              xhr.addEventListener ("readystatechange", boundEventHandler, false);
 
-          //  console.log ("Initiating upload");
 
              xhr.open("POST", url, true);
              xhr.send(uploadData);
 
-          //   console.log(xhr);
              this.fire("uploadstart", {xhr: xhr});
          }
 
          else if (this.get("uploader")) {
-            console.log("Using Flash upload method");
 
             var myUploader = this.get("uploader"),
                 fileField = fileFieldName || "Filedata",
                 id = this.get("id"),
                 params = parameters || null;
-            console.log("The uploader instance is ");
-            console.log(myUploader);
-
-            console.log(id);
 
             this._set("bytesUploaded", 0);
             
@@ -213,7 +197,6 @@
             myUploader.on("uploadcompletedata", this._swfEventHandler, this);
             myUploader.on("uploaderror", this._swfEventHandler, this);
 
-            console.log("Calling upload on the file...");
             myUploader.callSWF("upload", [id, url, params, fileField]);
          }
 

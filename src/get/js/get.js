@@ -525,9 +525,11 @@ Y.Get = Get = {
 
             // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
-            // and Firefox 9+. Note that IE versions <9 fire the DOM 0 "onload"
-            // event, but not "load". All versions of IE fire "onload".
-            cssLoad: !!(ua.gecko ? ua.gecko >= 9 : !ua.webkit),
+            // Firefox 9+, and WebKit 535.24+. Note that IE versions <9 fire the
+            // DOM 0 "onload" event, but not "load". All versions of IE fire
+            // "onload".
+            cssLoad: (!ua.gecko && !ua.webkit) ||
+                ua.gecko >= 9 || ua.webkit >= 535.24,
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -543,6 +545,12 @@ Y.Get = Get = {
         if (!Lang.isArray(urls)) {
             urls = [urls];
         }
+
+        options = Y.merge(this.options, options);
+
+        // Clone the attributes object so we don't end up modifying it by ref.
+        options.attributes = Y.merge(this.options.attributes,
+                options.attributes);
 
         for (i = 0, len = urls.length; i < len; ++i) {
             url = urls[i];
@@ -565,7 +573,6 @@ Y.Get = Get = {
             }
 
             Y.mix(req, options, false, null, 0, true);
-            Y.mix(req, this.options, false, null, 0, true);
 
             // If we didn't get an explicit type for this URL either in the
             // request options or the URL-specific options, try to determine
