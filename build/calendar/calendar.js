@@ -68,6 +68,11 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
   initializer : function () {
     this.plug(Y.Plugin.CalendarNavigator);
+
+
+    this._keyEvents = [];
+    this._highlightedDateNode = null;
+    this._lastSelectedDate = null;
   },
 
   /**
@@ -108,9 +113,6 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     var newNode = this._dateToNode(oDate);
     newNode.focus();
     newNode.addClass(CAL_DAY_HILITED);
-    //this._highlightedDateNode.set("tabIndex", -1);
-
-
   },
 
   /**
@@ -152,6 +154,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
    _focusCalendarCell : function (ev) {
        this._highlightedDateNode = ev.target;
+       ev.stopPropagation();
    },
 
   /**
@@ -159,7 +162,8 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    * @method _focusCalendarGrid
    * @protected
    */ 
-   _focusCalendarGrid : function (ev) {
+   _focusCalendarGrid : function (ev) {     
+       this._unhighlightCurrentDateNode();
        this._highlightedDateNode = null;
    },
 
@@ -174,7 +178,6 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
         keyCode = ev.keyCode,
         dayNum = 0,
         dir = '';
-
 
         switch(keyCode) {
           case KEY_DOWN: 
@@ -211,14 +214,14 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             }
           break;
         }
+ 
+
+      if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
 
       if (curDate == null) {
              curDate = ydate.addMonths(this.get("date"), gridNum);
              dayNum = 0;
       }
- 
-
-        if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
               ev.preventDefault();
           var newDate = ydate.addDays(curDate, dayNum),
               startDate = this.get("date"),
