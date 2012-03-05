@@ -692,6 +692,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-base-deprecated": {
+        "requires": [
+            "recordset-base", 
+            "widget", 
+            "substitute", 
+            "event-mouseenter"
+        ], 
+        "skinnable": true
+    }, 
     "datatable-body": {
         "requires": [
             "datatable-core", 
@@ -716,6 +725,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base", 
             "plugin", 
             "datasource-local"
+        ]
+    }, 
+    "datatable-datasource-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "datasource-local"
+        ]
+    }, 
+    "datatable-deprecated": {
+        "use": [
+            "datatable-base-deprecated", 
+            "datatable-datasource-deprecated", 
+            "datatable-sort-deprecated", 
+            "datatable-scroll-deprecated"
         ]
     }, 
     "datatable-head": {
@@ -747,6 +771,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-scroll-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin"
+        ]
+    }, 
     "datatable-sort": {
         "lang": [
             "en"
@@ -755,6 +785,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base"
         ], 
         "skinnable": true
+    }, 
+    "datatable-sort-deprecated": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "recordset-sort"
+        ]
     }, 
     "datatype": {
         "use": [
@@ -2386,7 +2426,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '4cf046fbf0f29c9bdf1aadccc3ed4325';
+YUI.Env[Y.version].md5 = 'afe9f7b567e32184ab3e2a76593d7ef7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
