@@ -10,13 +10,43 @@ var AppTransitions = Y.App.Transitions;
 function AppTransitionsNative() {}
 
 AppTransitionsNative.prototype = {
+    // -- Protected Properties -------------------------------------------------
+
+    /**
+    Whether the app is currently transitioning its `activeView`.
+
+    @property _transitioning
+    @type Boolean
+    @default false
+    @protected
+    **/
+
+    /**
+    A queue that holds pending calls to `_uiTransitionActiveView()`.
+
+    @property _viewTransitionQueue
+    @type Array
+    @default []
+    @protected
+    **/
+
     // -- Lifecycle Methods ----------------------------------------------------
 
     initializer: function () {
-        Y.Do.before(this._uiTransitionActiveView, this, '_uiSetActiveView');
+        this._transitioning       = false;
+        this._viewTransitionQueue = [];
+
+        Y.Do.before(this._queueActiveView, this, '_uiSetActiveView');
     },
 
     // -- Protected Methods ----------------------------------------------------
+
+    // TODO: API Docs.
+    _dequeueActiveView: function () {
+        var transition = this._viewTransitionQueue.shift();
+
+        transition && this._uiTransitionActiveView.apply(this, transition);
+    },
 
     /**
     Returns a transition object containing a named fx for both `viewIn` and
@@ -24,8 +54,9 @@ AppTransitionsNative.prototype = {
     `oldView`.
 
     @method _getFx
-    @param {View} newView The View being transitioned-in.
-    @param {View} oldView The View being transitioned-out.
+    @param {View} newView The view being transitioned-in.
+    @param {View} oldView The view being transitioned-out.
+    @param {String} transtion The prefered transition to use.
     @return {Object} The transition object containing a named fx for both
       `viewIn` and `viewOut`.
     @protected
@@ -54,6 +85,25 @@ AppTransitionsNative.prototype = {
     },
 
     /**
+    Queues calls to `_uiTransitionActiveView()` to make sure all transitions
+    have a chance to complete.
+
+    This method prevents the default `_uiSetActiveView()` method from running.
+
+    @method _queueActiveView
+    @protected
+    **/
+    _queueActiveView: function () {
+        this._viewTransitionQueue.push(arguments);
+
+        if (!this._transitioning) {
+            this._dequeueActiveView();
+        }
+
+        return new Y.Do.Prevent();
+    },
+
+    /**
     Performs the actual change of the app's `activeView` by attaching the
     `newView` to this app, and detaching the `oldView` from this app using any
     specified `options`.
@@ -77,73 +127,83 @@ AppTransitionsNative.prototype = {
         properties:
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
-      @param {Function} [callback] Optional callback Function to call after the
-        `newView` is ready to use, the function will be passed:
+      @param {Function} [options.callback] Optional callback Function to call
+        after the `newView` is ready to use, the function will be passed:
         @param {View} options.callback.view A reference to the `newView`.
     @protected
     **/
     _uiTransitionActiveView: function (newView, oldView, options) {
         options || (options = {});
 
-        var fx = this._getFx(newView, oldView, options.transition),
+        var callback = options.callback,
             container, transitioning, isChild, isParent, prepend,
-            fxConfig, transitions;
+            fx, fxConfig, transitions;
 
-        // Prevent detaching (thus removing) the view we want to show.
-        // Also hard to animate out and in, the same view. This allows the
-        // default `_uiSetActiveView()` method to run.
-        if (!fx || newView === oldView) {
+        // Quits early when to new and old views are the same.
+        if (newView === oldView) {
+            callback && callback.call(this, newView);
+
+            this._transitioning = false;
+            this._dequeueActiveView();
             return;
         }
+
+        fx       = this._getFx(newView, oldView, options.transition);
+        isChild  = this._isChildView(newView, oldView);
+        isParent = !isChild && this._isParentView(newView, oldView);
+        prepend  = !!options.prepend || isParent;
+
+        // Preforms simply attach/detach of the new and old view respectively
+        // when there's no transition to perform.
+        if (!fx) {
+            this._attachView(newView, prepend);
+            this._detachView(oldView);
+            callback && callback.call(this, newView);
+
+            this._transitioning = false;
+            this._dequeueActiveView();
+            return;
+        }
+
+        this._transitioning = true;
 
         container     = this.get('container');
         transitioning = AppTransitions.CLASS_NAMES.transitioning;
 
         container.addClass(transitioning);
 
-        // Attach the new active view, and insert into the DOM so it can be
-        // transitioned in.
-        isChild  = this._isChildView(newView, oldView);
-        isParent = !isChild && this._isParentView(newView, oldView);
-        prepend  = !!options.prepend || isParent;
-
         this._attachView(newView, prepend);
+
+        // Called when view transitions completed, if none were added this will
+        // run right away.
+        function complete() {
+            this._detachView(oldView);
+            container.removeClass(transitioning);
+            callback && callback.call(this, newView);
+
+            this._transitioning = false;
+            this._dequeueActiveView();
+        }
 
         // Setup a new stack to run the view transitions in parallel.
         transitions = new Y.Parallel({context: this});
         fxConfig    = {
             crossView: !!oldView && !!newView,
+            prepended: prepend
         };
 
         // Transition the new view first to prevent a gap when sliding.
         if (newView && fx.viewIn) {
-            newView.get('container').transition(fx.viewIn, {
-                crossView: !!oldView && !!newView,
-                isNewView: true,
-                prepended: prepend
-            }, transitions.add());
+            newView.get('container')
+                .transition(fx.viewIn, fxConfig, transitions.add());
         }
 
         if (oldView && fx.viewOut) {
-            oldView.get('container').transition(fx.viewOut, {
-                crossView: !!oldView && !!newView,
-                isOldView: true,
-                prepended: prepend
-            }, transitions.add());
+            oldView.get('container')
+                .transition(fx.viewOut, fxConfig, transitions.add());
         }
 
-        // Called when view transitions completed, if none were added this will
-        // run right away.
-        transitions.done(function () {
-            var callback = options.callback;
-
-            this._detachView(oldView);
-            container.removeClass(transitioning);
-
-            callback && callback.call(this, newView);
-        });
-
-        return new Y.Do.Prevent();
+        transitions.done(complete);
     }
 };
 
