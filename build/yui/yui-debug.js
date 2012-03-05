@@ -255,6 +255,7 @@ proto = {
             config = this.config,
             mods = config.modules,
             groups = config.groups,
+            aliases = config.aliases,
             loader = this.Env._loader;
 
         for (name in o) {
@@ -262,6 +263,8 @@ proto = {
                 attr = o[name];
                 if (mods && name == 'modules') {
                     clobber(mods, attr);
+                } else if (aliases && name == 'aliases') {
+                    clobber(aliases, attr);
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
@@ -1632,15 +1635,35 @@ overwriting other scripts configs.
  *      modules: {
  *          mymod1: {
  *              requires: ['node'],
- *              fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ *              fullpath: '/mymod1/mymod1.js'
  *          },
  *          mymod2: {
  *              requires: ['mymod1'],
- *              fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
- *          }
+ *              fullpath: '/mymod2/mymod2.js'
+ *          },
+ *          mymod3: '/js/mymod3.js',
+ *          mycssmod: '/css/mycssmod.css'
  *      }
  *
+ *
  * @property modules
+ * @type object
+ */
+
+/**
+ * Aliases are dynamic groups of modules that can be used as
+ * shortcuts.
+ *
+ *      YUI({
+ *          aliases: {
+ *              davglass: [ 'node', 'yql', 'dd' ],
+ *              mine: [ 'davglass', 'autocomplete']
+ *          }
+ *      }).use('mine', function(Y) {
+ *          //Node, YQL, DD &amp; AutoComplete available here..
+ *      });
+ *
+ * @property aliases
  * @type object
  */
 
@@ -2524,9 +2547,7 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject,
-
-    win = Y.config.win;
+    isObject = Y.Lang.isObject;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2585,11 +2606,15 @@ in both Safari and MobileSafari browsers:
 @since 3.5.0
 **/
 Y.getLocation = function () {
-    // The reference to the `window` object created outside this function's
-    // scope is safe to hold on to, but it is not safe to do so with the
-    // `location` object. The WebKit engine used in Safari and MobileSafari will
-    // "disconnect" the `location` object from the `window` when a page is
-    // restored from back/forward history cache.
+    // It is safer to look this up every time because yui-base is attached to a
+    // YUI instance before a user's config is applied; i.e. `Y.config.win` does
+    // not point the correct window object when this file is loaded.
+    var win = Y.config.win;
+
+    // It is not safe to hold a reference to the `location` object outside the
+    // scope in which it is being used. The WebKit engine used in Safari and
+    // MobileSafari will "disconnect" the `location` object from the `window`
+    // when a page is restored from back/forward history cache.
     return win && win.location;
 };
 
@@ -3558,7 +3583,7 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","model","model-list","router","view"],
+    "app": ["app-base","app-transitions","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -3567,7 +3592,7 @@ YUI.Env.aliases = {
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-scroll","datatable-datasource","datatable-sort"],
+    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -4125,9 +4150,11 @@ Y.Get = Get = {
 
             // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
-            // and Firefox 9+. Note that IE versions <9 fire the DOM 0 "onload"
-            // event, but not "load". All versions of IE fire "onload".
-            cssLoad: !!(ua.gecko ? ua.gecko >= 9 : !ua.webkit),
+            // Firefox 9+, and WebKit 535.24+. Note that IE versions <9 fire the
+            // DOM 0 "onload" event, but not "load". All versions of IE fire
+            // "onload".
+            cssLoad: (!ua.gecko && !ua.webkit) ||
+                ua.gecko >= 9 || ua.webkit >= 535.24,
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -4943,8 +4970,14 @@ Y.mix(Y.namespace('Features'), {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.py */
 var add = Y.Features.add;
-// graphics-canvas-default
+// io-nodejs
 add('load', '0', {
+    "name": "io-nodejs", 
+    "trigger": "io-base", 
+    "ua": "nodejs"
+});
+// graphics-canvas-default
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4956,7 +4989,7 @@ add('load', '0', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '1', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -4975,7 +5008,7 @@ add('load', '1', {
     "trigger": "autocomplete-list"
 });
 // graphics-svg
-add('load', '2', {
+add('load', '3', {
     "name": "graphics-svg", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4988,14 +5021,14 @@ add('load', '2', {
     "trigger": "graphics"
 });
 // editor-para-ie
-add('load', '3', {
+add('load', '4', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
 // graphics-vml-default
-add('load', '4', {
+add('load', '5', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5005,7 +5038,7 @@ add('load', '4', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '5', {
+add('load', '6', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5018,7 +5051,7 @@ add('load', '5', {
     "trigger": "graphics"
 });
 // history-hash-ie
-add('load', '6', {
+add('load', '7', {
     "name": "history-hash-ie", 
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
@@ -5029,7 +5062,7 @@ add('load', '6', {
     "trigger": "history-hash"
 });
 // transition-timer
-add('load', '7', {
+add('load', '8', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5045,7 +5078,7 @@ add('load', '7', {
     "trigger": "transition"
 });
 // dom-style-ie
-add('load', '8', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5076,7 +5109,7 @@ add('load', '8', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '9', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5087,13 +5120,13 @@ add('load', '9', {
     "trigger": "selector"
 });
 // widget-base-ie
-add('load', '10', {
+add('load', '11', {
     "name": "widget-base-ie", 
     "trigger": "widget-base", 
     "ua": "ie"
 });
 // event-base-ie
-add('load', '11', {
+add('load', '12', {
     "name": "event-base-ie", 
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
@@ -5102,7 +5135,7 @@ add('load', '11', {
     "trigger": "node-base"
 });
 // dd-gestures
-add('load', '12', {
+add('load', '13', {
     "name": "dd-gestures", 
     "test": function(Y) {
     return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
@@ -5110,13 +5143,28 @@ add('load', '12', {
     "trigger": "dd-drag"
 });
 // scrollview-base-ie
-add('load', '13', {
+add('load', '14', {
     "name": "scrollview-base-ie", 
     "trigger": "scrollview-base", 
     "ua": "ie"
 });
+// app-transitions-native
+add('load', '15', {
+    "name": "app-transitions-native", 
+    "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+    "trigger": "app-transitions"
+});
 // graphics-canvas
-add('load', '14', {
+add('load', '16', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5128,7 +5176,7 @@ add('load', '14', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '15', {
+add('load', '17', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -6247,6 +6295,14 @@ Y.Loader.prototype = {
                     } else if (i == 'modules') {
                         // add a hash of module definitions
                         oeach(val, self.addModule, self);
+                    } else if (i === 'aliases') {
+                        oeach(val, function(use, name) {
+                            YUI.Env.aliases[name] = use;
+                            self.addModule({
+                                name: name,
+                                use: use
+                            });
+                        });
                     } else if (i == 'gallery') {
                         this.groups.gallery.update(val);
                     } else if (i == 'yui2' || i == '2in3') {
@@ -8181,6 +8237,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -8197,7 +8254,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app-transitions": {
         "requires": [
-            "app-base", 
+            "app-base"
+        ]
+    }, 
+    "app-transitions-css": {
+        "type": "css"
+    }, 
+    "app-transitions-native": {
+        "condition": {
+            "name": "app-transitions-native", 
+            "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+            "trigger": "app-transitions"
+        }, 
+        "requires": [
+            "app-transitions", 
+            "app-transitions-css", 
             "parallel", 
             "transition"
         ]
@@ -8460,9 +8540,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "calendar-base", 
@@ -8472,9 +8556,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "widget", 
@@ -8497,15 +8585,26 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
+            "event-touch", 
             "widget", 
             "widget-position", 
             "widget-stack", 
             "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -8597,6 +8696,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "optional": [
             "cssreset", 
             "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-base": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-units": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "requires": [
+            "cssgrids-base"
         ], 
         "type": "css"
     }, 
@@ -8726,9 +8842,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-column-widths", 
             "datatable-message", 
             "datatable-mutable", 
-            "datatable-scroll", 
-            "datatable-datasource", 
-            "datatable-sort"
+            "datatable-sort", 
+            "datatable-datasource"
         ]
     }, 
     "datatable-base": {
@@ -9581,6 +9696,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
+    "io-nodejs": {
+        "condition": {
+            "name": "io-nodejs", 
+            "trigger": "io-base", 
+            "ua": "nodejs"
+        }, 
+        "requires": [
+            "io-base"
+        ]
+    }, 
     "io-queue": {
         "requires": [
             "io-base", 
@@ -10225,6 +10350,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
             "file", 
@@ -10303,12 +10429,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
@@ -10331,7 +10455,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-build", 
             "event-outside", 
             "widget"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-parent": {
         "requires": [
@@ -10406,7 +10531,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6b41a1c98d674f2873f064d79c84ad15';
+YUI.Env[Y.version].md5 = 'c4db5e87ba2cdfd2ccf6e8a6f43b13a7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

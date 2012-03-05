@@ -99,6 +99,12 @@
         */
         _resolveChangedNode: function(n) {
             var inst = this.getInstance(), lc, lc2, found;
+            if (n && n.test(BODY)) {
+                var sel = new inst.EditorSelection();
+                if (sel && sel.anchorNode) {
+                    n = sel.anchorNode;
+                }
+            }
             if (inst && n && n.test('html')) {
                 lc = inst.one(BODY).one(LAST_CHILD);
                 while (!found) {
@@ -154,6 +160,7 @@
             }
 
             e.changedNode = this._resolveChangedNode(e.changedNode);
+
 
             /*
             * @TODO

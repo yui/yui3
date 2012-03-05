@@ -10,7 +10,10 @@
 
 
 var  substitute  = Y.substitute,
-     UploaderQueue = Y.Uploader.Queue;
+     UploaderQueue = Y.Uploader.Queue,
+     getCN                 = Y.ClassNameManager.getClassName,
+     UPLOADER              = 'uploader',
+     SELECT_FILES          = getCN(UPLOADER, 'selectfiles-button');
 
 
     /**
@@ -58,6 +61,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @protected
     */
 	_swfContainerId: null,
+
+
+
+    _buttonState: "up",
+    _buttonFocus: false,
 
     // Y.UploaderFlash prototype
 
@@ -199,7 +207,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
 	renderUI : function () {
 	   var contentBox = this.get('contentBox');
-	   contentBox.append(this.get("selectFilesButton"));
+       var selFilesButton = this.get("selectFilesButton");
+       selFilesButton.setStyles({width: "100%", height: "100%"});
+
+	   contentBox.append(selFilesButton);
 	   contentBox.append(Y.Node.create(substitute(UploaderFlash.FLASH_CONTAINER, 
 		                                          {swfContainerId: this._swfContainerId})));
 	   var flashContainer = Y.one("#" + this._swfContainerId);
@@ -230,7 +241,80 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 		}, this);
         
 		this._swfReference.on("fileselect", this._updateFileList, this);
+
+        this.after("tabElementsChange", this._attachTabElements);
+        this._attachTabElements();
+
+        this._swfReference.on("mouseenter", function () {
+            this._setButtonClass("hover", true);
+            if (this._buttonState == "down") {
+                this._setButtonClass("active", true);
+            }
+        }, this);
+        this._swfReference.on("mouseleave", function () {
+            this._setButtonClass("hover", false);
+            this._setButtonClass("active", false);
+            
+        }, this);
+        this._swfReference.on("mousedown", function () {
+            this._buttonState = "down";
+            this._setButtonClass("active", true);
+        }, this);
+        this._swfReference.on("mouseup", function () {
+            console.log("mouseUP!");
+            this._buttonState = "up";
+            this._setButtonClass("active", false);
+        }, this);
+        this._swfReference.on("click", function () {
+            this._buttonFocus = true;
+            this._setButtonClass("focus", true);
+        }, this);
 	},
+
+    _setButtonClass : function (state, add) {
+        if (add) {
+            this.get("selectFilesButton").addClass(this.get("buttonClassNames")[state]);
+        }
+        else {
+            this.get("selectFilesButton").removeClass(this.get("buttonClassNames")[state]);
+        }
+    },
+
+    _attachTabElements : function () {
+        if (this.get("tabElements") != null) {
+            var fromElement = Y.one(this.get("tabElements").from);
+            var toElement = Y.one(this.get("tabElements").to);
+
+            fromElement.on("keydown", function (ev) { 
+                                                      if (ev.keyCode == 9 && !ev.shiftKey) {
+                                                          ev.preventDefault();
+                                                          this._swfReference._swf.setAttribute("tabindex", 0); 
+                                                          this._swfReference._swf.setAttribute("role", "button");
+                                                          this._swfReference._swf.setAttribute("aria-label", this.get("selectButtonLabel"));
+                                                          this._swfReference._swf.focus();
+                                                          this._buttonFocus = true;
+                                                          this._setButtonClass("focus", true);
+
+                                                      }
+                                                    }, this);
+            toElement.on("keydown", function (ev) { 
+                                                      if (ev.keyCode == 9 && ev.shiftKey) {
+                                                          ev.preventDefault();
+                                                          this._swfReference._swf.setAttribute("tabindex", 0); 
+                                                          this._swfReference._swf.setAttribute("role", "button");
+                                                          this._swfReference._swf.setAttribute("aria-label", this.get("selectButtonLabel"));
+                                                          this._swfReference._swf.focus();
+                                                          this._buttonFocus = true;
+                                                          this._setButtonClass("focus", true);
+                                                      }
+                                                    }, this);
+
+            this._swfReference.on("tabback", function (ev) {fromElement.focus();}, this);
+            this._swfReference.on("tabforward", function (ev) {toElement.focus();}, this);
+
+            this._swfReference._swf.on("blur", function (ev) {this._buttonFocus = false; this._setButtonClass("focus", false);}, this);
+        }
+    },
 
 
    /**
@@ -317,6 +401,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     */
 	FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; width:100%; height:100%'></div>",
 
+    SELECT_FILES_BUTTON: "<button type='button' class='yui3-button'>{selectButtonLabel}</button>",
+
     /**
      * The identity of the widget.
      *
@@ -340,10 +426,24 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
 	ATTRS: {
 
+        buttonClassNames: {
+            value: {
+                "hover": "yui3-button-hover",
+                "active": "yui3-button-active",
+                "disabled": "yui3-button-disabled",
+                "focus": "yui3-button-selected"
+            }
+        },
+
+        selectButtonLabel: {
+            value: "Select Files"
+        },
+
         errorAction: {
             value: "continue",
             validator: function (val, name) {
-                 return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           }
+                 return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           
+             }
         },
 
         /**
@@ -355,7 +455,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default A standard HTML button.
          */
 		selectFilesButton : {
-			value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
+			valueFn: function () {
+                return Y.Node.create(substitute(Y.UploaderFlash.SELECT_FILES_BUTTON, {selectButtonLabel: this.get("selectButtonLabel")}));
+            }
 		},
 
         /**
@@ -475,6 +577,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          */
         swfURL: {
         	value: "assets/flashuploader.swf"
+        },
+
+        tabElements: {
+            value: null
         }
 	}
 });

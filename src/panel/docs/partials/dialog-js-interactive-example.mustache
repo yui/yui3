@@ -20,6 +20,13 @@
     
     
     Y.one('.btn-show').on('click', function(){
+        // if page is refreshed, radios stay selected, but message icon needs to by sync'ed.
+        // this is for the example only.
+        Y.all('#radios input').each(function (o, i) {
+            if (o.get('checked') === true){
+                Y.one('#dialog .message').set('className', 'message ' + o.getAttribute('value'));
+            }
+        });
         dialog.callback = doSomething; // if you want a callback, you must add it every time, because on-hide it's removed
         dialog.show();
     });

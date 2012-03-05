@@ -73,6 +73,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -89,7 +90,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "app-transitions": {
         "requires": [
-            "app-base", 
+            "app-base"
+        ]
+    }, 
+    "app-transitions-css": {
+        "type": "css"
+    }, 
+    "app-transitions-native": {
+        "condition": {
+            "name": "app-transitions-native", 
+            "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+            "trigger": "app-transitions"
+        }, 
+        "requires": [
+            "app-transitions", 
+            "app-transitions-css", 
             "parallel", 
             "transition"
         ]
@@ -352,9 +376,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "calendar-base", 
@@ -364,9 +392,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "widget", 
@@ -389,15 +421,26 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
+            "event-touch", 
             "widget", 
             "widget-position", 
             "widget-stack", 
             "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -489,6 +532,23 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "optional": [
             "cssreset", 
             "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-base": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-units": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "requires": [
+            "cssgrids-base"
         ], 
         "type": "css"
     }, 
@@ -618,9 +678,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-column-widths", 
             "datatable-message", 
             "datatable-mutable", 
-            "datatable-scroll", 
-            "datatable-datasource", 
-            "datatable-sort"
+            "datatable-sort", 
+            "datatable-datasource"
         ]
     }, 
     "datatable-base": {
@@ -1473,6 +1532,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     }, 
+    "io-nodejs": {
+        "condition": {
+            "name": "io-nodejs", 
+            "trigger": "io-base", 
+            "ua": "nodejs"
+        }, 
+        "requires": [
+            "io-base"
+        ]
+    }, 
     "io-queue": {
         "requires": [
             "io-base", 
@@ -2117,6 +2186,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
             "file", 
@@ -2195,12 +2265,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
@@ -2223,7 +2291,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base-build", 
             "event-outside", 
             "widget"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-parent": {
         "requires": [
@@ -2298,7 +2367,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6b41a1c98d674f2873f064d79c84ad15';
+YUI.Env[Y.version].md5 = 'c4db5e87ba2cdfd2ccf6e8a6f43b13a7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

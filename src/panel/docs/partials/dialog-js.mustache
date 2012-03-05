@@ -3,35 +3,42 @@
         width      : 410,
         zIndex     : 6,
         centered   : true,
-//        modal      : true, // uncomment for modal behavior
+        modal      : false, // modal behavior
         srcNode    : '#dialog',
         render     : true,
-        buttons: [
-            {
-                value  : 'Cancel',
-                section: Y.WidgetStdMod.FOOTER,
-                action : function (e) {
-                    e.preventDefault();
-                    dialog.hide();
-                    // the callback is not executed, and is
-                    // callback reference removed, so it won't persist
-                    this.callback = false;
+        visible    : false, // make visible explicitly with .show()
+        buttons    : {
+            footer: [
+                {
+                    name  : 'cancel',
+                    label : 'Cancel',
+                    action: 'onCancel'
+                },
+
+                {
+                    name     : 'proceed',
+                    label    : 'OK',
+                    action   : 'onOK'
                 }
-            },
-            {
-                value  : 'OK',
-                section: Y.WidgetStdMod.FOOTER,
-                action : function (e) {
-                    e.preventDefault();
-                    dialog.hide();
-                    // code that executes the user confirmed action goes here 
-                    if(this.callback){
-                       this.callback();
-                    }
-                    // callback reference removed, so it won't persist
-                    this.callback = false;
-                }
-            }
-        ]
+            ]
+        }
     });
-    
+
+    dialog.onCancel = function (e) {
+        e.preventDefault();
+        this.hide();
+        // the callback is not executed, and is
+        // callback reference removed, so it won't persist
+        this.callback = false;
+    }
+
+    dialog.onOK = function (e) {
+        e.preventDefault();
+        this.hide();
+        // code that executes the user confirmed action goes here 
+        if(this.callback){
+           this.callback();
+        }
+        // callback reference removed, so it won't persist
+        this.callback = false;
+    }

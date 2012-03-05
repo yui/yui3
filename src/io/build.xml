@@ -9,6 +9,7 @@
             <ant antfile="io-form.xml" target="@{target}"/>
             <ant antfile="io-upload-iframe.xml" target="@{target}"/>
             <ant antfile="io-queue.xml" target="@{target}"/>
+            <ant antfile="io-nodejs.xml" target="@{target}"/>
         </sequential>
     </macrodef>
     <target name="local">

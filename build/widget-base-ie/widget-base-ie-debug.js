@@ -22,8 +22,8 @@ Y.Widget.prototype._uiSizeCB = function(expand) {
         cb = this.get(CONTENT_BOX),
         borderBoxSupported = this._bbs;
 
-    if(borderBoxSupported === undefined) {
-        this._bbs = borderBoxSupported = !(IE < 8 && bb.get("ownerDocument").get("compatMode") != "BackCompat"); 
+    if (borderBoxSupported === undefined) {
+        this._bbs = borderBoxSupported = !(IE && IE < 8 && bb.get("ownerDocument").get("compatMode") != "BackCompat"); 
     }
 
     if (borderBoxSupported) {

@@ -78,8 +78,8 @@
 		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the button that is viewable is the close button
-		    	Y.Assert.areEqual(buttons[0].type, "close");
-		    	Y.Assert.areEqual(buttons.length, 1);
+		    	Y.Assert.areEqual(this.panel.getButton('close').getData('name'), "close");
+		    	Y.Assert.areEqual(buttons.header.length, 1);
 		    	Y.Assert.isTrue(hd.hasChildNodes());
 
 		    	//there is no mask
@@ -108,8 +108,8 @@
 		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the button that is viewable is the close button
-		    	Y.Assert.areEqual(buttons[0].type, "close");
-		    	Y.Assert.areEqual(buttons.length, 1);
+		    	Y.Assert.areEqual(this.panel.getButton('close').getData('name'), "close");
+		    	Y.Assert.areEqual(buttons.header.length, 1);
 		    	Y.Assert.isTrue(hd.hasChildNodes());
 
 
@@ -148,7 +148,7 @@
 		    	var bb = this.panel.get('boundingBox');
 		    	var buttons = this.panel.get('buttons');
 		    	var hd = Y.one('#panelContent .yui3-widget-hd');
-		    	var wrap = Y.one('#panelContent .yui3-widget-hd .yui3-widget-button-wrapper');
+		    	var wrap = Y.one('#panelContent .yui3-widget-hd .yui3-widget-buttons');
 		    	var btns = Y.all('.yui3-button');
 
 		    	//panel is visible
@@ -156,8 +156,8 @@
 		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the correct buttons are viewable
-		    	Y.Assert.isUndefined(buttons[0].type);
-		    	Y.Assert.areEqual(buttons.length, 2);
+		    	Y.Assert.isUndefined(buttons.footer);
+		    	Y.Assert.areEqual(buttons.header.length, 2);
 		    	Y.Assert.isTrue(hd.hasChildNodes());
 		    	Y.Assert.isTrue(wrap.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 2);
@@ -199,25 +199,23 @@
 		    	var buttons = this.panel.get('buttons');
 		    	var hd = Y.one('#panelContent .yui3-widget-hd');
 		    	var ft = Y.one('#panelContent .yui3-widget-ft');
-		    	var wrap = Y.one('#panelContent .yui3-widget-ft .yui3-widget-button-wrapper');
+		    	var wrap = Y.one('#panelContent .yui3-widget-ft .yui3-widget-buttons');
 		    	var btns = Y.all('.yui3-button');
-		    	var btnspan = Y.all('.yui3-button-content');
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
 		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the correct buttons are viewable
-		    	Y.Assert.isUndefined(buttons[0].type);
-		    	Y.Assert.areEqual(buttons.length, 2);
+		    	Y.Assert.isUndefined(buttons.header);
+		    	Y.Assert.areEqual(buttons.footer.length, 2);
 		    	Y.Assert.isNull(hd);
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.isTrue(wrap.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 2);
-		    	Y.Assert.areEqual(btnspan.size(), 2);
 
-		    	Y.Assert.areEqual(btnspan.item(0).get('text'), "ft button 1");
-		    	Y.Assert.areEqual(btnspan.item(1).get('text'), "ft button 2");
+		    	Y.Assert.areEqual(btns.item(0).get('text'), "ft button 1");
+		    	Y.Assert.areEqual(btns.item(1).get('text'), "ft button 2");
 
 		    	//mask is not visible
 		    	var mask = Y.one('.yui3-widget-mask');
@@ -239,17 +237,15 @@
 		    	var buttons = this.panel.get('buttons');
 		    	var hd = Y.one('#panelContent .yui3-widget-hd');
 		    	var ft = Y.one('#panelContent .yui3-widget-ft');
-		    	var wrap = Y.one('#panelContent .yui3-widget-ft .yui3-widget-button-wrapper');
 		    	var btns = Y.all('.yui3-button');
-		    	var btnspan = Y.all('.yui3-button-content');
 
 		    	//panel is visible
 		    	Y.Assert.areEqual(this.panel.get('visible'), true);
 		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
 
 		    	//the correct buttons are viewable - only the close button in this case
-		    	Y.Assert.areEqual(buttons[0].type, "close");
-		    	Y.Assert.areEqual(buttons.length, 1);
+		    	Y.Assert.areEqual(buttons.header[0].getData('name'), "close");
+		    	Y.Assert.areEqual(buttons.header.length, 1);
 		    	Y.Assert.isNull(ft);
 		    	Y.Assert.areEqual(btns.size(), 1);
 
@@ -264,14 +260,11 @@
 
 		    	ft = Y.one('#panelContent .yui3-widget-ft');
 		    	btns = Y.all('.yui3-button');
-		    	btnspan = Y.all('.yui3-button-content');
 
 		    	//test to make sure new button is visible
 		    	//there should be 2 buttons, the original [x] and the new footer button
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 2);
-		    	Y.Assert.areEqual(btnspan.size(), 2);
-		    	Y.Assert.areEqual(btnspan.item(1).get('text'), "ft button 1");
 
 		    	//add the close button in to the header
 		    	this.panel.addButton({
@@ -281,13 +274,10 @@
 		    	hd = Y.one('#panelContent .yui3-widget-hd');
 		    	ft = Y.one('#panelContent .yui3-widget-ft');
 		    	btns = Y.all('.yui3-button');
-		    	btnspan = Y.all('.yui3-button-content');
 
 		    	Y.Assert.isTrue(hd.hasChildNodes());
 		    	Y.Assert.isTrue(ft.hasChildNodes());
 		    	Y.Assert.areEqual(btns.size(), 3);
-		    	Y.Assert.areEqual(btnspan.size(), 3);
-		    	Y.Assert.areEqual(btnspan.item(2).get('text'), "ft button 1"); //the last one should be the footer since the first 2 are the header [x] buttons
 
 		    	//mask is visible
 		    	var mask = Y.one('.yui3-widget-mask');

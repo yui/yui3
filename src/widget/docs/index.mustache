@@ -16,36 +16,41 @@
 
 <img src="{{componentAssets}}/widget-class-diagram.png" alt="The widget class diagram" width="436" height="357">
 
-<p>`Widget` provides the foundation class on which all YUI 3 widgets will be built. 
+<p>`Widget` provides the foundation class on which all YUI 3 widgets will be built.
 Although instantiable and usable by itself, it is designed to be extended to create widgets which address
 specific user interaction patterns.</p>
 
-<p>The `Widget` class extends <a href="{{apiDocs}}/Base.html">`Base`</a>. Therefore it provides 
+<p>The `Widget` class extends <a href="{{apiDocs}}/Base.html">`Base`</a>. Therefore it provides
 the same `Attribute`, `Event.Provider` and `Plugin.Host` support as <a href="../base/index.html#extendbase">`Base`</a> does.
 
 <p>It adds the following core functionality:</p>
 
 <dl>
-    <dt><strong>Basic Attributes</strong></dt> 
-    <dd>It introduces a common set of attributes that will be available on any widget. 
+    <dt><strong>Basic Attributes</strong></dt>
+    <dd>It introduces a common set of attributes that will be available on any widget.
     For example, `boundingBox`, `contentBox`, `width`, `height`, `visible`, `focused` and `disabled`.</dd>
 
     <dt><strong>Render Lifecycle Phase</strong></dt>
-    <dd>It adds the `render` lifecycle method (and event) to the `init` and `destroy` 
+    <dd>It adds the `render` lifecycle method (and event) to the `init` and `destroy`
     lifecycle methods provided by `Base`.</dd>
 
-    <dt><strong>Abstract Rendering Methods</strong></dt> 
-    <dd>It establishes abstract methods `renderUI`, `bindUI` and `syncUI` to 
+    <dt><strong>Abstract Rendering Methods</strong></dt>
+    <dd>It establishes abstract methods `renderUI`, `bindUI` and `syncUI` to
     provide consistent entry points for rendering across all widgets.</dd>
 
     <dt><strong>Consistent Progressive Enhancement</strong></dt>
-    
+
     <dd>It provides a common entry point for <a href="http://en.wikipedia.org/wiki/Progressive_Enhancement">Progressive Enhancement</a> during widget initialization and also provides
     the infrastructure to hide progressively enhanced markup to avoid flashes of unstyled content.</dd>
 
     <dt><strong>String Localization</strong></dt>
-    <dd>The `strings` attribute provides client-side string localization support, which when used with the <a href="../intl/index.html">Internationalization</a> utility
-    allows localized strings for your widget to be shipped separately from the core code.</dd>
+
+    <dd>
+        The `strings` attribute provides a consistent API for string management in all Widgets. 
+        Widget developers can define strings for their widget in an external language bundle when packaging their
+        widgets as a YUI module, and use the Internationalization utility to pull in strings for a given locale 
+        as demonstrated in the <a href="../intl/intl-basic.html">Language Resource Bundles</a> example. 
+    </dd>
 </ul>
 
 <h3 id="attributes">Basic Attributes</h3>
@@ -63,26 +68,26 @@ the same `Attribute`, `Event.Provider` and `Plugin.Host` support as <a href="../
     <tr><td>`visible`</td><td>Flag, indicating whether or not the widget is visible. `Widget` marks the bounding box with a "hidden" class. The hidden implementation is left to the CSS delivered by the specific widget class (viz. whether or not the widget uses visibility, display or off screen positioning to actually hide the widget).</td></tr>
     <tr><td>`height`</td><td>String with units, or a number, representing the height of the widget. If a number is provided, the default unit, defined by `Widget`'s `DEF_UNIT`, property is used. The height is applied to the bounding box.</td></tr>
     <tr><td>`width`</td><td>String with units, or a number, representing the width of the widget. If a number is provided, the default unit, defined by `Widget`'s `DEF_UNIT`, property is used. The width is applied to the bounding box.</td></tr>
-    <tr><td>`strings`</td><td>The collection of strings used to label elements of the widget's UI.</td></tr>
+    <tr><td>`strings`</td><td>The collection of strings used to label elements of the widget's UI. These should ideally be packaged separately from the Widget code, as discussed in the <a href="../intl/intl-basic.html">Language Resource Bundles</a> example.</td></tr>
 </table>
 
 <h3 id="rendering">Rendering Methods</h3>
 
-<p>`Widget` adds the `render` method/lifecycle phase to the 
+<p>`Widget` adds the `render` method/lifecycle phase to the
 `init` and `destroy` phases established by Base.</p>
 
 <p>
-The `render` method establishes the point at which the widget lays down its UI by adding elements to (or modifying existing elements in) the DOM and 
-setting up listeners to activate that UI. Having a distinct rendering phase promotes widget classes that separate state and corresponding logic 
+The `render` method establishes the point at which the widget lays down its UI by adding elements to (or modifying existing elements in) the DOM and
+setting up listeners to activate that UI. Having a distinct rendering phase promotes widget classes that separate state and corresponding logic
 from the way the widget UI is displayed. This separation tends to allow the widget's state to be safely modified and queried before it is displayed or rendered to the DOM.
 </p>
 
-<p>Additionally, this separation of concerns leads to code being split into methods that manipulate the widget's state or handle core "app" logic versus methods which work with the DOM.  
+<p>Additionally, this separation of concerns leads to code being split into methods that manipulate the widget's state or handle core "app" logic versus methods which work with the DOM.
 Following this practice makes it easier to customize and test one area or the other.</p>
 
 <h4>The Lifecycle Methods: `init, destroy, render`</h4>
 
-<p>As with `init` and `destroy`, the `render` method on `Widget` is final and delegates to the 
+<p>As with `init` and `destroy`, the `render` method on `Widget` is final and delegates to the
 widget implementation's `renderer` method to perform the actual rendering work:</p>
 
 <dl>
@@ -108,9 +113,9 @@ widget implementation's `renderer` method to perform the actual rendering work:<
 <dl>
     <dt><a href="{{apiDocs}}/Widget.html#method_render">`render`</a>:</dt>
     <dd>
-        <p>Invokes the `renderer` method for the Widget instance. Unlike the `initializer` and `destructor`, this method 
+        <p>Invokes the `renderer` method for the Widget instance. Unlike the `initializer` and `destructor`, this method
         is not chained automatically for the widget's class hierarchy.</p>
-        
+
         <p>
         The `render` method accepts a `parentNode` argument, which can be used to specify an existing node in the document, where the widget should be appended, when rendered.
         If the widget's contentBox or boundingBox don't already exist in the document, and the `parentNode` argument is not provided, the widget is inserted as the first child of the document's body element (we <em>insert</em> as the default behavior, to avoid IE6 "Operation Aborted" errors).
@@ -146,7 +151,7 @@ The intended role of each of these methods is described below, and most widgets 
 </dl>
 <dl>
     <dt><a href="{{apiDocs}}/Widget.html#method_bindUI">`bindUI`</a></dt>
-    <dd>This method is responsible for attaching event listeners which bind the UI to the widget state. 
+    <dd>This method is responsible for attaching event listeners which bind the UI to the widget state.
     These listeners are generally attribute change listeners &mdash; used to update the state of the UI in response to changes in the attribute's value.
     It also attaches DOM event listeners to the UI to map user interactions to the widget's API.</dd>
 </dl>
@@ -164,17 +169,17 @@ The intended role of each of these methods is described below, and most widgets 
 ```
 MyWidget.HTML_PARSER = {
 
-     // Set attributes which are Node references 
+     // Set attributes which are Node references
      // using selector syntax (uses node.one())
      titleNode: "span.yui3-title",
 
-     // Set attributes which are multiple Node references 
-     // using selector syntax (uses node.all()) 
+     // Set attributes which are multiple Node references
+     // using selector syntax (uses node.all())
      itemNodes: ["li.yui3-listitem"],
 
-     // Set attributes using a parse function. Execution context 
+     // Set attributes using a parse function. Execution context
      // is set to the widget instance
-     label: function(srcNode) {    
+     label: function(srcNode) {
         return srcNode.one("input.yui3-title").get("innerHTML");
      },
 
@@ -190,7 +195,7 @@ MyWidget.HTML_PARSER = {
 ```
 
 <p>The `HTML_PARSER` property is evaluated when the Widget class' `initializer` method is invoked (so Widget sub-classes receive the configuration
-object passed into the constructor). The object is iterated, to create a filled out configuration object for the widget, based on the content the user points to using the `srcNode` attribute. 
+object passed into the constructor). The object is iterated, to create a filled out configuration object for the widget, based on the content the user points to using the `srcNode` attribute.
 For example, the parser definition above may lead to the following object literal when evaluated:</p>
 
 ```
@@ -212,7 +217,7 @@ For example, the parser definition above may lead to the following object litera
 
 <ol>
     <li> If JavaScript <em>is not</em> enabled the content provided by the markup for the widget, should be visible and accessible.</li>
-    <li> If JavaScript <em>is enabled</em>, the widget source markup should be hidden as early as possible, to avoid the user seeing the flash of 
+    <li> If JavaScript <em>is enabled</em>, the widget source markup should be hidden as early as possible, to avoid the user seeing the flash of
     unstyled content while the widget's JavaScript and CSS components are delivered to the page and the widget is rendered.</li>
     <li> Once the widget is fully rendered it should then be displayed.</li>
 </ol>
@@ -221,22 +226,22 @@ For example, the parser definition above may lead to the following object litera
 
 <ul>
     <li> <p>The <a href="../yui/index.html">YUI</a> seed file will stamp the documentElement (the &lt;HTML&gt; element) with a class of `'yui3-js-enabled'`.</p></li>
-    <li> <p>Application developers can then add a class name representing the &quot;loading&quot; state, to the widget's content (e.g. `'yui3-widget-loading'`).</p><p>This class can be used in combination with the &quot;yui3-js-enabled&quot; class name to 
+    <li> <p>Application developers can then add a class name representing the &quot;loading&quot; state, to the widget's content (e.g. `'yui3-widget-loading'`).</p><p>This class can be used in combination with the &quot;yui3-js-enabled&quot; class name to
          create style rules to hide the widget content while its JavaScript is being loaded.</p>
 
-         <p>                    
+         <p>
          ```
          .yui3-js-enabled .yui3-widget-loading {
             display: none;
          }
-        
+
          .yui3-js-enabled .yui3-overlay-loading {
             /* Hide overlay markup offscreen */
             position:absolute;
             top:-1000em;
             left:-1000em;
          }
-         ```        
+         ```
          </p>
 
          <p>As shown in the example above, there is support for use of both a generic widget and type-specific widget class name by default (&quot;yui3-widget-loading&quot; and &quot;yui3-tabview-loading&quot;).</p>
@@ -246,7 +251,7 @@ For example, the parser definition above may lead to the following object litera
 
 <h3 id="markup">Rendered Markup</h3>
 
-<p>The `Widget` class establishes a common markup format for all widgets, through its <a href="{{apiDocs}}/Widget.html#attr_boundingBox">`boundingBox`</a> and 
+<p>The `Widget` class establishes a common markup format for all widgets, through its <a href="{{apiDocs}}/Widget.html#attr_boundingBox">`boundingBox`</a> and
 <a href="{{apiDocs}}/Widget.html#attr_contentBox">`contentBox`</a> attributes.</p>
 
 <p>
@@ -255,7 +260,7 @@ For example, the parser definition above may lead to the following object litera
 </p>
 
 <p>
-    The widget will create either of the nodes if they are not provided in the constructor, and add them to the document when the widget's `render` method is called. 
+    The widget will create either of the nodes if they are not provided in the constructor, and add them to the document when the widget's `render` method is called.
     As mentioned previously, if the `render` method is passed a node reference, the widget's bounding box is appended to that node.
 </p>
 
@@ -294,13 +299,13 @@ For example, the parser definition above may lead to the following object litera
     </li>
     <li><p class="topic">Visual treatment for the widget is applied to the content box (e.g. borders, padding, background-color, etc.).</p></li>
     <li>
-        <p class="topic">For progressively enhanced solutions, generally the application developer will only provide what will be the content box on the page and pass it into the constructor as the `srcNode` (rather than the bounding box).</p> 
+        <p class="topic">For progressively enhanced solutions, generally the application developer will only provide what will be the content box on the page and pass it into the constructor as the `srcNode` (rather than the bounding box).</p>
         <p>The bounding box will be added dynamically when the widget is instantiated. This maintains semantic value (the content box ends up containing existing content), and avoids unnecessary markup on the page up front.</p>
     </li>
 </ul>
 
 <h4>Widget Markup Diagram</h4>
-            
+
 <p>The following illustration demonstrates how the markup and class names for a widget's bounding box and content box come together.</p>
 
 <img src="{{componentAssets}}/widget-dom.png" height="357" width="524" alt="Illustration of the two-box DOM layout for a widget.">
@@ -324,25 +329,25 @@ For example, the parser definition above may lead to the following object litera
     <dd>
         <p>This method can be used to create class names which begin with the configured prefix for the application ("yui3-" by default) and the name of the widget (the `NAME` property, lowercase). For example:</p>
 
-        ```        
-        // A method on a Spinner widget instance, 
+        ```
+        // A method on a Spinner widget instance,
         // with Spinner.NAME = "spinner";
         renderSpinnerButton: function() {
             // generates the class name "yui3-spinner-increment-major"
             var btnClassName = this.getClassName("increment", "major");
         }
-        
+
         ```
 
         <p><strong>Note:</strong> The `ClassNameManager.getClassName(arg1, arg2, arg3 ...)` method can be used as a replacement for the above method, when class names need to be generated in a static context, by passing in the widget implementation's `NAME` property as the first argument. For example:</p>
-        
+
         ```
         // Generates the class name "yui3-spinner-button"
         Spinner.BUTTON_TEMPLATE = Y.ClassNameManager.getClassName(
                                                 Spinner.NAME, "button");
-        
+
         ```
- 
+
     </dd>
 
     <dt>Static Method: `Widget.getClassName(arg1, arg2, arg3 ....)`</dt>
@@ -356,7 +361,7 @@ For example, the parser definition above may lead to the following object litera
         ```
         // generates the class name "yui3-widget-shim"
         Widget.getClassName("shim");
-        
+
         ```
 
     </dd>
@@ -371,7 +376,7 @@ MyWidget.CSS_PREFIX = "myapp-common";
 
 // Inside your widget code:
 _renderUI : function() {
-    // Generates the class name "myapp-common-selected", 
+    // Generates the class name "myapp-common-selected",
     // instead of "yui3-mywidget-selected"
     var selectedClassName = this.getClassName("selected");
 }
@@ -400,9 +405,9 @@ _renderUI : function() {
     </tr>
 </table>
 
-<p>In the above definitions, "[widgetname]" is the name of the widget (e.g. "menu", "overlay", "slider"). 
+<p>In the above definitions, "[widgetname]" is the name of the widget (e.g. "menu", "overlay", "slider").
 
-The widget name is combined with the state identifier so that different widgets can customize the way they handle visibility differently, and still work with IE6, 
+The widget name is combined with the state identifier so that different widgets can customize the way they handle visibility differently, and still work with IE6,
 where multiple class name rules, like `.yui3-menu.yui3-hidden` are not well supported. For example:
 </p>
 
@@ -434,9 +439,9 @@ Whether or not CSS rules for the other two states are provided is usually a func
 <h3 id="uievents">Default UI Events</h3>
 
 <p>
-Widget publishes and fires custom events for any DOM events (`"click"`, `"mouseover"` etc.) which get fired inside its bounding box. 
-Like all other Widget custom events, these events are prefixed with the widget's name (e.g. 'menuitem:click') and 
-the default context of the event listener will be the widget that fired the event (as opposed to the Node firing the DOM event). 
+Widget publishes and fires custom events for any DOM events (`"click"`, `"mouseover"` etc.) which get fired inside its bounding box.
+Like all other Widget custom events, these events are prefixed with the widget's name (e.g. 'menuitem:click') and
+the default context of the event listener will be the widget that fired the event (as opposed to the Node firing the DOM event).
 These events provide application developers the ability to listen for UI events as part of the logical widget API, without having to be concerned with the DOM elements which make up the widget's UI.
 </p>
 
@@ -445,30 +450,30 @@ These events provide application developers the ability to listen for UI events 
 <ul>
     <li>
         <p>
-        Widget developers don't have to explicitly publish a given UI event in 
+        Widget developers don't have to explicitly publish a given UI event in
         order for Widget consumers to listen for them.
         </p>
         <p>
-        For performance, these events are only created when someone is listening, and the actual firing of these events is facilitated by a 
+        For performance, these events are only created when someone is listening, and the actual firing of these events is facilitated by a
         single, delegated DOM event listener.
         </p>
     </li>
     <li>
-        <p>Widget developers can still choose to publish any given UI event in order to 
-        explicitly control some aspect of the event.</p> 
-        
+        <p>Widget developers can still choose to publish any given UI event in order to
+        explicitly control some aspect of the event.</p>
+
         <p>
-        The most likely use case is the desire to provide the default implementation/handler for a given 
-        event. For example: a developer might want to publish a `"click"` event 
-        for a Menu widget with the goal of providing the default click 
+        The most likely use case is the desire to provide the default implementation/handler for a given
+        event. For example: a developer might want to publish a `"click"` event
+        for a Menu widget with the goal of providing the default click
         behavior/function.
         </p>
     </li>
     <li>
         <p>
-        The set of DOM events published by widget is defined by the 
+        The set of DOM events published by widget is defined by the
         UI_EVENTS prototype property.</p>
-        
+
         <p>
         This property defaults to <a href="{{apiDocs}}/Node.html#property_DOM_EVENTS">`Node.DOM_EVENTS`</a>.
         Widget developers can use this property to pare down or extend the number of events that are published and fired automatically.
@@ -482,8 +487,8 @@ These events provide application developers the ability to listen for UI events 
 
 <p><img src="{{componentAssets}}/widget-template-diagram.png" alt="Illustration of the code template for a custom widget, showing the ATTRS property and initializer, destructor, renderUI, bindUI and syncUI methods" width="446" height="412"></p>
 
-<p>The best place to start is by defining the attributes which make up your widget (the `ATTRS` static property). These will help define the state and API which your widget exposes to the application developer. 
-You can then implement the `initializer`, `destructor`, `renderUI`, `bindUI` and `syncUI` methods, based on the responsibilities defined for them above, 
+<p>The best place to start is by defining the attributes which make up your widget (the `ATTRS` static property). These will help define the state and API which your widget exposes to the application developer.
+You can then implement the `initializer`, `destructor`, `renderUI`, `bindUI` and `syncUI` methods, based on the responsibilities defined for them above,
 along with the methods which support the attribute state handling and API.</p>
 
 <p>
@@ -495,7 +500,7 @@ The <a href="widget-extend.html">"Extending The Widget Class"</a> example walks 
 <h2 id="pluginsandextensions">Plugins And Extensions</h2>
 
 <p>
-In addition to being able to subclass any given Widget class to provide custom widget implementations, YUI 3 also provides two additional code reuse mechanisms which can be used to 
+In addition to being able to subclass any given Widget class to provide custom widget implementations, YUI 3 also provides two additional code reuse mechanisms which can be used to
 package and reuse code to provide new widgets features, without being bound to a static all-or-nothing class hierarchy.
 
 These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins</em></a> and <a href="../base/#extensions"><em>Extensions</em></a> and support for both of them is provided through Base.</p>
@@ -514,8 +519,8 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
     <dt>Extensions - A Class Level Concept</dt>
     <dd>
         <ul>
-            <li><p>Extensions provide features which can be mixed and matched at the <strong>class</strong> level.</p></li> 
-            
+            <li><p>Extensions provide features which can be mixed and matched at the <strong>class</strong> level.</p></li>
+
             <li><p>Extensions are used by <strong>widget developers</strong> to create new widget <strong>classes</strong> which share the extension functionality.</p></li>
 
             <li><p>If it contains functionality which is not optional for the class, it's an extension.</p>
@@ -524,8 +529,8 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
             <li>
                 <p><a href="widget-parentchild-listbox.html">WidgetParent, WidgetChild</a> and <a href="widget-tooltip.html">WidgetPosition, WidgetStack</a> are good examples of extensions.</p>
                 <p>
-                A `Tree` widget class always needs Parent/Child support. However, so does a `Menu` widget class. 
-                We want to reuse the Parent/Child support across both classes, without forcing them to extend a shared base class. 
+                A `Tree` widget class always needs Parent/Child support. However, so does a `Menu` widget class.
+                We want to reuse the Parent/Child support across both classes, without forcing them to extend a shared base class.
                 Additionally, the Parent/Child functionality is a required for both classes; it is not optional.
                 </p>
             </li>
@@ -539,7 +544,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
             <li><p>Plugins provide features which can be mixed and matched at the <strong>instance</strong> level.</p></li>
 
             <li><p>Plugins are used by <strong>application developers</strong> to apply features to certain <strong>instances</strong> of a widget.</p></li>
-            
+
             <li><p>If it contains functionality which is not required for <em>all</em> instances of the class, it's a plugin.</p>
                 <p>A feature which you may only want to apply to one instance, out of the ten instances of your widget on a page, is a plugin.</p></li>
 
@@ -547,7 +552,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                 <p>The <a href="../overlay/overlay-anim-plugin.html">Animation</a> and <a href="../overlay/overlay-io-plugin.html">IO</a> plugin examples are good use cases.</p>
 
                 <p>
-                You don't want to have to bake Animation or IO support into a class (potentially resulting in the need to ship `MyAnimatedWidget`, `MyIOEnabledWidget`, `MyAnimatedAndIOEnabledWidget` and `MyWidget` classes). 
+                You don't want to have to bake Animation or IO support into a class (potentially resulting in the need to ship `MyAnimatedWidget`, `MyIOEnabledWidget`, `MyAnimatedAndIOEnabledWidget` and `MyWidget` classes).
                 The functionality is optional and can be plugged into just the <em>instances</em> of the single `MyWidget` class which need them.
                 </p>
             </li>
@@ -596,7 +601,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
     </tr>
     <tr>
         <td>widget-buttons</td>
-        <td>Adds header/footer buttons support to a widget that implements the `WidgetStdMod` extension.</td>
+        <td>Adds header/body/footer buttons support for Widgets that use the `WidgetStdMod` extension.</td>
     </tr>
     <tr>
         <td>widget-autohide</td>
@@ -620,13 +625,13 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                     ```
                     parent.add(child, n);
                     parent.remove(n);
-                    
+
                     ```
 
                 </li>
                 <li><p>These can be single level relationships (e.g. Tabs in a TabList, or Buttons in a Toolbar) or nested hierarchical relationships (e.g. Menus and MenuItems, or Trees and TreeNodes).</p></li>
                 <li><p>Parents are automatically set up as event targets for their children's events, allowing you to leverage custom event bubbling to listen for events higher up in the hierarchy.</p></li>
-                <li><p>Parents automatically render their children when rendered.</p></li> 
+                <li><p>Parents automatically render their children when rendered.</p></li>
                 <li>
                     <p>Widget Parent augments the <a href="{{apiDocs}}/ArrayList.html">ArrayList API</a>, providing a full range of iteration and traversal methods for it's children:</p>
 
@@ -635,7 +640,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                     parent.item(n);
                     parent.indexOf(child);
                     parent.size();
-                    
+
                     ```
 
                 </li>
@@ -652,7 +657,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
                             content: '<p>bar content</p>'
                         }]
                     });
-                    
+
                     ```
                 </li>
             </ul>
@@ -660,7 +665,7 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
         <dt>widget-child</dt>
         <dd>
             <p>Adds support to allow the widget to be contained within a widget parent.</p>
-            <p>Used together with widget-parent, allows you to support hierarchical parent/child structures. As with Widget Parent, it provides a consistent API for child widgets to 
+            <p>Used together with widget-parent, allows you to support hierarchical parent/child structures. As with Widget Parent, it provides a consistent API for child widgets to
             interact with their siblings and parents, e.g., `child.next()`, `child.previous()` and `child.ancestor()`.
             </p>
         </dd>

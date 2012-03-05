@@ -1,0 +1,62 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+<p>This example shows how to use group markers in a `Chart`.</p>
+</div>
+<div class="example">
+{{>charts-groupmarkers-source}}
+</div>
+<h3>Using Group Markers in a Chart</h3>
+
+<p>By default, charts render a marker for each data point in a series. This is useful for interactivity and custom styling but when there are many data points, performance can suffer. With a `ComboSeries`,
+you can set `showMarkers` to false and `interactionType` to `planar` for larger data sets, but this is of no help with a histogram. Additionally, you may still prefer visual markers for each data point in
+your chart. In this example, we'll take a large data set and display it on a `ComboSeries` with `groupMarkers`.</p>
+
+```
+//set canvas as the defaultGraphicEngine
+YUI({
+    defaultGraphicEngine: "canvas"
+}).use('charts', function (Y) 
+{
+    var myDataValues = getData(); 
+   
+    //style the series
+    var myseries = [
+        {
+            styles: {
+                line: {
+                    weight: 1
+                }
+            }
+        },
+        {
+            styles: {
+                line: {
+                    weight: 1
+                }
+            }
+        }
+
+    ];
+
+    //instantiate chart with interactionType of planar and groupMarkers set to true
+    var mychart = new Y.Chart({
+            interactionType:"planar", 
+            groupMarkers:true, 
+            dataProvider:myDataValues, 
+            categoryType:"time", 
+            categoryKey:"date", 
+            render:"#mychart", 
+            seriesCollection: myseries,
+            width:800, 
+            height:400
+        });
+        
+});
+```

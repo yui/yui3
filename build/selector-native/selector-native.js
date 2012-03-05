@@ -23,6 +23,13 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
 var Selector = {
     useNative: true,
 
+    _escapeId: function(id) {
+        if (id) {
+            id = id.replace(/([:\[\]\(\)#\.'<>+~"])/g,'\\$1');
+        }
+        return id;
+    },
+
     _compare: ('sourceIndex' in Y.config.doc.documentElement) ?
         function(nodeA, nodeB) {
             var a = nodeA.sourceIndex,
@@ -140,13 +147,21 @@ var Selector = {
         var groups = selector.split(','),
             queries = [],
             prefix = '',
-            i, len;
+            id,
+            i,
+            len;
 
         if (node) {
             // enforce for element scoping
-            if (node.tagName) {
-                node.id = node.id || Y.guid();
-                prefix = '[id="' + node.id + '"] ';
+            if (node.nodeType === 1) { // Elements only
+                id = Y.Selector._escapeId(Y.DOM.getId(node));
+
+                if (!id) {
+                    id = Y.guid();
+                    Y.DOM.setId(node, id);
+                }
+            
+                prefix = '[id="' + id + '"] ';
             }
 
             for (i = 0, len = groups.length; i < len; ++i) {
@@ -194,6 +209,7 @@ var Selector = {
             item,
             items,
             frag,
+            id,
             i, j, group;
 
         if (node && node.tagName) { // only test HTMLElements
@@ -216,11 +232,14 @@ var Selector = {
                 }
                 root = root || node[OWNER_DOCUMENT];
 
-                if (!node.id) {
-                    node.id = Y.guid();
+                id = Y.Selector._escapeId(Y.DOM.getId(node));
+                if (!id) {
+                    id = Y.guid();
+                    Y.DOM.setId(node, id);
                 }
+
                 for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                    group += '[id="' + node.id + '"]';
+                    group += '[id="' + id + '"]';
                     items = Y.Selector.query(group, root);
 
                     for (j = 0; item = items[j++];) {

@@ -376,16 +376,9 @@ SVGDrawing.prototype = {
         var pathArrayLen,
             currentArray;
         this._pathArray = this._pathArray || [];
-        if(this._pathType != "M")
-        {
-            this._pathType = "M";
-            currentArray = ["M"];
-            this._pathArray.push(currentArray);
-        }
-        else
-        {
-            currentArray = this._getCurrentArray(); 
-        }
+        this._pathType = "M";
+        currentArray = ["M"];
+        this._pathArray.push(currentArray);
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
         this._trackSize(x, y);

@@ -542,6 +542,36 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: {
         /**
+         * The x-coordinate for the graph.
+         *
+         * @attribute x
+         * @type Number
+         * @protected
+         */
+        x: {
+            setter: function(val)
+            {
+                this.get("boundingBox").setStyle("left", val + "px");
+                return val;
+            }
+        },
+
+        /**
+         * The y-coordinate for the graph.
+         *
+         * @attribute y
+         * @type Number
+         * @protected
+         */
+        y: {
+            setter: function(val)
+            {
+                this.get("boundingBox").setStyle("top", val + "px");
+                return val;
+            }
+        },
+
+        /**
          * Reference to the chart instance using the graph.
          *
          * @attribute chart

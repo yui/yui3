@@ -64,6 +64,7 @@
     "app": {
         "use": [
             "app-base", 
+            "app-transitions", 
             "model", 
             "model-list", 
             "router", 
@@ -80,7 +81,21 @@
     }, 
     "app-transitions": {
         "requires": [
-            "app-base", 
+            "app-base"
+        ]
+    }, 
+    "app-transitions-css": {
+        "type": "css"
+    }, 
+    "app-transitions-native": {
+        "condition": {
+            "name": "app-transitions-native", 
+            "test": "app-transitions-test.js", 
+            "trigger": "app-transitions"
+        }, 
+        "requires": [
+            "app-transitions", 
+            "app-transitions-css", 
             "parallel", 
             "transition"
         ]
@@ -330,9 +345,13 @@
     }, 
     "calendar": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "calendar-base", 
@@ -342,9 +361,13 @@
     }, 
     "calendar-base": {
         "lang": [
+            "de", 
             "en", 
+            "fr", 
             "ja", 
-            "ru"
+            "pt-BR", 
+            "ru", 
+            "zh-HANT-TW"
         ], 
         "requires": [
             "widget", 
@@ -367,15 +390,26 @@
     }, 
     "charts": {
         "requires": [
+            "charts-base"
+        ]
+    }, 
+    "charts-base": {
+        "requires": [
             "dom", 
             "datatype-number", 
             "datatype-date", 
             "event-custom", 
             "event-mouseenter", 
+            "event-touch", 
             "widget", 
             "widget-position", 
             "widget-stack", 
             "graphics"
+        ]
+    }, 
+    "charts-legend": {
+        "requires": [
+            "charts-base"
         ]
     }, 
     "classnamemanager": {
@@ -467,6 +501,23 @@
         "optional": [
             "cssreset", 
             "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-base": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "type": "css"
+    }, 
+    "cssgrids-units": {
+        "optional": [
+            "cssreset", 
+            "cssfonts"
+        ], 
+        "requires": [
+            "cssgrids-base"
         ], 
         "type": "css"
     }, 
@@ -596,9 +647,8 @@
             "datatable-column-widths", 
             "datatable-message", 
             "datatable-mutable", 
-            "datatable-scroll", 
-            "datatable-datasource", 
-            "datatable-sort"
+            "datatable-sort", 
+            "datatable-datasource"
         ]
     }, 
     "datatable-base": {
@@ -1382,6 +1432,16 @@
             "node-base"
         ]
     }, 
+    "io-nodejs": {
+        "condition": {
+            "name": "io-nodejs", 
+            "trigger": "io-base", 
+            "ua": "nodejs"
+        }, 
+        "requires": [
+            "io-base"
+        ]
+    }, 
     "io-queue": {
         "requires": [
             "io-base", 
@@ -2011,6 +2071,7 @@
             "widget", 
             "substitute", 
             "base", 
+            "cssbutton", 
             "node", 
             "event-custom", 
             "file", 
@@ -2089,12 +2150,10 @@
     }, 
     "widget-buttons": {
         "requires": [
+            "button-plugin", 
             "cssbutton", 
-            "base-build", 
-            "widget", 
             "widget-stdmod"
-        ], 
-        "skinnable": true
+        ]
     }, 
     "widget-child": {
         "requires": [
@@ -2117,7 +2176,8 @@
             "base-build", 
             "event-outside", 
             "widget"
-        ]
+        ], 
+        "skinnable": true
     }, 
     "widget-parent": {
         "requires": [

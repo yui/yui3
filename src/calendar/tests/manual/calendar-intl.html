@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Calendar Intl Tests</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="calendar"></div>
+<p>Current language: <span id="currentLang"></span></p>
+<p>
+    <select id="langSelect"></select>
+    <button id="switchLang">Switch</button>
+</p>
+
+<script type="text/javascript">
+    YUI({
+        lang: 'en',
+        filter: 'raw',
+        filters: {
+            'calendar-base': 'debug',
+            'calendar': 'debug'
+        }
+    }).use('calendar', function (Y) {
+        function buildCalendar(date) {
+            return new Y.Calendar({
+                width: '300px',
+                date: date,
+                contentBox: '#calendar',
+            });
+        }
+
+        function updateCurrentLanguage() {
+            Y.one('#currentLang').setContent(Y.Intl.getLang('calendar-base'));
+        }
+
+        var calendar = buildCalendar(new Date()).render(),
+            availableLangs = Y.Intl.getAvailableLangs('calendar-base'),
+            langSelect = Y.one('#langSelect');
+
+        Y.Array.each(availableLangs, function (lang) {
+            langSelect.append('<option value="' + lang + '">' + lang + '<\/option>');
+        });
+
+        Y.one('#switchLang').on('click', function () {
+            var lang = langSelect.get('value');
+            Y.use('lang/calendar-base_' + lang,
+                  'lang/datatype-date-format_' + lang, function (Y) {
+                var date = calendar.get('date');
+
+                Y.Intl.setLang('calendar-base', lang);
+                Y.Intl.setLang('datatype-date-format', lang);
+
+                calendar.destroy();
+                calendar = buildCalendar(date).render();
+
+                updateCurrentLanguage();
+            });
+        });
+
+        updateCurrentLanguage();
+    });
+</script>
+</body>
+</html>

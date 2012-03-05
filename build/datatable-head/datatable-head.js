@@ -79,14 +79,14 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     /**
     Template used to create the table's header cell markup.  Override this to
-    customize how these cells' markup is created.
+    customize how header cell markup is created.
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" {abbr} colspan="{_colspan}" rowspan="{_rowspan}" class="{className}">{content}</th>'
+    @default '<th id="{_yuid}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
     **/
-    CELL_TEMPLATE :
-        '<th id="{_yuid}" {abbr} colspan="{_colspan}" rowspan="{_rowspan}" class="{className}">{content}</th>',
+    CELL_TEMPLATE:
+        '<th id="{_yuid}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -101,6 +101,17 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     //columns: null,
 
     /**
+    Template used to create the table's header row markup.  Override this to
+    customize the row markup.
+
+    @property ROW_TEMPLATE
+    @type {HTML}
+    @default '<tr>{content}</tr>'
+    **/
+    ROW_TEMPLATE:
+        '<tr>{content}</tr>',
+
+    /**
     The object that serves as the source of truth for column and row data.
     This property is assigned at instantiation from the `source` property of
     the configuration object passed to the constructor.
@@ -111,17 +122,6 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     **/
     //TODO: should this be protected?
     //source: null,
-
-    /**
-    Template used to create the table's header row markup.  Override this to
-    customize the row markup.
-
-    @property ROW_TEMPLATE
-    @type {HTML}
-    @default '<tr>{content}</tr>'
-    **/
-    ROW_TEMPLATE:
-        '<tr>{content}</tr>',
 
 
     // -- Public methods ------------------------------------------------------
@@ -182,8 +182,11 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                             }
                         );
 
+                        values._id = col._id ?
+                            ' data-yui3-col-id="' + col._id + '"' : '';
+                        
                         if (col.abbr) {
-                            values.abbr = 'abbr="' + col.abbr + '"';
+                            values.abbr = ' abbr="' + col.abbr + '"';
                         }
 
                         if (col.className) {

@@ -17,6 +17,19 @@ CategoryAxis.NAME = "categoryAxis";
 Y.extend(CategoryAxis, Y.AxisType,
 {
     /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        return val;
+    },
+
+    /**
      * Object storing key data.
      *
      * @property _indices

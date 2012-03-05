@@ -65,7 +65,7 @@ YUI.add('exec-command', function(Y) {
                     Y.log('Using default browser execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
-                    Y.log(e.message, 'error', 'exec-command');
+                    Y.log(e.message, 'warn', 'exec-command');
                 }
             },
             /**
@@ -94,7 +94,7 @@ YUI.add('exec-command', function(Y) {
                 }, this));
             },
             _wrapContent: function(str, override) {
-                var useP = (this._inst.host.editorPara && !override ? true : false);
+                var useP = (this.getInstance().host.editorPara && !override ? true : false);
                 
                 if (useP) {
                     str = '<p>' + str + '</p>';
@@ -423,7 +423,8 @@ YUI.add('exec-command', function(Y) {
                     if (Y.UA.ie && !sel.isCollapsed) {
                         range = sel._selection;
                         html = range.htmlText;
-                        div = inst.Node.create(html);
+                        div = inst.Node.create(html) || inst.one('body');
+
                         if (div.test('li') || div.one('li')) {
                             this._command(cmd, null);
                             return;
@@ -472,9 +473,9 @@ YUI.add('exec-command', function(Y) {
                                 html = html.split(/<br>/i);
                             } else {
                                 var tmp = inst.Node.create(html),
-                                ps = tmp.all('p');
+                                ps = tmp ? tmp.all('p') : null;
 
-                                if (ps.size()) {
+                                if (ps && ps.size()) {
                                     html = [];
                                     ps.each(function(n) {
                                         html.push(n.get('innerHTML'));
@@ -486,7 +487,7 @@ YUI.add('exec-command', function(Y) {
                             list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
                                 var a = inst.Node.create(v);
-                                if (a.test('p')) {
+                                if (a && a.test('p')) {
                                     if (a.hasAttribute(DIR)) {
                                         dir = a.getAttribute(DIR);
                                     }

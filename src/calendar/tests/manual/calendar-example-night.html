@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+    <title>Calendar Example</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<style>
+.yui3-skin-sam .redtext {
+	color:#ff0000;
+}
+</style>
+</head>
+<body class="yui3-skin-night">
+<div id="mycalendar"></div>
+<div id="currentDate"></div>
+
+<script>
+YUI({
+base: '../../../../build/',
+filter: "raw",
+skin: "night"
+}).use('calendar',  function(Y) {
+
+
+Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
+
+function myHeaderRenderer (curDate) {
+	     	var ydate = Y.DataType.Date,
+	     	    output = ydate.format(curDate, {format: "%B %Y"}) +
+	     	             " &mdash; " +
+	     	             ydate.format(ydate.addMonths(curDate, 1), {format: "%B %Y"});
+	     	return output;
+	     };
+
+
+var dYear = "2011";
+var dMonth = "10";
+var dDate = "10";
+
+
+var newrules = {};
+
+function addNewRule(ruleSet, path, ruleName) {
+
+var currentObject = ruleSet;
+
+for (var i = 0, len = path.length - 1; i <= len; i++) {
+   if (i == len) {
+    currentObject[path[i]] = ruleName;
+   }
+   else {
+    currentObject[path[i]] = {};
+    currentObject = currentObject[path[i]];
+   }
+}
+
+return ruleSet;
+
+};
+
+newrules = addNewRule(newrules, [dYear, dMonth, dDate], "theweekends");
+
+
+console.log(newrules);
+
+
+	     var myRules = {
+	     	"2011": {
+                "0-11": {
+                	"all": {
+                		"1,2": "theweekends"
+                	}
+                },
+	     		"all": {
+	     			"5": "thefifths"
+	     		}
+	     	}
+
+	     };
+
+
+function myFilter (oDate, oNode, rules) {
+if (rules.indexOf("theweekends") >= 0) {
+	//oNode.addClass('redtext');
+}	
+};	     
+
+         var calendar = new Y.Calendar({
+	        showNextMonth: true,
+	        showPrevMonth: true,
+	        selectionMode: "multiple",
+	        minimumDate: new Date(2011,0,1),
+	        maximumDate: new Date(2011,11,1),
+	        date: new Date(2011,10,1),
+	        headerRenderer: myHeaderRenderer,
+			width:'600px'});
+			
+		calendar.render("#mycalendar");
+
+		calendar.set("customRenderer", {rules: myRules, filterFunction: myFilter});
+
+		calendar.set("enabledDatesRule", null);
+		calendar.set("disabledDatesRule", "thefifths");
+
+/*
+		calendar.on("dateChange", function (ev) {console.log("New date value: " + ev.newVal); console.log("What about..." + calendar.get("date"));});
+*/
+
+
+		calendar.on("showPrevMonthChange", function (ev) {console.log("New show prev month val: " + ev.newVal);});
+
+		calendar.set("showPrevMonth", true);
+
+		calendar.selectDates([new Date(2011,9,4), new Date(2011,9,3), new Date(2011,10,8)]);
+		calendar.selectDates([new Date(2011,9,5), new Date(2011,8,23), new Date(2011,11,21)]);
+
+		console.log(calendar.get("selectedDates"));
+
+
+
+});
+</script>
+</body>
+</html>

@@ -1,15 +1,12 @@
 .yui3-button {
     /* Structure */
     display: inline-block;
-    *display: inline; /*IE 6*/
+    *display: inline; /*IE 6/7*/
     zoom: 1;
-    font-size: 100%;
-    *+font-size: 90%;
-    margin: 0;
-    padding: 0 1em;
-    *+margin: 2px; /*IE 6/7*/
+    font-size: 100%; 
+    *font-size: 90%; /*IE 6/7 - To reduce IE's oversized button text*/
+    padding: 0.4em 1em 0.45em;
     line-height: normal;
-    line-height: 2;
     white-space: nowrap;
     vertical-align: baseline;
     text-align: center;
@@ -20,10 +17,11 @@
     user-select: none;
 
     /* Presentation */
-    color: rgba(0,0,0, 0.80);
-    *color: #444; /*IE 6*/
-    border: none;
-    border: outset 1px #999\9;  /*IE 6/7/8*/
+    color: #444; /* rgba not supported (IE 8) */
+    color: rgba(0, 0, 0, 0.80); /* rgba supported */
+    *color: #444; /* IE 6 & 7 */
+    border: outset 1px solid #999;  /*IE 6/7/8*/
+    border: none rgba(0, 0, 0, 0);  /*IE9 + everything else*/
     background-color: #E6E6E6;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80ffffff', endColorstr='#00ffffff', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255,255,255, 0.30)), color-stop(40%, rgba(255,255,255, 0.15)), to(transparent));
@@ -48,8 +46,10 @@
     transition: 0.1s linear box-shadow;
 }
 
-input.yui3-button {
-    height: 2em; /* Fixes height for <input> in firefox/opera */
+/* Because of IE's overly large left/right padding on <input> */
+input.yui3-button{
+    *padding-left:0px; /*IE 6/7*/
+    *padding-right:0px; /*IE 6/7*/
 }
 
 a.yui3-button {
@@ -58,6 +58,7 @@ a.yui3-button {
     text-decoration:none;
 }
 
+.yui3-button-hover,
 .yui3-button:hover {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#26000000', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), color-stop(40%, rgba(0,0,0, 0.05)), to(rgba(0,0,0, 0.15)));
@@ -66,11 +67,12 @@ a.yui3-button {
     background-image: -ms-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: -o-linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
     background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.15));
-    background-color:  #D6D6D6\0/; /*IE 8/9*/
 }
 
+.yui3-button-active,
 .yui3-button:active {
-    border: inset 1px #999\9;  /*IE 6/7/8*/
+    border: inset 1px solid #999;  /*IE 6/7/8*/
+    border: none rgba(0, 0, 0, 0);  /*IE9 + everything else*/
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1A000000', endColorstr='#26000000', GradientType=0);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,0, 0.10)), to(rgba(0,0,0, 0.15)));
     background-image: -webkit-linear-gradient(rgba(0,0,0, 0.10), rgba(0,0,0, 0.15));
@@ -99,11 +101,13 @@ a.yui3-button {
     box-shadow: 0 0 0 1px rgba(0,0,0, 0.25) inset;
 }
 
+/* Firefox: Get rid of the inner focus border */
 .yui3-button::-moz-focus-inner{
     padding: 0;
     border: 0;
 }
 
+/* Firefox: Add a border around a focused button */
 .yui3-button:-moz-focusring {
     outline: thin dotted;
 }

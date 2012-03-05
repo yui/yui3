@@ -25,18 +25,26 @@
             
             button.on('click', function(){
                 button2.set('disabled', !button2.get('disabled'));
-                Y.log('c');
             });
             /*-----*/
             
             var button3 = new Y.ToggleButton({
-                label: 'toggle'
-            });
-
-            button3.render();
-            button3.select();
+                label: 'checkbox',
+                type: 'checkbox',
+                checked: true
+            }).render();
+            
             button3.on('click', function(){
-                Y.log('d');
+                Y.log('button3 clicked');
+            });
+            
+            var button4 = new Y.ToggleButton({
+                label: 'toggle'
+            }).render();
+            
+            button4.on('click', function(){
+                //button3.set('checked', !button3.get('checked'));
+                Y.log('button4 clicked');
             });
 
         });
