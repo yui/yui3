@@ -196,16 +196,34 @@ var Y = YUI().use('node', 'event', function (Y) {
 
 <h3>Module States</h3>
 
+<p>
 Within any given YUI instance, there are three possible states for a module:
 </p>
 
 <ol>
-<li><p><strong>Not loaded</strong>: The module code has not been downloaded yet and is not available to any YUI instance.</p></li>
+    <li><p><strong>Not loaded</strong>: The module code has not been downloaded yet and is not available to any YUI instance.</p></li>
 
-<li><p><strong>Loaded</strong>: The module code has been downloaded, but has not been attached to this specific YUI instance. Other instances may be using it, but this instance isn't using it yet.</p></li>
+    <li><p><strong>Loaded</strong>: The module code has been downloaded, but has not been attached to this specific YUI instance. Other instances may be using it, but this instance isn't using it yet.</p></li>
 
-<li><p><strong>Attached</strong>: The module code has been downloaded and is attached to this YUI instance. The module is ready to use.</p></li>
+    <li><p><strong>Attached</strong>: The module code has been downloaded and is attached to this YUI instance. The module is ready to use.</p></li>
 </ol>
+
+```
+/*
+    Since we haven't created an instance yet, all YUI modules are
+    in the 'Not loaded' state until they are requested.
+*/
+
+YUI().use('calendar', function(Y) {
+    //Now calender and all if it's dependencies are 'Loaded' and 'Attached' on this instance
+});
+
+YUI().use('node', function(Y) {
+    //Now node and all of it's dependencies are 'Loaded' and 'Attached' on this instance
+    //Calender and it's un-used dependencies are in the 'Loaded' state on this instance
+});
+
+```
 
 <h3>Static Loading</h3>
 
