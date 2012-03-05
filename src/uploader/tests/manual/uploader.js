@@ -4,14 +4,19 @@ YUI({
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('uploader',  function(Y) {
+}).use('cssbutton', 'uploader',  function(Y) {
 
 var myuploader = new Y.Uploader({contentBox: "#fileselection", 
                                  multipleFiles: true, 
-                                 uploadURL: "upload.php",
-                                 dragAndDropArea: "#droparea"
+                                 uploadURL: "http://home.allenrabinovich.com:9876/yui3/src/uploader/tests/manual/upload.php",
+                                 dragAndDropArea: "#droparea",
+                                 tabIndex: "0",
+                                 swfURL: "assets/flashuploader.swf",
+                                 tabElements: {from: "#pageTitle", to: "#uploadButton"}
                                 });
 myuploader.render();
+
+console.log(Y.config.win.location.href);
 
 myuploader.set("multipleFiles", true);
 myuploader.set("appendNewFiles", true);

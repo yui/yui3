@@ -233,6 +233,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      */
 	renderUI : function () {
 	   var contentBox = this.get('contentBox');
+       var selButton = this.get("selectFilesButton");
+       selButton.setStyles({width:"100%", height:"100%"});
 	   contentBox.append(this.get("selectFilesButton"));
 	   this._fileInputField = Y.Node.create(UploaderHTML5.HTML5FILE_FIELD);
        contentBox.append(this._fileInputField);
@@ -253,7 +255,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 		this.after("multipleFilesChange", this._setMultipleFiles, this);
         this.after("selectFilesButtonChange", this._bindSelectButton, this);
         this.after("dragAndDropAreaChange", this._bindDropArea, this);
+        this.after("tabIndexChange", function (ev) {this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));}, this);
         this._fileInputField.on("change", this._updateFileList, this);
+
+        this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
 	},
 
    /**
@@ -338,6 +343,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @static
     */
 	HTML5FILE_FIELD: "<input type='file' style='visibility:hidden; width:0px; height: 0px;'>",
+  
+    SELECT_FILES_BUTTON: "<button type='button' class='yui3-button' role='button' aria-label='{selectButtonLabel}' tabindex='{tabIndex}'>{selectButtonLabel}</button>",
+
+    TYPE: "html5",
 
     /**
      * The identity of the widget.
@@ -368,6 +377,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                  return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           }
         },
 
+        selectButtonLabel: {
+            value: "Select Files"
+        },
+
         /**
          * The widget that serves as the &lquot;Select Files&rquot; control for the file uploader
          * 
@@ -376,9 +389,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @type {Node | Widget}
          * @default A standard HTML button.
          */
-		selectFilesButton : {
-           value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
-		},
+        selectFilesButton : {
+            valueFn: function () {
+                return Y.Node.create(substitute(Y.UploaderHTML5.SELECT_FILES_BUTTON, {selectButtonLabel: this.get("selectButtonLabel"),
+                                                                                      tabIndex: this.get("tabIndex")}));
+            }
+        },
 
         /**
          * The node that serves as the drop target for files.

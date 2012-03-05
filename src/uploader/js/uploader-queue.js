@@ -165,7 +165,8 @@
            
            this._currentState = UploaderQueue.UPLOADING;
 
-           while (this.numberOfUploads < this.get("simUploads")) {
+           while (this.numberOfUploads < this.get("simUploads") && this.queuedFiles.length > 0) {
+               console.log("Num uploads: " + this.numberOfUploads + ", simUploads: " + this.get("simUploads"));
                this._startNextFile();
            }
         },
@@ -192,7 +193,7 @@
             }
         },
 
-        cancelUpload: function () {
+        cancelUpload: function (file) {
             for (fid in this.currentFiles) {
               this.currentFiles[fid].cancel();
               this._unregisterUpload(this.currentFiles[fid]);
