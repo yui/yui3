@@ -3958,6 +3958,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "file": {
         "requires": [
+            "file-flash", 
+            "file-html5"
+        ]
+    }, 
+    "file-flash": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "file-html5": {
+        "requires": [
             "base"
         ]
     }, 
@@ -4848,7 +4859,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssbutton", 
             "node", 
             "event-custom", 
-            "file", 
+            "file-flash", 
             "uploader-queue"
         ]
     }, 
@@ -4857,7 +4868,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "node-event-simulate", 
             "substitute", 
-            "file", 
+            "file-html5", 
             "uploader-queue"
         ]
     }, 
@@ -5026,7 +5037,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4db5e87ba2cdfd2ccf6e8a6f43b13a7';
+YUI.Env[Y.version].md5 = '58800cdbef38386f6478bba60cf10aa4';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

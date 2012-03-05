@@ -168,8 +168,7 @@ YUI.add('uploader-queue', function(Y) {
            this._currentState = UploaderQueue.UPLOADING;
 
            while (this.numberOfUploads < this.get("simUploads") && this.queuedFiles.length > 0) {
-               console.log("Num uploads: " + this.numberOfUploads + ", simUploads: " + this.get("simUploads"));
-               this._startNextFile();
+                this._startNextFile();
            }
         },
 
