@@ -2076,6 +2076,14 @@
             "uploader-flash"
         ]
     }, 
+    "uploader-deprecated": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
+    }, 
     "uploader-flash": {
         "requires": [
             "swf", 
