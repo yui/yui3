@@ -2,7 +2,7 @@
 <project name="File" default="local">
     <property environment="env" />
 
-    <property file="file.properties" />
+    <property file="file-flash.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

@@ -114,7 +114,6 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                 break;
                 case "file:uploadcomplete":
                    this.fire("uploadcomplete", event);
-                   console.log(event);
                 break;
                 case "uploaderqueue:alluploadscomplete":
                    this.fire("alluploadscomplete", event);
@@ -189,7 +188,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
        });
 
        Y.each(fileConfObjects, function (value) {
-         parsedFiles.push(new Y.File(value));
+         parsedFiles.push(new Y.FileFlash(value));
        });
 
        this.fire("fileselect", {fileList: parsedFiles});
@@ -251,7 +250,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         this.after("tabElementsChange", this._attachTabElements);
         this._attachTabElements();
 
-        this._swfReference.on("trace", function (ev) {console.log(ev.message);});
+        // this._swfReference.on("trace", function (ev) {console.log(ev.message);});
 
         this._swfReference.on("mouseenter", function () {
             this._setButtonClass("hover", true);
@@ -340,7 +339,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
             postVars = postVars.hasOwnProperty(fileId) ? postVars[fileId] : postVars;
 
-        if (file instanceof Y.File) {
+        if (file instanceof Y.FileFlash) {
            
             file.on("uploadstart", this._uploadStartHandler, this);
             file.on("uploadprogress", this._uploadProgressHandler, this);

@@ -92,7 +92,6 @@ package com.yahoo.util
 			}
 
 			public function addCallbacks (callbacks:Object) : void {
-				this.log("Running addCallbacks. Is ExternalInterface available?");
 					if (ExternalInterface.available) {
 						for (var callback:String in callbacks) {
 							trace("Added callback for " + callback + ", function " + callbacks[callback]);

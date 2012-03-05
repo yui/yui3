@@ -89,7 +89,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                        parsedFiles = [];
 
                    Y.each(newfiles, function (value) {
-                     parsedFiles.push(new Y.File(value));
+                     parsedFiles.push(new Y.FileHTML5(value));
                    });
 
 
@@ -197,7 +197,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
            parsedFiles = [];
 
        Y.each(newfiles, function (value) {
-         parsedFiles.push(new Y.File(value));
+         parsedFiles.push(new Y.FileHTML5(value));
        });
 
 
@@ -278,7 +278,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
             postVars = postVars.hasOwnProperty(fileId) ? postVars[fileId] : postVars;
 
-		if (file instanceof Y.File) {
+		if (file instanceof Y.FileHTML5) {
 		   
             file.on("uploadstart", this._uploadStartHandler, this);
             file.on("uploadprogress", this._uploadProgressHandler, this);
