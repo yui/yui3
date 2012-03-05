@@ -10355,6 +10355,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "uploader-flash"
         ]
     }, 
+    "uploader-deprecated": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
+    }, 
     "uploader-flash": {
         "requires": [
             "swf", 
@@ -10542,7 +10550,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '58800cdbef38386f6478bba60cf10aa4';
+YUI.Env[Y.version].md5 = '4cf046fbf0f29c9bdf1aadccc3ed4325';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
