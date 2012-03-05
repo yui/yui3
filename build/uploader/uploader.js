@@ -16,8 +16,13 @@ YUI.add('uploader', function(Y) {
  	Y.Uploader = Y.UploaderHTML5;
  }
 
- else {
+ else if (Y.SWFDetect.isFlashVersionAtLeast(10,0,45)) {
  	Y.Uploader = Y.UploaderFlash;
+ }
+
+ else {
+ 	Y.namespace("Uploader");
+ 	Y.Uploader.TYPE = "none";
  }
 
 

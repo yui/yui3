@@ -165,6 +165,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      */
     _updateFileList : function (ev) {
        
+       Y.one("body").focus();
+       this._swfReference._swf.focus();
+
+
        var newfiles = ev.fileList,
            fileConfObjects = [],
            parsedFiles = [],
@@ -184,7 +188,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
        });
 
        Y.each(fileConfObjects, function (value) {
-         parsedFiles.push(new Y.File(value));
+         parsedFiles.push(new Y.FileFlash(value));
        });
 
        this.fire("fileselect", {fileList: parsedFiles});
@@ -218,7 +222,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                      fixedAttributes: {wmode: "transparent", 
                                        allowScriptAccess:"always", 
                                        allowNetworking:"all", 
-                                       scale: "noscale"},
+                                       scale: "noscale"
+                                      },
                     };
 	   this._swfReference = new Y.SWF(flashContainer, this.get("swfURL"), params);
 	},
@@ -240,10 +245,12 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 			this.after("fileFiltersChange", this._setFileFilters, this);
 		}, this);
         
-		this._swfReference.on("fileselect", this._updateFileList, this);
+ 		this._swfReference.on("fileselect", this._updateFileList, this);
 
         this.after("tabElementsChange", this._attachTabElements);
         this._attachTabElements();
+
+        // this._swfReference.on("trace", function (ev) {console.log(ev.message);});
 
         this._swfReference.on("mouseenter", function () {
             this._setButtonClass("hover", true);
@@ -261,13 +268,14 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
             this._setButtonClass("active", true);
         }, this);
         this._swfReference.on("mouseup", function () {
-            console.log("mouseUP!");
             this._buttonState = "up";
             this._setButtonClass("active", false);
         }, this);
         this._swfReference.on("click", function () {
             this._buttonFocus = true;
             this._setButtonClass("focus", true);
+            Y.one("body").focus();
+            this._swfReference._swf.focus();
         }, this);
 	},
 
@@ -281,7 +289,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     },
 
     _attachTabElements : function () {
-        if (this.get("tabElements") != null) {
+        if (this.get("tabElements") != null && this.get("tabElements").from != null && this.get("tabElements").to != null) {
             var fromElement = Y.one(this.get("tabElements").from);
             var toElement = Y.one(this.get("tabElements").to);
 
@@ -292,9 +300,6 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                                                           this._swfReference._swf.setAttribute("role", "button");
                                                           this._swfReference._swf.setAttribute("aria-label", this.get("selectButtonLabel"));
                                                           this._swfReference._swf.focus();
-                                                          this._buttonFocus = true;
-                                                          this._setButtonClass("focus", true);
-
                                                       }
                                                     }, this);
             toElement.on("keydown", function (ev) { 
@@ -304,14 +309,13 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                                                           this._swfReference._swf.setAttribute("role", "button");
                                                           this._swfReference._swf.setAttribute("aria-label", this.get("selectButtonLabel"));
                                                           this._swfReference._swf.focus();
-                                                          this._buttonFocus = true;
-                                                          this._setButtonClass("focus", true);
                                                       }
                                                     }, this);
 
-            this._swfReference.on("tabback", function (ev) {fromElement.focus();}, this);
-            this._swfReference.on("tabforward", function (ev) {toElement.focus();}, this);
+            this._swfReference.on("tabback", function (ev) {this._swfReference._swf.blur(); setTimeout(function () {fromElement.focus();}, 30);}, this);
+            this._swfReference.on("tabforward", function (ev) {this._swfReference._swf.blur(); setTimeout(function () {toElement.focus();}, 30);}, this);
 
+            this._swfReference._swf.on("focus", function (ev) {this._buttonFocus = true; this._setButtonClass("focus", true);}, this);
             this._swfReference._swf.on("blur", function (ev) {this._buttonFocus = false; this._setButtonClass("focus", false);}, this);
         }
     },
@@ -335,7 +339,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
             postVars = postVars.hasOwnProperty(fileId) ? postVars[fileId] : postVars;
 
-        if (file instanceof Y.File) {
+        if (file instanceof Y.FileFlash) {
            
             file.on("uploadstart", this._uploadStartHandler, this);
             file.on("uploadprogress", this._uploadProgressHandler, this);
@@ -399,10 +403,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @type {String}
     * @static
     */
-	FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; width:100%; height:100%'></div>",
+	FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; margin:0px; width:100%; height:100%'></div>",
 
-    SELECT_FILES_BUTTON: "<button type='button' class='yui3-button'>{selectButtonLabel}</button>",
+  SELECT_FILES_BUTTON: "<button type='button' class='yui3-button' tabindex='-1'>{selectButtonLabel}</button>",
 
+  TYPE: "flash",
     /**
      * The identity of the widget.
      *
@@ -576,7 +581,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default "CDN Prefix + assets/flashuploader.swf"
          */
         swfURL: {
-        	value: "assets/flashuploader.swf"
+        	value: Y.Env.cdn + "uploader/assets/flashuploader.swf"
         },
 
         tabElements: {

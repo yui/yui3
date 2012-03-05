@@ -1,0 +1,46 @@
+{
+    "uploader": {
+
+        "requires": [
+           "swfdetect"
+        ],
+
+        "use": [
+           "uploader-html5",
+           "uploader-flash"
+        ],
+
+        "submodules" : {
+            "uploader-html5" : {
+            	"condition" : {
+            		"trigger": "uploader",
+            		"test" : "uploader-html5.js"
+            	},
+                "requires" : [
+                    "widget",
+                    "node-event-simulate",
+                    "substitute",
+                    "file",
+                    "uploader-queue"
+                ] 
+            },
+            "uploader-flash" : {
+            	"condition" : {
+            		"trigger": "uploader",
+            		"test" : "uploader-flash.js"
+            	},
+            	"requires" : [
+            		 "swf",
+                     "widget",
+                     "substitute",
+                     "base", 
+                     "cssbutton",
+                     "node",
+                     "event-custom",
+                     "file",
+                     "uploader-queue"
+            	]
+            }
+        }
+    }
+}
