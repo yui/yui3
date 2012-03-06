@@ -655,6 +655,47 @@
 
                     o.set("foo", "bar");
                     Y.Assert.areEqual("bar", o.get("foo"));
+                },
+
+                testNodeInstanceAugment : function() {
+
+                    var node = Y.Node.create('<input id="testAttr" title="Test Me">'),
+                        valueChangeCalled = false,
+                        titleChangeCalled = false,
+                        changeEvent,
+                        test = this;
+
+                    node.appendTo('body');
+
+                    Y.augment(node, Y.Attribute);
+
+                    node.after('valueChange', function(e) {
+
+                        Y.Assert.areEqual("valueChange", e.type, "Unexpected type for valueChange");
+                        Y.Assert.areEqual("", e.prevVal, "Unexpected prevVal for valueChange");
+                        Y.Assert.areEqual("foo", e.newVal, "Unexpected newVal for valueChange");
+
+                        valueChangeCalled = true;
+                    });
+
+                    node.after('titleChange', function(e) {
+
+                        Y.Assert.areEqual("titleChange", e.type, "Unexpected type for titleChange");
+                        Y.Assert.areEqual("Test Me", e.prevVal, "Unexpected prevVal for titleChange");
+                        Y.Assert.areEqual("bar", e.newVal, "Unexpected newVal for titleChange");
+
+                        titleChangeCalled = true; 
+                    });
+
+                    node.set('value', 'foo');
+                    node.set('title', 'bar');
+
+                    Y.Assert.areEqual("testAttr", node.get('id'));
+
+                    Y.Assert.isTrue(titleChangeCalled, "after(titleChange) not called");
+                    Y.Assert.isTrue(valueChangeCalled, "after(valueChange) not called");
+
+                    node.remove(true);
                 }
             };
 
