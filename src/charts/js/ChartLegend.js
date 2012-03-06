@@ -45,7 +45,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
     {
         this.get("chart").after("seriesCollectionChange", this._updateHandler);
         this.after("stylesChange", this._updateHandler);
-        this.after("positionChange", this._updateHandler);
+        this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
         this.after("heightChange", this._handleSizeChange);
     },
@@ -78,7 +78,28 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             this._drawLegend();
         }
     },
-    
+
+    /** 
+     * Handles position changes.
+     *
+     * @method _positionChangeHandler
+     * @parma {Object} e Event object
+     * @private
+     */
+    _positionChangeHandler: function(e)
+    {
+        var chart = this.get("chart"),
+            parentNode = this._parentNode;
+        if(parentNode && ((chart && this.get("includeInChartLayout"))))
+        {
+            this.fire("legendRendered");
+        }
+        else if(this.get("rendered"))
+        {
+            this._drawLegend();
+        }
+    },
+
     /**
      * Updates the legend when the size changes.
      *
@@ -519,7 +540,13 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          * @attribute chart
          * @type Chart
          */
-        chart: {},
+        chart: {
+            setter: function(val)
+            {
+                this.after("legendRendered", Y.bind(val._itemRendered, val));
+                return val;
+            }
+        },
 
         /**
          * Indicates the direction in relation of the legend's layout. The `direction` of the legend is determined by its
@@ -572,18 +599,22 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             {
                 var chart = this.get("chart"),
                     parentNode = this._parentNode;
-                if(parentNode && ((chart && this.get("includeInChartLayout")) || this._width))
+                if(parentNode)
                 {
-                    if(!this._width)
+                    if((chart && this.get("includeInChartLayout")) || this._width)
                     {
-                        this._width = 0;
+                        if(!this._width)
+                        {
+                            this._width = 0;
+                        }
+                        return this._width;
                     }
-                    return this._width;
+                    else
+                    {
+                        return parentNode.get("offsetWidth");
+                    }
                 }
-                else
-                {
-                    return parentNode.get("offsetWidth");
-                }
+                return "";
             },
 
             setter: function(val)
@@ -603,22 +634,28 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          * @type Number
          */
         height: {
+            valueFn: "_heightGetter",
+
             getter: function()
             {
                 var chart = this.get("chart"),
                     parentNode = this._parentNode;
-                if(parentNode && ((chart && this.get("includeInChartLayout")) || this._height))
+                if(parentNode) 
                 {
-                    if(!this._height)
+                    if((chart && this.get("includeInChartLayout")) || this._height)
                     {
-                        this._height = 0;
+                        if(!this._height)
+                        {
+                            this._height = 0;
+                        }
+                        return this._height;
                     }
-                    return this._height;
+                    else
+                    {
+                        return parentNode.get("offsetHeight");
+                    }
                 }
-                else
-                {
-                    return parentNode.get("offsetHeight");
-                }
+                return "";
             },
 
             setter: function(val)
