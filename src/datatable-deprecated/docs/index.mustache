@@ -1,3 +1,17 @@
+<style scoped>
+.notice {
+    background: #faf3d1;
+    border: 1px solid #eac9a9;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: px;
+    padding: 0 1em;
+    -moz-box-shadow: 0 0 5px #ccc8b3;
+    -webkit-box-shadow: 0 0 5px #ccc8b3;
+    box-shadow: 0 0 5px #ccc8b3;
+    margin-bottom: 1em;
+}
+</style>
 <div class="intro component">
     <p>
         The DataTable widget is responsible for rendering columnar data into a
@@ -8,6 +22,33 @@
     </p>
 </div>
 				
+<div class="notice">
+    <p>
+        <strong>NOTICE</strong>: This component is <strong>deprecated</strong>
+        and will be removed in future versions.  Use
+        <a href="../datatable/index.html">the latest supported version of
+        DataTable</a>.
+    </p>
+
+    <p>
+        This component will be temporarily supported for implementations that
+        have unresolvable issues preventing them from upgrading to the new
+        APIs.  If you find issues while updating to the latest version, please
+        <a href="../../../projects/yui3/newticket/">file a ticket</a>.
+    </p>
+
+    <p>
+        This module is <strong>incompatible</strong> with
+        <a href="../datatable/index.html">the new `datatable` component
+        suite</a>.  Both use the `Y.DataTable` namespace.
+    </p>
+
+    <p>
+        Read the <a href="../datatable/migration.html">Migration Guide</a>
+        for help upgrading from version 3.4.1 or prior.
+    </p>
+</div>
+
 {{>getting-started}}
 				
 <h2 id="using">Using DataTables</h2>
@@ -96,7 +137,7 @@ var cols = [
 </p>
 
 ```
-// The attr attribute enhances the screen-reader experience
+// The abbr attribute enhances the screen-reader experience
 var cols = [
     {
         key: "mfr-parts-database-id",
@@ -422,10 +463,12 @@ myDataSource.setInterval(5000, {
 <h3 id="sorting">Column sorting</h3>
 
 <p>
-    Column sorting functionality can be added with the DataTableSort plugin
-    (provided by the <code>datatable-sort</code> module, or in the
-    <code>datatable</code> rollup module). Indicate which columns are sortable
-    by setting <code>sortable: true</code> in your column definitions.
+    Column sorting functionality for the deprecated version of DataTable can be
+    added with the DataTableSort plugin (provided by the
+    <code>datatable-sort-deprecated</code> module, or in the
+    <code>datatable-deprecated</code> rollup module). Indicate which columns
+    are sortable by setting <code>sortable: true</code> in your column
+    definitions.
 </p>
 
 ```
@@ -458,13 +501,7 @@ var table = new Y.DataTable.Base({
 </p>
 
 <p>
-    Scrolling functionality can be added with the DataTableScroll plugin
-    (provided by the <code>datatable-scroll</code> module or in the
-    <code>datatable</code> rollup module). Horizontal scrolling is enabled by
-    setting a <code>width</code> attribute value; fixed header vertical
-    scrolling is enabled by setting a <code>height</code> attribute value; and
-    xy-scrolling is enabled by setting both <code>width</code> and
-    <code>height</code> values.
+    Scrolling functionality for the deprecated version of DataTable can be added with the DataTableScroll plugin (provided by the <code>datatable-scroll-deprecated</code> module or in the <code>datatable-deprecated</code> rollup module). Horizontal scrolling is enabled by setting a <code>width</code> attribute value; fixed header vertical scrolling is enabled by setting a <code>height</code> attribute value; and xy-scrolling is enabled by setting both <code>width</code> and <code>height</code> values.
 </p>
 
 ```

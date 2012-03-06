@@ -6,9 +6,36 @@
 .dt-example th {text-transform:none;}
 .dt-example table {width:auto;}
 .dt-example caption {display:table-caption;}
+
+.notice {
+    background: #faf3d1;
+    border: 1px solid #eac9a9;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: px;
+    padding: 0 1em;
+    -moz-box-shadow: 0 0 5px #ccc8b3;
+    -webkit-box-shadow: 0 0 5px #ccc8b3;
+    box-shadow: 0 0 5px #ccc8b3;
+    margin-bottom: 1em;
+}
+
 </style>
 
+<div class="notice">
+    <p>
+        <strong>NOTICE</strong>: This example is for the <strong>deprecated
+        version of DataTable</strong>.  The components referred to here will be
+        removed in future versions of YUI</strong>.  If you are unable to
+        upgrade to <a href="../datatable/index.html">the latest DataTable
+        version</a> due to unresolvable feature conflicts from version 3.4.1 or
+        prior, please <a href="../../../projects/yui3/newticket/">file a
+        ticket</a>.
+    </p>
+</div>
+
 <div class="intro">
+
     <p>The DataTable widget displays data in a tabular format. Use plugins and extensions to add features and functionality to the `Y.DataTable.Base` class.</p>
 </div>
 
@@ -26,7 +53,7 @@
 <p>A basic table can be rendered into a given container by passing in a simple array of columns and an array of data objects into the constructor. As long as the columns map directly to the keys of the data objects, the table will be generated automatically from the data provided.</p>
 
 ```
-YUI().use("datatable-base", function(Y) {
+YUI().use("datatable-base-deprecated", function(Y) {
     var cols = ["id","name","price"],
     data = [
         {id:"ga-3475", name:"gadget", price:"$6.99"},
@@ -45,7 +72,7 @@ YUI().use("datatable-base", function(Y) {
 <p>Your column definitions may be an array of object literals in order to support any number of configurations that are supported by the `Y.Column` class. For instance, you may wish to define a `label` that will be displayed in each column header. Use the `key` property to define where data for the column will be coming from.</p>
 
 ```
-YUI().use("datatable-base", function(Y) {
+YUI().use("datatable-base-deprecated", function(Y) {
     var cols = [
         { key: "mfr_parts_database_id", label: "Mfr Part ID", abbr: "ID"},
         { key: "mfr_parts_database_name", label: "Mfr Part Name", abbr: "Name"},
