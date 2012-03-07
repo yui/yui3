@@ -31,15 +31,6 @@
     width: 100%;
 }
 
-.yui3-datatable-y-scroller .yui3-datatable-columns {
-    /*
-    Still needed for dimension calculation, but visibility 0 hides from
-    screen readers.
-    */
-    opacity: 0;
-    filter: alpha(opacity=0);
-}
-
 .yui3-datatable-x-scroller {
     position: relative;
     overflow-x: scroll;
@@ -67,6 +58,9 @@
     visibility: hidden;
 }
 
+/* Removed because it prevented cmd + zoom resizing in Chrome (at least) */
+/*
 .yui3-datatable-header {
     -webkit-text-size-adjust: none;
 }
+*/

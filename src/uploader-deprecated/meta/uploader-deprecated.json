@@ -1,0 +1,10 @@
+{
+    "uploader-deprecated": {
+        "requires": [
+            "event-custom", 
+            "node",
+            "base",
+            "swf"
+        ] 
+    }
+}

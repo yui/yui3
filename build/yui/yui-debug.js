@@ -3593,6 +3593,7 @@ YUI.Env.aliases = {
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
+    "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3634,6 +3635,9 @@ Provides dynamic loading of remote JavaScript and CSS resources.
 **/
 
 var Lang = Y.Lang,
+
+    CUSTOM_ATTRS, // defined lazily in Y.Get.Transaction._createNode()
+
     Get, Transaction;
 
 Y.Get = Get = {
@@ -4530,11 +4534,25 @@ Transaction.prototype = {
     // -- Protected Methods ----------------------------------------------------
     _createNode: function (name, attrs, doc) {
         var node = doc.createElement(name),
-            attr;
+            attr, testEl;
+
+        if (!CUSTOM_ATTRS) {
+            // IE6 and IE7 expect property names rather than attribute names for
+            // certain attributes. Rather than sniffing, we do a quick feature
+            // test the first time _createNode() runs to determine whether we
+            // need to provide a workaround.
+            testEl = doc.createElement('div');
+            testEl.setAttribute('class', 'a');
+
+            CUSTOM_ATTRS = testEl.className === 'a' ? {} : {
+                'for'  : 'htmlFor',
+                'class': 'className'
+            };
+        }
 
         for (attr in attrs) {
             if (attrs.hasOwnProperty(attr)) {
-                node.setAttribute(attr, attrs[attr]);
+                node.setAttribute(CUSTOM_ATTRS[attr] || attr, attrs[attr]);
             }
         }
 
@@ -8856,6 +8874,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-base-deprecated": {
+        "requires": [
+            "recordset-base", 
+            "widget", 
+            "substitute", 
+            "event-mouseenter"
+        ], 
+        "skinnable": true
+    }, 
     "datatable-body": {
         "requires": [
             "datatable-core", 
@@ -8880,6 +8907,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base", 
             "plugin", 
             "datasource-local"
+        ]
+    }, 
+    "datatable-datasource-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "datasource-local"
+        ]
+    }, 
+    "datatable-deprecated": {
+        "use": [
+            "datatable-base-deprecated", 
+            "datatable-datasource-deprecated", 
+            "datatable-sort-deprecated", 
+            "datatable-scroll-deprecated"
         ]
     }, 
     "datatable-head": {
@@ -8911,6 +8953,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-scroll-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin"
+        ]
+    }, 
     "datatable-sort": {
         "lang": [
             "en"
@@ -8919,6 +8967,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base"
         ], 
         "skinnable": true
+    }, 
+    "datatable-sort-deprecated": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "recordset-sort"
+        ]
     }, 
     "datatype": {
         "use": [
@@ -9462,6 +9520,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "file": {
+        "requires": [
+            "file-flash", 
+            "file-html5"
+        ]
+    }, 
+    "file-flash": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "file-html5": {
         "requires": [
             "base"
         ]
@@ -10344,6 +10413,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "uploader-flash"
         ]
     }, 
+    "uploader-deprecated": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
+    }, 
     "uploader-flash": {
         "requires": [
             "swf", 
@@ -10353,7 +10430,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssbutton", 
             "node", 
             "event-custom", 
-            "file", 
+            "file-flash", 
             "uploader-queue"
         ]
     }, 
@@ -10362,7 +10439,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "node-event-simulate", 
             "substitute", 
-            "file", 
+            "file-html5", 
             "uploader-queue"
         ]
     }, 
@@ -10531,7 +10608,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4db5e87ba2cdfd2ccf6e8a6f43b13a7';
+YUI.Env[Y.version].md5 = 'afe9f7b567e32184ab3e2a76593d7ef7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -4,7 +4,7 @@
             "widget",
             "node-event-simulate",
             "substitute",
-            "file",
+            "file-html5",
             "uploader-queue"
         ] 
     }

@@ -198,9 +198,9 @@ Y.mix(Sortable.prototype, {
 
     @property SORTABLE_HEADER_TEMPLATE
     @type {HTML}
-    @value '<a class="{className}" title="{title}" role="button"><span role="presentation" class="{indicatorClass}"></span></a>'
+    @value '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>'
     **/
-    SORTABLE_HEADER_TEMPLATE: '<a class="{className}" title="{title}" role="button"><span role="presentation" class="{indicatorClass}"></span></a>',
+    SORTABLE_HEADER_TEMPLATE: '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>',
 
     /**
     Reverse the current sort direction of one or more fields currently being
@@ -333,12 +333,12 @@ Y.mix(Sortable.prototype, {
             Y.bind('_uiSetSortable', this));
 
         if (this._theadNode) {
-            this._sortHandle = this.delegate('click',
+            this._sortHandle = this.delegate(['click','keydown'],
                 Y.rbind('_onUITriggerSort', this),
                 '.' + this.getClassName('sortable', 'column'));
         }
     },
-            
+
     /**
     Sets the `sortBy` attribute from the `sort` event's `e.sortBy` value.
 
@@ -519,19 +519,41 @@ Y.mix(Sortable.prototype, {
     **/
     _onUITriggerSort: function (e) {
         var id = e.currentTarget.getAttribute('data-yui3-col-id'),
-            config = {},
-            dir    = 1,
-            column = id && this.getColumn(id);
+            sortBy = e.shiftKey ? this.get('sortBy') : [{}],
+            column = id && this.getColumn(id),
+            i, len;
 
+        if (e.type === 'keydown' && e.keyCode !== 32) {
+            return;
+        }
+
+        // In case a headerTemplate injected a link
+        // TODO: Is this overreaching?
         e.preventDefault();
 
-        // TODO: if (e.ctrlKey) { /* subsort */ }
         if (column) {
-            config[id] = -(column.sortDir|0) || 1;
+            if (e.shiftKey) {
+                for (i = 0, len = sortBy.length; i < len; ++i) {
+                    if (id === sortBy[i] || Math.abs(sortBy[i][id] === 1)) {
+                        if (!isObject(sortBy[i])) {
+                            sortBy[i] = {};
+                        }
+
+                        sortBy[i][id] = -(column.sortDir|0) || 1;
+                        break;
+                    }
+                }
+
+                if (i >= len) {
+                    sortBy.push(column._id);
+                }
+            } else {
+                sortBy[0][id] = -(column.sortDir|0) || 1;
+            }
 
             this.fire('sort', {
                 originEvent: e,
-                sortBy: [config]
+                sortBy: sortBy
             });
         }
     },
@@ -708,38 +730,74 @@ Y.mix(Sortable.prototype, {
             descClass     = this.getClassName('sorted', 'desc'),
             linerClass    = this.getClassName('sort', 'liner'),
             indicatorClass= this.getClassName('sort', 'indicator'),
-            i, len, col, node, content, title;
+            sortableCols  = {},
+            i, len, col, node, liner, title, desc;
 
         this.get('boundingBox').toggleClass(
             this.getClassName('sortable'),
             columns.length);
 
+        for (i = 0, len = columns.length; i < len; ++i) {
+            sortableCols[columns[i].id] = columns[i];
+        }
+
         // TODO: this.head.render() + decorate cells?
-        this._theadNode.all('.' + indicatorClass).remove().destroy(true);
-        this._theadNode.all('.' + sortableClass)
-            .removeClass(sortableClass)
-            .removeClass(ascClass)
-            .removeClass(descClass)
-            .each(function (th) {
-                var liner = th.one('.' + linerClass);
+        this._theadNode.all('.' + sortableClass).each(function (node) {
+            var col       = sortableCols[node.get('id')],
+                liner     = node.one('.' + linerClass),
+                indicator;
+
+            if (col) {
+                if (!col.sortDir) {
+                    node.removeClass(ascClass)
+                        .removeClass(descClass);
+                }
+            } else {
+                node.removeClass(sortableClass)
+                    .removeClass(ascClass)
+                    .removeClass(descClass);
 
                 if (liner) {
                     liner.replace(liner.get('childNodes').toFrag());
                 }
-            });
+
+                indicator = node.one('.' + indicatorClass);
+
+                if (indicator) {
+                    indicator.remove().destroy(true);
+                }
+            }
+        });
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col  = columns[i];
-            node = this._theadNode.one('#' + col._yuid);
+            node = this._theadNode.one('#' + col.id);
+            desc = col.sortDir === -1;
 
             if (node) {
+                liner = node.one('.' + linerClass);
+
                 node.addClass(sortableClass);
+
                 if (col.sortDir) {
                     node.addClass(ascClass);
 
-                    if (col.sortDir === -1) {
-                        node.addClass(descClass);
-                    }
+                    node.toggleClass(descClass, desc);
+
+                    node.setAttribute('aria-sort', desc ?
+                        'descending' : 'ascending');
+                }
+
+                if (!liner) {
+                    liner = Y.Node.create(Y.Lang.sub(
+                        this.SORTABLE_HEADER_TEMPLATE, {
+                            className: linerClass,
+                            indicatorClass: indicatorClass
+                        }));
+
+                    liner.prepend(node.get('childNodes').toFrag());
+
+                    node.append(liner);
                 }
 
                 title = sub(this.getString(
@@ -748,13 +806,10 @@ Y.mix(Sortable.prototype, {
                                 col.key  || ('column ' + i)
                 });
 
-                Y.Node.create(Y.Lang.sub(this.SORTABLE_HEADER_TEMPLATE, {
-                        className     : linerClass,
-                        indicatorClass: indicatorClass,
-                        title         : title
-                    }))
-                    .prepend(node.get('childNodes').toFrag())
-                    .appendTo(node);
+                node.setAttribute('title', title);
+                // To combat VoiceOver from reading the sort title as the
+                // column header
+                node.setAttribute('aria-labelledby', col.id);
             }
         }
     },

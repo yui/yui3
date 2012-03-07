@@ -700,6 +700,7 @@ YUI.add('attribute-core', function(Y) {
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
+                prevRawVal = this._getStateVal(attrName),
                 name = subAttrName || attrName,
                 retVal,
                 valid;
@@ -739,7 +740,7 @@ YUI.add('attribute-core', function(Y) {
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && (newVal === this._getStateVal(attrName)) && !Lang.isObject(newVal)) {
+                    if(!subAttrName && (newVal === prevRawVal) && !Lang.isObject(newVal)) {
                         Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {

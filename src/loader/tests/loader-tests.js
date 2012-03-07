@@ -1,9 +1,9 @@
 YUI.add('loader-tests', function(Y) {
     
     var Assert = Y.Assert,
-    testY = YUI();
-    var ua = Y.UA;
-    var jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
+        testY = YUI(),
+        ua = Y.UA,
+        jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
 
 
     var testLoader = new Y.Test.Case({
@@ -13,7 +13,7 @@ YUI.add('loader-tests', function(Y) {
                 'test_failure': !jsFailure,
                 'test_timeout': !jsFailure
             }
-        },       
+        },
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
                 ignoreRegistered: true,
@@ -107,7 +107,7 @@ YUI.add('loader-tests', function(Y) {
                                 path: 'actioninfos/actioninfos.JS'
                             },
                             'mods-test': {
-                                path: 'test/test.JS',
+                                path: 'test/test.JS'
                             }
                         }
                     }
@@ -136,7 +136,7 @@ YUI.add('loader-tests', function(Y) {
                                 path: 'actioninfos/actioninfos.JS'
                             },
                             'mods-test': {
-                                path: 'test/test.JS',
+                                path: 'test/test.JS'
                             }
                         }
                     }
@@ -331,10 +331,10 @@ YUI.add('loader-tests', function(Y) {
         
             YUI({
                 cssAttributes: {
-                    'class': 'yui-css-module'
+                    'id': 'yui-id-css-module'
                 },
                 jsAttributes: {
-                    'class': 'yui-js-module'
+                    'id': 'yui-id-js-module'
                 },
                 modules: {
                     'attrs2-js': {
@@ -346,8 +346,8 @@ YUI.add('loader-tests', function(Y) {
                 }
             }).use('attrs2-js', 'attrs2-css', 'node', function(Y) {
                 test.resume(function() {
-                    Assert.isNotNull(Y.one('.yui-js-module'), 'Failed to add classname to JS');
-                    Assert.isNotNull(Y.one('.yui-css-module'), 'Failed to add classname to CSS');
+                    Assert.isNotNull(Y.one('#yui-id-js-module'), 'Failed to add id to JS');
+                    Assert.isNotNull(Y.one('#yui-id-css-module'), 'Failed to add id to CSS');
                 });                
             });
 
@@ -402,7 +402,7 @@ YUI.add('loader-tests', function(Y) {
                     if (e.name.indexOf('-ie') === -1) { //Weed out IE only modules
                         counter++;
                     }
-                },
+                }
             }).use('gallery-bitly', 'yui2-editor', function(Y) {
                 test.resume(function() {
                     Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
@@ -473,7 +473,7 @@ YUI.add('loader-tests', function(Y) {
                         patterns: {
                             modtest: {
                                 test: function(mname) {
-                                    return (mname === 'mod')
+                                    return (mname === 'mod');
                                 },
                                 configFn: function(me) {
                                     me.fullpath = './assets/mod.js';
@@ -719,10 +719,10 @@ YUI.add('loader-tests', function(Y) {
                                 requires: [ 'bar', 'baz' ]
                             },
                             baz: {
-                                path: 'path/to/baz.js',
+                                path: 'path/to/baz.js'
                             },
                             bar: {
-                                path: 'bar.js',
+                                path: 'bar.js'
                             },
                             somecss: {
                                 path: 'my/css/files.css'
@@ -968,7 +968,7 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isNotNull(node1, 'Failed to load module 1');
                     Assert.isNotNull(node2, 'Failed to load module 2');
                     Assert.isNotNull(node3, 'Failed to load module 3');
-
+                    
                     if (Y.Get._env.async) {
                         //This browser supports the async property, check it
                         Assert.isFalse(node1.async, 'Async flag on node1 was set incorrectly');
@@ -976,9 +976,15 @@ YUI.add('loader-tests', function(Y) {
                         Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
                     } else {
                         //The async attribute is still
-                        Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
-                        Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
-                        Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                        if (Y.UA.ie && Y.UA.ie > 8) {
+                            Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
+                            Assert.isUndefined(node1.async, 'Async flag on node1 was set incorrectly');
+                            Assert.isUndefined(node2.async, 'Async flag on node2 was set incorrectly');
+                        } else {
+                            Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
+                            Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
+                            Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                        }
                     }
                 });
             });
@@ -1009,5 +1015,6 @@ YUI.add('loader-tests', function(Y) {
     var suite = new Y.Test.Suite("Loader Automated Tests");
     suite.add(testLoader);
     Y.Test.Runner.add(suite);
+
     
 });

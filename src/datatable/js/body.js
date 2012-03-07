@@ -388,7 +388,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
                         if (cell) {
                             col = formatterData.column = columns[formatters[i]];
-                            key = col.key || col._yuid;
+                            key = col.key || col.id;
 
                             formatterData.value = record.get(key);
                             formatterData.td    = cell;

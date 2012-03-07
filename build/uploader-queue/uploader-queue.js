@@ -167,8 +167,8 @@ YUI.add('uploader-queue', function(Y) {
            
            this._currentState = UploaderQueue.UPLOADING;
 
-           while (this.numberOfUploads < this.get("simUploads")) {
-               this._startNextFile();
+           while (this.numberOfUploads < this.get("simUploads") && this.queuedFiles.length > 0) {
+                this._startNextFile();
            }
         },
 
@@ -194,7 +194,7 @@ YUI.add('uploader-queue', function(Y) {
             }
         },
 
-        cancelUpload: function () {
+        cancelUpload: function (file) {
             for (fid in this.currentFiles) {
               this.currentFiles[fid].cancel();
               this._unregisterUpload(this.currentFiles[fid]);
