@@ -3,7 +3,8 @@ YUI.add('date-tests', function(Y) {
 
     
     //Helper function to normalize timezone dependent hours.
-    var getHours = function(date) {
+    var getHours = function(date, pad) {
+        pad = (pad === false) ? false : true;
         var h = date.getHours();
         if (h > 12) {
             h = (h - 12);
@@ -11,7 +12,7 @@ YUI.add('date-tests', function(Y) {
         if (h === 0) {
             h = 12;
         }
-        if (h < 12) {
+        if (h < 12 & pad) {
             h = '0' + h;
         }
         return h;  
@@ -96,7 +97,7 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame(351, parseInt(output, 10), 'Expected %j format.');
 
             output = Y.DataType.Date.format(date, {format:"%l"});
-            ASSERT.areSame(5, parseInt(output, 10), 'Expected %l format.');
+            ASSERT.areSame(getHours(date, false), parseInt(output, 10), 'Expected %l format.');
 
 
             output = Y.DataType.Date.format(date, {format:"%s"});
