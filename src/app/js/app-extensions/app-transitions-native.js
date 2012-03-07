@@ -211,7 +211,7 @@ AppTransitionsNative.prototype = {
 Y.mix(Y.Transition.fx, {
     'app:fadeIn': {
         opacity : 1,
-        duration: 0.35,
+        duration: 0.3,
 
         on: {
             start: function (data) {
@@ -233,7 +233,7 @@ Y.mix(Y.Transition.fx, {
 
     'app:fadeOut': {
         opacity : 0,
-        duration: 0.35,
+        duration: 0.3,
 
         on: {
             start: function (data) {
@@ -254,10 +254,17 @@ Y.mix(Y.Transition.fx, {
     },
 
     'app:slideLeft': {
-        duration : 0.35,
+        duration : 0.3,
         transform: 'translateX(-100%)',
 
         on: {
+            start: function () {
+                this.setStyles({
+                    opacity  : 1,
+                    transform: 'translateX(0%)'
+                });
+            },
+
             end: function () {
                 this.setStyle('transform', 'translateX(0)');
             }
@@ -265,12 +272,15 @@ Y.mix(Y.Transition.fx, {
     },
 
     'app:slideRight': {
-        duration : 0.35,
+        duration : 0.3,
         transform: 'translateX(0)',
 
         on: {
             start: function () {
-                this.setStyle('transform', 'translateX(-100%)');
+                this.setStyles({
+                    opacity  : 1,
+                    transform: 'translateX(-100%)'
+                });
             },
 
             end: function () {
