@@ -40,7 +40,6 @@ LEGEND = {
                 val.includeInChartLayout = true;
             }
             legend = new Y.ChartLegend(val);
-            legend.after("legendRendered", Y.bind(this._itemRendered, this));
         }
         return legend;
     }
