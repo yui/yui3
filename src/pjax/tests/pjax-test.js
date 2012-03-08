@@ -7,6 +7,8 @@ filesystem, the tests that require XHR will be skipped.
 */
 YUI.add('pjax-test', function (Y) {
 
+// Y.Router.html5 = false;
+
 var Assert = Y.Assert,
 
     // Tests that require XHR are ignored when the protocol isn't http or https,
@@ -464,7 +466,8 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5
+            '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5,
+            '`navigate()` should fire the `unload` event in non HTML5 browsers': html5
         },
 
         error: {
@@ -541,6 +544,66 @@ suite.add(new Y.Test.Case({
 
         didNavigate = this.pjax.navigate('http://some.random.host.example.com/foo/bar/');
         Assert.areSame(false, didNavigate, '`navigate()` did not return `false`');
+    },
+
+    '`navigate()` should fire the `unload` event in non HTML5 browsers': function () {
+        var location = Y.getLocation().toString(),
+            didNavigate;
+
+        didNavigate = this.pjax.navigate('assets/page-full.html');
+        Assert.isTrue(didNavigate, 'pjax did not navigate.');
+
+        this.wait(function () {
+            Assert.areNotSame(location, Y.getLocation().toString(), 'The `location` did not change.');
+        }, 500);
+    },
+
+    '`navigate()` should not navigate to a hash URL that resolves to the current page': function () {
+        var location = Y.getLocation().toString();
+
+        this.pjax.on('navigate', function (e) {
+            Assert.fail('`navigate` event fired.');
+        });
+
+        Assert.isFalse(this.pjax.navigate('#log'), 'navigate() did not return `false`.');
+        Assert.areSame(location, Y.getLocation().toString(), 'The `location` changed.');
+    },
+
+    '`navigate()` should navigate to a hash URL on the current page when `navigateOnHash` is `true`': function () {
+        var location = Y.getLocation().toString();
+
+        // Set `navigateOnHash`.
+        this.pjax.set('navigateOnHash', true);
+
+        this.pjax.on('navigate', function (e) {
+            Assert.isNotUndefined(e.hash, '`hash` is `undefined`.');
+        });
+
+        Assert.isTrue(this.pjax.navigate('#log'), 'navigate() did not return `true`.');
+        Assert.areNotSame(location, Y.getLocation().toString(), 'The `location` did not change.');
+        Assert.areSame('#log', Y.getLocation().hash, 'hash is not "#log".');
+    },
+
+    '`navigate()` should replace the previous history entry when `options.replace` is `true`': function () {
+        var location = Y.getLocation().toString(),
+            test     = this;
+
+        test.pjax.navigate('assets/page-partial.html');
+
+        test.wait(function () {
+            Assert.areNotSame(location, Y.getLocation().toString(), 'The `location` did not change.');
+            test.pjax.navigate('assets/page-full.html', {replace: true});
+
+            test.wait(function () {
+                Assert.areNotSame(location, Y.getLocation().toString(), 'The `location` did not change.');
+                // Go back.
+                Y.config.win.history.back();
+
+                test.wait(function () {
+                    Assert.areSame(location, Y.getLocation().toString(), 'The history entry was not replaced.');
+                }, 500);
+            }, 500);
+        }, 500);
     }
 }));
 

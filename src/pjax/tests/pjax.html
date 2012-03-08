@@ -7,18 +7,11 @@
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
-<div id="test" style="visibility: hidden;">
-    <div id="test-content"></div>
-    <a href="assets/page-full.html" id="link-full" class="yui3-pjax">full page</a>
-    <a href="assets/page-minimal.html" id="link-minimal" class="yui3-pjax">minimal page</a>
-    <a href="assets/page-text.html" id="link-text" class="yui3-pjax">text page</a>
-    <a href="#log" id="link-in-page" class="yui3-pjax">in-page</a>
-    <a href="" id="link-current" class="yui3-pjax">current page</a>
-</div>
+<iframe id="test-iframe" src="pjax-iframe.html" style="visibility: hidden;"></iframe>
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({
+YUI.GlobalConfig = {
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
@@ -27,9 +20,25 @@ var Y = YUI({
             requires: ['pjax-plugin', 'test']
         }
     }
-}).use('pjax-test', 'test-console', function (Y) {
-    new Y.Test.Console().render('#log');
-    Y.Test.Runner.run();
+};
+
+var Y = YUI().use('test-console', function (Y) {
+    var iframe      = document.getElementById('test-iframe'),
+        iframeWin   = iframe.contentWindow || iframe.contentDocument.parentWindow,
+        iframeDoc   = iframeWin.document,
+        Test        = Y.Test,
+        testConsole = new Y.Test.Console().render('#log');
+
+    YUI({
+        win  : iframeWin,
+        doc  : iframeDoc,
+        logFn: testConsole.log
+    }).use('pjax-test', function (Y) {
+        Y.Test.Runner.run();
+        Y.Test.Runner.on('complete', function() {
+            Test.Runner.run();
+        });
+    });
 });
 </script>
 
