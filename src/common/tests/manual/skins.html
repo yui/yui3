@@ -20,6 +20,7 @@
     <link type="text/css" rel="stylesheet" href="../../../../build/node-menunav/assets/skins/night/node-menunav.css" charset="utf-8">
     <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendar-base-skin.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/calendar/assets/skins/night/calendarnavigator-skin.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/resize/assets/skins/night/resize-base.css">
     
 <!--
     <link type="text/css" rel="stylesheet" href="../../../calendar/assets/skins/night/calendar-base-skin.css">
@@ -65,6 +66,12 @@
 
         .yui3-panel {
             position: static !important;
+        }
+
+        #resize {
+            width:100px; 
+            height:100px; 
+            border:solid 1px #6F6F6F;
         }
 
         /* workaround site CSS */
@@ -391,6 +398,11 @@
                     <input id="ac-input" type="text">
                 </div>
             </div>
+<!-- Resize -->
+            <div class="yui3-u">
+                <div id="resize" >hello</div>
+            </div>
+<!-- end of components elements -->
         </div>      
     </div> 
 <script>
@@ -408,6 +420,7 @@ YUI({
     'node-event-delegate',
     'slider',
     'scrollview', 'scrollview-list',
+    'resize',
 
 function(Y) {
     var buttonHandlers = {
@@ -585,6 +598,13 @@ function(Y) {
         plugins:[Y.Plugin.ScrollViewList],
         render:true
     });
+
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#resize'
+    });   
+
+
 
     // what if...
     // Y.Calendar('#demo-calendar');
