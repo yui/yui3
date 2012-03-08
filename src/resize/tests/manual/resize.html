@@ -5,21 +5,23 @@
     <title>Resize Manual Test</title>
     <script src="../../../../build/yui/yui-min.js"></script>
     
-    
     <style>
+    #resize{
+        position: relative;
+        width:100px;
+        height:100px;
+        background-color:#abc;
+    }
     </style> 
 
-    <body class="yui3-skin-sam">
-        <div id="resize" style="width:100px; height:100px; background-color:#abc;">hello</div>
+<body class="yui3-skin-sam">
+    <div id="resize">Resize me</div>
 <script>
 YUI({filter: 'raw'},{ skin: 'sam' }).use('resize', function(Y) {
-
-
     var resize = new Y.Resize({
         //Selector of the node to resize
         node: '#resize'
     });   
-
 });
 </script>
 </body>
