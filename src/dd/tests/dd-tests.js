@@ -446,6 +446,18 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the viewport');
             dd.destroy();
         },
+        'test: node scroll plugin': function() {
+            dd = new Y.DD.Drag({
+                node: '#drag'
+            }).plug(Y.Plugin.DDNodeScroll, {
+                node: Y.one('body')
+            });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDNodeScroll, dd.nodescroll, 'NodeScroll: NodeScroll Instance');
+
+            dd.destroy();
+            
+        },
         test_window_scroll: function() {
             if (Y.one('win').get('winHeight') < 200) {
                 //This should work in IE to resize the window.
@@ -462,6 +474,7 @@ YUI.add('dd-tests', function(Y) {
             }).plug(Y.Plugin.DDWinScroll);
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isInstanceOf(Y.Plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
+
 
             Y.one(window).set('scrollTop', 0);
             Y.one(window).set('scrollLeft', 0);
