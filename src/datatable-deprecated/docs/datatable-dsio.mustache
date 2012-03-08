@@ -1,3 +1,30 @@
+<style scoped>
+.notice {
+    background: #faf3d1;
+    border: 1px solid #eac9a9;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: px;
+    padding: 0 1em;
+    -moz-box-shadow: 0 0 5px #ccc8b3;
+    -webkit-box-shadow: 0 0 5px #ccc8b3;
+    box-shadow: 0 0 5px #ccc8b3;
+    margin-bottom: 1em;
+}
+</style>
+
+<div class="notice">
+    <p>
+        <strong>NOTICE</strong>: This example is for the <strong>deprecated
+        version of DataTable</strong>.  The components referred to here will be
+        removed in future versions of YUI</strong>.  If you are unable to
+        upgrade to <a href="../datatable/index.html">the latest DataTable
+        version</a> due to unresolvable feature conflicts from version 3.4.1 or
+        prior, please <a href="../../../projects/yui3/newticket/">file a
+        ticket</a>.
+    </p>
+</div>
+
 <div class="intro">
     <p>This example shows how to populate a DataTable with data from the Yahoo! Local webservice retrieved via a same-domain script. First we create a DataSource.IO instance pointing to data, then using the DataTableDataSource plugin we can load data for Chinese restaurants near our office.</p>
 
@@ -17,7 +44,7 @@
 <p>Start with the `use()` statement:</p>
 
 ```
-YUI().use("datasource-io", "datasource-xmlschema", "datatable-datasource", function(Y) {
+YUI().use("datasource-io", "datasource-xmlschema", "datatable-datasource-deprecated", function(Y) {
 });
 ```
 
@@ -97,7 +124,7 @@ dataSource.after("response", function() {
 <p>Here's the code to run the whole example:</p>
 
 ```
-YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource", function(Y) {
+YUI().use("datasource-get", "datasource-jsonschema", "datatable-datasource-deprecated", function(Y) {
     var cols = ["Title", "Phone", "Rating"];
 
     var dataSource = new Y.DataSource.IO({

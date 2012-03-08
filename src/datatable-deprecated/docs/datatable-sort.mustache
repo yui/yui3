@@ -6,7 +6,31 @@
 .dt-example th {text-transform:none;}
 .dt-example table {width:auto;}
 .dt-example caption {display:table-caption;}
+.notice {
+    background: #faf3d1;
+    border: 1px solid #eac9a9;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: px;
+    padding: 0 1em;
+    -moz-box-shadow: 0 0 5px #ccc8b3;
+    -webkit-box-shadow: 0 0 5px #ccc8b3;
+    box-shadow: 0 0 5px #ccc8b3;
+    margin-bottom: 1em;
+}
 </style>
+
+<div class="notice">
+    <p>
+        <strong>NOTICE</strong>: This example is for the <strong>deprecated
+        version of DataTable</strong>.  The components referred to here will be
+        removed in future versions of YUI</strong>.  If you are unable to
+        upgrade to <a href="../datatable/index.html">the latest DataTable
+        version</a> due to unresolvable feature conflicts from version 3.4.1 or
+        prior, please <a href="../../../projects/yui3/newticket/">file a
+        ticket</a>.
+    </p>
+</div>
 
 <div class="intro">
     <p>The `Y.Plugin.DataTableSort` plugin adds column sorting functionality to a basic DataTable.</p>
@@ -18,10 +42,10 @@
 
 <h2>Implementing Sortable Columns</h2>
 
-<p>To add column sorting functionality to any DataTable, simply call `.plug(Y.Plugin.DataTableSort)`. The `DataTableSort` plugin is available in the`datatable-sort` submodule. To enable sorting, you must define `sortable:true` in each column definition.</p>
+<p>To add column sorting functionality to any DataTable, simply call `.plug(Y.Plugin.DataTableSort)`. The `DataTableSort` plugin is available in the`datatable-sort-deprecated` submodule. To enable sorting, you must define `sortable:true` in each column definition.</p>
 
 ```
-YUI().use("datatable-sort", function(Y) {
+YUI().use("datatable-sort-deprecated", function(Y) {
     var cols = [
         {key:"Company", label:"Click to Sort Column A", sortable:true},
         {key:"Phone", label:"Not Sortable Column B"},
@@ -47,7 +71,7 @@ YUI().use("datatable-sort", function(Y) {
 <p>Often data is already sorted when it loads, and we want the data to reverse-sort the first time the user clicks on the column. In that case, define the `lastSortedBy` value in the DataTableSort plugin to indicate the field that is already sorted and whether it is sorted in "asc" or "desc" order.</p>
 
 ```
-YUI().use("datatable-sort", function(Y) {
+YUI().use("datatable-sort-deprecated", function(Y) {
     var cols = [
         {key:"Company", label:"Click to Sort Column A", sortable:true},
         {key:"Phone", label:"Not Sortable Column B"},
@@ -89,7 +113,7 @@ the `template` attribute to be the unadorned `"{value}"` string.</p>
 <p><strong>Note:</strong> touch devices don't support the `dblclick` event, so the last table won't be sortable for all users.  Be mindful of your audience when configuring triggers.</p>
 
 ```
-YUI().use("datatable-sort", function(Y) {
+YUI().use("datatable-sort-deprecated", function(Y) {
     var cols = [
         {key:"Company", label:"Dblclick to Sort A", sortable:true},
         {key:"Phone", label:"Not Sortable Column B"},

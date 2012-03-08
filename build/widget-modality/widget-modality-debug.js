@@ -326,13 +326,11 @@ var WIDGET       = 'widget',
                 // push on top of stack
                 stack.unshift(this);
 
-                //this._attachUIHandlesModal();
                 this._repositionMask(this);
                 this._uiSetHostZIndexModal(this.get(Z_INDEX));
-                maskNode.show();
 
                 if (isModal) {
-                    //this._attachUIHandlesModal();
+                    maskNode.show();
                     Y.later(1, this, '_attachUIHandlesModal');
                     this._focus();
                 }
