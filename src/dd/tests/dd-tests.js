@@ -639,6 +639,72 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isTrue((n2.get('nextSibling') ? true : false), '3, Node has a sibling');
             Y.Assert.isNull((n1.get('nextSibling')), '4, Node has a sibling');
             
+        },
+        'test: proxy plugin on widget': function() {
+            var test = this,
+                Assert = Y.Assert,
+                ArrayAssert = Y.ArrayAssert;
+
+            YUI().use('panel', 'dd-plugin', 'dd-proxy', function(Y) {
+                var panel = new Y.Panel({
+                    headerContent: 'Some title',
+                    width: 250,
+                    bodyContent: "<h1>Some content goes here <br> Content</h1>",
+                    render: true
+                });
+                
+                panel.plug(Y.Plugin.Drag);
+
+                Assert.isInstanceOf(Y.Plugin.Drag, panel.dd);
+
+                panel.dd.plug(Y.Plugin.DDProxy);
+                
+                Assert.isInstanceOf(Y.Plugin.DDProxy, panel.dd.proxy);
+
+                Assert.areSame(2, panel.dd._widgetHandles.length, 'Should have 2 event listeners');
+
+                panel.dd._checkEvents();
+
+                Assert.areSame(0, panel.dd._widgetHandles.length, 'Should have no event listeners');
+
+                panel.dd.unplug(Y.Plugin.DDProxy);
+                panel.dd._checkEvents();
+
+                Assert.areSame(2, panel.dd._widgetHandles.length, 'Should have 2 event listeners');
+
+                panel.dd._updateStopPosition({  
+                    target: {
+                        realXY: [100, 100]
+                    }
+                });
+                ArrayAssert.itemsAreEqual([100, 100], panel.dd._stoppedPosition, 'Failed to set stoppedPosition');
+
+                panel.dd._setWidgetCoords({
+                    target: {
+                        realXY: [300, 300],
+                        nodeXY: [0, 0]
+                    }
+                });
+
+                panel.dd._stoppedPosition = null;
+                panel.dd._setWidgetCoords({
+                    target: {
+                        realXY: [300, 300],
+                        nodeXY: [50, 300]
+                    }
+                });
+
+                panel.dd._stoppedPosition = null;
+                panel.dd._setWidgetCoords({
+                    target: {
+                        realXY: [400, 400],
+                        nodeXY: [400, 50]
+                    }
+                });
+
+                panel.destroy();
+
+            });
 
         }
     };
