@@ -17,8 +17,6 @@ YUI({
                                                       to: "#uploadButton"}
                                        });
 
-  console.log(myuploader.get("swfURL"));
-
   myuploader.render();
 
 myuploader.set("multipleFiles", true);

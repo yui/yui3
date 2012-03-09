@@ -45,9 +45,21 @@ AppTransitionsNative.prototype = {
 
     // TODO: API Docs.
     _dequeueActiveView: function () {
-        var transition = this._viewTransitionQueue.shift();
+        var queue      = this._viewTransitionQueue,
+            transition = queue.shift(),
+            options;
 
-        transition && this._uiTransitionActiveView.apply(this, transition);
+        if (transition) {
+            // When items are still left in the queue, override the transition
+            // so it does not run.
+            if (queue.length) {
+                // Overrides `options.transtion` and splices in the new options.
+                options = Y.merge(transition[2], {transition: false});
+                transition.splice(2, 1, options);
+            }
+
+            this._uiTransitionActiveView.apply(this, transition);
+        }
     },
 
     /**
@@ -96,7 +108,9 @@ AppTransitionsNative.prototype = {
     @protected
     **/
     _queueActiveView: function () {
-        this._viewTransitionQueue.push(arguments);
+        var args = Y.Array(arguments, 0, true);
+
+        this._viewTransitionQueue.push(args);
 
         if (!this._transitioning) {
             this._dequeueActiveView();
@@ -146,8 +160,7 @@ AppTransitionsNative.prototype = {
             callback && callback.call(this, newView);
 
             this._transitioning = false;
-            this._dequeueActiveView();
-            return;
+            return this._dequeueActiveView();
         }
 
         fx       = this._getFx(newView, oldView, options.transition);
@@ -163,8 +176,7 @@ AppTransitionsNative.prototype = {
             callback && callback.call(this, newView);
 
             this._transitioning = false;
-            this._dequeueActiveView();
-            return;
+            return this._dequeueActiveView();
         }
 
         this._transitioning = true;
@@ -184,7 +196,7 @@ AppTransitionsNative.prototype = {
             callback && callback.call(this, newView);
 
             this._transitioning = false;
-            this._dequeueActiveView();
+            return this._dequeueActiveView();
         }
 
         // Setup a new stack to run the view transitions in parallel.
@@ -213,7 +225,7 @@ AppTransitionsNative.prototype = {
 Y.mix(Y.Transition.fx, {
     'app:fadeIn': {
         opacity : 1,
-        duration: 0.35,
+        duration: 0.3,
 
         on: {
             start: function (data) {
@@ -235,7 +247,7 @@ Y.mix(Y.Transition.fx, {
 
     'app:fadeOut': {
         opacity : 0,
-        duration: 0.35,
+        duration: 0.3,
 
         on: {
             start: function (data) {
@@ -256,10 +268,17 @@ Y.mix(Y.Transition.fx, {
     },
 
     'app:slideLeft': {
-        duration : 0.35,
+        duration : 0.3,
         transform: 'translateX(-100%)',
 
         on: {
+            start: function () {
+                this.setStyles({
+                    opacity  : 1,
+                    transform: 'translateX(0%)'
+                });
+            },
+
             end: function () {
                 this.setStyle('transform', 'translateX(0)');
             }
@@ -267,12 +286,15 @@ Y.mix(Y.Transition.fx, {
     },
 
     'app:slideRight': {
-        duration : 0.35,
+        duration : 0.3,
         transform: 'translateX(0)',
 
         on: {
             start: function () {
-                this.setStyle('transform', 'translateX(-100%)');
+                this.setStyles({
+                    opacity  : 1,
+                    transform: 'translateX(-100%)'
+                });
             },
 
             end: function () {

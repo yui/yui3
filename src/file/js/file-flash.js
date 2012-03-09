@@ -93,8 +93,7 @@
          if (this.get("uploader")) {
            this.get("uploader").callSWF("cancel", [this.get("id")]);
          }
-        },
-
+        }
 
     }, {
 
