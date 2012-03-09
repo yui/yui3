@@ -13,7 +13,6 @@ Y.AsyncQueue.defaults.timeout = -1;
 //
 
 function f() {}
-function fAsync() {this.pause(); this.run();}
 
 if (!window.console) {
     console = { log: f };
@@ -85,7 +84,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(q, q.stop());
     },
 
-    test_add : function () {
+    addTester : function (timeout) {
         var self = this;
         var q = new Y.AsyncQueue(f);
 
@@ -119,46 +118,27 @@ suite.add(new Y.Test.Case({
 
         // Three x calls scheduled.  A fourth added during a callback
         q = new Y.AsyncQueue(x,f,x,addToQueue,f,x);
-        q.defaults.timeout = -1;
-        q.run();
+        q.defaults.timeout = timeout;
         
-        Y.Assert.areSame(4,count);
+        if (q.defaults.timeout < 0) {
+            q.run();
+            Y.Assert.areSame(4,count);
+        } else {
+            q.on('complete', function () {
+                Y.Assert.areSame(4,count);
+                self.resume();
+            });
+            q.run();
+            self.wait();
+        }
         
     },
-        
-        // This is an Async version of above.
-    test_addAsync : function () {
-        var self = this;
-        var count = 0;
-
-        function xAsync() {
-            this.pause();
-            count++;
-            this.run();
-        }
-        function addToQueueAsync() {
-            this.pause();
-            this.add(xAsync);
-            this.run();
-        }
-        
-        var q = new Y.AsyncQueue(xAsync,
-                fAsync,
-                xAsync,
-                addToQueueAsync,
-                fAsync,
-                xAsync
-                );
-        q.defaults.timeout = 10;
-        
-        q.on('complete', function () {
-            Y.Assert.areSame(4,count);
-            self.resume();
-        });
-        q.run();
-        
-        self.wait();
-        
+    
+    test_addSync: function () {
+        this.addTester(-1);
+    },
+    test_addAsync: function () {
+        this.addTester(10);
     },
 
     test_remove : function () {
@@ -351,19 +331,18 @@ suite.add(new Y.Test.Case({
         var results = '',
             self = this,
             q = new Y.AsyncQueue(
-                function () { results += 'A'; q.run();},
+                function () { results += 'A';},
                 {
                     fn: function () {
                         results += 'B';
                         if (results.length === 3) {
                             this.iterationBreak();
                         }
-                        q.run();
                     },
                     iterations : 10
                 },
-                function () { results += 'C'; q.run();}
-                ).config({alwaysPause: true, timeout: timeout});
+                function () { results += 'C';}
+                ).config({timeout: timeout});
             
         q.on('complete', function () {
                 setTimeout(function () {
@@ -617,24 +596,18 @@ suite.add(new Y.Test.Case({
             self = this,
             q = new Y.AsyncQueue(
                 function () { q.pause(); results += 'A'; q.run();},
-                { fn: function () { q.pause(); results += 'B'; q.run();} },
                 { 
-                    fn: function () { q.pause(); results += 'C'; q.run();},
+                    fn: function () {  results += 'B'; },
                     timeout: 10
                 },
                 { 
-                    fn: function () { q.pause(); results += 'D'; q.run();},
+                    fn: function () { results += 'C'; },
                     timeout: 10
                 },
-                { 
-                    fn: function () { q.pause(); results += 'E'; q.run();},
-                    timeout: -1
-                },
-                { fn: function () {
+                function () {
                     self.resume(function () {
-                        Y.Assert.areSame('ABCDE', results);
+                        Y.Assert.areSame('ABC', results);
                     });
-                  }
                 }
             );
         q.defaults.timeout = -1;
@@ -642,6 +615,7 @@ suite.add(new Y.Test.Case({
 
         this.wait();
     },
+
 
     test_until : function () {
         var results = '',
