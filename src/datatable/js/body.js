@@ -332,7 +332,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         this.render();
     },
-    
+
     /**
     Handles modelList changes, including additions, deletions, and updates.
 
@@ -348,6 +348,28 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
+    Reacts to a change in the instance's `modelList` attribute by breaking
+    down the bubbling relationship with the previous `modelList` and setting up
+    that relationship with the new one.
+
+    @method _afterModelListChange
+    @param {EventFacade} e The `modelListChange` event
+    @protected
+    **/
+    _afterModelListChange: function (e) {
+        var old = e.prevVal,
+            now = e.newVal;
+
+        if (old && old.removeTarget) {
+            old.removeTarget(this);
+        }
+
+        if (now && now.addTarget(this)) {
+            now.addTarget(this);
+        }
+    },
+
+    /**
     Iterates the `modelList`, and calls any `nodeFormatter`s found in the
     `columns` param on the appropriate cell Nodes in the `tbody`.
 
@@ -360,9 +382,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         var source = this.source,
             data = this.get('modelList'),
             formatters = [],
-            tbodyNode  = tbody.getDOMNode(),
             linerQuery = '.' + this.getClassName('liner'),
-            i, len;
+            rows, i, len;
 
         // Only iterate the ModelList again if there are nodeFormatters
         for (i = 0, len = columns.length; i < len; ++i) {
@@ -372,19 +393,22 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         }
 
         if (data && formatters.length) {
+            rows = tbody.get('childNodes');
+
             data.each(function (record, index) {
                 var formatterData = {
                         data      : record.toJSON(),
                         record    : record,
                         rowIndex  : index
                     },
-                    row = tbodyNode.rows[index],
-                    i, len, col, key, cell, keep;
+                    row = rows.item(index),
+                    i, len, col, key, cells, cell, keep;
 
 
                 if (row) {
+                    cells = row.get('childNodes');
                     for (i = 0, len = formatters.length; i < len; ++i) {
-                        cell = Y.one(row.cells[formatters[i]]);
+                        cell = cells.item(formatters[i]);
 
                         if (cell) {
                             col = formatterData.column = columns[formatters[i]];
@@ -422,15 +446,14 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             data    = this.get('modelList');
 
         if (this.source && !handles.columnsChange) {
-            handles.columnsChange =
-                this.source.after('columnsChange',
-                    bind('_afterColumnsChange', this));
+            handles.columnsChange = this.source.after('columnsChange',
+                bind('_afterColumnsChange', this));
         }
 
         if (!handles.dataChange) {
-            handles.dataChange = 
-                data.after(['*:change', 'add', 'remove', 'reset'],
-                    bind('_afterDataChange', this));
+            handles.dataChange = this.after(
+                ['modelListChange', '*:change', '*:add', '*:remove', '*:reset'],
+                bind('_afterDataChange', this));
         }
     },
 
@@ -615,6 +638,9 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     destructor: function () {
+        // will unbind the bubble relationship and clear the table if necessary
+        this.set('modelList', null);
+
         (new Y.EventHandle(YObject.values(this._eventHandles))).detach();
     },
 
@@ -642,7 +668,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     initializer: function (config) {
-        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix;
+        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix,
+            modelList = this.get('modelList');
 
         this.source  = config.source;
         this.columns = this._parseColumns(config.columns);
@@ -655,6 +682,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         this.CLASS_ODD  = this.getClassName('odd');
         this.CLASS_EVEN = this.getClassName('even');
+
+        this.after('modelListChange', bind('_afterModelListChange', this));
+
+        if (modelList && modelList.addTarget) {
+            modelList.addTarget(this);
+        }
     },
 
     /**
@@ -705,4 +738,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @protected
     **/
     //_rowTemplate: null
+}, {
+    ATTRS: {
+        modelList: {
+            setter: '_setModelList'
+        }
+    }
 });
