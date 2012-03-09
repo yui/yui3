@@ -6,7 +6,7 @@ YUI.add('uploader-flash', function(Y) {
      * Flash as a transport engine.
      * The supported features include: automatic upload queue management, upload progress
      * tracking, server response retrieval and error reporting.
-	 *
+   *
      * @module uploader-flash
      */     
 
@@ -42,7 +42,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @type {SWF}
     * @protected
     */
-	_swfReference: null,
+  _swfReference: null,
 
    /**
     * Stored reference to the instance of Uploader.Queue used to manage
@@ -52,7 +52,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @type {Y.Uploader.Queue}
     * @protected
     */
-	_uploaderQueue: null,
+  _uploaderQueue: null,
 
    /**
     * Stored value of the unique id for the container that holds the 
@@ -62,7 +62,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @type {String}
     * @protected
     */
-	_swfContainerId: null,
+  _swfContainerId: null,
 
 
 
@@ -77,10 +77,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @method initializer
      * @protected
      */
-	initializer : function () {
+  initializer : function () {
 
-		// Assign a unique id for the SWF container
-		this._swfContainerId = Y.guid("uploader");
+    // Assign a unique id for the SWF container
+    this._swfContainerId = Y.guid("uploader");
 
         // Publish available events
         this.publish("fileselect");
@@ -92,7 +92,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         this.publish("alluploadscomplete");
         this.publish("uploaderror");
 
-	},
+  },
 
 
     /**
@@ -102,8 +102,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @param event The event dispatched during the upload process.
      * @private
      */
-	_uploadEventHandler : function (event) {
-	
+  _uploadEventHandler : function (event) {
+  
     switch (event.type) {
                 case "file:uploadstart":
                    this.fire("fileuploadstart", event);
@@ -124,7 +124,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                    this.fire("uploaderror", event);
     }   
 
-	},
+  },
 
     /**
      * Syncs the state of the `multipleFiles` attribute between this class
@@ -134,9 +134,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @private
      */
     _setMultipleFiles : function () {
-    	    if (this._swfReference) {
-				this._swfReference.callSWF("setAllowMultipleFiles", [this.get("multipleFiles")]);
-			}
+          if (this._swfReference) {
+        this._swfReference.callSWF("setAllowMultipleFiles", [this.get("multipleFiles")]);
+      }
     },
 
 
@@ -148,9 +148,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @private
      */
     _setFileFilters : function () {
-            if (this._swfReference && this.get("fileFilters") != null) {
-            	this._swfReference.callSWF("setFileFilters", [this.get("fileFilters")]);
-            }	
+            if (this._swfReference && this.get("fileFilters") !== null) {
+              this._swfReference.callSWF("setFileFilters", [this.get("fileFilters")]);
+            } 
 
     },
 
@@ -177,14 +177,14 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
            swfRef = this._swfReference;
  
        Y.each(newfiles, function (value) {
-       	 var newFileConf = {};
-       	 newFileConf.id = value.fileId;
-       	 newFileConf.name = value.fileReference.name;
-       	 newFileConf.size = value.fileReference.size;
-       	 newFileConf.type = value.fileReference.type;
-       	 newFileConf.dateCreated = value.fileReference.creationDate;
-       	 newFileConf.dateModified = value.fileReference.modificationDate;
-       	 newFileConf.uploader = swfRef;
+         var newFileConf = {};
+         newFileConf.id = value.fileId;
+         newFileConf.name = value.fileReference.name;
+         newFileConf.size = value.fileReference.size;
+         newFileConf.type = value.fileReference.type;
+         newFileConf.dateCreated = value.fileReference.creationDate;
+         newFileConf.dateModified = value.fileReference.modificationDate;
+         newFileConf.uploader = swfRef;
 
          fileConfObjects.push(newFileConf);
        });
@@ -197,8 +197,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
        var oldfiles = this.get("fileList");
 
-	   this.set("fileList", 
-	             this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+     this.set("fileList", 
+               this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
     },
 
@@ -211,24 +211,26 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @method renderUI
      * @protected
      */
-	renderUI : function () {
-	   var contentBox = this.get('contentBox');
-       var selFilesButton = this.get("selectFilesButton");
-       selFilesButton.setStyles({width: "100%", height: "100%"});
-
-	   contentBox.append(selFilesButton);
-	   contentBox.append(Y.Node.create(substitute(UploaderFlash.FLASH_CONTAINER, 
-		                                          {swfContainerId: this._swfContainerId})));
-	   var flashContainer = Y.one("#" + this._swfContainerId);
-	   var params = {version: "10.0.45",
+  renderUI : function () {
+     var boundingBox = this.get("boundingBox"),
+         contentBox = this.get('contentBox'),
+         selFilesButton = this.get("selectFilesButton");
+ 
+     boundingBox.setStyle("position", "relative");
+     selFilesButton.setStyles({width: "100%", height: "100%"});
+     contentBox.append(selFilesButton);
+     contentBox.append(Y.Node.create(substitute(UploaderFlash.FLASH_CONTAINER, 
+                                              {swfContainerId: this._swfContainerId})));
+     var flashContainer = Y.one("#" + this._swfContainerId);
+     var params = {version: "10.0.45",
                      fixedAttributes: {wmode: "transparent", 
                                        allowScriptAccess:"always", 
                                        allowNetworking:"all", 
                                        scale: "noscale"
-                                      },
+                                      }
                     };
-	   this._swfReference = new Y.SWF(flashContainer, this.get("swfURL"), params);
-	},
+     this._swfReference = new Y.SWF(flashContainer, this.get("swfURL"), params);
+  },
 
     /**
      * Binds to the UploaderFlash UI and subscribes to the necessary events.
@@ -238,16 +240,16 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @method bindUI
      * @protected
      */
-	bindUI : function () {
+  bindUI : function () {
 
-		this._swfReference.on("swfReady", function () {
-			this._setMultipleFiles();
-			this._setFileFilters();
-			this.after("multipleFilesChange", this._setMultipleFiles, this);
-			this.after("fileFiltersChange", this._setFileFilters, this);
-		}, this);
+    this._swfReference.on("swfReady", function () {
+      this._setMultipleFiles();
+      this._setFileFilters();
+      this.after("multipleFilesChange", this._setMultipleFiles, this);
+      this.after("fileFiltersChange", this._setFileFilters, this);
+    }, this);
         
- 		this._swfReference.on("fileselect", this._updateFileList, this);
+    this._swfReference.on("fileselect", this._updateFileList, this);
 
         this.after("tabElementsChange", this._attachTabElements);
         this._attachTabElements();
@@ -279,7 +281,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
             Y.one("body").focus();
             this._swfReference._swf.focus();
         }, this);
-	},
+  },
 
     _setButtonClass : function (state, add) {
         if (add) {
@@ -291,7 +293,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     },
 
     _attachTabElements : function () {
-        if (this.get("tabElements") != null && this.get("tabElements").from != null && this.get("tabElements").to != null) {
+        if (this.get("tabElements") !== null && this.get("tabElements").from !== null && this.get("tabElements").to !== null) {
             var fromElement = Y.one(this.get("tabElements").from);
             var toElement = Y.one(this.get("tabElements").to);
 
@@ -329,11 +331,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @method upload
     * @param file {Y.File} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
- 	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
-  	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
+  * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    *                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
 
-	upload : function (file, url, postvars) {
+  upload : function (file, url, postvars) {
         
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile"),
@@ -350,19 +352,19 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
         }
-	},
+  },
 
    /**
     * Starts the upload of all files on the file list, using an automated queue.
     *
     * @method uploadAll
     * @param url {String} The URL to upload the files to.
-  	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
-  	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
+    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    *                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
-	uploadAll : function (url, postvars) {
+  uploadAll : function (url, postvars) {
         this.uploadThese(this.get("fileList"), url, postvars);
-	},
+  },
 
    /**
     * Starts the upload of the files specified in the first argument, using an automated queue.
@@ -370,10 +372,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @method uploadThese
     * @param files {Array} The list of files to upload.
     * @param url {String} The URL to upload the files to.
-  	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
-  	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
+    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    *                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
-	uploadThese : function (files, url, postvars) {
+  uploadThese : function (files, url, postvars) {
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile");
 
@@ -392,7 +394,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
            this._uploaderQueue.startUpload();  
            
            this.fire("uploadstart"); 
-	}
+  }
 },
 
 {
@@ -405,7 +407,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @type {String}
     * @static
     */
-	FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; margin:0px; width:100%; height:100%'></div>",
+  FLASH_CONTAINER: "<div id='{swfContainerId}' style='position:absolute; top:0px; left: 0px; margin: 0; padding: 0; border: 0; width:100%; height:100%'></div>",
 
   SELECT_FILES_BUTTON: "<button type='button' class='yui3-button' tabindex='-1'>{selectButtonLabel}</button>",
 
@@ -420,7 +422,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @protected
      * @static
      */
-	NAME: "uploader",
+  NAME: "uploader",
 
     /**
      * Static property used to define the default attribute configuration of
@@ -431,7 +433,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      * @protected
      * @static
      */
-	ATTRS: {
+  ATTRS: {
 
         buttonClassNames: {
             value: {
@@ -461,11 +463,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @type {Node | Widget}
          * @default A standard HTML button.
          */
-		selectFilesButton : {
-			valueFn: function () {
+    selectFilesButton : {
+      valueFn: function () {
                 return Y.Node.create(substitute(Y.UploaderFlash.SELECT_FILES_BUTTON, {selectButtonLabel: this.get("selectButtonLabel")}));
             }
-		},
+    },
 
         /**
          * A Boolean indicating whether multiple file selection is enabled.
@@ -474,25 +476,25 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @type {Boolean}
          * @default false
          */
-		multipleFiles: {
-			value: false
-		},
+    multipleFiles: {
+      value: false
+    },
 
         /**
          * An array indicating what fileFilters should be applied to the file
          * selection dialog. Each element in the array should be an object with
          * the following key-value pairs:
          * {
-         *   description : String         	
+         *   description : String           
              extensions: String of the form &lquot;*.ext1;*.ext2;*.ext3;...&rquot;
          * }
          * @attribute fileFilters
          * @type {Array}
          * @default null
          */
-		fileFilters: {
-			value: null
-		},
+    fileFilters: {
+      value: null
+    },
          
         /**
          * A String specifying what should be the POST field name for the file
@@ -502,9 +504,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @type {String}
          * @default Filedata
          */
-		fileFieldName: {
-			value: "Filedata"
-		},
+    fileFieldName: {
+      value: "Filedata"
+    },
 
         /**
          * A Boolean indicating whether newly selected files should be appended 
@@ -514,9 +516,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @type {Boolean}
          * @default true
          */
-		appendNewFiles : {
-			value: true
-		},
+    appendNewFiles : {
+      value: true
+    },
 
         /**
          * The number of files that can be uploaded
@@ -528,7 +530,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @type {Number}
          * @default 2
          */
-		simLimit: {
+    simLimit: {
             value: 2,
             validator: function (val, name) {
                 return (val >= 2 && val <= 5);
@@ -537,15 +539,15 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
         /**
          * The array of files to be uploaded. All elements in the array
-	     * must be instances of `Y.File` and be instantiated with a `fileId`
-	     * retrieved from an instance of the uploader.
+       * must be instances of `Y.File` and be instantiated with a `fileId`
+       * retrieved from an instance of the uploader.
          *
          * @attribute fileList
          * @type {Array}
          * @default []
          */
         fileList: {
-        	value: []
+          value: []
         },
 
         /**
@@ -559,7 +561,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default {}
          */
         postVarsPerFile: {
-        	value: {}
+          value: {}
         },
 
         /**
@@ -570,7 +572,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default ""
          */
         uploadURL: {
-        	value: ""
+          value: ""
         },
 
         /**
@@ -583,13 +585,13 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default "CDN Prefix + assets/flashuploader.swf"
          */
         swfURL: {
-        	value: Y.Env.cdn + "uploader/assets/flashuploader.swf"
+          value: Y.Env.cdn + "uploader/assets/flashuploader.swf"
         },
 
         tabElements: {
             value: null
         }
-	}
+  }
 });
 
 Y.UploaderFlash.Queue = UploaderQueue;

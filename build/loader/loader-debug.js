@@ -34,18 +34,28 @@ if (!YUI.Env[Y.version]) {
                               groups: {},
                               patterns: {} },
             groups = META.groups,
-            yui2Update = function(tnt, yui2) {
-                                  var root = TNT + '.' +
-                                            (tnt || TNT_VERSION) + '/' +
-                                            (yui2 || YUI2_VERSION) + BUILD;
-                                  groups.yui2.base = CDN_BASE + root;
-                                  groups.yui2.root = root;
-                              },
-            galleryUpdate = function(tag) {
-                                  var root = (tag || GALLERY_VERSION) + BUILD;
-                                  groups.gallery.base = CDN_BASE + root;
-                                  groups.gallery.root = root;
-                              };
+            yui2Update = function(tnt, yui2, config) {
+                    
+                var root = TNT + '.' +
+                        (tnt || TNT_VERSION) + '/' +
+                        (yui2 || YUI2_VERSION) + BUILD,
+                    base = (config && config.base) ? config.base : CDN_BASE,
+                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+                groups.yui2.base = base + root;
+                groups.yui2.root = root;
+                groups.yui2.comboBase = combo;
+            },
+            galleryUpdate = function(tag, config) {
+                var root = (tag || GALLERY_VERSION) + BUILD,
+                    base = (config && config.base) ? config.base : CDN_BASE,
+                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+                groups.gallery.base = base + root;
+                groups.gallery.root = root;
+                groups.gallery.comboBase = combo;
+            };
+
 
         groups[VERSION] = {};
 
@@ -142,106 +152,47 @@ Y.Env.meta = META;
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
- * dependencies for the modules requested.  It supports rollup files and will
- * automatically use these when appropriate in order to minimize the number of
- * http connections required to load all of the dependencies.  It can load the
+ * dependencies for the modules requested. It can load the
  * files from the Yahoo! CDN, and it can utilize the combo service provided on
  * this network to reduce the number of http connections required to download
- * YUI files.
- *
- * While the loader can be instantiated by the end user, it normally is not.
- * @see YUI.use for the normal use case.  The use function automatically will
- * pull in missing dependencies.
- *
+ * YUI files. You can also specify an external, custom combo service to host
+ * your modules as well.
+
+        var Y = YUI();
+        var loader = new Y.Loader({
+            filter: 'debug',
+            base: '../../',
+            root: 'build/',
+            combine: true,
+            require: ['node', 'dd', 'console']
+        });
+        var out = loader.resolve(true);
+ 
  * @constructor
  * @class Loader
- * @param {object} o an optional set of configuration options.  Valid options:
- * <ul>
- *  <li>base:
- *  The base dir</li>
- *  <li>comboBase:
- *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
- *  <li>root:
- *  The root path to prepend to module names for the combo service.
- *  Ex: 2.5.2/build/</li>
- *  <li>filter:.
- *
- * A filter to apply to result urls.  This filter will modify the default
- * path for all modules.  The default path for the YUI library is the
- * minified version of the files (e.g., event-min.js).  The filter property
- * can be a predefined filter or a custom filter.  The valid predefined
- * filters are:
- * <dl>
- *  <dt>DEBUG</dt>
- *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
- *      This option will automatically include the Logger widget</dd>
- *  <dt>RAW</dt>
- *  <dd>Selects the non-minified version of the library (e.g., event.js).
- *  </dd>
- * </dl>
- * You can also define a custom filter, which must be an object literal
- * containing a search expression and a replace string:
- * <pre>
- *  myFilter: &#123;
- *      'searchExp': "-min\\.js",
- *      'replaceStr': "-debug.js"
- *  &#125;
- * </pre>
- *
- *  </li>
- *  <li>filters: per-component filter specification.  If specified
- *  for a given component, this overrides the filter config. _Note:_ This does not work on combo urls, use the filter property instead.</li>
- *  <li>combine:
- *  Use the YUI combo service to reduce the number of http connections
- *  required to load your dependencies</li>
- *  <li>ignore:
- *  A list of modules that should never be dynamically loaded</li>
- *  <li>force:
- *  A list of modules that should always be loaded when required, even if
- *  already present on the page</li>
- *  <li>insertBefore:
- *  Node or id for a node that should be used as the insertion point for
- *  new nodes</li>
- *  <li>charset:
- *  charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)
- *  </li>
- *  <li>jsAttributes: object literal containing attributes to add to script
- *  nodes</li>
- *  <li>cssAttributes: object literal containing attributes to add to link
- *  nodes</li>
- *  <li>timeout:
- *  The number of milliseconds before a timeout occurs when dynamically
- *  loading nodes.  If not set, there is no timeout</li>
- *  <li>context:
- *  execution context for all callbacks</li>
- *  <li>onSuccess:
- *  callback for the 'success' event</li>
- *  <li>onFailure: callback for the 'failure' event</li>
- *  <li>onCSS: callback for the 'CSSComplete' event.  When loading YUI
- *  components with CSS the CSS is loaded first, then the script.  This
- *  provides a moment you can tie into to improve
- *  the presentation of the page while the script is loading.</li>
- *  <li>onTimeout:
- *  callback for the 'timeout' event</li>
- *  <li>onProgress:
- *  callback executed each time a script or css file is loaded</li>
- *  <li>modules:
- *  A list of module definitions.  See Loader.addModule for the supported
- *  module metadata</li>
- *  <li>groups:
- *  A list of group definitions.  Each group can contain specific definitions
- *  for base, comboBase, combine, and accepts a list of modules.  See above
- *  for the description of these properties.</li>
- *  <li>2in3: the version of the YUI 2 in 3 wrapper to use.  The intrinsic
- *  support for YUI 2 modules in YUI 3 relies on versions of the YUI 2
- *  components inside YUI 3 module wrappers.  These wrappers
- *  change over time to accomodate the issues that arise from running YUI 2
- *  in a YUI 3 sandbox.</li>
- *  <li>yui2: when using the 2in3 project, you can select the version of
- *  YUI 2 to use.  Valid values *  are 2.2.2, 2.3.1, 2.4.1, 2.5.2, 2.6.0,
- *  2.7.0, 2.8.0, and 2.8.1 [default] -- plus all versions of YUI 2
- *  going forward.</li>
- * </ul>
+ * @param {Object} config an optional set of configuration options.
+ * @param {String} config.base The base dir which to fetch this module from
+ * @param {String} config.comboBase The Combo service base path. Ex: `http://yui.yahooapis.com/combo?`
+ * @param {String} config.root The root path to prepend to module names for the combo service. Ex: `2.5.2/build/`
+ * @param {String|Object} config.filter A filter to apply to result urls. <a href="#property_filter">See filter property</a>
+ * @param {Object} config.filters Per-component filter specification.  If specified for a given component, this overrides the filter config.
+ * @param {Boolean} config.combine Use a combo service to reduce the number of http connections required to load your dependencies
+ * @param {Array} config.ignore: A list of modules that should never be dynamically loaded
+ * @param {Array} config.force A list of modules that should always be loaded when required, even if already present on the page
+ * @param {HTMLElement|String} config.insertBefore Node or id for a node that should be used as the insertion point for new nodes
+ * @param {Object} config.jsAttributes Object literal containing attributes to add to script nodes
+ * @param {Object} config.cssAttributes Object literal containing attributes to add to link nodes
+ * @param {Number} config.timeout The number of milliseconds before a timeout occurs when dynamically loading nodes.  If not set, there is no timeout
+ * @param {Object} config.context Execution context for all callbacks
+ * @param {Function} config.onSuccess Callback for the 'success' event
+ * @param {Function} config.onFailure Callback for the 'failure' event
+ * @param {Function} config.onCSS Callback for the 'CSSComplete' event.  When loading YUI components with CSS the CSS is loaded first, then the script.  This provides a moment you can tie into to improve the presentation of the page while the script is loading.
+ * @param {Function} config.onTimeout Callback for the 'timeout' event
+ * @param {Function} config.onProgress Callback executed each time a script or css file is loaded
+ * @param {Object} config.modules A list of module definitions.  See <a href="#method_addModule">Loader.addModule</a> for the supported module metadata
+ * @param {Object} config.groups A list of group definitions.  Each group can contain specific definitions for `base`, `comboBase`, `combine`, and accepts a list of `modules`.
+ * @param {String} config.2in3 The version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox.
+ * @param {String} config.yui2 When using the 2in3 project, you can select the version of YUI 2 to use.  Valid values are `2.2.2`, `2.3.1`, `2.4.1`, `2.5.2`, `2.6.0`, `2.7.0`, `2.8.0`, `2.8.1` and `2.9.0` [default] -- plus all versions of YUI 2 going forward.
  */
 Y.Loader = function(o) {
 
@@ -461,12 +412,12 @@ Y.Loader = function(o) {
      * </dl>
      * You can also define a custom filter, which must be an object literal
      * containing a search expression and a replace string:
-     * <pre>
-     *  myFilter: &#123;
-     *      'searchExp': "-min\\.js",
-     *      'replaceStr': "-debug.js"
-     *  &#125;
-     * </pre>
+     *
+     *      myFilter: {
+     *          'searchExp': "-min\\.js",
+     *          'replaceStr': "-debug.js"
+     *      }
+     *
      * @property filter
      * @type string| {searchExp: string, replaceStr: string}
      */
@@ -515,29 +466,27 @@ Y.Loader = function(o) {
      * being loaded for calendar (if calendar was requested), and
      * 'sam' for all other skinnable components:
      *
-     *   <code>
-     *   skin: {
+     *      skin: {
+     *          // The default skin, which is automatically applied if not
+     *          // overriden by a component-specific skin definition.
+     *          // Change this in to apply a different skin globally
+     *          defaultSkin: 'sam',
      *
-     *      // The default skin, which is automatically applied if not
-     *      // overriden by a component-specific skin definition.
-     *      // Change this in to apply a different skin globally
-     *      defaultSkin: 'sam',
-     *
-     *      // This is combined with the loader base property to get
-     *      // the default root directory for a skin. ex:
-     *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
-     *      base: 'assets/skins/',
-     *
-     *      // Any component-specific overrides can be specified here,
-     *      // making it possible to load different skins for different
-     *      // components.  It is possible to load more than one skin
-     *      // for a given component as well.
-     *      overrides: {
-     *          calendar: ['skin1', 'skin2']
+     *          // This is combined with the loader base property to get
+     *          // the default root directory for a skin. ex:
+     *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+     *          base: 'assets/skins/',
+     *          
+     *          // Any component-specific overrides can be specified here,
+     *          // making it possible to load different skins for different
+     *          // components.  It is possible to load more than one skin
+     *          // for a given component as well.
+     *          overrides: {
+     *              calendar: ['skin1', 'skin2']
+     *          }
      *      }
-     *   }
-     *   </code>
-     *   @property skin
+     * @property skin
+     * @type {Object}
      */
     self.skin = Y.merge(Y.Env.meta.skin);
 
@@ -797,6 +746,7 @@ Y.Loader.prototype = {
     /**
     * Apply a new config to the Loader instance
     * @method _config
+    * @private
     * @param {Object} o The new configuration
     */
     _config: function(o) {
@@ -825,6 +775,9 @@ Y.Loader.prototype = {
                                 groupName = j;
                                 group = val[j];
                                 self.addGroup(group, groupName);
+                                if (group.aliases) {
+                                    oeach(group.aliases, self.addAlias, self);
+                                }
                             }
                         }
 
@@ -832,17 +785,11 @@ Y.Loader.prototype = {
                         // add a hash of module definitions
                         oeach(val, self.addModule, self);
                     } else if (i === 'aliases') {
-                        oeach(val, function(use, name) {
-                            YUI.Env.aliases[name] = use;
-                            self.addModule({
-                                name: name,
-                                use: use
-                            });
-                        });
+                        oeach(val, self.addAlias, self);
                     } else if (i == 'gallery') {
-                        this.groups.gallery.update(val);
+                        this.groups.gallery.update(val, o);
                     } else if (i == 'yui2' || i == '2in3') {
-                        this.groups.yui2.update(o['2in3'], o.yui2);
+                        this.groups.yui2.update(o['2in3'], o.yui2, o);
                     } else {
                         self[i] = val;
                     }
@@ -934,21 +881,48 @@ Y.Loader.prototype = {
 
         return name;
     },
-
+    /**
+    * Adds an alias module to the system
+    * @method addAlias
+    * @param {Array} use An array of modules that makes up this alias
+    * @param {String} name The name of the alias
+    * @example
+    *       var loader = new Y.Loader({});
+    *       loader.addAlias([ 'node', 'yql' ], 'davglass');
+    *       loader.require(['davglass']);
+    *       var out = loader.resolve(true);
+    *
+    *       //out.js will contain Node and YQL modules
+    */
+    addAlias: function(use, name) {
+        YUI.Env.aliases[name] = use;
+        this.addModule({
+            name: name,
+            use: use
+        });
+    },
     /**
      * Add a new module group
-     * <dl>
-     *   <dt>name:</dt>      <dd>required, the group name</dd>
-     *   <dt>base:</dt>      <dd>The base dir for this module group</dd>
-     *   <dt>root:</dt>      <dd>The root path to add to each combo
-     *   resource path</dd>
-     *   <dt>combine:</dt>   <dd>combo handle</dd>
-     *   <dt>comboBase:</dt> <dd>combo service base path</dd>
-     *   <dt>modules:</dt>   <dd>the group of modules</dd>
-     * </dl>
      * @method addGroup
-     * @param {object} o An object containing the module data.
-     * @param {string} name the group name.
+     * @param {Object} config An object containing the group configuration data
+     * @param {String} config.name required, the group name
+     * @param {String} config.base The base directory for this module group
+     * @param {String} config.root The root path to add to each combo resource path
+     * @param {Boolean} config.combine Should the request be combined
+     * @param {String} config.comboBase Combo service base path
+     * @param {Object} config.modules The group of modules
+     * @param {String} name the group name.
+     * @example
+     *      var loader = new Y.Loader({});
+     *      loader.addGroup({
+     *          name: 'davglass',
+     *          combine: true,
+     *          comboBase: '/combo?',
+     *          root: '',
+     *          modules: {
+     *              //Module List here
+     *          }
+     *      }, 'davglass');
      */
     addGroup: function(o, name) {
         var mods = o.modules,
@@ -977,55 +951,33 @@ Y.Loader.prototype = {
 
     /**
      * Add a new module to the component metadata.
-     * <dl>
-     *     <dt>name:</dt>       <dd>required, the component name</dd>
-     *     <dt>type:</dt>       <dd>required, the component type (js or css)
-     *     </dd>
-     *     <dt>path:</dt>       <dd>required, the path to the script from
-     *     "base"</dd>
-     *     <dt>requires:</dt>   <dd>array of modules required by this
-     *     component</dd>
-     *     <dt>optional:</dt>   <dd>array of optional modules for this
-     *     component</dd>
-     *     <dt>supersedes:</dt> <dd>array of the modules this component
-     *     replaces</dd>
-     *     <dt>after:</dt>      <dd>array of modules the components which, if
-     *     present, should be sorted above this one</dd>
-     *     <dt>after_map:</dt>  <dd>faster alternative to 'after' -- supply
-     *     a hash instead of an array</dd>
-     *     <dt>rollup:</dt>     <dd>the number of superseded modules required
-     *     for automatic rollup</dd>
-     *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used
-     *     instead of the configured base + path</dd>
-     *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should
-     *     automatically be pulled in</dd>
-     *     <dt>submodules:</dt> <dd>a hash of submodules</dd>
-     *     <dt>group:</dt>      <dd>The group the module belongs to -- this
-     *     is set automatically when it is added as part of a group
-     *     configuration.</dd>
-     *     <dt>lang:</dt>
-     *       <dd>array of BCP 47 language tags of languages for which this
-     *           module has localized resource bundles,
-     *           e.g., ["en-GB","zh-Hans-CN"]</dd>
-     *     <dt>condition:</dt>
-     *       <dd>Specifies that the module should be loaded automatically if
-     *           a condition is met.  This is an object with up to three fields:
-     *           [trigger] - the name of a module that can trigger the auto-load
-     *           [test] - a function that returns true when the module is to be
-     *           loaded.
-     *           [when] - specifies the load order of the conditional module
-     *           with regard to the position of the trigger module.
-     *           This should be one of three values: 'before', 'after', or
-     *           'instead'.  The default is 'after'.
-     *       </dd>
-     *     <dt>testresults:</dt><dd>a hash of test results from Y.Features.all()</dd>
-     * </dl>
      * @method addModule
-     * @param {object} o An object containing the module data.
-     * @param {string} name the module name (optional), required if not
-     * in the module data.
-     * @return {object} the module definition or null if
-     * the object passed in did not provide all required attributes.
+     * @param {Object} config An object containing the module data.
+     * @param {String} config.name Required, the component name
+     * @param {String} config.type Required, the component type (js or css)
+     * @param {String} config.path Required, the path to the script from `base`
+     * @param {Array} config.requires Array of modules required by this component
+     * @param {Array} [config.optional] Array of optional modules for this component
+     * @param {Array} [config.supersedes] Array of the modules this component replaces
+     * @param {Array} [config.after] Array of modules the components which, if present, should be sorted above this one
+     * @param {Object} [config.after_map] Faster alternative to 'after' -- supply a hash instead of an array
+     * @param {Number} [config.rollup] The number of superseded modules required for automatic rollup
+     * @param {String} [config.fullpath] If `fullpath` is specified, this is used instead of the configured `base + path`
+     * @param {Boolean} [config.skinnable] Flag to determine if skin assets should automatically be pulled in
+     * @param {Object} [config.submodules] Hash of submodules
+     * @param {String} [config.group] The group the module belongs to -- this is set automatically when it is added as part of a group configuration.
+     * @param {Array} [config.lang] Array of BCP 47 language tags of languages for which this module has localized resource bundles, e.g., `["en-GB", "zh-Hans-CN"]`
+     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met.  This is an object with up to three fields:
+     * @param {String} [config.condition.trigger] The name of a module that can trigger the auto-load
+     * @param {Function} [config.condition.test] A function that returns true when the module is to be loaded.
+     * @param {String} [config.condition.when] Specifies the load order of the conditional module
+     *  with regard to the position of the trigger module.
+     *  This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.
+     * @param {Object} [config.testresults] A hash of test results from `Y.Features.all()`
+     * @param {Function} [config.configFn] A function to exectute when configuring this module
+     * @param {Object} config.configFn.mod The module config, modifying this object will modify it's config. Returning false will delete the module's config.
+     * @param {String} [name] The module name, required if not in the module data.
+     * @return {Object} the module definition or null if the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
         name = name || o.name;
@@ -1670,6 +1622,7 @@ Y.Loader.prototype = {
     /**
     * Creates a "psuedo" package for languages provided in the lang array
     * @method _addLangPack
+    * @private
     * @param {String} lang The language to create
     * @param {Object} m The module definition to create the language pack around
     * @param {String} packName The name of the package (e.g: lang/datatype-date-en-US)
@@ -2123,6 +2076,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     /**
     * Handles the actual insertion of script/link tags
     * @method _insert
+    * @private
     * @param {Object} source The YUI instance the request came from
     * @param {Object} o The metadata to include
     * @param {String} type JS or CSS
@@ -3392,6 +3346,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-base-deprecated": {
+        "requires": [
+            "recordset-base", 
+            "widget", 
+            "substitute", 
+            "event-mouseenter"
+        ], 
+        "skinnable": true
+    }, 
     "datatable-body": {
         "requires": [
             "datatable-core", 
@@ -3416,6 +3379,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base", 
             "plugin", 
             "datasource-local"
+        ]
+    }, 
+    "datatable-datasource-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "datasource-local"
+        ]
+    }, 
+    "datatable-deprecated": {
+        "use": [
+            "datatable-base-deprecated", 
+            "datatable-datasource-deprecated", 
+            "datatable-sort-deprecated", 
+            "datatable-scroll-deprecated"
         ]
     }, 
     "datatable-head": {
@@ -3447,6 +3425,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-scroll-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin"
+        ]
+    }, 
     "datatable-sort": {
         "lang": [
             "en"
@@ -3455,6 +3439,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base"
         ], 
         "skinnable": true
+    }, 
+    "datatable-sort-deprecated": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "recordset-sort"
+        ]
     }, 
     "datatype": {
         "use": [
@@ -5086,7 +5080,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '4cf046fbf0f29c9bdf1aadccc3ed4325';
+YUI.Env[Y.version].md5 = 'afe9f7b567e32184ab3e2a76593d7ef7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

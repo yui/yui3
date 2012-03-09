@@ -465,7 +465,6 @@ ChartBase.prototype = {
             this._addTooltip();
         }
         this._setAriaElements(cb);
-        this._redraw();
     },
    
     /**

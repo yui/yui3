@@ -73,6 +73,52 @@ suite.add(new Y.Test.Case({
     "DataTable should not have default footerView": function () {
         Y.Assert.isUndefined(this.table.get('footerView'));
     }
+}));
+
+suite.add(new Y.Test.Case({
+    name: "DataTable UI tests",
+
+    setUp: function () {
+        this.table = new Y.DataTable({
+            columns: ['a', 'b', 'c'],
+            data: [{ a: 1, b: 1, c: 1 }]
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "set('data', modelList) should update the table": function () {
+        var model = Y.Base.create('test-model', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {}, c: {} } }),
+            table = this.table,
+            modelList = new Y.ModelList(),
+            fired;
+
+        table.render();
+
+        Y.Assert.isInstanceOf(Y.ModelList, table.data);
+        Y.Assert.areSame(1, table.data.item(0).get('a'));
+
+        table.after('dataChange', function (e) {
+            Y.Assert.areSame(modelList, e.newVal);
+            fired = true;
+        });
+
+        modelList.model = model;
+        modelList.add([{ a: 2, b: 2, c: 2 }]);
+
+        table.set('data', modelList);
+
+        Y.Assert.areSame(modelList, table.data);
+        Y.Assert.areSame(2, table.data.item(0).get('a'));
+        Y.Assert.isTrue(fired);
+
+        Y.Assert.areSame('2', table._tbodyNode.one('.yui3-datatable-cell').get('text'));
+
+        table.destroy();
+    }
 
 }));
 

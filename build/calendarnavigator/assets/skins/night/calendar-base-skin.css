@@ -1,7 +1,5 @@
 .yui3-skin-night .yui3-calendar-content {
     padding:10px;
-    font-size:0.8em;
-    font-family:"Lucida Grande", "Lucida Sans", Calibri, Helvetica, Arial, sans-serif;
     color: #CBCBCB;
     border: 1px solid #303030;
     background: #151515; /* Old browsers */
@@ -35,6 +33,7 @@
 .yui3-skin-night .yui3-calendar-day,
 .yui3-skin-night .yui3-calendar-prevmonth-day, 
 .yui3-skin-night .yui3-calendar-nextmonth-day {
+    padding:5px;
     border: 1px solid #151515;
     background: #262727;
     text-align:center;

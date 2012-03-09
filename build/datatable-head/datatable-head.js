@@ -50,12 +50,11 @@ Supported properties of the column objects include:
 Through the life of instantiation and rendering, the column objects will have
 the following properties added to them:
 
+  * `id`       - (Defaulted by DataTable) The id to assign the rendered column
   * `_colspan` - To supply the `<th>` attribute
   * `_rowspan` - To supply the `<th>` attribute
   * `_parent`  - (Added by DataTable) If the column is a child of another
     column, this points to its parent column
-  * `_yuid`    - (Added by DataTable) A unique YUI generated id used as the
-    `<th>`'s 'id' for reference in the data `<td>`'s 'headers' attribute.
 
 The column object is also used to provide values for {placeholder} tokens in the
 instance's `CELL_TEMPLATE`, so you can modify the template and include other
@@ -83,10 +82,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
+    @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
     **/
     CELL_TEMPLATE:
-        '<th id="{_yuid}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
+        '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -350,12 +349,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     with arrays for rows and objects for cells.  Column objects have the
     following properties added to them:
     
-      * `colspan` - Per the `<th>` attribute
-      * `rowspan` - Per the `<th>` attribute
-      * `parent`  - If the column is a child of another column, this points to
-        its parent column
-      * `_yuid`   - A unique YUI generated id used as the `<th>`'s 'id' for
-        reference in the data `<td>`'s 'headers' attribute.
+      * `id`       - (Defaulted by DataTable) The id to assign the rendered
+                     column
+      * `_colspan` - Per the `<th>` attribute
+      * `_rowspan` - Per the `<th>` attribute
+      * `_parent`  - (Added by DataTable) If the column is a child of another
+        column, this points to its parent column
 
     The column object is also used to provide values for {placeholder}
     replacement in the `CELL_TEMPLATE`, so you can modify the template and
@@ -441,12 +440,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                     entry[1] = i;
 
                     // collect the IDs of parent cols
-                    col._headers = [col._yuid];
+                    col._headers = [col.id];
 
                     for (j = stack.length - 2; j >= 0; --j) {
                         parent = stack[j][0][stack[j][1]];
 
-                        col._headers.unshift(parent._yuid);
+                        col._headers.unshift(parent.id);
                     }
 
                     if (children && children.length) {
