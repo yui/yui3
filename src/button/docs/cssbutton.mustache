@@ -2,19 +2,27 @@
     <p>In this example, we'll look at a few ways to provide additional styles to the `'cssbutton'` module.</p>
 </div>
 
-<link rel="stylesheet" href='{{yuiBuildUrl}}/cssbutton/cssbutton.css'></link>
-<style>{{>css-button-source-css}}</style>
+{{>getting-started}}
 
+<p>-Or-, include the CSS file directly:</p>
+```
+<link rel="stylsheet" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssbutton/cssbutton.css">
+```
+
+<link rel="stylesheet" href='{{yuiBuildUrl}}/cssbutton/cssbutton.css'></link>
+<style>{{>cssbutton-source-css}}</style>
+
+<h2>Demo</h2>
 <div class="example">
-    {{>css-button-source}}
+    {{>cssbutton-source}}
 </div>
 
 <h4>Source: HTML</h4>
 ```
-{{>css-button-source}}
+{{>cssbutton-source}}
 ``` 
 
 <h4>Source: CSS</h4>
 ```
-{{>css-button-source-css}}
+{{>cssbutton-source-css}}
 ``` 
