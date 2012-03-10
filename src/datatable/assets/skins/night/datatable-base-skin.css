@@ -28,7 +28,6 @@
     margin: 0;
 	overflow: visible; /*to make ths where the title is really long work*/
     padding: 4px 10px 4px 10px; /* cell padding */
-    white-space: nowrap;
 }
 .yui3-skin-night .yui3-datatable-cell:first-child,
 .yui3-skin-night .yui3-datatable-first-header {
@@ -57,6 +56,7 @@
     font-weight: normal;
     text-align: left;
     vertical-align: bottom;
+    white-space: nowrap;
 }
 
 /*
