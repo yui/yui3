@@ -1193,8 +1193,13 @@ Y.mix(Table.prototype, {
                 } else {
                     key = col.key;
 
-                    if (key) {
-                        map[col.key] = col;
+                    // First in wins for multiple columns with the same key
+                    // because the first call to genId will return the same key,
+                    // which will then be overwritten by the subsequent
+                    // same-keyed column.  So table.getColumn(key) would return
+                    // the last same-keyed column.
+                    if (key && !map[key]) {
+                        map[key] = col;
                     }
 
                     // Unique id based on the column's configured name or key,
