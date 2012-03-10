@@ -54,16 +54,12 @@ value.  If you need custom sorting, add a sort function in the column's
 relate to a single `key`, require a `sortFn` to be sortable.
 
 <pre><code>
-function nameSort(a, b) {
-    var aa = a.get('lastName'),
-        bb = a.get('lastName');
-
-    if (aa === bb) {
-        aa = a.get('firstName');
-        bb = b.get('firstName');
-    }
-
-    return (aa > bb) ? 1 : (aa < bb) ? -1 : 0;
+function nameSort(a, b, desc) {
+    var aa = a.get('lastName') + a.get('firstName'),
+        bb = a.get('lastName') + b.get('firstName'),
+        order = (aa > bb) ? 1 : -(aa < bb);
+        
+    return desc ? -order : order;
 }
 
 var table = new Y.DataTable({
@@ -472,7 +468,7 @@ Y.mix(Sortable.prototype, {
                 dir = col.sortDir;
 
                 if (col.sortFn) {
-                    cmp = col.sortFn(a, b) * dir;
+                    cmp = col.sortFn(a, b, (dir === -1));
                 } else {
                     // FIXME? Requires columns without sortFns to have key
                     aa = a.get(col.key);
