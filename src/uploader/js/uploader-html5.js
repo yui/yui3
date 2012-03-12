@@ -4,7 +4,7 @@
      * HTML5 XMLHTTPRequest as a transport engine.
      * The supported features include: automatic upload queue management, upload progress
      * tracking, drag-and-drop support, server response retrieval and error reporting.
-	 *
+     *
      * @module uploader-html5
      */     
 
@@ -36,7 +36,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @type {Node}
     * @protected
     */
-	_fileInputField: null,
+    _fileInputField: null,
 
    /**
     * Stored reference to the instance of Uploader.Queue used to manage
@@ -46,7 +46,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @type {Y.Uploader.Queue}
     * @protected
     */
-	_uploaderQueue: null,
+    _uploaderQueue: null,
 
     // Y.UploaderHTML5 prototype
 
@@ -56,19 +56,19 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @method initializer
      * @protected
      */
-	initializer : function () {
+    initializer : function () {
 
-		// Publish available events
-		this.publish("fileselect");
+        // Publish available events
+        this.publish("fileselect");
         this.publish("uploadstart");
         this.publish("fileuploadstart");
-		this.publish("uploadprogress");
-		this.publish("totaluploadprogress");
-		this.publish("uploadcomplete");
-		this.publish("alluploadscomplete");
-		this.publish("uploaderror");
-				
-	},
+        this.publish("uploadprogress");
+        this.publish("totaluploadprogress");
+        this.publish("uploadcomplete");
+        this.publish("alluploadscomplete");
+        this.publish("uploaderror");
+                
+    },
 
 
     _ddEventHandler : function (event) {
@@ -89,7 +89,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                        parsedFiles = [];
 
                    Y.each(newfiles, function (value) {
-                     parsedFiles.push(new Y.File(value));
+                     parsedFiles.push(new Y.FileHTML5(value));
                    });
 
 
@@ -110,9 +110,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @param event The event dispatched during the upload process.
      * @private
      */
-	_uploadEventHandler : function (event) {
-	
-	switch (event.type) {
+    _uploadEventHandler : function (event) {
+    
+    switch (event.type) {
                 case "file:uploadstart":
                    this.fire("fileuploadstart", event);
                 break;
@@ -131,9 +131,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
                 break;
-    }	
+    }   
 
-	},
+    },
 
     /**
      * Syncs the state of the `multipleFiles` attribute between this class
@@ -143,12 +143,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @private
      */
     _setMultipleFiles : function () {
-    	    if (this.get("multipleFiles") === true) {
-				this._fileInputField.set("multiple", "multiple");
-			}
-			else {
-				this._fileInputField.set("multiple", "");
-			}
+            if (this.get("multipleFiles") === true) {
+                this._fileInputField.set("multiple", "multiple");
+            }
+            else {
+                this._fileInputField.set("multiple", "");
+            }
     },
 
     /**
@@ -160,9 +160,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      */
 
     _bindDropArea : function (event) {
-        var ev = event || {};
+        var ev = event || {prevVal: null};
 
-        if (ev.prevVal != null) {
+        if (ev.prevVal !== null) {
             ev.prevVal.detach('drop', this._ddEventHandler);
             ev.prevVal.detach('dragenter', this._ddEventHandler);
             ev.prevVal.detach('dragover', this._ddEventHandler);
@@ -170,7 +170,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
         var ddArea = this.get("dragAndDropArea");
 
-        if (ddArea != null) {
+        if (ddArea !== null) {
             ddArea.on('drop', this._ddEventHandler, this);
             ddArea.on('dragenter', this._ddEventHandler, this);
             ddArea.on('dragover', this._ddEventHandler, this);
@@ -197,7 +197,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
            parsedFiles = [];
 
        Y.each(newfiles, function (value) {
-         parsedFiles.push(new Y.File(value));
+         parsedFiles.push(new Y.FileHTML5(value));
        });
 
 
@@ -205,8 +205,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
        var oldfiles = this.get("fileList");
 
-	   this.set("fileList", 
-	            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+       this.set("fileList", 
+                this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
     },
 
@@ -217,9 +217,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      */
     openFileSelectDialog : function () {
       var fileDomNode = this._fileInputField.getDOMNode();
-			if (fileDomNode.click) {
-				fileDomNode.click();
-			}	
+            if (fileDomNode.click) {
+                fileDomNode.click();
+            }   
     },
 
     /**
@@ -231,12 +231,14 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @method renderUI
      * @protected
      */
-	renderUI : function () {
-	   var contentBox = this.get('contentBox');
-	   contentBox.append(this.get("selectFilesButton"));
-	   this._fileInputField = Y.Node.create(UploaderHTML5.HTML5FILE_FIELD);
+    renderUI : function () {
+       var contentBox = this.get('contentBox');
+       var selButton = this.get("selectFilesButton");
+       selButton.setStyles({width:"100%", height:"100%"});
+       contentBox.append(this.get("selectFilesButton"));
+       this._fileInputField = Y.Node.create(UploaderHTML5.HTML5FILE_FIELD);
        contentBox.append(this._fileInputField);
-	},
+    },
 
     /**
      * Binds to the UploaderHTML5 UI and subscribes to the necessary events.
@@ -244,17 +246,20 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @method bindUI
      * @protected
      */
-	bindUI : function () {
+    bindUI : function () {
 
-		this._bindSelectButton();
-		this._setMultipleFiles();
+        this._bindSelectButton();
+        this._setMultipleFiles();
         this._bindDropArea();
 
-		this.after("multipleFilesChange", this._setMultipleFiles, this);
+        this.after("multipleFilesChange", this._setMultipleFiles, this);
         this.after("selectFilesButtonChange", this._bindSelectButton, this);
         this.after("dragAndDropAreaChange", this._bindDropArea, this);
+        this.after("tabIndexChange", function (ev) {this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));}, this);
         this._fileInputField.on("change", this._updateFileList, this);
-	},
+
+        this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
+    },
 
    /**
     * Starts the upload of a specific file.
@@ -262,10 +267,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @method upload
     * @param file {Y.File} Reference to the instance of the file to be uploaded.
     * @param url {String} The URL to upload the file to.
- 	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
-  	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
+    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    *                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
-	upload : function (file, url, postvars) {
+    upload : function (file, url, postvars) {
         
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile"),
@@ -273,28 +278,28 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
             postVars = postVars.hasOwnProperty(fileId) ? postVars[fileId] : postVars;
 
-		if (file instanceof Y.File) {
-		   
+        if (file instanceof Y.FileHTML5) {
+           
             file.on("uploadstart", this._uploadStartHandler, this);
             file.on("uploadprogress", this._uploadProgressHandler, this);
             file.on("uploadcomplete", this._uploadCompleteHandler, this);
             file.on("uploaderror", this._uploadErrorHandler, this);
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
-		}
-	},
+        }
+    },
 
    /**
     * Starts the upload of all files on the file list, using an automated queue.
     *
     * @method uploadAll
     * @param url {String} The URL to upload the files to.
-  	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
-  	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
+    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    *                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
-	uploadAll : function (url, postvars) {
+    uploadAll : function (url, postvars) {
         this.uploadThese(this.get("fileList"), url, postvars);
-	},
+    },
 
    /**
     * Starts the upload of the files specified in the first argument, using an automated queue.
@@ -302,10 +307,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @method uploadThese
     * @param files {Array} The list of files to upload.
     * @param url {String} The URL to upload the files to.
-  	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
-  	*                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
+    * @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.
+    *                          If not specified, the values from the attribute `postVarsPerFile` are used instead. 
     */
-	uploadThese : function (files, url, postvars) {
+    uploadThese : function (files, url, postvars) {
         var uploadURL = url || this.get("uploadURL"),
             postVars = postvars || this.get("postVarsPerFile");
 
@@ -324,7 +329,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
            this._uploaderQueue.startUpload();  
            
            this.fire("uploadstart"); 
-	}
+    }
 },
 
 {
@@ -337,7 +342,11 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @type {String}
     * @static
     */
-	HTML5FILE_FIELD: "<input type='file' style='visibility:hidden; width:0px; height: 0px;'>",
+    HTML5FILE_FIELD: "<input type='file' style='visibility:hidden; width:0px; height: 0px;'>",
+  
+    SELECT_FILES_BUTTON: "<button type='button' class='yui3-button' role='button' aria-label='{selectButtonLabel}' tabindex='{tabIndex}'>{selectButtonLabel}</button>",
+
+    TYPE: "html5",
 
     /**
      * The identity of the widget.
@@ -349,7 +358,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @protected
      * @static
      */
-	NAME: "uploader",
+    NAME: "uploader",
 
     /**
      * Static property used to define the default attribute configuration of
@@ -360,12 +369,16 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      * @protected
      * @static
      */
-	ATTRS: {
+    ATTRS: {
 
         errorAction: {
             value: "continue",
             validator: function (val, name) {
                  return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           }
+        },
+
+        selectButtonLabel: {
+            value: "Select Files"
         },
 
         /**
@@ -376,9 +389,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @type {Node | Widget}
          * @default A standard HTML button.
          */
-		selectFilesButton : {
-           value: Y.Node.create("<button type='button' style='height:100%;width:100%'>Select Files</button>")
-		},
+        selectFilesButton : {
+            valueFn: function () {
+                return Y.Node.create(substitute(Y.UploaderHTML5.SELECT_FILES_BUTTON, {selectButtonLabel: this.get("selectButtonLabel"),
+                                                                                      tabIndex: this.get("tabIndex")}));
+            }
+        },
 
         /**
          * The node that serves as the drop target for files.
@@ -387,12 +403,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @type {Node}
          * @default null
          */
-		dragAndDropArea: {
-			value: null,
+        dragAndDropArea: {
+            value: null,
             setter: function (val) {
                 return Y.one(val);
             }
-		},
+        },
 
         /**
          * A Boolean indicating whether multiple file selection is enabled.
@@ -401,9 +417,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @type {Boolean}
          * @default false
          */
-		multipleFiles: {
-			value: false
-		},
+        multipleFiles: {
+            value: false
+        },
 
         /**
          * A Boolean indicating whether newly selected files should be appended 
@@ -413,9 +429,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @type {Boolean}
          * @default true
          */
-		appendNewFiles : {
-			value: true
-		},
+        appendNewFiles : {
+            value: true
+        },
 
         /**
          * The number of files that can be uploaded
@@ -427,7 +443,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @type {Number}
          * @default 2
          */
-		simLimit: {
+        simLimit: {
             value: 2,
             validator: function (val, name) {
                 return (val >= 1 && val <= 5);
@@ -443,20 +459,20 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @default Filedata
          */
         fileFieldName: {
-        	value: "Filedata"	
+            value: "Filedata"   
         },
 
         /**
          * The array of files to be uploaded. All elements in the array
-	     * must be instances of `Y.File` and be instantiated with an instance
-	     * of native JavaScript File() class.
+         * must be instances of `Y.File` and be instantiated with an instance
+         * of native JavaScript File() class.
          *
          * @attribute fileList
          * @type {Array}
          * @default []
          */
         fileList: {
-        	value: []
+            value: []
         },
 
         /**
@@ -470,7 +486,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @default {}
          */
         postVarsPerFile: {
-        	value: {}
+            value: {}
         },
 
         /**
@@ -481,9 +497,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @default ""
          */
         uploadURL: {
-        	value: ""
+            value: ""
         }
-	}
+    }
 });
 
 Y.UploaderHTML5.UploaderQueue = UploaderQueue;

@@ -39,7 +39,6 @@ function define(type, proxy, directEvent) {
             notifier.currentTarget = (delegate) ? target : currentTarget;
             notifier.container     = (delegate) ? currentTarget : null;
 
-            //if (!sub.filter || sub.filter.apply(target, filterArgs)) {
             // Maintain a list to handle subscriptions from nested
             // containers div#a>div#b>input #a.on(focus..) #b.on(focus..),
             // use one focus or blur subscription that fires notifiers from
@@ -55,6 +54,16 @@ function define(type, proxy, directEvent) {
                         [directEvent, this._notify, target._node]).sub;
                     directSub.once = true;
                 }
+            } else {
+                // In old IE, defer is always true.  In capture-phase browsers,
+                // The delegate subscriptions will be encountered first, which
+                // will establish the notifiers data and direct subscription
+                // on the node.  If there is also a direct subscription to the
+                // node's focus/blur, it should not call _notify because the
+                // direct subscription from the delegate sub(s) exists, which
+                // will call _notify.  So this avoids _notify being called
+                // twice, unnecessarily.
+                defer = true;
             }
 
             if (!notifiers[yuid]) {
@@ -66,12 +75,10 @@ function define(type, proxy, directEvent) {
             if (!defer) {
                 this._notify(e);
             }
-            //}
         },
 
         _notify: function (e, container) {
             var currentTarget = e.currentTarget,
-                                // document.get('ownerDocument') returns null
                 notifierData  = currentTarget.getData(nodeDataKey),
                 axisNodes     = currentTarget.ancestors(),
                 doc           = currentTarget.get('ownerDocument'),
@@ -81,7 +88,7 @@ function define(type, proxy, directEvent) {
                 count         = notifierData ?
                                     Y.Object.keys(notifierData).length :
                                     0,
-                target, notifiers, notifier, yuid, match, tmp, i, len, sub;
+                target, notifiers, notifier, yuid, match, tmp, i, len, sub, ret;
 
             // clear the notifications list (mainly for delegation)
             currentTarget.clearData(nodeDataKey);
@@ -146,76 +153,67 @@ function define(type, proxy, directEvent) {
                         if (match) {
                             // undefined for direct subs
                             e.container = notifier.container;
-                            notifier.fire(e);
+                            ret = notifier.fire(e);
+                        }
+
+                        if (ret === false || e.stopped === 2) {
+                            break;
                         }
                     }
-
+                    
                     delete notifiers[yuid];
                     count--;
                 }
 
-                // delegates come after subs targeting this specific node
-                // because they would not normally report until they'd
-                // bubbled to the container node.
-                for (i = 0, len = delegates.length; i < len; ++i) {
-                    notifier = delegates[i];
-                    sub = notifier.handle.sub;
+                if (e.stopped !== 2) {
+                    // delegates come after subs targeting this specific node
+                    // because they would not normally report until they'd
+                    // bubbled to the container node.
+                    for (i = 0, len = delegates.length; i < len; ++i) {
+                        notifier = delegates[i];
+                        sub = notifier.handle.sub;
 
-                    if (sub.filter.apply(target,
-                        [target, e].concat(sub.args || []))) {
+                        if (sub.filter.apply(target,
+                            [target, e].concat(sub.args || []))) {
 
-                        e.container = notifier.container;
-                        e.currentTarget = target;
-                        notifier.fire(e);
+                            e.container = notifier.container;
+                            e.currentTarget = target;
+                            ret = notifier.fire(e);
+                        }
+
+                        if (ret === false || e.stopped === 2) {
+                            break;
+                        }
                     }
                 }
-            }
 
-/*
-                while (target && target !== doc) {
-                    nots.push.apply(nots, notifiers[Y.stamp(target)] || []);
-                    target = target.get('parentNode');
+                if (e.stopped) {
+                    break;
                 }
-                nots.push.apply(nots, notifiers[Y.stamp(doc)] || []);
-
-                for (i = 0, len = nots.length; i < len; ++i) {
-                    notifier = nots[i];
-                    e.currentTarget = nots[i].currentTarget;
-
-                    if (notifier.container) {
-                        e.container = notifier.container;
-                    }
-
-                    notifier.fire(e);
-                }
-
             }
-
-*/
         },
 
         on: function (node, sub, notifier) {
-            sub.onHandle = this._attach(node._node, notifier);
+            sub.handle = this._attach(node._node, notifier);
         },
 
         detach: function (node, sub) {
-            sub.onHandle.detach();
+            sub.handle.detach();
         },
 
         delegate: function (node, sub, notifier, filter) {
-            // For sort during notification phase.  Delegate subs should
-            // notify in subscription order when the fake bubble path is walked.
-            Y.stamp(notifier);
-
             if (isString(filter)) {
-                sub.filter = Y.delegate.compileFilter(filter);
+                sub.filter = function (target) {
+                    return Y.Selector.test(target._node, filter,
+                        node === target ? null : node._node);
+                };
             }
 
-            sub.delegateHandle = this._attach(node._node, notifier, true);
+            sub.handle = this._attach(node._node, notifier, true);
         },
 
         detachDelegate: function (node, sub) {
-            sub.delegateHandle.detach();
+            sub.handle.detach();
         }
     }, true);
 }

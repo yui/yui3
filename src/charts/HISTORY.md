@@ -4,6 +4,9 @@ Charts Change History
 3.5.0
 -----
 
+  * #2531748 Added aria keyboard navigation. 
+  * #2530195 Tooltip display toggles on touchend event for mobile implementations. 
+  * #2531410 Fixed issue in which specifying color arrays for marker borders of some series type broke in canvas implementation.
   * #2528814 Added charts-legend submodule to allow chart legends.
   * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load. 
   * #2530559 Added ability to explicitly set the width/height for vertical/horizontal axes

@@ -23,11 +23,11 @@
      * @constructor
      */
     var UploaderQueue = function(o) {
-        this.queuedFiles = [],
-        this.numberOfUploads = 0,
-        this.currentUploadedByteValues = {},
-        this.currentFiles = {},
-        this.totalBytesUploaded = 0,
+        this.queuedFiles = [];
+        this.numberOfUploads = 0;
+        this.currentUploadedByteValues = {};
+        this.currentFiles = {};
+        this.totalBytesUploaded = 0;
         this.totalBytes = 0;      
   
         UploaderQueue.superclass.constructor.apply(this, arguments);
@@ -127,7 +127,7 @@
 
            this.fire("uploadcomplete", updatedEvent);
 
-           if (this.queuedFiles.length == 0 && this.currentFiles.length == 0) {
+           if (this.queuedFiles.length === 0 && this.currentFiles.length === 0) {
                this.fire("alluploadscomplete");
            }
         },
@@ -165,8 +165,8 @@
            
            this._currentState = UploaderQueue.UPLOADING;
 
-           while (this.numberOfUploads < this.get("simUploads")) {
-               this._startNextFile();
+           while (this.numberOfUploads < this.get("simUploads") && this.queuedFiles.length > 0) {
+                this._startNextFile();
            }
         },
 
@@ -192,8 +192,8 @@
             }
         },
 
-        cancelUpload: function () {
-            for (fid in this.currentFiles) {
+        cancelUpload: function (file) {
+            for (var fid in this.currentFiles) {
               this.currentFiles[fid].cancel();
               this._unregisterUpload(this.currentFiles[fid]);
             }

@@ -7,7 +7,9 @@ YUI.add('charts-base', function(Y) {
  * @module charts
  * @main charts
  */
-var DOCUMENT = Y.config.doc,
+var CONFIG = Y.config,
+    WINDOW = CONFIG.win,
+    DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
     LeftAxisLayout,
@@ -4192,6 +4194,23 @@ NumericAxis.ATTRS = {
 Y.extend(NumericAxis, Y.AxisType,
 {
     /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        if(format)
+        {
+            return Y.DataType.Number.format(val, format);
+        }
+        return val;
+    },
+
+    /**
      * Returns the sum of all values per key.
      *
      * @method getTotalByKey
@@ -5024,6 +5043,24 @@ TimeAxis.ATTRS =
 
 Y.extend(TimeAxis, Y.AxisType, {
     /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        val = Y.DataType.Date.parse(val);
+        if(format)
+        {
+            return Y.DataType.Date.format(val, {format:format});
+        }
+        return val;
+    },
+
+    /**
      * Constant used to generate unique id.
      *
      * @property GUID
@@ -5224,6 +5261,19 @@ CategoryAxis.NAME = "categoryAxis";
 
 Y.extend(CategoryAxis, Y.AxisType,
 {
+    /**
+     * Formats a label based on the axis type and optionally specified format.
+     *
+     * @method formatLabel
+     * @param {Object} value
+     * @param {Object} format Pattern used to format the value.
+     * @return String
+     */
+    formatLabel: function(val, format)
+    {
+        return val;
+    },
+
     /**
      * Object storing key data.
      *
@@ -6368,7 +6418,7 @@ Plots.prototype = {
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         for(; i < len; ++i)
@@ -6386,7 +6436,7 @@ Plots.prototype = {
             }
             if(borderColors)
             {
-                style.border.colors = borderColors[i % borderColors.length];
+                style.border.color = borderColors[i % borderColors.length];
             }
 
             style.x = left;
@@ -6858,7 +6908,7 @@ Histogram.prototype = {
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         if(this.get("direction") == "vertical")
         {
@@ -6932,7 +6982,7 @@ Histogram.prototype = {
                     }
                     if(borderColors)
                     {
-                        style.border.colors = borderColors[i % borderColors.length];
+                        style.border.color = borderColors[i % borderColors.length];
                     }
                     marker = this.getMarker(style, graphOrder, i);
                 }
@@ -7327,6 +7377,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 		this.set("ycoords", ycoords);
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
+        this._dataLength = dataLength;
     },
 
     /**
@@ -9267,7 +9318,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         if(totalWidth > this.get("width"))
@@ -9608,7 +9659,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         }
         if(Y_Lang.isArray(style.border.color))
         {
-            borderColors = style.border.colors.concat();
+            borderColors = style.border.color.concat();
         }
         this._createMarkerCache();
         if(totalHeight > this.get("height"))
@@ -11619,6 +11670,42 @@ function ChartBase() {}
 
 ChartBase.ATTRS = {
     /**
+     * Sets the `aria-label` for the chart.
+     *
+     * @attribute ariaLabel
+     * @type String
+     */
+    ariaLabel: {
+        value: "Chart Application",
+
+        setter: function(val)
+        {
+            this.get("contentBox").setAttribute("ariaLabel", val);
+            return val;
+        }
+    },
+    
+    /**
+     * Sets the aria description for the chart.
+     *
+     * @attribute ariaDescription
+     * @type String
+     */
+    ariaDescription: {
+        value: "Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.",
+
+        setter: function(val)
+        {
+            if(this._description)
+            {
+                this._description.setContent("");
+                this._description.appendChild(DOCUMENT.createTextNode(val));
+            }
+            return val;
+        }
+    },
+    
+    /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
      *  <dl>
@@ -12016,6 +12103,8 @@ ChartBase.prototype = {
     initializer: function()
     {
         this._itemRenderQueue = [];
+        this._seriesIndex = -1;
+        this._itemIndex = -1;
         this.after("dataProviderChange", this._dataProviderChangeHandler);
     },
 
@@ -12025,17 +12114,63 @@ ChartBase.prototype = {
      */
     renderUI: function()
     {
-        var tt = this.get("tooltip");
+        var tt = this.get("tooltip"),
+            cb = this.get("contentBox");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
-        this.get("contentBox").setStyle("position", "absolute");
+        cb.setStyle("position", "absolute");
         this._addAxes();
         this._addSeries();
         if(tt && tt.show)
         {
             this._addTooltip();
         }
-        this._redraw();
+        this._setAriaElements(cb);
+    },
+   
+    /**
+     * Creates an aria `live-region`, `aria-label` and `aria-describedby` for the Chart.
+     *
+     * @method _setAriaElements
+     * @param {Node} cb Reference to the Chart's `contentBox` attribute.
+     * @private
+     */
+    _setAriaElements: function(cb)
+    {
+        var description = this._getAriaOffscreenNode(),
+            id = this.get("id") + "_description",
+            liveRegion = this._getAriaOffscreenNode();
+        cb.set("role", "img");
+        cb._node.setAttribute("aria-label", this.get("ariaLabel"));
+        cb._node.setAttribute("aria-describedby", id);
+        cb.set("tabIndex", 0);
+        description.set("id", id);
+        description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
+        liveRegion.set("id", "live-region");
+        liveRegion.set("role", "status");
+        cb.appendChild(description);
+        cb.appendChild(liveRegion);
+        this._description = description;
+        this._liveRegion = liveRegion;
+    },
+
+    /**
+     * Sets a node offscreen for use as aria-description or aria-live-regin.
+     *
+     * @method _setOffscreen
+     * @return Node 
+     * @private
+     */
+    _getAriaOffscreenNode: function()  
+    {
+        var node = Y.one(DOCUMENT.createElement("div"));
+        node.setStyle("position", "absolute");
+        node.setStyle("height", "1px"); 
+        node.setStyle("width", "1px"); 
+        node.setStyle("overflow", "hidden");
+        node.setStyle("clip", "rect(1px 1px 1px 1px)"); 
+        node.setStyle("clip", "rect(1px, 1px, 1px, 1px)");
+        return node;
     },
   
     /**
@@ -12063,25 +12198,76 @@ ChartBase.prototype = {
             interactionType = this.get("interactionType"),
             i = 0,
             len,
-            markerClassName = "." + SERIES_MARKER;
+            markerClassName = "." + SERIES_MARKER,
+            isTouch = ((WINDOW && ("ontouchstart" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+        Y.on("keydown", Y.bind(function(e) {
+            var key = e.keyCode,
+                numKey = parseFloat(key),
+                msg;
+            if(numKey > 36 && numKey < 41)
+            {
+                e.halt();
+                msg = this._getAriaMessage(numKey);
+                this._liveRegion.setContent("");
+                this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
+            }
+        }, this), this.get("contentBox"));
         if(interactionType == "marker")
         {
+            //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
             hideEvent = tt.hideEvent;
             showEvent = tt.showEvent;
-            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
-            Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
+            if(isTouch)
+            {
+                Y.delegate("touchend", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                //hide active tooltip if the chart is touched
+                Y.on("touchend", Y.bind(function(e) {
+                    e.halt(true);
+                    if(this._activeMarker)
+                    {
+                        this._activeMarker = null;
+                        this.hideTooltip(e);
+                    }
+                }, this));
+            }
+            else
+            {
+                Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, markerClassName);
+                Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
+            }
         }
         else if(interactionType == "planar")
         {
-            this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
-            this.on("mouseout", this.hideTooltip);
+            if(isTouch)
+            {
+                this._overlay.on("touchend", Y.bind(this._planarEventDispatcher, this));
+            }
+            else
+            {
+                this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
+                this.on("mouseout", this.hideTooltip);
+            }
         }
         if(tt)
         {
+            this.on("markerEvent:touchend", Y.bind(function(e) {
+                var marker = e.series.get("markers")[e.index];
+                if(this._activeMarker && marker === this._activeMarker)
+                {
+                    this._activeMarker = null;
+                    this.hideTooltip(e);
+                }
+                else
+                {
+
+                    this._activeMarker = marker;
+                    tt.markerEventHandler.apply(this, [e]);
+                }
+            }, this));
             if(hideEvent && showEvent && hideEvent == showEvent)
             {
                 this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
@@ -12125,8 +12311,9 @@ ChartBase.prototype = {
             seriesIndex = strArr.pop(),
             series = this.getSeries(parseInt(seriesIndex, 10)),
             items = this.getSeriesItems(series, index),
-            pageX = e.pageX,
-            pageY = e.pageY,
+            isTouch = e && e.hasOwnProperty("changedTouches"),
+            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,
+            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             x = pageX - cb.getX(),
             y = pageY - cb.getY();
         if(type == "mouseenter")
@@ -12261,6 +12448,8 @@ ChartBase.prototype = {
             axes = this.get("axes"),
             i,
             axis;
+        this._seriesIndex = -1;
+        this._itemIndex = -1;
         if(axes)
         {
             for(i in axes)
@@ -12377,7 +12566,7 @@ ChartBase.prototype = {
         {
             cb.removeChild(oldNode);
         }
-        tt.node.setAttribute("id", id);
+        tt.node.set("id", id);
         tt.node.setStyle("visibility", "hidden");
         cb.appendChild(tt.node);
     },
@@ -12464,8 +12653,8 @@ ChartBase.prototype = {
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 }
             };
-        node.setAttribute("id", this.get("id") + "_tooltip");
         node = Y.one(node);
+        node.set("id", this.get("id") + "_tooltip");
         node.setStyle("fontSize", "85%");
         node.setStyle("opacity", "0.83");
         node.setStyle("position", "absolute");
@@ -12509,10 +12698,17 @@ ChartBase.prototype = {
             i = 0,
             len = seriesArray.length,
             axis,
+            categoryValue,
+            seriesValue,
             series;
         if(categoryAxis)
         {
-            msg.appendChild(DOCUMENT.createTextNode(categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")])));
+            categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            if(Y_Lang.isString(categoryValue))
+            {
+                categoryValue = DOCUMENT.createTextNode(categoryValue);
+            }
+            msg.appendChild(categoryValue);
         }
 
         for(; i < len; ++i)
@@ -12522,8 +12718,15 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
+                seriesValue =  axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]);
                 msg.appendChild(DOCUMENT.createElement("br"));
-                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")])));
+                msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+                msg.appendChild(DOCUMENT.createTextNode(": "));
+                if(Y_Lang.isString(seriesValue))
+                {
+                    seriesValue = DOCUMENT.createTextNode(seriesValue);
+                }
+                msg.appendChild(seriesValue);
             }
         }
         return msg;
@@ -12555,12 +12758,24 @@ ChartBase.prototype = {
      */
     _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
     {
-        var msg = DOCUMENT.createElement("div");
-        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName +
-        ": " + categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]))); 
+        var msg = DOCUMENT.createElement("div"),
+            categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
+            seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(categoryValue))
+        {
+            categoryValue = DOCUMENT.createTextNode(categoryValue);
+        }
+        msg.appendChild(categoryValue);
         msg.appendChild(DOCUMENT.createElement("br"));
-        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName + 
-        ": " + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")])));
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName)); 
+        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        if(Y_Lang.isString(seriesValue))
+        {
+            seriesValue = DOCUMENT.createTextNode(seriesValue);
+        }
+        msg.appendChild(seriesValue);
         return msg; 
     },
 
@@ -12632,12 +12847,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     renderUI: function()
     {
-        var tt = this.get("tooltip"),
+        var cb = this.get("contentBox"),
+            tt = this.get("tooltip"),
             overlay,
             overlayClass = _getClassName("overlay");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
-        this.get("contentBox").setStyle("position", "absolute");
+        cb.setStyle("position", "absolute");
         this._addAxes();
         this._addGridlines();
         this._addSeries();
@@ -12658,6 +12874,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             this._overlay.addClass(overlayClass);
             this._overlay.setStyle("zIndex", 4);
         }
+        this._setAriaElements(cb);
         this._redraw();
     },
 
@@ -12674,8 +12891,9 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         var graph = this.get("graph"),
             bb = this.get("boundingBox"),
             cb = graph.get("contentBox"),
-            pageX = e.pageX,
-            pageY = e.pageY,
+            isTouch = e && e.hasOwnProperty("changedTouches"),
+            pageX = isTouch ? e.changedTouches[0].pageX : e.pageX,
+            pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             posX = pageX - bb.getX(),
             posY = pageY - bb.getY(),
             offset = {
@@ -12700,6 +12918,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             markerPlane,
             len,
             coords;
+        e.halt(true);
         if(direction == "horizontal")
         {
             catAxis = "x";
@@ -14144,6 +14363,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             seriesCollection = this.get("seriesCollection"),
             axesCollection = this._axesCollection,
             tooltip = this.get("tooltip").node;
+        if(this._description)
+        {
+            this._description.empty();
+            this._description.remove(true);
+        }
+        if(this._liveRegion)
+        {
+            this._liveRegion.empty();
+            this._liveRegion.remove(true);
+        }
         len = seriesCollection ? seriesCollection.length : 0;
         for(; i < len; ++i)
         {
@@ -14166,12 +14395,96 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         if(tooltip)
         {
+            tooltip.empty();
             tooltip.remove(true);
         }
         if(this._overlay)
         {
+            this._overlay.empty();
             this._overlay.remove(true);
         }
+    },
+
+    /**
+     * Returns the appropriate message based on the key press.
+     *
+     * @method _getAriaMessage
+     * @param {Number} key The keycode that was pressed.
+     * @return String
+     */
+    _getAriaMessage: function(key)
+    {
+        var msg = "",
+            series,
+            items,
+            categoryItem,
+            valueItem,
+            seriesIndex = this._seriesIndex,
+            itemIndex = this._itemIndex,
+            seriesCollection = this.get("seriesCollection"),
+            len = seriesCollection.length,
+            dataLength;
+        if(key % 2 === 0)
+        {
+            if(len > 1)
+            {
+                if(key === 38)
+                {
+                    seriesIndex = seriesIndex < 1 ? len - 1 : seriesIndex - 1;
+                }
+                else if(key === 40)
+                {
+                    seriesIndex = seriesIndex >= len - 1 ? 0 : seriesIndex + 1;
+                }
+                this._itemIndex = -1;
+            }
+            else
+            {
+                seriesIndex = 0;
+            }
+            this._seriesIndex = seriesIndex;
+            series = this.getSeries(parseInt(seriesIndex, 10));
+            msg = "This is the " + series.get("valueDisplayName") + " series. Move the left and right arrows to navigate through the series items.";
+        }
+        else
+        {
+            if(seriesIndex > -1)
+            {
+                msg = "";
+                series = this.getSeries(parseInt(seriesIndex, 10));
+            }
+            else
+            {
+                seriesIndex = 0;
+                this._seriesIndex = seriesIndex;
+                series = this.getSeries(parseInt(seriesIndex, 10));
+                msg = "This is the " + series.get("valueDisplayName") + " series.";
+            }
+            dataLength = series._dataLength ? series._dataLength : 0;
+            if(key === 37)
+            {
+                itemIndex = itemIndex > 0 ? itemIndex - 1 : dataLength - 1;
+            }
+            else if(key === 39)
+            {
+                itemIndex = itemIndex >= dataLength - 1 ? 0 : itemIndex + 1;
+            }
+            this._itemIndex = itemIndex;
+            items = this.getSeriesItems(series, itemIndex);
+            categoryItem = items.category;
+            valueItem = items.value;
+            msg += "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
+            if(categoryItem && valueItem && categoryItem.value && valueItem.value)
+            {
+                msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
+                msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
+            }
+            else
+            {
+                msg += "No data available.";
+            }
+        }
+        return msg;
     }
 }, {
     ATTRS: {
@@ -14991,9 +15304,81 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         msg.appendChild(DOCUMENT.createElement("br"));
         msg.appendChild(DOCUMENT.createTextNode(pct + "%")); 
         return msg; 
+    },
+
+    /**
+     * Returns the appropriate message based on the key press.
+     *
+     * @method _getAriaMessage
+     * @param {Number} key The keycode that was pressed.
+     * @return String
+     */
+    _getAriaMessage: function(key)
+    {
+        var msg = "",
+            categoryItem,
+            items,
+            series,
+            valueItem,
+            seriesIndex = 0,
+            itemIndex = this._itemIndex,
+            seriesCollection = this.get("seriesCollection"),
+            len,
+            total,
+            pct,
+            markers;
+        series = this.getSeries(parseInt(seriesIndex, 10));
+        markers = series.get("markers");
+        len = markers && markers.length ? markers.length : 0;
+        if(key === 37)
+        {
+            itemIndex = itemIndex > 0 ? itemIndex - 1 : len - 1;
+        }
+        else if(key === 39)
+        {
+            itemIndex = itemIndex >= len - 1 ? 0 : itemIndex + 1;
+        }
+        this._itemIndex = itemIndex;
+        items = this.getSeriesItems(series, itemIndex);
+        categoryItem = items.category;
+        valueItem = items.value;
+        total = series.getTotalValues();
+        pct = Math.round((valueItem.value / total) * 10000)/100;
+        msg = "Item " + (itemIndex + 1) + " of " + len + ". ";
+        if(categoryItem && valueItem)
+        {
+            msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
+            msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
+            msg += valueItem.displayName + " is " + pct + "% of the total."; 
+        }
+        else
+        {
+            msg += "No data available.";
+        }
+        return msg;
     }
 }, {
     ATTRS: {
+        /**
+         * Sets the aria description for the chart.
+         *
+         * @attribute ariaDescription
+         * @type String
+         */
+        ariaDescription: {
+            value: "Use the left and right keys to navigate through items in the chart.",
+
+            setter: function(val)
+            {
+                if(this._description)
+                {
+                    this._description.setContent("");
+                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                }
+                return val;
+            }
+        },
+        
         /**
          * Axes to appear in the chart. 
          *
@@ -15044,4 +15429,4 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 });
 
 
-}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'widget', 'widget-position', 'widget-stack', 'graphics']});
+}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'event-touch', 'widget', 'widget-position', 'widget-stack', 'graphics']});

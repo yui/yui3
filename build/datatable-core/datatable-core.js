@@ -63,12 +63,36 @@ Table.ATTRS = {
     Strings are converted to objects, so `columns: ['first', 'last']` becomes
     `columns: [{ key: 'first' }, { key: 'last' }]`.
 
-    DataTable.Core only concerns itself with the `key` property of columns.
+    DataTable.Core only concerns itself with a few properties of columns.
     All other properties are for use by the `headerView`, `bodyView`,
     `footerView`, and any class extensions or plugins on the final class or
     instance. See the descriptions of the view classes and feature class
     extensions and plugins for details on the specific properties they read or
     add to column definitions.
+
+    The properties that are referenced or assigned are:
+
+    * `key` - Used to identify the record field/attribute containing content for
+      this column.  Also used to create a default Model if no `recordType` or
+      `data` are provided during construction.  If `name` is not specified, this
+      is assigned to the `_id` property (with added incrementer if the key is
+      used by multiple columns).
+    * `children` - Traversed to initialize nested column objects
+    * `name` - Used in place of, or in addition to, the `key`.  Useful for
+      columns that aren't bound to a field/attribute in the record data.  This
+      is assigned to the `_id` property.
+    * `id` - For backward compatibility.  Implementers can specify the id of
+      the header cell.  This should be avoided, if possible, to avoid the
+      potential for creating DOM elements with duplicate IDs.
+    * `field` - For backward compatibility.  Implementers should use `name`.
+    * `_id` - Assigned unique-within-this-instance id for a column.  By order
+      of preference, assumes the value of `name`, `key`, `id`, or `_yuid`.
+      This is used by the `bodyView` and `headerView` as well as feature module
+      as a means to identify a specific column without ambiguity (such as
+      multiple columns using the same `key`.
+    * `_yuid` - Guid stamp assigned to the column object.
+    * `_parent` - Assigned to all child columns, referencing their parent
+      column.
 
     @attribute columns
     @type {Object[]|String[]}
@@ -567,6 +591,28 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Updates the `modelList` attributes of the rendered views in response to the
+    `data` attribute being assigned a new ModelList.
+
+    @method _afterDataChange
+    @param {EventFacade} e the `dataChange` event
+    @protected
+    **/
+    _afterDataChange: function (e) {
+        var modelList = e.newVal;
+
+        if (this.head) {
+            this.head.set('modelList', modelList);
+        }
+        if (this.body) {
+            this.body.set('modelList', modelList);
+        }
+        if (this.foot) {
+            this.foot.set('modelList', modelList);
+        }
+    },
+
+    /**
     Subscribes to attribute change events to update the UI.
 
     @method bindUI
@@ -574,6 +620,7 @@ Y.mix(Table.prototype, {
     **/
     bindUI: function () {
         // TODO: handle widget attribute changes
+        this.after('dataChange', Y.bind('_afterDataChange', this));
     },
 
     /**
@@ -1118,6 +1165,18 @@ Y.mix(Table.prototype, {
 
                 yuid = Y.stamp(col);
 
+                // For backward compatibility
+                if (!col.id) {
+                    // Implementers can shoot themselves in the foot by setting
+                    // this config property to a non-unique value
+                    col.id = yuid;
+                }
+                if (col.field) {
+                    // Field is now known as "name" to avoid confusion with data
+                    // fields or schema.resultFields
+                    col.name = col.field;
+                }
+
                 if (parent) {
                     col._parent = parent;
                 } else {
@@ -1134,14 +1193,19 @@ Y.mix(Table.prototype, {
                 } else {
                     key = col.key;
 
-                    if (key) {
-                        map[col.key] = col;
+                    // First in wins for multiple columns with the same key
+                    // because the first call to genId will return the same key,
+                    // which will then be overwritten by the subsequent
+                    // same-keyed column.  So table.getColumn(key) would return
+                    // the last same-keyed column.
+                    if (key && !map[key]) {
+                        map[key] = col;
                     }
 
                     // Unique id based on the column's configured name or key,
                     // falling back to the yuid.  Duplicates will have a counter
                     // added to the end.
-                    col._id = genId(col.name || col.key || col._yuid);
+                    col._id = genId(col.name || col.key || col.id);
 
                     //TODO: named columns can conflict with keyed columns
                     map[col._id] = col;
@@ -1258,10 +1322,10 @@ Y.mix(Table.prototype, {
 
                 this.data.reset(val);
 
-                // Return true to avoid storing the data both in the state
-                // object underlying the attribute and in the data property.
-                // Decreases memory consumption.
-                val = true;
+                // Return the instance ModelList to avoid storing unprocessed
+                // data in the state and their vivified Model representations in
+                // the instance's data property.  Decreases memory consumption.
+                val = this.data;
             }
             // else pass through the array data, but don't assign this.data
             // Let the _initData process clean up.

@@ -68,6 +68,11 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
   initializer : function () {
     this.plug(Y.Plugin.CalendarNavigator);
+
+
+    this._keyEvents = [];
+    this._highlightedDateNode = null;
+    this._lastSelectedDate = null;
   },
 
   /**
@@ -93,7 +98,8 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     pane.delegate("click", this._clickCalendar, "." + CAL_DAY, this);
     pane.delegate("keydown", this._keydownCalendar, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarGrid, "." + CAL_GRID, this);
-    pane.delegate("blur", this._blurCalendarGrid, "." + CAL_GRID, this);
+    pane.delegate("focus", this._focusCalendarCell, "." + CAL_DAY, this);
+    pane.delegate("blur", this._blurCalendarGrid, "." + CAL_GRID + ",." + CAL_DAY, this);
   },
 
   /**
@@ -105,8 +111,8 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   _highlightDateNode : function (oDate) {
     this._unhighlightCurrentDateNode();
     var newNode = this._dateToNode(oDate);
-    this._highlightedDateNode = newNode;
-    this._highlightedDateNode.addClass(CAL_DAY_HILITED);
+    newNode.focus();
+    newNode.addClass(CAL_DAY_HILITED);
   },
 
   /**
@@ -140,16 +146,25 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
       this._unhighlightCurrentDateNode();
    },
 
+
+  /**
+   * Handler for gain of focus of calendar cell
+   * @method _focusCalendarCell
+   * @protected
+   */ 
+   _focusCalendarCell : function (ev) {
+       this._highlightedDateNode = ev.target;
+       ev.stopPropagation();
+   },
+
   /**
    * Handler for gain of focus of calendar grid
    * @method _focusCalendarGrid
    * @protected
    */ 
-   _focusCalendarGrid : function (ev) {
-         var gridNum = this._getGridNumber(ev.target),
-          newDate = ydate.addMonths(this.get("date"), gridNum);
-
-          this._highlightDateNode(newDate);
+   _focusCalendarGrid : function (ev) {     
+       this._unhighlightCurrentDateNode();
+       this._highlightedDateNode = null;
    },
 
   /**
@@ -159,12 +174,11 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
    _keydownCalendar : function (ev) {
     var gridNum = this._getGridNumber(ev.target),
-        curDate = this._nodeToDate(this._highlightedDateNode),
+        curDate = this._highlightedDateNode == null ? null : this._nodeToDate(this._highlightedDateNode),
         keyCode = ev.keyCode,
         dayNum = 0,
         dir = '';
 
-    if (curDate) {
         switch(keyCode) {
           case KEY_DOWN: 
             dayNum = 7;
@@ -183,6 +197,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             dir = 'e';
           break;
           case KEY_SPACE: case KEY_ENTER:
+            if (this._highlightedDateNode) {
             var selMode = this.get("selectionMode");
             if (selMode === "single" && !this._highlightedDateNode.hasClass(CAL_DAY_SELECTED)) {
                 this._clearSelection(true);
@@ -195,18 +210,29 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                 else {
                   this._addDateToSelection(curDate);
                 }
+             }
             }
           break;
         }
+ 
 
-        if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
+      if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
+
+      if (curDate == null) {
+             curDate = ydate.addMonths(this.get("date"), gridNum);
+             dayNum = 0;
+      }
+              ev.preventDefault();
           var newDate = ydate.addDays(curDate, dayNum),
               startDate = this.get("date"),
-              endDate = ydate.addMonths(this.get("date"), this._paneNumber - 1);
+              endDate = ydate.addMonths(this.get("date"), this._paneNumber - 1),
+              lastPaneDate = new Date(endDate);
               endDate.setDate(ydate.daysInMonth(endDate));
           
           if (ydate.isInRange(newDate, startDate, endDate)) {
+/*
               var paneShift = (newDate.getMonth() - curDate.getMonth()) % 10;
+
 
               if (paneShift != 0) {
                 var newGridNum = gridNum + paneShift,
@@ -214,24 +240,23 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                     newPane = contentBox.one("#" + this._calendarId + "_pane_" + newGridNum);
                     newPane.focus();
               }
-
+*/
               this._highlightDateNode(newDate);
           }
           else if (ydate.isGreater(startDate, newDate)) {
-            this.set("date", ydate.addMonths(startDate, -1));
-            if (!ydate.isGreater(this.get("minimumDate"), newDate)) {
+            if (!ydate.isGreaterOrEqual(this.get("minimumDate"), startDate)) {
+                 this.set("date", ydate.addMonths(startDate, -1));
                  this._highlightDateNode(newDate);
             }
           }
           else if (ydate.isGreater(newDate, endDate)) {
-            this.set("date", ydate.addMonths(startDate, 1));
-            if (!ydate.isGreaterOrEqual(endDate, this.get("maximumDate"))) {
+            if (!ydate.isGreaterOrEqual(lastPaneDate, this.get("maximumDate"))) {
+                 this.set("date", ydate.addMonths(startDate, 1));
                  this._highlightDateNode(newDate);
             }
           }
 
         }
-    }
    },
 
   /**
@@ -507,4 +532,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 });
 
 
-}, '@VERSION@' ,{lang:['de', 'en', 'fr', 'ja', 'pt-BR', 'ru', 'zh-HANT-TW'], requires:['calendar-base', 'calendarnavigator']});
+}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['de', 'en', 'fr', 'ja', 'pt-BR', 'ru', 'zh-HANT-TW']});

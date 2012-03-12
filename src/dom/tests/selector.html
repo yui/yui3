@@ -587,6 +587,11 @@ onload = function() {
                 Assert.areEqual(1, Y.Selector.query('tr:not(.class1):not(.class2)').length);
             },
 
+            'should test multiple :not pseudos with attribute': function() {
+                var node = document.getElementById('href-test');
+                Assert.isTrue(Selector.test(node, 'a:not(.foo):not([target])'));
+            },
+
             'should support boolean custom attribute via quoted attr': function() {
                 var node = document.createElement('div');
                 node.setAttribute('foo', true);
@@ -678,7 +683,7 @@ onload = function() {
 
     <div id="mod1">
             <div><h3>H3 - Title</h3></div>
-            <div><p>lorem ipsum dolor sit <a href="#"><span>link</span></a></p></div>
+            <div><p>lorem ipsum dolor sit <a href="#" target="_blank"><span>link</span></a></p></div>
     </div>
 
     <div class="Bar" id="class-bar"></div>

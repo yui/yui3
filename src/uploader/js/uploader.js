@@ -7,13 +7,18 @@
  * @main uploader
  * @since 3.5.0
  */
-	
+    
  var Win = Y.config.win;
 
  if (Win && Win.File && Win.FormData && Win.XMLHttpRequest) {
- 	Y.Uploader = Y.UploaderHTML5;
+    Y.Uploader = Y.UploaderHTML5;
+ }
+
+ else if (Y.SWFDetect.isFlashVersionAtLeast(10,0,45)) {
+    Y.Uploader = Y.UploaderFlash;
  }
 
  else {
- 	Y.Uploader = Y.UploaderFlash;
+    Y.namespace("Uploader");
+    Y.Uploader.TYPE = "none";
  }

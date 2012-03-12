@@ -391,17 +391,17 @@ var PARENT_NODE = 'parentNode',
                 selector = selector.replace(Selector._re.esc, '\uE000');
             }
 
-            attrs = selector.match(Selector._re.attr);
             pseudos = selector.match(Selector._re.pseudos);
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, '\uE001');
-            }
 
             if (pseudos) {
                 selector = selector.replace(Selector._re.pseudos, '\uE002');
             }
 
+            attrs = selector.match(Selector._re.attr);
+
+            if (attrs) {
+                selector = selector.replace(Selector._re.attr, '\uE001');
+            }
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {

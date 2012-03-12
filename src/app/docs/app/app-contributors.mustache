@@ -24,10 +24,11 @@ This example demonstrates the powerful navigation and view management features `
 
 
 <section>
-<div id="github-app" class="example">
-{{>app-contributors-css}}
-{{>app-contributors-templates}}
-{{>app-contributors-javascript}}
+<div class="example">
+    {{>app-contributors-css}}
+    {{>app-contributors-templates}}
+    {{>app-contributors-javascript}}
+    <div id="github-app"></div>
 </div>
 </section>
 
@@ -45,7 +46,7 @@ This application starts with a bare container which will be used to define the b
 <h3>Templates</h3>
 
 <p>
-This app makes heavy use of <a href="http://www.handlebarsjs.com/">Handlebars</a> templates to create reusable chunks of HTML which will be used by our views render the different "pages" and sections of our app.
+This app makes heavy use of <a href="../handlebars/index.html">Handlebars</a> templates to create reusable chunks of HTML which will be used by our views render the different "pages" and sections of our app.
 </p>
 
 <p>
@@ -61,7 +62,7 @@ This is generally a more maintainable way of embedding templates than storing th
 </p>
 
 <div class="scrollable">
-```
+```handlebars
 {{>app-contributors-templates}}
 ```
 </div>
@@ -117,8 +118,7 @@ All of these things will live inside the following YUI instance:
 <script>
 YUI().use('app', 'handlebars', 'jsonp', 'cssbutton', function (Y) {
 
-var GithubSync,
-    User, Repo, RepoList, Contributor, ContributorList,
+var User, Repo, RepoList, Contributor, ContributorList,
     UserView, RepoView, RepoListView, ContributorListView,
     HomePageView, UserPageView, RepoPageView,
     ContributorsApp;
@@ -139,7 +139,7 @@ We have this ability to create mixable feature extensions, like this sync implem
 </p>
 
 ```
-GithubSync = function () {};
+function GithubSync() {}
 
 GithubSync.API_ORIGIN = 'https://api.github.com';
 
@@ -860,8 +860,7 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         },
 
         userPage: {
-            type  : UserPageView,
-            parent: 'homePage'
+            type: UserPageView
         },
 
         repoPage: {
@@ -871,11 +870,6 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
     },
 
     initializer: function () {
-        // When a user navigates to different "pages" within our app, the
-        // `navigate` event will fire; we can listen to this event and show some
-        // indication that the app is busy loading data.
-        this.on('navigate', this.indicateLoading);
-
         // Here we register a listener for the `HomePageView`'s `changeUser`
         // event. When the `HomePageView` is the `activeView`, its events will
         // bubble up to this app instance.
@@ -901,14 +895,22 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
 
     // -- Event Handlers -------------------------------------------------------
 
-    indicateLoading: function (e) {
-        this.get('activeView').get('container').addClass('loading');
-    },
-
     // When called, this will navigate the application to the user-page for the
     // GitHub username specified on the event facade. This will cause our app to
     // dispatch to its route-handlers along with updating the URL.
     navigateToUser: function (e) {
+        var activeView = this.get('activeView');
+
+        // We want to add a history entry for "/" when we're showing the home
+        // page, but the app's current path isn't already "/". This provides
+        // proper back button support and helps get around a side effect of
+        // using hash based URLs in this example.
+        if (activeView instanceof HomePageView && this.getPath() !== '/') {
+            // Adds history entry for "/" so we can get back to the home page
+            // via the back button.
+            this.save('/');
+        }
+
         this.navigate('/github/' + e.user + '/');
     },
 
@@ -970,6 +972,10 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         if (user === repos.get('user')) {
             next();
         } else {
+            // A fade transition is preferred when we've switched users, so it
+            // is added to the response object.
+            res.transition = 'fade';
+
             // Sets the current user model on the `RepoList` instance and loads
             // the repos for the given user before continuing.
             repos.set('user', user).load(function () {
@@ -1023,19 +1029,25 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
 
     // This is the final route for "/github/:user/" URLs and will show our app's
     // user page which lists the user's repos.
-    showUserPage: function (req) {
+    showUserPage: function (req, res) {
         this.showView('userPage', {
             model    : req.user,
             modelList: req.repos
+        }, {
+            // Overrides the default transition with the preferred one, if set.
+            transition: res.transition
         });
     },
 
     // This is the final route for "/github/:user/:repo/" URLs and will show our
     // app's repo page which lists the contributors to the repo/project.
-    showRepoPage: function (req) {
+    showRepoPage: function (req, res) {
         this.showView('repoPage', {
             model    : req.repo,
             modelList: req.contributors
+        }, {
+            // Overrides the default transition with the preferred one, if set.
+            transition: res.transition
         });
     }
 }, {
@@ -1082,6 +1094,9 @@ new ContributorsApp({
     // the page should cause the app to navigate.
     container   : '#github-app',
     linkSelector: '#github-app a',
+
+    // Enable view transitions when users are navigating around the app.
+    transitions: true,
 
     // We'll define the default GitHub user to be "yui".
     user: new User({login: 'yui'})

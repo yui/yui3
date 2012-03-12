@@ -1,9 +1,9 @@
 YUI.add('loader-tests', function(Y) {
     
     var Assert = Y.Assert,
-    testY = YUI();
-    var ua = Y.UA;
-    var jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
+        testY = YUI(),
+        ua = Y.UA,
+        jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
 
 
     var testLoader = new Y.Test.Case({
@@ -13,7 +13,7 @@ YUI.add('loader-tests', function(Y) {
                 'test_failure': !jsFailure,
                 'test_timeout': !jsFailure
             }
-        },       
+        },
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
                 ignoreRegistered: true,
@@ -107,7 +107,7 @@ YUI.add('loader-tests', function(Y) {
                                 path: 'actioninfos/actioninfos.JS'
                             },
                             'mods-test': {
-                                path: 'test/test.JS',
+                                path: 'test/test.JS'
                             }
                         }
                     }
@@ -136,7 +136,7 @@ YUI.add('loader-tests', function(Y) {
                                 path: 'actioninfos/actioninfos.JS'
                             },
                             'mods-test': {
-                                path: 'test/test.JS',
+                                path: 'test/test.JS'
                             }
                         }
                     }
@@ -331,10 +331,10 @@ YUI.add('loader-tests', function(Y) {
         
             YUI({
                 cssAttributes: {
-                    'class': 'yui-css-module'
+                    'id': 'yui-id-css-module'
                 },
                 jsAttributes: {
-                    'class': 'yui-js-module'
+                    'id': 'yui-id-js-module'
                 },
                 modules: {
                     'attrs2-js': {
@@ -346,8 +346,8 @@ YUI.add('loader-tests', function(Y) {
                 }
             }).use('attrs2-js', 'attrs2-css', 'node', function(Y) {
                 test.resume(function() {
-                    Assert.isNotNull(Y.one('.yui-js-module'), 'Failed to add classname to JS');
-                    Assert.isNotNull(Y.one('.yui-css-module'), 'Failed to add classname to CSS');
+                    Assert.isNotNull(Y.one('#yui-id-js-module'), 'Failed to add id to JS');
+                    Assert.isNotNull(Y.one('#yui-id-css-module'), 'Failed to add id to CSS');
                 });                
             });
 
@@ -402,7 +402,7 @@ YUI.add('loader-tests', function(Y) {
                     if (e.name.indexOf('-ie') === -1) { //Weed out IE only modules
                         counter++;
                     }
-                },
+                }
             }).use('gallery-bitly', 'yui2-editor', function(Y) {
                 test.resume(function() {
                     Assert.areEqual(Y.config.yui2, Y.YUI2.VERSION, 'Failed to load ' + Y.config.yui2);
@@ -473,7 +473,7 @@ YUI.add('loader-tests', function(Y) {
                         patterns: {
                             modtest: {
                                 test: function(mname) {
-                                    return (mname === 'mod')
+                                    return (mname === 'mod');
                                 },
                                 configFn: function(me) {
                                     me.fullpath = './assets/mod.js';
@@ -719,10 +719,10 @@ YUI.add('loader-tests', function(Y) {
                                 requires: [ 'bar', 'baz' ]
                             },
                             baz: {
-                                path: 'path/to/baz.js',
+                                path: 'path/to/baz.js'
                             },
                             bar: {
-                                path: 'bar.js',
+                                path: 'bar.js'
                             },
                             somecss: {
                                 path: 'my/css/files.css'
@@ -968,7 +968,7 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isNotNull(node1, 'Failed to load module 1');
                     Assert.isNotNull(node2, 'Failed to load module 2');
                     Assert.isNotNull(node3, 'Failed to load module 3');
-
+                    
                     if (Y.Get._env.async) {
                         //This browser supports the async property, check it
                         Assert.isFalse(node1.async, 'Async flag on node1 was set incorrectly');
@@ -976,9 +976,15 @@ YUI.add('loader-tests', function(Y) {
                         Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
                     } else {
                         //The async attribute is still
-                        Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
-                        Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
-                        Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                        if (Y.UA.ie && Y.UA.ie > 8) {
+                            Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
+                            Assert.isUndefined(node1.async, 'Async flag on node1 was set incorrectly');
+                            Assert.isUndefined(node2.async, 'Async flag on node2 was set incorrectly');
+                        } else {
+                            Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
+                            Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
+                            Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                        }
                     }
                 });
             });
@@ -1003,11 +1009,92 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
             Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
 
+        },
+        'test: aliases config option inside group': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                groups: {
+                    aliastest: {
+                        aliases: {
+                            dav2: [ 'node' ],
+                            davglass2: [ 'dav2' ]
+                        }
+                    }
+                },
+                require: [ 'davglass2' ]
+            });
+
+            var out = loader.resolve(true);
+
+            Assert.isTrue(out.js.length >= 1);
+            Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
+            Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
+
+        },
+        'test: addAlias': function() {
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                comboBase: '/c?',
+                root: '',
+                maxURLLength: 4048
+            });
+
+            loader.addAlias([ 'node', 'dd' ], 'davdd');
+            loader.require(['davdd']);
+
+            var out = loader.resolve(true);
+
+            Assert.isTrue(out.js.length >= 1);
+            Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
+            Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
+            Assert.isTrue(out.js[0].indexOf('dd-drag') > 0, 'Failed to load dd-drag');
+
+        },
+        'test: gallery combo with custom server': function() {
+            //TODO: in 3.6.0 this should not be required..
+            var groups = YUI.Env[YUI.version].groups;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                groups: groups,
+                combine: true,
+                root: '',
+                comboBase: '/combo?',
+                gallery: 'gallery-2010.08.04-19-46',
+                require: [ 'gallery-noop-test' ]
+            });
+
+            var out = loader.resolve(true);
+            Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
+            Assert.areSame('/combo?gallery-2010.08.04-19-46/build/gallery-noop-test/gallery-noop-test-min.js', out.js[0], 'Failed to return combo url for gallery module.');
+        },
+        'test: 2in3 combo with custom server': function() {
+            //TODO: in 3.6.0 this should not be required..
+            var groups = YUI.Env[YUI.version].groups;
+            
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                groups: groups,
+                combine: true,
+                root: '',
+                comboBase: '/combo?',
+                '2in3': '4',
+                'yui2': '2.9.0',
+                require: [ 'yui2-foo' ] //Invalid module so we have no module data..
+            });
+
+            var out = loader.resolve(true);
+            Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
+            Assert.areSame('/combo?2in3.4/2.9.0/build/yui2-foo/yui2-foo-min.js', out.js[0], 'Failed to return combo url for 2in3 module.');
         }
     });
 
     var suite = new Y.Test.Suite("Loader Automated Tests");
     suite.add(testLoader);
     Y.Test.Runner.add(suite);
+
     
 });

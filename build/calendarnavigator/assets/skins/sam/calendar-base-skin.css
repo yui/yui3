@@ -1,7 +1,5 @@
 .yui3-skin-sam .yui3-calendar-content {
     padding:10px;
-    font-size:0.8em;
-    font-family:"Lucida Grande", "Lucida Sans", Calibri, Helvetica, Arial, sans-serif;
     color: #000000;
     border: 1px solid gray;
     background: #f2f2f2; /* Old browsers */
@@ -31,13 +29,10 @@
     font-weight: bold;
 }
 
-.yui3-skin-sam .yui3-calendar-selection-disabled {
-  color: #555555;
-}
-
 .yui3-skin-sam .yui3-calendar-day,
 .yui3-skin-sam .yui3-calendar-prevmonth-day, 
 .yui3-skin-sam .yui3-calendar-nextmonth-day {
+    padding:5px;
     border: 1px solid #CCCCCC;
     background: #FFFFFF;
     text-align:center;
@@ -70,10 +65,6 @@
 .yui3-skin-sam .yui3-calendar-day-selected {
     background-color: #B3D4FF;
     color: #000000;
-}
-
-.yui3-skin-sam .yui3-calendar-day-highlighted {
-    background-color: #DCDEF5;
 }
 
 .yui3-skin-sam .yui3-calendar-header-label {

@@ -17,14 +17,14 @@
 
 ```
     <div id="ruler"></div>
-    <div id="corn"></div>
+    <div id="corn">
+        <div class="ruler-marker"></div>                
+        <div id="output">? px</div>
+    </div>
     <label>Width:</label>
-    <input id="input" size="2" value="510"> px
+    <input id="input" size="2" value="550"> px
     <button class="yui3-button btn-set">Set</button>
-
     <button class="yui3-button btn-get">Get</button>
-    <label>Width:</label>
-    <span id="output"></span>
 ```
 
 <h2>Getting a Node Instance</h2>
@@ -33,11 +33,9 @@ returns a Node instance.  First we'll set up some variables
 for the node's representing our HTML.</p>
 
 ```
-var corn = Y.one('#corn'),
-    getButton = Y.one('.example .btn-get'),
-    setButton = Y.one('.example .btn-set'),
-    input = Y.one('.example #input'),
-    output = Y.one('.example #output');
+    var corn = Y.one('#corn'),
+        input = Y.one('.example #input'),
+        output = Y.one('.example #output');
 ```
 
 <h2>Accessing Node Properties</h2>
@@ -77,7 +75,7 @@ containing the corn image when the Set button is pressed.
 </p>
 
 ```
-Y.one('.btn-set').on('click', function(e) {
+Y.one('.example .btn-set').on('click', function(e) {
     ...
     corn.set('offsetWidth', value);
     ...

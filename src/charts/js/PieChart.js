@@ -340,9 +340,81 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         msg.appendChild(DOCUMENT.createElement("br"));
         msg.appendChild(DOCUMENT.createTextNode(pct + "%")); 
         return msg; 
+    },
+
+    /**
+     * Returns the appropriate message based on the key press.
+     *
+     * @method _getAriaMessage
+     * @param {Number} key The keycode that was pressed.
+     * @return String
+     */
+    _getAriaMessage: function(key)
+    {
+        var msg = "",
+            categoryItem,
+            items,
+            series,
+            valueItem,
+            seriesIndex = 0,
+            itemIndex = this._itemIndex,
+            seriesCollection = this.get("seriesCollection"),
+            len,
+            total,
+            pct,
+            markers;
+        series = this.getSeries(parseInt(seriesIndex, 10));
+        markers = series.get("markers");
+        len = markers && markers.length ? markers.length : 0;
+        if(key === 37)
+        {
+            itemIndex = itemIndex > 0 ? itemIndex - 1 : len - 1;
+        }
+        else if(key === 39)
+        {
+            itemIndex = itemIndex >= len - 1 ? 0 : itemIndex + 1;
+        }
+        this._itemIndex = itemIndex;
+        items = this.getSeriesItems(series, itemIndex);
+        categoryItem = items.category;
+        valueItem = items.value;
+        total = series.getTotalValues();
+        pct = Math.round((valueItem.value / total) * 10000)/100;
+        msg = "Item " + (itemIndex + 1) + " of " + len + ". ";
+        if(categoryItem && valueItem)
+        {
+            msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
+            msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
+            msg += valueItem.displayName + " is " + pct + "% of the total."; 
+        }
+        else
+        {
+            msg += "No data available.";
+        }
+        return msg;
     }
 }, {
     ATTRS: {
+        /**
+         * Sets the aria description for the chart.
+         *
+         * @attribute ariaDescription
+         * @type String
+         */
+        ariaDescription: {
+            value: "Use the left and right keys to navigate through items in the chart.",
+
+            setter: function(val)
+            {
+                if(this._description)
+                {
+                    this._description.setContent("");
+                    this._description.appendChild(DOCUMENT.createTextNode(val));
+                }
+                return val;
+            }
+        },
+        
         /**
          * Axes to appear in the chart. 
          *

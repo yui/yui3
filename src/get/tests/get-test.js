@@ -2256,9 +2256,24 @@ YUI.add('get-test', function (Y) {
         }
     });
 
-    // -- TODO: Options --------------------------------------------------------------
+    // -- Options --------------------------------------------------------------
     Y.GetTests.Options = new Y.Test.Case({
-        name: 'Options'
+        name: 'Options',
+
+        '`class` attribute should be set correctly in all browsers': function () {
+            var test = this;
+
+            this.t = Y.Get.js('getfiles/a.js', {
+                attributes: {'class': 'get-class-test'}
+            }, function (err, t) {
+                test.resume(function () {
+                    Assert.areSame('get-class-test', t.nodes[0].className, 'className should be set');
+                    Assert.areSame(1, Y.all('.get-class-test').size(), 'selector should return one node');
+                });
+            });
+
+            this.wait();
+        }
     });
 
     // -- Functional tests -----------------------------------------------------

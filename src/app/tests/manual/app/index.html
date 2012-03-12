@@ -6,16 +6,7 @@
 
     <style>
         .yui3-app {
-            overflow-x: hidden;
-        }
-        .yui3-app-views {
-            position: relative;
-            white-space: nowrap;
-        }
-        .yui3-app-views > * {
-            display: inline-block;
-            width: 100%;
-            vertical-align: top;
+            padding: 1em 0;
         }
 
         .yui3-app-views h2 {
@@ -131,6 +122,7 @@
 
             views: {
                 home: {
+                    instance: new Y.View({containerTemplate: '<h2>Home</h2>'}),
                     preserve: true
                 },
 

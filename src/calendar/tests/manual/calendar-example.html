@@ -61,12 +61,12 @@ newrules = addNewRule(newrules, [dYear, dMonth, dDate], "theweekends");
 
 console.log(newrules);
 
-/*
+
 	     var myRules = {
 	     	"2011": {
                 "0-11": {
                 	"all": {
-                		"0,6": "theweekends"
+                		"1,2": "theweekends"
                 	}
                 },
 	     		"all": {
@@ -75,11 +75,11 @@ console.log(newrules);
 	     	}
 
 	     };
-*/
+
 
 function myFilter (oDate, oNode, rules) {
 if (rules.indexOf("theweekends") >= 0) {
-	oNode.addClass('redtext');
+	//oNode.addClass('redtext');
 }	
 };	     
 
@@ -95,10 +95,7 @@ if (rules.indexOf("theweekends") >= 0) {
 			
 		calendar.render("#mycalendar");
 
-    
-    	calendar.selectDates()
-
-		calendar.set("customRenderer", {rules: newrules, filterFunction: myFilter});
+		calendar.set("customRenderer", {rules: myRules, filterFunction: myFilter});
 
 		calendar.set("enabledDatesRule", null);
 		calendar.set("disabledDatesRule", "thefifths");
