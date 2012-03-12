@@ -25,6 +25,8 @@ Provides a top-level application component which manages navigation and views.
 //     above? We could do `app.getView('foo').destroy()` and it would be removed
 //     from the `_viewsInfoMap` as well.
 //
+//   * Should named views support a collection of instances instead of just one?
+//
 
 var Lang    = Y.Lang,
     YObject = Y.Object,
@@ -115,7 +117,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @property views
     @type Object
-    @default `{}`
+    @default {}
+    @since 3.5.0
     **/
     views: {},
 
@@ -131,6 +134,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @type Object
     @default {}
     @protected
+    @since 3.5.0
     **/
 
     // -- Lifecycle Methods ----------------------------------------------------
@@ -183,6 +187,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @param {Object} [config] The configuration object passed to the view
       constructor function when creating the new view instance.
     @return {View} The new view instance.
+    @since 3.5.0
     **/
     createView: function (name, config) {
         var viewInfo = this.getViewInfo(name),
@@ -209,6 +214,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
       `views` object.
     @return {Object} The metadata for the view, or `undefined` if the view is
       not registered.
+    @since 3.5.0
     **/
     getViewInfo: function (view) {
         if (Lang.isString(view)) {
@@ -248,6 +254,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
           `true` when `serverRouting` is falsy.
     @see PjaxBase.navigate()
     **/
+    // Does not override `navigate()` but does use extra `options`.
 
     /**
     Renders this application by appending the `viewContainer` node to the
@@ -264,6 +271,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @method render
     @chainable
+    @see View.render()
     **/
     render: function () {
         var container           = this.get('container'),
@@ -321,17 +329,23 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
-      or a view instance.
+        or a view instance.
     @param {Object} [config] Optional configuration to use when creating a new
-      view instance.
+        view instance.
     @param {Object} [options] Optional object containing any of the following
         properties:
+      @param {Function} [options.callback] Optional callback function to call
+        after new `activeView` is ready to use, the function will be passed:
+          @param {View} options.callback.view A reference to the new
+            `activeView`.
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
     @param {Function} [callback] Optional callback Function to call after the
-        new `activeView` is ready to use, the function will be passed:
+        new `activeView` is ready to use. **Note:** this will override
+        `options.callback`. The function will be passed the following:
       @param {View} callback.view A reference to the new `activeView`.
     @chainable
+    @since 3.5.0
     **/
     showView: function (view, config, options, callback) {
         var viewInfo;
@@ -387,6 +401,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @param {Boolean} prepend Whether the view should be prepended instead of
       appended to the `viewContainer`.
     @protected
+    @since 3.5.0
     **/
     _attachView: function (view, prepend) {
         if (!view) {
@@ -412,6 +427,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @method _destroyContainer
     @protected
+    @see View._destroyContainer()
     **/
     _destroyContainer: function () {
         var container     = this.get('container'),
@@ -451,6 +467,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @method _detachView
     @param {View} view View to detach.
     @protected
+    @since 3.5.0
     **/
     _detachView: function (view) {
         if (!view) {
@@ -489,6 +506,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @param {Node|null} value Current attribute value.
     @return {Node} View container node.
     @protected
+    @since 3.5.0
     **/
     _getViewContainer: function (value) {
         // This wackiness is necessary to enable fully lazy creation of the
@@ -513,6 +531,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @method _getURL
     @return {String} URL.
     @protected
+    @see Router._getURL()
     **/
     _getURL: function () {
         var url = Y.getLocation().toString();
@@ -532,6 +551,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @method _initHtml5
     @return {Boolean} Whether or not HTML5 history should be used.
     @protected
+    @since 3.5.0
     **/
     _initHtml5: function () {
         // When `serverRouting` is explicitly set to `false` (not just falsy),
@@ -556,6 +576,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
       object, or a view instance.
     @return {Boolean} Whether the view is configured as a child of the parent.
     @protected
+    @since 3.5.0
     **/
     _isChildView: function (view, parent) {
         var viewInfo   = this.getViewInfo(view),
@@ -581,6 +602,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
       object, or a view instance.
     @return {Boolean} Whether the view is configured as the parent of the child.
     @protected
+    @since 3.5.0
     **/
     _isParentView: function (view, child) {
         var viewInfo  = this.getViewInfo(view),
@@ -648,6 +670,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see Router._save()
     @chainable
     @protected
+    @see Router._save()
     **/
     _save: function (url, replace) {
         // Forces full-path URLs to always be used by modifying
@@ -677,7 +700,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Performs the actual change of the app's `activeView` by attaching the
+    Performs the actual change of this app's `activeView` by attaching the
     `newView` to this app, and detaching the `oldView` from this app using any
     specified `options`.
 
@@ -688,20 +711,22 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     `viewContainer`, and removing this app as a bubble target for its events.
     The `oldView` will either be preserved or properly destroyed.
 
-    The `activeView` attribute is read-only and can be changed by calling the
-    `showView()` method.
+    **Note:** The `activeView` attribute is read-only and can be changed by
+    calling the `showView()` method.
 
     @method _uiSetActiveView
     @param {View} newView The View which is now this app's `activeView`.
     @param {View} [oldView] The View which was this app's `activeView`.
     @param {Object} [options] Optional object containing any of the following
         properties:
+      @param {Function} [options.callback] Optional callback function to call
+        after new `activeView` is ready to use, the function will be passed:
+          @param {View} options.callback.view A reference to the new
+            `activeView`.
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
-      @param {Function} [callback] Optional callback Function to call after the
-        `newView` is ready to use, the function will be passed:
-        @param {View} options.callback.view A reference to the `newView`.
     @protected
+    @since 3.5.0
     **/
     _uiSetActiveView: function (newView, oldView, options) {
         options || (options = {});
@@ -711,8 +736,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             isParent = !isChild && this._isParentView(newView, oldView),
             prepend  = !!options.prepend || isParent;
 
-        // Prevent detaching (thus removing) the view we want to show.
-        // Also hard to animate out and in, the same view.
+        // Prevent detaching (thus removing) the view we want to show. Also hard
+        // to animate out and in, the same view.
         if (newView === oldView) {
             return callback && callback.call(this, newView);
         }
@@ -737,6 +762,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @param {String} url The URL to upgrade from hash-based to full-path.
     @return {String} The upgraded URL, or the specified URL untouched.
     @protected
+    @since 3.5.0
     **/
     _upgradeURL: function (url) {
         // We should not try to upgrade paths for external URLs.
@@ -776,6 +802,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @method _afterActiveViewChange
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _afterActiveViewChange: function (e) {
         this._uiSetActiveView(e.newVal, e.prevVal, e.options);
@@ -790,9 +817,10 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute activeView
         @type View
-        @default `null`
+        @default null
         @readOnly
         @see showView
+        @since 3.5.0
         **/
         activeView: {
             value   : null,
@@ -825,7 +853,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default `<body>`
+        @default <body>
         @initOnly
         **/
         container: {
@@ -867,7 +895,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute linkSelector
         @type String|Function
-        @default `"a"`
+        @default "a"
         **/
         linkSelector: {
             value: 'a'
@@ -940,8 +968,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute serverRouting
         @type Boolean
-        @default `undefined`
+        @default undefined
         @initOnly
+        @since 3.5.0
         **/
         serverRouting: {
             value    : undefined,
@@ -973,8 +1002,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default Y.Node.create("<div/>")
+        @default "<div/>"
         @initOnly
+        @since 3.5.0
         **/
         viewContainer: {
             getter   : '_getViewContainer',
@@ -984,8 +1014,29 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
     },
 
-    // TODO: Should these go on the `prototype`? Also Document these!
+    // TODO: Should these go on the `prototype`?
+    // TODO: These should also just go in a `CLASS_NAMES` object.
+
+    /**
+    CSS class added to an app's `container` node.
+
+    @property CSS_CLASS
+    @type String
+    @default "yui3-app"
+    @static
+    @since 3.5.0
+    **/
     CSS_CLASS      : getClassName('app'),
+
+    /**
+    CSS class added to an app's `viewContainer` node.
+
+    @property VIEWS_CSS_CLASS
+    @type String
+    @default "yui3-app-views"
+    @static
+    @since 3.5.0
+    **/
     VIEWS_CSS_CLASS: getClassName('app', 'views'),
 
     /**
@@ -1032,6 +1083,7 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
     provided by the `views` object on the `prototype`.
 @constructor
 @extends App.Base
+@uses App.Transitions
 @since 3.5.0
 **/
 Y.App = Y.mix(Y.Base.create('app', Y.App.Base, []), Y.App, true);
