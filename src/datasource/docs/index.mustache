@@ -215,22 +215,37 @@ myDataSource.cache.set("max", 0);
 </p>
 
 ```
-YUI().use("datasource-function", "datasource-polling", function(Y) {
-    var myFunction = function() {
-            return new Date();
-        },
-        myDataSource = new Y.DataSource.Function({source:myFunction}),
-        callback = {
-            success: function(e){
-                alert("At the tone the time will be: " + e.response.results[0]);
-            },
-            failure: function(e){
-                alert("Could not retrieve data: " + e.error.message);
-            }
-        },
-        id = myDataSource.setInterval(1000, null,callback); // Starts polling
+YUI().use('datasource-io', 'datasource-polling', 'json-parse', function(Y) {
+    var onlineFriends = Y.one('#friend-count'),
+        friendData,
+        intervalId;
+        
+    friendData = new Y.DataSource.IO({
+        source: '/services/friends/'
+    });
 
-        myDataSource.clearInterval(id); // Ends polling
+    // Start polling the server every 10 seconds
+    intervalId = friendData.setInterval(10000, {
+        request : Y.one('#user-id').get('value'),
+        callback: {
+            success: function (e) {
+                var friends = Y.JSON.parse(e.response.results[0]).friendCount;
+
+                if (!friends) {
+                    friends = 'No friends.  You should go outside more.';
+                }
+
+                onlineFriends.set('text', friends);
+            },
+            failure: function (e) {
+                onlineFriends.set('text',
+                    '(Bang) Ouch! ' + e.error.message + ' happened!');
+
+                // Stop polling
+                friendData.clearInterval(intervalId);
+            }
+        }
+    });
 });
 ```
 
