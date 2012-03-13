@@ -1,4 +1,7 @@
-/**
+// API Doc comments disabled to avoid deprecated class leakage into
+// non-deprecated class API docs.  See the 3.4.1 datatable API doc files in the
+// download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip for reference.
+/*
  * The Column class defines and manages attributes of Columns for DataTable.
  *
  * @class Column
@@ -15,7 +18,7 @@ function Column(config) {
 //
 /////////////////////////////////////////////////////////////////////////////
 Y.mix(Column, {
-    /**
+    /*
      * Class name.
      *
      * @property NAME
@@ -32,7 +35,7 @@ Y.mix(Column, {
 //
 /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
-        /**
+        /*
         Unique internal identifier, used to stamp ID on TH element.
         
         @attribute id
@@ -44,7 +47,7 @@ Y.mix(Column, {
             readOnly: true
         },
         
-        /**
+        /*
         User-supplied identifier. Defaults to id.
         @attribute key
         @type {String}
@@ -53,7 +56,7 @@ Y.mix(Column, {
             valueFn: "_defaultKey"
         },
 
-        /**
+        /*
         Points to underlying data field (for sorting or formatting, for
         example). Useful when column doesn't hold any data itself, but is just
         a visual representation of data from another column or record field.
@@ -67,7 +70,7 @@ Y.mix(Column, {
             valueFn: "_defaultField"
         },
 
-        /**
+        /*
         Display label for column header. Defaults to key.
 
         @attribute label
@@ -77,7 +80,7 @@ Y.mix(Column, {
             valueFn: "_defaultLabel"
         },
         
-        /**
+        /*
         Array of child column definitions (for nested headers).
 
         @attribute children
@@ -88,7 +91,7 @@ Y.mix(Column, {
             value: null
         },
         
-        /**
+        /*
         TH abbr attribute.
 
         @attribute abbr
@@ -106,7 +109,7 @@ Y.mix(Column, {
             getter: "_getClassnames"
         },
         
-        /**
+        /*
         Formating template string or function for cells in this column.
 
         Function formatters receive a single object (described below) and are
@@ -132,7 +135,7 @@ Y.mix(Column, {
         **/
         formatter: {},
 
-        /**
+        /*
         The default markup to display in cells that have no corresponding record
         data or content from formatters.
 
@@ -177,7 +180,7 @@ Y.extend(Column, Y.Widget, {
     // ATTRIBUTE HELPERS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * Return ID for instance.
     *
     * @method _defaultId
@@ -188,7 +191,7 @@ Y.extend(Column, Y.Widget, {
         return Y.guid();
     },
 
-    /**
+    /*
     * Return key for instance. Defaults to ID if one was not provided.
     *
     * @method _defaultKey
@@ -199,7 +202,7 @@ Y.extend(Column, Y.Widget, {
         return Y.guid();
     },
 
-    /**
+    /*
     * Return field for instance. Defaults to key if one was not provided.
     *
     * @method _defaultField
@@ -210,7 +213,7 @@ Y.extend(Column, Y.Widget, {
         return this.get("key");
     },
 
-    /**
+    /*
     * Return label for instance. Defaults to key if one was not provided.
     *
     * @method _defaultLabel
@@ -221,7 +224,7 @@ Y.extend(Column, Y.Widget, {
         return this.get("key");
     },
 
-    /**
+    /*
      * Updates the UI if changes are made to abbr.
      *
      * @method _afterAbbrChange
@@ -237,7 +240,7 @@ Y.extend(Column, Y.Widget, {
     // PROPERTIES
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
      * Reference to Column's current position index within its Columnset's keys
      * array, if applicable. This property only applies to non-nested and bottom-
      * level child Columns. Value is set by Columnset code.
@@ -247,7 +250,7 @@ Y.extend(Column, Y.Widget, {
      */
     keyIndex: null,
     
-    /**
+    /*
     * Array of TH IDs associated with this column, for TD "headers" attribute.
     * Value is set by Columnset code
     *
@@ -256,7 +259,7 @@ Y.extend(Column, Y.Widget, {
     */
     headers: null,
 
-    /**
+    /*
      * Number of cells the header spans. Value is set by Columnset code.
      *
      * @property colSpan
@@ -265,7 +268,7 @@ Y.extend(Column, Y.Widget, {
      */
     colSpan: 1,
     
-    /**
+    /*
      * Number of rows the header spans. Value is set by Columnset code.
      *
      * @property rowSpan
@@ -274,7 +277,7 @@ Y.extend(Column, Y.Widget, {
      */
     rowSpan: 1,
 
-    /**
+    /*
      * Column's parent Column instance, if applicable. Value is set by Columnset
      * code.
      *
@@ -283,7 +286,7 @@ Y.extend(Column, Y.Widget, {
      */
     parent: null,
 
-    /**
+    /*
      * The Node reference to the associated TH element.
      *
      * @property thNode
@@ -305,7 +308,7 @@ Y.extend(Column, Y.Widget, {
     // METHODS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * Initializer.
     *
     * @method initializer
@@ -315,7 +318,7 @@ Y.extend(Column, Y.Widget, {
     initializer: function(config) {
     },
 
-    /**
+    /*
     * Destructor.
     *
     * @method destructor
@@ -324,7 +327,7 @@ Y.extend(Column, Y.Widget, {
     destructor: function() {
     },
 
-    /**
+    /*
      * Returns classnames for Column.
      *
      * @method _getClassnames
@@ -339,7 +342,7 @@ Y.extend(Column, Y.Widget, {
     // SYNC
     //
     ////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * Syncs UI to intial state.
     *
     * @method syncUI
@@ -349,7 +352,7 @@ Y.extend(Column, Y.Widget, {
         this._uiSetAbbr(this.get("abbr"));
     },
 
-    /**
+    /*
      * Updates abbr.
      *
      * @method _uiSetAbbr

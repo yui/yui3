@@ -1,4 +1,7 @@
-/**
+// API Doc comments disabled to avoid deprecated class leakage into
+// non-deprecated class API docs.  See the 3.4.1 datatable API doc files in the
+// download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip for reference.
+/*
  * The Columnset class defines and manages a collection of Columns.
  *
  * @class Columnset
@@ -15,7 +18,7 @@ function Columnset(config) {
 //
 /////////////////////////////////////////////////////////////////////////////
 Y.mix(Columnset, {
-    /**
+    /*
      * Class name.
      *
      * @property NAME
@@ -32,7 +35,7 @@ Y.mix(Columnset, {
     //
     /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
-        /**
+        /*
         * @attribute definitions
         * @description Array of column definitions that will populate this Columnset.
         * @type Array
@@ -55,7 +58,7 @@ Y.extend(Columnset, Y.Base, {
     // ATTRIBUTE HELPERS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * @method _setDefinitions
     * @description Clones definitions before setting.
     * @param definitions {Array} Array of column definitions.
@@ -71,7 +74,7 @@ Y.extend(Columnset, Y.Base, {
     // PROPERTIES
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
      * Top-down tree representation of Column hierarchy. Used to create DOM
      * elements.
      *
@@ -80,7 +83,7 @@ Y.extend(Columnset, Y.Base, {
      */
     tree: null,
 
-    /**
+    /*
      * Hash of all Columns by ID.
      *
      * @property idHash
@@ -88,7 +91,7 @@ Y.extend(Columnset, Y.Base, {
      */
     idHash: null,
 
-    /**
+    /*
      * Hash of all Columns by key.
      *
      * @property keyHash
@@ -96,7 +99,7 @@ Y.extend(Columnset, Y.Base, {
      */
     keyHash: null,
 
-    /**
+    /*
      * Array of only Columns that are meant to be displayed in DOM.
      *
      * @property keys
@@ -109,7 +112,7 @@ Y.extend(Columnset, Y.Base, {
     // METHODS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * Initializer. Generates all internal representations of the collection of
     * Columns.
     *
@@ -212,7 +215,7 @@ Y.extend(Columnset, Y.Base, {
         this._setHeaders();
     },
 
-    /**
+    /*
     * Destructor.
     *
     * @method destructor
@@ -226,7 +229,7 @@ Y.extend(Columnset, Y.Base, {
     // COLUMN HELPERS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * Cascade certain properties to children if not defined on their own.
     *
     * @method _cascadePropertiesToChildren
@@ -271,7 +274,7 @@ Y.extend(Columnset, Y.Base, {
         }
     },
 
-    /**
+    /*
     * @method _setColSpans
     * @description Calculates and sets colSpan attribute on given Column.
     * @param column {Array} Column instance.
@@ -303,7 +306,7 @@ Y.extend(Columnset, Y.Base, {
         column.colSpan = terminalChildNodes;
     },
 
-    /**
+    /*
     * @method _setRowSpans
     * @description Calculates and sets rowSpan attribute on all Columns.
     * @private
@@ -369,7 +372,7 @@ Y.extend(Columnset, Y.Base, {
         parseDomTreeForRowSpan(this.tree);
     },
 
-    /**
+    /*
     * @method _setHeaders
     * @description Calculates and sets headers attribute on all Columns.
     * @private
