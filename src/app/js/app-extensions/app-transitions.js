@@ -1,35 +1,91 @@
 /**
-Provides view transitions for `Y.App`.
+Provides view transitions for `Y.App` in browsers which support native CSS3
+transitions.
+
+**Note:** When this module is used, `Y.App.Transitions` will automatically mix
+itself in to `Y.App`.
 
 @submodule app-transitions
 @since 3.5.0
 **/
 
 /**
-Provides view transitions for `Y.App`.
+Provides view transitions for `Y.App` in browsers which support native CSS3
+transitions.
 
-When this module is used, it will automatically mix itself on to `Y.App` adding
-transitions to `activeView` changes.
+View transitions provide an nice way to move from one "page" to the next that is
+both pleasant to the user and helps to communicate a hierarchy between sections
+of an application.
+
+When this module is used, it will automatically mix itself in to `Y.App` and
+transition between `activeView` changes using the following effects:
+
+  * **`fade`**: Cross-fades between the old an new active views.
+
+  * **`slideLeft`**: The old and new active views are positioned next to each
+    other and both slide to the left.
+
+  * **`slideRight`**: The old and new active views are positioned next to each
+    other and both slide to the right.
+
+**Note:** Transitions are an opt-in feature and are enabled via an app's
+`transitions` attribute.
 
 @class App.Transitions
+@uses App.TransitionsNative
 @since 3.5.0
 **/
 function AppTransitions() {}
 
-// TODO: API docs.
 AppTransitions.ATTRS = {
+    /**
+    Whether or not this application should use view transitions, and if so then
+    which ones or `true` for the defaults which are specified by the
+    `transitions` prototype property.
+
+    **Note:** Transitions are an opt-in feature and will only be used in
+    browsers which support native CSS3 transitions.
+
+    @attribute transitions
+    @type Boolean|Object
+    @default false
+    @since 3.5.0
+    **/
     transitions: {
         setter: '_setTransitions',
         value : false
     }
 };
 
-// TODO: API docs.
+/**
+CSS classes used by `App.Transitions`.
+
+When an app is transitioning between `activeView`s, its `container` node will
+have the "yui3-app-transitioning" CSS class added.
+
+@property CLASS_NAMES
+@type Object
+@static
+@since 3.5.0
+**/
 AppTransitions.CLASS_NAMES = {
     transitioning: Y.ClassNameManager.getClassName('app', 'transitioning')
 };
 
-// TODO: API docs.
+/**
+Collect of transitions -> fx.
+
+A transition (e.g. "fade") is a simple name given to a configuration of fx to
+apply, consisting of `viewIn` and `viewOut` properties who's values are names of
+fx registered on `Y.Transition.fx`.
+
+By default transitions: `fade`, `slideLeft`, and `slideRight` have fx defined.
+
+@property FX
+@type Object
+@static
+@since 3.5.0
+**/
 AppTransitions.FX = {
     fade: {
         viewIn : 'app:fadeIn',
@@ -51,27 +107,24 @@ AppTransitions.prototype = {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Transitions to use when the `activeView` changes.
+    Default transitions to use when the `activeView` changes.
 
-    Transition configurations contain a two properties: `viewIn` and `viewOut`;
-    there exists three configurations that represent the different scenarios of
-    the `activeView` changing:
+    The following are types of changes for which transitions can be defined that
+    correspond to the relationship between the new and previous `activeView`:
 
-      * `navigate`: The default set of transitions to use when changing the
-        `activeView` of the application.
+      * `navigate`: The default transition to use when changing the `activeView`
+        of the application.
 
-      * `toChild`: The set of transitions to use when the `activeView` changes
-        to a named view who's `parent` property references the metadata of the
-        previously active view.
+      * `toChild`: The transition to use when the new `activeView` is configured
+        as a child of the previously active view via its `parent` property as
+        defined in this app's `views`.
 
-      * `toParent`: The set of transitions to use when the `activeView` changes
-        to a named view who's metadata is referenced by the previously active
-        view's `parent` property.
+      * `toParent`: The transition to use when the new `activeView` is
+        configured as the `parent` of the previously active view as defined in
+        this app's `views`.
 
-    With the current state of `Y.Transition`, it is best to used named
-    transitions that registered on `Y.Transition.fx`. If `transitions` are
-    passed at instantiation time, they will override any transitions set on
-    the prototype.
+    **Note:** Transitions are an opt-in feature and will only be used in
+    browsers which support native CSS3 transitions.
 
     @property transitions
     @type Object
@@ -81,9 +134,8 @@ AppTransitions.prototype = {
             toChild : 'slideLeft',
             toParent: 'slideRight'
         }
-
+    @since 3.5.0
     **/
-    // TODO: API docs.
     transitions: {
         navigate: 'fade',
         toChild : 'slideLeft',
@@ -125,25 +177,43 @@ AppTransitions.prototype = {
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
-      or a view instance.
+        or a view instance.
     @param {Object} [config] Optional configuration to use when creating a new
-      view instance.
+        view instance.
     @param {Object} [options] Optional object containing any of the following
         properties:
+      @param {Function} [options.callback] Optional callback function to call
+        after new `activeView` is ready to use, the function will be passed:
+          @param {View} options.callback.view A reference to the new
+            `activeView`.
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
-      @param {Object} [options.transition] The name of the fx registered on
-        `Y.App.Transitions.FX` to use, or `false` for no transition.
+      @param {Boolean|String} [options.transition] Optional transition override.
+        A transition can be specified which will override the default, or
+        `false` for no transition.
     @param {Function} [callback] Optional callback Function to call after the
-        new `activeView` is ready to use, the function will be passed:
+        new `activeView` is ready to use. **Note:** this will override
+        `options.callback`. The function will be passed the following:
       @param {View} callback.view A reference to the new `activeView`.
     @chainable
+    @see App.Base.showView()
     **/
-    // Does not override `showView()` but does use additional `options`.
+    // Does not override `showView()` but does use `options.transitions`.
 
     // -- Protected Methods ----------------------------------------------------
 
-    // TODO: API docs.
+    /**
+    Setter for `transitions` attribute.
+
+    When specified as `true`, the defaults will be use as specified by the
+    `transitions` prototype property.
+
+    @method _setTransitions
+    @param {Boolean|Object} transitions The new `transitions` attribute value.
+    @return {Mixed} The processed value which represents the new state.
+    @protected
+    @since 3.5.0
+    **/
     _setTransitions: function (transitions) {
         var defTransitions = this.transitions;
 
