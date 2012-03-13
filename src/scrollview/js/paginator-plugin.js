@@ -324,7 +324,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          if (cbChildren.size() > 3) {
              nodeToRemove = (isForward) ? cb.one('li:first-of-type') : cb.one('li:last-of-type');
              nodeToRemove.remove();
-             host.set('scrollX', 300);
+             host.set('scrollX', this._pageOffsets[1]); // Center
          }
      },
      
