@@ -331,7 +331,7 @@ var PARENT_NODE = 'parentNode',
          */
         _tokenize: function(selector) {
             selector = selector || '';
-            selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
+            selector = Selector._parseSelector(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
                 query = selector, // original query for debug report
                 tokens = [],    // array of tokens
@@ -422,8 +422,19 @@ var PARENT_NODE = 'parentNode',
 
         _replaceShorthand: function(selector) {
             var shorthand = Y.Selector.shorthand,
-                esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
-                re,
+                re;
+
+            for (re in shorthand) {
+                if (shorthand.hasOwnProperty(re)) {
+                    selector = selector.replace(new RegExp(re, 'gi'), shorthand[re]);
+                }
+            }
+
+            return selector;
+        },
+
+        _parseSelector: function(selector) {
+            var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
                 attrs,
                 pseudos;
 
@@ -435,11 +446,7 @@ var PARENT_NODE = 'parentNode',
             attrs = Y.Selector._parse('attr', selector);
             selector = Y.Selector._replace('attr', selector);
 
-            for (re in shorthand) {
-                if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(new RegExp(re, 'gi'), shorthand[re]);
-                }
-            }
+            selector = Y.Selector._replaceShorthand(selector);
 
             selector = Y.Selector._restore('attr', selector, attrs);
             selector = Y.Selector._restore('pseudo', selector, pseudos);
