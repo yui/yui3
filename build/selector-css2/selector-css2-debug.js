@@ -20,13 +20,25 @@ var PARENT_NODE = 'parentNode',
     Selector = Y.Selector,
 
     SelectorCSS2 = {
+        _types: {
+            esc: {
+                token: '\uE000',
+                re: /\\[:\[\]\(\)#\.\'\>+~"]/gi
+            },
+
+            attr: {
+                token: '\uE001',
+                re: /(\[[^\]]*\])/g
+            },
+
+            pseudo: {
+                token: '\uE002',
+                re: /(\([^\)]*\))/g
+            }
+        },
+
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
-        _re: {
-            attr: /(\[[^\]]*\])/g,
-            esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
-            pseudos: /(\([^\)]*\))/g
-        },
 
         // TODO: better detection, document specific
         _isXML: (function() {
@@ -380,28 +392,49 @@ var PARENT_NODE = 'parentNode',
             return tokens;
         },
 
+        _parse: function(name, selector) {
+            return selector.match(Y.Selector._types[name].re);
+        },
+
+        _replace: function(name, selector) {
+            var o = Y.Selector._types[name];
+            return selector.replace(o.re, o.token);
+        },
+
+        _restore: function(name, selector, items) {
+            if (items) {
+                var token = Y.Selector._types[name].token,
+                    i, len;
+                for (i = 0, len = items.length; i < len; ++i) {
+                    selector = selector.replace(token, items[i]);
+                }
+            }
+            return selector;
+        },
+
+        _replaceMarkers: function(selector) {
+            selector = selector.replace(/\[/g, '\uE003');
+            selector = selector.replace(/\]/g, '\uE004');
+
+            selector = selector.replace(/\(/g, '\uE005');
+            selector = selector.replace(/\)/g, '\uE006');
+            return selector;
+        },
+
         _replaceShorthand: function(selector) {
-            var shorthand = Selector.shorthand,
-                esc = selector.match(Selector._re.esc), // pull escaped colon, brackets, etc. 
+            var shorthand = Y.Selector.shorthand,
+                esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
+                re,
                 attrs,
-                pseudos,
-                re, i, len;
+                pseudos;
 
-            if (esc) {
-                selector = selector.replace(Selector._re.esc, '\uE000');
-            }
+            selector = Y.Selector._replace('esc', selector);
 
-            pseudos = selector.match(Selector._re.pseudos);
+            pseudos = Y.Selector._parse('pseudo', selector);
+            selector = Selector._replace('pseudo', selector);
 
-            if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, '\uE002');
-            }
-
-            attrs = selector.match(Selector._re.attr);
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, '\uE001');
-            }
+            attrs = Y.Selector._parse('attr', selector);
+            selector = Y.Selector._replace('attr', selector);
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
@@ -409,29 +442,11 @@ var PARENT_NODE = 'parentNode',
                 }
             }
 
-            if (attrs) {
-                for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace(/\uE001/, attrs[i]);
-                }
-            }
+            selector = Y.Selector._restore('attr', selector, attrs);
+            selector = Y.Selector._restore('pseudo', selector, pseudos);
 
-            if (pseudos) {
-                for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace(/\uE002/, pseudos[i]);
-                }
-            }
-
-            selector = selector.replace(/\[/g, '\uE003');
-            selector = selector.replace(/\]/g, '\uE004');
-
-            selector = selector.replace(/\(/g, '\uE005');
-            selector = selector.replace(/\)/g, '\uE006');
-
-            if (esc) {
-                for (i = 0, len = esc.length; i < len; ++i) {
-                    selector = selector.replace('\uE000', esc[i]);
-                }
-            }
+            selector = Y.Selector._replaceMarkers(selector);
+            selector = Y.Selector._restore('esc', selector, esc);
 
             return selector;
         },
