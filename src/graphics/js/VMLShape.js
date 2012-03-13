@@ -784,7 +784,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
     _getSkewOffsetValue: function(val)
     {
         var sign = Y.MatrixUtil.sign(val),
-            absVal = Math.abs(Math.round(val));
+            absVal = Math.abs(val);
         val = Math.min(absVal, 32767) * sign;
         return val;
     },
