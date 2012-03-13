@@ -1,16 +1,9 @@
 /**
 The core implementation of the `DataTable` and `DataTable.Base` Widgets.
 
-Use this class extension with Widget or another Base-based superclass to create
-the basic DataTable API and composing class structure.
-
-Notable about this architecture is that rendering and UI event management for
-the header, body, and footer of the table are deferred to configurable classes
-in the `headerView`, `bodyView`, and `footerView` attributes.  In this extension
-they have no default values, requiring implementers to supply their own classes
-to render the table content.
-
-@module datatable-core
+@module datatable
+@submodule datatable-core
+@since 3.5.0
 **/
 
 var INVALID = Y.Attribute.INVALID_VALUE,
@@ -43,9 +36,22 @@ function flatten(o) {
 }
 
 /**
+_API docs for this extension are included in the DataTable class._
+
 Class extension providing the core API and structure for the DataTable Widget.
 
+Use this class extension with Widget or another Base-based superclass to create
+the basic DataTable API and composing class structure.
+
+Notable about this architecture is that rendering and UI event management for
+the header, body, and footer of the table are deferred to configurable classes
+in the `headerView`, `bodyView`, and `footerView` attributes.  In this extension
+they have no default values, requiring implementers to supply their own classes
+to render the table content.
+
 @class DataTable.Core
+@for DataTable
+@since 3.5.0
 **/
 Table = Y.namespace('DataTable').Core = function () {};
 
@@ -95,6 +101,7 @@ Table.ATTRS = {
     @attribute columns
     @type {Object[]|String[]}
     @default (from `recordType` ATTRS or first item in the `data`)
+    @since 3.5.0
     **/
     columns: {
         // TODO: change to setter to coerce Columnset?
@@ -127,6 +134,7 @@ Table.ATTRS = {
     @attribute recordType
     @type {Function}
     @default (see description)
+    @since 3.5.0
     **/
     recordType: {
         setter: '_setRecordType',
@@ -148,6 +156,7 @@ Table.ATTRS = {
     @attribute data
     @type {ModelList|Object[]}
     @default `new ModelList()`
+    @since 3.5.0
     **/
     data: {
         value : [],
@@ -174,6 +183,7 @@ Table.ATTRS = {
 
     @attribute headerView
     @type {Function|Object}
+    @since 3.5.0
     **/
     headerView: {
         validator: '_validateView',
@@ -199,6 +209,7 @@ Table.ATTRS = {
 
     @attribute footerView
     @type {Function|Object}
+    @since 3.5.0
     **/
     footerView: {
         validator: '_validateView',
@@ -224,6 +235,7 @@ Table.ATTRS = {
 
     @attribute bodyView
     @type {Function|Object}
+    @since 3.5.0
     **/
     bodyView: {
         validator: '_validateView',
@@ -237,6 +249,7 @@ Table.ATTRS = {
     @attribute summary
     @type {String}
     @default '' (empty string)
+    @since 3.5.0
     **/
     summary: {
         value: '',
@@ -252,6 +265,7 @@ Table.ATTRS = {
     @attribute caption
     @type HTML
     @default '' (empty string)
+    @since 3.5.0
     **/
     caption: {
         value: ''
@@ -266,6 +280,7 @@ Table.ATTRS = {
     @attribute recordset
     @type {Object[]|Recordset}
     @deprecated Use the `data` attribute
+    @since 3.5.0
     **/
     recordset: {
         setter: '_setRecordset',
@@ -285,6 +300,7 @@ Table.ATTRS = {
     @attribute columnset
     @type {Object[]|Columnset}
     @deprecated Use the `columns` attribute
+    @since 3.5.0
     **/
     columnset: {
         setter: '_setColumnset',
@@ -303,6 +319,7 @@ Y.mix(Table.prototype, {
     @property CAPTION_TEMPLATE
     @type {HTML}
     @default '<caption class="{className}"/>'
+    @since 3.5.0
     **/
     CAPTION_TEMPLATE: '<caption class="{className}"/>',
 
@@ -312,6 +329,7 @@ Y.mix(Table.prototype, {
     @property TABLE_TEMPLATE
     @type {HTML}
     @default '<table cellspacing="0" class="{className}"/>'
+    @since 3.5.0
     **/
     TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
 
@@ -322,6 +340,7 @@ Y.mix(Table.prototype, {
     @property TBODY_TEMPLATE
     @type {HTML}
     @default '<tbody class="{className}"/>'
+    @since 3.5.0
     **/
     TBODY_TEMPLATE: '<tbody class="{className}"/>',
 
@@ -332,6 +351,7 @@ Y.mix(Table.prototype, {
     @property TFOOT_TEMPLATE
     @type {HTML}
     @default '<tfoot class="{className}"/>'
+    @since 3.5.0
     **/
     TFOOT_TEMPLATE:
         '<tfoot class="{className}"/>',
@@ -343,6 +363,7 @@ Y.mix(Table.prototype, {
     @property THEAD_TEMPLATE
     @type {HTML}
     @default '<thead class="{className}"/>'
+    @since 3.5.0
     **/
     THEAD_TEMPLATE:
         '<thead class="{className}"/>',
@@ -355,6 +376,7 @@ Y.mix(Table.prototype, {
     @property body
     @type {Object}
     @default undefined (initially unset)
+    @since 3.5.0
     **/
     //body: null,
 
@@ -366,6 +388,7 @@ Y.mix(Table.prototype, {
     @property foot
     @type {Object}
     @default undefined (initially unset)
+    @since 3.5.0
     **/
     //foot: null,
 
@@ -377,6 +400,7 @@ Y.mix(Table.prototype, {
     @property head
     @type {Object}
     @default undefined (initially unset)
+    @since 3.5.0
     **/
     //head: null,
 
@@ -386,6 +410,7 @@ Y.mix(Table.prototype, {
     @property data
     @type {ModelList}
     @default undefined (initially unset)
+    @since 3.5.0
     **/
     //data: null,
 
@@ -403,6 +428,7 @@ Y.mix(Table.prototype, {
     @param args* {any} 0..n additional arguments to pass on to the callback
                  function.  These arguments will be added after the event object.
     @return {EventHandle} the detach handle
+    @since 3.5.0
     **/
     delegate: function () {
         var contentBox = this.get('contentBox');
@@ -420,6 +446,7 @@ Y.mix(Table.prototype, {
     @param {Number} row Index of the cell's containing row
     @param {Number} col Index of the cell's containing column
     @return {Node}
+    @since 3.5.0
     **/
     getCell: function (row, col) {
         return this.body && this.body.getCell && this.body.getCell(row, col);
@@ -439,6 +466,7 @@ Y.mix(Table.prototype, {
     @param {String|Number|Number[]} name Key, "name", index, or index array to
                 identify the column
     @return {Object} the column configuration object
+    @since 3.5.0
     **/
     getColumn: function (name) {
         var col, columns, i, len, cols;
@@ -482,6 +510,7 @@ Y.mix(Table.prototype, {
     @method getRow
     @param {Number} index Index of the row in the data `<tbody>`
     @return {Node}
+    @since 3.5.0
     **/
     getRow: function (index) {
         return this.body && this.body.getRow && this.body.getRow(index);
@@ -491,6 +520,7 @@ Y.mix(Table.prototype, {
     Updates the UI with the current attribute state.
 
     @method syncUI
+    @since 3.5.0
     **/
     syncUI: function () {
         this._uiSetCaption(this.get('caption'));
@@ -509,6 +539,7 @@ Y.mix(Table.prototype, {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_bodyConfig: null,
 
@@ -520,6 +551,7 @@ Y.mix(Table.prototype, {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_columnMap: null,
 
@@ -533,6 +565,7 @@ Y.mix(Table.prototype, {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_footerConfig: null,
 
@@ -546,6 +579,7 @@ Y.mix(Table.prototype, {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_headerConfig: null,
 
@@ -558,6 +592,7 @@ Y.mix(Table.prototype, {
     @type {Node}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_tableNode: null,
 
@@ -572,6 +607,7 @@ Y.mix(Table.prototype, {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_viewConfig: null,
 
@@ -582,6 +618,7 @@ Y.mix(Table.prototype, {
     @method _afterColumnsChange
     @param {EventFacade} e The `columnsChange` event object
     @protected
+    @since 3.5.0
     **/
     _afterColumnsChange: function (e) {
         this._setColumnMap(e.newVal);
@@ -595,6 +632,7 @@ Y.mix(Table.prototype, {
     @method _afterDataChange
     @param {EventFacade} e the `dataChange` event
     @protected
+    @since 3.5.0
     **/
     _afterDataChange: function (e) {
         var modelList = e.newVal;
@@ -615,6 +653,7 @@ Y.mix(Table.prototype, {
 
     @method bindUI
     @protected
+    @since 3.5.0
     **/
     bindUI: function () {
         // TODO: handle widget attribute changes
@@ -632,6 +671,7 @@ Y.mix(Table.prototype, {
                 `ATTRS` or its entire `ATTRS` definition object
     @return {Model}
     @protected
+    @since 3.5.0
     **/
     _createRecordClass: function (attrs) {
         var ATTRS, i, len;
@@ -655,6 +695,7 @@ Y.mix(Table.prototype, {
     @method _createTable
     @return {Node} The `<table>` node
     @protected
+    @since 3.5.0
     **/
     _createTable: function () {
         return Y.Node.create(fromTemplate(this.TABLE_TEMPLATE, {
@@ -667,6 +708,7 @@ Y.mix(Table.prototype, {
 
     @method _createTBody
     @protected
+    @since 3.5.0
     **/
     _createTBody: function () {
         return Y.Node.create(fromTemplate(this.TBODY_TEMPLATE, {
@@ -679,6 +721,7 @@ Y.mix(Table.prototype, {
 
     @method _createTFoot
     @protected
+    @since 3.5.0
     **/
     _createTFoot: function () {
         return Y.Node.create(fromTemplate(this.TFOOT_TEMPLATE, {
@@ -691,6 +734,7 @@ Y.mix(Table.prototype, {
 
     @method _createTHead
     @protected
+    @since 3.5.0
     **/
     _createTHead: function () {
         return Y.Node.create(fromTemplate(this.THEAD_TEMPLATE, {
@@ -708,6 +752,7 @@ Y.mix(Table.prototype, {
     @method _defRenderBodyFn
     @param {EventFacade} e The renderBody event
     @protected
+    @since 3.5.0
     **/
     _defRenderBodyFn: function (e) {
         e.view.render();
@@ -728,6 +773,7 @@ Y.mix(Table.prototype, {
     @method _defRenderFooterFn
     @param {EventFacade} e The renderFooter event
     @protected
+    @since 3.5.0
     **/
     _defRenderFooterFn: function (e) {
         e.view.render();
@@ -749,6 +795,7 @@ Y.mix(Table.prototype, {
     @method _defRenderHeaderFn
     @param {EventFacade} e The renderHeader event
     @protected
+    @since 3.5.0
     **/
     _defRenderHeaderFn: function (e) {
         e.view.render();
@@ -768,6 +815,7 @@ Y.mix(Table.prototype, {
     @method _defRenderTableFn
     @param {EventFacade} e The renderTable event
     @protected
+    @since 3.5.0
     **/
     _defRenderTableFn: function (e) {
         var view, config;
@@ -813,6 +861,7 @@ Y.mix(Table.prototype, {
     @type {Object[]}
     @value undefined (initially not set)
     @protected
+    @since 3.5.0
     **/
     //_displayColumns: null,
 
@@ -826,6 +875,7 @@ Y.mix(Table.prototype, {
     @param {String} name The attribute name requested
                          (e.g. 'columns' or 'columns.foo');
     @protected
+    @since 3.5.0
     **/
     _getColumns: function (columns, name) {
         // Workaround for an attribute oddity (ticket #2529254)
@@ -848,6 +898,7 @@ Y.mix(Table.prototype, {
     @deprecated This will be removed with the `columnset` attribute in a future
                 version.
     @protected
+    @since 3.5.0
     **/
     _getColumnset: function (_, name) {
         return this.get(name.replace(/^columnset/, 'columns'));
@@ -861,6 +912,7 @@ Y.mix(Table.prototype, {
     @method _getData
     @param {Object[]|ModelList} val The current data stored in the attribute
     @protected
+    @since 3.5.0
     **/
     _getData: function (val) {
         return this.data || val;
@@ -875,6 +927,7 @@ Y.mix(Table.prototype, {
 
     @method _initColumns
     @protected
+    @since 3.5.0
     **/
     _initColumns: function () {
         var columns    = this.get('columns'),
@@ -903,6 +956,7 @@ Y.mix(Table.prototype, {
 
     @method _initData
     @protected
+    @since 3.5.0
     **/
     _initData: function () {
         var data = this.get('data'),
@@ -937,6 +991,7 @@ Y.mix(Table.prototype, {
 
     @method _initEvents
     @protected
+    @since 3.5.0
     **/
     _initEvents: function () {
         this.publish({
@@ -965,6 +1020,7 @@ Y.mix(Table.prototype, {
 
     @method initializer
     @protected
+    @since 3.5.0
     **/
     initializer: function () {
         this._initColumns();
@@ -1011,6 +1067,7 @@ Y.mix(Table.prototype, {
 
     @method _initRecordType
     @protected
+    @since 3.5.0
     **/
     _initRecordType: function () {
         var data, columns, recordType, handle, columnKeys;
@@ -1094,6 +1151,7 @@ Y.mix(Table.prototype, {
 
     @method _initViewConfig
     @protected
+    @since 3.5.0
     **/
     _initViewConfig: function () {
         this._viewConfig = {
@@ -1130,6 +1188,7 @@ Y.mix(Table.prototype, {
     @param {Object[]|String[]} columns The array of column names or
                 configuration objects to scan
     @protected
+    @since 3.5.0
     **/
     _parseColumns: function (columns) {
         var map  = {},
@@ -1222,6 +1281,7 @@ Y.mix(Table.prototype, {
 
     @method renderUI
     @protected
+    @since 3.5.0
     **/
     renderUI: function () {
         var contentBox = this.get('contentBox'),
@@ -1264,6 +1324,7 @@ Y.mix(Table.prototype, {
     @param {Object[]|String[]} columns the raw column configuration objects or
                                        key names
     @protected
+    @since 3.5.0
     **/
     _setColumnMap: function (columns) {
         this._columnMap = this._parseColumns(columns);
@@ -1279,6 +1340,7 @@ Y.mix(Table.prototype, {
     @deprecated This will be removed with the deprecated `columnset` attribute
                 in a later version.
     @protected
+    @since 3.5.0
     **/
     _setColumnset: function (val) {
         if (val && Y.Columnset && val instanceof Y.Columnset) {
@@ -1305,6 +1367,7 @@ Y.mix(Table.prototype, {
 
     @method _setData
     @protected
+    @since 3.5.0
     **/
     _setData: function (val) {
         if (val === null) {
@@ -1347,6 +1410,7 @@ Y.mix(Table.prototype, {
     @method _setDisplayColumns
     @param {Object[]} columns Column config array to extract display columns from
     @protected
+    @since 3.5.0
     **/
     _setDisplayColumns: function (columns) {
         function extract(cols) {
@@ -1379,6 +1443,7 @@ Y.mix(Table.prototype, {
     @deprecated This will be removed with the deprecated `recordset` attribute
                 in a later version.
     @protected
+    @since 3.5.0
     **/
     _setRecordset: function (val) {
         var data;
@@ -1410,6 +1475,7 @@ Y.mix(Table.prototype, {
             subclass
     @return {Function} A Base/Model subclass
     @protected
+    @since 3.5.0
     **/
     _setRecordType: function (val) {
         var modelClass;
@@ -1431,6 +1497,7 @@ Y.mix(Table.prototype, {
     @method _uiSetCaption
     @param {HTML} htmlContent The content to populate the table caption
     @protected
+    @since 3.5.0
     **/
     _uiSetCaption: function (htmlContent) {
         var table   = this._tableNode,
@@ -1461,6 +1528,7 @@ Y.mix(Table.prototype, {
 
     @method _uiSetSummary
     @protected
+    @since 3.5.0
     **/
     _uiSetSummary: function (summary) {
         if (summary) {
@@ -1476,6 +1544,7 @@ Y.mix(Table.prototype, {
     @method _uiSetWidth
     @param {Number|String} width The width to make the table
     @protected
+    @since 3.5.0
     **/
     _uiSetWidth: function (width) {
         var table = this._tableNode;
@@ -1505,6 +1574,7 @@ Y.mix(Table.prototype, {
 
     @method _validateView
     @protected
+    @since 3.5.0
     **/
     _validateView: function (val) {
         // TODO support View instances?
