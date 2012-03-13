@@ -278,6 +278,39 @@ var Selector = {
         return Y.DOM.ancestor(element, function(n) {
             return Y.Selector.test(n, selector);
         }, testSelf);
+    },
+
+    _replaceShorthand: function(selector) {
+        var shorthand = Y.Selector.shorthand,
+            re;
+
+        for (re in shorthand) {
+            if (shorthand.hasOwnProperty(re)) {
+                selector = selector.replace(new RegExp(re, 'gi'), shorthand[re]);
+            }
+        }
+
+        return selector;
+    },
+
+    _parse: function(name, selector) {
+        return selector.match(Y.Selector._types[name].re);
+    },
+
+    _replace: function(name, selector) {
+        var o = Y.Selector._types[name];
+        return selector.replace(o.re, o.token);
+    },
+
+    _restore: function(name, selector, items) {
+        if (items) {
+            var token = Y.Selector._types[name].token,
+                i, len;
+            for (i = 0, len = items.length; i < len; ++i) {
+                selector = selector.replace(token, items[i]);
+            }
+        }
+        return selector;
     }
 };
 
