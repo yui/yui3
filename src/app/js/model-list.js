@@ -664,7 +664,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         models  || (models  = []);
         options || (options = {});
 
-        var facade = Y.merge(options, {src: 'reset'});
+        var facade = Y.merge({src: 'reset'}, options);
 
         if (models._isYUIModelList) {
             models = models.toArray();
