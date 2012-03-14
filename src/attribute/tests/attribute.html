@@ -204,9 +204,7 @@
                 },
 
                 DE: {
-                    valueFn: function() {
-                        return this.get("D") + this.get("E");
-                    }
+                    valueFn: "DEValueFn"
                 },
 
                 complex: {
@@ -235,7 +233,11 @@
                 }    
             };
 
-            Y.extend(AttrHost, Y.Base);
+            Y.extend(AttrHost, Y.Base, {
+                DEValueFn : function() {
+                    return this.get("D") + this.get("E");
+                }
+            });
 
             // -----
 
