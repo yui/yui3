@@ -154,7 +154,7 @@ YUI.add('file-html5', function(Y) {
     */  
         cancelUpload: function () {
             this.get('xhr').abort();
-        },
+        }
 
 
     }, {

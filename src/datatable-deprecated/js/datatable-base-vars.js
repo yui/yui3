@@ -1,3 +1,6 @@
+// API Doc comments disabled to avoid deprecated class leakage into
+// non-deprecated class API docs.  See the 3.4.1 datatable API doc files in the
+// download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip for reference.
 var YLang = Y.Lang,
     YisValue = YLang.isValue,
     fromTemplate = Y.Lang.sub,

@@ -37,7 +37,6 @@ YUI.add('core-tests', function(Y) {
     var testCore = new Y.Test.Case({
 
         name: "Core tests",
-
         _should: {
             ignore: {
                 'getLocation() should return the location object': Y.UA.nodejs,
@@ -167,19 +166,6 @@ YUI.add('core-tests', function(Y) {
                 Assert.isObject(Y.Node, 'Node was not loaded');
             });
         },
-        /* TODO Find a better way to test this.
-        This test will fail since it's loading all modules.
-        Including test modules so the test will re-execute and
-        loop de loop..
-
-        test_use_star: function() {
-            var Assert = Y.Assert,
-                testY = YUI().use('*');
-
-            Assert.isObject(testY.Test, 'Failed to load via use *');
-            
-        },
-        */
         test_one_submodule: function() {
             var Assert = Y.Assert;
             YUI({
@@ -437,6 +423,26 @@ YUI.add('core-tests', function(Y) {
             Assert.isString(results, 'Feature tests failed to return a string');
             Assert.isTrue((results.length > 0), 'Feature tests failed to return results');
             Assert.areEqual(testY.Object.keys(testY.Features.tests.load).length, results.split(';').length, 'Failed to return all results for Feature Tests');
+        },
+        'test: requirements defined in external module': function() {
+            var test = this,
+                Assert = Y.Assert;
+
+            YUI({
+                modules: {
+                    mod: {
+                        fullpath: './assets/mod.js'
+                    }
+                }
+            }).use('mod', function(Y) {
+                test.resume(function() {
+                    Assert.isTrue(Y.MOD, 'Failed to load external mod');
+                    Assert.isObject(Y.Node, 'Failed to load Node requirement');
+                    Assert.isObject(Y.YQL, 'Failed to load YQL requirement');
+                });
+            });
+
+            test.wait();
         }
     });
 

@@ -6,9 +6,33 @@
 .tableDemo th {text-transform:none;}
 .tableDemo table {width:auto;}
 
-/* scrolling datatable doesn't support caption 
+/* version 3.4.1 and prior scrolling datatable doesn't support caption 
 .dt-example caption {display:table-caption;}*/
+.notice {
+    background: #faf3d1;
+    border: 1px solid #eac9a9;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: px;
+    padding: 0 1em;
+    -moz-box-shadow: 0 0 5px #ccc8b3;
+    -webkit-box-shadow: 0 0 5px #ccc8b3;
+    box-shadow: 0 0 5px #ccc8b3;
+    margin-bottom: 1em;
+}
 </style>
+
+<div class="notice">
+    <p>
+        <strong>NOTICE</strong>: This example is for the <strong>deprecated
+        version of DataTable</strong>.  The components referred to here will be
+        removed in future versions of YUI</strong>.  If you are unable to
+        upgrade to <a href="../datatable/index.html">the latest DataTable
+        version</a> due to unresolvable feature conflicts from version 3.4.1 or
+        prior, please <a href="../../../projects/yui3/newticket/">file a
+        ticket</a>.
+    </p>
+</div>
 
 <div class="intro">
     <p>Datatables can be made to scroll along the x and y axes. The `DataTableScroll` plugin enables this functionality.</p>
@@ -36,10 +60,10 @@ var sampleData = [
 ```
 
 <h3>Instantiation &amp; Plugin</h3>
-<p>The `DataTableScroll` plugin is packaged in the `datatable-scroll` module.</p>
+<p>The `DataTableScroll` plugin is packaged in the `datatable-scroll-deprecated` module.</p>
 
 ```
-YUI().use('datatable-scroll', function (Y) {
+YUI().use('datatable-scroll-deprecated', function (Y) {
    ...
 });
 ```
@@ -66,7 +90,7 @@ dtScrollingXY.render("#scrolling-xy");
 ```
 
 <h3>Setting a scrolling direction</h3>
-<p>The `width` and `height` values passed into the `datatable-scroll` plugin determine the scrolling directions on that particular datatable instance. The following rules apply:</p>
+<p>The `width` and `height` values passed into the `datatable-scroll-deprecated` plugin determine the scrolling directions on that particular datatable instance. The following rules apply:</p>
 <ol>
     <li>If a width and height are both passed in through the configuration object, the datatable will support scrolling in 'x' and 'y' directions.</li>
     <li>If only a width is passed in, the datatable will only support x-scrolling, and its height will default to `auto`</li>

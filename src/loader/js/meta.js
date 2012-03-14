@@ -32,18 +32,28 @@ if (!YUI.Env[Y.version]) {
                               groups: {},
                               patterns: {} },
             groups = META.groups,
-            yui2Update = function(tnt, yui2) {
-                                  var root = TNT + '.' +
-                                            (tnt || TNT_VERSION) + '/' +
-                                            (yui2 || YUI2_VERSION) + BUILD;
-                                  groups.yui2.base = CDN_BASE + root;
-                                  groups.yui2.root = root;
-                              },
-            galleryUpdate = function(tag) {
-                                  var root = (tag || GALLERY_VERSION) + BUILD;
-                                  groups.gallery.base = CDN_BASE + root;
-                                  groups.gallery.root = root;
-                              };
+            yui2Update = function(tnt, yui2, config) {
+                    
+                var root = TNT + '.' +
+                        (tnt || TNT_VERSION) + '/' +
+                        (yui2 || YUI2_VERSION) + BUILD,
+                    base = (config && config.base) ? config.base : CDN_BASE,
+                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+                groups.yui2.base = base + root;
+                groups.yui2.root = root;
+                groups.yui2.comboBase = combo;
+            },
+            galleryUpdate = function(tag, config) {
+                var root = (tag || GALLERY_VERSION) + BUILD,
+                    base = (config && config.base) ? config.base : CDN_BASE,
+                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;
+
+                groups.gallery.base = base + root;
+                groups.gallery.root = root;
+                groups.gallery.comboBase = combo;
+            };
+
 
         groups[VERSION] = {};
 

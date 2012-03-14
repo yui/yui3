@@ -1,7 +1,11 @@
 YUI.add('app-transitions-native', function(Y) {
 
 /**
-Provides view transitions for `Y.App`.
+Provides the implementation of view transitions for `Y.App.Transitions` in
+browsers which support native CSS3 transitions.
+
+**Note:** When this module is used, `Y.App.TransitionsNative` will automatically
+mix itself in to `Y.App`.
 
 @submodule app-transitions-native
 @since 3.5.0
@@ -9,27 +13,37 @@ Provides view transitions for `Y.App`.
 
 var AppTransitions = Y.App.Transitions;
 
+/**
+Provides the implementation of view transitions for `Y.App.Transitions` in
+browsers which support native CSS3 transitions.
+
+@class App.TransitionsNative
+@since 3.5.0
+**/
 function AppTransitionsNative() {}
 
 AppTransitionsNative.prototype = {
     // -- Protected Properties -------------------------------------------------
 
     /**
-    Whether the app is currently transitioning its `activeView`.
+    Whether this app is currently transitioning its `activeView`.
 
     @property _transitioning
     @type Boolean
     @default false
     @protected
+    @since 3.5.0
     **/
 
     /**
-    A queue that holds pending calls to `_uiTransitionActiveView()`.
+    A queue that holds pending calls to this app's `_uiTransitionActiveView()`
+    method.
 
     @property _viewTransitionQueue
     @type Array
     @default []
     @protected
+    @since 3.5.0
     **/
 
     // -- Lifecycle Methods ----------------------------------------------------
@@ -38,30 +52,53 @@ AppTransitionsNative.prototype = {
         this._transitioning       = false;
         this._viewTransitionQueue = [];
 
+        // TODO: Consider the AOP approach that `Plugin.WidgetAnim` uses.
         Y.Do.before(this._queueActiveView, this, '_uiSetActiveView');
     },
 
     // -- Protected Methods ----------------------------------------------------
 
-    // TODO: API Docs.
-    _dequeueActiveView: function () {
-        var transition = this._viewTransitionQueue.shift();
+    /**
+    Dequeues any pending calls to `_uiTransitionActiveView()`.
 
-        transition && this._uiTransitionActiveView.apply(this, transition);
+    **Note:** When there is more than one queued transition, only the most
+    recent `activeView` change will be visually transitioned, while the others
+    will have their `transition` option overridden to `false`.
+
+    @method _dequeueActiveView
+    @protected
+    @since 3.5.0
+    **/
+    _dequeueActiveView: function () {
+        var queue      = this._viewTransitionQueue,
+            transition = queue.shift(),
+            options;
+
+        if (transition) {
+            // When items are still left in the queue, override the transition
+            // so it does not run.
+            if (queue.length) {
+                // Overrides `transition` option and splices in the new options.
+                options = Y.merge(transition[2], {transition: false});
+                transition.splice(2, 1, options);
+            }
+
+            this._uiTransitionActiveView.apply(this, transition);
+        }
     },
 
     /**
-    Returns a transition object containing a named fx for both `viewIn` and
-    `viewOut` based on the relationship between the specified `newView` and
-    `oldView`.
+    Returns an object containing a named fx for both `viewIn` and `viewOut`
+    based on the relationship between the specified `newView` and `oldView`.
 
     @method _getFx
     @param {View} newView The view being transitioned-in.
     @param {View} oldView The view being transitioned-out.
-    @param {String} transtion The prefered transition to use.
-    @return {Object} The transition object containing a named fx for both
-      `viewIn` and `viewOut`.
+    @param {String} [transition] The preferred transition to use.
+    @return {Object} An object containing a named fx for both `viewIn` and
+        `viewOut`.
     @protected
+    @since 3.5.0
     **/
     _getFx: function (newView, oldView, transition) {
         var fx          = AppTransitions.FX,
@@ -87,16 +124,20 @@ AppTransitionsNative.prototype = {
     },
 
     /**
-    Queues calls to `_uiTransitionActiveView()` to make sure all transitions
-    have a chance to complete.
+    Queues calls to `_uiTransitionActiveView()` to make sure a currently running
+    transition isn't interrupted.
 
-    This method prevents the default `_uiSetActiveView()` method from running.
+    **Note:** This method prevents the default `_uiSetActiveView()` method from
+    running.
 
     @method _queueActiveView
     @protected
+    @since 3.5.0
     **/
     _queueActiveView: function () {
-        this._viewTransitionQueue.push(arguments);
+        var args = Y.Array(arguments, 0, true);
+
+        this._viewTransitionQueue.push(args);
 
         if (!this._transitioning) {
             this._dequeueActiveView();
@@ -106,9 +147,9 @@ AppTransitionsNative.prototype = {
     },
 
     /**
-    Performs the actual change of the app's `activeView` by attaching the
-    `newView` to this app, and detaching the `oldView` from this app using any
-    specified `options`.
+    Performs the actual change of this app's `activeView` by visually
+    transitioning between the `newView` and `oldView` using any specified
+    `options`.
 
     The `newView` is attached to the app by rendering it to the `viewContainer`,
     and making this app a bubble target of its events.
@@ -117,22 +158,27 @@ AppTransitionsNative.prototype = {
     `viewContainer`, and removing this app as a bubble target for its events.
     The `oldView` will either be preserved or properly destroyed.
 
-    The `activeView` attribute is read-only and can be changed by calling the
-    `showView()` method.
-
-    TODO: Update docs to talk about transitions.
+    **Note:** This method overrides `_uiSetActiveView()` and provides all of its
+    functionality plus supports visual transitions. Also, the `activeView`
+    attribute is read-only and can be changed by calling the `showView()`
+    method.
 
     @method _uiTransitionActiveView
     @param {View} newView The View which is now this app's `activeView`.
     @param {View} [oldView] The View which was this app's `activeView`.
     @param {Object} [options] Optional object containing any of the following
         properties:
+      @param {Function} [options.callback] Optional callback function to call
+        after new `activeView` is ready to use, the function will be passed:
+          @param {View} options.callback.view A reference to the new
+            `activeView`.
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
-      @param {Function} [options.callback] Optional callback Function to call
-        after the `newView` is ready to use, the function will be passed:
-        @param {View} options.callback.view A reference to the `newView`.
+      @param {Boolean|String} [options.transition] Optional transition override.
+        A transition can be specified which will override the default, or
+        `false` for no transition.
     @protected
+    @since 3.5.0
     **/
     _uiTransitionActiveView: function (newView, oldView, options) {
         options || (options = {});
@@ -146,8 +192,7 @@ AppTransitionsNative.prototype = {
             callback && callback.call(this, newView);
 
             this._transitioning = false;
-            this._dequeueActiveView();
-            return;
+            return this._dequeueActiveView();
         }
 
         fx       = this._getFx(newView, oldView, options.transition);
@@ -163,8 +208,7 @@ AppTransitionsNative.prototype = {
             callback && callback.call(this, newView);
 
             this._transitioning = false;
-            this._dequeueActiveView();
-            return;
+            return this._dequeueActiveView();
         }
 
         this._transitioning = true;
@@ -184,7 +228,7 @@ AppTransitionsNative.prototype = {
             callback && callback.call(this, newView);
 
             this._transitioning = false;
-            this._dequeueActiveView();
+            return this._dequeueActiveView();
         }
 
         // Setup a new stack to run the view transitions in parallel.
@@ -209,11 +253,11 @@ AppTransitionsNative.prototype = {
     }
 };
 
-// -- Transitions --------------------------------------------------------------
+// -- Transition fx ------------------------------------------------------------
 Y.mix(Y.Transition.fx, {
     'app:fadeIn': {
         opacity : 1,
-        duration: 0.35,
+        duration: 0.3,
 
         on: {
             start: function (data) {
@@ -235,7 +279,7 @@ Y.mix(Y.Transition.fx, {
 
     'app:fadeOut': {
         opacity : 0,
-        duration: 0.35,
+        duration: 0.3,
 
         on: {
             start: function (data) {
@@ -256,10 +300,17 @@ Y.mix(Y.Transition.fx, {
     },
 
     'app:slideLeft': {
-        duration : 0.35,
+        duration : 0.3,
         transform: 'translateX(-100%)',
 
         on: {
+            start: function () {
+                this.setStyles({
+                    opacity  : 1,
+                    transform: 'translateX(0%)'
+                });
+            },
+
             end: function () {
                 this.setStyle('transform', 'translateX(0)');
             }
@@ -267,12 +318,15 @@ Y.mix(Y.Transition.fx, {
     },
 
     'app:slideRight': {
-        duration : 0.35,
+        duration : 0.3,
         transform: 'translateX(0)',
 
         on: {
             start: function () {
-                this.setStyle('transform', 'translateX(-100%)');
+                this.setStyles({
+                    opacity  : 1,
+                    transform: 'translateX(-100%)'
+                });
             },
 
             end: function () {

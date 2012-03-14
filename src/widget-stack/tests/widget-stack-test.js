@@ -19,11 +19,18 @@ suite.add(new Y.Test.Case({
         Y.one('#test').empty();
     },
 
-    'WidgetStack should add a `zIndex` attribute': function () {
-        this.widget = new TestWidget();
-        this.widget.render('#test');
+    'WidgetStack should add `shim` and `zIndex` attributes': function () {
+        this.widget = new TestWidget({
+            zIndex : 10,
+            shim   : true,
+            render : '#test',
+            visible: false
+        });
 
-        Assert.areSame(0, this.widget.get('zIndex'), '`zIndex` is not 0.');
+        this.widget.show();
+
+        Assert.areSame(10, this.widget.get('zIndex'), '`zIndex` is not 10.');
+        Assert.areSame(true, this.widget.get('shim'), '`shim` is not `true`.');
     }
 }));
 

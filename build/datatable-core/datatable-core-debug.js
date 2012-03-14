@@ -591,6 +591,28 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Updates the `modelList` attributes of the rendered views in response to the
+    `data` attribute being assigned a new ModelList.
+
+    @method _afterDataChange
+    @param {EventFacade} e the `dataChange` event
+    @protected
+    **/
+    _afterDataChange: function (e) {
+        var modelList = e.newVal;
+
+        if (this.head) {
+            this.head.set('modelList', modelList);
+        }
+        if (this.body) {
+            this.body.set('modelList', modelList);
+        }
+        if (this.foot) {
+            this.foot.set('modelList', modelList);
+        }
+    },
+
+    /**
     Subscribes to attribute change events to update the UI.
 
     @method bindUI
@@ -598,6 +620,7 @@ Y.mix(Table.prototype, {
     **/
     bindUI: function () {
         // TODO: handle widget attribute changes
+        this.after('dataChange', Y.bind('_afterDataChange', this));
     },
 
     /**
@@ -1170,8 +1193,13 @@ Y.mix(Table.prototype, {
                 } else {
                     key = col.key;
 
-                    if (key) {
-                        map[col.key] = col;
+                    // First in wins for multiple columns with the same key
+                    // because the first call to genId will return the same key,
+                    // which will then be overwritten by the subsequent
+                    // same-keyed column.  So table.getColumn(key) would return
+                    // the last same-keyed column.
+                    if (key && !map[key]) {
+                        map[key] = col;
                     }
 
                     // Unique id based on the column's configured name or key,
@@ -1296,10 +1324,10 @@ Y.mix(Table.prototype, {
 
                 this.data.reset(val);
 
-                // Return true to avoid storing the data both in the state
-                // object underlying the attribute and in the data property.
-                // Decreases memory consumption.
-                val = true;
+                // Return the instance ModelList to avoid storing unprocessed
+                // data in the state and their vivified Model representations in
+                // the instance's data property.  Decreases memory consumption.
+                val = this.data;
             }
             // else pass through the array data, but don't assign this.data
             // Let the _initData process clean up.

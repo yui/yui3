@@ -6,7 +6,31 @@
 .dt-example th {text-transform:none;}
 .dt-example table {width:auto;}
 .dt-example caption {display:table-caption;}
+.notice {
+    background: #faf3d1;
+    border: 1px solid #eac9a9;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: px;
+    padding: 0 1em;
+    -moz-box-shadow: 0 0 5px #ccc8b3;
+    -webkit-box-shadow: 0 0 5px #ccc8b3;
+    box-shadow: 0 0 5px #ccc8b3;
+    margin-bottom: 1em;
+}
 </style>
+
+<div class="notice">
+    <p>
+        <strong>NOTICE</strong>: This example is for the <strong>deprecated
+        version of DataTable</strong>.  The components referred to here will be
+        removed in future versions of YUI</strong>.  If you are unable to
+        upgrade to <a href="../datatable/index.html">the latest DataTable
+        version</a> due to unresolvable feature conflicts from version 3.4.1 or
+        prior, please <a href="../../../projects/yui3/newticket/">file a
+        ticket</a>.
+    </p>
+</div>
 
 <div class="intro">
     <p>Custom format row data for display with string templates or custom functions.</p>
@@ -23,7 +47,7 @@
 <p>Simple formatting can be defined with a string template on the column definition.</p>
 
 ```
-YUI().use("datatable-base", function(Y) {
+YUI().use("datatable-base-deprecated", function(Y) {
     var cols = ["id","name", {key:"price", formatter:"\${value}"}],
     data = [
         {id:"ga-3475", name:"gadget", price:6.99},
@@ -68,7 +92,7 @@ also uses the `emptyCellValue` column configuration to supply a custom cell
 value in the case of missing data.</p>
 
 ```
-YUI().use("datatype-date", "datatable-base", function (Y) {
+YUI().use("datatype-date", "datatable-base-deprecated", function (Y) {
     // The custom formatter function recieves an object with the properties:
     // {tbody, tr, classnames, headers, rowindex, record, column, data, value}
     var formatDates = function (o){

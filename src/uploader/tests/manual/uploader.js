@@ -4,32 +4,33 @@ YUI({
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('cssbutton', 'uploader', 'node', function(Y) {
+}).use('cssbutton', 'uploader', 'node', 'console', function(Y) {
 
 var myuploader;
 
-if (Y.Uploader.TYPE != "none") {
-            myuploader = new Y.Uploader({contentBox: "#fileselection", 
-                                             multipleFiles: true, 
-                                             uploadURL: "http://www.someabsoluteurl.com/yui3/src/uploader/tests/manual/upload.php",
-                                             dragAndDropArea: "#droparea",
-                                             tabIndex: "0",
-                                             swfURL: "assets/flashuploader.swf",
-                                             tabElements: {from: "#pageTitle", to: "#uploadButton"}
-                                            });
 
-            if (Y.Uploader.TYPE === "html5") {
+if (Y.UploaderFlash.TYPE != "none") {
+            myuploader = new Y.UploaderFlash({ multipleFiles: true, 
+                                          uploadURL: "http://bedfamous-lm.corp.yahoo.com/yui3/src/uploader/tests/manual/upload.php",
+                                          dragAndDropArea: "#droparea",
+                                          tabIndex: "0",
+                                          swfURL: "assets/flashuploader.swf?t=" + Math.random(),
+                                          tabElements: {from: "#pageTitle", to: "#uploadButton"}
+                                        });
+
+            if (Y.UploaderFlash.TYPE === "html5") {
             Y.one("#pageTitle").setContent("Using uploader: HTML5");
             var dropArea = Y.Node.create('<div id="droparea" style="width:500px;height:150px;background:#cccccc;">Drop some files here!</div>');
             Y.one("body").prepend(dropArea);
             myuploader.set("dragAndDropArea", dropArea);
-            } 
-            else if (Y.Uploader.TYPE === "flash") {
-              Y.one("#pageTitle").setContent("Using uploader: Flash");
-              myuploader.set("swfURL", "assets/flashuploader.swf");
             }
 
-            myuploader.render();
+            else if (Y.UploaderFlash.TYPE === "flash") {
+              Y.one("#pageTitle").setContent("Using uploader: Flash");
+              myuploader.set("swfURL", "assets/flashuploader.swf");
+             }
+
+            myuploader.render("#fileselection");
 
             myuploader.set("multipleFiles", true);
             myuploader.set("appendNewFiles", true);
@@ -75,4 +76,3 @@ else {
 }
 
 });
-

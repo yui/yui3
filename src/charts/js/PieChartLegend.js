@@ -17,6 +17,8 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
         var graph = this.get("graph"),
             w = this.get("width"),
             h = this.get("height"),
+            graphWidth,
+            graphHeight,
             legend = this.get("legend"),
             x = 0,
             y = 0,
@@ -25,40 +27,70 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
             legendWidth,
             legendHeight,
             dimension,
-            gap;
+            gap,
+            position,
+            direction;
         if(graph)
         {
             if(legend)
             {
+                position = legend.get("position");
+                direction = legend.get("direction");
+                graphWidth = graph.get("width");
+                graphHeight = graph.get("height");
                 legendWidth = legend.get("width");
                 legendHeight = legend.get("height");
                 gap = legend.get("styles").gap;
-                switch(legend.get("position"))
+                
+                if((direction == "vertical" && (graphWidth + legendWidth + gap !== w)) || (direction == "horizontal" &&  (graphHeight + legendHeight + gap !== h)))
                 {
-                    case LEFT :
-                        legendWidth += gap;
-                        dimension = Math.min(w - legendWidth, h);
-                        legendHeight = dimension;
-                        x = legendWidth;
-                    break;
-                    case TOP :
-                        legendHeight += gap;
-                        dimension = Math.min(h - legendHeight, w); 
-                        legendWidth = dimension;
-                        y = legendHeight;
-                    break;
-                    case RIGHT :
-                        legendWidth += gap;
-                        dimension = Math.min(w - legendWidth, h);
-                        legendHeight = dimension;
-                        legendX = dimension + gap;
-                    break;
-                    case BOTTOM :
-                        legendHeight += gap;
-                        dimension = Math.min(h - legendHeight, w); 
-                        legendWidth = dimension;
-                        legendY = dimension + gap; 
-                    break;
+                    switch(legend.get("position"))
+                    {
+                        case LEFT :
+                            dimension = Math.min(w - (legendWidth + gap), h);
+                            legendHeight = h;
+                            x = legendWidth + gap;
+                            legend.set(HEIGHT, legendHeight);
+                        break;
+                        case TOP :
+                            dimension = Math.min(h - (legendHeight + gap), w); 
+                            legendWidth = w;
+                            y = legendHeight + gap;
+                            legend.set(WIDTH, legendWidth);
+                        break;
+                        case RIGHT :
+                            dimension = Math.min(w - (legendWidth + gap), h);
+                            legendHeight = h;
+                            legendX = dimension + gap;
+                            legend.set(HEIGHT, legendHeight);
+                        break;
+                        case BOTTOM :
+                            dimension = Math.min(h - (legendHeight + gap), w); 
+                            legendWidth = w;
+                            legendY = dimension + gap; 
+                            legend.set(WIDTH, legendWidth);
+                        break;
+                    }
+                    graph.set(WIDTH, dimension);
+                    graph.set(HEIGHT, dimension);
+                }
+                else
+                {
+                    switch(legend.get("position"))
+                    {   
+                        case LEFT :
+                            x = legendWidth + gap;
+                        break;
+                        case TOP :
+                            y = legendHeight + gap;
+                        break;
+                        case RIGHT :
+                            legendX = graphWidth + gap;
+                        break;
+                        case BOTTOM :
+                            legendY = graphHeight + gap; 
+                        break;
+                    }
                 }
             }
             else
@@ -79,15 +111,11 @@ var PieChartLegend = Y.Base.create("pieChartLegend", Y.PieChart, [], {
         {
             graph.set(_X, x);
             graph.set(_Y, y);
-            graph.set(WIDTH, dimension);
-            graph.set(HEIGHT, dimension);
         }
         if(legend)
         {
             legend.set(_X, legendX);
             legend.set(_Y, legendY);
-            legend.set(WIDTH, legendWidth);
-            legend.set(HEIGHT, legendHeight);
         }
     }
 }, {
