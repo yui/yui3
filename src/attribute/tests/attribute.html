@@ -38,11 +38,6 @@
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
         }).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
 
-            function areObjectsReallyEqual(o1, o2) {
-                Y.ObjectAssert.areEqual(o1, o2);
-                Y.ObjectAssert.areEqual(o2, o1);
-            }
-
             function TestAugment(attrs, values) {}
             Y.augment(TestAugment, Y.Attribute);
 
@@ -226,6 +221,13 @@
                             A: 3
                         }
                     }
+                },
+
+                testGetCfg : {
+                    value : "foo",
+                    readOnly : true,
+                    getter : function(val) { return val; },
+                    setter : function(val) { return val; }  
                 },
 
                 initOnly : {
@@ -923,7 +925,8 @@
                         complex: "MyNewComplexVal",
                         initialized:true,
                         destroyed:false,
-                        initOnly: undefined
+                        initOnly: undefined,
+                        testGetCfg : "foo"
                     };
 
                     Y.Assert.areEqual(expectedVals.A, h.get("A"));
@@ -933,7 +936,7 @@
                     Y.Assert.areEqual(expectedVals.E, h.get("E"));   // Write Once
                     Y.Assert.areEqual(expectedVals.DE, h.get("DE"));
 
-                    areObjectsReallyEqual(expectedVals, h.getAttrs());
+                    Y.ObjectAssert.areEqual(expectedVals, h.getAttrs());
                 },
 
                 testModifiedAttrs : function() {
@@ -950,7 +953,7 @@
                         initialized:true
                     };
 
-                    areObjectsReallyEqual(expectedVals, h.getAttrs(true));
+                    Y.ObjectAssert.areEqual(expectedVals, h.getAttrs(true));
                 },
 
                 testValidation : function() {
@@ -1026,14 +1029,14 @@
                     Y.Assert.areEqual(2, h.get("complex.Y.A"));
                     Y.Assert.areEqual(3, h.get("complex.Z.A"));
 
-                    areObjectsReallyEqual({A:1}, h.get("complex.X"));
-                    areObjectsReallyEqual({A:2}, h.get("complex.Y"));
-                    areObjectsReallyEqual({A:3}, h.get("complex.Z"));
+                    Y.ObjectAssert.areEqual({A:1}, h.get("complex.X"));
+                    Y.ObjectAssert.areEqual({A:2}, h.get("complex.Y"));
+                    Y.ObjectAssert.areEqual({A:3}, h.get("complex.Z"));
 
                     var val = h.get("complex");
 
                     Y.each(val, function(v, k) {
-                        areObjectsReallyEqual(v, o[k]);
+                        Y.ObjectAssert.areEqual(v, o[k]);
                     });
                 },
 
@@ -1045,9 +1048,9 @@
                         "complex.W.A": 14 // Does not exist, not allowed to set
                     });
 
-                    areObjectsReallyEqual({A:11}, h.get("complex.X"));
-                    areObjectsReallyEqual({A:12}, h.get("complex.Y"));
-                    areObjectsReallyEqual({A:13}, h.get("complex.Z"));
+                    Y.ObjectAssert.areEqual({A:11}, h.get("complex.X"));
+                    Y.ObjectAssert.areEqual({A:12}, h.get("complex.Y"));
+                    Y.ObjectAssert.areEqual({A:13}, h.get("complex.Z"));
 
                     Y.Assert.areEqual(undefined, h.get("complex.W"));
                 },
@@ -1060,7 +1063,7 @@
 
                     h.set("complex.X.B", 112);
                     Y.Assert.areEqual(112, h.get("complex.X.B"));
-                    areObjectsReallyEqual({A:111, B:112}, h.get("complex.X"));
+                    Y.ObjectAssert.areEqual({A:111, B:112}, h.get("complex.X"));
 
                     h.set("complex.W.B", 113);
                     Y.Assert.areEqual(undefined, h.get("complex.W"));
@@ -1080,22 +1083,22 @@
                         actualEvents.push("Before" + e.subAttrName);
                         if (e.subAttrName == "complex.X.A") {
                             Y.Assert.areEqual(1111, e.newVal.X.A);
-                            areObjectsReallyEqual({A:1111}, e.newVal.X);
-                            areObjectsReallyEqual({A:2}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:2}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y.A") {
                             Y.Assert.areEqual(2222, e.newVal.Y.A);
-                            areObjectsReallyEqual({A:1111}, e.newVal.X);
-                            areObjectsReallyEqual({A:2222}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:2222}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y") {
                             Y.Assert.areEqual(2223, e.newVal.Y);
-                            areObjectsReallyEqual({A:1111}, e.newVal.X);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
                     });
 
@@ -1103,22 +1106,22 @@
                         actualEvents.push("After" + e.subAttrName);
                         if (e.subAttrName == "complex.X.A") {
                             Y.Assert.areEqual(1111, e.newVal.X.A);
-                            areObjectsReallyEqual({A:1111}, e.newVal.X);
-                            areObjectsReallyEqual({A:2}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:2}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y.A") {
                             Y.Assert.areEqual(2222, e.newVal.Y.A);
-                            areObjectsReallyEqual({A:1111}, e.newVal.X);
-                            areObjectsReallyEqual({A:2222}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:2222}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y") {
                             Y.Assert.areEqual(2223, e.newVal.Y);
-                            areObjectsReallyEqual({A:1111}, e.newVal.X);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
                     });
 
@@ -1201,6 +1204,90 @@
                 testInitialValidation: function() {
                     var h = this.createHost({A:5});
                     Y.Assert.areEqual("AVal", h.get("A")); // Numerical value validation failure should revert to default value
+                },
+
+                testRemoveAttr : function() {
+                    var h = this.createHost();
+
+                    h.removeAttr("A"); // Regular
+
+                    Y.Assert.isUndefined(h.get("A"), "Attribute A doesn't seem to be removed");
+                    Y.Assert.isUndefined(h._state.getAll("A"), "Attribute A still has an entry in the internal state table");
+
+                    h.removeAttr("D"); // readOnly
+
+                    Y.Assert.isUndefined(h.get("D"), "Attribute D doesn't seem to be removed");
+                    Y.Assert.isUndefined(h._state.getAll("D"), "Attribute D still has an entry in the internal state table");
+
+                    h.removeAttr("E"); // writeOnce
+
+                    Y.Assert.isUndefined(h.get("E"), "Attribute E doesn't seem to be removed");
+                    Y.Assert.isUndefined(h._state.getAll("E"), "Attribute E still has an entry in the internal state table");
+                },
+
+                testGetAttrCfg : function() {
+
+                    var h = this.createHost(),
+                        attrCfg = h._getAttrCfg("testGetCfg");
+
+                    Y.Assert.areEqual(2, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected initial lazy state");
+
+                    Y.ObjectAssert.ownsKeys({
+                        lazy : {},
+                        added : true
+                    }, attrCfg);
+
+                    var val = h.get("testGetCfg");
+                    
+                    attrCfg = h._getAttrCfg("testGetCfg");
+
+                    Y.Assert.areEqual(8, Y.Object.keys(attrCfg).length, "getAttrCfg returned unexpected populated state");
+
+                    Y.ObjectAssert.ownsKeys({
+                        added: true,
+                        defaultValue: "foo",
+                        getter: function (val) { return val; },
+                        initValue: "foo",
+                        isLazyAdd: true,
+                        readOnly: true,
+                        setter: function (val) { return val; },
+                        value: "foo"                    
+                    }, attrCfg);
+                },
+
+                testGetAllAttrCfgs : function () {
+
+                    var h = this.createHost();
+
+                    var expectedVals = [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                        "E",
+                        "DE",
+                        "complex",
+                        "initialized",
+                        "destroyed",
+                        "initOnly",
+                        "testGetCfg"
+                    ];
+
+                    Y.ObjectAssert.ownsKeys(expectedVals, h._getAttrCfg());
+                },
+
+                testModifyAttrLazy : function() {
+                    var h = this.createHost();
+
+                    h.modifyAttr("D", {
+                        readOnly : false
+                    });
+
+                    Y.Assert.isFalse(h._state.get("D", "readOnly"));
+
+                    h.set("D", "foo");
+
+                    Y.Assert.areEqual("foo", h.get("D")); // not readOnly anymore                            
                 },
 
                 testModifyAttr : function() {
@@ -1355,11 +1442,11 @@
                     // Only add AdHoc Attrs       
                     Y.Assert.areEqual("foo", h.get("foo")); 
                     Y.Assert.areEqual("bar", h.get("bar"));
-                    
+
                     // Configured Attrs
                     Y.Assert.areEqual("EXTDVAL", h.get("D"));
                     Y.Assert.areEqual("MyAVal", h.get("A"));
-                    
+
                     // Not _NON_ATTRS_CFG
                     Y.Assert.isUndefined(h.get("plugins"));
                     Y.Assert.isUndefined(h.get("on"));
@@ -1464,7 +1551,8 @@
                         Z: "MYZ",
                         initialized:true,
                         destroyed:false,
-                        initOnly: undefined
+                        initOnly: undefined,
+                        testGetCfg : "foo"
                     };
 
                     Y.Assert.areEqual(expectedVals.A, h.get("A"));
@@ -1475,7 +1563,34 @@
                     Y.Assert.areEqual(expectedVals.F, h.get("F"));
                     Y.Assert.areEqual(expectedVals.DE, h.get("DE"));
 
-                    areObjectsReallyEqual(expectedVals, h.getAttrs());
+                    Y.ObjectAssert.areEqual(expectedVals, h.getAttrs());
+                },
+
+                testGetAllAttrCfgs : function () {
+
+                    var h = this.createHost();
+
+                    var expectedVals = [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                        "E",
+                        "F",
+                        "DE",
+                        "complex",
+                        "G",
+                        "H",
+                        "I",
+                        "PassThrough",
+                        "Z",
+                        "initialized",
+                        "destroyed",
+                        "initOnly",
+                        "testGetCfg"
+                    ];
+
+                    Y.ObjectAssert.ownsKeys(expectedVals, h._getAttrCfg());
                 },
 
                 testModifiedAttrs : function() {
@@ -1494,7 +1609,7 @@
                         initialized:true
                     };
 
-                    areObjectsReallyEqual(expectedVals, h.getAttrs(true));
+                    Y.ObjectAssert.areEqual(expectedVals, h.getAttrs(true));
                 },
 
                 testValidation : function() {
@@ -1578,14 +1693,14 @@
                     Y.Assert.areEqual(2222, h.get("complex.Y.A"));
                     Y.Assert.areEqual(3, h.get("complex.Z.A"));
 
-                    areObjectsReallyEqual({A:1111}, h.get("complex.X"));
-                    areObjectsReallyEqual({A:2222}, h.get("complex.Y"));
-                    areObjectsReallyEqual({A:3}, h.get("complex.Z"));
+                    Y.ObjectAssert.areEqual({A:1111}, h.get("complex.X"));
+                    Y.ObjectAssert.areEqual({A:2222}, h.get("complex.Y"));
+                    Y.ObjectAssert.areEqual({A:3}, h.get("complex.Z"));
 
                     var val = h.get("complex");
 
                     Y.each(val, function(v, k) {
-                        areObjectsReallyEqual(v, o[k]);
+                        Y.ObjectAssert.areEqual(v, o[k]);
                     });
                 },
 
@@ -1597,9 +1712,9 @@
                         "complex.W.A": 14 // Does not exist, not allowed to set
                     });
 
-                    areObjectsReallyEqual({A:11}, h.get("complex.X"));
-                    areObjectsReallyEqual({A:12}, h.get("complex.Y"));
-                    areObjectsReallyEqual({A:13}, h.get("complex.Z"));
+                    Y.ObjectAssert.areEqual({A:11}, h.get("complex.X"));
+                    Y.ObjectAssert.areEqual({A:12}, h.get("complex.Y"));
+                    Y.ObjectAssert.areEqual({A:13}, h.get("complex.Z"));
 
                     Y.Assert.areEqual(undefined, h.get("complex.W"));
                 },
@@ -1612,7 +1727,7 @@
 
                     h.set("complex.X.B", 112);
                     Y.Assert.areEqual(112, h.get("complex.X.B"));
-                    areObjectsReallyEqual({A:111, B:112}, h.get("complex.X"));
+                    Y.ObjectAssert.areEqual({A:111, B:112}, h.get("complex.X"));
 
                     h.set("complex.W.B", 113);
                     Y.Assert.areEqual(undefined, h.get("complex.W"));
@@ -1632,22 +1747,22 @@
                         actualEvents.push("Before" + e.subAttrName);
                         if (e.subAttrName == "complex.X.A") {
                             Y.Assert.areEqual(11111, e.newVal.X.A);
-                            areObjectsReallyEqual({A:11111}, e.newVal.X);
-                            areObjectsReallyEqual({A:2222}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:11111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:2222}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y.A") {
                             Y.Assert.areEqual(22222, e.newVal.Y.A);
-                            areObjectsReallyEqual({A:11111}, e.newVal.X);
-                            areObjectsReallyEqual({A:22222}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:11111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:22222}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y") {
                             Y.Assert.areEqual(22233, e.newVal.Y);
-                            areObjectsReallyEqual({A:11111}, e.newVal.X);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:11111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
                     });
 
@@ -1655,22 +1770,22 @@
                         actualEvents.push("After" + e.subAttrName);
                         if (e.subAttrName == "complex.X.A") {
                             Y.Assert.areEqual(11111, e.newVal.X.A);
-                            areObjectsReallyEqual({A:11111}, e.newVal.X);
-                            areObjectsReallyEqual({A:2222}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:11111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:2222}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y.A") {
                             Y.Assert.areEqual(22222, e.newVal.Y.A);
-                            areObjectsReallyEqual({A:11111}, e.newVal.X);
-                            areObjectsReallyEqual({A:22222}, e.newVal.Y);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:11111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:22222}, e.newVal.Y);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
 
                         if (e.subAttrName == "complex.Y") {
                             Y.Assert.areEqual(22233, e.newVal.Y);
-                            areObjectsReallyEqual({A:11111}, e.newVal.X);
-                            areObjectsReallyEqual({A:3}, e.newVal.Z);
+                            Y.ObjectAssert.areEqual({A:11111}, e.newVal.X);
+                            Y.ObjectAssert.areEqual({A:3}, e.newVal.Z);
                         }
                     });
 

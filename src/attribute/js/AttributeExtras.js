@@ -120,14 +120,15 @@
          * @return {Object} The configuration properties for the given attribute, or all attributes.
          */
         _getAttrCfg : function(name) {
-            var o;
+            var o,
+                state = this._state;
 
             if (name) {
-                o = this._state.getAll(name) || {};
+                o = state.getAll(name) || {};
             } else {
                 o = {};
-                Y.each(this._state.data, function(v, n) {
-                    o[name] = this._state.getAll(name);
+                Y.each(state.data, function(v, n) {
+                    o[n] = state.getAll(n);
                 }); 
             }
 
