@@ -8,6 +8,8 @@ the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
 **/
 var Lang         = Y.Lang,
     isArray      = Lang.isArray,
+    isNumber     = Lang.isNumber,
+    isString     = Lang.isString,
     fromTemplate = Lang.sub,
     htmlEscape   = Y.Escape.html,
     toArray      = Y.Array,
@@ -142,10 +144,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property ROW_TEMPLATE
     @type {HTML}
-    @default '<tr id="{rowId}" class="{rowClass}">{content}</tr>'
+    @default '<tr id="{rowId}" data-yui3-record="{clientId}" class="{rowClass}">{content}</tr>'
     @since 3.5.0
     **/
-    ROW_TEMPLATE : '<tr id="{rowId}" class="{rowClass}">{content}</tr>',
+    ROW_TEMPLATE : '<tr id="{rowId}" data-yui3-record="{clientId}" class="{rowClass}">{content}</tr>',
 
     /**
     The object that serves as the source of truth for column and row data.
@@ -163,25 +165,67 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // -- Public methods ------------------------------------------------------
 
     /**
-    Returns the `<td>` Node from the given row and column index.  If there is
-    no cell at the given coordinates, `null` is returned.
+    Returns the `<td>` Node from the given row and column index.  Alternately,
+    the `seed` can be a Node.  If so, the nearest ancestor cell is returned.
+    If the `seed` is a cell, it is returned.  If there is no cell at the given
+    coordinates, `null` is returned.
+
+    Optionally, include an offset array or string to return a cell near the
+    cell identified by the `seed`.  The offset can be an array containing the
+    number of rows to shift followed by the number of columns to shift, or one
+    of "above", "below", "next", or "previous".
+
+    <pre><code>// Previous cell in the previous row
+    var cell = table.getCell(e.target, [-1, -1]);
+
+    // Next cell
+    var cell = table.getCell(e.target, 'next');
+    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
 
     @method getCell
-    @param {Number} row Zero based index of the row with the target cell
-    @param {Number} col Zero based index of the column with the target cell
+    @param {Number[]|Node} seed Array of row and column indexes, or a Node that
+        is either the cell itself or a descendant of one.
+    @param {Number[]|String} [shift] Offset by which to identify the returned
+        cell Node
     @return {Node}
     @since 3.5.0
     **/
-    getCell: function (row, col) {
+    getCell: function (seed, shift) {
         var tbody = this.get('container'),
-            el;
+            row, cell, index, rowIndexOffset;
 
-        if (tbody) {
-            el = tbody.getDOMNode().rows[+row];
-            el && (el = el.cells[+col]);
+        if (seed && tbody) {
+            if (isArray(seed)) {
+                row = tbody.get('children').item(seed[0]);
+                cell = row && row.get('children').item(seed[1]);
+            } else if (Y.instanceOf(seed, Y.Node)) {
+                cell = seed.ancestor('.' + this.getClassName('cell'), true);
+            }
+
+            if (cell && shift) {
+                rowIndexOffset = tbody.get('firstChild.rowIndex');
+                if (isString(shift)) {
+                    // TODO this should be a static object map
+                    switch (shift) {
+                        case 'above'   : shift = [-1, 0]; break;
+                        case 'below'   : shift = [1, 0]; break;
+                        case 'next'    : shift = [0, 1]; break;
+                        case 'previous': shift = [0, -1]; break;
+                    }
+                }
+
+                if (isArray(shift)) {
+                    index = cell.get('parentNode.rowIndex') +
+                                shift[0] - rowIndexOffset;
+                    row   = tbody.get('children').item(index);
+
+                    index = cell.get('cellIndex') + shift[1];
+                    cell  = row && row.get('children').item(index);
+                }
+            }
         }
         
-        return Y.one(el);
+        return cell || null;
     },
 
     /**
@@ -205,19 +249,69 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
-    Returns the `<tr>` Node from the given row index.  If there is
-    no row at the given index, `null` is returned.
+    Returns the Model associated to the record index (not row index), or to the
+    row Node or id passed.  If an id or Node for a child element of the row is
+    passed, that will work, too.
+
+    If no Model can be found, `null` is returned.
+
+    @method getRecord
+    @param {Number|String|Node} seed Record index, Node, or identifier for a row
+        or child element
+    @return {Model}
+    @since 3.5.0
+    **/
+    getRecord: function (seed) {
+        var modelList = this.get('modelList'),
+            tbody     = this.get('container'),
+            row       = null,
+            record;
+
+        if (isNumber(seed)) {
+            record = modelList && modelList.item(seed);
+        } else if (tbody) {
+            if (isString(seed)) {
+                record = modelList.getByClientId(seed);
+
+                if (!record) {
+                    seed = tbody.one('#' + seed);
+                }
+            }
+
+            if (!record) {
+                if (Y.instanceOf(seed, Y.Node)) {
+                    row = seed.ancestor(function (node) {
+                        return node.get('parentNode').compareTo(tbody);
+                    }, true);
+
+                    record = row &&
+                        modelList.getByClientId(row.getData('yui3-record'));
+                }
+            }
+        }
+
+        return record || null;
+    },
+
+    /**
+    Returns the `<tr>` Node from the given row index, Model, or Model's
+    `clientId`.  If the rows haven't been rendered yet, or if the row can't be
+    found by the input, `null` is returned.
 
     @method getRow
-    @param {Number} row Zero based index of the row
+    @param {Number|String|Model} id Row index, Model instance, or clientId
     @return {Node}
     @since 3.5.0
     **/
-    // TODO: Support index as clientId => container.one('> #' + index)?
-    getRow: function (index) {
-        var tbody = this.get('container');
+    getRow: function (id) {
+        var tbody = this.get('container') || null;
 
-        return Y.one(tbody && tbody.getDOMNode().rows[+index]);
+        if (id) {
+            id = this._idMap[id.get ? id.get('clientId') : id] || id;
+        }
+
+        return tbody &&
+            Y.one(isNumber(id) ? tbody.get('children').item(id) : '#' + id);
     },
 
     /**
@@ -387,6 +481,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         if (now && now.addTarget(this)) {
             now.addTarget(this);
         }
+
+        this._idMap = {};
     },
 
     /**
@@ -464,8 +560,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     bindUI: function () {
-        var handles = this._eventHandles,
-            data    = this.get('modelList');
+        var handles = this._eventHandles;
 
         if (this.source && !handles.columnsChange) {
             handles.columnsChange = this.source.after('columnsChange',
@@ -552,9 +647,11 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     _createRowHTML: function (model, index) {
-        var data    = model.toJSON(),
-            values  = {
-                rowId   : model.get('clientId'),
+        var data     = model.toJSON(),
+            clientId = model.get('clientId'),
+            values   = {
+                rowId   : this._getRowId(clientId),
+                clientId: clientId,
                 rowClass: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
             source  = this.source || this,
@@ -684,6 +781,27 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     //_eventHandles: null,
 
     /**
+    Returns the row ID associated with a Model's clientId.
+
+    @method _getRowId
+    @param {String} clientId The Model clientId
+    @return {String}
+    @protected
+    **/
+    _getRowId: function (clientId) {
+        return this._idMap[clientId] || (this._idMap[clientId] = Y.guid());
+    },
+
+    /**
+    Map of Model clientIds to row ids.
+
+    @property _idMap
+    @type {Object}
+    @protected
+    **/
+    //_idMap,
+
+    /**
     Initializes the instance. Reads the following configuration properties in
     addition to the instance attributes:
 
@@ -704,6 +822,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this.columns = this._parseColumns(config.columns);
 
         this._eventHandles = {};
+        this._idMap = {};
 
         if (cssPrefix) {
             this._cssPrefix = cssPrefix;
