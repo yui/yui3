@@ -517,7 +517,8 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Updates the UI with the current attribute state.
+    Updates the UI with the current attribute state.  Fires the `renderHeader`,
+    `renderBody`, and `renderFooter` events;
 
     @method syncUI
     @since 3.5.0
@@ -525,6 +526,16 @@ Y.mix(Table.prototype, {
     syncUI: function () {
         this._uiSetCaption(this.get('caption'));
         this._uiSetSummary(this.get('summary'));
+
+        if (this.head) {
+            this.fire('renderHeader', { view: this.head });
+        }
+        if (this.body) {
+            this.fire('renderBody',   { view: this.body });
+        }
+        if (this.foot) {
+            this.fire('renderFooter', { view: this.foot });
+        }
     },
 
     // -- Protected and private properties and methods ------------------------
@@ -700,7 +711,7 @@ Y.mix(Table.prototype, {
     _createTable: function () {
         return Y.Node.create(fromTemplate(this.TABLE_TEMPLATE, {
             className: this.getClassName('table')
-        }));
+        })).empty();
     },
 
     /**
@@ -743,11 +754,7 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Calls `render()` on the `bodyView` class instance and inserts the view's
-    container into the `<table>`.
-
-    Assigns the instance's `body` property from `e.view` and the `_tbodyNode`
-    from the view's `container` attribute.
+    Calls `render()` on the `bodyView` class instance.
 
     @method _defRenderBodyFn
     @param {EventFacade} e The renderBody event
@@ -756,19 +763,10 @@ Y.mix(Table.prototype, {
     **/
     _defRenderBodyFn: function (e) {
         e.view.render();
-
-        this.body = e.view;
-        this._tbodyNode = e.view.get('container');
-
-        this._tableNode.append(this._tbodyNode);
     },
 
     /**
-    Calls `render()` on the `footerView` class instance and inserts the view's
-    container into the `<table>`.
-
-    Assigns the instance's `foot` property from `e.view` and the `_tfootNode`
-    from the view's `container` attribute.
+    Calls `render()` on the `footerView` class instance.
 
     @method _defRenderFooterFn
     @param {EventFacade} e The renderFooter event
@@ -777,20 +775,10 @@ Y.mix(Table.prototype, {
     **/
     _defRenderFooterFn: function (e) {
         e.view.render();
-
-        this.foot = e.view;
-        this._tfootNode = e.view.get('container');
-
-        this._tableNode.insertBefore(this._tfootNode,
-            this._tableNode.one('> tbody'));
     },
 
     /**
-    Calls `render()` on the `headerView` class instance and inserts the view's
-    container into the `<table>`.
-
-    Assigns the instance's `head` property from `e.view` and the `_theadNode`
-    from the view's `container` attribute.
+    Calls `render()` on the `headerView` class instance.
 
     @method _defRenderHeaderFn
     @param {EventFacade} e The renderHeader event
@@ -799,18 +787,16 @@ Y.mix(Table.prototype, {
     **/
     _defRenderHeaderFn: function (e) {
         e.view.render();
-
-        this.head = e.view;
-        this._theadNode = e.view.get('container');
-
-        this._tableNode.insertBefore(this._theadNode,
-            this._tableNode.one('> tfoot, > tbody'));
     },
 
     /**
-    Renders the `<table>`, `<caption>`, and `<colgroup>`.
+    Renders the `<table>` and, if there are associated Views, the `<thead>`,
+    `<tfoot>`, and `<tbody>` (empty until `syncUI`).
 
-    Assigns the generated table to the `_tableNode` property.
+    Assigns the generated table nodes to the `_tableNode`, `_theadNode`,
+    `_tfootNode`, and `_tbodyNode` properties.  Assigns the instantiated Views
+    to the `head`, `foot`, and `body` properties.
+
 
     @method _defRenderTableFn
     @param {EventFacade} e The renderTable event
@@ -818,40 +804,41 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     _defRenderTableFn: function (e) {
-        var view, config;
+        var config;
 
         this._tableNode = this._createTable();
 
         if (e.headerView) {
             config = flatten(e.headerConfig || {});
-            config.container = this._createTHead();
+            config.container = this._theadNode = this._createTHead();
 
-            view = new e.headerView(config);
-            view.addTarget(this);
+            this.head = new e.headerView(config);
+            this.head.addTarget(this);
 
-            this.fire('renderHeader', { view: view });
+            this._tableNode.insertBefore(this._theadNode,
+                this._tableNode.one('> tfoot, > tbody'));
         }
 
         if (e.footerView) {
             config = flatten(e.footerConfig || {});
-            config.container = this._createTFoot();
+            config.container = this._tfootNode = this._createTFoot();
 
-            view = new e.footerView(config);
-            view.addTarget(this);
+            this.foot = new e.footerView(config);
+            this.foot.addTarget(this);
 
-            this.fire('renderFooter', { view: view });
+            this._tableNode.insertBefore(this._tfootNode,
+                this._tableNode.one('> tbody'));
         }
 
         if (e.bodyView) {
             config = flatten(e.bodyConfig || {});
-            config.container = this._createTBody();
+            config.container = this._tbodyNode = this._createTBody();
 
-            view = new e.bodyView(config);
-            view.addTarget(this);
+            this.body = new e.bodyView(config);
+            this.body.addTarget(this);
 
-            this.fire('renderBody', { view: view });
+            this._tableNode.append(this._tbodyNode);
         }
-
     },
 
     /**
@@ -1001,15 +988,12 @@ Y.mix(Table.prototype, {
                 defaultFn: Y.bind('_defRenderTableFn', this)
             },
             renderHeader: {
-                fireOnce: true,
                 defaultFn: Y.bind('_defRenderHeaderFn', this)
             },
             renderBody  : {
-                fireOnce: true,
                 defaultFn: Y.bind('_defRenderBodyFn', this)
             },
             renderFooter: {
-                fireOnce: true,
                 defaultFn: Y.bind('_defRenderFooterFn', this)
             }
         });
