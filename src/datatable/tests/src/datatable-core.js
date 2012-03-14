@@ -48,6 +48,38 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(modelList, instance.data);
         Y.Assert.areSame(2, instance.data.item(0).get('a'));
         Y.Assert.isTrue(fired);
+    },
+
+    "syncUI should call render() on all views": function () {
+        function View(config) {
+            this.container = config.container;
+            this.count = 0;
+        }
+        View.prototype = {
+            render: function () { this.count++; },
+            addTarget: function () {},
+            get: function () { return this.container; }
+        };
+
+        var table = new (Y.Base.create('test', Y.Widget, [Y.DataTable.Core]))({
+                columns: ['a'],
+                data: [{ a: 1 }],
+                headerView: View,
+                bodyView: View,
+                footerView: View
+            }).render();
+            
+        Y.Assert.areSame(1, table.head.count);
+        Y.Assert.areSame(1, table.body.count);
+        Y.Assert.areSame(1, table.foot.count);
+
+        table.syncUI();
+
+        Y.Assert.areSame(2, table.head.count);
+        Y.Assert.areSame(2, table.body.count);
+        Y.Assert.areSame(2, table.foot.count);
+
+        table.destroy();
     }
 
 
