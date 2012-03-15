@@ -224,9 +224,9 @@ suite.add(new Y.Test.Case({
                 'c'
             ],
             data: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 }
+                { a: 'a1', b: 1, c: 1 },
+                { a: 'a2', b: 2, c: 2 },
+                { a: 'a3', b: 3, c: 3 }
             ]
         }).render();
     },
@@ -251,6 +251,33 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(this.table.data.item(0),
             this.table.getRecord(
                 this.table._tbodyNode.one('em')));
+    },
+
+    "getRecord(model.id) should return the corresponding Model": function () {
+        var M = Y.Base.create('testModel', Y.Model, [], {
+                idAttribute: 'a'
+            }, {
+                ATTRS: {
+                    a: {},
+                    b: {},
+                    c: {}
+                }
+            }),
+            table = new Y.DataTable({
+                columns: [ 'a', 'b', 'c' ],
+                data: [
+                    { a: 'a1', b: 1, c: 1 },
+                    { a: 'a2', b: 2, c: 2 },
+                    { a: 'a3', b: 3, c: 3 }
+                ],
+                recordType: M
+            });
+
+        // For proper cleanup
+        this.table.destroy();
+        this.table = table;
+
+        Y.Assert.areSame(table.data.item(0), table.getRecord('a1'));
     },
 
     "getRecord(model.clientId) should return the corresponding Model": function () {
