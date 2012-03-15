@@ -1281,15 +1281,16 @@
                 testModifyAttrLazy : function() {
                     var h = this.createHost();
 
-                    h.modifyAttr("D", {
-                        readOnly : false
+                    h.modifyAttr("C", {
+                        writeOnce : false
                     });
 
-                    Y.Assert.isFalse(h._state.get("D", "readOnly"));
+                    Y.Assert.isFalse(h._state.get("C", "writeOnce"));
 
-                    h.set("D", "foo");
+                    h.set("C", "foo");
+                    h.set("C", "bar");
 
-                    Y.Assert.areEqual("foo", h.get("D")); // not readOnly anymore                            
+                    Y.Assert.areEqual("bar", h.get("C")); // not writeOnce anymore                            
                 },
 
                 testModifyAttr : function() {
