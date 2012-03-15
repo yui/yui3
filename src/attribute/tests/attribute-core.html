@@ -198,9 +198,7 @@
                 },
 
                 DE: {
-                    valueFn: function() {
-                        return this.get("D") + this.get("E");
-                    }
+                    valueFn: "DEValueFn"
                 },
 
                 complex: {
@@ -224,6 +222,10 @@
 
             // Straightup augment, no wrapper functions
             Y.mix(AttrHost, Y.AttributeCore, false, null, 1);
+            
+            AttrHost.prototype.DEValueFn = function() {
+                return this.get("D") + this.get("E");
+            };
 
             var augmentTemplate = {
 
