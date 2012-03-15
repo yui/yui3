@@ -68,8 +68,14 @@
     A basic DataTable is made of columns and rows. Define the columns you
     want to display in your DataTable with the `columns` attribute. Rows are
     created for you based on the data you provide to the `data` attribute.
-    Under the hood, the DataTable class uses a ModelList instance to manage the
-    row data properties.
+</p>
+
+<p>
+    Under the hood, the DataTable class uses a
+    <a href="../model-list/index.html">ModelList</a> instance to manage the row
+    data properties.  Read the <a href="#data">Table Data Configuration</a>
+    section below for details about how to load, configure, and work with the
+    table data.
 </p>
 
 ```
@@ -580,6 +586,129 @@ var cols = [
 
 
 <h2 id="data">Table Data Configuration</h2>
+
+<p>
+    In each of the examples above, the DataTable's `data` attribute was
+    assigned an array of objects.  This is a convenient way of initializing the
+    table, but not the only way.
+</p>
+
+<p>
+    Each record in the table is stored as a
+    <a href="../model/index.html">Model</a> instance, where the
+    keys of the record objects become Model attributes.  This allows you to
+    interact with the models as you would any other <a
+    href="../base/index.html">Base</a>-based class, with `get(attr)`,
+    `set(attr, value)`, and subscribing to attribute change events.
+</p>
+
+```
+var data = [
+    { item: "widget",   cost: 23.57, price: 47.5 },
+    { item: "gadget",   cost: 0.11, price: 6.99 },
+    { item: "sprocket", cost: 4.08, price: 3.75 },
+    { item: "nut",      cost: 0.01, price: 0.25 }
+];
+
+var table = new Y.DataTable({
+    columns: ["item", "cost", "price"],
+    data: data
+});
+
+var sprocket = table.getRecord(2);
+
+// Fires a costChange event, and the table is updated if rendered
+sprocket.set('cost', 2.65);
+```
+
+<p>
+    The Model class used to store the record data is created for you, based on
+    the objects in the `data` array.  If `data` is not set, the column keys
+    identified in the `columns` configuration is used.
+</p>
+
+<h3 id="recordtype">Specifying the Record Model</h3>
+
+<p>
+    To use a custom Model for your records, pass your Model subclass to the
+    `recordType` attribute.
+</p>
+
+```
+var pieTable = new Y.DataTable({
+    recordType: Y.PieModel,
+    columns: ['slices', 'type'],
+    data: [
+        // Y.PieModel has attributes 'slices', which defaults to 6, and 'type',
+        // which defaults to 'apple'. Records can use these defaults.
+        { type: 'lemon meringue' },
+        { type: 'chocolate creme', slices: 8 },
+        {} // equivalent to { type: 'apple', slices: 6 }
+    ]
+});
+
+// Y.PieModel has its idAttribute assigned to 'type', overriding the default
+// of 'id'.  Fetch a PieModel by its id.
+var applePie = pieTable.getRecord('apple');
+
+// eatSlice is a method on the Y.PieModel prototype
+applePie.eatSlice();
+```
+
+<p>
+    Alternately, `recordType` will accept an array of attribute strings, or an
+    `ATTRS` configuration object to make it easier to create custom attribute
+    behaviors without needing to explicitly build the Model subclass.
+</p>
+
+<p>
+    If the `columns` configuration is omitted, but the `recordType` is set, the
+    `columns` will default to the `recordType`'s attributes.
+</p>
+
+```
+var data = [
+    { item: "widget",   cost: 23.57, price: 47.5 },
+    { item: "gadget",   cost: 0.11, price: 6.99 },
+    { item: "sprocket", cost: 4.08, price: 3.75 },
+    { item: "nut",      cost: 0.01, price: 0.25 }
+];
+
+// Effectively synonymous with setting the columns attribute if no special
+// column configuration is needed.
+var table = new Y.DataTable({
+    recordType: [ 'item', 'cost', 'price' ],
+    data: data
+});
+
+// Or for more control, pass an ATTRS configuration object
+var table = new Y.DataTable({
+    recordType: {
+        item: {},
+        cost: {
+            value: 0,
+            setter: function (val) { return +val || 0; }
+        },
+        price: {
+            valueFn: function () { return (this.get('cost') + 0.1) * 10; },
+            setter: function (val) { return +val || 0; }
+        }
+    },
+    data: data
+});
+```
+
+<p>
+    When the table data is loaded asychronously, it is often a good idea to
+    configure the `recordType`.  This can prevent the generation of a record
+    Model that is missing fields that are omitted from the `columns`
+    configuration because they aren't intended for viewing.
+</p>
+
+<h3 id="modellist">The `data` ModelList</h3>
+
+<p>
+</p>
 
 <!-- TODO: describe data as array, data as ModelList instance, assigned and dynamic recordTypes -->
 
