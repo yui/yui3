@@ -19,7 +19,11 @@ ChartBase.ATTRS = {
 
         setter: function(val)
         {
-            this.get("contentBox").setAttribute("ariaLabel", val);
+            var cb = this.get("contentBox");
+            if(cb)
+            {
+                cb.setAttribute("aria-label", val);
+            }
             return val;
         }
     },
@@ -454,9 +458,10 @@ ChartBase.prototype = {
     renderUI: function()
     {
         var tt = this.get("tooltip"),
+            bb = this.get("boundingBox"),
             cb = this.get("contentBox");
         //move the position = absolute logic to a class file
-        this.get("boundingBox").setStyle("position", "absolute");
+        bb.setStyle("position", "absolute");
         cb.setStyle("position", "absolute");
         this._addAxes();
         this._addSeries();
@@ -464,7 +469,7 @@ ChartBase.prototype = {
         {
             this._addTooltip();
         }
-        this._setAriaElements(cb);
+        this._setAriaElements(bb, cb);
     },
    
     /**
@@ -474,21 +479,21 @@ ChartBase.prototype = {
      * @param {Node} cb Reference to the Chart's `contentBox` attribute.
      * @private
      */
-    _setAriaElements: function(cb)
+    _setAriaElements: function(bb, cb)
     {
         var description = this._getAriaOffscreenNode(),
             id = this.get("id") + "_description",
             liveRegion = this._getAriaOffscreenNode();
+        this.set("tabIndex", 0);
         cb.set("role", "img");
-        cb._node.setAttribute("aria-label", this.get("ariaLabel"));
-        cb._node.setAttribute("aria-describedby", id);
-        cb.set("tabIndex", 0);
+        cb.setAttribute("aria-label", this.get("ariaLabel"));
+        cb.setAttribute("aria-describedby", id);
         description.set("id", id);
         description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
         liveRegion.set("id", "live-region");
         liveRegion.set("role", "status");
-        cb.appendChild(description);
-        cb.appendChild(liveRegion);
+        bb.appendChild(description);
+        bb.appendChild(liveRegion);
         this._description = description;
         this._liveRegion = liveRegion;
     },
@@ -502,13 +507,14 @@ ChartBase.prototype = {
      */
     _getAriaOffscreenNode: function()  
     {
-        var node = Y.one(DOCUMENT.createElement("div"));
+        var node = Y.Node.create("<div></div>"),
+            ie = Y.UA.ie,
+            clipRect = (ie && ie < 8) ? "rect(1px 1px 1px 1px)" : "rect(1px, 1px, 1px, 1px)";
         node.setStyle("position", "absolute");
         node.setStyle("height", "1px"); 
         node.setStyle("width", "1px"); 
         node.setStyle("overflow", "hidden");
-        node.setStyle("clip", "rect(1px 1px 1px 1px)"); 
-        node.setStyle("clip", "rect(1px, 1px, 1px, 1px)");
+        node.setStyle("clip", clipRect); 
         return node;
     },
   
@@ -550,7 +556,7 @@ ChartBase.prototype = {
                 this._liveRegion.setContent("");
                 this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
             }
-        }, this), this.get("contentBox"));
+        }, this), this.get("boundingBox"));
         if(interactionType == "marker")
         {
             //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
