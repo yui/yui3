@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
+        <!--<script src=".http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
+        -->
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
         
         <style>
@@ -31,6 +33,7 @@
         </style>
         
         <script type="text/javascript" charset="utf-8">
+        var scrollView;
         YUI({
             debug: true,
             filter:"raw"
@@ -40,7 +43,7 @@
                 Y.one("#scrollview-content ul").append("<li>" + j + "</li>");
             }
 
-            var scrollView = new Y.ScrollView({
+            scrollView = new Y.ScrollView({
                 id: "scrollview",
                 srcNode : '#scrollview-content',
                 width: "300px"
@@ -48,7 +51,7 @@
 
             scrollView.plug(Y.Plugin.ScrollViewPaginator, {
                 selector: 'li',
-                optimizeDOM: true
+                optimizeMemory: false
             });
 
             scrollView.render();

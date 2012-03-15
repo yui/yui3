@@ -57,7 +57,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     }, 
-    "anim-transform": {
+    "anim-shape-transform": {
         "requires": [
             "anim-base", 
             "anim-easing", 
@@ -2426,7 +2426,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'afe9f7b567e32184ab3e2a76593d7ef7';
+YUI.Env[Y.version].md5 = '0f82c1d4f0a041f12d3c4d0a82427fcc';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

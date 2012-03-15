@@ -3,7 +3,8 @@ YUI.add('date-tests', function(Y) {
 
     
     //Helper function to normalize timezone dependent hours.
-    var getHours = function(date) {
+    var getHours = function(date, pad) {
+        pad = (pad === false) ? false : true;
         var h = date.getHours();
         if (h > 12) {
             h = (h - 12);
@@ -11,7 +12,7 @@ YUI.add('date-tests', function(Y) {
         if (h === 0) {
             h = 12;
         }
-        if (h < 12) {
+        if (h < 12 & pad) {
             h = '0' + h;
         }
         return h;  
@@ -80,6 +81,47 @@ YUI.add('date-tests', function(Y) {
             output = Y.DataType.Date.format(date, {format:"%D"});
             ASSERT.areSame("12/17/95", output, "Expected %D format.");
 
+            output = Y.DataType.Date.format(date, {format:"%R"});
+            ASSERT.areSame(getHours(date) + ":24", output, "Expected %R format.");
+
+            output = Y.DataType.Date.format(date, {format:"%C"});
+            ASSERT.areSame(19, parseInt(output, 10), 'Expected %C format.');
+
+            output = Y.DataType.Date.format(date, {format:"%g"});
+            ASSERT.areSame(95, parseInt(output, 10), 'Expected %g format.');
+
+            output = Y.DataType.Date.format(date, {format:"%G"});
+            ASSERT.areSame(1995, parseInt(output, 10), 'Expected %G format.');
+
+            output = Y.DataType.Date.format(date, {format:"%j"});
+            ASSERT.areSame(351, parseInt(output, 10), 'Expected %j format.');
+
+            output = Y.DataType.Date.format(date, {format:"%l"});
+            ASSERT.areSame(getHours(date, false), parseInt(output, 10), 'Expected %l format.');
+
+
+            output = Y.DataType.Date.format(date, {format:"%s"});
+            ASSERT.areSame(819199440, parseInt(output, 10), 'Expected %s format.');
+
+            output = Y.DataType.Date.format(date, {format:"%u"});
+            ASSERT.areSame(7, parseInt(output, 10), 'Expected %u format.');
+
+            output = Y.DataType.Date.format(date, {format:"%U"});
+            ASSERT.areSame(51, parseInt(output, 10), 'Expected %U format.');
+
+
+            output = Y.DataType.Date.format(date, {format:"%V"});
+            ASSERT.areSame(50, parseInt(output, 10), 'Expected %V format.');
+
+            output = Y.DataType.Date.format(date, {format:"%W"});
+            ASSERT.areSame(50, parseInt(output, 10), 'Expected %W format.');
+
+            output = Y.DataType.Date.format(date, {format:"%Z"});
+            ASSERT.isTrue((date.toString()).indexOf(output) > -1, 'Expected %Z format.');
+
+            output = Y.DataType.Date.format(date, {format:"%"});
+            ASSERT.areSame('%', output, 'Expected % format.');
+
             output = Y.DataType.Date.format(date, {format:"%a %A"});
             ASSERT.areSame("Sun Sunday", output, "Expected %a %A format.");
 
@@ -89,8 +131,8 @@ YUI.add('date-tests', function(Y) {
             output = Y.DataType.Date.format(date, {format:"%r"});
             ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
 
-            output = Y.DataType.Date.format(date, {format:"%R"});
-            ASSERT.areSame(getHours(date) + ":24", output, "Expected %R format.");
+            output = Y.DataType.Date.format(date, {format:"%P"});
+            ASSERT.areSame('am', output, 'Expected %P format.');
 
         }
     });

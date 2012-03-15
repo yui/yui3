@@ -48,7 +48,7 @@
             "anim-base"
         ]
     }, 
-    "anim-transform": {
+    "anim-shape-transform": {
         "requires": [
             "anim-base", 
             "anim-easing", 

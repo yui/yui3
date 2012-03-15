@@ -1009,6 +1009,86 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
             Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
 
+        },
+        'test: aliases config option inside group': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                groups: {
+                    aliastest: {
+                        aliases: {
+                            dav2: [ 'node' ],
+                            davglass2: [ 'dav2' ]
+                        }
+                    }
+                },
+                require: [ 'davglass2' ]
+            });
+
+            var out = loader.resolve(true);
+
+            Assert.isTrue(out.js.length >= 1);
+            Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
+            Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
+
+        },
+        'test: addAlias': function() {
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                combine: true,
+                comboBase: '/c?',
+                root: '',
+                maxURLLength: 4048
+            });
+
+            loader.addAlias([ 'node', 'dd' ], 'davdd');
+            loader.require(['davdd']);
+
+            var out = loader.resolve(true);
+
+            Assert.isTrue(out.js.length >= 1);
+            Assert.isTrue(out.js[0].indexOf('node-core') > 0, 'Failed to load node-core');
+            Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
+            Assert.isTrue(out.js[0].indexOf('dd-drag') > 0, 'Failed to load dd-drag');
+
+        },
+        'test: gallery combo with custom server': function() {
+            //TODO: in 3.6.0 this should not be required..
+            var groups = YUI.Env[YUI.version].groups;
+
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                groups: groups,
+                combine: true,
+                root: '',
+                comboBase: '/combo?',
+                gallery: 'gallery-2010.08.04-19-46',
+                require: [ 'gallery-noop-test' ]
+            });
+
+            var out = loader.resolve(true);
+            Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
+            Assert.areSame('/combo?gallery-2010.08.04-19-46/build/gallery-noop-test/gallery-noop-test-min.js', out.js[0], 'Failed to return combo url for gallery module.');
+        },
+        'test: 2in3 combo with custom server': function() {
+            //TODO: in 3.6.0 this should not be required..
+            var groups = YUI.Env[YUI.version].groups;
+            
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                groups: groups,
+                combine: true,
+                root: '',
+                comboBase: '/combo?',
+                '2in3': '4',
+                'yui2': '2.9.0',
+                require: [ 'yui2-foo' ] //Invalid module so we have no module data..
+            });
+
+            var out = loader.resolve(true);
+            Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
+            Assert.areSame('/combo?2in3.4/2.9.0/build/yui2-foo/yui2-foo-min.js', out.js[0], 'Failed to return combo url for 2in3 module.');
         }
     });
 

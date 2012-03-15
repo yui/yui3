@@ -74,13 +74,19 @@
         removeAll: function(name, o) {
             var d = this.data;
 
-            Y.each(o || d, function(v, k) {
-                if(Y.Lang.isString(k)) {
-                    this.remove(name, k);
-                } else {
-                    this.remove(name, v);
+            if (!o) {
+                if (d[name]) {
+                    delete d[name];
                 }
-            }, this);
+            } else {
+                Y.each(o, function(v, k) {
+                    if(Y.Lang.isString(k)) {
+                        this.remove(name, k);
+                    } else {
+                        this.remove(name, v);
+                    }
+                }, this);
+            }
         },
 
         /**

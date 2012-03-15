@@ -3,7 +3,7 @@ YUI.add('widget-position-constrain-test', function (Y) {
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
 
-    suite;
+    suite, TestWidget;
 
 // -- Suite --------------------------------------------------------------------
 suite      = new Y.Test.Suite('WidgetPositionConstrain');
@@ -19,11 +19,15 @@ suite.add(new Y.Test.Case({
         Y.one('#test').empty();
     },
 
-    'WidgetPositionConstrain should add a `constrain` attribute': function () {
-        this.widget = new TestWidget({constrain: '#test'});
-        this.widget.render('#test');
+    'WidgetPositionConstrain should add `constrain` and `preventOverlap` attributes': function () {
+        this.widget = new TestWidget({
+            constrain     : '#test',
+            preventOverlap: true,
+            render        : '#test'
+        });
 
         Assert.areSame(Y.one('#test'), this.widget.get('constrain'), '`constrain` is not "#test" node.');
+        Assert.isTrue(this.widget.get('preventOverlap'), '`preventOverlap` is not `false`.');
     }
 }));
 

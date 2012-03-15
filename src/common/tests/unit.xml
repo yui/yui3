@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <!-- Don't specify a version on yuitest.
-     We want to use the "YUITest" global
-     instead of a "Y" global that
-     version="3" looks for. -->
+
+     We want to use the "YUITest" global instead of a "Y" global that
+     version="3" looks for.
+-->
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
         <url>app/tests/app.html</url>
@@ -10,6 +11,7 @@
         <url>async-queue/tests/async-queue.html</url>
         <url>attribute/tests/attribute.html</url>
         <url>attribute/tests/attribute-core.html</url>
+        <url>attribute/tests/state.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
         <url>base/tests/base.html</url>
         <url>base/tests/base-core.html</url>
@@ -24,9 +26,9 @@
         <url>charts/tests/charts.html</url>
         <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/graph.html</url>
+        <url>charts/tests/legend.html</url>
         <url>charts/tests/pie.html</url>
         <url>charts/tests/seriestests.html</url>
-        <url>charts/tests/legend.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/array-invoke.html</url>
@@ -76,19 +78,20 @@
         <url>event/tests/event-contextmenu.html</url>
         <url>event/tests/event-hover.html</url>
         <url>event/tests/event-key.html</url>
+        <url>event/tests/event-mouseenter.html</url>
+        <url>event/tests/event-mousewheel.html</url>
         <url>event/tests/event-outside.html</url>
         <url>event/tests/event-resize.html</url>
         <url>event/tests/event-synthetic.html</url>
+        <url>event/tests/event-touch.html</url>
         <url>event/tests/focusblur.html</url>
         <url>event-custom/tests/customevent.html</url>
         <url>event-custom/tests/event-custom-base.html</url>
         <url>event-gestures/tests/index.html</url>
-        <url>event/tests/event-touch.html</url>
-        <url>event/tests/event-mouseenter.html</url>
-        <url>event/tests/event-mousewheel.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
+        <url>graphics/tests/shape-anim.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>

@@ -1,8 +1,24 @@
+// API Doc comments disabled to avoid deprecated class leakage into
+// non-deprecated class API docs.  See the 3.4.1 datatable API doc files in the
+// download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip for reference.
 /**
- * Extends DataTable base to enable x,y, and xy scrolling.
- * @module datatable
- * @submodule datatable-scroll
- */
+Extends DataTable base to enable x,y, and xy scrolling.
+
+DEPRECATED. As of YUI 3.5.0, DataTable has been rebuilt.  This module
+is designed to work with `datatable-base-deprecated` (effectively the 3.4.1
+version of DataTable) and will be removed from the library in a future version.
+
+See http://yuilibrary.com/yui/docs/migration.html for help upgrading to the
+latest version.
+
+For complete API docs for the classes in this and other deprecated
+DataTable-related modules, refer to the static API doc files in the 3.4.1
+download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip
+
+@module datatable-deprecated
+@submodule datatable-scroll-deprecated
+@deprecated
+**/
 
 
 var YNode = Y.Node,
@@ -27,7 +43,7 @@ var YNode = Y.Node,
         return width;
     });
     
-/**
+/*
  * Adds scrolling to DataTable.
  * @class DataTableScroll
  * @extends Plugin.Base
@@ -43,7 +59,7 @@ Y.mix(DataTableScroll, {
 
     ATTRS: {
     
-        /**
+        /*
         *  The width for the table. Set to a string (ex: "200px", "20em") if you want the table to scroll in the x direction.
         *
         * @attribute width
@@ -55,7 +71,7 @@ Y.mix(DataTableScroll, {
             writeOnce: "initOnly"
         },
         
-        /**
+        /*
         *  The height for the table. Set to a string (ex: "200px", "20em") if you want the table to scroll in the y-direction.
         *
         * @attribute height
@@ -68,7 +84,7 @@ Y.mix(DataTableScroll, {
         },
         
         
-        /**
+        /*
         *  The scrolling direction for the table.
         *
         * @attribute scroll
@@ -97,7 +113,7 @@ Y.mix(DataTableScroll, {
         },
         
         
-        /**
+        /*
         *  The hexadecimal colour value to set on the top-right of the table if a scrollbar exists. 
         *
         * @attribute COLOR_COLUMNFILLER
@@ -118,7 +134,7 @@ Y.mix(DataTableScroll, {
 
 Y.extend(DataTableScroll, Y.Plugin.Base, {
     
-    /**
+    /*
     *  The table node created in datatable-base
     *
     * @property _parentTableNode
@@ -128,7 +144,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _parentTableNode: null,
     
     
-    /**
+    /*
     *  The THEAD node which resides within the table node created in datatable-base
     *
     * @property _parentTheadNode
@@ -138,7 +154,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _parentTheadNode: null,
     
     
-    /**
+    /*
     *  The TBODY node which resides within the table node created in datatable-base
     *
     * @property _parentTbodyNode
@@ -148,7 +164,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _parentTbodyNode: null,
     
     
-    /**
+    /*
     *  The TBODY Message node which resides within the table node created in datatable-base
     *
     * @property _parentMsgNode
@@ -158,7 +174,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _parentMsgNode: null,
     
     
-    /**
+    /*
     *  The contentBox specified for the datatable in datatable-base
     *
     * @property _parentContainer
@@ -168,7 +184,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _parentContainer: null,
     
     
-    /**
+    /*
     *  The DIV node that contains all the scrollable elements (a table with a tbody on it)
     *
     * @property _bodyContainerNode
@@ -178,7 +194,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     _bodyContainerNode: null,
     
     
-    /**
+    /*
     *  The DIV node that contains a table with a THEAD in it (which syncs its horizontal scroll with the _bodyContainerNode above)
     *
     * @property _headerContainerNode
@@ -207,7 +223,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     //
     /////////////////////////////////////////////////////////////////////////////
     
-    /**
+    /*
     *  Set up methods to fire after host methods execute
     *
     * @method _setUpNodes
@@ -231,7 +247,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         
     },
         
-    /**
+    /*
     *  Stores the main &lt;table&gt; node provided by the host as a private property
     *
     * @method _setUpParentTableNode
@@ -242,7 +258,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     },
     
     
-    /**
+    /*
     *  Stores the main &lt;thead&gt; node provided by the host as a private property
     *
     * @method _setUpParentTheadNode
@@ -252,7 +268,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         this._parentTheadNode = this.get('host')._theadNode;
     },
     
-    /**
+    /*
     *  Stores the main &lt;tbody&gt; node provided by the host as a private property
     *
     * @method _setUpParentTbodyNode
@@ -263,7 +279,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     },
     
     
-    /**
+    /*
     *  Stores the main &lt;tbody&gt; message node provided by the host as a private property
     *
     * @method _setUpParentMessageNode
@@ -279,7 +295,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     //
     /////////////////////////////////////////////////////////////////////////////
     
-    /**
+    /*
     *  Primary rendering method that takes the datatable rendered in
     * the host, and splits it up into two separate &lt;divs&gt; each containing two 
     * separate tables (one containing the head and one containing the body). 
@@ -296,7 +312,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         //console.log(Y.Profiler.getReport("render"));
     },
     
-    /**
+    /*
     Binds event subscriptions to keep the state and UI in sync
 
     @method bindUI
@@ -310,7 +326,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         this.afterHostEvent("recordset:recordsChange", this.syncUI);
     },
 
-    /**
+    /*
     *  Post rendering method that is responsible for creating a column
     * filler, and performing width and scroll synchronization between the &lt;th&gt; 
     * elements and the &lt;td&gt; elements.
@@ -329,7 +345,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         
     },
     
-    /**
+    /*
     *  Remove the caption created in base. Scrolling datatables dont support captions.
     * 
     * @method _removeCaptionNode
@@ -341,7 +357,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         //Y.DataTable.Base.prototype._uiSetCaption = function(v) {/*do nothing*/};
     },
 
-    /**
+    /*
     *  Adjusts the width of the TH and the TDs to make sure that the two are in sync
     * 
     * Implementation Details: 
@@ -445,7 +461,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 
     },
     
-    /**
+    /*
     *  Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
     *
     * @method _attachTheadThNode
@@ -463,7 +479,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         }
     },
     
-    /**
+    /*
     *  Adds the appropriate width to the liner divs of the TD nodes before they are appended to DOM
     *
     * @method _attachTbodyTdNode
@@ -481,7 +497,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         }
     },
     
-    /**
+    /*
     *  Creates the body DIV that contains all the data. 
     *
     * @method _createBodyContainer
@@ -497,7 +513,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         this._parentContainer.appendChild(bd);
     },
     
-    /**
+    /*
     *  Creates the DIV that contains a &lt;table&gt; with all the headers. 
     *
     * @method _createHeaderContainer
@@ -517,7 +533,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         
     },
     
-    /**
+    /*
     *  Creates styles for the TBODY based on what type of table it is.
     *
     * @method _setStylesForTbody
@@ -551,7 +567,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     },
     
     
-    /**
+    /*
     *  Creates styles for the THEAD based on what type of datatable it is.
     *
     * @method _setStylesForThead
@@ -566,7 +582,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         // }
     },
     
-    /**
+    /*
     *  Sets an auto width on the content box if it doesn't exist or if its a y-datatable.
     *
     * @method _setContentBoxDimensions
@@ -586,7 +602,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     //
     /////////////////////////////////////////////////////////////////////////////
     
-    /**
+    /*
     *  Ensures that scrolling is synced across the two tables
     *
     * @method _onScroll
@@ -596,7 +612,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         this._headerContainerNode.set('scrollLeft', this._bodyContainerNode.get('scrollLeft'));
     },
     
-    /**
+    /*
      *  Syncs padding around scrollable tables, including Column header right-padding
      * and container width and height.
      *
@@ -618,7 +634,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         }
     },
     
-    /**
+    /*
     *  Snaps container width for y-scrolling tables.
     *
     * @method _syncScrollY
@@ -640,7 +656,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
         }
     },
         
-    /**
+    /*
      *  Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
      * Taken from YUI2 ScrollingDataTable.js
      *
@@ -671,7 +687,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
             
     },
     
-    /**
+    /*
      *  Adds/removes Column header overhang as necesary.
      * Taken from YUI2 ScrollingDataTable.js
      *
@@ -703,7 +719,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     },
     
     
-    /**
+    /*
      *  Sets Column header overhang to given width.
      * Taken from YUI2 ScrollingDataTable.js with minor modifications
      *
