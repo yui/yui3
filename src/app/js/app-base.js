@@ -985,19 +985,16 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         previous view will be removed from this node, and the new active view's
         `container` node will be appended.
 
-        The default view container is `<div>` Node, but you can override this in
-        a subclass, or by passing in a custom `viewContainer` config value at
-        instantiation time.
-
-        When `viewContainer` is overridden by a subclass or passed as a config
-        option at instantiation time, it may be provided as a selector string,
-        DOM element, or a `Y.Node` instance (having the `viewContainer` and the
-        `container` be the same node is also supported).
+        The default view container is a `<div>` Node, but you can override this
+        in a subclass, or by passing in a custom `viewContainer` config value at
+        instantiation time. The `viewContainer` may be provided as a selector
+        string, DOM element, or a `Y.Node` instance (having the `viewContainer`
+        and the `container` be the same node is also supported).
 
         The app's `render()` method will stamp the view container with the CSS
-        class `yui3-app-views` and append it to the app's `container` node if it
-        isn't already, and any `activeView` will be appended to this node if it
-        isn't already.
+        class `"yui3-app-views"` and append it to the app's `container` node if
+        it isn't already, and any `activeView` will be appended to this node if
+        it isn't already.
 
         @attribute viewContainer
         @type HTMLElement|Node|String

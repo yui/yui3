@@ -92,7 +92,7 @@ The goal of the App component is to provide you a place to organize and connect 
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enable you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
 </p>
 
 <p>
@@ -317,15 +317,11 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
         </p>
 
         <p>
-        The default view container is a `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time.
+        The default view container is a `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time. The `viewContainer` may be provided as a selector string, DOM element, or a `Y.Node` instance (having the `viewContainer` and the `container` be the same node is also supported).
         </p>
 
         <p>
-        When `viewContainer` is overridden by a subclass or passed as a config option at instantiation time, it may be provided as a selector string, DOM element, or a `Y.Node` instance. Using the same node as the `viewContainer` and the `container` is also supported.
-        </p>
-
-        <p>
-        The app's `render()` method will stamp the view container with the CSS class "yui3-app-views" and append the view container to the app's `container` node if it isn't there already. Any `activeView` will be appended to the view container node if it isn't there already.
+        The app's `render()` method will stamp the view container with the CSS class `"yui3-app-views"` and append it to the app's `container` node if it isn't already, and any `activeView` will be appended to this node if it isn't already.
         </p>
       </td>
     </tr>
@@ -517,7 +513,7 @@ var app = new Y.CustomApp({
 
 // Add a route and route handler.
 app.route('/about/', function (req) {
-    // Handle the '/about/' route here.
+    // Handle the "/about/" route here.
 });
 ```
 
@@ -709,7 +705,7 @@ Y.log(app.getViewInfo('home').preserve);  // => false
 
 // Added `preserve` to "user" view,
 // and this did not overwrite the default `parent` value.
-Y.log(app.getViewInfo('user').parent);    // => 'home'
+Y.log(app.getViewInfo('user').parent);    // => "home"
 Y.log(app.getViewInfo('user').preserve);  // => false
 
 // The specified "about" view was registered.
