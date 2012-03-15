@@ -439,19 +439,37 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Returns the Node for a cell at the given coordinates.
+    Returns the `<td>` Node from the given row and column index.  Alternately,
+    the `seed` can be a Node.  If so, the nearest ancestor cell is returned.
+    If the `seed` is a cell, it is returned.  If there is no cell at the given
+    coordinates, `null` is returned.
 
-    Technically, this only relays to the `bodyView` instance's `getCell` method.
-    If the `bodyView` doesn't have a `getCell` method, `undefined` is returned.
+    Optionally, include an offset array or string to return a cell near the
+    cell identified by the `seed`.  The offset can be an array containing the
+    number of rows to shift followed by the number of columns to shift, or one
+    of "above", "below", "next", or "previous".
+
+    <pre><code>// Previous cell in the previous row
+    var cell = table.getCell(e.target, [-1, -1]);
+
+    // Next cell
+    var cell = table.getCell(e.target, 'next');
+    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
+
+    This is actually just a pass through to the `bodyView` instance's method
+    by the same name.
 
     @method getCell
-    @param {Number} row Index of the cell's containing row
-    @param {Number} col Index of the cell's containing column
+    @param {Number[]|Node} seed Array of row and column indexes, or a Node that
+        is either the cell itself or a descendant of one.
+    @param {Number[]|String} [shift] Offset by which to identify the returned
+        cell Node
     @return {Node}
     @since 3.5.0
     **/
-    getCell: function (row, col) {
-        return this.body && this.body.getCell && this.body.getCell(row, col);
+    getCell: function (seed, shift) {
+        return this.body && this.body.getCell &&
+            this.body.getCell.apply(this.body, arguments);
     },
 
     /**
@@ -504,18 +522,51 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Returns the Node for a row at the given index.
+    Returns the Model associated to the record `id`, `clientId`, or index (not
+    row index).  If none of those yield a Model from the `data` ModelList, the
+    arguments will be passed to the `bodyView` instance's `getRecord` method
+    if it has one.
 
-    Technically, this only relays to the `bodyView` instance's `getRow` method.
-    If the `bodyView` doesn't have a `getRow` method, `undefined` is returned.
+    If no Model can be found, `null` is returned.
+
+    @method getRecord
+    @param {Number|String|Node} seed Record `id`, `clientId`, index, Node, or
+        identifier for a row or child element
+    @return {Model}
+    @since 3.5.0
+    **/
+    getRecord: function (seed) {
+        var record = this.data.getById(seed) || this.data.getByClientId(seed);
+
+        if (!record) {
+            if (isNumber(seed)) {
+                record = this.data.item(seed);
+            }
+            
+            if (!record && this.body && this.body.getRecord) {
+                record = this.body.getRecord.apply(this.body, arguments);
+            }
+        }
+
+        return record || null;
+    },
+
+    /**
+    Returns the `<tr>` Node from the given row index, Model, or Model's
+    `clientId`.  If the rows haven't been rendered yet, or if the row can't be
+    found by the input, `null` is returned.
+
+    This is actually just a pass through to the `bodyView` instance's method
+    by the same name.
 
     @method getRow
-    @param {Number} index Index of the row in the data `<tbody>`
+    @param {Number|String|Model} id Row index, Model instance, or clientId
     @return {Node}
     @since 3.5.0
     **/
-    getRow: function (index) {
-        return this.body && this.body.getRow && this.body.getRow(index);
+    getRow: function (id) {
+        return this.body && this.body.getRow &&
+            this.body.getRow.apply(this.body, arguments);
     },
 
     /**
@@ -1485,8 +1536,7 @@ Y.mix(Table.prototype, {
     **/
     _uiSetCaption: function (htmlContent) {
         var table   = this._tableNode,
-            caption = this._captionNode,
-            captionId;
+            caption = this._captionNode;
 
         if (htmlContent) {
             if (!caption) {
