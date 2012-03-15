@@ -520,24 +520,33 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Returns the Model associated to the record index (not row index), or to the
-    row Node or id passed.  If an id or Node for a child element of the row is
-    passed, that will work, too.
+    Returns the Model associated to the record `id`, `clientId`, or index (not
+    row index).  If none of those yield a Model from the `data` ModelList, the
+    arguments will be passed to the `bodyView` instance's `getRecord` method
+    if it has one.
 
     If no Model can be found, `null` is returned.
 
-    This is actually just a pass through to the `bodyView` instance's method
-    by the same name.
-
     @method getRecord
-    @param {Number|String|Node} seed Record index, Node, or identifier for a row
-        or child element
+    @param {Number|String|Node} seed Record `id`, `clientId`, index, Node, or
+        identifier for a row or child element
     @return {Model}
     @since 3.5.0
     **/
-    getRecord: function (id) {
-        return this.body && this.body.getRecord &&
-            this.body.getRecord.apply(this.body, arguments);
+    getRecord: function (seed) {
+        var record = this.data.getById(seed) || this.data.getByClientId(seed);
+
+        if (!record) {
+            if (isNumber(seed)) {
+                record = this.data.item(seed);
+            }
+            
+            if (!record && this.body && this.body.getRecord) {
+                record = this.body.getRecord.apply(this.body, arguments);
+            }
+        }
+
+        return record || null;
     },
 
     /**

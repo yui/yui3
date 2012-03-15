@@ -249,15 +249,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
-    Returns the Model associated to the record index (not row index), or to the
-    row Node or id passed.  If an id or Node for a child element of the row is
-    passed, that will work, too.
+    Returns the Model associated to the record `id`, `clientId`, or index (not
+    row index).  If a DOM element id or Node for a table row or child of a row
+    is passed, that will work, too.
 
     If no Model can be found, `null` is returned.
 
     @method getRecord
-    @param {Number|String|Node} seed Record index, Node, or identifier for a row
-        or child element
+    @param {Number|String|Node} seed Record `id`, `clientId`, index, Node, or
+        identifier for a row or child element
     @return {Model}
     @since 3.5.0
     **/
@@ -267,26 +267,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             row       = null,
             record;
 
-        if (isNumber(seed)) {
-            record = modelList && modelList.item(seed);
-        } else if (tbody) {
+        if (tbody) {
             if (isString(seed)) {
-                record = modelList.getByClientId(seed);
-
                 if (!record) {
                     seed = tbody.one('#' + seed);
                 }
             }
 
-            if (!record) {
-                if (Y.instanceOf(seed, Y.Node)) {
-                    row = seed.ancestor(function (node) {
-                        return node.get('parentNode').compareTo(tbody);
-                    }, true);
+            if (Y.instanceOf(seed, Y.Node)) {
+                row = seed.ancestor(function (node) {
+                    return node.get('parentNode').compareTo(tbody);
+                }, true);
 
-                    record = row &&
-                        modelList.getByClientId(row.getData('yui3-record'));
-                }
+                record = row &&
+                    modelList.getByClientId(row.getData('yui3-record'));
             }
         }
 
