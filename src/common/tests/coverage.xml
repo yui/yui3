@@ -95,6 +95,7 @@
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>get/tests/get-coverage.html</url>
         <url>graphics/tests/graphics.html</url>
+        <url>graphics/tests/shape-anim.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>

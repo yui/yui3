@@ -667,7 +667,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @param {String} [url] URL for the history entry.
     @param {Boolean} [replace=false] If `true`, the current history entry will
       be replaced instead of a new one being added.
-    @see Router._save()
     @chainable
     @protected
     @see Router._save()
@@ -819,7 +818,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         @type View
         @default null
         @readOnly
-        @see showView
+        @see AppBase.showView()
         @since 3.5.0
         **/
         activeView: {
@@ -853,7 +852,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default <body>
+        @default Y.one('body')
         @initOnly
         **/
         container: {
@@ -1002,15 +1001,14 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default "<div/>"
+        @default Y.Node.create(this.containerTemplate)
         @initOnly
         @since 3.5.0
         **/
         viewContainer: {
             getter   : '_getViewContainer',
             setter   : Y.one,
-            value    : null,
-            writeOnce: 'initOnly'
+            writeOnce: true
         }
     },
 
@@ -1026,7 +1024,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @static
     @since 3.5.0
     **/
-    CSS_CLASS      : getClassName('app'),
+    CSS_CLASS: getClassName('app'),
 
     /**
     CSS class added to an app's `viewContainer` node.
