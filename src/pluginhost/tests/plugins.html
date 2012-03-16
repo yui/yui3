@@ -256,6 +256,34 @@
                     Y.Assert.isUndefined(h1.one);
                     Y.Assert.isUndefined(h1.two);
                 },
+                
+                testUnplugNonExistant : function() {
+                    var h1 = new Host();
+
+                    var NonExistant = function() {}
+                    NonExistant.NS = "foo";
+                    
+                    var SharedNS = function() {}
+                    SharedNS.NS = "one";
+
+                    try {
+                        h1.unplug("foo");
+                        h1.unplug(NonExistant);
+                    } catch (e) {
+                        Y.Assert.fail("Error unplugging a non-plugged in plugin");
+                    }
+
+                    h1.plug(PluginOne);
+                    
+                    try {
+                        // Unplugging a diff plugin with the same NS
+                        h1.unplug(SharedNS);                        
+                    } catch (e) {
+                        Y.Assert.fail("Error unplugging a plugin which shares a NS with a plugged in plugin");
+                    }
+
+                    Y.Assert.isTrue(h1.one instanceof PluginOne);
+                },
 
                 testUnplugPlug : function() {
 
