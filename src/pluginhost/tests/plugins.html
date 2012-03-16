@@ -371,6 +371,18 @@
 
                     h1.unplug(PluginOne);
                 },
+                
+                testPluginHostReference : function() {
+
+                    var h1 = new Host();
+                    h1.plug(PluginOne);
+
+                    Y.Assert.areEqual(h1, h1.one.get("host"));
+
+                    h1.one.set("host", this);
+
+                    Y.Assert.areEqual(h1, h1.one.get("host"));    
+                },
 
                 testPluginEventListeners : function() {
 
