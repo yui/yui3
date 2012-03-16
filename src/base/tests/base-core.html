@@ -219,7 +219,7 @@
 
                 initOnly : {
                     writeOnce:"initOnly"
-                }    
+                }
             };
 
             Y.extend(AttrHost, Y.BaseCore);
@@ -344,9 +344,220 @@
                }
             });
 
+            function CoreTestsHost(config) {
+                CoreTestsHost.superclass.constructor.apply(this, arguments);
+            }
+
+            CoreTestsHost.NAME = "coreTestsHost";
+            CoreTestsHost.ATTRS = {
+                cloneDefaultObject : {
+                    value : {
+                        a:1, 
+                        b:2, 
+                        c:3
+                    }
+                },
+
+                cloneDefaultArray : {
+                    value : ["foo", "bar", "foobar"]
+                },
+                
+                cloneDefaultString : {
+                    value : "foo"
+                },
+
+                cloneDefaultOverride : {
+                    value : {
+                        a:1, b:2, c:3
+                    },
+                    cloneDefaultValue : false
+                },
+
+                cloneDefaultShallow : {
+                    value : {
+                        a: {foo: "bar"}
+                    },
+                    cloneDefaultValue : "shallow"
+                },
+
+                cloneDefaultDeep : {
+                    value : {
+                        a: {foo: "bar"}
+                    },
+                    cloneDefaultValue : "deep"
+                },
+
+                cloneDefaultComplex : {
+                    value : new Y.BaseCore()
+                }
+            };
+            Y.extend(CoreTestsHost, Y.BaseCore);
+
+            var coreTemplate = {
+
+                name: "Core Tests",
+
+                testInit : function() {
+                    var h = new CoreTestsHost();
+                    Y.Assert.isTrue(h.get("initialized"));
+                },
+
+                testDestroy : function() {
+                    var h = new CoreTestsHost();
+                    
+                    Y.Assert.isFalse(h.get("destroyed"));
+
+                    h.destroy();
+
+                    Y.Assert.isTrue(h.get("destroyed"));
+                },
+
+                testToString : function() {
+                    var h = new CoreTestsHost(),
+                        re = /^coreTestsHost\[.*?\]$/,
+                        str = h.toString();
+
+                    Y.Assert.isTrue(re.test(str));                    
+                },
+
+                testCloneDefaultValueObject : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultObject");
+
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultObject.value !== val);
+
+                    Y.ObjectAssert.areEqual({
+                        a:1,
+                        b:2,
+                        c:3
+                    }, val);
+                },
+
+                testCloneDefaultValueArray : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultArray");
+
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultArray.value !== val);
+                    Y.ArrayAssert.itemsAreEqual(["foo", "bar", "foobar"], val);
+                },
+
+                testCloneDefaultValueString : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultString");
+
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultString.value === val);
+                },
+
+                testCloneDefaultComplex : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultComplex");
+
+                    // Don't try to clone by default. We may hurt our backs
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultComplex.value === val);
+                },
+
+                testCloneDefaultShallow : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultShallow");
+
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultShallow.value !== val);
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultShallow.value.a === val.a);
+                    
+                    Y.ObjectAssert.areEqual({
+                        foo:"bar"
+                    }, val.a);
+                },
+
+                testCloneDefaultDeep : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultDeep");
+
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultDeep.value !== val);
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultDeep.value.a !== val.a);
+                    
+                    Y.ObjectAssert.areEqual({
+                        foo:"bar"
+                    }, val.a);
+                },
+
+                testCloneDefaultOverride : function() {
+                    var h = new CoreTestsHost(),
+                        val = h.get("cloneDefaultOverride");
+
+                    Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultOverride.value === val);
+
+                    Y.ObjectAssert.areEqual({
+                        a:1,
+                        b:2,
+                        c:3
+                    }, val);
+                },
+
+                testInitializerDestructorInvocation : function() {
+
+                    var expected = ["beforeConstructorTwo", "beforeConstructorOne", "initializerOne", "initializerTwo", "afterConstructorOne", "afterConstructorTwo", "destructorTwo", "destructorOne"],
+                        actual = [],
+                        initCfg = {
+                            foo: 1
+                        };
+
+                    function One(cfg) {
+                        actual.push("beforeConstructorOne");
+                        One.superclass.constructor.apply(this, arguments);
+                        actual.push("afterConstructorOne");
+                    }
+
+                    Y.extend(One, Y.BaseCore, {
+                        initializer : function(cfg) {
+                            Y.Assert.areSame(initCfg, cfg);
+                            actual.push("initializerOne");
+                        },
+                        destructor : function() {
+                            actual.push("destructorOne");
+                        }
+                    }, {
+                        NAME : "one",
+                        ATTRS : {
+                            "a" : {
+                                value: 1
+                            }                        
+                        }
+                    });
+
+                    function Two(cfg) {
+                        actual.push("beforeConstructorTwo");
+                        Two.superclass.constructor.apply(this, arguments);
+                        actual.push("afterConstructorTwo");
+                    }
+
+                    Y.extend(Two, One, {
+                        initializer : function(cfg) {
+                            Y.Assert.areSame(initCfg, cfg);
+                            actual.push("initializerTwo");
+                        },
+                        destructor : function() {
+                            actual.push("destructorTwo");
+                        }
+                    }, {
+                        NAME : "two",
+                        ATTRS : {
+                            "b" : {
+                                value: 2
+                            }                        
+                        }
+                    });
+                    
+                    var o = new Two(initCfg);
+                    o.destroy();
+
+                    Y.ArrayAssert.itemsAreEqual(expected, actual);                    
+
+                }
+            };
+
             var basicTemplate = {
 
-                name: "Core Base Class Tests",
+                name: "Base Class Tests",
 
                 createHost : function(cfg) {
                     return new AttrHost(cfg);
@@ -654,7 +865,7 @@
 
             var extendedTemplate = {
 
-                name: "Core Extended Class Tests",
+                name: "Extended Class Tests",
 
                 createHost : function(cfg) {
                     return new ExtendedAttrHost(cfg);
@@ -968,6 +1179,8 @@
             }
 
             var suite = new Y.Test.Suite({name:"Base Core Unit Tests"});
+
+            suite.add(new Y.Test.Case(coreTemplate));
 
             suite.add(new Y.Test.Case(basicTemplate));
             suite.add(new Y.Test.Case(extendedTemplate));
