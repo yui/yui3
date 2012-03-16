@@ -20,23 +20,6 @@ var PARENT_NODE = 'parentNode',
     Selector = Y.Selector,
 
     SelectorCSS2 = {
-        _types: {
-            esc: {
-                token: '\uE000',
-                re: /\\[:\[\]\(\)#\.\'\>+~"]/gi
-            },
-
-            attr: {
-                token: '\uE001',
-                re: /(\[[^\]]*\])/g
-            },
-
-            pseudo: {
-                token: '\uE002',
-                re: /(\([^\)]*\))/g
-            }
-        },
-
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
 
@@ -391,26 +374,6 @@ var PARENT_NODE = 'parentNode',
             return tokens;
         },
 
-        _parse: function(name, selector) {
-            return selector.match(Y.Selector._types[name].re);
-        },
-
-        _replace: function(name, selector) {
-            var o = Y.Selector._types[name];
-            return selector.replace(o.re, o.token);
-        },
-
-        _restore: function(name, selector, items) {
-            if (items) {
-                var token = Y.Selector._types[name].token,
-                    i, len;
-                for (i = 0, len = items.length; i < len; ++i) {
-                    selector = selector.replace(token, items[i]);
-                }
-            }
-            return selector;
-        },
-
         _replaceMarkers: function(selector) {
             selector = selector.replace(/\[/g, '\uE003');
             selector = selector.replace(/\]/g, '\uE004');
@@ -434,25 +397,20 @@ var PARENT_NODE = 'parentNode',
         },
 
         _parseSelector: function(selector) {
-            var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
-                attrs,
-                pseudos;
+            var replaced = Y.Selector._replaceSelector(selector),
+                selector = replaced.selector;
 
-            selector = Y.Selector._replace('esc', selector);
-
-            pseudos = Y.Selector._parse('pseudo', selector);
-            selector = Selector._replace('pseudo', selector);
-
-            attrs = Y.Selector._parse('attr', selector);
-            selector = Y.Selector._replace('attr', selector);
-
+            // replace shorthand (".foo, #bar") after pseudos and attrs
+            // to avoid replacing unescaped chars
             selector = Y.Selector._replaceShorthand(selector);
 
-            selector = Y.Selector._restore('attr', selector, attrs);
-            selector = Y.Selector._restore('pseudo', selector, pseudos);
+            selector = Y.Selector._restore('attr', selector, replaced.attrs);
+            selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);
 
+            // replace braces and parens before restoring escaped chars
+            // to avoid replacing ecaped markers
             selector = Y.Selector._replaceMarkers(selector);
-            selector = Y.Selector._restore('esc', selector, esc);
+            selector = Y.Selector._restore('esc', selector, replaced.esc);
 
             return selector;
         },

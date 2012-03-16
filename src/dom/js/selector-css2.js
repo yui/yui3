@@ -18,23 +18,6 @@ var PARENT_NODE = 'parentNode',
     Selector = Y.Selector,
 
     SelectorCSS2 = {
-        _types: {
-            esc: {
-                token: '\uE000',
-                re: /\\[:\[\]\(\)#\.\'\>+~"]/gi
-            },
-
-            attr: {
-                token: '\uE001',
-                re: /(\[[^\]]*\])/g
-            },
-
-            pseudo: {
-                token: '\uE002',
-                re: /(\([^\)]*\))/g
-            }
-        },
-
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
 
@@ -399,36 +382,26 @@ var PARENT_NODE = 'parentNode',
             return selector;
         },
 
-        _replaceSelector: function(selector) {
-            var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
-                attrs,
-                pseudos;
+        _replaceShorthand: function(selector) {
+            var shorthand = Y.Selector.shorthand,
+                re;
 
-            // first replace escaped chars, which could be present in attrs or pseudos
-            selector = Y.Selector._replace('esc', selector);
-
-            // then replace pseudos before attrs to avoid replacing :not([foo])
-            pseudos = Y.Selector._parse('pseudo', selector);
-            selector = Selector._replace('pseudo', selector);
-
-            attrs = Y.Selector._parse('attr', selector);
-            selector = Y.Selector._replace('attr', selector);
-
-            // replace shorthand (".foo, #bar") after pseudos and attrs
-            // to avoid replacing unescaped chars
-            selector = Y.Selector._replaceShorthand(selector);
-
-            return {
-                esc: esc,
-                attrs: attrs,
-                pseudos: pseudos,
-                selector: selector
+            for (re in shorthand) {
+                if (shorthand.hasOwnProperty(re)) {
+                    selector = selector.replace(new RegExp(re, 'gi'), shorthand[re]);
+                }
             }
+
+            return selector;
         },
 
         _parseSelector: function(selector) {
             var replaced = Y.Selector._replaceSelector(selector),
                 selector = replaced.selector;
+
+            // replace shorthand (".foo, #bar") after pseudos and attrs
+            // to avoid replacing unescaped chars
+            selector = Y.Selector._replaceShorthand(selector);
 
             selector = Y.Selector._restore('attr', selector, replaced.attrs);
             selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);

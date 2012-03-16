@@ -19,6 +19,23 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     OWNER_DOCUMENT = 'ownerDocument';
 
 var Selector = {
+    _types: {
+        esc: {
+            token: '\uE000',
+            re: /\\[:\[\]\(\)#\.\'\>+~"]/gi
+        },
+
+        attr: {
+            token: '\uE001',
+            re: /(\[[^\]]*\])/g
+        },
+
+        pseudo: {
+            token: '\uE002',
+            re: /(\([^\)]*\))/g
+        }
+    },
+
     useNative: true,
 
     _escapeId: function(id) {
@@ -140,10 +157,55 @@ var Selector = {
 
     },
 
+    _replaceSelector: function(selector) {
+        var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
+            attrs,
+            pseudos;
+
+        // first replace escaped chars, which could be present in attrs or pseudos
+        selector = Y.Selector._replace('esc', selector);
+
+        // then replace pseudos before attrs to avoid replacing :not([foo])
+        pseudos = Y.Selector._parse('pseudo', selector);
+        selector = Selector._replace('pseudo', selector);
+
+        attrs = Y.Selector._parse('attr', selector);
+        selector = Y.Selector._replace('attr', selector);
+
+        return {
+            esc: esc,
+            attrs: attrs,
+            pseudos: pseudos,
+            selector: selector
+        }
+    },
+
+    _restoreSelector: function(replaced) {
+        var selector = replaced.selector;
+        selector = Y.Selector._restore('attr', selector, replaced.attrs);
+        selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);
+        selector = Y.Selector._restore('esc', selector, replaced.esc);
+        return selector;
+    },
+
+    _replaceCommas: function(selector) {
+        var replaced = Y.Selector._replaceSelector(selector),
+            selector = replaced.selector;
+
+        if (selector) {
+            selector = selector.replace(',', '\uE007', 'g');
+            replaced.selector = selector;
+            selector = Y.Selector._restoreSelector(replaced);
+        }
+        return selector;
+    },
+
     // allows element scoped queries to begin with combinator
     // e.g. query('> p', document.body) === query('body > p')
     _splitQueries: function(selector, node) {
-        var groups = selector.split(','),
+        // avoid picking up from attrs and pseudos
+        selector = Y.Selector._replaceCommas(selector);
+        var groups = selector.split('\uE007'),
             queries = [],
             prefix = '',
             id,
@@ -278,19 +340,6 @@ var Selector = {
         return Y.DOM.ancestor(element, function(n) {
             return Y.Selector.test(n, selector);
         }, testSelf);
-    },
-
-    _replaceShorthand: function(selector) {
-        var shorthand = Y.Selector.shorthand,
-            re;
-
-        for (re in shorthand) {
-            if (shorthand.hasOwnProperty(re)) {
-                selector = selector.replace(new RegExp(re, 'gi'), shorthand[re]);
-            }
-        }
-
-        return selector;
     },
 
     _parse: function(name, selector) {
