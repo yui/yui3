@@ -852,7 +852,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute container
         @type HTMLElement|Node|String
-        @default <body>
+        @default Y.one('body')
         @initOnly
         **/
         container: {
@@ -1001,15 +1001,14 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         @attribute viewContainer
         @type HTMLElement|Node|String
-        @default "<div/>"
+        @default Y.Node.create(this.containerTemplate)
         @initOnly
         @since 3.5.0
         **/
         viewContainer: {
             getter   : '_getViewContainer',
             setter   : Y.one,
-            value    : null,
-            writeOnce: 'initOnly'
+            writeOnce: true
         }
     },
 
