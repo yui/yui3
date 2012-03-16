@@ -372,10 +372,9 @@
 
                     tree.render();
 
-
                     //  Select a child in the subtree to test if the selection is represented at the root level
 
-                    tree.item(2).item(0).set("selected", 1);
+                    tree.item(2).selectChild(0);
 
                     Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
                     Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
@@ -402,9 +401,38 @@
                     Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
                     Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-3", "The subtree's \"selection\" attribute should return its third child.");
 
+                    // Confirm that we can't do a multiple selection 
+                    var evts = [];
+
+                    tree.on("selectedChange", function() {
+                        evts.push("root:onSelectedChange");
+                    });
+
+                    tree.after("selectedChange", function() {
+                        evts.push("root:afterSelectedChange");
+                    });
+
+                    tree.set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
+                    
+                    evts = [];
+
+                    tree.item(2).on("selectedChange", function() {
+                        evts.push("subTree:onSelectedChange");
+                    });
+                    
+                    tree.item(2).after("selectedChange", function() {
+                        evts.push("subTree:afterSelectedChange");
+                    });
+
+                    tree.item(2).set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["subTree:onSelectedChange", "root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
 
                     tree.destroy();
-
                 },
 
                 testMultipleSelection: function () {
