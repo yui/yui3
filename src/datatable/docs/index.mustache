@@ -1,4 +1,10 @@
 <style type="text/css">
+    td code {
+        white-space: nowrap;
+        background: #fcfbfa;
+        border: 1px solid #d0d5ec;
+        padding: 0 3px;
+    }
     .yui3-datatable table {
         width: auto;
     }
@@ -9,6 +15,11 @@
 
     .yui3-datatable-col-Module {
         white-space: nowrap;
+    }
+
+    .yui3-skin-sam .yui3-datatable-message-content {
+        background: #fff;
+        border-bottom: 0 none;
     }
 
     .notice {
@@ -832,42 +843,405 @@ table.datasource.load({
 });
 ```
 
-<h2 id="features">DataTable Feature Modules</h2>
+<h2 id="features">DataTable Modules and Features</h2>
+
+<p>
+    For a basic, stripped down `Y.DataTable` class, include the `datatable-base`
+    module in your `use()`.
+</p>
+
+<p>
+    Feature modules, such as `datatable-sort`, will bring in `datatable-base`
+    automatically.  By including only feature modules in your `use()`, you will
+    get a `Y.DataTable` that supports specifically those features, without
+    extra code for other features you won't be using.
+</p>
+
+<p>
+    The `datatable` module is a bundle of `datatable-base` plus a set of common
+    feature modules.  Other feature modules need to be included explicitly in
+    `use()`.
+</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Module</th>
+        <th>Description</th>
+        <th>In `datatable`?</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-core.html">`datatable-core`</a></td>
+        <td>
+            The core API for DataTable, implemented as a class extension, used
+            by `datatable-base` to create `Y.DataTable` and `Y.DataTable.Base`.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-base.html">`datatable-base`</a></td>
+        <td>
+            Creates the `Y.DataTable` and `Y.DataTable.Base` classes, and
+            defaults the `headerView` and `bodyView` to `Y.DataTable.HeaderView`
+            and `Y.DataTable.BodyView` respectively.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-head.html">`datatable-head`</a></td>
+        <td>
+            Creates the `Y.DataTable.HeaderView` class as a subclass of
+            `Y.View`.  DataTable defers rendering of the `<thead>` content to
+            this View when it is passed as the DataTable's `headerView`
+            attribute (the default, as set by `datatable-base`).
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-body.html">`datatable-body`</a></td>
+        <td>
+            Creates the `Y.DataTable.BodyView` class as a subclass of
+            `Y.View`.  DataTable defers rendering of the `<tbody>` content to
+            this View when it is passed as the DataTable's `bodyView`
+            attribute (the default, as set by `datatable-base`).
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-message.html">`datatable-message`</a></td>
+        <td>
+            Creates the `Y.DataTable.Message` class extension and adds
+            `showMessage` and `hideMessage` methods to `Y.DataTable`.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-column-widths.html">`datatable-column-widths`</a></td>
+        <td>
+            Creates the `Y.DataTable.ColumnWidths` class extension, and adds 
+            support for the `width` property in column configuration objects
+            to `Y.DataTable`.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-mutable.html">`datatable-mutable`</a></td>
+        <td>
+            Creates the `Y.DataTable.Mutable` class extension and adds methods
+            such as `addRow`, `removeRow`, and `moveColumn` to `Y.DataTable`.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-sort.html">`datatable-sort`</a></td>
+        <td>
+            Creates the `Y.DataTable.Sort` class extension and adds methods
+            `sort` and `toggleSort` as well as attributes `sortable` and
+            `sortBy` to `Y.DataTable`.  Enables sorting the table rows by
+            clicking on column headers.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-datasource.html">`datatable-datasource`</a></td>
+        <td>
+            Creates the `Y.Plugin.DataTableDataSource` plugin for binding a
+            DataSource instance to the table as its source of record data.
+        </td>
+        <td>yes</td>
+    </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/modules/datatable-scroll.html">`datatable-scroll`</a></td>
+        <td>
+            Creates the `Y.DataTable.Scroll` class extension and adds attribute
+            `scrollable` to `Y.DataTable`.  Adds support for vertically and/or
+            horizontally scrolling table rows within fixed table dimensions.
+        </td>
+        <td>no</td>
+    </tr>
+</tbody>
+</table>
+
+<h3 id="base">Features in `DataTable.Base`</h3>
+
+<p>
+    By including only `datatable-base` in your `use()` line, you get both
+    `Y.DataTable` and `Y.DataTable.Base` classes.  With no other module
+    inclusion, these classes are effectively the same.  When additional
+    DataTable related modules are included, those modules' features will
+    usually be added to `Y.DataTable`, but <strong>never</strong> to
+    `Y.DataTable.Base`.
+</p>
+
+<p>
+    Though it can be instantiated, the purpose of `Y.DataTable.Base` is
+    primarily as a superclass to a custom DataTable implementation that has a
+    locked set of features that will not be modified, as `Y.DataTable` can be,
+    by the inclusion of other modules.
+</p>
+
+```
+// Create a custom DataTable that includes only the core set of APIs, plus
+// sorting and message support.
+Y.MyDataTable = Y.Base.create('myTable', Y.DataTable.Base,
+    [ Y.DataTable.Sort, Y.DataTable.Message ]);
+
+Y.use('datatable-scroll', function (Y) {
+    // Y.DataTable now has support for scrolling
+    var table = new Y.DataTable({ scrollable: 'y', ... });
+
+    // Y.MyDataTable does not (the config does nothing)
+    var myTable = new Y.MyDataTable({ scrollable: 'y', ... });
+});
+```
+
+<p>
+    `Y.DataTable.Base` includes the `columns`, `data`, `caption`, and other
+    basic table attributes, the underlying ModelList and View rendering
+    architecture, as well as methods to fetch rows and cells or columns and
+    records.
+</p>
+
+<h3 id="datatable-message">Table Messages</h3>
+
+<p>
+    The `datatable-message` module adds the ability to display a message in the
+    table body.  By default, the "emptyMessage" will display when the table's
+    ModelList has no data records.  The message will hide when data is added.
+</p>
+
+```
+var table = new Y.DataTable({
+    columns: ["id", "name", "price"],
+    data: []
+}).render('#example');
+```
+
+<p>This code produces this table:</p>
+
+<div id="message-example" class="yui3-skin-sam"></div>
+
+<script>
+YUI({ filter: 'raw' }).use('datatable-message', function (Y) {
+    var table = new Y.DataTable({
+        columns: ["id", "name", "price"],
+        data: []
+    }).render('#message-example');
+});
+</script>
+
+<p>
+    Use `table.showMessage("message")` and `table.hideMessage()` to toggle the
+    message display.
+</p>
+
+<p>
+    `showMessage` supports internationalized strings by using a few named
+    strings, which are registered in the language packs for the
+    `datatable-message` module .  These strings are currently:
+</p>
+
+<ul>
+    <li>
+        `table.showMessage("emptyMessage")` defaults to "No data to display".
+    </li>
+    <li>
+        `table.showMessage("loadingMessage")` defaults to "Loading...".
+    </li>
+</ul>
+
+<p>
+    Other values passed to `showMessage` will pass that content directly
+    through to the message Node.
+</p>
+
+<h3 id="colwidths">Column Width Configuration</h3>
+
+<p>
+    The `datatable-column-widths` module adds basic support for specifying
+    column widths.
+</p>
+
+```
+var table = new Y.DataTable({
+    columns: [
+        { key: 'item', width: '125px' },
+        { key: 'cost', formatter: '${value}' },
+        ...
+    ],
+    data   : data
+}).render("#example");
+```
+
+<p>This code produces this table:</p>
+
+<div id="colwidths-example" class="yui3-skin-sam"></div>
+
+<script>
+YUI({ filter: 'raw' }).use('datatable-column-widths', function (Y) {
+    var data = [
+        { item: "widget",   cost: 23.57, price: 47.5 },
+        { item: "gadget",   cost: 0.11, price: 6.99 },
+        { item: "sprocket", cost: 4.08, price: 3.75 },
+        { item: "nut",      cost: 0.01, price: 0.25 }
+    ];
+
+    var table = new Y.DataTable({
+        columns: [
+            { key: 'item', width: '125px' },
+            { key: 'cost', formatter: '${value}' },
+            { key: 'price', formatter: '${value}' },
+            { key: 'profit', formatter: function (o) {
+                    var price = o.data.price,
+                        cost  = o.data.cost;
+
+                    return (((price - cost) / cost) * 100).toFixed(2) + '%';
+                }
+            }
+        ],
+        data   : data
+    }).render("#colwidths-example");
+});
+</script>
+
+<p>
+    <strong>CAVEAT</strong>: Column widths will expand beyond the configured
+    value if column cells contain data that is long and can't line-wrap.  Also,
+    column widths may be reduced below the configured value if the table width
+    (by configuring the DataTable's `width` attribute, or constrained by a
+    narrow containing element) is too narrow to fit all data at the configured
+    widths.
+</p>
+
+<p>
+    To force column widths, including cell data truncation and allowing the
+    table to spill beyond its configured or inherited width, wrap the cell
+    content in a `<div>` either by configuring the column's `formatter` or
+    `cellTemplate`, then assign the `<div>`'s CSS style with the desired width
+    (or "inherit"), plus `overflow: hidden;`.  Then set the DataTable column's
+    `width` configuration accordingly.
+</p>
 
 <h3 id="sorting">Column sorting</h3>
 
 <p>
-    Column sorting functionality can be added with the `datatable-sort` module
-    (included in the `datatable` rollup module).
-    Enable sorting for all columns by setting `sortable` to true during
-    instantiation.  Alternately, pass `sortable` an array of column keys to
-    enable sortability of those specific columns, `false` to disable sorting,
-    or the string "auto" (the default) to determine which columns to make
-    sortable by reading the `sortable` property from the column configurations.
+    The `datatable-sort` module adds support for sorting the table rows either
+    through the added APIs or by clicking on the table headers.
 </p>
 
+<p>
+    By default, when `datatable-sort` is included, DataTables will inspects
+    the `columns` objects, looking for `sortable: true` to enable table sorting
+    by those columns, triggered by clicking on their respective headers.
+</p>
 ```
 var cols = [
     { key: "Company", sortable: true },
     { key: "Phone" },
     { key: "Contact", sortable: true }
 ];
-
-var data = [
-    { Company: "Company Bee", Phone: "415-555-1234", Contact: "Sally Spencer"},
-    { Company: "Acme Company", Phone: "650-555-4444", Contact: "John Jones"},
-    { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
-];
-
-// Alternately, include sortable: true or sortable: ["Company", "Contact"]
-// in the DataTable configuration
-var table = new Y.DataTable({
-    columns: cols,
-    data: data,
-    summary: "Contacts list",
-    caption: "Table with simple column sorting"
-}).render("#sort");
 ```
+
+<p>
+    For convenience, you can enable header-click sorting for all columns by
+    setting the `sortable` attribute to `true`, or pass an array of column keys
+    to enable just those column's headers.
+</p>
+
+```
+// Set all columns to be sortable
+var table = new Y.DataTable({
+    columns: ["Company", "Phone", "Contact"],
+    data: ...
+    sortable: true
+}).render("#example");
+```
+
+<p>This code produces this table:</p>
+
+<div id="sort-example1" class="yui3-skin-sam"></div>
+
+<script>
+YUI({ filter: 'raw' }).use('datatable-sort', function (Y) {
+    var table = new Y.DataTable({
+        columns: ['Company', 'Phone', 'Contact'],
+        data: [
+            { Company: "Company Bee", Phone: "415-555-1234", Contact: "Sally Spencer"},
+            { Company: "Acme Company", Phone: "650-555-4444", Contact: "John Jones"},
+            { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
+        ],
+        sortable: true
+    }).render('#sort-example1');
+});
+</script>
+
+<p>
+    As long as the `datatable-sort` module has been included, you will always
+    be able to sort the table data through the API, even by columns that aren't
+    configured to accept header-click sorting.
+</p>
+
+<p>
+    When a table is sorted, any new records added to the DataTable's ModelList
+    will be inserted at the proper sorted index, as will the created table
+    rows.
+</p>
+
+<h4 id="customsort">Custom Sorting</h4>
+
+<p>
+    Assign a function to a column's `sortFn` to support customized sorting.  The
+    function will receive the two records being compared and a boolean flag
+    indicating a descending sort was requested.
+</p>
+
+```
+var columns = [
+    {
+        key: 'id',
+        label: '&#9679;', // a big dot
+        formatter: function (o) {
+            return o.value ? '' : '&#9679;'; // only new records have a dot
+        },
+        sortable: true,
+        sortFn: function (a, b, desc) {
+            var aid   = a.get('id'),
+                bid   = b.get('id'),
+                acid  = a.get('clientId'),
+                bcid  = b.get('clientId'),
+                order = // existing records are equivalent
+                        (aid && bid) ? 0 :
+                        // new records are grouped apart from existing records
+                        (aid && -1) || (bid && 1) ||
+                        // new records are sorted by insertion order
+                        (acid > bcid) ? 1 : -(acid < bcid);
+
+            return desc ? -order : order;
+        }
+    },
+    ...
+```
+
+<p>
+    The function must return 1, 0, or -1.  1 specifies that the Model passed as
+    the first parameter should sort below the Model passed as the second
+    parameter.  -1 for above, and 0 if they are equivalent for the purpose of
+    this sort.
+</p>
+
+<h4 id="multisort">Multi-Column Sorting</h4>
+shift-click, or by API
+
+<h4 id="multisort">Sorting APIs</h4>
+sort, toggleSort, sortBy
+
+<p>
+    Disable header-click sorting by setting `sortable` to `false`.
+</p>
+
+note sort event, point to events section.
 
 <h3 id="scrolling">Scrolling</h3>
 				
