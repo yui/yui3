@@ -49,7 +49,7 @@
                     "node-screen"
                 ]
             },
-            "anim-transform": {
+            "anim-shape-transform": {
                 "requires": [
                     "anim-base",
                     "anim-easing",

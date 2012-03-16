@@ -1,4 +1,4 @@
-YUI.add('anim-transform', function(Y) {
+YUI.add('anim-shape-transform', function(Y) {
 
     var NUM = Number,
         TO,

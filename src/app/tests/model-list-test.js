@@ -1022,6 +1022,20 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(1, list.size());
     },
 
+    '`reset` event should allow the caller to override the `src` property on the event facade': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.once('reset', function (e) {
+            calls += 1;
+            Assert.areSame('monkeys', e.src);
+        });
+
+        list.reset([], {src: 'monkeys'});
+
+        Assert.areSame(1, calls);
+    },
+
     '`remove` event should fire when a model is removed': function () {
         var calls = 0,
             list  = this.createList(),

@@ -40,6 +40,7 @@ var win = Y.config.win,
     @param {Boolean} [replace] Whether or not the current history entry will be
       replaced, or a new entry will be created. Will default to `true` if the
       specified `url` is the same as the current URL.
+    @since 3.5.0
     **/
     EVT_NAVIGATE = 'navigate';
 
@@ -75,6 +76,7 @@ PjaxBase.prototype = {
     @property _pjaxEvents
     @type EventHandle
     @protected
+    @since 3.5.0
     **/
 
     /**
@@ -89,6 +91,7 @@ PjaxBase.prototype = {
     @property _regexURL
     @type RegExp
     @protected
+    @since 3.5.0
     **/
     _regexURL: /^((?:[^\/#?:]+:\/\/|\/\/)[^\/]*)?([^?#]*)(\?[^#]*)?(#.*)?$/,
 
@@ -138,6 +141,7 @@ PjaxBase.prototype = {
         @param {Boolean} [options.force=false] Whether the enhanced navigation
           should occur even in browsers without HTML5 history.
     @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
+    @since 3.5.0
     **/
     navigate: function (url, options) {
         // The `_navigate()` method expects fully-resolved URLs.
@@ -165,6 +169,7 @@ PjaxBase.prototype = {
     @method _getRoot
     @return {String} The URL's path root.
     @protected
+    @since 3.5.0
     **/
     _getRoot: function () {
         var slash = '/',
@@ -197,6 +202,7 @@ PjaxBase.prototype = {
           should occur even in browsers without HTML5 history.
     @return {Boolean} `true` if the URL was navigated to, `false` otherwise.
     @protected
+    @since 3.5.0
     **/
     _navigate: function (url, options) {
         // Navigation can only be enhanced if there is a route-handler.
@@ -255,6 +261,7 @@ PjaxBase.prototype = {
     @param {String} path URL path to normalize.
     @return {String} Normalized path.
     @protected
+    @since 3.5.0
     **/
     _normalizePath: function (path) {
         var dots  = '..',
@@ -297,6 +304,7 @@ PjaxBase.prototype = {
 
     @method _pjaxBindUI
     @protected
+    @since 3.5.0
     **/
     _pjaxBindUI: function () {
         // Only bind link if we haven't already.
@@ -314,6 +322,7 @@ PjaxBase.prototype = {
     @param {String} path URL path to resolve.
     @return {String} Resolved path.
     @protected
+    @since 3.5.0
     **/
     _resolvePath: function (path) {
         if (!path) {
@@ -342,6 +351,7 @@ PjaxBase.prototype = {
     @param {String} url URL to resolve.
     @return {String} Resolved URL.
     @protected
+    @since 3.5.0
     **/
     _resolveURL: function (url) {
         var parts    = url && url.match(this._regexURL),
@@ -390,6 +400,7 @@ PjaxBase.prototype = {
     @method _defNavigateFn
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _defNavigateFn: function (e) {
         this[e.replace ? 'replace' : 'save'](e.url);
@@ -421,6 +432,7 @@ PjaxBase.prototype = {
     @method _onLinkClick
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _onLinkClick: function (e) {
         var url;
@@ -452,6 +464,7 @@ PjaxBase.ATTRS = {
     @type String|Function
     @default "a.pjax"
     @initOnly
+    @since 3.5.0
     **/
     linkSelector: {
         value    : 'a.' + CLASS_PJAX,
@@ -469,6 +482,7 @@ PjaxBase.ATTRS = {
     @attribute navigateOnHash
     @type Boolean
     @default false
+    @since 3.5.0
     **/
     navigateOnHash: {
         value: false
@@ -483,6 +497,7 @@ PjaxBase.ATTRS = {
     @attribute scrollToTop
     @type Boolean
     @default true
+    @since 3.5.0
     **/
     scrollToTop: {
         value: true

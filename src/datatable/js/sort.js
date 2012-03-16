@@ -2,6 +2,34 @@
 Adds support for sorting the table data by API methods `table.sort(...)` or
 `table.toggleSort(...)` or by clicking on column headers in the rendered UI.
 
+@module datatable
+@submodule datatable-sort
+@since 3.5.0
+**/
+var YLang     = Y.Lang,
+    isBoolean = YLang.isBoolean,
+    isString  = YLang.isString,
+    isArray   = YLang.isArray,
+    isObject  = YLang.isObject,
+
+    toArray = Y.Array,
+    sub     = YLang.sub,
+
+    dirMap = {
+        asc : 1,
+        desc: -1,
+        "1" : 1,
+        "-1": -1
+    };
+
+
+/**
+_API docs for this extension are included in the DataTable class._
+
+This DataTable class extension adds support for sorting the table data by API
+methods `table.sort(...)` or `table.toggleSort(...)` or by clicking on column
+headers in the rendered UI.
+
 Sorting by the API is enabled automatically when this module is `use()`d.  To
 enable UI triggered sorting, set the DataTable's `sortable` attribute to
 `true`.
@@ -54,16 +82,12 @@ value.  If you need custom sorting, add a sort function in the column's
 relate to a single `key`, require a `sortFn` to be sortable.
 
 <pre><code>
-function nameSort(a, b) {
-    var aa = a.get('lastName'),
-        bb = a.get('lastName');
-
-    if (aa === bb) {
-        aa = a.get('firstName');
-        bb = b.get('firstName');
-    }
-
-    return (aa > bb) ? 1 : (aa < bb) ? -1 : 0;
+function nameSort(a, b, desc) {
+    var aa = a.get('lastName') + a.get('firstName'),
+        bb = a.get('lastName') + b.get('firstName'),
+        order = (aa > bb) ? 1 : -(aa < bb);
+        
+    return desc ? -order : order;
 }
 
 var table = new Y.DataTable({
@@ -75,27 +99,10 @@ var table = new Y.DataTable({
 
 See the user guide for more details.
 
-@module datatable-sort
 @class DataTable.Sortable
 @for DataTable
+@since 3.5.0
 **/
-var YLang     = Y.Lang,
-    isBoolean = YLang.isBoolean,
-    isString  = YLang.isString,
-    isArray   = YLang.isArray,
-    isObject  = YLang.isObject,
-
-    toArray = Y.Array,
-    sub     = YLang.sub,
-
-    dirMap = {
-        asc : 1,
-        desc: -1,
-        "1" : 1,
-        "-1": -1
-    };
-
-
 function Sortable() {}
 
 Sortable.ATTRS = {
@@ -115,6 +122,7 @@ Sortable.ATTRS = {
     @attribute sortable
     @type {String|String[]|Boolean}
     @default "auto"
+    @since 3.5.0
     **/
     sortable: {
         value: 'auto',
@@ -142,6 +150,7 @@ Sortable.ATTRS = {
 
     @attribute sortBy
     @type {String|String[]|Object|Object[]}
+    @since 3.5.0
     **/
     sortBy: {
         validator: '_validateSortBy',
@@ -154,6 +163,7 @@ Sortable.ATTRS = {
     @attribute strings
     @type {Object}
     @default (strings for current lang configured in the YUI instance config)
+    @since 3.5.0
     **/
     strings: {}
 };
@@ -185,6 +195,7 @@ Y.mix(Sortable.prototype, {
     @param {Object} [payload] Extra `sort` event payload you want to send along
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     sort: function (fields, payload) {
         return this.fire('sort', Y.merge((payload || {}), {
@@ -199,6 +210,7 @@ Y.mix(Sortable.prototype, {
     @property SORTABLE_HEADER_TEMPLATE
     @type {HTML}
     @value '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>'
+    @since 3.5.0
     **/
     SORTABLE_HEADER_TEMPLATE: '<div class="{className}" tabindex="0"><span class="{indicatorClass}"></span></div>',
 
@@ -214,6 +226,7 @@ Y.mix(Sortable.prototype, {
     @param {Object} [payload] Extra `sort` event payload you want to send along
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     toggleSort: function (columns, payload) {
         var current = this._sortBy,
@@ -266,6 +279,7 @@ Y.mix(Sortable.prototype, {
     @method _afterSortByChange
     @param {EventFacade} e The `sortByChange` event
     @protected
+    @since 3.5.0
     **/
     _afterSortByChange: function (e) {
         // Can't use a setter because it's a chicken and egg problem. The
@@ -291,6 +305,7 @@ Y.mix(Sortable.prototype, {
     @method _afterSortDataChange
     @param {EventFacade} e the `dataChange` event
     @protected
+    @since 3.5.0
     **/
     _afterSortDataChange: function (e) {
         // object values always trigger a change event, but we only want to
@@ -309,6 +324,7 @@ Y.mix(Sortable.prototype, {
     @method _afterSortRecordChange
     @param {EventFacade} e The Model's `change` event
     @protected
+    @since 3.5.0
     **/
     _afterSortRecordChange: function (e) {
         var i, len;
@@ -327,6 +343,7 @@ Y.mix(Sortable.prototype, {
 
     @method _bindSortUI
     @protected
+    @since 3.5.0
     **/
     _bindSortUI: function () {
         this.after(['sortableChange', 'sortByChange', 'columnsChange'],
@@ -345,6 +362,7 @@ Y.mix(Sortable.prototype, {
     @method _defSortFn
     @param {EventFacade} e The `sort` event
     @protected
+    @since 3.5.0
     **/
     _defSortFn: function (e) {
         this.set.apply(this, ['sortBy', e.sortBy].concat(e.details));
@@ -355,6 +373,7 @@ Y.mix(Sortable.prototype, {
 
     @method destructor
     @protected
+    @since 3.5.0
     **/
     destructor: function () {
         if (this._sortHandle) {
@@ -389,6 +408,7 @@ Y.mix(Sortable.prototype, {
     @param {String|String[]|Object|Object[]} val The current sortBy value
     @param {String} detail String passed to `get(HERE)`. to parse subattributes
     @protected
+    @since 3.5.0
     **/
     _getSortBy: function (val, detail) {
         var state, i, len, col;
@@ -421,6 +441,7 @@ Y.mix(Sortable.prototype, {
 
     @method initializer
     @protected
+    @since 3.5.0
     **/
     initializer: function () {
         var boundParseSortable = Y.bind('_parseSortable', this);
@@ -453,6 +474,7 @@ Y.mix(Sortable.prototype, {
 
     @method _initSortFn
     @protected
+    @since 3.5.0
     **/
     _initSortFn: function () {
         var self = this;
@@ -472,7 +494,7 @@ Y.mix(Sortable.prototype, {
                 dir = col.sortDir;
 
                 if (col.sortFn) {
-                    cmp = col.sortFn(a, b) * dir;
+                    cmp = col.sortFn(a, b, (dir === -1));
                 } else {
                     // FIXME? Requires columns without sortFns to have key
                     aa = a.get(col.key);
@@ -502,6 +524,7 @@ Y.mix(Sortable.prototype, {
     
     @method _initSortStrings
     @protected
+    @since 3.5.0
     **/
     _initSortStrings: function () {
         // Not a valueFn because other class extensions will want to add to it
@@ -516,6 +539,7 @@ Y.mix(Sortable.prototype, {
     @method _onUITriggerSort
     @param {DOMEventFacade} e The `click` event
     @protected
+    @since 3.5.0
     **/
     _onUITriggerSort: function (e) {
         var id = e.currentTarget.getAttribute('data-yui3-col-id'),
@@ -564,6 +588,7 @@ Y.mix(Sortable.prototype, {
 
     @method _parseSortable
     @protected
+    @since 3.5.0
     **/
     _parseSortable: function () {
         var sortable = this.get('sortable'),
@@ -604,6 +629,7 @@ Y.mix(Sortable.prototype, {
 
     @method _renderSortable
     @protected
+    @since 3.5.0
     **/
     _renderSortable: function () {
         this._uiSetSortable();
@@ -618,6 +644,7 @@ Y.mix(Sortable.prototype, {
 
     @method _setSortBy
     @protected
+    @since 3.5.0
     **/
     _setSortBy: function () {
         var columns     = this._displayColumns,
@@ -685,6 +712,7 @@ Y.mix(Sortable.prototype, {
     @property _sortable
     @type {Object[]}
     @protected
+    @since 3.5.0
     **/
     //_sortable: null,
 
@@ -696,6 +724,7 @@ Y.mix(Sortable.prototype, {
     @property _sortBy
     @type {Object[]}
     @protected
+    @since 3.5.0
     **/
     //_sortBy: null,
 
@@ -707,6 +736,7 @@ Y.mix(Sortable.prototype, {
     @param {Model} item The record being evaluated for sort position
     @return {Model} The record
     @protected
+    @since 3.5.0
     **/
     _sortComparator: function (item) {
         // Defer sorting to ModelList's _compare
@@ -722,6 +752,7 @@ Y.mix(Sortable.prototype, {
 
     @method _uiSetSortable
     @protected
+    @since 3.5.0
     **/
     _uiSetSortable: function () {
         var columns       = this._sortable || [],
@@ -821,6 +852,7 @@ Y.mix(Sortable.prototype, {
     @param {Any} val The input value to `set("sortable", VAL)`
     @return {Boolean}
     @protected
+    @since 3.5.0
     **/
     _validateSortable: function (val) {
         return val === 'auto' || isBoolean(val) || isArray(val);
@@ -833,6 +865,7 @@ Y.mix(Sortable.prototype, {
     @param {String|String[]|Object|Object[]} val The new `sortBy` value
     @return {Boolean}
     @protected
+    @since 3.5.0
     **/
     _validateSortBy: function (val) {
         return val === null ||

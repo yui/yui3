@@ -152,7 +152,7 @@
     */  
         cancelUpload: function () {
             this.get('xhr').abort();
-        },
+        }
 
 
     }, {

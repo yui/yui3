@@ -446,6 +446,18 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the viewport');
             dd.destroy();
         },
+        'test: node scroll plugin': function() {
+            dd = new Y.DD.Drag({
+                node: '#drag'
+            }).plug(Y.Plugin.DDNodeScroll, {
+                node: Y.one('body')
+            });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isInstanceOf(Y.Plugin.DDNodeScroll, dd.nodescroll, 'NodeScroll: NodeScroll Instance');
+
+            dd.destroy();
+            
+        },
         test_window_scroll: function() {
             if (Y.one('win').get('winHeight') < 200) {
                 //This should work in IE to resize the window.
@@ -462,6 +474,7 @@ YUI.add('dd-tests', function(Y) {
             }).plug(Y.Plugin.DDWinScroll);
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isInstanceOf(Y.Plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
+
 
             Y.one(window).set('scrollTop', 0);
             Y.one(window).set('scrollLeft', 0);
@@ -626,6 +639,72 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isTrue((n2.get('nextSibling') ? true : false), '3, Node has a sibling');
             Y.Assert.isNull((n1.get('nextSibling')), '4, Node has a sibling');
             
+        },
+        'test: proxy plugin on widget': function() {
+            var test = this,
+                Assert = Y.Assert,
+                ArrayAssert = Y.ArrayAssert;
+
+            YUI().use('panel', 'dd-plugin', 'dd-proxy', function(Y) {
+                var panel = new Y.Panel({
+                    headerContent: 'Some title',
+                    width: 250,
+                    bodyContent: "<h1>Some content goes here <br> Content</h1>",
+                    render: true
+                });
+                
+                panel.plug(Y.Plugin.Drag);
+
+                Assert.isInstanceOf(Y.Plugin.Drag, panel.dd);
+
+                panel.dd.plug(Y.Plugin.DDProxy);
+                
+                Assert.isInstanceOf(Y.Plugin.DDProxy, panel.dd.proxy);
+
+                Assert.areSame(2, panel.dd._widgetHandles.length, 'Should have 2 event listeners');
+
+                panel.dd._checkEvents();
+
+                Assert.areSame(0, panel.dd._widgetHandles.length, 'Should have no event listeners');
+
+                panel.dd.unplug(Y.Plugin.DDProxy);
+                panel.dd._checkEvents();
+
+                Assert.areSame(2, panel.dd._widgetHandles.length, 'Should have 2 event listeners');
+
+                panel.dd._updateStopPosition({  
+                    target: {
+                        realXY: [100, 100]
+                    }
+                });
+                ArrayAssert.itemsAreEqual([100, 100], panel.dd._stoppedPosition, 'Failed to set stoppedPosition');
+
+                panel.dd._setWidgetCoords({
+                    target: {
+                        realXY: [300, 300],
+                        nodeXY: [0, 0]
+                    }
+                });
+
+                panel.dd._stoppedPosition = null;
+                panel.dd._setWidgetCoords({
+                    target: {
+                        realXY: [300, 300],
+                        nodeXY: [50, 300]
+                    }
+                });
+
+                panel.dd._stoppedPosition = null;
+                panel.dd._setWidgetCoords({
+                    target: {
+                        realXY: [400, 400],
+                        nodeXY: [400, 50]
+                    }
+                });
+
+                panel.destroy();
+
+            });
 
         }
     };

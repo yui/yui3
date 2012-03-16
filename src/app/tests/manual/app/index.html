@@ -160,6 +160,21 @@
             Y.log('I need to run via an HTTP server!');
         }
 
+        setTimeout(function () {
+            fooApp.navigate('/');
+            fooApp.navigate('/users/');
+            fooApp.navigate('/users/1/');
+            fooApp.navigate('/users/');
+            fooApp.navigate('/users/2/');
+            fooApp.navigate('/users/3/');
+            fooApp.navigate('/users/');
+            fooApp.navigate('/users/1/');
+            fooApp.navigate('/users/');
+            fooApp.navigate('/users/2/');
+            fooApp.navigate('/users/3/');
+            fooApp.navigate('/users/');
+        }, 5000);
+
     });
     </script>
 </body>

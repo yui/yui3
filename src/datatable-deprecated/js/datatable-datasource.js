@@ -1,11 +1,26 @@
+// API Doc comments disabled to avoid deprecated class leakage into
+// non-deprecated class API docs.  See the 3.4.1 datatable API doc files in the
+// download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip for reference.
 /**
- * Plugs DataTable with DataSource integration.
- *
- * @module datatable
- * @submodule datatable-datasource
- */
+Plugs DataTable with DataSource integration.
 
-/**
+DEPRECATED. As of YUI 3.5.0, DataTable has been rebuilt.  This module
+is designed to work with `datatable-base-deprecated` (effectively the 3.4.1
+version of DataTable) and will be removed from the library in a future version.
+
+See http://yuilibrary.com/yui/docs/migration.html for help upgrading to the
+latest version.
+
+For complete API docs for the classes in this and other deprecated
+DataTable-related modules, refer to the static API doc files in the 3.4.1
+download at http://yui.zenfs.com/releases/yui3/yui_3.4.1.zip
+
+@module datatable-deprecated
+@submodule datatable-datasource-deprecated
+@deprecated
+**/
+
+/*
  * Adds DataSource integration to DataTable.
  * @class DataTableDataSource
  * @extends Plugin.Base
@@ -20,7 +35,7 @@ function DataTableDataSource() {
 //
 /////////////////////////////////////////////////////////////////////////////
 Y.mix(DataTableDataSource, {
-    /**
+    /*
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
      *
@@ -32,7 +47,7 @@ Y.mix(DataTableDataSource, {
      */
     NS: "datasource",
 
-    /**
+    /*
      * Class name.
      *
      * @property NAME
@@ -49,7 +64,7 @@ Y.mix(DataTableDataSource, {
 //
 /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
-        /**
+        /*
         * @attribute datasource
         * @description Pointer to DataSource instance.
         * @type {DataSource}
@@ -58,7 +73,7 @@ Y.mix(DataTableDataSource, {
             setter: "_setDataSource"
         },
         
-        /**
+        /*
         * @attribute initialRequest
         * @description Request sent to DataSource immediately upon initialization.
         * @type Object
@@ -80,7 +95,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     // ATTRIBUTE HELPERS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * @method _setDataSource
     * @description Creates new DataSource instance if one is not provided.
     * @param ds {Object | Y.DataSource}
@@ -91,7 +106,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
         return ds || new Y.DataSource.Local(ds);
     },
 
-    /**
+    /*
     * @method _setInitialRequest
     * @description Sends request to DataSource.
     * @param request {Object} DataSource request.
@@ -105,7 +120,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     // METHODS
     //
     /////////////////////////////////////////////////////////////////////////////
-    /**
+    /*
     * Initializer.
     *
     * @method initializer
@@ -124,7 +139,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    /**
+    /*
      * Load data by calling DataSource's sendRequest() method under the hood.
      *
      * @method load
@@ -158,7 +173,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
         }
     },
 
-    /**
+    /*
      * Callback function passed to DataSource's sendRequest() method populates
      * an entire DataTable with new data, clearing previous data, if any.
      *
