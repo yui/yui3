@@ -12145,14 +12145,18 @@ ChartBase.prototype = {
         var description = this._getAriaOffscreenNode(),
             id = this.get("id") + "_description",
             liveRegion = this._getAriaOffscreenNode();
-        this.set("tabIndex", 0);
+        cb.set("tabIndex", 0);
         cb.set("role", "img");
         cb.setAttribute("aria-label", this.get("ariaLabel"));
         cb.setAttribute("aria-describedby", id);
         description.set("id", id);
+        description.set("tabIndex", -1);
         description.appendChild(DOCUMENT.createTextNode(this.get("ariaDescription")));
         liveRegion.set("id", "live-region");
+        liveRegion.set("aria-live", "polite");
+        liveRegion.set("aria-atomic", "true");
         liveRegion.set("role", "status");
+        bb.setAttribute("role", "application");
         bb.appendChild(description);
         bb.appendChild(liveRegion);
         this._description = description;
@@ -12217,7 +12221,7 @@ ChartBase.prototype = {
                 this._liveRegion.setContent("");
                 this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
             }
-        }, this), this.get("boundingBox"));
+        }, this), this.get("contentBox"));
         if(interactionType == "marker")
         {
             //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
