@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>Widget Test Suite</title>
+    <title>Widget Parent Child Test Suite</title>
 
     <script src="../../../build/yui/yui.js"></script>
 
@@ -299,7 +299,73 @@
                     Y.Assert.areEqual(parentBB.all(childSelector).size(), 0, "The widget should now have no children bounding boxes.");
 
                     widget.destroy();
+                },
 
+                testRemoveSelectedChild : function() {
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                    });
+                    widget.render();
+
+                    var childSelector = "." + widget.item(0).getClassName(),
+                        parentBB = widget.get("boundingBox");
+
+                    widget.selectChild(1);
+
+                    Y.Assert.areSame(widget.item(1), widget.get("selection"));
+                    
+                    Y.Assert.areEqual(widget.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(widget.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.areEqual(0, widget.get("selected"));
+                    Y.Assert.isNull(widget.get("selection"));
+
+                    widget.destroy();
+                },
+
+                testRemoveFocusedChild : function() {
+
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                    });
+                    widget.render();
+
+                    var childSelector = "." + widget.item(0).getClassName(),
+                        parentBB = widget.get("boundingBox");
+
+                    widget.item(1).focus();
+
+                    Y.Assert.areSame(widget.item(1), widget.get("activeDescendant"));
+
+                    var removedChild = widget.remove(1); 
+
+                    Y.Assert.isFalse(removedChild.get("focused"));
+                    Y.Assert.areEqual(removedChild.get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(widget.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.isNull(widget.get("activeDescendant"));
+
+                    widget.destroy();
                 },
 
                 testSingleSelection: function () {
@@ -372,10 +438,9 @@
 
                     tree.render();
 
-
                     //  Select a child in the subtree to test if the selection is represented at the root level
 
-                    tree.item(2).item(0).set("selected", 1);
+                    tree.item(2).selectChild(0);
 
                     Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
                     Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
@@ -402,9 +467,38 @@
                     Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
                     Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-3", "The subtree's \"selection\" attribute should return its third child.");
 
+                    // Confirm that we can't do a multiple selection 
+                    var evts = [];
+
+                    tree.on("selectedChange", function() {
+                        evts.push("root:onSelectedChange");
+                    });
+
+                    tree.after("selectedChange", function() {
+                        evts.push("root:afterSelectedChange");
+                    });
+
+                    tree.set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
+                    
+                    evts = [];
+
+                    tree.item(2).on("selectedChange", function() {
+                        evts.push("subTree:onSelectedChange");
+                    });
+                    
+                    tree.item(2).after("selectedChange", function() {
+                        evts.push("subTree:afterSelectedChange");
+                    });
+
+                    tree.item(2).set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["subTree:onSelectedChange", "root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
 
                     tree.destroy();
-
                 },
 
                 testMultipleSelection: function () {
