@@ -4,61 +4,66 @@ YUI({
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('node', 'uploader-flash', function(Y) {
- 
-  var selectButton = Y.one("#fileselection");
+}).use('cssbutton', 'uploader-flash', 'node', 'console', function(Y) {
+
+var myuploader;
 
 
-  var myuploader = new Y.UploaderFlash({contentBox: selectButton, 
-                                        multipleFiles: true, 
-                                        uploadURL: "http://localhost/myyui/src/uploader/tests/manual/upload.php",
-                                        swfURL: "assets/flashuploader.swf",
-                                        tabElements: {from: "#prevElement",
-                                                      to: "#uploadButton"}
-                                       });
+if (Y.UploaderFlash.TYPE != "none") {
+            myuploader = new Y.UploaderFlash({ multipleFiles: true, 
+                                          uploadURL: "http://bedfamous-lm.corp.yahoo.com/yui3/src/uploader/tests/manual/upload.php",
+                                          dragAndDropArea: "#droparea",
+                                          tabIndex: "0",
+                                          swfURL: "assets/flashuploader.swf?t=" + Math.random(),
+                                          tabElements: {from: "#prevElement", to: "#uploadButton"}
+                                        });
 
-  myuploader.render();
 
-myuploader.set("multipleFiles", true);
-myuploader.set("appendNewFiles", true);
+            myuploader.set("swfURL", "assets/flashuploader.swf");
 
-var out = Y.one("#uploadinfo");
+            myuploader.render("#fileselection");
 
-var postVars = [];
+            myuploader.set("multipleFiles", true);
+            myuploader.set("appendNewFiles", true);
+            myuploader.set("simLimit", 3);
 
-myuploader.after("fileListChange", function (ev) {
-  out.setContent("");
-  postVars = [];
-  Y.each(myuploader.get("fileList"), function (value) {
-    out.append("<div id='" + value.get("id") + "'>" + value.get("id") + " | " + 0 + "%</div>");
-      postVars.push({customvar: "file:" + value.get("name")});
-    });
-    myuploader.set("postVarsPerFile", postVars);
+            var out = Y.one("#uploadinfo");
+
+            var postVars = [];
+
+            myuploader.after("fileListChange", function (ev) {
+            	out.setContent("");
+            	postVars = [];
+            	Y.each(myuploader.get("fileList"), function (value) {
+            	  out.append("<div id='" + value.get("id") + "'>" + value.get("name") + " | " + 0 + "%</div>");
+                  postVars[value.get("id")] = {filename: value.get("name"), filesize: value.get("size")};
+                });
+                myuploader.set("postVarsPerFile", postVars);
+            });
+
+            myuploader.on("uploadprogress", function (ev) {
+                    out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + ev.percentLoaded + "%");
+            });
+
+            myuploader.on("uploadcomplete", function (ev) {
+            	 	out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
+            });
+            	 
+            	 
+            myuploader.on("totaluploadprogress", function (ev) {
+            	 	Y.one("#totalpercent").setContent("Total upload progress: " + ev.percentLoaded);
+            });
+
+            myuploader.on("alluploadscomplete", function (ev) {
+            	 	Y.one("#totalpercent").setContent("<p>Upload complete!</p>");
+            });	                                    	                                       
+
+            Y.one("#uploadButton").on("click", function () {
+            	 myuploader.uploadAll();
+            });
+}
+else {
+    Y.one("body").prepend("Flash Uploader cannot be used on this system");
+}
+
 });
-
-myuploader.on("uploadprogress", function (ev) {
-        out.one("#" + ev.file.get("id")).setContent(ev.file.get("id") + " | " + ev.percentLoaded + "%");
-});
-
-myuploader.on("uploadcomplete", function (ev) {
-    out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
-});
-   
-   
-myuploader.on("totaluploadprogress", function (ev) {
-    Y.one("#totalpercent").setContent("Total upload progress: " + ev.percentLoaded);
-});
-
-myuploader.on("alluploadscomplete", function (ev) {
-    Y.one("#totalpercent").setContent("<p>Upload complete!</p>");
-});                                                                              
-
-Y.one("#uploadButton").on("click", function () {
-   myuploader.uploadAll();
-});
-
-
-
-
-});
-
