@@ -1468,14 +1468,15 @@ pies.data.load(function () {
 </p>
 
 <p>
-    Scrolling functionality can be added with the `datatable-scroll` module
-    Scrolling is enabled by the `scrollable` attribute, which accepts values
-    "x", "y", "xy", `true` (same as "xy"), or `false` (the default).
+    Scrolling functionality can be added to `Y.DataTable` by including
+    `datatable-scroll` module in your `use()`.  `datatable-scroll` is
+    <strong>NOT</strong> included in the `datatable` rollup module, so must be
+    included separately.
 </p>
 
 <p>
-    `datatable-scroll` is <strong>NOT</strong> included in the `datatable`
-    rollup module, and must be included in `use()` explicitly.
+    Enable scrolling by setting the `scrollable` attribute, which accepts values
+    "x", "y", "xy", `true` (same as "xy"), or `false` (the default).
 </p>
 
 <p>
