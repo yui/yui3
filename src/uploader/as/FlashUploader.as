@@ -393,14 +393,18 @@
 		this.log("ERROR has fired for: " + event.target.fileId);
 		this.log("The event type is " + event.type);
 		    if (event is IOErrorEvent) {
-		this.log("The event text is " + (event as IOErrorEvent).text);
+				this.log("The event text is " + (event as IOErrorEvent).text);
+		        newEvent.source="io";
+		        newEvent.message = (event as IOErrorEvent).text;
 		    }
 		    else if (event is HTTPStatusEvent) {
-		this.log("The event status is " + (event as HTTPStatusEvent).status);		    	
+		        this.log("The event status is " + (event as HTTPStatusEvent).status);		    	
+		        newEvent.source="http";
+		        newEvent.message = (event as HTTPStatusEvent).status;
 		    }
 			for (var itemName:String in event) {
 				newEvent[itemName] = event[itemName];
-		this.log("Error details / " + itemName + ": " + event[itemName]);
+				this.log("Error details / " + itemName + ": " + event[itemName]);
 			}
             
 	        newEvent.id = event.target.fileId;

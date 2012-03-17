@@ -17,7 +17,7 @@
         totalBytes;
 
     /**
-     * The class manages a queue of files to be uploaded to the server.
+     * This class manages a queue of files to be uploaded to the server.
      * @class UploaderQueue
      * @extends Base
      * @constructor
@@ -125,11 +125,26 @@
            updatedEvent.file = event.target;
            updatedEvent.originEvent = event;
 
+           var uploadedTotal = this.totalBytesUploaded;
+
+           Y.each(this.currentUploadedByteValues, function (value) {
+              uploadedTotal += value; 
+           });
+           
+           var percentLoaded = Math.min(100, Math.round(10000*uploadedTotal/this.totalBytes) / 100); 
+           
+           this.fire("totaluploadprogress", {bytesLoaded: uploadedTotal, 
+                                             bytesTotal: this.totalBytes,
+                                             percentLoaded: percentLoaded});
+
            this.fire("uploadcomplete", updatedEvent);
 
            if (this.queuedFiles.length === 0 && this.currentFiles.length === 0) {
                this.fire("alluploadscomplete");
+               this._currentState = UploaderQueue.STOPPED;
            }
+
+
         },
 
         _uploadProgressHandler : function (event) {
@@ -192,7 +207,32 @@
             }
         },
 
+        addToQueueTop: function (file) {
+            this.queuedFiles.unshift(file);
+        },
+
+        addToQueueBottom: function (file) {
+            this.queuedFiles.push(file);
+        },
+
         cancelUpload: function (file) {
+
+          if (file) {
+            var id = file.get("id");
+            if (this.currentFiles[id]) {
+              this.currentFiles[id].cancel();
+              this._unregisterUpload(this.currentFiles[id]);
+            }
+            else {
+              for (var i = 0, len = this.queuedFiles.length; i < len; i++) {
+                if (this.queuedFiles[i].get("id") === id) {
+                  this.queuedFiles.splice(i, 1);
+                  break;
+                }
+              }
+            }
+          }
+          else {
             for (var fid in this.currentFiles) {
               this.currentFiles[fid].cancel();
               this._unregisterUpload(this.currentFiles[fid]);
@@ -201,6 +241,9 @@
             this.currentUploadedByteValues = {};
             this.currentFiles = {};
             this.totalBytesUploaded = 0;
+            this.fire("alluploadscancelled");
+            this._currentState = UploaderQueue.STOPPED;
+          }
         }
     }, 
 
@@ -216,59 +259,60 @@
 
         ATTRS: {
        
-       /**
-        * @property simUploads
-        * @type Number
-        * @description Maximum number of simultaneous uploads
-        */
-        simUploads: {
-            value: 2,
-            validator: function (val, name) {
-                return (val >= 1 && val <= 5);
-            }
-        },
+          /**
+           * @property simUploads
+           * @type Number
+           * @description Maximum number of simultaneous uploads
+           */
+           simUploads: {
+               value: 2,
+               validator: function (val, name) {
+                   return (val >= 1 && val <= 5);
+               }
+           },
+   
+           errorAction: {
+               value: "continue",
+               validator: function (val, name) {
+                   return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);
+               }
+           },
+   
+           bytesUploaded: {
+               readOnly: true,
+               value: 0
+           },
+   
+           bytesTotal: {
+               readOnly: true,
+               value: 0
+           },
+   
+           fileList: {
+               value: [],
+               lazyAdd: false,
+               setter: function (val) {
+                   var newValue = val;
+                   Y.Array.each(newValue, function (value) {
+                       this.totalBytes += value.get("size");
+                   }, this);
+    
+                   return val;
+               }   
+           },
+   
+           fileFieldName: {
+              value: "Filedata"
+           },
+   
+           uploadURL: {
+             value: ""
+           },
+   
+           perFileParameters: {
+             value: {}
+           }
 
-        errorAction: {
-            value: "continue",
-            validator: function (val, name) {
-                return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);
-            }
-        },
-
-        bytesUploaded: {
-            readOnly: true,
-            value: 0
-        },
-
-        bytesTotal: {
-            readOnly: true,
-            value: 0
-        },
-
-        fileList: {
-            value: [],
-            lazyAdd: false,
-            setter: function (val) {
-                var newValue = val;
-                Y.Array.each(newValue, function (value) {
-                    this.totalBytes += value.get("size");
-                }, this);
- 
-                return val;
-            }   
-        },
-
-        fileFieldName: {
-           value: "Filedata"
-        },
-
-        uploadURL: {
-          value: ""
-        },
-
-        perFileParameters: {
-          value: {}
-        }
         }
     });
 
