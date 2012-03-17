@@ -902,7 +902,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             background = new Y.Rect({
                 graphic: cb,
                 fill: styles.fill,
-                stroke: styles.stroke
+                stroke: styles.border
             });
         bb.setStyle("display", "block");
         bb.setStyle("position", "absolute");
@@ -1033,10 +1033,10 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             shapeClass,
             item,
             fill,
-            stroke,
+            border,
             fillColors,
-            strokeColors,
-            strokeWeight,
+            borderColors,
+            borderWeight,
             items = [],
             markerWidth = marker.width,
             markerHeight = marker.height,
@@ -1057,8 +1057,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             displayName = series.get("categoryAxis").getDataByKey(series.get("categoryKey")); 
             seriesStyles = series.get("styles").marker;
             fillColors = seriesStyles.fill.colors;
-            strokeColors = seriesStyles.border.colors;
-            strokeWeight = seriesStyles.border.weight;
+            borderColors = seriesStyles.border.colors;
+            borderWeight = seriesStyles.border.weight;
             i = 0;
             len = displayName.length;
             shape = shape || Y.Circle;
@@ -1069,12 +1069,12 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 fill = {
                     color: fillColors[i]
                 };
-                stroke = {
-                    colors: strokeColors[i],
-                    weight: strokeWeight
+                border = {
+                    colors: borderColors[i],
+                    weight: borderWeight
                 };
                 displayName = chart.getSeriesItems(series, i).category.value;
-                item = this._getLegendItem(node, this._getShapeClass(shape), fill, stroke, labelStyles, markerWidth, markerHeight, displayName);
+                item = this._getLegendItem(node, this._getShapeClass(shape), fill, border, labelStyles, markerWidth, markerHeight, displayName);
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1101,7 +1101,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                     }
                 }
                 shapeClass = Y.Lang.isArray(shape) ? shape[i] : shape;
-                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.stroke, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
+                item = this._getLegendItem(node, this._getShapeClass(shape), seriesStyles.fill, seriesStyles.border, labelStyles, markerWidth, markerHeight, series.get("valueDisplayName"));
                 itemWidth = item.width;
                 itemHeight = item.height;
                 maxWidth = Math.max(maxWidth, itemWidth);
@@ -1143,7 +1143,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             h = contentRect.bottom - y + padding.bottom;
         this.get("background").set({
             fill: backgroundStyles.fill,
-            stroke: backgroundStyles.stroke,
+            stroke: backgroundStyles.border,
             width: w,
             height: h,
             x: x,
@@ -1156,7 +1156,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * 
      * @method _getStylesBySeriesType
      * @param {CartesianSeries | PieSeries} The series in which the style properties will be received.
-     * @return Object An object containing fill, stroke and shape information.
+     * @return Object An object containing fill, border and shape information.
      * @private
      */
     _getStylesBySeriesType: function(series)
@@ -1166,7 +1166,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         {
             styles = series.get("styles").line;
             return {
-                stroke: {
+                border: {
                     weight: 1,
                     color: styles.color
                 },
@@ -1179,7 +1179,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         {
             series = series.get("styles").fill;
             return {
-                stroke: {
+                border: {
                     weight: 1,
                     color: styles.color
                 },
@@ -1194,7 +1194,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
             return {
                 fill: styles.fill,
 
-                stroke: {
+                border: {
                     weight: styles.border.weight,
 
                     color: styles.border.color,
@@ -1219,7 +1219,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @param {Node} shapeProps Reference to the `node` attribute.
      * @param {String | Class} shapeClass The type of shape
      * @param {Object} fill Properties for the shape's fill
-     * @param {Object} stroke Properties for the shape's stroke
+     * @param {Object} border Properties for the shape's border
      * @param {String} text String to be rendered as the legend's text
      * @param {Number} width Total width of the legend item
      * @param {Number} height Total height of the legend item
@@ -1227,7 +1227,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * @return Object
      * @private
      */
-    _getLegendItem: function(node, shapeClass, fill, stroke, labelStyles, w, h, text) 
+    _getLegendItem: function(node, shapeClass, fill, border, labelStyles, w, h, text) 
     {
         var containerNode = Y.one(DOCUMENT.createElement("div")),
             textField = Y.one(DOCUMENT.createElement("span")),
@@ -1250,7 +1250,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         containerNode.setStyle("width", (left + textField.get("offsetWidth")) + PX);
         shape = new shapeClass({
             fill: fill,
-            stroke: stroke,
+            stroke: border,
             width: w,
             height: h,
             x: padding * 0.5,
@@ -1318,7 +1318,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 fill:{
                     color:"#faf9f2"
                 },
-                stroke: {
+                border: {
                     color:"#dad8c9",
                     weight: 1
                 }
@@ -1623,10 +1623,10 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
          *                      <dt>color</dt><dd>Color for the fill. The default value is "#faf9f2".</dd>
          *                  </dl>
          *              </dd>
-         *              <dt>stroke</dt><dd>Properties for the background stroke.
+         *              <dt>border</dt><dd>Properties for the background border.
          *                  <dl>
-         *                      <dt>color</dt><dd>Color for the stroke. The default value is "#dad8c9".</dd>
-         *                      <dt>weight</dt><dd>Weight of the stroke. The default values is 1.</dd>
+         *                      <dt>color</dt><dd>Color for the border. The default value is "#dad8c9".</dd>
+         *                      <dt>weight</dt><dd>Weight of the border. The default values is 1.</dd>
          *                  </dl>
          *              </dd>
          *          </dl>

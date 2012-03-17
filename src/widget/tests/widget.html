@@ -842,6 +842,35 @@
                 widget.destroy(true);
 
                 Y.Assert.isTrue(gotFocus, "widget.on('focus') wasn't invoked");
+            },
+
+            "testToString" : function() {
+                var w = this.createWidget({
+                    id: "foo"
+                });
+
+                Y.Assert.areEqual("widget[foo]", w.toString());
+                
+                w.destroy();
+            },
+
+            "testDeprecated" : function() {
+                var w = this.createWidget({
+                    strings: {
+                        a:"strA",
+                        b:"strB"
+                    }
+                });
+
+                Y.Assert.areEqual("strA", w.getString("a"));
+                Y.Assert.areEqual("strB", w.getString("b"));
+                
+                Y.ObjectAssert.areEqual({
+                    a:"strA",
+                    b:"strB"    
+                }, w.getStrings());
+                
+                w.destroy();
             }
         };
 
@@ -895,6 +924,16 @@
             "testInstanceClassNameGeneration" : function() {
                 var w = this.createWidget();
                 Y.Assert.areEqual("yui3-mywidget-foo-bar", w.getClassName("foo", "bar"));
+                w.destroy();
+            },
+
+            "testToString" : function() {
+                var w = this.createWidget({
+                    id: "foo"
+                });
+
+                Y.Assert.areEqual("myWidget[foo]", w.toString());
+                
                 w.destroy();
             }
         }, true);
@@ -1150,7 +1189,17 @@
             
             // CONSCIOUSLY NOT TESTED - CAN'T PASS 2 BOXES TO A SINGLE BOX WIDGET
             "testBoundingBoxContentBox" : null,
-            "testBoundingBoxContentBoxRenderTo" : null
+            "testBoundingBoxContentBoxRenderTo" : null,
+            
+            "testToString" : function() {
+                var w = this.createWidget({
+                    id: "foo"
+                });
+
+                Y.Assert.areEqual("mySingleBoxWidget[foo]", w.toString());
+                
+                w.destroy();
+            }
             
         }, true);
 
@@ -2080,6 +2129,28 @@
     
                 w1.destroy();
                 w2.destroy();
+            },
+
+            testPublishDefaultFn : function() {
+                var w = new Y.Widget({
+                        render:true
+                    }),
+                    called = false;
+
+                w.publish("click", {
+                    defaultFn : function(e) {
+                        called = true;
+                        Y.Assert.areEqual("click", e.domEvent.type);
+                    }
+                });
+
+                w.get("contentBox").simulate("click");
+
+                //this.wait(function() {
+                    Y.Assert.isTrue(called);
+                //}, 0);
+                
+                w.destroy();
             }
             
         }));

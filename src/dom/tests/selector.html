@@ -21,7 +21,7 @@ document.createElement('foo'); // enable custom element for IE native querySelec
 onload = function() {
 
     var SELECTOR_MODULE = 'selector-css3';
-    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
+    YUI({filter: 'debug'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -599,6 +599,12 @@ onload = function() {
                 document.body.appendChild(node);
                 Assert.areEqual(1, Y.Selector.query('[foo="true"]').length);
                 document.body.removeChild(node);
+            },
+
+            'should allow special chars in attribute': function() {
+                var node = document.getElementById('test-chars');
+
+                Assert.areEqual(node, Y.Selector.query('input[value="ML キshigo, Mfg., Co."]', null, true));
             }
         });
 
@@ -715,5 +721,6 @@ onload = function() {
         <span>foo</span>
     </code>
 
+    <input id="test-chars" type="hidden" value="ML キshigo, Mfg., Co.">
 </body>
 </html>

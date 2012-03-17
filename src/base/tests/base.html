@@ -43,7 +43,132 @@ YUI({
 
     // NOTE: Attribute's unit tests cover a large section of Base's functionality when it comes to dealing with attributes.
 
+    function EventTests(config) {
+        EventTests.superclass.constructor.apply(this, arguments);
+    }
+
+    EventTests.NAME = "eventTestsHost";
+
+    EventTests.ATTRS = {
+        attr1 : {
+            value: "foo"
+        }
+    };
+
+    Y.extend(EventTests, Y.Base);
+
     var suite = new Y.Test.Suite("Base Tests");
+
+    suite.add(new Y.Test.Case({
+        name : "Base Event Tests",
+
+        testEventPrefix : function() {
+            var h = new EventTests();
+            Y.Assert.areEqual("eventTestsHost", h._eventPrefix);            
+        },
+
+        testEventRegistrationThroughConstructor : function() {
+
+            var expectedEvents = ["OnInit", "AfterInit", "OnAttr1Change", "AfterAttr1Change"];
+            var actualEvents = [];
+
+            var h = new EventTests({
+                on: {
+                    "attr1Change" : function() {
+                        actualEvents.push("OnAttr1Change");
+                    },
+
+                    "init" : function() {
+                        actualEvents.push("OnInit");
+                    }
+                },
+
+                after: {
+                    "attr1Change" : function() {
+                        actualEvents.push("AfterAttr1Change");
+                    },
+
+                    "init" : function() {
+                        actualEvents.push("AfterInit");
+                    }
+                }
+            });
+
+            h.set("attr1", "bar");
+
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+        },
+
+        testBubbleTargetsThroughConstructor : function() {
+
+            var expectedEvents = ["bubbleTargetOne", "bubbleTargetTwo", "bubbleTargetThree"];
+            var actualEvents = [];
+
+            var bubbleTargetOne = new Y.EventTarget();
+            bubbleTargetOne.on("eventTestsHost:attr1Change", function() {
+                actualEvents.push("bubbleTargetOne");
+            });
+
+            var bubbleTargetTwo = new Y.EventTarget();
+            bubbleTargetTwo.on("eventTestsHost:attr1Change", function() {
+                actualEvents.push("bubbleTargetTwo");
+            });
+
+            var bubbleTargetThree = new Y.EventTarget();
+            bubbleTargetThree.on("eventTestsHost:attr1Change", function() {
+                actualEvents.push("bubbleTargetThree");
+            });
+
+            var h1 = new EventTests({
+               bubbleTargets : [bubbleTargetOne, bubbleTargetTwo]  
+            });
+
+            h1.set("attr1", "bar");
+
+            var h2 = new EventTests({
+                bubbleTargets : bubbleTargetThree
+            });
+
+            h2.set("attr1", "foobar");
+
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+        },
+
+        testInitEvent : function() {
+            var actual = [];
+            var expected = ["onInit", "afterInit"];
+
+            var h = new EventTests({
+                on : {
+                    init : function() {
+                        actual.push("onInit");
+                    }
+                }, 
+                after : {
+                    init : function() {
+                        actual.push("afterInit");                        
+                    }
+                }
+            });
+
+            Y.ArrayAssert.itemsAreEqual(expected, actual);  
+        },
+
+        testDestroyEvent : function() {
+            var actual = [];
+            var expected = ["onDestroy", "afterDestroy"];
+
+            var h = new EventTests();
+
+            h.on("destroy", function() {
+                actual.push("onDestroy");
+            });
+            
+            h.after("destroy", function() {
+                actual.push("afterDestroy");
+            });        
+        }
+    }));
 
     suite.add(new Y.Test.Case({
 
@@ -828,12 +953,311 @@ YUI({
             });
 
             var o = new MyClassTwo();
+
             o.methodOne();
             o.methodTwo();
             o.extOne();
             o.extTwo();
 
             Y.ArrayAssert.itemsAreEqual(expectedMethodCalls, actualMethodCalls, "Unexpected method calls");
+        },
+
+        "test:mainclass-statics" : function() {
+
+            function Ext1() {}
+
+            Ext1.prototype.extOne = function() {};
+            Ext1.prototype.initializer = function() {};
+            Ext1.prototype.methodOne = function() {
+                return "methodOne";
+            };
+
+            Ext1.STATIC_ONE = "static_one";
+            Ext1.STATIC_TWO = "static_two";
+            Ext1.STATIC_THREE = "static_three";
+            
+            var MyClass = Y.extend(function() {
+                MyClass.superclass.constructor.apply(this, arguments);                
+            }, Y.Base, null, {
+                NAME : "myClass",
+                _buildCfg : {
+                    statics : ["STATIC_ONE", "STATIC_TWO"]
+                }
+            });
+
+            var MyBuiltClass = Y.Base.create("myBuiltClass", MyClass, [Ext1]);
+
+            var o = new MyBuiltClass();
+
+            Y.Assert.isTrue(o instanceof MyBuiltClass);
+
+            Y.Assert.isFunction(o.methodOne); // prototype properties copied
+            Y.Assert.isFunction(o.init); // but prototype not switched completely by mistake
+
+            Y.Assert.areEqual("static_one", MyBuiltClass.STATIC_ONE);
+            Y.Assert.areEqual("static_two", MyBuiltClass.STATIC_TWO);
+            Y.Assert.isFalse("STATIC_THREE" in MyBuiltClass);
+
+            Y.Assert.isFalse(MyBuiltClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over, it should be aggregated");            
+        },
+
+        "test:mainclass-statics" : function() {
+
+            function Ext1() {}
+
+            Ext1.prototype.extOne = function() {};
+            Ext1.prototype.initializer = function() {};
+            Ext1.prototype.methodOne = function() {
+                return "methodOne";
+            };
+
+            Ext1.STATIC_ONE = "static_one";
+            Ext1.STATIC_TWO = "static_two";
+            Ext1.STATIC_THREE = "static_three";
+
+            var MyClass = Y.extend(function() {
+                MyClass.superclass.constructor.apply(this, arguments);                
+            }, Y.Base, null, {
+                NAME : "myClass",
+                _buildCfg : {
+                    statics : ["STATIC_ONE", "STATIC_TWO"]
+                }
+            });
+
+            var MyBuiltClass = Y.Base.create("myBuiltClass", MyClass, [Ext1]);
+
+            var o = new MyBuiltClass();
+
+            Y.Assert.isTrue(o instanceof MyBuiltClass);
+
+            Y.Assert.isFunction(o.methodOne); // prototype properties copied
+            Y.Assert.isFunction(o.init); // but prototype not switched completely by mistake
+
+            Y.Assert.areEqual("static_one", MyBuiltClass.STATIC_ONE);
+            Y.Assert.areEqual("static_two", MyBuiltClass.STATIC_TWO);
+            Y.Assert.isFalse("STATIC_THREE" in MyBuiltClass);
+
+            Y.Assert.isFalse(MyBuiltClass.ATTRS === Ext1.ATTRS, "Ext1.ATTRS shouldn't have been copied over, it should be aggregated");            
+        },
+
+        "test:mainclass-aggregates" : function() {
+
+            function Ext1() {}
+            Ext1.AGG = {
+                "foo": true
+            };
+            
+            function Ext2() {}
+            Ext2.AGG = {
+                "bar": true
+            };
+
+            var MyClass = Y.extend(function() {
+                MyClass.superclass.constructor.apply(this, arguments);          
+            }, Y.Base, null, {
+                NAME : "myClass",
+                _buildCfg : {
+                    aggregates : ["AGG"]
+                }
+            });
+
+            var MyBuiltClass = Y.Base.create("myBuiltClass", MyClass, [Ext1, Ext2]);
+
+            var o = new MyBuiltClass();
+
+            Y.ObjectAssert.areEqual({
+                foo:true,
+                bar:true
+            }, MyBuiltClass.AGG);
+        },
+
+        "test:mainclass-custom" : function() {
+
+            function Ext1() {}
+
+            Ext1.prototype.extOne = function() {};
+            Ext1.prototype.methodOne = function() {
+                return "methodOne";
+            };
+
+            Ext1.CUST = {
+                foo: [1],
+                bar: [1]
+            };
+
+            function Ext2() {}
+
+            Ext2.prototype.extTwo = function() {};
+            Ext2.prototype.methodTwo = function() {
+                return "methodOne";
+            };
+
+            Ext2.CUST = {
+                foo: [2, 3],
+                bar: [2, 3, 4]
+            };
+
+            // ---
+
+            var MyClass = Y.extend(function() {
+                MyClass.superclass.constructor.apply(this, arguments);
+            }, Y.Base, null, {
+                NAME : "myClass",
+                _buildCfg : {
+                    custom : {
+                        CUST : function(p, r, s) {
+
+                            r[p] = r[p] || {
+                                foo:[],
+                                bar:[]
+                            };
+    
+                            if (s[p]) {
+                                if (s[p].foo) {
+                                    r[p].foo = r[p].foo.concat(s[p].foo);    
+                                }
+                                if (s[p].bar) {
+                                    r[p].bar = r[p].bar.concat(s[p].bar);    
+                                }
+                            }
+    
+                        }
+                    }
+                }
+            });
+
+            var MyClass1 = Y.Base.create("myClass1", MyClass, [Ext1]);
+            var myclass1 = new MyClass1();
+
+            Y.Assert.isTrue(myclass1 instanceof MyClass1);
+
+            Y.Assert.isFunction(myclass1.methodOne);
+            Y.Assert.isFunction(myclass1.init);
+
+            // ObjectAssert.areEqual doesn't work: values don't == compare
+            Y.ObjectAssert.hasKeys({
+                bar:[1],
+                foo:[1]
+            }, MyClass1.CUST, "Class1 - object assert");
+            
+            Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.foo, "Class1 foo assert");
+            Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.bar, "Class1 bar assert");
+
+            Y.Assert.isFalse(MyClass1.CUST === Ext1.CUST, "Ext1.CUST shouldn't have been copied over");
+
+            // ---
+
+            var MyClass2 = Y.Base.create("myClass2", MyClass, [Ext1, Ext2]);
+            var myclass2 = new MyClass2();
+
+            Y.Assert.isTrue(myclass2 instanceof MyClass2);
+
+            Y.Assert.isFunction(myclass2.methodTwo); // prototype properties copied
+            Y.Assert.isFunction(myclass2.init); // but prototype not switched completely by mistake
+
+            // ObjectAssert.areEqual doesn't work: values don't == compare
+            Y.ObjectAssert.hasKeys({
+                foo:[1,2,3],
+                bar:[1,2,3,4]
+            }, MyClass2.CUST);
+
+            Y.ArrayAssert.itemsAreEqual([1,2,3], MyClass2.CUST.foo);
+            Y.ArrayAssert.itemsAreEqual([1,2,3,4], MyClass2.CUST.bar);
+
+            Y.Assert.isFalse(MyClass2.CUST === Ext1.CUST, "Ext1.CUST shouldn't have been copied over");
+            Y.Assert.isFalse(MyClass2.CUST === Ext2.CUST, "Ext2.CUST shouldn't have been copied over");
+        },
+
+        "test:extCfg-custom" : function() {
+
+            function Ext1() {}
+
+            Ext1.prototype.extOne = function() {};
+            Ext1.prototype.methodOne = function() {
+                return "methodOne";
+            };
+
+            Ext1.CUST = {
+                foo: [1],
+                bar: [1]
+            };
+
+            Ext1._buildCfg = {
+                custom : {
+                    CUST : function(p, r, s) {
+                        
+                        r[p] = r[p] || {
+                            foo:[],
+                            bar:[]
+                        };
+
+                        if (s[p]) {
+                            if (s[p].foo) {
+                                r[p].foo = r[p].foo.concat(s[p].foo);    
+                            }
+                            if (s[p].bar) {
+                                r[p].bar = r[p].bar.concat(s[p].bar);    
+                            }
+                        }
+
+                    }
+                }
+            };
+
+            function Ext2() {}
+
+            Ext2.prototype.extTwo = function() {};
+            Ext2.prototype.methodTwo = function() {
+                return "methodOne";
+            };
+
+            Ext2.CUST = {
+                foo: [2, 3],
+                bar: [2, 3, 4]
+            };
+
+            // ---
+
+            var MyClass1 = Y.Base.create("myClass1", Y.Base, [Ext1]);
+            var myclass1 = new MyClass1();
+
+            Y.Assert.isTrue(myclass1 instanceof MyClass1);
+
+            Y.Assert.isFunction(myclass1.methodOne);
+            Y.Assert.isFunction(myclass1.init);
+
+            // ObjectAssert.areEqual doesn't work: values don't == compare
+            Y.ObjectAssert.hasKeys({
+                bar:[1],
+                foo:[1]
+            }, MyClass1.CUST, "Class1 - object assert");
+            
+            Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.foo, "Class1 foo assert");
+            Y.ArrayAssert.itemsAreEqual([1], MyClass1.CUST.bar, "Class1 bar assert");
+
+            Y.Assert.isFalse(MyClass1.CUST === Ext1.CUST, "Ext1.CUST shouldn't have been copied over");
+
+            // ---
+
+            var MyClass2 = Y.Base.create("myClass2", Y.Base, [Ext1, Ext2]);
+            var myclass2 = new MyClass2();
+
+            Y.Assert.isTrue(myclass2 instanceof MyClass2);
+
+            Y.Assert.isFunction(myclass2.methodTwo); // prototype properties copied
+            Y.Assert.isFunction(myclass2.init); // but prototype not switched completely by mistake
+
+            // ObjectAssert.areEqual doesn't work: values don't == compare
+            Y.ObjectAssert.hasKeys({
+                foo:[1,2,3],
+                bar:[1,2,3,4]
+            }, MyClass2.CUST);
+
+            Y.ArrayAssert.itemsAreEqual([1,2,3], MyClass2.CUST.foo);
+            Y.ArrayAssert.itemsAreEqual([1,2,3,4], MyClass2.CUST.bar);
+
+            Y.Assert.isFalse(MyClass2.CUST === Ext1.CUST, "Ext1.CUST shouldn't have been copied over");
+            Y.Assert.isFalse(MyClass2.CUST === Ext2.CUST, "Ext2.CUST shouldn't have been copied over");
         },
 
         "test:extCfg-statics" : function() {
@@ -1025,6 +1449,54 @@ YUI({
 
             Y.Assert.isFalse(MyClass2.CUST === Ext1.CUST, "Ext1.CUST shouldn't have been copied over");
             Y.Assert.isFalse(MyClass2.CUST === Ext2.CUST, "Ext2.CUST shouldn't have been copied over");
+        },
+
+        "test:deprecated" : function() {
+            
+            function Ext1() {}
+            
+            Ext1.MY_AGG = {a:1};
+            Ext1.MY_STATICS = "a";
+            Ext1.MY_CUSTOM = "a";
+
+            function Ext2() {}
+            
+            Ext2.MY_AGG = {b:2};
+            Ext2.MY_STATICS = "b";
+            Ext2.MY_CUSTOM = "b";
+
+            function Ext3() {}
+            
+            Ext3.MY_AGG = {c:3};
+            Ext3.MY_STATICS = "c";
+            Ext3.MY_CUSTOM = "c";
+
+            function MyMainClass(cfg) {
+                MyMainClass.superclass.constructor.apply(this, arguments);
+            }
+
+            var MyBuiltClass = Y.Base.build("foo", MyMainClass, [Ext1, Ext2, Ext3], {
+                dynamic: true,
+                aggregates : ["MY_AGG"],
+                statics : ["MY_STATICS"],
+                custom : {
+                    MY_CUSTOM : function(prop, r, s) {
+                        r[prop] = r[prop] || "";
+                        r[prop] = r[prop] + s[prop];
+                    }
+                }
+            });
+
+            Y.ObjectAssert.areEqual({
+                a:1,
+                b:2,
+                c:3
+            }, MyBuiltClass.MY_AGG);
+            
+            Y.Assert.areEqual("c", MyBuiltClass.MY_STATICS);
+
+            /* Currently broken. Will fix in 3.6.0pr1. Too late at this point, given the extreme edge caseness. */
+            // Y.Assert.areEqual("abc", MyBuiltClass.MY_CUSTOM);
         }
 
     }));
