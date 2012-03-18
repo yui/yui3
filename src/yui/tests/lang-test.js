@@ -122,12 +122,15 @@ suite.add(new Y.Test.Case({
     },
 
     test_trim: function() {
-        Assert.areEqual(Lang.trim("  My String"), "My String");
-        Assert.areEqual(Lang.trim("My String  "), "My String");
-        Assert.areEqual(Lang.trim("  My String  "), "My String");
-        Assert.areEqual(Lang.trim(null), null);
-        Assert.areEqual(Lang.trim(undefined), undefined);
-        Assert.areEqual(Lang.trim({}), "[object Object]");
+        Assert.areSame(Lang.trim("  My String"), "My String");
+        Assert.areSame(Lang.trim("My String  "), "My String");
+        Assert.areSame(Lang.trim("  My String  "), "My String");
+        Assert.areSame(Lang.trim(null), "null");
+        Assert.areSame(Lang.trim(undefined), "undefined");
+        Assert.areSame(Lang.trim(true), "true");
+        Assert.areSame(Lang.trim(false), "false");
+        Assert.areSame(Lang.trim(1), "1");
+        Assert.areSame(Lang.trim({}), "[object Object]");
     },
 
     test_trim_left: function() {
