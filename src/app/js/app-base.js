@@ -171,7 +171,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
     },
 
-    // TODO: `destructor` to destory the `activeView`?
+    // TODO: `destructor` to destroy the `activeView`?
 
     // -- Public Methods -------------------------------------------------------
 
@@ -948,7 +948,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         **Note:** When this is set to `false`, the server will *never* receive
         the full URL because browsers do not send the fragment-part to the
-        server, that is everything after and including the '#'.
+        server, that is everything after and including the "#".
 
         Consider the following example:
 
