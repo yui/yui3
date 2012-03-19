@@ -1,0 +1,8 @@
+{
+    "drawing": {
+        "requires": [
+            "node",
+            "base"
+        ]
+    }
+}
