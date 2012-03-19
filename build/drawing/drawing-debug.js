@@ -184,6 +184,16 @@ Context2d.prototype = {
     asyncDrawXULElement: function()
     {
         return this._context.asyncDrawXULElement.apply(this._context, arguments);
+    },
+    
+    set: function(prop, val)
+    {
+        this._context[prop] = val;
+    },
+
+    get: function(prop)
+    {
+        return this._context[prop];
     }
 };
 Y.Context2d = Context2d;
@@ -312,6 +322,12 @@ Drawing = Base.create("drawing", Base, [], {
             }
         },
 
+        /**
+         * Width for the canvas.
+         *
+         * @attr width
+         * @type Number
+         */
         width: {
             setter: function(val) 
             {
@@ -324,6 +340,12 @@ Drawing = Base.create("drawing", Base, [], {
             }
         },
         
+        /**
+         * Height for the canvas.
+         *
+         * @attr height
+         * @type Number
+         */
         height: {
             setter: function(val) 
             {
@@ -336,6 +358,12 @@ Drawing = Base.create("drawing", Base, [], {
             }
         },
 
+        /**
+         * Reference to the parent node of the canvas.
+         *
+         * @attr parentNode
+         * @type Node
+         */
         parentNode: {
             setter: function(val)
             {
