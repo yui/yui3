@@ -76,6 +76,10 @@ App Framework Change History
   to do things like descending sort, multi-field sorting, etc. See the API docs
   for details.
 
+* The `reset()` method now allows the caller-provided options object to override
+  the `src` property that's passed on the event facade of the `reset` event.
+  [Ticket #2531888]
+
 ### Router (formerly Controller)
 
 * [!] The `Controller` class and `controller` module have been renamed to

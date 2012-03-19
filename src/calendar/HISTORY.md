@@ -1,6 +1,14 @@
 Calendar Change History
 =======================
 
+3.5.0 - Updates
+---------------
+   * Calendar is now keyboard navigable [Ticket #2530348]
+   * Calendar skins have been updated [Tickets #2530720, [#2531110, #2531744]
+   * Calendar has received accessibility fixes
+   * CalendarNavigator plugin has been updated and now supports disabled button states
+   * Calendar got multiple new internationalization packages (de, fr, pt-BR, zh-HANT-TW)
+
 3.4.1 - Bug Fix Release
 -----------------------
 

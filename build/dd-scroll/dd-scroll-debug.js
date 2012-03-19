@@ -310,14 +310,6 @@ YUI.add('dd-scroll', function(Y) {
         end: function(xy) {
             this._dimCache = null;
             this._cancelScroll();
-        },
-        /**
-        * @method toString
-        * @description General toString method for logging
-        * @return String name for the object
-        */
-        toString: function() {
-            return S.NAME + ' #' + this.get('node').get('id');
         }
     });
 
@@ -424,4 +416,4 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-proxy'], skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{skinnable:false, optional:['dd-proxy'], requires:['dd-drag']});

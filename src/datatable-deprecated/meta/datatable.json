@@ -1,0 +1,42 @@
+{
+    "datatable-deprecated": {
+        "use": [
+            "datatable-base-deprecated",
+            "datatable-datasource-deprecated",
+            "datatable-sort-deprecated",
+            "datatable-scroll-deprecated"
+        ],
+        "submodules": {
+            "datatable-base-deprecated": {
+                "requires": [
+                    "recordset-base",
+                    "widget",
+                    "substitute",
+                    "event-mouseenter"
+                ],
+                "skinnable": true
+            },
+            "datatable-datasource-deprecated": {
+                "requires": [
+                    "datatable-base-deprecated",
+                    "plugin",
+                    "datasource-local"
+                ]
+            },
+            "datatable-sort-deprecated": {
+                "requires": [
+                    "datatable-base-deprecated",
+                    "plugin",
+                    "recordset-sort"
+                ],
+                "lang": ["en"]
+            },
+			"datatable-scroll-deprecated": {
+				"requires": [
+					"datatable-base-deprecated",
+					"plugin"
+				]
+			}
+        }
+    }
+}

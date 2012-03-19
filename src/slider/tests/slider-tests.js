@@ -515,21 +515,136 @@ suite.add( new Y.Test.Case({
     },
 
     "test clickableRail": function () {
-        
+        var slider = new Y.Slider({
+                width    : '300px',
+                clickableRail: true
+            }),
+            railRegion, where, fired;
+
+        slider.on('railMouseDown', function () {
+            fired = true;
+        });
+
+        slider.render('#testbed');
+
+        railRegion = slider.rail.get('region');
+        where = {
+            clientX: railRegion.left + Math.floor(railRegion.width / 2),
+            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+        };
+
+        slider.on('railMouseDown', function (e) {
+            fired = true;
+        });
+
+        slider.rail.simulate('mousedown', where);
+        slider.rail.simulate('mouseup', where);
+        slider.rail.simulate('click', where);
+
+        Y.Assert.isTrue(fired, "railMouseDown didn't fire for clickableRail: true");
+
+        fired = false;
+
+        slider.destroy();
+
+        Y.one('#testbed').empty();
+
+        slider = new Y.Slider({
+            width    : '300px',
+            clickableRail: false
+        });
+
+        slider.on('railMouseDown', function () {
+            fired = true;
+        });
+
+        slider.render('#testbed');
+
+        slider.rail.simulate('mousedown', where);
+        slider.rail.simulate('mouseup', where);
+        slider.rail.simulate('click', where);
+
+        Y.Assert.isFalse(fired, "railMouseDown fired for clickableRail: false");
+
+        slider.destroy();
     },
 
     "test min": function () {
+        var slider = new Y.Slider({ min: -100 });
+
+        Y.Assert.areSame(-100, slider.get('min'));
+
+        slider.set('min', 0);
+
+        Y.Assert.areSame(0, slider.get('min'));
+
+        slider.destroy();
     },
 
     "test max": function () {
+        var slider = new Y.Slider({ max: 33 });
+
+        Y.Assert.areSame(33, slider.get('max'));
+
+        slider.set('max', 80);
+
+        Y.Assert.areSame(80, slider.get('max'));
+
+        slider.destroy();
     },
 
     "test value": function () {
+        var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.set('value', 0);
+
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting the value outside the min or max should constrain it": function () {
+        var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.set('value', -10);
+
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', 110);
+
+        Y.Assert.areSame(100, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting the min or max should update the value if necessary": function () {
+        var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        slider.render('#testbed');
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.set('min', 60);
+
+        Y.Assert.areSame(60, slider.get('value'));
+
+        slider.set('min', 0);
+        Y.Assert.areSame(60, slider.get('value'));
+
+        slider.set('max', 50);
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.destroy();
     }
 }));
 
 suite.add( new Y.Test.Case({
-    name: "Keyboard",
+    name: "Mouse",
 
     setUp: function () {
         Y.one("body").append('<div id="testbed"></div>');
@@ -712,22 +827,6 @@ suite.add( new Y.Test.Case({
         slider.destroy();
     }
 }));
-
-
-/*
-suite.add( new Y.Test.Case({
-    name: "Bugs",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
-*/
 
 Y.Test.Runner.add( suite );
 

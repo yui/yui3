@@ -22,11 +22,6 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
-        _re: {
-            attr: /(\[[^\]]*\])/g,
-            esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
-            pseudos: /(\([^\)]*\))/g
-        },
 
         // TODO: better detection, document specific
         _isXML: (function() {
@@ -319,7 +314,7 @@ var PARENT_NODE = 'parentNode',
          */
         _tokenize: function(selector) {
             selector = selector || '';
-            selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
+            selector = Selector._parseSelector(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
                 query = selector, // original query for debug report
                 tokens = [],    // array of tokens
@@ -380,28 +375,18 @@ var PARENT_NODE = 'parentNode',
             return tokens;
         },
 
+        _replaceMarkers: function(selector) {
+            selector = selector.replace(/\[/g, '\uE003');
+            selector = selector.replace(/\]/g, '\uE004');
+
+            selector = selector.replace(/\(/g, '\uE005');
+            selector = selector.replace(/\)/g, '\uE006');
+            return selector;
+        },
+
         _replaceShorthand: function(selector) {
-            var shorthand = Selector.shorthand,
-                esc = selector.match(Selector._re.esc), // pull escaped colon, brackets, etc. 
-                attrs,
-                pseudos,
-                re, i, len;
-
-            if (esc) {
-                selector = selector.replace(Selector._re.esc, '\uE000');
-            }
-
-            pseudos = selector.match(Selector._re.pseudos);
-
-            if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, '\uE002');
-            }
-
-            attrs = selector.match(Selector._re.attr);
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, '\uE001');
-            }
+            var shorthand = Y.Selector.shorthand,
+                re;
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
@@ -409,29 +394,24 @@ var PARENT_NODE = 'parentNode',
                 }
             }
 
-            if (attrs) {
-                for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace(/\uE001/, attrs[i]);
-                }
-            }
+            return selector;
+        },
 
-            if (pseudos) {
-                for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace(/\uE002/, pseudos[i]);
-                }
-            }
+        _parseSelector: function(selector) {
+            var replaced = Y.Selector._replaceSelector(selector),
+                selector = replaced.selector;
 
-            selector = selector.replace(/\[/g, '\uE003');
-            selector = selector.replace(/\]/g, '\uE004');
+            // replace shorthand (".foo, #bar") after pseudos and attrs
+            // to avoid replacing unescaped chars
+            selector = Y.Selector._replaceShorthand(selector);
 
-            selector = selector.replace(/\(/g, '\uE005');
-            selector = selector.replace(/\)/g, '\uE006');
+            selector = Y.Selector._restore('attr', selector, replaced.attrs);
+            selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);
 
-            if (esc) {
-                for (i = 0, len = esc.length; i < len; ++i) {
-                    selector = selector.replace('\uE000', esc[i]);
-                }
-            }
+            // replace braces and parens before restoring escaped chars
+            // to avoid replacing ecaped markers
+            selector = Y.Selector._replaceMarkers(selector);
+            selector = Y.Selector._restore('esc', selector, replaced.esc);
 
             return selector;
         },

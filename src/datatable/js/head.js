@@ -2,6 +2,22 @@
 View class responsible for rendering the `<thead>` section of a table. Used as
 the default `headerView` for `Y.DataTable.Base` and `Y.DataTable` classes.
 
+@module datatable
+@submodule datatable-head
+@since 3.5.0
+**/
+var Lang = Y.Lang,
+    fromTemplate = Lang.sub,
+    isArray = Lang.isArray,
+    toArray = Y.Array,
+
+    ClassNameManager = Y.ClassNameManager,
+    _getClassName    = ClassNameManager.getClassName;
+
+/**
+View class responsible for rendering the `<thead>` section of a table. Used as
+the default `headerView` for `Y.DataTable.Base` and `Y.DataTable` classes.
+
 Translates the provided array of column configuration objects into a rendered
 `<thead>` based on the data in those objects.
     
@@ -48,30 +64,21 @@ Supported properties of the column objects include:
 Through the life of instantiation and rendering, the column objects will have
 the following properties added to them:
 
+  * `id`       - (Defaulted by DataTable) The id to assign the rendered column
   * `_colspan` - To supply the `<th>` attribute
   * `_rowspan` - To supply the `<th>` attribute
   * `_parent`  - (Added by DataTable) If the column is a child of another
     column, this points to its parent column
-  * `_yuid`    - (Added by DataTable) A unique YUI generated id used as the
-    `<th>`'s 'id' for reference in the data `<td>`'s 'headers' attribute.
 
 The column object is also used to provide values for {placeholder} tokens in the
 instance's `CELL_TEMPLATE`, so you can modify the template and include other
 column object properties to populate them.
 
-@module datatable-head
 @class HeaderView
 @namespace DataTable
 @extends View
+@since 3.5.0
 **/
-var Lang = Y.Lang,
-    fromTemplate = Lang.sub,
-    isArray = Lang.isArray,
-    toArray = Y.Array,
-
-    ClassNameManager = Y.ClassNameManager,
-    _getClassName    = ClassNameManager.getClassName;
-
 Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     // -- Instance properties -------------------------------------------------
 
@@ -81,10 +88,11 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{_yuid}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
+    @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
+    @since 3.5.0
     **/
     CELL_TEMPLATE:
-        '<th id="{_yuid}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
+        '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -94,6 +102,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @property columns
     @type {Array[]}
     @default (initially unset)
+    @since 3.5.0
     **/
     //TODO: should this be protected?
     //columns: null,
@@ -105,6 +114,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @property ROW_TEMPLATE
     @type {HTML}
     @default '<tr>{content}</tr>'
+    @since 3.5.0
     **/
     ROW_TEMPLATE:
         '<tr>{content}</tr>',
@@ -117,6 +127,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @property source
     @type {Object}
     @default (initially unset)
+    @since 3.5.0
     **/
     //TODO: should this be protected?
     //source: null,
@@ -134,6 +145,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @method getClassName
     @param {String} token* Any number of tokens to include in the class name
     @return {String} The generated class name
+    @since 3.5.0
     **/
     getClassName: function () {
         var args = toArray(arguments);
@@ -151,6 +163,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @method render
     @return {HeaderView} The instance
     @chainable
+    @since 3.5.0
     **/
     render: function () {
         var thead    = this.get('container'),
@@ -226,6 +239,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @type {String}
     @default 'yui3-table'
     @protected
+    @since 3.5.0
     **/
     _cssPrefix: ClassNameManager.getClassName('table'),
 
@@ -235,6 +249,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @method _afterColumnsChange
     @param {EventFacade} e The `columnsChange` event object
     @protected
+    @since 3.5.0
     **/
     _afterColumnsChange: function (e) {
         this.columns = this._parseColumns(e.newVal);
@@ -247,6 +262,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @method bindUI
     @protected
+    @since 3.5.0
     **/
     bindUI: function () {
         if (this.source && !this._eventHandles.columnsChange) {
@@ -262,6 +278,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @method destructor
     @protected
+    @since 3.5.0
     **/
     destructor: function () {
         (new Y.EventHandle(Y.Object.values(this._eventHandles))).detach();
@@ -275,6 +292,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_eventHandles: null,
 
@@ -288,6 +306,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @method initializer
     @param {Object} config Configuration data
     @protected
+    @since 3.5.0
     **/
     initializer: function (config) {
         config || (config = {});
@@ -348,12 +367,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     with arrays for rows and objects for cells.  Column objects have the
     following properties added to them:
     
-      * `colspan` - Per the `<th>` attribute
-      * `rowspan` - Per the `<th>` attribute
-      * `parent`  - If the column is a child of another column, this points to
-        its parent column
-      * `_yuid`   - A unique YUI generated id used as the `<th>`'s 'id' for
-        reference in the data `<td>`'s 'headers' attribute.
+      * `id`       - (Defaulted by DataTable) The id to assign the rendered
+                     column
+      * `_colspan` - Per the `<th>` attribute
+      * `_rowspan` - Per the `<th>` attribute
+      * `_parent`  - (Added by DataTable) If the column is a child of another
+        column, this points to its parent column
 
     The column object is also used to provide values for {placeholder}
     replacement in the `CELL_TEMPLATE`, so you can modify the template and
@@ -364,6 +383,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @return {Array[]} An array of arrays corresponding to the header row
             structure to render
     @protected
+    @since 3.5.0
     **/
     _parseColumns: function (data) {
         var columns = [],
@@ -439,12 +459,12 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                     entry[1] = i;
 
                     // collect the IDs of parent cols
-                    col._headers = [col._yuid];
+                    col._headers = [col.id];
 
                     for (j = stack.length - 2; j >= 0; --j) {
                         parent = stack[j][0][stack[j][1]];
 
-                        col._headers.unshift(parent._yuid);
+                        col._headers.unshift(parent.id);
                     }
 
                     if (children && children.length) {

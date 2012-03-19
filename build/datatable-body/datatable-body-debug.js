@@ -4,6 +4,27 @@ YUI.add('datatable-body', function(Y) {
 View class responsible for rendering the `<tbody>` section of a table. Used as
 the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
 
+@module datatable
+@submodule datatable-body
+@since 3.5.0
+**/
+var Lang         = Y.Lang,
+    isArray      = Lang.isArray,
+    isNumber     = Lang.isNumber,
+    isString     = Lang.isString,
+    fromTemplate = Lang.sub,
+    htmlEscape   = Y.Escape.html,
+    toArray      = Y.Array,
+    bind         = Y.bind,
+    YObject      = Y.Object,
+
+    ClassNameManager = Y.ClassNameManager,
+    _getClassName    = ClassNameManager.getClassName;
+
+/**
+View class responsible for rendering the `<tbody>` section of a table. Used as
+the default `bodyView` for `Y.DataTable.Base` and `Y.DataTable` classes.
+
 Translates the provided `modelList` into a rendered `<tbody>` based on the data
 in the constituent Models, altered or ammended by any special column
 configurations.
@@ -76,22 +97,11 @@ If a `nodeFormatter` returns `false`, the `o.td` and `o.cell` Nodes will be
 elements will remain as will any content added to them.  _It is highly
 advisable to always return `false` from your `nodeFormatter`s_.
 
-@module datatable-body
 @class BodyView
 @namespace DataTable
 @extends View
+@since 3.5.0
 **/
-var Lang         = Y.Lang,
-    isArray      = Lang.isArray,
-    fromTemplate = Lang.sub,
-    htmlEscape   = Y.Escape.html,
-    toArray      = Y.Array,
-    bind         = Y.bind,
-    YObject      = Y.Object,
-
-    ClassNameManager = Y.ClassNameManager,
-    _getClassName    = ClassNameManager.getClassName;
-
 Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // -- Instance properties -------------------------------------------------
 
@@ -101,6 +111,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @property CELL_TEMPLATE
     @type {HTML}
     @default '<td {headers} class="{className}">{content}</td>'
+    @since 3.5.0
     **/
     CELL_TEMPLATE: '<td {headers} class="{className}">{content}</td>',
 
@@ -113,6 +124,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @property CLASS_EVEN
     @type {String}
     @default 'yui3-table-even'
+    @since 3.5.0
     **/
     //CLASS_EVEN: null
 
@@ -125,6 +137,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @property CLASS_ODD
     @type {String}
     @default 'yui3-table-odd'
+    @since 3.5.0
     **/
     //CLASS_ODD: null
 
@@ -133,9 +146,10 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @property ROW_TEMPLATE
     @type {HTML}
-    @default '<tr id="{rowId}" class="{rowClass}">{content}</tr>'
+    @default '<tr id="{rowId}" data-yui3-record="{clientId}" class="{rowClass}">{content}</tr>'
+    @since 3.5.0
     **/
-    ROW_TEMPLATE : '<tr id="{rowId}" class="{rowClass}">{content}</tr>',
+    ROW_TEMPLATE : '<tr id="{rowId}" data-yui3-record="{clientId}" class="{rowClass}">{content}</tr>',
 
     /**
     The object that serves as the source of truth for column and row data.
@@ -145,6 +159,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @property source
     @type {Object}
     @default (initially unset)
+    @since 3.5.0
     **/
     //TODO: should this be protected?
     //source: null,
@@ -152,24 +167,67 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // -- Public methods ------------------------------------------------------
 
     /**
-    Returns the `<td>` Node from the given row and column index.  If there is
-    no cell at the given coordinates, `null` is returned.
+    Returns the `<td>` Node from the given row and column index.  Alternately,
+    the `seed` can be a Node.  If so, the nearest ancestor cell is returned.
+    If the `seed` is a cell, it is returned.  If there is no cell at the given
+    coordinates, `null` is returned.
+
+    Optionally, include an offset array or string to return a cell near the
+    cell identified by the `seed`.  The offset can be an array containing the
+    number of rows to shift followed by the number of columns to shift, or one
+    of "above", "below", "next", or "previous".
+
+    <pre><code>// Previous cell in the previous row
+    var cell = table.getCell(e.target, [-1, -1]);
+
+    // Next cell
+    var cell = table.getCell(e.target, 'next');
+    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
 
     @method getCell
-    @param {Number} row Zero based index of the row with the target cell
-    @param {Number} col Zero based index of the column with the target cell
+    @param {Number[]|Node} seed Array of row and column indexes, or a Node that
+        is either the cell itself or a descendant of one.
+    @param {Number[]|String} [shift] Offset by which to identify the returned
+        cell Node
     @return {Node}
+    @since 3.5.0
     **/
-    getCell: function (row, col) {
+    getCell: function (seed, shift) {
         var tbody = this.get('container'),
-            el;
+            row, cell, index, rowIndexOffset;
 
-        if (tbody) {
-            el = tbody.getDOMNode().rows[+row];
-            el && (el = el.cells[+col]);
+        if (seed && tbody) {
+            if (isArray(seed)) {
+                row = tbody.get('children').item(seed[0]);
+                cell = row && row.get('children').item(seed[1]);
+            } else if (Y.instanceOf(seed, Y.Node)) {
+                cell = seed.ancestor('.' + this.getClassName('cell'), true);
+            }
+
+            if (cell && shift) {
+                rowIndexOffset = tbody.get('firstChild.rowIndex');
+                if (isString(shift)) {
+                    // TODO this should be a static object map
+                    switch (shift) {
+                        case 'above'   : shift = [-1, 0]; break;
+                        case 'below'   : shift = [1, 0]; break;
+                        case 'next'    : shift = [0, 1]; break;
+                        case 'previous': shift = [0, -1]; break;
+                    }
+                }
+
+                if (isArray(shift)) {
+                    index = cell.get('parentNode.rowIndex') +
+                                shift[0] - rowIndexOffset;
+                    row   = tbody.get('children').item(index);
+
+                    index = cell.get('cellIndex') + shift[1];
+                    cell  = row && row.get('children').item(index);
+                }
+            }
         }
         
-        return Y.one(el);
+        return cell || null;
     },
 
     /**
@@ -182,6 +240,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method getClassName
     @param {String} token* Any number of tokens to include in the class name
     @return {String} The generated class name
+    @since 3.5.0
     **/
     getClassName: function () {
         var args = toArray(arguments);
@@ -192,18 +251,63 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
-    Returns the `<tr>` Node from the given row index.  If there is
-    no row at the given index, `null` is returned.
+    Returns the Model associated to the record `id`, `clientId`, or index (not
+    row index).  If a DOM element id or Node for a table row or child of a row
+    is passed, that will work, too.
+
+    If no Model can be found, `null` is returned.
+
+    @method getRecord
+    @param {Number|String|Node} seed Record `id`, `clientId`, index, Node, or
+        identifier for a row or child element
+    @return {Model}
+    @since 3.5.0
+    **/
+    getRecord: function (seed) {
+        var modelList = this.get('modelList'),
+            tbody     = this.get('container'),
+            row       = null,
+            record;
+
+        if (tbody) {
+            if (isString(seed)) {
+                if (!record) {
+                    seed = tbody.one('#' + seed);
+                }
+            }
+
+            if (Y.instanceOf(seed, Y.Node)) {
+                row = seed.ancestor(function (node) {
+                    return node.get('parentNode').compareTo(tbody);
+                }, true);
+
+                record = row &&
+                    modelList.getByClientId(row.getData('yui3-record'));
+            }
+        }
+
+        return record || null;
+    },
+
+    /**
+    Returns the `<tr>` Node from the given row index, Model, or Model's
+    `clientId`.  If the rows haven't been rendered yet, or if the row can't be
+    found by the input, `null` is returned.
 
     @method getRow
-    @param {Number} row Zero based index of the row
+    @param {Number|String|Model} id Row index, Model instance, or clientId
     @return {Node}
+    @since 3.5.0
     **/
-    // TODO: Support index as clientId => container.one('> #' + index)?
-    getRow: function (index) {
-        var tbody = this.get('container');
+    getRow: function (id) {
+        var tbody = this.get('container') || null;
 
-        return Y.one(tbody && tbody.getDOMNode().rows[+index]);
+        if (id) {
+            id = this._idMap[id.get ? id.get('clientId') : id] || id;
+        }
+
+        return tbody &&
+            Y.one(isNumber(id) ? tbody.get('children').item(id) : '#' + id);
     },
 
     /**
@@ -294,6 +398,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method render
     @return {BodyView} The instance
     @chainable
+    @since 3.5.0
     **/
     render: function () {
         var tbody   = this.get('container'),
@@ -321,6 +426,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method _afterColumnsChange
     @param {EventFacade} e The `columnsChange` event object
     @protected
+    @since 3.5.0
     **/
     // TODO: Preserve existing DOM
     // This will involve parsing and comparing the old and new column configs
@@ -334,7 +440,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         this.render();
     },
-    
+
     /**
     Handles modelList changes, including additions, deletions, and updates.
 
@@ -343,10 +449,36 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method _afterDataChange
     @param {EventFacade} e The `change` event from the ModelList
     @protected
+    @since 3.5.0
     **/
     _afterDataChange: function (e) {
         // Baseline view will just rerender the tbody entirely
         this.render();
+    },
+
+    /**
+    Reacts to a change in the instance's `modelList` attribute by breaking
+    down the bubbling relationship with the previous `modelList` and setting up
+    that relationship with the new one.
+
+    @method _afterModelListChange
+    @param {EventFacade} e The `modelListChange` event
+    @protected
+    @since 3.5.0
+    **/
+    _afterModelListChange: function (e) {
+        var old = e.prevVal,
+            now = e.newVal;
+
+        if (old && old.removeTarget) {
+            old.removeTarget(this);
+        }
+
+        if (now && now.addTarget(this)) {
+            now.addTarget(this);
+        }
+
+        this._idMap = {};
     },
 
     /**
@@ -357,14 +489,14 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @param {Node} tbody The `<tbody>` Node whose columns to update
     @param {Object[]} columns The column configurations
     @protected
+    @since 3.5.0
     **/
     _applyNodeFormatters: function (tbody, columns) {
         var source = this.source,
             data = this.get('modelList'),
             formatters = [],
-            tbodyNode  = tbody.getDOMNode(),
             linerQuery = '.' + this.getClassName('liner'),
-            i, len;
+            rows, i, len;
 
         // Only iterate the ModelList again if there are nodeFormatters
         for (i = 0, len = columns.length; i < len; ++i) {
@@ -374,23 +506,26 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         }
 
         if (data && formatters.length) {
+            rows = tbody.get('childNodes');
+
             data.each(function (record, index) {
                 var formatterData = {
                         data      : record.toJSON(),
                         record    : record,
                         rowIndex  : index
                     },
-                    row = tbodyNode.rows[index],
-                    i, len, col, key, cell, keep;
+                    row = rows.item(index),
+                    i, len, col, key, cells, cell, keep;
 
 
                 if (row) {
+                    cells = row.get('childNodes');
                     for (i = 0, len = formatters.length; i < len; ++i) {
-                        cell = Y.one(row.cells[formatters[i]]);
+                        cell = cells.item(formatters[i]);
 
                         if (cell) {
                             col = formatterData.column = columns[formatters[i]];
-                            key = col.key || col._yuid;
+                            key = col.key || col.id;
 
                             formatterData.value = record.get(key);
                             formatterData.td    = cell;
@@ -418,21 +553,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @method bindUI
     @protected
+    @since 3.5.0
     **/
     bindUI: function () {
-        var handles = this._eventHandles,
-            data    = this.get('modelList');
+        var handles = this._eventHandles;
 
         if (this.source && !handles.columnsChange) {
-            handles.columnsChange =
-                this.source.after('columnsChange',
-                    bind('_afterColumnsChange', this));
+            handles.columnsChange = this.source.after('columnsChange',
+                bind('_afterColumnsChange', this));
         }
 
         if (!handles.dataChange) {
-            handles.dataChange = 
-                data.after(['*:change', 'add', 'remove', 'reset'],
-                    bind('_afterDataChange', this));
+            handles.dataChange = this.after(
+                ['modelListChange', '*:change', '*:add', '*:remove', '*:reset'],
+                bind('_afterDataChange', this));
         }
     },
 
@@ -443,6 +577,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @type {String}
     @default 'yui3-table'
     @protected
+    @since 3.5.0
     **/
     _cssPrefix: ClassNameManager.getClassName('table'),
 
@@ -458,6 +593,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @return {HTML} The markup for all Models in the `modelList`, each applied
                 to the `_rowTemplate`
     @protected
+    @since 3.5.0
     **/
     _createDataHTML: function (columns) {
         var data = this.get('modelList'),
@@ -504,11 +640,14 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @param {Number} index The index the row will be appearing
     @return {HTML} The markup for the provided Model, less any `nodeFormatter`s
     @protected
+    @since 3.5.0
     **/
     _createRowHTML: function (model, index) {
-        var data    = model.toJSON(),
-            values  = {
-                rowId   : model.get('clientId'),
+        var data     = model.toJSON(),
+            clientId = model.get('clientId'),
+            values   = {
+                rowId   : this._getRowId(clientId),
+                clientId: clientId,
                 rowClass: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
             source  = this.source || this,
@@ -574,6 +713,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method _createRowTemplate
     @param {Object[]} columns Array of column configuration objects
     @protected
+    @since 3.5.0
     **/
     _createRowTemplate: function (columns) {
         var html         = '',
@@ -615,8 +755,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     @method destructor
     @protected
+    @since 3.5.0
     **/
     destructor: function () {
+        // will unbind the bubble relationship and clear the table if necessary
+        this.set('modelList', null);
+
         (new Y.EventHandle(YObject.values(this._eventHandles))).detach();
     },
 
@@ -628,8 +772,30 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @type {Object}
     @default undefined (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_eventHandles: null,
+
+    /**
+    Returns the row ID associated with a Model's clientId.
+
+    @method _getRowId
+    @param {String} clientId The Model clientId
+    @return {String}
+    @protected
+    **/
+    _getRowId: function (clientId) {
+        return this._idMap[clientId] || (this._idMap[clientId] = Y.guid());
+    },
+
+    /**
+    Map of Model clientIds to row ids.
+
+    @property _idMap
+    @type {Object}
+    @protected
+    **/
+    //_idMap,
 
     /**
     Initializes the instance. Reads the following configuration properties in
@@ -642,14 +808,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method initializer
     @param {Object} config Configuration data
     @protected
+    @since 3.5.0
     **/
     initializer: function (config) {
-        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix;
+        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix,
+            modelList = this.get('modelList');
 
         this.source  = config.source;
         this.columns = this._parseColumns(config.columns);
 
         this._eventHandles = {};
+        this._idMap = {};
 
         if (cssPrefix) {
             this._cssPrefix = cssPrefix;
@@ -657,6 +826,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         this.CLASS_ODD  = this.getClassName('odd');
         this.CLASS_EVEN = this.getClassName('even');
+
+        this.after('modelListChange', bind('_afterModelListChange', this));
+
+        if (modelList && modelList.addTarget) {
+            modelList.addTarget(this);
+        }
     },
 
     /**
@@ -670,6 +845,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @param {Object[]} columns Working array of data columns. Used for recursion.
     @return {Object[]} Only those columns that will be rendered.
     @protected
+    @since 3.5.0
     **/
     _parseColumns: function (data, columns) {
         var col, i, len;
@@ -705,8 +881,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @type {HTML}
     @default (initially unset)
     @protected
+    @since 3.5.0
     **/
     //_rowTemplate: null
+}, {
+    ATTRS: {
+        modelList: {
+            setter: '_setModelList'
+        }
+    }
 });
 
 

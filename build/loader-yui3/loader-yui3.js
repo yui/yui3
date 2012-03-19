@@ -57,7 +57,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     }, 
-    "anim-transform": {
+    "anim-shape-transform": {
         "requires": [
             "anim-base", 
             "anim-easing", 
@@ -692,6 +692,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-base-deprecated": {
+        "requires": [
+            "recordset-base", 
+            "widget", 
+            "substitute", 
+            "event-mouseenter"
+        ], 
+        "skinnable": true
+    }, 
     "datatable-body": {
         "requires": [
             "datatable-core", 
@@ -716,6 +725,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base", 
             "plugin", 
             "datasource-local"
+        ]
+    }, 
+    "datatable-datasource-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "datasource-local"
+        ]
+    }, 
+    "datatable-deprecated": {
+        "use": [
+            "datatable-base-deprecated", 
+            "datatable-datasource-deprecated", 
+            "datatable-sort-deprecated", 
+            "datatable-scroll-deprecated"
         ]
     }, 
     "datatable-head": {
@@ -747,6 +771,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "datatable-scroll-deprecated": {
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin"
+        ]
+    }, 
     "datatable-sort": {
         "lang": [
             "en"
@@ -755,6 +785,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base"
         ], 
         "skinnable": true
+    }, 
+    "datatable-sort-deprecated": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base-deprecated", 
+            "plugin", 
+            "recordset-sort"
+        ]
     }, 
     "datatype": {
         "use": [
@@ -1298,6 +1338,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "file": {
+        "requires": [
+            "file-flash", 
+            "file-html5"
+        ]
+    }, 
+    "file-flash": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "file-html5": {
         "requires": [
             "base"
         ]
@@ -2180,6 +2231,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "uploader-flash"
         ]
     }, 
+    "uploader-deprecated": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "base", 
+            "swf"
+        ]
+    }, 
     "uploader-flash": {
         "requires": [
             "swf", 
@@ -2189,7 +2248,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssbutton", 
             "node", 
             "event-custom", 
-            "file", 
+            "file-flash", 
             "uploader-queue"
         ]
     }, 
@@ -2198,7 +2257,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget", 
             "node-event-simulate", 
             "substitute", 
-            "file", 
+            "file-html5", 
             "uploader-queue"
         ]
     }, 
@@ -2367,7 +2426,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c4db5e87ba2cdfd2ccf6e8a6f43b13a7';
+YUI.Env[Y.version].md5 = '0f82c1d4f0a041f12d3c4d0a82427fcc';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

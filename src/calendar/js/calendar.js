@@ -66,6 +66,11 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
   initializer : function () {
     this.plug(Y.Plugin.CalendarNavigator);
+
+
+    this._keyEvents = [];
+    this._highlightedDateNode = null;
+    this._lastSelectedDate = null;
   },
 
   /**
@@ -106,19 +111,17 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     var newNode = this._dateToNode(oDate);
     newNode.focus();
     newNode.addClass(CAL_DAY_HILITED);
-    //this._highlightedDateNode.set("tabIndex", -1);
-
-
   },
 
   /**
    * Unhighlights a specific date node currently highlighted with keyboard highlight class
-   * @method _unhighlightDateNode
+   * @method _unhighlightCurrentDateNode
    * @protected
    */   
   _unhighlightCurrentDateNode : function () {
-    if (this._highlightedDateNode) {
-      this._highlightedDateNode.removeClass(CAL_DAY_HILITED);
+    var allHilitedNodes = this.get("contentBox").all("." + CAL_DAY_HILITED);
+    if (allHilitedNodes) {
+      allHilitedNodes.removeClass(CAL_DAY_HILITED);
     }
   },
 
@@ -150,6 +153,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
    _focusCalendarCell : function (ev) {
        this._highlightedDateNode = ev.target;
+       ev.stopPropagation();
    },
 
   /**
@@ -157,7 +161,8 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    * @method _focusCalendarGrid
    * @protected
    */ 
-   _focusCalendarGrid : function (ev) {
+   _focusCalendarGrid : function (ev) {     
+       this._unhighlightCurrentDateNode();
        this._highlightedDateNode = null;
    },
 
@@ -168,11 +173,10 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
    _keydownCalendar : function (ev) {
     var gridNum = this._getGridNumber(ev.target),
-        curDate = this._highlightedDateNode == null ? null : this._nodeToDate(this._highlightedDateNode),
+        curDate = !this._highlightedDateNode ? null : this._nodeToDate(this._highlightedDateNode),
         keyCode = ev.keyCode,
         dayNum = 0,
         dir = '';
-
 
         switch(keyCode) {
           case KEY_DOWN: 
@@ -180,7 +184,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             dir = 's';
           break;
           case KEY_UP: 
-            dayNum = -7
+            dayNum = -7;
             dir = 'n';
           break;
           case KEY_LEFT: 
@@ -209,14 +213,14 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             }
           break;
         }
+ 
 
-      if (curDate == null) {
+      if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
+
+      if (!curDate) {
              curDate = ydate.addMonths(this.get("date"), gridNum);
              dayNum = 0;
       }
- 
-
-        if (keyCode == KEY_DOWN || keyCode == KEY_UP || keyCode == KEY_LEFT || keyCode == KEY_RIGHT) {
               ev.preventDefault();
           var newDate = ydate.addDays(curDate, dayNum),
               startDate = this.get("date"),
@@ -302,7 +306,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                   }
                }
                else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && ev.shiftKey) {
-                  if (this._lastSelectedDate != null) {
+                  if (this._lastSelectedDate) {
                     var selectedDate = this._nodeToDate(clickedCell);
                     this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
                     this._lastSelectedDate = selectedDate;
@@ -314,7 +318,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 
                }
                else if (ev.shiftKey) {
-                    if (this._lastSelectedDate != null) {
+                    if (this._lastSelectedDate) {
                       var selectedDate = this._nodeToDate(clickedCell);
                       this._clearSelection(true);
                       this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
@@ -456,16 +460,16 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             newTopDate = ydate.addMonths(newDate, this._paneNumber - 1);
         var minDate = this.get("minimumDate");
         var maxDate = this.get("maximumDate");
-            if ((minDate == null || ydate.isGreaterOrEqual(newDate, minDate)) && 
-                (maxDate == null || ydate.isGreaterOrEqual(maxDate, newTopDate))) {
+            if ((!minDate || ydate.isGreaterOrEqual(newDate, minDate)) && 
+                (!maxDate || ydate.isGreaterOrEqual(maxDate, newTopDate))) {
                 return newDate;
             }
 
-            else if (minDate != null && ydate.isGreater(minDate, newDate)) {
+            else if (minDate && ydate.isGreater(minDate, newDate)) {
                    return minDate;
             }
 
-            else if (maxDate != null && ydate.isGreater(newTopDate, maxDate)) {
+            else if (maxDate && ydate.isGreater(newTopDate, maxDate)) {
                 var actualMaxDate = ydate.addMonths(maxDate, -1*(this._paneNumber - 1));
                   return actualMaxDate;
             }
@@ -484,10 +488,10 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     minimumDate: {
       value: null,
       setter: function (val) {
-        if (val != null) {
+        if (val) {
           var curDate = this.get('date'),
               newMinDate = this._normalizeDate(val);
-          if (curDate!= null && !ydate.isGreaterOrEqual(curDate, newMinDate)) {
+          if (curDate && !ydate.isGreaterOrEqual(curDate, newMinDate)) {
               this.set('date', newMinDate);
           }
           return newMinDate;
@@ -510,10 +514,10 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     maximumDate: {
       value: null,
       setter: function (val) {
-        if (val != null) {
+        if (val) {
           var curDate = this.get('date'),
               newMaxDate = this._normalizeDate(val);
-          if (curDate!= null && !ydate.isGreaterOrEqual(val, ydate.addMonths(curDate, this._paneNumber - 1))) {
+          if (curDate && !ydate.isGreaterOrEqual(val, ydate.addMonths(curDate, this._paneNumber - 1))) {
               this.set('date', ydate.addMonths(newMaxDate, -1*(this._paneNumber -1)));
           }
           return newMaxDate;

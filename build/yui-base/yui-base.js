@@ -934,7 +934,6 @@ with any configuration info required for the module.
                     ret = true,
                     data = response.data;
 
-
                 Y._loading = false;
 
                 if (data) {
@@ -952,8 +951,8 @@ with any configuration info required for the module.
                 }
 
                 if (redo && data) {
-                    Y._loading = false;
-                    Y._use(args, function() {
+                    Y._loading = true;
+                    Y._use(missing, function() {
                         if (Y._attach(data)) {
                             Y._notify(callback, response, data);
                         }
@@ -3579,6 +3578,7 @@ YUI.Env.aliases = {
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
+    "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3620,6 +3620,9 @@ Provides dynamic loading of remote JavaScript and CSS resources.
 **/
 
 var Lang = Y.Lang,
+
+    CUSTOM_ATTRS, // defined lazily in Y.Get.Transaction._createNode()
+
     Get, Transaction;
 
 Y.Get = Get = {
@@ -4500,11 +4503,25 @@ Transaction.prototype = {
     // -- Protected Methods ----------------------------------------------------
     _createNode: function (name, attrs, doc) {
         var node = doc.createElement(name),
-            attr;
+            attr, testEl;
+
+        if (!CUSTOM_ATTRS) {
+            // IE6 and IE7 expect property names rather than attribute names for
+            // certain attributes. Rather than sniffing, we do a quick feature
+            // test the first time _createNode() runs to determine whether we
+            // need to provide a workaround.
+            testEl = doc.createElement('div');
+            testEl.setAttribute('class', 'a');
+
+            CUSTOM_ATTRS = testEl.className === 'a' ? {} : {
+                'for'  : 'htmlFor',
+                'class': 'className'
+            };
+        }
 
         for (attr in attrs) {
             if (attrs.hasOwnProperty(attr)) {
-                node.setAttribute(attr, attrs[attr]);
+                node.setAttribute(CUSTOM_ATTRS[attr] || attr, attrs[attr]);
             }
         }
 
@@ -4944,9 +4961,9 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// graphics-canvas-default
+// graphics-canvas
 add('load', '1', {
-    "name": "graphics-canvas-default", 
+    "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
@@ -4975,28 +4992,29 @@ add('load', '2', {
 }, 
     "trigger": "autocomplete-list"
 });
-// graphics-svg
+// dd-gestures
 add('load', '3', {
-    "name": "graphics-svg", 
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
+});
+// scrollview-base-ie
+add('load', '4', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
 });
 // editor-para-ie
-add('load', '4', {
+add('load', '5', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
 // graphics-vml-default
-add('load', '5', {
+add('load', '6', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5006,7 +5024,7 @@ add('load', '5', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '6', {
+add('load', '7', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5019,7 +5037,7 @@ add('load', '6', {
     "trigger": "graphics"
 });
 // history-hash-ie
-add('load', '7', {
+add('load', '8', {
     "name": "history-hash-ie", 
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
@@ -5029,24 +5047,14 @@ add('load', '7', {
 }, 
     "trigger": "history-hash"
 });
-// transition-timer
-add('load', '8', {
-    "name": "transition-timer", 
-    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
-        ret = true;
-
-    if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
-
-    return ret;
-}, 
-    "trigger": "transition"
+// widget-base-ie
+add('load', '9', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
 });
 // dom-style-ie
-add('load', '9', {
+add('load', '10', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5077,7 +5085,7 @@ add('load', '9', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '10', {
+add('load', '11', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5086,12 +5094,6 @@ add('load', '10', {
     return ret;
 }, 
     "trigger": "selector"
-});
-// widget-base-ie
-add('load', '11', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -5102,19 +5104,34 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// dd-gestures
+// graphics-svg
 add('load', '13', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
-// scrollview-base-ie
+// transition-timer
 add('load', '14', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "transition-timer", 
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+    "trigger": "transition"
 });
 // app-transitions-native
 add('load', '15', {
@@ -5131,9 +5148,9 @@ add('load', '15', {
 }, 
     "trigger": "app-transitions"
 });
-// graphics-canvas
+// graphics-canvas-default
 add('load', '16', {
-    "name": "graphics-canvas", 
+    "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",

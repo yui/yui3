@@ -58,8 +58,7 @@ YUI({
     new Y.Test.Console().render('#log');
 
     //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.masterSuite.name = 'YUI Seed Static Loader Test Suite';
-    Y.Test.Runner.masterSuite.items[0].name = 'YUI Seed Static Loader Test Suite';
+    Y.Test.Runner.setName('YUI Seed Static Loader Test Suite');
     Y.Test.Runner.run();
 });
 

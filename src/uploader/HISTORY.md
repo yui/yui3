@@ -1,10 +1,12 @@
-Uploader Utility Change History
-===============================
+Uploader Utility (New) Change History
+=====================================
 
 3.5.0
   * Added HTML5Uploader layer
   * Refactored queue management out of Uploader
   * Introduced new APIs (more details in documentation)
+  * Added keyboard access to the Flash layer
+  * Old uploader has been deprecated as 'uploader-deprecated' module.
 
 3.4.1
 -----

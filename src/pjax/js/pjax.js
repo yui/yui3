@@ -36,6 +36,7 @@ Fired when an error occurs while attempting to load a URL via Ajax.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
 @param {String} url The absolute URL that failed to load.
+@since 3.5.0
 **/
 var EVT_ERROR = 'error',
 
@@ -52,6 +53,7 @@ Fired when a URL is successfully loaded via Ajax.
 @param {String} responseText Raw Ajax response text.
 @param {Number} status HTTP status code for the Ajax response.
 @param {String} url The absolute URL that was loaded.
+@since 3.5.0
 **/
 EVT_LOAD = 'load';
 
@@ -83,6 +85,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method getContent
     @param {String} responseText Raw Ajax response text.
     @return {Object} Content object with the properties described above.
+    @since 3.5.0
     **/
     getContent: function (responseText) {
         var content         = {},
@@ -116,6 +119,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method _defaultRoute
     @param {Object} req Request object.
     @protected
+    @since 3.5.0
     **/
     _defaultRoute: function (req) {
         var url = req.url;
@@ -159,6 +163,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
     @method _defCompleteFn
     @param {EventFacade} e
     @protected
+    @since 3.5.0
     **/
     _defCompleteFn: function (e) {
         var container = this.get('container'),
@@ -178,6 +183,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
 
     @method _onPjaxIOEnd
     @protected
+    @since 3.5.0
     **/
     _onPjaxIOEnd: function () {
         this._request = null;
@@ -188,6 +194,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
 
     @method _onPjaxIOFailure
     @protected
+    @since 3.5.0
     **/
     _onPjaxIOFailure: function (id, res, details) {
         var content = this.getContent(res.responseText);
@@ -205,6 +212,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
 
     @method _onPjaxIOSuccess
     @protected
+    @since 3.5.0
     **/
     _onPjaxIOSuccess: function (id, res, details) {
         var content = this.getContent(res.responseText);
@@ -234,6 +242,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         @attribute addPjaxParam
         @type Boolean
         @default true
+        @since 3.5.0
         **/
         addPjaxParam: {
             value: true
@@ -250,6 +259,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         @attribute container
         @type Node
         @default null
+        @since 3.5.0
         **/
         container: {
             value: null,
@@ -272,6 +282,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         @attribute contentSelector
         @type String
         @default null
+        @since 3.5.0
         **/
         contentSelector: {
             value: null
@@ -296,6 +307,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         @attribute titleSelector
         @type String
         @default "title"
+        @since 3.5.0
         **/
         titleSelector: {
             value: 'title'
@@ -308,6 +320,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
         @attribute timeout
         @type Number
         @default 30000
+        @since 3.5.0
         **/
         timeout: {
             value: 30000

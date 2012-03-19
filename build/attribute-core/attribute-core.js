@@ -76,13 +76,19 @@ YUI.add('attribute-core', function(Y) {
         removeAll: function(name, o) {
             var d = this.data;
 
-            Y.each(o || d, function(v, k) {
-                if(Y.Lang.isString(k)) {
-                    this.remove(name, k);
-                } else {
-                    this.remove(name, v);
+            if (!o) {
+                if (d[name]) {
+                    delete d[name];
                 }
-            }, this);
+            } else {
+                Y.each(o, function(v, k) {
+                    if(Y.Lang.isString(k)) {
+                        this.remove(name, k);
+                    } else {
+                        this.remove(name, v);
+                    }
+                }, this);
+            }
         },
 
         /**
@@ -693,6 +699,7 @@ YUI.add('attribute-core', function(Y) {
                 validator = cfg.validator,
                 setter = cfg.setter,
                 initializing = cfg.initializing,
+                prevRawVal = this._getStateVal(attrName),
                 name = subAttrName || attrName,
                 retVal,
                 valid;
@@ -730,7 +737,7 @@ YUI.add('attribute-core', function(Y) {
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && (newVal === this._getStateVal(attrName)) && !Lang.isObject(newVal)) {
+                    if(!subAttrName && (newVal === prevRawVal) && !Lang.isObject(newVal)) {
                         allowSet = false;
                     } else {
                         // Store value

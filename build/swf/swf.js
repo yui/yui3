@@ -56,10 +56,10 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 
     var _id = this._id;
     var oElement = Node.one(p_oElement);
-	
-	var p_oAttributes = p_oAttributes || {};
+    
+    var p_oAttributes = p_oAttributes || {};
 
-	var flashVersion = p_oAttributes["version"] || FLASH_VER;
+    var flashVersion = p_oAttributes.version || FLASH_VER;
 
     var flashVersionSplit = (flashVersion + '').split(".");
     var isFlashVersionRight = SWFDetect.isFlashVersionAtLeast(parseInt(flashVersionSplit[0], 10), parseInt(flashVersionSplit[1], 10), parseInt(flashVersionSplit[2], 10));
@@ -162,35 +162,35 @@ SWF.prototype = {
     },
 
         /**
-	 * Calls a specific function exposed by the SWF's
-	 * ExternalInterface.
-	 * @method callSWF
-	 * @param func {String} the name of the function to call
-	 * @param args {Array} the set of arguments to pass to the function.
-	 */
-	
-	callSWF: function (func, args)
-	{
-	if (!args) { 
-		  args= []; 
-	}	
-		if (this._swf._node[func]) {
-		return(this._swf._node[func].apply(this._swf._node, args));
-	    } else {
-		return null;
-	    }
-	},
-	
-	/**
-	 * Public accessor to the unique name of the SWF instance.
-	 *
-	 * @method toString
-	 * @return {String} Unique name of the SWF instance.
-	 */
-	toString: function()
-	{
-		return "SWF " + this._id;
-	}
+     * Calls a specific function exposed by the SWF's
+     * ExternalInterface.
+     * @method callSWF
+     * @param func {String} the name of the function to call
+     * @param args {Array} the set of arguments to pass to the function.
+     */
+    
+    callSWF: function (func, args)
+    {
+    if (!args) { 
+          args= []; 
+    }   
+        if (this._swf._node[func]) {
+        return(this._swf._node[func].apply(this._swf._node, args));
+        } else {
+        return null;
+        }
+    },
+    
+    /**
+     * Public accessor to the unique name of the SWF instance.
+     *
+     * @method toString
+     * @return {String} Unique name of the SWF instance.
+     */
+    toString: function()
+    {
+        return "SWF " + this._id;
+    }
 };
 
 Y.augment(SWF, Y.EventTarget);

@@ -516,7 +516,7 @@ Parent.prototype = {
             children = this._items;
 
         if (child.get("focused")) {
-            child.set("focused", false);
+            child.blur(); // focused is readOnly, so use the public i/f to unset it
         }
 
         if (child.get("selected")) {

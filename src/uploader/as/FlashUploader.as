@@ -27,6 +27,7 @@
 	import flash.utils.Dictionary; 
 	import flash.utils.setTimeout;
 	import flash.filters.GlowFilter;
+	import flash.accessibility.*;
 
 	[SWF(backgroundColor=0xFFFFFF)]
 
@@ -46,7 +47,6 @@
    */  
 		public function FlashUploader()
 		{
-			trace("Adding activate event");
 
             fileList = {};
             filesInProgress = {};
@@ -56,30 +56,30 @@
 			yuiBridge = new YUIBridge(this.stage);
 			yuiBridge.addCallbacks ({clearFileList:clearFileList, upload:upload,cancel:cancel,setAllowMultipleFiles:setAllowMultipleFiles,setSimUploadLimit:setSimUploadLimit,setFileFilters:setFileFilters,enable:enable, disable:disable});
 
-			/*
+			var _accProps:AccessibilityProperties = new AccessibilityProperties();
 			_accProps.silent = false;
-			_accProps.name = "Upload button";
-			_accProps.description = "Upload button";
+			_accProps.name = "Select Files button";
+			_accProps.description = "Select Files button";
 
 			this.accessibilityProperties = _accProps;
-        
-            function updateAccessibility():void {
-               trace("Accactive?", Accessibility.active);
-               if(Accessibility.active) {
-                   Accessibility.updateProperties();
-               }
+
+            // setTimeout(updateAccessibility, 2000); 
+
+            // this.log("Accactive? " + Accessibility.active);
+            if(Accessibility.active) {
+                Accessibility.updateProperties();
             }
 
-            setTimeout(updateAccessibility, 2000); 
-      		*/
-
-
-      		this.buttonGlow.color = 0x819DEB;
-      		this.buttonGlow.inner = true;
-      		this.buttonGlow.blurX = this.buttonGlow.blurY = 4;
-      		this.buttonGlow.knockout = true;
-
 			this.renderAsTransparent();
+		}
+
+        private function updateAccessibility():void {
+
+            }
+
+
+		private function log (msg: String) : void {
+			this.yuiBridge.sendEvent({type:"trace", message: msg});
 		}
  
 
@@ -89,18 +89,21 @@
 		 	}
 
 		private function keyboardEventHandler (evt : KeyboardEvent) : void {
-		 		trace("key received: " + evt.keyCode);
+		 	//	trace("key received: " + evt.keyCode);
+		 		this.log("Key pressed " + evt.keyCode);
+		 		this.log("Shift key " + evt.shiftKey);
+		 		this.log("Target " + evt.target);
+		 		this.log("In focus: " + this.stage.focus);
 		 		switch (evt.keyCode) {
 		 			case 9:
 		 			   if (evt.shiftKey) {
-		 			   	 trace("tabback");
+		 	//		   	 trace("tabback");
 		 			   	 this.yuiBridge.sendEvent({type:"tabback"});
 		 			   }
 		 			   else {
-		 			   trace("tabforward");
+		 	//		   trace("tabforward");
 		 			   this.yuiBridge.sendEvent({type:"tabforward"});
 		 			   }
-		 			   this.buttonSprite.filters = [];
 		 			   break;
 		 			case 32: 
 		 			case 13:
@@ -119,16 +122,19 @@
 			buttonSprite.width = this.stage.stageWidth;
 			buttonSprite.height = this.stage.stageHeight;
 			buttonSprite.graphics.endFill();
+			buttonSprite.tabEnabled = false;
+
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.tabChildren = false;
 			
 			this.stage.addEventListener(Event.RESIZE, this.transparentStageResize);
 			this.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.keyboardEventHandler);
-			trace("1.0");
+		//	trace("3.0");
 
 			this.buttonMode = true;
 			this.useHandCursor = true;
+			this.tabEnabled = false;
 			this.enable();
 			
 			this.addChild(buttonSprite);
@@ -142,7 +148,6 @@
 	    //--------------------------------------------------------------------------
 
 	    private var buttonSprite:Sprite = new Sprite();
-	    private var buttonGlow:GlowFilter = new GlowFilter();
 
 	    private var enabled:Boolean = true;
 
@@ -177,7 +182,7 @@
 
 		public function setAllowMultipleFiles (allowMultipleFiles:Boolean) : void {
 			this.allowMultiple = allowMultipleFiles;
-			yuiBridge.log("setAllowMultipleFiles has been called, and the allowMultiple value is now " + this.allowMultiple);
+			//yuiBridge.log("setAllowMultipleFiles has been called, and the allowMultiple value is now " + this.allowMultiple);
 		}
 
         
@@ -195,6 +200,7 @@
 				else {
 					singleFile.browse();
 				}
+
 			}
 
 			else {
@@ -218,16 +224,12 @@
 		// Enable or disable the button
 
 		public function enable () : void {
-
-
-
 				this.enabled = true;
 				this.addEventListener(MouseEvent.CLICK, handleMouseClick);
 			
 				this.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				this.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 				this.stage.addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
-				//this.sbroot.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, handleMouseUp);
 				this.addEventListener(MouseEvent.ROLL_OVER, handleRollOver);
 				this.addEventListener(MouseEvent.ROLL_OUT, handleRollOut);
 		}
@@ -239,7 +241,6 @@
 				this.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				this.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 				this.stage.removeEventListener(MouseEvent.MOUSE_UP, handleMouseUp);				
-				//this.sbroot.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, handleMouseUp);
 				this.removeEventListener(MouseEvent.ROLL_OVER, handleRollOver);
 				this.removeEventListener(MouseEvent.ROLL_OUT, handleRollOut);
 		}
@@ -258,18 +259,18 @@
 
 		public function upload(fileID:String, url:String, vars:Object = null, fieldName:String = "Filedata"):void {
 			
-			trace("upload has been called");
+		this.log("upload has been called");
 			if(isEmptyString(fieldName)) {
 				fieldName = "Filedata";
 			}
 
-			trace("The url is " + url);
+		this.log("The url is " + url);
 			var request:URLRequest = formURLRequest(url, "POST", vars);
 
 
 			var file:File = this.fileList[fileID];
 
-			trace("Got the file with id " + file.fileId);
+		this.log("Got the file with id " + file.fileId);
 
 			var fr:FileReference = file.fileReference;
 
@@ -302,9 +303,10 @@
 
         // Interactive mouse events
 
-		private function handleMouseClick (evt:MouseEvent) : void {
+		private function handleMouseClick (evt:*) : void {
 			this.browse(this.allowMultiple, this.filterArray);
 			var newEvent:Object = new Object();
+		this.log("mouseclick");
 			newEvent.type = "click";
 			yuiBridge.sendEvent(newEvent);
 		}	
@@ -312,24 +314,28 @@
 
 		private function handleMouseDown (event:MouseEvent) : void {
 			var newEvent:Object = new Object();
+		this.log("mousedown");
 			newEvent.type = "mousedown";
 			yuiBridge.sendEvent(newEvent);
 		}
 
 		private function handleMouseUp (event:*) : void {
 			var newEvent:Object = new Object();
+		this.log("mouseup");
 			newEvent.type = "mouseup";
 			yuiBridge.sendEvent(newEvent);
 		}
 
 		private function handleRollOver (event:MouseEvent) : void {
 			var newEvent:Object = new Object();
+		this.log("rollover");
 			newEvent.type = "mouseenter";
 			yuiBridge.sendEvent(newEvent);
 		}
 		
 		private function handleRollOut (event:MouseEvent) : void {
 			var newEvent:Object = new Object();
+		this.log("rollout");
 			newEvent.type = "mouseleave";
 			yuiBridge.sendEvent(newEvent);
 		}
@@ -337,7 +343,7 @@
 		
 		private function uploadStart (event:Event) : void {
 			var newEvent:Object = new Object();
-			trace("uploadStart fired for: " + event.target.fileId);
+		this.log("START fired for: " + event.target.fileId);
 			newEvent.id = event.target.fileId;
 			newEvent.type = "uploadstart";
             yuiBridge.sendEvent(newEvent);
@@ -346,7 +352,7 @@
 
 		private function uploadProgress (event:ProgressEvent) : void {
 			var newEvent:Object = new Object();
-			trace("uploadStart fired for: " + event.target.fileId + ":::" + event.bytesLoaded + ":::" + event.bytesTotal);
+		    this.log("PROGRESS fired for: " + event.target.fileReference.name + ":::" + event.bytesLoaded + ":::" + event.bytesTotal);
 			newEvent.id = event.target.fileId;
 			newEvent.bytesLoaded = event.bytesLoaded;
 			newEvent.bytesTotal = event.bytesTotal;
@@ -357,7 +363,7 @@
 
 		private function uploadComplete (event:Event) : void {
 			var newEvent:Object = new Object();
-			trace("uploadComplete fired for: " + event.target.fileId);			
+		    this.log("COMPLETE fired for: " + event.target.fileId);			
 			newEvent.id = event.target.fileId;
 			newEvent.type = "uploadcomplete";
 			yuiBridge.sendEvent(newEvent);
@@ -366,7 +372,7 @@
 
 		private function uploadCompleteData (event:DataEvent) : void {
 			var newEvent:Object = new Object();
-			trace("uploadCompleteData fired for: " + event.target.fileId);
+		this.log("COMPLETEDATA fired for: " + event.target.fileId);
 			newEvent.id = event.target.fileId;
 			newEvent.data = event.data;
 			newEvent.type = "uploadcompletedata";
@@ -375,7 +381,7 @@
 		
 		private function uploadCancel (event:Event) : void {			
 			var newEvent:Object = new Object();
-			trace("uploadCancel fired for: " + event.target.fileId);
+		this.log("CANCEL fired for: " + event.target.fileId);
 			newEvent.id = event.target.fileId;
 			newEvent.type = "uploadcancel";
 			yuiBridge.sendEvent(newEvent);
@@ -384,17 +390,21 @@
 
 		private function uploadError (event:Event) : void {
 			var newEvent:Object = new Object();
-		    trace("uploadError has fired for: " + event.target.fileId);
-		    trace("The event type is " + event.type);
+		this.log("ERROR has fired for: " + event.target.fileId);
+		this.log("The event type is " + event.type);
 		    if (event is IOErrorEvent) {
-		    trace("The event text is " + (event as IOErrorEvent).text);
+				this.log("The event text is " + (event as IOErrorEvent).text);
+		        newEvent.source="io";
+		        newEvent.message = (event as IOErrorEvent).text;
 		    }
 		    else if (event is HTTPStatusEvent) {
-		    trace("The event status is " + (event as HTTPStatusEvent).status);		    	
+		        this.log("The event status is " + (event as HTTPStatusEvent).status);		    	
+		        newEvent.source="http";
+		        newEvent.message = (event as HTTPStatusEvent).status;
 		    }
 			for (var itemName:String in event) {
 				newEvent[itemName] = event[itemName];
-				trace("Error details / " + itemName + ": " + event[itemName]);
+				this.log("Error details / " + itemName + ": " + event[itemName]);
 			}
             
 	        newEvent.id = event.target.fileId;

@@ -4,7 +4,7 @@ Widget Parent Change History
 3.5.0
 -----
 
-  * No changes.
+  * Removing a focused child, now unsets activeDescendant properly
 
 3.4.1
 -----
