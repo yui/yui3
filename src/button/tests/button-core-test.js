@@ -4,10 +4,10 @@ YUI.add('button-core-test', function (Y) {
         ArrayAssert = Y.ArrayAssert,
         suite;
     
-    suite = new Y.Test.Suite('Buttons');
+    suite = new Y.Test.Suite('button-core');
 
     suite.add(new Y.Test.Case({
-        name: 'button core',
+        name: 'Attributes',
 
         setUp : function () {
             Y.one("#container").setContent('<button id="testButton">Hello</button>');
@@ -101,7 +101,7 @@ YUI.add('button-core-test', function (Y) {
     }));
     
     suite.add(new Y.Test.Case({
-        name: 'misc button core',
+        name: 'Instantiation',
 
         setUp : function () {
 
