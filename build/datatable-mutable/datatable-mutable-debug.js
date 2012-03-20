@@ -1,5 +1,12 @@
 YUI.add('datatable-mutable', function(Y) {
 
+/**
+Adds mutation convenience methods such as `table.addRow(data)` to `Y.DataTable`. (or other built class).
+
+@module datatable
+@submodule datatable-mutable
+@since 3.5.0
+**/
 var toArray = Y.Array,
     YLang   = Y.Lang,
     isString = YLang.isString,
@@ -10,7 +17,10 @@ var toArray = Y.Array,
     Mutable;
 
 /**
-Adds mutation convenience methods to `Y.DataTable` (or other built class).
+_API docs for this extension are included in the DataTable class._
+
+Class extension to add mutation convenience methods to `Y.DataTable` (or other
+built class).
 
 Column mutation methods are paired with new custom events:
 
@@ -22,26 +32,26 @@ Column mutation methods are paired with new custom events:
 Row mutation events are bubbled from the DataTable's `data` ModelList through
 the DataTable instance.
 
-@module datatable-mutable
 @class DataTable.Mutable
 @for DataTable
+@since 3.5.0
 **/
-
 Y.namespace('DataTable').Mutable = Mutable = function () {};
 
-/**
-Controls whether `addRow`, `removeRow`, and `modifyRow` should trigger the
-underlying Model's sync layer by default.
-
-When `true`, it is unnecessary to pass the "sync" configuration property to
-those methods to trigger per-operation sync.
-
-
-@attribute autoSync
-@type {Boolean}
-@default `false`
-**/
 Mutable.ATTRS = {
+    /**
+    Controls whether `addRow`, `removeRow`, and `modifyRow` should trigger the
+    underlying Model's sync layer by default.
+
+    When `true`, it is unnecessary to pass the "sync" configuration property to
+    those methods to trigger per-operation sync.
+
+
+    @attribute autoSync
+    @type {Boolean}
+    @default `false`
+    @since 3.5.0
+    **/
     autoSync: {
         value: false,
         validator: YLang.isBoolean
@@ -83,6 +93,7 @@ Y.mix(Mutable.prototype, {
     @param {Number|Number[]} [index] the insertion index
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     addColumn: function (config, index) {
         if (isString(config)) {
@@ -124,6 +135,7 @@ Y.mix(Mutable.prototype, {
     @param {Object} config The new column configuration properties
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     modifyColumn: function (name, config) {
         if (isString(config)) {
@@ -152,6 +164,7 @@ Y.mix(Mutable.prototype, {
     @param {Number|Number[]} index The destination index of the column
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     moveColumn: function (name, index) {
         if (name !== undefined && (isNumber(index) || isArray(index))) {
@@ -172,6 +185,7 @@ Y.mix(Mutable.prototype, {
                 current configuration object
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     removeColumn: function (name) {
         if (name !== undefined) {
@@ -211,6 +225,7 @@ Y.mix(Mutable.prototype, {
         return an attribute hash.
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     addRow: function (data, config) {
         // Allow autoSync: true + addRow({ data }, { sync: false })
@@ -269,6 +284,7 @@ Y.mix(Mutable.prototype, {
         return an attribute hash.
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     removeRow: function (id, config) {
         var modelList = this.data,
@@ -342,6 +358,7 @@ Y.mix(Mutable.prototype, {
         return an attribute hash.
     @return {DataTable}
     @chainable
+    @since 3.5.0
     **/
     modifyRow: function (id, data, config) {
         var modelList = this.data,
@@ -386,6 +403,7 @@ Y.mix(Mutable.prototype, {
         @param {Object} e.column The new column definition object
         @param {Number|Number[]} e.index The array index to insert the new column
     @protected
+    @since 3.5.0
     **/
     _defAddColumnFn: function (e) {
         var index   = toArray(e.index),
@@ -415,6 +433,7 @@ Y.mix(Mutable.prototype, {
         @param {Object|String|Number|Number[]} e.column The column definition object or identifier
         @param {Object} e.newColumnDef The properties to assign to the column
     @protected
+    @since 3.5.0
     **/
     _defModifyColumnFn: function (e) {
         var columns = this.get('columns'),
@@ -439,6 +458,7 @@ Y.mix(Mutable.prototype, {
         @param {Object|String|Number|Number[]} e.column The column definition object or identifier
         @param {Object} e.index The destination index to move to
     @protected
+    @since 3.5.0
     **/
     _defMoveColumnFn: function (e) {
         var columns = this.get('columns'),
@@ -489,6 +509,7 @@ Y.mix(Mutable.prototype, {
     @param {EventFacade} e The `removeColumn` event
         @param {Object|String|Number|Number[]} e.column The column definition object or identifier
     @protected
+    @since 3.5.0
     **/
     _defRemoveColumnFn: function (e) {
         var columns = this.get('columns'),
@@ -518,6 +539,7 @@ Y.mix(Mutable.prototype, {
 
     @method initializer
     @protected
+    @since 3.5.0
     **/
     initializer: function () {
         this.publish({
@@ -560,6 +582,7 @@ as a callback to each Model's `save()` method.
     return an attribute hash.
 @return {DataTable}
 @chainable
+@since 3.5.0
 **/
 Mutable.prototype.addRows = Mutable.prototype.addRow;
 
@@ -575,6 +598,7 @@ Fired by the `addColumn` method.
 @preventable _defAddColumnFn
 @param {Object} column The new column definition object
 @param {Number|Number[]} index The array index to insert the new column
+@since 3.5.0
 **/
 
 /**
@@ -583,6 +607,7 @@ Fired by the `removeColumn` method.
 @event removeColumn
 @preventable _defRemoveColumnFn
 @param {Object|String|Number|Number[]} column The column definition object or identifier
+@since 3.5.0
 **/
 
 /**
@@ -592,6 +617,7 @@ Fired by the `modifyColumn` method.
 @preventable _defModifyColumnFn
 @param {Object|String|Number|Number[]} column The column definition object or identifier
 @param {Object} newColumnDef The properties to assign to the column
+@since 3.5.0
 **/
 
 /**
@@ -601,6 +627,7 @@ Fired by the `moveColumn` method.
 @preventable _defMoveColumnFn
 @param {Object|String|Number|Number[]} column The column definition object or identifier
 @param {Object} index The destination index to move to
+@since 3.5.0
 **/
 
 
