@@ -160,6 +160,8 @@ AppTransitions.prototype = {
 
     @example
         var app = new Y.App({
+            transitions: true,
+
             views: {
                 users: {
                     // Imagine that `Y.UsersView` has been defined.
@@ -173,7 +175,8 @@ AppTransitions.prototype = {
         });
 
         app.render();
-        app.navigate('/uses/'); // => Creates a new `Y.UsersView` and shows it.
+        app.navigate('/uses/');
+        // => Creates a new `Y.UsersView` and transitions to it.
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,

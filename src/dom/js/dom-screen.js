@@ -283,7 +283,7 @@ Y.mix(Y_DOM, {
      * (display:none or elements not appended return false).
      * @method getX
      * @param element The target element
-     * @return {Int} The X position of the element
+     * @return {Number} The X position of the element
      */
 
     getX: function(node) {
@@ -296,7 +296,7 @@ Y.mix(Y_DOM, {
      * (display:none or elements not appended return false).
      * @method getY
      * @param element The target element
-     * @return {Int} The Y position of the element
+     * @return {Number} The Y position of the element
      */
 
     getY: function(node) {
@@ -354,7 +354,7 @@ Y.mix(Y_DOM, {
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param element The target element
-     * @param {Int} x The X values for new position (coordinates are page-based)
+     * @param {Number} x The X values for new position (coordinates are page-based)
      */
     setX: function(node, x) {
         return Y_DOM.setXY(node, [x, null]);
@@ -365,7 +365,7 @@ Y.mix(Y_DOM, {
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param element The target element
-     * @param {Int} y The Y values for new position (coordinates are page-based)
+     * @param {Number} y The Y values for new position (coordinates are page-based)
      */
     setY: function(node, y) {
         return Y_DOM.setXY(node, [null, y]);
