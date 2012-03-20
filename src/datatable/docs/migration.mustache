@@ -1,4 +1,14 @@
 <style>
+li code,
+td code {
+    white-space: nowrap;
+    background: #fcfbfa;
+    border: 1px solid #d0d5ec;
+    padding: 0 3px;
+}
+li code {
+    border-color: #efeeed;
+}
 .yui3-skin-sam table {
     width: auto;
 }
@@ -14,17 +24,44 @@
     margin-left: 5%;
 }
 
+#quickref li {
+    margin: 1ex 0;
+}
+#quickref em code {
+    color: #900;
+}
+#quickref strong code {
+    color: #090;
+}
+#quickref pre.code {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .spendy {
     color: #b00;
 }
 </style>
 <div class="intro">
     <p>
-        In version 3.5.0, DataTable and supporting modules underwent a major
-        refactoring.  The new architecture <strong>does not support full backward
-        compatibility</strong> with versions 3.4.1 and prior.  This guide should
-        help answer questions that may come up when upgrading to the lastest
-        version.
+        DataTable and supporting modules were rebuilt in version 3.5.0.  The
+        new architecture is <strong>not fully backward compatible</strong> with
+        versions 3.4.1 and prior.  This guide is to help answer questions that
+        may come up when upgrading to the lastest version.
+    </p>
+
+    <p>
+        This guide focuses on 3.4.1 API compatibility.  It <strong>does not
+        describe new features added in 3.5.0</strong> (there were a lot).
+        Refer to the updated <a href="index.html">DataTable user guide</a> for
+        that.
+    </p>
+
+    <p>
+        If you are unable to upgrade due to unresolvable issues, you can use the
+        <a href="../datatable-deprecated/index.html">`datatable-deprecated`</a>
+        module suite, which is equivalent to the 3.4.1 implementation.  But be
+        aware that these modules will be removed in a future version of YUI.
     </p>
 </div>
 
@@ -33,675 +70,888 @@
 <p>
     The architectural change resulted in the deprecation, replacement, or
     removal of nearly all attributes and properties from the version 3.4.1
-    implementation.  We'll go into details below, but here are the high points:
+    implementation.  Here is a quick list of the changes most likely to affect
+    your upgrade:
 </p>
 
-<ol>
-    <li>`Y.DataTable` is now the preferred class for instantiation.</li>
-    <li>The `recordset` attribute is deprecated. Use `data`.</li>
-    <li>The `columnset` attribute is deprecated. Use `columns`.</li>
+<ol id="quickref">
     <li>
-        Cell formatters have changed a little, template attributes and
-        properties a lot.
+        `new `<em>`Y.DataTable.Base`</em>`(...)` &rarr;
+        `new `<strong>`Y.DataTable`</strong>`({ ... })`</strong>
     </li>
-    <li>Table markup has changed.</li>
-    <li>Table sorting is now via configuration, not plugin.</li>
-    <li>Table scrolling is now via configuration, not plugin.</li>
+    <li>
+        <div class="yui3-g">
+        <div class="yui3-u">
+            ```
+            new Y.DataTable.Base({
+                columnset: [ ... ],
+                recordset: [ ... ]
+            });
+            ```
+        </div>
+        <p class="yui3-u" style="line-height: 72px; margin: 0 1em;">&rarr;</p>
+        <div class="yui3-u">
+            ```
+            new Y.DataTable({
+                columns: [ ... ],
+                data   : [ ... ]
+            });
+            ```
+        </div>
+        </div>
+    </li>
+    <li>
+        `table.plug(`<em>`Y.Plugin.DataTableSort`</em>`)` &rarr; <em>(plugin not needed)</em>
+        <a href="#features">See below</a> or read
+        <a href="index.html#sorting">the user guide</a>
+    </li>
+    <li>
+        `table.plug(`<em>`Y.Plugin.DataTableScroll`</em>`, ...)` &rarr;
+        <em>(plugin not needed)</em>
+        <a href="#features">See below</a> or read
+        <a href="index.html#scrolling">the user guide</a>
+    </li>
+    <li>
+        `columnset: [ { `<em>`formatter: function (o) { ... }`</em>` } ]` &rarr;
+        (formatter changes)
+        <a href="#formatters">See below</a> or read
+        <a href="index.html#scrolling">the user guide</a>
+    </li>
+    <li>
+        `record.`<em>`getValue(fieldName)`</em> &rarr;
+        `record.`<strong>`get(fieldName)`</strong>
+    </li>
 </ol>
 
-<h2 id="before-and-after">Before And After</h2>
+<h2 id="instantiation">Instantiation and Instance Configuration Changes</h2>
 
 <p>
-    Below are some common DataTable setups, each showing what changes you'll
-    need to make for 3.5.0+
+    As of 3.5.0, `Y.DataTable` is no longer just a namespace, but is now the
+    preferred constructor for DataTable instances.
 </p>
 
-<h3 id="quick-basic">Basic Table</h3>
-
-<div class="yui3-g" dir="rtl">
-    <div class="details yui3-u" dir="ltr">
-        <h4 class="no-toc">What changed</h4>
-
-        <ul>
-            <li>`Y.DataTable.Base` &rarr; `Y.DataTable`</li>
-            <li>`columnset` &rarr; `columns`</li>
-            <li>`recordset` &rarr; `data`</li>
-        </ul>
-
-        <p>
-            `columnset` and `recordset` attributes are deprecated and pass through
-            to their new counterpart attributes.  <strong>Note</strong>:
-            `table.get("recordset")` will NOT return an instance of `Y.Recordset`
-            and `table.get("columnset")` will NOT return an instance of
-            `Y.Columnset`.  Table data is now stored in a
-            <a href="../model-list/index.html">`Y.ModelList`</a>, and column data
-            is maintained as a simple array of objects.
-        </p>
-
-        <p>
-            These changes are applicable to all examples below as well.
-        </p>
-    </div>
-
-    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
-        <div id="basic-demo"></div>
-        <script>
-        YUI().use('datatable', function (Y) {
-            var table = new Y.DataTable({
-                columns: ["id", "name", "price"],
-                data: [
-                    { id: 1, name: "Bread", price: 3.45 },
-                    { id: 2, name: "Milk",  price: 4.99 },
-                    { id: 3, name: "Eggs",  price: 2.75 }
-                ],
-                caption: "Price List"
-            }).render('#basic-demo');
-        });
-        </script>
-    </div>
-</div>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">Before</h4>
-
-        ```
-var table = new Y.DataTable.Base({
-    columnset: ["id", "name", "price"],
-    recordset: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
-    ],
-    caption: "Price List"
-}).render('#basic-demo');
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">After</h4>
-
-        ```
+```
 var table = new Y.DataTable({
-    columns: ["id", "name", "price"],
-    data: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
-    ],
-    caption: "Price List"
-}).render('#basic-demo');
-        ```
-    </div>
-</div>
+    // Column configuration looks much the same except the attribute name
+    columns: [
+        { key: 'name', label: 'Name', sortable: true, width: '200px' },
+        {
+            key: 'birthdate',
+            label: 'Age',
+            sortable: true,
+            formatter: function (o) {
+                var now = new Date(),
+                    years = now.getYear() - o.value.getYear();
 
-<h3 id="quick-remote">Table With Remote Data</h3>
+                now.setYear(o.value.getYear());
 
-<div class="yui3-g" dir="rtl">
-    <div class="details yui3-u" dir="ltr">
-        <h4 class="no-toc">What Changed</h4>
-
-        <ul>
-            <li>`Y.DataTable.Base` &rarr; `Y.DataTable`</li>
-            <li>`columnset` &rarr; `columns`</li>
-            <li>`recordset` &rarr; `data`</li>
-        </ul>
-
-        <p>
-            Nothing beyond changing the DataTable class and attributes as noted
-            above.
-        </p>
-    </div>
-
-    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
-        <div id="remote-demo"></div>
-        <script>
-        YUI().use('datatable', 'datatable-datasource', function (Y) {
-            var table = new Y.DataTable({
-                columns: ["id", "name", "price"],
-                caption: "Price List"
-            });
-            
-            // Just pretend this is remote.  It works the same anyway
-            var source = new Y.DataSource.Local({
-                source: [
-                    { id: 1, name: "Bread", price: 3.45 },
-                    { id: 2, name: "Milk",  price: 4.99 },
-                    { id: 3, name: "Eggs",  price: 2.75 }
-                ]
-            });
-
-            // (optional) Add DataSource plugins
-
-            table.plug(Y.Plugin.DataTableDataSource, {
-                datasource: source
-            });
-            
-            table.render('#remote-demo');
-
-            table.datasource.load();
-        });
-        </script>
-    </div>
-</div>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">Before</h4>
-
-        ```
-var table = new Y.DataTable.Base({
-    columnset: ["id", "name", "price"],
-    caption: "Price List"
-});
-
-var source = new Y.DataSource.IO({
-    source: "/api/v2.1/data?"
-}).plug(Y.Plugin.DataSourceJSONSchema, { ... });
-
-table.plug(Y.Plugin.DataTableDataSource, {
-    datasource: source
-});
-
-table.render('#remote-demo');
-
-table.datasource.load();
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">After</h4>
-
-        ```
-YUI().use('datatable', 'datatable-datasource', function (Y) {
-    var table = new Y.DataTable({
-        columns: ["id", "name", "price"],
-        caption: "Price List"
-    });
-    
-    // Everything else is the same as before...
-});
-        ```
-    </div>
-</div>
-
-<h3 id="quick-formatter">Formatted Columns</h3>
-
-<div class="yui3-g" dir="rtl">
-    <div class="details yui3-u" dir="ltr">
-        <h4 class="no-toc">What Changed</h4>
-
-        <ul>
-            <li>`o.classnames` &rarr; `o.className`</li>
-            <li>`this.createCell(o)` &rarr; `o.cell` in `nodeFormatter`s</li>
-        </ul>
-
-        <p>
-            `formatter` no longer supports accessing the `<td>`, `<tr>`, or
-            `<tbody>` Nodes from the object passed to the formatter.  This
-            functionality has been moved to `nodeFormatter`s.  See the <a
-            href="index.html#formatters">Formatting Cell Data</a> section in
-            the user guide for more details.
-        </p>
-    </div>
-
-    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
-        <div id="formatter-demo"></div>
-        <script>
-        YUI().use('datatable', function (Y) {
-            var table = new Y.DataTable({
-                columns: [
-                    "id",
-                    "name",
-                    { key: "price", formatter: "${value}" },
-                    { key: "price",
-                      formatter: function (o) {
-                        if (o.value > 4) {
-                            o.className += "spendy";
-                        }
-                        return '$' + o.value.toFixed(2);
-                      }
-                    },
-                    { key: "price",
-                      nodeFormatter: function (o) {
-                        if (o.value > 4) {
-                            o.cell.addClass('spendy');
-                        }
-
-                        o.cell.setContent('$' + o.value);
-
-                        return false;
-                      }
-                    }
-                ],
-                data: [
-                    { id: 1, name: "Bread", price: 3.45 },
-                    { id: 2, name: "Milk",  price: 4.99 },
-                    { id: 3, name: "Eggs",  price: 2.75 }
-                ],
-                caption: "Price List"
-            }).render('#formatter-demo');
-        });
-        </script>
-    </div>
-</div>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">Before</h4>
-
-        ```
-var table = new Y.DataTable.Base({
-    columnset: [
-        "id",
-        "name",
-        { key: "price", formatter: "\\${value}" },
-        { key: "price",
-          formatter: function (o) {
-            if (o.value > 4) {
-                o.classnames += "spendy";
+                return years - (o.value < now);
             }
-            return '$' + o.value.toFixed(2);
-          }
-        },
-        { key: "price",
-          formatter: function (o) {
-            var cell = this.createCell(o);
-
-            if (o.value > 4) {
-                cell.addClass('spendy');
-            }
-
-            cell.setContent('$' + o.value);
-          }
         }
     ],
+    // Passing in row data looks much the same except the attribute name
     data: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
-    ],
-    caption: "Price List"
-}).render('#formatter-demo');
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">After</h4>
+        { name: 'Tom Brokaw',     birthdate: new Date(1940, 1, 6) },
+        { name: 'Peter Jennings', birthdate: new Date(1938, 6, 29) },
+        { name: 'Katie Couric',   birthdate: new Date(1957, 1, 7) },
+        { name: 'Brian Williams', birthdate: new Date(1958, 4, 5) },
+        { name: 'Matt Lauer',     birthdate: new Date(1957, 11, 30) }
+    ]
+}).render('#over-there');
+```
 
-        ```
-var table = new Y.DataTable({
-    columns: [
-        "id",
-        "name",
-        { key: "price", formatter: "${value}" },
-        { key: "price",
-          formatter: function (o) {
-            if (o.value > 4) {
-                o.className += "spendy";
-            }
-            return '$' + o.value.toFixed(2);
-          }
-        },
-        { key: "price",
-          nodeFormatter: function (o) {
-            if (o.value > 4) {
-                o.cell.addClass('spendy');
-            }
+<p>
+    The `Y.DataTable.Base` class still exists, but is useful primarily as a
+    superclass for extension.  The attributes of `Y.DataTable.Base` are the
+    same as those of `Y.DataTable`, less any attributes added by class
+    extensions (<a href="#features">see below</a>).
+</p>
 
-            o.cell.setContent('$' + o.value);
+<p>
+    Configuration attributes that have changed from 3.4.1 are:
+</p>
 
-            return false;
-          }
-        }
-    ],
-    data: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
-    ],
-    caption: "Price List"
-}).render('#formatter-demo');
-        ```
-    </div>
-</div>
-
-<h3 id="quick-sort">Sortable Table</h3>
-
-<div class="yui3-g" dir="rtl">
-    <div class="details yui3-u" dir="ltr">
-        <h4 class="no-toc">What Changed</h4>
-
-        <ul>
-            <li>Column `sortable: true` is now optional</li>
-            <li>Table attribute `sortable` added</li>
-            <li><del>`plug(Y.Plugin.DataTableSort)`</del></li>
-        </ul>
-
-        <p>
-            Table sorting has been moved from a plugin to a class extension.
-            The module to include is still `datatable-sort`, but now column
-            sorting is enabled by default for those columns declared with
-            `sortable: true`.  It is unnecessary to call
-            `table.plug(Y.Plugin.DataTableSort)` &mdash; and doesn't do anything
-            anyway.
-        </p>
-
-        <p>
-            The `sortable` attribute of DataTable instances (note, <em>not</em>
-            the column declarations) now controls a tables ability to be sorted
-            by column header clicks. The default value for `sortable` is
-            "auto", which tells the DataTable to look at your column
-            definitions for the same `sortable: true` configuration used in 3.4.1
-            and prior.
-        </p>
-        
-        <p>
-            See the "After" snippet below or the
-            <a href="index.html#sorting">Column Sorting</a> section in the main
-            use guide for details about other `sortable` options.
-        </p>
-
-    </div>
-
-    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
-        <div id="sort-demo"></div>
-        <script>
-        YUI().use('datatable', function (Y) {
-            var table = new Y.DataTable({
-                columns: [
-                    { key: "id" },
-                    { key: "name", sortable: true },
-                    { key: "price", sortable: true }
-                ],
-                data: [
-                    { id: 1, name: "Bread", price: 3.45 },
-                    { id: 2, name: "Milk",  price: 4.99 },
-                    { id: 3, name: "Eggs",  price: 2.75 },
-                    { id: 4, name: "Apples", price: 0.79 },
-                    { id: 5, name: "Daikon",  price: 1.22 },
-                    { id: 6, name: "Onions",  price: 0.86 },
-                    { id: 7, name: "Garlic", price: 0.13 },
-                    { id: 8, name: "Sugar",  price: 5.99 },
-                    { id: 9, name: "Beets",  price: 0.93 }
-                ],
-                caption: "Price List"
-            });
-
-            table.plug(Y.Plugin.DataTableSort);
-            
-            table.render('#sort-demo');
-        });
-        </script>
-    </div>
-</div>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">Before</h4>
-
-        ```
-var table = new Y.DataTable.Base({
-    columnset: [
-        { key: "id" },
-        { key: "name", sortable: true },
-        { key: "price", sortable: true }
-    ],
-    recordset: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 },
-        ...
-    ],
-    caption: "Price List"
-});
-
-table.plug(Y.Plugin.DataTableSort);
-
-table.render('#sort-demo');
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">After</h4>
-
-        ```
-var table = new Y.DataTable({
-    columns: [
-        { key: "id" },
-        { key: "name", sortable: true },
-        { key: "price", sortable: true }
-    ],
-    data: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 },
-        ...
-    ],
-    caption: "Price List"
-});
-
-// OR
-var table = new Y.DataTable({
-    columns: [ "id", "name", "price" ],
-    sortable: [ "name", "price" ],
-    data: [ ... ],
-    ...
-});
-
-// OR
-var table = new Y.DataTable({
-    columns: [ "id", "name", "price" ],
-    sortable: true, // makes all columns sortable
-    data: [ ... ],
-    ...
-});
-
-table.render('#sort-demo');
-        ```
-    </div>
-</div>
-
-<h3 id="quick-scroll">Scrolling Table</h3>
-
-<div class="yui3-g" dir="rtl">
-    <div class="details yui3-u" dir="ltr">
-        <h4 class="no-toc">What Changed"</h4>
-
-
-    </div>
-
-    <div class="demo yui3-u yui3-skin-sam" dir="ltr">
-        <div id="scroll-demo"></div>
-        <script>
-        YUI().use('datatable-scroll', function (Y) {
-            var table = new Y.DataTable({
-                columns: ["id", "name", "price"],
-                data: [
-                    { id: 1, name: "Bread", price: 3.45 },
-                    { id: 2, name: "Milk",  price: 4.99 },
-                    { id: 3, name: "Eggs",  price: 2.75 },
-                    { id: 4, name: "Apples", price: 0.79 },
-                    { id: 5, name: "Daikon",  price: 1.22 },
-                    { id: 6, name: "Onions",  price: 0.86 },
-                    { id: 7, name: "Garlic", price: 0.13 },
-                    { id: 8, name: "Sugar",  price: 5.99 },
-                    { id: 9, name: "Beets",  price: 0.93 }
-                ],
-                scrollable: "y",
-                height: "175px",
-                caption: "Price List"
-            }).render('#scroll-demo');
-        });
-        </script>
-    </div>
-</div>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">Before</h4>
-
-        <ul>
-            <li>`plug(Y.Plugin.DataTableScroll, ...)`</li>
-            <li>`height` configured in plugin</li>
-            <li>No table configs</li>
-        </ul>
-
-        ```
-var table = new Y.DataTable.Base({
-    columnset: ["id", "name", "price"],
-    recordset: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 },
-        ...
-    ],
-    caption: "Price List"
-});
-
-table.plug(Y.Plugin.DataTableScroll, {
-    height: "175px"
-});
-
-table.render('#scroll-demo');
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">After</h4>
-
-        <ul>
-            <li><del>`plug(Y.Plugin.DataTableScroll, ...)`</del></li>
-            <li>`height` configured in table</li>
-            <li>`scrollable: "y"` configured in table</li>
-        </ul>
-
-        ```
-var table = new Y.DataTable({
-    columns: ["id", "name", "price"],
-    data: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 },
-        ...
-    ],
-    scrollable: "y",
-    height: "175px",
-    caption: "Price List"
-}).render('#scroll-demo');
-        ```
-    </div>
-</div>
-
-<h3 id="quick-mutable">Adding/Removing/Modifying Table Rows</h3>
-
-<div class="demo yui3-skin-sam">
-    <div id="mutable-demo"></div>
-</div>
-<script>
-YUI().use('datatable', function (Y) {
-    var table = new Y.DataTable({
-        columns: ["id", "name", "price"],
-        data: [
-            { id: 1, name: "Bread", price: 3.45 },
-            { id: 2, name: "Milk",  price: 4.99 },
-            { id: 3, name: "Eggs",  price: 2.75 }
-        ],
-        caption: "Price List"
-    }).render('#mutable-demo');
-
-    table.addRow({ id: 4, name: "Cheese", price: 24.97 });
-    table.modifyRow(1, { name: "Artisan bread" });
-    table.removeRow(2);
-});
-</script>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">Before</h4>
-
-        <ul>
-            <li>`Y.DataTable.Base`</li>
-            <li>`columnset`</li>
-            <li>`recordset`</li>
-        </ul>
-
-        ```
-var table = new Y.DataTable.Base({
-    columnset: ["id", "name", "price"],
-    recordset: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
-    ],
-    caption: "Price List"
-}).render('#basic-demo');
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">After</h4>
-
-        <ul>
-            <li>`Y.DataTable`</li>
-            <li>`columns`</li>
-            <li>`data`</li>
-        </ul>
-
-        ```
-var table = new Y.DataTable({
-    columns: ["id", "name", "price"],
-    data: [
-        { id: 1, name: "Bread", price: 3.45 },
-        { id: 2, name: "Milk",  price: 4.99 },
-        { id: 3, name: "Eggs",  price: 2.75 }
-    ],
-    caption: "Price List"
-}).render('#basic-demo');
-        ```
-    </div>
-</div>
-
-<h2 id="classes">Class Structure Changes</h2>
-        `Y.DataTable.Base` should only be used as a base class for creating custom
-        DataTable subclasses.
+<table>
+<thead>
+    <tr>
+        <th>Attribute</th>
+        <th>Change</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>`columnset`</td>
+        <td>
+            <strong>Deprecated</strong>.  Use `columns`.  `columnset` will
+            behave as an alias for `columns` for a short time, but will be
+            removed in future versions. <a href="#columns">See below</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>`recordset`</td>
+        <td>
+            <strong>Deprecated</strong>.  Use `data`.  `recordset` will
+            behave as an alias for `data` for a short time, but will be
+            removed in future versions. <a href="#data">See below</a>.
+        </td>
+    </tr>
+    <tr>
+        <td>`tdValueTemplate`</td>
+        <td>
+            <strong>Removed</strong>. Use column `formatter`, `cellTemplate`,
+            or override the `Y.DataTable.BodyView` instance's `CELL_TEMPLATE`.
+        </td>
+    </tr>
+    <tr>
+        <td>`thValueTemplate`</td>
+        <td>
+            <strong>Removed</strong>. Use column `label`, `headerTemplate`,
+            or override the `Y.DataTable.HeaderView` instance's `CELL_TEMPLATE`.
+        </td>
+    </tr>
+    <tr>
+        <td>`trTemplate`</td>
+        <td>
+            <strong>Removed</strong>. Use column `nodeFormatter` or override
+            the `Y.DataTable.BodyView` instance's `ROW_TEMPLATE`.
+        </td>
+    </tr>
+</tbody>
+</table>
 
 <h2 id="columns">Column Configuration Changes</h2>
-        `columnset` will
-        be maintained as a relay to `columns` in 3.5.0, but will be removed in
-        future versions. <strong>`table.get("columnset")` will not return a
-        `Y.Columnset` instance</strong>.
 
-<h2 id="columns">Data Storage Changes</h2>
-        `recordset` will
-        be maintained as a relay to `data` in 3.5.0, but will be removed in
-        future versions.  <strong>`table.get("recordset")` will return a
-        `Y.ModelList` instance, not a `Y.Recordset` instance</strong>.
+<p>
+    As of 3.5.0, the `Y.Columnset` and `Y.Column` classes have been deprecated.
+    The DataTable configuration attribute `columnset` has been deprecated in
+    favor of the `columns` attribute.  The `columnset` attribute has been
+    retained for <em>partial</em> backward compatibility.  Columns are now
+    stored as an array of simple JavaScript objects rather than class instances.
+</p>
 
-<h2 id="columns">Cell Formatting Changes</h2>
+```
+var table = new Y.DataTable({
+    columnset: [ 'name', 'age' ],
+    ...
+});
+
+// columnset passes through to columns
+var columns = table.get('columns'); // => Array, not Columnset instance
+
+table.set('columnset', [ ... (new column configurations) ... ]);
+
+// backward compatibility stops here
+var columnset = table.get('columnset'); // => Array, not Columnset instance
+```
+
+<p>
+    Strings passed into the column configuration will become objects with those
+    strings as the value of the `key` property.
+</p>
+
+<p>
+    See the <a href="index.html#columns">Column configuration</a> section in
+    the user guide for more details.
+</p>
+
+<h2 id="data">Row Data Configuration Changes</h2>
+
+<p>
+    As of 3.5.0, DataTable uses `Y.Model` and `Y.ModelList` to store row data.
+    `Y.Recordset` and `Y.Record` haven't been deprecated, but may be in the
+    future.  The `recordset` attribute has been retained for <em>partial</em>
+    backward compatibility.  The `data` ModelList can be assigned to, but
+    retrieving the value of the attribute will return the ModelList, <em>not
+    a `Y.Recordset` instance</em>.
+</p>
+
+```
+var table = new Y.DataTable({
+    columnset: [ ... ],
+    recordset: [
+        { name: 'Tom Brokaw',     birthdate: new Date(1940, 1, 6) },
+        { name: 'Peter Jennings', birthdate: new Date(1938, 6, 29) },
+        { name: 'Katie Couric',   birthdate: new Date(1957, 1, 7) },
+        ...
+    ]
+});
+
+// recordset passes through to data.
+var data = table.get('data'); // => ModelList instance
+
+table.set('recordset', [ ... (new data records) ... ]);
+
+// backward compatibility stops here
+var recordset = table.get('recordset'); // => ModelList, not Recordset
+```
+
+<p>
+    `Y.Record` stores all values in a single attribute named `data`, where `Y.Model` uses individual attributes for each value.
+</p>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        // Y.Record
+        var record = oldTable.get('recordset').item(0);
+
+        record.getValue('birthdate'); // => Date(1940, 1, 6)
+        record.get('data').birthdate; // => same
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+        ```
+        // Y.Model
+        var model = newTable.getRecord(0);
+
+        model.get('birthdate'); // => Date(1940, 1, 6)
+        ```
+    </div>
+</div>
+
+<p>
+    <strong>This change breaks column/record keys that contain periods</strong>.
+    Attribute treats periods as subproperty indicators, so periods are no
+    longer allowed;  use an alternate character.  In the case of remote data
+    that is parsed by `Y.Plugin.DataSourceJSONSchema`, use the `locator`
+    configuration for fields to extract subproperty values.  A benefit to doing
+    this is that you may not need to specify a column `label`.
+</p>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        var table = new Y.DataTable.Base({
+            columnset: [
+                { key: "id" },
+                { key: "Product.Name",  label: "Product" },
+                { key: "Product.Price", label: "Price" }
+            ],
+            caption: "Price List"
+        }).plug(Y.Plugin.DataTableDataSource, {
+            datasource: new Y.DataSource.IO({
+                source: "/service/price-list"
+            }).plug(Y.Plugin.DataSourceJSONSchema, {
+                schema: {
+                    resultListLocator: "items",
+                    resultFields: [
+                        { key: "id" },
+                        { key: "Product.Name" },
+                        { key: "Product.Price" }
+                    ]
+                }
+            })
+        });
+
+        table.datasource.load(...);
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+
+        ```
+        var table = new Y.DataTable({
+            columns: [ "id", "Product", "Price" ],
+            caption: "Price List"
+        }).plug(Y.Plugin.DataTableDataSource, {
+            datasource: new Y.DataSource.IO({
+                source: "/service/price-list"
+            }).plug(Y.Plugin.DataSourceJSONSchema, {
+                schema: {
+                    resultListLocator: "items",
+                    resultFields: [
+                        { key: "id" },
+                        { key: "Product",
+                          locator: "Product.Name" },
+                        { key: "Price",
+                          locator: "Product.Price" }
+                    ]
+                }
+            })
+        });
+
+        table.datasource.load(...);
+        ```
+    </div>
+</div>
+
+<p>
+    If you are using any Recordset plugins, your code will need to be modified.
+    Some loss of functionality may result.
+</p>
+
+<dl>
+    <dt>`Y.Plugin.RecordsetSort`</dt>
+    <dd>
+        This plugin was formerly applied by the `Y.Plugin.DataTableSort` plugin
+        to the DataTable's Recordset instance.  Sorting is now enabled
+        <a href="#features">through a class extension</a>.
+    </dd>
+
+    <dt>`Y.Plugin.RecordsetFilter`</dt>
+    <dd>
+        The default ModelList implementation only supports a `filter(function)`
+        method.  If you were relying on this plugin's `grep` or `reject`
+        methods or the `filter(key, value)` functionality, you will need to
+        replace that functionality through custom code.
+    </dd>
+
+    <dt>`Y.Plugin.RecordsetIndexer`</dt>
+    <dd>
+        The default ModelList implementation does not support multiple custom
+        indexes, though it does maintain an index for `id` (or another,
+        assigned primary key attribute) and `clientId`.  See
+        <a href="../model/index.html">the Model user guide</a> for more
+        information on customizing the primary index.  If multiple custom
+        indexes are required, DataTable supports the use of
+        <a href="#recordtype">custom Model subclasses</a> to store the record
+        data.
+    </dd>
+</ul>
+
+<p>
+    See the <a href="#data">Data Configuration section</a> of the DataTable
+    user guide for more information.
+</p>
+
+<h2 id="features">Feature Configuration Changes</h2>
+
+<p>
+    The two optional features available for DataTable in 3.4.1 were sorting and
+    scrolling.  Both features exist in 3.5.0, but are implemented as class
+    extensions for `Y.DataTable`.  Simply including the `datatable-sort` or
+    `datatable-scroll` module in your `use(...)` will enable the feature for
+    all new DataTables.
+</p>
+
+```
+YUI().use('datatable-sort', 'datatable-scroll', function (Y) {
+
+    // Create a DataTable that is sortable by the "name" column, and is
+    // configured to scroll vertically within 300px.  Because scrollable is
+    // set to "y", not "x" or "xy", it will not attempt to scroll horizontally.
+    // Instead the table width will be set to 100%.
+    var table = new Y.DataTable({
+        columns   : [ { key: 'name', sortable: true }, ... ],
+        data      : [ ... ],
+        scrollable: "y",
+        height    : "300px",
+        width     : "100%"
+    });
+
+    // No plugins necessary
+    table.render('#over-there');
+});
+```
+
+<h3 id="sorting">Column Sorting Changes</h3>
+
+<p>
+    Configuring sortable columns may be done as it was in 3.4.1, by setting the
+    column configuration property `sortable: true`, but may also be done by
+    setting the DataTable's `sortable` configuration to `true` or an array of
+    column names.
+</p>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        // Assumes use('datatable-sort') or use('datatable')
+        var table = new Y.DataTable.Base({
+            columnset: [
+                { key: "id" },
+                { key: "name", sortable: true },
+                { key: "price", sortable: true }
+            ],
+            recordset: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 },
+                ...
+            ],
+            caption: "Price List"
+        });
+
+        table.plug(Y.Plugin.DataTableSort);
+
+        table.render('#sort-demo');
+
+        // Sorting API is on the Recordset's plugin
+        table.get("recordset").sort.sort("name");
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+
+        ```
+        // Assumes use('datatable-sort') or use('datatable')
+        var table = new Y.DataTable({
+            columns: [ "id", "name", "price" ],
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 },
+                ...
+            ],
+            sortable: [ "name", "price" ]
+        });
+
+        table.render('#sort-demo');
+
+        // Sort method is on the instance
+        table.sort("name");
+
+        //-------------------------------------------------
+        // Alternate methods
+        //-------------------------------------------------
+
+        var table = new Y.DataTable({
+            columns: [ "id", "name", "price" ],
+            data: [ ... ],
+            sortable: true // makes all columns sortable
+        });
+
+        // OR the old way works, too
+        var table = new Y.DataTable({
+            columns: [
+                { key: "id" },
+                { key: "name", sortable: true },
+                { key: "price", sortable: true }
+            ],
+            data: [ ... ]
+        });
+        ```
+    </div>
+</div>
+
+<p>
+    Since there is no plugin, the `sort` method is now on the DataTable instance
+    itself, as are the related attributes.  In particular, the `lastSortedBy`
+    attribute from the plugin implementation has been replaced by the `sortBy`
+    attribute added by the class extension.
+</p>
+
+<p>
+    As of 3.5.0, DataTables configured with `sortBy` will have their rows
+    sorted automatically upon inserting into the table.  You do not need to
+    presort data for the initial render.
+</p>
+
+<p>
+    <strong>The `trigger` attribute of the sorting plugin was not retained in
+    the 3.5.0 class extension</strong>.  If you require an alternate triggering
+    event, detach and replace the table's `_sortHandle` property after
+    `render()`.
+</p>
+
+```
+var table = new Y.DataTable({ ... }).render("#over-there");
+
+table._sortHandle.detach();
+table._sortHandle = table.delegate(["dblclick", "keydown"],
+    table._onUITriggerSort, ".yui3-datatable-sortable-column", table);
+```
+
+<p>
+    See the <a href="index.html#sorting">Column Sorting section</a> of the 
+    user guide for details about the APIs and attributes.
+</p>
+
+<h3 id="scrolling">Scrollable Table Changes</h3>
+
+<p>
+    Like sorting, the scrolling functionality has been moved to a class
+    extension, making it unnecessary to plug the DataTable instance with the
+    (now deprecated) `Y.Plugin.DataTableScroll` plugin.
+</p>
+
+<p>
+    <strong>`datatable-scroll` is no longer included in the `datatable`
+    rollup</strong>, and must be explicitly included in your `use()` statement.
+</p>
+
+<p>
+    To enable scrolling in 3.5.0, set the table's `scrollable` attribute to "x",
+    "y", or "xy".  The configured `height` and `width` for the DataTable are
+    used to bound the overall widget dimesions.  Scrolling will only be applied
+    on the axis or axes specified in `scrollable`.  However, if `scrollable` is
+    set to "y", but the `height` isn't set, it will not be made scrollable.
+    Likewise for "x" and `width`.
+</p>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        // Assumes use("datatable-scroll") or use("datatable")
+        var table = new Y.DataTable.Base({
+            columnset: ["id", "name", "price"],
+            recordset: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 },
+                ...
+            ]
+        });
+
+        table.plug(Y.Plugin.DataTableScroll, {
+            height: "175px"
+        });
+
+        table.render("#over-there");
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+
+        ```
+        // Assumes use("datatable-scroll")
+        var table = new Y.DataTable({
+            columns: ["id", "name", "price"],
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 },
+                ...
+            ],
+            scrollable: "y",
+            height: "175px"
+        }).render("#over-there");
+        ```
+    </div>
+</div>
+
+<h2 id="formatters">Table and Cell Formatting Changes</h2>
+
+<p>
+    The following changes apply to table and column cell formatting:
+</p>
+
+<ul>
+    <li>`o.classnames` in the formatter parameter is now `o.className`.</li>
     <li>
-        Attributes `tdValueTemplate`, `thValueTemplate`, `trTemplate`, and
-        properties `tdTemplate` and `thTemplate` have been removed.
-        Modifications to the templates used to generate the markup should be
-        done on the `Y.DataTable.HeaderView` and `Y.DataTable.BodyView` class
-        templates, such as `Y.DataTable.BodyView.prototype.CELL_TEMPLATE` or
-        decorated with column `formatter`s.
+        `o.column` in the formatter parameter is now <a href="#columns">the
+        plain JavaScript object</a> containing the column configurations rather
+        than a `Y.Column` instance.
     </li>
-
-        Column `formatters` no longer have access to the cell Node.  This
-        functionality has been moved to `nodeFormatter`s.  See
-        <a href="index.html#formatters">Formatting Cell Data</a> for details.
-
-    including the addition of a new
-        column configuration property: `nodeFormatter`.
-
-<h2 id="columns">Table Sorting Changes</h2>
-        `Y.Plugin.DataTableSort` has been deprecated.  Sorting can be
-        <a href="#sort">enabled by attribute configuration</a> on `Y.DataTable`
-        instance directly when using `datatable-sort`.
     <li>
-        Column sorting `trigger` has been removed.  If you need a different
-        trigger that the `click` event, override the table's `_bindSortUI`
-        method prior to calling `render()`.
+        `o.record` in the formatter parameter is now <a href="#data">a Model
+        instance</a> instead of a `Y.Record` instance.
     </li>
-
-<h2 id="columns">Scrolling Table Changes</h2>
     <li>
-        `Y.Plugin.DataTableScroll` has been deprecated.  Scrolling can be
-        <a href="index.html#scroll">enabled by attribute configuration</a> on `Y.DataTable`
-        instance directly when using `datatable-scroll`.
+        `this.createCell(o)`, `o.td`, `o.tr`, and `o.tbody` no longer exist on
+        the parameter passed to `formatter` functions.  Use
+        <a href="index.html#nodeformatter">`nodeFormatter`</a>s.
     </li>
+    <li>
+        `o.headers` is now at `o.column._headers`, but is read-only for
+        `formatter` functions.  If you need to change the cell's headers
+        attribute, add a {placeholder} for them to a custom `cellTemplate` for
+        the column, or use a `nodeFormatter`.
+    </li>
+    <li>
+        The table's `tdValueTemplate`, `thValueTemplate`, and `trTemplate` no
+        longer exist, nor do the DataTable instance properties `tdTemplate` and
+        `thTemplate`.  Use `formatter` strings or functions to customize the
+        content of data cells in a column and `label` strings to customize the
+        content of header cells.  To modify the `<td>` or `<th>` entirely, set
+        the column configuration `cellTemplate` or `headerTemplate`.
+    </li>
+</ul>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        var table = new Y.DataTable.Base({
+            columnset: [
+                "id",
+                "name",
+                { key: "price", formatter: "${value}" },
+                { key: "price",
+                  formatter: function (o) {
+                    if (o.value > 4) {
+                        o.classnames += "spendy";
+                    }
+                    return '$' + o.value.toFixed(2);
+                  }
+                },
+                { key: "price",
+                  formatter: function (o) {
+                    var cell = this.createCell(o);
+
+                    if (o.value > 4) {
+                        cell.addClass('spendy');
+                    }
+
+                    cell.setContent('$' + o.value);
+                  }
+                }
+            ],
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 }
+            ]
+        }).render("#over-there");
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+
+        ```
+        var table = new Y.DataTable({
+            columns: [
+                "id",
+                "name",
+                { key: "price", formatter: "${value}" },
+                { key: "price",
+                  formatter: function (o) {
+                    if (o.value > 4) {
+                        o.className += "spendy";
+                    }
+                    return '$' + o.value.toFixed(2);
+                  }
+                },
+                { key: "price",
+                  nodeFormatter: function (o) {
+                    if (o.value > 4) {
+                        o.cell.addClass('spendy');
+                    }
+
+                    o.cell.setContent('$' + o.value);
+
+                    return false;
+                  }
+                }
+            ],
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 }
+            ]
+        }).render("#over-there");
+        ```
+    </div>
+</div>
+
+<p>
+    Read the <a href="index.html#formatters">Formatting Cell Data</a> section in
+    the DataTable user guide for more details.
+</p>
+
+<h2 id="markup">Markup and CSS Changes</h2>
+
+<p>
+    DataTable in 3.5.0 applies more CSS classes to Nodes, stamps fewer nodes
+    with guid ids, and does not render header and cell liner `<div>`s.
+</p>
+
+<p>
+    Below are examples of the same table rendered in 3.4.1 and 3.5.0.  The 3.5.0
+    table has comments indicating markup added by feature modules.
+</p>
+
+<h4 class="no-toc">3.4.1</h4>
+```
+<div id="(guid)" class="yui3-widget yui3-datatable">
+  <div id="(guid)" class="yui3-datatable-content">
+    <table>
+
+      <caption>
+        Example table with simple columns
+      </caption>
+
+      <colgroup>
+        <col>
+        <col>
+        <col>
+      </colgroup>
+
+    <thead class="yui3-datatable-columns">
+      <tr id="" class="yui3-datatable-first yui3-datatable-last">
+        <th id="(guid)" rowspan="1" colspan="1" class="yui3-column-id" abbr="">
+          <div class="yui3-datatable-liner">
+            id
+          </div>
+        </th>
+        <th id="(guid)" rowspan="1" colspan="1" class="yui3-column-name" abbr="">
+          <div class="yui3-datatable-liner">
+            name
+          </div>
+        </th>
+        <th id="(guid)" rowspan="1" colspan="1" class="yui3-column-price" abbr="">
+          <div class="yui3-datatable-liner">
+            price
+          </div>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody class="yui3-datatable-msg">
+    </tbody>
+
+    <tbody class="yui3-datatable-data" id="(guid)">
+      <tr id="(guid)" class="yui3-datatable-even">
+        <td headers="(guid)" class="yui3-column-id">
+          <div class="yui3-datatable-liner">
+            1
+          </div>
+        </td>
+        <td headers="(guid)" class="yui3-column-name">
+          <div class="yui3-datatable-liner">
+            Bread
+          </div>
+        </td>
+        <td headers="(guid)" class="yui3-column-price">
+          <div class="yui3-datatable-liner">
+            3.45
+          </div>
+        </td>
+      </tr>
+      <tr id="(guid)" class="yui3-datatable-odd">
+        <td headers="(guid)" class="yui3-column-id">
+          <div class="yui3-datatable-liner">
+            2
+          </div>
+        </td>
+        <td headers="(guid)" class="yui3-column-name">
+          <div class="yui3-datatable-liner">
+            Milk
+          </div>
+        </td>
+        <td headers="(guid)" class="yui3-column-price">
+          <div class="yui3-datatable-liner">
+            4.99
+          </div>
+        </td>
+      </tr>
+      <tr id="(guid)" class="yui3-datatable-even">
+        <td headers="(guid)" class="yui3-column-id">
+          <div class="yui3-datatable-liner">
+            3
+          </div>
+        </td>
+        <td headers="(guid)" class="yui3-column-name">
+            <div class="yui3-datatable-liner">
+              Eggs
+            </div>
+          </td>
+          <td headers="(guid)" class="yui3-column-price">
+            <div class="yui3-datatable-liner">
+              2.75
+            </div>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+</div>
+```
+
+<h4 class="no-toc">3.5.0</h4>
+```
+<div id="(guid)" class="yui3-widget yui3-datatable">
+  <div id="(guid)" class="yui3-datatable-content">
+    <table cellspacing="0" class="yui3-datatable-table" id="(guid)">
+
+      <caption class="yui3-datatable-caption">
+        Price List
+      </caption>
+  
+      <!-- colgroup only renders if datatable-column-widths is use()d.
+           Note, datatable-column-widths is included in the datatable rollup -->
+      <colgroup id="(guid)">
+        <col>
+        <col>
+        <col>
+      </colgroup>
+  
+      <thead class="yui3-datatable-columns" id="(guid)">
+        <tr>
+          <th id="(guid)" colspan="1" rowspan="1" class="yui3-datatable-header yui3-datatable-first-header yui3-datatable-col-id" scope="col" data-yui3-col-id="id">
+            id
+          </th>
+          <th id="(guid)" colspan="1" rowspan="1" class="yui3-datatable-header yui3-datatable-col-name" scope="col" data-yui3-col-id="name">
+            name
+          </th>
+          <th id="(guid)" colspan="1" rowspan="1" class="yui3-datatable-header yui3-datatable-col-price" scope="col" data-yui3-col-id="price">
+            price
+          </th>
+        </tr>
+      </thead>
+
+      <!-- The message tbody only renders if datatable-message is use()d.
+           Note, datatable-message is included in the datatable rollup -->
+      <tbody class="yui3-datatable-message" id="(guid)">
+        <tr>
+          <td class="yui3-datatable-message-content" colspan="3">
+            No data to display
+          </td>
+        </tr>
+      </tbody>
+
+      <tbody class="yui3-datatable-data">
+        <tr id="(guid)" data-yui3-record="record_1" class="yui3-datatable-even">
+          <td class="yui3-datatable-col-id  yui3-datatable-cell">
+            1
+          </td>
+          <td class="yui3-datatable-col-name  yui3-datatable-cell">
+            Bread
+          </td>
+          <td class="yui3-datatable-col-price  yui3-datatable-cell">
+            3.45
+          </td>
+        </tr>
+        <tr id="(guid)" data-yui3-record="record_2" class="yui3-datatable-odd">
+          <td class="yui3-datatable-col-id  yui3-datatable-cell">
+            2</td>
+          <td class="yui3-datatable-col-name  yui3-datatable-cell">
+            Milk
+          </td>
+          <td class="yui3-datatable-col-price  yui3-datatable-cell">
+            4.99
+          </td>
+        </tr>
+        <tr id="(guid)" data-yui3-record="record_3" class="yui3-datatable-even">
+          <td class="yui3-datatable-col-id  yui3-datatable-cell">
+            3
+          </td>
+          <td class="yui3-datatable-col-name  yui3-datatable-cell">
+            Eggs
+          </td>
+          <td class="yui3-datatable-col-price  yui3-datatable-cell">
+            2.75
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+</div>
+```
+
+<h2 id="help-me">What Did I Miss?</h2>
+
+<p>
+    Obviously, there were a lot of changes to DataTable from 3.4.1 to 3.5.0.
+    It's entirely likely that I have missed something here.  If you experience
+    trouble with your upgrade and find this migration guide is missing
+    something important, please <a href="/projects/yui3/newticket">file a
+    ticket</a> and I'll update it as soon as possible.
+</p>
+
+<p>
+    Additional resources to help with the upgrade include the
+    <a href="/forum">forums</a>, and the #yui IRC channel on freenode.net.
+</p>
