@@ -250,19 +250,44 @@ L.sub = function(s, o) {
 
 /**
  * Returns a string without any leading or trailing whitespace.  If
- * the input is not a string, the input will be returned untouched.
+ * the input is not a string, the input will be returned the result of
+ * calling ToString.
  * @method trim
  * @static
  * @param s {string} the string to trim.
  * @return {string} the trimmed string.
  */
 L.trim = STRING_PROTO.trim ? function(s) {
-    return s && s.trim ? s.trim() : s;
+    var t = L.type(s);
+
+    switch (t) {
+        case 'string':
+            return s.trim();
+        case 'undefined':
+        case 'null':
+        case 'boolean':
+        case 'number':
+            return String(s);
+        case 'object':
+            return TOSTRING.call(s);
+        default:
+            return s;
+    }
 } : function (s) {
-    try {
-        return s.replace(TRIMREGEX, '');
-    } catch (e) {
-        return s;
+    var t = L.type(s);
+
+    switch (t) {
+        case 'string':
+            return s.replace(TRIMREGEX, '');
+        case 'undefined':
+        case 'null':
+        case 'boolean':
+        case 'number':
+            return String(s);
+        case 'object':
+            return TOSTRING.call(s);
+        default:
+            return s;
     }
 };
 
