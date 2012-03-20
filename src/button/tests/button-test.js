@@ -5,12 +5,12 @@ var Assert      = Y.Assert,
     suite;
 
 // -- Suite --------------------------------------------------------------------
-suite = new Y.Test.Suite('Buttons');
+suite = new Y.Test.Suite('button');
 
 
 // -- Widget ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
-    name: 'button widget',
+    name: 'Basic',
 
     setUp : function () {
         Y.one("#container").setContent('<button id="testButton">Hello</button><button id="testToggleButton">Hello</button><button id="testCheckButton">Hello</button>');
@@ -167,7 +167,7 @@ suite.add(new Y.Test.Case({
 
 // -- Config tests ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
-    name: 'button widget',
+    name: 'Config',
 
     setUp : function () {
 

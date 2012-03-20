@@ -13,8 +13,8 @@
 
         <script src="../../../build/yui/yui.js"></script>
         <script>
-            YUI({
-                filter: 'RAW',
+            var Y = YUI({
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
                 modules: {
                     'button-core-test': {
                         fullpath: 'button-core-test.js',
