@@ -198,6 +198,18 @@ Y.mix(Sortable.prototype, {
     @since 3.5.0
     **/
     sort: function (fields, payload) {
+        /**
+        Notifies of an impending sort, either from clicking on a column
+        header, or from a call to the `sort` or `toggleSort` method.
+
+        The requested sort is available in the `sortBy` property of the event.
+
+        The default behavior of this event sets the table's `sortBy` attribute.
+
+        @event sort
+        @param {String|String[]|Object|Object[]} sortBy The requested sort
+        @preventable _defSortFn
+        **/
         return this.fire('sort', Y.merge((payload || {}), {
             sortBy: fields || this.get('sortBy')
         }));
