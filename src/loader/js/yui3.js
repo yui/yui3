@@ -377,6 +377,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de", 
             "en", 
+            "es",
             "fr", 
             "it", 
             "ja", 
@@ -394,6 +395,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de", 
             "en", 
+            "es",
             "fr", 
             "it", 
             "ja", 
