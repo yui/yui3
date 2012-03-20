@@ -29,7 +29,42 @@ function VMLDrawing() {}
  */
 VMLDrawing.prototype = {
     /**
-     * Current x position of the drqwing.
+     * Value for rounding up to coordsize
+     *
+     * @property _multiplier
+     * @type Number
+     * @private
+     */
+    _multiplier: 21600,
+
+    /**
+     * Rounds dimensions and position values based on the coordsize.
+     *
+     * @method _round
+     * @param {Number} The value for rounding
+     * @return Number
+     * @private
+     */
+    _round:function(val)
+    {
+        return Math.round(val * this._multiplier);
+    },
+
+    /**
+     * Concatanates the path.
+     *
+     * @method _addToPath
+     * @param {String} val The value to add to the path string.
+     * @private
+     */
+    _addToPath: function(val)
+    {
+        this._path = this._path || "";
+        this._path += val;
+    },
+
+    /**
+     * Current x position of the drawing.
      *
      * @property _currentX
      * @type Number
@@ -47,38 +82,6 @@ VMLDrawing.prototype = {
     _currentY: 0,
 
     /**
-     * Returns a path array to be compiled into a path command at end.
-     *
-     * @method _getCurrentPath
-     * @param {String} command The drawing command to be added to the path.
-     * @private
-     */
-    _getCurrentPathArray: function(command)
-    {
-        var currentArray;
-        if(this._pathType !== command)
-        {
-            this._pathType = command;
-            currentArray = [command];
-            if(!this._pathArray)
-            {
-                this._pathArray = [];
-            }
-            this._pathArray.push(currentArray);
-        }
-        else
-        {
-            currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
-            if(!currentArray)
-            {
-                currentArray = [];
-                this._pathArray.push(currentArray);
-            }
-        }
-        return currentArray;
-    },
-
-    /**
      * Draws a bezier curve.
      *
      * @method curveTo
@@ -93,14 +96,8 @@ VMLDrawing.prototype = {
         var hiX,
             loX,
             hiY,
-            loY,
-            currentArray = this._getCurrentPathArray("c");
-        currentArray.push(cp1x);
-        currentArray.push(cp1y); 
-        currentArray.push(cp2x); 
-        currentArray.push(cp2y); 
-        currentArray.push(x); 
-        currentArray.push(y);
+            loY;
+        this._addToPath(" c " + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y));
         this._currentX = x;
         this._currentY = y;
         hiX = Math.max(x, Math.max(cp1x, cp2x));
@@ -193,13 +190,7 @@ VMLDrawing.prototype = {
         this._drawingComplete = false;
         this._trackSize(x + circum, y + circum);
         this.moveTo((x + circum), (y + radius));
-        currentArray = this._getCurrentPathArray("ae");
-        currentArray.push(x + radius);
-        currentArray.push(y + radius); 
-        currentArray.push(radius); 
-        currentArray.push(radius); 
-        currentArray.push(startAngle); 
-        currentArray.push(endAngle);
+        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(y + radius) + ", " + this._round(radius) + ", " + this._round(radius) + ", " + startAngle + ", " + endAngle);
         return this;
     },
     
@@ -217,19 +208,12 @@ VMLDrawing.prototype = {
         var startAngle = 0,
             endAngle = 360,
             radius = w * 0.5,
-            yRadius = h * 0.5,
-            currentArray;
+            yRadius = h * 0.5;
         endAngle *= 65535;
         this._drawingComplete = false;
         this._trackSize(x + w, y + h);
         this.moveTo((x + w), (y + yRadius));
-        currentArray = this._getCurrentPathArray("ae");
-        currentArray.push(x + radius);
-        currentArray.push(y + yRadius);
-        currentArray.push(radius);
-        currentArray.push(yRadius);
-        currentArray.push(startAngle);
-        currentArray.push(endAngle);
+        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(x + radius) + ", " + this._round(y + yRadius) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " + startAngle + ", " + endAngle);
         return this;
     },
     
@@ -281,7 +265,7 @@ VMLDrawing.prototype = {
         startAngle *= -65535;
         arc *= 65536;
         moveTo(x, y);
-        currentArray.concat([x, y, radius, yRadius, startAngle, arc]);
+        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " +  startAngle + ", " + arc);
         this._trackSize(diameter, diameter); 
         this._currentX = x;
         this._currentY = y;
@@ -299,18 +283,18 @@ VMLDrawing.prototype = {
         var args = arguments,
             i,
             len,
-            currentArray = this._getCurrentPathArray("l");
+            path = ' l ';
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             args = [[point1, point2]];
         }
         len = args.length;
         for (i = 0; i < len; ++i) {
-            currentArray.push(args[i][0]);
-            currentArray.push(args[i][1]);
+            path += ' ' + this._round(args[i][0]) + ', ' + this._round(args[i][1]);
             this._trackSize.apply(this, args[i]);
             this._currentX = args[i][0];
             this._currentY = args[i][1];
         }
+        this._addToPath(path);
         return this;
     },
 
@@ -322,9 +306,7 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
-        var currentArray = this._getCurrentPathArray("m");
-        currentArray[1] = x
-        currentArray[2] = y;
+        this._addToPath(" m " + this._round(x) + ", " + this._round(y));
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
@@ -343,35 +325,9 @@ VMLDrawing.prototype = {
             node = this.node,
             w = this.get("width"),
             h = this.get("height"),
-            path = "",
+            path = this._path,
             pathEnd = "",
-            currentPath,
-            command,
-            args,
-            multiplier = 21600,
-            i,
-            len,
-            multiplier,
-            pathArray = this._pathArray;
-        while(pathArray.length > 0)
-        {
-            currentPath = pathArray.shift();
-            if(IS_ARRAY(currentPath))
-            {
-                command = currentPath.shift();
-                args = currentPath;
-                len = command == "ae" ? 4 : args.length;
-                for(i = 0; i < len; ++i)
-                {
-                    args[i] = Math.round(args[i] * multiplier);
-                }
-                path += " " + command + " " + args.toString();
-            }
-            else if(IS_STRING(currentPath))
-            {
-                path += currentPath;
-            }
-        }
+            multiplier = this._multiplier;
         this._fillChangeHandler();
         this._strokeChangeHandler();
         if(path)
@@ -418,8 +374,7 @@ VMLDrawing.prototype = {
      */
     closePath: function()
     {
-        this._pathArray.push(' x e ');
-        this._pathType = 'pathEnd';
+        this._addToPath(" x e");
     },
 
     /**
