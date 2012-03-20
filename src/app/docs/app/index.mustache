@@ -92,7 +92,7 @@ The goal of the App component is to provide you a place to organize and connect 
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enable you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
 </p>
 
 <p>
@@ -146,7 +146,11 @@ When constructing a new `Y.App` instance you can provide a config object with in
   <dt>`views`</dt>
   <dd>
     <p>
-    Hash of view-name to metadata used to declaratively describe an application's views and their relationship with the app and its other views. The views specified here will override any defaults provided by the `views` object on the `prototype`. See the [[#App Properties]] and [[#Declaring Views]] sections for more details.
+    Hash of view-name to metadata used to declaratively describe an application's views and their relationship with the app and its other views. The views specified here will override any defaults provided by the `views` object on the `prototype`. Every `Y.App` instance gets its own copy of a `views` object so this object on the prototype will not be polluted.
+    </p>
+
+    <p>
+    See the [[#App Properties]] and [[#Declaring Views]] sections for more details.
     </p>
   </dd>
 </dl>
@@ -218,6 +222,43 @@ The following properties are meaningful to App classes and subclasses. In additi
           <dd>
             <p>
             Used internally to manage the current instance of this named view. This can be used if your view instance is created up-front, or if you would rather manage the View lifecycle, but you probably should just let this be handled for you.
+            </p>
+          </dd>
+        </dl>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`transitions`</td>
+      <td>`{}`</td>
+      <td>
+        <p>
+        Default transitions to use when the `activeView` changes. See the [[#Switching the Active View]] and `[[#Y.App.Transitions]]` sections for more details.
+        </p>
+
+        <p>
+        The following are types of changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
+        </p>
+
+        <dl style="margin-top:1em">
+          <dt>`navigate`</dt>
+          <dd>
+            <p>
+            The default transition to use when changing the `activeView` of the application. This will be <strong>`"fade"`</strong> by default.
+            </p>
+          </dd>
+
+          <dt>`toChild`</dt>
+          <dd>
+            <p>
+            The transition to use when the new `activeView` is configured as a child of the previously active view via its `parent` property as defined in this app's `views`. This will be <strong>`"slideLeft"`</strong> by default.
+            </p>
+          </dd>
+
+          <dt>`toParent`</dt>
+          <dd>
+            <p>
+            The transition to use when the new `activeView` is configured as the `parent` of the previously active view as defined in this app's `views`. This will be <strong>`"slideRight"`</strong> by default.
             </p>
           </dd>
         </dl>
@@ -305,6 +346,24 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
     </tr>
 
     <tr>
+      <td>`transitions`</td>
+      <td>`false`</td>
+      <td>
+        <p>
+        Whether or not this application should use view transitions, and if so then which ones or `true` for the defaults which are specified by the `transitions` prototype property.
+        </p>
+
+        <p>
+        <strong>Note:</strong> Transitions are an opt-in feature and will only be used in browsers which support native CSS3 transitions.
+        </p>
+
+        <p>
+        See the [[#Switching the Active View]] and `[[#Y.App.Transitions]]` sections for more details.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
       <td>`viewContainer`</td>
       <td>`<div>` Node</td>
       <td>
@@ -317,15 +376,15 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
         </p>
 
         <p>
-        The default view container is a `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time.
+        The default view container is a `<div>` Node, but you can override this in a subclass, or by passing in a custom `viewContainer` config value at instantiation time. The `viewContainer` may be provided as a selector string, DOM element, or a `Y.Node` instance (having the `viewContainer` and the `container` be the same node is also supported).
         </p>
 
         <p>
-        When `viewContainer` is overridden by a subclass or passed as a config option at instantiation time, it may be provided as a selector string, DOM element, or a `Y.Node` instance. Using the same node as the `viewContainer` and the `container` is also supported.
+        The app's `render()` method will stamp the view container with the CSS class `"yui3-app-views"` and append it to the app's `container` node if it isn't already, and any `activeView` will be appended to this node if it isn't already.
         </p>
 
         <p>
-        The app's `render()` method will stamp the view container with the CSS class "yui3-app-views" and append the view container to the app's `container` node if it isn't there already. Any `activeView` will be appended to the view container node if it isn't there already.
+        See [[#Rendering an App]] for more details.
         </p>
       </td>
     </tr>
@@ -517,7 +576,7 @@ var app = new Y.CustomApp({
 
 // Add a route and route handler.
 app.route('/about/', function (req) {
-    // Handle the '/about/' route here.
+    // Handle the "/about/" route here.
 });
 ```
 
@@ -709,7 +768,7 @@ Y.log(app.getViewInfo('home').preserve);  // => false
 
 // Added `preserve` to "user" view,
 // and this did not overwrite the default `parent` value.
-Y.log(app.getViewInfo('user').parent);    // => 'home'
+Y.log(app.getViewInfo('user').parent);    // => "home"
 Y.log(app.getViewInfo('user').preserve);  // => false
 
 // The specified "about" view was registered.
@@ -791,10 +850,6 @@ Y.HelloView = Y.Base.create('helloView', Y.View, [], {
         this.get('container').set('text', 'Hello ' + (name || 'World') + '!');
         return this;
     }
-}, {
-    ATTRS: {
-        name: {value: null}
-    }
 });
 
 // Creates a new App instance and registers the HelloView.
@@ -827,8 +882,6 @@ app.render().save('/eric');
 ```
 
 <p>
-
-<p>
 This results in the URL being updated to either `"/eric"` or `"/#/eric"` depending on whether the browser is capable of HTML5 history, and the HTML of the page looking like this:
 </p>
 
@@ -840,8 +893,6 @@ This results in the URL being updated to either `"/eric"` or `"/#/eric"` dependi
     </div>
 </body>
 ```
-
-
 
 <p>
 Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/classes/App.html#method_showView">`showView()` method</a>.
@@ -863,5 +914,127 @@ Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/clas
 <h2>App Extensions</h2>
 
 <h3>`Y.App.Transitions`</h3>
+
+<p>
+The <a href="{{apiDocs}}/classes/App.Transitions.html">Transitions</a> extension provides view transitions for apps in browsers which support native CSS3 transitions. View transitions visually enhance the change from one "page" to the next that is both pleasant to the user and helps to communicate a hierarchy between sections of an application.
+</p>
+
+<p>
+Enabling transitions for an app just requires <em>opting-in</em>. The following will create a new `Y.App` instance with the default transitions enabled:
+</p>
+
+```
+var app = new Y.App({transitions: true});
+```
+
+<p>
+With transitions enabled for an app, anytime the app's `activeView` changes there will be a visual transitions between the old and new active view. How an app's `views` are configured effects which transition will be used, e.g. when changing between views which have a hierarchical relationship a sliding transition will be used.
+</p>
+
+<p>
+The following are types of changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
+</p>
+
+<dl>
+  <dt>`navigate`</dt>
+  <dd>
+    <p>
+    The default transition to use when changing the `activeView` of the application. This will be <strong>`"fade"`</strong> by default.
+    </p>
+  </dd>
+
+  <dt>`toChild`</dt>
+  <dd>
+    <p>
+    The transition to use when the new `activeView` is configured as a child of the previously active view via its `parent` property as defined in this app's `views`. This will be <strong>`"slideLeft"`</strong> by default.
+    </p>
+  </dd>
+
+  <dt>`toParent`</dt>
+  <dd>
+    <p>
+    The transition to use when the new `activeView` is configured as the `parent` of the previously active view as defined in this app's `views`. This will be <strong>`"slideRight"`</strong> by default.
+    </p>
+  </dd>
+</dl>
+
+<p>
+The default transitions can be overridden in the following ways:
+</p>
+
+<ul>
+  <li>
+    <p>
+    Overriding the <a href="{{apiDocs}}/classes/App.html#property_transitions">`transitions` property</a> which is used as the default transitions for all `Y.App` instances.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Specifying a `transitions` configuration object when instantiating a new app, which sets the app's <a href="{{apiDocs}}/classes/App.html#attr_transitions">`transitions` attribute</a>.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Specifying a `transition` when calling the <a href="{{apiDocs}}/classes/App.html#method_showView">`showView()` method</a>.
+    </p>
+  </li>
+</ul>
+
+<p>
+The following example will override which transitions should be used by default, and specifically set the `transition` option on certain calls to `showView()`.
+</p>
+
+```
+var app = new Y.App({
+    // The app's three views and their relationships between one another.
+    views: {
+        home   : {},
+        about  : {},
+        contact: {parent: 'about'},
+        team   : {parent: 'about'}
+    },
+
+    // Overrides the default transitions types all to "fade" which will
+    // cross-fade between `activeView` changes.
+    transitions: {
+        navigate: 'fade',
+        toChild : 'fade',
+        toParent: 'fade'
+    },
+
+    // The app's `team` model list for use by the "team" view.
+    team: new Y.ModelList().reset([
+        {name: 'Eric Ferraiuolo'},
+        {name: 'Ryan Grove'}
+    ])
+});
+
+app.route('/', function () {
+    // Will transition via "fade".
+    app.showView('home');
+});
+
+app.route('/about/', function () {
+    // Will transition via "fade", even though we maybe coming from a child
+    // view (i.e. "contact" or "team").
+    app.showView('about');
+});
+
+app.route('/about/contact/', function () {
+    // Will transition via "fade", even though we maybe coming from the parent
+    // "about" view.
+    app.showView('contact');
+});
+
+app.route('/about/team/', function () {
+    // Shows the "team" view, passing it the app's `team` model list, and
+    // overrides the `transition` options so no visual transitions will occur.
+    app.showView('team', {team: this.get('team')}, {transition: false});
+});
+
+app.render().dispatch();
+```
 
 <h2>Apps vs. Widgets</h2>
