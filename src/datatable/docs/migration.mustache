@@ -1,4 +1,8 @@
 <style>
+#main li {
+    margin: 1ex 0;
+}
+
 li code,
 td code {
     white-space: nowrap;
@@ -24,13 +28,10 @@ li code {
     margin-left: 5%;
 }
 
-#quickref li {
-    margin: 1ex 0;
-}
-#quickref em code {
+#quickref code em {
     color: #900;
 }
-#quickref strong code {
+#quickref code strong {
     color: #090;
 }
 #quickref pre.code {
@@ -76,8 +77,8 @@ li code {
 
 <ol id="quickref">
     <li>
-        `new `<em>`Y.DataTable.Base`</em>`(...)` &rarr;
-        `new `<strong>`Y.DataTable`</strong>`({ ... })`</strong>
+        <code>new <em>Y.DataTable.Base</em>(...)</code> &rarr;
+        <code>new <strong>Y.DataTable</strong>({ ... })</code>
     </li>
     <li>
         <div class="yui3-g">
@@ -101,25 +102,30 @@ li code {
         </div>
     </li>
     <li>
-        `table.plug(`<em>`Y.Plugin.DataTableSort`</em>`)` &rarr; <em>(plugin not needed)</em>
+        (cells rendered as HTML by default) &rarr;
+        <code>columns: [ { key: 'email', <strong>allowHTML: true</strong> }, ... ]</code>
+    </li>
+    <li>
+        <code>table.plug(<em>Y.Plugin.DataTableSort</em>)</code> &rarr; <em>(plugin not needed)</em>
         <a href="#features">See below</a> or read
         <a href="index.html#sorting">the user guide</a>
     </li>
     <li>
-        `table.plug(`<em>`Y.Plugin.DataTableScroll`</em>`, ...)` &rarr;
+        <code>table.plug(<em>Y.Plugin.DataTableScroll</em>, ...)</code> &rarr;
         <em>(plugin not needed)</em>
         <a href="#features">See below</a> or read
         <a href="index.html#scrolling">the user guide</a>
     </li>
     <li>
-        `columnset: [ { `<em>`formatter: function (o) { ... }`</em>` } ]` &rarr;
+        <code>columnset: [ { <em>formatter: function (o) { ... }</em> } ]</code>
+        &rarr;
         (formatter changes)
         <a href="#formatters">See below</a> or read
         <a href="index.html#scrolling">the user guide</a>
     </li>
     <li>
-        `record.`<em>`getValue(fieldName)`</em> &rarr;
-        `record.`<strong>`get(fieldName)`</strong>
+        <code>record.<em>getValue(fieldName)</em></code> &rarr;
+        <code>record.<strong>get(fieldName)</strong></code>
     </li>
 </ol>
 
@@ -218,6 +224,135 @@ var table = new Y.DataTable({
     </tr>
 </tbody>
 </table>
+
+<h2 id="formatters">Table and Cell Formatting Changes</h2>
+
+<p>
+    The following changes apply to table and column cell formatting:
+</p>
+
+<ul>
+    <li>
+        If cell values include HTML, add `allowHTML: true` to the column
+        configuration.  HTML is escaped by default for security.
+    </li>
+    <li>
+        `o.classnames` in the formatter parameter is now `o.className`.
+    </li>
+    <li>
+        `o.column` in the formatter parameter is now <a href="#columns">the
+        plain JavaScript object</a> containing the column configurations rather
+        than a `Y.Column` instance.
+    </li>
+    <li>
+        `o.record` in the formatter parameter is now <a href="#data">a Model
+        instance</a> instead of a `Y.Record` instance.
+    </li>
+    <li>
+        `this.createCell(o)`, `o.td`, `o.tr`, and `o.tbody` no longer exist on
+        the parameter passed to `formatter` functions.  Use
+        <a href="index.html#nodeformatter">`nodeFormatter`</a>s.
+    </li>
+    <li>
+        `o.headers` is now at `o.column._headers`, but is read-only for
+        `formatter` functions.  If you need to change the cell's headers
+        attribute, add a {placeholder} for them to a custom `cellTemplate` for
+        the column, or use a `nodeFormatter`.
+    </li>
+    <li>
+        The table's `tdValueTemplate`, `thValueTemplate`, and `trTemplate` no
+        longer exist, nor do the DataTable instance properties `tdTemplate` and
+        `thTemplate`.  Use `formatter` strings or functions to customize the
+        content of data cells in a column and `label` strings to customize the
+        content of header cells.  To modify the `<td>` or `<th>` entirely, set
+        the column configuration `cellTemplate` or `headerTemplate`.
+    </li>
+</ul>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        var table = new Y.DataTable.Base({
+            columnset: [
+                { key: "id",
+                  emptyCellValue: "<em>new</em>" },
+                { key: "name" },
+                { key: "price", formatter: "${value}" },
+                { key: "price",
+                  formatter: function (o) {
+                    if (o.value > 4) {
+                        o.classnames += "spendy";
+                    }
+                    return '$' + o.value.toFixed(2);
+                  }
+                },
+                { key: "price",
+                  formatter: function (o) {
+                    var cell = this.createCell(o);
+
+                    if (o.value > 4) {
+                        cell.addClass('spendy');
+                    }
+
+                    cell.setContent('$' + o.value);
+                  }
+                }
+            ],
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 }
+            ]
+        }).render("#over-there");
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+
+        ```
+        var table = new Y.DataTable({
+            columns: [
+                { key: "id",
+                  emptyCellValue: "<em>new</em>",
+                  allowHTML: true },
+                { key: "name" },
+                { key: "price", formatter: "${value}" },
+                { key: "price",
+                  formatter: function (o) {
+                    if (o.value > 4) {
+                        o.className += "spendy";
+                    }
+                    return '$' + o.value.toFixed(2);
+                  }
+                },
+                { key: "price",
+                  nodeFormatter: function (o) {
+                    if (o.value > 4) {
+                        o.cell.addClass('spendy');
+                    }
+
+                    o.cell.setContent('$' + o.value);
+
+                    return false;
+                  }
+                }
+            ],
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 }
+            ]
+        }).render("#over-there");
+        ```
+    </div>
+</div>
+
+<p>
+    Read the <a href="index.html#formatters">Formatting Cell Data</a> section in
+    the DataTable user guide for more details.
+</p>
 
 <h2 id="columns">Column Configuration Changes</h2>
 
@@ -628,126 +763,6 @@ table._sortHandle = table.delegate(["dblclick", "keydown"],
         ```
     </div>
 </div>
-
-<h2 id="formatters">Table and Cell Formatting Changes</h2>
-
-<p>
-    The following changes apply to table and column cell formatting:
-</p>
-
-<ul>
-    <li>`o.classnames` in the formatter parameter is now `o.className`.</li>
-    <li>
-        `o.column` in the formatter parameter is now <a href="#columns">the
-        plain JavaScript object</a> containing the column configurations rather
-        than a `Y.Column` instance.
-    </li>
-    <li>
-        `o.record` in the formatter parameter is now <a href="#data">a Model
-        instance</a> instead of a `Y.Record` instance.
-    </li>
-    <li>
-        `this.createCell(o)`, `o.td`, `o.tr`, and `o.tbody` no longer exist on
-        the parameter passed to `formatter` functions.  Use
-        <a href="index.html#nodeformatter">`nodeFormatter`</a>s.
-    </li>
-    <li>
-        `o.headers` is now at `o.column._headers`, but is read-only for
-        `formatter` functions.  If you need to change the cell's headers
-        attribute, add a {placeholder} for them to a custom `cellTemplate` for
-        the column, or use a `nodeFormatter`.
-    </li>
-    <li>
-        The table's `tdValueTemplate`, `thValueTemplate`, and `trTemplate` no
-        longer exist, nor do the DataTable instance properties `tdTemplate` and
-        `thTemplate`.  Use `formatter` strings or functions to customize the
-        content of data cells in a column and `label` strings to customize the
-        content of header cells.  To modify the `<td>` or `<th>` entirely, set
-        the column configuration `cellTemplate` or `headerTemplate`.
-    </li>
-</ul>
-
-<div class="yui3-g">
-    <div class="yui3-u before">
-        <h4 class="no-toc">3.4.1</h4>
-
-        ```
-        var table = new Y.DataTable.Base({
-            columnset: [
-                "id",
-                "name",
-                { key: "price", formatter: "${value}" },
-                { key: "price",
-                  formatter: function (o) {
-                    if (o.value > 4) {
-                        o.classnames += "spendy";
-                    }
-                    return '$' + o.value.toFixed(2);
-                  }
-                },
-                { key: "price",
-                  formatter: function (o) {
-                    var cell = this.createCell(o);
-
-                    if (o.value > 4) {
-                        cell.addClass('spendy');
-                    }
-
-                    cell.setContent('$' + o.value);
-                  }
-                }
-            ],
-            data: [
-                { id: 1, name: "Bread", price: 3.45 },
-                { id: 2, name: "Milk",  price: 4.99 },
-                { id: 3, name: "Eggs",  price: 2.75 }
-            ]
-        }).render("#over-there");
-        ```
-    </div>
-    <div class="yui3-u after">
-        <h4 class="no-toc">3.5.0</h4>
-
-        ```
-        var table = new Y.DataTable({
-            columns: [
-                "id",
-                "name",
-                { key: "price", formatter: "${value}" },
-                { key: "price",
-                  formatter: function (o) {
-                    if (o.value > 4) {
-                        o.className += "spendy";
-                    }
-                    return '$' + o.value.toFixed(2);
-                  }
-                },
-                { key: "price",
-                  nodeFormatter: function (o) {
-                    if (o.value > 4) {
-                        o.cell.addClass('spendy');
-                    }
-
-                    o.cell.setContent('$' + o.value);
-
-                    return false;
-                  }
-                }
-            ],
-            data: [
-                { id: 1, name: "Bread", price: 3.45 },
-                { id: 2, name: "Milk",  price: 4.99 },
-                { id: 3, name: "Eggs",  price: 2.75 }
-            ]
-        }).render("#over-there");
-        ```
-    </div>
-</div>
-
-<p>
-    Read the <a href="index.html#formatters">Formatting Cell Data</a> section in
-    the DataTable user guide for more details.
-</p>
 
 <h2 id="markup">Markup and CSS Changes</h2>
 
