@@ -17,8 +17,8 @@
 </body>
 </html>
 <script>
-    //   {filter:'raw'}
-    YUI().use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
+    //   
+    YUI({filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
         var dial = new Y.Dial({
         });
         dial.render(".dial-container");
