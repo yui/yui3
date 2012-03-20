@@ -28,9 +28,9 @@ YUI().use('button', function(Y){
     var toggleButton = new Y.ToggleButton({
         srcNode:'#myToggleButton',
         after: {
-            'selectedChange': function () {
-                var button = this;
-                var selected = button.get('selected');
+            'pressedChange': function () {
+                var button = this,
+                    selected = button.get('pressed');
                 
                 if (selected) {
                     button.set('label', 'Toggle Button: Selected');
