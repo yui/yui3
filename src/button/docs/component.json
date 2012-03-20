@@ -1,7 +1,7 @@
 {
     "name"       : "button",
     "displayName": "Button",
-    "description": "The Button component is a lightweight wrapper for DOM elements that should be treated like a button.",
+    "description": "YUI's Button component is a mixed-module approach to providing a simple-to-use button that normalizes and enhances the Web browser's default button component.",
     "author"     : "drgath",
 
     "tags": ["widget", "button", "beta"],
