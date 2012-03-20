@@ -176,6 +176,21 @@ All configuration attributes are optional, although you'll usually want to at le
         </tr>
 
         <tr>
+            <td>`navigateOnHash`</td>
+            <td>Boolean</td>
+            <td>`false`</td>
+            <td>
+                <p>
+                Whether navigating to a hash-fragment identifier on the current page should be enhanced and cause the `navigate` event to fire.
+                </p>
+
+                <p>
+                By default Pjax allows the browser to perform its default action when a user is navigating within a page by clicking in-page links (e.g. `<a href="#top">Top of page</a>`) and does not attempt to interfere or enhance in-page navigation.
+                </p>
+            </td>
+        </tr>
+
+        <tr>
             <td>`scrollToTop`</td>
             <td>Boolean</td>
             <td>`true`</td>
