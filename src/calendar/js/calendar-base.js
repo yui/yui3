@@ -446,7 +446,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * argument if all dates should be deselected.
      */
     deselectDates : function (dates) {
-      if (dates == null) {
+      if (!dates) {
          this._clearSelection();
       }
       else if (ydate.isValidDate(dates)) {
@@ -492,7 +492,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         this._selectedDates = setVal(this._selectedDates, [year, month, day], oDate);
         this._renderSelectedDate(oDate);
 
-        if (index == null) {
+        if (!index) {
         this._fireSelectionChange();
         }
       }
@@ -557,7 +557,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             hasKey(this._selectedDates[year][month], day)) {
                delete this._selectedDates[year][month][day];
                this._renderUnselectedDate(oDate);
-               if (index == null) {
+               if (!index) {
                  this._fireSelectionChange();
                }
         }
@@ -809,7 +809,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * set to noon.
      */
     _normalizeDate : function (date) {
-      if (date != null) {
+      if (date) {
        return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
       }
       else {
@@ -924,7 +924,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         if (daysInMonth == 31 && (cutoffCol <= 1)) {
           startingCell = 2;
         }
-        else if (daysInMonth== 30 && cutoffCol == 0) {
+        else if (daysInMonth == 30 && cutoffCol === 0) {
           startingCell = 1;
         }
   
@@ -955,7 +955,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         if (daysInMonth == 31 && (cutoffCol <= 1)) {
           startingCell = 2;
         }
-        else if (daysInMonth == 30 && cutoffCol == 0) {
+        else if (daysInMonth == 30 && cutoffCol === 0) {
           startingCell = 1;
         }
   
