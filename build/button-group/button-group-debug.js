@@ -173,4 +173,4 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['button-plugin', 'widget']});
+}, '@VERSION@' ,{requires:['button-plugin', 'cssbutton', 'widget']});

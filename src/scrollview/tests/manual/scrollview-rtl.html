@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html dir="rtl">
     <head>
         <title>ScrollView Example</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -11,7 +11,7 @@
         
         <style>
         #scrollview-bounding {
-            xborder:dotted 2px orange;
+            border:dotted 2px orange;
             height:500px;
         }
 
@@ -21,8 +21,8 @@
 
         #scrollview-content li{
             display:inline-block;
-            width:298px;
-            height:298px;
+            width:398px;
+            height:398px;
             border:1px solid red;
             color:black;
             font-size:40px;
@@ -33,27 +33,29 @@
         </style>
         
         <script type="text/javascript" charset="utf-8">
-        var scrollView;
+        var s;
         YUI({
             debug: true,
             filter:"raw"
         }).use('scrollview-base', 'scrollview-paginator', function(Y) {
 
-            for (var j=0; j<100; j++){
-                Y.one("#scrollview-content ul").append("<li>" + j + "</li>");
-            }
-
-            scrollView = new Y.ScrollView({
+            var scrollView = new Y.ScrollView({
                 id: "scrollview",
                 srcNode : '#scrollview-content',
-                width: "300px"
+                width: "400px"
             });
+            s = scrollView;
 
             scrollView.plug(Y.Plugin.ScrollViewPaginator, {
                 selector: 'li',
                 optimizeMemory: true
             });
-
+            /*
+            scrollView.plug(Y.Plugin.ScrollViewPaginator, {
+                selector: 'li',
+                optimizeMemory: false
+            });
+*/
             scrollView.render();
         });
         </script>
@@ -62,7 +64,15 @@
     <body class="yui3-skin-sam">
         <div>
             <div id="scrollview-content">
-                <ul></ul>
+                <ul>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                    <li>6</li>
+                    <li>7</li>
+                </ul>
             </div>
         </div>
     </body>

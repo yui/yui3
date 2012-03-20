@@ -1,7 +1,7 @@
 {
     "name"       : "button",
     "displayName": "Button",
-    "description": "The Button component is a lightweight wrapper for DOM elements that should be treated like a button.",
+    "description": "YUI's Button component is a mixed-module approach to providing a simple-to-use button that normalizes and enhances the Web browser's default button component.",
     "author"     : "drgath",
 
     "tags": ["widget", "button", "beta"],
@@ -9,28 +9,49 @@
 
     "examples": [
         {
-            "name"       : "simple-button",
-            "displayName": "Button",
+            "name"       : "cssbutton",
+            "displayName": "cssbutton",
             "description": "",
-            "modules"    : ["button-base", "cssbutton"],
+            "modules"    : ["cssbutton"],
             "tags"       : ["button"],
-            "hideTableOfContents": true
+            "use"        : ["cssbutton"],
+            "hideTableOfContents": false
         },
         {
-            "name"       : "css-button",
-            "displayName": "CSS Buttons",
+            "name"       : "button-core",
+            "displayName": "button-core",
             "description": "",
-            "modules"    : ["button-base", "cssbutton"],
+            "modules"    : ["button-core", "cssbutton"],
             "tags"       : ["button"],
-            "hideTableOfContents": true
+            "use"        : ["button-core"],
+            "hideTableOfContents": false
+        },
+        {
+            "name"       : "button-plugin",
+            "displayName": "button-plugin",
+            "description": "",
+            "modules"    : ["button-plugin", "cssbutton"],
+            "tags"       : ["button"],
+            "use"        : ["button-plugin"],
+            "hideTableOfContents": false
+        },
+        {
+            "name"       : "button",
+            "displayName": "button",
+            "description": "",
+            "modules"    : ["button", "cssbutton"],
+            "tags"       : ["button"],
+            "use"        : ["button"],
+            "hideTableOfContents": false
         },
         {
             "name"       : "button-group",
-            "displayName": "Button Group",
+            "displayName": "button-group",
             "description": "",
             "modules"    : ["button-group"],
+            "use"        : ["button-group", "cssbutton"],
             "tags"       : ["button", "button-group"],
-            "hideTableOfContents": true
+            "hideTableOfContents": false
         }
     ]
 }
