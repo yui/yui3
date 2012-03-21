@@ -9,7 +9,7 @@ YUI.add('datatable-datasource', function(Y) {
 
 /**
  * Adds DataSource integration to DataTable.
- * @class DataTableDataSource
+ * @class Plugin.DataTableDataSource
  * @extends Plugin.Base
  */
 function DataTableDataSource() {

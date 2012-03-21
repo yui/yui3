@@ -382,8 +382,8 @@ YUI.add('dial', function(Y) {
             
             // init
             this._setTimesWrappedFromValue(this._originalValue);
-            this._handleNode.set('aria-valuemin', this._minValue);
-            this._handleNode.set('aria-valuemax', this._maxValue);
+            this._handleNode.setAttribute('aria-valuemin', this._minValue);
+            this._handleNode.setAttribute('aria-valuemax', this._maxValue);
         },
 
         /**
@@ -1251,8 +1251,8 @@ YUI.add('dial', function(Y) {
                 this._prevAng = this._getAngleFromValue(this.get('value'));
             }
             this._valueStringNode.setContent(val.toFixed(this.get('decimalPlaces'))); // [#2530045]
-            this._handleNode.set('aria-valuenow', val);
-            this._handleNode.set('aria-valuetext', val);
+            this._handleNode.setAttribute('aria-valuenow', val);
+            this._handleNode.setAttribute('aria-valuetext', val);
             this._setNodeToFixedRadius(this._markerNode, false);
             if((val === this._maxValue) || (val === this._minValue)){
                 this._markerNode.addClass(Dial.CSS_CLASSES.markerMaxMin);
