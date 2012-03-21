@@ -473,9 +473,10 @@ PjaxBase.ATTRS = {
     Whether navigating to a hash-fragment identifier on the current page should
     be enhanced and cause the `navigate` event to fire.
 
-    By default pjax allows the browser to perform its default action when a user
-    is navigating around a page by clicking <a href="#in-page">in-page links</a>
-    and does not attempt to interfere or enhance in-page navigation.
+    By default Pjax allows the browser to perform its default action when a user
+    is navigating within a page by clicking in-page links
+    (e.g. `<a href="#top">Top of page</a>`) and does not attempt to interfere or
+    enhance in-page navigation.
 
     @attribute navigateOnHash
     @type Boolean

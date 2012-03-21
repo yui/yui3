@@ -15,6 +15,7 @@
         <url>autocomplete/tests/functional/autocomplete.html</url>
         <url>base/tests/base.html</url>
         <url>base/tests/base-core.html</url>
+        <url>button/tests/index.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>

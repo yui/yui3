@@ -3946,9 +3946,9 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// graphics-canvas
+// graphics-canvas-default
 add('load', '1', {
-    "name": "graphics-canvas", 
+    "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
@@ -3977,29 +3977,28 @@ add('load', '2', {
 }, 
     "trigger": "autocomplete-list"
 });
-// dd-gestures
+// graphics-svg
 add('load', '3', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
-});
-// scrollview-base-ie
-add('load', '4', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "trigger": "graphics"
 });
 // editor-para-ie
-add('load', '5', {
+add('load', '4', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
 // graphics-vml-default
-add('load', '6', {
+add('load', '5', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4009,7 +4008,7 @@ add('load', '6', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '7', {
+add('load', '6', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4022,7 +4021,7 @@ add('load', '7', {
     "trigger": "graphics"
 });
 // history-hash-ie
-add('load', '8', {
+add('load', '7', {
     "name": "history-hash-ie", 
     "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
@@ -4032,14 +4031,24 @@ add('load', '8', {
 }, 
     "trigger": "history-hash"
 });
-// widget-base-ie
-add('load', '9', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+// transition-timer
+add('load', '8', {
+    "name": "transition-timer", 
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+    "trigger": "transition"
 });
 // dom-style-ie
-add('load', '10', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -4070,7 +4079,7 @@ add('load', '10', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '11', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4079,6 +4088,12 @@ add('load', '11', {
     return ret;
 }, 
     "trigger": "selector"
+});
+// widget-base-ie
+add('load', '11', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -4089,34 +4104,19 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// graphics-svg
+// dd-gestures
 add('load', '13', {
-    "name": "graphics-svg", 
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
-// transition-timer
+// scrollview-base-ie
 add('load', '14', {
-    "name": "transition-timer", 
-    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
-        ret = true;
-
-    if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
-
-    return ret;
-}, 
-    "trigger": "transition"
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
 });
 // app-transitions-native
 add('load', '15', {
@@ -4133,9 +4133,9 @@ add('load', '15', {
 }, 
     "trigger": "app-transitions"
 });
-// graphics-canvas-default
+// graphics-canvas
 add('load', '16', {
-    "name": "graphics-canvas-default", 
+    "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
@@ -7508,6 +7508,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "button-group": {
         "requires": [
             "button-plugin", 
+            "cssbutton", 
             "widget"
         ]
     }, 
@@ -9594,7 +9595,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0f82c1d4f0a041f12d3c4d0a82427fcc';
+YUI.Env[Y.version].md5 = '6e052a384cfed1255f3f0c504dc1b061';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

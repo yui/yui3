@@ -4,10 +4,10 @@ YUI.add('button-plugin-test', function (Y) {
         ArrayAssert = Y.ArrayAssert,
         suite;
 
-    suite = new Y.Test.Suite('Buttons');
+    suite = new Y.Test.Suite('button-plugin');
 
     suite.add(new Y.Test.Case({
-        name: 'button plugin factory',
+        name: 'Methods',
 
         setUp : function () {
             this.label = "Hello";

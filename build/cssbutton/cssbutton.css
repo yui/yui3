@@ -48,8 +48,8 @@
 
 /* Because of IE's overly large left/right padding on <input> */
 input.yui3-button{
-    *padding-left:0px;
-    *padding-right:0px;
+    *padding-left:0px; /*IE 6/7*/
+    *padding-right:0px; /*IE 6/7*/
 }
 
 a.yui3-button {
