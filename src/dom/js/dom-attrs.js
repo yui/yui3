@@ -1,3 +1,7 @@
+/**
+* @for DOM
+* @module dom
+*/
 var documentElement = Y.config.doc.documentElement,
     Y_DOM = Y.DOM,
     TAG_NAME = 'tagName',
