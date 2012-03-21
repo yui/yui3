@@ -9,35 +9,8 @@
 
     "examples": [
         {
-            "name"       : "cssbutton",
-            "displayName": "cssbutton",
-            "description": "",
-            "modules"    : ["cssbutton"],
-            "tags"       : ["button"],
-            "use"        : ["cssbutton"],
-            "hideTableOfContents": false
-        },
-        {
-            "name"       : "button-core",
-            "displayName": "button-core",
-            "description": "",
-            "modules"    : ["button-core", "cssbutton"],
-            "tags"       : ["button"],
-            "use"        : ["button-core"],
-            "hideTableOfContents": false
-        },
-        {
-            "name"       : "button-plugin",
-            "displayName": "button-plugin",
-            "description": "",
-            "modules"    : ["button-plugin", "cssbutton"],
-            "tags"       : ["button"],
-            "use"        : ["button-plugin"],
-            "hideTableOfContents": false
-        },
-        {
             "name"       : "button",
-            "displayName": "button",
+            "displayName": "Button",
             "description": "",
             "modules"    : ["button", "cssbutton"],
             "tags"       : ["button"],
@@ -45,8 +18,26 @@
             "hideTableOfContents": false
         },
         {
+            "name"       : "cssbutton",
+            "displayName": "CSSButton",
+            "description": "",
+            "modules"    : ["cssbutton"],
+            "tags"       : ["button"],
+            "use"        : ["cssbutton"],
+            "hideTableOfContents": false
+        },
+        {
+            "name"       : "button-plugin",
+            "displayName": "Button Plugin",
+            "description": "",
+            "modules"    : ["button-plugin", "cssbutton"],
+            "tags"       : ["button"],
+            "use"        : ["button-plugin"],
+            "hideTableOfContents": false
+        },
+        {
             "name"       : "button-group",
-            "displayName": "button-group",
+            "displayName": "Button Group",
             "description": "",
             "modules"    : ["button-group"],
             "use"        : ["button-group", "cssbutton"],
