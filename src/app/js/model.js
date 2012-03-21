@@ -689,9 +689,9 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     Note: The ECMAScript 5 specification states that objects may implement a
     `toJSON` method to provide an alternate object representation to serialize
-    when passed to `JSON.stringify(obj)`.  This allows class instances, such as
-    Models, to be serialized as plain objects.  `toJSON` should not return a
-    JSON string.
+    when passed to `JSON.stringify(obj)`.  This allows class instances to be
+    serialized as if they were plain objects.  This is why Model's `toJSON`
+    returns an object, not a JSON string.
 
     See <http://es5.github.com/#x15.12.3> for details.
 
