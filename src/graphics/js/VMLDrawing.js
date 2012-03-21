@@ -183,8 +183,7 @@ VMLDrawing.prototype = {
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 360,
-            circum = radius * 2,
-            currentArray;
+            circum = radius * 2;
 
         endAngle *= 65535;
         this._drawingComplete = false;
@@ -251,24 +250,22 @@ VMLDrawing.prototype = {
      * @param {Number} yRadius [optional] y radius for wedge.
      * @private
      */
-    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    drawWedge: function(x, y, startAngle, arc, radius)
     {
-        var diameter = radius * 2,
-            currentArray = this._getCurrentPathArray("ae");
-        yRadius = yRadius || radius;
-        radius = Math.round(radius);
-        yRadius = Math.round(yRadius);
+        var diameter = radius * 2;
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
-        startAngle *= -65535;
-        arc *= 65536;
-        moveTo(x, y);
-        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " +  startAngle + ", " + arc);
-        this._trackSize(diameter, diameter); 
         this._currentX = x;
         this._currentY = y;
+        startAngle *= -65535;
+        arc *= 65536;
+        startAngle = Math.round(startAngle);
+        arc = Math.round(arc);
+        this.moveTo(x, y);
+        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + " " + this._round(radius) + ", " +  startAngle + ", " + arc);
+        this._trackSize(diameter, diameter); 
         return this;
     },
 
