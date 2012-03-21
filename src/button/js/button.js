@@ -191,7 +191,7 @@ Y.extend(ToggleButton, Button,  {
     },
 
     /**
-     * @method bindUI
+     * @method syncUI
      * @description Syncs the UI for the widget
      */
     syncUI: function() {
@@ -299,7 +299,7 @@ Y.extend(ToggleButton, Button,  {
     ARIA_ROLES: ARIA_ROLES,
 
     /**
-     * List of class names used in the ButtonGroup's DOM
+     * Array of static constants used to identify the classnames applied to DOM nodes
      *
      * @property CLASS_NAMES
      * @type Object
