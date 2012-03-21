@@ -9,8 +9,17 @@
 
     "examples": [
         {
+            "name"       : "button",
+            "displayName": "Buttons",
+            "description": "",
+            "modules"    : ["button"],
+            "tags"       : ["button"],
+            "use"        : ["button", "widget"],
+            "hideTableOfContents": false
+        },
+        {
             "name"       : "cssbutton",
-            "displayName": "cssbutton",
+            "displayName": "CSSButton",
             "description": "",
             "modules"    : ["cssbutton"],
             "tags"       : ["button"],
@@ -18,39 +27,21 @@
             "hideTableOfContents": false
         },
         {
-            "name"       : "button-core",
-            "displayName": "button-core",
-            "description": "",
-            "modules"    : ["button-core", "cssbutton"],
-            "tags"       : ["button"],
-            "use"        : ["button-core"],
-            "hideTableOfContents": false
-        },
-        {
             "name"       : "button-plugin",
-            "displayName": "button-plugin",
+            "displayName": "Button Plugin",
             "description": "",
             "modules"    : ["button-plugin", "cssbutton"],
-            "tags"       : ["button"],
-            "use"        : ["button-plugin"],
-            "hideTableOfContents": false
-        },
-        {
-            "name"       : "button",
-            "displayName": "button",
-            "description": "",
-            "modules"    : ["button", "cssbutton"],
             "tags"       : ["button"],
             "use"        : ["button"],
             "hideTableOfContents": false
         },
         {
             "name"       : "button-group",
-            "displayName": "button-group",
+            "displayName": "Button Group",
             "description": "",
             "modules"    : ["button-group"],
-            "use"        : ["button-group", "cssbutton"],
-            "tags"       : ["button", "button-group"],
+            "use"        : ["button-group"],
+            "tags"       : ["button", "widget"],
             "hideTableOfContents": false
         }
     ]

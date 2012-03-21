@@ -1,45 +1,31 @@
 YUI().use('button', function(Y){
     
-    // A basic push button
-    var pushButton = new Y.Button({
-        srcNode:'#myButton'
-    }).render();
-    
-    
-    // A disabled button
-    var disabledButton = new Y.Button({
-        srcNode:'#myDisabledButton',
-        disabled: true
-    }).render();
-    
-    
-    // An event button, listening for a click
-    var eventButton = new Y.Button({
-        srcNode:'#myEventButton'
-    }).render();
-    
-    eventButton.on('click', function(){
-        var button = this;
-        var label = button.get('label');
-        alert("'" + label + "' was clicked");
-    });
-    
     // A toggle button with a state change listener
     var toggleButton = new Y.ToggleButton({
         srcNode:'#myToggleButton',
+        
+        // 'after', because 'on' would trigger before the attribute update
         after: {
             'pressedChange': function () {
                 var button = this,
-                    selected = button.get('pressed');
+                    pressed = button.get('pressed'),
+                    newLabel = 'this' + (pressed ? ' selected ' : ' unselected ') + 'button' ;
                 
-                if (selected) {
-                    button.set('label', 'Toggle Button: Selected');
-                }
-                else {
-                    button.set('label', 'Toggle Button: Unselected');                    
-                }
+                button.set('label', newLabel);
             }
         }
     }).render();
+    
+    
+    var button = new Y.Button({
+        srcNode:'#myPushButton',
+        on: {
+            'click': function(){
+                var pressed = toggleButton.get('pressed');
+                toggleButton.set('pressed', !pressed);
+            }
+        }
+    }).render();
+    
     
 });

@@ -1,198 +1,21 @@
+<link rel="stylesheet" href='{{yuiBuildUrl}}/cssbutton/cssbutton.css'></link>
 <div class="intro">
-    <p>In this example, we'll look at a few ways to create buttons using the `'button'` module, which combines `'button-core'`, `'widget'`, and uses and `'cssbutton'` for styling.</p>
+    <p>In this example, we'll look at a few ways to create button widgets using the `'button'` module and listen for events on one to manipulate an attribute of another.</p>
 </div>
 
-{{>getting-started}}
-
-
-
-
-
-<h2>Using Button</h2>
-<h3>Quick Start</h3>
-<p>There are two ways to create a Y.Button instance.  The most common method is to assign it to an existing DOM node, like:</p>
-
-```
-// Use an existing node
-var button = new Y.Button({
-    srcNode: '#myButton'
-});
-```
-
-Or, you can also create an unattached node and append to a parent container:
-```
-
-var button = new Y.Button(); // Dynamically create the node
-var node = button.getNode(); // Get the Y.Node instance
-Y.one('#container').append(node); // Append it to #container
-```
-
-<p>In either case, the object you receive from the constructor will be a Y.Button instance that contains a few attributes, and wraps around a Y.Node instance.  The markup generated will look something similar to:</p>
-
-```
-<button id='myButton' class='yui3-button' aria-pressed='false'>My Button</button>
-```
-
-<p>At this point, you can modify `button`'s attributes, manipulate its state, or listen for change events.</p>
-
-```
-// Create a toggle button
-var node = button.getNode()
-node.on('click', function(){
-    button.set('selected', !button.get('selected'));
-});
-```
-
-
-
-
-
-
-
-<h3>Events</h3>
-
-<p>Most commonly with button elements, you want to listen for any clicks, or other <a href='/yui/docs/api/files/node_js_node-event.js.html#l8'>DOM events</a> that occur.</p>
-
-```
-var button = new Y.Button({
-    srcNode: '#myButton'
-});
-
-var node = button.getNode();
-node.on('click', function(){
-    alert('Hello!');
-});
-```
-
-<p>If you are more interested in listening to a `button`'s attribute change events, that can be done at creation.</p>
-
-```
-var button = new Y.Button({
-    srcNode: '#myButton',
-    type: 'toggle',
-    on: {
-        selectedChange: function(){
-            Y.log('This will fire when the toggled state changed')
-        }
-    }
-})
-```
-
-<p>Any event handlers can also be assigned by using the `on` property in the configuration object.  Valid events include any , as well as Y.Button attribute change events (e.g. 'selectedChange').</p>
-
-<h3>Styling</h3>
-<p>YUI's Button component was designed with the idea in mind that you may only want button styles, no JS functionality.  Instead of `use('button')`, you can just include the `cssbutton` sub-module.  This can be done dynamically with `use('cssbutton')`, or statically with a `<link>` tag.</p>
-
-<p>Including this CSS module will load in a stylesheet consisting of the following classes:</p>
-<ul>
-    <li>yui3-button</li>
-    <li>yui3-button:hover</li>
-    <li>yui3-button:active</li>
-    <li>yui3-button-disabled</li>
-</ul>
-
-<p>These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear a bit nicer than native buttons, and in modern browsers you'll get buttons using the latest CSS3 styles.</p>
-
-
-
-
-
-<h3>Events</h3>
-<p>Here are the events emitted from a Y.Button instance </p>
-<p>`button.on('eventName', fn)` will fire <strong>before</strong> the attribute &amp; UI are updated. 
-<br>`button.after('eventName', fn)` will fire <strong>after</strong> the attribute &amp; UI are updated.</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Event</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>`selectedChange`</td>
-      <td>
-         Fires for toggle buttons to notify the subscriber the selected state is about to be, or has been updated.
-      </td>
-    </tr>
-    <tr>
-      <td>`disabledChange`</td>
-      <td>
-           Fires to notify the subscriber the disabled state is about to be, or has been updated.
-      </td>
-    </tr>
-    <tr>
-      <td>`typeChange`</td>
-      <td>
-         Fires to inform the subscriber that the button's type is about to be, or has been updated.
-      </td>
-    </tr>
-    <tr>
-      <td>`labelChange`</td>
-      <td>
-           Fires to inform the subscriber that the button's label is about to be, or has been updated.
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-<h3>Configuration</h3>
-<p>Here are the attributes that can be set on instantiation.</p>
-<table>
-  <thead>
-    <tr>
-      <th>Event</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>`srcNode`</td>
-      <td>
-         The source node 
-      </td>
-    </tr>
-    <tr>
-      <td>`label`</td>
-      <td>
-          The textual representation of the element
-      </td>
-    </tr>
-    <tr>
-      <td>`on`</td>
-      <td>
-         Any single event, or group of events to listen for. 
-         <br> Note: These are attribute change events, not DOM events.
-      </td>
-    </tr>
-    <tr>
-      <td>`disabled`</td>
-      <td>
-         Whether or not the button should be disabled by default
-      </td>
-    </tr>
-    <tr>
-      <td>`selected`</td>
-      <td>
-         Whether or not the button should be selected by default
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<h2>Demo</h2>
-
-
 <div class="example yui3-skin-sam">
-    {{>button-source}}
+    {{>button-source-html}}
+
+    <script>
+    {{>button-source-js}}
+    </script>
 </div>
 
 <h4>Source: HTML</h4>
 ```
 {{>button-source-html}}
 ```
+
 <h4>Source: JavaScript</h4>
 ```
 {{>button-source-js}}

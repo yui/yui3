@@ -285,7 +285,7 @@ Y.mix(Y_DOM, {
      * (display:none or elements not appended return false).
      * @method getX
      * @param element The target element
-     * @return {Int} The X position of the element
+     * @return {Number} The X position of the element
      */
 
     getX: function(node) {
@@ -298,7 +298,7 @@ Y.mix(Y_DOM, {
      * (display:none or elements not appended return false).
      * @method getY
      * @param element The target element
-     * @return {Int} The Y position of the element
+     * @return {Number} The Y position of the element
      */
 
     getY: function(node) {
@@ -356,7 +356,7 @@ Y.mix(Y_DOM, {
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param element The target element
-     * @param {Int} x The X values for new position (coordinates are page-based)
+     * @param {Number} x The X values for new position (coordinates are page-based)
      */
     setX: function(node, x) {
         return Y_DOM.setXY(node, [x, null]);
@@ -367,7 +367,7 @@ Y.mix(Y_DOM, {
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param element The target element
-     * @param {Int} y The Y values for new position (coordinates are page-based)
+     * @param {Number} y The Y values for new position (coordinates are page-based)
      */
     setY: function(node, y) {
         return Y_DOM.setXY(node, [null, y]);
@@ -478,12 +478,12 @@ Y.mix(DOM, {
     },
 
     /**
-     * Find the intersect information for the passes nodes.
+     * Find the intersect information for the passed nodes.
      * @method intersect
      * @for DOM
      * @param {HTMLElement} element The first element 
      * @param {HTMLElement | Object} element2 The element or region to check the interect with
-     * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance e.g. DragDrop)
      * @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
      */
     intersect: function(node, node2, altRegion) {
@@ -516,9 +516,10 @@ Y.mix(DOM, {
      * Check if any part of this node is in the passed region
      * @method inRegion
      * @for DOM
-     * @param {Object} node2 The node to get the region from or an Object literal of the region
+     * @param {Object} node The node to get the region from
+     * @param {Object} node2 The second node to get the region from or an Object literal of the region
      * $param {Boolean} all Should all of the node be inside the region
-     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inRegion: function(node, node2, all, altRegion) {
@@ -558,7 +559,7 @@ Y.mix(DOM, {
      * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {Boolean} all Should all of the node be inside the region
-     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inViewportRegion: function(node, all, altRegion) {
