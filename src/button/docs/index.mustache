@@ -10,12 +10,12 @@
 // Create some button widgets
 YUI().use('button', function(Y){
     
-    // Create a push button widget
+    // A push button widget
     var button = new Y.Button({
         srcNode: '#myButton'
     });
 
-    // Create a toggle button widget
+    // A toggle button widget
     var toggleButton = new Y.ToggleButton({
         srcNode: '#myToggleButton'
     });
@@ -28,11 +28,11 @@ YUI().use('button', function(Y){
     
 });
 
-// Create some lighter-weight buttons by plugging nodes
+// Or, if you want something a little more light-weight...
 YUI().use('button-plugin', function(Y){
     
     // Plug an existing node
-    var button = new Y.Plugin.Button.nodeCreate("#testButton", {
+    var button = new Y.Plugin.Button.createNode("#testButton", {
         label: "I'm a disabled button",
         disabled: true
     });
@@ -42,10 +42,9 @@ YUI().use('button-plugin', function(Y){
     button.on('click', function(){
         Y.log('I was clicked!');
     });
-    
 });
 
-// Create a button group widget
+// And if you want to manage a group of buttons
 YUI().use('button-group', function(Y){
     
     // Use an existing node to create a toggle button widget
@@ -53,14 +52,14 @@ YUI().use('button-group', function(Y){
         srcNode: '#container' // Should contain <button> children
     });
 
-    // Get an array of buttons that have a selected (pressed/checked) state
+    // Get an array of buttons that have a selected state
     var buttons = ButtonGroup.getSelectedButtons();
 });
 ```
 
 
 
-<h2>Anatomy</h2>
+<h2>Modules</h2>
 <p>YUI's Button component introduces 5 modules:</p>
 <ul>
     <li><a href="#cssbutton">`cssbutton`</a> - Includes various `yui3-button` styles to provide a normalized CSS base for buttons.</li>
@@ -73,19 +72,15 @@ YUI().use('button-group', function(Y){
 
 <h3>Which one to use?</h3>
 <ul>
-    <li>`use('cssbutton')` if you only want CSS-styled buttons</li>
+    <li>`use('cssbutton')` if you only want a CSS stylesheet to enhance button(-like) nodes</li>
+    <li>`use('button-plugin')` if you only need to enhance a DOM node with button functionality</li>
     <li>`use('button')` if you want a button widget</li>
-    <li>`use('button-group')` if you want to manage a group of buttons (widget)</li>
-    <li>`use('button-plugin')` if you only need a enhance a Y.Node instance with button functionality</li>
+    <li>`use('button-group')` if you want a widget to manage a group of buttons</li>
     <li>`button-core` is not intended to be used stand-alone</li>
 </ul>
 
-
-
-<h2>Modules</h2>
-
 <div id="cssbutton">
-    <h3>cssbutton</h3>
+    <h3>use('cssbutton')</h3>
     <p>YUI's Button component was designed with the idea in mind that sometimes you may only want button styles, without the need for any JavaScript functionality.  Instead of `use('button', ...)`, you can just include the `cssbutton` module.  This can be done dynamically with `use('cssbutton')`, or statically with a `link` tag.</p>
 ```
 <link rel="stylesheet" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssbutton/cssbutton.css">
@@ -102,76 +97,46 @@ YUI().use('button-group', function(Y){
 
     <p>These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear a bit nicer than native buttons, and in modern browsers you'll get buttons using modern CSS3 styles.  These are intended to be base styles and all overridable.</p>
     
-    <h4>Background Color</h4>
-    <p>A feature of `cssbutton` is that it uses transparent gradients to create a colored effect.  So if you would like a button that has a light to dark red gradient, you do not need to specify all the styles for proper cross-browser gradients, you only need to specify one style, `background-color` and apply it to your buttons.</p>
-</div>
-
-<div id="button">
-    <h3>button</h3>
-    
-    <h4>Y.Button</h4>
-    
-    <h5>Benefits of Y.Button</h5>
-    <p>So what do you get from Y.Button over just creating your own button node, via something like `new Y.Node.create('<button></button>')`</p>
-
-    <ul>
-        <li><strong>State management</strong> - Instances automatically apply classes, such as `yui3-button-selected` and `yui3-button-disabled` which are useful for styling purposes. Also, Y.ToggleButton will fire a 'pressedChange' or 'checkedChange' (depending on `type`) event only when the button state changes from selected to unselected, or vice-versa, eliminating the typical case of listening for 'click' and then checking to see if a state changed.</li>
-
-        <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own ARIA <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>states</a> &amp; <a href='http://www.w3.org/TR/wai-aria/roles'>roles</a>.  This includes states like `aria-pressed` &amp; `aria-checked`, also appropriate roles like `button`, `checked`, `radio`, etc...</li>
-
-        <li><strong>Groups</strong> - `Y.ButtonGroup` allows you to group buttons together to create checkbox &amp; radio groups, giving your users a nicer experience when compared to the standard `<input type='radio'>` or `<input type='checkbox'>` controls.</li>
-    </ul>
-    
-
-
-
-    <h5>Events</h5>
-
-    <p>Most commonly with button elements, you want to listen for any clicks, or other <a href='/yui/docs/api/files/node_js_node-event.js.html#l8'>DOM events</a> that occur.</p>
-
-    ```
-    var button = new Y.Button({
-        srcNode: '#myButton'
-    });
-
-    var node = button.getNode();
-    node.on('click', function(){
-        alert('Hello!');
-    });
-    ```
-
-    <p>If you are more interested in listening to a `button`'s attribute change events, that can be done at creation.</p>
-
-    ```
-    var button = new Y.ToggleButton({
-        srcNode: '#myButton',
-        on: {
-            labelChange: function(){
-                Y.log('This will fire when the toggled state changes')
-            }
-        }
-    })
-    ```
-
-    <p>Any event handlers can also be assigned by using the `on` property in the configuration object.  Valid events include any , as well as Y.Button attribute change events (e.g. 'selectedChange').</p>
-    
-    <h4>Y.ToggleButton</h4>
-    <p>`Y.ToggleButton` does everything that `Y.Button` does (by extending it), and adds the concept of a 'selected' state, which is referred to as either 'pressed' or 'checked', depending on the type attribute of button.</p>
-
-
+    <h5>Background Color</h5>
+    <p>A feature of cssbutton is that it uses transparent gradients to create a colored effect.  So if you would like a button that has a light to dark red gradient, you do not need to specify all the styles for proper cross-browser gradients, you only need to specify one style, `background-color` and apply it to your buttons.</p>
 </div>
 
 
 <div id="buttonplugin">
-    <h3>button-plugin</h3>
-    <p>This module exports the Y.Plugin.Node.createNode factory, which simplifies the process of plugging nodes.</p>
+    <h3>use('button-core')</h3>
+    <p>This module serves as the foundation for all Button component JavaScript modules and exports `Y.ButtonCore`.  While you can use it stand-alone if you like, it is typically as a foundational building block for all other Button classes.</p>
+</div>
+
+
+<div id="buttonplugin">
+    <h3>use('button-plugin')</h3>
+    <p>This module exports the `Y.Plugin.Node.createNode` factory, which simplifies the process of plugging nodes with `Y.ButtonCore`.</p>
+</div>
+
+
+<div id="button">
+    <h3>use('button')</h3>
+    
+    <h4>Y.Button</h4>
+    <p>`Y.Button` essentially combines Y.ButtonCore with Y.Widget, to give you basic button functionality, but with the benefits of having a Y.Widget instance.  This can become a building block for different types of buttons, for instance, a toggle button. </p>
+    
+    <h4>Y.ToggleButton</h4>
+    <p>`Y.ToggleButton` does everything that `Y.Button` does (by extending it), and adds the concept of a selected state which is referred to as either 'pressed' or 'checked', depending on the `type` attribute of the instance.</p>
+    
+    <h4>Benefits</h4>
+    
+    <p>So what do you get from `Y.Button`/`Y.ToggleButton` over just creating or plugging a `<button>` node?</p>
+
+    <ul>
+        <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own ARIA <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>states</a> &amp; <a href='http://www.w3.org/TR/wai-aria/roles'>roles</a>.  This includes states like `aria-pressed` &amp; `aria-checked`, also appropriate roles like `button`, `checked`, `radio`, etc...</li>
+        <li><strong>State management</strong> - Instances automatically apply classes, such as `yui3-button-selected` and `yui3-button-disabled` which are useful for styling purposes. Also, Y.ToggleButton will fire a 'pressedChange' or 'checkedChange' (depending on `type`) event only when the button state changes from selected to unselected, or vice-versa, eliminating the typical case of listening for 'click' and then checking to see if a state changed.</li>
+    </ul>
 </div>
 
 
 <div id="buttongroup">
-    <h3>button-group</h3>
-    <h4>Y.ButtonGroup</h4>
-    <p>`Y.ButtonGroup` is a constructor that is used to generate widgets containing a group of buttons. To avoid widgets inside of widgets, this class is built on top of `Y.ButtonCore`</p>
+    <h3>use('button-group')</h3>
+    <p>`Y.ButtonGroup` is a constructor that is used to generate widgets containing a group of buttons. To avoid widgets inside of widgets, this class is built on top of `Y.ButtonCore`, not `Y.Button`</p>
 </div>
 
 

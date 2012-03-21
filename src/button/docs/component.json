@@ -10,11 +10,11 @@
     "examples": [
         {
             "name"       : "button",
-            "displayName": "Button",
+            "displayName": "Buttons",
             "description": "",
-            "modules"    : ["button", "cssbutton"],
+            "modules"    : ["button"],
             "tags"       : ["button"],
-            "use"        : ["button"],
+            "use"        : ["button", "widget"],
             "hideTableOfContents": false
         },
         {
@@ -32,7 +32,7 @@
             "description": "",
             "modules"    : ["button-plugin", "cssbutton"],
             "tags"       : ["button"],
-            "use"        : ["button-plugin"],
+            "use"        : ["button"],
             "hideTableOfContents": false
         },
         {
@@ -40,8 +40,8 @@
             "displayName": "Button Group",
             "description": "",
             "modules"    : ["button-group"],
-            "use"        : ["button-group", "cssbutton"],
-            "tags"       : ["button", "button-group"],
+            "use"        : ["button-group"],
+            "tags"       : ["button", "widget"],
             "hideTableOfContents": false
         }
     ]
