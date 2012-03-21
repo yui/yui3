@@ -2,33 +2,304 @@
     <p>{{description}}</p>
 </div>
 
-<h2>Anatomy of Button</h2>
+{{>getting-started}}
+
+<h2>Using Button - Quick Start</h2>
+<h3>Button Widgets</h3>
+```
+// Create some button widgets
+YUI().use('button', function(Y){
+    
+    // A push button widget
+    var button = new Y.Button({
+        srcNode: '#myButton'
+    });
+
+    // A toggle button widget
+    var toggleButton = new Y.ToggleButton({
+        srcNode: '#myToggleButton'
+    });
+    
+});
+```
+
+<h3>Node Plugin</h3>
+```
+// If you want something a little more light-weight than a widget...
+YUI().use('button-plugin', function(Y){
+    
+    var button = new Y.Plugin.Button.createNode("#testButton", {
+        label: "I'm a disabled button",
+        disabled: true
+    });
+    
+});
+```
+<h3>Button Groups</h3>
+```
+// And if you want to manage a group of buttons
+YUI().use('button-group', function(Y){
+    
+    var buttonGroup = new Y.ButtonGroup({
+        srcNode: '#container' // Should contain <button> children
+    });
+    
+});
+```
+
+
+
+<h2>Modules</h2>
 <p>YUI's Button component introduces 5 modules:</p>
 <ul>
-    <li>`cssbutton` - Imports various `yui3-button` styles to provide a normalized css base for your buttons.</li>
-    <li>`button` - Exports the `Y.Button` &amp; `Y.ToggleButton` widgets.</li>
-    <li>`button-group` - Exports the `Y.ButtonGroup` widget.</li>
-    <li>`button-core`</li>
-    <li>`button-plugin` - Exports the `Y.Plugin.Button.createNode` factory.</li>
+    <li><a href="#cssbutton">`cssbutton`</a> - Includes various `yui3-button` styles to provide a normalized CSS base for buttons.</li>
+    <li><a href="#button">`button`</a> - Exports the `Y.Button` &amp; `Y.ToggleButton` widgets.</li>
+    <li><a href="#buttongroup">`button-group`</a> - Exports the `Y.ButtonGroup` widget.</li>
+    <li><a href="#buttonplugin">`button-plugin`</a> - Exports the `Y.Plugin.Button.createNode` factory.</li>
+    <li>`button-core` - Exports `Y.ButtonCore`, a base used by all other Button component modules.</li>
 </ul>
 
 
-<h2>Which one to use?</h2>
+<h3>Which one to use?</h3>
 <ul>
-    <li>`use('button')` if you want a button (widget)</li>
-    <li>`use('button-group')` if you want to manage a group of buttons (widget)</li>
-    <li>`use('cssbutton')` if you only want css-styled buttons</li>
-    <li>`use('button-plugin')` if you only need a Y.Node-based button to do things like; @TODO</li>
+    <li>`use('cssbutton')` if you only want a CSS stylesheet to enhance button(-like) nodes</li>
+    <li>`use('button-plugin')` if you only need to enhance a DOM node with button functionality</li>
+    <li>`use('button')` if you want a button widget</li>
+    <li>`use('button-group')` if you want a widget to manage a group of buttons</li>
+    <li>`button-core` is not intended to be used stand-alone</li>
 </ul>
 
+<div id="cssbutton">
+    <h3>use('cssbutton')</h3>
+    <p>YUI's Button component was designed with the idea in mind that sometimes you may only want button styles, without the need for any JavaScript functionality.  Instead of `use('button', ...)`, you can just include the `cssbutton` module.  This can be done dynamically with `use('cssbutton')`, or statically with a `link` tag.</p>
+```
+<link rel="stylesheet" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssbutton/cssbutton.css">
+```
 
-<h3>Benefits</h3>
-<p>So what do you get from Y.Button over just creating your own button node, via something like `new Y.Node.create('<button></button>')`</p>
+    <p>Loading this stylesheet will include the following classes:</p>
+    <ul>
+        <li>yui3-button</li>
+        <li>yui3-button-disabled</li>
+        <li>yui3-button-hover, yui3-button:hover</li>
+        <li>yui3-button-active, yui3-button:active</li>
+        <li>yui3-button-primary, yui3-button-selected</li>
+    </ul>
 
-<ul>
-    <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own ARIA <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>states</a> &amp; <a href='http://www.w3.org/TR/wai-aria/roles'>roles</a>.  This includes states like `aria-pressed` &amp; `aria-checked`, also appropriate roles like `button`, `checked`, `radio`, etc...</li>
+    <p>These styles are designed to progressively enhance.  In legacy browsers, you'll get styles that appear as basic buttons, and in new browsers you'll get buttons using modern styles.  cssbutton is intended to provide a base and be overridable with custom styles.  Such as `background-color`.</p>
+    
+    <h5>Background Color</h5>
+    <p>A feature of cssbutton is that it uses transparent gradients to create a colored effect.  So if you would like a button that has a light to dark red gradient, you do not need to specify all the styles for proper cross-browser gradients, you only need to specify a single `background-color` style to your buttons.</p>
+</div>
 
-    <li><strong>State management</strong> - Y.Button instances automatically apply classes, such as `yui3-button-selected` and `yui3-button-disabled` which are useful for styling purposes. Also, Y.ToggleButton will fire a 'pressedChange' or 'pressedChange' (depending on `type`) event only when the button state changes from selected to unselected, or vice-versa, eliminating the typical case of listening for 'click' and then checking to see if the state changed.</li>
 
-    <li><strong>Groups</strong> - `Y.ButtonGroup` allows you to group buttons together to create checkbox &amp; radio groups, giving your users a nicer experience when compared to the standard radio or checkbox controls.</li>
-</ul>
+<div id="buttonplugin">
+    <h3>use('button-core')</h3>
+    <p>This module serves as the foundation for all Button component JavaScript modules and exports `Y.ButtonCore`.  While you can use it stand-alone if you like, it is typically a foundational building block for all other Button classes.</p>
+</div>
+
+
+<div id="buttonplugin">
+    <h3>use('button-plugin')</h3>
+    <p>This module exports the `Y.Plugin.Node.createNode` factory, which simplifies the process of plugging nodes with `Y.ButtonCore`.</p>
+</div>
+
+
+<div id="button">
+    <h3>use('button')</h3>
+    
+    <h4>Y.Button</h4>
+    <p>`Y.Button` combines `Y.ButtonCore` with `Y.Widget`, to give you basic button functionality, but with the benefits of having a <a href='/yui/docs/widget/'>Widget</a> instance.  This can be used as a building block for different types of advanced buttons.</p>
+    
+    <h4>Y.ToggleButton</h4>
+    <p>`Y.ToggleButton` does everything that `Y.Button` does (by extending it), and adds the concept of a selected state, which is referred to as either 'pressed' or 'checked', depending on the `type` attribute of the instance. This distinction is made for proper ARIA support.</p>
+    
+    <h4>Benefits</h4>
+    
+    <p>So what do you get from `Y.Button`/`Y.ToggleButton` over just creating or plugging a `<button>` node?</p>
+
+    <ul>
+        <li><strong>Accessibility</strong> - Your buttons automatically create and manage their own ARIA <a href='http://www.w3.org/TR/wai-aria/states_and_properties'>states</a> &amp; <a href='http://www.w3.org/TR/wai-aria/roles'>roles</a>.  This includes states like `aria-pressed` &amp; `aria-checked`, also appropriate roles like `button`, `checked`, `radio`, etc...</li>
+        <li><strong>State management</strong> - Instances automatically apply classes, such as `yui3-button-selected` and `yui3-button-disabled` which are useful for styling purposes. Also, `Y.ToggleButton` will fire a 'pressedChange' or 'checkedChange' event (depending on `type`) when the button's state changes from selected to unselected, or vice-versa.  This event eliminates the typical case of listening for all 'click' events and then verifying a state changed actually did occur.</li>
+    </ul>
+</div>
+
+
+<div id="buttongroup">
+    <h3>use('button-group')</h3>
+    <p>`Y.ButtonGroup` is a constructor that is used to generate widgets containing a group of buttons. To avoid widgets inside of widgets, this class is built on top of `Y.ButtonCore`, not `Y.Button`</p>
+</div>
+
+
+<h2>Reference</h2>
+<p><strong>Note</strong>: This is not an exhaustive list. See the API documentation for a complete listing.</p>
+<h3>Attributes</h3>
+<h4>Y.ButtonCore</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Data type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>label</td>
+      <td>string</td>
+      <td>
+           Sets the button's `innerHTML` or `value` attribute depending on node type
+      </td>
+    </tr>
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>
+           Sets the button's disabled state to true/false
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Node Plugin</h4>
+<p>Inherited from `Y.ButtonCore`</p>
+
+<h4>Y.Button</h4>
+<p>Identical to `Y.ButtonCore`</p>
+
+<h4>Y.ToggleButton</h4>
+<p>In addition to the inherited `Y.Button` attributes...</p>
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Data type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>type</td>
+      <td>string</td>
+      <td>
+            <p>Sets the type of a toggleable button.</p>
+            <p>Possible values: 
+                <ul>
+                    <li>'toggle' (default)</li>
+                    <li>'checkbox' </li>
+                </ul>
+            </p>
+            <p>The difference is that a 'toggle' button will use <a href='http://www.w3.org/TR/wai-aria/states_and_properties#aria-pressed'>aria-pressed</a>, and a 'checkbox' button will use <a href='http://www.w3.org/TR/wai-aria/states_and_properties#aria-checked'>aria-checked</a>.</p>       </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Y.ButtonGroup</h4>
+<p>In addition to the inherited `Y.ButtonCore` attributes...</p>
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Data type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>type</td>
+      <td>string</td>
+      <td>
+          <p>Sets the type of button group</p>
+          <p>Possible values: 
+              <ul>
+                  <li>'push' (default) - No buttons have a selectable state</li>
+                  <li>'radio' - Only one button is selectable at a time</li>
+                  <li>'checkbox' - Multiple buttons can be selected at a time</li>
+              </ul>
+          </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<h3>Change Events</h3>
+<h4>Y.ButtonCore</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        <td>labelChange</td>
+        <td>
+            Fires to inform the subscriber that the button's label is about to be, or has been updated.
+        </td>
+    </tr>
+    <tr>
+        <td>disabledChange</td>
+        <td>
+            Fires to notify the subscriber the disabled state is about to be, or has been updated.
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Node Plugin</h4>
+<p>Inherited from `Y.ButtonCore`</p>
+
+<h4>Y.Button</h4>
+<p>Identical to `Y.ButtonCore`</p>
+
+<h4>Y.ToggleButton</h4>
+<p>In addition to the inherited `Y.Button` events...</p>
+<table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>pressedChange</td>
+      <td>
+         Fires for toggle buttons to notify the subscriber the selected state is about to be, or has been updated.
+      </td>
+    </tr>
+    <tr>
+      <td>checkedChange</td>
+      <td>
+         Identical to `"pressedChange"`, but only applicable for buttons with a configuration attribute `"type: 'checkbox'"`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Y.ButtonGroup</h4>
+<p>In addition to the inherited `Y.ButtonCore` events...</p>
+<table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>selectionChange</td>
+      <td>
+          Fires when a button within the group is either selected or unselected.  The event payload contains a reference `'originEvent'` to the original event, which can be used to obtain the target button.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+    Note:
+    <br>`.on('eventName', fn)` will fire <strong>before</strong> the attribute &amp; UI are updated. 
+    <br>`.after('eventName', fn)` will fire <strong>after</strong> the attribute &amp; UI are updated.
+</p>
