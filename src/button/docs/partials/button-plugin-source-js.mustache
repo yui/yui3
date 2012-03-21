@@ -1,0 +1,32 @@
+YUI().use('button-plugin', 'cssbutton', function(Y){
+    var ButtonFactory = Y.Plugin.Button.createNode;
+    
+    // A basic push button
+    var pushButton = new ButtonFactory({
+        srcNode:'#myButton'
+    });
+    
+    
+    // A disabled button
+    var disabledButton = new ButtonFactory({
+        srcNode:'#myDisabledButton',
+        disabled: true
+    });
+    
+    disabledButton.on('click', function(){
+        var label = this.get('label');
+        alert("My label is '"  + label + "'");
+    });
+    
+    // An event button, listening for a click
+    var eventButton = new ButtonFactory({
+        srcNode:'#myEventButton'
+    });
+    
+    eventButton.on('click', function(){
+        var disabled = disabledButton.get('disabled'),
+            newLabel = disabled ? 'Not disabled' : 'Disabled';
+            
+        disabledButton.set('label', newLabel).set('disabled', !disabled);
+    });
+});
