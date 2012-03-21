@@ -12,7 +12,7 @@ var getClassName = Y.ClassNameManager.getClassName;
 /**
 * Creates a button
 *
-* @class Button
+* @class ButtonCore
 * @param config {Object} Configuration object
 * @constructor
 */
@@ -85,7 +85,7 @@ Button.prototype = {
 
     /**
     * @method enable    
-    * @description Sets the Button's disabled DOM attribute to false
+    * @description Sets the button's `disabled` DOM attribute to false
     * @public
     */
     enable: function() {
@@ -94,7 +94,7 @@ Button.prototype = {
 
     /**
     * @method disable
-    * @description Sets the Button's disabled DOM attribute to true
+    * @description Sets the button's `disabled` DOM attribute to true
     * @public
     */
     disable: function() {
@@ -103,7 +103,7 @@ Button.prototype = {
 
     /**
     * @method getNode
-    * @description Gets the host node
+    * @description Gets the host node for this button instance
     * @public
     */
     getNode: function() {
@@ -197,11 +197,11 @@ Button.ATTRS = {
 Button.NAME = "button";
 
 /**
-* Array of static constants used to identify the classnames applied to the Button DOM objects
+* Array of static constants used to identify the classnames applied to DOM nodes
 *
 * @property CLASS_NAMES
-* @type {Array}
-* @private
+* @type {Object}
+* @public
 * @static
 */
 Button.CLASS_NAMES = {
@@ -211,11 +211,27 @@ Button.CLASS_NAMES = {
     LABEL   : getClassName('button', 'label')
 };
 
+/**
+* Array of static constants used to for applying ARIA states
+*
+* @property CLASS_NAMES
+* @type {Object}
+* @private
+* @static
+*/
 Button.ARIA_STATES = {
     PRESSED : 'aria-pressed',
     CHECKED : 'aria-checked'
 };
 
+/**
+* Array of static constants used to for applying ARIA roles
+*
+* @property CLASS_NAMES
+* @type {Object}
+* @private
+* @static
+*/
 Button.ARIA_ROLES = {
     BUTTON  : 'button',
     CHECKBOX: 'checkbox',
