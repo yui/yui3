@@ -1,12 +1,12 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>simplest 2dial</title>
+<title>sim</title>
 
-<!-- Source File and Seed for YUI3
+<!-- Source File and Seed for YUI3-->
 <link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
 <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
--->
+
 <script src="../../../../build/yui/yui.js"></script>
 </head>
 <style>
@@ -21,15 +21,12 @@
     height:200px;
 }
 </style>
-<body class="yui3-skin-sam">
-    hello
+<body class="yui3-skin-sam">hello
 
     <div class="dial-container foo"></div> 
-    <div class="dial-container2 foo"></div> 
 </body>
 </html>
 <script>
-    //
     YUI({filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
         var dial = new Y.Dial({
 			min: 0,
@@ -40,16 +37,6 @@
 			decimalPlaces:0
         });
         dial.render(".dial-container");
-
-        var dial = new Y.Dial({
-			min: 0,
-			max: 100,
-			stepsPerRevolution: 100,
-			value: 0,
-			diameter: 100,
-			decimalPlaces:0,
-			strings: {label:"frog"}
-        });
-        dial.render(".dial-container2");
+        //Y.on('mousedown',function(e){alert('clicked ring' + e.pageX);}, dial._ringNode);
     });
 </script>
