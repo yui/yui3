@@ -1,5 +1,9 @@
 YUI.add('dom-base', function(Y) {
 
+/**
+* @for DOM
+* @module dom
+*/
 var documentElement = Y.config.doc.documentElement,
     Y_DOM = Y.DOM,
     TAG_NAME = 'tagName',
@@ -642,7 +646,7 @@ Y.mix(Y.DOM, {
      * of box model, border, padding, etc.
      * @method setWidth
      * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
+     * @param {String|Number} size The pixel height to size to
      */
 
     setWidth: function(node, size) {
@@ -654,7 +658,7 @@ Y.mix(Y.DOM, {
      * of box model, border, padding, etc.
      * @method setHeight
      * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
+     * @param {String|Number} size The pixel height to size to
      */
 
     setHeight: function(node, size) {
