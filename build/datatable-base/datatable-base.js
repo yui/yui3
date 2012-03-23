@@ -5,28 +5,28 @@ A Widget for displaying tabular data.  The base implementation of DataTable
 provides the ability to dynamically generate an HTML table from a set of column
 configurations and row data.
 
-Two classes are included in the `datatable-base` module:
+Two classes are included in the `datatable-base` module: `Y.DataTable` and
+`Y.DataTable.Base`.
 
-1. `Y.DataTable` - Main instantiable class, has all loaded features available
-2. `Y.DataTable.Base` - Featureless version for use primarily as a superclass.
+@module datatable
+@submodule datatable-base
+@main datatable
+@since 3.5.0
+**/
 
-Example usage might look like this:
+// DataTable API docs included before DataTable.Base to make yuidoc work
+/**
+A Widget for displaying tabular data.  Before feature modules are `use()`d,
+this class is functionally equivalent to DataTable.Base.  However, feature
+modules can modify this class in non-destructive ways, expanding the API and
+functionality.
+
+This is the primary DataTable class.  Out of the box, it provides the ability
+to dynamically generate an HTML table from a set of column configurations and
+row data.  But feature module inclusion can add table sorting, pagintaion,
+highlighting, selection, and more.
 
 <pre><code>
-// Featureless table, usually used as a subclass, but can be instantiated
-var table = new Y.DataTable.Base({
-    columns: ['firstName', 'lastName', 'age'],
-    data: [
-        { firstName: 'Frank', lastName: 'Zappa', age: 71 },
-        { firstName: 'Frank', lastName: 'Lloyd Wright', age: 144 },
-        { firstName: 'Albert', lastName: 'Einstein', age: 132 },
-        ...
-    ]
-});
-
-table.render('#in-here');
-
-// Table with all loaded features available (not .Base)
 // The functionality of this table would require additional modules be use()d,
 // but the feature APIs are aggregated onto Y.DataTable.
 // (Snippet is for illustration. Not all features are available today.)
@@ -57,8 +57,7 @@ var table = new Y.DataTable({
         rowsPerPage: 20,
         pageLinks: 5
     },
-    editable: true,
-    filterable: true
+    editable: true
 });
 </code></pre>
 
@@ -108,7 +107,7 @@ var columns = [
         formatter: function (o) {
             // Fill the column cells with data from firstName and lastName
             if (o.data.age > 55) {
-                o.classnames += ' senior';
+                o.className += ' senior';
             }
             return o.data.lastName + ', ' + o.data.firstName;
         }
@@ -161,74 +160,10 @@ the default `bodyView` to `Y.DataTable.BodyView`, though either can be
 overridden for custom rendering.  No default `footerView` is assigned. See
 those classes for more details about how they operate.
 
-@module datatable-base
-@main
-**/
-
-// DataTable API docs included before DataTable.Base to make yuidoc work
-/**
-A Widget for displaying tabular data.  Before feature modules are `use()`d,
-this class is functionally equivalent to DataTable.Base.  However, feature
-modules can modify this class in non-destructive ways, expanding the API and
-functionality.
-
-This is the primary DataTable class.  Out of the box, it provides the ability
-to dynamically generate an HTML table from a set of column configurations and
-row data.  But feature module inclusion can add table sorting, pagintaion,
-highlighting, selection, and more.
-
-<pre><code>
-// Basic use
-var table = new Y.DataTable({
-    columns: ['firstName', 'lastName', 'age'],
-    data: [
-        { firstName: 'Frank', lastName: 'Zappa', age: 71 },
-        { firstName: 'Frank', lastName: 'Lloyd Wright', age: 144 },
-        { firstName: 'Albert', lastName: 'Einstein', age: 132 },
-        ...
-    ]
-});
-
-table.render('#in-here');
-
-// Table with loaded features.
-// The functionality of this table would require additional modules be use()d,
-// but the feature APIs are aggregated onto Y.DataTable.
-// (Snippet is for illustration. Not all features are available today.)
-var table = new Y.DataTable({
-    columns: [
-        { type: 'checkbox', defaultChecked: true },
-        { key: 'firstName', sortable: true, resizable: true },
-        { key: 'lastName', sortable: true },
-        { key: 'role', formatter: toRoleName }
-    ],
-    data: {
-        source: 'http://myserver.com/service/json',
-        type: 'json',
-        schema: {
-            resultListLocator: 'results.users',
-            fields: [
-                'username',
-                'firstName',
-                'lastName',
-                { key: 'role', type: 'number' }
-            ]
-        }
-    },
-    recordType: UserModel,
-    pagedData: {
-        location: 'footer',
-        pageSizes: [20, 50, 'all'],
-        rowsPerPage: 20,
-        pageLinks: 5
-    },
-    editable: true,
-    filterable: true
-});
-</code></pre>
 
 @class DataTable
 @extends DataTable.Base
+@since 3.5.0
 **/
 
 // DataTable API docs included before DataTable.Base to make yuidoc work
@@ -239,6 +174,40 @@ features.  Because features can be composed onto `Y.DataTable`, custom
 subclasses of DataTable.Base will remain unmodified when new feature modules
 are loaded.
 
+Example usage might look like this:
+
+<pre><code>
+// Custom subclass with only sorting and mutability added.  If other datatable
+// feature modules are loaded, this class will not be affected.
+var MyTableClass = Y.Base.create('table', Y.DataTable.Base,
+                       [ Y.DataTable.Sort, Y.DataTable.Mutable ]);
+
+var table = new MyTableClass({
+    columns: ['firstName', 'lastName', 'age'],
+    data: [
+        { firstName: 'Frank', lastName: 'Zappa', age: 71 },
+        { firstName: 'Frank', lastName: 'Lloyd Wright', age: 144 },
+        { firstName: 'Albert', lastName: 'Einstein', age: 132 },
+        ...
+    ]
+});
+
+table.render('#over-there');
+
+// DataTable.Base can be instantiated if a featureless table is needed.
+var table = new Y.DataTable.Base({
+    columns: ['firstName', 'lastName', 'age'],
+    data: [
+        { firstName: 'Frank', lastName: 'Zappa', age: 71 },
+        { firstName: 'Frank', lastName: 'Lloyd Wright', age: 144 },
+        { firstName: 'Albert', lastName: 'Einstein', age: 132 },
+        ...
+    ]
+});
+
+table.render('#in-here');
+</code></pre>
+
 DataTable.Base is built from DataTable.Core, and sets the default `headerView`
 to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
 
@@ -246,6 +215,7 @@ to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
 @extends Widget
 @uses DataTable.Core
 @namespace DataTable
+@since 3.5.0
 **/
 Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core],
     null, {

@@ -12,19 +12,19 @@ var CLASS_NAMES = Y.ButtonCore.CLASS_NAMES,
     ARIA_ROLES  = Y.ButtonCore.ARIA_ROLES;
 
 /**
-* Creates a ButtonWidget
+* Creates a Button
 *
-* @class ButtonWidget
+* @class Button
 * @extends Widget
 * @param config {Object} Configuration object
 * @constructor
 */
-function ButtonWidget(config) {
-    ButtonWidget.superclass.constructor.apply(this, arguments);
+function Button(config) {
+    Button.superclass.constructor.apply(this, arguments);
 }
 
-/* ButtonWidget extends Widget */
-Y.extend(ButtonWidget, Y.Widget,  {
+/* Button extends Widget */
+Y.extend(Button, Y.Widget,  {
 
     BOUNDING_TEMPLATE: Y.ButtonCore.prototype.TEMPLATE,
 
@@ -139,23 +139,23 @@ Y.extend(ButtonWidget, Y.Widget,  {
     CLASS_NAMES: CLASS_NAMES
 });
 
-Y.mix(ButtonWidget.prototype, Y.ButtonCore.prototype);
+Y.mix(Button.prototype, Y.ButtonCore.prototype);
 
 /**
 * Creates a ToggleButton
 *
 * @class ToggleButton
-* @extends ButtonWidget
+* @extends Button
 * @param config {Object} Configuration object
 * @constructor
 */
 function ToggleButton(config) {
-    ButtonWidget.superclass.constructor.apply(this, arguments);
+    Button.superclass.constructor.apply(this, arguments);
 }
 
 // TODO: move to ButtonCore subclass to enable toggle plugin, widget, etc.
-/* ToggleButton extends ButtonWidget */
-Y.extend(ToggleButton, ButtonWidget,  {
+/* ToggleButton extends Button */
+Y.extend(ToggleButton, Button,  {
     
     trigger: 'click',
     selectedAttrName: '',
@@ -193,7 +193,7 @@ Y.extend(ToggleButton, ButtonWidget,  {
     },
 
     /**
-     * @method bindUI
+     * @method syncUI
      * @description Syncs the UI for the widget
      */
     syncUI: function() {
@@ -225,7 +225,7 @@ Y.extend(ToggleButton, ButtonWidget,  {
             type = button.get('type'),
             ariaState = (type === 'checkbox' ? STATES.CHECKED : STATES.PRESSED);
         
-        cb.toggleClass(ButtonWidget.CLASS_NAMES.SELECTED, value);
+        cb.toggleClass(Button.CLASS_NAMES.SELECTED, value);
         cb.set(ariaState, value);
     },
     
@@ -301,7 +301,7 @@ Y.extend(ToggleButton, ButtonWidget,  {
     ARIA_ROLES: ARIA_ROLES,
 
     /**
-     * List of class names used in the ButtonGroup's DOM
+     * Array of static constants used to identify the classnames applied to DOM nodes
      *
      * @property CLASS_NAMES
      * @type Object
@@ -312,7 +312,7 @@ Y.extend(ToggleButton, ButtonWidget,  {
 });
 
 // Export
-Y.Button = ButtonWidget;
+Y.Button = Button;
 Y.ToggleButton = ToggleButton;
 
 

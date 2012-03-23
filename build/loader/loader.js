@@ -2953,6 +2953,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "button-group": {
         "requires": [
             "button-plugin", 
+            "cssbutton", 
             "widget"
         ]
     }, 
@@ -5039,7 +5040,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0f82c1d4f0a041f12d3c4d0a82427fcc';
+YUI.Env[Y.version].md5 = '6e052a384cfed1255f3f0c504dc1b061';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

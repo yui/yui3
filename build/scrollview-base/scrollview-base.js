@@ -124,7 +124,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         sv._bindDrag(sv.get(DRAG));
         sv._bindFlick(sv.get(FLICK));
-        sv._bindMousewheel(MOUSEWHEEL_ENABLED);
+        // Note: You can find _bindMousewheel() inside syncUI(), becuase it depends on UI details
+
         sv._bindAttrs();
 
         // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
@@ -200,12 +201,23 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
     },
     
+    /**
+     * Bind (or unbind) mousewheel listeners.
+     * 
+     * @method _bindMousewheel
+     * @param mousewheel {Object|boolean} If truthy, the method binds listeners for mousewheel support. If false, the method unbinds mousewheel listeners.  
+     * @private
+     */
     _bindMousewheel : function(mousewheel) {
         var cb = this._cb;
-        if (mousewheel) {
-            cb.on("mousewheel", Y.bind(this._mousewheel, this), mousewheel);
-        } else {
-            cb.detach('mousewheel|*');
+        
+        // Only enable for vertical scrollviews
+        if (this._scrollsVertical) {
+            if (mousewheel) {
+                cb.on("mousewheel", Y.bind(this._mousewheel, this), mousewheel);
+            } else {
+                cb.detach('mousewheel|*');
+            }
         }
     },
 
@@ -219,6 +231,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     syncUI: function() {
         this._cDisabled = this.get(DISABLED);
         this._uiDimensionsChange();
+        this._bindMousewheel(MOUSEWHEEL_ENABLED);
         this.scrollTo(this.get(SCROLL_X), this.get(SCROLL_Y));
     },
 
@@ -1196,4 +1209,4 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
