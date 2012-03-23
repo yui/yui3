@@ -44,6 +44,8 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     Y.WidgetPositionConstrain,
     Y.WidgetStack
 ], {
+    // -- Public Properties ----------------------------------------------------
+
     /**
     Collection of predefined buttons mapped from name => config.
 
@@ -73,10 +75,27 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     BUTTONS: {
         close: {
             label     : 'Close',
-            action    : 'hide',
+            action    : '_onCloseAction',
             section   : 'header',
             classNames: getClassName('button', 'close')
         }
+    },
+
+    // -- Protected Methods ----------------------------------------------------
+
+    /**
+    Handler for the default "close" button's `action`.
+
+    Hides this panel and prevents the default action of the button.
+
+    @method _onCloseAction
+    @param {EventFacade} e
+    @protected
+    @since 3.5.0
+    **/
+    _onCloseAction: function (e) {
+        e.preventDefault();
+        this.hide();
     }
 }, {
     ATTRS: {
