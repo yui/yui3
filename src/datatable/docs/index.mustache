@@ -1339,7 +1339,7 @@ var table = new Y.DataTable({
     Clicking on a column header, or calling the `sort` or `toggleSort` methods
     will fire a `sort` method containing an `e.sortBy` property that
     corresponds to the requested sort column and direction.  The value will be
-    in either string or object format, depending on how which method was used.
+    in either string or object format, depending on how each method was used.
 </p>
 
 <p>
@@ -1565,7 +1565,7 @@ var table = new Y.DataTable({
 <p>
     DataTable is a composition of supporting class instances and extensions, so
     to centralize event reporting, it is a bubble target for its `data`
-    ModelList as well as the View instances used to for rendering.
+    ModelList as well as the View instances used for rendering.
 </p>
 
 <p>
@@ -1597,8 +1597,8 @@ table.after('*:priceChange', function (e) { ... });
 var table = new Y.DataTable({
     columns: ['items', 'cost', 'price'],
     data: [
-        { item: "widget",   cost: 23.57, price: 47.5 },
-        { item: "gadget",   cost: 0.11, price: 6.99 },
+        { item: "widget", cost: 23.57, price: 47.5 },
+        { item: "gadget", cost: 0.11, price: 6.99 },
         ...
     ]
 });
