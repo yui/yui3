@@ -129,15 +129,15 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1, "Module (anim-scroll) not found in sorted array");
         },
-     "Testing anim-transform": function(data) {
+     "Testing anim-shape-transform": function(data) {
             var loader = new Y.Loader({
-                require: ["anim-transform"],
+                require: ["anim-shape-transform"],
                 ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-transform")) > -1, "Module (anim-transform) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-shape-transform")) > -1, "Module (anim-shape-transform) not found in sorted array");
         },
      "Testing anim-xy": function(data) {
             var loader = new Y.Loader({
