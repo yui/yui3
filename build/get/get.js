@@ -517,6 +517,11 @@ Y.Get = Get = {
             async: doc && doc.createElement('script').async === true,
 
             // True if this browser fires an event when a dynamically injected
+            // link node fails to load. This is currently true for Firefox 9+
+            // and WebKit 535.24+.
+            cssFail: ua.gecko >= 9 || ua.webkit >= 535.24,
+
+            // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
             // Firefox 9+, and WebKit 535.24+. Note that IE versions <9 fire the
             // DOM 0 "onload" event, but not "load". All versions of IE fire
@@ -719,8 +724,8 @@ Get.Transaction = Transaction = function (requests, options) {
     self._waiting   = 0;
 
     // Deprecated pre-3.5.0 properties.
-    self.tId   = self.id; // Use `id` instead.
-    self.win   = options.win || Y.config.win;
+    self.tId = self.id; // Use `id` instead.
+    self.win = options.win || Y.config.win;
 };
 
 /**
@@ -1015,7 +1020,7 @@ Transaction.prototype = {
             node         = req.node,
             self         = this,
             ua           = Y.UA,
-            nodeType;
+            cssTimeout, nodeType;
 
         if (!node) {
             if (isScript) {
@@ -1035,6 +1040,10 @@ Transaction.prototype = {
         }
 
         function onLoad() {
+            if (cssTimeout) {
+                clearTimeout(cssTimeout);
+            }
+
             self._progress(null, req);
         }
 
@@ -1097,6 +1106,12 @@ Transaction.prototype = {
             // evens the playing field with older IEs.
             node.onerror = onError;
             node.onload  = onLoad;
+
+            // If this browser doesn't fire an event when CSS fails to load,
+            // fail after a timeout to avoid blocking the transaction queue.
+            if (!env.cssFail) {
+                cssTimeout = setTimeout(onError, req.timeout || 3000);
+            }
         }
 
         this._waiting += 1;
