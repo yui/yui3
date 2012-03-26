@@ -11,7 +11,7 @@ var myuploader;
 
 if (Y.UploaderFlash.TYPE != "none") {
             myuploader = new Y.UploaderFlash({ multipleFiles: true, 
-                                          uploadURL: "http://bedfamous-lm.corp.yahoo.com/yui3/src/uploader/tests/manual/upload.php",
+                                          uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
                                           swfURL: "assets/flashuploader.swf?t=" + Math.random(),

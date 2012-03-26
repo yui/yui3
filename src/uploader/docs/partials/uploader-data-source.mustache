@@ -10,8 +10,17 @@
 #overallProgress {
     float: right;
 }
+
+.yellowBackground {
+  background: #F2E699;
+}
+
+.serverdata {
+  font-size: 0.8em;
+}
 </style>
 
+<div id="exampleContainer">
 <div id="uploaderContainer"> 
     <div id="selectFilesButtonContainer">
     </div> 
@@ -26,16 +35,17 @@
 <div id="filelist">
   <table id="filenames">
     <thead>
-       <tr><th>File name</th><th>File size</th><th>Percent uploaded</th></tr>
+       <tr><th>File name</th><th>File size</th><th>Percent uploaded</th><th>Data from Server</th></tr>
        <tr id="nofiles">
-        <td colspan="3">
-            No files have been selected.
+        <td colspan="4" id="ddmessage">
+            <strong>No files selected.</strong>
         </td>
        </tr>
     </thead>
     <tbody>
     </tbody>
   </table>  
+</div>
 </div>
 
 <script>
@@ -52,6 +62,28 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
                                      });    
        var uploadDone = false;
 
+       if (Y.Uploader.TYPE == "html5") {
+          uploader.set("dragAndDropArea", "body");
+
+          Y.one("#ddmessage").setContent("<strong>Drag and drop files here.</strong>");   
+
+          uploader.on(["dragenter", "dragover"], function (event) {
+              var ddmessage = Y.one("#ddmessage");
+              if (ddmessage) {
+                ddmessage.setContent("<strong>Files detected, drop them here!</strong>");
+                ddmessage.addClass("yellowBackground");
+              }
+           });
+    
+           uploader.on(["dragleave", "drop"], function (event) {
+              var ddmessage = Y.one("#ddmessage");
+              if (ddmessage) {
+                ddmessage.setContent("<strong>Drag and drop files here.</strong>");
+                ddmessage.removeClass("yellowBackground");
+              }
+           });
+       }
+
        uploader.render("#selectFilesButtonContainer");
 
        uploader.after("fileselect", function (event) {
@@ -67,12 +99,19 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
             fileTable.setContent("");
           }
           
+          var perFileVars = {};
+
           Y.each(fileList, function (fileInstance) {
               fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" + 
                                     "<td class='filename'>" + fileInstance.get("name") + "</td>" + 
                                     "<td class='filesize'>" + fileInstance.get("size") + "</td>" + 
-                                    "<td class='percentdone'>Hasn't started yet</td>"); 
+                                    "<td class='percentdone'>Hasn't started yet</td>" +
+                                    "<td class='serverdata'>&nbsp;</td>"); 
+
+              perFileVars[fileInstance.get("id")] = {filename: fileInstance.get("name")};
                              });
+
+              uploader.set("postVarsPerFile", Y.merge(uploader.get("postVarsPerFile"), perFileVars));
        });
 
        uploader.on("uploadprogress", function (event) {
@@ -89,6 +128,7 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
        uploader.on("uploadcomplete", function (event) {
             var fileRow = Y.one("#" + event.file.get("id") + "_row");
                 fileRow.one(".percentdone").set("text", "Finished!");
+                fileRow.one(".serverdata").setContent(event.data);
        });
 
        uploader.on("totaluploadprogress", function (event) {

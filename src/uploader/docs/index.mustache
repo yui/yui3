@@ -1,30 +1,96 @@
+<style type="text/css">
+    .notice {
+        background: #faf3d1;
+        border: 1px solid #eac9a9;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: px;
+        padding: 0 1em;
+        -moz-box-shadow: 0 0 5px #ccc8b3;
+        -webkit-box-shadow: 0 0 5px #ccc8b3;
+        box-shadow: 0 0 5px #ccc8b3;
+        margin-bottom: 1em;
+    }
+    .notice h2 {
+        margin-top: .6em;
+    }
+
+    .only {
+        vertical-align: super;
+        font-size: 9px;
+        background: #faf3d1;
+    }
+</style>
+
 <div class="intro">
-   <p>The YUI Uploader leverages Flash to provide file upload functionality beyond the native browser-based methods. Specifically, the Uploader allows for:
+   <p><strong>The YUI Uploader leverages HTML5+XMLHttpRequest 2 or Flash to provide file upload functionality beyond the basic HTTP `<input type='file'>` capabilities.</strong> Specifically, the Uploader allows for:
 	<ol>
-		<li> Multiple file selection in a single "Open File" dialog.</li>
-		<li> File extension filters to facilitate the user's selection.</li>
-		<li> Progress tracking for file uploads.</li>
-		<li> A range of available file metadata: filename, size, date created, date modified, and author.</li>
-		<li> A set of events dispatched on various aspects of the file upload process: file selection, upload progress, upload completion, data return, and upload errors.</li>
-		<li> Inclusion of additional data in the file upload POST request.</li>
-		<li> Faster file upload on broadband connections (due to the modified SEND buffer size).</li>
+		<li> <strong>Multiple file selection</strong> in a single "Open File" dialog.</li>
+        <li> <strong>Dragging-and-dropping files</strong> into the browser (when used in HTML5 mode).</li>
+        <li> <strong>Automatic upload queue management</strong> with fine-grained control.</li>
+		<li> <strong>Upload progress tracking</strong>, both on a per-file and a per-queue basis.</li>
+		<li> <strong>A range of available file metadata</strong>: filename, size, date created, and date modified.</li>
+		<li> A set of <strong>events dispatched on various aspects of the file upload process</strong>: file selection, upload progress, upload completion, data return, and upload errors.</li>
+		<li> Inclusion of <strong>additional data in the file upload POST request</strong>, on a file-by-file basis.</li>
+        <li> <strong>Keyboard accessibility</strong> both in HTML5 and in Flash modes.</li>
 	</ol>
-	
-	<p><strong>Important usage notes:</strong></p>
+</div>
+    <div class="notice">
+        <h2 id="migration-intro">Upgrading from version 3.4.1 or older?</h2>
+    
+        <p>
+            Uploader has been refactored for 3.5.0.  Parts of its API have changed in backward-incompatible ways.
+        </p>
+        
+        <p>
+            Read the <a href="migration.html">3.5.0 Migration Guide</a> for tips on a smooth transition.  
+            If you still run into issues, please <a href="../../../projects/yui3/newticket/">file a ticket</a>.
+        </p>
+    
+        <p>
+            If you are unable to upgrade due to unresolvable issues, you can use the
+            <a href="../uploader-deprecated/index.html">`uploader-deprecated`</a>
+            module suite, which is equivalent to the 3.4.1 implementation.  But be
+            aware that this module will be removed in a future version of YUI.
+        </p>
+    </div>
+
+    <div class="notice">
+        <h2>Known Issues</h2>
+        <ul>
+            <li><a href="http://yuilibrary.com/projects/yui3/ticket/2531948">#2531948</a>: The uploader is currently not firing the `alluploadscomplete` event. Instead, use the `totaluploadprogress` event
+                and compare the `bytesLoaded` and `bytesTotal` properties in the event payload: once they are equal, the upload has
+                completed. At that point, also set `uploaderInstance.queue` to null to allow further uploads.
+            </li>
+        </ul>
+    </div>
+
+{{>getting-started}}
+
+<div class="intro">
+	<h2>Uploader Usage Notes for the Flash mode</h2>
 	<ul>
-	<li>Because of security requirements of the Flash Player, the Uploader has to receive a direct user input in order to initiate file browsing.</li>
-	<li>Because of limitations of the Flash Player, the Uploader does not transmit session data in the header of the POST requests it sends to the server. In order to transmit the session data, the developer will need to programmatically extract it from the DOM and send as part of the body of the POST request.</li>
-  	<li>The Uploader SWF should always be served from an HTTP server due to Flash Player's restricted local security model.</li>
-    <li>The Uploader SWF should not be placed in a container with `visibility` set to `hidden`, or `display` set to `none`, whether at initialization of the page, or at any subsequent time. Because of how Flash Player is instantiated, setting these properties to these values will result in the loss of communication between the Flash player and the DOM. If it's necessary to hide the instance of the Uploader on the page, its size should be set to 0x0</li>
-  	<li>The Uploader requires Flash Player 9.0.45 or higher, with Flash Player 10.1 preferred. The latest version of Flash Player is available at the <a href="http://www.adobe.com/go/getflashplayer">Adobe Flash Player Download Center</a>.</li>
-    <li>Because of a bug in IE6, IE7 and IE8, the Uploader SWF does not function properly when loaded from local cache. For that reason, in IE6, IE7 and IE8, it is best to prevent cache loading of the SWF. See the examples for one possible workaround of this issue.
-  </ul>
-
-</p>
-
+	<li>Because of security requirements of the Flash Player, the <strong>Uploader in Flash mode must receive a direct user input</strong> in order to initiate file browsing.</li>
+    <li><strong>The target server for file uploads must include a `crossdomain.xml` file</strong> that allows access from the location where the uploader SWF file is hosted.
+    See more in the <a href="#backend-setup">Backend Setup</a> section below, or read the <a href="http://www.adobe.com/devnet/articles/crossdomain_policy_file_spec.html">crossdomain specification on Adobe's website</a>.</li>
+    <li><strong>The relative URLs to the target server are resolved differently in the Flash mode</strong> than they are in the HTML5 mode. In Flash mode, the URLs
+    are resolved relatively to the location of the SWF file, whereas in HTML5 mode, they are resolved relatively to the location of the web page. It is best to
+    avoid using relative URLs for upload targets and use absolute URLs instead.</li>
+	<li>Because of limitations of the Flash Player, the <strong>Uploader in Flash mode does not transmit session data (cookies)</strong> in the header of the POST requests it sends to the server. In order to transmit the session data, the developer will need to programmatically extract it from the DOM and send as part of the body of the POST request.</li>
+  	<li>The <strong>Uploader SWF should always be served from an HTTP server</strong> due to Flash Player's restricted local security model.</li>
+    <li>The <strong>Uploader control should not be placed in a container with `visibility` set to `hidden`, or `display` set to `none`</strong>, whether at initialization of the page, or at any subsequent time. Because of how the Flash Player is instantiated, setting these properties to these values will result in the loss of communication between the Flash player and the DOM. If it's necessary to hide the instance of the Uploader on the page, its width and height should be set to 0.</li>
+  	<li>The <strong>Uploader requires Flash Player 10.1 or higher</strong>. The latest version of Flash Player is available at the <a href="http://www.adobe.com/go/getflashplayer">Adobe Flash Player Download Center</a>.</li>
+    <li>Because of a long-standing bug in Internet Explorer, the <strong>Uploader SWF does not function properly in IE when loaded from local cache</strong>. For that reason, in IE, the default URL for the SWF is appended with a random GET parameter to prevent loading from cache.</li>
+    </ul>
 </div>
 
-{{>getting-started}}				
+<div class="intro">
+    <h2>Uploader Usage Notes for the HTML5 mode</h2>
+    <ul>
+    <li>Because of security requirements of crossorigin requests in XMLHttpRequest Level 2, the <strong>Uploader in HTML5 mode sends out a preflight `OPTIONS` request to the target server</strong> for file uploads (if the target server is different from the one that is hosting the page originating the request). See the <a href="#backend-setup">Backend Setup</a> section below for more information, or read more about CORS on the <a href="http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request">HTML5Rocks website.</a></li>
+    <li>Because of variations in browser support for multiple concurrent XMLHttpRequests, <strong>we recommend limiting the number of simultaneous uploads to 2</strong>.</li>
+    </ul>
+</div>  			
 			
 				<h2>Using the Uploader</h2>
 			
@@ -33,173 +99,428 @@
 
 				<h3>Anatomy of the Uploader</h3>
 
-                <h4>Hybrid structure</h4>
+                <h4>Progressive Enhancement</h4>
 
-                <p>The Uploader uses the native functionality of the widely adopted Adobe Flash player to provide methods for sending
-				   multiple files to the server and tracking the progress of the uploads. In order to control the Flash player,
-				   the Uploader uses the Flash player's built-in `ExternalInterface` class for communicating with JavaScript.
-				   `ExternalInterface` allows JavaScript to call exposed methods on an instance of a Flash player, and allows
-				   the instance of the Flash player to call arbitrary global methods in the global JavaScript space.
+                <p>The Uploader consists of two classes, one of which is picked dynamically based on the functionality available on the end user's computer. For that reason, `Y.Uploader` is an alias that is dynamically assigned either to the `Y.UploaderHTML5` (for browsers that implement <em>XMLHttpRequest Level 2</em>) or `Y.UploaderFlash` (for browsers that include the Flash player plugin), or otherwise left as an unpopulated namespace when neither functionality is available. Before instantiating the Uploader, the developer can easily determine which of the three options has been loaded by checking the static `Y.Uploader.TYPE` property. This property resolves to either `"html5"`, `"flash"`, or `"none"`, and allows the developer to configure the uploader appropriately or otherwise load a different UI.
+                </p>
+                <p>Due to the limitations of the Flash player, it is only possible to initiate the file selection dialog for Flash-supported file uploads with a direct user input to the Flash player. For that reason, and to maintain the API and configuration consistency, the Uploader is implemented as a "Select Files" button widget in both the HTML5 and the Flash modes. In case of HTML5 uploader, the interaction events are dispatched by the underlying UI control, whereas in case of the Flash uploader, a transparent Flash player overlay is placed on top of the control and captures all mouse events directly. The underlying UI control is customizable by the developer (the `selectFilesButton` attribute).
+
+                <h4>Hybrid structure</h4>
+                <p>In Flash mode, the Uploader uses the native functionality of the widely adopted Adobe Flash player to provide methods for sending
+				   multiple files to the server and tracking the progress of the uploads. In order to control the Flash player, the Uploader uses the Flash player's built-in `ExternalInterface` class for communicating with JavaScript. `ExternalInterface` allows JavaScript to call exposed methods on an instance of a Flash player, and allows the instance of the Flash player to call arbitrary global methods in the global JavaScript space.
 				</p>
 				<p>
 				   In order to properly instantiate the Flash player and communicate with it, the Uploader uses YUI SWF utility. The SWF utility
 				   encapsulates the instance of the Flash player and standardizes communication with it (e.g., all Flash player method calls are
-				   wrapped in SWF's `callSWF` function; correspondingly, all method calls from the Flash player are exposed as SWF's events.)
-                </p>
-				<h4>Presence in the DOM</h4>
-				<p>
-				   Because of security restrictions of the Flash player, browsing for files cannot be initialized via a method call or a simulated
-				   event. Such initialization must come from a hardware device controlled by the user (mouse or keyboard). As a consequence, the instance
-				   of the Flash player tied to a specific instance of the Uploader must be present on the page that uses it and must be clickable. Clicking
-				   this instance of the Flash player always triggers the standard OS "Browse" dialog (unless the Uploader has been specifically `disable()`ed.)</p>
-				<p>The Uploader provides two methods for displaying its instance of the Flash Player: either as a Flash-based "button" with a developer-provided 			     
-				skin Sprite, or as a fully transparent overlay that can be placed above another UI element to mimic native behavior. When the user interacts with
-				the Uploader Flash Player instance, all mouse events are bubbled up to JavaScript and are dispatched by the instance of the Uploader.</p>                
+				   wrapped in SWF's `callSWF` function; correspondingly, all method calls from the Flash player are exposed as events dispatched by SWF.)
+                </p>                
 
 				<h3>Instantiating and Configuring the Uploader</h3>
-
-				<p>To put the Uploader on the page, simply create a new instance of `Y.Uploader` and provide it with the reference to the container in which it should be placed:</p>
+                
+                <h4>Simple Instantiation</h4>
+				<p>To place the Uploader on the page, simply create a new instance of `Y.Uploader` and render it to the container in which it should be placed.
+                   Since `Y.Uploader` may not resolve to a fully-featured module if the required functionality is missing, test that the `Y.Uploader.TYPE` property
+                   is not set to `"none"` first.
+                   It is recommended that you set fixed dimensions in the configurations for the uploader widget, because the underlying button UI control
+                   is by default sized to 100% of the width and height of its parent:</p>
 
 ```
 YUI({...}).use('uploader',function (Y) {
 
-    // Default everything
-    var uploader = new Y.Uploader({boundingBox:"#uploaderContainerID"});
-
-    // Use a custom button skin:
-    var uploader = new Y.Uploader({
-	    boundingBox:'#uploaderContainerID',
-        buttonSkin : 'assets/buttonSkin.jpg'
-    });
-
-    // Use a custom SWF URL:
-    var uploader = new Y.Uploader({
-	    boundingBox:'#uploaderContainerID',
-        swfURL : 'assets/uploader.swf'
-    });
+ if (Y.Uploader.TYPE != "none") {
+    var uploader = new Y.Uploader({width: "300px", 
+                                   height: "40px"}).render("#uploaderContainerID");
+ }
 
 });
-```				
-<p>The only required configuration attribute for the Uploader is the `boundingBox` property, which specifies the container where the Uploader will be rendered. By default, the Uploader is assigned the same dimensions as its container, is transparent, and allows the user to select a single file with any extension. Below are the three other configuration attributes available for Slider:</p>
-                <table>
+```
+<h4>Manual Uploader Type Override</h4>
+<p>With the above instantiation, you are allowing the Uploader to automatically choose whether to use `UploaderHTML5` or `UploaderFlash` as the underlying module. You can always use those modules directly or manually override the alias as follows:
+
+```
+YUI({...}).use('uploader','uploader-flash', function (Y) {
+
+Y.Uploader = Y.UploaderFlash;
+
+// or
+
+Y.Uploader = Y.UploaderHTML5;
+
+var uploader = new Y.Uploader(...);
+
+});
+```
+</p>
+<h4>Features Based on Available Functionality</h4>
+<p>You can further use the `Y.Uploader.TYPE` property to add functionality-specific features to the Uploader based on whether HTML5 or Flash are available. For instance, in the following code snippet, if the Uploader is in HTML5 mode, we assign it a drag-and-drop area where files can be dragged directly into the browser
+(functionality which is unavailable in Flash). If it's in Flash mode, we provide a `fileFilters` configuration which allows the selection dialog to filter
+files by extension (functionality only available in Flash):
+
+```
+YUI({...}).use('uploader', function (Y) {
+
+   var uploader = new Y.Uploader(...);
+
+   if (Y.Uploader.TYPE == "html5") {
+       uploader.dragAndDropArea = "#divContainer";
+       uploader.render("#selectFilesButtonContainer");
+   }
+   else if (Y.Uploader.TYPE == "flash") {
+       uploader.set("fileFilters", [{description:"Images", extensions:"*.jpg;*.png;*.gif"},
+                                    {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}];);
+       uploader.render("#selectFilesButtonContainer");
+   }
+   else {
+       Y.log("No Flash or HTML5 capabilities detected."); 
+   }
+
+});
+```
+
+<h4>Uploader Configuration Attributes</h4>
+<p>The following configuration attributes are specific to the Uploader:</p>
+             <table>
                 <thead>
                     <tr>
-                        <th>Property</th>
+                        <th>Attribute</th>
                         <th>Description</th>
                         <th>Default</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>`buttonSkin`</td>
-                        <td>Specifies an image Sprite to use as the skin for the Uploader.</td>
-                        <td>N/A</td>
+                        <td>`appendNewFiles`</td>
+                        <td>A Boolean indicating whether newly selected files should be appended to the existing file list, or whether they should replace it.</td>
+                        <td>`true`</td>
                     </tr>
                     <tr>
-                        <td>`swfURL`</td>
-                        <td>An alternative path to the Flash SWF file used by the uploader</td>
-                        <td>YUI CDN location</td>
+                        <td>`buttonClassNames`</td>
+                        <td>The names of CSS classes that correspond to different button states of the "Select Files" control. These classes are assigned to the "Select Files" control based on the mouse states reported by the Flash player or by the state of the HTML5 Uploader. The keys for the class names are:
+                            <ul>                               
+                               <li>`hover`: the class corresponding to mouse hovering over the "Select Files" button.<span class="only">UploaderFlash</span></li>    
+                               <li>`active`: the class corresponding to mouse down state of the "Select Files" button.<span class="only">UploaderFlash</span></li>
+                               <li>`disabled`: the class corresponding to the disabled state of the "Select Files" button.</li>
+                               <li>`focus`: the class corresponding to the focused state of the "Select Files" button.<span class="only">UploaderFlash</span></li>
+                            </ul>
+                        </td>
+                        <td><pre>{ 
+hover: 
+"yui3-button-hover", 
+active: 
+"yui3-button-active", 
+disabled: 
+"yui3-button-disabled", 
+focus: 
+"yui3-button-selected" 
+}</pre>
+                        </td>
                     </tr>
                     <tr>
-                        <td>`transparent`</td>
-                        <td>Whether to render the Uploader SWF as transparent or opaque (useful if keyboard access is needed)</td>
-                        <td>true</td>
+                        <td>`dragAndDropArea`<span class="only">UploaderHTML5</span></td>
+                        <td>The node that serves as the drop target for files.</td>
+                        <td>`null`</td>
+                    </tr>
+                     <tr>
+                        <td>`enabled`</td>
+                        <td>A Boolean indicating whether the uploader is enabled or disabled for user input.</td>
+                        <td>`true`</td>
+                    </tr>
+                    <tr>
+                        <td>`errorAction`</td>
+                        <td>The action performed when an upload error occurs for a specific file being uploaded. The possible values are:
+                            <ul>
+                             <li>`Y.Uploader.Queue.CONTINUE`: the error is ignored and the upload process is continued.</li>
+                             <li>`Y.Uploader.Queue.STOP`: the upload process is stopped as soon as any other parallel file uploads are finished.</li>
+                             <li>`Y.Uploader.Queue.RESTART_ASAP`: the file is added back to the front of the queue.</li>
+                             <li>`Y.Uploader.Queue.RESTART_AFTER`: the file is added to the back of the queue.</li>
+                            </ul>
+                        </td>
+                        <td>`Y.Uploader.Queue.CONTINUE`</td>
+                    </tr>
+                    <tr>
+                        <td>`fileFieldName`</td>
+                        <td>A String specifying what should be the POST field name for the file content in the upload request.</td>
+                        <td>`"Filedata"`</td>
+                    </tr>
+                    <tr>
+                        <td>`fileFilters`<span class="only">UploaderFlash</span></td>
+                        <td>An array indicating what fileFilters should be applied to the file selection dialog. Each element in the 
+                            array should be an object with the following key-value pairs: 
+                            ```
+                            { description : String,
+                              extensions: String of the form"."ext1;.ext2;*.ext3;..." 
+                            }
+                            ```
+                        </td>
+                        <td>`null`</td>
+                    </tr>
+                    <tr>
+                        <td>`fileList`</td>
+                        <td>The array of files to be uploaded. All elements in the array must be instances of `Y.File` and be properly instantiated
+                            depending on whether `UploaderHTML5` or `UploaderFlash` is being used.</td>
+                        <td>`[]`</td>
+                    </tr>
+                    <tr>
+                        <td>`multipleFiles`</td>
+                        <td>A Boolean indicating whether multiple file selection is enabled.</td>
+                        <td>`false`</td>
+                    </tr>
+                    <tr>
+                        <td>`postVarsPerFile`</td>
+                        <td>An object, keyed by fileId, containing sets of key-value pairs that should be passed as POST variables along with each 
+                            corresponding file. This attribute is only used if no POST variables are specified in the upload method call.</td>
+                        <td>`{}`</td>
+                    </tr>
+                    <tr>
+                        <td>`selectButtonLabel`</td>
+                        <td>The label for the "Select Files" widget. This is the value that replaces the `{selectButtonLabel}` token in the 
+                            `Y.Uploader.SELECT_FILES_BUTTON` template.</td>
+                        <td>`"Select Files"`</td>
+                    </tr>
+                    <tr>
+                        <td>`selectFilesButton`</td>
+                        <td>The widget that serves as the "Select Files" control for the file uploader.</td>
+                        <td>`HTML Button with YUI3 CSS Button skin`</td>
+                    </tr>
+                    <tr>
+                        <td>`simLimit`</td>
+                        <td>The number of files that can be uploaded simultaneously if the automatic queue management is used. 
+                            This value can be in the range between 2 and 5, with the value of 1 or 2 recommended.</td>
+                        <td>`2`</td>
+                    </tr>
+                    <tr>
+                        <td>`swfURL`<span class="only">UploaderFlash</span></td>
+                        <td>The URL to the SWF file of the flash uploader. A copy local to the server that hosts the page on 
+                            which the uploader appears (rather than a CDN-sourced uploader) is recommended.</td>
+                        <td>`CDN Prefix` + `uploader/assets/flashuploader.swf`</td>
+                    </tr>
+                    <tr>
+                        <td>`tabElements`<span class="only">UploaderFlash</span></td>
+                        <td>The `id`'s or Node references of the DOM elements that precede and follow the "Select Files" button in the tab order. 
+                            Specifying these allows keyboard navigation to and from the Flash player layer of the uploader. The two keys 
+                            corresponding to the DOM elements are:
+                            <ul>
+                             <li>`from`: the id or the Node reference corresponding to the DOM element that precedes the Select Files button in the tab order.</li>
+                             <li>`to`: the id or the Node reference corresponding to the DOM element that follows the Select Files button in the tab order.</li>
+                            </ul>
+                        </td>
+                        <td>`null`</td>
+                    </tr>
+                    <tr>
+                        <td>`uploadURL`</td>
+                        <td>The URL to which file upload requested are POSTed. Only used if a different url is not passed to the upload method call.</td>
+                        <td>`""`</td>
                     </tr>
                 </tbody>
                 </table>
-<p>Because the Flash player runs in a thread separate from JavaScript, the Uploader methods and properties will not set correctly until the initialization event is fired. Make sure to subscribe to that event and perform subsequent method calls inside its handler:</p>
 
-
-```
-uploader.on("uploaderReady", setupUploader);
-
-var setupUploader = function (event) {
-	// Uploader method calls / property setting here.
-}
-```
-<h3>File extension filtering and multiple file selection</h3>
-<p>While the browse dialog in the Uploader is standard for the user's specific operating system, there are two parameters that you can modify to control the user's experience. The first parameter is `fileFilters`, which allows you to specify file extensions that can be selected. The second parameter is a Boolean `multiFiles`, which specifies whether the user can select many files, or just one. These parameters are set as follows:</p>
+<h4>Multiple file selection</h4>
+<p>While the file selection dialog in the Uploader is standard for the user's specific operating system, you can specify whether you want the user to be able to select multiple files, or just one:</p>
 
 ```
-	uploader.set("multiFiles", true);
-
-	var fileFilters = [{description:"Images", extensions:"*.jpg;*.png;*.gif"},
-	                   {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}]; 
-	
-    newuploader.set("fileFilters", fileFilters); 
-```
-<p>Note that even though file extensions are filtered, the user can circumvent this filter by entering "*.*" in the text field of the "Browse" dialog. Therefore, it is up to the developer to check that the files that were selected do, in fact, have correct extensions</p>
-
-<h3>The upload process</h3>
-<p> After the user has selected a file (or files) to be uploaded, the selected file list is returned as an array in the `fileSelect` event. At that point, you can either have the user initialize the actual upload process, or initialize it automatically, without any additional user action.</p>
-<p> Each selected file is uploaded in its own POST request. You can either upload each file individually, and manage the queue using your own code, or use the Uploader's built-in queue management. To upload a single file, the following method call is made:</p>
+    uploader.set("multipleFiles", true);
 
 ```
-	uploader.upload("file0", "upload.php");
+
+<h3>The Upload Process</h3>
+
+<h4>Automatic Queue Management</h4>
+<p> After the user has selected a file (or files) to be uploaded, the selected file list is places into the `fileList` attribute of the Uploader. At that point, 
+    you can either have the user initialize the actual upload process, or initialize it automatically, without any additional user action.</p>
+<p> Each of the selected files is uploaded in its own POST request. You can either upload each file individually, and manage the queue on your own, or use the Uploader's built-in queue management. To upload a single file "manually" (without using automatic queue management), the following method call can be made:</p>
+
+```
+    var firstFile = uploader.get("fileList")[0];
+    uploader.upload(firstFile, "http://url.to/upload.php", {postvar1: "foo", postvar2: "bar"});
 ```
 <p> To upload all files using the built-in queue manager, you can call the `uploadAll()` method:</p>
 ```
-	uploader.uploadAll("upload.php");
+    uploader.uploadAll("http://url.to/upload.php");
 ```
-<p> You can also upload a subset of the provided files, using an overloaded call to upload(): </p>
+<p> You can also upload a subset of the provided files, using the `uploadThese()` method: </p>
 ```
-	uploader.upload(['file0', 'file1'], "upload.php");
+    var firstFive = uploader.get("fileList").slice(0,5);
+    uploader.uploadThese(firstFive, "upload.php");
 ```
-<p> To monitor the upload progress, you can subscribe to the `uploadprogress` event, which reports the number of bytes uploaded, and the number of total bytes that needs to be uploaded:</p>
+
+<h4>Monitoring Upload Progress</h4>
+<p>When using the automatic queue management, you can monitor the overall upload progress by subscribing to the `totaluploadprogress` event, which reports the number of bytes uploaded, the total number of bytes, and the percentage of the upload completed:</p>
 
 ```
-	uploader.on(uploadprogress, reportProgress);
+	uploader.on("totaluploadprogress", reportProgress);
 	
 	function reportProgress (event) {
-		Y.log("Percent of " + event.id + 
-              " uploaded: " + 
-              Math.round((100 * event.bytesLoaded / event.bytesTotal)) 
-              + "%");
+		Y.log("Bytes uploaded: " + event.bytesLoaded);
+        Y.log("Bytes remaining: " + (event.bytesTotal - event.bytesLoaded));
+        Y.log("Percent uploaded: " + event.percentLoaded);
 	}
 ```
-                <h3>Uploader events</h3>
-                <p>Uploader fires the following events during operation:</p>
-                <table>
+<p>Individual file upload progress is also reported, via the `uploadprogress`, `uploadcomplete`, and `uploaderror` events described below.</p>
+
+<h4>Custom Queue Control</h4>
+<p>During the automatic queue management of multiple files, you can call various methods on the Uploader queue (available as `uploaderInstance.queue`)
+   in order to control the file upload. The methods available to you include:
+   <ul>
+     <li><strong>addToQueueTop()</strong> and <strong>addToQueueBottom()</strong>: allow you to include additional files in the upload queue, either at the
+         beginning or at the end.</li>
+     <li><strong>cancelUpload()</strong>: cancel a specific file's upload. If no arguments are passed, all of the uploads are cancelled.</li>
+     <li><strong>forceReupload()</strong>: if a particular file is stuck in an ongoing upload without any progress events, you can force its reupload.
+         This method is equivalent to cancelling the file's upload and then adding it back to the queue.</li>
+     <li><strong>pauseUpload()</strong>: complete all currently ongoing uploads, but ceases starting new ones, until <strong>startUpload()</strong> is called.</li>
+   </ul>
+<p>For more information, see the <a href="{{apiDocs}}/classes/Uploader.Queue.html">API Docs for Uploader.Queue</a>.</p>
+
+<h3>Uploader events</h3>
+    <p>Uploader fires the following events during operation:</p>
+        <table>
                 <thead>
                     <tr>
                         <th>Event</th>
-                        <th>When</th>
+                        <th>Cause</th>
                         <th>Payload</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>`uploaderReady`</td>
-                        <td>Uploader ready to accept method calls</td>
+                        <td>`alluploadscomplete`</td>
+                        <td>Signals that the upload process of the entire file list has been completed.</td>
+                        <td>`None`</td>
+                    </tr>
+                    <tr>
+                        <td>`click`<span class="only">UploaderFlash</span></td>
+                        <td>Signals that a mouse has been clicked over the `Select Files` button.</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`dragenter`<span class="only">UploaderHTML5</span></td>
+                        <td>Signals that a dragged object has entered into the uploader's associated drag-and-drop area (if one is specified).</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`dragleave`<span class="only">UploaderHTML5</span></td>
+                        <td>Signals that a dragged object has entered into the uploader's associated drag-and-drop area (if one is specified).</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`dragleave`<span class="only">UploaderHTML5</span></td>
+                        <td>Signals that an object has been dragged off of the uploader's associated drag-and-drop area (if one is specified).</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`dragover`<span class="only">UploaderHTML5</span></td>
+                        <td>Signals that an object has been dragged over the uploader's associated drag-and-drop area (if one is specified).</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`drop`<span class="only">UploaderHTML5</span></td>
+                        <td>Signals that an object has been dropped over the uploader's associated drag-and-drop area (if one is specified).</td>
                         <td>`None`</td>
                     </tr>
                     <tr>
                         <td>`fileselect`</td>
-                        <td>The user has selected some files to upload</td>
-                        <td>`{ fileList : {fileID: {id:String, name:String, size:Number, date:Number}, ...} }`</td>
+                        <td>Signals that files have been selected.</td>
+                        <td>`fileList`: An Array of files selected by the user, encapsulated in `Y.File`</td>
                     </tr>
                     <tr>
-                        <td>`uploadstart`</td>
-                        <td>A specific file's upload has started.</td>
-                        <td>`{id : String}`</td>
+                        <td>`fileuploadstart`</td>
+                        <td>Signals that the upload of multiple files has been started.</td>
+                        <td><p>`file`: A reference to the instance of `Y.File` that dispatched the event.</p>
+                            <p>`originEvent`: The original event dispatched by `Y.File`</p>
+                        </td>
                     </tr>
                     <tr>
-                        <td>`uploadprogress`</td>
-                        <td>TCP socket reports how many bytes of a specific file have been uploaded</td>
-                        <td>`{id:String, bytesLoaded:Number, bytesTotal:Number}`</td>
+                        <td>`mousedown`<span class="only">UploaderFlash</span></td>
+                        <td>Signals that a mouse has been pressed over the `Select Files` button.</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`mouseenter`<span class="only">UploaderFlash</span></td>
+                        <td>Signals that a mouse has begun hovering over the `Select Files` button.</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`mouseleave`<span class="only">UploaderFlash</span></td>
+                        <td>Signals that a mouse has stopped hovering over the `Select Files` button.</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`mouseup`<span class="only">UploaderFlash</span></td>
+                        <td>Signals that a mouse has been released over the `Select Files` button.</td>
+                        <td>`None`</td>
+                    </tr> 
+                    <tr>
+                        <td>`totaluploadprogress`</td>
+                        <td>Reports on the total upload progress of the file list.</td>
+                        <td><p>`bytesLoaded`: The number of bytes of the file list that has been uploaded.</p>
+                            <p>`bytesTotal`: The total number of bytes in the file list.</p>
+                            <p>`percentLoaded`: The fraction of the file list that has been uploaded, out of 100.</p>
+                        </td>
                     </tr>
                     <tr>
                         <td>`uploadcomplete`</td>
-                        <td>A specific file has been uploaded to the server.</td>
-                        <td>`{id:String}`</td>
+                        <td>Signals that a single file upload has been completed.</td>
+                        <td><p>`originEvent`: The original event dispatched by the instance of `Y.File`.</p>
+                            <p>`file`: The pointer to the instance of `Y.File` that dispatched the event.</p>
+                            <p>`data`: The data returned by the server.</p>
+                        </td>
                     </tr>
                     <tr>
-                        <td>`uploadcompletedata`</td>
-                        <td>The server has returned data in response to the upload POST request.</td>
-                        <td>`{id:String, data:String}`</td>
+                        <td>`uploaderror`</td>
+                        <td>Signals that a error has occurred in a specific file's upload process.</td>
+                        <td><p>`originEvent`: The original event dispatched by the Uploader.</p>
+                            <p>`file`: The pointer to the instance of `Y.File` that dispatched the event.</p>
+                            <p>`source`: Either 'io' or 'http'.<span class="only">UploaderFlash</span></p>
+                            <p>`message`: The message corresponding to the error. In case of HTTP errors contains the status code.<span class="only">UploaderFlash</span></p>
+                            <p>`status`: The status reported by the XMLHttpRequest object.<span class="only">UploaderHTML5</span></p>
+                            <p>`statusText`: The status text reported by the XMLHttpRequest object.<span class="only">UploaderHTML5</span></p>
+                        </td>
                     </tr>
-
+                    <tr>
+                        <td>`uploadprogress`</td>
+                        <td>Reports on upload progress of a specific file.</td>
+                        <td><p>`file`: The pointer to the instance of `Y.File` that dispatched the event.</p>
+                            <p>`bytesLoaded`: The number of bytes of the file that has been uploaded.</p>
+                            <p>`bytesTotal`: The total number of bytes in the file.</p>
+                            <p>`percentLoaded`: The fraction of the file that has been uploaded, out of 100.</p>
+                            <p>`originEvent`: The original event dispatched by the uploader transport.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>`uploadstart`</td>
+                        <td>Signals that an upload of multiple files has been started.</td>
+                        <td>`None`</td>
+                    </tr>
                 </tbody>
                 </table>
 
-                <p>This is not an exhaustive list.  See the <a href="{{apiDocs}}/module_{{name}}.html">API docs</a> for a complete listing.</p>
+                <p>See the API documentation for <a href="{{apiDocs}}/classes/UploaderHTML5.html">UploaderHTML5</a> and <a href="{{apiDocs}}/classes/UploaderFlash.html">UploaderFlash</a> for a complete documentation of the Uploader events, methods, attributes, and properties.</p>
+
+<h3>Backend Setup</h3>
+<h4>Setting up the backend for Flash</h4>
+<p>Unless the server receiving the file uploads is located on the same domain as the SWF file that is dispatching the uploads, the receiving server must include a <strong>crossdomain.xml</strong> file allowing the server on which the SWF is located to make requests to it. Consider, for instance, the <a href="http://www.yahoo.com/crossdomain.xml"><strong>crossdomain.xml</strong> policy file on yahoo.com</a>. It looks as follows:</p>
+```
+<cross-domain-policy>
+<allow-access-from domain="*.yahoo.com" secure="false"/>
+</cross-domain-policy>
+```
+<p>The `allow-access-from` parameter specifies which domains hosting SWFs can access yahoo.com: in this case, only subdomains of yahoo.com are allowed to do so. Note, for instance, that <a href="http://www.cnn.com/crossdomain.xml">CNN.com's list</a> is considerably larger.</p>
+<p>If you are planning on using the CDN-hosted Uploader SWF, your crossdomain.xml file might look something like this:</p>
+```
+<cross-domain-policy>
+<allow-access-from domain="yui.yahooapis.com" secure="false"/>
+</cross-domain-policy>
+```
+
+<h4>Setting up the backend for HTML5</h4>
+<p>The security policy for XMLHttpRequest Level 2 cross-domain requests is a little bit trickier. Instead of using separate files, XHR2 uses server-supplied headers to determine whether a request can be made. Before the regular POST request, XHR submits a preflight OPTIONS request with an `Origin` parameter. In response, it expects a `Access-Control-Allow-Origin` header with a wildcard or a URL matching the `Origin` parameter it sent. This header can be set either through the web server you are using, or directly by the script output. For instance, here is a PHP example that replies to the OPTIONS requests with a header allowing all origins:</p>
+
+```
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+ header('Access-Control-Allow-Origin: *');
+ exit;
+}
+```
+
+<p>Note that the actual response must also contain the `Access-Control-Allow-Origin` header.</p>
+
+<p>To learn more about XHR2 cross-domain requests, read <a href="http://www.html5rocks.com/en/tutorials/cors/">this helpful tutorial on html5rocks.com</a>.</p>
