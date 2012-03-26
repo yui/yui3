@@ -978,7 +978,7 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-        
+
         if (typeof o === 'string') {
             o = { name: name, fullpath: o };
         }
@@ -1017,7 +1017,6 @@ Y.Loader.prototype = {
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-        o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
@@ -1025,8 +1024,17 @@ Y.Loader.prototype = {
             overrides, skinname, when,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
-
+        
         this.moduleInfo[name] = o;
+
+        o.requires = o.requires || [];
+
+        if (o.skinnable) {
+            skinname = this._addSkin(this.skin.defaultSkin, name);
+            o.requires.unshift(skinname);
+        }
+
+        o.requires = this.filterRequires(o.requires) || [];
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
@@ -1039,6 +1047,7 @@ Y.Loader.prototype = {
                 }
             }
         }
+
 
         if (subs) {
             sup = o.supersedes || [];
