@@ -876,9 +876,9 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-
-            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
-            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
+            
+            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[0], 'Failed to combine plugin with module path CSS');
+            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
         },
         test_fullpath_with_combine: function() {
@@ -1089,6 +1089,20 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
             Assert.areSame('/combo?2in3.4/2.9.0/build/yui2-foo/yui2-foo-min.js', out.js[0], 'Failed to return combo url for 2in3 module.');
+        },
+        'test: gallery skinnable': function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+            YUI({
+                gallery: 'gallery-2012.03.23-18-00'
+            }).use('gallery-accordion-horiz-vert', function(Y) {
+
+                var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+                test.resume(function() {
+                    Assert.areEqual((links + 1), links2, 'Failed to load css for gallery module');
+                });
+            });
+            test.wait();
         }
     });
 
