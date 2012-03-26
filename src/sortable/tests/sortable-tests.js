@@ -132,7 +132,7 @@ YUI.add('sortable-tests', function(Y) {
         },
         _should: {
             fail: {
-                'test: dragEnd event': Y.UA.ie
+                'test: dragEnd event': (Y.UA.ie && Y.UA.ie < 9)
             }
         }
     };
