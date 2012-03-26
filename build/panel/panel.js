@@ -76,28 +76,15 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
     **/
     BUTTONS: {
         close: {
-            label     : 'Close',
-            action    : '_onCloseAction',
-            section   : 'header',
+            label  : 'Close',
+            action : 'hide',
+            section: 'header',
+
+            // Uses `type="button"` so the button's default action can still
+            // occur but it won't cause things like a form to submit.
+            template  : '<button type="button" />',
             classNames: getClassName('button', 'close')
         }
-    },
-
-    // -- Protected Methods ----------------------------------------------------
-
-    /**
-    Handler for the default "close" button's `action`.
-
-    Hides this panel and prevents the default action of the button.
-
-    @method _onCloseAction
-    @param {EventFacade} e
-    @protected
-    @since 3.5.0
-    **/
-    _onCloseAction: function (e) {
-        e.preventDefault();
-        this.hide();
     }
 }, {
     ATTRS: {
