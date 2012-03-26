@@ -50,7 +50,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 
     /**
     * @method getButtons
-    * @description Returns all Y.Buttons instances assigned to this group
+    * @description Returns all buttons inside this this button group
     * @public
     */
     getButtons: function() {
@@ -163,7 +163,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     },
 
     /**
-     * List of class names used in the ButtonGroup's DOM
+     * List of class names to use for ButtonGroups
      *
      * @property CLASS_NAMES
      * @type {Object}
@@ -173,4 +173,4 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['button-plugin', 'widget']});
+}, '@VERSION@' ,{requires:['button-plugin', 'cssbutton', 'widget']});

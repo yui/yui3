@@ -151,10 +151,12 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
      * @protected
      */
     _subtractMonths : function (ev) {
-        var host = this.get(HOST);
-        var oldDate = host.get("date");
-        host.set("date", ydate.addMonths(oldDate, -1*this.get("shiftByMonths")));
-        ev.preventDefault();
+        if ( (ev.type === "click") || (ev.type === "keydown" && (ev.keyCode == 13 || ev.keyCode == 32)) ) {
+           var host = this.get(HOST);
+           var oldDate = host.get("date");
+           host.set("date", ydate.addMonths(oldDate, -1*this.get("shiftByMonths")));
+           ev.preventDefault();
+       }
     },
 
     /**
@@ -166,10 +168,12 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
      * @protected
      */
     _addMonths : function (ev) {
-        var host = this.get(HOST);
-        var oldDate = host.get("date");
-        host.set("date", ydate.addMonths(oldDate, this.get("shiftByMonths")));
-        ev.preventDefault();
+        if ( (ev.type === "click") || (ev.type === "keydown" && (ev.keyCode == 13 || ev.keyCode == 32)) ) {
+           var host = this.get(HOST);
+           var oldDate = host.get("date");
+           host.set("date", ydate.addMonths(oldDate, this.get("shiftByMonths")));
+           ev.preventDefault();
+       }
     },
 
 
@@ -182,15 +186,15 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
             }
 
             if (!this._controls.prevMonth.hasClass(CAL_DIS_M)) {
-                this._controls.prevMonth.addClass(CAL_DIS_M);
+                this._controls.prevMonth.addClass(CAL_DIS_M).setAttribute("aria-disabled", "true");
             }
         }
         else {
             if (!this._eventAttachments.prevMonth) {
-            this._eventAttachments.prevMonth = this._controls.prevMonth.on("click", this._subtractMonths, this);
+            this._eventAttachments.prevMonth = this._controls.prevMonth.on(["click", "keydown"], this._subtractMonths, this);
             }
             if (this._controls.prevMonth.hasClass(CAL_DIS_M)) {
-              this._controls.prevMonth.removeClass(CAL_DIS_M);
+              this._controls.prevMonth.removeClass(CAL_DIS_M).setAttribute("aria-disabled", "false");
             }
         }
 
@@ -201,15 +205,15 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
             }
 
             if (!this._controls.nextMonth.hasClass(CAL_DIS_M)) {
-                this._controls.nextMonth.addClass(CAL_DIS_M);
+                this._controls.nextMonth.addClass(CAL_DIS_M).setAttribute("aria-disabled", "true");
             }
         }
         else {
             if (!this._eventAttachments.nextMonth) {
-            this._eventAttachments.nextMonth = this._controls.nextMonth.on("click", this._addMonths, this);
+            this._eventAttachments.nextMonth = this._controls.nextMonth.on(["click", "keydown"], this._addMonths, this);
             }
             if (this._controls.nextMonth.hasClass(CAL_DIS_M)) {
-              this._controls.nextMonth.removeClass(CAL_DIS_M);
+              this._controls.nextMonth.removeClass(CAL_DIS_M).setAttribute("aria-disabled", "false");
             }
         }
     },

@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.02.01-21-35',
+            GALLERY_VERSION = 'gallery-2012.03.23-18-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -981,7 +981,7 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-        
+
         if (typeof o === 'string') {
             o = { name: name, fullpath: o };
         }
@@ -1021,7 +1021,6 @@ Y.Loader.prototype = {
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-        o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
@@ -1029,8 +1028,17 @@ Y.Loader.prototype = {
             overrides, skinname, when,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
-
+        
         this.moduleInfo[name] = o;
+
+        o.requires = o.requires || [];
+
+        if (o.skinnable) {
+            skinname = this._addSkin(this.skin.defaultSkin, name);
+            o.requires.unshift(skinname);
+        }
+
+        o.requires = this.filterRequires(o.requires) || [];
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
@@ -1043,6 +1051,7 @@ Y.Loader.prototype = {
                 }
             }
         }
+
 
         if (subs) {
             sup = o.supersedes || [];
@@ -2994,6 +3003,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "button-group": {
         "requires": [
             "button-plugin", 
+            "cssbutton", 
             "widget"
         ]
     }, 
@@ -5080,7 +5090,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0f82c1d4f0a041f12d3c4d0a82427fcc';
+YUI.Env[Y.version].md5 = '6e052a384cfed1255f3f0c504dc1b061';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

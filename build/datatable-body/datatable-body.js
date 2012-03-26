@@ -251,15 +251,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
-    Returns the Model associated to the record `id`, `clientId`, or index (not
-    row index).  If a DOM element id or Node for a table row or child of a row
-    is passed, that will work, too.
+    Returns the Model associated to the row Node or id provided. Passing the
+    Node or id for a descendant of the row also works.
 
     If no Model can be found, `null` is returned.
 
     @method getRecord
-    @param {Number|String|Node} seed Record `id`, `clientId`, index, Node, or
-        identifier for a row or child element
+    @param {String|Node} seed Row Node or `id`, or one for a descendant of a row
     @return {Model}
     @since 3.5.0
     **/
@@ -271,9 +269,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         if (tbody) {
             if (isString(seed)) {
-                if (!record) {
-                    seed = tbody.one('#' + seed);
-                }
+                seed = tbody.one('#' + seed);
             }
 
             if (Y.instanceOf(seed, Y.Node)) {

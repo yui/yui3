@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Panel in Form Manual Test</title>
+
+    <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" />
+    <link rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css" />
+    <link rel="stylesheet" href="../../../../build/cssbase/base-min.css" />
+</head>
+<body class="yui3-skin-sam">
+
+    <h1>Panel in Form Manual Test</h1>
+
+    <form action="">
+        <div id="foo">
+            <div class="yui3-widget-bd">
+                Click the close button!
+            </div>
+        </div>
+    </form>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({
+        skin  : 'sam',
+        filter: 'raw'
+    }).use('panel', function (Y) {
+
+        var panel = new Y.Panel({
+            srcNode      : '#foo',
+            headerContent: 'Panel',
+            centered     : true,
+            width        : 250,
+            modal        : true,
+            render       : true
+        });
+
+        Y.one('form').on('submit', function (e) {
+            alert('The form is submitting!');
+            e.preventDefault();
+        });
+
+    });
+    </script>
+</body>
+</html>

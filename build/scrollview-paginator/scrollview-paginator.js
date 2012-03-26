@@ -91,17 +91,6 @@ PaginatorPlugin.ATTRS = {
     },
     
     /**
-     * The active page number for a paged scrollview
-     *
-     * @attribute index
-     * @type {Number}
-     * @default 0
-     */
-    prevIndex: {
-        value: 0
-    },
-    
-    /**
      * The total number of pages
      *
      * @attribute total
@@ -115,7 +104,7 @@ PaginatorPlugin.ATTRS = {
 
 Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     
-    optimizeMemory: true,
+    optimizeMemory: false,
     _pageOffsets: null,
     _pageNodes: null,
     
@@ -134,8 +123,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
         paginator.afterHostEvent('render', paginator._afterRender);
         paginator.after('indexChange', paginator._afterIndexChange);
-        
         paginator.optimizeMemory = optimizeMemory;
+        paginator._pageNodes = new Y.NodeList();
     },
 
     /**
@@ -144,45 +133,45 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method _calcOffsets
      * @protected
      */
-    _calcOffsets : function() {
-        var host = this._host,
-            cb = host.get(CONTENT_BOX),
-            bb = host.get(BOUNDING_BOX),
-            vert = host._scrollsVertical,
-            size = (vert) ? host._scrollHeight : host._scrollWidth,
-            pageSelector = this.get("selector"),
-            optimizeMemory = this.optimizeMemory,
-            currentIndex = this.get(INDEX),
-            pages,
-            offsets, 
-            node;
-            
-        // Pre-calculate min/max values for each page
-        this._pageNodes = pages = pageSelector ? cb.all(pageSelector) : cb.get("children");
-        
-        //Set the total # of pages
-        this.set(TOTAL, pages.size());
-        
-        // Determine the offset
-        this._pageOffsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
-        
-        if (optimizeMemory) {
-            this.set(PREVINDEX, currentIndex);
-            
-            // Reduce the scroll width to the size of (3) pages (or whatever MAX_PAGE_COUNT is)
-            host._maxScrollX = this._pageOffsets[MAX_PAGE_COUNT-1];
-            
-            // Empty the content-box.  @TODO: leave {MAX_PAGE_COUNT} items in?
-            cb.empty(true);
-            
-            // Now, fill it with the first set of items
-            for (var i=0; i < MAX_PAGE_COUNT; i++) {
-                node = pages.item(currentIndex + i);
-                cb.append(node);
-            }
-        }
-    },
-    
+     _calcOffsets : function() {
+         var host = this._host,
+             cb = host.get(CONTENT_BOX),
+             bb = host.get(BOUNDING_BOX),
+             vert = host._scrollsVertical,
+             size = (vert) ? host._scrollHeight : host._scrollWidth,
+             pageSelector = this.get("selector"),
+             optimizeMemory = this.optimizeMemory,
+             currentIndex = this.get(INDEX),
+             pages,
+             offsets,
+             node;
+         
+         pages = pageSelector ? cb.all(pageSelector) : cb.get("children");
+         this._pageNodes = pages;
+         
+         //Set the total # of pages
+         this.set(TOTAL, pages.size());
+
+         // Determine the offsets
+         this._pageOffsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
+
+         if (optimizeMemory) {
+             
+             this.set(PREVINDEX, currentIndex);
+
+             // Reduce the scroll width to the size of (3) pages (or whatever MAX_PAGE_COUNT is)
+             host._maxScrollX = this._pageOffsets[MAX_PAGE_COUNT-1];
+
+             // Empty the content-box. @TODO: leave {MAX_PAGE_COUNT} items in?
+             cb.empty(true);
+
+             // Now, fill it with the first set of items
+             for (var i=0; i < MAX_PAGE_COUNT; i++) {
+                 node = pages.item(currentIndex + i);
+                 cb.append(node);
+             }
+         }
+     },
     /**
      * Return the offset value where scrollview should scroll to.
      * Neccesary because index # doesn't nessecarily map up to location in the DOM because of this._manageDOM()
@@ -242,7 +231,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             inc = velocity < 0,
             pageIndex = this.get(INDEX),
             pageCount = this.get(TOTAL);
-
+            
         if (velocity) {
             if (inc && pageIndex < pageCount-1) {
                 this.next();
@@ -350,7 +339,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              host.set('scrollX', this._pageOffsets[targetOffset]); // Center
          }
      },
-     
+
     /**
      * index attr change handler
      *
@@ -382,7 +371,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     next: function() {
         var index = this.get(INDEX);
-
         if(index < this.get(TOTAL)-1) {
             this.set(INDEX, index+1);
         }
@@ -395,7 +383,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     prev: function() {
         var index = this.get(INDEX);
-
         if(index > 0) {
             this.set(INDEX, index-1);
         }

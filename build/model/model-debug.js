@@ -689,15 +689,13 @@ Y.Model = Y.extend(Model, Y.Base, {
     If you've specified a custom attribute name in the `idAttribute` property,
     the default `id` attribute will not be included in the returned object.
 
-    Note: This method is named `toJSON()`, but it returns an object, not a JSON
-    string. We know that. It's not because we're idiots who are incapable of
-    naming things. It's because the method name "toJSON" and the object return
-    type are specified in the ECMAScript 5 standard. Adhering to this standard
-    allows you to stringify a model by doing `JSON.stringify(model)` if you want
-    to. Please don't file a bug telling us we're idiots. We'll just sigh, cry a
-    little, and mark the bug invalid.
+    Note: The ECMAScript 5 specification states that objects may implement a
+    `toJSON` method to provide an alternate object representation to serialize
+    when passed to `JSON.stringify(obj)`.  This allows class instances to be
+    serialized as if they were plain objects.  This is why Model's `toJSON`
+    returns an object, not a JSON string.
 
-    See <http://es5.github.com/#x15.12.3>.
+    See <http://es5.github.com/#x15.12.3> for details.
 
     @method toJSON
     @return {Object} Copy of this model's attributes.

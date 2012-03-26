@@ -11,8 +11,9 @@ YUI.add('get-test', function (Y) {
 
         supports = {
             // True if this browser should call an onFailure callback on a link
-            // that 404s. Currently only Firefox 9+ supports this.
-            cssFailure: ua.gecko >= 9,
+            // that 404s. Currently only Firefox 9+ and WebKit 535.24+ (Chrome
+            // 19) support this.
+            cssFailure: ua.gecko >= 9 || ua.webkit >= 535.24,
 
             // True if this browser should call an onFailure callback on a
             // script that 404s.
@@ -1060,13 +1061,6 @@ YUI.add('get-test', function (Y) {
             this.removeInsertBeforeNode();
         },
 
-        _should: {
-            ignore: {
-                'test: single css, failure': !supports.cssFailure,
-                'test: multiple css, failure': !supports.cssFailure
-            }
-        },
-
         createInsertBeforeNode: function() {
             this.ib = Y.Node.create('<link id="insertBeforeMe" href="' + path("ib.css?delay=0") + '" rel="stylesheet" type="text/css" charset="utf-8">');
             Y.Node.one("head").appendChild(this.ib);
@@ -1109,7 +1103,9 @@ YUI.add('get-test', function (Y) {
                 },
 
                 onFailure: function(o) {
-                    Assert.fail("onFailure shouldn't have been called");
+                    test.resume(function () {
+                        Assert.fail("onFailure shouldn't have been called");
+                    });
                 }
             });
 
@@ -1334,7 +1330,9 @@ YUI.add('get-test', function (Y) {
 
                 onSuccess: function(o) {
                     test.resume(function () {
-                        Assert.fail("onSuccess shouldn't have been called");
+                        if (supports.cssFailure) {
+                            Assert.fail("onSuccess shouldn't have been called");
+                        }
                     });
                 },
 
@@ -1366,7 +1364,9 @@ YUI.add('get-test', function (Y) {
 
                 onSuccess: function(o) {
                     test.resume(function() {
-                        Assert.fail("onSuccess shouldn't have been called");
+                        if (supports.cssFailure) {
+                            Assert.fail("onSuccess shouldn't have been called");
+                        }
                     });
                 },
 

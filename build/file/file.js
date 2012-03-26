@@ -9,7 +9,14 @@ YUI.add('file', function(Y) {
      * @since 3.5.0
      */     
 
-    
+    /**
+     * `Y.File` serves as an alias for either <a href="FileFlash.html">`Y.FileFlash`</a>
+     * or <a href="FileHTML5.html">`Y.FileHTML5`</a>, depending on the feature set available
+     * in a specific browser.
+     *
+     * @class File
+     */
+
  var Win = Y.config.win;
 
  if (Win && Win.File && Win.FormData && Win.XMLHttpRequest) {

@@ -1,0 +1,31 @@
+YUI().use('button', function(Y){
+    
+    // A toggle button with a state change listener
+    var toggleButton = new Y.ToggleButton({
+        srcNode:'#myToggleButton',
+        
+        // 'after', because 'on' would trigger before the attribute update
+        after: {
+            'pressedChange': function () {
+                var button = this,
+                    pressed = button.get('pressed'),
+                    newLabel = 'this' + (pressed ? ' selected ' : ' unselected ') + 'button' ;
+                
+                button.set('label', newLabel);
+            }
+        }
+    }).render();
+    
+    
+    var button = new Y.Button({
+        srcNode:'#myPushButton',
+        on: {
+            'click': function(){
+                var pressed = toggleButton.get('pressed');
+                toggleButton.set('pressed', !pressed);
+            }
+        }
+    }).render();
+    
+    
+});

@@ -1004,6 +1004,12 @@ Y.use('datatable-scroll', function (Y) {
     records.
 </p>
 
+<p>
+    Rendering features include most column configurations, such as `children`
+    and `allowHTML`, as well as column formatting options `formatter`,
+    `nodeFormatter`, `cellTemplate`, etc.
+</p>
+
 <h3 id="datatable-message">Table Messages</h3>
 
 <p>
@@ -1178,6 +1184,11 @@ YUI({ filter: 'raw' }).use('datatable-sort', function (Y) {
 </script>
 
 <p>
+    Hold down the `shift` key while clicking on column headers to subsort by
+    that column.  Doing so repeatedly will toggle the subsort direction.
+</p>
+
+<p>
     As long as the `datatable-sort` module has been included, you will always
     be able to sort the table data through the API, even by columns that aren't
     configured to accept header-click sorting.
@@ -1187,6 +1198,10 @@ YUI({ filter: 'raw' }).use('datatable-sort', function (Y) {
     When a table is sorted, any new records added to the DataTable's ModelList
     will be inserted at the proper sorted index, as will the created table
     rows.
+</p>
+
+<p>
+    Disable header-click sorting by setting `sortable` to `false`.
 </p>
 
 <h4 id="customsort">Custom Sorting</h4>
@@ -1231,17 +1246,219 @@ var columns = [
     this sort.
 </p>
 
-<h4 id="multisort">Multi-Column Sorting</h4>
-shift-click, or by API
 
-<h4 id="multisort">Sorting APIs</h4>
-sort, toggleSort, sortBy
+<h4 id="sortapi">Sorting Methods</h4>
 
 <p>
-    Disable header-click sorting by setting `sortable` to `false`.
+    To sort the table in the code, call `table.sort(NAME OR KEY)`.  To
+    toggle the sort direction, call `table.toggleSort(NAME OR KEY)`.
 </p>
 
-note sort event, point to events section.
+```
+// Sorts the table by values in the price field in ascending order
+table.sort('price');
+
+// Flips to descending
+table.toggleSort('price');
+```
+
+<p>
+    To sort by multiple columns, pass an array of column keys to `sort` or
+    `toggleSort`.
+</p>
+
+<p>
+    Calling `toggleSort` with no arguments will reverse all current sort
+    directions.  Calling with specific column names or keys will toggle only
+    those columns.
+</p>
+
+```
+// Sort first by author, subsort by title in ascending order
+table.sort(['author', 'title']);
+
+// Now descending by author then title
+// same as table.toggleSort(['author', 'title']);
+table.toggleSort();
+
+// Now ascending by author, descending by title
+table.toggleSort('author');
+
+```
+
+<p>
+    To specify a sort direction, pass an object instead of a string to `sort`.
+    The object should have the column name as the key, and sort direction as its
+    value.
+</p>
+
+```
+// Explicitly sort by price in descending order
+table.sort({ price: 'desc' });
+
+// Each column gets its own object
+table.sort([{ author: 'desc' }, { title: 'desc' }]);
+```
+
+<p>
+    Acceptable values for the sort direction are "asc", "desc", 1, and -1. 1 is
+    equivalent to "asc", and -1 to "desc".
+</p>
+
+<h4 id="sortby">The `sortBy` Attribute</h4>
+
+<p>
+    Every sort operation updates the `sortBy` attribute.  You can also trigger
+    a sort by setting this attribute directly.  It accepts the same values as
+    the `sort` method.
+</p>
+
+```
+// Sort by author in descending order, then by title in ascending order
+table.set('sortBy', [{ author: -1 }, 'title']);
+```
+
+<p>
+    To specify an initial sort order for your table, assign this attribute
+    during instantiation.  This will sort the data as soon as it is added
+    to the table's ModelList.
+</p>
+
+```
+// Pre-sort the data
+var table = new Y.DataTable({
+    columns: ['item', 'cost', 'price'],
+    data: [...],
+    sortBy: { price: -1 }
+});
+```
+
+<h4 id="sortevent">The `sort` Event</h4>
+
+<p>
+    Clicking on a column header, or calling the `sort` or `toggleSort` methods
+    will fire a `sort` method containing an `e.sortBy` property that
+    corresponds to the requested sort column and direction.  The value will be
+    in either string or object format, depending on how each method was used.
+</p>
+
+<p>
+    Preventing the `sort` event will prevent the `sortBy` attribute from being
+    updated.  Updating the `sortBy` attribute directly will not fire the `sort`
+    event, but will still sort the data and update the table.
+</p>
+
+<h3 id="mutation">Table Mutation APIs (`addRow`, etc)</h3>
+
+<p>
+    The `datatable-mutable` module adds APIs for adding, removing, and
+    modifying records and columns.
+</p>
+
+<h4 id="column-mutation">Column Mutation Methods</h4>
+
+<p>
+    Use the methods `addColumn`, `removeColumn`, `modifyColumn`, and
+    `moveColumn` to update the table's configured `columns`.
+</p>
+
+```
+// Insert a column for the profit field in the data records as the third column
+table.addColumn('profit', 2);
+
+// Actually, make that the fourth column
+table.moveColumn('profit', 3);
+
+// Actually, strike that.  Don't show it after all
+table.removeColumn('profit');
+
+// Instead, add a formatter to the price column that includes the profit data
+table.modifyColumn('price', {
+    formatter: function (o) {
+        return o.value + ' (' + (o.data.profit / o.data.cost).toFixed(2) + '%)';
+    }
+});
+```
+
+<p>
+    Each column mutation method fires an identically named event.  See
+    <a href="{{apiDocs}}/classes/DataTable.html">the API docs</a> for details.
+</p>
+
+<h4 id="row-mutation">Row Mutation Methods</h4>
+
+<p>
+    Use the methods `addRow`, `addRows`, `removeRow`, and `modifyRow` to update
+    the table's ModelList.
+</p>
+
+```
+table.addRow({ item: 'collet', cost: 0.42, price: 2.65 });
+
+table.addRows([
+    { item: 'nut',    cost: 0.42, price: 2.65 },
+    { item: 'washer', cost: 0.01, price: 0.08 },
+    { item: 'bit',    cost: 0.19, price: 0.97 }
+]);
+
+// Remove table records by their Model, id, clientId, or index
+table.removeRow(0);
+
+// Modify a record by passing its id, clientId, or index, followed by an
+// object with new field values
+table.modifyRow('record_4', { cost: 0.74 });
+```
+<p>
+    Everything that's done by these methods can be accomplished through the
+    table's ModelList instance methods, but having methods on the table itself
+    can make the code more readable.
+</p>
+
+```
+// Same as table.addRow(...);
+table.data.add({ item: 'collet', cost: 0.42, price: 2.65 });
+```
+
+<p>
+    By default, changes made to the table are only local, they don't update the
+    server or other data origin if the data was served remotely.  However, if
+    your table's ModelList is built with a sync layer, the mutation methods
+    can also trigger the appropriate sync behavior by passing an additional
+    argument to the methods, an object with the property `sync` set to `true`.
+</p>
+
+```
+// Tell the server we're down to one slice of apple pie!
+table.modifyRow('apple', { slices: 1 }, { sync: true });
+
+// Uh oh, make that 0.  No more apple pie :(
+table.removeRow('apple', { sync: true });
+```
+
+<p>
+    If all modifications are destined for the server/origin, you can set the
+    `autoSync` attribute to `true`, and the row mutation methods will
+    automatically call into the sync layer.
+</p>
+
+```
+var pies = new Y.DataTable({
+    columns: ['type', 'slices'],
+    data: new Y.PieList()
+    autoSync: true
+});
+
+pies.data.load(function () {
+
+    pies.render('#pie-cart');
+
+    // The new PieModel's save() method is called, notifying the server
+    pies.addRow({ type: 'pecan', slices: 8 });
+
+    // Let us eat some pie!
+    pies.modifyRow('lemon meringue', { slices: 5 });
+});
+```
 
 <h3 id="scrolling">Scrolling</h3>
 				
@@ -1251,10 +1468,15 @@ note sort event, point to events section.
 </p>
 
 <p>
-    Scrolling functionality can be added with the `datatable-scroll` module
-    (included in the `datatable` rollup module).  Scrolling is enabled by the
-    `scrollable` attribute, which accepts values "x", "y", "xy", `true` (same
-    as "xy"), or `false` (the default).
+    Scrolling functionality can be added to `Y.DataTable` by including
+    `datatable-scroll` module in your `use()`.  `datatable-scroll` is
+    <strong>NOT</strong> included in the `datatable` rollup module, so must be
+    included separately.
+</p>
+
+<p>
+    Enable scrolling by setting the `scrollable` attribute, which accepts values
+    "x", "y", "xy", `true` (same as "xy"), or `false` (the default).
 </p>
 
 <p>
@@ -1263,25 +1485,144 @@ note sort event, point to events section.
 </p>
 
 ```
-var cols = [
-    { key: "Company" },
-    { key: "Phone" },
-    { key: "Contact" }
+// Data from the seafoodwatch YQL table as of 3/16/2012
+var data = [
+    { "fish": "Barramundi (Imported Farmed in Open Systems)", "recommendation": "avoid" },
+    { "fish": "Caviar, Paddlefish (Wild caught from U.S.)", "recommendation": "avoid" },
+    { "fish": "Caviar, Sturgeon (Imported Wild-caught)", "recommendation": "avoid" },
+    ...
 ];
 
+// Enable vertical scrolling with scrollable "y". The width is also set, but
+// because scrollable is not "x" or "xy", this just sets the table width.
+var table = new Y.DataTable({
+    caption: 'Seafood tips for the US West Coast',
+    columns: ['fish', 'recommendation'],
+    data: data,
+    scrollable: "y",
+    height: "200px",
+    width:  "400px"
+}).render("#scroll");
+```
+
+<p>This code produces this table:</p>
+
+<div id="scroll-example" class="yui3-skin-sam"></div>
+
+<script>
+YUI().use('datatable-scroll', function (Y) {
+// Data from the seafoodwatch YQL table as of 3/16/2012
 var data = [
-    { Company: "Company Bee", Phone: "415-555-1234", Contact: "Sally Spencer"},
-    { Company: "Acme Company", Phone: "650-555-4444", Contact: "John Jones"},
-    { Company: "Indutrial Industries", Phone: "408-555-5678", Contact: "Robin Smith"}
+    { "fish": "Barramundi (Imported Farmed in Open Systems)", "recommendation": "avoid" },
+    { "fish": "Caviar, Paddlefish (Wild caught from U.S.)", "recommendation": "avoid" },
+    { "fish": "Caviar, Sturgeon (Imported Wild-caught)", "recommendation": "avoid" },
+    { "fish": "Chilean Seabass", "recommendation": "avoid" },
+    { "fish": "Cobia (Imported Farmed)", "recommendation": "avoid" },
+    { "fish": "Cod, Atlantic (Trawl-caught from Canadian and U.S. Atlantic)", "recommendation": "avoid" },
+    { "fish": "Cod, Pacific (Imported)", "recommendation": "avoid" },
+    { "fish": "Crab, King (Imported)", "recommendation": "avoid" },
+    { "fish": "Dab, Common (Danish Seine from Iceland)", "recommendation": "avoid" },
+    { "fish": "Flounder (Wild-caught from U.S. Atlantic, Except Summer Flounder)", "recommendation": "avoid" },
+    { "fish": "Hake, White", "recommendation": "avoid" },
+    { "fish": "Halibut, Atlantic (Wild-caught from U.S.)", "recommendation": "avoid" },
+    { "fish": "Lobster, Caribbean Spiny (Brazil)", "recommendation": "avoid" },
+    { "fish": "Mahi Mahi (Imported Longline)", "recommendation": "avoid" },
+    { "fish": "Marlin, Blue (Imported)", "recommendation": "avoid" },
+    { "fish": "Marlin, Striped", "recommendation": "avoid" },
+    { "fish": "Monkfish", "recommendation": "avoid" },
+    { "fish": "Octopus (Philippines)", "recommendation": "avoid" },
+    { "fish": "Orange Roughy", "recommendation": "avoid" },
+    { "fish": "Plaice, American (Wild-caught from U.S. Atlantic)", "recommendation": "avoid" },
+    { "fish": "Pollock, Atlantic (Danish Seine and Trawl from Iceland)", "recommendation": "avoid" },
+    { "fish": "Salmon (Farmed including Atlantic Except U.S. Farmed in Tank Systems)", "recommendation": "avoid" },
+    { "fish": "Sardines, Atlantic (Mediterranean)", "recommendation": "avoid" },
+    { "fish": "Shad, American (U.S. Atlantic Gillnet)", "recommendation": "avoid" },
+    { "fish": "Shark (Except Common Thresher and Shortfin Mako, from California and Hawaii)", "recommendation": "avoid" },
+    { "fish": "Shrimp (Imported Farmed Except Thailand Farmed in Fully Reciruclating Systems)", "recommendation": "avoid" },
+    { "fish": "Shrimp (Imported Wild-Caught Except Canadian)", "recommendation": "avoid" },
+    { "fish": "Shrimp (Mexico Farmed in Open Systems)", "recommendation": "avoid" },
+    { "fish": "Skates", "recommendation": "avoid" },
+    { "fish": "Snapper, Red (U.S. Gulf of Mexico Wild-caught)", "recommendation": "avoid" },
+    { "fish": "Snapper, Red (Imported Wild-caught)", "recommendation": "avoid" },
+    { "fish": "Sole (Wild-caught from U.S Atlantic)", "recommendation": "avoid" },
+    { "fish": "Sturgeon (Imported Wild-caught)", "recommendation": "avoid" },
+    { "fish": "Swordfish (Imported)", "recommendation": "avoid" }
 ];
 
 var table = new Y.DataTable({
-    columns: cols,
+    caption: 'Seafood tips for the US West Coast',
+    columns: ['fish', 'recommendation'],
     data: data,
     scrollable: "y",
-    height: "300px"
-}).render("#scroll");
+    height: "200px",
+    width:  "400px" // scrollable is not set to x or xy, so no scrolling
+}).render("#scroll-example");
+});
+</script>
+
+<h2 id="events">DataTable Events</h2>
+
+<p>
+    DataTable is a composition of supporting class instances and extensions, so
+    to centralize event reporting, it is a bubble target for its `data`
+    ModelList as well as the View instances used for rendering.
+</p>
+
+<p>
+    In other words, some events you may need to subscribe to using an event
+    prefix to be notified.  Often, using a wildcard prefix is the simplest
+    method to ensure your subscribers will be notified, even if classes change.
+</p>
+
 ```
+// The sort event is from an extension, so it originates from DataTable
+table.after('sort', function (e) { ... });
+
+// Model changes originate from the record's Model instance, propagate to the
+// table's ModelList, then finally to the DataTable, so they must be
+// subscribed with an event prefix.  In this case, we'll use a wildcard
+// prefix.
+table.after('*:priceChange', function (e) { ... });
+```
+
+<p>
+    DataTable generates a custom Model class with the "record" event prefix, if
+    you want to be more specific.  Otherwise, if your table uses a custom Model
+    class for its `recordType`, you can prefix Model events with the appropriate
+    prefix.
+</p>
+
+```
+// Allow DataTable to generate the Model class automatically
+var table = new Y.DataTable({
+    columns: ['items', 'cost', 'price'],
+    data: [
+        { item: "widget", cost: 23.57, price: 47.5 },
+        { item: "gadget", cost: 0.11, price: 6.99 },
+        ...
+    ]
+});
+
+// generated Model classes have prefix "record"
+table.after('record:change', function (e) { ... });
+
+// PieList uses PieModels, which have a prefix of, you guessed it, "pie"
+var pies = new Y.DataTable({
+    columns: ['type', 'slices'],
+    data: new Y.PieList()
+});
+
+pies.on('pie:slicesChange', function (e) {
+    if (e.target.get('type') === 'chocolate creme') {
+        // Oh no you don't!
+        e.preventDefault();
+    }
+});
+```
+
+<p>
+    The full list of events is included in <a href="{{apiDocs}}/classes/DataTable.html#events">the DataTable API docs</a>.
+</p>
 
 <h2 id="knownissues">Known Issues</h2>
 

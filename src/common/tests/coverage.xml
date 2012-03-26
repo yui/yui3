@@ -29,6 +29,7 @@
         <url>autocomplete/tests/functional/autocomplete.html</url>
         <url>base/tests/base-core.html</url>
         <url>base/tests/base.html</url>
+        <url>button/tests/index.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
@@ -59,6 +60,7 @@
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
         <url>datatable/tests/datatable-base.html</url>
+        <url>datatable/tests/datatable-core.html</url>
         <url>datatable/tests/datatable-column-widths.html</url>
         <url>datatable/tests/datatable-mutable.html</url>
         <url>datatype/tests/date.html</url>

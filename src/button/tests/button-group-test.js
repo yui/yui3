@@ -4,7 +4,7 @@ YUI.add('button-group-test', function (Y) {
         ArrayAssert = Y.ArrayAssert,
         suite;
         
-    suite = new Y.Test.Suite('ButtonGroup');
+    suite = new Y.Test.Suite('button-group');
 
     // -- Creation ----------------------------------------------------------------
     suite.add(new Y.Test.Case({
@@ -31,7 +31,7 @@ YUI.add('button-group-test', function (Y) {
 
     // -- Checkbox Group ----------------------------------------------------------------
     suite.add(new Y.Test.Case({
-        name: 'Methods',
+        name: 'Checkbox',
 
         setUp : function () {
             Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');
@@ -125,7 +125,7 @@ YUI.add('button-group-test', function (Y) {
 
     // -- Radio Group ----------------------------------------------------------------
     suite.add(new Y.Test.Case({
-        name: 'Methods',
+        name: 'Radio',
 
         setUp : function () {
             Y.one("#container").setContent('<div id="group"><button>A</button><button>B</button><button>C</button></div>');

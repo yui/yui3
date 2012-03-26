@@ -33,6 +33,7 @@
     <button id="sort">Sort</button>
     <button id="showmessage">Show Message</button>
     <button id="hidemessage">Hide Message</button>
+    <button id="sync">syncUI</button>
 
     <!--div id="log"></div-->
 
@@ -53,39 +54,6 @@
             'datatable-scroll': 'debug'
         },
         filter: 'raw'
-        /*
-        groups: {
-            datatable: {
-                patterns: {
-                    'datatable-': {
-                        configFn: function (meta) {
-                            meta.path = meta.module + '/' + meta.module + '.js';
-                        }
-                    }
-                },
-                //root: '/dev/yui/build/',
-                modules: {
-                    // Core
-                    'datatable-core': { requires: [
-                        'escape', 'view', 'model-list', 'dom-screen'
-                    ]},
-                    'datatable-body': { requires: [ 'view', 'classnamemanager' ]},
-                    'datatable-head': { requires: [ 'view', 'classnamemanager' ]},
-                    'datatable-base': { skinnable: true, requires: [
-                        'datatable-core', 'datatable-head', 'datatable-body',
-                        'base-build', 'widget'
-                    ]},
-
-                    // Features
-                    'datatable-mutable': { requires: [ 'datatable-base' ]},
-                    'datatable-column-widths': { requires: ['datatable-base'] },
-                    'datatable-scroll': { skinnable: true, requires: [
-                        'datatable-base', 'datatable-column-widths', 'dom-screen'
-                    ]}
-                }
-            }
-        }
-        */
     }).use(
         'datatable-scroll', 'datatable-sort', 'datatable-mutable',
         'datatable-message',
@@ -107,17 +75,18 @@
 
         var start = new Date();
 
-        //debugger;
         var table = new Y.DataTable({
             data: data,
             scrollable: 'xy',
-            width: '100%',
+            //width: '100%',
             //width: '750px',
-            //width: '500px',
+            width: '500px',
             height: '250px',
             //autoSync: true,
+            sortable: true,
             //sortable: ['carrots'],
             caption: 'Can you hear the caption?',
+            sortBy: [{ apples: 'desc' }],
             columns: [
                 {
                     key: 'apples',
@@ -131,7 +100,8 @@
                         b = +b.get('apples').replace(/\D/g, '');
 
                         return (a > b) ? 1 : (a < b) ? -1 : 0;
-                    }
+                    },
+                    sortDir: -1
                 },
                 { label: "Parent of B and C", children: [
                     { key: 'bananas' },
@@ -151,11 +121,10 @@
         var milestone = new Date();
         //console.log('instantiation: ', milestone - start);
 
-        /*
         table.delegate('click', function (e) {
-            console.log(table.data.getByClientId(this.get('id')).toJSON());
+            console.log(table.getRecord(this).toJSON());
+            //console.log(table.data.getByClientId(this.get('id')).toJSON());
         }, '.yui3-datatable-data tr');
-        */
 
 /*
         table.plug(Y.Plugin.DataTableDataSource, {
@@ -241,6 +210,10 @@
 
         Y.one('#hidemessage').on('click', function () {
             table.hideMessage();
+        });
+
+        Y.one('#sync').on('click', function () {
+            table.syncUI();
         });
     });
     </script>
