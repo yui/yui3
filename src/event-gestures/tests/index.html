@@ -16,11 +16,11 @@ YUI({
     modules: {
         'gesture-tests': {
             fullpath: './gesture-tests.js',
-            requires: [ 'event-gestures', 'event-simulate', 'node-simulate', 'test-console', 'test' ]
+            requires: [ 'event-gestures', 'event-simulate', 'test-console', 'test' ]
         },
         'flick-tests': {
             fullpath: './flick-tests.js',
-            requires: [ 'event-gestures', 'event-simulate', 'node-simulate', 'test-console', 'test' ]
+            requires: [ 'event-gestures', 'event-simulate', 'test-console', 'test' ]
         }
     }
 }).use('gesture-tests', 'flick-tests', function(Y) {

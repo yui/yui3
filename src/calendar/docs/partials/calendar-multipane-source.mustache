@@ -9,6 +9,11 @@
 <script type="text/javascript">
 YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
 
+  Y.CalendarBase.prototype._afterHeaderRendererChange = function () {
+    var headerCell = this.get("contentBox").one(".yui3-calendar-header-label");
+    headerCell.setContent(this._updateCalendarHeader(this.get('date')));
+  };
+
  // Switch the calendar main template to the included two pane template
  Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
 
@@ -20,7 +25,7 @@ YUI().use('calendar', 'datatype-date', 'datatype-date-math', function(Y) {
  // to be July of 2011.
  var calendar = new Y.Calendar({
    contentBox: "#mycalendar",
-   width: "650px",
+   width: "700px",
    showPrevMonth: true,
    showNextMonth: true,
    selectionMode: 'multiple',

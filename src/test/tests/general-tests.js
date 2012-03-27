@@ -266,10 +266,9 @@ YUI.add('general-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Runner Tests',
         'test: set name': function() {
-            var setName = 'YUI Test Suite',
+            var setName = 'YUITest Test Suite',
                 name = Y.Test.Runner.getName();
 
-            Assert.isTrue(name.indexOf('yuitests') === 0);
             Y.Test.Runner.setName(setName);
             name = Y.Test.Runner.getName();
             Assert.areSame(setName, name);

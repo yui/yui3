@@ -1,21 +1,17 @@
 YUI({
-    base: '../../../../build/',
     lang: "en",
     filter: "raw",
     debug: true,
     useBrowserConsole: true
-}).use('cssbutton', 'uploader', 'node', 'console', function(Y) {
+}).use('uploader', function(Y) {
 
-// Force Flash uploader
-// Y.Uploader = Y.UploaderFlash;
+    var uploader = new Y.Uploader({width: "300px", height:"40px"}).render("#selectFilesContainer");
 
-// Force HTML5 uploader
-// Y.Uploader = Y.UploaderHTML5;
-var myuploader;
+/*
 
 if (Y.Uploader.TYPE != "none") {
             myuploader = new Y.Uploader({ multipleFiles: true, 
-                                          uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
+                                          uploadURL: "http://localhost/yui3/src/uploader/tests/manual/upload.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
                                           width: "100%",
@@ -85,9 +81,10 @@ if (Y.Uploader.TYPE != "none") {
                     myuploader.set("enabled", true);
                 }
             });
+
 }
 else {
     Y.one("body").prepend("Neither HTML5 nor Flash uploaders can be used on this system");
 }
-
+*/
 });

@@ -971,19 +971,20 @@ YUI.add('loader-tests', function(Y) {
                     
                     if (Y.Get._env.async) {
                         //This browser supports the async property, check it
-                        Assert.isFalse(node1.async, 'Async flag on node1 was set incorrectly');
-                        Assert.isFalse(node2.async, 'Async flag on node2 was set incorrectly');
-                        Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
+                        Assert.isFalse(node1.async, '#1 Async flag on node1 was set incorrectly');
+                        Assert.isFalse(node2.async, '#1 Async flag on node2 was set incorrectly');
+                        Assert.isTrue(node3.async, '#1 Async flag on node3 was set incorrectly');
                     } else {
                         //The async attribute is still
-                        if (Y.UA.ie && Y.UA.ie > 8) {
-                            Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
-                            Assert.isUndefined(node1.async, 'Async flag on node1 was set incorrectly');
-                            Assert.isUndefined(node2.async, 'Async flag on node2 was set incorrectly');
+                        if (Y.UA.ie && Y.UA.ie > 8 || Y.UA.opera) {
+                            Assert.isTrue(node3.async, '#2 Async flag on node3 was set incorrectly');
+                            Assert.isUndefined(node1.async, '#2 Async flag on node1 was set incorrectly');
+                            Assert.isUndefined(node2.async, '#2 Async flag on node2 was set incorrectly');
                         } else {
-                            Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
-                            Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
-                            Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                            Assert.isNull(node1.getAttribute('async'), '#3 Async flag on node1 was set incorrectly');
+                            Assert.isNull(node2.getAttribute('async'), '#3 Async flag on node2 was set incorrectly');
+                            Assert.isNotNull(node3.getAttribute('async'), '#3 Async flag on node3 was set incorrectly');
+                            
                         }
                     }
                 });
