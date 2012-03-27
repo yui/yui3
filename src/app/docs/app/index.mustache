@@ -919,6 +919,8 @@ Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/clas
 The <a href="{{apiDocs}}/classes/App.Transitions.html">Transitions</a> extension provides view transitions for apps in browsers which support native CSS3 transitions. View transitions visually enhance the change from one "page" to the next that is both pleasant to the user and helps to communicate a hierarchy between sections of an application.
 </p>
 
+<h4 class="no-toc">Enabling Transitions</h4>
+
 <p>
 Enabling transitions for an app just requires <em>opting-in</em>. The following will create a new `Y.App` instance with the default transitions enabled:
 </p>
@@ -928,11 +930,13 @@ var app = new Y.App({transitions: true});
 ```
 
 <p>
-With transitions enabled for an app, anytime the app's `activeView` changes there will be a visual transitions between the old and new active view. How an app's `views` are configured effects which transition will be used, e.g. when changing between views which have a hierarchical relationship a sliding transition will be used.
+With transitions enabled for an app, anytime the app's `activeView` changes, there will be a visual transition from the old to the new active view. How an app's `views` are configured effects which transition will be used, e.g. when changing between views which have a hierarchical relationship a sliding transition will be used.
 </p>
 
+<h4 class="no-toc">Types of `activeView` Changes</h4>
+
 <p>
-The following are types of changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
+The following are the types of `activeView` changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
 </p>
 
 <dl>
@@ -957,6 +961,8 @@ The following are types of changes for which transitions can be defined that cor
     </p>
   </dd>
 </dl>
+
+<h4 class="no-toc">Overriding Default Transitions</h4>
 
 <p>
 The default transitions can be overridden in the following ways:
@@ -1036,5 +1042,15 @@ app.route('/about/team/', function () {
 
 app.render().dispatch();
 ```
+
+<h4 class="no-toc">Transition-Aiding CSS</h4>
+
+<p>
+Some structural CSS is required to setup an app's `container` and `viewContainer` nodes so the app's views transition properly. While an app's views are transitioning, the CSS class: <strong>`yui3-app-transitioning`</strong> will be added to the app's `container` node.
+</p>
+
+<p>
+<strong>Note:</strong> While transitioning, the app's `viewContainer` node will have its `overflow-x` set to `hidden`. This causes its margins to <em>not collapse</em> with its child nodes. To compensate for this, it is best to not style your views with margins.
+</p>
 
 <h2>Apps vs. Widgets</h2>
