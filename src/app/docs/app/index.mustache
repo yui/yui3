@@ -505,7 +505,7 @@ When writing your own class extensions to add features to `Y.App`, feel free to 
 <h4>Subclassing</h4>
 
 <p>
-Creating class extensions for [[#mixing-in features]] to `Y.App` is a great way to extend its functionality in a reusable way while not changing how you [[#Instantiating App|instanciate an App]]; but might find it more useful to extend the `Y.App` class to create a subclass customized to your specific needs.
+Creating class extensions for [[#mixing-in features]] to `Y.App` is a great way to extend its functionality in a reusable way while not changing how you [[#Instantiating App|Instantiate an App]]; but might find it more useful to extend the `Y.App` class to create a subclass customized to your specific needs.
 </p>
 
 <p>
@@ -899,11 +899,184 @@ Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/clas
 </p>
 
 <h3>Navigating Between "Pages"</h3>
-{{! TODO:
 
-  * Note about `linkSelector` default value override.
+<p>
+A key feature of `Y.App` is its powerful navigation management. You can simply use standard HTML links within your app and when the user clicks a link, `Y.App` will handle it if there’s a matching route for that URL. With the [[#Configuring Navigation Behavior|navigation-related config options]] you have full control over your app's navigation behavior and experience, plus your app will automatically use the best available navigation method based on these settings, the browser’s capabilities, and the actions of the user.
+</p>
 
-}}
+<p>
+This enables an app fulfill a "page request" by using data it already has stored in models or loading new data, then composing and showing a view which represents the app's current state for this URL — all without requiring a full page load.
+</p>
+
+<h4>Programmatic navigation</h4>
+
+<p>
+Beyond handling navigation via link clicks, `Y.App` also exposes a programmatic way to navigate the user though your app via the `navigate()` method.
+</p>
+
+<p>
+App's `navigate()` method implements a higher level concept of "browsing" over the `save()` and `replace()` methods. It will manage a user's navigation history like a browser, and is the recommended method to use when programmatically navigating the user to URLs within your app.
+</p>
+
+<p>
+The `navigate()` method will do the right thing (what the browser would do) when navigating the user to the same URL they are currently on — it will replace the history entry — or to an in-page fragment identifier — which only when configured will navigate. The following demonstrates some of these behaviors:
+</p>
+
+```
+var app = new Y.App();
+
+app.route('*', function (req, res, next) {
+    // Handle all URLs.
+});
+
+// Save a new history entry for "/", or replaces the current entry if we're
+// already on "/".
+app.navigate('/'); // => true
+
+// Does not navigate even though there's a matching route handler.
+app.navigate('#top'); // => false
+
+// Enable navigation on hash-only changes to the URL.
+app.set('navigateOnHash', true);
+
+// Does navigate because `navigateOnHash` was enabled.
+app.navigate('#top'); // => true
+```
+
+<p>
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_navigate">`navigate()` method</a>.
+</p>
+
+<h4>Configuring Navigation Behavior</h4>
+
+<p>
+The navigation features of `Y.App` are built on the <a href="{{apiDocs}}/classes/PjaxBase.html">base pjax functionality</a>. This is what enables users to navigate to the different sections or "pages" of an app while avoiding full page loads.
+</p>
+
+<p>
+The following are configuration attributes which define an app’s navigation behavior:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Defined in</th>
+      <th>Default Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`linkSelector`</td>
+      <td>`Y.PjaxBase`</td>
+      <td>`"a"`</td>
+      <td>
+        <p>
+        CSS selector string used to filter link click events so that only the links which match it will have the enhanced-navigation behavior of pjax applied.
+        </p>
+
+        <p>
+        When a link is clicked and that link matches this selector, navigating to the link's `href` URL using the enhanced, pjax, behavior will be attempted; and the browser's default way to navigate to new pages will be the fallback.
+        </p>
+
+        <p>
+        By default this selector will match <em>all</em> links on the page.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`navigateOnHash`</td>
+      <td>`Y.PjaxBase`</td>
+      <td>`false`</td>
+      <td>
+        <p>
+        Whether navigating to a hash-fragment identifier on the current page should be enhanced and cause the `navigate` event to fire.
+        </p>
+
+        <p>
+        By default Pjax allows the browser to perform its default action when a user is navigating within a page by clicking in-page links (e.g. `<a href="#top">Top of page</a>`) and does not attempt to interfere or enhance in-page navigation.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`scrollToTop`</td>
+      <td>`Y.PjaxBase`</td>
+      <td>`true`</td>
+      <td>
+        <p>
+        Whether the page should be scrolled to the top after navigating to a URL.
+        </p>
+
+        <p>
+        When the user clicks the browser's back button, the previous scroll position will be maintained.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`serverRouting`</td>
+      <td>`Y.App.Base`</td>
+      <td>`undefined`</td>
+      <td>
+        <p>
+        Whether or not this application's server is capable of properly routing all requests and rendering the initial state in the HTML responses.
+        </p>
+
+        <p>
+        See [[#App Attributes]] and [[#Routing Coordination with Server]] for more details.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>`navigate` Event</h4>
+
+<p>
+When the user is navigating to a URL for which the app has a route handler, the `navigate` event will fire. The default action of this event updates the browser’s address bar to reflect the new URL, causing the app to dispatch to the matching route handlers.
+</p>
+
+<p>
+Listening to your app's `navigate` event is a useful way to indicate to the user that something is loading while they wait for the app to fully handle the new URL, possibly loading data from a remote server.
+</p>
+
+```
+var app = new Y.App({
+    views: {
+        users: {}
+    },
+
+    users: new Y.ModelList()
+});
+
+app.route('/users/', function () {
+    var users = app.get('users');
+
+    // Load users data from a remote server.
+    users.load(function () {
+        app.showView('users', {users: users});
+
+        // Removes the "loading" class from the app's `container` node.
+        app.get('container').removeClass('loading');
+    });
+});
+
+// Listen for the app's `navigate` event.
+app.on('navigate', function (e) {
+    // Adds the "loading" class to the app's `container` node.
+    app.get('container').addClass('loading');
+});
+
+// Navigate the user to "/users/".
+app.navigate('/users/');
+```
+
+<p>
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#event_navigate">`navigate` event</a>.
+</p>
 
 <h2>Best Practices</h2>
 
@@ -919,6 +1092,8 @@ Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/clas
 The <a href="{{apiDocs}}/classes/App.Transitions.html">Transitions</a> extension provides view transitions for apps in browsers which support native CSS3 transitions. View transitions visually enhance the change from one "page" to the next that is both pleasant to the user and helps to communicate a hierarchy between sections of an application.
 </p>
 
+<h4 class="no-toc">Enabling Transitions</h4>
+
 <p>
 Enabling transitions for an app just requires <em>opting-in</em>. The following will create a new `Y.App` instance with the default transitions enabled:
 </p>
@@ -928,11 +1103,13 @@ var app = new Y.App({transitions: true});
 ```
 
 <p>
-With transitions enabled for an app, anytime the app's `activeView` changes there will be a visual transitions between the old and new active view. How an app's `views` are configured effects which transition will be used, e.g. when changing between views which have a hierarchical relationship a sliding transition will be used.
+With transitions enabled for an app, anytime the app's `activeView` changes, there will be a visual transition from the old to the new active view. How an app's `views` are configured effects which transition will be used, e.g. when changing between views which have a hierarchical relationship a sliding transition will be used.
 </p>
 
+<h4 class="no-toc">Types of `activeView` Changes</h4>
+
 <p>
-The following are types of changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
+The following are the types of `activeView` changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
 </p>
 
 <dl>
@@ -957,6 +1134,8 @@ The following are types of changes for which transitions can be defined that cor
     </p>
   </dd>
 </dl>
+
+<h4 class="no-toc">Overriding Default Transitions</h4>
 
 <p>
 The default transitions can be overridden in the following ways:
@@ -1036,5 +1215,15 @@ app.route('/about/team/', function () {
 
 app.render().dispatch();
 ```
+
+<h4 class="no-toc">Transition-Aiding CSS</h4>
+
+<p>
+Some structural CSS is required to setup an app's `container` and `viewContainer` nodes so the app's views transition properly. While an app's views are transitioning, the CSS class: <strong>`yui3-app-transitioning`</strong> will be added to the app's `container` node.
+</p>
+
+<p>
+<strong>Note:</strong> While transitioning, the app's `viewContainer` node will have its `overflow-x` set to `hidden`. This causes its margins to <em>not collapse</em> with its child nodes. To compensate for this, it is best to not style your views with margins.
+</p>
 
 <h2>Apps vs. Widgets</h2>
