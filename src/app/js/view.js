@@ -3,6 +3,7 @@ Represents a logical piece of an application's user interface, and provides a
 lightweight, overridable API for rendering content and handling delegated DOM
 events on a container element.
 
+@module app
 @submodule view
 @since 3.4.0
 **/
