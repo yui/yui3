@@ -62,6 +62,7 @@
         <url>datatable/tests/datatable-base.html</url>
         <url>datatable/tests/datatable-core.html</url>
         <url>datatable/tests/datatable-column-widths.html</url>
+        <url>datatable/tests/datatable-head.html</url>
         <url>datatable/tests/datatable-mutable.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/datatype-date-math.html</url>
