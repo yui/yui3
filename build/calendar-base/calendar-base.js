@@ -1693,4 +1693,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['de', 'en', 'fr', 'ja', 'pt-BR', 'ru', 'zh-HANT-TW']});
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['de', 'en', 'fr', 'ja', 'nb-NO', 'pt-BR', 'ru', 'zh-HANT-TW']});
