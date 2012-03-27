@@ -10,8 +10,13 @@
 #overallProgress {
     float: right;
 }
+
+.yellowBackground {
+  background: #F2E699;
+}
 </style>
 
+<div id="exampleContainer">
 <div id="uploaderContainer"> 
     <div id="selectFilesButtonContainer">
     </div> 
@@ -28,14 +33,15 @@
     <thead>
        <tr><th>File name</th><th>File size</th><th>Percent uploaded</th></tr>
        <tr id="nofiles">
-        <td colspan="3">
-            No files have been selected.
+        <td colspan="3" id="ddmessage">
+            <strong>No files selected.</strong>
         </td>
        </tr>
     </thead>
     <tbody>
     </tbody>
   </table>  
+</div>
 </div>
 
 <script>
@@ -51,6 +57,28 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
                                       simLimit: 2
                                      });    
        var uploadDone = false;
+
+       if (Y.Uploader.TYPE == "html5") {
+          uploader.set("dragAndDropArea", "body");
+
+          Y.one("#ddmessage").setContent("<strong>Drag and drop files here.</strong>");   
+
+          uploader.on(["dragenter", "dragover"], function (event) {
+              var ddmessage = Y.one("#ddmessage");
+              if (ddmessage) {
+                ddmessage.setContent("<strong>Files detected, drop them here!</strong>");
+                ddmessage.addClass("yellowBackground");
+              }
+           });
+    
+           uploader.on(["dragleave", "drop"], function (event) {
+              var ddmessage = Y.one("#ddmessage");
+              if (ddmessage) {
+                ddmessage.setContent("<strong>Drag and drop files here.</strong>");
+                ddmessage.removeClass("yellowBackground");
+              }
+           });
+       }
 
        uploader.render("#selectFilesButtonContainer");
 
@@ -92,7 +120,9 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
        });
 
        uploader.on("totaluploadprogress", function (event) {
-                Y.one("#overallProgress").setContent("Total uploaded: <strong>" + event.percentLoaded + "%" + "</strong>");
+                Y.one("#overallProgress").setContent("Total uploaded: <strong>" + 
+                                                     event.percentLoaded + "%" + 
+                                                     "</strong>");
 
                 if (event.bytesLoaded == event.bytesTotal) {
                      uploadDone = true;

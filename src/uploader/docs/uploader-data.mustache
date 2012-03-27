@@ -1,0 +1,66 @@
+<div class="intro">
+<p>In this example, the Uploader is used to send multiple images or videos to the server and monitor
+   their upload progress with individual counters. If the Uploader is used in a browser with HTML5
+   support, it is progressively enhanced to enable dragging-and-dropping files into the browser window.
+   Along with each file, this example also submits an additional POST variable (the file's name).
+   Once each upload completes, the server sends the received file name POST variable back, along with a time
+   stamp, and the example displays them next to the file.</p>
+   
+<p><strong>Please note:</strong> This example will not work when run from a local filesystem because of security restrictions in the transport protocols used. If you’d like to run this example locally, set up a local web server and launch it from there.</p>
+
+<p><strong>Also note:</strong> The uploader is not supported on iOS devices (iPhone and iPad), because they lack file upload capability. This example provides a graceful degradation message for all such systems.</p>
+
+<p><strong>Also note:</strong> The backend script used in these examples does not store any information it receives. Nevertheless, do not submit any sensitive or private data and keep
+your tests to a few small files to avoid overloading the system.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>uploader-data-source}}
+</div>
+
+<h2>Sending and Retrieving Data from the Server</h2>
+<p>This example is based on the <a href="uploader-dd.html">Uploader with HTML5 Drag-and-Drop Support</a>, but adds custom POST variables along with each file upload,
+   and retrieves and displays data received from the server in response to each file upload.</p>
+
+<p>To send additional POST variables along with files, we populate the `postVarsPerFile` attribute when files are selected:
+
+```
+uploader.after("fileselect", function (event) {
+
+   ...
+            
+   var perFileVars = {};
+   
+   Y.each(fileList, function (fileInstance) {
+       fileTable.append("<tr id='" + fileInstance.get("id") + "_row" + "'>" + 
+                             "<td class='filename'>" + fileInstance.get("name") + "</td>" + 
+                             "<td class='filesize'>" + fileInstance.get("size") + "</td>" + 
+                             "<td class='percentdone'>Hasn't started yet</td>" +
+                             "<td class='serverdata'>&nbsp;</td>"); 
+  
+       perFileVars[fileInstance.get("id")] = {filename: fileInstance.get("name")};
+   });
+   
+   uploader.set("postVarsPerFile", Y.merge(uploader.get("postVarsPerFile"), perFileVars));
+});
+```
+
+<p>When uploads complete, we can retrieve and display the data received from the server (in this case, the `filename` POST variable that we transmitted,
+   along with the server timestamp):
+
+```
+uploader.on("uploadcomplete", function (event) {
+
+    ...
+
+    fileRow.one(".serverdata").setContent(event.data);
+});
+
+```
+
+<h2>Full Source Code For this Example</h2>
+
+```
+{{>uploader-data-source}}
+```
+

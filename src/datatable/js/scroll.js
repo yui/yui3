@@ -396,6 +396,7 @@ Y.mix(Scrollable.prototype, {
             heightChange : Y.bind('_afterScrollHeightChange', this),
             widthChange  : Y.bind('_afterScrollWidthChange', this),
             captionChange: Y.bind('_afterScrollCaptionChange', this),
+            scrollableChange: Y.bind('_afterScrollableChange', this),
             // FIXME: this is a last minute hack to work around the fact that
             // DT doesn't use a tableView to render table content that can be
             // replaced with a scrolling table view.  This must be removed asap!
@@ -575,6 +576,7 @@ Y.mix(Scrollable.prototype, {
     _disableYScrolling: function () {
         this._removeYScrollHeader();
         this._removeYScrollNode();
+        this._removeYScrollContainer();
         this._removeScrollbar();
     },
 
@@ -644,7 +646,26 @@ Y.mix(Scrollable.prototype, {
             scroller.replace(scroller.get('childNodes').toFrag());
             scroller.remove().destroy(true);
 
-            delete this._yScrollNode;
+            delete this._xScrollNode;
+        }
+    },
+
+    /**
+    Removes the `<div>` wrapper used to contain the data table and fixed header
+    when the table is vertically scrolling.
+
+    @method _removeYScrollContainer
+    @protected
+    @since 3.5.0
+    **/
+    _removeYScrollContainer: function () {
+        var scroller = this._yScrollContainer;
+
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
+
+            delete this._yScrollContainer;
         }
     },
 
@@ -673,8 +694,11 @@ Y.mix(Scrollable.prototype, {
     @since 3.5.0
     **/
     _removeYScrollNode: function () {
-        if (this._yScrollNode) {
-            this._yScrollNode.remove().destroy(true);
+        var scroller = this._yScrollNode;
+
+        if (scroller) {
+            scroller.replace(scroller.get('childNodes').toFrag());
+            scroller.remove().destroy(true);
 
             delete this._yScrollNode;
         }
@@ -689,9 +713,14 @@ Y.mix(Scrollable.prototype, {
     **/
     _removeScrollbar: function () {
         if (this._scrollbarNode) {
-            this._scrollBarNode.remove().destroy(true);
+            this._scrollbarNode.remove().destroy(true);
 
-            delete this._scrollBarNode;
+            delete this._scrollbarNode;
+        }
+        if (this._scrollbarEventHandle) {
+            this._scrollbarEventHandle.detach();
+
+            delete this._scrollbarEventHandle;
         }
     },
 
@@ -971,6 +1000,7 @@ Y.mix(Scrollable.prototype, {
     **/
     _syncXScrollUI: function (xy) {
         var scroller     = this._xScrollNode,
+            yScroller    = this._yScrollContainer,
             table        = this._tableNode,
             width        = this.get('width'),
             bbWidth      = this.get('boundingBox').get('offsetWidth'),
@@ -982,7 +1012,7 @@ Y.mix(Scrollable.prototype, {
 
             // Not using table.wrap() because IE went all crazy, wrapping the
             // table in the last td in the table itself.
-            table.replace(scroller).appendTo(scroller);
+            (yScroller || table).replace(scroller).appendTo(scroller);
         }
 
         // Can't use offsetHeight - clientHeight because IE6 returns

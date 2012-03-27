@@ -20,9 +20,10 @@ YUI.add('uploader-queue', function(Y) {
 
     /**
      * This class manages a queue of files to be uploaded to the server.
-     * @class UploaderQueue
+     * @class Uploader.Queue
      * @extends Base
      * @constructor
+     * @param {Object} config Configuration object
      */
     var UploaderQueue = function(o) {
         this.queuedFiles = [];
@@ -38,12 +39,32 @@ YUI.add('uploader-queue', function(Y) {
 
     Y.extend(UploaderQueue, Y.Base, {
 
+       /**
+        * Stored value of the current queue state
+        * @property _currentState
+        * @type {String}
+        * @protected
+        * @default UploaderQueue.STOPPED
+        */
         _currentState: UploaderQueue.STOPPED,
 
+       /**
+        * Construction logic executed during UploaderQueue instantiation.
+        *
+        * @method initializer
+        * @protected
+        */
         initializer : function (cfg) {
 
         },
 
+       /**
+        * Handles and retransmits upload start event.
+        * 
+        * @method _uploadStartHandler
+        * @param event The event dispatched during the upload process.
+        * @private
+        */
         _uploadStartHandler : function (event) {
            var updatedEvent = event;
            updatedEvent.file = event.target;
@@ -52,6 +73,13 @@ YUI.add('uploader-queue', function(Y) {
            this.fire("uploadstart", updatedEvent);          
         },
 
+       /**
+        * Handles and retransmits upload error event.
+        * 
+        * @method _uploadErrorHandler
+        * @param event The event dispatched during the upload process.
+        * @private
+        */
         _uploadErrorHandler : function (event) {
            var errorAction = this.get("errorAction");
            var updatedEvent = event;
@@ -79,6 +107,12 @@ YUI.add('uploader-queue', function(Y) {
            this.fire("uploaderror", updatedEvent);  
         },
 
+       /**
+        * Launches the upload of the next file in the queue.
+        * 
+        * @method _startNextFile
+        * @private
+        */
         _startNextFile : function () {
           if (this.queuedFiles.length > 0) {
             var currentFile = this.queuedFiles.shift(),
@@ -99,11 +133,23 @@ YUI.add('uploader-queue', function(Y) {
           }
         },
 
+       /**
+        * Register a new upload process.
+        * 
+        * @method _registerUpload
+        * @private
+        */
         _registerUpload : function (file) {
           this.numberOfUploads += 1;
           this.currentFiles[file.get("id")] = file;
         },
 
+       /**
+        * Unregisters a new upload process.
+        * 
+        * @method _unregisterUpload
+        * @private
+        */
         _unregisterUpload : function (file) {
           if (this.numberOfUploads > 0) {
             this.numberOfUploads -=1;
@@ -111,6 +157,13 @@ YUI.add('uploader-queue', function(Y) {
           delete this.currentFiles[file.get("id")];
         },
 
+       /**
+        * Handles and retransmits upload complete event.
+        * 
+        * @method _uploadCompleteHandler
+        * @param event The event dispatched during the upload process.
+        * @private
+        */
         _uploadCompleteHandler : function (event) {
 
            this._unregisterUpload(event.target);
@@ -149,6 +202,13 @@ YUI.add('uploader-queue', function(Y) {
 
         },
 
+       /**
+        * Handles and retransmits upload progress event.
+        * 
+        * @method _uploadProgressHandler
+        * @param event The event dispatched during the upload process.
+        * @private
+        */
         _uploadProgressHandler : function (event) {
           
           this.currentUploadedByteValues[event.target.get("id")] = event.bytesLoaded;
@@ -172,6 +232,11 @@ YUI.add('uploader-queue', function(Y) {
                                             percentLoaded: percentLoaded});
         },
 
+       /**
+        * Starts uploading the queued up file list.
+        * 
+        * @method startUpload
+        */
         startUpload: function() {
            
            this.queuedFiles = this.get("fileList").slice(0);
@@ -187,11 +252,22 @@ YUI.add('uploader-queue', function(Y) {
            }
         },
 
-
+       /**
+        * Pauses the upload process. The ongoing file uploads
+        * will complete after this method is called, but no
+        * new ones will be launched.
+        * 
+        * @method pauseUpload
+        */
         pauseUpload: function () {
             this._currentState = UploaderQueue.STOPPED;
         },
 
+       /**
+        * Restarts a paused upload process.
+        * 
+        * @method restartUpload
+        */
         restartUpload: function () {
             this._currentState = UploaderQueue.UPLOADING;
             while (this.numberOfUploads < this.get("simUploads")) {
@@ -199,6 +275,14 @@ YUI.add('uploader-queue', function(Y) {
             }
         },
 
+       /**
+        * If a particular file is stuck in an ongoing upload without
+        * any progress events, this method allows to force its reupload
+        * by cancelling its upload and immediately relaunching it.
+        * 
+        * @method forceReupload
+        * @param file {Y.File} The file to force reupload on.
+        */
         forceReupload : function (file) {
             var id = file.get("id");
             if (this.currentFiles.hasOwnProperty(id)) {
@@ -209,14 +293,38 @@ YUI.add('uploader-queue', function(Y) {
             }
         },
 
+       /**
+        * Add a new file to the top of the queue (the upload will be
+        * launched as soon as the current number of uploading files
+        * drops below the maximum permissible value).
+        * 
+        * @method addToQueueTop
+        * @param file {Y.File} The file to add to the top of the queue.
+        */
         addToQueueTop: function (file) {
             this.queuedFiles.unshift(file);
         },
 
+       /**
+        * Add a new file to the bottom of the queue (the upload will be
+        * launched after all the other queued files are uploaded.)
+        * 
+        * @method addToQueueBottom
+        * @param file {Y.File} The file to add to the bottom of the queue.
+        */
         addToQueueBottom: function (file) {
             this.queuedFiles.push(file);
         },
 
+       /**
+        * Cancels a specific file's upload. If no argument is passed,
+        * all ongoing uploads are cancelled and the upload process is
+        * stopped.
+        * 
+        * @method cancelUpload
+        * @param file {Y.File} An optional parameter - the file whose upload
+        * should be cancelled.
+        */
         cancelUpload: function (file) {
 
           if (file) {
@@ -250,21 +358,100 @@ YUI.add('uploader-queue', function(Y) {
     }, 
 
     {
+      /** 
+       * Static constant for the value of the `errorAction` attribute:
+       * prescribes the queue to continue uploading files in case of 
+       * an error.
+       * @property CONTINUE
+       * @readOnly
+       * @type {String}
+       * @static
+       */
         CONTINUE: "continue",
+
+      /** 
+       * Static constant for the value of the `errorAction` attribute:
+       * prescribes the queue to stop uploading files in case of 
+       * an error.
+       * @property STOP
+       * @readOnly
+       * @type {String}
+       * @static
+       */
         STOP: "stop",
+
+      /** 
+       * Static constant for the value of the `errorAction` attribute:
+       * prescribes the queue to restart a file upload immediately in case of 
+       * an error.
+       * @property RESTART_ASAP
+       * @readOnly
+       * @type {String}
+       * @static
+       */
         RESTART_ASAP: "restartasap",
+
+      /** 
+       * Static constant for the value of the `errorAction` attribute:
+       * prescribes the queue to restart an errored out file upload after 
+       * other files have finished uploading.
+       * @property RESTART_AFTER
+       * @readOnly
+       * @type {String}
+       * @static
+       */
         RESTART_AFTER: "restartafter",
+
+      /** 
+       * Static constant for the value of the `_currentState` property:
+       * implies that the queue is currently not uploading files.
+       * @property STOPPED
+       * @readOnly
+       * @type {String}
+       * @static
+       */
         STOPPED: "stopped",
+
+      /** 
+       * Static constant for the value of the `_currentState` property:
+       * implies that the queue is currently uploading files.
+       * @property UPLOADING
+       * @readOnly
+       * @type {String}
+       * @static
+       */
         UPLOADING: "uploading",
 
+       /**
+        * The identity of the class.
+        *
+        * @property NAME
+        * @type String
+        * @default 'uploaderqueue'
+        * @readOnly
+        * @protected
+        * @static
+        */
         NAME: 'uploaderqueue',
 
+       /**
+        * Static property used to define the default attribute configuration of
+        * the class.
+        *
+        * @property ATTRS
+        * @type {Object}
+        * @protected
+        * @static
+        */
         ATTRS: {
        
           /**
+           * Maximum number of simultaneous uploads; must be in the
+           * range between 1 and 5. The value of `2` is default. It
+           * is recommended that this value does not exceed 3.
            * @property simUploads
            * @type Number
-           * @description Maximum number of simultaneous uploads
+           * @default 2
            */
            simUploads: {
                value: 2,
@@ -273,23 +460,53 @@ YUI.add('uploader-queue', function(Y) {
                }
            },
    
+          /**
+           * The action to take in case of error. The valid values for this attribute are: 
+           * `Y.Uploader.Queue.CONTINUE` (the upload process should continue on other files, 
+           * ignoring the error), `Y.Uploader.Queue.STOP` (the upload process 
+           * should stop completely), `Y.Uploader.Queue.RESTART_ASAP` (the upload 
+           * should restart immediately on the errored out file and continue as planned), or
+           * Y.Uploader.Queue.RESTART_AFTER (the upload of the errored out file should restart
+           * after all other files have uploaded)
+           * @property errorAction
+           * @type String
+           * @default Y.Uploader.Queue.CONTINUE
+           */
            errorAction: {
                value: "continue",
                validator: function (val, name) {
                    return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);
                }
            },
-   
+
+          /**
+           * The total number of bytes that has been uploaded.
+           * @property bytesUploaded
+           * @type Number
+           */   
            bytesUploaded: {
                readOnly: true,
                value: 0
            },
    
+          /**
+           * The total number of bytes in the queue.
+           * @property bytesTotal
+           * @type Number
+           */ 
            bytesTotal: {
                readOnly: true,
                value: 0
            },
-   
+
+          /**
+           * The queue file list. This file list should only be modified
+           * before the upload has been started; modifying it after starting
+           * the upload has no effect, and `addToQueueTop` or `addToQueueBottom` methods
+           * should be used instead.
+           * @property fileList
+           * @type Number
+           */    
            fileList: {
                value: [],
                lazyAdd: false,
@@ -302,15 +519,38 @@ YUI.add('uploader-queue', function(Y) {
                    return val;
                }   
            },
-   
+
+          /**
+           * A String specifying what should be the POST field name for the file
+           * content in the upload request.
+           *
+           * @attribute fileFieldName
+           * @type {String}
+           * @default Filedata
+           */   
            fileFieldName: {
               value: "Filedata"
            },
-   
+
+           /**
+           * The URL to POST the file upload requests to.
+           *
+           * @attribute uploadURL
+           * @type {String}
+           * @default ""
+           */  
            uploadURL: {
              value: ""
            },
-   
+          /**
+           * An object, keyed by `fileId`, containing sets of key-value pairs
+           * that should be passed as POST variables along with each corresponding
+           * file.
+           *
+           * @attribute perFileParameters
+           * @type {Object}
+           * @default {}
+           */   
            perFileParameters: {
              value: {}
            }

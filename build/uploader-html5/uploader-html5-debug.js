@@ -86,7 +86,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     *  <dl>
     *      <dt>fileList</dt>
     *          <dd>An `Array` of files selected by the user, encapsulated
-    *              in Y.FileFlash objects.</dd>
+    *              in Y.FileHTML5 objects.</dd>
     *  </dl>
     */
     this.publish("fileselect");
@@ -95,13 +95,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * Signals that an upload of multiple files has been started. 
     *
     * @event uploadstart
-    * @param event {Event} The event object for the `uploadstart` with the
-    *                      following payload:
-    *  <dl>
-    *      <dt>fileList</dt>
-    *          <dd>An `Array` of files selected by the user, encapsulated
-    *              in Y.FileFlash objects.</dd>
-    *  </dl>
+    * @param event {Event} The event object for the `uploadstart`.
     */
     this.publish("uploadstart");
 
@@ -112,8 +106,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @param event {Event} The event object for the `fileuploadstart` with the
     *                      following payload:
     *  <dl>
-    *      <dt>uploader</dt>
-    *          <dd>A reference to the SWF uploader that is uploading the file firing the event.</dd>
+    *      <dt>file</dt>
+    *          <dd>A reference to the Y.File that dispatched the event.</dd>
+    *      <dt>originEvent</dt>
+    *          <dd>The original event dispatched by Y.File.</dd>
     *  </dl>
     */
     this.publish("fileuploadstart");
@@ -125,6 +121,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @param event {Event} The event object for the `uploadprogress` with the
     *                      following payload:
     *  <dl>
+    *      <dt>file</dt>
+    *          <dd>The pointer to the instance of `Y.File` that dispatched the event.</dd>
     *      <dt>bytesLoaded</dt>
     *          <dd>The number of bytes of the file that has been uploaded</dd>
     *      <dt>bytesTotal</dt>
@@ -132,7 +130,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     *      <dt>percentLoaded</dt>
     *          <dd>The fraction of the file that has been uploaded, out of 100</dd>
     *      <dt>originEvent</dt>
-    *          <dd>The original event dispatched by the SWF uploader</dd>
+    *          <dd>The original event dispatched by the HTML5 uploader</dd>
     *  </dl>
     */
     this.publish("uploadprogress");
@@ -161,6 +159,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     * @param event {Event} The event object for the `uploadcomplete` with the
     *                      following payload:
     *  <dl>
+    *      <dt>file</dt>
+    *          <dd>The pointer to the instance of `Y.File` whose upload has been completed.</dd>
     *      <dt>originEvent</dt>
     *          <dd>The original event fired by the SWF Uploader</dd>
     *      <dt>data</dt>
@@ -185,15 +185,13 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     *                      following payload:
     *  <dl>
     *      <dt>originEvent</dt>
-    *          <dd>The original error event fired by the SWF Uploader. </dd>
+    *          <dd>The original error event fired by the HTML5 Uploader. </dd>
     *      <dt>file</dt>
-    *          <dd>The pointer at the instance of Y.FileFlash that returned the error.</dd>
-    *      <dt>source</dt>
-    *          <dd>The source of the upload error, either "io" or "http"</dd>       
-    *      <dt>message</dt>
-    *          <dd>The message that accompanied the error. Corresponds to the text of
-    *              the error in cases where source is "io", and to the HTTP status for
-                   cases where source is "http".</dd>     
+    *          <dd>The pointer at the instance of Y.File that returned the error.</dd>    
+    *      <dt>status</dt>
+    *          <dd>The status reported by the XMLHttpRequest object.</dd>
+    *      <dt>statusText</dt>
+    *          <dd>The statusText reported by the XMLHttpRequest object.</dd>       
     *  </dl>
     */
     this.publish("uploaderror");
@@ -735,7 +733,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * An object, keyed by `fileId`, containing sets of key-value pairs
          * that should be passed as POST variables along with each corresponding
          * file. This attribute is only used if no POST variables are specifed
-         * in the upload request (only possible when calling the `upload()` method.
+         * in the upload method call.
          *
          * @attribute postVarsPerFile
          * @type {Object}
@@ -758,12 +756,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         },
 
         /**
-         * The widget that serves as the &lquot;Select Files&rquot; control for the file uploader
+         * The widget that serves as the "Select Files control for the file uploader
          * 
          *
          * @attribute selectFilesButton
          * @type {Node | Widget}
-         * @default A standard HTML button skinned with YUI CSS3 Button Class.
+         * @default A standard HTML button with YUI CSS Button skin.
          */
         selectFilesButton : {
             valueFn: function () {
@@ -790,7 +788,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         },
 
         /**
-         * The URL to POST the file upload requests to.
+         * The URL to which file upload requested are POSTed. Only used if a different url is not passed to the upload method call.
          *
          * @attribute uploadURL
          * @type {String}

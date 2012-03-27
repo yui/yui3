@@ -1011,7 +1011,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */ 
   _afterHeaderRendererChange : function () {
-    var headerCell = this.get('contentBox').one("." + CAL_HD);
+    var headerCell = this.get("contentBox").one("." + CAL_HD_LABEL);
     headerCell.setContent(this._updateCalendarHeader(this.get('date')));
   },
 

@@ -9,17 +9,6 @@
     "tags": ["utility", "datatype"],
 
     "examples": [
-
-        {
-            "name": "datatype-dateformat",
-            "displayName": "DataType.Date.format()",
-            "modules": ["datatype"],
-            "description": "Formatting dates into strings.",
-	        "useModules": ["node", "datatype-date", "escape"],
-
-            "hideTableOfContents": true
-        },
-
         {
             "name": "datatype-dateformat-lang",
             "displayName": "Formatting Dates Using Language Resource Bundles",
