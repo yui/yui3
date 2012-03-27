@@ -53,18 +53,18 @@ YUI.add('gesture-tests', function(Y) {
                 }
             }, {
                 fire: function(e) {
-                    Assert.areSame(event.target, e.target);
-                    Assert.areSame('gesturemovestart', e.type);
-                    Assert.areEqual(1, e.button);
+                    Assert.areSame(event.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
         },
         'test: _start()': function() {
             eventData.start._start(event,node, {
                 fire: function(e) {
-                    Assert.areSame(event.target, e.target);
-                    Assert.areSame('gesturemovestart', e.type);
-                    Assert.areEqual(1, e.button);
+                    Assert.areSame(event.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemovestart', e.type, 'Event type not correct');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
         }
@@ -96,9 +96,9 @@ YUI.add('gesture-tests', function(Y) {
                 }
             }, {
                 fire: function(e) {
-                    Assert.areSame(event.target, e.target);
-                    Assert.areSame('gesturemove', e.type);
-                    Assert.areEqual(1, e.button);
+                    Assert.areSame(event.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemove', e.type, 'Event type not correct');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
         }
@@ -133,9 +133,9 @@ YUI.add('gesture-tests', function(Y) {
                 }
             }, {
                 fire: function(e) {
-                    Assert.areSame(event.target, e.target);
-                    Assert.areSame('gesturemoveend', e.type);
-                    Assert.areEqual(1, e.button);
+                    Assert.areSame(event.target, e.target, 'Targets are not the same');
+                    Assert.areSame('gesturemoveend', e.type, 'Event type not correct');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
         }

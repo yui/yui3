@@ -1013,7 +1013,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */ 
   _afterHeaderRendererChange : function () {
-    var headerCell = this.get('contentBox').one("." + CAL_HD);
+    var headerCell = this.get("contentBox").one("." + CAL_HD_LABEL);
     headerCell.setContent(this._updateCalendarHeader(this.get('date')));
   },
 
@@ -1693,4 +1693,4 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['de', 'en', 'fr', 'ja', 'pt-BR', 'ru', 'zh-HANT-TW']});
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'datatype-date', 'datatype-date-math', 'cssgrids'], lang:['de', 'en', 'fr', 'ja', 'nb-NO', 'pt-BR', 'ru', 'zh-HANT-TW']});

@@ -129,13 +129,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * Signals that an upload of multiple files has been started. 
     *
     * @event uploadstart
-    * @param event {Event} The event object for the `uploadstart` with the
-    *                      following payload:
-    *  <dl>
-    *      <dt>fileList</dt>
-    *          <dd>An `Array` of files selected by the user, encapsulated
-    *              in Y.FileFlash objects.</dd>
-    *  </dl>
+    * @param event {Event} The event object for the `uploadstart`.
     */
     this.publish("uploadstart");
 
@@ -146,8 +140,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @param event {Event} The event object for the `fileuploadstart` with the
     *                      following payload:
     *  <dl>
-    *      <dt>uploader</dt>
-    *          <dd>A reference to the SWF uploader that is uploading the file firing the event.</dd>
+    *      <dt>file</dt>
+    *          <dd>A reference to the Y.File that dispatched the event.</dd>
+    *      <dt>originEvent</dt>
+    *          <dd>The original event dispatched by Y.File.</dd>
     *  </dl>
     */
     this.publish("fileuploadstart");
@@ -195,6 +191,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     * @param event {Event} The event object for the `uploadcomplete` with the
     *                      following payload:
     *  <dl>
+    *      <dt>file</dt>
+    *          <dd>The pointer to the instance of `Y.File` whose upload has been completed.</dd>
     *      <dt>originEvent</dt>
     *          <dd>The original event fired by the SWF Uploader</dd>
     *      <dt>data</dt>
@@ -843,7 +841,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * An object, keyed by `fileId`, containing sets of key-value pairs
          * that should be passed as POST variables along with each corresponding
          * file. This attribute is only used if no POST variables are specifed
-         * in the upload request (only possible when calling the `upload()` method.
+         * in the upload method call.
          *
          * @attribute postVarsPerFile
          * @type {Object}
@@ -866,12 +864,12 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         },
 
         /**
-         * The widget that serves as the &lquot;Select Files&rquot; control for the file uploader
+         * The widget that serves as the "Select Files" control for the file uploader
          * 
          *
          * @attribute selectFilesButton
          * @type {Node | Widget}
-         * @default A standard HTML button skinned with YUI CSS3 Button Class.
+         * @default A standard HTML button with YUI CSS Button skin.
          */
         selectFilesButton : {
            valueFn: function () {
@@ -939,7 +937,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         },
 
         /**
-         * The URL to POST the file upload requests to.
+         * The URL to which file upload requested are POSTed. Only used if a different url is not passed to the upload method call.
          *
          * @attribute uploadURL
          * @type {String}

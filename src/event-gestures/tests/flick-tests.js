@@ -45,16 +45,16 @@ YUI.add('flick-tests', function(Y) {
                 }
             }, {
                 fire: function(e) {
-                    Assert.areSame(event.target, e.target);
-                    Assert.areSame('flick', e.type);
-                    Assert.areEqual(1, e.button);
+                    Assert.areSame(event.target, e.target, 'Target not set properly');
+                    Assert.areSame('flick', e.type, 'Event type is wrong');
+                    Assert.areEqual(1, e.button, 'e.button is not set');
                 }
             });
         },
         'test: _onMove()': function() {
             var sub = { '_fs': { flick: { } } };
             eventData.flick._onMove(event,node, sub);
-            Assert.isTrue((sub['_fs'].flick.time > 0));
+            Assert.isTrue((sub['_fs'].flick.time > 0), 'Flick time was not set on move');
         },
         'test: _onEnd()': function() {
             var en = event;
@@ -82,16 +82,16 @@ YUI.add('flick-tests', function(Y) {
                 }
             }, {
                 fire: function(e) {
-                    Assert.areSame('flick', e.type);
-                    Assert.isObject(e.flick);
-                    Assert.areSame('x', e.flick.axis);
-                    Assert.areSame(95, e.flick.distance);
-                    Assert.isTrue((e.flick.time >- 3000));
-                    Assert.areSame(0.03166666666666667, e.flick.velocity);
-                    Assert.areSame(0, e.touches.length);
-                    Assert.areSame(1, e.changedTouches.length);
-                    Assert.areSame(node, e.target);
-                    Assert.areSame(node, e.currentTarget);
+                    Assert.areSame('flick', e.type, 'Event type is incorrect');
+                    Assert.isObject(e.flick, 'e.click is not an Object');
+                    Assert.areSame('x', e.flick.axis, 'flick axis is not X');
+                    Assert.areSame(95, e.flick.distance, 'Did not flick the proper distance');
+                    Assert.isTrue((e.flick.time >- 3000), 'flick time is not set properly');
+                    Assert.isTrue((e.flick.velocity >= 0.020), 'Failed to move in the proper velocity');
+                    Assert.areSame(0, e.touches.length, 'e.touches.length should be 0');
+                    Assert.areSame(1, e.changedTouches.length), 'e.changedTouches.length should be 1';
+                    Assert.areSame(node, e.target, 'Event target is not set properly');
+                    Assert.areSame(node, e.currentTarget, 'Event currentTarget is not set properly');
                 }
             });
         }

@@ -34,6 +34,7 @@
     <button id="showmessage">Show Message</button>
     <button id="hidemessage">Hide Message</button>
     <button id="sync">syncUI</button>
+    <button id="scrollable">Toggle scrollable</button>
 
     <!--div id="log"></div-->
 
@@ -46,6 +47,7 @@
     </p>
 
     <!--script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script-->
+    <!--script src="http://yui.yahooapis.com/3.5.0pr4/build/yui/yui.js"></script-->
     <script src="../../../../build/yui/yui.js"></script>
     <!--script src="/dev/yui3/src/datatable/js/mutable.js"></script-->
     <script>
@@ -73,6 +75,8 @@
             });
         }
 
+        data[1].eggs = data[1].fennel = data[1].guacamole = '';
+
         var start = new Date();
 
         var table = new Y.DataTable({
@@ -95,11 +99,12 @@
                     //cellTemplate: '<th class="{className}" scope="row">{content}</th>',
                     allowHTML: true,
                     width: '150px',
-                    sortFn: function (a, b) {
+                    sortFn: function (a, b, desc) {
                         a = +a.get('apples').replace(/\D/g, ''),
-                        b = +b.get('apples').replace(/\D/g, '');
+                        b = +b.get('apples').replace(/\D/g, ''),
+                        order = (a > b) ? 1 : (a < b) ? -1 : 0;
 
-                        return (a > b) ? 1 : (a < b) ? -1 : 0;
+                        return desc ? -order : order;
                     },
                     sortDir: -1
                 },
@@ -214,6 +219,17 @@
 
         Y.one('#sync').on('click', function () {
             table.syncUI();
+        });
+
+        Y.one('#scrollable').on('click', function () {
+            var scrollable = {
+                    x: 'xy',
+                    y: 'x',
+                    xy: false
+                },
+                current = table.get('scrollable');
+
+            table.set('scrollable', current ? scrollable[current] : 'y');
         });
     });
     </script>

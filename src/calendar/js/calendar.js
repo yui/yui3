@@ -196,6 +196,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             dir = 'e';
           break;
           case KEY_SPACE: case KEY_ENTER:
+            ev.preventDefault();
             if (this._highlightedDateNode) {
             var selMode = this.get("selectionMode");
             if (selMode === "single" && !this._highlightedDateNode.hasClass(CAL_DAY_SELECTED)) {
