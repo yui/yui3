@@ -89,6 +89,8 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
 
+        var yeti = Y.config.win && Y.config.win.$yetify;
+
         // Extended Widget
         function MyWidget() {
             MyWidget.superclass.constructor.apply(this, arguments);
@@ -110,9 +112,19 @@
         var suite = new Y.Test.Suite("Widget Tests");
 
         var coreTests = {
-    
+
             name : "Widget Core Tests",
-            
+
+            _should : {
+                ignore: {
+                    "testFocusOnChildFocus" : yeti && Y.UA.gecko,
+                    "testFocusOnBoundingBox" : yeti && Y.UA.gecko,
+                    "testMultiWidgetFocus" :  yeti && Y.UA.gecko,
+                    "testWidgetOnFocus" :  yeti && Y.UA.gecko
+                    
+                }
+            },
+
             createWidget: function(cfg) {
                 return new Y.Widget(cfg);
             },
@@ -120,7 +132,7 @@
             "testInstantiation" : function() {
                 var w = this.createWidget();
                 Y.Assert.isTrue(w instanceof Y.Widget);
-    
+
                 // Basic API
                 Y.Assert.isFunction(w.render);
                 Y.Assert.isFunction(w.renderUI);
@@ -142,10 +154,10 @@
 
             "testInitState" : function() {
                 var w = this.createWidget();
-    
+
                 Y.Assert.areEqual("div", w.get("boundingBox").get("tagName").toLowerCase());
                 Y.Assert.areEqual("div", w.get("contentBox").get("tagName").toLowerCase());
-    
+
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
                 Y.Assert.isFalse(w.get("focused"), "focused should be false");
                 Y.Assert.areSame("", w.get("height"), "height should be empty string");
@@ -159,7 +171,7 @@
     
                 w.destroy();
             },
-    
+
             "testNonRenderedStateUpdate" : function() {
                 var w = this.createWidget({
                     // WRITE ONCE
@@ -167,18 +179,18 @@
                     boundingBox: Y.Node.create("<span id='bb'></span>"),
                     srcNode: Y.Node.create("<span id='cb'></span>")
                 });
-    
+
                 w.set("disabled", true);
                 w.set("height", 100);
                 w.set("width", 200);
                 w.set("visible", false);
                 w.set("tabIndex", 5);
-    
+
                 Y.Assert.areEqual("span", w.get("boundingBox").get("tagName").toLowerCase());
                 Y.Assert.areEqual("span", w.get("contentBox").get("tagName").toLowerCase());
                 Y.Assert.areEqual("bb", w.get("boundingBox").get("id"));
                 Y.Assert.areEqual("cb", w.get("contentBox").get("id"));
-    
+
                 Y.Assert.isTrue(w.get("disabled"), "disabled should be true");
                 Y.Assert.isFalse(w.get("focused"), "focused should be false"); // focused is READONLY
                 Y.Assert.areEqual("100", w.get("height"), "height should be 100px");
@@ -186,30 +198,30 @@
                 Y.Assert.areEqual("foobar", w.get("id"), "id should be foobar");
                 Y.Assert.isFalse(w.get("visible"), "visible should be false");
                 Y.Assert.areEqual(5, w.get("tabIndex"), "tabIndex should be 5");
-    
+
                 w.destroy();
             },
-    
+
             "testValidationReadonlyWriteonce" : function() {
-                
+
                 var w = this.createWidget();
-    
+
                 // READONLY
                 w.set("focused", true);
                 w.set("rendered", true);
-    
+
                 // WRITE ONCE
                 w.set("boundingBox", Y.Node.create("<span id='bb'></span>"));
                 w.set("contentBox", Y.Node.create("<span id='cb'></span>"));
                 w.set("render", true);
-    
+
                 // INVALID
                 w.set("tabIndex", "foo");
-    
+
                 // State should be the same as the initial state
                 Y.Assert.areEqual("div", w.get("boundingBox").get("tagName").toLowerCase());
                 Y.Assert.areEqual("div", w.get("contentBox").get("tagName").toLowerCase());
-    
+
                 Y.Assert.isFalse(w.get("disabled"), "disabled should be false");
                 Y.Assert.isFalse(w.get("focused"), "focused should be false");
                 Y.Assert.areSame("", w.get("height"), "height should be empty string");
@@ -220,7 +232,7 @@
                 Y.Assert.isFalse(w.get("rendered"), "rendered should be false");
                 Y.Assert.isTrue(w.get("visible"), "visible should be true");
                 Y.Assert.isNull(w.get("tabIndex"), "tabIndex should be null");
-    
+
                 w.destroy();
             },
 

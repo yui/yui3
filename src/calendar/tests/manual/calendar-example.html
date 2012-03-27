@@ -17,7 +17,7 @@
 YUI({
 base: '../../../../build/',
     filter: "raw"
-}).use('calendar',  function(Y) {
+}).use('array', 'calendar',  function(Y) {
 
 
 Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
@@ -59,7 +59,7 @@ return ruleSet;
 newrules = addNewRule(newrules, [dYear, dMonth, dDate], "theweekends");
 
 
-console.log(newrules);
+//console.log(newrules);
 
 
 	     var myRules = {
@@ -78,7 +78,7 @@ console.log(newrules);
 
 
 function myFilter (oDate, oNode, rules) {
-if (rules.indexOf("theweekends") >= 0) {
+if (Y.Array.indexOf(rules, "theweekends") >= 0) {
 	//oNode.addClass('redtext');
 }	
 };	     
@@ -105,14 +105,15 @@ if (rules.indexOf("theweekends") >= 0) {
 */
 
 
-		calendar.on("showPrevMonthChange", function (ev) {console.log("New show prev month val: " + ev.newVal);});
+		calendar.on("showPrevMonthChange", function (ev) {//console.log("New show prev month val: " + ev.newVal);
+														 });
 
 		calendar.set("showPrevMonth", true);
 
 		calendar.selectDates([new Date(2011,9,4), new Date(2011,9,3), new Date(2011,10,8)]);
 		calendar.selectDates([new Date(2011,9,5), new Date(2011,8,23), new Date(2011,11,21)]);
 
-		console.log(calendar.get("selectedDates"));
+		//console.log(calendar.get("selectedDates"));
 
 
 

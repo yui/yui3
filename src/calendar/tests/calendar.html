@@ -175,6 +175,34 @@
                 
             },
 
+            testCustomHeader : function() {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+
+                this.firstcalendar.set("headerRenderer", function (curDate) {
+                   var ydate = Y.DataType.Date,
+                       output = ydate.format(curDate, {
+                       format: "%m %Y"
+                       });
+                   return output;
+                 }); 
+
+                this.firstcalendar.render();
+
+                var currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");              
+                Y.Assert.areEqual("12 2011", currentHeaderString);
+                
+                // Click to advance the month
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+
+                currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");
+                Y.Assert.areEqual("01 2012", currentHeaderString);                
+            },            
+
             testMultiplePanes : function () {
                  var cfg = {
                     contentBox: "#firstcontainer",
