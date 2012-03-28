@@ -14,7 +14,6 @@ YUI().use('cookie', 'console', 'node', function (Y) {
 
     Y.one("#yui-cookie-btn1").on("click", function () {
         var value = Y.Cookie.get("example");
-        alert(value);
         Y.log("Cookie 'example' has a value of '" + value + "'");
     });
 
