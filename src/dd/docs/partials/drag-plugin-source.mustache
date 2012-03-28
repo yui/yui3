@@ -1,26 +1,26 @@
 <style>
     #demo {
         height: 100px;
-        width: 100px;
+        width: 150px;
         border: 1px solid black;
         background-color: #8DD5E7;
         position: relative;
-        padding: 7px;
     }
     #demo h2 {
-        padding: 0;
+        padding: 5px;
         margin: 0;
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        font-size: 110%;
+        height: 30px;
+        font-size: 120%;
         color: black;
         font-weight: bold;
+        text-align: center;
         cursor: move;
+        background-color: #CDCDCD;
+        border-bottom: 1px solid black;
     }
 </style>
 
-<div id="demo"><h2>x</h2>Drag Me</div>
+<div id="demo"><h2 class="no-toc">Drag Me Here</h2>Can't drag me here</div>
 
 <script>
 YUI().use('dd-plugin', function(Y) {

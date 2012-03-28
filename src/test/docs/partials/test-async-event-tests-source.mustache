@@ -2,7 +2,7 @@
 <div id="testDiv" style="left:0;position:absolute;width:10px;height:10px; background-color:red"></div>
 
 <script>
-YUI().use('anim', 'console', 'test', function (Y) {
+YUI().use('anim', 'test-console', 'test', function (Y) {
 
     Y.namespace("example.test");
 
@@ -49,12 +49,13 @@ YUI().use('anim', 'console', 'test', function (Y) {
     });
 
     //create the console
-    var r = new Y.Console({
+    (new Y.Test.Console({
         newestOnTop : false,
-        style: 'block' // to anchor in the example content
-    });
-
-    r.render('#testLogger');
+        filters: {
+            pass: true,
+            fail: true
+        }
+    })).render('#testLogger');
 
     //create the logger
     Y.Test.Runner.add(Y.example.test.AsyncTestCase);

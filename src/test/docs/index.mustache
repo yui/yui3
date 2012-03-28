@@ -1067,19 +1067,18 @@ TestRunner.run();
 
 
                 <h2 id="viewing-results">Viewing Results</h2>
-                <p>There are two ways to view test results. The first is to output test results to the Console
-                component. To do so, you need only create a new Console instance; the result results will be posted
+                <p>There are two ways to view test results. The first is to output test results to the TestConsole
+                component. To do so, you need only create a new `Test.Console` instance; the result results will be posted
                 to the logger automatically:</p>
 ```
-YUI({ logInclude: { TestRunner: true } }).use("test", function(Y){
+YUI({ logInclude: { TestRunner: true } }).use('test-console', "test", function(Y){
 
     //tests go here
 
     //initialize the console
-    var yconsole = new Y.Console({
+    (new Y.Test.Console({
         newestOnTop: false
-    });
-    yconsole.render('#log');
+    })).render('#log');
 
     //run the tests
     Y.Test.Runner.run();
