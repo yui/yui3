@@ -300,4 +300,102 @@ suite.add(new Y.Test.Case({
         
 }));
 
+suite.add(new Y.Test.Case({
+    name: "columns attribute",
+
+    setUp: function () {
+        this.table = new Y.DataTable.Base({
+            columns: [
+                { key: 'a', formatter: '<em id="em{value}">{value}</em>', allowHTML: true },
+                { label: 'formatters', children: [
+                    { key: 'b',
+                      formatter: function (o) {
+                        o.rowClass += 'testRowClass';
+                        o.className += 'testCellClass';
+                      }
+                    },
+                    { key: 'c', nodeFormatter: function (o) {
+                        o.cell
+                            .addClass('testCellClass')
+                            .setContent(o.value)
+                            .ancestor()
+                                .addClass('testRowClass2');
+
+                        return false;
+                      }
+                    }
+                  ]
+                },
+                'd'
+            ],
+            data: [
+                { a: 'a1', b: 'b1', c: 'c1', d: 'd1' }
+            ]
+        }).render();
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "formatter adding to o.className should add to cell classes": function () {
+        var node = this.table._tbodyNode.one('.yui3-datatable-col-b');
+
+        Y.Assert.isTrue(node.hasClass('testCellClass'));
+        Y.Assert.areSame('b1', node.get('text'));
+    },
+
+    "formatter adding to o.rowClass should add to row classes": function () {
+        var node = this.table._tbodyNode.one('tr');
+
+        Y.Assert.isTrue(node.hasClass('testRowClass'));
+    },
+
+    "nodeFormatter should be able to add classes to o.cell": function () {
+        var node = this.table._tbodyNode.one('.yui3-datatable-col-c');
+
+        Y.Assert.isTrue(node.hasClass('testCellClass'));
+        Y.Assert.areSame('c1', node.get('text'));
+    },
+
+    "nodeFormatter should be able to add row classes from o.cell.ancestor()": function () {
+        var node = this.table._tbodyNode.one('tr');
+
+        Y.Assert.isTrue(node.hasClass('testRowClass2'));
+    },
+
+    "changing columns config propagates to the UI": function () {
+        Y.Assert.areSame(4, this.table._tbodyNode.all('.yui3-datatable-cell').size());
+
+        this.table.set('columns', ['d']);
+
+        Y.Assert.areSame(1, this.table._tbodyNode.all('.yui3-datatable-cell').size());
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: "destroy",
+
+    tearDown: function () {
+        if (this.table) {
+            this.table.destroy();
+        }
+    },
+
+    "destroying the bodyView instance should prevent further changes propagating to the UI": function () {
+        var table = this.table = new Y.DataTable({
+            columns: [ 'a' ],
+            data: [{ a: 1, b: 1 }]
+        }).render();
+
+        Y.Assert.areSame(1, table._tbodyNode.all('td').size());
+
+        table.body.destroy();
+
+        table.set('columns', ['a', 'b']);
+
+        Y.Assert.areSame(1, table._tbodyNode.all('td').size());
+    }
+}));
+
 Y.Test.Runner.add(suite);
