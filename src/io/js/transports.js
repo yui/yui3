@@ -45,7 +45,7 @@ Y.mix(Y.IO, {
         xdr: function () {
             return XDR ? new XDomainRequest() : null;
         },
-        iframe: {},
+        iframe:function () { return {}; },
         flash: null,
         nodejs: null
     },
