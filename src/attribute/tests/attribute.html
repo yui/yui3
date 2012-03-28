@@ -700,6 +700,61 @@
                     Y.Assert.isTrue(valueChangeCalled, "after(valueChange) not called");
 
                     node.remove(true);
+                },
+
+                testAugmentedCloneWithNodeValue : function() {
+                    function FooBar(userVals) {
+                        Y.Attribute.call(this, null, userVals);
+                    };
+
+                    FooBar.ATTRS = {
+                        node : {
+                            value:null
+                        }
+                    };
+
+                    // Straightup augment, no wrapper functions
+                    Y.mix(FooBar, Y.Attribute, false, null, 1);
+
+                    var n = Y.Node.create('<div id="foobar"></div>');
+
+                    var o1 = new FooBar();
+                    o1.set("node", n);
+
+                    var o2 = Y.clone(o1);
+
+                    Y.Assert.areEqual("foobar", o2.get("node").get("id"), "Expected foobar as the id of the cloned node");
+                    Y.Assert.isObject(o2.get("node")._node.style, "Unable to access the cloned HTMLElement");
+
+                    n.destroy();
+                },
+
+                testAugmentedCloneWithNodeValueConstructor : function() {
+                    function FooBar(userVals) {
+                        Y.Attribute.call(this, null, userVals);
+                    };
+
+                    FooBar.ATTRS = {
+                        node : {
+                            value:null
+                        }
+                    };
+
+                    // Straightup augment, no wrapper functions
+                    Y.mix(FooBar, Y.Attribute, false, null, 1);
+
+                    var n = Y.Node.create('<div id="foobar2"></div>');
+
+                    var o1 = new FooBar({
+                        node: n
+                    });
+
+                    var o2 = Y.clone(o1);
+
+                    Y.Assert.areEqual("foobar2", o2.get("node").get("id"), "Expected foobar2 as the id of the cloned node");
+                    Y.Assert.isObject(o2.get("node")._node.style, "Unable to access the cloned HTMLElement");
+
+                    n.destroy();
                 }
             };
 
@@ -1348,7 +1403,66 @@
                     q.A.value = "modified value";
 
                     Y.Assert.areNotEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
+                },
+
+                testCloneWithNodeValue : function() {
+
+                    function FooBar(userVals) {
+                        FooBar.superclass.constructor.apply(this, arguments);
+                    };
+
+                    FooBar.NAME = "foobar"; 
+
+                    FooBar.ATTRS = {
+                        node : {
+                            value:null
+                        }
+                    };
+
+                    Y.extend(FooBar, Y.Base);
+
+                    var n = Y.Node.create('<div id="foobar3"></div>');
+
+                    var o1 = new FooBar();
+                    o1.set("node", n);
+
+                    var o2 = Y.clone(o1);
+
+                    Y.Assert.areEqual("foobar3", o2.get("node").get("id"), "Expected foobar3 as the id of the cloned node");
+                    Y.Assert.isObject(o2.get("node")._node.style, "Unable to access properties of the cloned HTMLElement");
+
+                    n.destroy();
+                },
+
+                testCloneWithNodeValueConstructor : function() {
+
+                    function FooBar(userVals) {
+                        FooBar.superclass.constructor.apply(this, arguments);
+                    };
+
+                    FooBar.NAME = "foobar"; 
+
+                    FooBar.ATTRS = {
+                        node : {
+                            value:null
+                        }
+                    };
+
+                    Y.extend(FooBar, Y.Base);
+
+                    var n = Y.Node.create('<div id="foobar4"></div>');
+
+                    var o1 = new FooBar({
+                        node: n
+                    });
+                    var o2 = Y.clone(o1);
+
+                    Y.Assert.areEqual("foobar4", o2.get("node").get("id"), "Expected foobar4 as the id of the cloned node");
+                    Y.Assert.isObject(o2.get("node")._node.style, "Unable to access properties of the cloned HTMLElement");
+
+                    n.destroy();
                 }
+
             };
 
             basicTemplate = Y.merge(basicTemplate, sharedEventTests);

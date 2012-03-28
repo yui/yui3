@@ -15,7 +15,7 @@ var myuploader;
 
 if (Y.Uploader.TYPE != "none") {
             myuploader = new Y.Uploader({ multipleFiles: true, 
-                                          uploadURL: "http://localhost/yui3/src/uploader/tests/manual/upload.php",
+                                          uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
                                           width: "100%",

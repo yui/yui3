@@ -876,9 +876,9 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-
-            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
-            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
+            
+            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[0], 'Failed to combine plugin with module path CSS');
+            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
         },
         test_fullpath_with_combine: function() {
@@ -971,19 +971,20 @@ YUI.add('loader-tests', function(Y) {
                     
                     if (Y.Get._env.async) {
                         //This browser supports the async property, check it
-                        Assert.isFalse(node1.async, 'Async flag on node1 was set incorrectly');
-                        Assert.isFalse(node2.async, 'Async flag on node2 was set incorrectly');
-                        Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
+                        Assert.isFalse(node1.async, '#1 Async flag on node1 was set incorrectly');
+                        Assert.isFalse(node2.async, '#1 Async flag on node2 was set incorrectly');
+                        Assert.isTrue(node3.async, '#1 Async flag on node3 was set incorrectly');
                     } else {
                         //The async attribute is still
-                        if (Y.UA.ie && Y.UA.ie > 8) {
-                            Assert.isTrue(node3.async, 'Async flag on node3 was set incorrectly');
-                            Assert.isUndefined(node1.async, 'Async flag on node1 was set incorrectly');
-                            Assert.isUndefined(node2.async, 'Async flag on node2 was set incorrectly');
+                        if (Y.UA.ie && Y.UA.ie > 8 || Y.UA.opera) {
+                            Assert.isTrue(node3.async, '#2 Async flag on node3 was set incorrectly');
+                            Assert.isUndefined(node1.async, '#2 Async flag on node1 was set incorrectly');
+                            Assert.isUndefined(node2.async, '#2 Async flag on node2 was set incorrectly');
                         } else {
-                            Assert.isNull(node1.getAttribute('async'), 'Async flag on node1 was set incorrectly');
-                            Assert.isNull(node2.getAttribute('async'), 'Async flag on node2 was set incorrectly');
-                            Assert.isNotNull(node3.getAttribute('async'), 'Async flag on node3 was set incorrectly');
+                            Assert.isNull(node1.getAttribute('async'), '#3 Async flag on node1 was set incorrectly');
+                            Assert.isNull(node2.getAttribute('async'), '#3 Async flag on node2 was set incorrectly');
+                            Assert.isNotNull(node3.getAttribute('async'), '#3 Async flag on node3 was set incorrectly');
+                            
                         }
                     }
                 });
@@ -1089,6 +1090,20 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.isTrue((out.js[0].indexOf('yui.yahooapis.com') === -1), 'Combo URL should not contain yui.yahooapis.com URL');
             Assert.areSame('/combo?2in3.4/2.9.0/build/yui2-foo/yui2-foo-min.js', out.js[0], 'Failed to return combo url for 2in3 module.');
+        },
+        'test: gallery skinnable': function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+            YUI({
+                gallery: 'gallery-2012.03.23-18-00'
+            }).use('gallery-accordion-horiz-vert', function(Y) {
+
+                var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+                test.resume(function() {
+                    Assert.areEqual((links + 1), links2, 'Failed to load css for gallery module');
+                });
+            });
+            test.wait();
         }
     });
 

@@ -8,12 +8,11 @@
 
 <h2>Description</h2>
 
-<p>This example consists of three buttons, each of which performs one of the basic cookie functions: getting a value, setting a value, and removing a value. The first button, &quot;Get Value&quot;, retrieves the value of a cookie and displays it in an alert:</p>
+<p>This example consists of three buttons, each of which performs one of the basic cookie functions: getting a value, setting a value, and removing a value. The first button, &quot;Get Value&quot;, retrieves the value of a cookie and logs it:</p>
 
 ```
 Y.one("#yui-cookie-btn1").on("click", function () {
     var value = Y.Cookie.get("example");
-    alert(value);
     Y.log("Cookie 'example' has a value of '" + value + "'");
 });
 ```

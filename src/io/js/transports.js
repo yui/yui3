@@ -22,7 +22,7 @@ Y.mix(Y.IO, {
         if (id) {
             Y.log('Setting default IO to: ' + id, 'info', 'io');
             Y.IO._default = id;
-        } else {  
+        } else {
             var o = {
                 c: Y.IO.transports[Y.IO._default](),
                 notify: Y.IO._default === 'xhr' ? false : true
@@ -45,7 +45,7 @@ Y.mix(Y.IO, {
         xdr: function () {
             return XDR ? new XDomainRequest() : null;
         },
-        iframe: {},
+        iframe: function () { return {}; },
         flash: null,
         nodejs: null
     },

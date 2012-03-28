@@ -198,6 +198,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
             dir = 'e';
           break;
           case KEY_SPACE: case KEY_ENTER:
+            ev.preventDefault();
             if (this._highlightedDateNode) {
             var selMode = this.get("selectionMode");
             if (selMode === "single" && !this._highlightedDateNode.hasClass(CAL_DAY_SELECTED)) {
@@ -533,4 +534,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
 });
 
 
-}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['de', 'en', 'fr', 'ja', 'pt-BR', 'ru', 'zh-HANT-TW']});
+}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['de', 'en', 'fr', 'ja', 'nb-NO', 'pt-BR', 'ru', 'zh-HANT-TW']});

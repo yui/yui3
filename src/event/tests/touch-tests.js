@@ -55,11 +55,15 @@ YUI.add('touch-tests', function(Y) {
             Assert.areSame(node.getDOMNode(), event._currentTarget);
 
         },
+
         _should: {
-            fail: {
-                'test: touch nodes': Y.UA.ie
+            ignore: {
+                // event-touch doesn't make sense on IE 6,7,8 and needs to account for the inclusion of event-base-ie
+                // which modifies Y.DOMEventFacade - which is another issue
+                'test: touch nodes': Y.UA.ie && Y.UA.ie < 9
             }
         }
+
     }));
 
     Y.Test.Runner.add(suite);

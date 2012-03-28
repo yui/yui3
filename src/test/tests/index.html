@@ -45,7 +45,8 @@ YUI({
     }
 }).use('format-tests', 'mock-tests', 'objectassert-tests', 'arrayassert-tests', 'bugs-tests', 'general-tests', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
-
+    
+    Y.Test.Runner.setName('YUITest Test Suite');
     Y.Test.Runner.run();
 });
 

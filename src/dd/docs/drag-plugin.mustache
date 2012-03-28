@@ -10,7 +10,7 @@
 <p>First we need to create an HTML Node to make draggable.</p>
 
 ```
-<div id="demo"><h2>x</h2>Drag Me</div>
+<div id="demo"><h2>Drag Me Here</h2>Can't drag me here</div>
 ```
 
 <p>Now we give that Node some CSS to make it visible.</p>
@@ -18,21 +18,22 @@
 ```
 #demo {
     height: 100px;
-    width: 100px;
+    width: 150px;
     border: 1px solid black;
     background-color: #8DD5E7;
-    padding: 7px;
+    position: relative;
 }
 #demo h2 {
-    padding: 0;
+    padding: 5px;
     margin: 0;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 110%;
+    height: 30px;
+    font-size: 120%;
     color: black;
     font-weight: bold;
+    text-align: center;
     cursor: move;
+    background-color: #CDCDCD;
+    border-bottom: 1px solid black;
 }
 ```
 

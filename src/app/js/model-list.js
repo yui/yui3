@@ -1,6 +1,7 @@
 /**
 Provides an API for managing an ordered list of Model instances.
 
+@module app
 @submodule model-list
 @since 3.4.0
 **/

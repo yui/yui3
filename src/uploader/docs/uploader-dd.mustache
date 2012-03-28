@@ -1,0 +1,55 @@
+<div class="intro">
+<p>In this example, the Uploader is used to send multiple images or videos to the server and monitor
+   their upload progress with individual counters. If the Uploader is used in a browser with HTML5
+   support, it is progressively enhanced to enable dragging-and-dropping files into the browser window.</p>
+   
+<p><strong>Please note:</strong> This example will not work when run from a local filesystem because of security restrictions in the transport protocols used. If you’d like to run this example locally, set up a local web server and launch it from there.</p>
+
+<p><strong>Also note:</strong> The uploader is not supported on iOS devices (iPhone and iPad), because they lack file upload capability. This example provides a graceful degradation message for all such systems.</p>
+
+<p><strong>Also note:</strong> The backend script used in these examples does not store any information it receives. Nevertheless, do not submit any sensitive or private data and keep
+your tests to a few small files to avoid overloading the system.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>uploader-dd-source}}
+</div>
+
+<h2>Progressive Enhancement with a Drag-and-Drop Area</h2>
+
+<p>The base functionality in this example is the same as in the <a href="uploader-multiple.html">Simple Multiple Files Uploader</a>, but we are conditionally adding support for a
+   drag-and-drop area for cases where the HTML5 uploader is being used:<p>
+
+```
+if (Y.Uploader.TYPE == "html5") {
+   uploader.set("dragAndDropArea", "body");
+   Y.one("#ddmessage").setContent("<strong>Drag and drop files here.</strong>");   
+ 
+   uploader.on(["dragenter", "dragover"], function (event) {
+       var ddmessage = Y.one("#ddmessage");
+       if (ddmessage) {
+         ddmessage.setContent("<strong>Files detected, drop them here!</strong>");
+         ddmessage.addClass("yellowBackground");
+       }
+    });
+
+    uploader.on(["dragleave", "drop"], function (event) {
+       var ddmessage = Y.one("#ddmessage");
+       if (ddmessage) {
+         ddmessage.setContent("<strong>Drag and drop files here.</strong>");
+         ddmessage.removeClass("yellowBackground");
+       }
+    });
+}
+```
+
+<p>Note that we are setting the entire page `<body>` as the drag-and-drop area, so the user can drop the files anywhere onto the page. We also add a visual response to the files
+   being dragged over the page by listening to the `dragenter`, `dragover`, `dragleave` and `drop` events.
+</p>
+
+<h2>Full Source Code For this Example</h2>
+
+```
+{{>uploader-dd-source}}
+```
+

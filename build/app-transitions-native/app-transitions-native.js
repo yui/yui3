@@ -4,9 +4,7 @@ YUI.add('app-transitions-native', function(Y) {
 Provides the implementation of view transitions for `Y.App.Transitions` in
 browsers which support native CSS3 transitions.
 
-**Note:** When this module is used, `Y.App.TransitionsNative` will automatically
-mix itself in to `Y.App`.
-
+@module app
 @submodule app-transitions-native
 @since 3.5.0
 **/
@@ -16,6 +14,9 @@ var AppTransitions = Y.App.Transitions;
 /**
 Provides the implementation of view transitions for `Y.App.Transitions` in
 browsers which support native CSS3 transitions.
+
+When this module is used, `Y.App.TransitionsNative` will automatically mix
+itself in to `Y.App`.
 
 @class App.TransitionsNative
 @since 3.5.0

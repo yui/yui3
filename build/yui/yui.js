@@ -582,7 +582,7 @@ with any configuration info required for the module.
             if (instances.hasOwnProperty(i)) {
                 loader = instances[i].Env._loader;
                 if (loader) {
-                    if (!loader.moduleInfo[name]) {
+                    if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
                         loader.addModule(details, name);
                     }
                 }
@@ -4126,6 +4126,11 @@ Y.Get = Get = {
             async: doc && doc.createElement('script').async === true,
 
             // True if this browser fires an event when a dynamically injected
+            // link node fails to load. This is currently true for Firefox 9+
+            // and WebKit 535.24+.
+            cssFail: ua.gecko >= 9 || ua.webkit >= 535.24,
+
+            // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
             // Firefox 9+, and WebKit 535.24+. Note that IE versions <9 fire the
             // DOM 0 "onload" event, but not "load". All versions of IE fire
@@ -4328,8 +4333,8 @@ Get.Transaction = Transaction = function (requests, options) {
     self._waiting   = 0;
 
     // Deprecated pre-3.5.0 properties.
-    self.tId   = self.id; // Use `id` instead.
-    self.win   = options.win || Y.config.win;
+    self.tId = self.id; // Use `id` instead.
+    self.win = options.win || Y.config.win;
 };
 
 /**
@@ -4624,7 +4629,7 @@ Transaction.prototype = {
             node         = req.node,
             self         = this,
             ua           = Y.UA,
-            nodeType;
+            cssTimeout, nodeType;
 
         if (!node) {
             if (isScript) {
@@ -4644,6 +4649,10 @@ Transaction.prototype = {
         }
 
         function onLoad() {
+            if (cssTimeout) {
+                clearTimeout(cssTimeout);
+            }
+
             self._progress(null, req);
         }
 
@@ -4706,6 +4715,12 @@ Transaction.prototype = {
             // evens the playing field with older IEs.
             node.onerror = onError;
             node.onload  = onLoad;
+
+            // If this browser doesn't fire an event when CSS fails to load,
+            // fail after a timeout to avoid blocking the transaction queue.
+            if (!env.cssFail && !isScript) {
+                cssTimeout = setTimeout(onError, req.timeout || 3000);
+            }
         }
 
         this._waiting += 1;
@@ -5462,7 +5477,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.02.01-21-35',
+            GALLERY_VERSION = 'gallery-2012.03.23-18-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -6427,7 +6442,7 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
-        
+
         if (typeof o === 'string') {
             o = { name: name, fullpath: o };
         }
@@ -6466,7 +6481,6 @@ Y.Loader.prototype = {
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-        o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
@@ -6474,8 +6488,17 @@ Y.Loader.prototype = {
             overrides, skinname, when,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
-
+        
         this.moduleInfo[name] = o;
+
+        o.requires = o.requires || [];
+
+        if (o.skinnable) {
+            skinname = this._addSkin(this.skin.defaultSkin, name);
+            o.requires.unshift(skinname);
+        }
+
+        o.requires = this.filterRequires(o.requires) || [];
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
@@ -6488,6 +6511,7 @@ Y.Loader.prototype = {
                 }
             }
         }
+
 
         if (subs) {
             sup = o.supersedes || [];
@@ -8443,6 +8467,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "fr", 
             "ja", 
+            "nb-NO", 
             "pt-BR", 
             "ru", 
             "zh-HANT-TW"
@@ -8459,6 +8484,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "fr", 
             "ja", 
+            "nb-NO", 
             "pt-BR", 
             "ru", 
             "zh-HANT-TW"
@@ -10489,7 +10515,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6e052a384cfed1255f3f0c504dc1b061';
+YUI.Env[Y.version].md5 = 'e10cbe2ecc9d0ecc296ae706d7e27262';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

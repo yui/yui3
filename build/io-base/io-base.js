@@ -888,6 +888,7 @@ Y.io.header = function(name, value) {
 Y.IO = IO;
 // Map of all IO instances created.
 Y.io._map = {};
+
 var XHR = win && win.XMLHttpRequest,
     XDR = win && win.XDomainRequest,
     AX = win && win.ActiveXObject;
@@ -911,7 +912,7 @@ Y.mix(Y.IO, {
     defaultTransport: function(id) {
         if (id) {
             Y.IO._default = id;
-        } else {  
+        } else {
             var o = {
                 c: Y.IO.transports[Y.IO._default](),
                 notify: Y.IO._default === 'xhr' ? false : true
@@ -933,7 +934,7 @@ Y.mix(Y.IO, {
         xdr: function () {
             return XDR ? new XDomainRequest() : null;
         },
-        iframe: {},
+        iframe: function () { return {}; },
         flash: null,
         nodejs: null
     },
@@ -974,6 +975,7 @@ Y.mix(Y.IO.prototype, {
         }
     }
 });
+
 
 
 

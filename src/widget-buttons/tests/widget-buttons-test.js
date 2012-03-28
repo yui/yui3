@@ -4,6 +4,8 @@ var Assert       = Y.Assert,
     ArrayAssert  = Y.ArrayAssert,
     ObjectAssert = Y.ObjectAssert,
 
+    yeti = window && window.$yetify,
+
     TestWidget, suite;
 
 // -- Suite --------------------------------------------------------------------
@@ -799,6 +801,12 @@ suite.add(new Y.Test.Case({
 // -- Rendering ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
     name: 'Rendering',
+
+    _should: {
+        ignore: {
+            'Default button should be focused on `visibleChange`': yeti
+        }
+    },
 
     tearDown: function () {
         this.widget && this.widget.destroy();
