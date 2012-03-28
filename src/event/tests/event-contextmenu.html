@@ -30,7 +30,7 @@
             var keyDownConfig = Y.UA.os == "macintosh" ? {
                     shiftKey: true,
                     ctrlKey: true,
-                    altKey: true,
+                    altKey: (Y.UA.opera ? false : true),
                     keyCode: 77
                 } : {
                     shiftKey: true,
