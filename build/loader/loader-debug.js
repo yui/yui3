@@ -3044,6 +3044,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "fr", 
             "ja", 
+            "nb-NO", 
             "pt-BR", 
             "ru", 
             "zh-HANT-TW"
@@ -3060,6 +3061,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "fr", 
             "ja", 
+            "nb-NO", 
             "pt-BR", 
             "ru", 
             "zh-HANT-TW"
@@ -5090,7 +5092,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6e052a384cfed1255f3f0c504dc1b061';
+YUI.Env[Y.version].md5 = 'e10cbe2ecc9d0ecc296ae706d7e27262';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

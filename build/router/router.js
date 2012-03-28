@@ -3,6 +3,7 @@ YUI.add('router', function(Y) {
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
 
+@module app
 @submodule router
 @since 3.4.0
 **/

@@ -12,6 +12,7 @@ views, and URL-based routing) for writing single-page JavaScript applications.
 /**
 Provides a top-level application component which manages navigation and views.
 
+@module app
 @submodule app-base
 @since 3.5.0
 **/

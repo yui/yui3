@@ -2,9 +2,7 @@
 Provides view transitions for `Y.App` in browsers which support native CSS3
 transitions.
 
-**Note:** When this module is used, `Y.App.Transitions` will automatically mix
-itself in to `Y.App`.
-
+@module app
 @submodule app-transitions
 @since 3.5.0
 **/
