@@ -518,7 +518,7 @@ Y.mix(DOM, {
      * @for DOM
      * @param {Object} node The node to get the region from
      * @param {Object} node2 The second node to get the region from or an Object literal of the region
-     * $param {Boolean} all Should all of the node be inside the region
+     * @param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
