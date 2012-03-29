@@ -38,27 +38,12 @@
     /* header gradient */
     background: #fff url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
 
-    background-image: -webkit-gradient(
-        linear,
-        0 0,
-        0 100%,
-        from(transparent),
-        color-stop(40%, transparent),
-        to(rgba(255,255,255, 0.21)));
-
     background-image:-webkit-linear-gradient(transparent 40%, rgba(0,0,0,0.21));
     background-image:-moz-linear-gradient(top,transparent 40%,rgba(0,0,0,0.21));
     background-image:    -ms-linear-gradient(transparent 40%, rgba(0,0,0,0.21));
     background-image:     -o-linear-gradient(transparent 40%, rgba(0,0,0,0.21));
     background-image:        linear-gradient(transparent 40%, rgba(0,0,0,0.21));
-
-    /* IE gradient doesn't support color stops, so this isn't going to work out */
-    /*
-    filter: progid:DXImageTransform.Microsoft.gradient(
-        startColorstr='#80ffffff',
-        endColorstr='#00ffffff',
-        GradientType=0);
-    */
+    /* Not using an IE gradient because it doesn't support color stops */
 
     color: #000;
     font-weight: normal;
