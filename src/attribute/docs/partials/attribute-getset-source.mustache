@@ -263,8 +263,8 @@ YUI().use("node", "attribute", function(Y) {
         }
 
     }, "#attrs", "button.action");
-    
-    Y.delegate("submit", function(e) {
+
+    Y.all("#attrs form.action").on("submit", function(e) {
 
         e.preventDefault();
 
@@ -288,8 +288,7 @@ YUI().use("node", "attribute", function(Y) {
             default:
                 break;
         }
-
-    }, "#attrs", "form.action");
+    });
 
     // Bind listeners to provide min, max unconstrained value hints for x, y
     // (focus/blur doesn't bubble, so bind individual listeners)

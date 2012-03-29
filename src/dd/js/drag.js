@@ -1017,7 +1017,7 @@
             node.detachAll('dragstart');
             node.detachAll(Drag.START_EVENT);
             this.mouseXY = [];
-            this.deltaXY = [];
+            this.deltaXY = [0,0];
             this.startXY = [];
             this.nodeXY = [];
             this.lastXY = [];
