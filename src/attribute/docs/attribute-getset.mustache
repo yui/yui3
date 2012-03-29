@@ -301,39 +301,7 @@ Y.delegate("click", function(e) {
 
 }, "#attrs", "button.action");
 ```
-```
-Y.delegate("submit", function(e) {
-
-    // Stop form submission. We already know we're on one of the forms
-    // we're interested in (forms with the action class), because delegate has 
-    // already done the filtering for us
-    e.preventDefault();
-
-    // Get Node target from the event object
-
-    // We already know it's a button which has an action because
-    // of our selector (button.action), so all we need to do is 
-    // route it based on the id.
-    var id = e.currentTarget.get("id");
-
-    switch (id) {
-        case "setX":
-            box.set("x", parseInt(xTxt.get("value")));
-            break;
-        case "setY":
-            box.set("y", parseInt(yTxt.get("value")));
-            break;
-        case "setColor":
-            box.set("color", Y.Lang.trim(colorTxt.get("value")));
-            break;
-        default:
-            break;
-    }
-
-}, "#attrs", "form.action");
-```
-
-<p>Rather than attach individual listeners to each button or form, the above code uses YUI 3's `delegate` support, to listen for `click` from buttons and `submit` from forms, with an `action` class which bubble up to the `attrs` element.</p>
+<p>Rather than attach individual listeners to each button, the above code uses YUI 3's `delegate` support, to listen for `click` from buttons, with an `action` class which bubble up to the `attrs` element.</p>
 <p>The delegate listener uses the <a href="{{apiDocs}}/DOMEventFacade.html">Event Facade</a> which normalizes cross-browser access to DOM event properties, such as `currentTarget`, to route to the appropriate button handler. Note the use of selector syntax when we specify the elements for the listener (e.g. `#attrs`, `button.actions`) and the use of the <a href="{{apiDocs}}/Node.html">Node</a> facade when dealing with references to HTML elements (e.g. `xTxt, yTxt, colorTxt`).</p>
 
 <h2>Complete Example Source</h2>
