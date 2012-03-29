@@ -20,7 +20,12 @@
     position: relative;
 }
 
-.yui3-skin-sam .yui3-datatable-scroll-columns {
+.yui3-datatable-scrollable-y .yui3-datatable-table .yui3-datatable-columns {
+    /* Prevent masked headers from showing during momentum scrolling */
+    visibility: hidden;
+}
+
+.yui3-datatable-scroll-columns {
     position: absolute;
     width: 100%;
     z-index: 2;
