@@ -368,6 +368,37 @@ YUI instance.</p>
 
 <p>You can find <a href="loader.html">more information about Loader here</a>.</p>
 
+<h3 id="async">New Async Loading in 3.5.0</h3>
+
+<p>In `3.5.0`, we introduced asnychronous loading in Loader by default. This means that any script
+`Loader` injects into the page will be loaded asnychronously. This will decrease load time and
+improve performance by allowing the browser to fetch as many scripts at once as it can.
+</p>
+
+<p>If your custom modules are properly wrapped in a `YUI.add` callback, you will see no difference at all.
+However, if you are loading custom modules that require ordered script loading 
+(depends on another dynamic, unwrapped module), you will need to change your module config to tell
+`Loader` to <strong>not</strong> load these modules with the `async` flag. You can do this by adding
+an `async: false` config to it's module definition and `Y.Get.script` will not load it asynchronously.
+</p>
+
+```
+YUI({
+    modules: {
+        one: {
+            aync: false,
+            fullpath: './one.js'
+        },
+        two: {
+            async: false,
+            fullpath: './two.js',
+            requires: [ 'one' ]
+        }
+    }
+}).use('two'), function(Y) {
+    //Module one &amp; two are loaded now.
+});
+```
 
 <h2 id="Lang">Y.Lang</h2>
 <p>`Y.Lang` contains JavaScript language utilities and extensions that are used in the YUI library.

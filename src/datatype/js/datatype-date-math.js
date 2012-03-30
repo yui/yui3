@@ -21,7 +21,7 @@ Y.mix(Y.namespace("DataType.Date"), {
             return true;
         }
         else {
-            Y.log("Could not validate data " + LANG.dump(oDate) + " as type Date", "warn", "date");
+            Y.log("Could not validate data as type Date", "warn", "date");
             return false;
         }
 	},

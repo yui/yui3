@@ -1,15 +1,12 @@
 YUI().use('button-plugin', 'cssbutton', function(Y){
-    var ButtonFactory = Y.Plugin.Button.createNode;
     
     // A basic push button
-    var pushButton = new ButtonFactory({
-        srcNode:'#myButton'
-    });
+    Y.one('#myButton').plug(Y.Plugin.Button);
     
     
     // A disabled button
-    var disabledButton = new ButtonFactory({
-        srcNode:'#myDisabledButton',
+    var disabledButton = Y.one('#myDisabledButton');
+    disabledButton.plug(Y.Plugin.Button, {
         disabled: true
     });
     
@@ -19,7 +16,7 @@ YUI().use('button-plugin', 'cssbutton', function(Y){
     });
     
     // An event button, listening for a click
-    var eventButton = new ButtonFactory({
+    var eventButton = Y.Plugin.Button.createNode({
         srcNode:'#myEventButton'
     });
     
