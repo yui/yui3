@@ -6,6 +6,7 @@
                 "requires" : [
                     "widget",
                     "event-gestures",
+                    "event-mousewheel",
                     "transition"
                 ],
 

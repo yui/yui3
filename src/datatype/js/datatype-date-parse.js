@@ -31,7 +31,7 @@ Y.mix(Y.namespace("DataType.Date"), {
             return date;
         }
         else {
-            Y.log("Could not convert data " + LANG.dump(date) + " to type Date", "warn", "date");
+            Y.log("Could not convert data to type Date", "warn", "date");
             return null;
         }
     }

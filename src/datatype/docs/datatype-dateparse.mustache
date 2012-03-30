@@ -4,7 +4,7 @@
 </style>
 
 <div class="intro">
-    <p>The Date module of the DataType Utility allows you to take a data value and convert it to a number. The `parse()` method will accept <a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Date">any value supported by JavaScript's `Date()` constructor</a>.</p>
+    <p>The Date module of the DataType Utility allows you to take a `String` or a `Number` (in milliseconds) value and convert it to `Date`. The `parse()` method will accept any `String` or `Number` value supported by <a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Date">JavaScript's `Date()` constructor</a>.</p>
 </div>
 
 <div class="example yui3-skin-sam">
@@ -26,11 +26,6 @@ YUI().use("datatype-date", function(Y) {
 YUI().use("datatype-date", function(Y) {
     // These all return dates
     var date = Y.DataType.Date.parse("December 17, 1995 03:24:00");
-
-    date = Y.DataType.Date.parse(1995,11,17);
-
-    date = Y.DataType.Date.parse(1995,11,17,3,24,0);
-
     date = Y.DataType.Date.parse(948548583);
 });
 ```
