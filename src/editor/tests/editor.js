@@ -1,5 +1,6 @@
 YUI.add('editor-tests', function(Y) {
 
+
     var editor = null,
     iframe = null,
     fireKey = function(editor, key) {
@@ -255,7 +256,7 @@ YUI.add('editor-tests', function(Y) {
             inst.EditorSelection.removeFontFamily(node);
 
             Y.Assert.areSame(node.getAttribute('face'), '', 'Failed to remove font face');
-            if (!Y.UA.ie || (Y.UA.ie && Y.UA.ie > 6)) {
+            if (!Y.UA.ie || (Y.UA.ie && Y.UA.ie > 8)) {
                 //IE 6 doesn't like the getAttribute('style') call, it returns an object
                 Y.Assert.isTrue((node.getAttribute('style').indexOf('foo: bar') > -1), 'Failed to remove font-family ;');
                 Y.Assert.isTrue((node.getAttribute('style').indexOf('font-family') === -1), 'Failed to remove font-family ;');
@@ -432,10 +433,12 @@ YUI.add('editor-tests', function(Y) {
             editor.editorPara._fixFirstPara();
             editor.editorPara._afterPaste();
             editor.editorPara._onNodeChange({
+                changedEvent: {},
                 changedNode: inst.one('b'),
                 changedType: 'enter-up'
             });
             editor.editorPara._onNodeChange({
+                changedEvent: {},
                 changedNode: inst.one('br'),
                 changedType: 'enter'
             });
@@ -533,13 +536,16 @@ YUI.add('editor-tests', function(Y) {
         },
         _should: {
             fail: {
+                'test: EditorSelection': (Y.UA.chrome),
+                test_bidi_plug: (Y.UA.ie && Y.UA.ie === 9),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
-                test_execCommands: (Y.UA.webkit ? true : false)
+                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie === 9) || Y.UA.chrome) ? true : false)
 
             },
             error: { //These tests should error
-                test_selection_methods: (Y.UA.webkit ? true : false),
-                test_execCommands: (Y.UA.webkit ? true : false),
+                'test: EditorSelection': (Y.UA.chrome),
+                test_selection_methods: (Y.UA.ie || Y.UA.webkit ? true : false),
+                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie === 9) || Y.UA.chrome) ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true
