@@ -176,10 +176,10 @@
                         pageX = clientX + scrollX,
                         pageY = clientY + scrollY;  
 
-                        Y.Assert.areSame(e.clientX, clientX, "clientX mismatch");
-                        Y.Assert.areSame(e.clientY, clientY, "clientY mismatch");
-                        Y.Assert.areSame(e.pageX, pageX, "pageX mismatch");
-                        Y.Assert.areSame(e.pageY, pageY, "pageY mismatch");
+                        Y.Assert.areSame(parseInt(e.clientX, 10), parseInt(clientX, 10), "clientX mismatch");
+                        Y.Assert.areSame(parseInt(e.clientY, 10), parseInt(clientY, 10), "clientY mismatch");
+                        Y.Assert.areSame(parseInt(e.pageX, 10), parseInt(pageX, 10), "pageX mismatch");
+                        Y.Assert.areSame(parseInt(e.pageY, 10), parseInt(pageY, 10), "pageY mismatch");
                     });
                 
                     if (Y.UA.os == "windows") {                    
@@ -221,11 +221,10 @@
                         pageX = clientX + scrollX,
                         pageY = clientY + scrollY;  
 
-              
-                        Y.Assert.areSame(e.clientX, clientX, "clientX mismatch");
-                        Y.Assert.areSame(e.clientY, clientY, "clientY mismatch");
-                        Y.Assert.areSame(e.pageX, pageX, "pageX mismatch");
-                        Y.Assert.areSame(e.pageY, pageY, "pageY mismatch");
+                        Y.Assert.areSame(parseInt(e.clientX, 10), parseInt(clientX, 10), "clientX mismatch");
+                        Y.Assert.areSame(parseInt(e.clientY, 10), parseInt(clientY, 10), "clientY mismatch");
+                        Y.Assert.areSame(parseInt(e.pageX, 10), parseInt(pageX, 10), "pageX mismatch");
+                        Y.Assert.areSame(parseInt(e.pageY, 10), parseInt(pageY, 10), "pageY mismatch");
                 
                     });
 
