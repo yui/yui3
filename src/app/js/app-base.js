@@ -341,6 +341,10 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             `activeView`.
       @param {Boolean} [options.prepend] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
+      @param {Boolean} [options.update] Whether an existing view should be
+        have the `config` object passed to it via `setAttrs`
+      @param {Boolean} [options.render] Whether an existing view should have
+        its `render` method called
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use. **Note:** this will override
         `options.callback`. The function will be passed the following:
@@ -349,8 +353,17 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @since 3.5.0
     **/
     showView: function (view, config, options, callback) {
-        var viewInfo;
+        var viewInfo,
+            created;
+        
+        options || (options = {});
 
+        if (callback) {
+            options.callback = callback;
+        } else if (Lang.isFunction(options)) {
+            options = {callback: options};
+        }
+        
         if (Lang.isString(view)) {
             viewInfo = this.getViewInfo(view);
 
@@ -360,30 +373,22 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // `preserve` when detaching?
             if (viewInfo && viewInfo.preserve && viewInfo.instance) {
                 view = viewInfo.instance;
+                
                 // Make sure there's a mapping back to the view metadata.
                 this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
             } else {
+                created = true;
+                
                 view = this.createView(view, config);
                 view.render();
             }
         }
-
-        // TODO: Add `options.update` to update to view with the `config`, if
-        // needed. This could also call `setAttrs()` when the specified `view`
-        // already a View instance. Is this be too much overloading of the API?
-
-        // TODO: Add `options.render` to provide a way to control whether a view
-        // is rendered or not; by default, `render()` will only be called if
-        // this method created the View.
-
-        options || (options = {});
-
-        if (callback) {
-            options.callback = callback;
-        } else if (Lang.isFunction(options)) {
-            options = {callback: options};
+        
+        if(!created) {
+            options.update && (view.setAttrs(config));
+            options.render && (view.render());
         }
-
+        
         // TODO: Should the `callback` _always_ be called, even when the
         // `activeView` does not change?
 

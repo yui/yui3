@@ -830,6 +830,31 @@ appBaseSuite.add(new Y.Test.Case({
         Assert.areSame(2, app.get('viewContainer').get('children').size());
         Assert.areSame(app.get('viewContainer').get('firstChild'), view.get('container'));
     },
+    
+    '`showView()` should update the attributes of the view with the config when `options.update` is `true`' : function() {
+        var view = new Y.View({ attr : false }),
+            app  = new Y.App();
+            
+        app.showView(view);
+        app.showView(view, {attr : true}, {update : true});
+        
+        Assert.areSame(true, view.get("attr"));
+    },
+    
+    '`showView()` should render the view when `options.render` is `true`' : function() {
+        var app  = this.app = new Y.App(),
+            View = Y.Base.create("testView", Y.View, [], {
+                render : function() {
+                    this.get('container').setContent('<div/>');
+                }
+            }),
+            view = new View();
+        
+        app.showView(view);
+        app.showView(view, null, {render : true});
+        
+        Assert.areSame(1, app.get('viewContainer').get('firstChild').get('children').size());
+    },
 
     '`options` passed to `showView()` should be mixed into the `activeViewChange` event facade': function () {
         var app     = this.app = new Y.App(),
