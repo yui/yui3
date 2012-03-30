@@ -117,7 +117,8 @@ YUI.add('date-tests', function(Y) {
             ASSERT.areSame(50, parseInt(output, 10), 'Expected %W format.');
 
             output = Y.DataType.Date.format(date, {format:"%Z"});
-            ASSERT.isTrue((date.toString()).indexOf(output) > -1, 'Expected %Z format.');
+			var tz = date.toString().replace(/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/, "$2").replace(/[a-z ]/g, "");
+            ASSERT.areSame(tz, output, 'Expected %Z format.');
 
             output = Y.DataType.Date.format(date, {format:"%"});
             ASSERT.areSame('%', output, 'Expected % format.');

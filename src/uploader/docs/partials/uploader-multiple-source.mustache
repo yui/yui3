@@ -17,7 +17,7 @@
     </div> 
     <div id="uploadFilesButtonContainer">
       <button type="button" id="uploadFilesButton" 
-              class="yui3-button" style="width:250px; height:25px;">Upload Files</button>
+              class="yui3-button" style="width:250px; height:35px;">Upload Files</button>
     </div> 
     <div id="overallProgress">
     </div>
@@ -44,9 +44,9 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
 Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
    if (Y.Uploader.TYPE != "none" && !Y.UA.ios) { 
        var uploader = new Y.Uploader({width: "250px", 
-                                      height: "25px", 
+                                      height: "35px", 
                                       multipleFiles: true,
-                                      swfURL: "../build/uploader/assets/flashuploader.swf?t=" + Math.random(),
+                                      swfURL: "{{yuiBuildUrl}}/uploader/assets/flashuploader.swf?t=" + Math.random(),
                                       uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
                                       simLimit: 2
                                      });    
