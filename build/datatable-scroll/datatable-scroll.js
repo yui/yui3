@@ -442,7 +442,9 @@ Y.mix(Scrollable.prototype, {
                     className: this.getClassName('scrollbar')
                 }));
 
-            scrollbar.setStyle('width', Y.DOM.getScrollbarWidth() + 'px');
+            // IE 6-10 require the scrolled area to be visible (at least 1px)
+            // or they don't respond to clicking on the scrollbar rail or arrows
+            scrollbar.setStyle('width', (Y.DOM.getScrollbarWidth() + 1) + 'px');
         }
 
         return scrollbar;
@@ -1224,8 +1226,11 @@ Y.mix(Scrollable.prototype, {
                       styleDim(scroller, 'borderTopWidth') +
                       scroller.get('offsetTop')) + 'px',
 
+                // Minus 1 because IE 6-10 require the scrolled area to be
+                // visible by at least 1px or it won't respond to clicks on the
+                // scrollbar rail or endcap arrows.
                 left: (scroller.get('offsetWidth') -
-                       Y.DOM.getScrollbarWidth() -
+                       Y.DOM.getScrollbarWidth() - 1 -
                        styleDim(scroller, 'borderRightWidth')) + 'px'
             });
         }
