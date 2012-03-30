@@ -7,7 +7,7 @@
 <script>
 YUI().use('overlay', 'event', 'widget-anim', function (Y) {
 
-    var fadeInStarted = false,
+    var waitingToShow = false,
         
         // array for text to be displayed in tooltips
         tipText = [
