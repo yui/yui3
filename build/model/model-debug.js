@@ -4,6 +4,7 @@ YUI.add('model', function(Y) {
 Attribute-based data model with APIs for getting, setting, validating, and
 syncing attribute values, as well as events for being notified of model changes.
 
+@module app
 @submodule model
 @since 3.4.0
 **/

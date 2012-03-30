@@ -211,6 +211,9 @@ YUI.add('editor-tests', function(Y) {
         test_get_content: function() {
             var html = editor.getContent(),
                 ex = ((Y.UA.gecko) ? '<br>' : '');
+                if (Y.UA.ie) {
+                    html = html.replace(' style=""', '');
+                }
             Y.Assert.areEqual(ex + 'Hello <b>World</b>!!'.toLowerCase(), html.toLowerCase(), 'getContent failed to get the editor content');
         },
         test_font_size_normalize: function() {
@@ -252,8 +255,11 @@ YUI.add('editor-tests', function(Y) {
             inst.EditorSelection.removeFontFamily(node);
 
             Y.Assert.areSame(node.getAttribute('face'), '', 'Failed to remove font face');
-            Y.Assert.isTrue((node.getAttribute('style').indexOf('foo: bar') > -1), 'Failed to remove font-family ;');
-            Y.Assert.isTrue((node.getAttribute('style').indexOf('font-family') === -1), 'Failed to remove font-family ;');
+            if (!Y.UA.ie || (Y.UA.ie && Y.UA.ie > 6)) {
+                //IE 6 doesn't like the getAttribute('style') call, it returns an object
+                Y.Assert.isTrue((node.getAttribute('style').indexOf('foo: bar') > -1), 'Failed to remove font-family ;');
+                Y.Assert.isTrue((node.getAttribute('style').indexOf('font-family') === -1), 'Failed to remove font-family ;');
+            }
 
             node.setAttribute('style', 'font-family: ');
             inst.EditorSelection.removeFontFamily(node);

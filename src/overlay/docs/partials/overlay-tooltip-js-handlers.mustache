@@ -3,15 +3,19 @@
         var i;
         if (tooltip.get('visible') === false) {
             // while it's still hidden, move the tooltip adjacent to the cursor
+            Y.one('#tooltip').setStyle('opacity', '0');
             tooltip.move([(e.pageX + 10), (e.pageY + 20)]);
         }
-        if (fadeInStarted === false) {
+        if (waitingToShow === false) {
             // wait half a second, then show tooltip
-            setTimeout(function(){tooltip.show()}, 500);
+            setTimeout(function(){
+                Y.one('#tooltip').setStyle('opacity', '1');
+                tooltip.show();
+            }, 500);
             
             // while waiting to show tooltip, don't let other
             // mousemoves try to show tooltip too.
-            fadeInStarted = true;
+            waitingToShow = true;
             
             // loop through the tipText array looking for a match between
             // the class name and the array literal `name`
@@ -33,6 +37,6 @@
         // when the cursor moves over the tooltip itself
         if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
             tooltip.hide();
-            fadeInStarted = false;            
+            waitingToShow = false;            
         }
     }

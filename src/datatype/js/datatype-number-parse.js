@@ -23,7 +23,7 @@ Y.mix(Y.namespace("DataType.Number"), {
             return number;
         }
         else {
-            Y.log("Could not parse data " + Y.dump(data) + " to type Number", "warn", "datatype-number");
+            Y.log("Could not parse data to type Number", "warn", "datatype-number");
             return null;
         }
     }

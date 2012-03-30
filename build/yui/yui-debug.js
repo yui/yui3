@@ -4748,7 +4748,7 @@ Transaction.prototype = {
 
             // If this browser doesn't fire an event when CSS fails to load,
             // fail after a timeout to avoid blocking the transaction queue.
-            if (!env.cssFail) {
+            if (!env.cssFail && !isScript) {
                 cssTimeout = setTimeout(onError, req.timeout || 3000);
             }
         }
@@ -5509,7 +5509,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.03.23-18-00',
+            GALLERY_VERSION = 'gallery-2012.03.28-20-16',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -8540,6 +8540,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "fr", 
             "ja", 
+            "nb-NO", 
             "pt-BR", 
             "ru", 
             "zh-HANT-TW"
@@ -8556,6 +8557,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "fr", 
             "ja", 
+            "nb-NO", 
             "pt-BR", 
             "ru", 
             "zh-HANT-TW"
@@ -10586,7 +10588,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '6e052a384cfed1255f3f0c504dc1b061';
+YUI.Env[Y.version].md5 = 'e10cbe2ecc9d0ecc296ae706d7e27262';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

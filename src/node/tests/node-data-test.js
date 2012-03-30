@@ -117,11 +117,11 @@ YUI.add('node-data-test', function(Y) {
             Y.Assert.areEqual('foo', nodes.item(1).getData('foo'));
         },
 
-        'should return all html data': function() {
+        'should return all html data from all nodes': function() {
             var nodes = Y.Node.create(
                     '<div><em data-foo="foo" data-bar="bar" data-baz="baz"></em>' +
                     '<span data-foo="foo" data-bar="bar" data-baz="baz"></span></div>'
-                ).get('children');
+                ).get('children'),
 
                 data = nodes.getData();
 

@@ -20,6 +20,11 @@
 -->
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <!-- This needs to be first to prep the 
+            browser window for the other tests -->
+        <url>common/tests/prep.html</url>
+
+
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>
@@ -60,8 +65,10 @@
         <url>datasource/tests/datasource-textschema.html</url>
         <url>datasource/tests/datasource-xmlschema.html</url>
         <url>datatable/tests/datatable-base.html</url>
+        <url>datatable/tests/datatable-body.html</url>
         <url>datatable/tests/datatable-core.html</url>
         <url>datatable/tests/datatable-column-widths.html</url>
+        <url>datatable/tests/datatable-head.html</url>
         <url>datatable/tests/datatable-mutable.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/datatype-date-math.html</url>

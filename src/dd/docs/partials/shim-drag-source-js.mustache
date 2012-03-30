@@ -2,29 +2,29 @@ YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y) {
         //Toggling the buttons
         Y.one('#shim').on('click', function(e) {
             var value = e.target.get('value');
-            if (value == 'off' || value == 'Shim Off') {
+            if (value == 'off' || value == 'Turn Shim On') {
                 dd.set('useShim', true);
                 e.target.set('value', 'on');
-                e.target.set('innerHTML', 'Shim On');
+                e.target.set('innerHTML', 'Turn Shim Off');
                 Y.one('#debugShim').set('disabled', false);
             } else {
                 dd.set('useShim', false);
                 e.target.set('value', 'off');
-                e.target.set('innerHTML', 'Shim Off');
+                e.target.set('innerHTML', 'Turn Shim On');
                 Y.one('#debugShim').set('disabled', true);
             }
         });
         
         Y.one('#debugShim').on('click', function(e) {
             var value = e.target.get('value');
-            if (value == 'off' || value == 'Debug Off') {
+            if (value == 'off' || value == 'Turn Debugging On') {
                 Y.DD.DDM._debugShim = true;
                 e.target.set('value', 'on');
-                e.target.set('innerHTML', 'Debug On');
+                e.target.set('innerHTML', 'Turn Debugging Off');
             } else {
                 Y.DD.DDM._debugShim = false;
                 e.target.set('value', 'off');
-                e.target.set('innerHTML', 'Debug Off');
+                e.target.set('innerHTML', 'Turn Debugging On');
             }
         });
         

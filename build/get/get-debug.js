@@ -1125,7 +1125,7 @@ Transaction.prototype = {
 
             // If this browser doesn't fire an event when CSS fails to load,
             // fail after a timeout to avoid blocking the transaction queue.
-            if (!env.cssFail) {
+            if (!env.cssFail && !isScript) {
                 cssTimeout = setTimeout(onError, req.timeout || 3000);
             }
         }

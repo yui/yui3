@@ -92,8 +92,8 @@
         },
         {
             "name"       : "loader-resolve",
-            "displayName": "Progamatically use Loader",
-            "description": "Progamatically use Loader",
+            "displayName": "Programatically use Loader",
+            "description": "Programatically use Loader",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "loader", "nodejs", "cli", "utility"]
         },
