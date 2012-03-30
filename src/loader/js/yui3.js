@@ -2002,6 +2002,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget", 
             "event-gestures", 
+            "event-mousewheel", 
             "transition"
         ], 
         "skinnable": true
@@ -2427,4 +2428,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e10cbe2ecc9d0ecc296ae706d7e27262';
+YUI.Env[Y.version].md5 = 'f5a3bc9bda2441a3b15fb52c567fc1f7';
