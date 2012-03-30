@@ -21,9 +21,11 @@
 <p>
 This example demonstrates how to instantiate a Calendar, switch its template to a double-pane, and create custom renderers for its header and certain cells (based on rules), as well as turn on multiple date selection and disable certain dates from being selected.
 </p>
+<p><strong>The `selectionMode` in this example is set to `multiple`</strong>, which allows additional dates to be selected if a <strong>Shift</strong> or <strong>Ctrl/Meta</strong> key is held down. This selection mode does not allow multiple selection on touchscreen devices; for such devices, use the `multiple-sticky` selection mode instead.
+</p>
 
 <p>
-There are two rules provided in the example code. One matches all Saturdays and Sundays (weekends in the United States), and the other matches Tuesdays and Fridays. The first rule is used in conjunction with a custom renderer to set the corresponding date cell text color to red. The second rule is used to disable matching dates from selection and interaction.
+<strong>There are two custom filtering rules provided in the example code.</strong> One matches all Saturdays and Sundays (weekends in the United States), and the other matches Tuesdays and Fridays. The first rule is used in conjunction with a custom renderer to set the corresponding date cell text color to red. The second rule is used to disable matching dates from selection and interaction.
 </p>
 </div>
 
