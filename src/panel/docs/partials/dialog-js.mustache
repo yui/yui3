@@ -1,11 +1,11 @@
     var dialog = new Y.Panel({
+        contentBox : Y.Node.create('<div id="dialog" />'),
         bodyContent: '<div class="message icon-warn">Are you sure you want to [take some action]?</div>',
         width      : 410,
         zIndex     : 6,
         centered   : true,
         modal      : false, // modal behavior
-        srcNode    : '#dialog',
-        render     : true,
+        render     : '#example',
         visible    : false, // make visible explicitly with .show()
         buttons    : {
             footer: [
