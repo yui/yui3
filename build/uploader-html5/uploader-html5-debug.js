@@ -538,6 +538,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
            this.queue = new UploaderQueue({simUploads: this.get("simLimit"), 
                                                 errorAction: this.get("errorAction"),
+                                                fileFieldName: this.get("fileFieldName"),
                                                 fileList: files,
                                                 uploadURL: uploadURL,
                                                 perFileParameters: postVars
@@ -800,7 +801,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     }
 });
 
-Y.UploaderHTML5.UploaderQueue = UploaderQueue;
+Y.UploaderHTML5.Queue = UploaderQueue;
 
 
 
