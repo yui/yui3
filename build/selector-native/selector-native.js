@@ -204,9 +204,11 @@ var Selector = {
     // allows element scoped queries to begin with combinator
     // e.g. query('> p', document.body) === query('body > p')
     _splitQueries: function(selector, node) {
-        // avoid picking up from attrs and pseudos
-        selector = Y.Selector._replaceCommas(selector);
-        var groups = selector.split('\uE007'),
+        if (selector.indexOf(',') > -1) {
+            selector = Y.Selector._replaceCommas(selector);
+        }
+
+        var groups = selector.split('\uE007'), // split on replaced comma token
             queries = [],
             prefix = '',
             id,

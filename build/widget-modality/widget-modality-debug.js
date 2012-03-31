@@ -243,12 +243,13 @@ var WIDGET       = 'widget',
             this.after(Z_INDEX+CHANGE, this._afterHostZIndexChangeModal);
             this.after("focusOnChange", this._afterFocusOnChange);
 
-            //realign the mask in the viewport if positionfixed is not supported.
-            //ios and android don't support it and the current feature test doesnt
-            //account for this, so we are doing UA sniffing here. This should be replaced
-            //with an updated featuretest later.
-            if (!supportsPosFixed || Y.UA.ios || Y.UA.android) {
-                Y.on('scroll', this._resyncMask, this);
+            // Re-align the mask in the viewport if `position: fixed;` is not
+            // supported. iOS < 5 and Android < 3 don't actually support it even
+            // though they both pass the feature test; the UA sniff is here to
+            // account for that. Ideally this should be replaced with a better
+            // feature test.
+            if (!supportsPosFixed || Y.UA.ios < 5 || Y.UA.android < 3) {
+                Y.one('win').on('scroll', this._resyncMask, this);
             }
         },
 
