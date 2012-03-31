@@ -637,6 +637,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
            this.queue = new UploaderQueue({simUploads: this.get("simLimit"), 
                                                 errorAction: this.get("errorAction"),
+                                                fileFieldName: this.get("fileFieldName"),
                                                 fileList: files,
                                                 uploadURL: uploadURL,
                                                 perFileParameters: postVars

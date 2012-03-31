@@ -1,0 +1,117 @@
+<style scoped>
+    #demo {
+        background: #fff;
+        border: 1px solid #999;
+        color: #000;
+    }
+
+    #demo .demo-content {
+        padding: 1ex 1em;
+    }
+
+    #volume_control {
+        height: 25px;
+        line-height: 25px;
+        background: url({{componentAssets}}/images/sprite.png) repeat-x 0 0;
+        position: relative;
+    }
+
+    #volume_control label {
+        font-weight: bold;
+        margin: 0 1ex 0 1em;
+        zoom: 1;
+    }
+
+    #volume {
+        border: 1px inset #999;
+        height: 16px;
+        margin-top: 3px;
+        padding: 0 3px;
+        text-align: right;
+        width: 2em;
+    }
+
+    /* Support open/close action for the slider */
+    #demo .volume-hide #volume_slider {
+        display: none;
+    }
+
+    #volume_icon {
+        background: url({{componentAssets}}/images/sprite.png) no-repeat 0 -25px;
+        border: 0 none;
+        height: 25px;
+        vertical-align: top;
+        width: 31px;
+    }
+
+    /* move the button text offscreen left */
+    #volume_icon p {
+        text-indent: -9999px;
+    }
+
+    /*
+     * adjust the speaker icon sprite in accordance with volume level and
+     * active state
+    */
+    #demo .volume-hide .level_0 { background-position: 0 -25px; }
+    #demo .volume-hide .level_1 { background-position: 0 -50px; }
+    #demo .volume-hide .level_2 { background-position: 0 -75px; }
+    #demo .volume-hide .level_3 { background-position: 0 -100px; }
+
+    #demo .level_0,
+    #demo .level_0:hover {
+        background-position: 0 -125px;
+    }
+    #demo .level_1,
+    #demo .level_1:hover {
+        background-position: 0 -150px;
+    }
+    #demo .level_2,
+    #demo .level_2:hover {
+        background-position: 0 -175px;
+    }
+    #demo .level_3,
+    #demo .level_3:hover {
+        background-position: 0 -200px;
+    }
+
+    #volume_slider {
+        position: absolute;
+        top: 25px;
+    }
+
+    /* rail image on the containing box rather than the rail element */
+    #volume_slider {
+        background: url({{componentAssets}}/images/sprite.png) no-repeat 0 -259px;
+        height: 116px;
+        width: 31px;
+        padding-top: 9px;
+        cursor: arrow;
+    }
+
+    #volume_slider .yui3-slider-rail {
+        background-image: none;
+        width: 31px;
+    }
+
+    #volume_slider .yui3-slider-thumb {
+        height: 17px;
+        width: 31px;
+        overflow: hidden;
+    }
+
+    #volume_slider .yui3-slider-thumb img {
+        position: absolute;
+        top: -225px;
+    }
+
+    #volume_slider .yui3-slider-disabled .yui3-slider-thumb img {
+        top: -242px;
+    }
+
+    #demo_sprite {
+        display: inline;
+        float: left;
+        margin-right: 1em;
+    }
+</style>

@@ -35,6 +35,11 @@
         <url>charts/tests/legend.html</url>
         <url>charts/tests/pie.html</url>
         <url>charts/tests/seriestests.html</url>
+        <url>charts/tests/arialinetests.html</url>
+        <url>charts/tests/ariasplinetests.html</url>
+        <url>charts/tests/ariahistogramtests.html</url>
+        <url>charts/tests/ariapietests.html</url>
+        <url>charts/tests/ariaeventtests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/array-invoke.html</url>

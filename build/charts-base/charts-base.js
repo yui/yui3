@@ -14455,7 +14455,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
             this._seriesIndex = seriesIndex;
             series = this.getSeries(parseInt(seriesIndex, 10));
-            msg = "This is the " + series.get("valueDisplayName") + " series. Move the left and right arrows to navigate through the series items.";
+            msg = series.get("valueDisplayName") + " series.";
         }
         else
         {
@@ -14469,7 +14469,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 seriesIndex = 0;
                 this._seriesIndex = seriesIndex;
                 series = this.getSeries(parseInt(seriesIndex, 10));
-                msg = "This is the " + series.get("valueDisplayName") + " series.";
+                msg = series.get("valueDisplayName") + " series.";
             }
             dataLength = series._dataLength ? series._dataLength : 0;
             if(key === 37)
@@ -14484,16 +14484,16 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             items = this.getSeriesItems(series, itemIndex);
             categoryItem = items.category;
             valueItem = items.value;
-            msg += "Item " + (itemIndex + 1) + " of " + dataLength + ". ";
             if(categoryItem && valueItem && categoryItem.value && valueItem.value)
             {
-                msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
-                msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
+                msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
+                msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
             }
             else
             {
                 msg += "No data available.";
             }
+            msg += (itemIndex + 1) + " of " + dataLength + ". ";
         }
         return msg;
     }
@@ -15355,17 +15355,17 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         valueItem = items.value;
         total = series.getTotalValues();
         pct = Math.round((valueItem.value / total) * 10000)/100;
-        msg = "Item " + (itemIndex + 1) + " of " + len + ". ";
         if(categoryItem && valueItem)
         {
-            msg += categoryItem.displayName + " is " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]);
-            msg += valueItem.displayName + " is " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]); 
-            msg += valueItem.displayName + " is " + pct + "% of the total."; 
+            msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
+            msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
+            msg += "Percent of total " + valueItem.displayName + ": " + pct + "%,"; 
         }
         else
         {
-            msg += "No data available.";
+            msg += "No data available,";
         }
+        msg += (itemIndex + 1) + " of " + len + ". ";
         return msg;
     }
 }, {
@@ -15377,7 +15377,7 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
          * @type String
          */
         ariaDescription: {
-            value: "Use the left and right keys to navigate through items in the chart.",
+            value: "Use the left and right keys to navigate through items.",
 
             setter: function(val)
             {
