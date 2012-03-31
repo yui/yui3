@@ -30,6 +30,10 @@ var testModules = {
     "facades-tests": {
         "fullpath": "./js/facades-tests.js",
         "requires": ["io-base", "test"]
+    },
+    "transport-tests": {
+        "fullpath": "./js/transport-tests.js",
+        "requires": ["io-xdr", "test"]
     }
 };
 
