@@ -20,9 +20,10 @@
     the second using the shorter, method chaining style.</p>
 </div>
 
-<div class="example yui3-skin-sam">
-    {{>slider-basic-source}}
-</div>
+{{>slider-basic-html}}
+<script>
+{{>slider-basic-js}}
+</script>
 
 <h3>Horizontal Slider with default configuration</h3>
 <p>Sliders are horizontal by default, with available values ranging from 0 to 100, and an initial value of 0.  The rail is 150 pixels long plus a few pixels for the rail's end caps.</p>
@@ -105,70 +106,14 @@ yInput.setData( "slider", new Y.Slider({
 ```
 
 <h3>Full Code Listing</h3>
+
+<h4>HTML</h4>
 ```
-// Create a YUI instance and request the slider module and its dependencies
-YUI($yuiConfig).use($requiredModules, function (Y) {
-
-var xInput,  // input tied to xSlider
-    yInput,  // input tied to ySlider
-    xSlider; // horizontal Slider
-
-// Function to pass input value back to the Slider
-function updateSlider( e ) {
-    var data   = this.getData(),
-        slider = data.slider,
-        value  = parseInt( this.get( "value" ), 10 );
-
-    if ( data.wait ) {
-        data.wait.cancel();
-    }
-
-    // Update the Slider on a delay to allow time for typing
-    data.wait = Y.later( 200, slider, function () {
-        data.wait = null;
-        this.set( "value", value );
-    } );
-}
-
-// Function to update the input value from the Slider value
-function updateInput( e ) {
-    this.set( "value", e.newVal );
-}
-
-
-
-// Create a horizontal Slider using all defaults
-xSlider = new Y.Slider();
-
-// Link the input value to the Slider
-xInput = Y.one( "#horiz_value" );
-xInput.setData( { slider: xSlider } );
-
-// Pass the input as the third arg to be 'this' inside updateInput
-xSlider.after( "valueChange", updateInput, xInput );
-xInput.on( "keyup", updateSlider );
-
-// Render the Slider next to the input
-xSlider.render('.horiz_slider')
-
-
-// Create the vertical Slider.
-yInput = Y.one( "#vert_value" );
-yInput.setData( "slider", new Y.Slider({
-            axis: 'y',
-            min   : 100,      // min is the value at the top
-            max   : -100,     // max is the value at the bottom
-            value : 30,       // initial value
-            length: '201px',  // rail extended to afford all values
-
-            // construction-time event subscription
-            after : {
-                valueChange: Y.bind( updateInput, yInput )
-            }
-        }).render( ".vert_slider" ) // render returns the Slider
-    )                               // set( "data", ... ) returns the Node
-    .on( "keyup", updateSlider );   // chain the keyup subscription
-
-});
+<!-- Add the yui3-skin-sam class to a containing element to apply the default skin -->
+{{>slider-basic-html}}
 ```
 
+<h4>JavaScript</h4>
+```
+{{>slider-basic-js}}
+```

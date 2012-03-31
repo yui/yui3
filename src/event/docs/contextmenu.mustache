@@ -35,7 +35,6 @@ This code will work great if the "contextmenu" is triggered via the mouse. Howev
 </p>
 
 <h3>Internet Explorer</h3>
-
 <ul>
     <li>When the user triggers the "contextmenu" event, the x and y coordinates of the event will be relative to the current position of the mouse cursor. Not useful since the event was fired via the keyboard and the mouse cursor could be anywhere on the screen.</li>
     <li>When the user presses Shift + F10 IE's menubar will gain focus, with the first item ("File") highlighted. To fix that, you'll need to bind a "keydown" listener for Shift + F10 and call e.preventDefault(). That WILL prevent the menubar from gaining focus, but will also prevent the "contextmenu" event from firing when the user presses Shift + F10.</li>
@@ -53,10 +52,16 @@ This code will work great if the "contextmenu" is triggered via the mouse. Howev
     <li>If the "contextmenu" event is triggered via the Menu key, the x and y coordinates will be close to the target's bottom left corner.</li>
 </ul>
 
-<h3>Safari on the Mac</h3>
+<h3>Safari, Chrome and Firefox on the Mac</h3>
 <ul>
     <li>No keyboard shortcut available for triggering the "contextmenu" event, unless the screen reader (VoiceOver) is running, in which case the shortcut is Shift + Ctrl + Alt + M.</li>
     <li>When VoiceOver is running and the user presses Shift + Ctrl + Alt + M, the x and y coordinates will reference the center of the event target.</li>
+</ul>
+
+<h3>Opera</h3>
+<ul>
+    <li>On Windows, Shift + F10 won't fire the "contextmenu" event, but WILL trigger the display of the browser's context menu.</li>
+    <li>On Mac, Shift + Command + M won't fire "contextmenu" event, but WILL trigger the display of the browser's context menu.</li>
 </ul>
 
 <p>Here's a working example. The following button has a custom context menu. Try to invoke it via the keyboard to see the problems yourself:</p>

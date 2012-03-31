@@ -1,18 +1,3 @@
-<div id="demo" class="yui3-skin-sam">
-
-    <h4>Horizontal Slider</h4>
-    <p>
-        <label for="horiz_value">Value: </label>
-            <input id="horiz_value" value="0">
-        <span class="horiz_slider"></span>
-    </p>
-
-    <h4>Vertical Slider</h4>
-    <p><label for="vert_value">Value: </label><input id="vert_value" value="30"></p>
-    <div class="vert_slider"></div>
-
-</div>
-<script type="text/javascript">
 // Create a YUI instance and request the slider module and its dependencies
 YUI().use("slider", function (Y) {
 
@@ -77,4 +62,3 @@ yInput.setData( "slider", new Y.Slider({
     .on( "keyup", updateSlider );   // chain the keyup subscription
 
 });
-</script>

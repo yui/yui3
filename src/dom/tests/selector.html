@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
+<meta charset="utf-8">
 <title>Selector Test Suite</title>
 
 <style type="text/css">
@@ -21,7 +22,7 @@ document.createElement('foo'); // enable custom element for IE native querySelec
 onload = function() {
 
     var SELECTOR_MODULE = 'selector-css3';
-    YUI({filter: 'debug'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
+    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -604,7 +605,14 @@ onload = function() {
             'should allow special chars in attribute': function() {
                 var node = document.getElementById('test-chars');
 
-                Assert.areEqual(node, Y.Selector.query('input[value="ML キshigo, Mfg., Co."]', null, true));
+                Assert.areEqual(node, Y.Selector.query('input[value="ML キshigo, Mfg.,& Co."]', null, true));
+            },
+
+            'should allow special chars in attribute, scoped query': function() {
+                var form = document.getElementById('test-chars-form'),
+                    node = document.getElementById('test-chars');
+
+                Assert.areEqual(node, Y.Selector.query('input[value="ML キshigo, Mfg.,& Co."]', form, true));
             }
         });
 
@@ -721,6 +729,8 @@ onload = function() {
         <span>foo</span>
     </code>
 
-    <input id="test-chars" type="hidden" value="ML キshigo, Mfg., Co.">
+    <form id="test-chars-form">
+        <input id="test-chars" type="hidden" value="ML キshigo, Mfg.,& Co.">
+    </form>
 </body>
 </html>
