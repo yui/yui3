@@ -107,9 +107,9 @@ YUI.add('button-plugin-test', function (Y) {
             var anchorButton = Y.Plugin.Button.createNode({template: '<a href="#foo" />'});
 
             anchorButton.appendTo('#container');
-
+            
             Assert.areSame('a', anchorButton.get('tagName').toLowerCase(), '`anchorButton` was not an <a>.');
-            Assert.areSame('#foo', anchorButton.getAttribute('href'), '`anchorButton` did not have href "#foo".');
+            Assert.areSame('foo', anchorButton.getAttribute('href').split('#')[1], '`anchorButton` did not have href "#foo".');
         }
 
     }));
