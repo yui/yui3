@@ -123,24 +123,26 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
                 Y.one("#overallProgress").setContent("Total uploaded: <strong>" + 
                                                      event.percentLoaded + "%" + 
                                                      "</strong>");
+       });
 
-                if (event.bytesLoaded == event.bytesTotal) {
-                     uploadDone = true;
+       uploader.on("alluploadscomplete", function (event) {
                      uploader.set("enabled", true);
                      uploader.set("fileList", []);
                      Y.one("#uploadFilesButton").removeClass("yui3-button-disabled");
                      Y.one("#uploadFilesButton").on("click", function () {
-                         uploader.uploadAll();
+                          if (!uploadDone && uploader.get("fileList").length > 0) {
+                             uploader.uploadAll();
+                          }
                      });
                      Y.one("#overallProgress").set("text", "Uploads complete!");
-                     // Workaround for bug 2531948
-                     uploader.queue = null;
-                }
+                     uploadDone = true;
        });
 
        Y.one("#uploadFilesButton").on("click", function () {
+         if (!uploadDone && uploader.get("fileList").length > 0) {
             uploader.uploadAll();
-       });       
+         }
+       });      
    } 
    else {
        Y.one("#uploaderContainer").set("text", "We are sorry, but the uploader technology is not supported" + 

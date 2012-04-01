@@ -55,16 +55,6 @@
         </p>
     </div>
 
-    <div class="notice">
-        <h2>Known Issues</h2>
-        <ul>
-            <li><a href="http://yuilibrary.com/projects/yui3/ticket/2531948">#2531948</a>: The uploader is currently not firing the `alluploadscomplete` event. Instead, use the `totaluploadprogress` event
-                and compare the `bytesLoaded` and `bytesTotal` properties in the event payload: once they are equal, the upload has
-                completed. At that point, also set `uploaderInstance.queue` to null to allow further uploads.
-            </li>
-        </ul>
-    </div>
-
 {{>getting-started}}
 
 <div class="intro">

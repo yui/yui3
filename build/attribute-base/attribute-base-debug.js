@@ -48,6 +48,7 @@ YUI.add('attribute-base', function(Y) {
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      * @uses AttributeCore
      * @uses AttributeEvents
+     * @uses EventTarget
      * @uses AttributeExtras
      */
     var Attribute = function() {
