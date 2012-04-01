@@ -628,7 +628,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         var path = (!this._html5 && this._getHashPath()) ||
                 Y.getLocation().pathname;
 
-        return this.removeRoot(path);
+        return this.removeQuery(this.removeRoot(path));
     },
 
     /**
