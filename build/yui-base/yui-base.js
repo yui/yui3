@@ -3490,11 +3490,14 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
             }
-
-            m = ua.match(/Chrome\/([^\s]*)/);
-            if (m && m[1]) {
-                o.chrome = numberify(m[1]); // Chrome
+            
+            m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
+            if (m && m[1] && m[2]) {
+                o.chrome = numberify(m[2]); // Chrome
                 o.safari = 0; //Reset safari back to 0
+                if (m[1] === 'CrMo') {
+                    o.mobile = 'chrome';
+                }
             } else {
                 m = ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {
