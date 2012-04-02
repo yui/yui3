@@ -538,7 +538,7 @@ Y.Get = Get = {
             // "onload".
             // davglass: Seems that Chrome on Android needs this to be false.
             cssLoad: ((!ua.gecko && !ua.webkit) || 
-                ua.gecko >= 9 || ua.webkit >= 535.24) && !(ua.chrome && ua.mobile),
+                ua.gecko >= 9 || ua.webkit >= 535.24) && !(ua.chrome && ua.chrome <=18),
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
