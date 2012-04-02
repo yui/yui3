@@ -60,6 +60,10 @@
      * @constructor
      * @uses BaseCore
      * @uses Attribute
+     * @uses AttributeCore
+     * @uses AttributeEvents
+     * @uses AttributeExtras
+     * @uses EventTarget
      *
      * @param {Object} config Object with configuration property name/value pairs. The object can be 
      * used to provide default values for the objects published attributes.

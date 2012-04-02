@@ -26,7 +26,7 @@
     </div> 
     <div id="uploadFilesButtonContainer">
       <button type="button" id="uploadFilesButton" 
-              class="yui3-button" style="width:250px; height:25px;">Upload Files</button>
+              class="yui3-button" style="width:250px; height:35px;">Upload Files</button>
     </div> 
     <div id="overallProgress">
     </div>
@@ -54,9 +54,9 @@ YUI({filter:"raw"}).use("uploader", function(Y) {
 Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
    if (Y.Uploader.TYPE != "none" && !Y.UA.ios) { 
        var uploader = new Y.Uploader({width: "250px", 
-                                      height: "25px", 
+                                      height: "35px", 
                                       multipleFiles: true,
-                                      swfURL: "../build/uploader/assets/flashuploader.swf?t=" + Math.random(),
+                                      swfURL: "{{yuiBuildUrl}}/uploader/assets/flashuploader.swf?t=" + Math.random(),
                                       uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
                                       simLimit: 2
                                      });    
@@ -133,23 +133,25 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
 
        uploader.on("totaluploadprogress", function (event) {
                 Y.one("#overallProgress").setContent("Total uploaded: <strong>" + event.percentLoaded + "%" + "</strong>");
+       });
 
-                if (event.bytesLoaded == event.bytesTotal) {
-                     uploadDone = true;
+       uploader.on("alluploadscomplete", function (event) {
                      uploader.set("enabled", true);
                      uploader.set("fileList", []);
                      Y.one("#uploadFilesButton").removeClass("yui3-button-disabled");
                      Y.one("#uploadFilesButton").on("click", function () {
-                         uploader.uploadAll();
+                          if (!uploadDone && uploader.get("fileList").length > 0) {
+                             uploader.uploadAll();
+                          }
                      });
                      Y.one("#overallProgress").set("text", "Uploads complete!");
-                     // Workaround for bug 2531948
-                     uploader.queue = null;
-                }
+                     uploadDone = true;
        });
 
        Y.one("#uploadFilesButton").on("click", function () {
+         if (!uploadDone && uploader.get("fileList").length > 0) {
             uploader.uploadAll();
+         }
        });       
    } 
    else {

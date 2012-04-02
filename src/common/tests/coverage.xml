@@ -20,6 +20,11 @@
 -->
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <!-- This needs to be first to prep the 
+            browser window for the other tests -->
+        <url>common/tests/prep.html</url>
+
+
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>
@@ -41,6 +46,11 @@
         <url>charts/tests/legend.html</url>
         <url>charts/tests/pie.html</url>
         <url>charts/tests/seriestests.html</url>
+        <url>charts/tests/arialinetests.html</url>
+        <url>charts/tests/ariasplinetests.html</url>
+        <url>charts/tests/ariahistogramtests.html</url>
+        <url>charts/tests/ariapietests.html</url>
+        <url>charts/tests/ariaeventtests.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/array-extras.html</url>

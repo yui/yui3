@@ -431,10 +431,11 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
      * A setting specifying the type of selection the calendar allows.
      * Possible values include:
      * <ul>
-     *   <li>`single`</li> - One date at a time
-     *   <li>`multiple-sticky</li> - Multiple dates, selected one at a time (the dates "stick")
-     *   <li>`multiple`</li> - Multiple dates, selected with Ctrl/Meta keys for additional single
-     *   dates, and Shift key for date ranges.
+     *   <li>`single` - One date at a time</li>
+     *   <li>`multiple-sticky` - Multiple dates, selected one at a time (the dates "stick"). This option
+     *   is appropriate for mobile devices, where function keys from the keyboard are not available.</li>
+     *   <li>`multiple` - Multiple dates, selected with Ctrl/Meta keys for additional single
+     *   dates, and Shift key for date ranges.</li>
      *
      * @attribute selectionMode
      * @type String

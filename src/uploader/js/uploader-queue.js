@@ -192,7 +192,7 @@
 
            this.fire("uploadcomplete", updatedEvent);
 
-           if (this.queuedFiles.length === 0 && this.currentFiles.length === 0) {
+           if (this.queuedFiles.length === 0 && this.numberOfUploads <= 0) {
                this.fire("alluploadscomplete");
                this._currentState = UploaderQueue.STOPPED;
            }
@@ -328,7 +328,7 @@
           if (file) {
             var id = file.get("id");
             if (this.currentFiles[id]) {
-              this.currentFiles[id].cancel();
+              this.currentFiles[id].cancelUpload();
               this._unregisterUpload(this.currentFiles[id]);
             }
             else {
@@ -342,7 +342,7 @@
           }
           else {
             for (var fid in this.currentFiles) {
-              this.currentFiles[fid].cancel();
+              this.currentFiles[fid].cancelUpload();
               this._unregisterUpload(this.currentFiles[fid]);
             }
 
