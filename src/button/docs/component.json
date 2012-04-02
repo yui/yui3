@@ -9,18 +9,9 @@
 
     "examples": [
         {
-            "name"       : "button",
-            "displayName": "Buttons",
-            "description": "",
-            "modules"    : ["button"],
-            "tags"       : ["button"],
-            "use"        : ["button", "widget"],
-            "hideTableOfContents": false
-        },
-        {
             "name"       : "cssbutton",
-            "displayName": "CSSButton",
-            "description": "",
+            "displayName": "Styling elements with cssbutton",
+            "description": "This example shows how you can easily style button and non-button DOM elements to appear as buttons",
             "modules"    : ["cssbutton"],
             "tags"       : ["button"],
             "use"        : ["cssbutton"],
@@ -28,17 +19,26 @@
         },
         {
             "name"       : "button-plugin",
-            "displayName": "Button Plugin",
-            "description": "",
+            "displayName": "Enhancing <button> nodes with button-plugin",
+            "description": "This example shows a simple, light solution to enhance <button> nodes",
             "modules"    : ["button-plugin", "cssbutton"],
             "tags"       : ["button"],
             "use"        : ["button"],
             "hideTableOfContents": false
         },
         {
+            "name"       : "button",
+            "displayName": "Basic button widgets",
+            "description": "This example demonstrates how to create button widgets",
+            "modules"    : ["button"],
+            "tags"       : ["button"],
+            "use"        : ["button", "widget"],
+            "hideTableOfContents": false
+        },
+        {
             "name"       : "button-group",
-            "displayName": "Button Group",
-            "description": "",
+            "displayName": "Managing groups of buttons with button-group",
+            "description": "This example demonstrates how to create a widget containing a group of buttons",
             "modules"    : ["button-group"],
             "use"        : ["button-group"],
             "tags"       : ["button", "widget"],
