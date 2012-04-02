@@ -111,8 +111,15 @@ IO.prototype = {
             },
             alt = config.xdr ? config.xdr.use : null,
             form = config.form && config.form.upload ? 'iframe' : null,
-            use = alt || form;
+            use;
 
+        if (alt === 'native') {
+            // Non-IE  can use XHR level 2 and not rely on an
+            // external transport.
+            alt = Y.UA.ie ? 'xdr' : null;
+        }
+
+        use = alt || form;
         transaction = use ? Y.merge(Y.IO.customTransport(use), transaction) :
                             Y.merge(Y.IO.defaultTransport(), transaction);
 
