@@ -1,0 +1,20 @@
+.yui3-paginator-first-page,
+.yui3-paginator-last-page,
+.yui3-paginator-next-page,
+.yui3-paginator-previous-page,
+.yui3-paginator-page {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    border: 1px solid #cbcbcb;
+    margin: 0 .1em;
+    padding: .5ex 1ex;
+    text-decoration: none;
+    font-family: arial, sans-serif;
+}
+
+.yui3-paginator-current-page {
+    border-color: transparent;
+    color: #000;
+    text-decoration: none;
+    cursor: default;
+}

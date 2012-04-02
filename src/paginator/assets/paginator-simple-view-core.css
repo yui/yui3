@@ -1,0 +1,21 @@
+.yui3-paginator-pages {
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    letter-spacing: -0.31em; /* webkit: collapse white-space between units */
+    *letter-spacing: normal; /* reset IE < 8 */
+    word-spacing: -0.43em; /* IE < 8 && gecko: collapse white-space between units */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    vertical-align: top;
+}
+
+.yui3-paginator-page-item {
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    margin: 0;
+    padding: 0;
+}
