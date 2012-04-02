@@ -503,6 +503,17 @@ Y.UAData["YUI Internal"] = [
                         "android": 3.01,
                         "os": "android"
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; Xoom Build/IML77) AppleWebKit/535.7 (KHTML, like Gecko) CrMo/16.0.912.77  Safari/535.7",
+                "data": {
+                        "webkit": 535.7,
+                        "chrome": 16.0912,
+                        "safari": 0,
+                        "android": 4.03,
+                        "os": "android",
+                        "mobile": "chrome"
+                }
         }
 ];
 });
