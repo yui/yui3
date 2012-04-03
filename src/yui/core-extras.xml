@@ -25,10 +25,10 @@
     </macrodef>
 
     <target name="core">
-        <echo level="info">Custom YUI Core Build Task: ${component.builddir}</echo>
+        <echo level="verbose">Custom YUI Core Build Task: ${component.builddir}</echo>
         <prop2array from="yui.core" to="component.core" />
-        <echo level="info">Setting core to: ${yui.core}</echo>
-        <echo level="info">Setting core to: ${component.core}</echo>
+        <echo level="verbose">Setting core to: ${yui.core}</echo>
+        <echo level="verbose">Setting core to: ${component.core}</echo>
         
 
         <for param="file">
@@ -36,8 +36,8 @@
                 <fileset dir="${component.builddir}/" includes="*.js"/>
             </path>
             <sequential>
-                <echo level="info">Filtering: @{file}, replacing @YUI_CORE@ with:</echo>
-                <echo level="info">${yui.core}</echo>
+                <echo level="verbose">Filtering: @{file}, replacing @YUI_CORE@ with:</echo>
+                <echo level="verbose">${yui.core}</echo>
                 <move file="@{file}" tofile="@{file}.tmp" />
                 <move file="@{file}.tmp" tofile="@{file}">
                     <filterchain>
