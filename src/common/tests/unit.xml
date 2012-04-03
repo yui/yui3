@@ -35,7 +35,7 @@
         <url>charts/tests/graph.html</url>
         <url>charts/tests/legend.html</url>
         <url>charts/tests/pie.html</url>
-        <url>charts/tests/groupmarkers.html</url>
+        <url>charts/tests/groupmarkertests.html</url>
         <url>charts/tests/pielegend.html</url>
         <url>charts/tests/seriestests.html</url>
         <url>charts/tests/arialinetests.html</url>
