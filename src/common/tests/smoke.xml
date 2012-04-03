@@ -5,6 +5,8 @@
      version="3" looks for. -->
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>yui/tests/index.html</url>
+        <url>loader/tests/index.html</url>
         <url>io/tests/smoketest.html</url>
     </tests>
 </yuitest>
