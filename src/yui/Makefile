@@ -1,7 +1,7 @@
 all: aliases build docmods
 
 build:
-	ant all
+	ant all -q -Djshint.skip=true
 
 alias: aliases
 

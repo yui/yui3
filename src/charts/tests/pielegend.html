@@ -61,6 +61,13 @@ YUI({
             {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
     
+    pieDataValues = [ 
+            {date:"5/1/2010", miscellaneous:2000}, 
+            {date:"5/2/2010", miscellaneous:50}, 
+            {date:"5/3/2010", miscellaneous:400}, 
+            {date:"5/4/2010", miscellaneous:200}, 
+            {date:"5/5/2010", miscellaneous:5000}
+    ],
     topLegend = function()
     {
         return {
@@ -127,6 +134,16 @@ YUI({
         assert.areEqual(chartSC.length, legendItems.length);
     },
 
+    testPieLegendItemsLength = function()
+    {
+        var assert = Y.Assert,
+            chart = this.chart,
+            legend = chart.get("legend"),
+            chartSC = chart.get("seriesCollection")[0].get("markers"),
+            legendItems = legend.get("items");
+        assert.areEqual(chartSC.length, legendItems.length);
+    },
+
     testLegendItemsText = function()
     {
         var assert = Y.Assert,
@@ -141,12 +158,30 @@ YUI({
             assert.areEqual(chartSC[i].get("displayName"), legendItems.text);
         }
     },
+
+    testPieLegendItemsText = function()
+    {
+        var assert = Y.Assert,
+            chart = this.chart,
+            legend = chart.get("legend"),
+            series = chart.get("seriesCollection")[0],
+            displayName,
+            legendItems = legend.get("items"),
+            i = 0,
+            len = legendItems.length;
+        for(; i < len; ++i)
+        {
+            displayName = chart.getSeriesItems(series, i).category.value;
+            assert.areEqual(displayName, legendItems[i].text);
+        }
+    },
     
-    NoLegendTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieNoLegendTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart"
     }, {
-        name: "No Legend Tests",
+        name: "Pie No Legend Tests",
 
         testNoLegend: function()
         {
@@ -157,8 +192,9 @@ YUI({
         }
     }),
     
-    TopLegendTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieTopLegendTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: topLegend()
     }, {
@@ -167,181 +203,196 @@ YUI({
         testLegend: testLegend
     }),
     
-    RightLegendTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieRightLegendTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: rightLegend()
     }, {
-        name: "Right Legend Test",
+        name: "Pie Right Legend Test",
 
         testLegend: testLegend
     }),
     
-    BottomLegendTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieBottomLegendTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: bottomLegend()
     }, {
-        name: "Bottom Legend Test",
+        name: "Pie Bottom Legend Test",
 
         testLegend: testLegend
     }),
     
-    LeftLegendTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieLeftLegendTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: leftLegend()
     }, {
-        name: "Left Legend Test",
+        name: "Pie Left Legend Test",
 
         testLegend: testLegend
     }),
     
-    TopLegendPositionTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieTopLegendPositionTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: topLegend()
     }, {
-        name: "Top Legend Position Test",
+        name: "Pie Top Legend Position Test",
 
         legendPosition: "top",
 
         testLegendPosition: testLegendPosition
     }),
     
-    RightLegendPositionTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieRightLegendPositionTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: rightLegend()
     }, {
-        name: "Right Legend Position Test",
+        name: "Pie Right Legend Position Test",
 
         legendPosition: "right",
 
         testLegend: testLegendPosition
     }),
     
-    BottomLegendPositionTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieBottomLegendPositionTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: bottomLegend()
     }, {
-        name: "Bottom Legend Position Test",
+        name: "Pie Bottom Legend Position Test",
 
         legendPosition: "bottom",
 
         testLegend: testLegendPosition
     }),
     
-    LeftLegendPositionTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieLeftLegendPositionTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: leftLegend()
     }, {
-        name: "Left Legend Position Test",
+        name: "Pie Left Legend Position Test",
         
         legendPosition: "left",
 
         testLegend: testLegendPosition
     }),
 
-    TopLegendItemsLengthTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieTopLegendItemsLengthTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: topLegend()
     }, {
-        name: "Top Legend Items Length Test",
+        name: "Pie Top Legend Items Length Test",
 
-        testLegend: testLegendItemsLength
+        testLegend: testPieLegendItemsLength
     }),
     
-    RightLegendItemsLengthTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieRightLegendItemsLengthTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: rightLegend()
     }, {
-        name: "Right Legend Items Length Test",
+        name: "Pie Right Legend Items Length Test",
 
-        testLegend: testLegendItemsLength
+        testLegend: testPieLegendItemsLength
     }),
     
-    BottomLegendItemsLengthTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieBottomLegendItemsLengthTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: bottomLegend()
     }, {
-        name: "Bottom Legend Items Length Test",
+        name: "Pie Bottom Legend Items Length Test",
 
-        testLegend: testLegendItemsLength
+        testLegend: testPieLegendItemsLength
     }),
     
-    LeftLegendItemsLengthTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieLeftLegendItemsLengthTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: leftLegend()
     }, {
-        name: "Left Legend Items Length Test",
+        name: "Pie Left Legend Items Length Test",
 
-        testLegend: testLegendItemsLength
+        testLegend: testPieLegendItemsLength
     }),
     
-    TopLegendItemsTextTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieTopLegendItemsTextTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: topLegend()
     }, {
-        name: "Top Legend Items Text Test",
+        name: "Pie Top Legend Items Text Test",
 
-        testLegend: testLegendItemsText
+        testLegend: testPieLegendItemsText
     }),
     
-    RightLegendItemsTextTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieRightLegendItemsTextTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: rightLegend()
     }, {
-        name: "Right Legend Items Text Test",
+        name: "Pie Right Legend Items Text Test",
 
-        testLegend: testLegendItemsText
+        testLegend: testPieLegendItemsText
     }),
     
-    BottomLegendItemsTextTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieBottomLegendItemsTextTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: bottomLegend()
     }, {
-        name: "Bottom Legend Items Text Test",
+        name: "Pie Bottom Legend Items Text Test",
 
-        testLegend: testLegendItemsText
+        testLegend: testPieLegendItemsText
     }),
     
-    LeftLegendItemsTextTest = new LegendTestTemplate({
-        dataProvider: basicDataValues,
+    PieLeftLegendItemsTextTest = new LegendTestTemplate({
+        type: "pie",
+        dataProvider: pieDataValues,
         render: "#mychart",
         legend: leftLegend()
     }, {
-        name: "Left Legend Items Text Test",
+        name: "Pie Left Legend Items Text Test",
 
-        testLegend: testLegendItemsText
+        testLegend: testPieLegendItemsText
     });
     
-    suite.add(NoLegendTest);
-    suite.add(TopLegendTest);
-    suite.add(RightLegendTest);
-    suite.add(BottomLegendTest);
-    suite.add(LeftLegendTest);
-    suite.add(TopLegendPositionTest);
-    suite.add(RightLegendPositionTest);
-    suite.add(BottomLegendPositionTest);
-    suite.add(LeftLegendPositionTest);
-    suite.add(TopLegendItemsLengthTest);
-    suite.add(RightLegendItemsLengthTest);
-    suite.add(BottomLegendItemsLengthTest);
-    suite.add(LeftLegendItemsLengthTest);
-    suite.add(TopLegendItemsTextTest);
-    suite.add(RightLegendItemsTextTest);
-    suite.add(BottomLegendItemsTextTest);
-    suite.add(LeftLegendItemsTextTest);
+    suite.add(PieNoLegendTest);
+    suite.add(PieTopLegendTest);
+    suite.add(PieRightLegendTest);
+    suite.add(PieBottomLegendTest);
+    suite.add(PieLeftLegendTest);
+    suite.add(PieTopLegendPositionTest);
+    suite.add(PieRightLegendPositionTest);
+    suite.add(PieBottomLegendPositionTest);
+    suite.add(PieLeftLegendPositionTest);
+    suite.add(PieTopLegendItemsLengthTest);
+    suite.add(PieRightLegendItemsLengthTest);
+    suite.add(PieBottomLegendItemsLengthTest);
+    suite.add(PieLeftLegendItemsLengthTest);
+    suite.add(PieTopLegendItemsTextTest);
+    suite.add(PieRightLegendItemsTextTest);
+    suite.add(PieBottomLegendItemsTextTest);
+    suite.add(PieLeftLegendItemsTextTest);
 
     //create the console
     var r = new Y.Console({

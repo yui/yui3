@@ -3,14 +3,14 @@
 
     <property file="loader.meta.properties" />
     <target name="loader">
-        <echo level="info">Custom YUI Loader Build Task: ${component.builddir}</echo>
+        <echo level="verbose">Custom YUI Loader Build Task: ${component.builddir}</echo>
 
         <for param="file">
             <path>
                 <fileset dir="${component.builddir}/" includes="*.js"/>
             </path>
             <sequential>
-                <echo level="info">Filtering: @{file}</echo>
+                <echo level="verbose">Filtering: @{file}</echo>
                 <move file="@{file}" tofile="@{file}.tmp" />
                 <move file="@{file}.tmp" tofile="@{file}">
                     <filterchain>

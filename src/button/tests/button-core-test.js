@@ -97,7 +97,7 @@ YUI.add('button-core-test', function (Y) {
             Assert.areEqual(1, eventsTriggered);
             button.set('label', 'somethingElse');
             Assert.areEqual(2, eventsTriggered);
-        },
+        }
     }));
     
     suite.add(new Y.Test.Case({

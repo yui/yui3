@@ -584,13 +584,16 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     _redraw: function()
     {
         var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
-        this._contentNode.style.left = box.left + "px";
-        this._contentNode.style.top = box.top + "px";
-        this._contentNode.setAttribute("width", box.width);
-        this._contentNode.setAttribute("height", box.height);
-        this._contentNode.style.width = box.width + "px";
-        this._contentNode.style.height = box.height + "px";
-        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
+        if(this._contentNode)
+        {
+            this._contentNode.style.left = box.left + "px";
+            this._contentNode.style.top = box.top + "px";
+            this._contentNode.setAttribute("width", box.width);
+            this._contentNode.setAttribute("height", box.height);
+            this._contentNode.style.width = box.width + "px";
+            this._contentNode.style.height = box.height + "px";
+            this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
+        }
         if(this.get("autoSize"))
         {
             this.set("width", box.right);
@@ -598,7 +601,10 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         }
         if(this._frag)
         {
-            this._contentNode.appendChild(this._frag);
+            if(this._contentNode)
+            {
+                this._contentNode.appendChild(this._frag);
+            }
             this._frag = null;
         }
     },

@@ -9,7 +9,7 @@ YUI().use('button', function(Y){
             'pressedChange': function () {
                 var button = this,
                     pressed = button.get('pressed'),
-                    newLabel = 'this' + (pressed ? ' selected ' : ' unselected ') + 'button' ;
+                    newLabel = 'this ' + (pressed ? 'pressed ' : 'depressed') + ' button :' + (pressed ? ')' : '(');
                 
                 button.set('label', newLabel);
             }
