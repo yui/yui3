@@ -177,6 +177,9 @@ IO.prototype = {
             globalEvent = "io:" + eventName,
             trnEvent    = "io-trn:" + eventName;
 
+        // Workaround for #2532107
+        this.detach(trnEvent);
+
         if (transaction.e) {
             transaction.c = { status: 0, statusText: transaction.e };
         }
