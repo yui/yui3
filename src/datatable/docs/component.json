@@ -84,6 +84,16 @@
 	        "useModules": ["datatable-scroll"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-recordtype",
+            "displayName": "Creating columns using recordType attribute",
+            "modules": ["datatable", "datatype"],
+            "description": "DataTable with columns calculated from other columns.",
+            "useModules": ["datatable"],
+
+            "hideTableOfContents": true
         }
     ]
 }
