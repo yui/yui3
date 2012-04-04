@@ -1,0 +1,43 @@
+<style scoped>
+/* custom styles for this example */
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
+
+/* css to counter global site css */
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
+.numeric { text-align: right; }
+.percentage { text-align: center; }
+.loss { color: red; }
+.gain { color: green; }
+</style>
+
+<div class="intro">
+    <p>Some introductory content.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+	<div id="dtable"></div>
+	<script>
+    {{>datatable-recordtype-js}}
+    </script>
+</div>
+
+<h2>All about this example</h2>
+
+<p>The content, yo.</p>
+
+```
+{{>datatable-recordtype-js}}
+```
+
