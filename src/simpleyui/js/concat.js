@@ -255,6 +255,7 @@ proto = {
             config = this.config,
             mods = config.modules,
             groups = config.groups,
+            aliases = config.aliases,
             loader = this.Env._loader;
 
         for (name in o) {
@@ -262,6 +263,8 @@ proto = {
                 attr = o[name];
                 if (mods && name == 'modules') {
                     clobber(mods, attr);
+                } else if (aliases && name == 'aliases') {
+                    clobber(aliases, attr);
                 } else if (groups && name == 'groups') {
                     clobber(groups, attr);
                 } else if (name == 'win') {
@@ -580,7 +583,7 @@ with any configuration info required for the module.
             if (instances.hasOwnProperty(i)) {
                 loader = instances[i].Env._loader;
                 if (loader) {
-                    if (!loader.moduleInfo[name]) {
+                    if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
                         loader.addModule(details, name);
                     }
                 }
@@ -934,7 +937,6 @@ with any configuration info required for the module.
                     ret = true,
                     data = response.data;
 
-
                 Y._loading = false;
 
                 if (data) {
@@ -952,8 +954,8 @@ with any configuration info required for the module.
                 }
 
                 if (redo && data) {
-                    Y._loading = false;
-                    Y._use(args, function() {
+                    Y._loading = true;
+                    Y._use(missing, function() {
                         Y.log('Nested use callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
                             Y._notify(callback, response, data);
@@ -1632,15 +1634,35 @@ overwriting other scripts configs.
  *      modules: {
  *          mymod1: {
  *              requires: ['node'],
- *              fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ *              fullpath: '/mymod1/mymod1.js'
  *          },
  *          mymod2: {
  *              requires: ['mymod1'],
- *              fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
- *          }
+ *              fullpath: '/mymod2/mymod2.js'
+ *          },
+ *          mymod3: '/js/mymod3.js',
+ *          mycssmod: '/css/mycssmod.css'
  *      }
  *
+ *
  * @property modules
+ * @type object
+ */
+
+/**
+ * Aliases are dynamic groups of modules that can be used as
+ * shortcuts.
+ *
+ *      YUI({
+ *          aliases: {
+ *              davglass: [ 'node', 'yql', 'dd' ],
+ *              mine: [ 'davglass', 'autocomplete']
+ *          }
+ *      }).use('mine', function(Y) {
+ *          //Node, YQL, DD &amp; AutoComplete available here..
+ *      });
+ *
+ * @property aliases
  * @type object
  */
 
@@ -2109,27 +2131,32 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
 };
 
 /**
- * <p>
- * Returns a string representing the type of the item passed in.
- * </p>
- *
- * <p>
- * Known issues:
- * </p>
- *
- * <ul>
- *   <li>
- *     <code>typeof HTMLElementCollection</code> returns function in Safari, but
- *     <code>Y.type()</code> reports object, which could be a good thing --
- *     but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
- *   </li>
- * </ul>
- *
- * @method type
- * @param o the item to test.
- * @return {string} the detected type.
- * @static
- */
+Returns one of the following strings, representing the type of the item passed
+in:
+
+ * "array"
+ * "boolean"
+ * "date"
+ * "error"
+ * "function"
+ * "null"
+ * "number"
+ * "object"
+ * "regexp"
+ * "string"
+ * "undefined"
+
+Known issues:
+
+ * `typeof HTMLElementCollection` returns function in Safari, but
+    `Y.Lang.type()` reports "object", which could be a good thing --
+    but it actually caused the logic in <code>Y.Lang.isObject</code> to fail.
+
+@method type
+@param o the item to test.
+@return {string} the detected type.
+@static
+**/
 L.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
@@ -2519,9 +2546,7 @@ utilities for the library.
 var CACHED_DELIMITER = '__',
 
     hasOwn   = Object.prototype.hasOwnProperty,
-    isObject = Y.Lang.isObject,
-
-    win = Y.config.win;
+    isObject = Y.Lang.isObject;
 
 /**
 Returns a wrapper for a function which caches the return value of that function,
@@ -2580,11 +2605,15 @@ in both Safari and MobileSafari browsers:
 @since 3.5.0
 **/
 Y.getLocation = function () {
-    // The reference to the `window` object created outside this function's
-    // scope is safe to hold on to, but it is not safe to do so with the
-    // `location` object. The WebKit engine used in Safari and MobileSafari will
-    // "disconnect" the `location` object from the `window` when a page is
-    // restored from back/forward history cache.
+    // It is safer to look this up every time because yui-base is attached to a
+    // YUI instance before a user's config is applied; i.e. `Y.config.win` does
+    // not point the correct window object when this file is loaded.
+    var win = Y.config.win;
+
+    // It is not safe to hold a reference to the `location` object outside the
+    // scope in which it is being used. The WebKit engine used in Safari and
+    // MobileSafari will "disconnect" the `location` object from the `window`
+    // when a page is restored from back/forward history cache.
     return win && win.location;
 };
 
@@ -3475,11 +3504,14 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
             }
-
-            m = ua.match(/Chrome\/([^\s]*)/);
-            if (m && m[1]) {
-                o.chrome = numberify(m[1]); // Chrome
+            
+            m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
+            if (m && m[1] && m[2]) {
+                o.chrome = numberify(m[2]); // Chrome
                 o.safari = 0; //Reset safari back to 0
+                if (m[1] === 'CrMo') {
+                    o.mobile = 'chrome';
+                }
             } else {
                 m = ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {
@@ -3553,17 +3585,17 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","model","model-list","router","view"],
+    "app": ["app-base","app-transitions","model","model-list","router","view"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
-    "button": ["button-base","button-group","cssbutton"],
     "cache": ["cache-base","cache-offline","cache-plugin"],
     "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-scroll","datatable-datasource","datatable-sort"],
+    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
+    "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
@@ -3587,7 +3619,7 @@ YUI.Env.aliases = {
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
     "text": ["text-accentfold","text-wordbreak"],
-    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"]
+    "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
 
 
@@ -3605,6 +3637,9 @@ Provides dynamic loading of remote JavaScript and CSS resources.
 **/
 
 var Lang = Y.Lang,
+
+    CUSTOM_ATTRS, // defined lazily in Y.Get.Transaction._createNode()
+
     Get, Transaction;
 
 Y.Get = Get = {
@@ -4120,10 +4155,18 @@ Y.Get = Get = {
             async: doc && doc.createElement('script').async === true,
 
             // True if this browser fires an event when a dynamically injected
+            // link node fails to load. This is currently true for Firefox 9+
+            // and WebKit 535.24+.
+            cssFail: ua.gecko >= 9 || ua.webkit >= 535.24,
+
+            // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
-            // and Firefox 9+. Note that IE versions <9 fire the DOM 0 "onload"
-            // event, but not "load". All versions of IE fire "onload".
-            cssLoad: !!(ua.gecko ? ua.gecko >= 9 : !ua.webkit),
+            // Firefox 9+, and WebKit 535.24+. Note that IE versions <9 fire the
+            // DOM 0 "onload" event, but not "load". All versions of IE fire
+            // "onload".
+            // davglass: Seems that Chrome on Android needs this to be false.
+            cssLoad: ((!ua.gecko && !ua.webkit) || 
+                ua.gecko >= 9 || ua.webkit >= 535.24) && !(ua.chrome && ua.chrome <=18),
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -4324,8 +4367,8 @@ Get.Transaction = Transaction = function (requests, options) {
     self._waiting   = 0;
 
     // Deprecated pre-3.5.0 properties.
-    self.tId   = self.id; // Use `id` instead.
-    self.win   = options.win || Y.config.win;
+    self.tId = self.id; // Use `id` instead.
+    self.win = options.win || Y.config.win;
 };
 
 /**
@@ -4499,11 +4542,25 @@ Transaction.prototype = {
     // -- Protected Methods ----------------------------------------------------
     _createNode: function (name, attrs, doc) {
         var node = doc.createElement(name),
-            attr;
+            attr, testEl;
+
+        if (!CUSTOM_ATTRS) {
+            // IE6 and IE7 expect property names rather than attribute names for
+            // certain attributes. Rather than sniffing, we do a quick feature
+            // test the first time _createNode() runs to determine whether we
+            // need to provide a workaround.
+            testEl = doc.createElement('div');
+            testEl.setAttribute('class', 'a');
+
+            CUSTOM_ATTRS = testEl.className === 'a' ? {} : {
+                'for'  : 'htmlFor',
+                'class': 'className'
+            };
+        }
 
         for (attr in attrs) {
             if (attrs.hasOwnProperty(attr)) {
-                node.setAttribute(attr, attrs[attr]);
+                node.setAttribute(CUSTOM_ATTRS[attr] || attr, attrs[attr]);
             }
         }
 
@@ -4606,7 +4663,7 @@ Transaction.prototype = {
             node         = req.node,
             self         = this,
             ua           = Y.UA,
-            nodeType;
+            cssTimeout, nodeType;
 
         if (!node) {
             if (isScript) {
@@ -4626,8 +4683,13 @@ Transaction.prototype = {
         }
 
         function onLoad() {
+            if (cssTimeout) {
+                clearTimeout(cssTimeout);
+            }
+
             self._progress(null, req);
         }
+
 
         // Deal with script asynchronicity.
         if (isScript) {
@@ -4688,6 +4750,12 @@ Transaction.prototype = {
             // evens the playing field with older IEs.
             node.onerror = onError;
             node.onload  = onLoad;
+
+            // If this browser doesn't fire an event when CSS fails to load,
+            // fail after a timeout to avoid blocking the transaction queue.
+            if (!env.cssFail && !isScript) {
+                cssTimeout = setTimeout(onError, req.timeout || 3000);
+            }
         }
 
         this._waiting += 1;
@@ -4939,8 +5007,14 @@ Y.mix(Y.namespace('Features'), {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.py */
 var add = Y.Features.add;
-// graphics-canvas-default
+// io-nodejs
 add('load', '0', {
+    "name": "io-nodejs", 
+    "trigger": "io-base", 
+    "ua": "nodejs"
+});
+// graphics-canvas-default
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4952,7 +5026,7 @@ add('load', '0', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '1', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -4971,7 +5045,7 @@ add('load', '1', {
     "trigger": "autocomplete-list"
 });
 // graphics-svg
-add('load', '2', {
+add('load', '3', {
     "name": "graphics-svg", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4983,19 +5057,15 @@ add('load', '2', {
 }, 
     "trigger": "graphics"
 });
-// history-hash-ie
-add('load', '3', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
+// editor-para-ie
+add('load', '4', {
+    "name": "editor-para-ie", 
+    "trigger": "editor-para", 
+    "ua": "ie", 
+    "when": "instead"
 });
 // graphics-vml-default
-add('load', '4', {
+add('load', '5', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5005,7 +5075,7 @@ add('load', '4', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '5', {
+add('load', '6', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5017,14 +5087,19 @@ add('load', '5', {
 }, 
     "trigger": "graphics"
 });
-// widget-base-ie
-add('load', '6', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+// history-hash-ie
+add('load', '7', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
 });
 // transition-timer
-add('load', '7', {
+add('load', '8', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5040,7 +5115,7 @@ add('load', '7', {
     "trigger": "transition"
 });
 // dom-style-ie
-add('load', '8', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5071,7 +5146,7 @@ add('load', '8', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '9', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5081,8 +5156,14 @@ add('load', '9', {
 }, 
     "trigger": "selector"
 });
+// widget-base-ie
+add('load', '11', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
 // event-base-ie
-add('load', '10', {
+add('load', '12', {
     "name": "event-base-ie", 
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
@@ -5091,7 +5172,7 @@ add('load', '10', {
     "trigger": "node-base"
 });
 // dd-gestures
-add('load', '11', {
+add('load', '13', {
     "name": "dd-gestures", 
     "test": function(Y) {
     return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
@@ -5099,13 +5180,28 @@ add('load', '11', {
     "trigger": "dd-drag"
 });
 // scrollview-base-ie
-add('load', '12', {
+add('load', '14', {
     "name": "scrollview-base-ie", 
     "trigger": "scrollview-base", 
     "ua": "ie"
 });
+// app-transitions-native
+add('load', '15', {
+    "name": "app-transitions-native", 
+    "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+    "trigger": "app-transitions"
+});
 // graphics-canvas
-add('load', '13', {
+add('load', '16', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5117,7 +5213,7 @@ add('load', '13', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '14', {
+add('load', '17', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5914,8 +6010,14 @@ Y.mix(Y.namespace('Features'), {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.py */
 var add = Y.Features.add;
-// graphics-canvas-default
+// io-nodejs
 add('load', '0', {
+    "name": "io-nodejs", 
+    "trigger": "io-base", 
+    "ua": "nodejs"
+});
+// graphics-canvas-default
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5927,7 +6029,7 @@ add('load', '0', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '1', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -5946,7 +6048,7 @@ add('load', '1', {
     "trigger": "autocomplete-list"
 });
 // graphics-svg
-add('load', '2', {
+add('load', '3', {
     "name": "graphics-svg", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5958,19 +6060,15 @@ add('load', '2', {
 }, 
     "trigger": "graphics"
 });
-// history-hash-ie
-add('load', '3', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
+// editor-para-ie
+add('load', '4', {
+    "name": "editor-para-ie", 
+    "trigger": "editor-para", 
+    "ua": "ie", 
+    "when": "instead"
 });
 // graphics-vml-default
-add('load', '4', {
+add('load', '5', {
     "name": "graphics-vml-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5980,7 +6078,7 @@ add('load', '4', {
     "trigger": "graphics"
 });
 // graphics-svg-default
-add('load', '5', {
+add('load', '6', {
     "name": "graphics-svg-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5992,14 +6090,19 @@ add('load', '5', {
 }, 
     "trigger": "graphics"
 });
-// widget-base-ie
-add('load', '6', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+// history-hash-ie
+add('load', '7', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
 });
 // transition-timer
-add('load', '7', {
+add('load', '8', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6015,7 +6118,7 @@ add('load', '7', {
     "trigger": "transition"
 });
 // dom-style-ie
-add('load', '8', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -6046,7 +6149,7 @@ add('load', '8', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '9', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6056,8 +6159,14 @@ add('load', '9', {
 }, 
     "trigger": "selector"
 });
+// widget-base-ie
+add('load', '11', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
 // event-base-ie
-add('load', '10', {
+add('load', '12', {
     "name": "event-base-ie", 
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
@@ -6066,7 +6175,7 @@ add('load', '10', {
     "trigger": "node-base"
 });
 // dd-gestures
-add('load', '11', {
+add('load', '13', {
     "name": "dd-gestures", 
     "test": function(Y) {
     return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
@@ -6074,13 +6183,28 @@ add('load', '11', {
     "trigger": "dd-drag"
 });
 // scrollview-base-ie
-add('load', '12', {
+add('load', '14', {
     "name": "scrollview-base-ie", 
     "trigger": "scrollview-base", 
     "ua": "ie"
 });
+// app-transitions-native
+add('load', '15', {
+    "name": "app-transitions-native", 
+    "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+}, 
+    "trigger": "app-transitions"
+});
 // graphics-canvas
-add('load', '13', {
+add('load', '16', {
     "name": "graphics-canvas", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -6092,7 +6216,7 @@ add('load', '13', {
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '14', {
+add('load', '17', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -6147,6 +6271,28 @@ Y_DOM = {
     byId: function(id, doc) {
         // handle dupe IDs and IE name collision
         return Y_DOM.allById(id, doc)[0] || null;
+    },
+
+    getId: function(node) {
+        var id;
+        // HTMLElement returned from FORM when INPUT name === "id"
+        // IE < 8: HTMLCollection returned when INPUT id === "id"
+        // via both getAttribute and form.id 
+        if (node.id && !node.id.tagName && !node.id.item) {
+            id = node.id;
+        } else if (node.attributes && node.attributes.id) {
+            id = node.attributes.id.value;
+        }
+
+        return id;
+    },
+
+    setId: function(node, id) {
+        if (node.setAttribute) {
+            node.setAttribute('id', id);
+        } else {
+            node.id = id;
+        }
     },
 
     /*
@@ -6457,6 +6603,10 @@ Y.DOM = Y_DOM;
 }, '@VERSION@' ,{requires:['oop','features']});
 YUI.add('dom-base', function(Y) {
 
+/**
+* @for DOM
+* @module dom
+*/
 var documentElement = Y.config.doc.documentElement,
     Y_DOM = Y.DOM,
     TAG_NAME = 'tagName',
@@ -6532,7 +6682,7 @@ Y.mix(Y_DOM, {
 
     /**
      * Provides a normalized attribute interface. 
-     * @method getAttibute
+     * @method getAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
@@ -6652,7 +6802,7 @@ Y.mix(Y_DOM.VALUE_GETTERS, {
             // TODO: implement multipe select
             if (node.multiple) {
                 Y.log('multiple select normalization not implemented', 'warn', 'DOM');
-            } else {
+            } else if (node.selectedIndex > -1) {
                 val = Y_DOM.getValue(options[node.selectedIndex]);
             }
         }
@@ -6861,11 +7011,12 @@ Y.mix(Y.DOM, {
                     ret = nodes[0].nextSibling;
                 } else {
                     nodes[0].parentNode.removeChild(nodes[0]); 
-                     ret = Y_DOM._nl2frag(nodes, doc);
+                    ret = Y_DOM._nl2frag(nodes, doc);
                 }
             } else { // return multiple nodes as a fragment
                  ret = Y_DOM._nl2frag(nodes, doc);
             }
+
         }
 
         return ret;
@@ -6887,7 +7038,6 @@ Y.mix(Y.DOM, {
                 ret.appendChild(nodes[i]); 
             }
         } // else inline with log for minification
-        else { Y.log('unable to convert ' + nodes + ' to fragment', 'warn', 'dom'); }
         return ret;
     },
 
@@ -7099,7 +7249,7 @@ Y.mix(Y.DOM, {
      * of box model, border, padding, etc.
      * @method setWidth
      * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
+     * @param {String|Number} size The pixel height to size to
      */
 
     setWidth: function(node, size) {
@@ -7111,7 +7261,7 @@ Y.mix(Y.DOM, {
      * of box model, border, padding, etc.
      * @method setHeight
      * @param {HTMLElement} element The DOM element. 
-     * @param {String|Int} size The pixel height to size to
+     * @param {String|Number} size The pixel height to size to
      */
 
     setHeight: function(node, size) {
@@ -8059,7 +8209,7 @@ Y.mix(Y_DOM, {
      * (display:none or elements not appended return false).
      * @method getX
      * @param element The target element
-     * @return {Int} The X position of the element
+     * @return {Number} The X position of the element
      */
 
     getX: function(node) {
@@ -8072,7 +8222,7 @@ Y.mix(Y_DOM, {
      * (display:none or elements not appended return false).
      * @method getY
      * @param element The target element
-     * @return {Int} The Y position of the element
+     * @return {Number} The Y position of the element
      */
 
     getY: function(node) {
@@ -8130,7 +8280,7 @@ Y.mix(Y_DOM, {
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param element The target element
-     * @param {Int} x The X values for new position (coordinates are page-based)
+     * @param {Number} x The X values for new position (coordinates are page-based)
      */
     setX: function(node, x) {
         return Y_DOM.setXY(node, [x, null]);
@@ -8141,7 +8291,7 @@ Y.mix(Y_DOM, {
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param element The target element
-     * @param {Int} y The Y values for new position (coordinates are page-based)
+     * @param {Number} y The Y values for new position (coordinates are page-based)
      */
     setY: function(node, y) {
         return Y_DOM.setXY(node, [null, y]);
@@ -8252,12 +8402,12 @@ Y.mix(DOM, {
     },
 
     /**
-     * Find the intersect information for the passes nodes.
+     * Find the intersect information for the passed nodes.
      * @method intersect
      * @for DOM
      * @param {HTMLElement} element The first element 
      * @param {HTMLElement | Object} element2 The element or region to check the interect with
-     * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance e.g. DragDrop)
      * @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
      */
     intersect: function(node, node2, altRegion) {
@@ -8290,9 +8440,10 @@ Y.mix(DOM, {
      * Check if any part of this node is in the passed region
      * @method inRegion
      * @for DOM
-     * @param {Object} node2 The node to get the region from or an Object literal of the region
-     * $param {Boolean} all Should all of the node be inside the region
-     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} node The node to get the region from
+     * @param {Object} node2 The second node to get the region from or an Object literal of the region
+     * @param {Boolean} all Should all of the node be inside the region
+     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inRegion: function(node, node2, all, altRegion) {
@@ -8332,7 +8483,7 @@ Y.mix(DOM, {
      * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {Boolean} all Should all of the node be inside the region
-     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance e.g. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
     inViewportRegion: function(node, all, altRegion) {
@@ -8405,7 +8556,31 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     OWNER_DOCUMENT = 'ownerDocument';
 
 var Selector = {
+    _types: {
+        esc: {
+            token: '\uE000',
+            re: /\\[:\[\]\(\)#\.\'\>+~"]/gi
+        },
+
+        attr: {
+            token: '\uE001',
+            re: /(\[[^\]]*\])/g
+        },
+
+        pseudo: {
+            token: '\uE002',
+            re: /(\([^\)]*\))/g
+        }
+    },
+
     useNative: true,
+
+    _escapeId: function(id) {
+        if (id) {
+            id = id.replace(/([:\[\]\(\)#\.'<>+~"])/g,'\\$1');
+        }
+        return id;
+    },
 
     _compare: ('sourceIndex' in Y.config.doc.documentElement) ?
         function(nodeA, nodeB) {
@@ -8519,19 +8694,74 @@ var Selector = {
 
     },
 
+    _replaceSelector: function(selector) {
+        var esc = Y.Selector._parse('esc', selector), // pull escaped colon, brackets, etc. 
+            attrs,
+            pseudos;
+
+        // first replace escaped chars, which could be present in attrs or pseudos
+        selector = Y.Selector._replace('esc', selector);
+
+        // then replace pseudos before attrs to avoid replacing :not([foo])
+        pseudos = Y.Selector._parse('pseudo', selector);
+        selector = Selector._replace('pseudo', selector);
+
+        attrs = Y.Selector._parse('attr', selector);
+        selector = Y.Selector._replace('attr', selector);
+
+        return {
+            esc: esc,
+            attrs: attrs,
+            pseudos: pseudos,
+            selector: selector
+        }
+    },
+
+    _restoreSelector: function(replaced) {
+        var selector = replaced.selector;
+        selector = Y.Selector._restore('attr', selector, replaced.attrs);
+        selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);
+        selector = Y.Selector._restore('esc', selector, replaced.esc);
+        return selector;
+    },
+
+    _replaceCommas: function(selector) {
+        var replaced = Y.Selector._replaceSelector(selector),
+            selector = replaced.selector;
+
+        if (selector) {
+            selector = selector.replace(',', '\uE007', 'g');
+            replaced.selector = selector;
+            selector = Y.Selector._restoreSelector(replaced);
+        }
+        return selector;
+    },
+
     // allows element scoped queries to begin with combinator
     // e.g. query('> p', document.body) === query('body > p')
     _splitQueries: function(selector, node) {
-        var groups = selector.split(','),
+        if (selector.indexOf(',') > -1) {
+            selector = Y.Selector._replaceCommas(selector);
+        }
+
+        var groups = selector.split('\uE007'), // split on replaced comma token
             queries = [],
             prefix = '',
-            i, len;
+            id,
+            i,
+            len;
 
         if (node) {
             // enforce for element scoping
-            if (node.tagName) {
-                node.id = node.id || Y.guid();
-                prefix = '[id="' + node.id + '"] ';
+            if (node.nodeType === 1) { // Elements only
+                id = Y.Selector._escapeId(Y.DOM.getId(node));
+
+                if (!id) {
+                    id = Y.guid();
+                    Y.DOM.setId(node, id);
+                }
+            
+                prefix = '[id="' + id + '"] ';
             }
 
             for (i = 0, len = groups.length; i < len; ++i) {
@@ -8583,6 +8813,7 @@ var Selector = {
             item,
             items,
             frag,
+            id,
             i, j, group;
 
         if (node && node.tagName) { // only test HTMLElements
@@ -8605,11 +8836,14 @@ var Selector = {
                 }
                 root = root || node[OWNER_DOCUMENT];
 
-                if (!node.id) {
-                    node.id = Y.guid();
+                id = Y.Selector._escapeId(Y.DOM.getId(node));
+                if (!id) {
+                    id = Y.guid();
+                    Y.DOM.setId(node, id);
                 }
+
                 for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                    group += '[id="' + node.id + '"]';
+                    group += '[id="' + id + '"]';
                     items = Y.Selector.query(group, root);
 
                     for (j = 0; item = items[j++];) {
@@ -8645,6 +8879,26 @@ var Selector = {
         return Y.DOM.ancestor(element, function(n) {
             return Y.Selector.test(n, selector);
         }, testSelf);
+    },
+
+    _parse: function(name, selector) {
+        return selector.match(Y.Selector._types[name].re);
+    },
+
+    _replace: function(name, selector) {
+        var o = Y.Selector._types[name];
+        return selector.replace(o.re, o.token);
+    },
+
+    _restore: function(name, selector, items) {
+        if (items) {
+            var token = Y.Selector._types[name].token,
+                i, len;
+            for (i = 0, len = items.length; i < len; ++i) {
+                selector = selector.replace(token, items[i]);
+            }
+        }
+        return selector;
     }
 };
 
@@ -12498,68 +12752,6 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
-    _prepEvtArgs: function(type, fn, context) {
-        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
-        var args = Y.Array(arguments, 0, true);
-
-        if (args.length < 2) { // type only (event hash) just add nodes
-            args[2] = this._nodes;
-        } else {
-            args.splice(2, 0, this._nodes);
-        }
-
-        args[3] = context || this; // default to NodeList instance as context
-
-        return args;
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * @method on
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @param {Object} context The context to call the handler with.
-     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
-     * when the event fires.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    on: function(type, fn, context) {
-        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an one-time event listener to each Node bound to the NodeList.
-     * @method once
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    once: function(type, fn, context) {
-        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
-    /**
-     * Applies an event listener to each Node bound to the NodeList.
-     * The handler is called only after all on() handlers are called
-     * and the event is not prevented.
-     * @method after
-     * @param {String} type The event being listened for
-     * @param {Function} fn The handler to call when the event fires
-     * @param {Object} context The context to call the handler with.
-     * Default is the NodeList instance.
-     * @return {Object} Returns an event handle that can later be use to detach().
-     * @see Event.on
-     */
-    after: function(type, fn, context) {
-        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
-    },
-
     /**
      * Returns the current number of items in the NodeList.
      * @method size
@@ -12909,7 +13101,6 @@ Y.Node.importMethod(Y.DOM, [
      * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
      * @for Node
-     * @for NodeList
      * @chainable
      * @param {string} name The attribute name
      * @param {string} value The value to set
@@ -12920,7 +13111,6 @@ Y.Node.importMethod(Y.DOM, [
      * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
      * @for Node
-     * @for NodeList
      * @param {string} name The attribute name
      * @return {string} The attribute value
      */
@@ -13237,7 +13427,10 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Replaces the node's current content with the content.
+     * Note that this passes to innerHTML and is not escaped.
+     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
      * @method setContent
+     * @deprecated Use setHTML
      * @param {String | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
      * @chainable
      */
@@ -13249,6 +13442,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns the node's current content (e.g. innerHTML)
      * @method getContent
+     * @deprecated Use getHTML
      * @return {String} The current content
      */
     getContent: function(content) {
@@ -13258,6 +13452,8 @@ Y.mix(Y_Node.prototype, {
 
 /**
  * Replaces the node's current html content with the content provided.
+ * Note that this passes to innerHTML and is not escaped.
+ * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
  * @method setHTML
  * @param {String | HTML | Node | HTMLElement | NodeList | HTMLCollection} content The content to insert
  * @chainable
@@ -13266,7 +13462,7 @@ Y.Node.prototype.setHTML = Y.Node.prototype.setContent;
 
 /**
  * Returns the node's current html content (e.g. innerHTML)
- * @method getContent
+ * @method getHTML
  * @return {String} The html content
  */
 Y.Node.prototype.getHTML = Y.Node.prototype.getContent;
@@ -13307,16 +13503,30 @@ Y.NodeList.importMethod(Y.Node.prototype, [
     'prepend',
 
     /** Called on each Node instance
+      * Note that this passes to innerHTML and is not escaped.
+      * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
       * @method setContent
-      * @see Node.setContent
+      * @deprecated Use setHTML
       */
     'setContent',
 
     /** Called on each Node instance
       * @method getContent
-      * @see Node.getContent
+      * @deprecated Use getHTML
       */
-    'getContent'
+    'getContent',
+
+    /** Called on each Node instance
+      * @method setHTML
+      * Note that this passes to innerHTML and is not escaped.
+      * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+      */
+    'setHTML',
+
+    /** Called on each Node instance
+      * @method getHTML
+      */
+    'getHTML'
 ]);
 /**
  * @module node
@@ -13772,8 +13982,20 @@ Y.mix(Y_Node.prototype, {
         return Y.DOM.getStyle(this._node, 'display') === 'none';
     },
 
+    /**
+     * Displays or hides the node.
+     * If the "transition" module is loaded, toggleView optionally
+     * animates the toggling of the node using either the default
+     * transition effect ('fadeIn'), or the given named effect.
+     * @method toggleView
+     * @for Node
+     * @param {Boolean} [on] An optional boolean value to force the node to be shown or hidden
+     * @param {Function} [callback] An optional function to run after the transition completes.
+     * @chainable
+     */
     toggleView: function(on, callback) {
         this._toggleView.apply(this, arguments);
+        return this;
     },
 
     _toggleView: function(on, callback) {
@@ -13854,6 +14076,16 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'hide',
 
+    /**
+     * Displays or hides each node.
+     * If the "transition" module is loaded, toggleView optionally
+     * animates the toggling of the nodes using either the default
+     * transition effect ('fadeIn'), or the given named effect.
+     * @method toggleView
+     * @param {Boolean} [on] An optional boolean value to force the nodes to be shown or hidden
+     * @param {Function} [callback] An optional function to run after the transition completes.
+     * @chainable
+     */
     'toggleView'
 ]);
 
@@ -15603,7 +15835,7 @@ YUI.add('pluginhost-base', function(Y) {
          *
          * @method hasPlugin
          * @param {String} ns The plugin's namespace
-         * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
+         * @return {Plugin} Returns a truthy value (the plugin instance) if present, or undefined if not.
          */
         hasPlugin : function(ns) {
             return (this._plugins[ns] && this[ns]);
@@ -15815,7 +16047,7 @@ var toArray          = Y.Array,
  * @param fn {Function} the callback function to execute.  This function
  *              will be provided the event object for the delegated event.
  * @param el {String|node} the element that is the delegation container
- * @param spec {string|Function} a selector that must match the target of the
+ * @param filter {string|Function} a selector that must match the target of the
  *              event or a function to test target and its parents for a match
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
@@ -15976,7 +16208,8 @@ Hosted as a property of the `delegate` method (e.g. `Y.delegate.compileFilter`).
 **/
 delegate.compileFilter = Y.cached(function (selector) {
     return function (target, e) {
-        return selectorTest(target._node, selector, e.currentTarget._node);
+        return selectorTest(target._node, selector,
+            (e.currentTarget === e.target) ? null : e.currentTarget._node);
     };
 });
 
@@ -16016,7 +16249,7 @@ delegate._applyFilter = function (filter, args, ce) {
     if (isString(filter)) {
         while (target) {
             isContainer = (target === container);
-            if (selectorTest(target, filter, (isContainer ?null: container))) {
+            if (selectorTest(target, filter, (isContainer ? null: container))) {
                 match.push(target);
             }
 
@@ -16617,8 +16850,8 @@ YUI.add('io-base', function(Y) {
 
 /**
 Base IO functionality. Provides basic XHR transport support.
-@module io
-@submodule io-base
+@module io-base
+@main io-base
 @for IO
 **/
 
@@ -16629,8 +16862,6 @@ var // List of events that comprise the IO event lifecycle.
     XHR_PROPS = ['status', 'statusText', 'responseText', 'responseXML'],
 
     win = Y.config.win,
-    XHR = win.XMLHttpRequest,
-    XDR = win.XDomainRequest,
     uid = 0;
 
 /**
@@ -16694,7 +16925,7 @@ IO.prototype = {
 
     _init: function(config) {
         var io = this, i, len;
-        
+
         io.cfg = config || {};
 
         Y.augment(io, Y.EventTarget);
@@ -16714,7 +16945,7 @@ IO.prototype = {
     *
     * @method _create
     * @private
-    * @param {Object} config Configuration object subset to determine if
+    * @param {Object} cfg Configuration object subset to determine if
     *                 the transaction is an XDR or file upload,
     *                 requiring an alternate transport.
     * @param {Number} id Transaction id
@@ -16726,57 +16957,51 @@ IO.prototype = {
                 id : Y.Lang.isNumber(id) ? id : io._id++,
                 uid: io._uid
             },
-            xdrConfig = config.xdr,
-            use = xdrConfig && xdrConfig.use,
-            ie  = (xdrConfig && xdrConfig.use === 'native' && XDR),
-            transport = io._transport;
+            alt = config.xdr ? config.xdr.use : null,
+            form = config.form && config.form.upload ? 'iframe' : null,
+            use;
 
-        if (!use) {
-            use = (config.form && config.form.upload) ? 'iframe' : 'xhr';
+        if (alt === 'native') {
+            // Non-IE  can use XHR level 2 and not rely on an
+            // external transport.
+            alt = Y.UA.ie ? 'xdr' : null;
         }
 
-        switch (use) {
-            case 'native':
-            case 'xhr':
-                transaction.c = ie ?
-                    new XDR() :
-                    XHR ?
-                        new XHR() :
-                        new ActiveXObject('Microsoft.XMLHTTP');
+        use = alt || form;
+        transaction = use ? Y.merge(Y.IO.customTransport(use), transaction) :
+                            Y.merge(Y.IO.defaultTransport(), transaction);
 
-				if (win && win.FormData && config.data instanceof FormData) {
-					//u = Y.UA.chrome ? transaction.c : transaction.c.upload;
-					transaction.c.upload.onprogress = function (e) {
-						io.progress(transaction, e, config);
-					};
-					transaction.c.onload = function (e) {
-						io.load(transaction, e, config);
-					};
-					transaction.c.onerror = function (e) {
-						io.error(transaction, e, config);
-					};
-					transaction.upload = true;
-				}
+        if (transaction.notify) {
+            config.notify = function (e, t, c) { io.notify(e, t, c); };
+        }
 
-                transaction.transport =  ie ? true : false;
-                break;
-            default:
-                transaction.c = (transport && transport[use]) || {};
-                transaction.transport = true;
+        if (!use) {
+            if (win && win.FormData && config.data instanceof FormData) {
+                transaction.c.upload.onprogress = function (e) {
+                    io.progress(transaction, e, config);
+                };
+                transaction.c.onload = function (e) {
+                    io.load(transaction, e, config);
+                };
+                transaction.c.onerror = function (e) {
+                    io.error(transaction, e, config);
+                };
+                transaction.upload = true;
+            }
         }
 
         return transaction;
     },
 
     _destroy: function(transaction) {
-		if (win && !transaction.transport) {
+        if (win && !transaction.notify && !transaction.xdr) {
             if (XHR && !transaction.upload) {
                 transaction.c.onreadystatechange = null;
             } else if (transaction.upload) {
-				transaction.c.upload.onprogress = null;
-				transaction.c.onload = null;
-				transaction.c.onerror = null;
-			} else if (Y.UA.ie && !transaction.e) {
+                transaction.c.upload.onprogress = null;
+                transaction.c.onload = null;
+                transaction.c.onerror = null;
+            } else if (Y.UA.ie && !transaction.e) {
                 // IE, when using XMLHttpRequest as an ActiveX Object, will throw
                 // a "Type Mismatch" error if the event handler is set to "null".
                 transaction.c.abort();
@@ -16802,7 +17027,10 @@ IO.prototype = {
             globalEvent = "io:" + eventName,
             trnEvent    = "io-trn:" + eventName;
 
-        if (transaction.e) { 
+        // Workaround for #2532107
+        this.detach(trnEvent);
+
+        if (transaction.e) {
             transaction.c = { status: 0, statusText: transaction.e };
         }
 
@@ -16818,22 +17046,22 @@ IO.prototype = {
         ];
 
         if (!emitFacade) {
-            if (eventName === EVENTS[0] || eventName === EVENTS[2] && args) {
+            if (eventName === EVENTS[0] || eventName === EVENTS[2]) {
                 if (args) {
                     params.push(args);
                 }
             } else {
                 if (transaction.evt) {
                     params.push(transaction.evt);
-                } else { 
-					params.push(transaction.c);
+                } else {
+                    params.push(transaction.c);
                 }
                 if (args) {
                     params.push(args);
                 }
             }
         }
-        
+
         params.unshift(globalEvent);
         // Fire global events.
         io.fire.apply(io, params);
@@ -16946,7 +17174,7 @@ IO.prototype = {
     progress: function(transaction, e, config) {
        /**
         * Signals the interactive state during a file upload transaction.
-		* This event fires after io:start and before io:complete.
+        * This event fires after io:start and before io:complete.
         * @event io:progress
         */
         transaction.evt = e;
@@ -17059,7 +17287,7 @@ IO.prototype = {
     _startTimeout: function(transaction, timeout) {
         var io = this;
 
-        io._timeout[transaction.id] = win.setTimeout(function() {
+        io._timeout[transaction.id] = setTimeout(function() {
             io._abort(transaction, 'timeout');
         }, timeout);
     },
@@ -17072,7 +17300,7 @@ IO.prototype = {
     * @param {Number} id - Transaction id.
     */
     _clearTimeout: function(id) {
-        win.clearTimeout(this._timeout[id]);
+        clearTimeout(this._timeout[id]);
         delete this._timeout[id];
     },
 
@@ -17122,7 +17350,7 @@ IO.prototype = {
             }
 
             // Yield in the event of request timeout or abort.
-            win.setTimeout(function() {
+            setTimeout(function() {
                 io.complete(transaction, config);
                 io._result(transaction, config);
             }, 0);
@@ -17251,7 +17479,7 @@ IO.prototype = {
         var transaction, method, i, len, sync, data,
             io = this,
             u = uri,
-			response = {};
+            response = {};
 
         config = config ? Y.Object(config) : {};
         transaction = io._create(config, id);
@@ -17290,16 +17518,20 @@ IO.prototype = {
                     // If Content-Type is defined in the configuration object, or
                     // or as a default header, it will be used instead of
                     // 'application/x-www-form-urlencoded; charset=UTF-8'
-					config.headers = Y.merge({
-						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-					}, config.headers);
+                    config.headers = Y.merge({
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }, config.headers);
                     break;
             }
         }
 
-        if (transaction.transport) {
-            // Cross-domain request or custom transport configured.
+        if (transaction.xdr) {
+            // Route data to io-xdr module for flash and XDomainRequest.
             return io.xdr(u, transaction, config);
+        }
+        else if (transaction.notify) {
+            // Route data to custom transport
+            return transaction.c.send(transaction, uri, config);
         }
 
         if (!sync && !transaction.upload) {
@@ -17331,9 +17563,9 @@ IO.prototype = {
                 // Create a response object for synchronous transactions,
                 // mixing id and arguments properties with the xhr
                 // properties whitelist.
-				for (i = 0, len = XHR_PROPS.length; i < len; ++i) {
-					response[XHR_PROPS[i]] = transaction.c[XHR_PROPS[i]];
-				}
+                for (i = 0, len = XHR_PROPS.length; i < len; ++i) {
+                    response[XHR_PROPS[i]] = transaction.c[XHR_PROPS[i]];
+                }
 
                 response.getAllResponseHeaders = function() {
                     return transaction.c.getAllResponseHeaders();
@@ -17342,14 +17574,14 @@ IO.prototype = {
                 response.getResponseHeader = function(name) {
                     return transaction.c.getResponseHeader(name);
                 };
-                    
+
                 io.complete(transaction, config);
                 io._result(transaction, config);
 
                 return response;
             }
         } catch(e) {
-            if (transaction.transport) {
+            if (transaction.xdr) {
                 // This exception is usually thrown by browsers
                 // that do not support XMLHttpRequest Level 2.
                 // Retry the request with the XDR transport set
@@ -17505,7 +17737,6 @@ Hosted as a property on the `io` function (e.g. `Y.io.header`).
 @param {String} name HTTP header
 @param {String} value HTTP header value
 @static
-@for IO
 **/
 Y.io.header = function(name, value) {
     // Calling IO through the static interface will use and reuse
@@ -17517,6 +17748,96 @@ Y.io.header = function(name, value) {
 Y.IO = IO;
 // Map of all IO instances created.
 Y.io._map = {};
+var XHR = win && win.XMLHttpRequest,
+    XDR = win && win.XDomainRequest,
+    AX = win && win.ActiveXObject;
+
+
+Y.mix(Y.IO, {
+    /**
+    * The ID of the default IO transport, defaults to `xhr`
+    * @property _default
+    * @type {String}
+    * @static
+    */
+    _default: 'xhr',
+    /**
+    *
+    * @method defaultTransport
+    * @static
+    * @param {String} [id] The transport to set as the default, if empty a new transport is created.
+    * @return {Object} The transport object with a `send` method
+    */
+    defaultTransport: function(id) {
+        if (id) {
+            Y.log('Setting default IO to: ' + id, 'info', 'io');
+            Y.IO._default = id;
+        } else {
+            var o = {
+                c: Y.IO.transports[Y.IO._default](),
+                notify: Y.IO._default === 'xhr' ? false : true
+            };
+            Y.log('Creating default transport: ' + Y.IO._default, 'info', 'io');
+            return o;
+        }
+    },
+    /**
+    * An object hash of custom transports available to IO
+    * @property transports
+    * @type {Object}
+    * @static
+    */
+    transports: {
+        xhr: function () {
+            return XHR ? new XMLHttpRequest() :
+                AX ? new ActiveXObject('Microsoft.XMLHTTP') : null;
+        },
+        xdr: function () {
+            return XDR ? new XDomainRequest() : null;
+        },
+        iframe: function () { return {}; },
+        flash: null,
+        nodejs: null
+    },
+    /**
+    * Create a custom transport of type and return it's object
+    * @method customTransport
+    * @param {String} id The id of the transport to create.
+    * @static
+    */
+    customTransport: function(id) {
+        var o = { c: Y.IO.transports[id]() };
+
+        o[(id === 'xdr' || id === 'flash') ? 'xdr' : 'notify'] = true;
+        return o;
+    }
+});
+
+Y.mix(Y.IO.prototype, {
+    /**
+    * Fired from the notify method of the transport which in turn fires
+    * the event on the IO object.
+    * @method notify
+    * @param {String} event The name of the event
+    * @param {Object} transaction The transaction object
+    * @param {Object} config The configuration object for this transaction
+    */
+    notify: function(event, transaction, config) {
+        var io = this;
+
+        switch (event) {
+            case 'timeout':
+            case 'abort':
+            case 'transport error':
+                transaction.c = { status: 0, statusText: event };
+                event = 'failure';
+            default:
+                io[event].apply(io, [transaction, config]);
+        }
+    }
+});
+
+
 
 
 }, '@VERSION@' ,{requires:['event-custom-base', 'querystring-stringify-simple']});
@@ -18475,11 +18796,6 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/,
         SORT_RESULTS: true,
-        _re: {
-            attr: /(\[[^\]]*\])/g,
-            esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
-            pseudos: /(\([^\)]*\))/g
-        },
 
         // TODO: better detection, document specific
         _isXML: (function() {
@@ -18600,9 +18916,11 @@ var PARENT_NODE = 'parentNode',
                                 if (test[0] === 'tagName' && !Selector._isXML) {
                                     value = value.toUpperCase();    
                                 }
-                                // use getAttribute for non-standard attributes
-                                if (value === undefined && tmpNode.getAttribute) {
-                                    value = tmpNode.getAttribute(test[0]);
+                                if (typeof value != 'string' && value !== undefined && value.toString) {
+                                    value = value.toString(); // coerce for comparison
+                                } else if (value === undefined && tmpNode.getAttribute) {
+                                    // use getAttribute for non-standard attributes
+                                    value = tmpNode.getAttribute(test[0], 2); // 2 === force string for IE
                                 }
                             }
 
@@ -18770,7 +19088,7 @@ var PARENT_NODE = 'parentNode',
          */
         _tokenize: function(selector) {
             selector = selector || '';
-            selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
+            selector = Selector._parseSelector(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
                 query = selector, // original query for debug report
                 tokens = [],    // array of tokens
@@ -18831,28 +19149,18 @@ var PARENT_NODE = 'parentNode',
             return tokens;
         },
 
+        _replaceMarkers: function(selector) {
+            selector = selector.replace(/\[/g, '\uE003');
+            selector = selector.replace(/\]/g, '\uE004');
+
+            selector = selector.replace(/\(/g, '\uE005');
+            selector = selector.replace(/\)/g, '\uE006');
+            return selector;
+        },
+
         _replaceShorthand: function(selector) {
-            var shorthand = Selector.shorthand,
-                esc = selector.match(Selector._re.esc), // pull escaped colon, brackets, etc. 
-                attrs,
-                pseudos,
-                re, i, len;
-
-            if (esc) {
-                selector = selector.replace(Selector._re.esc, '\uE000');
-            }
-
-            attrs = selector.match(Selector._re.attr);
-            pseudos = selector.match(Selector._re.pseudos);
-
-            if (attrs) {
-                selector = selector.replace(Selector._re.attr, '\uE001');
-            }
-
-            if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, '\uE002');
-            }
-
+            var shorthand = Y.Selector.shorthand,
+                re;
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
@@ -18860,29 +19168,24 @@ var PARENT_NODE = 'parentNode',
                 }
             }
 
-            if (attrs) {
-                for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace(/\uE001/, attrs[i]);
-                }
-            }
+            return selector;
+        },
 
-            if (pseudos) {
-                for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace(/\uE002/, pseudos[i]);
-                }
-            }
+        _parseSelector: function(selector) {
+            var replaced = Y.Selector._replaceSelector(selector),
+                selector = replaced.selector;
 
-            selector = selector.replace(/\[/g, '\uE003');
-            selector = selector.replace(/\]/g, '\uE004');
+            // replace shorthand (".foo, #bar") after pseudos and attrs
+            // to avoid replacing unescaped chars
+            selector = Y.Selector._replaceShorthand(selector);
 
-            selector = selector.replace(/\(/g, '\uE005');
-            selector = selector.replace(/\)/g, '\uE006');
+            selector = Y.Selector._restore('attr', selector, replaced.attrs);
+            selector = Y.Selector._restore('pseudo', selector, replaced.pseudos);
 
-            if (esc) {
-                for (i = 0, len = esc.length; i < len; ++i) {
-                    selector = selector.replace('\uE000', esc[i]);
-                }
-            }
+            // replace braces and parens before restoring escaped chars
+            // to avoid replacing ecaped markers
+            selector = Y.Selector._replaceMarkers(selector);
+            selector = Y.Selector._restore('esc', selector, replaced.esc);
 
             return selector;
         },
@@ -18895,6 +19198,10 @@ var PARENT_NODE = 'parentNode',
         getters: {
             href: function(node, attr) {
                 return Y.DOM.getAttribute(node, attr);
+            },
+
+            id: function(node, attr) {
+                return Y.DOM.getId(node);
             }
         }
     };
@@ -19276,6 +19583,142 @@ YUI.add('dump', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['yui-base']});
+YUI.add('io-nodejs', function(Y) {
+
+/*global Y: false, Buffer: false, clearInterval: false, clearTimeout: false, console: false, exports: false, global: false, module: false, process: false, querystring: false, require: false, setInterval: false, setTimeout: false, __filename: false, __dirname: false */   
+
+    /**
+    * Passthru to the NodeJS <a href="https://github.com/mikeal/request">request</a> module.
+    * This method is return of `require('request')` so you can use it inside NodeJS without
+    * the IO abstraction.
+    * @method request
+    * @static
+    */
+    if (!Y.IO.request) {
+        Y.IO.request = require('request');
+    }
+
+    Y.log('Loading NodeJS Request Transport', 'info', 'io');
+
+    /**
+    NodeJS IO transport, uses the NodeJS <a href="https://github.com/mikeal/request">request</a>
+    module under the hood to perform all network IO.
+    @method transports.nodejs
+    @static
+    @returns {Object} This object contains only a `send` method that accepts a
+    `transaction object`, `uri` and the `config object`.
+    @example
+        
+        Y.io('https://somedomain.com/url', {
+            method: 'PUT',
+            data: '?foo=bar',
+            //Extra request module config options.
+            request: {
+                maxRedirects: 100,
+                strictSSL: true,
+                multipart: [
+                    {
+                        'content-type': 'application/json',
+                        body: JSON.stringify({
+                            foo: 'bar',
+                            _attachments: {
+                                'message.txt': {
+                                    follows: true,
+                                    length: 18,
+                                    'content_type': 'text/plain'
+                                }
+                            }
+                        })
+                    },
+                    {
+                        body: 'I am an attachment'
+                    }
+                ] 
+            },
+            on: {
+                success: function(id, e) {
+                    Y.log(e.responseText);
+                }
+            }
+        });
+    */
+
+    var flatten = function(o) {
+        var str = [];
+        Object.keys(o).forEach(function(name) {
+            str.push(name + ': ' + o[name]);
+        });
+        return str.join('\n');
+    };
+
+    Y.IO.transports.nodejs = function() {
+        return {
+            send: function (transaction, uri, config) {
+
+                Y.log('Starting Request Transaction', 'info', 'io');
+                config.notify('start', transaction, config);
+                config.method = config.method || 'GET';
+
+                var rconf = {
+                    method: config.method,
+                    uri: uri
+                };
+                if (config.data) {
+                    rconf.body = config.data;
+                }
+                if (config.headers) {
+                    rconf.headers = config.headers;
+                }
+                if (config.timeout) {
+                    rconf.timeout = config.timeout;
+                }
+                if (config.request) {
+                    Y.mix(rconf, config.request);
+                }
+                Y.log('Initiating ' + rconf.method + ' request to: ' + rconf.uri, 'info', 'io');
+                Y.IO.request(rconf, function(err, data) {
+                    Y.log('Request Transaction Complete', 'info', 'io');
+
+                    if (err) {
+                        Y.log('An IO error occurred', 'warn', 'io');
+                        transaction.c = err;
+                        config.notify(((err.code === 'ETIMEDOUT') ? 'timeout' : 'failure'), transaction, config);
+                        return;
+                    }
+                    if (data) {
+                        transaction.c = {
+                            status: data.statusCode,
+                            statusCode: data.statusCode,
+                            headers: data.headers,
+                            responseText: data.body,
+                            responseXML: null,
+                            getResponseHeader: function(name) {
+                                return this.headers[name];
+                            },
+                            getAllResponseHeaders: function() {
+                                return flatten(this.headers);
+                            }
+                        };
+                    }
+                    Y.log('Request Transaction Complete', 'info', 'io');
+
+                    config.notify('complete', transaction, config);
+                    config.notify(((data && (data.statusCode >= 200 && data.statusCode <= 299)) ? 'success' : 'failure'), transaction, config);
+                });
+                
+                var ret = {
+                    io: transaction
+                };
+                return ret;
+            }
+        };
+    };
+
+    Y.IO.defaultTransport('nodejs');
+
+
+
+}, '@VERSION@' ,{requires:['io-base']});
 YUI.add('transition-timer', function(Y) {
 
 /*
