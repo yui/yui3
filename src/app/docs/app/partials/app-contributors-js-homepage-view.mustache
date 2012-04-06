@@ -28,7 +28,8 @@ HomePageView = Y.Base.create('homePageView', Y.View, [], {
         var user    = this.get('model'),
             content = this.template(user.getAttrs(['login']));
 
-        // Sets the resulting HTML as the contents of this view's container.
+        // Adds the "home-page" CSS class to aid styling and sets the resulting
+        // HTML as the contents of this view's container.
         this.get('container').addClass('home-page').setContent(content);
 
         return this;

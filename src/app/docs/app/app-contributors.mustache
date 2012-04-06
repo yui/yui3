@@ -27,7 +27,7 @@ This example demonstrates the powerful navigation and view management features `
 <div class="example">
     {{>app-contributors-css}}
     {{>app-contributors-templates}}
-    {{>app-contributors-javascript}}
+    {{>app-contributors-js}}
     <div id="github-app"></div>
 </div>
 </section>
@@ -115,9 +115,9 @@ All of these things will live inside the following YUI instance:
 <!-- Include YUI on the page if you haven't already. -->
 <script src="http://yui.yahooapis.com/{{yuiVersion}}/build/yui/yui-min.js"></script>
 
-{{>app-contributors-start}}
+{{>app-contributors-js-yui-start}}
     // ... Add the code from the following sections here! ...
-{{>app-contributors-end}}
+{{>app-contributors-js-yui-end}}
 ```
 
 <h3>GithubSync</h3>
@@ -131,7 +131,7 @@ We have this ability to create mixable feature extensions, like this sync implem
 </p>
 
 ```
-{{>app-contributors-githubsync}}
+{{>app-contributors-js-githubsync}}
 ```
 
 <h3>Models &amp; Model Lists</h3>
@@ -155,7 +155,7 @@ The `User` model contains only the data attributes from the <a href="http://deve
 </p>
 
 ```
-{{>app-contributors-user}}
+{{>app-contributors-js-user}}
 ```
 
 <h4>Repo</h4>
@@ -165,7 +165,7 @@ The `Repo` model contains only the data attributes from the <a href="http://deve
 </p>
 
 ```
-{{>app-contributors-repo}}
+{{>app-contributors-js-repo}}
 ```
 
 <h4>RepoList</h4>
@@ -175,7 +175,7 @@ Our app will display a list of [[#`Repo`]]s for a [[#`User`]]. The `RepoList` cl
 </p>
 
 ```
-{{>app-contributors-repolist}}
+{{>app-contributors-js-repolist}}
 ```
 
 <h4>Contributor</h4>
@@ -185,7 +185,7 @@ The `Contributor` model extends the [[#`User`]] model and adds one additional da
 </p>
 
 ```
-{{>app-contributors-contributor}}
+{{>app-contributors-js-contributor}}
 ```
 
 <h4>ContributorList</h4>
@@ -195,7 +195,7 @@ Our app will display a list of [[#`Contributor`]]s for a [[#`Repo`]]. The `Contr
 </p>
 
 ```
-{{>app-contributors-contributorlist}}
+{{>app-contributors-js-contributorlist}}
 ```
 
 <h3>Views</h3>
@@ -209,7 +209,7 @@ The data model for our app consists of many numerical values which our views wil
 </p>
 
 ```
-{{>app-contributors-helper}}
+{{>app-contributors-js-utilities}}
 ```
 
 <p>
@@ -231,7 +231,7 @@ The `UserView` is responsible for the rendering the info and stats about the cur
 </p>
 
 ```
-{{>app-contributors-userview}}
+{{>app-contributors-js-user-view}}
 ```
 
 <h4>RepoView</h4>
@@ -245,7 +245,7 @@ The `RepoView` is responsible for the rendering the info and stats about the cur
 </p>
 
 ```
-{{>app-contributors-repoview}}
+{{>app-contributors-js-repo-view}}
 ```
 
 <h4>RepoListView</h4>
@@ -259,7 +259,7 @@ The `RepoListView` is responsible for the rendering a list of repositories/proje
 </p>
 
 ```
-{{>app-contributors-repolistview}}
+{{>app-contributors-js-repolist-view}}
 ```
 
 <h4>ContributorListView</h4>
@@ -273,7 +273,7 @@ The `ContributorListView` is responsible for the rendering a list of contributor
 </p>
 
 ```
-{{>app-contributors-contributorlistview}}
+{{>app-contributors-js-contributorlist-view}}
 ```
 
 <h3>App</h3>
@@ -307,7 +307,7 @@ This view will handle the user interaction of choosing a particular GitHub user 
 </p>
 
 ```
-{{>app-contributors-homepageview}}
+{{>app-contributors-js-homepage-view}}
 ```
 
 <h5>UserPageView</h5>
@@ -317,7 +317,7 @@ This view is a composite of a [[#`UserView`]] and a [[#`RepoListView`]] which wi
 </p>
 
 ```
-{{>app-contributors-userpageview}}
+{{>app-contributors-js-userpage-view}}
 ```
 
 <h5>RepoPageView</h5>
@@ -327,7 +327,7 @@ This view is a composite of a [[#`RepoView`]] and a [[#`ContributorListView`]] w
 </p>
 
 ```
-{{>app-contributors-repopageview}}
+{{>app-contributors-js-repopage-view}}
 ```
 
 <h4>Routes</h4>
@@ -408,7 +408,7 @@ Here is our subclass of `Y.App` where we have defined our three page-level views
 </p>
 
 ```
-{{>app-contributors-contributorsapp}}
+{{>app-contributors-js-contributors-app}}
 ```
 
 <h4>Initializing the App</h4>
@@ -418,7 +418,7 @@ Finally we can create a new instance of our `ContributorsApp`, render it to the 
 </p>
 
 ```
-{{>app-contributors-init}}
+{{>app-contributors-js-init}}
 ```
 
 
@@ -427,5 +427,5 @@ Finally we can create a new instance of our `ContributorsApp`, render it to the 
 ```
 {{>app-contributors-css}}
 {{>app-contributors-templates}}
-{{>app-contributors-javascript}}
+{{>app-contributors-js}}
 ```
