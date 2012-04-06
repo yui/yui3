@@ -1464,7 +1464,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style && style['display'] === 'none') {
+        if (style && style.display === 'none') {
             ret = true;
         }
 
@@ -1695,6 +1695,16 @@ Y.Loader.prototype = {
         // Y.log('After explode: ' + YObject.keys(r));
     },
     /**
+    * The default method used to test a module against a pattern
+    * @method _patternTest
+    * @private
+    * @param {String} mname The module being tested
+    * @param {String} pname The pattern to match
+    */
+    _patternTest: function(mname, pname) {
+        return (mname.indexOf(pname) > -1);
+    },
+    /**
     * Get's the loader meta data for the requested module
     * @method getModule
     * @param {String} mname The module name to get
@@ -1722,9 +1732,7 @@ Y.Loader.prototype = {
                     //There is no test method, create a default one that tests
                     // the pattern against the mod name
                     if (!p.test) {
-                        p.test = function(mname, pname) {
-                            return (mname.indexOf(pname) > -1);
-                        };
+                        p.test = this._patternTest;
                     }
 
                     if (p.test(mname, pname)) {
@@ -2194,24 +2202,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	        groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
+            groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
-	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
-	 	    modFilter = this.groups[groupName].filter;
-		    hasFilter = true;		
-	    };
+        if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
+            modFilter = this.groups[groupName].filter;
+            hasFilter = true;
+        }
 
         if (u) {
             if (hasFilter) {
-                f = (L.isString(modFilter)) ?
-                    this.FILTER_DEFS[modFilter.toUpperCase()] || null :
-                    modFilter;
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
             if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }
-
         return u;
     },
 
@@ -2280,7 +2285,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         async: m.async
                     };
                     if (m.attributes) {
-                        url.attributes = m.attributes
+                        url.attributes = m.attributes;
                     }
                 }
                 resolved[m.type].push(url);
@@ -2400,7 +2405,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                                 if (tmpBase.length > maxURLLength) {
                                     m = u.pop();
-                                    tmpBase = base + u.join(comboSep)
+                                    tmpBase = base + u.join(comboSep);
                                     resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                                     u = [];
                                     if (m) {
