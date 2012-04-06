@@ -86,6 +86,38 @@ YUI.add('yql-tests', function(Y) {
             });
 
             this.wait();
+        },
+        'test: context as option': function() {
+            var test = this;
+
+            var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
+                var context = this;
+                test.resume(function() {
+                    Y.Assert.isInstanceOf(YUI, context, 'Context object not YUI');
+                    Y.Assert.isObject(r, 'Query Failure');
+                    Y.Assert.isObject(r.query, 'Query object not present');
+                });
+            }, {}, {
+                context: Y
+            });
+
+            this.wait();
+        },
+        'test: context as param': function() {
+            var test = this;
+
+            var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
+                var context = this;
+                test.resume(function() {
+                    Y.Assert.isInstanceOf(YUI, context, 'Context object not YUI');
+                    Y.Assert.isObject(r, 'Query Failure');
+                    Y.Assert.isObject(r.query, 'Query object not present');
+                });
+            }, {
+                context: Y
+            });
+
+            this.wait();
         }
     };
     var suite = new Y.Test.Suite("YQL");
