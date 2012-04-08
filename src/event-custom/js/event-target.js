@@ -555,7 +555,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
     publish: function(type, opts) {
         var events, ce, ret, defaults,
             edata    = this._yuievt,
-            pre      = edata.config.prefix;
+            pre      = edata.config.prefix,
+            broadcast = opts && opts.broadcast || false;
 
         if (L.isObject(type)) {
             ret = {};
@@ -588,6 +589,14 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ce = new Y.CustomEvent(type,
                                   (opts) ? Y.merge(defaults, opts) : defaults);
             events[type] = ce;
+        }
+        
+        if(broadcast && this !== Y && this !== Y.Global){
+            YArray.each((broadcast == 2) ? [Y,Y.Global] : [Y], function(et){
+                defaults = Y.merge(et._yuievt.defaults);
+                et.publish(type,
+                          (opts) ? Y.mix(defaults, opts, true, ['fireOnce']) : defaults);
+            });
         }
 
         // make sure we turn the broadcast flag off if this
