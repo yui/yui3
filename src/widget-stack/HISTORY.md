@@ -1,6 +1,15 @@
 Widget Stack Change History
 ===========================
 
+3.5.0
+-----
+
+  * [!] Default `zIndex` was reverted back to `0` now that parsing works
+    correctly.
+
+  * `zIndex` is now correctly parsed from a widget's `srcNode` using an updated
+    `HTML_PARSER` implementaiton. [Ticket 2530186] [PR #68] [Hat tip Pat Cavit]
+
 3.4.1
 -----
 
