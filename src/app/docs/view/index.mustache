@@ -231,7 +231,7 @@ If the user clicks the "Eat a Slice!" button, the model will be updated and the 
 <h3>Views, Models, and `addTarget()`</h3>
 
 <p>
-In [[#Extending `Y.View`]], the view's ``initializer()`` set two event listeners directly on the model:
+In [[#Extending `Y.View`]], the view's `initializer()` set two event listeners directly on the model:
 </p>
 
 ```
@@ -241,7 +241,7 @@ model.after('destroy', this.destroy, this);
 ```
 
 <p>
-Alternatively, you can use ``addTarget()`` to create a bubbling chain.
+Alternatively, you can use `addTarget()` to create a bubbling chain.
 In the example below, the view automatically receives events from the model,
 which means you can now choose to set change event listeners on the view. 
 </p>
@@ -271,7 +271,7 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
 ```
 
 <p>
-The ``modelChange`` listener is not strictly necessary, but it does make your code more robust.
+The `modelChange` listener is not strictly necessary, but it does make your code more robust.
 If you decide to swap in another model instance sometime after initialization,
 this listener ensures that the new model gets wired up properly to the view.  
 </p>
