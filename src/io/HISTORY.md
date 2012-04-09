@@ -24,6 +24,8 @@ IO Utility Change History
 
   * Fixed error in sending an XML document as POST data. [Ticket #2531257]
 
+  * success/failure/complete/etc callbacks that throw errors no longer
+    hijack all future transactions. [Ticket #2532107]
 
 3.4.1
 -----
