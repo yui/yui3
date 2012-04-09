@@ -104,8 +104,8 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
         }
 
         objstring += "</object>";
-        oElement.setContent(objstring);
-
+        oElement._node.innerHTML = objstring;
+        
         this._swf = Node.one("#" + _id);
     } else {
         /**
