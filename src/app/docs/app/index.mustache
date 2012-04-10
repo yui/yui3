@@ -88,7 +88,7 @@ App is a high-level component that builds upon other components in the App Frame
 </p>
 
 <p>
-The goal of the App component is to provide you a place to organize and connect together the parts of your application. App implements infrastructural pieces which are common to all apps — such as managing views and the navigation between pages — allowing you to focus on the specifics of <em>your</em> app.
+The goal of the App component is to provide you a place to organize and connect together the parts of your application. App implements infrastructural pieces which are common to all apps — such as [[#View Management|managing views]] and the [[#Navigating Between "Pages"|navigation between pages]] — allowing you to focus on the specifics of <em>your</em> app.
 </p>
 
 <p>
@@ -274,7 +274,7 @@ The App class uses both properties and attributes. Properties are best when thei
 <h3>App Attributes</h3>
 
 <p>
-App is composed of <a href="../view/index.html#view-attributes">View</a>, <a href="../router/index.html#config-attributes">Router</a>, and <a href="../pjax/index.html">Pjax</a>, all of which provide attributes that will be of interest to you — beyond these, App adds the following attributes:
+App is composed of <a href="../view/index.html#view-attributes">View</a>, <a href="../router/index.html#config-attributes">Router</a>, and <a href="../pjax/index.html#config-attributes">Pjax</a>, all of which provide attributes that will be of interest to you — beyond these, App adds the following attributes:
 </p>
 
 <table>
@@ -316,7 +316,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
           <dt>`undefined`</dt>
           <dd>
             <p>
-            The best form of URLs will be chosen based on the capabilities of the browser. Given no information about the server environment, a balanced approach to routing and navigation is chosen. See [[#Routing Coordination with Server]] for more details.
+            The best form of URLs will be chosen based on the capabilities of the browser. Given no information about the server environment, a balanced approach to routing and navigation is chosen. See [[#URLs Based on Browser Capabilities]] for more details.
             </p>
           </dd>
 
@@ -327,7 +327,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
             </p>
 
             <p>
-            This is the best option for progressive-enhancement because it will cause <strong>all URLs to always have full-paths</strong>, which means the server will be able to accurately handle all URLs this app produces. See [[#Progressively-Enhanced Apps]] and [[#Routing Coordination with Server]] for more details.
+            This is the best option for progressive-enhancement because it will cause <strong>all URLs to always have full-paths</strong>, which means the server will be able to accurately handle all URLs this app produces. See [[#Full-path URLs Only]] and [[#Progressively-Enhanced Apps]] for more details.
             </p>
           </dd>
 
@@ -338,10 +338,14 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
             </p>
 
             <p>
-            Be aware that this will cause <strong>all URLs to always be hash-based</strong>, even in browsers that are capable of using HTML5 history. Please make sure you fully understand the implications of client-only apps. See [[#Client-Only Apps]] and [[#Routing Coordination with Server]] for more details.
+            Be aware that this will cause <strong>all URLs to always be hash-based</strong>, even in browsers that are capable of using HTML5 history. Please make sure you fully understand the implications of client-only apps. See [[#Hash-based URLs Only]] and [[#Client-Only Apps]] for more details.
             </p>
           </dd>
         </dl>
+
+        <p>
+        See [[#Routing Coordination with Server]] for more details.
+        </p>
       </td>
     </tr>
 
@@ -439,154 +443,6 @@ A few of App's inherited attributes are given new default values:
     </tr>
   </tbody>
 </table>
-
-<h3>Extending `Y.App`</h3>
-
-<p>
-The `Y.App` class is intended to be mutable insofar as being the host for <em>all</em> App-component features, whereas `Y.App.Base` is intended to remain pure and just host the basic set of features. This allows for two different ways to extend the functionality of `Y.App`: [[#mixing-in features]], and [[#subclassing]].
-</p>
-
-<h4>Mixing-In Features</h4>
-
-<p>
-Additional class extensions can be automatically mixed-into `Y.App`, doing so will dynamically extend the functionality of the App class making these new features available to all of its instances and subclasses. The `Y.App.Transitions` class extension, provided by the `app-transitions` module, uses this pattern to add transitions support to `Y.App`.
-</p>
-
-```
-// Creates the namespace for the transitions class extension and assigns a
-// simple constructor function to it.
-Y.App.Transitions = function () {};
-
-// This defines the prototype of the transitions class extension, the actual
-// implementation has been left out for the sake of simplicity.
-Y.App.Transitions.prototype = {
-
-    // The implementation of the transition features would be here.
-
-};
-
-// Here the transitions class extension is being applied automatically by
-// mixing itself into the `Y.App` class.
-Y.Base.mix(Y.App, [Y.App.Transitions]);
-```
-
-<p>
-When this module is included in the YUI instance, the transitions support for App can be used by simply toggling it on:
-</p>
-
-```
-YUI().use('app-base', 'app-transitions', function (Y) {
-    var app = new Y.App({transitions: true});
-});
-```
-
-<p>
-When writing your own class extensions to add features to `Y.App`, feel free to add them to App's namespace (e.g., `Y.App.SomeNewFeature`), and be sure to follow these two rules:
-</p>
-
-<ol>
-  <li>
-    <p>
-    The addition functionality should be <strong>disabled by default</strong>. The API for the class extensions should provide some way for the user to <em>opt-in</em> to using the features it adds.
-    </p>
-
-    <p>
-    The `Y.App.Transitions` class extension does this be requiring a "truthy" value for the `transitions` property of the config object passed-in during instance creation.
-    </p>
-  </li>
-
-  <li>
-    <p>
-    Be courteous to the other App component class extensions, since they all share the same `prototype` be careful not to unintentionally overwrite other properties or methods.
-    </p>
-  </li>
-</ol>
-
-<h4>Subclassing</h4>
-
-<p>
-Creating class extensions for [[#mixing-in features]] to `Y.App` is a great way to extend its functionality in a reusable way while not changing how you [[#Instantiating App|Instantiate an App]]; but might find it more useful to extend the `Y.App` class to create a subclass customized to your specific needs.
-</p>
-
-<p>
-Use the `Y.Base.create()` method to extend `Y.App` and add or override prototype and static members and attributes. You may also optionally specify one or more <a href="../base/index.html#extensions">class extensions</a> to mix into your new class.
-</p>
-
-```
-// Create a Y.CustomApp class that extends Y.App.
-Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
-    // Add or override prototype properties and methods here.
-}, {
-    // Add static properties and methods here.
-
-    ATTRS: {
-        // Add or override default attributes here.
-    }
-});
-```
-
-<p>
-One benefit of extending `Y.App` is that you can easily add default views, routes, and route handlers to your custom App class, and they'll be shared by all instances of that class unless overridden at the instance level:
-</p>
-
-```
-// Create a Y.CustomApp class that extends Y.App.
-Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
-    // Default registered views inherited by all CustomApp instances.
-    views: {
-        home : {preserve: true},
-        users: {preserve: true},
-        user : {parent: 'users'}
-    },
-
-    // Default route handlers inherited by all CustomApp instances.
-
-    handleHome: function (req) {
-        // Handle the "/" route here.
-    },
-
-    handleUsers: function (req) {
-        // Handle the "/users/" route here.
-    },
-
-    handleUser: function (req) {
-        // Handle the "/users/:name/" route here.
-    }
-}, {
-    ATTRS: {
-        // Share these routes with all CustomApp instances.
-        routes: {
-            value: [
-                {path: '/',             callback: 'handleHome'},
-                {path: '/users/',       callback: 'handleUsers'}
-                {path: '/users/:name/', callback: 'handleUser'}
-            ]
-        }
-    }
-});
-
-// Create a CustomApp instance that inherits the defaults and adds to them.
-var app = new Y.CustomApp({
-    // Register an additional view. The `home`, `users`, and `user` views will
-    // also be inherited.
-    views: {
-        about: {preserve: true}
-    }
-});
-
-// Add a route and route handler.
-app.route('/about/', function (req) {
-    // Handle the "/about/" route here.
-});
-```
-
-<p>
-Now all instances of `Y.CustomApp` will inherit all the custom defaults and can add to or override them. The `app` instance created here will handle the `"/"`, `"/users/"`, and `"/users/:name/"` routes in addition to its own `"/about/"` route.
-</p>
-
-<p>
-Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/app-base.html">App's API docs</a> to become familiar with its public and protected properties and methods.
-</p>
 
 <h3>Routing Coordination with Server</h3>
 
@@ -1141,7 +997,7 @@ Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/clas
 <h3>Navigating Between "Pages"</h3>
 
 <p>
-A key feature of `Y.App` is its powerful navigation management. You can simply use standard HTML links within your app and when the user clicks a link, `Y.App` will handle it if there’s a matching route for that URL. With the [[#Configuring Navigation Behavior|navigation-related config options]] you have full control over your app's navigation behavior and experience, plus your app will automatically use the best available navigation method based on these settings, the browser’s capabilities, and the actions of the user.
+A key feature of `Y.App` is its robust URL navigation management. You can simply use standard HTML links within your app and when the user clicks a link, `Y.App` will handle it if there’s a matching route for that URL. With the [[#Configuring Navigation Behavior|navigation-related config options]] you have full control over your app's navigation behavior and experience, plus your app will automatically use the best available navigation method based on these settings, the browser’s capabilities, and the actions of the user.
 </p>
 
 <p>
@@ -1318,11 +1174,153 @@ app.navigate('/users/');
 Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#event_navigate">`navigate` event</a>.
 </p>
 
-<h2>Best Practices</h2>
+<h2>Extending `Y.App`</h2>
 
-<h3>Progressively-Enhanced Apps</h3>
+<p>
+The `Y.App` class is intended to be mutable insofar as being the host for <em>all</em> App-component features, whereas `Y.App.Base` is intended to remain pure and just host the basic set of features. This allows for two different ways to extend the functionality of `Y.App`: [[#mixing-in features]], and [[#subclassing]].
+</p>
 
-<h3>Client-Only Apps</h3>
+<h3>Mixing-In Features</h3>
+
+<p>
+Additional class extensions can be automatically mixed-into `Y.App`, doing so will dynamically extend the functionality of the App class making these new features available to all of its instances and subclasses. The [[#`Y.App.Transitions`]] class extension, provided by the `app-transitions` module, uses this pattern to add transitions support to `Y.App`.
+</p>
+
+```
+// Creates the namespace for the transitions class extension and assigns a
+// simple constructor function to it.
+Y.App.Transitions = function () {};
+
+// This defines the prototype of the transitions class extension, the actual
+// implementation has been left out for the sake of simplicity.
+Y.App.Transitions.prototype = {
+
+    // The implementation of the transition features would be here.
+
+};
+
+// Here the transitions class extension is being applied automatically by
+// mixing itself into the `Y.App` class.
+Y.Base.mix(Y.App, [Y.App.Transitions]);
+```
+
+<p>
+When this module is included in the YUI instance, the transitions support for App can be used by simply toggling it on:
+</p>
+
+```
+YUI().use('app-base', 'app-transitions', function (Y) {
+    var app = new Y.App({transitions: true});
+});
+```
+
+<p>
+When writing your own class extensions to add features to `Y.App`, feel free to add them to App's namespace (e.g., `Y.App.SomeNewFeature`), and be sure to follow these two rules:
+</p>
+
+<ol>
+  <li>
+    <p>
+    The addition functionality should be <strong>disabled by default</strong>. The API for the class extensions should provide some way for the user to <em>opt-in</em> to using the features it adds.
+    </p>
+
+    <p>
+    The `Y.App.Transitions` class extension does this be requiring a "truthy" value for the `transitions` property of the config object passed-in during instance creation.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Be courteous to the other App component class extensions, since they all share the same `prototype` be careful not to unintentionally overwrite other properties or methods.
+    </p>
+  </li>
+</ol>
+
+<h3>Subclassing</h3>
+
+<p>
+Creating class extensions for [[#mixing-in features]] to `Y.App` is a great way to extend its functionality in a reusable way while not changing how you [[#Instantiating App|Instantiate an App]]; but might find it more useful to extend the `Y.App` class to create a subclass customized to your specific needs.
+</p>
+
+<p>
+Use the `Y.Base.create()` method to extend `Y.App` and add or override prototype and static members and attributes. You may also optionally specify one or more <a href="../base/index.html#extensions">class extensions</a> to mix into your new class.
+</p>
+
+```
+// Create a Y.CustomApp class that extends Y.App.
+Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
+    // Add or override prototype properties and methods here.
+}, {
+    // Add static properties and methods here.
+
+    ATTRS: {
+        // Add or override default attributes here.
+    }
+});
+```
+
+<p>
+One benefit of extending `Y.App` is that you can easily add default views, routes, and route handlers to your custom App class, and they'll be shared by all instances of that class unless overridden at the instance level:
+</p>
+
+```
+// Create a Y.CustomApp class that extends Y.App.
+Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
+    // Default registered views inherited by all CustomApp instances.
+    views: {
+        home : {preserve: true},
+        users: {preserve: true},
+        user : {parent: 'users'}
+    },
+
+    // Default route handlers inherited by all CustomApp instances.
+
+    handleHome: function (req) {
+        // Handle the "/" route here.
+    },
+
+    handleUsers: function (req) {
+        // Handle the "/users/" route here.
+    },
+
+    handleUser: function (req) {
+        // Handle the "/users/:name/" route here.
+    }
+}, {
+    ATTRS: {
+        // Share these routes with all CustomApp instances.
+        routes: {
+            value: [
+                {path: '/',             callback: 'handleHome'},
+                {path: '/users/',       callback: 'handleUsers'}
+                {path: '/users/:name/', callback: 'handleUser'}
+            ]
+        }
+    }
+});
+
+// Create a CustomApp instance that inherits the defaults and adds to them.
+var app = new Y.CustomApp({
+    // Register an additional view. The `home`, `users`, and `user` views will
+    // also be inherited.
+    views: {
+        about: {preserve: true}
+    }
+});
+
+// Add a route and route handler.
+app.route('/about/', function (req) {
+    // Handle the "/about/" route here.
+});
+```
+
+<p>
+Now all instances of `Y.CustomApp` will inherit all the custom defaults and can add to or override them. The `app` instance created here will handle the `"/"`, `"/users/"`, and `"/users/:name/"` routes in addition to its own `"/about/"` route.
+</p>
+
+<p>
+Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/app-base.html">App's API docs</a> to become familiar with its public and protected properties and methods.
+</p>
 
 <h2>App Extensions</h2>
 
@@ -1465,5 +1463,11 @@ Some structural CSS is required to setup an app's `container` and `viewContainer
 <p>
 <strong>Note:</strong> While transitioning, the app's `viewContainer` node will have its `overflow-x` set to `hidden`. This causes its margins to <em>not collapse</em> with its child nodes. To compensate for this, it is best to not style your views with margins.
 </p>
+
+<h2>Best Practices</h2>
+
+<h3>Progressively-Enhanced Apps</h3>
+
+<h3>Client-Only Apps</h3>
 
 <h2>Apps vs. Widgets</h2>
