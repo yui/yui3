@@ -776,7 +776,7 @@ This results in the HTML of the page looking like this:
 ```
 
 <p>
-Refer to App's API Docs for more details about <a href="{{apiDocs}}/classes/App.html#attr_container">`container`</a> and <a href="/classes/App.html#attr_viewContainer">`viewContainer`</a> attributes.
+Refer to App's API Docs for more details about <a href="{{apiDocs}}/classes/App.html#attr_container">`container`</a> and <a href="{{apiDocs}}/classes/App.html#attr_viewContainer">`viewContainer`</a> attributes.
 </p>
 
 <h4>Overriding `render()`</h4>
@@ -1471,3 +1471,23 @@ Some structural CSS is required to setup an app's `container` and `viewContainer
 <h3>Client-Only Apps</h3>
 
 <h2>Apps vs. Widgets</h2>
+
+<h2>Known Limitations</h2>
+
+<ul>
+  <li>
+    <p>
+    <strong>When multiple App instances are on the page, only one can manage the URL and navigation.</strong> All of the app instances can have route handlers, but only one should have its `linkSelector` attribute set to a non-falsy value. See [[#Configuring Navigation Behavior]] for more details.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    <strong>Transitions are only supported in WebKit and Firefox browsers which also support CSS3 transitions.</strong> It is intended to only support transitions in browser which have native CSS3 transitions, and YUI's <a href="../transition/index.html">Transition</a> component only supports WebKit and Firefox.
+    </p>
+  </li>
+</ul>
+
+<p>
+App relies heavily on Router which has some know limitations in Internet Explorer 9 and lower, and Android 2.x. See <a href="../router/index.html#known-limitations">Router's Known Limitations</a> for more details.
+</p>
