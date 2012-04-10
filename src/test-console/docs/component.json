@@ -5,7 +5,7 @@
     "author"     : ["rgrove"],
 
     "tags": [
-        "widget", "test", "yuitest", "console"
+        "devtool", "test", "yuitest", "console"
     ],
 
     "use": ["test-console"]
