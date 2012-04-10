@@ -92,11 +92,11 @@ The goal of the App component is to provide you a place to organize and connect 
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-enhanced vs. Client-only Apps]] sections of this guide contain details and best practices on accomplishing this.
 </p>
 
 <p>
-You can also use the App component to build client-only apps for when there is no server, or the server is not capable of routing and handling requests. There are <strong>drawbacks to client-only apps</strong> which you need to be aware of and fully understand their implications. Be sure to read the [[#Client-Only Apps]] section which contains details on these drawbacks and best practices.
+You can also use the App component to build client-only apps for when there is no server, or the server is not capable of routing and handling requests. There are <strong>drawbacks to client-only apps</strong> which you need to be aware of and fully understand their implications. Be sure to read the [[#Progressively-enhanced vs. Client-only Apps]] section which contains details on these drawbacks and best practices.
 </p>
 
 <p>
@@ -327,7 +327,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
             </p>
 
             <p>
-            This is the best option for progressive-enhancement because it will cause <strong>all URLs to always have full-paths</strong>, which means the server will be able to accurately handle all URLs this app produces. See [[#Full-path URLs Only]] and [[#Progressively-Enhanced Apps]] for more details.
+            This is the best option for progressive-enhancement because it will cause <strong>all URLs to always have full-paths</strong>, which means the server will be able to accurately handle all URLs this app produces. See [[#Full-path URLs Only]] and [[#Progressively-enhanced vs. Client-only Apps]] for more details.
             </p>
           </dd>
 
@@ -338,7 +338,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
             </p>
 
             <p>
-            Be aware that this will cause <strong>all URLs to always be hash-based</strong>, even in browsers that are capable of using HTML5 history. Please make sure you fully understand the implications of client-only apps. See [[#Hash-based URLs Only]] and [[#Client-Only Apps]] for more details.
+            Be aware that this will cause <strong>all URLs to always be hash-based</strong>, even in browsers that are capable of using HTML5 history. Please make sure you fully understand the implications of client-only apps. See [[#Hash-based URLs Only]] and [[#Progressively-enhanced vs. Client-only Apps]] for more details.
             </p>
           </dd>
         </dl>
@@ -637,7 +637,7 @@ This is the <strong>best option for progressive enhancement</strong>! All users 
 </p>
 
 <p>
-See [[#Progressively-Enhanced Apps]] for more information about best practices.
+See [[#Progressively-enhanced vs. Client-only Apps]] for more information about best practices.
 </p>
 
 <h4>Hash-based URLs Only</h4>
@@ -688,7 +688,7 @@ This is the best option if there is no guarantee that your app will be served by
 </p>
 
 <p>
-<strong>Please read</strong> [[#Client-Only Apps]] for more information and best practices.
+<strong>Please read</strong> [[#Progressively-enhanced vs. Client-only Apps]] for more information and best practices.
 </p>
 
 <h3>Rendering an App</h3>
@@ -1466,11 +1466,85 @@ Some structural CSS is required to setup an app's `container` and `viewContainer
 
 <h2>Best Practices</h2>
 
-<h3>Progressively-Enhanced Apps</h3>
+<h3>Progressively-enhanced vs. Client-only Apps</h3>
 
-<h3>Client-Only Apps</h3>
+<p>
+See <a href="../router/index.html#best-practices">Router's Best Practices</a> for more information.
+</p>
 
+{{! TODO: Content!}}
+
+{{! TODO: Finish:
+<h3>Flow Control</h3>
+
+<p>
+When developing an app, it's important to have a clear understanding about how the various components are working together. The use of consistent patterns for information sharing, execution of operations, and maintaining a separation of concerns becomes ever more crucial as the size of the app and team increases.
+</p>
+
+<p>
+Restricting the flow of information to a single direction creates a "one-way street" which enforces a successful pattern of separating concerns and dividing control over execution throughout an application.
+</p>
+}}
+
+{{! TODO: Finish writing content.}}
+
+{{! TODO: Show a code example.}}
+
+<h3>Preserved Views</h3>
+
+<p>
+An app's `views` can be defined so that a single instance of a particular view is preserved and can be reused. When a view is defined with its `preserve` property set to `true`, the same view instance will be used each time the app's `showView()` method is called to set it as the app's `activeView`.
+</p>
+
+<p>
+Preserved views should be used in situations where the contents of the view might not change and that view will be displayed often. They are especially useful if its contents have a complex DOM structure that would be costly to create each time the view was to be shown.
+</p>
+
+<p>
+Imagine an a simple app that displays user information in two views: a `users` view that lists all the users, and a `user` view that displays the details of a single user. If the set of all users in this application won't change often, then it would be a good idea to make the `users` view a preserved view. That way it only has to be constructed once, and the same view instance can be shown many times. Whereas the contents of the `user` view are always going to change depending on which user is being displayed, making it <em>not</em> suitable to preserve.
+</p>
+
+<p>
+The following example demonstrates how this hypothetical users app would define its two views:
+</p>
+
+```
+// Create the `UsersView`.
+Y.UsersView = Y.Base.create('usersView', Y.View, [] {
+    // Implementation would be here...
+});
+
+// Create the `UserView`.
+Y.UserView = Y.Base.create('userView', Y.View, [] {
+    // Implementation would be here...
+});
+
+// Create the app and define its two views.
+var app = new Y.App({
+    views: {
+        // Only one `users` view instance will be created and it will be
+        // preserved for reuse.
+        users: {
+            preserve: true,
+            type    : 'UsersView'
+        },
+
+        // A new `user` view instance will be created every time.
+        user: {
+            type  : 'UserView',
+            parent: 'users'
+        }
+    }
+});
+```
+
+<p>
+Be cautious about the number of preserved views you have in your application. Their DOM structures are maintained even when they are not in the visible portion of the page's DOM, this means the more preserved views, the more memory your application will consume. On mobile devices with very limited memory and no swap space, consuming too much memory in your app can cause the browser to crash.
+</p>
+
+{{! TODO: Write content:
 <h2>Apps vs. Widgets</h2>
+}}
 
 <h2>Known Limitations</h2>
 
