@@ -92,7 +92,7 @@ The goal of the App component is to provide you a place to organize and connect 
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-enhanced vs. Client-only Apps]] sections of this guide contain details and best practices on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] section of this guide contain details on accomplishing this.
 </p>
 
 <p>
@@ -207,7 +207,7 @@ The following properties are meaningful to App classes and subclasses. In additi
           <dt>`preserve`</dt>
           <dd>
             <p>
-            Boolean for whether the view instance should be retained. By default, the view instance will be destroyed when it is no longer the `activeView`. If `true` the view instance will simply be `removed()` from the DOM when it is no longer active. This is useful when the view is frequently used and may be expensive to re-create.
+            Boolean for whether the view instance should be retained. By default, the view instance will be destroyed when it is no longer the `activeView`. If `true` the view instance will simply be `removed()` from the DOM when it is no longer active. This is useful when the view is frequently used and may be expensive to re-create. See [[#Preserved Views]] for best practices.
             </p>
           </dd>
 
@@ -809,7 +809,7 @@ Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
 ```
 
 <p>
-Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()` method</a>.
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()` method</a>. See [[#Subclassing]] for more details on extending `Y.App`.
 </p>
 
 <h3>View Management</h3>
@@ -1469,26 +1469,158 @@ Some structural CSS is required to setup an app's `container` and `viewContainer
 <h3>Progressively-enhanced vs. Client-only Apps</h3>
 
 <p>
-See <a href="../router/index.html#best-practices">Router's Best Practices</a> for more information.
+It's important to understand the difference between the preferred approach of developing an app using a progressive enhancement strategy vs. creating a client side-only app, and when it might be appropriate to do so. As discussed in the [[#Routing Coordination with Server]], `Y.App` provides the tools and is flexible enough implement an app using either strategy, but <strong>there are drawbacks to client-only applications</strong>.
 </p>
 
-{{! TODO: Content!}}
+<p>
+The following sections build on <a href="../router/index.html#best-practices">Router's Best Practices</a>, all of which apply, by looking at things from a higher level, application perspective:
+</p>
 
-{{! TODO: Finish:
+<h4>Full-path vs. Hash-based URLs</h4>
+
+<p>
+Before making a decision to use hash-based URLs in your application, you should <strong>be aware of their drawbacks</strong>.
+</p>
+
+<p>
+A client-only app will use hash-based URLs instead of the standard, full-path URLs. When the server receives a request for a hash-based URL everything after and including the fragment identifier ("#") is lost. This means your application will have to rely on the JavaScript to finish fulfilling the request for the user.
+</p>
+
+<p>
+The following shows how this information loss manifest itself:
+</p>
+
+```nohighlight
+Browser URL: http://example.com/#/foo/bar/
+Request URL: http://example.com/
+```
+
+<p>
+The request URL that the server will see is missing the entire path, this means every URL in your application looks to the server as if it's the same page! To prevent link rot in your application, you'll have to support the hash-based variation of your URLs indefinitely.
+</p>
+
+<p>
+Ideally you should prefer full-path URLs (e.g., http://example.com/foo/bar/) for your application and be able to handle full page loads for browsers which are not capable of using HTML5 history. This requires a server capable of routing requests and rendering the initial state of the application in the HTML responses. This is the main idea behind a progressive enhancement development strategy — providing a better experience for more capable browsers/devices.
+</p>
+
+<h4>Performance and SEO</h4>
+
+<p>
+Client-only apps suffer in more places than just their URLs. There are <em>horrible side-effects</em> of using hash-based URLs: degradation in performance of rendering the app's initial state, and lack of SEO.
+</p>
+
+<p>
+It is faster to render the initial state of an app on the server before delegating control to the client-side JavaScript. But in order to achieve this, the server must be capable of routing requests and rendering this initial state. This means your application needs to be using full-path URLs.
+</p>
+
+<p>
+To render the initial state in a client-only app, the server has to send over the HTML "shell" page, which then makes more HTTP requests to get the JavaScript. Once the JavaScript has been downloaded and parsed, it can execute and construct the `Y.App` instance. The app now needs to fetch data from the server (yet another HTTP request), and then it can display the initial state. All while the user is staring at a blank page — which is a horrible user experience, especially on a mobile device with a slower connection.
+</p>
+
+<p>
+Optimizing your app to be indexed by search engines is also relates to this. SEO requires that your app uses full-path URLs so the server can route requests and render the initial state. The basic functions of your app which you want to be indexable should work without JavaScript.
+</p>
+
+<h4>When Client-only Apps are Appropriate</h4>
+
+<p>
+Given all the drawbacks of client-only apps, there's one major advantage: <strong>they don't rely on the server</strong>. If your app needs to run off the filesystem, or be deployed to a "dumb" static file server, then this might be your only option.
+</p>
+
+<p>
+Developing a client-only app using `Y.App` still gives you nice (but hash-based) URLs that are bookmarkable, browser back/forward button support, and view management.
+</p>
+
+<p>
+<strong>Please make sure you understand the issues with hash-based URLs and their side-effects.</strong> Consider developing your application using a progressive enhancement strategy, it will be worth the extra effort in the long run.
+</p>
+
 <h3>Flow Control</h3>
 
 <p>
-When developing an app, it's important to have a clear understanding about how the various components are working together. The use of consistent patterns for information sharing, execution of operations, and maintaining a separation of concerns becomes ever more crucial as the size of the app and team increases.
+When developing an app, it's important to have a clear understanding about how the various components are working together. The use of consistent patterns for information sharing, and execution of operations aid in maintaining a separation of concerns which becomes ever more crucial as the size of the app and team increases.
 </p>
 
 <p>
-Restricting the flow of information to a single direction creates a "one-way street" which enforces a successful pattern of separating concerns and dividing control over execution throughout an application.
+Restricting the flow of information to a single direction creates a "one-way street" which enforces a strict separation of concerns and divides control over execution throughout an application. This strategy can be implemented by leveraging YUI's powerful custom event infrastructure. All of the components of App Framework are `Y.Base`-based, and therefore are primed to be both publishers and subscribers of an app's custom events.
 </p>
-}}
 
-{{! TODO: Finish writing content.}}
+<p>
+The following example app demonstrates how to wire up the components of an application using custom events to achieve the one-way flow of information and divide control by maintaining a strict separation of concerns:
+</p>
 
-{{! TODO: Show a code example.}}
+```
+// Create the `UserView`.
+Y.UserView = Y.Base.create('userView', Y.View, [], {
+    template: '<p>{name}</p>' +
+              '<label for="name-input">Name:</label>' +
+              '<input id="name-input" type="text" value="{name}" />' +
+              '<button>Save</button>',
+
+    // Listens for DOM events from the user and translates them into application
+    // events; e.g., "click" -> "save".
+    events: {
+        'button': {click: 'save'}
+    },
+
+    initializer: function () {
+        // Listens for the user model to change, and re-renders the view.
+        this.get('user').after('change', this.render, this);
+    },
+
+    render: function () {
+        var user    = this.get('user'),
+            content = Y.Lang.sub(this.template, {name: user.get('name')});
+
+        this.get('container').setContent(content);
+        return this;
+    },
+
+    // This view doesn't actually do the saving, instead, it is translating the
+    // user's intent (they click the Save button) to an application-level event.
+    // This way control is given to the app to respond to this action.
+    save: function () {
+        var user = this.get('user'),
+            name = this.get('container').one('input').get('value');
+
+        // Fires the save event and passes along the needed information. When
+        // this is the app's `activeView` this event will bubble to the app.
+        this.fire('save', {
+            user: user,
+            name: name
+        });
+    }
+});
+
+// Create the app and define the app's `views`, and assign a new `Model`
+// instance as an ad-hoc attribute to the app.
+var app = new Y.App({
+    views: {
+        user: {
+            type    : 'UserView',
+            preserve: true
+        }
+    },
+
+    user: new Y.Model()
+});
+
+// The app listens for the `UserView` to fire its `save` event. The only will
+// only be notified if the view is the app's current `activeView`.
+app.on('userView:save', function (e) {
+    // The app has the control to execute update the model and execute the save
+    // operation. Updating the model will cause the view to re-render.
+    e.user.set('name', e.name).save();
+});
+
+// Renders the app and set's the `user` view and the `activeView`, passing it
+// the user model.
+app.render().showView('user', {user: app.get('user')});
+```
+
+<p>
+The main thing to note about the above example is that the `UserView` is <em>not</em> updating its `user` model directly, instead it is translating the user's intent via DOM events into application-level events. This gives control back to the app so it can decide how best to proceed. The result is a flow of information and control that moves in one direction and in a continuous loop.
+</p>
 
 <h3>Preserved Views</h3>
 
@@ -1501,7 +1633,7 @@ Preserved views should be used in situations where the contents of the view migh
 </p>
 
 <p>
-Imagine an a simple app that displays user information in two views: a `users` view that lists all the users, and a `user` view that displays the details of a single user. If the set of all users in this application won't change often, then it would be a good idea to make the `users` view a preserved view. That way it only has to be constructed once, and the same view instance can be shown many times. Whereas the contents of the `user` view are always going to change depending on which user is being displayed, making it <em>not</em> suitable to preserve.
+Imagine a simple app that displays user information in two views: a `users` view that lists all the users, and a `user` view that displays the details of a single user. If the set of all users in this application won't change often, then it would be a good idea to make the `users` view a preserved view. That way it only has to be constructed once, and the same view instance can be shown many times. Whereas the contents of the `user` view are always going to change depending on which user is being displayed, making it <em>not</em> suitable to preserve.
 </p>
 
 <p>
