@@ -319,6 +319,21 @@ View classes and subclasses provide the following attributes.
         <p>
         If you specify a container element that isn't already on the page, then you'll need to append it to the page yourself. You can do this in the `render()` method the first time the view is rendered.
         </p>
+
+        <p>
+        Note that if you are extending a view and want to set a default value for the `container` attribute in `ATTRS`, you must use `valueFn`:
+        </p>
+
+```
+ATTRS: {
+    container: {
+        valueFn: function () { /* return a Y.Node */ }
+    }
+}
+```
+        <p>
+        The view's constructor will ignore any assignments using the `value` property. The reason for this is that `container` already supplies its own `valueFn`, which <a href="/yui/docs/attribute/#configuration">takes priority over `value`</a>.
+        </p>
       </td>
     </tr>
   </tbody>
