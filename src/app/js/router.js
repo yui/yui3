@@ -560,7 +560,7 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
                 
-                req.hasNext = routes.length;
+                req.pendingRoutes = routes.length;
                 
                 callback.call(self, req, res, req.next);
             }
