@@ -1,0 +1,71 @@
+RepoListView = Y.Base.create('repoListView', Y.View, [], {
+    // Compiles the RepoList Template into a reusable Handlebars template.
+    template: Y.Handlebars.compile(Y.one('#t-repo-list').getContent()),
+
+    // Attach DOM events for the view. The `events` object is a mapping of
+    // selectors to an object containing one or more events to attach to the
+    // node(s) matching each selector.
+    events: {
+        '.repo': {
+            click: 'selectRepo'
+        }
+    },
+
+    initializer: function () {
+        // The `selectRepo` event is fired when the user chooses a GitHub repo
+        // to view its contributors. This event will bubble up to the
+        // `ContributorsApp` via the `UserPageView` view when it is the app's
+        // `activeView`.
+        this.publish('selectRepo', {preventable: false});
+    },
+
+    render: function () {
+        var repos = this.get('modelList'),
+            reposData, content;
+
+        // Iterates over all `Repo` models in the list and retrieves each model
+        // instance's data as a simple JSON structs and collects it in an array.
+        reposData = repos.map(function (repo) {
+            var data = repo.toJSON();
+
+            // Add `clientId` to the data, this is ignored by `toJSON()`. This
+            // will be used by the template and is an easy way to regain access
+            // to the associated Repo model.
+            data.clientId = repo.get('clientId');
+
+            // Add proper pluralized labels for numerical data fields.
+            addLabel(data, 'watchers', 'Watcher');
+            addLabel(data, 'forks', 'Fork');
+
+            return data;
+        });
+
+        // Applies the `RepoList` data to the RepoList Template and sets the
+        // resulting HTML as the contents of this view's container.
+        content = this.template({repos: reposData});
+        this.get('container').setContent(content);
+
+        return this;
+    },
+
+    // Called when the user clicks anywhere on a repo line-item in our list
+    // of repos. This will retreive the corresponding Repo model instance
+    // from the RepoList via the `clientId`.
+    selectRepo: function (e) {
+        // Noop when the element clicked is an anchor, we'll let the link
+        // preform its default action.
+        if (e.target.test('a')) {
+            return;
+        }
+
+        // Because we've rendered our list of repos with the `clientId` as the
+        // `id` attribute for each repo node, we can use the client id to
+        // retreive the Repo model instance from the RepoList.
+        var repos = this.get('modelList'),
+            repo  = repos.getByClientId(e.currentTarget.get('id'));
+
+        if (repo) {
+            this.fire('selectRepo', {repo: repo});
+        }
+    }
+});
