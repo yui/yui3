@@ -228,6 +228,56 @@ If the user clicks the "Eat a Slice!" button, the model will be updated and the 
 </div>
 ```
 
+<h3>Views, Models, and `addTarget()`</h3>
+
+<p>
+In [[#Extending `Y.View`]], the view's `initializer()` set two event listeners directly on the model:
+</p>
+
+```
+var model = this.get('model');
+model.after('change', this.render, this);
+model.after('destroy', this.destroy, this);
+```
+
+<p>
+Alternatively, you can use 
+<a href="{{apiDocs}}/classes/View.html#method_addTarget">addTarget()</a> 
+to create a bubbling chain.
+In the example below, the view automatically receives events from the model,
+which means you can now choose to set change event listeners on the view. 
+</p>
+
+```
+Y.PieView = Y.Base.create('pieView', Y.View, [], {
+
+  ...
+
+  initializer: function () {
+    var model = this.get('model');
+    
+    // If this view has a model, bubble model events to the view. 
+    model && model.addTarget(this);
+
+    // If the model gets swapped out, reset targets accordingly.
+    this.after('modelChange', function (ev) {
+        ev.prevVal && ev.prevVal.removeTarget(this);
+        ev.newVal && ev.newVal.addTarget(this);
+    });
+
+    // Re-render this view when the model changes.
+    this.after('*:change', this.render, this);
+  },
+
+  ... 
+```
+
+<p>
+The `modelChange` listener is not strictly necessary, but it does make your code more robust.
+If you decide to swap in another model instance sometime after initialization,
+this listener ensures that the new model gets wired up properly to the view.  
+</p>
+
 <h3>View Properties</h3>
 
 <p>
@@ -318,6 +368,21 @@ View classes and subclasses provide the following attributes.
 
         <p>
         If you specify a container element that isn't already on the page, then you'll need to append it to the page yourself. You can do this in the `render()` method the first time the view is rendered.
+        </p>
+
+        <p>
+        Note that if you are extending a view and want to set a default value for the `container` attribute in `ATTRS`, you must use `valueFn`:
+        </p>
+
+```
+ATTRS: {
+    container: {
+        valueFn: function () { /* return a Y.Node */ }
+    }
+}
+```
+        <p>
+        The view's constructor will ignore any assignments using the `value` property. The reason for this is that `container` already supplies its own `valueFn`, which <a href="/yui/docs/attribute/#configuration">takes priority over `value`</a>.
         </p>
       </td>
     </tr>
