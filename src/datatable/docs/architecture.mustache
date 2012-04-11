@@ -1,0 +1,413 @@
+<h1>Dissecting 3.5.0 DataTable</h1>
+
+<style>
+.before, .after { width: 47%; }
+.after {
+    margin-left: 5%;
+}
+</style>
+<p>
+    DataTable has been one of YUI's most heavily used and relied upon widgets
+    for years.  Even today, YUI 3 adoption has been slower than it might be
+    because this-or-that feature from YUI 2 DataTable hasn't been ported to 3
+    yet.  And if you know YUI 2 DataTable, you know there are a lot of features
+    in that list.
+</p>
+
+<p>
+    In 3.5.0, DataTable got a lot of attention, and as a result, it suddenly is
+    <a href="http://yuilibrary.com/yui/docs/datatable/migration.html">looking
+    a little different</a>, and <strong>working a lot better</strong>.  But most importantly, it is now architecturally
+    structured to make it easy to fill in those missing features rapidly, and
+    with greater confidence that the supporting infrastructure won't break down
+    when new features are added and the limitless combinations of features and
+    per-implementation customizations appear in the wild.
+</p>
+
+<h2>Big Changes</h2>
+
+<p>
+    The major changes from 3.4.1 to 3.5.0 are mostly under the hood, and with
+    any luck,
+    <a href="http://yuilibrary.com/yui/docs/datatable/migration.html">migrating
+    to 3.5.0 DataTable</a> should be painless.
+</p>
+
+<p>
+    That said, there are some obvious, outward changes to the API and how you
+    add (or don't need to explicitly add) features, such as sorting.
+</p>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">3.4.1</h4>
+
+        ```
+        // Assumes use('datatable-sort') or use('datatable')
+        var table = new Y.DataTable.Base({
+            columnset: [
+                { key: "id" },
+                { key: "name", sortable: true },
+                { key: "price", sortable: true }
+            ],
+            recordset: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 },
+                ...
+            ]
+        });
+
+        table.plug(Y.Plugin.DataTableSort);
+
+        table.render('#back-then');
+
+        // Sorting API is on the Recordset's plugin
+        table.get("recordset").sort.sort("name");
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">3.5.0</h4>
+
+        ```
+        // Constructor is now Y.DataTable
+        var table = new Y.DataTable({
+            // columns takes the place of columnset
+            columns: [
+                { key: "id" },
+                { key: "name", sortable: true },
+                { key: "price", sortable: true }
+            ],
+            // data takes the place of recordset
+            data: [
+                { id: 1, name: "Bread", price: 3.45 },
+                { id: 2, name: "Milk",  price: 4.99 },
+                { id: 3, name: "Eggs",  price: 2.75 },
+                ...
+            ]
+        });
+
+        // Plugin NOT needed. Sorting enabled by datatable-sort
+
+        table.render('#here-and-now');
+
+        // APIs are centralized on the instance now
+        table.sort("name");
+        ```
+    </div>
+</div>
+
+<h3>Why Refactor?</h3>
+
+<p>
+    The short answer is "to make it easier".  The 3.4.1 infrastructure was based
+    on the simple Widget model, where all the code to describe the state and
+    render the UI were in one place, and altering or expanding those core
+    behaviors was the responsibility of plugins.  There are a few issues with
+    this for DataTable:
+</p>
+
+<ol>
+    <li>
+        The plugin process is verbose, which is not friendly to new users of
+        YUI (and burdensome to experienced users).  For something like
+        DataTable, the introduction story needs to be simple and intuitive.
+        It's rare that a potential new DataTable user won't come with a
+        list of required features.  That can make for a lot of setup code.
+    </li>
+    <li>
+        Similarly, the instance API was fragmented into the plugin namespaces
+        (though I admit, there are people that prefer namespacing
+        feature-related APIs).
+    </li>
+    <li>
+        Some features need or needed to impact parts of the base implementation
+        so dramatically, that it suggested a better approach would be to allow
+        for more configuration in those and potentially other areas.  But
+        configuration has limits when implemented in a single place.  The
+        code starts to become monolithic, which runs counter to the goals of
+        YUI 3.
+    </li>
+    <li>
+        In some places, the plugin architecture required uncomfortable
+        compromises such as how to resolve the Column class needing to support
+        a "sortable" attribute for datatable-sort, when that attribute was
+        irrelevant to datatable-base, where the Column class is defined.
+    </li>
+</ol>
+
+<p>
+    The new architecture aims to address these and other issues uncovered
+    during its production life prior to 3.5.0, and take advantage of the
+    App framework components that emerged after DataTable's debut in 3.3.
+</p>
+
+<p>
+    DataTable is incredibly important to a lot of people, and it's important
+    to us that it not only be built right, but also that it be as easy to use
+    as possible.
+</p>
+
+<p>
+    Now let's get into the nitty gritty.  What big changes?
+</p>
+
+<h3>What's in a Name?</h3>
+
+<p>
+    As of 3.5.0, `Y.DataTable` is the main instantiable class.
+</p>
+
+```
+// 3.4.1
+var before = new Y.DataTable.Base({ ... });
+
+// 3.5.0
+var after = new Y.DataTable({ ... });
+```
+
+<p>
+    `Y.DataTable` continues to serve the role of namespace, and in fact
+    `Y.DataTable.Base` is still there, but its primary role now is as
+    <a href="#baseclass">a superclass for extension</a>.  Otherwise, you'll now
+    find all the classes that support or enhance DataTable under the namespace,
+    such as `Y.DataTable.Sortable`.  The notable exception is 
+    `Y.Plugin.DataTableDataSource`, which hasn't yet been migrated over to the
+    new world order (expect that in 3.6.0).
+</p>
+
+<h3>New Feature Architecture</h3>
+
+<p>
+    To simplify the process
+</p>
+
+<p>
+    The downside of the name changes is that the plugins that were
+    reimplemented as class extensions suddenly disappear from the `Y.Plugin`
+    namespace.  This can be confusing because `plug()` doesn't throw an error
+    when a non-existent plugin class is passed as an argument.  But if your code
+    is creating an instance of `Y.DataTable.Base` and plugging in
+    `Y.Plugin.DataTableSort`, as of 3.5.0 it won't be sortable because the
+    plugin doesn't exist, and sorting is added to `Y.DataTable`, not
+    `Y.DataTable.Base`.  However, the fix is easy: change `Y.DataTable.Base` to
+    `Y.DataTable`.  And you can get rid of the superfluous call to `plug(...)`
+    as well.
+</p>
+
+<div class="yui3-g">
+    <div class="yui3-u before">
+        <h4 class="no-toc">Creates a non-sortable table in 3.5.0</h4>
+
+        ```
+        // DataTable.Base has no features, and ...
+        var table = new Y.DataTable.Base({
+            columns: [
+                { key: "id" },
+                { key: "name", sortable: true },
+                { key: "price", sortable: true }
+            ],
+            data: [ ... ]
+        });
+
+        // the feature plugin no longer exists
+        table.plug(Y.Plugin.DataTableSort);
+
+        table.render('#back-then');
+        ```
+    </div>
+    <div class="yui3-u after">
+        <h4 class="no-toc">Fixed</h4>
+
+        ```
+        // Sorting is added to Y.DataTable by datatable-sort
+        var table = new Y.DataTable({
+            columns: [
+                { key: "id" },
+                { key: "name", sortable: true },
+                { key: "price", sortable: true }
+            ],
+            data: [ ... ]
+        });
+
+        // now does nothing, but is harmless
+        table.plug(Y.Plugin.DataTableSort);
+
+        table.render('#here-and-now');
+        ```
+    </div>
+</div>
+
+
+<h3>Now With More MVC!</h3>
+
+<p>
+    DataTable now uses the App framework components Model, ModelList, and View
+    to manage its data and rendering needs.  Recordset and Record are still
+    supported components in 3.5.0, but may be deprecated in the future so we
+    can focus on a single family of components for data representation in YUI.
+</p>
+
+<h4>Models for Data</h4>
+
+<p>
+    There are a lot of benefits to using Model and ModelList for DataTable's
+    record storage, the most compelling reasons being:
+</p>
+
+<ul>
+    <li>
+        the App framework is very popular, which means its progress and feature
+        list can immediately benefit DataTable users,
+    </li>
+    <li>
+        being able to create custom Models to represent your business objects
+        and reuse them across components makes for a more stable codebase, and
+    </li>
+    <li>
+        familiar APIs between components makes each an easy gateway to the
+        others.
+    </li>
+</ul>
+
+<p>
+    Now if you have a table record in hand, it is a Model instance, and you
+    access and update its fields using `model.get('username')` and
+    `model.set('favColor', '#C0FFEE')` rather than
+    `record.getValue('username')` and
+    `record.get('data').favColor = '#C0FFEE';`.
+</p>
+
+<p>
+    In most use cases, the change to Model and ModelList will be transparent
+    since passing an array of columns and an array of objects for data to the
+    DataTable constructor will still result in the same rendered table.
+    However, when you start needing more intelligence from the objects the
+    table is displaying, Model is perfectly positioned as a superclass for your
+    business objects.
+</p>
+
+<p>
+    To keep things simple, DataTable will create a Model subclass for you
+    based on your data, but if you want to use your own Model class for your
+    table records, DataTable now has a `recordType` attribute which will accept
+    a Model class, an array of field names (similar to `columns`, but controls
+    what data is stored, as opposed to what is displayed), or an object
+    corresponding to an ATTRS definition object, where you can specify field
+    validators, setters, getters, default values, etc..  Alternately, you can
+    just pass a prebuilt ModelList instance for the DataTable's `data`
+    attribute.
+</p>
+
+<p>
+    
+    The added configurability for data representation decouples DataTable from
+    the data implementation, providing more opportunity for customization.
+    For example, if you don't need any mutation events or attribute fanciness
+    from your records&mdash;you just want it to be blazing fast&mdash;you can
+    configure it with a `recordType` class that avoids the work that's
+    extraneous for your use case.
+</p>
+
+```
+// Some quacking will be needed for the various places where duck-typing is used
+function DumbRecord(data) {
+    this.data = data;
+    this._id = 'record_' + DumbRecord._id++;
+    this.lists = []; // quack
+}
+
+DumbRecord._id = 0;
+DumbRecord.prototype = {
+    _isYUIModel: 'quack',
+    set: function () { /* quack */ },
+    addTarget: function () { /* quack */ },
+    getAttrs: function () { /* quack */ },
+
+    get: function (name) {
+        return name === 'clientId' ? this._id : this.data[name];
+    },
+    toJSON: function () { return this.data },
+};
+
+var table = new Y.DataTable({
+    columns: [ ... ],
+    data:  [ ... ],
+    recordType: DumbRecord
+}).render('#over-there');
+```
+
+<h4>Views for Rendering</h4>
+
+<p>
+    Different features need different markup, and there is no shortage of 
+</p>
+
+MVC
+Out of the box Views
+    BodyView - string rendering + nodeFormatters
+
+<h3>New Rendering Algorithm</h3>
+
+
+Rendering events
+    render vs renderTable vs renderHeader, etc
+    event to hand off responsibility to View
+
+
+<h2>New Concepts</h2>
+
+    Model, ModelList
+        reuse - use existing biz objects
+        learning/use cases feed back upstream for broader wins
+        configurable (fast Model, Flyweight ML)
+        familiar, consistent
+        Sync layer
+    View
+        swappable, can be tailored to your specific rendering needs (DT APIs
+            pass through to View for DOM related methods)
+        can be isolated, or post processor (nodeFormatter post-processor View?)
+    Controller/View-Controller
+        primary API lives on the instance
+        some methods will relay to the view
+
+Instantiable namespace, pristeen Base
+Extensions auto-mixed
+
+<h2>New Features</h2>
+
+<h2>Experiments</h2>
+
+Columns are simple objects
+    removes the notion of a column instance, making changes to columns rely on
+        table APIs
+    In response to separation of concerns issues where a feature (sorting)
+        required the Column class to host additional attributes.  A plugin
+        requiring a class extension is confusing.
+    May have been obviated by adhoc attribute support, added in 3.5.0 after
+        the change was already in place.
+
+Extensions auto-mixed
+
+
+<h2>The way forward</h2>
+
+gallery-preview module
+
+    tableView
+    clean up/improve the configuration of Views
+    View + extension breakdown
+    Migrate scrollable, message, and column-widths to use Views
+    editable
+    pagination
+    progressive enhancement tableView
+    remote data love
+
+<h3>When Will it Be Out of Beta?</h3>
+Complicates beta marking because components are marked beta, not features
+
+<h3>Questions?</h3>
+
+forums, #yui, @ls_n. Shout out to the dialog in these places driving/validating
+API decisions and helping prioritize the order of current and future feature
+implementation.

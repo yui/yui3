@@ -11,6 +11,9 @@
     "pages": {
         "migration": {
             "displayName": "3.5.0+ Migration Guide"
+        },
+        "architecture": {
+            "displayName": "DataTable architecture, disected"
         }
     },
 
