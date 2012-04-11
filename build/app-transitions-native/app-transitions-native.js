@@ -173,7 +173,7 @@ AppTransitionsNative.prototype = {
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
       @param {Boolean|String} [options.transition] Optional transition override.
         A transition can be specified which will override the default, or
