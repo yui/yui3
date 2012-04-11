@@ -293,21 +293,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     /**
-    Removes any query parameters from the end of the _url_ (if they exist) and
-    returns the result.
+    Removes a query string from the end of the _url_ (if one exists) and returns
+    the result.
 
     @method removeQuery
     @param {String} url URL.
     @return {String} Queryless path.
     **/
     removeQuery: function (url) {
-        var containsQuery = url.indexOf('?');
-
-        if (containsQuery > -1) {
-            url = url.substring(0, containsQuery);
-        }
-
-        return url;
+        return url.replace(/\?.*$/, '');
     },
 
     /**
