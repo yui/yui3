@@ -362,7 +362,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     showView: function (view, config, options, callback) {
         var viewInfo,
             created;
-        
+
         options || (options = {});
 
         if (callback) {
@@ -370,7 +370,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         } else if (Lang.isFunction(options)) {
             options = {callback: options};
         }
-        
+
         if (Lang.isString(view)) {
             viewInfo = this.getViewInfo(view);
 
@@ -380,22 +380,22 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // `preserve` when detaching?
             if (viewInfo && viewInfo.preserve && viewInfo.instance) {
                 view = viewInfo.instance;
-                
+
                 // Make sure there's a mapping back to the view metadata.
                 this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
             } else {
                 created = true;
-                
+
                 view = this.createView(view, config);
                 view.render();
             }
         }
-        
+
         if(!created) {
             options.update && (view.setAttrs(config));
             options.render && (view.render());
         }
-        
+
         // TODO: Should the `callback` _always_ be called, even when the
         // `activeView` does not change?
 
