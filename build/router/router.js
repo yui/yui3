@@ -293,23 +293,17 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         return url.charAt(0) === '/' ? url : '/' + url;
     },
-    
+
     /**
-    Removes any query parameters from the end of the _url_ (if they exist) and
-    returns the result.
-    
+    Removes a query string from the end of the _url_ (if one exists) and returns
+    the result.
+
     @method removeQuery
     @param {String} url URL.
     @return {String} Queryless path.
     **/
     removeQuery: function (url) {
-        var containsQuery = url.indexOf('?');
-        
-        if (containsQuery > -1) {
-            url = url.substring(0, containsQuery);
-        }
-        
-        return url;
+        return url.replace(/\?.*$/, '');
     },
 
     /**
@@ -384,8 +378,10 @@ Y.Router = Y.extend(Router, Y.Base, {
     @param {Function|String} callback Callback function to call whenever this
         route is triggered. If specified as a string, the named function will be
         called on this router instance.
+
       @param {Object} callback.req Request object containing information about
           the request. It contains the following properties.
+
         @param {Array|Object} callback.req.params Captured parameters matched by
           the route path specification. If a string path was used and contained
           named parameters, then this will be a key/value hash mapping parameter
@@ -393,6 +389,8 @@ Y.Router = Y.extend(Router, Y.Base, {
           an array of subpattern matches starting at index 0 for the full match,
           then 1 for the first subpattern match, and so on.
         @param {String} callback.req.path The current URL path.
+        @param {Number} callback.req.pendingRoutes Number of matching routes
+          after this one in the dispatch chain.
         @param {Object} callback.req.query Query hash representing the URL query
           string, if any. Parameter names are keys, and are mapped to parameter
           values.
@@ -400,10 +398,12 @@ Y.Router = Y.extend(Router, Y.Base, {
         @param {String} callback.req.src What initiated the dispatch. In an
           HTML5 browser, when the back/forward buttons are used, this property
           will have a value of "popstate".
+
       @param {Object} callback.res Response object containing methods and
           information that relate to responding to a request. It contains the
           following properties.
         @param {Object} callback.res.req Reference to the request object.
+
       @param {Function} callback.next Callback to pass control to the next
         matching route. If you don't call this function, then no further route
         handlers will be executed, even if there are more that match. If you do
@@ -580,6 +580,8 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
 
+                req.pendingRoutes = routes.length;
+
                 callback.call(self, req, res, req.next);
             }
         };
@@ -628,7 +630,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         var path = (!this._html5 && this._getHashPath()) ||
                 Y.getLocation().pathname;
 
-        return this.removeRoot(path);
+        return this.removeQuery(this.removeRoot(path));
     },
 
     /**
@@ -681,7 +683,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             }
 
             keys.push(key);
-            return operator === '*' ? '(.*?)' : '([^/\\?\\#]*)';
+            return operator === '*' ? '(.*?)' : '([^/#?]*)';
         });
 
         return new RegExp('^' + path + '$');
@@ -1072,7 +1074,6 @@ version of YUI.
 @see Router
 **/
 Y.Controller = Y.Router;
-
 
 
 }, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
