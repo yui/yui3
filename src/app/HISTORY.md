@@ -1,6 +1,16 @@
 App Framework Change History
 ============================
 
+3.6.0
+-----
+
+### Router
+
+* The `req` object passed to routes now has a `pendingRoutes` property that
+  indicates the number of matching routes after the current route in the
+  dispatch chain. [Steven Olmsted]
+
+
 3.5.0
 -----
 

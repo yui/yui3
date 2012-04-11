@@ -564,6 +564,7 @@ routerSuite.add(new Y.Test.Case({
             Assert.areSame(next, req.next);
             Assert.isObject(req.params);
             Assert.isTrue(Y.Object.isEmpty(req.params));
+            Assert.isNumber(req.pendingRoutes);
             Assert.areSame('/foo', req.path);
             ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
         });
@@ -609,6 +610,32 @@ routerSuite.add(new Y.Test.Case({
         router._dispatch('/baz/quux', {});
 
         Assert.areSame(3, calls);
+    },
+
+    'request object should contain a `pendingRoutes` property': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        router.route('/a*', function (req, res, next) {
+            calls += 1;
+            Assert.areSame(2, req.pendingRoutes, 'there should be 2 pending routes');
+            next();
+        });
+
+        router.route('/ab*', function (req, res, next) {
+            calls += 1;
+            Assert.areSame(1, req.pendingRoutes, 'there should be 1 pending route');
+            next();
+        });
+
+        router.route('/abc', function (req, res, next) {
+            calls += 1;
+            Assert.areSame(0, req.pendingRoutes, 'there should be 0 pending routes');
+        });
+
+        router._dispatch('/abc', {});
+
+        Assert.areSame(3, calls, '3 routes should be called');
     },
 
     'calling `res()` should have the same result as calling `next()`': function () {
