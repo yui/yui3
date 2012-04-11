@@ -197,7 +197,7 @@ routerSuite.add(new Y.Test.Case({
         Y.config.throwFail = this.throwFail;
         delete this.throwFail;
     },
-
+    
     'route() should add a route': function () {
         var router = this.router = new Y.Router();
 
@@ -236,7 +236,8 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'hasRoute() should return `true` if one or more routes match the given path': function () {
-        var router = this.router = new Y.Router();
+        var router = this.router = new Y.Router(),
+            router2 = new Y.Router();
 
         function noop () {}
 
@@ -246,9 +247,21 @@ routerSuite.add(new Y.Test.Case({
 
         Assert.isTrue(router.hasRoute('/foo'));
         Assert.isTrue(router.hasRoute('/bar'));
+        Assert.isTrue(router.hasRoute('/bar?a=b'));
+        Assert.isTrue(router.hasRoute('/baz?a=b')); //this matches /:foo
         Assert.isFalse(router.hasRoute('/baz/quux'));
+        Assert.isFalse(router.hasRoute('/baz/quux?a=b'));
+        
+        //need to test a router that doesn't have a /:foo catch-all
+        router2.route('/foo', noop);
+        router2.route('/bar', noop);
+        
+        Assert.isTrue( router2.hasRoute('/foo'));
+        Assert.isTrue( router2.hasRoute('/bar'));
+        Assert.isTrue( router2.hasRoute('/bar?a=b'));
+        Assert.isFalse(router2.hasRoute('/baz?a=b'));
     },
-
+    
     'hasRoute() should support full URLs': function () {
         var router = this.router = new Y.Router(),
             loc    = win && win.location,
@@ -267,7 +280,7 @@ routerSuite.add(new Y.Test.Case({
         // Scheme-relative URL.
         Assert.isTrue(router.hasRoute('//' + loc.host + '/foo'));
     },
-
+    
     'hasRoute() should always return `false` for URLs with different origins': function () {
         var router = this.router = new Y.Router(),
             origin = 'http://something.really.random.com';
@@ -518,6 +531,63 @@ routerSuite.add(new Y.Test.Case({
         });
 
         router._dispatch('/foo', {}, src);
+    },
+    
+    '_getRegex() should return regexes that do not match too much' : function() {
+        var router = this.router = new Y.Router(),
+            check = function(path, url) {
+                return router._getRegex(path, []).test(url);
+            };
+        
+        Assert.isTrue( check("/*", "/"));
+        Assert.isTrue( check("/*", "/foo"));
+        Assert.isTrue( check("/*", "/foo?a=b"));
+        Assert.isTrue( check("/*", "/foo#a"));
+        Assert.isTrue( check("/*", "/foo/bar"));
+        
+        Assert.isTrue( check("/*foo", "/"));
+        Assert.isTrue( check("/*foo", "/foo"));
+        Assert.isTrue( check("/*foo", "/foo?a=b"));
+        Assert.isTrue( check("/*foo", "/foo#a"));
+        Assert.isTrue( check("/*foo", "/foo/bar"));
+        
+        Assert.isTrue( check("/", "/"));
+        Assert.isFalse(check("/", "/foo"));
+        Assert.isFalse(check("/", "/foo/bar"));
+        Assert.isFalse(check("/", "/foo?bar"));
+        Assert.isFalse(check("/", "/foo#bar"));
+        
+        Assert.isTrue( check("/foo", "/foo"));
+        Assert.isFalse(check("/foo", "/"));
+        Assert.isFalse(check("/foo", "/foo/bar"));
+        Assert.isFalse(check("/foo", "/foo?bar"));
+        Assert.isFalse(check("/foo", "/foo#bar"));
+        
+        Assert.isTrue( check("/foo/bar", "/foo/bar"));
+        Assert.isFalse(check("/foo/bar", "/"));
+        Assert.isFalse(check("/foo/bar", "/foo"));
+        Assert.isFalse(check("/foo/bar", "/foo?bar"));
+        Assert.isFalse(check("/foo/bar", "/foo#bar"));
+        
+        Assert.isTrue( check("/:foo", "/foo"));
+        Assert.isTrue( check("/:foo", "/bar"));
+        Assert.isFalse(check("/:foo", "/baz/quux"));
+        Assert.isFalse(check("/:foo", "/bar?a=b"));
+        Assert.isFalse(check("/:foo", "/bar#a"));
+        
+        Assert.isTrue( check("/foo/:foo", "/foo/bar"));
+        Assert.isTrue( check("/foo/:foo", "/foo/bar"));
+        Assert.isFalse(check("/foo/:foo", "/baz/quux"));
+        Assert.isFalse(check("/foo/:foo", "/foo/bar?a=b"));
+        Assert.isFalse(check("/foo/:foo", "/foo/bar#a"));
+        
+        Assert.isTrue( check("/:foo/bar", "/foo/bar"));
+        Assert.isTrue( check("/:foo/bar", "/bar/bar"));
+        Assert.isFalse(check("/:foo/bar", "/baz"));
+        Assert.isFalse(check("/:foo/bar", "/bar"));
+        Assert.isFalse(check("/:foo/bar", "/baz/quux"));
+        Assert.isFalse(check("/:foo/bar", "/foo/bar?a=b"));
+        Assert.isFalse(check("/:foo/bar", "/foo/bar#a"));
     }
 }));
 
@@ -564,6 +634,7 @@ routerSuite.add(new Y.Test.Case({
             Assert.areSame(next, req.next);
             Assert.isObject(req.params);
             Assert.isTrue(Y.Object.isEmpty(req.params));
+            Assert.isNumber(req.pendingRoutes);
             Assert.areSame('/foo', req.path);
             ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
         });
@@ -609,6 +680,32 @@ routerSuite.add(new Y.Test.Case({
         router._dispatch('/baz/quux', {});
 
         Assert.areSame(3, calls);
+    },
+
+    'request object should contain a `pendingRoutes` property': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        router.route('/a*', function (req, res, next) {
+            calls += 1;
+            Assert.areSame(2, req.pendingRoutes, 'there should be 2 pending routes');
+            next();
+        });
+
+        router.route('/ab*', function (req, res, next) {
+            calls += 1;
+            Assert.areSame(1, req.pendingRoutes, 'there should be 1 pending route');
+            next();
+        });
+
+        router.route('/abc', function (req, res, next) {
+            calls += 1;
+            Assert.areSame(0, req.pendingRoutes, 'there should be 0 pending routes');
+        });
+
+        router._dispatch('/abc', {});
+
+        Assert.areSame(3, calls, '3 routes should be called');
     },
 
     'calling `res()` should have the same result as calling `next()`': function () {
@@ -677,6 +774,7 @@ routerSuite.add(new Y.Test.Case({
 
         Assert.areSame(2, calls);
     },
+    
 
     'routes containing a "*" should match the segments which follow it': function () {
         var calls  = 0,
@@ -706,7 +804,7 @@ routerSuite.add(new Y.Test.Case({
         var calls = 0,
             routerOne = this.router  = new Y.Router(),
             routerTwo = this.router2 = new Y.Router();
-
+            
         routerOne.route('/baz', function () {
             calls += 1;
         });
@@ -714,7 +812,7 @@ routerSuite.add(new Y.Test.Case({
         routerTwo.route('/baz', function () {
             calls += 1;
         });
-
+        
         routerOne.save('/baz');
 
         this.wait(function () {
