@@ -234,7 +234,9 @@ Y.Router = Y.extend(Router, Y.Base, {
             return false;
         }
 
-        return !!this.match(this.removeRoot(url)).length;
+        url = this.removeQuery(this.removeRoot(url));
+
+        return !!this.match(url).length;
     },
 
     /**
@@ -290,6 +292,24 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         return url.charAt(0) === '/' ? url : '/' + url;
+    },
+    
+    /**
+    Removes any query parameters from the end of the _url_ (if they exist) and
+    returns the result.
+    
+    @method removeQuery
+    @param {String} url URL.
+    @return {String} Queryless path.
+    **/
+    removeQuery: function (url) {
+        var containsQuery = url.indexOf('?');
+        
+        if (containsQuery > -1) {
+            url = url.substring(0, containsQuery);
+        }
+        
+        return url;
     },
 
     /**
@@ -661,7 +681,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             }
 
             keys.push(key);
-            return operator === '*' ? '(.*?)' : '([^/]*)';
+            return operator === '*' ? '(.*?)' : '([^/\\?\\#]*)';
         });
 
         return new RegExp('^' + path + '$');
@@ -1054,4 +1074,5 @@ version of YUI.
 Y.Controller = Y.Router;
 
 
-}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
+
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
