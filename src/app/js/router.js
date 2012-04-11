@@ -291,22 +291,22 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         return url.charAt(0) === '/' ? url : '/' + url;
     },
-    
+
     /**
     Removes any query parameters from the end of the _url_ (if they exist) and
     returns the result.
-    
+
     @method removeQuery
     @param {String} url URL.
     @return {String} Queryless path.
     **/
     removeQuery: function (url) {
         var containsQuery = url.indexOf('?');
-        
+
         if (containsQuery > -1) {
             url = url.substring(0, containsQuery);
         }
-        
+
         return url;
     },
 
@@ -689,7 +689,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             }
 
             keys.push(key);
-            return operator === '*' ? '(.*?)' : '([^/\\?\\#]*)';
+            return operator === '*' ? '(.*?)' : '([^/#?]*)';
         });
 
         return new RegExp('^' + path + '$');
