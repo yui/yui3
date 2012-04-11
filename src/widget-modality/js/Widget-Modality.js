@@ -246,7 +246,10 @@ var WIDGET       = 'widget',
             // though they both pass the feature test; the UA sniff is here to
             // account for that. Ideally this should be replaced with a better
             // feature test.
-            if (!supportsPosFixed || Y.UA.ios < 5 || Y.UA.android < 3) {
+            if (!supportsPosFixed ||
+                    (Y.UA.ios && Y.UA.ios < 5) ||
+                    (Y.UA.android && Y.UA.android < 3)) {
+
                 Y.one('win').on('scroll', this._resyncMask, this);
             }
         },
@@ -384,7 +387,9 @@ var WIDGET       = 'widget',
         },
 
         /**
-         * Attaches UI Listeners for "clickoutside" and "focusoutside" on the widget. When these events occur, and the widget is modal, focus is shifted back onto the widget.
+         * Attaches UI Listeners for "clickoutside" and "focusoutside" on the
+         * widget. When these events occur, and the widget is modal, focus is
+         * shifted back onto the widget.
          *
          * @method _attachUIHandlesModal
          */
