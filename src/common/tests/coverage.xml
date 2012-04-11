@@ -43,6 +43,7 @@
         <url>charts/tests/charts.html</url>
         <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/axestests.html</url>
+        <url>charts/tests/numericaxistests.html</url>
         <url>charts/tests/numericaxismintests.html</url>
         <url>charts/tests/numericaxismaxtests.html</url>
         <url>charts/tests/numericaxisminandmaxtests.html</url>
