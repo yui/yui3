@@ -10,6 +10,17 @@ App Framework Change History
   indicates the number of matching routes after the current route in the
   dispatch chain. [Steven Olmsted]
 
+* Added a `removeQuery()` function that accepts a URL and returns it without a
+  query string (if it had one). [Pat Cavit]
+
+* Fixed `hasRoute()` failing to match routes with query params. [Pat Cavit]
+
+* Fixed bad route regex generation if a placeholder was the last thing in the
+  route. [Pat Cavit]
+
+* Fixed generated route regexes matching hash/query params when they shouldn't
+  have. [Pat Cavit]
+
 
 3.5.0
 -----
