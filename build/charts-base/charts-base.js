@@ -4520,12 +4520,13 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             max = 0;
                             roundingUnit = this._getMinimumUnit(max, min, units);
+                            min = max - (roundingUnit * units);
                         }
                         else
                         {
+                            min = this._roundDownToNearest(min, roundingUnit);
                             max = this._roundUpToNearest(max, roundingUnit);
                         }
-                        min = max - (roundingUnit * units);
                     }
                     else
                     {
@@ -4597,12 +4598,13 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             Math.ceil(roundingUnit);
                         }
+                        min = max - (roundingUnit * units);
                     }
                     else
                     {
+                        min = this._roundDownToNearest(min, roundingUnit);
                         max = this._roundUpToNearest(max, roundingUnit);
                     }
-                    min = max - (roundingUnit * units);
 
                 }
             }
@@ -4636,7 +4638,7 @@ Y.extend(NumericAxis, Y.AxisType,
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
                     min = minRound;
-                    max = min + minimumRange;
+                    max = maxRound;
                 }
                 else
                 {

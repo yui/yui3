@@ -88,15 +88,15 @@ App is a high-level component that builds upon other components in the App Frame
 </p>
 
 <p>
-The goal of the App component is to provide you a place to organize and connect together the parts of your application. App implements infrastructural pieces which are common to all apps — such as managing views and the navigation between pages — allowing you to focus on the specifics of <em>your</em> app.
+The goal of the App component is to provide you a place to organize and connect together the parts of your application. App implements infrastructural pieces which are common to all apps — such as [[#View Management|managing views]] and the [[#Navigating Between "Pages"|navigation between pages]] — allowing you to focus on the specifics of <em>your</em> app.
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] and [[#Progressively-Enhanced Apps]] sections of this guide contain details and best practices on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] section of this guide contain details on accomplishing this.
 </p>
 
 <p>
-You can also use the App component to build client-only apps for when there is no server, or the server is not capable of routing and handling requests. There are <strong>drawbacks to client-only apps</strong> which you need to be aware of and fully understand their implications. Be sure to read the [[#Client-Only Apps]] section which contains details on these drawbacks and best practices.
+You can also use the App component to build client-only apps for when there is no server, or the server is not capable of routing and handling requests. There are <strong>drawbacks to client-only apps</strong> which you need to be aware of and fully understand their implications. Be sure to read the [[#Progressively-enhanced vs. Client-only Apps]] section which contains details on these drawbacks and best practices.
 </p>
 
 <p>
@@ -207,7 +207,7 @@ The following properties are meaningful to App classes and subclasses. In additi
           <dt>`preserve`</dt>
           <dd>
             <p>
-            Boolean for whether the view instance should be retained. By default, the view instance will be destroyed when it is no longer the `activeView`. If `true` the view instance will simply be `removed()` from the DOM when it is no longer active. This is useful when the view is frequently used and may be expensive to re-create.
+            Boolean for whether the view instance should be retained. By default, the view instance will be destroyed when it is no longer the `activeView`. If `true` the view instance will simply be `removed()` from the DOM when it is no longer active. This is useful when the view is frequently used and may be expensive to re-create. See [[#Preserved Views]] for best practices.
             </p>
           </dd>
 
@@ -274,7 +274,7 @@ The App class uses both properties and attributes. Properties are best when thei
 <h3>App Attributes</h3>
 
 <p>
-App is composed of <a href="../view/index.html#view-attributes">View</a>, <a href="../router/index.html#config-attributes">Router</a>, and <a href="../pjax/index.html">Pjax</a>, all of which provide attributes that will be of interest to you — beyond these, App adds the following attributes:
+App is composed of <a href="../view/index.html#view-attributes">View</a>, <a href="../router/index.html#config-attributes">Router</a>, and <a href="../pjax/index.html#config-attributes">Pjax</a>, all of which provide attributes that will be of interest to you — beyond these, App adds the following attributes:
 </p>
 
 <table>
@@ -316,7 +316,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
           <dt>`undefined`</dt>
           <dd>
             <p>
-            The best form of URLs will be chosen based on the capabilities of the browser. Given no information about the server environment, a balanced approach to routing and navigation is chosen. See [[#Routing Coordination with Server]] for more details.
+            The best form of URLs will be chosen based on the capabilities of the browser. Given no information about the server environment, a balanced approach to routing and navigation is chosen. See [[#URLs Based on Browser Capabilities]] for more details.
             </p>
           </dd>
 
@@ -327,7 +327,7 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
             </p>
 
             <p>
-            This is the best option for progressive-enhancement because it will cause <strong>all URLs to always have full-paths</strong>, which means the server will be able to accurately handle all URLs this app produces. See [[#Progressively-Enhanced Apps]] and [[#Routing Coordination with Server]] for more details.
+            This is the best option for progressive-enhancement because it will cause <strong>all URLs to always have full-paths</strong>, which means the server will be able to accurately handle all URLs this app produces. See [[#Full-path URLs Only]] and [[#Progressively-enhanced vs. Client-only Apps]] for more details.
             </p>
           </dd>
 
@@ -338,10 +338,14 @@ App is composed of <a href="../view/index.html#view-attributes">View</a>, <a hre
             </p>
 
             <p>
-            Be aware that this will cause <strong>all URLs to always be hash-based</strong>, even in browsers that are capable of using HTML5 history. Please make sure you fully understand the implications of client-only apps. See [[#Client-Only Apps]] and [[#Routing Coordination with Server]] for more details.
+            Be aware that this will cause <strong>all URLs to always be hash-based</strong>, even in browsers that are capable of using HTML5 history. Please make sure you fully understand the implications of client-only apps. See [[#Hash-based URLs Only]] and [[#Progressively-enhanced vs. Client-only Apps]] for more details.
             </p>
           </dd>
         </dl>
+
+        <p>
+        See [[#Routing Coordination with Server]] for more details.
+        </p>
       </td>
     </tr>
 
@@ -440,160 +444,252 @@ A few of App's inherited attributes are given new default values:
   </tbody>
 </table>
 
-<h3>Extending `Y.App`</h3>
-
-<p>
-The `Y.App` class is intended to be mutable insofar as being the host for <em>all</em> App-component features, whereas `Y.App.Base` is intended to remain pure and just host the basic set of features. This allows for two different ways to extend the functionality of `Y.App`: [[#mixing-in features]], and [[#subclassing]].
-</p>
-
-<h4>Mixing-In Features</h4>
-
-<p>
-Additional class extensions can be automatically mixed-into `Y.App`, doing so will dynamically extend the functionality of the App class making these new features available to all of its instances and subclasses. The `Y.App.Transitions` class extension, provided by the `app-transitions` module, uses this pattern to add transitions support to `Y.App`.
-</p>
-
-```
-// Creates the namespace for the transitions class extension and assigns a
-// simple constructor function to it.
-Y.App.Transitions = function () {};
-
-// This defines the prototype of the transitions class extension, the actual
-// implementation has been left out for the sake of simplicity.
-Y.App.Transitions.prototype = {
-
-    // The implementation of the transition features would be here.
-
-};
-
-// Here the transitions class extension is being applied automatically by
-// mixing itself into the `Y.App` class.
-Y.Base.mix(Y.App, [Y.App.Transitions]);
-```
-
-<p>
-When this module is included in the YUI instance, the transitions support for App can be used by simply toggling it on:
-</p>
-
-```
-YUI().use('app-base', 'app-transitions', function (Y) {
-    var app = new Y.App({transitions: true});
-});
-```
-
-<p>
-When writing your own class extensions to add features to `Y.App`, feel free to add them to App's namespace (e.g., `Y.App.SomeNewFeature`), and be sure to follow these two rules:
-</p>
-
-<ol>
-  <li>
-    <p>
-    The addition functionality should be <strong>disabled by default</strong>. The API for the class extensions should provide some way for the user to <em>opt-in</em> to using the features it adds.
-    </p>
-
-    <p>
-    The `Y.App.Transitions` class extension does this be requiring a "truthy" value for the `transitions` property of the config object passed-in during instance creation.
-    </p>
-  </li>
-
-  <li>
-    <p>
-    Be courteous to the other App component class extensions, since they all share the same `prototype` be careful not to unintentionally overwrite other properties or methods.
-    </p>
-  </li>
-</ol>
-
-<h4>Subclassing</h4>
-
-<p>
-Creating class extensions for [[#mixing-in features]] to `Y.App` is a great way to extend its functionality in a reusable way while not changing how you [[#Instantiating App|Instantiate an App]]; but might find it more useful to extend the `Y.App` class to create a subclass customized to your specific needs.
-</p>
-
-<p>
-Use the `Y.Base.create()` method to extend `Y.App` and add or override prototype and static members and attributes. You may also optionally specify one or more <a href="../base/index.html#extensions">class extensions</a> to mix into your new class.
-</p>
-
-```
-// Create a Y.CustomApp class that extends Y.App.
-Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
-    // Add or override prototype properties and methods here.
-}, {
-    // Add static properties and methods here.
-
-    ATTRS: {
-        // Add or override default attributes here.
-    }
-});
-```
-
-<p>
-One benefit of extending `Y.App` is that you can easily add default views, routes, and route handlers to your custom App class, and they'll be shared by all instances of that class unless overridden at the instance level:
-</p>
-
-```
-// Create a Y.CustomApp class that extends Y.App.
-Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
-    // Default registered views inherited by all CustomApp instances.
-    views: {
-        home : {preserve: true},
-        users: {preserve: true},
-        user : {parent: 'users'}
-    },
-
-    // Default route handlers inherited by all CustomApp instances.
-
-    handleHome: function (req) {
-        // Handle the "/" route here.
-    },
-
-    handleUsers: function (req) {
-        // Handle the "/users/" route here.
-    },
-
-    handleUser: function (req) {
-        // Handle the "/users/:name/" route here.
-    }
-}, {
-    ATTRS: {
-        // Share these routes with all CustomApp instances.
-        routes: {
-            value: [
-                {path: '/',             callback: 'handleHome'},
-                {path: '/users/',       callback: 'handleUsers'}
-                {path: '/users/:name/', callback: 'handleUser'}
-            ]
-        }
-    }
-});
-
-// Create a CustomApp instance that inherits the defaults and adds to them.
-var app = new Y.CustomApp({
-    // Register an additional view. The `home`, `users`, and `user` views will
-    // also be inherited.
-    views: {
-        about: {preserve: true}
-    }
-});
-
-// Add a route and route handler.
-app.route('/about/', function (req) {
-    // Handle the "/about/" route here.
-});
-```
-
-<p>
-Now all instances of `Y.CustomApp` will inherit all the custom defaults and can add to or override them. The `app` instance created here will handle the `"/"`, `"/users/"`, and `"/users/:name/"` routes in addition to its own `"/about/"` route.
-</p>
-
-<p>
-Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/app-base.html">App's API docs</a> to become familiar with its public and protected properties and methods.
-</p>
-
 <h3>Routing Coordination with Server</h3>
-{{! TODO:
 
-  * Note about `html5` default value override.
+<p>
+A primary feature of App is its powerful routing which enables you to enhance the user experience and performance of traditional client/server apps. Using `Y.App` you can create more meaningful and richer interactions for a user navigating through your application. App's routing features center on progressive enhancement and do <em>not</em> compromise standard browser features (back/forward button support), URLs, or search engine craw-ability.
+</p>
 
-}}
+<p>
+There are two attributes which are used to configure an app's URLs and how its routing should coordinate with the server:
+</p>
+
+<dl>
+  <dt>`root`</dt>
+  <dd>
+    <p>
+    An app's `root` is the absolute path from which all routes should be evaluated, i.e. the path at which the app is mounted, usually "/".
+    </p>
+
+    <p>
+    See <a href="../router/index.html#setting-the-root-path">Setting the Root Path</a> in Router's user guide for more information.
+    </p>
+  </dd>
+
+  <dt>`serverRouting`</dt>
+  <dd>
+    <p>
+    Models a higher level concept over the capabilities of, and interactions between the browser and server with respect to URLs and inter-page navigation. This attribute determines how your `Y.App` instance will interact with the server: set this to `true` if the app can be progressively enhanced, or `false` if it's a client side-only app.
+    </p>
+
+    <p>
+    <strong>Note:</strong> The value of an app's `html5` attribute depends on the value of its `serverRouting` attribute. When `serverRouting` is explicit set to `false` (not just falsy), the default value for `html5` will be set to `false` for <em>all</em> browsers. When `serverRouting` is `true` or `undefined` the returned value will be dependent on the browser's capability of using HTML5 history.
+    </p>
+  </dd>
+</dl>
+
+<p>
+<strong>Looking for general information about routing?</strong> See the <a href="../router/index.html#routing">Routing</a> section in Router's user guide.
+</p>
+
+<h4>URLs Based on Browser Capabilities</h4>
+
+<p>
+This is the <strong>default</strong> behavior of how an app's routing will coordinate with the server. When `serverRouting` is left `undefined`, the app is given no information about the server's capabilities. In this case a balanced approach to URLs, routing, and navigation will be used:
+</p>
+
+<ul>
+  <li>
+    <p>
+    Full-path URLs will only be used if the browser is capable of using HTML5 history, otherwise hash-based URLs will be used.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The `Y.App` instance will handle <em>all</em> routing since it is unknown whether the server is capable of properly routing requests.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The server is <em>required</em> to handle full-path URLs which will be generated by browsers which use the HTML5 `pushState()` history API. A server can handle these requests by either rendering the initial state in the HTML, or redirecting to a hash-based URL and letting the app dispatch to its route handlers.
+    </p>
+  </li>
+</ul>
+
+<p>
+This behavior has been chosen as the default because it provides the best path forward for a developer to upgrade a client side-only app to a progressively enhanced app (but you should always prefer to build an app using progressive enhancement from the start, that's the whole point).
+</p>
+
+<p>
+The following is a simple <a href="http://nodejs.org/">Node.js</a> <a href="http://expressjs.com/">Express</a> server and very basic `Y.App` instance which demonstrate how the client and server can coordinate routing and the fulfillment of a request when using URLs that conform to the capabilities of the browser, but the server is "dumb":
+</p>
+
+<h5 class="no-toc">server.js - The Node.js Express server</h5>
+
+```
+var server = require('express').createServer();
+
+// Handles requests to the root path ("/") my simply sending the "shell" page
+// which creates the `Y.App` instance.
+server.get('/', function (req, res) {
+    res.sendfile('index.html');
+});
+
+// Handles all other requests by redirecting the browser back to the root path
+// and tacking on URL's path as the fragment; e.g. "/foo/" => "/#/foo/".
+server.get('*', function (req, res) {
+    res.redirect('/#' + req.url, 302);
+});
+
+server.listen(process.env.PORT || 3000);
+```
+
+<h5 class="no-toc">`index.html` - The "shell" page for the `Y.App` instance</h5>
+
+```
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example App</title>
+</head>
+<body>
+
+    <h1></h1>
+
+    <script src="http://yui.yahooapis.com/{{{yuiVersion}}}/build/yui/yui-min.js"></script>
+    <script>
+    YUI().use('app-base', function (Y) {
+
+        var app = new Y.App({
+            // Configure the app.
+        });
+
+        // Handles requests for the root by updating the page heading.
+        app.route('/', function () {
+            Y.one('h1').set('text', 'Example App - Home');
+        });
+
+        // Handles all other requests by updating the page heading and
+        // displaying current path in it.
+        app.route('*', function (req) {
+            Y.one('h1').set('text', 'Example App - ' + req.path);
+        });
+
+        // Make sure to dispatch the current hash-based URL which was set by
+        // the server to our route handlers.
+        app.render().dispatch();
+
+    });
+    </script>
+
+</body>
+</html>
+```
+
+<p>
+In the above example, the server handles full URLs by sending a redirect back to the root ("/") with a hash-based path and serves a "shell" HTML page to delegate control to a `Y.App` instance. Once the app is loaded, it will dipatch the hash-based path to its route handlers, finishing the fulfillment of the request on the client.
+</p>
+
+<p>
+You could also implement the server-side redirection logic using an Apache Mod Rewrite `.htaccess` file:
+</p>
+
+```nohighlight
+RewriteEngine On
+RewriteRule ^(.+)$ /#/$1 [L]
+```
+
+<h4>Full-path URLs Only</h4>
+
+<p>
+Full-path URLs are standard URLs which have matching routes based on the URL's path segments. The follow are example full-path URLs you might expect to see in a photos application:
+</p>
+
+```nohighlight
+http://example.com/
+http://example.com/photos/
+http://example.com/photos/1
+http://example.com/photos/2
+http://example.com/albums/
+http://example.com/albums/vacation
+```
+
+<p>
+Setting an app's `serverRouting` attribute to `true` signals that the server <em>is</em> capable of properly handling requests to all full-path URLs the app can produce. This causes the app to <em>always</em> use full-path URLs, regardless of whether the browser can use HTML5 history or not. In this case the capabilities of the client and server are coordinated in the most optimal way, giving the app the following qualities:
+</p>
+
+<ul>
+  <li>
+    <p>
+    Full-path URLs are <em>always</em> used, older browsers which can not use HTML5 history will have to do full page loads.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The `Y.App` instance will only handle routing in browser which support HTML5 history, the other browser's "requests" will be handled completely by the server.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The server is <em>required</em> to handle full-path URLs which will be generated by the app. Ideally the server should render the application's initial state in the response HTML for the given URL.
+    </p>
+  </li>
+</ul>
+
+<p>
+This is the <strong>best option for progressive enhancement</strong>! All users of your app will have the same, full-path URLs, independent of the browser or device they are using. Configuring your app with `serverRouting` set to `true` means that the client and server components of your application are working together to provide the best overall experience for your users.
+</p>
+
+<p>
+See [[#Progressively-enhanced vs. Client-only Apps]] for more information about best practices.
+</p>
+
+<h4>Hash-based URLs Only</h4>
+
+<p>
+Hash-based URLs have matching routes based on the URL's fragment identifier ("#"). The follow are example hash-based URLs you might expect to see in a photos application:
+</p>
+
+```nohighlight
+http://example.com/#/
+http://example.com/#/photos/
+http://example.com/#/photos/1
+http://example.com/#/photos/2
+http://example.com/#/albums/
+http://example.com/#/albums/vacation
+```
+
+<p>
+Notice how the above URLs actually all contain the same path segment ("/"), but use the fragment identifier ("#") to hold a pseudo-path value.
+</p>
+
+<p>
+Setting an app's `serverRouting` attribute to `false` signals that the server is <em>not</em> capable of properly handling requests to full-path URLs. This causes the app to <em>always</em> use hash-based URLs, regardless of the browser's capabilities. In this case the app will assume that there is no server to rely on, giving the app the following qualities:
+</p>
+
+<ul>
+  <li>
+    <p>
+    Be aware that <strong>all URLs will be hash-based</strong>, even in browsers which are capable of using HTML5 history.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The `Y.App` instance will handle all routing since there is no server capable of properly routing handling requests.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    The server is only expected to serve out a static HTML "shell" page with the required JavaScript to instantiate the `Y.App` instance, which will then render the initial state of the application.
+    </p>
+  </li>
+</ul>
+
+<p>
+This is the best option if there is no guarantee that your app will be served by a capable server. This allows an app to run when hosted on the filesystem or static file server. You should be aware that using hash-based URLs means there will be information loss. The server will <em>not</em> receive the full URL because browsers do not send the fragment-part to the server, that is everything after and including the "#".
+</p>
+
+<p>
+<strong>Please read</strong> [[#Progressively-enhanced vs. Client-only Apps]] for more information and best practices.
+</p>
 
 <h3>Rendering an App</h3>
 
@@ -680,7 +776,7 @@ This results in the HTML of the page looking like this:
 ```
 
 <p>
-Refer to App's API Docs for more details about <a href="{{apiDocs}}/classes/App.html#attr_container">`container`</a> and <a href="/classes/App.html#attr_viewContainer">`viewContainer`</a> attributes.
+Refer to App's API Docs for more details about <a href="{{apiDocs}}/classes/App.html#attr_container">`container`</a> and <a href="{{apiDocs}}/classes/App.html#attr_viewContainer">`viewContainer`</a> attributes.
 </p>
 
 <h4>Overriding `render()`</h4>
@@ -713,7 +809,7 @@ Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
 ```
 
 <p>
-Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()` method</a>.
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_render">`render()` method</a>. See [[#Subclassing]] for more details on extending `Y.App`.
 </p>
 
 <h3>View Management</h3>
@@ -901,7 +997,7 @@ Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/clas
 <h3>Navigating Between "Pages"</h3>
 
 <p>
-A key feature of `Y.App` is its powerful navigation management. You can simply use standard HTML links within your app and when the user clicks a link, `Y.App` will handle it if there’s a matching route for that URL. With the [[#Configuring Navigation Behavior|navigation-related config options]] you have full control over your app's navigation behavior and experience, plus your app will automatically use the best available navigation method based on these settings, the browser’s capabilities, and the actions of the user.
+A key feature of `Y.App` is its robust URL navigation management. You can simply use standard HTML links within your app and when the user clicks a link, `Y.App` will handle it if there’s a matching route for that URL. With the [[#Configuring Navigation Behavior|navigation-related config options]] you have full control over your app's navigation behavior and experience, plus your app will automatically use the best available navigation method based on these settings, the browser’s capabilities, and the actions of the user.
 </p>
 
 <p>
@@ -1078,11 +1174,159 @@ app.navigate('/users/');
 Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#event_navigate">`navigate` event</a>.
 </p>
 
-<h2>Best Practices</h2>
+<h2>Extending `Y.App`</h2>
 
-<h3>Progressively-Enhanced Apps</h3>
+<p>
+The `Y.App` class is intended to be mutable insofar as being the host for <em>all</em> App-component features, whereas `Y.App.Base` is intended to remain pure and just host the basic set of features. This allows for two different ways to extend the functionality of `Y.App`: [[#mixing-in features]], and [[#subclassing]].
+</p>
 
-<h3>Client-Only Apps</h3>
+<h3>Mixing-In Features</h3>
+
+<p>
+Additional class extensions can be automatically mixed-into `Y.App`, doing so will dynamically extend the functionality of the App class making these new features available to all of its instances and subclasses. The [[#`Y.App.Transitions`]] class extension, provided by the `app-transitions` module, uses this pattern to add transitions support to `Y.App`.
+</p>
+
+```
+// Creates the namespace for the transitions class extension and assigns a
+// simple constructor function to it.
+Y.App.Transitions = function () {};
+
+// Defines the `transitions` attribute with a default value of `false`. This
+// makes the view transitions an opt-in feature.
+Y.App.Transitions.ATTRS = {
+    transitions: {value: false}
+};
+
+// This defines the prototype of the transitions class extension, the actual
+// implementation has been left out for the sake of simplicity.
+Y.App.Transitions.prototype = {
+
+    // The implementation of the transition features would be here.
+
+};
+
+// Here the transitions class extension is being applied automatically by
+// mixing itself into the `Y.App` class.
+Y.Base.mix(Y.App, [Y.App.Transitions]);
+```
+
+<p>
+When this module is included in the YUI instance, the transitions support for App can be used by simply toggling it on:
+</p>
+
+```
+YUI().use('app-base', 'app-transitions', function (Y) {
+    var app = new Y.App({transitions: true});
+});
+```
+
+<p>
+When writing your own class extensions to add features to `Y.App`, feel free to add them to App's namespace (e.g., `Y.App.SomeNewFeature`), and be sure to follow these two rules:
+</p>
+
+<ol>
+  <li>
+    <p>
+    The addition functionality should be <strong>disabled by default</strong>. The API for the class extensions should provide some way for the user to <em>opt-in</em> to using the features it adds.
+    </p>
+
+    <p>
+    The `Y.App.Transitions` class extension does this be requiring a "truthy" value for the `transitions` attribute. By default the value will be `false`, making this an opt-in feature.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Be courteous to the other App component class extensions, since they all share the same `prototype` be careful not to unintentionally overwrite other properties or methods.
+    </p>
+  </li>
+</ol>
+
+<h3>Subclassing</h3>
+
+<p>
+Creating class extensions for [[#mixing-in features]] to `Y.App` is a great way to extend its functionality in a reusable way while not changing how you [[#Instantiating App|Instantiate an App]]; but might find it more useful to extend the `Y.App` class to create a subclass customized to your specific needs.
+</p>
+
+<p>
+Use the `Y.Base.create()` method to extend `Y.App` and add or override prototype and static members and attributes. You may also optionally specify one or more <a href="../base/index.html#extensions">class extensions</a> to mix into your new class.
+</p>
+
+```
+// Create a Y.CustomApp class that extends Y.App.
+Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
+    // Add or override prototype properties and methods here.
+}, {
+    // Add static properties and methods here.
+
+    ATTRS: {
+        // Add or override default attributes here.
+    }
+});
+```
+
+<p>
+One benefit of extending `Y.App` is that you can easily add default views, routes, and route handlers to your custom App class, and they'll be shared by all instances of that class unless overridden at the instance level:
+</p>
+
+```
+// Create a Y.CustomApp class that extends Y.App.
+Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
+    // Default registered views inherited by all CustomApp instances.
+    views: {
+        home : {preserve: true},
+        users: {preserve: true},
+        user : {parent: 'users'}
+    },
+
+    // Default route handlers inherited by all CustomApp instances.
+
+    handleHome: function (req) {
+        // Handle the "/" route here.
+    },
+
+    handleUsers: function (req) {
+        // Handle the "/users/" route here.
+    },
+
+    handleUser: function (req) {
+        // Handle the "/users/:name/" route here.
+    }
+}, {
+    ATTRS: {
+        // Share these routes with all CustomApp instances.
+        routes: {
+            value: [
+                {path: '/',             callback: 'handleHome'},
+                {path: '/users/',       callback: 'handleUsers'}
+                {path: '/users/:name/', callback: 'handleUser'}
+            ]
+        }
+    }
+});
+
+// Create a CustomApp instance that inherits the defaults and adds to them.
+var app = new Y.CustomApp({
+    // Register an additional view. The `home`, `users`, and `user` views will
+    // also be inherited.
+    views: {
+        about: {preserve: true}
+    }
+});
+
+// Add a route and route handler.
+app.route('/about/', function (req) {
+    // Handle the "/about/" route here.
+});
+```
+
+<p>
+Now all instances of `Y.CustomApp` will inherit all the custom defaults and can add to or override them. The `app` instance created here will handle the `"/"`, `"/users/"`, and `"/users/:name/"` routes in addition to its own `"/about/"` route.
+</p>
+
+<p>
+Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/app-base.html">App's API docs</a> to become familiar with its public and protected properties and methods.
+</p>
 
 <h2>App Extensions</h2>
 
@@ -1226,4 +1470,236 @@ Some structural CSS is required to setup an app's `container` and `viewContainer
 <strong>Note:</strong> While transitioning, the app's `viewContainer` node will have its `overflow-x` set to `hidden`. This causes its margins to <em>not collapse</em> with its child nodes. To compensate for this, it is best to not style your views with margins.
 </p>
 
+<h2>Best Practices</h2>
+
+<h3>Progressively-enhanced vs. Client-only Apps</h3>
+
+<p>
+It's important to understand the difference between the preferred approach of developing an app using a progressive enhancement strategy vs. creating a client side-only app, and when it might be appropriate to do so. As discussed in the [[#Routing Coordination with Server]], `Y.App` provides the tools and is flexible enough implement an app using either strategy, but <strong>there are drawbacks to client-only applications</strong>.
+</p>
+
+<p>
+The following sections build on <a href="../router/index.html#best-practices">Router's Best Practices</a>, all of which apply, by looking at things from a higher level, application perspective:
+</p>
+
+<h4>Full-path vs. Hash-based URLs</h4>
+
+<p>
+Before making a decision to use hash-based URLs in your application, you should <strong>be aware of their drawbacks</strong>.
+</p>
+
+<p>
+A client-only app will use hash-based URLs instead of the standard, full-path URLs. When the server receives a request for a hash-based URL everything after and including the fragment identifier ("#") is lost. This means your application will have to rely on the JavaScript to finish fulfilling the request for the user.
+</p>
+
+<p>
+The following shows how this information loss manifest itself:
+</p>
+
+```nohighlight
+Browser URL: http://example.com/#/foo/bar/
+Request URL: http://example.com/
+```
+
+<p>
+The request URL that the server will see is missing the entire path, this means every URL in your application looks to the server as if it's the same page! To prevent link rot in your application, you'll have to support the hash-based variation of your URLs indefinitely.
+</p>
+
+<p>
+Ideally you should prefer full-path URLs (e.g., http://example.com/foo/bar/) for your application and be able to handle full page loads for browsers which are not capable of using HTML5 history. This requires a server capable of routing requests and rendering the initial state of the application in the HTML responses. This is the main idea behind a progressive enhancement development strategy — providing a better experience for more capable browsers/devices.
+</p>
+
+<h4>Performance and SEO</h4>
+
+<p>
+Client-only apps suffer in more places than just their URLs. There are <em>horrible side-effects</em> of using hash-based URLs: degradation in performance of rendering the app's initial state, and lack of SEO.
+</p>
+
+<p>
+It is faster to render the initial state of an app on the server before delegating control to the client-side JavaScript. But in order to achieve this, the server must be capable of routing requests and rendering this initial state. This means your application needs to be using full-path URLs.
+</p>
+
+<p>
+To render the initial state in a client-only app, the server has to send over the HTML "shell" page, which then makes more HTTP requests to get the JavaScript. Once the JavaScript has been downloaded and parsed, it can execute and construct the `Y.App` instance. The app now needs to fetch data from the server (yet another HTTP request), and then it can display the initial state. All while the user is staring at a blank page — which is a horrible user experience, especially on a mobile device with a slower connection.
+</p>
+
+<p>
+Optimizing your app to be indexed by search engines is also relates to this. SEO requires that your app uses full-path URLs so the server can route requests and render the initial state. The basic functions of your app which you want to be indexable should work without JavaScript.
+</p>
+
+<h4>When Client-only Apps are Appropriate</h4>
+
+<p>
+Given all the drawbacks of client-only apps, there's one major advantage: <strong>they don't rely on the server</strong>. If your app needs to run off the filesystem, or be deployed to a "dumb" static file server, then this might be your only option.
+</p>
+
+<p>
+Developing a client-only app using `Y.App` still gives you nice (but hash-based) URLs that are bookmarkable, browser back/forward button support, and view management.
+</p>
+
+<p>
+<strong>Please make sure you understand the issues with hash-based URLs and their side-effects.</strong> Consider developing your application using a progressive enhancement strategy, it will be worth the extra effort in the long run.
+</p>
+
+<h3>Flow Control</h3>
+
+<p>
+When developing an app, it's important to have a clear understanding about how the various components are working together. The use of consistent patterns for information sharing, and execution of operations aid in maintaining a separation of concerns which becomes ever more crucial as the size of the app and team increases.
+</p>
+
+<p>
+Restricting the flow of information to a single direction creates a "one-way street" which enforces a strict separation of concerns and divides control over execution throughout an application. This strategy can be implemented by leveraging YUI's powerful custom event infrastructure. All of the components of App Framework are `Y.Base`-based, and therefore are primed to be both publishers and subscribers of an app's custom events.
+</p>
+
+<p>
+The following example app demonstrates how to wire up the components of an application using custom events to achieve the one-way flow of information and divide control by maintaining a strict separation of concerns:
+</p>
+
+```
+// Create the `UserView`.
+Y.UserView = Y.Base.create('userView', Y.View, [], {
+    template: '<p>{name}</p>' +
+              '<label for="name-input">Name:</label>' +
+              '<input id="name-input" type="text" value="{name}" />' +
+              '<button>Save</button>',
+
+    // Listens for DOM events from the user and translates them into application
+    // events; e.g., "click" -> "save".
+    events: {
+        'button': {click: 'save'}
+    },
+
+    initializer: function () {
+        // Listens for the user model to change, and re-renders the view.
+        this.get('user').after('change', this.render, this);
+    },
+
+    render: function () {
+        var user    = this.get('user'),
+            content = Y.Lang.sub(this.template, {name: user.get('name')});
+
+        this.get('container').setContent(content);
+        return this;
+    },
+
+    // This view doesn't actually do the saving, instead, it is translating the
+    // user's intent (they click the Save button) to an application-level event.
+    // This way control is given to the app to respond to this action.
+    save: function () {
+        var user = this.get('user'),
+            name = this.get('container').one('input').get('value');
+
+        // Fires the save event and passes along the needed information. When
+        // this is the app's `activeView` this event will bubble to the app.
+        this.fire('save', {
+            user: user,
+            name: name
+        });
+    }
+});
+
+// Create the app and define the app's `views`, and assign a new `Model`
+// instance as an ad-hoc attribute to the app.
+var app = new Y.App({
+    views: {
+        user: {
+            type    : 'UserView',
+            preserve: true
+        }
+    },
+
+    user: new Y.Model()
+});
+
+// The app listens for the `UserView` to fire its `save` event. The only will
+// only be notified if the view is the app's current `activeView`.
+app.on('userView:save', function (e) {
+    // The app has the control to execute update the model and execute the save
+    // operation. Updating the model will cause the view to re-render.
+    e.user.set('name', e.name).save();
+});
+
+// Renders the app and set's the `user` view and the `activeView`, passing it
+// the user model.
+app.render().showView('user', {user: app.get('user')});
+```
+
+<p>
+The main thing to note about the above example is that the `UserView` is <em>not</em> updating its `user` model directly, instead it is translating the user's intent via DOM events into application-level events. This gives control back to the app so it can decide how best to proceed. The result is a flow of information and control that moves in one direction and in a continuous loop.
+</p>
+
+<h3>Preserved Views</h3>
+
+<p>
+An app's `views` can be defined so that a single instance of a particular view is preserved and can be reused. When a view is defined with its `preserve` property set to `true`, the same view instance will be used each time the app's `showView()` method is called to set it as the app's `activeView`.
+</p>
+
+<p>
+Preserved views should be used in situations where the contents of the view might not change and that view will be displayed often. They are especially useful if its contents have a complex DOM structure that would be costly to create each time the view was to be shown.
+</p>
+
+<p>
+Imagine a simple app that displays user information in two views: a `users` view that lists all the users, and a `user` view that displays the details of a single user. If the set of all users in this application won't change often, then it would be a good idea to make the `users` view a preserved view. That way it only has to be constructed once, and the same view instance can be shown many times. Whereas the contents of the `user` view are always going to change depending on which user is being displayed, making it <em>not</em> suitable to preserve.
+</p>
+
+<p>
+The following example demonstrates how this hypothetical users app would define its two views:
+</p>
+
+```
+// Create the `UsersView`.
+Y.UsersView = Y.Base.create('usersView', Y.View, [] {
+    // Implementation would be here...
+});
+
+// Create the `UserView`.
+Y.UserView = Y.Base.create('userView', Y.View, [] {
+    // Implementation would be here...
+});
+
+// Create the app and define its two views.
+var app = new Y.App({
+    views: {
+        // Only one `users` view instance will be created and it will be
+        // preserved for reuse.
+        users: {
+            preserve: true,
+            type    : 'UsersView'
+        },
+
+        // A new `user` view instance will be created every time.
+        user: {
+            type  : 'UserView',
+            parent: 'users'
+        }
+    }
+});
+```
+
+<p>
+Be cautious about the number of preserved views you have in your application. Their DOM structures are maintained even when they are not in the visible portion of the page's DOM, this means the more preserved views, the more memory your application will consume. On mobile devices with very limited memory and no swap space, consuming too much memory in your app can cause the browser to crash.
+</p>
+
+{{! TODO: Write content:
 <h2>Apps vs. Widgets</h2>
+}}
+
+<h2>Known Limitations</h2>
+
+<ul>
+  <li>
+    <p>
+    <strong>When multiple App instances are on the page, only one can manage the URL and navigation.</strong> All of the app instances can have route handlers, but only one should have its `linkSelector` attribute set to a non-falsy value. See [[#Configuring Navigation Behavior]] for more details.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    <strong>Transitions are only supported in WebKit and Firefox browsers which also support CSS3 transitions.</strong> It is intended to only support transitions in browser which have native CSS3 transitions, and YUI's <a href="../transition/index.html">Transition</a> component only supports WebKit and Firefox.
+    </p>
+  </li>
+</ul>
+
+<p>
+App relies heavily on Router which has some know limitations in Internet Explorer 9 and lower, and Android 2.x. See <a href="../router/index.html#known-limitations">Router's Known Limitations</a> for more details.
+</p>

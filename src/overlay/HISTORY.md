@@ -1,6 +1,11 @@
 Overlay Change History
 ======================
 
+3.5.0
+-----
+
+  * No changes, see Widget and extensions for changes to dependencies.
+
 3.4.1
 -----
 

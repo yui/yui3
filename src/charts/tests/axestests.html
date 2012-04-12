@@ -15,7 +15,7 @@
 <body class="yui3-skin-sam">
 <h3>Unit Tests</h3>
 <div id="mychart"></div>
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>            
 YUI({
     allowRollup: false,
@@ -226,7 +226,6 @@ YUI({
         ENGINE = "Canvas";
     }
     
-
     AxisTestTemplate = function(cfg, globalCfg)
     {
         var i;
@@ -253,109 +252,6 @@ YUI({
             this.chart.destroy(true);
         }
     });
-
-    var AxisMinTestTemplate = function()
-    {
-        AxisMinTestTemplate.superclass.constructor.apply(this, arguments);
-    };
-    
-    Y.extend(AxisMinTestTemplate, AxisTestTemplate, {
-        //Tests a NumericAxis minimum by applying the labelFunction of the axis to the set minimum value to the innerHTML of the first label.
-        //Tests a NumericAxis maximum (unset) by checking to ensure the last label has a numeric value greater than or equal to the largest value in the data set.
-        testMin: function()
-        {
-            var chart = this.chart,
-                setMin = this.setMin,
-                dataMax = this.dataMax;
-            this.eventListener = this.chart.on("chartRendered", function(e) {
-                var axis = chart.getAxisByKey("values"),
-                    majorUnit = axis.get("styles").majorUnit,
-                    count = majorUnit.count - 1,
-                    labels = axis.get("labels"),
-                    min = parseFloat(labels[0].innerHTML),
-                    max = labels[count].innerHTML,
-                    roundingMethod = axis.get("roundingMethod"),
-                    setIntervals = Y.Lang.isNumber(roundingMethod);
-                Y.assert(min == axis.get("labelFunction").apply(axis, [setMin, axis.get("labelFormat")]));
-                if(setIntervals)
-                {
-                    Y.assert((max - min) % roundingMethod === 0);
-                }
-                //if the roundingMethod is numeric the axis cannot guarantee that the maximum will be greater than the data maximum
-                if(!setIntervals || (count * roundingMethod) >= dataMax - setMin)
-                {
-                    Y.assert(max >= dataMax); 
-                }
-            });
-            this.chart.render("#mychart");
-        }
-    });
-
-    Y.AxisMinTestTemplate = AxisMinTestTemplate;
-
-    var AxisMaxTestTemplate = function()
-    {
-        AxisMaxTestTemplate.superclass.constructor.apply(this, arguments);
-    };
-
-    Y.extend(AxisMaxTestTemplate, AxisTestTemplate, {
-        //Tests a NumericAxis minimum and maximum by applying the labelFunction of the axis to the set minimum and maximum values and
-        //then comparing the innerHTML of the first and last labels
-        testMax: function()
-        {
-            var chart = this.chart,
-                setMax = this.setMax,
-                dataMin = this.dataMin;
-            this.eventListener = this.chart.on("chartRendered", function(e) {
-                var axis = chart.getAxisByKey("values"),
-                    majorUnit = axis.get("styles").majorUnit,
-                    count = majorUnit.count - 1,
-                    labels = axis.get("labels"),
-                    min = parseFloat(labels[0].innerHTML),
-                    max = labels[count].innerHTML,
-                    roundingMethod = axis.get("roundingMethod"),
-                    setIntervals = Y.Lang.isNumber(roundingMethod);
-                Y.assert(max == axis.get("labelFunction").apply(axis, [setMax, axis.get("labelFormat")])); 
-                if(setIntervals)
-                {
-                    Y.assert((max - min) % roundingMethod === 0);
-                }
-                //if the roundingMethod is numeric the axis cannot guarantee that the minimum will be less than the data minimum
-                if(!setIntervals || (count * roundingMethod) >= setMax - dataMin)
-                {
-                    Y.assert(min <= dataMin); 
-                }
-            });
-            this.chart.render("#mychart");
-        }
-    });
-
-    Y.AxisMaxTestTemplate = AxisMaxTestTemplate;
-
-    var AxisMinAndMaxTestTemplate = function()
-    {
-        AxisMinAndMaxTestTemplate.superclass.constructor.apply(this, arguments);
-    };
-    
-    Y.extend(AxisMinAndMaxTestTemplate, AxisTestTemplate, {
-        testMinAndMax: function()
-        {
-            var chart = this.chart,
-                setMax = this.setMax,
-                setMin = this.setMin;
-            this.eventListener = this.chart.on("chartRendered", function(e) {
-                var axis = chart.getAxisByKey("values"),
-                    majorUnit = axis.get("styles").majorUnit,
-                    count = majorUnit.count - 1,
-                    labels = axis.get("labels");
-                Y.assert(labels[0].innerHTML == axis.get("labelFunction").apply(axis, [setMin, axis.get("labelFormat")]));
-                Y.assert(labels[count].innerHTML == axis.get("labelFunction").apply(axis, [setMax, axis.get("labelFormat")])); 
-            });
-            this.chart.render("#mychart");
-        }
-    });
-
-    Y.AxisMinAndMaxTestTemplate = AxisMinAndMaxTestTemplate;
     
     function AxisDataProviderTemplate()
     {
@@ -689,49 +585,8 @@ YUI({
         {date: "2/4/2010", revenue: 1500}
     ],
     
-    AxisMaxWithDecimalsRoundingMethodNumericTest = new Y.AxisMaxTestTemplate({
-        axes: {
-            values: {
-                roundingMethod: 2,
-                maximum: 7.5
-            }
-        },
-        dataProvider: decimalDataProvider
-    },
-    {
-        name: "Axes Max with Decimals Test with roundingMethod=2",
-        dataMin: decimalDataProviderDataMin,
-        setMax: 7.5
-    }),
- 
-    AxisMaxIntegerDecimalDataRoundingMethodNumericTest= new Y.AxisMaxTestTemplate({
-        axes: {
-            values: {
-                roundingMethod: 2,
-                maximum: 8 
-            }
-        },
-        dataProvider: decimalDataProvider
-    },
-    {
-        name: "Axes Integer Max with Decimal Data Test with roundingMethod=2",
-        dataMin: decimalDataProviderDataMin,
-        setMax: 8
-    }),
-
-    AxisMaxWithPositiveAndNegativeDataRoundingMethodNumericTest = new Y.AxisMaxTestTemplate({
-        axes: {
-            values: {
-                maximum: 1492,
-                roundingMethod: 1000
-            }
-        },
-        dataProvider: positiveAndNegativeDataProvider   
-    },
-    {
-        name: "Axes Max with Positive and Negative Data Test with roundingMethod=1000",
-        setMax: 1492,
-        dataMin: positiveAndNegativeDataProviderDataMin
+    AxisNoMinOrMaxTest = new Y.AxisDataProviderTemplate({
+        dataProvider: allNegativeDataProvider
     }),
 
     DualAxesMissingDataSmallTest = new Y.AxisDataProviderTemplate({
@@ -1539,9 +1394,6 @@ YUI({
     });
     
     suite.add(AxesTests);
-    suite.add(AxisMaxWithDecimalsRoundingMethodNumericTest);
-    suite.add(AxisMaxIntegerDecimalDataRoundingMethodNumericTest);
-    suite.add(AxisMaxWithPositiveAndNegativeDataRoundingMethodNumericTest);
     suite.add(AxisAlwaysShowZero);
     suite.add(AxisAlwaysShowZeroFalse);
     suite.add(DualAxesMissingDataSmallTest);
@@ -1560,7 +1412,7 @@ YUI({
     suite.add(RightAndTopAxisCustomTickAndLinesInsideTicks);
     suite.add(RightAndTopAxisCustomTickAndLinesOutsideTicks);
     suite.add(RightAndTopAxisCustomTickAndLinesCrossTicks);
-    
+
     //create the console
     var r = new Y.Console({
         newestOnTop : false,

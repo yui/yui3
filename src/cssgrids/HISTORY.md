@@ -4,7 +4,7 @@ CSS Grids Change History
 3.5.0
 -----
 
-  * No change.
+  * CSS Grids has been broken out into cssgrids-base and cssgrids-units.
 
 
 3.4.1

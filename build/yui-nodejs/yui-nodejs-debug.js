@@ -3,6 +3,7 @@
  * file.  This includes the script loading mechanism, a simple queue, and
  * the core utilities for the library.
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 
@@ -232,7 +233,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.3.0'; // dev time hack for cdn test
+    VERSION = '3.5.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -3949,8 +3950,19 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// graphics-canvas-default
+// history-hash-ie
 add('load', '1', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
+});
+// graphics-canvas-default
+add('load', '2', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -3962,7 +3974,7 @@ add('load', '1', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '2', {
+add('load', '3', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -3980,62 +3992,23 @@ add('load', '2', {
 }, 
     "trigger": "autocomplete-list"
 });
-// graphics-svg
-add('load', '3', {
-    "name": "graphics-svg", 
+// dd-gestures
+add('load', '4', {
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
 // editor-para-ie
-add('load', '4', {
+add('load', '5', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
-// graphics-vml-default
-add('load', '5', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
-});
-// graphics-svg-default
-add('load', '6', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// history-hash-ie
-add('load', '7', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // transition-timer
-add('load', '8', {
+add('load', '6', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4050,8 +4023,33 @@ add('load', '8', {
 }, 
     "trigger": "transition"
 });
-// dom-style-ie
+// graphics-svg-default
+add('load', '7', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+}, 
+    "trigger": "graphics"
+});
+// scrollview-base-ie
+add('load', '8', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
+});
+// widget-base-ie
 add('load', '9', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// dom-style-ie
+add('load', '10', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -4082,7 +4080,7 @@ add('load', '9', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '10', {
+add('load', '11', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4091,12 +4089,6 @@ add('load', '10', {
     return ret;
 }, 
     "trigger": "selector"
-});
-// widget-base-ie
-add('load', '11', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -4107,19 +4099,28 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// dd-gestures
+// graphics-svg
 add('load', '13', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
-// scrollview-base-ie
+// graphics-vml-default
 add('load', '14', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
 });
 // app-transitions-native
 add('load', '15', {
@@ -4694,6 +4695,7 @@ Y.Env.meta = META;
  * @param {String|Object} config.filter A filter to apply to result urls. <a href="#property_filter">See filter property</a>
  * @param {Object} config.filters Per-component filter specification.  If specified for a given component, this overrides the filter config.
  * @param {Boolean} config.combine Use a combo service to reduce the number of http connections required to load your dependencies
+ * @param {Boolean} [config.async=true] Fetch files in async
  * @param {Array} config.ignore: A list of modules that should never be dynamically loaded
  * @param {Array} config.force A list of modules that should always be loaded when required, even if already present on the page
  * @param {HTMLElement|String} config.insertBefore Node or id for a node that should be used as the insertion point for new nodes
@@ -5048,6 +5050,12 @@ Y.Loader = function(o) {
      */
     self.loaded = GLOBAL_LOADED[VERSION];
 
+    
+    /**
+    * Should Loader fetch scripts in `async`, defaults to `true`
+    * @property async
+    */
+    self.async = true;
 
     self._inspectPage();
 
@@ -6074,7 +6082,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style && style['display'] === 'none') {
+        if (style && style.display === 'none') {
             ret = true;
         }
 
@@ -6305,6 +6313,16 @@ Y.Loader.prototype = {
         // Y.log('After explode: ' + YObject.keys(r));
     },
     /**
+    * The default method used to test a module against a pattern
+    * @method _patternTest
+    * @private
+    * @param {String} mname The module being tested
+    * @param {String} pname The pattern to match
+    */
+    _patternTest: function(mname, pname) {
+        return (mname.indexOf(pname) > -1);
+    },
+    /**
     * Get's the loader meta data for the requested module
     * @method getModule
     * @param {String} mname The module name to get
@@ -6332,9 +6350,7 @@ Y.Loader.prototype = {
                     //There is no test method, create a default one that tests
                     // the pattern against the mod name
                     if (!p.test) {
-                        p.test = function(mname, pname) {
-                            return (mname.indexOf(pname) > -1);
-                        };
+                        p.test = this._patternTest;
                     }
 
                     if (p.test(mname, pname)) {
@@ -6723,7 +6739,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 timeout: self.timeout,
                 autopurge: false,
                 context: self,
-                async: true,
+                async: self.async,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
@@ -6804,24 +6820,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	        groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
+            groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
-	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
-	 	    modFilter = this.groups[groupName].filter;
-		    hasFilter = true;		
-	    };
+        if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
+            modFilter = this.groups[groupName].filter;
+            hasFilter = true;
+        }
 
         if (u) {
             if (hasFilter) {
-                f = (L.isString(modFilter)) ?
-                    this.FILTER_DEFS[modFilter.toUpperCase()] || null :
-                    modFilter;
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
             if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }
-
         return u;
     },
 
@@ -6890,7 +6903,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         async: m.async
                     };
                     if (m.attributes) {
-                        url.attributes = m.attributes
+                        url.attributes = m.attributes;
                     }
                 }
                 resolved[m.type].push(url);
@@ -7010,7 +7023,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                                 if (tmpBase.length > maxURLLength) {
                                     m = u.pop();
-                                    tmpBase = base + u.join(comboSep)
+                                    tmpBase = base + u.join(comboSep);
                                     resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                                     u = [];
                                     if (m) {
