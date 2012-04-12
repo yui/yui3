@@ -1,9 +1,9 @@
 YUI.add('loader-tests', function(Y) {
-    
+
     var Assert = Y.Assert,
         testY = YUI(),
         ua = Y.UA,
-        jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17));
+        jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0);
 
 
     var testLoader = new Y.Test.Case({
@@ -22,7 +22,7 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve();
             Assert.areEqual(0, out.js.length, 'JS files returned');
             Assert.areEqual(0, out.css.length, 'CSS files returned');
-            
+
         },
         test_resolve_manual_calc: function() {
             var loader = new testY.Loader({
@@ -271,8 +271,8 @@ YUI.add('loader-tests', function(Y) {
         },
         test_group_filters: function() {
             var test = this;
-        
-        
+
+
             YUI({
                 debug: true,
                 filter: 'DEBUG',
@@ -291,7 +291,7 @@ YUI.add('loader-tests', function(Y) {
             }).use('foo', function(Y) {
                 test.resume(function() {
                     Assert.isTrue(Y.Foo, 'Raw groups module did not load');
-                });                
+                });
             });
 
             test.wait();
@@ -299,7 +299,7 @@ YUI.add('loader-tests', function(Y) {
         },
         test_module_attrs: function() {
             var test = this;
-        
+
             YUI({
                 modules: {
                     'attrs-js': {
@@ -321,14 +321,14 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isTrue(Y.davglass, 'Attrs JS did not load');
                     Assert.isNotNull(Y.one('#attrs-js-test'), 'attrs-js-test id was not found');
                     Assert.isNotNull(Y.one('#attrs-css-test'), 'attrs-css-test id was not found');
-                });                
+                });
             });
 
             test.wait();
         },
         test_global_attrs: function() {
             var test = this;
-        
+
             YUI({
                 cssAttributes: {
                     'id': 'yui-id-css-module'
@@ -348,7 +348,7 @@ YUI.add('loader-tests', function(Y) {
                 test.resume(function() {
                     Assert.isNotNull(Y.one('#yui-id-js-module'), 'Failed to add id to JS');
                     Assert.isNotNull(Y.one('#yui-id-css-module'), 'Failed to add id to CSS');
-                });                
+                });
             });
 
             test.wait();
@@ -366,8 +366,8 @@ YUI.add('loader-tests', function(Y) {
                 Assert.isFunction(Y.Base, 'Y.Base did not load');
                 Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
                 Y.LOADED = true;
-            });                                                                                                                                 
-            
+            });
+
             YUI({
                 filter: 'debug',
                 gallery: 'gallery-2010.08.04-19-46',
@@ -381,8 +381,8 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isUndefined(Y.LOADED, 'Callback executed twice.');
                     Y.LOADED = true;
                 });
-            });                                                                                                                                 
-            
+            });
+
             test.wait();
         },
         test_progress: function() {
@@ -440,7 +440,7 @@ YUI.add('loader-tests', function(Y) {
             });
 
             test.wait();
-            
+
         },
         test_timeout: function() {
             var test = this,
@@ -462,11 +462,11 @@ YUI.add('loader-tests', function(Y) {
             });
 
 
-            
+
         },
         test_condpattern: function() {
             var test = this;
-            
+
             YUI({
                 groups: {
                     testpatterns: {
@@ -492,7 +492,7 @@ YUI.add('loader-tests', function(Y) {
         },
         test_cond_with_test_function: function() {
             var test = this;
-            
+
             YUI({
                 modules: {
                     cond2: {
@@ -505,7 +505,7 @@ YUI.add('loader-tests', function(Y) {
                         }
                     }
                 }
-            }).use('jsonp', function(Y) {   
+            }).use('jsonp', function(Y) {
                 test.resume(function() {
                     Assert.isTrue(Y.COND2, 'Conditional module failed to load with test function');
                 });
@@ -515,7 +515,7 @@ YUI.add('loader-tests', function(Y) {
         },
         test_cond_no_test_or_ua: function() {
             var test = this;
-            
+
             YUI({
                 modules: {
                     cond: {
@@ -614,10 +614,10 @@ YUI.add('loader-tests', function(Y) {
                 },
                 require: [ 'slider' ]
             });
-            
+
             var out = loader.resolve(true);
             Assert.areSame(loader.skin.overrides.slider.length, out.css.length, 'Failed to load all override skins');
-            
+
         },
         test_load_optional: function() {
             var loader = new Y.Loader({
@@ -702,7 +702,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('path/to/baz.js', out.js[1], 'Failed to serve single JS file properly');
             Assert.areSame('http://foobar.com/combo?foo/foo.js', out.js[2], 'Failed to combine manual JS file properly');
             Assert.areSame('my/css/files.css', out.css[0], 'Failed to serve single CSS file properly');
-        
+
         },
         test_combine_no_core_group: function() {
             var loader = new Y.Loader({
@@ -738,7 +738,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame(1, out.css.length, 'Returned too many CSS files');
             Assert.areSame('http://foobar.com/combo?bar.js&path/to/baz.js&foo/foo.js', out.js[0], 'Failed to combine JS files properly');
             Assert.areSame('http://foobar.com/combo?my/css/files.css', out.css[0], 'Failed to combine CSS files properly');
-        
+
         },
         test_outside_group: function() {
             var loader = new Y.Loader({
@@ -813,7 +813,7 @@ YUI.add('loader-tests', function(Y) {
 
         },
         test_submodules: function() {
-            
+
             var loader = new Y.Loader({
                 ignoreRegistered: true,
                 combine: false,
@@ -836,7 +836,7 @@ YUI.add('loader-tests', function(Y) {
                 },
                 require: [ 'subsub2' ]
             });
-            
+
             var out = loader.resolve(true);
             Assert.areSame('sub1/lang/subsub2.js', out.js[0], 'Failed to combine submodule with module path for LANG JS');
             Assert.areSame('sub1/subsub2.js', out.js[1], 'Failed to combine submodule with module path JS');
@@ -844,7 +844,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(1, out.css.length, 'Failed to skin submodule');
         },
         test_plugins: function() {
-            
+
             var loader = new Y.Loader({
                 ignoreRegistered: true,
                 combine: false,
@@ -870,13 +870,13 @@ YUI.add('loader-tests', function(Y) {
                 },
                 require: [ 'subplug2' ]
             });
-            
+
             var out = loader.resolve(true);
             Assert.areSame('plug1/lang/subplug2.js', out.js[0], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-            
+
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
@@ -926,7 +926,7 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isNotNull(Y.one('#loadmod-test'), 'Failed to load module');
                 });
             });
-            
+
             test.wait();
         },
         test_async: function() {
@@ -968,7 +968,7 @@ YUI.add('loader-tests', function(Y) {
                     Assert.isNotNull(node1, 'Failed to load module 1');
                     Assert.isNotNull(node2, 'Failed to load module 2');
                     Assert.isNotNull(node3, 'Failed to load module 3');
-                    
+
                     if (Y.Get._env.async) {
                         //This browser supports the async property, check it
                         Assert.isFalse(node1.async, '#1 Async flag on node1 was set incorrectly');
@@ -984,14 +984,14 @@ YUI.add('loader-tests', function(Y) {
                             Assert.isNull(node1.getAttribute('async'), '#3 Async flag on node1 was set incorrectly');
                             Assert.isNull(node2.getAttribute('async'), '#3 Async flag on node2 was set incorrectly');
                             Assert.isNotNull(node3.getAttribute('async'), '#3 Async flag on node3 was set incorrectly');
-                            
+
                         }
                     }
                 });
             });
-            
+
             test.wait();
-            
+
         },
         'test: aliases config option': function() {
             var loader = new Y.Loader({
@@ -1075,7 +1075,7 @@ YUI.add('loader-tests', function(Y) {
         'test: 2in3 combo with custom server': function() {
             //TODO: in 3.6.0 this should not be required..
             var groups = YUI.Env[YUI.version].groups;
-            
+
             var loader = new Y.Loader({
                 ignoreRegistered: true,
                 groups: groups,
@@ -1111,5 +1111,5 @@ YUI.add('loader-tests', function(Y) {
     suite.add(testLoader);
     Y.Test.Runner.add(suite);
 
-    
+
 });
