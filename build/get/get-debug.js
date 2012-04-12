@@ -531,7 +531,7 @@ Y.Get = Get = {
             // True if this browser fires an event when a dynamically injected
             // link node fails to load. This is currently true for Firefox 9+
             // and WebKit 535.24+.
-            cssFail: ua.gecko >= 9 || ua.webkit >= 535.24,
+            cssFail: ua.gecko >= 9 || ua.compareVersions(ua.webkit, 535.24) >= 0,
 
             // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
@@ -539,8 +539,10 @@ Y.Get = Get = {
             // DOM 0 "onload" event, but not "load". All versions of IE fire
             // "onload".
             // davglass: Seems that Chrome on Android needs this to be false.
-            cssLoad: ((!ua.gecko && !ua.webkit) || 
-                ua.gecko >= 9 || ua.webkit >= 535.24) && !(ua.chrome && ua.chrome <=18),
+            cssLoad: (
+                    (!ua.gecko && !ua.webkit) || ua.gecko >= 9 ||
+                    ua.compareVersions(ua.webkit, 535.24) >= 0
+                ) && !(ua.chrome && ua.chrome <= 18),
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
