@@ -23,12 +23,6 @@ Attribute Change History
     manually pull in attribute-core, attribute-events and attribute-extras 
     before it.
 
-    **IMPORTANT** AttributeCore, AttributeEvents and AttributeExtras are 
-    considered beta, and may be subject to change over the course 
-    of the 3.5.0PRS. 
-
-    Y.Attribute will remain unchanged however.
-
     Summary:
 
     Y.Attribute     - Common Attribute Functionality (100% backwards compat)

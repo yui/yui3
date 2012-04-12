@@ -1,6 +1,12 @@
 DataSchema Change History
 =========================
 
+3.5.0
+-----
+
+  * No changes.
+
+
 3.4.1
 -----
 
@@ -22,7 +28,7 @@ DataSchema Change History
    * `getPath` is far more tolerant of locator strings.  In particular, it
      considered utf-8 characters that didn't match the `\w` regex group to be
      invalid.  This is fixed.
-   
+
 
 3.3.0
 -----

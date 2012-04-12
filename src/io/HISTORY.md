@@ -4,10 +4,28 @@ IO Utility Change History
 3.5.0
 -----
 
-  * Fixed error in sending an XML document as POST data. [Ticket #2531257]
-
   * Configuration data can now include an instance of FormData for HTTP
     POST requests. [Ticket #2531274]
+
+  * Implemented FormData file upload in io-base. [Ticket #2531274]
+
+  * Fixed transport error in io-base [Ticket #2531308][Ticket #2531941]
+    [Ticket #2531947]
+
+  * Fixed IO loader meta-data [Ticket #2531320]
+
+  * Fixed transport error in io-base [Ticket #2531308]
+
+  * Implemented Node.js compatibility [Ticket #2531495]
+
+  * Fixed transport error in io-base [Ticket #2531308]
+
+  * Fixed API docs discrepancy for IO [Ticket #2531756]
+
+  * Fixed error in sending an XML document as POST data. [Ticket #2531257]
+
+  * success/failure/complete/etc callbacks that throw errors no longer
+    hijack all future transactions. [Ticket #2532107]
 
 3.4.1
 -----
@@ -21,7 +39,7 @@ IO Utility Change History
 
   * Fixed request abort error in IE. [Ticket #2531038]
 
-  * Add try/catch to io-upload-iframe response to handle failure cases 
+  * Add try/catch to io-upload-iframe response to handle failure cases
     where the document may be inaccessible. [Ticket #2531041]
 
   * Add IO support for XHR basic user authentication. [Ticket #2530023]
@@ -29,7 +47,7 @@ IO Utility Change History
   * Revert Y.mix usage for synchronous requests. [Ticket #2531056]
 
   * Fixed io-upload-iframe transport destruction.  [Ticket #2531058]
-    
+
 3.4.0
 -----
 
@@ -60,7 +78,7 @@ IO Utility Change History
   * Implemented default HTTP headers can be suppressed in the transaction's
     configuration object by setting the header with a value of `disable`.
     [Ticket #2529324]
-  
+
     For example:
 
         var config = { headers: { "X-Requested-With": "disable" } };
@@ -85,12 +103,12 @@ IO Utility Change History
     Removed: `Security.allowDomain("*")` setting from `io.as` (source) and
     `io.swf` (compiled). The implementation reverts back to the version in
 3.0.0.
-  
+
     This reversion prevents third-party sites from being able to load `io.swf`
     from a disparate domain, and make HTTP requests with the SWF's domain
     privileges, and passing the domain's credentials.  Only the domain serving
     `io.swf` will be permitted to load it, and call its fields.
-  
+
     See the "Security Bulletin" for more details:
     http://yuilibrary.com/yui/docs/io/#security-bulletin
 
@@ -107,13 +125,13 @@ IO Utility Change History
     `true`; the default behavior is `false`. During a synchronous request, all
     io events will fire, and response data are accessible through the events.
     Response data are also returned by io, as an alternative. [Ticket #2528181]
-  
+
     For example:
-    
+
         var request = Y.io(uri, { sync: true });
-        
+
     `request` will contain the following fields, when the tx is complete:
-    
+
       * `id`
       * `status`
       * `statusText`
@@ -122,9 +140,9 @@ IO Utility Change History
       * `responseText`
       * `responseXML`
       * `arguments`
-  
+
     When making synchronous requests:
-  
+
       * The transaction cannot be aborted,
       * The transaction's progress cannot be monitored.
 
@@ -141,14 +159,14 @@ IO Utility Change History
     an XDR transaction, set the config object with the following properties:
 
     * `use`: Specify either `native` or `flash` as the desired XDR transport.
-    
+
     * `credentials`: Set to `true` if cookies are to be sent with the request.
       Does not work with XDomainRequest (e.g., IE8) or the Flash transport.
-    
+
     * `datatType`: Set to `xml` if the response is an XML document.
 
     For example:
-  
+
         var configuration.xdr = {
             use         : 'flash',  // Required -- 'flash` or 'native'.
             credentials : true,     // Optional.
@@ -168,7 +186,7 @@ IO Utility Change History
 
   * XDR transport initialization is simplified to one required value -- the path
     to Flash transport. For example:
-  
+
         Y.io.transport({ src:'io.swf' });
 
 3.0.0beta1
@@ -180,9 +198,9 @@ IO Utility Change History
     For example:
 
     * io queue is used to make three requests.
-    
+
     * The actual server response order happens to be: transaction 2, 1, 3.
-    
+
     * However, using the queue interface, the transaction callbacks are
       processed in the order of: transaction 1, 2, 3.
 
@@ -192,7 +210,7 @@ IO Utility Change History
     response object's `status` and `statusText` properties will be populated as:
 
     * `response.status` will be 0.
-    
+
     * `response.statusText` will be set to `timeout` or `abort` to differentiate
       the two possible conditions.
 
@@ -202,7 +220,7 @@ IO Utility Change History
     arguments.
 
     * The global event name is `io:end`.
-    
+
     * To subscribe to the transaction event, define the `end` property in the
       transaction's configuration object. `{on: {end: function(){…} } }`.
 
@@ -214,16 +232,16 @@ IO Utility Change History
 
     * `io-base`: This is the IO base class, using `XMLHttpRequest` as the
       transport.
-    
+
     * `io-xdr`: This sub-module extends IO to enable cross-domain transactions
       using Flash as the transport.
-    
+
     * `io-form`: This sub-module extends IO to enable the serialization of an
       HTML form as transaction data.
-    
+
     * `io-upload-iframe`: This sub-module extends IO, to allow file uploads with
       an HTML form, using an `iframe` transport.
-    
+
     * `io-queue`: This sub-module extends IO to add transaction queuing
       capabilities.
 

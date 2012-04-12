@@ -42,9 +42,16 @@
         <url>charts/tests/axesattrs.html</url>
         <url>charts/tests/charts.html</url>
         <url>charts/tests/dataprovider.html</url>
+        <url>charts/tests/axestests.html</url>
+        <url>charts/tests/numericaxistests.html</url>
+        <url>charts/tests/numericaxismintests.html</url>
+        <url>charts/tests/numericaxismaxtests.html</url>
+        <url>charts/tests/numericaxisminandmaxtests.html</url>
         <url>charts/tests/graph.html</url>
         <url>charts/tests/legend.html</url>
         <url>charts/tests/pie.html</url>
+        <url>charts/tests/groupmarkertests.html</url>
+        <url>charts/tests/pielegend.html</url>
         <url>charts/tests/seriestests.html</url>
         <url>charts/tests/arialinetests.html</url>
         <url>charts/tests/ariasplinetests.html</url>

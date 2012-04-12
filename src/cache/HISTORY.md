@@ -1,6 +1,12 @@
 Cache Change History
 ====================
 
+3.5.0
+-----
+
+  * Fixed issue with dropping values when `uniqueKeys` was `true`.
+    [Ticket #2531339] [PR #39] [Contributed by Stuart Colville]
+
 3.4.1
 -----
 

@@ -1,6 +1,9 @@
 all: build test
 
 build:
+	ant all -q
+
+buildloud:
 	ant all
 
 meta:

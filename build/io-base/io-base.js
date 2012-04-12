@@ -179,6 +179,9 @@ IO.prototype = {
             globalEvent = "io:" + eventName,
             trnEvent    = "io-trn:" + eventName;
 
+        // Workaround for #2532107
+        this.detach(trnEvent);
+
         if (transaction.e) {
             transaction.c = { status: 0, statusText: transaction.e };
         }
@@ -895,7 +898,6 @@ Y.io.header = function(name, value) {
 Y.IO = IO;
 // Map of all IO instances created.
 Y.io._map = {};
-
 var XHR = win && win.XMLHttpRequest,
     XDR = win && win.XDomainRequest,
     AX = win && win.ActiveXObject;
@@ -982,7 +984,6 @@ Y.mix(Y.IO.prototype, {
         }
     }
 });
-
 
 
 

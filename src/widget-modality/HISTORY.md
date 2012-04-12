@@ -1,6 +1,13 @@
 Widget Modality Change History
 ==============================
 
+3.6.0
+-----
+
+  * Fixed regression where browsers which actually support `position: fixed`
+    were also getting the fallback implementation to emulate fixed position,
+    causing the mask node to be repositioned incorrectly. [Ticket #2532136]
+
 3.5.0
 -----
 
