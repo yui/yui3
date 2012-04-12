@@ -8,75 +8,74 @@ YUI().use('datatable', 'datatype-number-format', function (Y) {
         { stock_id:5, ticker:'SAFET', company:'Stability Partners LLP', qty:25, cost:7283.41, price:58.74 }
     ];
 
-    function currency(val, objs) {
-        return Y.DataType.Number.format(val, Y.merge({
+    function formatCurrency(o) {
+        return Y.DataType.Number.format(o.value, {
             prefix:"$ ",
             thousandsSeparator: ",",
             decimalSeparator: ".",
             decimalPlaces: 2
-        }, objs));
-    }
-    
-    function formatCurrency(o) {
-        return currency(o.value);
+        });
     }
     
     function formatGainLoss(o) {
         o.className += (o.value < 0) ? 'loss' : 'gain';
         
-        return currency(o.value)
-    }
-
-    function formatGainLossPercent(o) {
-        if (o.value) {
-            o.className += (o.value < 0) ? 'loss' : 'gain';
-        }
-        
-        return o.value ? currency(o.value, {suffix:' %', prefix:'' }) : 'n/a';
+        return o.value ?
+            Y.DataType.Number.format(o.value, {
+                suffix: ' %',
+                decimalSeparator: ".",
+                decimalPlaces: 2
+            }) :
+            'n/a';
     }
     
-    var cols = [
-        { key:'ticker',  label:'Ticker' },
-        { key:'company', label:'Company Name' },        
-        { key:'qty',     label:'Share Qty', className:'numeric' },        
-        { key:'cost',    label:'Purchase Cost', className: 'numeric',
-          formatter: formatCurrency },
-        { key:'mvalue', label:'Market Value', className: 'numeric',
-          formatter: formatCurrency },
-        { key:'gl',     label:'Gain or Loss', className: 'numeric',
-          formatter:formatGainLoss },
-        { key:'glperc', label:'Gain or Loss %', formatter:formatGainLossPercent,  
-          className:'percentage' }
-    ];
-        
     var dt = new Y.DataTable({
-        columns: cols,
         data: portfolio,
+        columns: [
+            { key: 'ticker',  label: 'Ticker' },
+            { key: 'company', label: 'Company Name' },        
+            { key: 'qty',     label: 'Share Qty', className: 'numeric' },
+            {
+              key      : 'cost',
+              label    : 'Purchase Cost',
+              className: 'numeric',
+              formatter: formatCurrency
+            },
+            {
+              key      : 'marketvalue',
+              label    : 'Market Value',
+              className: 'numeric',
+              formatter: formatCurrency
+            },
+            {
+              key      : 'gainloss',
+              label    : 'Gain or Loss',
+              className: 'percentage',
+              formatter: formatGainLoss
+            }
+        ],
         recordType: {
             ticker: {},
             company: {},
             qty: {},
             cost: {},
-            mvalue: {
+            marketvalue: {
                 getter: function () {
                     return +((this.get('price') * this.get('qty')).toFixed(2));
                 }
             },
-            gl: {
+            gainloss: {
                 getter: function () {
-                    return this.get('qty') * this.get('price') - this.get('cost');
-                }
-            },
-            glperc: {
-                getter: function () {
-                    var cost = this.get('cost');
+                    var cost = this.get('cost'),
+                        amt  = (this.get('qty') * this.get('price')) -
+                                    this.get('cost');
                     
-                    return cost ? (100 * this.get('gl') / cost) : 0;
+                    return cost ? ((100 * amt) / cost) : 0;
                 }
             }
         },
-        sortable: ['ticket', 'company', 'cost', 'mvalue', 'gl', 'glperc'],
-        sortBy: { gl: 'desc' }
+        sortable: ['ticket', 'company', 'cost', 'marketvalue', 'gainloss'],
+        sortBy: { gainloss: 'desc' }
     });
     
     dt.render("#dtable");    
