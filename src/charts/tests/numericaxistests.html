@@ -106,6 +106,16 @@ YUI({
 
     allPositiveDataProviderDataMin = 50,
 
+    allPositiveHighMinimumDataProvider =  [ 
+        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
+        {category:"5/2/2010", values:5000, expenses:9100, revenue:5000}, 
+        {category:"5/3/2010", values:4000, expenses:1100, revenue:1500}, 
+        {category:"5/4/2010", values:2000, expenses:1900, revenue:2800}, 
+        {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
+    ],
+
+    allPositiveDataProviderDataHighMin = 1100,
+    
     positiveAndNegativeDataProvider = [ 
         {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
         {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
@@ -130,6 +140,16 @@ YUI({
 
     allNegativeDataProviderDataMin = -5000,
 
+    allNegativeLowMaximumDataProvider = [ 
+        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
+        {category:"5/2/2010", values:-5000, expenses:-3100, revenue:-5000}, 
+        {category:"5/3/2010", values:-6000, expenses:-1100, revenue:-1500}, 
+        {category:"5/4/2010", values:-1200, expenses:-1900, revenue:-2800}, 
+        {category:"5/5/2010", values:-5000, expenses:-5000, revenue:-2650}
+    ],
+
+    allNegativeDataProviderDataLowMax = -1100,
+
     allNegativeDataProviderNearZero = [ 
         {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
         {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100}, 
@@ -153,6 +173,19 @@ YUI({
     decimalDataProviderDataMax = 9.1,
 
     decimalDataProviderDataMin = 0.05,
+   
+    
+    positiveAndNegativeDecimalDataProvider = [ 
+        {category:"5/1/2010", values:-2.45, expenses:3.71, revenue:2.2}, 
+        {category:"5/2/2010", values:0.5, expenses:-4.1, revenue:0.16}, 
+        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:-1.25}, 
+        {category:"5/4/2010", values:-0.05, expenses:-1.9, revenue:2.8}, 
+        {category:"5/5/2010", values:4.53, expenses:-5.21, revenue:2.65}
+    ],
+
+    positiveAndNegativeDecimalDataMax = 4.53,
+    
+    positiveAndNegativeDecimalDataMin = -4.1,
     
     AxisAllPositiveDataTest = new Y.NumericAxisTestTemplate({
         dataProvider: allPositiveDataProvider    
@@ -260,6 +293,36 @@ YUI({
         dataMin: allPositiveDataProviderDataMin
     }),
     
+    AxisAllPositiveDataNumericRoundingMethodAlwaysShowZeroFalseTest = new Y.NumericAxisTestTemplate({
+        axes: {
+            values: {
+                roundingMethod: 1000,
+                alwaysShowZero: false
+            }
+        },
+        dataProvider: allPositiveHighMinimumDataProvider
+    },
+    {
+        name: "Axes All Positive Data with Numeric roundingMethod and alwaysShowZero=false Test",
+        dataMax: allPositiveDataProviderDataMax,
+        dataMin: allPositiveDataProviderDataHighMin
+    }),
+    
+    AxisAllNegativeDataNumericRoundingMethodAlwaysShowZeroFalseTest = new Y.NumericAxisTestTemplate({
+        axes: {
+            values: {
+                roundingMethod: 1000,
+                alwaysShowZero: false
+            }
+        },
+        dataProvider: allNegativeLowMaximumDataProvider
+    },
+    {
+        name: "Axes All Negative Data with Numeric roundingMethod and alwaysShowZero=false Test",
+        dataMax: allNegativeDataProviderDataLowMax,
+        dataMin: allNegativeDataProviderDataMin
+    }),
+    
     AxisPositiveAndNegativeDataNumericRoundingMethodTest = new Y.NumericAxisTestTemplate({
         axes: {
             values: {
@@ -311,7 +374,7 @@ YUI({
         dataProvider: positiveAndNegativeDataProvider    
     },
     {
-        name: "Axes Positive and Negative Data with Numeric roundingMethod Test",
+        name: "Axes Positive and Negative Data with Auto roundingMethod Test",
         dataMax: positiveAndNegativeDataProviderDataMax,
         dataMin: positiveAndNegativeDataProviderDataMin
     }),
@@ -328,6 +391,20 @@ YUI({
         name: "Axes All Negative Data with Numeric roundingMethod Test",
         dataMax: allNegativeDataProviderDataMax,
         dataMin: allNegativeDataProviderDataMin
+    }),
+
+    AxisPositiveAndNegativeDecimalDataAutoRoundingMethodTest = new Y.NumericAxisTestTemplate({
+        axes: {
+            values: {
+                roundingMethod: "auto"
+            }
+        },
+        dataProvider: positiveAndNegativeDecimalDataProvider    
+    },
+    {
+        name: "Axes Positive and Negative Decimal Data with Numeric roundingMethod Test",
+        dataMax: positiveAndNegativeDecimalDataMax,
+        dataMin: positiveAndNegativeDecimalDataMin
     }),
 
     AxisAllPositiveDataAutoRoundingMethodAlwaysShowZeroFalseTest = new Y.NumericAxisTestTemplate({
@@ -374,7 +451,7 @@ YUI({
         dataMax: allNegativeDataProviderDataMax,
         dataMin: allNegativeDataProviderDataMin
     });
-   
+  
     suite.add(AxisAllPositiveDataTest);
     suite.add(AxisPositiveAndNegativeDataTest);
     suite.add(AxisAllNegativeDataTest);
@@ -388,11 +465,14 @@ YUI({
     suite.add(AxisAllNegativeDataNumericRoundingMethodTest);
     suite.add(AxisAllPositiveDataAutoRoundingMethodTest);
     suite.add(AxisPositiveAndNegativeDataAutoRoundingMethodTest);
+    suite.add(AxisPositiveAndNegativeDecimalDataAutoRoundingMethodTest);
     suite.add(AxisAllNegativeDataAutoRoundingMethodTest);
     suite.add(AxisAllPositiveDataAutoRoundingMethodAlwaysShowZeroFalseTest);
     suite.add(AxisPositiveAndNegativeDataAutoRoundingMethodAlwaysShowZeroFalseTest);
     suite.add(AxisAllNegativeDataAutoRoundingMethodAlwaysShowZeroFalseTest);
-    
+    suite.add(AxisAllPositiveDataNumericRoundingMethodAlwaysShowZeroFalseTest);
+    suite.add(AxisAllNegativeDataNumericRoundingMethodAlwaysShowZeroFalseTest);
+
     //create the console
     var r = new Y.Console({
         newestOnTop : false,
