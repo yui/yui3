@@ -1191,6 +1191,12 @@ Additional class extensions can be automatically mixed-into `Y.App`, doing so wi
 // simple constructor function to it.
 Y.App.Transitions = function () {};
 
+// Defines the `transitions` attribute with a default value of `false`. This
+// makes the view transitions an opt-in feature.
+Y.App.Transitions.ATTRS = {
+    transitions: {value: false}
+};
+
 // This defines the prototype of the transitions class extension, the actual
 // implementation has been left out for the sake of simplicity.
 Y.App.Transitions.prototype = {
@@ -1225,7 +1231,7 @@ When writing your own class extensions to add features to `Y.App`, feel free to 
     </p>
 
     <p>
-    The `Y.App.Transitions` class extension does this be requiring a "truthy" value for the `transitions` property of the config object passed-in during instance creation.
+    The `Y.App.Transitions` class extension does this be requiring a "truthy" value for the `transitions` attribute. By default the value will be `false`, making this an opt-in feature.
     </p>
   </li>
 
