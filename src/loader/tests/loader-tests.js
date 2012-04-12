@@ -1104,6 +1104,15 @@ YUI.add('loader-tests', function(Y) {
                 });
             });
             test.wait();
+        },
+        'test: global async flag': function() {
+            var loader = new Y.Loader({
+                async: false
+            });
+            Assert.isFalse(loader.async, 'Failed to set async config option');
+
+            var loader = new Y.Loader({});
+            Assert.isTrue(loader.async, 'Failed to set default async config option');
         }
     });
 
