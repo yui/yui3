@@ -8,6 +8,11 @@ var path = require('path'),
 
 var Y = YUI();
 
+//Tell the UA we are not in Node.js so that 
+//Node.js modules are not resolved and loaded
+
+Y.UA.nodejs = false;
+
 var loader = new Y.Loader({
     base: base,
     filter: 'debug',
@@ -29,6 +34,7 @@ var loader = new Y.Loader({
 });
 
 var out = loader.resolve(true);
+
 var str = '';
 
 out.js.forEach(function(f) {
