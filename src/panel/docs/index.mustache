@@ -205,3 +205,17 @@ Panel is tested across the A-grade browser set according to the <a href="http://
 <p>
 However, developers implementing Panel and other components which rely on `z-index` support in IE6 and IE7 should be aware of the concept of <a href="https://developer.mozilla.org/en/Understanding_CSS_z-index/Stacking_context_example_2" alt="Stacking Context in IE">stacking context</a>. Essentially, when setting the `z-index` of the widget, you should ensure that the Widget's parent does not have a lower `z-index`.
 </p>
+
+<h2>Known Issues</h2>
+
+<ul>
+    <li>
+        <p>
+        <strong>`WidgetModality` mask node regression in 3.5.0.</strong> There was a regression where browsers which actually support `position: fixed` were also getting a `scroll` listener attached to their `window`. The bad behavior was the result of faulty logic when checking `Y.UA`. See: <a href="See: http://yuilibrary.com/projects/yui3/ticket/2532136">Ticket #2532136</a>.
+        </p>
+
+        <p>
+        A <strong><a href="http://yuilibrary.com/gallery/show/586">Gallery patch module</a></strong> has been created to fix this bug until the next release.
+        </p>
+    </li>
+</ul>
