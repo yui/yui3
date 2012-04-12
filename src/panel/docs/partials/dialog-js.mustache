@@ -5,7 +5,7 @@
         zIndex     : 6,
         centered   : true,
         modal      : false, // modal behavior
-        render     : '#example',
+        render     : '.example',
         visible    : false, // make visible explicitly with .show()
         buttons    : {
             footer: [
@@ -35,7 +35,7 @@
     dialog.onOK = function (e) {
         e.preventDefault();
         this.hide();
-        // code that executes the user confirmed action goes here 
+        // code that executes the user confirmed action goes here
         if(this.callback){
            this.callback();
         }
