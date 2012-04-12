@@ -555,8 +555,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
     publish: function(type, opts) {
         var events, ce, ret, defaults,
             edata    = this._yuievt,
-            pre      = edata.config.prefix,
-            broadcast = opts && opts.broadcast || false;
+            pre      = edata.config.prefix;
 
         if (L.isObject(type)) {
             ret = {};
@@ -591,11 +590,10 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             events[type] = ce;
         }
         
-        if(broadcast && this !== Y && this !== Y.Global){
-            YArray.each((broadcast == 2) ? [Y,Y.Global] : [Y], function(et){
+        if(ce && ce.broadcast && this !== Y && this !== Y.Global){
+            YArray.each((ce.broadcast == 2) ? [Y,Y.Global] : [Y], function(et){
                 defaults = Y.merge(et._yuievt.defaults);
-                et.publish(type,
-                          (opts) ? Y.mix(defaults, opts, true, ['fireOnce']) : defaults);
+                et.publish(type, Y.mix(defaults, ce, true, ['fireOnce']));
             });
         }
 
