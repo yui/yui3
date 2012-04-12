@@ -339,7 +339,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use. **Note:** this will override
@@ -399,8 +399,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @method _attachView
     @param {View} view View to attach.
-    @param {Boolean} prepend Whether the view should be prepended instead of
-      appended to the `viewContainer`.
+    @param {Boolean} prepend=false Whether the view should be prepended instead
+      of appended to the `viewContainer`.
     @protected
     @since 3.5.0
     **/
@@ -723,7 +723,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the new view should be
         prepended instead of appended to the `viewContainer`.
     @protected
     @since 3.5.0
