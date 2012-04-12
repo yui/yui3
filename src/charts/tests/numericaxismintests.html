@@ -15,7 +15,7 @@
 <body class="yui3-skin-sam">
 <h3>Numeric Axis Minimum Tests</h3>
 <div id="mychart"></div>
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>            
 YUI({
     allowRollup: false,
@@ -184,6 +184,35 @@ YUI({
         dataMax: positiveAndNegativeDataProviderDataMax
     }),
 
+    AxisPositiveAndNegativeMinTest = new Y.AxisMinTestTemplate({
+        axes: {
+            values: {
+                minimum: -1721
+            }
+        },
+        dataProvider: positiveAndNegativeDataProvider
+    },
+    {    
+        name: "Axes Negative Min Test",
+        setMin: -1721,
+        dataMax: positiveAndNegativeDataProviderDataMax
+    }),
+
+    AxisPositiveAndNegativeAlwaysShowZeroFalseMinTest = new Y.AxisMinTestTemplate({
+        axes: {
+            values: {
+                minimum: -1721,
+                alwaysShowZero: false
+            }
+        },
+        dataProvider: positiveAndNegativeDataProvider
+    },
+    {    
+        name: "Axes Negative Min Test",
+        setMin: -1721,
+        dataMax: positiveAndNegativeDataProviderDataMax
+    }),
+
     AxisNegativeMinWithAllNegativeDataTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -194,6 +223,21 @@ YUI({
     },
     {
         name: "Axes Negative Min with All Negative Data Test",
+        setMin: -1721,
+        dataMax: allNegativeDataProviderDataMax 
+    }),
+
+    AxisNegativeMinAlwaysShowZeroFalseTest = new Y.AxisMinTestTemplate({
+        axes: {
+            values: {
+                minimum: -1721,
+                alwaysShowZero: false
+            }
+        },
+        dataProvider: allNegativeDataProvider
+    },
+    {
+        name: "Axes Negative Min with All Negative Data and alwaysShowZero=false Test",
         setMin: -1721,
         dataMax: allNegativeDataProviderDataMax 
     }),
@@ -563,10 +607,11 @@ YUI({
         setMin: -100,
         dataMax: allPositiveDataProviderDataMax
     });
-   
+    
     suite.add(AxisMinTest);
     suite.add(AxisMinAlwaysShowZeroFalseTest);
     suite.add(AxisNegativeMinTest);
+    suite.add(AxisNegativeMinAlwaysShowZeroFalseTest);
     suite.add(AxisNegativeMinWithAllNegativeDataTest);
     suite.add(AxisMinWithDecimalsTest);
     suite.add(AxisMinIntegerDecimalDataTest);
@@ -592,6 +637,8 @@ YUI({
     suite.add(AxisMinWithDecimalsRoundingMethodNumericTest);
     suite.add(AxisMinIntegerDecimalDataRoundingMethodNumericTest);
     suite.add(AxisNegativeMinPositiveDataRoundingMethodNumericTest);
+    suite.add(AxisPositiveAndNegativeMinTest); 
+    suite.add(AxisPositiveAndNegativeAlwaysShowZeroFalseMinTest); 
     
     //create the console
     var r = new Y.Console({
