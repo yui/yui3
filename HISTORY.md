@@ -1,6 +1,11 @@
 Anim Change History
 ===================
 
+3.5.0
+-----
+  * No change.
+
+
 3.4.1
 -----
   * no change
@@ -45,19 +50,184 @@ Anim Change History
 App Framework Change History
 ============================
 
+3.5.0
+-----
+
+### App
+
+* Initial release.
+
+### Model
+
+* [!] The `validate()` method is now asynchronous, and is expected to call a
+  callback function on success or failure. Old-style synchronous `validate()`
+  methods will still work, but are deprecated. [Ticket #2531218]
+
+* Model now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.Model` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a model instance with "foo" and "bar"
+  attributes:
+
+          var model = new Y.Model({foo: 'foo', bar: 'bar'});
+
+* `load()` now fires a `load` event after the operation completes successfully,
+  or an `error` event on failure. The `load()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
+* `save()` now fires a `save` event after the operation completes successfully,
+  or an `error` event on failure. The `save()` callback (if provided) will still
+  be called in both cases. [Ticket #2531207]
+
+* Options passed to `set()` and `setAttrs()` are now correctly merged into the
+  event facade of the `change` event. [Ticket #2531492]
+
+* Model's `destroy` event is now fully preventable (previously it was possible
+  for the model to be deleted even if the `destroy` event was prevented by a
+  subscriber in the `on` phase).
+
+### ModelList
+
+* ModelList's `model` property is now set to `Y.Model` by default. Since
+  `Y.Model` now supports ad-hoc attributes, this makes it much easier to create
+  and populate a ModelList without doing any subclassing:
+
+          var list = new Y.ModelList();
+
+          list.add([
+              {foo: 'bar'},
+              {baz: 'quux'}
+          ]);
+
+* Added a `filter()` method that returns a filtered array of models or,
+  optionally, a new ModelList containing the filtered models. [Ticket #2531250]
+
+* Added a `create` event that fires when a model is created/updated via the
+  `create()` method, but before that model has actually been saved and added to
+  the list (and before the `add` method has fired). [Ticket #2531400]
+
+* Added a `load` event that fires when models are loaded. [Ticket #2531399]
+
+* Models' `id` attributes (if set) are now used to enforce uniqueness. If you
+  attempt to add a model to the list that has the same id as another model in
+  the list, an `error` event will be fired and the model will not be added.
+  [Ticket #2531409]
+
+* The `add()`, `remove()` and `reset()` methods now accept other ModelList
+  instances in addition to models and arrays of models. For example, passing a
+  ModelList to `add()` will add all the models in that list to this list as
+  well. [Ticket #2531408]
+
+* ModelList now allows you to add models to the list even if they were
+  instantiated in another window or another YUI sandbox. [Ticket #2531543]
+
+* ModelList subclasses can now override the protected `_compare()` method to
+  customize the low-level comparison logic used for sorting. This makes it easy
+  to do things like descending sort, multi-field sorting, etc. See the API docs
+  for details.
+
+* The `reset()` method now allows the caller-provided options object to override
+  the `src` property that's passed on the event facade of the `reset` event.
+  [Ticket #2531888]
+
+### Router (formerly Controller)
+
+* [!] The `Controller` class and `controller` module have been renamed to
+  `Router` and `router` respectively. The old names are deprecated, but have
+  been retained as aliases for backwards compatibility. They will be removed
+  in a future version of YUI.
+
+* [!] The `html5`, `root`, and `routes` properties are now attributes, and
+  `routes` may be set both during and after init. Code that refers to the old
+  properties, like `myController.root` and `myController.root = '/foo'`, must be
+  updated to use the attribute syntax instead: `myRouter.get('root')` and
+  `myRouter.set('root', '/foo')`.
+
+* [!] The signature for route handlers has changed. Route handlers now receive
+  three arguments: `req`, `res`, and `next`. To preserve backcompat, `res` is a
+  function that, when executed, calls `next()`. This behavior is deprecated and
+  will be removed in a future version of YUI, so please update your route
+  handlers to expect `next` as the third param.
+
+* `"*"` can now be used to create a wildcard route that will match any path
+  (previously it was necessary to use a regex to do this). Additionally, paths
+  which contain a `"*"` (e.g., `"/users/*"`) act as a wildcard matching
+  everything after it.
+
+* The `hasRoute()` method now accepts full URLs as well as paths.
+
+* The hashes used when `html5` is `false` are now root-less; the router's `root`
+  is removed from the hash before it is set on the URL.
+
+* When multiple Router instances exist on a page, calling `save()` in one will
+  now cause matching routes to be dispatched in all routers, rather than only
+  the router that was the source of the change.
+
+* Added `url` and `src` properties to the request object that's passed to route
+  handlers.
+
+* Made the `html5` config attribute writable. This allows you to force a router
+  to use (`true`) or not use (`false`) HTML5 history. Please don't set it to
+  `false` unless you understand the consequences.
+
+* Added a workaround for a nasty iOS 5 bug that destroys stored references to
+  `window.location` when the page is restored from the page cache. We already
+  had a workaround in place since this issue is present in desktop Safari as
+  well, but the old workaround no longer does the trick in iOS 5.
+  [Ticket #2531608]
+
+### View
+
+* [!] The `container`, `model`, and `modelList` properties are now attributes.
+  Code that refers to the old properties, like `myView.model` and
+  `myView.model = model`, must be updated to use the attribute syntax instead:
+  `myView.get('model')` and `myView.set('model', model)`.
+
+* [!] The `container` attribute now treats string values as CSS selectors.
+  Previously, it assumed string values represented raw HTML. To get the same
+  functionality as the old behavior, pass your HTML string through
+  `Y.Node.create()` before passing it to `container`.
+
+* [!] Destroying a view no longer also destroys the view's container node by
+  default. To destroy a view's container node when destroying the view, pass
+  `{remove: true}` to the view's `destroy()` method. [Ticket #2531689]
+
+* View now supports ad-hoc attributes, which means it's no longer necessary to
+  subclass `Y.View` and declare attributes ahead of time. The following is now
+  perfectly valid, and will result in a view instance with "foo" and "bar"
+  attributes:
+
+          var view = new Y.View({foo: 'foo', bar: 'bar'});
+
+* Added a `containerTemplate` property that contains an HTML template used to
+  create a container node when one isn't specified. Defaults to "<div/>".
+
+* When no `container` node is specified at instantiation time, the container
+  won't be created until it's needed. `create()` is now only used to create a
+  default container; it's never called when a custom container node is
+  specified.
+
+* Added a View extension, `Y.View.NodeMap`, that can be mixed into a `View`
+  subclass to provide a static `getByNode()` method that returns the nearest
+  View instance associated with a given Node (similar to `Widget.getByNode()`).
+
+
 3.4.1
 -----
 
-* Controller: Added a workaround for an iOS 4 bug that causes the previous URL
-  to be displayed in the location bar after calling `save()` or `replace()` with
-  a new URL.
+### Controller
 
-* Controller: Fixed a bug that caused the controller to get stuck in a
-  "dispatching" state if `save()` was called with no routes defined.
+* Added a workaround for an iOS 4 bug that causes the previous URL to be
+  displayed in the location bar after calling `save()` or `replace()` with a
+  new URL.
 
-* Model: The `validate()` method is now only called when `save()` is called,
-  rather than on every attribute change. If validation fails, the save operation
-  will be aborted.
+* Fixed a bug that caused the controller to get stuck in a "dispatching" state
+  if `save()` was called with no routes defined.
+
+### Model
+
+* The `validate()` method is now only called when `save()` is called, rather
+  than on every attribute change. If validation fails, the save operation will
+  be aborted.
 
 
 3.4.0
@@ -69,6 +239,11 @@ App Framework Change History
 
 ArraySort Change History
 ========================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -89,6 +264,11 @@ ArraySort Change History
 
 AsyncQueue Change History
 =========================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -149,6 +329,64 @@ AsyncQueue Change History
 
 Attribute Change History
 ========================
+
+3.5.0
+-----
+
+  * Broke Y.Attribute up into:
+
+    - Y.AttributeCore
+    - Y.AttributeEvents
+    - Y.AttributeExtras
+
+    To support core Attribute usage, without Events, but still allow upgrade 
+    path to add Events, if required.
+
+    Y.AttributeCore is likely to form the basis for BaseCore and WidgetCore 
+    (ala Node Plugins, where low-level state change events are not required). 
+
+    Y.Attribute's public and protected API reimain unchanged, and loader will
+    pull in the new dependencies.
+
+    However if you're manually pulling in attribute-base, you'll need to 
+    manually pull in attribute-core, attribute-events and attribute-extras 
+    before it.
+
+    Summary:
+
+    Y.Attribute     - Common Attribute Functionality (100% backwards compat)
+    Y.AttributeCore - Lightest Attribute support, without CustomEvents
+
+    --
+
+    Y.AttributeEvents - Augmentable Attribute Events support
+    Y.AttributeExtras - Augmentable 20% usage for Attribute (modifyAttr, removeAttr, reset ...)
+    Y.AttributeComplex - Augmentable support for constructor complex attribute parsing ({"x.y":foo})
+
+    --
+
+    Y.Attribute = Y.AttributeCore + Y.AttributeEvents + Y.AttributeExtras
+
+    --
+
+    Modules:
+
+    "attribute-base" : Y.Attribute
+    "attribute-core" : Y.AttributeCore
+
+    "attribute-complex" : Y.AttributeComplex mixin (mixed into Y.Attribute)
+    "attribute-events" : Y.AttributeEvents mixin
+    "attribute-extras" : Y.AttributeExtras mixin
+
+  * Changed State's internal data structure, to store pairs by 
+    [name][property], instead of [property][name] to improve performance
+    (most Attribute operations are name centric, not property centric).
+
+    If you're working directly with Attribute's private _state.data, you
+    may need to update your code to account for the change in structure. 
+
+  * Attribute now passes the attribute name to valueFn, allowing users to
+    write shared valueFn impls across attributes.
 
 3.4.1
 -----
@@ -306,100 +544,201 @@ Attribute Change History
 --------------------------
 
 
+
 AutoComplete Change History
 ===========================
+
+3.5.0
+-----
+
+* Added an `enableCache` config attribute. Set this to `false` to prevent the
+  built-in result sources from caching results (it's `true` by default).
+
+* The `requestTemplate` value is now made available to YQL sources via the
+  `{request}` placeholder, which works just like the `{query}` placeholder. Use
+  this when you need to customize the query value (such as double-escaping it)
+  used in the YQL query. [Ticket #2531285]
+
+* Changing the value of the `value` attribute programmatically will now also
+  update the value of the `query` attribute and will fire a `clear` event when
+  the value is cleared (thus clearing results), but still will not fire a
+  `query` event. Use the `sendRequest()` method to trigger a query
+  programmatically.
+
+* Added a workaround for an IE7 bug that would cause the result list to appear
+  empty when it first becomes visible.
+
+* Fixed a bug that caused a scrollable result list to be hidden when the user
+  clicked and dragged on the scrollbar and then released the mouse button while
+  the cursor was outside the list region.
+
+* Fixed a bug that caused the list to disappear on mouseover if the input field
+  received focus before the AutoComplete widget was initialized
+  [Ticket #2531651]
+
+* Fixed a bug that could prevent results from being selected via mouse click
+  after a result was selected via the tab key. [Ticket #2531684]
+
+* Fixed a bug that prevented the list from being re-aligned when the window was
+  resized.
+
 
 3.4.1
 -----
 
-  * The "combobox" ARIA role is no longer automatically added to an
-    AutoCompleteList input node. After consulting with the Y! Accessibility
-    team, we felt that the combobox role doesn't accurately represent the
-    out-of-the-box interactions that AutoCompleteList provides. Implementers can
-    still apply this role (or any other ARIA role) to the input node manually if
-    desired.
+* The "combobox" ARIA role is no longer automatically added to an
+  AutoCompleteList input node. After consulting with the Y! Accessibility
+  team, we felt that the combobox role doesn't accurately represent the
+  out-of-the-box interactions that AutoCompleteList provides. Implementers can
+  still apply this role (or any other ARIA role) to the input node manually if
+  desired.
 
-  * Fixed a bug that prevented the autocomplete list from being hidden after
-    right-clicking on the list and then clicking elsewhere in the document.
-    [Ticket #2531009]
+* Fixed a bug that prevented the autocomplete list from being hidden after
+  right-clicking on the list and then clicking elsewhere in the document.
+  [Ticket #2531009]
 
 
 3.4.0
 -----
 
-  * Added the ability to use a `<select>` node as a result source.
+* Added the ability to use a `<select>` node as a result source.
 
-  * Function sources may now be either asynchronous or synchronous. Returning
-    an array of results from a function source will cause it to be treated as
-    synchronous (same as in 3.3.0). For async operation, don't return anything,
-    and pass an array of results to the provided callback function when the
-    results become available. [Ticket #2529974]
+* Function sources may now be either asynchronous or synchronous. Returning
+  an array of results from a function source will cause it to be treated as
+  synchronous (same as in 3.3.0). For async operation, don't return anything,
+  and pass an array of results to the provided callback function when the
+  results become available. [Ticket #2529974]
 
-  * Added a `sourceType` attribute to `AutoCompleteBase`, which may be used to
-    force a specific source type, overriding the automatic source type
-    detection. [Ticket #2529974]
+* Added a `sourceType` attribute to `AutoCompleteBase`, which may be used to
+  force a specific source type, overriding the automatic source type
+  detection. [Ticket #2529974]
 
-  * The `scrollIntoView` config option is now much smarter. It will only scroll
-    if the selected result isn't fully visible. If the result is already
-    entirely within the visible area of the viewport, no scrolling will occur.
+* The `scrollIntoView` config option is now much smarter. It will only scroll
+  if the selected result isn't fully visible. If the result is already
+  entirely within the visible area of the viewport, no scrolling will occur.
 
-  * A pre-existing `listNode` may now be specified at initialization time.
+* A pre-existing `listNode` may now be specified at initialization time.
 
-  * Added `subWordMatch` filters and highlighters. [Contributed by Tobias
-    Schultze]
+* Added `subWordMatch` filters and highlighters. [Contributed by Tobias
+  Schultze]
 
-  * The `this` object now refers to the current AutoComplete instance instead of
-    the window in list locators, text locators, filters, formatters,
-    highlighters, and requestTemplate functions.
+* The `this` object now refers to the current AutoComplete instance instead of
+  the window in list locators, text locators, filters, formatters,
+  highlighters, and requestTemplate functions.
 
-  * Added an `originEvent` property to the event facade of `select` events. It
-    contains an event facade of the DOM event that triggered the selection if
-    the selection was triggered by a DOM event.
+* Added an `originEvent` property to the event facade of `select` events. It
+  contains an event facade of the DOM event that triggered the selection if
+  the selection was triggered by a DOM event.
 
-  * Small performance improvement for filters operating on empty query strings.
-    [Ticket #2529949]
+* Small performance improvement for filters operating on empty query strings.
+  [Ticket #2529949]
 
-  * Result list alignment is now updated both when results change and when
-    the window is resized instead of only when the list becomes visible. This
-    makes right-aligned lists with dynamic widths less awkward.
+* Result list alignment is now updated both when results change and when
+  the window is resized instead of only when the list becomes visible. This
+  makes right-aligned lists with dynamic widths less awkward.
 
-  * Fixed a bug that prevented CSS-based z-index values from taking effect on
-    the AutoComplete list and required the z-index to be set via JS. The
-    `.yui3-aclist` class now provides a default z-index of 1, and this can be
-    overridden with custom CSS. Specifying a `zIndex` attribute value via JS
-    no longer has any effect.
+* Fixed a bug that prevented CSS-based z-index values from taking effect on
+  the AutoComplete list and required the z-index to be set via JS. The
+  `.yui3-aclist` class now provides a default z-index of 1, and this can be
+  overridden with custom CSS. Specifying a `zIndex` attribute value via JS
+  no longer has any effect.
 
-  * Fixed a bug that caused the IE6 iframe shim under the AutoComplete list to
-    be sized incorrectly the first time the list was displayed.
+* Fixed a bug that caused the IE6 iframe shim under the AutoComplete list to
+  be sized incorrectly the first time the list was displayed.
 
-  * Fixed a bug in which the `requestTemplate` would sometimes be used as the
-    query instead of being appended to the source URL. This affected XHR and
-    JSONP sources that used both a `{query}` placeholder in the source string
-    and a custom `requestTemplate` value. [Ticket #2529895]
+* Fixed a bug in which the `requestTemplate` would sometimes be used as the
+  query instead of being appended to the source URL. This affected XHR and
+  JSONP sources that used both a `{query}` placeholder in the source string
+  and a custom `requestTemplate` value. [Ticket #2529895]
 
-  * Fixed a bug that caused the `requestTemplate` function to be called twice
-    for an XHR request instead of just once.
+* Fixed a bug that caused the `requestTemplate` function to be called twice
+  for an XHR request instead of just once.
 
-  * Fixed a bug in which JSONP, XHR, and YQL requests were cached solely based
-    on the query rather than on the complete request. This could result in
-    cache collisions when two requests with the same query but different
-    parameters (provided by a requestTemplate) were made. [Ticket #2530410]
+* Fixed a bug in which JSONP, XHR, and YQL requests were cached solely based
+  on the query rather than on the complete request. This could result in
+  cache collisions when two requests with the same query but different
+  parameters (provided by a requestTemplate) were made. [Ticket #2530410]
 
-  * Fixed a bug that caused the `&` character to be treated as an up arrow
-    key in Firefox. [Ticket #2530455]
+* Fixed a bug that caused the `&` character to be treated as an up arrow
+  key in Firefox. [Ticket #2530455]
 
-  * Removed the "beta" label. Hooray!
+* Removed the "beta" label. Hooray!
 
 
 3.3.0
 -----
 
-  * Initial release.
+* Initial release.
 
 
 
 Base Change History
 ===================
+
+3.5.0
+-----
+
+  * Only invoke Base constructor logic once to 
+    support multi-inheritance scenario in which
+    an extension passed to Base.create inherits from Base
+    itself.
+
+    NOTE: To support multiple inhertiance more deeply, we'd 
+    need to remove the hasOwnProperty restriction around object
+    key iteration.
+
+  * Added Y.BaseCore which is core Base functionality without
+    Custom Events (it uses Y.AttributeCore instead of Y.Attribute).
+
+    Y.BaseCore still maintains the ATTRS handling, init/destroy
+    lifecycle and plugin support, but doesn't fire any custom evnets
+    of it's own (the idea is that it will the base for Node-Plugin 
+    type components, built off of a WidgetCore) 
+
+    Y.Base is now Y.BaseCore + Y.Attribute, and is 100% backwards
+    compatible.
+
+    Summary:
+
+    Y.Attribute     - Common Attribute Functionality (100% backwards compat)
+    Y.Base          - Common Base Functionality (100% backwards compat)
+   
+    Y.AttributeCore - Lightest Attribute support, without CustomEvents
+    Y.BaseCore      - Lightest Base support, without CustomEvents
+
+    --
+
+    Y.AttributeEvents - Augmentable Attribute Events support
+    Y.AttributeExtras - Augmentable 20% usage for Attribute (modifyAttr, removeAttr, reset ...)
+    Y.AttributeComplex - Augmentable support for constructor complex attribute parsing ({"x.y":foo})
+
+    --
+ 
+    Y.Attribute = Y.AttributeCore + Y.AttributeEvents + Y.AttributeExtras
+    Y.Base      = Y.BaseCore + Y.Attribute
+
+    -- 
+
+    Modules:
+    
+    "base-base" : Y.Base
+    "base-core" : Y.BaseCore
+
+    "base-build" : Y.Base.build/create/mix mixin
+
+  * Extended Base.create/mix support for _buildCfg, to Extensions, mainly so that
+    extensions can define a whitelist of statics which need to be copied to the 
+    main class.
+
+    e.g.
+
+    MyExtension._buildCfg = {
+       aggregates:["newPropsToAggregate"...],
+       custom: {
+           newPropsToCustomMix
+       },
+       statics: ["newPropsToCopy"]
+    };
 
 3.4.1
 -----
@@ -582,8 +921,24 @@ Base Change History
 
 
 
+Button Change History
+====================
+
+3.5.0
+-----
+
+  * Initial Release
+
+
+
 Cache Change History
 ====================
+
+3.5.0
+-----
+
+  * Fixed issue with dropping values when `uniqueKeys` was `true`.
+    [Ticket #2531339] [PR #39] [Contributed by Stuart Colville]
 
 3.4.1
 -----
@@ -635,6 +990,14 @@ Cache Change History
 Calendar Change History
 =======================
 
+3.5.0 - Updates
+---------------
+   * Calendar is now keyboard navigable [Ticket #2530348]
+   * Calendar skins have been updated [Tickets #2530720, [#2531110, #2531744]
+   * Calendar has received accessibility fixes
+   * CalendarNavigator plugin has been updated and now supports disabled button states
+   * Calendar got multiple new internationalization packages (de, fr, pt-BR, zh-HANT-TW)
+
 3.4.1 - Bug Fix Release
 -----------------------
 
@@ -652,9 +1015,43 @@ Calendar Change History
 Charts Change History
 =====================
 
+3.5.0
+-----
+
+  * #2531748 Added aria keyboard navigation. 
+  * #2530195 Tooltip display toggles on touchend event for mobile implementations. 
+  * #2531410 Fixed issue in which specifying color arrays for marker borders of some series type broke in canvas implementation.
+  * #2528814 Added charts-legend submodule to allow chart legends.
+  * #2531456 Fixed issue in which loading a chart with an empty data provider throw an error and not load. 
+  * #2530559 Added ability to explicitly set the width/height for vertical/horizontal axes
+  * #2531003 Fixed issue in which axis labels flowed outside the chart's bounding box. Added allowContentOverflow attribute to allow for the overflow if desired.
+  * #2531390 Addressed performance issues with IE
+  * #2530151 Fixed issue in which charts will load large data sets loaded slowly. Added the notion of group markers to limit the number of dom nodes.
+  * #2531468 Changed axis title attribute to use appendChild. NOTE: This may break backward compatibility if the value for your title attribute was dependent on innerHTML to format text.
+  * #2531469 Changed axis label to use appendChild. NOTE: This may break backward compatibility with custom label functions if they were dependent on innerHTML to format text.
+  * #2531472 Changed tooltip to use appendChild.  NOTE: This may break backward compatibility with custom tooltip functions if they were dependent on innerHTML to format text.
+  * Removed memory leaks caused by orphaned dom elements.
+  * Axes performance enhancements.
+  * #2529859 Fixed issue in which Chart with timeAxis was not correctly initialized when setting dataProvider.
+  * #2529922 Fixed issue in which updates to axes config after chart render did not take affect.  
+  * #2530032 Fixed issue in which changing dataProvider after instantiation but pre-render resulted in the original dataProvider being used by the chart.
+  * #2531245 Fixed issue in which the alwaysShowZero attribute was ignored by the NumericAxis.
+  * #2531277 Fixed issue in which the area charts bled outside of content bounds when minimum was higher than zero.
+  * #2531283 Fixed issue in which stacked historgrams did not accept an array for marker color values.
+  * #2531314 Fixed issue in which a series failed to show if its value was missing from the first index of the dataProvider.  
+  * #2529878 Added a percentage of whole value to the tooltip for PieChart.
+  * #2529916 Added ability to distinguish between zero and null values in histograms. 
+  * #2531515 Fixed issue in which PieChart was not handling numbers of type string.
+  * #2531459 Fixed issue with histogram marker size irregularity on mouseover when specified width/height values are larger than the area available on the graph.
+
+
 3.4.1
 -----
 
+  * #2531234 Fixed issue in which axis titles were not positioned properly in IE 6 and 7.
+  * #2531233 Fixed issue in which axis line and tick styles were overriding each other.
+  * #2531232 Fixed issue in which inner axis ticks did not display.
+  * #2531231 Fixed issue in which the top axis line was not positioned properly. 
   * #2530109 Fixed issue in which the NumericAxis roundingMethod was not always being respected when a number was specified.
   * #2531100 Fixed issue in which the NumericAxis was not correctly calculating its data range when a minimum or maximum was explicitly set.
   * #2530127 Added originEvent, pageX and pageY properties to the event facade for marker and planar events.
@@ -701,6 +1098,11 @@ Charts Change History
 
 ClassName Manager Change History
 ================================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -759,75 +1161,90 @@ ClassName Manager Change History
 Collection Change History
 =========================
 
+3.5.0
+-----
+
+* YUI now detects non-native ES5 shims added to native objects by other
+  libraries and falls back to its own internal shims rather than relying on the
+  potentially broken code from the other library.
+* Deprecated arraylist-add and arraylist-filter in favor of individual
+  subclass implementations or ModelList.
+
+
 3.4.1
 -----
 
-  * Sparse arrays are now handled correctly in the non-native fallback
-    implementation of `Y.Array.lastIndexOf()`. [Ticket #2530966]
+* Sparse arrays are now handled correctly in the non-native fallback
+  implementation of `Y.Array.lastIndexOf()`. [Ticket #2530966]
 
 
 3.4.0
 -----
 
-  * Sparse arrays are now handled correctly in the non-native implementations of
-    `Array.every`, `Array.filter`, `Array.find`, `Array.map`, and
-    `Array.reduce`. [Ticket #2530376]
+* Sparse arrays are now handled correctly in the non-native implementations of
+  `Array.every`, `Array.filter`, `Array.find`, `Array.map`, and
+  `Array.reduce`. [Ticket #2530376]
 
 
 3.3.0
 -----
 
-  * [!] The `sort` parameter of `Array.unique` has been deprecated. It still
-    works, but you're encouraged not to use it as it will be removed from a
-    future version of YUI.
-  * `Array.lastIndexOf` now supports the `fromIndex` parameter as specified in
-    ES5.
-  * Improved the performance of `Array.filter`, `Array.map`, `Array.reduce`, and
-    `Array.unique`, especially in browsers without native ES5 array extras.
+* [!] The `sort` parameter of `Array.unique` has been deprecated. It still
+  works, but you're encouraged not to use it as it will be removed from a
+  future version of YUI.
+* `Array.lastIndexOf` now supports the `fromIndex` parameter as specified in
+  ES5.
+* Improved the performance of `Array.filter`, `Array.map`, `Array.reduce`, and
+  `Array.unique`, especially in browsers without native ES5 array extras.
 
 
 3.2.0
 -----
 
-  * No changes.
+* No changes.
 
 
 3.1.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.1.0
 ------
 
-  * `array-extras` is the base submodule for the package.
-  * Added `ArrayList` for generic iterable objects.
-  * `Array.forEach` is an alias for `Array.each`.
-  * Added `Array.invoke` to execute a named method on an array of objects.
+* `array-extras` is the base submodule for the package.
+* Added `ArrayList` for generic iterable objects.
+* `Array.forEach` is an alias for `Array.each`.
+* Added `Array.invoke` to execute a named method on an array of objects.
 
 
 3.0.0
 -----
 
-  * `unique` with `sort` works.
+* `unique` with `sort` works.
 
 
 3.0.0b1
 -------
 
-  * Fixed load time fork assumptions.
+* Fixed load time fork assumptions.
 
 
 3.0.0pr1
 --------
 
-  * Initial release.
+* Initial release.
 
 
 
 Console Change History
 ======================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -935,6 +1352,11 @@ Console Change History
 ConsoleFilters Plugin Change History
 ====================================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -980,6 +1402,11 @@ ConsoleFilters Plugin Change History
 
 Cookie Change History
 =====================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -1064,6 +1491,12 @@ Cookie Change History
 CSS Base Change History
 =======================
 
+3.5.0
+-----
+
+  * No code changes.
+
+
 3.4.1
 -----
 
@@ -1109,6 +1542,11 @@ CSS Base Change History
 
 CSS Fonts Change History
 ========================
+
+3.5.0
+-----
+  * No change.
+
 
 3.4.1
 -----
@@ -1156,6 +1594,12 @@ Both Standards and Quirks modes are supported in A-grade browsers.
 
 CSS Grids Change History
 ========================
+
+3.5.0
+-----
+
+  * CSS Grids has been broken out into cssgrids-base and cssgrids-units.
+
 
 3.4.1
 -----
@@ -1250,6 +1694,11 @@ over 1000 page layout combinations. Other features include:
 CSS Reset Change History
 ========================
 
+3.5.0
+-----
+  * No change.
+
+
 3.4.1
 -----
   * Moved list-type to list declaration.
@@ -1289,6 +1738,12 @@ CSS Reset Change History
 DataSchema Change History
 =========================
 
+3.5.0
+-----
+
+  * No changes.
+
+
 3.4.1
 -----
 
@@ -1310,7 +1765,7 @@ DataSchema Change History
    * `getPath` is far more tolerant of locator strings.  In particular, it
      considered utf-8 characters that didn't match the `\w` regex group to be
      invalid.  This is fixed.
-   
+
 
 3.3.0
 -----
@@ -1363,6 +1818,12 @@ DataSchema Change History
 DataSource Change History
 =========================
 
+3.5.0
+-----
+
+  * No changes.
+
+
 3.4.1
 -----
 
@@ -1393,11 +1854,11 @@ DataSource Change History
 -----
 
   * Removed hardcoded `DataSource.IO` from `DataSourceJSONSchema`.
-  
+
   * Added ability to cancel underlying IO and Get transactions.
-  
+
   * Better `DataSource` error handling.
-  
+
   * Added `ioConfig` Attribute to `DataSource.IO`.
 
 
@@ -1413,14 +1874,14 @@ DataSource Change History
   * [!] `DataSource`'s `sendRequest()` argument signature has changed in a
     non-backward-compatible way. It now accepts a single object containing the
     properties `request`, `callback`, and `cfg`.
-  
+
   * `DataSource.Get` bug fixed where it was trying to delete the proxy callback
     in the wrong location during cleanup.
-    
+
   * Changed from array of proxy callbacks to object with guid keys to support
     services that don't properly handle array indexes in the callback parameter
     (Twitter).
-  
+
   * Code reorganized (API and functionality unaffected).
 
 
@@ -1428,7 +1889,7 @@ DataSource Change History
 -----
 
   * `DataSource.IO` now passes request value to IO.
-  
+
   * `DataSource.Function` now catches exception and fires error event.
 
 
@@ -1441,6 +1902,41 @@ DataSource Change History
 
 DataTable Change History
 ========================
+
+3.5.0
+-----
+
+ * Major refactor.  See README for details about the new architecture.
+ * Y.DataTable is now instantiable, in addition to Y.DataTable.Base
+ * Recordset use has been replaced by ModelList. `recordset` attribute passes through to `data` attribute.  This is incomplete back compat because get('recordset') doesn't return a Recordset instance.
+ * Columnset use has been removed. Column configuration is managed as an array of objects. `columnset` attribute passes through to `columns` attribute.  The same incomplete back compat applies.
+ * DataTable doesn't render the table contents or header contents. That is left to `bodyView` and `headerView` classes.
+ * Support for rendering a `<tfoot>` is baked in.
+ * `datatable-datasource` modified to update a DataTable's `data` attribute rather than the (deprecated) `recordset`.
+ * Scrollable tables now support captions
+ * Added datatable-mutable module to provide addRow, removeRow, addColumn, etc
+ * Added datatable-column-widths module to set column widths
+ 
+ * Liner `<div>`s have been removed from the cell template in the default markup
+ * `<colgroup>` is not rendered by default (added via `datatable-column-widths` extension)
+ * message `<tbody>` is not added by default (compatibility module not added yet)
+ * CSS uses `border-collapse: collapse` for all user agents instead of `separate` for most, but `collapse` for IE
+ * CSS for base only includes styles appropriate to rendering the base markup
+ * header gradient rendered as CSS gradient where possible, falling back to background image.
+ * Added class "yui3-datatable-table" to the `<table>`
+ * Added class "yui3-datatable-header" to all `<th>`s
+ * Changed class "yui3-column-foo" to "yui3-datatable-col-foo" for `<th>`s and `<td>`s
+ * Added class "yui3-datatable-cell" to all `<td>`s
+ * CSS no longer references tags, only classes
+ * ARIA grid, row, and gridcell roles added to the markup templates
+ 
+ * `recordset` attribute deprecated in favor of `data` attribute
+ * `columnset` attribute deprecated in favor of `columns` attribute
+ * `tdValueTemplate`, `thValueTemplate`, and `trTemplate` attributes and `tdTemplate` and `thTemplate` properties dropped in favor of CELL_TEMPLATE and ROW_TEMPLATE properties on the `bodyView` and `headerView` instances.
+ * Now fires `renderTable`, `renderHeader`, `renderBody`, and `renderFooter` events
+ * Added `data`, `head`, `body`, and `foot` properties to contain instances of the ModelList and section Views.
+ * Columns now MAY NOT have `key`s with dots in them.  It competes with Attribute's support for complex attributes. When parsing data with DataSchema.JSON, use the `locator` configuration to extract the value, but use a simple `key` to store/reference it from DT.
+
 
 3.4.1
 -----
@@ -1490,8 +1986,23 @@ DataTable Change History
 
 
 
+DataTable (deprecated) Change History
+=====================================
+
+3.5.0
+-----
+
+Created to house the 3.4.1 implementations of datatable modules for people that
+can't upgrade to 3.5.0 or greater for whatever reason.
+
+
+
 DataType Change History
 =======================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -1540,6 +2051,13 @@ DataType Change History
 
 Drag and Drop Change History
 ============================
+
+### 3.5.0
+
+* 2530257 Avoid interference of Drag and Nodes Event Handles
+* 2531377 shim is not created if dd-ddm is loaded after the first drag is activated
+* 2531674 Issue with drag and drop and drop:hit event
+
 
 ### 3.4.1
 
@@ -1681,6 +2199,21 @@ Known Issues:
 Dial Change History
 ===================
 
+3.5.0
+-----
+
+  * Changed method name from _recalculateDialCenter to _calculateDialCenter
+   
+  * Changed property name from _centerXOnPage to _dialCenterX
+    and from _centerYOnPage to _dialCenterY
+    
+  * Known issue: On IE7, when browser is zoomed, clicking on dial gives the
+    wrong value.
+    
+  * Multiple instances of Dial all had the same ARIA label. 
+    They are now unique. Screenreaders now read both the label and the value.
+    [Ticket #2531505]   
+
 3.4.1
 -----
 
@@ -1756,6 +2289,13 @@ Dial Change History
 DOM Change History
 ==================
 
+3.5.0
+-----
+  * Bug fix: Comments are now filtered from IE child queries. [Ticket 2530101]
+  * Bug fix: Root node border correctly accounted for in IE. [Ticket 2531246]
+  * Added Y.DOM.getScrollbarWidth() to return the width of a scrollbar in the current user agent
+
+
 3.4.1
 -----
 
@@ -1803,6 +2343,11 @@ DOM Change History
 
 Dump Change History
 ===================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -1859,6 +2404,22 @@ Dump Change History
 Rich Text Editor Change History
 ===============================
 
+### 3.5.0
+
+* 2530547 Frame: src attribute doesn't do anything
+* General fixes for Y! Mail deployment
+* 2531299 Pressing Backspace may cause editor to lose focus.
+* 2531301 Editor using EditorPara and EditorLIsts has JS exceptions
+* 2530547 Frame: src attribute doesn't do anything
+* 2531329 Rename Y.Selection to Y.EditorSelection (or something)
+* 2531577 Plugin.EditorBR works incorrectly in IE
+* 2531615 Newline breaks <br> replaced with <wbr> in IE8 [bz 5242614]
+* 2531329 - Breaking change, more below:
+
+
+Bug #2531329 changed the old Y.Selection to Y.EditorSelection. This has been aliased until 3.6.0, bug #2531659
+created to track that change.
+
 ###3.4.1
 
 No changes.
@@ -1887,28 +2448,52 @@ It's only the iframe rendering and event system.
 Escape Change History
 =====================
 
+3.5.0
+-----
+
+* `regex()` no longer escapes the `#` character, since it has no special meaning
+  in JS regexes.
+
+
 3.4.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.4.0
 -----
 
-  * Non-string arguments to `html()` and `regex()` are now coerced to strings.
-    [Ticket #2530408]
+* Non-string arguments to `html()` and `regex()` are now coerced to strings.
+  [Ticket #2530408]
 
 
 3.3.0
 -----
 
-  * Initial release.
+* Initial release.
 
 
 
 Event Infrastructure Change History
 ===================================
+
+3.5.0
+-----
+  * `event-simulate` references to `window` replaced with `Y.config.win`
+    [#2531223]
+  * `event-resize` no longer throws an exception in IE [#2531310]
+  * "avilable" and "contentready" handlers that throw exceptions no longer
+    result in infinite polling [#2531375]
+  * Added `event-touch`, `event-flick`, `event-move`, and `event-valuechange` to
+    the `event` virtual rollup in accordance with the docs.
+  * 'key' event does a better job parsing character filters. Uses `e.which`
+    instead of `e.keyCode` or `e.charCode`.
+  * `node.delegate('focus', fn, '.not-focusable')` now works.  Properly supports
+    delegation where the filter matches non-focusable parent nodes of the
+    focused target. Same for blur. [#2531334] (`event-focus`)
+  * `node.delegate('focus', fn, filterThatMatchesNode); node.focus();` now
+    works. [#2531734]
 
 3.4.1
 -----
@@ -2170,6 +2755,11 @@ Event Infrastructure Change History
 Custom Event Infrastructure Change History
 ==========================================
 
+3.5.0
+-----
+
+  * Multiple calls to target.publish({ ... }) now work [Ticket #2531671]
+
 3.4.1
 -----
 
@@ -2288,6 +2878,12 @@ Custom Event Infrastructure Change History
 Gestures Change History
 =======================
 
+3.5.0
+-----
+
+  * Chrome fixed ontouchstart in window bug. No need to caveat
+    the touch test for Chrome 6+.
+
 3.4.1
 -----
 
@@ -2319,63 +2915,250 @@ Gestures Change History
 ValueChange Change History
 ==========================
 
+3.5.0
+-----
+
+* Changed the name of the synthetic event to "valuechange" (all lowercase) for
+  greater consistency with DOM event names. The older "valueChange" name will
+  continue to be supported indefinitely, but for consistency I recommend
+  switching to "valuechange".
+
+* Added support for delegated valuechange events. You can now use `delegate()`
+  to attach a valuechange event to a container node and be notified of changes
+  to any descendant that matches the specified delegation filter.
+
+* The valuechange event facade now includes `currentTarget` and `target`
+  properties like a good little synthetic event.
+
+
 3.4.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.4.0
 -----
 
-  * No changes.
+* No changes.
 
 
 3.3.0
 -----
 
-  * Focus is now used (in addition to keyboard and mouse events) as a sign that
-    we should begin polling for value changes. [Ticket #2529294]
+* Focus is now used (in addition to keyboard and mouse events) as a sign that
+  we should begin polling for value changes. [Ticket #2529294]
 
-  * If the value changes while an element is not focused, that change will no
-    longer be reported the next time polling is started (since it couldn't have
-    been user input).
+* If the value changes while an element is not focused, that change will no
+  longer be reported the next time polling is started (since it couldn't have
+  been user input).
 
 
 3.2.0
 -----
 
-  * Module renamed to `event-valuechange` and refactored to be a true synthetic
-    event.
+* Module renamed to `event-valuechange` and refactored to be a true synthetic
+  event.
 
-  * The `value` and `oldValue` event facade properties were renamed to `newVal`
-    and `prevVal` respectively, for consistency with other change event facades
-    throughout the library.
+* The `value` and `oldValue` event facade properties were renamed to `newVal`
+  and `prevVal` respectively, for consistency with other change event facades
+  throughout the library.
 
-  * Performance improvements.
+* Performance improvements.
 
 
 3.1.2
 -----
 
-  * No changes.
+* No changes.
 
 
 3.1.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.1.0
 -----
 
-  * Initial release as `value-change`.
+* Initial release as `value-change`.
+
+
+
+File Module Change History
+==========================
+
+3.5.0
+  * New modules
+
+
+Get Utility Change History
+==========================
+
+3.5.0
+-----
+
+* [!] The `Y.Get.abort()` method is now deprecated and will be removed in a
+  future version of YUI. Use the transaction-level `abort()` method instead.
+
+* [!] The `charset` option is now deprecated and will be removed in a future
+  version of YUI. Specify an `attributes` object with a `charset` property
+  instead.
+
+* [!] The `win` option, which allowed you to specify the window into which
+  nodes should be inserted, is now deprecated and will be removed in a future
+  version of YUI. Use the `doc` option instead, which allows you to specify a
+  document, as opposed to a window (which makes more sense).
+
+* [!] The `win` property of transaction objects is now deprecated and will be
+  removed in a future version of YUI. Since any given request in a transaction
+  may now have its node inserted into any document, the best way to get this
+  info is to find the request you're interested in inside the transaction's
+  `requests` property, then look at that request's `doc` property to figure out
+  what document it's associated with.
+
+* [!] The `tId` property of transaction objects is now deprecated and will be
+  removed in a future version of YUI. Use the `id` property instead.
+
+* The Get Utility has been completely rewritten to improve performance and add
+  much-needed functionality. Backwards compatibility has been maintained, but
+  some methods and APIs have been deprecated and will be removed in a future
+  version of YUI.
+
+* Multiple scripts within a transaction are now loaded in parallel whenever
+  possible in browsers that are capable of preserving execution order regardless
+  of load order. This improves performance in those browsers when loading
+  multiple scripts.
+
+* Multiple CSS resources within a transaction are now always loaded
+  asynchronously, since CSS rules are applied based on the order of link nodes
+  in the document, not the order in which resources finish loading. This
+  improves performance in all browsers when loading multiple CSS files.
+
+* Script and CSS resources that fail to load due to HTTP or network errors are
+  now correctly treated as failures in all browsers that support `error` events
+  on script or link nodes. Most browsers support this on script nodes, but only
+  Firefox 9+ currently supports this on link nodes.
+
+* CSS load completion is now detected reliably in older versions of
+  WebKit (<535.24) and Firefox (<9), which don't support the `load` event on
+  link nodes. Unfortunately, while our workaround makes it possible to detect
+  when loading is complete, we still can't detect whether it completed
+  successfully or with an error, so in these browsers CSS resources are always
+  assumed to have loaded successfully.
+
+* Added a `Y.Get.load()` method, which allows you to load both CSS and JS
+  resources in a single transaction.
+
+* Added a `Y.Get.js()` method, which is now the preferred way to load JavaScript
+  resources. `Y.Get.script()` is now an alias for `js()`.
+
+* Added a new `Y.Get.options` property containing global options that should be
+  used as the default for all requests, along with similar `cssOptions` and
+  `jsOptions` properties containing default options that apply only to CSS or
+  JS requests, respectively, and that take precedence over the global defaults.
+
+* Added a new `pollInterval` option, which allows you to customize the polling
+  interval (in milliseconds) used to check for CSS load completion in WebKit and
+  Firefox <=8.
+
+* The `css()`, `js()`, `load()`, and `script()` methods now return an instance
+  of `Y.Get.Transaction`, which encompasses one or more requests and contains
+  useful properties and methods for getting information about and manipulating
+  those requests (and related HTML nodes) as a unit.
+
+* The `css()`, `js()`, `load()`, and `script()` methods now accept an optional
+  Node.js-style callback function as either the second or third parameter. This
+  function will be called after the transaction finishes. The first argument
+  is an array of errors, or `null` on success. The second argument is the
+  transaction object.
+
+* The `css()`, `js()`, `load()`, and `script()` methods now accept URL strings,
+  objects of the form `{url: '...', [... options ...]}`, or arrays of URL
+  strings and/or objects. This allows you to specify per-URL options if desired,
+  such as node attributes, parent documents, `insertBefore` nodes, etc.
+
+* The logic used to determine where a node should be inserted when no custom
+  `insertBefore` node has been specified has changed slightly. By default,
+  script and link nodes will now be inserted before the first `<base>` element
+  if there is one, or failing that, before the last child of the `<head>`
+  element, or if there's no `<head>` element, before the first `<script>`
+  element on the page.
+
+* The source for the `get` module has moved from `src/yui` to `src/get`. This
+  allows it to be built separately from the core YUI modules.
+
+
+3.4.1
+-----
+
+* No changes.
+
+
+3.4.0
+-----
+
+* Added an `async` option to `script()`. When set to `true`, the specified
+  scripts will be loaded asynchronously (i.e. in parallel), and order of
+  execution is not guaranteed. The `onSuccess` callback will be called once,
+  after all scripts have finished loading.
+
+* Added an `onProgress` callback, which is useful when loading multiple scripts
+  either in series or in parallel by passing an array of URLs to `script()`.
+  The `onProgress` callback is called each time a script finishes loading,
+  whereas `onSuccess` is only called once after all scripts have finished
+  loading.
+
+
+3.3.0
+-----
+
+* No changes.
+
+
+3.2.0
+-----
+
+* No changes.
+
+
+3.1.1
+-----
+
+* No changes.
+
+
+3.1.0
+-----
+
+* Inserted script nodes get `charset="utf-8"` by default.
+
+
+3.0.0
+-----
+
+* Initial release.
 
 
 
 Graphics Change History
 =======================
+
+3.5.0
+-----
+
+  * #2531630 Changed BaseGraphic class to GraphicBase.
+  * Removed memory leaks from Shape class. 
+  * Added defaultGraphicEngine config to allow developer to specify canvas as the preferred graphic technology. 
+  * #2531127 Fixed issue in which transforms were not consistent across different browsers.
+  * #2531230 Fixed issue in which setting visible at instantiation would throw an error for a shape.
+  * #2531359 Fixed issue in which setting attributes in IE would throw errors.
+  * #2531460 Fixed issue in which the clear() method would throw errors in IE.
+  * #2531465 Fixed typographic error in SVGGraphic class.
+  * #2531049 Added matrix option to the shape's transform attribute.
+  * #2531126 Added ability animate transform attribute.
+  * #2531552 Change name of Graphics Path Utility to Graphics Path Tool.
 
 3.4.1
 -----
@@ -2390,8 +3173,23 @@ Graphics Change History
 
 
 
+Handlebars Change History
+=========================
+
+3.5.0
+-----
+
+* Initial release.
+
+
+
 Highlight Change History
 ========================
+
+3.5.0
+-----
+  * No change.
+
 
 3.4.1
 -----
@@ -2422,63 +3220,81 @@ Highlight Change History
 History Change History
 ======================
 
+3.5.0
+-----
+
+* Added a workaround for a nasty iOS 5 bug that destroys stored references to
+  `window.location` when the page is restored from the page cache. We already
+  had a workaround in place since this issue is present in desktop Safari as
+  well, but the old workaround no longer does the trick in iOS 5.
+  [Ticket #2531608]
+
+* Bug fix: HTML5 history is no longer used by default in Android <2.4, even if
+  feature detection shows it's available. It's just too broken.
+  [Ticket #2531670]
+
+
 3.4.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.4.0
 -----
 
-  * [!] The `history-deprecated` module, which was deprecated in YUI 3.2.0, has
-    been removed from the library.
+* [!] The `history-deprecated` module, which was deprecated in YUI 3.2.0, has
+  been removed from the library.
 
-  * HistoryHTML5 now uses the new `window.history.state` property (which
-    showed up in Firefox 4 and the HTML5 spec after YUI 3.3.0 was released) to
-    get the current HTML5 history state.
+* HistoryHTML5 now uses the new `window.history.state` property (which
+  showed up in Firefox 4 and the HTML5 spec after YUI 3.3.0 was released) to
+  get the current HTML5 history state.
 
-  * Removed the `enableSessionStorage` config option that was previously used to
-    work around the lack of an HTML5 API for getting the current state.
+* Removed the `enableSessionStorage` config option that was previously used to
+  work around the lack of an HTML5 API for getting the current state.
 
-  * Added a `force` config parameter to History constructors. If set to `true`,
-    a `history:change` event will be fired whenever the URL changes, even if
-    there is no associated state change.
+* Added a `force` config parameter to History constructors. If set to `true`,
+  a `history:change` event will be fired whenever the URL changes, even if
+  there is no associated state change.
 
-  * Bug fix: On a page with a `<base>` element, replacing a hash-based history
-    state resulted in a broken URL. [Contributed by Ben Joffe] [Ticket #2530305]
+* Bug fix: On a page with a `<base>` element, replacing a hash-based history
+  state resulted in a broken URL. [Contributed by Ben Joffe] [Ticket #2530305]
 
-  * Bug fix: In IE6 and IE7, navigating to a page with a hash state could result
-    in endlessly repeating `history:change` events. [Ticket #2529990]
+* Bug fix: In IE6 and IE7, navigating to a page with a hash state could result
+  in endlessly repeating `history:change` events. [Ticket #2529990]
 
-  * Bug fix: In IE6 and IE7, replacing a history state would actually result in
-    a new history entry being added. [Ticket #2530301]
+* Bug fix: In IE6 and IE7, replacing a history state would actually result in
+  a new history entry being added. [Ticket #2530301]
 
 
 3.3.0
 -----
 
 
-  * Bug fix: Setting an improperly encoded hash value outside of HistoryHash
-    resulted in two history entries being created. [Ticket #2529399]
+* Bug fix: Setting an improperly encoded hash value outside of HistoryHash
+  resulted in two history entries being created. [Ticket #2529399]
 
-  * Bug fix: Changes to the URL hash (as opposed to the iframe hash) are now
-    reflected in the history state in IE6 and IE7. [Ticket #2529400]
+* Bug fix: Changes to the URL hash (as opposed to the iframe hash) are now
+  reflected in the history state in IE6 and IE7. [Ticket #2529400]
 
 
 3.2.0
 -----
 
-  * [!] The pre-3.2.0 Browser History Utility has been deprecated, and its
-    module has been renamed to `history-deprecated`. It will be removed
-    completely in a future release.
+* [!] The pre-3.2.0 Browser History Utility has been deprecated, and its
+  module has been renamed to `history-deprecated`. It will be removed
+  completely in a future release.
 
-  * Initial release of the new History Utility.
+* Initial release of the new History Utility.
 
 
 
 ImageLoader Change History
 ==========================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -2530,6 +3346,11 @@ ImageLoader Change History
 Intl Change History
 ===================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -2565,19 +3386,45 @@ Intl Change History
 IO Utility Change History
 =========================
 
+3.5.0
+-----
+
+  * Configuration data can now include an instance of FormData for HTTP
+    POST requests. [Ticket #2531274]
+
+  * Implemented FormData file upload in io-base. [Ticket #2531274]
+
+  * Fixed transport error in io-base [Ticket #2531308][Ticket #2531941]
+    [Ticket #2531947]
+
+  * Fixed IO loader meta-data [Ticket #2531320]
+
+  * Fixed transport error in io-base [Ticket #2531308]
+
+  * Implemented Node.js compatibility [Ticket #2531495]
+
+  * Fixed transport error in io-base [Ticket #2531308]
+
+  * Fixed API docs discrepancy for IO [Ticket #2531756]
+
+  * Fixed error in sending an XML document as POST data. [Ticket #2531257]
+
+  * success/failure/complete/etc callbacks that throw errors no longer
+    hijack all future transactions. [Ticket #2532107]
+
 3.4.1
 -----
 
   * HTTP 304 now treated as a success condition. [Ticket #2530931]
 
   * Fixed transport creation error when both io-xdr and io-upload-iframe
-    modules are in use [Ticket #2530999]
+    modules are in use. [Ticket #2530999]
 
   * Querystring stringify added to io-upload-iframe. [Ticket #2531037]
 
   * Fixed request abort error in IE. [Ticket #2531038]
 
-  * Add try/catch to io-upload-iframe response to handle failure cases 
+  * Add try/catch to io-upload-iframe response to handle failure cases
     where the document may be inaccessible. [Ticket #2531041]
 
   * Add IO support for XHR basic user authentication. [Ticket #2530023]
@@ -2585,7 +3432,7 @@ IO Utility Change History
   * Revert Y.mix usage for synchronous requests. [Ticket #2531056]
 
   * Fixed io-upload-iframe transport destruction.  [Ticket #2531058]
-    
+
 3.4.0
 -----
 
@@ -2616,7 +3463,7 @@ IO Utility Change History
   * Implemented default HTTP headers can be suppressed in the transaction's
     configuration object by setting the header with a value of `disable`.
     [Ticket #2529324]
-  
+
     For example:
 
         var config = { headers: { "X-Requested-With": "disable" } };
@@ -2641,12 +3488,12 @@ IO Utility Change History
     Removed: `Security.allowDomain("*")` setting from `io.as` (source) and
     `io.swf` (compiled). The implementation reverts back to the version in
 3.0.0.
-  
+
     This reversion prevents third-party sites from being able to load `io.swf`
     from a disparate domain, and make HTTP requests with the SWF's domain
     privileges, and passing the domain's credentials.  Only the domain serving
     `io.swf` will be permitted to load it, and call its fields.
-  
+
     See the "Security Bulletin" for more details:
     http://yuilibrary.com/yui/docs/io/#security-bulletin
 
@@ -2663,13 +3510,13 @@ IO Utility Change History
     `true`; the default behavior is `false`. During a synchronous request, all
     io events will fire, and response data are accessible through the events.
     Response data are also returned by io, as an alternative. [Ticket #2528181]
-  
+
     For example:
-    
+
         var request = Y.io(uri, { sync: true });
-        
+
     `request` will contain the following fields, when the tx is complete:
-    
+
       * `id`
       * `status`
       * `statusText`
@@ -2678,9 +3525,9 @@ IO Utility Change History
       * `responseText`
       * `responseXML`
       * `arguments`
-  
+
     When making synchronous requests:
-  
+
       * The transaction cannot be aborted,
       * The transaction's progress cannot be monitored.
 
@@ -2697,14 +3544,14 @@ IO Utility Change History
     an XDR transaction, set the config object with the following properties:
 
     * `use`: Specify either `native` or `flash` as the desired XDR transport.
-    
+
     * `credentials`: Set to `true` if cookies are to be sent with the request.
       Does not work with XDomainRequest (e.g., IE8) or the Flash transport.
-    
+
     * `datatType`: Set to `xml` if the response is an XML document.
 
     For example:
-  
+
         var configuration.xdr = {
             use         : 'flash',  // Required -- 'flash` or 'native'.
             credentials : true,     // Optional.
@@ -2724,7 +3571,7 @@ IO Utility Change History
 
   * XDR transport initialization is simplified to one required value -- the path
     to Flash transport. For example:
-  
+
         Y.io.transport({ src:'io.swf' });
 
 3.0.0beta1
@@ -2736,9 +3583,9 @@ IO Utility Change History
     For example:
 
     * io queue is used to make three requests.
-    
+
     * The actual server response order happens to be: transaction 2, 1, 3.
-    
+
     * However, using the queue interface, the transaction callbacks are
       processed in the order of: transaction 1, 2, 3.
 
@@ -2748,7 +3595,7 @@ IO Utility Change History
     response object's `status` and `statusText` properties will be populated as:
 
     * `response.status` will be 0.
-    
+
     * `response.statusText` will be set to `timeout` or `abort` to differentiate
       the two possible conditions.
 
@@ -2758,7 +3605,7 @@ IO Utility Change History
     arguments.
 
     * The global event name is `io:end`.
-    
+
     * To subscribe to the transaction event, define the `end` property in the
       transaction's configuration object. `{on: {end: function(){…} } }`.
 
@@ -2770,16 +3617,16 @@ IO Utility Change History
 
     * `io-base`: This is the IO base class, using `XMLHttpRequest` as the
       transport.
-    
+
     * `io-xdr`: This sub-module extends IO to enable cross-domain transactions
       using Flash as the transport.
-    
+
     * `io-form`: This sub-module extends IO to enable the serialization of an
       HTML form as transaction data.
-    
+
     * `io-upload-iframe`: This sub-module extends IO, to allow file uploads with
       an HTML form, using an `iframe` transport.
-    
+
     * `io-queue`: This sub-module extends IO to add transaction queuing
       capabilities.
 
@@ -2799,6 +3646,10 @@ IO Utility Change History
 
 JSON Utility Change History
 ===========================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -2881,6 +3732,10 @@ JSON Utility Change History
 JSONP Change History
 ====================
 
+3.5.0
+-----
+  * No changes.
+
 3.4.1
 -----
 
@@ -2909,6 +3764,42 @@ Initial release
 
 YUI Loader Change History
 =========================
+
+### 3.5.0
+
+The biggest change made was the use of the `async` flag on `Y.Get` requests. Loader will now use the
+`Y.Loader.resolve()` method under the hood to calculate all the dependencies that it is aware of, then
+build the URL's to complete this request. It will then batch those into one `Y.Get` transation and fetch
+all of them asynchronously, then return to loader for post processing of the injected dependencies.
+
+   * 2529521 Consider making the presence of YUI CSS detectable by the loader
+   * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
+   * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
+   * 2530343 Loader.sorted does not contain conditional modules
+   * 2530565 Slider one-off skins not being loaded
+   * 2530958 Loader.resolve not properly handling CSS modules
+   * 2531319 The aliased modules are reported as missing 
+   * 2531324 Support regular expressions in the patterns configuration
+   * 2531281 specify ID when injecting CSS via loader
+   * 2529521 Consider making the presence of YUI CSS detectable by the loader
+   * 2530077 'force' ignored for on-page modules unless 'allowRollup' is true
+   * 2530135 Add support for loading YUI modules in parallel in all browsers, since execution order is unimportan...
+   * 2530177 [Pull Request] - Bug #2530111  If the condition block is defined w/o a test fn or UA check, assume i...
+   * 2530343 Loader.sorted does not contain conditional modules
+   * 2530565 Slider one-off skins not being loaded
+   * 2530958 Loader.resolve not properly handling CSS modules
+   * 2531150 Update Dynamic Loader example
+   * 2531319 The aliased modules are reported as missing 
+   * 2531324 Support regular expressions in the patterns configuration
+   * 2531433 Improve the syntax for setting a skin in the YUI.use() statement
+   * 2531451 Loading of lang modules doesn't go through configFn in loader
+   * 2531590 addModule does not update the global cache so dynamically added skins modules can get lost
+   * 2531626 maxURLlength configuration on a per group basis
+   * 2531637 Configurable 'comboSep' for groups
+   * 2531646 "undefined" error
+   * 2531697 Loading a CSS module without specifying 'type=css' will throw a syntax error
+   * 2531587 Loader will not load custom modules if combine: true
+
 
 ### 3.4.1
 
@@ -2956,8 +3847,25 @@ YUI Loader Change History
 
 
 
+Matrix Change History
+=====================
+
+3.5.0
+-----
+
+  * Initial release.
+
+
+
 Node Change History
 ===================
+
+3.5.0
+-----
+
+  * Bug fix: Children collection now accessible from documentFragments. [Ticket 2531356] 
+  * Bug fix: The compareTo() method now works across sandboxes. [Ticket 2530381] 
+
 
 3.4.1
 -----
@@ -3053,6 +3961,11 @@ Node Change History
 Flick Node Plugin Change History
 ================================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -3077,6 +3990,11 @@ Flick Node Plugin Change History
 
 Focus Manager Change History
 ============================
+
+3.5.0
+-----
+  * No changes.
+
 
 3.4.1
 -----
@@ -3139,6 +4057,13 @@ Focus Manager Change History
 
 MenuNav Change History
 ======================
+
+3.5.0
+-----
+
+  * Added Night skin for MenuNav
+  * Removed console logging message (#2531192)
+   
 
 3.4.1
 -----
@@ -3208,6 +4133,11 @@ MenuNav Change History
 
 OOP Change History
 ==================
+
+3.5.0
+-----
+  * No change.
+
 
 3.4.1
 -----
@@ -3291,6 +4221,11 @@ OOP Change History
 Overlay Change History
 ======================
 
+3.5.0
+-----
+
+  * No changes, see Widget and extensions for changes to dependencies.
+
 3.4.1
 -----
 
@@ -3340,6 +4275,35 @@ Overlay Change History
 Panel Change History
 ====================
 
+3.5.0
+-----
+
+  * Panel now hosts the a default "close" button which can be included more
+    easily then before. This button has advanced styling which will render the
+    button with the text [Close] when it's in the footer, and with the icon [x]
+    when it's in the header. [Ticket #2531680]
+
+        // Panel with close button in header.
+        var panel = new Y.Panel({
+            buttons: ['close']
+        });
+
+        // Panel with close button in footer.
+        var otherPanel = new Y.Panel({
+            buttons: {
+                footer: ['close']
+            }
+        });
+
+  * Panel's skins now uses `.yui3-panel` instead of `.yui3-panel-content` for
+    its CSS selectors where possible. [Ticket #2531623]
+
+  * Moved mask-related styles/skins to `WidgetModality`.
+
+  * See also WidgetButtons' change history.
+
+  * See also WidgetModality's change history.
+
 3.4.1
 -----
 
@@ -3362,8 +4326,32 @@ Panel Change History
 
 
 
+Parallel Change History
+=======================
+
+### 3.5.0
+
+Initial Release
+
+
+
+Pjax Change History
+===================
+
+3.5.0
+-----
+
+* Initial release.
+
+
+
 Plugin Change History
 =====================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -3419,6 +4407,13 @@ Plugin Change History
 Plugin Host Change History
 ==========================
 
+3.5.0
+-----
+
+  * API corrected for hasPlugin. It returns the plugin if available, otherwise undefined.
+    It has always done this, and since they're truthy/falsey, figured it was better than
+    changing the behavior, in case folks are using the plugin instance returned by hasPlugin.
+
 3.4.1
 -----
 
@@ -3465,6 +4460,10 @@ Plugin Host Change History
 
 QueryString Utility Change History
 ==================================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -3518,6 +4517,10 @@ QueryString Utility Change History
 
 Queue Promote Change History
 ============================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -3575,6 +4578,11 @@ Queue Promote Change History
 Recordset Change History
 ========================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -3595,6 +4603,10 @@ Recordset Change History
 Resize Utility Change History
 =============================
 
+### 3.5.0
+
+No changes.
+
 ### 3.4.1
 
 No changes.
@@ -3612,6 +4624,12 @@ Initial release
 
 ScrollView Change History
 =========================
+
+3.5.0
+-----
+
+  * Allow scrollbar to work with non-px width scrollviews
+  * Added mousewheel support (#2529136)
 
 3.4.1
 -----
@@ -3727,6 +4745,11 @@ ScrollView Change History
 Simple YUI Change History
 =========================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -3751,6 +4774,16 @@ Simple YUI Change History
 
 Slider Change History
 =====================
+
+3.5.0
+-----
+
+  * Added ARIA roles and states [#2528788]
+  * Added keyboard support. Arrows, pageUp/Down, home/end [#2528788]
+  * Fixed a bug where set('value', x) could be ignored if the max - min was
+    less than the configured length. [#2531498]
+  * Added click on thumb or clickable rail gives the thumb focus, allowing 
+    keyboard access. [#2531569] 
 
 3.4.1
 -----
@@ -3848,6 +4881,10 @@ Slider Change History
 Sortable Utility Change History
 ===============================
 
+### 3.5.0
+
+No changes.
+
 ### 3.4.1
 
 No changes.
@@ -3882,6 +4919,10 @@ Initial Release
 
 StyleSheet Change History
 =========================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -3927,6 +4968,10 @@ StyleSheet Change History
 
 Substitute Utility Change History
 =================================
+
+3.5.0
+-----
+  * No change.
 
 3.4.1
 -----
@@ -3990,6 +5035,10 @@ Substitute Utility Change History
 SWF Utility Change History
 ==========================
 
+3.5.0
+-----
+  * No change.
+
 3.4.1
 -----
   * No changes.
@@ -4023,6 +5072,10 @@ SWF Utility Change History
 
 SWFDetect Utility Change History
 ================================
+
+3.5.0
+-----
+  * No changes.
 
 3.4.1
 -----
@@ -4058,6 +5111,12 @@ SWFDetect Utility Change History
 
 TabView Change History
 ======================
+
+3.5.0
+-----
+
+  * No change.
+
 
 3.4.1
 -----
@@ -4097,30 +5156,53 @@ TabView Change History
 
 
 
+Test Console Change History
+===========================
+
+3.5.0
+-----
+
+* Initial release.
+
+
+
 Text Change History
 ===================
+
+3.5.0
+-----
+
+* Data files now use escape sequences rather than actual Unicode characters in
+  order to work around a bug in Internet Explorer that causes script file
+  encodings to be ignored.
+
 
 3.4.1
 -----
 
-  * No changes.
+* No changes.
 
 
 3.4.0
 -----
 
-  * No changes.
+* No changes.
 
 
 3.3.0
 -----
 
-  * Initial release.
+* Initial release.
 
 
 
 Transition Change History
 =========================
+
+3.5.0
+-----
+  * No change.
+
 
 3.4.1
 -----
@@ -4156,8 +5238,39 @@ Transition Change History
 
 
 
-Uploader Utility Change History
-===============================
+Uploader Utility (New) Change History
+=====================================
+
+3.5.0
+  * Added HTML5Uploader layer
+  * Refactored queue management out of Uploader
+  * Introduced new APIs (more details in documentation)
+  * Added keyboard access to the Flash layer
+  * Old uploader has been deprecated as 'uploader-deprecated' module.
+
+3.4.1
+-----
+  * No changes in source code
+  * Minor example changes
+
+3.4.0
+-----
+  * No changes
+
+3.3.0
+-----
+  * Minor changes in documentation
+
+3.2.0
+-----
+  * Initial release
+
+
+Uploader Utility (DEPRECATED) Change History
+============================================
+3.5.0
+-----
+  * DEPRECATED
 
 3.4.1
 -----
@@ -4179,6 +5292,27 @@ Uploader Utility Change History
 
 Widget Change History
 =====================
+
+3.5.0
+-----
+
+ * Refactored some of the box stamping code, to avoid Node references
+   until render. Changed caching mechanism for Y.Widget.getByNode to use node.get("id")
+
+ * Patched after listeners in Widget with a if (e.target === this), so that homogenous 
+   bubbles don't end up changing state at both the source and the target. Broader
+   fix needs to go into Event/EventTarget
+
+ * Optimized focus handler registration, by only registering a single document focus
+   listener and using Widget.getByNode to ship out handling to the specific widget
+   instance.
+
+ * Widget will now default to an empty object config, if one isn't passed in, 
+   so that HTML_PARSER can work with a static ATTRS srcNode definition.
+
+   It's not possible to address this just at the HTML_PARSER level, since the config 
+   object gets used by reference, so we need to make sure everything is updating the
+   config object which is passed to Base's initialization chain.
 
 3.4.1
 -----
@@ -4432,6 +5566,11 @@ Widget Change History
 Widget Anim Change History
 ==========================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -4467,6 +5606,11 @@ Widget Anim Change History
 Widget Autohide Change History
 ==============================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -4481,6 +5625,93 @@ Widget Autohide Change History
 
 Widget Buttons Change History
 =============================
+
+3.5.0
+-----
+
+  * [!] WidgetButtons has been completely rewritten, back-compat for common
+    usage has been maintained. The new version is _much more_ robust.
+    [Tickets #2531366, #2531624, #2531043]
+
+  * [!] The `buttons` attribute is handled in an _extremely_ flexible manner.
+    It supports being a single Array, or an Object of Arrays keyed to a
+    particular section.
+
+    The `buttons` collection will be normalized into an Object which contains an
+    Array of `Y.Node`s for every `WidgetStdMod` section (header, body, footer)
+    which has one or more buttons. The structure will end up looking like this:
+
+        {
+            header: [...],
+            footer: [...]
+        }
+
+    A button can be specified as a Y.Node, config Object, or String name for a
+    predefined button on the `BUTTONS` prototype property. When a config Object
+    is provided, it will be merged with any defaults provided by a button with
+    the same `name` defined on the `BUTTONS` property. [Ticket #2531365]
+
+  * [!] All button nodes have the `Y.Plugin.Button` plugin applied.
+
+  * [!] The HTML structure for buttons has been optimized to:
+
+        <span class="yui3-widget-butons>
+            <button class="yui3-button">Foo</button>
+        </span>
+
+    The above structure will appear in each `WidgetStdMod` section
+    (header/body/footer) which contains buttons. [Ticket #2531367]
+
+  * Fixed issue with multiplying subscriptions to `buttonsChange` event. The
+    event handler was itself subscripting _again_ to the event causing an
+    ever-increasing number of subscriptions all doing the same work. Now
+    WidgetButtons will always clean up its event subscriptions.
+    [Ticket #2531449]
+
+  * Added support for predefining `BUTTONS` on the prototype. `BUTTONS` is
+    Collection of predefined buttons mapped by name -> config. These button
+    configurations will serve as defaults for any button added to a widget's
+    buttons which have the same `name`. [Ticket #2531680]
+
+  * Added an `HTML_PARSER` implementation for the `buttons` attribute. This
+    allows the initial value for a widget's `buttons` to be seeded from its DOM.
+
+  * A widget's `buttons` now persist after header/body/footer content updates.
+    Option 2 of the follow scenario has been implemented:
+    http://jsfiddle.net/ericf/EXR52/
+
+  * A button can be configured with a `context` object (which defaults to the
+    widget instance), which will be used as the `this` object when calling a
+    button's `action` or `events` handlers. [Ticket #2531166]
+
+  * Buttons now support multiple `events` which can be specified in place of an
+    `action`. The follow are equivalent:
+
+        var buttonConfigWithEvents = {
+            label: 'Foo',
+            events: {
+                click: function (e) {
+                    this.hide();
+                }
+            }
+        };
+
+        var buttonConfigWithAction = {
+            label : 'Foo',
+            action: 'hide'
+        };
+
+    A button's `action` can now be specified as the String name of a function
+    which is hosted on the `context` object. [Ticket #2531363]
+
+  * Added the notion of a default button. A widget's `defaultButton` will have
+    the "yui3-button-primary" CSS class added to it, and will be focused when
+    the widget is shown.
+
+  * Updated the `addButton()` method and added other accessor/mutator methods:
+    `getButton()` and `removeButton()`.
+
+  * Buttons can now be added to a widget's body, not just the header and footer.
 
 3.4.1
 -----
@@ -4510,6 +5741,11 @@ Widget Buttons Change History
 
 Widget Child Change History
 ===========================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -4550,6 +5786,20 @@ Widget Child Change History
 Widget Modality Change History
 ==============================
 
+3.5.0
+-----
+
+  * Initialization logic will now always run, even when a widget is constructed
+    with `{modal: false}`; previously the initialization logic did not run in
+    this case. [Ticket #2531401]
+
+  * Fixed destruction lifecycle bug. The mask is now removed when no modal
+    widgets are visible on the page. This also fixed an issue with multiple
+    modal widget and their `visible` attribute.
+    [Ticket #2531484, #2531821, #2531812]
+
+  * Moved mask-related styles/skins out of Panel and into WidgetModality.
+
 3.4.1
 -----
 
@@ -4571,6 +5821,11 @@ Widget Modality Change History
 
 Widget Parent Change History
 ============================
+
+3.5.0
+-----
+
+  * Removing a focused child, now unsets activeDescendant properly
 
 3.4.1
 -----
@@ -4642,6 +5897,11 @@ Widget Parent Change History
 Widget Position Change History
 ==============================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -4684,6 +5944,11 @@ Widget Position Change History
 
 Widget Position Align Change History
 ====================================
+
+3.5.0
+-----
+
+  * No changes.
 
 3.4.1
 -----
@@ -4730,6 +5995,11 @@ Widget Position Align Change History
 Widget Position Constrain Change History
 ========================================
 
+3.5.0
+-----
+
+  * No changes.
+
 3.4.1
 -----
 
@@ -4764,6 +6034,15 @@ Widget Position Constrain Change History
 
 Widget Stack Change History
 ===========================
+
+3.5.0
+-----
+
+  * [!] Default `zIndex` was reverted back to `0` now that parsing works
+    correctly.
+
+  * `zIndex` is now correctly parsed from a widget's `srcNode` using an updated
+    `HTML_PARSER` implementaiton. [Ticket 2530186] [PR #68] [Hat tip Pat Cavit]
 
 3.4.1
 -----
@@ -4810,6 +6089,12 @@ Widget Stack Change History
 
 Widget Std Mod Change History
 =============================
+
+3.5.0
+-----
+
+  * Added `forceCreate` option to `getStdModNode()` method which, if true, will
+    create the section node if it does not already exist. [Ticket #2531214]
 
 3.4.1
 -----
@@ -4889,6 +6174,10 @@ Widget Std Mod Change History
 YQL Change History
 ==================
 
+### 3.5.0
+
+No changes.
+
 ### 3.4.1
 
     No changes.
@@ -4909,6 +6198,48 @@ YQL Change History
 
 YUI Core Change History
 =======================
+
+3.5.0
+-----
+
+* YUI now runs natively on Node.js without a shim. See README.nodejs.md for
+  details.
+
+* YUI now detects non-native ES5 shims added to native objects by other
+  libraries and falls back to its own internal shims rather than relying on the
+  potentially broken code from the other library.
+
+* Added static YUI.applyConfig to apply config settings to YUI.GlobalConfig in
+  parts instead of in whole. [Ticket #2530970]
+
+* Added `Y.getLocation()` which returns the `location` object from the
+  window/frame in which a YUI instance operates. [Ticket #2531608]
+
+* Added a `useNativeES5` YUI config option, which is `true` by default. If
+  `false`, certain YUI features that check for native ES5 functionality will
+  always fall back to non-native implementations even in ES5 browsers (useful
+  for testing).
+
+* `Y.Array.indexOf()` now supports a `fromIndex` argument for full ES5
+  compatibility. [Based on a patch from Ryuichi Okumurua]
+
+* `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
+  already, which prevents exceptions when it's given a non-object.
+
+* Fixed issue #2531247: Namespace function behaves wrong with multiple
+  arguments.
+
+* Fixed issue #2531512: 'debug' parameter missing from the YUI Config object
+  documentation.
+
+* 2530970 Should we provide a YUI.applyConfig(), to avoid clobbering of YUI_config in 'mashup' use cases
+* 2531164 Natively use YUI Gallery Modules form does not submit on [enter]
+* 2531247 namespace function behaves wrong with multiple arguments
+* 2531512 'debug' parameter missing from the YUI Config object documentation; the Config object documentation ...
+* 2531550 Prepare npm package for 3.5.0
+* 2531551 Add support for Silk in Y.UA
+* 2531612 Wrong module name in YUI Global Object documentation
+
 
 3.4.1
 -----
@@ -4935,29 +6266,29 @@ YUI Core Change History
 * Added `Y.Array.dedupe()`, which provides an optimized solution for deduping
   arrays of strings. When you know an array contains only strings, use `dedupe`,
   since it's faster than `unique`.
+
 * `Y.Lang.isArray()` now uses the native ES5 `Array.isArray()` method when
   possible.
+
 * `Y.Object()` now uses the native ES5 `Object.create()` method when possible.
+
 * `Y.Object.keys()` now uses the native ES5 `Object.keys()` method when
   possible.
+
 * Sparse arrays are now handled correctly in the non-native fallback
   implementations of `Y.Array.each`, `Y.Array.hash`, and `Y.Array.some`.
   [Ticket #2530376]
-* Added async:true support to Get, to dispatch scripts/link nodes in parallel.
-  NOTE: Order of execution is not guaranteed (it's not required for the YUI
-  Module use case, for which this feature was introduced - to improve performance).
-  onSuccess is called once, after all files are loaded.
-* Added onProgress callback support to Get, which is useful when dispatching
-  multiple scripts using the [] syntax. onProgress is called when each script
-  is done loading.
 
 
 3.3.0
 -----
 
 * Added fast path for repeat calls to `use()` with the same arguments.
+
 * Added a `Y.destroy()` method, which destroys the YUI instance.
+
 * Added `Y.Lang.now()`, which returns the current time in milliseconds.
+
 * Added `YUI.GlobalConfig` to allow three stages of configuration
   (`YUI.GlobalConfig` --> `YUI_Config` --> instance configs). This is helpful in
   non-browser environments for supplying a global config for the YUI container.
@@ -4967,17 +6298,25 @@ YUI Core Change History
 -----
 
 * Added `Y.Lang.sub()`, which is a very lightweight version of `Y.substitute()`.
+
 * `Y.Array.hash()` no longer skips falsy values.
+
 * Script errors in module and `use()` callback functions are caught and routed
   through `Y.error`.
+
 * `Y.error` invokations can be monitored with the `errorFn` configuration.
+
 * Returning `true` from the `errorFn` will prevent the script error from halting
   further script execution.
+
 * Added UA properties for mobile devices and ensured that UA is only evaluated
   once.
+
 * The YUI global will overwrite itself when included again, while attempting to
   preserve the global environment of previous instances.
+
 * Added a remote loader service submodule.
+
 * Added a features submodule.  This is used by the capability-based loader
   when dispatching to a remote loader service.
 
@@ -4994,27 +6333,39 @@ YUI Core Change History
 
 * YUI will attempt to fetch newly discovered dependencies after a module is
   dynamically loaded.
+
 * The `documentElement` (`<html>`) is now stamped with a `yui3-js-enabled`
   classname to indicate that JS is enabled. This allows for the creation of
   JS-aware CSS style rules that progressively enhance the page.
+
 * Added the ability to define a global configuration object (`YUI_config`).
+
 * Added `Y.Object.some()` and `Y.some()`, which are analogous to
   `Y.Array.some()`.
+
 * UA refinements for Chrome, Android and other browsers/platforms.
-* Inserted script nodes get `charset="utf-8"` by default.
+
 * Added `last()` to `Queue` for LIFO support.
+
 * Added throttle utility to buffer expensive functions that are called
   frequently.
+
 * The `YUI.add()` callback now gets the module name as the second parameter for
   generic processing of similar modules.
+
 * Added `intl-base` submodule to process the decision tree for selecting
   language packs when dynamically loading internationalized modules.
+
 * `Y.guid()` generates identifiers that are safe to use as HTML attributes.
+
 * Improved persistent messaging for missing modules/functionality.
+
 * Bootstrapping improved to prevent simultaneous loading of resources when
   multiple instances are launched at the same moment.
+
 * The YUI script source URL is read in order to try to dynamically determine the
   base path for loading resources on demand.
+
 * The core loads without errors in non-browser environments.
 
 
@@ -5023,17 +6374,26 @@ YUI Core Change History
 
 * Extracted the loader from the seed file. If loader is not available, but `get`
   is and dependencies are missing, the loader will be fetched before continuing.
+
 * User agent detection is more granular. For example, Firefox 3.5 reports Gecko
   1.91 rather than 1.9.
+
 * Fixed `Y.UA.os`.
+
 * Added additional mobile device detection.
+
 * Get utility cleans up attribues before purging nodes.
+
 * `Y.cached` accepts a parameter to refresh a cached value.
+
 * `yui-log` and `yui-later` are now optional modules that are included with
   `yui.js`.
+
 * `queue-base` is no longer a submodule of `queue` -- it's now part of
   `yui-base`.
+
 * All YUI submodules end up in the `yui` build directory.
+
 * Dynamic loading can be disabled by setting the `bootstrap` config to `false`.
 
 
@@ -5044,15 +6404,22 @@ YUI Core Change History
 
 * `Y.fail` has been renamed to `Y.error` so that `Y.fail` can be used for the
   assertion engine.
+
 * `Y.stamp` now accepts a `readOnly` parameter to be used when you are only
   interested in reading an existing guid rather than creating a new one.
+
 * `Y.stamp` defends against stamping items that can't be stamped.
+
 * Added to `Y.Object`: `values()`, `hasKey()`, `hasValue()`, `size()`,
   `getValue()`, `setValue()` (the latter two are for manipulating nested
   values).
+
 * `Y.use` calls are queued during dynamic loading.
+
 * Added `Y.cached` for function memoizing
+
 * Added `numericSort` to `Y.Array`.
+
 * The `yui:log` event broadcasts globally.
 
 ### Lang
@@ -5063,7 +6430,9 @@ YUI Core Change History
 ### Get
 
 * Accepts an attribute collection config to apply to inserted nodes.
+
 * `id` attributes are globally unique
+
 * Now accepts `purgethreshold` as a config option. This will set the number of
   transactions required before auto removing nodes from previous transactions
   (default is 20).
@@ -5071,17 +6440,24 @@ YUI Core Change History
 ### Loader
 
 * `yuitest` renamed to `test`, now requires `collection`.
+
 * Lots of new module metadata.
+
 * Added `onCSS`.
+
 * Loader requests are queued globally.
+
 * Accepts `jsAttributes` and `cssAttributes` configs for adding attributes to
   inserted nodes
+
 * Added `force` config.
 
 ### UA
 
 * Added `secure` property for SSL detection.
+
 * Added `os` property for OS detection.
+
 * Added Adobe Air and Google Caja detection.
 
 
@@ -5091,9 +6467,12 @@ YUI Core Change History
 ### Core
 
 * The initial dependency calculation should not allow automatic rollup.
+
 * `Y.fail` will throw/rethrow errors by default (`throwFail` is now `true`).
+
 * `Y.namespace` reverted to scrub `YAHOO` out if included as the first level of
   the namespace.
+
 * `useConsole` config changed to `useBrowserConsole`.
 
 
@@ -5110,16 +6489,26 @@ YUI Core Change History
 ### Loader
 
 * `get` requires `yui-base`.
+
 * `loader` requires `get`.
+
 * Combo URL build process defends against undefined modules.
+
 * Added combo handler support for CSS.
+
 * Filters are correctly applied to combo and fullpath URLs.
+
 * Added `compat`, `profiler`, `yuitest`, `widget`, `stylesheet`,
   `classnamemanager`, `overlay`, `plugin`, `slider`, and `console` modules.
+
 * Added `io` submodules.
+
 * `queue` requires `event`.
+
 * Added submodule metadata logic.
+
 * Added plugin metadata logic.
+
 * Added skin metadata logic.
 
 
@@ -5132,6 +6521,10 @@ YUI Core Change History
 
 YUI Throttle Change History
 ===========================
+
+## 3.5.0
+
+No Changes.
 
 ## 3.4.1
 

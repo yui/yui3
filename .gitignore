@@ -78,8 +78,6 @@ build/datatable-message/assets/skins/sam/datatable-sort-skin.css
 build/datatable-message/assets/skins/sam/*.png
 build/datatable-message/assets/skins/night/*.png
 build/datatable-base-deprecated/assets/datatable-base-core.css
-build/datatable-base-deprecated/assets/skins/sam/dt-arrow-dn.png
-build/datatable-base-deprecated/assets/skins/sam/dt-arrow-up.png
 build/datatable-datasource-deprecated/assets/
 build/datatable-scroll-deprecated/assets/
 build/datatable-sort-deprecated/assets/

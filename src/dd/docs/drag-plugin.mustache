@@ -57,12 +57,20 @@ YUI().use('dd-plugin', function(Y) {
 <h3>Accessing the Drag instance</h3>
 <p>Now that we have a draggable Node, you can get access to the Drag Instance from the `dd` namespace on the `Node` instance.</p>
 
+<h4>Using a drag handle</h4>
+
+<p>Drag handles allow you to specify what element will initiate a drag. For example,
+you may want the entire element to be able to be dragged, but you only want them to
+click on the header to do that (in case you have content that will not react well to
+a drag, like an `input` or an `anchor`).</p>
+
 ```
 YUI().use('dd-plugin', function(Y) {
     var node = Y.one('#demo');
     node.plug(Y.Plugin.Drag);
     
-    //Now you can only drag it from the x in the corner
+    //Now you can only drag it from the h2 at the top of the box
     node.dd.addHandle('h2'); 
 });
 ```
+

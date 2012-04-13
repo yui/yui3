@@ -1,6 +1,10 @@
 ImageLoader Change History
 ==========================
 
+3.5.0
+-----
+  * No change.
+
 3.4.1
 -----
 

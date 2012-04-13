@@ -374,12 +374,16 @@ Y.View = Y.extend(View, Y.Base, {
 
         The default container is a `<div>` Node, but you can override this in
         a subclass, or by passing in a custom `container` config value at
-        instantiation time.
+        instantiation time. If you override the default container in a subclass
+        using `ATTRS`, you must use the `valueFn` property. The view's constructor 
+        will ignore any assignments using `value`.
 
         When `container` is overridden by a subclass or passed as a config
-        option at instantiation time, it may be provided as a selector string, a
-        DOM element, or a `Y.Node` instance. The value will be converted into a
-        `Y.Node` instance if it isn't one already.
+        option at instantiation time, you can provide it as a selector string, a
+        DOM element, a `Y.Node` instance, or (if you are subclassing and modifying
+        the attribute), a `valueFn` function that returns a `Y.Node` instance. 
+        The value will be converted into a `Y.Node` instance if it isn't one 
+        already.
 
         The container is not added to the page automatically. This allows you to
         have full control over how and when your view is actually rendered to
