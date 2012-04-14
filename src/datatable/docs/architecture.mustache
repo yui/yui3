@@ -176,14 +176,207 @@ var after = new Y.DataTable({ ... });
     new world order (expect that in 3.6.0).
 </p>
 
-<h3>New Feature Architecture</h3>
+
+<h3>Now With More MVC!</h3>
 
 <p>
-    To simplify the process
+    DataTable now uses the App framework components Model, ModelList, and View
+    to manage its data and rendering needs.  Recordset and Record are still
+    supported components in 3.5.0, but may be deprecated in the future so we
+    can focus on a single family of components for data representation in YUI.
+</p>
+
+<h4>Models for Data</h4>
+
+<p>
+    There are a lot of benefits to using Model and ModelList for DataTable's
+    record storage, the most compelling reasons being:
+</p>
+
+<ul>
+    <li>
+        the App framework is very popular, which means its progress and feature
+        list can immediately benefit DataTable users,
+    </li>
+    <li>
+        being able to create custom Models to represent your business objects
+        and reuse them across components makes for a more stable codebase, and
+    </li>
+    <li>
+        familiar APIs between components makes each an easy gateway to the
+        others.
+    </li>
+</ul>
+
+<p>
+    Now if you have a table record in hand, it is a Model instance, and you
+    access and update its fields using `model.get('username')` and
+    `model.set('favColor', '#C0FFEE')` rather than
+    `record.getValue('username')` and
+    `record.get('data').favColor = '#C0FFEE';`.
 </p>
 
 <p>
-    The downside of the name changes is that the plugins that were
+    In most use cases, the change to Model and ModelList will be transparent
+    since passing an array of columns and an array of objects for data to the
+    DataTable constructor will still result in the same rendered table.
+    However, when you start needing more intelligence from the objects the
+    table is displaying, Model is perfectly positioned as a superclass for your
+    business objects.
+</p>
+
+<p>
+    To keep things simple, DataTable will create a Model subclass for you
+    based on your data, but if you want to use your own Model class for your
+    table records, DataTable now has a `recordType` attribute which will accept
+    any of:
+</p>
+
+<ul>
+    <li>a Model subclass (or class that quacks like a Model)</li>
+    <li>
+        an array of field names, similar to `columns`, but controls
+        what data is stored, where `columns` controls what is displayed
+    </li>
+    <li>
+        an object corresponding to an ATTRS definition object, where you can
+        <a href="datatable-recordtype.html">specify field validators, setters,
+        getters, default values, etc.</a>.
+    </li>
+</ul>
+
+<p>
+    Alternately, you can just pass a prebuilt ModelList instance for the
+    DataTable's `data` attribute.
+</p>
+
+<p>
+    
+    This new configuration option decouples DataTable from the data
+    implementation, providing more opportunity for customization.
+    For example, if you don't need any mutation events or attribute fanciness
+    from your records&mdash;you just want it to render as fast as
+    possible&mdash;you can configure it with a `recordType` class that pretends
+    to be a Model, but is actually a much simpler object.
+</p>
+
+```
+// Warning: crazy hack that probably shouldn't ever be used
+// Some quacking will be needed for the various places where duck-typing is used
+function DumbRecord(data) {
+    this.data = data;
+    this._id = 'record_' + DumbRecord._id++;
+    this.lists = []; // quack
+}
+
+DumbRecord._id = 0;
+DumbRecord.prototype = {
+    _isYUIModel: 'quack',
+    set: function () { /* quack */ },
+    addTarget: function () { /* quack */ },
+    getAttrs: function () { /* quack */ },
+
+    get: function (name) {
+        return name === 'clientId' ? this._id : this.data[name];
+    },
+    toJSON: function () { return this.data },
+};
+
+var table = new Y.DataTable({
+    columns: [ ... ],
+    data:  [ ... ],
+    recordType: DumbRecord
+}).render('#over-there');
+```
+
+<p>
+    <strong>Note</strong>: This is an extreme case, and a hack, and shouldn't
+    be necessary.  `recordType` is best used to build _on top of_ Model's
+    infrastructure with classes that model your business objects.  There are
+    several performance improvements planned for 3.6.0, making such hackery
+    unnecessary even in those cases.
+</p>
+
+<h4>Views for Rendering</h4>
+
+<p>
+    In keeping with the notion of configurable data storage, DataTable also
+    delegates its rendering algorithms to View classes.  In 3.5.0, the basic,
+    featureless DataTable has attributes `headerView`, `bodyView`, and
+    `footerView`.  By default, `footerView` is unset, but `headerView` is set
+    to `Y.DataTable.HeaderView`, and `bodyView` is set to
+    `Y.DataTable.BodyView`.
+</p>
+
+<p>
+    When a DataTable instance is `render()`ed, the only DOM content the Widget
+    itself is responsible for is the `<table>` and its immediate children.  The
+    rendering of the header content, footer content, and data rows is left to
+    whatever View class is supplied to the respective attribute.
+</p>
+
+<p>
+    The default Views attempt to match, and augment, the 3.4.1 feature set for
+    header and cell customization, but with faster rendering algorithms.
+    However, with the View itself now being configurable, that means that you
+    can customize DataTable rendering from the column configuration level all
+    the way to the View level, replacing the algorithm entirely.
+</p>
+
+```
+// Create a custom subclass of View with a very simple rendering algorithm
+var RowRowRowYourView = Y.Base.create('tableBody', Y.View, [], {
+    render: function () {
+        var tbody   = this.get('container'),
+            rowData = this.get('modelList'),
+            content = '';
+
+        rowData.each(function (record, index) {
+            var stripe = index % 2 ? 'odd' : 'even',
+                template = '<tr class="' + (index % 2 ? 'odd' : 'even') + '">' +
+                    '<td>{username}</td><td>{first}</td><td>{last}</td>' +
+                '</tr>';
+
+            content += Y.Lang.sub(template, record.toJSON());
+        });
+
+        tbody.setHTML(content);
+
+        return this;
+    }
+});
+
+var table = new Y.DataTable({
+    data: [ ... ],
+    columns: [ ... ],
+    bodyView: RowRowRowYourView
+}).render('#over-there');
+```
+
+
+<h3>New Rendering Algorithm</h3>
+
+
+Rendering events
+    render vs renderTable vs renderHeader, etc
+    event to hand off responsibility to View
+
+
+<h2>New Concepts</h2>
+
+    MVC (really MVP) Widget
+
+    Controller/View-Controller
+        primary API lives on the instance
+        some methods will relay to the view
+
+    Instantiable namespace, pristeen Base
+    Extensions auto-mixed
+
+<h3>New Feature Architecture</h3>
+
+<p>
+    The downside of the name changes noted above is that the plugins that were
     reimplemented as class extensions suddenly disappear from the `Y.Plugin`
     namespace.  This can be confusing because `plug()` doesn't throw an error
     when a non-existent plugin class is passed as an argument.  But if your code
@@ -239,142 +432,18 @@ var after = new Y.DataTable({ ... });
 </div>
 
 
-<h3>Now With More MVC!</h3>
-
-<p>
-    DataTable now uses the App framework components Model, ModelList, and View
-    to manage its data and rendering needs.  Recordset and Record are still
-    supported components in 3.5.0, but may be deprecated in the future so we
-    can focus on a single family of components for data representation in YUI.
-</p>
-
-<h4>Models for Data</h4>
-
-<p>
-    There are a lot of benefits to using Model and ModelList for DataTable's
-    record storage, the most compelling reasons being:
-</p>
-
-<ul>
-    <li>
-        the App framework is very popular, which means its progress and feature
-        list can immediately benefit DataTable users,
-    </li>
-    <li>
-        being able to create custom Models to represent your business objects
-        and reuse them across components makes for a more stable codebase, and
-    </li>
-    <li>
-        familiar APIs between components makes each an easy gateway to the
-        others.
-    </li>
-</ul>
-
-<p>
-    Now if you have a table record in hand, it is a Model instance, and you
-    access and update its fields using `model.get('username')` and
-    `model.set('favColor', '#C0FFEE')` rather than
-    `record.getValue('username')` and
-    `record.get('data').favColor = '#C0FFEE';`.
-</p>
-
-<p>
-    In most use cases, the change to Model and ModelList will be transparent
-    since passing an array of columns and an array of objects for data to the
-    DataTable constructor will still result in the same rendered table.
-    However, when you start needing more intelligence from the objects the
-    table is displaying, Model is perfectly positioned as a superclass for your
-    business objects.
-</p>
-
-<p>
-    To keep things simple, DataTable will create a Model subclass for you
-    based on your data, but if you want to use your own Model class for your
-    table records, DataTable now has a `recordType` attribute which will accept
-    a Model class, an array of field names (similar to `columns`, but controls
-    what data is stored, as opposed to what is displayed), or an object
-    corresponding to an ATTRS definition object, where you can specify field
-    validators, setters, getters, default values, etc..  Alternately, you can
-    just pass a prebuilt ModelList instance for the DataTable's `data`
-    attribute.
-</p>
-
-<p>
-    
-    The added configurability for data representation decouples DataTable from
-    the data implementation, providing more opportunity for customization.
-    For example, if you don't need any mutation events or attribute fanciness
-    from your records&mdash;you just want it to be blazing fast&mdash;you can
-    configure it with a `recordType` class that avoids the work that's
-    extraneous for your use case.
-</p>
-
-```
-// Some quacking will be needed for the various places where duck-typing is used
-function DumbRecord(data) {
-    this.data = data;
-    this._id = 'record_' + DumbRecord._id++;
-    this.lists = []; // quack
-}
-
-DumbRecord._id = 0;
-DumbRecord.prototype = {
-    _isYUIModel: 'quack',
-    set: function () { /* quack */ },
-    addTarget: function () { /* quack */ },
-    getAttrs: function () { /* quack */ },
-
-    get: function (name) {
-        return name === 'clientId' ? this._id : this.data[name];
-    },
-    toJSON: function () { return this.data },
-};
-
-var table = new Y.DataTable({
-    columns: [ ... ],
-    data:  [ ... ],
-    recordType: DumbRecord
-}).render('#over-there');
-```
-
-<h4>Views for Rendering</h4>
-
-<p>
-    Different features need different markup, and there is no shortage of 
-</p>
-
-MVC
-Out of the box Views
-    BodyView - string rendering + nodeFormatters
-
-<h3>New Rendering Algorithm</h3>
-
-
-Rendering events
-    render vs renderTable vs renderHeader, etc
-    event to hand off responsibility to View
-
-
-<h2>New Concepts</h2>
-
-    Model, ModelList
-        reuse - use existing biz objects
-        learning/use cases feed back upstream for broader wins
-        configurable (fast Model, Flyweight ML)
-        familiar, consistent
-        Sync layer
-    View
-        swappable, can be tailored to your specific rendering needs (DT APIs
-            pass through to View for DOM related methods)
-        can be isolated, or post processor (nodeFormatter post-processor View?)
-    Controller/View-Controller
-        primary API lives on the instance
-        some methods will relay to the view
-
-Instantiable namespace, pristeen Base
-Extensions auto-mixed
-
 <h2>New Features</h2>
+mutable + sync layer access
+column widths
+100% width scrolling
+table initially sorted
+multi-column sorting
+custom column sorting works
+sortable: true/array
+formatter rowClass
+nodeFormatter
+footer support
+
 
 <h2>Experiments</h2>
 
@@ -393,15 +462,16 @@ Extensions auto-mixed
 <h2>The way forward</h2>
 
 gallery-preview module
+view (aka tableView)
+clean up/improve the configuration of Views
+migrating features to new contract extension + view implementation model
+pagination
+progressive enhancement
+cell/row editing
+highlighting
+row/cell selection
+remote data love
 
-    tableView
-    clean up/improve the configuration of Views
-    View + extension breakdown
-    Migrate scrollable, message, and column-widths to use Views
-    editable
-    pagination
-    progressive enhancement tableView
-    remote data love
 
 <h3>When Will it Be Out of Beta?</h3>
 Complicates beta marking because components are marked beta, not features
