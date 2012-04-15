@@ -10,18 +10,69 @@
     DataTable has been one of YUI's most heavily used and relied upon widgets
     for years.  Even today, YUI 3 adoption has been slower than it might be
     because this-or-that feature from YUI 2 DataTable hasn't been ported to 3
-    yet.  And if you know YUI 2 DataTable, you know there are a lot of features
-    in that list.
+    yet.  And if you know YUI 2 DataTable, you know there are a <em>lot</em> of
+    features to port to 3.
 </p>
 
 <p>
-    In 3.5.0, DataTable got a lot of attention, and as a result, it suddenly is
-    <a href="http://yuilibrary.com/yui/docs/datatable/migration.html">looking
-    a little different</a>, and <strong>working a lot better</strong>.  But most importantly, it is now architecturally
-    structured to make it easy to fill in those missing features rapidly, and
-    with greater confidence that the supporting infrastructure won't break down
-    when new features are added and the limitless combinations of features and
-    per-implementation customizations appear in the wild.
+    In 3.5.0, DataTable got a major overhaul, and as a result it is 
+    looking a little different and <strong>working a lot better</strong>.  But
+    most importantly, it is now architecturally structured to make it easy to
+    fill in those missing features rapidly, and with greater confidence that
+    the supporting infrastructure won't break down when new features are added
+    and the limitless combinations and per-implementation customizations appear
+    in the wild.
+</p>
+
+<p>
+    Before we get into the nitty gritty, I want to answer the obvious question:
+</p>
+
+<h2>Why Refactor?</h2>
+
+<p>
+    The short answer is "to make it easier".  The 3.4.1 infrastructure was based
+    on the simple Widget model, where all the code to describe the state and
+    render the UI were in one place, and altering or expanding those core
+    behaviors was the responsibility of plugins.  That's a fine architecture for
+    some Widgets, but there are a few issues with this for DataTable:
+</p>
+
+<ol>
+    <li>
+        To a fair extent, DataTables are defined by their features, which means
+        there could be a lot of `plug()`ing to get the DataTable that fits your
+        application.  This made getting started with DataTable more
+        complicated, and working with DataTable more verbose.
+    </li>
+    <li>
+        DataTable is composed of multiple parts, and features often need to
+        interact with more than one of these parts to work.  This is a difficult
+        situation to navigate as the feature list grows, and the constraint of
+        the plugin contract made this more difficult.  In fact, this contract
+        was already broken in 3.4.1, and in ways that signaled that it was
+        untenable for upcoming features.
+    </li>
+    <li>
+        Some features need or needed to impact parts of the base implementation
+        so dramatically, that it suggested a better approach would be to allow
+        for more configuration in those areas in the core.  But configuration
+        has limits when implemented in a single place.  The code starts to
+        become monolithic, which runs counter to the goals of YUI 3.
+    </li>
+</ol>
+
+<p>
+    The new architecture aims to address these and other issues uncovered
+    during its production life prior to 3.5.0, and take advantage of the
+    excellent work in the App framework components that weren't around when
+    DataTable debuted in 3.3.0.
+</p>
+
+<p>
+    DataTable is incredibly important to a lot of people, and it's important
+    to us that it not only be built right, but also that it be as easy to use
+    as possible.
 </p>
 
 <h2>Big Changes</h2>
@@ -35,7 +86,8 @@
 
 <p>
     That said, there are some obvious, outward changes to the API and how you
-    add (or don't need to explicitly add) features, such as sorting.
+    add (or don't need to explicitly add) features.  Take for example, creating
+    a sortable DataTable.
 </p>
 
 <div class="yui3-g">
@@ -97,65 +149,12 @@
     </div>
 </div>
 
-<h3>Why Refactor?</h3>
-
-<p>
-    The short answer is "to make it easier".  The 3.4.1 infrastructure was based
-    on the simple Widget model, where all the code to describe the state and
-    render the UI were in one place, and altering or expanding those core
-    behaviors was the responsibility of plugins.  There are a few issues with
-    this for DataTable:
-</p>
-
-<ol>
-    <li>
-        The plugin process is verbose, which is not friendly to new users of
-        YUI (and burdensome to experienced users).  For something like
-        DataTable, the introduction story needs to be simple and intuitive.
-        It's rare that a potential new DataTable user won't come with a
-        list of required features.  That can make for a lot of setup code.
-    </li>
-    <li>
-        Similarly, the instance API was fragmented into the plugin namespaces
-        (though I admit, there are people that prefer namespacing
-        feature-related APIs).
-    </li>
-    <li>
-        Some features need or needed to impact parts of the base implementation
-        so dramatically, that it suggested a better approach would be to allow
-        for more configuration in those and potentially other areas.  But
-        configuration has limits when implemented in a single place.  The
-        code starts to become monolithic, which runs counter to the goals of
-        YUI 3.
-    </li>
-    <li>
-        In some places, the plugin architecture required uncomfortable
-        compromises such as how to resolve the Column class needing to support
-        a "sortable" attribute for datatable-sort, when that attribute was
-        irrelevant to datatable-base, where the Column class is defined.
-    </li>
-</ol>
-
-<p>
-    The new architecture aims to address these and other issues uncovered
-    during its production life prior to 3.5.0, and take advantage of the
-    App framework components that emerged after DataTable's debut in 3.3.
-</p>
-
-<p>
-    DataTable is incredibly important to a lot of people, and it's important
-    to us that it not only be built right, but also that it be as easy to use
-    as possible.
-</p>
-
-<p>
-    Now let's get into the nitty gritty.  What big changes?
-</p>
-
 <h3>What's in a Name?</h3>
 
 <p>
-    As of 3.5.0, `Y.DataTable` is the main instantiable class.
+    The first thing you'll notice is that as of 3.5.0, `Y.DataTable` is the
+    main instantiable class.  `Y.DatatTable.Base` is still around, but now its
+    primary role is as <a href="#baseclass">a superclass for extension</a>.
 </p>
 
 ```
@@ -167,23 +166,26 @@ var after = new Y.DataTable({ ... });
 ```
 
 <p>
-    `Y.DataTable` continues to serve the role of namespace, and in fact
-    `Y.DataTable.Base` is still there, but its primary role now is as
-    <a href="#baseclass">a superclass for extension</a>.  Otherwise, you'll now
-    find all the classes that support or enhance DataTable under the namespace,
-    such as `Y.DataTable.Sortable`.  The notable exception is 
-    `Y.Plugin.DataTableDataSource`, which hasn't yet been migrated over to the
-    new world order (expect that in 3.6.0).
+    `Y.DataTable` continues to serve the role of namespace as well, and now
+    you'll find all the classes that support or enhance DataTable inside, such
+    as `Y.DataTable.Base`, `Y.DataTable.Sortable`, and `Y.DataTable.BodyView`.
+    The notable exception is `Y.Plugin.DataTableDataSource`, which hasn't yet
+    been migrated over to the new world order (expect that in 3.6.0).
 </p>
 
+<p>
+    You'll see more about this below, when we talk about some of the
+    <a href="#newconcepts">new concepts</a> used in DataTable.
+</p>
 
 <h3>Now With More MVC!</h3>
 
 <p>
     DataTable now uses the App framework components Model, ModelList, and View
     to manage its data and rendering needs.  Recordset and Record are still
-    supported components in 3.5.0, but may be deprecated in the future so we
-    can focus on a single family of components for data representation in YUI.
+    supported components separate from DataTable in 3.5.0, but may be
+    deprecated in the future so we can focus on a single family of components
+    for data representation in YUI.
 </p>
 
 <h4>Models for Data</h4>
@@ -196,25 +198,32 @@ var after = new Y.DataTable({ ... });
 <ul>
     <li>
         the App framework is very popular, which means its progress and feature
-        list can immediately benefit DataTable users,
+        list can immediately benefit DataTable users
     </li>
     <li>
         being able to create custom Models to represent your business objects
-        and reuse them across components makes for a more stable codebase, and
+        and reuse them across components makes for a more stable codebase
     </li>
     <li>
         familiar APIs between components makes each an easy gateway to the
-        others.
+        others
     </li>
 </ul>
 
 <p>
     Now if you have a table record in hand, it is a Model instance, and you
-    access and update its fields using `model.get('username')` and
-    `model.set('favColor', '#C0FFEE')` rather than
-    `record.getValue('username')` and
-    `record.get('data').favColor = '#C0FFEE';`.
+    access and update its fields using the Attribute API:
 </p>
+
+```
+// 3.4.1
+record.getValue('username');
+record.get('data').favColor = '#C0FFEE';
+
+// 3.5.0
+model.get('username');
+model.set('favColor', '#C0FFEE');
+```
 
 <p>
     In most use cases, the change to Model and ModelList will be transparent
@@ -235,8 +244,8 @@ var after = new Y.DataTable({ ... });
 <ul>
     <li>a Model subclass (or class that quacks like a Model)</li>
     <li>
-        an array of field names, similar to `columns`, but controls
-        what data is stored, where `columns` controls what is displayed
+        an array of Model attribute names&mdash;similar to `columns`, but
+        controls what data is stored; `columns` controls what is displayed
     </li>
     <li>
         an object corresponding to an ATTRS definition object, where you can
@@ -247,7 +256,7 @@ var after = new Y.DataTable({ ... });
 
 <p>
     Alternately, you can just pass a prebuilt ModelList instance for the
-    DataTable's `data` attribute.
+    DataTable's `data` attribute, configured with whatever Model is appropriate.
 </p>
 
 <p>
@@ -294,7 +303,7 @@ var table = new Y.DataTable({
     be necessary.  `recordType` is best used to build _on top of_ Model's
     infrastructure with classes that model your business objects.  There are
     several performance improvements planned for 3.6.0, making such hackery
-    unnecessary even in those cases.
+    unnecessary even in those extreme cases.
 </p>
 
 <h4>Views for Rendering</h4>
@@ -331,13 +340,13 @@ var RowRowRowYourView = Y.Base.create('tableBody', Y.View, [], {
             rowData = this.get('modelList'),
             content = '';
 
-        rowData.each(function (record, index) {
+        rowData.each(function (rowModel, index) {
             var stripe = index % 2 ? 'odd' : 'even',
                 template = '<tr class="' + (index % 2 ? 'odd' : 'even') + '">' +
                     '<td>{username}</td><td>{first}</td><td>{last}</td>' +
                 '</tr>';
 
-            content += Y.Lang.sub(template, record.toJSON());
+            content += Y.Lang.sub(template, rowModel.toJSON());
         });
 
         tbody.setHTML(content);
@@ -353,6 +362,7 @@ var table = new Y.DataTable({
 }).render('#over-there');
 ```
 
+<h3>Features as Class Extensions</h3>
 
 <h3>New Rendering Algorithm</h3>
 
