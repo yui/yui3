@@ -6,7 +6,8 @@
      *      Default is YUITest.TestFormat.XML.
      * @constructor
      * @namespace Test
-     * @class Reporter
+     * @module test
+ * @class Reporter
      */
     YUITest.Reporter = function(url, format) {
     

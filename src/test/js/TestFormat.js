@@ -1,6 +1,7 @@
 /**
  * An object object containing test result formatting methods.
  * @namespace Test
+ * @module test
  * @class TestFormat
  * @static
  */

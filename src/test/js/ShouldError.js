@@ -5,6 +5,7 @@
  * @param {String} message The message to display when the error occurs.
  * @namespace Test 
  * @extends AssertionError
+ * @module test
  * @class ShouldError
  * @constructor
  */ 
