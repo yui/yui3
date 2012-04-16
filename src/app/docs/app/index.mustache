@@ -910,7 +910,9 @@ view.render = function () {
 };
 
 // Renders the `app` and `view`, then sets the view as the app's `activeView`.
-app.render().showView(view.render());
+// We have to explicity tell the app to render the view because by default, if
+// the view instance already exists it won't be rendered automatically.
+app.render().showView(view, null, {render: true});
 
 // Verify that `view` is now the `activeView`, and that the view's `container`
 // is now rendered within the app's `viewContainer`.
@@ -1030,6 +1032,17 @@ The following is the list of `options` which affect how the app will switch its 
     </p>
   </dd>
 
+  <dt>`render`</dt>
+  <dd>
+    <p>
+    Whether the `view` should be rendered. <strong>Note:</strong> If no value is specified, a view instance will only be rendered if it's newly created by this method.
+    </p>
+
+    <p>
+    Sometimes you may need greater control over when a view is rendered. Under certain circumstances you may wish to re-render a preserved view, you can use this option to accomplish this.
+    </p>
+  </dd>
+
   <dt>`transition`</dt>
   <dd>
     <p>
@@ -1038,6 +1051,17 @@ The following is the list of `options` which affect how the app will switch its 
 
     <p>
     When an app is using transitions, this option allows you to override the default transition that will occur per the app's `transitions` configuration — enabling finer-grained control over how views transition.
+    </p>
+  </dd>
+
+  <dt>`update`</dt>
+  <dd>
+    <p>
+    Whether an existing view should have its attributes updated by passing the `config` object to its `setAttrs()` method. <strong>Note:</strong> This option does not have an effect if the `view` instance is created as a result of calling this method.
+    </p>
+
+    <p>
+    This option would usually be used to update a preserved view with new data and can be used in conjunction with the `render` option to force a view to update and re-render.
     </p>
   </dd>
 </dl>
