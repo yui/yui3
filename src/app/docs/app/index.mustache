@@ -880,11 +880,9 @@ See the [[#App Properties]] section above for more details on what metadata can 
 
   * Fancy diagram showing header/body/footer screen-regions with the body highlighted. What about an iPhone to pump mobile! Use Omnigraffle!
 
-  * Expand on docs for `showView()` method.
-
   * Mention `createView()` API is being used.
 
-  * View event bubbling.
+  * View event bubbling example.
 
 }}
 
@@ -966,6 +964,7 @@ app.route('/', function (req) {
 app.route('/:name', function (req) {
     // The name which we want to say hello to is specified on `req.params`.
     var name = req.params.name;
+
     // Sets the `activeView` to a new instance of a `Y.HelloView`, but here
     // we are also passing a config object which the new view instance will
     // be constructed with, and it contains the name which we'll say hello to.
@@ -989,6 +988,59 @@ This results in the URL being updated to either `"/eric"` or `"/#/eric"` dependi
     </div>
 </body>
 ```
+
+<h5>Understanding `showView()` Options</h5>
+
+<p>
+App's `showView()` method has the following signature:
+</p>
+
+```
+showView ( view  [config]  [options]  [callback] )
+```
+
+<p>
+As seen in the previous usage examples, `view` can either be a view instance or the string-name of a view defined in the app's `views` object. The optional `config` object is used when creating a new view instance. The `config` object can also be used to update an existing or preserved `view`'s attributes when `options.update` is `true`.
+</p>
+
+<p>
+The following is the list of `options` which affect how the app will switch its `activeView`:
+</p>
+
+<dl>
+  <dt>`callback`</dt>
+  <dd>
+    <p>
+    Optional callback function to call after new `activeView` is ready to use, the function will be passed a reference to the view.
+    </p>
+
+    <p>
+    Specifying a callback function is useful you need access to the view instance which is created as a result of calling `showView()`. Also, if an app is using transitions, the callback function will be called once the transitions have completed.
+    </p>
+  </dd>
+
+  <dt>`prepend`</dt>
+  <dd>
+    <p>
+    Whether the `view` should be prepended instead of appended to the app's `viewContainer` node.
+    </p>
+
+    <p>
+    This option is used internally to aid transitions by prepending the new `activeView` if it has been defined as the `parent` of the currently active view. This puts the view as the first child of the app's `viewContainer` node which helps the sliding transitions.
+    </p>
+  </dd>
+
+  <dt>`transition`</dt>
+  <dd>
+    <p>
+    Optional transition override. A transition can be specified which will override the default, or `false` for no transition.
+    </p>
+
+    <p>
+    When an app is using transitions, this option allows you to override the default transition that will occur per the app's `transitions` configuration — enabling finer-grained control over how views transition.
+    </p>
+  </dd>
+</dl>
 
 <p>
 Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/classes/App.html#method_showView">`showView()` method</a>.
