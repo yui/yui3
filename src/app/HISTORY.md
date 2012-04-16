@@ -4,6 +4,11 @@ App Framework Change History
 3.5.1
 -----
 
+### App
+
+* Added `render` and `update` options to the `showView()` method.
+  [PR #100 Pat Cavit]
+
 ### Router
 
 * Added a `removeQuery()` function that accepts a URL and returns it without a
