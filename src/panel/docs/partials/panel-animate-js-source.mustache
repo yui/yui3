@@ -1,5 +1,7 @@
-
-YUI().use('transition', 'panel', function (Y) {
+YUI({
+    // Uses a Gallery module to a WidgetModality regression in 3.5.0.
+    gallery: 'gallery-2012.04.12-13-50'
+}).use('gallery-patch-350-widget-modality', 'transition', 'panel', function (Y) {
 
     var openBtn = Y.one('#openButton'),
         panel, bb;

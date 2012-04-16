@@ -3,7 +3,8 @@
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
      * @namespace Test
-     * @class TestRunner
+     * @module test
+ * @class TestRunner
      * @static
      */
     YUITest.TestRunner = function(){
@@ -34,7 +35,8 @@
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
-         * @class TestNode
+         * @module test
+ * @class TestNode
          * @constructor
          * @private
          */
@@ -100,6 +102,7 @@
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
+             * @method appendChild
              */
             appendChild : function (testObject){
                 var node = new TestNode(testObject);
@@ -118,7 +121,8 @@
          * Runs test suites and test cases, providing events to allowing for the
          * interpretation of test results.
          * @namespace Test
-         * @class Runner
+         * @module test
+ * @class Runner
          * @static
          */
         function TestRunner(){
@@ -759,11 +763,11 @@
                     
             /**
              * Runs a single test based on the data provided in the node.
+             * @method _runTest
              * @param {TestNode} node The TestNode representing the test to run.
              * @return {Void}
              * @static
              * @private
-             * @name _runTest
              */
             _runTest : function (node) {
             
@@ -938,6 +942,7 @@
              * as the key name (value is the argument itself).
              * @private
              * @return {Function} A callback function.
+             * @method callback
              */
             callback: function(){
                 var names   = arguments,

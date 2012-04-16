@@ -3,6 +3,7 @@
  * file.  This includes the script loading mechanism, a simple queue, and
  * the core utilities for the library.
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 
@@ -232,7 +233,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.3.0'; // dev time hack for cdn test
+    VERSION = '3.5.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -3504,7 +3505,7 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
             }
-            
+
             m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
             if (m && m[1] && m[2]) {
                 o.chrome = numberify(m[2]); // Chrome
@@ -3583,6 +3584,55 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+
+/**
+Performs a simple comparison between two version numbers, accounting for
+standard versioning logic such as the fact that "535.8" is a lower version than
+"535.24", even though a simple numerical comparison would indicate that it's
+greater. Also accounts for cases such as "1.1" vs. "1.1.0", which are
+considered equivalent.
+
+Returns -1 if version _a_ is lower than version _b_, 0 if they're equivalent,
+1 if _a_ is higher than _b_.
+
+Versions may be numbers or strings containing numbers and dots. For example,
+both `535` and `"535.8.10"` are acceptable. A version string containing
+non-numeric characters, like `"535.8.beta"`, may produce unexpected results.
+
+@method compareVersions
+@param {Number|String} a First version number to compare.
+@param {Number|String} b Second version number to compare.
+@return -1 if _a_ is lower than _b_, 0 if they're equivalent, 1 if _a_ is
+    higher than _b_.
+**/
+Y.UA.compareVersions = function (a, b) {
+    var aPart, aParts, bPart, bParts, i, len;
+
+    if (a === b) {
+        return 0;
+    }
+
+    aParts = (a + '').split('.');
+    bParts = (b + '').split('.');
+
+    for (i = 0, len = Math.max(aParts.length, bParts.length); i < len; ++i) {
+        aPart = parseInt(aParts[i], 10);
+        bPart = parseInt(bParts[i], 10);
+
+        isNaN(aPart) && (aPart = 0);
+        isNaN(bPart) && (bPart = 0);
+
+        if (aPart < bPart) {
+            return -1;
+        }
+
+        if (aPart > bPart) {
+            return 1;
+        }
+    }
+
+    return 0;
+};
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "app": ["app-base","app-transitions","model","model-list","router","view"],
@@ -4157,7 +4207,7 @@ Y.Get = Get = {
             // True if this browser fires an event when a dynamically injected
             // link node fails to load. This is currently true for Firefox 9+
             // and WebKit 535.24+.
-            cssFail: ua.gecko >= 9 || ua.webkit >= 535.24,
+            cssFail: ua.gecko >= 9 || ua.compareVersions(ua.webkit, 535.24) >= 0,
 
             // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
@@ -4165,8 +4215,10 @@ Y.Get = Get = {
             // DOM 0 "onload" event, but not "load". All versions of IE fire
             // "onload".
             // davglass: Seems that Chrome on Android needs this to be false.
-            cssLoad: ((!ua.gecko && !ua.webkit) || 
-                ua.gecko >= 9 || ua.webkit >= 535.24) && !(ua.chrome && ua.chrome <=18),
+            cssLoad: (
+                    (!ua.gecko && !ua.webkit) || ua.gecko >= 9 ||
+                    ua.compareVersions(ua.webkit, 535.24) >= 0
+                ) && !(ua.chrome && ua.chrome <= 18),
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -5514,7 +5566,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.04.10-14-57',
+            GALLERY_VERSION = 'gallery-2012.04.12-13-50',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5678,6 +5730,7 @@ Y.Env.meta = META;
  * @param {String|Object} config.filter A filter to apply to result urls. <a href="#property_filter">See filter property</a>
  * @param {Object} config.filters Per-component filter specification.  If specified for a given component, this overrides the filter config.
  * @param {Boolean} config.combine Use a combo service to reduce the number of http connections required to load your dependencies
+ * @param {Boolean} [config.async=true] Fetch files in async
  * @param {Array} config.ignore: A list of modules that should never be dynamically loaded
  * @param {Array} config.force A list of modules that should always be loaded when required, even if already present on the page
  * @param {HTMLElement|String} config.insertBefore Node or id for a node that should be used as the insertion point for new nodes
@@ -6032,6 +6085,12 @@ Y.Loader = function(o) {
      */
     self.loaded = GLOBAL_LOADED[VERSION];
 
+    
+    /**
+    * Should Loader fetch scripts in `async`, defaults to `true`
+    * @property async
+    */
+    self.async = true;
 
     self._inspectPage();
 
@@ -7058,7 +7117,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style && style['display'] === 'none') {
+        if (style && style.display === 'none') {
             ret = true;
         }
 
@@ -7289,6 +7348,16 @@ Y.Loader.prototype = {
         // Y.log('After explode: ' + YObject.keys(r));
     },
     /**
+    * The default method used to test a module against a pattern
+    * @method _patternTest
+    * @private
+    * @param {String} mname The module being tested
+    * @param {String} pname The pattern to match
+    */
+    _patternTest: function(mname, pname) {
+        return (mname.indexOf(pname) > -1);
+    },
+    /**
     * Get's the loader meta data for the requested module
     * @method getModule
     * @param {String} mname The module name to get
@@ -7316,9 +7385,7 @@ Y.Loader.prototype = {
                     //There is no test method, create a default one that tests
                     // the pattern against the mod name
                     if (!p.test) {
-                        p.test = function(mname, pname) {
-                            return (mname.indexOf(pname) > -1);
-                        };
+                        p.test = this._patternTest;
                     }
 
                     if (p.test(mname, pname)) {
@@ -7707,7 +7774,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 timeout: self.timeout,
                 autopurge: false,
                 context: self,
-                async: true,
+                async: self.async,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
@@ -7788,24 +7855,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	        groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
+            groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
-	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
-	 	    modFilter = this.groups[groupName].filter;
-		    hasFilter = true;		
-	    };
+        if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
+            modFilter = this.groups[groupName].filter;
+            hasFilter = true;
+        }
 
         if (u) {
             if (hasFilter) {
-                f = (L.isString(modFilter)) ?
-                    this.FILTER_DEFS[modFilter.toUpperCase()] || null :
-                    modFilter;
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
             if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }
-
         return u;
     },
 
@@ -7874,7 +7938,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         async: m.async
                     };
                     if (m.attributes) {
-                        url.attributes = m.attributes
+                        url.attributes = m.attributes;
                     }
                 }
                 resolved[m.type].push(url);
@@ -7994,7 +8058,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                                 if (tmpBase.length > maxURLLength) {
                                     m = u.pop();
-                                    tmpBase = base + u.join(comboSep)
+                                    tmpBase = base + u.join(comboSep);
                                     resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                                     u = [];
                                     if (m) {

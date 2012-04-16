@@ -84,6 +84,16 @@
 	        "useModules": ["datatable-scroll"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-recordtype",
+            "displayName": "Sortable generated columns",
+            "modules": ["datatable", "datatype"],
+            "description": "Using DataTable's recordType attribute to create calculated, sortable columns.",
+            "useModules": ["datatable-base"],
+
+            "hideTableOfContents": true
         }
     ]
 }
