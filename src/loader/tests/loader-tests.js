@@ -3,7 +3,7 @@ YUI.add('loader-tests', function(Y) {
     var Assert = Y.Assert,
         testY = YUI(),
         ua = Y.UA,
-        jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0);
+        jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
 
 
     var testLoader = new Y.Test.Case({
