@@ -8,7 +8,7 @@
  */
 YUITest.TestCase = function (template) {
     
-    /**
+    /*
      * Special rules for the test case. Possible subobjects
      * are fail, for tests that should fail, and error, for
      * tests that should throw an error.
@@ -112,6 +112,7 @@ YUITest.TestCase.prototype = {
     /**
      * Function to run once before tests start to run.
      * This executes before the first call to setUp().
+     * @method init
      */
     init: function(){
         //noop
@@ -120,6 +121,7 @@ YUITest.TestCase.prototype = {
     /**
      * Function to run once after tests finish running.
      * This executes after the last call to tearDown().
+     * @method destroy
      */
     destroy: function(){
         //noop

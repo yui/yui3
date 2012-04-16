@@ -100,6 +100,7 @@
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
+             * @method appendChild
              */
             appendChild : function (testObject){
                 var node = new TestNode(testObject);
@@ -759,11 +760,11 @@
                     
             /**
              * Runs a single test based on the data provided in the node.
+             * @method _runTest
              * @param {TestNode} node The TestNode representing the test to run.
              * @return {Void}
              * @static
              * @private
-             * @name _runTest
              */
             _runTest : function (node) {
             
@@ -938,6 +939,7 @@
              * as the key name (value is the argument itself).
              * @private
              * @return {Function} A callback function.
+             * @method callback
              */
             callback: function(){
                 var names   = arguments,

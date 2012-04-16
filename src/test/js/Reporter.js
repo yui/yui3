@@ -68,7 +68,7 @@
         /**
          * Removes all previous defined fields.
          * @return {Void}
-         * @method addField
+         * @method clearFields
          */
         clearFields : function(){
             this._fields = new Object();
