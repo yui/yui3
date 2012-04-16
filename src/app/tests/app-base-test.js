@@ -831,6 +831,177 @@ appBaseSuite.add(new Y.Test.Case({
         Assert.areSame(app.get('viewContainer').get('firstChild'), view.get('container'));
     },
 
+    '`showView()` should update the attributes of the `view` with the `config` when `options.update` is `true`' : function() {
+        var app  = this.app = new Y.App(),
+            view = new Y.View({attr: false});
+
+        app.showView(view);
+        app.showView(view, {attr: true}, {update: true});
+
+        Assert.areSame(true, view.get('attr'));
+    },
+
+    '`showView()` should not update the attributes of the `view` with the `config` when `options.update` is `false`' : function() {
+        var app  = this.app = new Y.App(),
+            view = new Y.View({attr: false});
+
+        app.showView(view);
+        app.showView(view, {attr: true}, {update: false});
+
+        Assert.areSame(false, view.get('attr'));
+    },
+
+    '`showView()` should not update the attributes of the `view` with the `config` by default' : function() {
+        var app  = this.app = new Y.App(),
+            view = new Y.View({attr: false});
+
+        app.showView(view);
+        app.showView(view, {attr: true});
+
+        Assert.areSame(false, view.get('attr'));
+    },
+
+    '`showView()` should render a newly-created `view` when `options.render` is `true`': function () {
+        var called = 0,
+            TestView, app;
+
+        TestView = Y.Base.create('testView', Y.View, [], {
+            render: function () {
+                called += 1;
+            }
+        });
+
+        app = this.app = new Y.App({
+            views: {
+                'test': {type: TestView}
+            }
+        });
+
+        app.showView('test', null, {render: true});
+
+        Assert.areSame(1, called, '`render()` was not called once.');
+    },
+
+    '`showView()` should render an existing `view` when `options.render` is `true`': function () {
+        var called = 0,
+            TestView, app;
+
+        TestView = Y.Base.create('testView', Y.View, [], {
+            render: function () {
+                called += 1;
+            }
+        });
+
+        app = this.app = new Y.App({
+            views: {
+                test: {
+                    type    : TestView,
+                    preserve: true,
+                    instance: new TestView()
+                }
+            }
+        });
+
+        app.showView(new TestView(), null, {render: true});
+        app.showView('test', null, {render: true});
+
+        Assert.areSame(2, called, '`render()` was called.');
+    },
+
+    '`showView()` should not render a newly-created `view` when `options.render` is `false`': function () {
+        var called = 0,
+            TestView, app;
+
+        TestView = Y.Base.create('testView', Y.View, [], {
+            render: function () {
+                called += 1;
+            }
+        });
+
+        app = this.app = new Y.App({
+            views: {
+                'test': {type: TestView}
+            }
+        });
+
+        app.showView('test', null, {render: false});
+
+        Assert.areSame(0, called, '`render()` was not called once.');
+    },
+
+    '`showView()` should not render an existing `view` when `options.render` is `false`': function () {
+        var called = 0,
+            TestView, app;
+
+        TestView = Y.Base.create('testView', Y.View, [], {
+            render: function () {
+                called += 1;
+            }
+        });
+
+        app = this.app = new Y.App({
+            views: {
+                test: {
+                    type    : TestView,
+                    preserve: true,
+                    instance: new TestView()
+                }
+            }
+        });
+
+        app.showView(new TestView(), null, {render: false});
+        app.showView('test', null, {render: false});
+
+        Assert.areSame(0, called, '`render()` was called.');
+    },
+
+    '`showView()` should render a newly-created `view` by default': function () {
+        var called = 0,
+            TestView, app;
+
+        TestView = Y.Base.create('testView', Y.View, [], {
+            render: function () {
+                called += 1;
+            }
+        });
+
+        app = this.app = new Y.App({
+            views: {
+                'test': {type: TestView}
+            }
+        });
+
+        app.showView('test');
+
+        Assert.areSame(1, called, '`render()` was not called once.');
+    },
+
+    '`showView()` should not render an existing `view` by default': function () {
+        var called = 0,
+            TestView, app;
+
+        TestView = Y.Base.create('testView', Y.View, [], {
+            render: function () {
+                called += 1;
+            }
+        });
+
+        app = this.app = new Y.App({
+            views: {
+                test: {
+                    type    : TestView,
+                    preserve: true,
+                    instance: new TestView()
+                }
+            }
+        });
+
+        app.showView(new TestView());
+        app.showView('test');
+
+        Assert.areSame(0, called, '`render()` was called.');
+    },
+
     '`options` passed to `showView()` should be mixed into the `activeViewChange` event facade': function () {
         var app     = this.app = new Y.App(),
             calls   = 0,
@@ -910,7 +1081,7 @@ appBaseSuite.add(new Y.Test.Case({
             Assert.areSame(activeView, app.get('activeView'), '`activeView` and the app\'s `activeView` are not the same.');
         });
 
-        Assert.areSame(1, calls, '`showView()` callback was not called.')
+        Assert.areSame(1, calls, '`showView()` callback was not called.');
     },
 
     '`activeViewChange` event should be preventable': function () {
