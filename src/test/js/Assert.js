@@ -4,6 +4,7 @@
  * known and expected results. Whenever a comparison (assertion) fails,
  * an error is thrown.
  * @namespace Test
+ * @module test
  * @class Assert
  * @static
  */

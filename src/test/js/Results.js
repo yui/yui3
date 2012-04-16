@@ -3,6 +3,7 @@
  * test result information.
  * @private
  * @namespace Test
+ * @module test
  * @class Results
  * @constructor
  * @param {String} name The name of the test.

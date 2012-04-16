@@ -1,6 +1,7 @@
 /**
  * An object object containing coverage result formatting methods.
  * @namespace Test
+ * @module test
  * @class CoverageFormat
  * @static
  */

@@ -2,6 +2,7 @@
  * Test case containing various tests to run.
  * @param template An object containing any number of test methods, other methods,
  *                 an optional name, and anything else the test case needs.
+ * @module test
  * @class TestCase
  * @namespace Test
  * @constructor

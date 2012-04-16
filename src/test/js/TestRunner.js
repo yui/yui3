@@ -3,7 +3,8 @@
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
      * @namespace Test
-     * @class TestRunner
+     * @module test
+ * @class TestRunner
      * @static
      */
     YUITest.TestRunner = function(){
@@ -34,7 +35,8 @@
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
-         * @class TestNode
+         * @module test
+ * @class TestNode
          * @constructor
          * @private
          */
@@ -119,7 +121,8 @@
          * Runs test suites and test cases, providing events to allowing for the
          * interpretation of test results.
          * @namespace Test
-         * @class Runner
+         * @module test
+ * @class Runner
          * @static
          */
         function TestRunner(){
