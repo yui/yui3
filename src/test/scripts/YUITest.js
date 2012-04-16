@@ -4,7 +4,7 @@
  * @main test
  */
 
-/**
+/*
  * The root namespace for YUI Test.
  */
 
