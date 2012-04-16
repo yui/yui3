@@ -3,12 +3,11 @@ YUI.add('test', function(Y) {
 /**
  * YUI Test Framework
  * @module test
+ * @main test
  */
 
-/**
+/*
  * The root namespace for YUI Test.
- * @class Test
- * @static
  */
 
 var YUITest = {
@@ -29,6 +28,7 @@ YUITest.Util = {
 /**
  * Simple custom event implementation.
  * @namespace Test
+ * @module test
  * @class EventTarget
  * @constructor
  */
@@ -147,6 +147,7 @@ YUITest.EventTarget.prototype = {
  * @param {String||Object} data The name of the test suite or an object containing
  *      a name property as well as setUp and tearDown methods.
  * @namespace Test
+ * @module test
  * @class TestSuite
  * @constructor
  */
@@ -228,13 +229,14 @@ YUITest.TestSuite.prototype = {
  * Test case containing various tests to run.
  * @param template An object containing any number of test methods, other methods,
  *                 an optional name, and anything else the test case needs.
+ * @module test
  * @class TestCase
  * @namespace Test
  * @constructor
  */
 YUITest.TestCase = function (template) {
     
-    /**
+    /*
      * Special rules for the test case. Possible subobjects
      * are fail, for tests that should fail, and error, for
      * tests that should throw an error.
@@ -338,6 +340,7 @@ YUITest.TestCase.prototype = {
     /**
      * Function to run once before tests start to run.
      * This executes before the first call to setUp().
+     * @method init
      */
     init: function(){
         //noop
@@ -346,6 +349,7 @@ YUITest.TestCase.prototype = {
     /**
      * Function to run once after tests finish running.
      * This executes after the last call to tearDown().
+     * @method destroy
      */
     destroy: function(){
         //noop
@@ -372,6 +376,7 @@ YUITest.TestCase.prototype = {
 /**
  * An object object containing test result formatting methods.
  * @namespace Test
+ * @module test
  * @class TestFormat
  * @static
  */
@@ -620,7 +625,8 @@ YUITest.TestFormat = function(){
      *      Default is YUITest.TestFormat.XML.
      * @constructor
      * @namespace Test
-     * @class Reporter
+     * @module test
+ * @class Reporter
      */
     YUITest.Reporter = function(url, format) {
     
@@ -682,7 +688,7 @@ YUITest.TestFormat = function(){
         /**
          * Removes all previous defined fields.
          * @return {Void}
-         * @method addField
+         * @method clearFields
          */
         clearFields : function(){
             this._fields = new Object();
@@ -782,7 +788,8 @@ YUITest.TestFormat = function(){
      * Runs test suites and test cases, providing events to allowing for the
      * interpretation of test results.
      * @namespace Test
-     * @class TestRunner
+     * @module test
+ * @class TestRunner
      * @static
      */
     YUITest.TestRunner = function(){
@@ -813,7 +820,8 @@ YUITest.TestFormat = function(){
          * A node in the test tree structure. May represent a TestSuite, TestCase, or
          * test function.
          * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
-         * @class TestNode
+         * @module test
+ * @class TestNode
          * @constructor
          * @private
          */
@@ -879,6 +887,7 @@ YUITest.TestFormat = function(){
              * of this node.
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
+             * @method appendChild
              */
             appendChild : function (testObject){
                 var node = new TestNode(testObject);
@@ -897,7 +906,8 @@ YUITest.TestFormat = function(){
          * Runs test suites and test cases, providing events to allowing for the
          * interpretation of test results.
          * @namespace Test
-         * @class Runner
+         * @module test
+ * @class Runner
          * @static
          */
         function TestRunner(){
@@ -1538,11 +1548,11 @@ YUITest.TestFormat = function(){
                     
             /**
              * Runs a single test based on the data provided in the node.
+             * @method _runTest
              * @param {TestNode} node The TestNode representing the test to run.
              * @return {Void}
              * @static
              * @private
-             * @name _runTest
              */
             _runTest : function (node) {
             
@@ -1717,6 +1727,7 @@ YUITest.TestFormat = function(){
              * as the key name (value is the argument itself).
              * @private
              * @return {Function} A callback function.
+             * @method callback
              */
             callback: function(){
                 var names   = arguments,
@@ -1795,6 +1806,7 @@ YUITest.TestFormat = function(){
  * The ArrayAssert object provides functions to test JavaScript array objects
  * for a variety of cases.
  * @namespace Test
+ * @module test
  * @class ArrayAssert
  * @static
  */
@@ -2171,6 +2183,7 @@ YUITest.ArrayAssert = {
  * known and expected results. Whenever a comparison (assertion) fails,
  * an error is thrown.
  * @namespace Test
+ * @module test
  * @class Assert
  * @static
  */
@@ -2653,6 +2666,7 @@ YUITest.Assert = {
  *
  * @param {String} message The message to display when the error occurs.
  * @namespace Test
+ * @module test
  * @class AssertionError
  * @constructor
  */ 
@@ -2708,6 +2722,7 @@ YUITest.AssertionError.prototype = {
  * @param {Object} actual The actual value that caused the assertion to fail.
  * @namespace Test 
  * @extends AssertionError
+ * @module test
  * @class ComparisonFailure
  * @constructor
  */ 
@@ -2758,6 +2773,7 @@ YUITest.ComparisonFailure.prototype.getMessage = function(){
 /**
  * An object object containing coverage result formatting methods.
  * @namespace Test
+ * @module test
  * @class CoverageFormat
  * @static
  */
@@ -2804,6 +2820,7 @@ YUITest.CoverageFormat = {
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
  * @namespace Test
+ * @module test
  * @class DateAssert
  * @static
  */
@@ -2886,6 +2903,7 @@ YUITest.DateAssert = {
 /**
  * Creates a new mock object.
  * @namespace Test
+ * @module test
  * @class Mock
  * @constructor
  * @param {Object} template (Optional) An object whose methods
@@ -3042,6 +3060,7 @@ YUITest.Mock.verify = function(mock){
  * @param {Array} originalArgs (Optional) Array of arguments to pass to the method.
  * @param {String} message (Optional) Message to display in case of failure.
  * @namespace Test.Mock
+ * @module test
  * @class Value
  * @constructor
  */
@@ -3110,6 +3129,7 @@ YUITest.Mock.Value.Function   = YUITest.Mock.Value(YUITest.Assert.isFunction);
  * The ObjectAssert object provides functions to test JavaScript objects
  * for a variety of cases.
  * @namespace Test
+ * @module test
  * @class ObjectAssert
  * @static
  */
@@ -3296,6 +3316,7 @@ YUITest.ObjectAssert = {
  * test result information.
  * @private
  * @namespace Test
+ * @module test
  * @class Results
  * @constructor
  * @param {String} name The name of the test.
@@ -3372,6 +3393,7 @@ YUITest.Results.prototype.include = function(results){
  * @param {String} message The message to display when the error occurs.
  * @namespace Test 
  * @extends AssertionError
+ * @module test
  * @class ShouldError
  * @constructor
  */ 
@@ -3401,6 +3423,7 @@ YUITest.ShouldError.prototype.constructor = YUITest.ShouldError;
  * @param {String} message The message to display when the error occurs.
  * @namespace Test 
  * @extends YUITest.AssertionError
+ * @module test
  * @class ShouldFail
  * @constructor
  */ 
@@ -3432,6 +3455,7 @@ YUITest.ShouldFail.prototype.constructor = YUITest.ShouldFail;
  *                      thrown.
  * @namespace Test 
  * @extends YUITest.AssertionError
+ * @module test
  * @class UnexpectedError
  * @constructor
  */  
@@ -3478,6 +3502,7 @@ YUITest.UnexpectedError.prototype.constructor = YUITest.UnexpectedError;
  * @param {Object} unexpected The unexpected value.
  * @namespace Test 
  * @extends AssertionError
+ * @module test
  * @class UnexpectedValue
  * @constructor
  */ 
@@ -3523,6 +3548,7 @@ YUITest.UnexpectedValue.prototype.getMessage = function(){
  * continuing.
  * @param {Function} segment A function to run when the wait is over.
  * @param {int} delay The number of milliseconds to wait before running the code.
+ * @module test
  * @class Wait
  * @namespace Test
  * @constructor
