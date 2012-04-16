@@ -303,6 +303,10 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     Sets which view is active/visible for the application. This will set the
     app's `activeView` attribute to the specified `view`.
 
+    The `view` will be "attached" to this app, meaning it will be both rendered
+    into this app's `viewContainer` node and all of its events will bubble to
+    the app. The previous `activeView` will be "detached" from this app.
+
     When a string-name is provided for a view which has been registered on this
     app's `views` object, the referenced metadata will be used and the
     `activeView` will be set to either a preserved view instance, or a new
@@ -316,15 +320,17 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @example
         var app = new Y.App({
             views: {
-                users: {
+                usersView: {
                     // Imagine that `Y.UsersView` has been defined.
                     type: Y.UsersView
                 }
-            }
+            },
+
+            users: new Y.ModelList()
         });
 
         app.route('/users/', function () {
-            this.showView('users');
+            this.showView('usersView', {users: this.get('users')});
         });
 
         app.render();
@@ -332,7 +338,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
-        or a view instance.
+        or a view instance which should become this app's `activeView`.
     @param {Object} [config] Optional configuration to use when creating a new
         view instance.
     @param {Object} [options] Optional object containing any of the following
@@ -345,7 +351,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         prepended instead of appended to the `viewContainer`.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use. **Note:** this will override
-        `options.callback`. The function will be passed the following:
+        `options.callback` and it can be specified as either the third or fourth
+        argument. The function will be passed the following:
       @param {View} callback.view A reference to the new `activeView`.
     @chainable
     @since 3.5.0
@@ -821,7 +828,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         @type View
         @default null
         @readOnly
-        @see AppBase.showView()
+        @see App.Base.showView()
         @since 3.5.0
         **/
         activeView: {
