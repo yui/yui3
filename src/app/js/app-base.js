@@ -17,6 +17,9 @@ Provides a top-level application component which manages navigation and views.
 
 // TODO: Better handling of lifecycle for registered views:
 //
+//   * [!] Just redo basically everything with view management so there are no
+//     pre-`activeViewChange` side effects and handle the rest of these things:
+//
 //   * Seems like any view created via `createView` should listen for the view's
 //     `destroy` event and use that to remove it from the `_viewsInfoMap`. I
 //     should look at what ModelList does for Models as a reference.
@@ -25,6 +28,9 @@ Provides a top-level application component which manages navigation and views.
 //     needed if we have a `getView(name, create)` method, and already doing the
 //     above? We could do `app.getView('foo').destroy()` and it would be removed
 //     from the `_viewsInfoMap` as well.
+//
+//   * Should we wait to call a view's `render()` method inside of the
+//     `_attachView()` method?
 //
 //   * Should named views support a collection of instances instead of just one?
 //
@@ -338,19 +344,23 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @param {String|View} view The name of a view defined in the `views` object,
         or a view instance which should become this app's `activeView`.
     @param {Object} [config] Optional configuration to use when creating a new
-        view instance.
+        view instance. This config object can also be used to update an existing
+        or preserved view's attributes when `options.update` is `true`.
     @param {Object} [options] Optional object containing any of the following
         properties:
       @param {Function} [options.callback] Optional callback function to call
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend=false] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the `view` should be
         prepended instead of appended to the `viewContainer`.
-      @param {Boolean} [options.update] Whether an existing view should be
-        have the `config` object passed to it via `setAttrs`
-      @param {Boolean} [options.render] Whether an existing view should have
-        its `render` method called
+      @param {Boolean} [options.render] Whether the `view` should be rendered.
+        **Note:** If no value is specified, a view instance will only be
+        rendered if it's newly created by this method.
+      @param {Boolean} [options.update=false] Whether an existing view should
+        have its attributes updated by passing the `config` object to its
+        `setAttrs()` method. **Note:** This option does not have an effect if
+        the `view` instance is created as a result of calling this method.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use. **Note:** this will override
         `options.callback` and it can be specified as either the third or fourth
@@ -360,11 +370,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @since 3.5.0
     **/
     showView: function (view, config, options, callback) {
-        var viewInfo,
-            created;
+        var viewInfo, created;
 
         options || (options = {});
 
+        // Support the callback function being either the third or fourth arg.
         if (callback) {
             options.callback = callback;
         } else if (Lang.isFunction(options)) {
@@ -384,20 +394,34 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
                 // Make sure there's a mapping back to the view metadata.
                 this._viewInfoMap[Y.stamp(view, true)] = viewInfo;
             } else {
-                created = true;
+                // TODO: Add the app as a bubble target during construction, but
+                // make sure to check that it isn't already in `bubbleTargets`!
+                // This will allow the app to be notified for about _all_ of the
+                // view's events. **Note:** This should _only_ happen if the
+                // view is created _after_ `activeViewChange`.
 
-                view = this.createView(view, config);
-                view.render();
+                view    = this.createView(view, config);
+                created = true;
             }
         }
 
-        if(!created) {
-            options.update && (view.setAttrs(config));
-            options.render && (view.render());
+        // Update the specified or preserved `view` when signaled to do so.
+        // There's no need to updated a view if it was _just_ created.
+        if (options.update && !created) {
+            view.setAttrs(config);
         }
 
-        // TODO: Should the `callback` _always_ be called, even when the
-        // `activeView` does not change?
+        // TODO: Hold off on rendering the view until after it has been
+        // "attached", and move the call to render into `_attachView()`.
+
+        // When a value is specified for `options.render`, prefer it because it
+        // represents the developer's intent. When no value is specified, the
+        // `view` will only be rendered if it was just created.
+        if ('render' in options) {
+            options.render && view.render();
+        } else if (created) {
+            view.render();
+        }
 
         return this._set('activeView', view, {options: options});
     },
@@ -429,6 +453,9 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // TODO: Attach events here for persevered Views?
         // See related TODO in `_detachView`.
+
+        // TODO: Actually render the view here so that it gets "attached" before
+        // it gets rendered?
 
         // Insert view into the DOM.
         viewContainer[prepend ? 'prepend' : 'append'](view.get('container'));
@@ -656,7 +683,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             // Force navigation to be enhanced and handled by the app when
             // `serverRouting` is falsy because the server might not be able to
             // properly handle the request.
-            Lang.isValue(options.force) || (options.force = true);
+            'force' in options || (options.force = true);
         }
 
         return PjaxBase.prototype._navigate.call(this, url, options);
@@ -735,8 +762,15 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend=false] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the `view` should be
         prepended instead of appended to the `viewContainer`.
+      @param {Boolean} [options.render] Whether the `view` should be rendered.
+        **Note:** If no value is specified, a view instance will only be
+        rendered if it's newly created by this method.
+      @param {Boolean} [options.update=false] Whether an existing view should
+        have its attributes updated by passing the `config` object to its
+        `setAttrs()` method. **Note:** This option does not have an effect if
+        the `view` instance is created as a result of calling this method.
     @protected
     @since 3.5.0
     **/
