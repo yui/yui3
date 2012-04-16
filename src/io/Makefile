@@ -6,3 +6,5 @@ deps:
 
 test: deps
 	./scripts/launch_tests.sh
+
+tests: test
