@@ -241,7 +241,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     syncUI: function() {
-        //this.set('label', this.get('label'));
+        this.set('label', this.get('label'));
         this.set('content', this.get('content'));
         this._uiSetSelectedPanel(this.get('selected'));
     },
@@ -249,7 +249,6 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     bindUI: function() {
        this.after('selectedChange', this._afterTabSelectedChange);
        this.after('parentChange', this._afterParentChange);
-       this.after('contentChange', this._afterContentChange);
     },
 
     renderUI: function() {
@@ -296,9 +295,18 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
        });
     },
 
-    _afterContentChange: function(e) {
-    console.log(e);
-        this.get('panelNode').setContent(e.newVal);
+    _defLabelSetter: function(label) {
+        this.get('contentBox').setContent(label);
+        return label;
+    },
+
+    _defContentSetter: function(content) {
+        this.get('panelNode').setContent(content);
+        return content;
+    },
+
+    _defContentGetter: function(content) {
+        return this.get('panelNode').getContent();
     },
 
     // find panel by ID mapping from label href
@@ -353,6 +361,8 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          * @type HTML
          */
         content: {
+            setter: '_defContentSetter',
+            getter: '_defContentGetter'
         },
 
         /**
@@ -374,6 +384,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             value: null,
             validator: '_validTabIndex'
         }        
+
     },
 
     HTML_PARSER: {
@@ -381,10 +392,6 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             var ret = (this.get('boundingBox').hasClass(_classNames.selectedTab)) ?
                         1 : 0;
             return ret;
-        },
-
-        content: function(contentBox) {
-            return this.get('panelNode').getContent();
         }
     }
 
