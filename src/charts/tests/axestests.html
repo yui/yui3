@@ -13,7 +13,7 @@
         <link rel="stylesheet" type="text/css" href="../../../build/cssfonts/fonts-min.css">
     </head>		
 <body class="yui3-skin-sam">
-<h3>Unit Tests</h3>
+<h3>Axes Tests</h3>
 <div id="mychart"></div>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>            
@@ -34,24 +34,73 @@ YUI({
                 lineOpacity = lineStyles.alpha,
                 tickColor = tickStyles.color,
                 tickWeight = tickStyles.weight,
-                tickOpacity = tickStyles.alpha;
-            valueLineNode = valueLinePath.get("node");
-            valueTickNode = valueTickPath.get("node");
-            catLineNode = catLinePath.get("node");
-            catTickNode = catTickPath.get("node");
+                tickOpacity = tickStyles.alpha,
+                valueLineNode,
+                valueTickNode,
+                catLineNode,
+                catTickNode,
+                valueLineNodeWeight,
+                valueLineNodeOpacity,
+                valueLineNodeColor,
+                catLineNodeWeight,
+                catLineNodeOpacity,
+                catLineNodeColor,
+                valueTickNodeWeight,
+                valueTickNodeOpacity,
+                valueTickNodeColor,
+                catTickNodeWeight,
+                catTickNodeOpacity,
+                catTickNodeColor;
+            
+            if(valueTickPath)
+            {
+                valueTickNode = valueTickPath.get("node");
+                valueTickNodeWeight = parseFloat(valueTickNode.getAttribute("stroke-width"));
+                valueTickNodeOpacity = parseFloat(valueTickNode.getAttribute("stroke-opacity"));
+                valueTickNodeColor = valueTickNode.getAttribute("stroke");
+                Y.Assert.areEqual(tickColor, valueTickNodeColor, "The color of the value axis tick should be " + tickColor + ".");
+                Y.Assert.areEqual(tickWeight, valueTickNodeWeight, "The weight of the value axis tick should be " + tickWeight + ".");
+                Y.Assert.areEqual(tickOpacity, valueTickNodeOpacity, "The opacity of the value axis tick should be " + tickOpacity + ".");
+            }
+            
+            if(catTickPath)
+            {
+                catTickNode = catTickPath.get("node");
+                catTickNodeWeight = parseFloat(catTickNode.getAttribute("stroke-width"));
+                catTickNodeOpacity = parseFloat(catTickNode.getAttribute("stroke-opacity"));
+                catTickNodeColor = catTickNode.getAttribute("stroke");
+                Y.Assert.areEqual(tickColor, catTickNodeColor, "The color of the category axis tick should be " + tickColor + ".");
+                Y.Assert.areEqual(tickWeight, catTickNodeWeight, "The weight of the category axis tick should be " + tickWeight + ".");
+                Y.Assert.areEqual(tickOpacity, catTickNodeOpacity, "The opacity of the category axis tick should be " + tickOpacity + ".");
+            }
 
-            return  ( lineColor == valueLineNode.getAttribute("stroke") &&
-                    parseFloat(lineWeight) === parseFloat(valueLineNode.getAttribute("stroke-width")) &&
-                    parseFloat(lineOpacity) === parseFloat(valueLineNode.getAttribute("stroke-opacity")) &&
-                    lineColor == catLineNode.getAttribute("stroke") &&
-                    parseFloat(lineWeight) === parseFloat(catLineNode.getAttribute("stroke-width")) &&
-                    parseFloat(lineOpacity) === parseFloat(catLineNode.getAttribute("stroke-opacity")) &&
-                    tickColor == valueTickNode.getAttribute("stroke") &&
-                    parseFloat(tickWeight) === parseFloat(valueTickNode.getAttribute("stroke-width")) &&
-                    parseFloat(tickOpacity) === parseFloat(valueTickNode.getAttribute("stroke-opacity")) &&
-                    tickColor == catTickNode.getAttribute("stroke") &&
-                    parseFloat(tickWeight) === parseFloat(catTickNode.getAttribute("stroke-width")) &&
-                    parseFloat(tickOpacity) === parseFloat(catTickNode.getAttribute("stroke-opacity")));
+            if(valueLinePath)
+            {
+                valueLineNode = valueLinePath.get("node");
+                valueLineNodeWeight = parseFloat(valueLineNode.getAttribute("stroke-width"));
+                valueLineNodeOpacity = parseFloat(valueLineNode.getAttribute("stroke-opacity"));
+                valueLineNodeColor = valueLineNode.getAttribute("stroke");
+                Y.Assert.areEqual(lineColor, valueLineNodeColor, "The color of the value axis line should be " + lineColor + ".");
+                Y.Assert.areEqual(lineWeight, valueLineNodeWeight, "The weight of the value axis line should be " + lineWeight + ".");
+                Y.Assert.areEqual(lineOpacity, valueLineNodeOpacity, "The opacity of the value axis line should be " + lineOpacity + ".");
+            }
+
+            if(catLinePath)
+            {
+                catLineNode = catLinePath.get("node");
+                catLineNodeWeight = parseFloat(catLineNode.getAttribute("stroke-width"));
+                catLineNodeOpacity = parseFloat(catLineNode.getAttribute("stroke-opacity"));
+                catLineNodeColor = catLineNode.getAttribute("stroke");
+                Y.Assert.areEqual(lineColor, catLineNodeColor, "The color of the category axis line should be " + lineColor + ".");
+                Y.Assert.areEqual(lineWeight, catLineNodeWeight, "The weight of the category axis line should be " + lineWeight + ".");
+                Y.Assert.areEqual(lineOpacity, catLineNodeOpacity, "The opacity of the category axis line should be " + lineOpacity + ".");
+            }
+            
+            if(tickStyles.display == "none")
+            {
+                Y.Assert.isTrue(!valueTickPath, "There should not be a path element for the value axis ticks.");
+                Y.Assert.isTrue(!catTickPath, "There should not be a path element for the category axis ticks.");
+            }
     },
 
     compareVMLColors = function(color, strokeNode, node)
@@ -66,8 +115,6 @@ YUI({
     compareVMLStrokeWeight = function(weight, strokeNode, node)
     {
         weight = parseFloat(weight);
-        alert(weight + ", " + node.strokeWeight);
-        alert(weight + ", " + strokeNode.weight);
         return weight === parseFloat(strokeNode.weight) || weight === parseFloat(node.strokeWeight);
     },
 
@@ -78,27 +125,56 @@ YUI({
                 lineOpacity = lineStyles.alpha,
                 tickColor = tickStyles.color,
                 tickWeight = tickStyles.weight,
-                tickOpacity = tickStyles.alpha;
-            valueLineStrokeNode = valueLinePath._strokeNode;
-            valueTickStrokeNode = valueTickPath._strokeNode;
-            valueLineNode = valueLinePath.get("stroke");
-            valueTickNode = valueTickPath.get("stroke");
-            catLineStrokeNode = catLinePath._strokeNode;
-            catTickStrokeNode = catTickPath._strokeNode;
-            catLineNode = catLinePath.get("node");
-            catTickNode = catTickPath.get("node");
-            return compareVMLColors(lineColor, valueLineStrokeNode, valueLineNode) &&
-                    //compareVMLStrokeWeight(lineWeight, valueLineStrokeNode, valueLineNode) &&
-                    parseFloat(lineOpacity) === parseFloat(valueLineStrokeNode.opacity) &&
-                    compareVMLColors(lineColor, catLineStrokeNode, valueLineNode) &&
-                    //compareVMLStrokeWeight(lineWeight, catLineStrokeNode, catLineNode) &&
-                    parseFloat(lineOpacity) === parseFloat(catLineStrokeNode.opacity) &&
-                    compareVMLColors(tickColor, valueTickStrokeNode, valueTickNode) && 
-                    //compareVMLStrokeWeight(tickWeight, valueTickStrokeNode, valueTickNode) &&
-                    parseFloat(tickOpacity) === parseFloat(valueTickStrokeNode.opacity) &&
-                    compareVMLColors(tickColor, catTickStrokeNode, catTickNode) &&
-                    //compareVMLStrokeWeight(tickWeight, catTickStrokeNode, catTickNode) &&
-                    parseFloat(tickOpacity) === parseFloat(catTickStrokeNode.opacity);
+                tickOpacity = tickStyles.alpha,
+                valueTickStrokeNode,
+                valueTickNode,
+                catTickStrokeNode,
+                catTickNode,
+                valueLineStrokeNode,
+                valueLineNode,
+                catLineStrokeNode,
+                catLineNode;
+            
+            if(valueTickPath)
+            {
+                valueTickNode = valueTickPath.get("stroke");
+                valueTickStrokeNode = valueTickPath._strokeNode;
+                Y.Assert.isTrue(compareVMLColors(tickColor, valueTickStrokeNode, valueTickNode), "The color of the value axis ticks should be " + tickColor + ".");
+                //Y.Assert.isTrue(compareVMLStrokeWeight(tickWeight, valueTickStrokeNode, valueTickNode), "The weight of the value axis ticks should be " + tickWeight + ".");
+                Y.Assert.areEqual(parseFloat(tickOpacity), parseFloat(valueTickStrokeNode.opacity), "The opacity of the value axis ticks should be " + tickOpacity + ".");
+            }
+            if(catTickPath)
+            {
+                catTickStrokeNode = catTickPath._strokeNode;
+                catTickNode = catTickPath.get("node");
+                Y.Assert.isTrue(compareVMLColors(tickColor, catTickStrokeNode, catTickNode), "The color of the category axis ticks should be " + tickColor + ".");
+                //Y.Assert.isTrue(compareVMLStrokeWeight(tickWeight, catTickStrokeNode, catTickNode), "The weight of the category axis ticks should be " + tickWeight + ".");
+                Y.Assert.areEqual(parseFloat(tickOpacity), parseFloat(catTickStrokeNode.opacity), "The opacity of the category axis ticks should be " + tickOpacity + ".");
+            }
+
+            if(valueLinePath)
+            {
+                valueLineStrokeNode = valueLinePath._strokeNode;
+                valueLineNode = valueLinePath.get("stroke");
+                Y.Assert.isTrue(compareVMLColors(lineColor, valueLineStrokeNode, valueLineNode), "The value axis line color should be " + lineColor + ".");
+                //Y.Assert.isTrue(compareVMLStrokeWeight(lineWeight, valueLineStrokeNode, valueLineNode), "The value axis line weight should be " + lineWeight + ".");
+                Y.Assert.areEqual(parseFloat(lineOpacity), parseFloat(valueLineStrokeNode.opacity), "The opacity of the value axis line should be " + lineOpacity + ".");
+            }
+
+            if(catLinePath)
+            {
+                catLineStrokeNode = catLinePath._strokeNode;
+                catLineNode = catLinePath.get("node");
+                Y.Assert.isTrue(compareVMLColors(lineColor, catLineStrokeNode, catLineNode), "The color of the category axis line should be " + lineColor + ".");
+                //Y.Assert.isTrue(compareVMLStrokeWeight(lineWeight, catLineStrokeNode, catLineNode), "The weight of the category axis line should be " + lineWeight + ".");
+                Y.Assert.areEqual(parseFloat(lineOpacity), parseFloat(catLineStrokeNode.opacity), "The opacity of the category axis line should be " + lineOpacity + ".");
+            }
+            
+            if(tickStyles.display == "none")
+            {
+                Y.Assert.isTrue(!valueTickPath, "There should not be a path element for the value axis ticks.");
+                Y.Assert.isTrue(!catTickPath, "There should not be a path element for the category axis ticks.");
+            }
     },
 
     toRGBA = function(val, alpha) {
@@ -126,98 +202,100 @@ YUI({
                 tickColor = toHex(tickStyles.color),
                 tickWeight = tickStyles.weight,
                 tickOpacity = tickStyles.alpha,
-                valueLineContext = valueLinePath._context,
-                valueTickContext = valueTickPath._context,
-                catLineContext = catLinePath._context,
-                catTickContext = catTickPath._context,
-                valueLineColor = valueLineContext.strokeStyle,
-                valueTickColor = valueTickContext.strokeStyle,
-                catLineColor = catLineContext.strokeStyle,
-                catTickColor = catTickContext.strokeStyle;
+                valueLineContext,
+                valueTickContext,
+                catLineContext,
+                catTickContext,
+                valueLineColor,
+                valueTickColor,
+                catLineColor,
+                catTickColor;
 
             lineOpacity = Y.Lang.isNumber(lineOpacity) ? lineOpacity : 1;
             tickOpacity = Y.Lang.isNumber(tickOpacity) ? tickOpacity : 1;
-           
-            //Test values line color and alpha 
-            if(valueLineColor.indexOf("RGBA") > -1 || valueLineColor.indexOf("rgba") > -1)
+
+            if(valueLinePath)
             {
-                valueLineColor = valueLineColor.toLowerCase();
-                valueLineColor = valueLineColor.replace(/, /g, ",");
-                if(valueLineColor != toRGBA(toHex(lineColor), lineOpacity))
+                valueLineContext = valueLinePath._context;
+                valueLineColor = valueLineContext.strokeStyle;
+                //Test values line color and alpha 
+                if(valueLineColor.indexOf("RGBA") > -1 || valueLineColor.indexOf("rgba") > -1)
                 {
-                    return false;
+                    valueLineColor = valueLineColor.toLowerCase();
+                    valueLineColor = valueLineColor.replace(/, /g, ",");
+                    Y.Assert.areEqual(valueLineColor, toRGBA(toHex(lineColor), lineOpacity), "The line color of the value axis should be " + lineColor + ".");
                 }
-            }
-            else
-            {
-                if(toHex(valueLineColor) != lineColor)
+                else
                 {
-                    return false;
+                    Y.Assert.areEqual(toHex(valueLineColor), lineColor, "The line color of the value axis should be " + lineColor + ".");
                 }
+                Y.Assert.areEqual(lineWeight, valueLineContext.lineWidth, "The width of the value axis line should be " + lineWeight + ".");
             }
 
-            //Test values ticks color and alpha 
-            if(valueTickColor.indexOf("RGBA") > -1 || valueTickColor.indexOf("rgba") > -1)
+            if(catLinePath)
             {
-                valueTickColor = valueTickColor.toLowerCase();
-                valueTickColor = valueTickColor.replace(/, /g, ",");
-                if(valueTickColor != toRGBA(toHex(tickColor), tickOpacity))
+                catLineContext = catLinePath._context;
+                catLineColor = catLineContext.strokeStyle;
+                //Test category line color and alpha 
+                if(catLineColor.indexOf("RGBA") > -1 || catLineColor.indexOf("rgba") > -1)
                 {
-                    return false;
+                    catLineColor = catLineColor.toLowerCase();
+                    catLineColor = catLineColor.replace(/, /g, ",");
+                    Y.Assert.areEqual(catLineColor, toRGBA(toHex(lineColor), lineOpacity), "The line color of the category axis should be " + lineColor + ".");
                 }
+                else
+                {
+                    Y.Assert.areEqual(toHex(catLineColor), lineColor, "The line color of the category axis should be " + lineColor + ".");
+                }
+                Y.Assert.areEqual(lineWeight, catLineContext.lineWidth, "The width of the category axis line should be " + lineWeight + ".");
             }
-            else
+
+            if(valueTickPath)
             {
-                if(toHex(valueTickColor) != tickColor)
+                valueTickContext = valueTickPath._context;
+                valueTickColor = valueTickContext.strokeStyle;
+                //Test values ticks color and alpha 
+                if(valueTickColor.indexOf("RGBA") > -1 || valueTickColor.indexOf("rgba") > -1)
                 {
-                    return false;
+                    valueTickColor = valueTickColor.toLowerCase();
+                    valueTickColor = valueTickColor.replace(/, /g, ",");
+                    Y.Assert.areEqual(valueTickColor, toRGBA(toHex(tickColor), tickOpacity), "The color of the value axis ticks should be " + tickColor + ".");
                 }
+                else
+                {
+                    Y.Assert.areEqual(toHex(valueTickColor), tickColor, "The color of the value axis ticks should be " + tickColor + ".");
+                }
+                Y.Assert.areEqual(tickWeight, valueTickContext.lineWidth, "The width of the value axis ticks should be " + lineWeight + ".");
             }
             
             
-            //Test category line color and alpha 
-            if(catLineColor.indexOf("RGBA") > -1 || catLineColor.indexOf("rgba") > -1)
-            {
-                catLineColor = catLineColor.toLowerCase();
-                catLineColor = catLineColor.replace(/, /g, ",");
-                if(catLineColor != toRGBA(toHex(lineColor), lineOpacity))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                if(toHex(catLineColor) != lineColor)
-                {
-                    return false;
-                }
-            }
 
             //Test category ticks color and alpha 
-            if(catTickColor.indexOf("RGBA") > -1 || catTickColor.indexOf("rgba") > -1)
+            if(catTickPath)
             {
-                catTickColor = catTickColor.toLowerCase();
-                catTickColor = catTickColor.replace(/, /g, ",");
-                if(catTickColor != toRGBA(toHex(tickColor), tickOpacity))
+                catTickContext = catTickPath._context;
+                catTickColor = catTickContext.strokeStyle;
+                if(catTickColor.indexOf("RGBA") > -1 || catTickColor.indexOf("rgba") > -1)
                 {
-                    return false;
+                    catTickColor = catTickColor.toLowerCase();
+                    catTickColor = catTickColor.replace(/, /g, ",");
+                    Y.Assert.areEqual(catTickColor, toRGBA(toHex(tickColor), tickOpacity), "The color of the category axis ticks should be " + catTickColor + ".");
                 }
+                else
+                {
+                    Y.Assert.areEqual(toHex(catTickColor), tickColor, "The color of the category axis ticks should be " + tickColor + ".");
+                }
+                Y.Assert.areEqual(tickWeight, catTickContext.lineWidth, "The width of the category axis ticks should be " + lineWeight + ".");
             }
-            else
+            
+            if(tickStyles.display == "none")
             {
-                if(toHex(catTickColor) != tickColor)
-                {
-                    return false;
-                }
+                Y.Assert.isTrue(!valueTickPath, "There should not be a path element for the value axis ticks.");
+                Y.Assert.isTrue(!catTickPath, "There should not be a path element for the category axis ticks.");
             }
-            return lineWeight == valueLineContext.lineWidth &&
-                    lineWeight == catLineContext.lineWidth &&
-                    tickWeight == valueTickContext.lineWidth &&
-                    tickWeight == catTickContext.lineWidth;
-
     };
 
-    if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
+    if(Y.config.defaultGraphicEngine != "canvas" && DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
     {
         ENGINE = "SVG";
     }
@@ -328,18 +406,18 @@ YUI({
             this.eventListener = this.chart.on("chartRendered", function(e) {
                 var valueAxis = chart.getAxisByKey("values"),
                     catAxis = chart.getAxisByKey("category"),
-                    valueLinePath = valueAxis.get("path"),
-                    valueTickPath = valueAxis.get("tickPath"),
-                    catLinePath = catAxis.get("path"),
-                    catTickPath = catAxis.get("tickPath");
-                    Y.Assert.isTrue(testNodes.apply(this, [lineStyles, 
-                                                            tickStyles, 
-                                                            valueLinePath, 
-                                                            valueTickPath, 
-                                                            catLinePath, 
-                                                            catTickPath
-                                                        ]
-                                                   ));
+                    valueLinePath = valueAxis._path,
+                    valueTickPath = valueAxis._tickPath,
+                    catLinePath = catAxis._path,
+                    catTickPath = catAxis._tickPath;
+                testNodes.apply(this, [
+                    lineStyles, 
+                    tickStyles, 
+                    valueLinePath, 
+                    valueTickPath, 
+                    catLinePath, 
+                    catTickPath
+                ]);
             });
             this.chart.render("#mychart");
         }
@@ -348,7 +426,7 @@ YUI({
     
     Y.AxisGraphicStylesTemplate = AxisGraphicStylesTemplate;
 
-    var suite = new Y.Test.Suite("Y.Charts"),
+    var suite = new Y.Test.Suite("Y.AxesTests"),
     
     AxesTests = new Y.Test.Case({
         name: "Axes Tests",
@@ -1357,7 +1435,7 @@ YUI({
                 }
             },
             values: {
-                position: "left",
+                position: "right",
                 type: "numeric",
                 keys: ["expenses", "revenue"],
                 styles: {
@@ -1389,7 +1467,64 @@ YUI({
             weight: 1,
             color: "#0000ff",
             alpha: 0.5,
-            display: "inside"
+            display: "cross"
+        }
+    });
+
+    RightAndTopAxisCustomTickAndLinesNoneTicks = new Y.AxisGraphicStylesTemplate({
+        axes: {
+            category: {
+                position: "top",
+                type: "category",
+                keys: ["category"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "none"
+                    }
+                }
+            },
+            values: {
+                position: "right",
+                type: "numeric",
+                keys: ["expenses", "revenue"],
+                styles: {
+                    line: {
+                        weight: 2,
+                        color: "#ff0000",
+                        alpha: 1
+                    },
+                    majorTicks: {
+                        weight: 1,
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        display: "none"
+                    }
+                }
+            }
+        },
+        dataProvider: allPositiveDataProvider
+    },
+    {
+        name: "Custom Right and Top Axes with ticks set to none",
+
+        lineStyles: {
+            weight: 2,
+            color: "#ff0000",
+            alpha: 1
+        },
+        tickStyles: {
+            weight: 1,
+            color: "#0000ff",
+            alpha: 0.5,
+            display: "none"
         }
     });
     
@@ -1412,7 +1547,8 @@ YUI({
     suite.add(RightAndTopAxisCustomTickAndLinesInsideTicks);
     suite.add(RightAndTopAxisCustomTickAndLinesOutsideTicks);
     suite.add(RightAndTopAxisCustomTickAndLinesCrossTicks);
-
+    suite.add(RightAndTopAxisCustomTickAndLinesNoneTicks);
+    
     //create the console
     var r = new Y.Console({
         newestOnTop : false,
@@ -1422,7 +1558,7 @@ YUI({
     r.render('#testLogger');
 
     //run the tests
-    Y.Test.Runner.setName("Y.Charts");
+    Y.Test.Runner.setName("Y.AxesTests");
     Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
