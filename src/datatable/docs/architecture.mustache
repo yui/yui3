@@ -25,17 +25,27 @@
 </p>
 
 <p>
-    Before we get into the nitty gritty, I want to answer the obvious question:
+    In this two part series, we'll first talk about the big changes in 3.5.0
+    DataTable and what led up to the decision to revisit the infrastructure
+    rather than focus on adding features.  Then in the next article, we'll break
+    down some of the new concepts being explored by the revised DataTable,
+    including a few experimental changes, and finish up with a look at the plan
+    for 3.6.0 and the future as we see it today.
+</p>
+
+<p>
+    So without further ado, let's address the obvious question:
 </p>
 
 <h2>Why Refactor?</h2>
 
 <p>
-    The short answer is "to make it easier".  The 3.4.1 infrastructure was based
-    on the simple Widget model, where all the code to describe the state and
-    render the UI were in one place, and altering or expanding those core
-    behaviors was the responsibility of plugins.  That's a fine architecture for
-    some Widgets, but there are a few issues with this for DataTable:
+    The short answer is "to make it easier and more customizable".  The 3.4.1
+    infrastructure was based on the simple Widget model, where all the code to
+    describe the state and render the UI were in one place, and altering or
+    expanding those core behaviors was the responsibility of plugins.  That's a
+    fine architecture for some Widgets, but there are a few issues with this
+    for DataTable:
 </p>
 
 <ol>
@@ -54,11 +64,12 @@
         untenable for upcoming features.
     </li>
     <li>
-        Some features need or needed to impact parts of the base implementation
-        so dramatically, that it suggested a better approach would be to allow
-        for more configuration in those areas in the core.  But configuration
-        has limits when implemented in a single place.  The code starts to
-        become monolithic, which runs counter to the goals of YUI 3.
+        Some features need (or needed) to impact parts of the base
+        implementation so dramatically, that it suggested a better approach
+        would be to allow for more configuration in those areas in the core or
+        create a subclass.  But features-through-inheritance opens its own can
+        of worms, and configuration overload makes the API larger and more
+        difficult to understand.
     </li>
 </ol>
 
@@ -71,8 +82,8 @@
 
 <p>
     DataTable is incredibly important to a lot of people, and it's important
-    to us that it not only be built right, but also that it be as easy to use
-    as possible.
+    to us that it not only be built right, but also that it be <em>as easy to
+    use as possible</em>.
 </p>
 
 <h2>Big Changes</h2>
@@ -154,7 +165,8 @@
 <p>
     The first thing you'll notice is that as of 3.5.0, `Y.DataTable` is the
     main instantiable class.  `Y.DatatTable.Base` is still around, but now its
-    primary role is as <a href="#baseclass">a superclass for extension</a>.
+    primary role is as a superclass for extension (which we'll talk more about
+    in the next article).
 </p>
 
 ```
@@ -167,25 +179,98 @@ var after = new Y.DataTable({ ... });
 
 <p>
     `Y.DataTable` continues to serve the role of namespace as well, and now
-    you'll find all the classes that support or enhance DataTable inside, such
+    you'll find all the classes that support or enhance DataTable here, such
     as `Y.DataTable.Base`, `Y.DataTable.Sortable`, and `Y.DataTable.BodyView`.
     The notable exception is `Y.Plugin.DataTableDataSource`, which hasn't yet
     been migrated over to the new world order (expect that in 3.6.0).
 </p>
 
 <p>
-    You'll see more about this below, when we talk about some of the
-    <a href="#newconcepts">new concepts</a> used in DataTable.
+    You'll see more about this in the next article as well, when we talk about
+    some of DataTable's new concepts.
 </p>
+
+<h3>Features as Class Extensions</h3>
+
+<p>
+    The 3.5.0 architecture marks a shift <em>away</em> from the plugin model
+    for DataTable.  Instead, we're putting features in class extensions, and
+    using the powerful
+    <a href="http://yuilibrary.com/yui/docs/api/classes/Base.html#method_mix">`Y.Base.mix()`</a>
+    method to augment these features into the DataTable class, creating a sort
+    of ad-hoc multiple inheritance model.
+</p>
+
+<p>
+    The two primary benefits this approach has are:
+</p>
+
+<ol>
+    <li>
+        The API for your DataTable and all its features is in one place, your
+        `Y.DataTable` instance.
+    </li>
+    <li>
+        Rather than having to explicitly build up your DataTable from the Base,
+        simply including the feature modules in your `use()` line adds support
+        for those features to the the `Y.DataTable` class.
+    </li>
+</ol>
+
+<p>
+    But what if you have a couple DataTables on the page, and you don't want
+    all of them sortable or scrollable, etc.?
+</p>
+
+<p>
+    To keep features from leaking between DataTable instances, each feature
+    includes a behavioral trigger, which is responsible for activating the
+    feature for that particular instance.  Usually the trigger is a
+    configuration attribute, such as "scrollable", but it might also look for a
+    trigger in your column configurations such as "sortable" or "width".
+</p>
+
+```
+// By including feature modules, Y.DataTable can use the features
+YUI().use('datatable-sort', 'datatable-scroll', function (Y) {
+
+var table = new Y.DataTable({
+    data: ...,
+
+    columns: [
+        // column.sortable is one way to trigger
+        // the ability to sort by header cell clicks
+        { key: 'partnum', label: 'Part #', sortable: true },
+        { key: 'desc', label: 'Part', sortable: true },
+        { key: 'cost', label: 'Cost' }
+    ],
+
+    // vertical scrolling rows activated by setting scrollable and height
+    scrollable: 'y',
+    height: '350px'
+}).render('#here-and-now');
+
+});
+```
 
 <h3>Now With More MVC!</h3>
 
 <p>
-    DataTable now uses the App framework components Model, ModelList, and View
-    to manage its data and rendering needs.  Recordset and Record are still
-    supported components separate from DataTable in 3.5.0, but may be
-    deprecated in the future so we can focus on a single family of components
-    for data representation in YUI.
+    DataTable resembles a small app more than a simple Widget. It manages
+    collections of data, column and instance configurations, renders distinctly
+    different content into multiple areas (including the `<table>`,
+    `<thead>`, and `<tbody>`, to name the most obvious), and is responsible for
+    keeping all of these pieces in sync.  And adding features only increases
+    the list of moving parts.
+</p>
+
+<p>
+    So it seemed appropriate that DataTable should use the App framework
+    components since that's what they're for.  In 3.5.0, DataTable now
+    uses Model, ModelList, and View to manage its data and rendering needs.
+    Recordset and Record are still supported components, separate from
+    DataTable in 3.5.0, but may be deprecated in the future so we can focus on
+    a single family of components for data representation in YUI.
 </p>
 
 <h4>Models for Data</h4>
@@ -205,8 +290,8 @@ var after = new Y.DataTable({ ... });
         and reuse them across components makes for a more stable codebase
     </li>
     <li>
-        familiar APIs between components makes each an easy gateway to the
-        others
+        familiar APIs between components makes the library as a whole easier
+        to use
     </li>
 </ul>
 
@@ -309,7 +394,7 @@ var table = new Y.DataTable({
 <h4>Views for Rendering</h4>
 
 <p>
-    In keeping with the notion of configurable data storage, DataTable also
+    In keeping with the notion of configurable data storage, DataTable similarly
     delegates its rendering algorithms to View classes.  In 3.5.0, the basic,
     featureless DataTable has attributes `headerView`, `bodyView`, and
     `footerView`.  By default, `footerView` is unset, but `headerView` is set
@@ -362,9 +447,13 @@ var table = new Y.DataTable({
 }).render('#over-there');
 ```
 
-<h3>Features as Class Extensions</h3>
-
 <h3>New Rendering Algorithm</h3>
+
+<p>
+    The last thing we'll cover in this article is DataTable's new default
+    rendering algorithm.
+</p>
+
 
 
 Rendering events
