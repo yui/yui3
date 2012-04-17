@@ -8,8 +8,8 @@ export NODE_PATH=$nodePath
 
 wait
 
-npm i request
+npm i request yuitest
 
 wait
 
-yuitest ../tests/cli/run.js
+../../../node_modules/.bin/yuitest ../tests/cli/run.js

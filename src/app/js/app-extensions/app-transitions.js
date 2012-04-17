@@ -146,6 +146,10 @@ AppTransitions.prototype = {
     Sets which view is active/visible for the application. This will set the
     app's `activeView` attribute to the specified `view`.
 
+    The `view` will be "attached" to this app, meaning it will be both rendered
+    into this app's `viewContainer` node and all of its events will bubble to
+    the app. The previous `activeView` will be "detached" from this app.
+
     When a string-name is provided for a view which has been registered on this
     app's `views` object, the referenced metadata will be used and the
     `activeView` will be set to either a preserved view instance, or a new
@@ -158,18 +162,19 @@ AppTransitions.prototype = {
 
     @example
         var app = new Y.App({
-            transitions: true,
-
             views: {
-                users: {
+                usersView: {
                     // Imagine that `Y.UsersView` has been defined.
                     type: Y.UsersView
                 }
-            }
+            },
+
+            transitions: true,
+            users      : new Y.ModelList()
         });
 
         app.route('/users/', function () {
-            this.showView('users');
+            this.showView('usersView', {users: this.get('users')});
         });
 
         app.render();
@@ -178,26 +183,35 @@ AppTransitions.prototype = {
 
     @method showView
     @param {String|View} view The name of a view defined in the `views` object,
-        or a view instance.
+        or a view instance which should become this app's `activeView`.
     @param {Object} [config] Optional configuration to use when creating a new
-        view instance.
+        view instance. This config object can also be used to update an existing
+        or preserved view's attributes when `options.update` is `true`.
     @param {Object} [options] Optional object containing any of the following
         properties:
       @param {Function} [options.callback] Optional callback function to call
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the `view` should be
         prepended instead of appended to the `viewContainer`.
+      @param {Boolean} [options.render] Whether the `view` should be rendered.
+        **Note:** If no value is specified, a view instance will only be
+        rendered if it's newly created by this method.
       @param {Boolean|String} [options.transition] Optional transition override.
         A transition can be specified which will override the default, or
         `false` for no transition.
+      @param {Boolean} [options.update=false] Whether an existing view should
+        have its attributes updated by passing the `config` object to its
+        `setAttrs()` method. **Note:** This option does not have an effect if
+        the `view` instance is created as a result of calling this method.
     @param {Function} [callback] Optional callback Function to call after the
         new `activeView` is ready to use. **Note:** this will override
-        `options.callback`. The function will be passed the following:
+        `options.callback` and it can be specified as either the third or fourth
+        argument. The function will be passed the following:
       @param {View} callback.view A reference to the new `activeView`.
     @chainable
-    @see App.Base.showView()
+    @since 3.5.0
     **/
     // Does not override `showView()` but does use `options.transitions`.
 
@@ -213,6 +227,7 @@ AppTransitions.prototype = {
     @param {Boolean|Object} transitions The new `transitions` attribute value.
     @return {Mixed} The processed value which represents the new state.
     @protected
+    @see App.Base.showView()
     @since 3.5.0
     **/
     _setTransitions: function (transitions) {

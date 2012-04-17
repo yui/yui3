@@ -1,6 +1,13 @@
 YUI Core Change History
 =======================
 
+3.6.0
+-----
+
+* Added a `Y.UA.compareVersions()` function for performing simple version number
+  comparisons using version-safe logic rather than numerical logic.
+
+
 3.5.0
 -----
 

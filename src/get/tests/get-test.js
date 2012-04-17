@@ -13,11 +13,11 @@ YUI.add('get-test', function (Y) {
             // True if this browser should call an onFailure callback on a link
             // that 404s. Currently only Firefox 9+ and WebKit 535.24+ (Chrome
             // 19) support this.
-            cssFailure: ua.gecko >= 9 || (ua.webkit >= 535.24 && !(ua.chrome && ua.chrome <=18)),
+            cssFailure: ua.gecko >= 9 || (ua.compareVersions(ua.webkit, 535.24) >= 0 && !(ua.chrome && ua.chrome <= 18)),
 
             // True if this browser should call an onFailure callback on a
             // script that 404s.
-            jsFailure: !((ua.ie && ua.ie < 9) || (ua.opera && ua.opera < 11.6) || (ua.webkit && ua.webkit < 530.17))
+            jsFailure: !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0))
         };
 
     function areObjectsReallyEqual(o1, o2, msg) {

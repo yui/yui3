@@ -8,6 +8,7 @@
  * @param {Object} actual The actual value that caused the assertion to fail.
  * @namespace Test 
  * @extends AssertionError
+ * @module test
  * @class ComparisonFailure
  * @constructor
  */ 

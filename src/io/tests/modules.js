@@ -39,4 +39,5 @@ var testModules = {
 
 if (typeof exports !== 'undefined') {
     module.exports = testModules;
+    delete testModules['transport-tests']; //Remove non Nodejs Tests
 }
