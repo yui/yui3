@@ -24,7 +24,7 @@ YUI({
 { 
     Y.namespace("example.test");
     
-    var suite = new Y.Test.Suite("Y.NumericAxis"),
+    var suite = new Y.Test.Suite("Y.NumericAxisMaxTests"),
     
     AxisTestTemplate = function(cfg, globalCfg)
     {
@@ -529,7 +529,7 @@ YUI({
     r.render('#testLogger');
 
     //run the tests
-    Y.Test.Runner.setName("Y.NumericAxis");
+    Y.Test.Runner.setName("Y.NumericAxisMaxTests");
     Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
