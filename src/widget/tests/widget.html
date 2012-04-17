@@ -7,29 +7,29 @@
     <!--script src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui.js"></script-->
 
     <style type="text/css">
-        #console .yui3-console-entry {
+        #testConsole .yui3-console-entry {
             padding:2px;
             margin:0px;
             min-height:0;
         }
         
-        #console .yui3-console-entry-fail .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-fail .yui3-console-entry-cat {
             background-color:red;
         }
 
-        #console .yui3-console-entry-pass .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-pass .yui3-console-entry-cat {
             background-color:green;
         }
 
-        #console .yui3-console-entry-perf .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-perf .yui3-console-entry-cat {
             background-color:blue;
         }
         
-        #console .yui3-console-entry-content {
+        #testConsole .yui3-console-entry-content {
             font-family:monospace;
         }
 
-        #console .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-cat {
             padding:0;
             height:10px;
             width:10px;
@@ -40,7 +40,7 @@
             *zoom:1;
         }
 
-        #console {
+        #testConsole {
             position:static;
         }
         
@@ -89,7 +89,8 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
 
-        var yeti = Y.config.win && Y.config.win.$yetify;
+        var yeti = Y.config.win && Y.config.win.$yetify,
+            testConsole;
 
         // Extended Widget
         function MyWidget() {
@@ -120,8 +121,8 @@
                     "testFocusOnChildFocus" : yeti && Y.UA.gecko,
                     "testFocusOnBoundingBox" : yeti && Y.UA.gecko,
                     "testMultiWidgetFocus" :  yeti && Y.UA.gecko,
-                    "testWidgetOnFocus" :  yeti && Y.UA.gecko
-                    
+                    "testWidgetOnFocus" :  yeti && Y.UA.gecko,
+                    "testDetachFocusOnLastWidgetDestroy" : (testConsole !== undefined) // Can't test this if there are other Widget on the page
                 }
             },
 
@@ -137,7 +138,7 @@
                 Y.Assert.isFunction(w.render);
                 Y.Assert.isFunction(w.renderUI);
                 Y.Assert.isFunction(w.bindUI);
-                Y.Assert.isFunction(w.syncUI);               
+                Y.Assert.isFunction(w.syncUI);
                 Y.Assert.isFunction(w.init);
                 Y.Assert.isFunction(w.destroy);
                 Y.Assert.isFunction(w.get);
@@ -854,6 +855,28 @@
                 widget.destroy(true);
 
                 Y.Assert.isTrue(gotFocus, "widget.on('focus') wasn't invoked");
+            },
+            
+            "testDetachFocusOnLastWidgetDestroy" : function() {
+                var w1 = this.createWidget({
+                    id : "foo",
+                    render: true
+                });
+
+                var w2 = this.createWidget({
+                   id : "bar",
+                   render: true
+                });
+
+                Y.Assert.areEqual(2, Y.Widget._hDocFocus.listeners);
+                
+                w1.destroy();
+                
+                Y.Assert.areEqual(1, Y.Widget._hDocFocus.listeners);
+                
+                w2.destroy();
+
+                Y.Assert.isNull(Y.Widget._hDocFocus);
             },
 
             "testToString" : function() {
@@ -2295,13 +2318,13 @@
         Y.Test.Runner.once("complete", function() {
             Y.one("#automationmsg").addClass("msg-hidden");
 
-            var console, runButton = Y.one("#btnRun");
+            var runButton = Y.one("#btnRun");
 
             runButton.set("value", "Run Tests"); 
             runButton.set("disabled", false).on("click", function() {
-                if (!console) {
-                    console = new Y.Console({
-                        id:"console",
+                if (!testConsole) {
+                    testConsole = new Y.Console({
+                        id:"testConsole",
                         width:"100%",
                         height:"90%",
                         verbose : false,
