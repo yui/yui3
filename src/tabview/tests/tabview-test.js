@@ -73,12 +73,37 @@ YUI.add('tabview-test', function(Y) {
 
         },
 
-        'should set the label': function() {
+        'should set the content': function() {
             var tab = new Y.Tab();
             tab.set('content', 'new content');
             Y.Assert.areEqual('new content', tab.get('content'));
             Y.Assert.areEqual('new content', tab.get('panelNode').get('text'));
 
+        }
+    })); 
+
+    Y.Test.Runner.add(new Y.Test.Case({
+        name: 'Y.Tab Content Events',
+
+        'should preserve existing event listeners': function() {
+            var pass = false,
+                node = Y.one('#foo3 p'),
+                tabs = new Y.TabView({srcNode: '#demo-tab-content'});
+
+            node.on('click', function() {
+            console.log('click');
+                pass = true;
+            });
+
+            //node.simulate('click');
+            Y.Event.simulate(node._node, 'click');
+            Y.Assert.isTrue(pass);
+            pass = false;
+
+            tabs.render();
+            console.log(tabs.item(0).get('panelNode'));
+            Y.Event.simulate(node._node, 'click');
+            Y.Assert.isTrue(pass);
         }
     })); 
 }, '@VERSION@' ,{requires:['tabview', 'test']});
