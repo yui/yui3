@@ -528,13 +528,3 @@ The basic version of the <a href="../io/index.html">IO Utility</a> (`io-base`) u
 <p>
 The IO Utility also supports cross domain requests through the `io-xdr` module. However, there are specific trust requirements as described in the documentation for the <a href="../io/index.html#xdr">IO Utility</a>. The `io-xdr` submodule may be a better choice than the Get Utility for cross-domain communication if the service you are accessing can be configured to trust the server that is hosting your application.
 </p>
-
-<h2>Known Issues</h2>
-
-<ul>
-    <li>
-        <p>
-        A bug in YUI 3.5.0's Get Utility may cause CSS requests to hang in WebKit versions between 535.3 and 535.9 (inclusive). The next release of YUI will include a fix for this issue.
-        </p>
-    </li>
-</ul>
