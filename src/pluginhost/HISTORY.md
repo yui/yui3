@@ -1,6 +1,12 @@
 Plugin Host Change History
 ==========================
 
+3.6.0
+-----
+
+  * Allow for non-base/non-attribute based plugins, by not assuming setAttrs or destroy exist
+    on the plugin.
+
 3.5.0
 -----
 

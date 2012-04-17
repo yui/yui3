@@ -371,7 +371,33 @@
 
                     h1.unplug(PluginOne);
                 },
-                
+
+                testPlugSameNonAttrPluginTwice : function() {
+                    var h1 = new Host();
+
+                    var NonAttrPlugin = function(cfg) {
+                        this.a = cfg.a;
+                    };
+                    NonAttrPlugin.NS = "nonAttrPlugin";
+                    NonAttrPlugin.prototype.getA = function() {
+                        return this.a;
+                    };
+
+                    h1.plug(NonAttrPlugin, {a:10});
+                    Y.Assert.areEqual(10, h1.nonAttrPlugin.getA());
+
+                    var orig = h1.nonAttrPlugin;
+
+                    h1.plug(NonAttrPlugin, {a:20});
+                    Y.Assert.areEqual(10, h1.nonAttrPlugin.getA());
+
+                    Y.Assert.isTrue(h1.nonAttrPlugin === orig, "Expected the same plugin instance");
+
+                    h1.unplug(NonAttrPlugin);
+
+                    Y.Assert.isFalse("nonAttrPlugin" in h1, "Didn't expect nonAttrPlugin namespace to still exist");
+                },
+
                 testPluginHostReference : function() {
 
                     var h1 = new Host();
