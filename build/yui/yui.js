@@ -6629,17 +6629,9 @@ Y.Loader.prototype = {
             };
         }
 
-        if (o.skinnable) {
-            overrides = this.skin.overrides;
-            if (overrides && overrides[name]) {
-                for (j = 0; j < overrides[name].length; j++) {
-                    skinname = this._addSkin(overrides[name][j], name);
-                    o.requires.unshift(skinname);
-                }
-            } else {
-                skinname = this._addSkin(this.skin.defaultSkin, name);
-                o.requires.unshift(skinname);
-            }
+        if (o.skinnable && o.ext) {
+            skinname = this._addSkin(this.skin.defaultSkin, name);
+            o.requires.unshift(skinname);
         }
 
         o.requires = this.filterRequires(o.requires) || [];
