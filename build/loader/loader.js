@@ -2378,6 +2378,10 @@ Y.Loader.prototype = {
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
+        if (self.skin.overrides) { 
+            self.resetModules();
+        }
+
         if (calc) {
             self.calculate();
         }
