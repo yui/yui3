@@ -5680,6 +5680,8 @@ if (!YUI.Env[Y.version]) {
 }
 
 
+/*jslint forin: true */
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * information for the version of the library in use, and will automatically pull in
@@ -6119,6 +6121,7 @@ Y.Loader = function(o) {
     * Should Loader fetch scripts in `async`, defaults to `true`
     * @property async
     */
+
     self.async = true;
 
     self._inspectPage();
@@ -6134,6 +6137,12 @@ Y.Loader = function(o) {
     if (Y.config.tests) {
         self.testresults = Y.config.tests;
     }
+    
+    /*
+    if (self.ignoreRegistered) {
+        self.loaded = {};
+    }
+    */
 
     /**
      * List of rollup files found in the library metadata
@@ -6200,9 +6209,36 @@ Y.Loader = function(o) {
      */
     //self.results = {};
 
+    if (self.ignoreRegistered) {
+        //Clear inpage already processed modules.
+        self.resetModules();
+    }
+
 };
 
 Y.Loader.prototype = {
+    resetModules: function() {
+        var self = this;
+        oeach(self.moduleInfo, function(mod) {
+            var name = mod.name,
+                details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);
+
+            if (details) {
+                self.moduleInfo[name]._reset = true;
+                self.moduleInfo[name].requires = details.requires || [];
+                self.moduleInfo[name].optional = details.optional || [];
+                self.moduleInfo[name].supersedes = details.supercedes || [];
+            }
+
+            if (mod.defaults) {
+                oeach(mod.defaults, function(val, key) {
+                    if (mod[key]) {
+                        mod[key] = mod.defaults[key];
+                    }
+                });
+            }
+        });
+    },
     /**
     Regex that matches a CSS URL. Used to guess the file type when it's not
     specified.
@@ -6621,8 +6657,15 @@ Y.Loader.prototype = {
         this.moduleInfo[name] = o;
 
         o.requires = o.requires || [];
+        if (!o.defaults) {
+            o.defaults = {
+                requires: o.requires ? [].concat(o.requires) : null,
+                supersedes: o.supersedes ? [].concat(o.supersedes) : null,
+                optional: o.optional ? [].concat(o.optional) : null
+            };
+        }
 
-        if (o.skinnable) {
+        if (o.skinnable && o.ext) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -6946,7 +6989,6 @@ Y.Loader.prototype = {
 
         // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
 
-        // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
             //Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
@@ -7942,6 +7984,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
+
+        if (self.skin.overrides) { 
+            self.resetModules();
+        }
 
         if (calc) {
             self.calculate();
