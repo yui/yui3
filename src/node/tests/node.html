@@ -1008,9 +1008,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(mask.offsetWidth, doc.get('docWidth'), 'get("docWidth")');
             mask.className = '';
         },
-        /*
-        This test is breaking in CI, I tried to fix it but I'm not sure what it's
-        actually trying to do. -- davglass 04/18/2012
 
         test_refresh: function() {
             var node = Y.one('#test-nodes'),
@@ -1024,7 +1021,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             ArrayAssert.itemsAreEqual( node.one('li'), nodelist, "Y.one('#test-node').all('li')");
         },
-        */
+
         test_one: function() {
             var node = Y.DOM.byId('test:colon');
             Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
