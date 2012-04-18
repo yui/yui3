@@ -16,6 +16,7 @@ YUI.add('loader-tests', function(Y) {
         },
         'test: empty skin overrides': function() {
             var loader = new Y.Loader({
+                ignoreRegistered: true,
                 root: '',
                 base: '',
                 combine: true,
