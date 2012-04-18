@@ -4,6 +4,10 @@ YUI Core Change History
 3.6.0
 -----
 
+* Changed the default `throwFail` behavior to act like it sounds, see ticket #2531679
+    If `throwFail` is `true` (default) we will not wrap modules or the use callback in 
+    a try catch. If it's `false`, they will be wrapped (the old behavior).
+
 * Added a `Y.UA.compareVersions()` function for performing simple version number
   comparisons using version-safe logic rather than numerical logic.
 

@@ -38,6 +38,9 @@ YUI.add('core-tests', function(Y) {
 
         name: "Core tests",
         _should: {
+            error: {
+                test_attach_error: true 
+            },
             ignore: {
                 'getLocation() should return the location object': Y.UA.nodejs,
                 'getLocation() should return `undefined` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)) //If there is a window object, ignore too
@@ -376,10 +379,30 @@ YUI.add('core-tests', function(Y) {
 
         },
         test_attach_error: function() {
+            /*
+                As of 3.6.0 this should now throw an error as the default
+                setting throwFail: false will supress the error #2531679
+            */
             var Assert = Y.Assert;
             YUI.add('attach-error', function() { Y.push(); });
 
             YUI({
+                errorFn: function(str) {
+                    Assert.isTrue(str.indexOf('attach-error') > -1, 'Failed to fire errorFn on attach error');
+                    return true;
+                }
+            }).use('attach-error');
+        },
+        test_attach_error_silent: function() {
+            /*
+                As of 3.6.0 this should NOT throw an error as
+                setting throwFail: false will supress the error #2531679
+            */
+            var Assert = Y.Assert;
+            YUI.add('attach-error', function() { Y.push(); });
+
+            YUI({
+                throwFail: false,
                 errorFn: function(str) {
                     Assert.isTrue(str.indexOf('attach-error') > -1, 'Failed to fire errorFn on attach error');
                     return true;
