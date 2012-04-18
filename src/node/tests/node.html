@@ -950,8 +950,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
         test_elements: function() {
             var elements = Y.one('#test-form').get('elements');
-
-            ArrayAssert.itemsAreEqual(Y.DOM.byId('test-form').elements, elements._nodes, "Y.one('#test-form').get('elements')");
+            Assert.areEqual(Y.DOM.byId('test-form').elements.length, elements.size());
         },
 
         test_toFrag: function() {
@@ -1007,19 +1006,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(mask.offsetHeight, doc.get('docHeight'), 'get("docHeight")');
             Assert.areEqual(mask.offsetWidth, doc.get('docWidth'), 'get("docWidth")');
             mask.className = '';
-        },
-
-        test_refresh: function() {
-            var node = Y.one('#test-nodes'),
-                nodelist = node.all('li');
-
-            nodelist.item(1).remove();
-            ArrayAssert.itemsAreEqual( node.one('li'), nodelist, "Y.one('#test-node').all('li')");
-            
-            nodelist = Y.all('#test-nodes li');
-            nodelist.item(1).remove();
-
-            ArrayAssert.itemsAreEqual( node.one('li'), nodelist, "Y.one('#test-node').all('li')");
         },
 
         test_one: function() {
