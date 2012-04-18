@@ -693,7 +693,9 @@ with any configuration info required for the module.
                         }
                     }
 
-                    if (mod.fn) {
+                    if (mod.fn && Y.config.throwFail) {
+                        mod.fn(Y, name);
+                    } else if (mod.fn) {
                         try {
                             mod.fn(Y, name);
                         } catch (e) {
@@ -830,6 +832,11 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
+            if (this.config.throwFail) {
+                callback(this, response);
+                return;
+            }
+
             try {
                 callback(this, response);
             } catch (e) {
