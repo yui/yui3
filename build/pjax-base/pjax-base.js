@@ -234,7 +234,7 @@ PjaxBase.prototype = {
 
         // When navigating to the same URL as the current URL, behave like a
         // browser and replace the history entry instead of creating a new one.
-        Lang.isValue(options.replace) || (options.replace = url === currentURL);
+        'replace' in options || (options.replace = url === currentURL);
 
         // The `navigate` event will only fire and therefore enhance the
         // navigation to the new URL in HTML5 history enabled browsers or when
