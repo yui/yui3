@@ -264,6 +264,19 @@ YUI.add('nodelist-test', function(Y) {
 
             ArrayAssert.itemsAreEqual(nodes, nodelist1._nodes);
             ArrayAssert.itemsAreEqual(spliced1, spliced2);
+        },
+
+        'should refresh the nodelist': function() {
+            var node = Y.one('#test-nodes'),
+                nodelist = node.all('li'),
+                size = nodelist.size();
+
+            nodelist.item(1).remove();
+            ArrayAssert.itemsAreEqual(size, nodelist.size(), 'remove item shouldnt affect size');
+            
+            nodelist.refresh();
+            ArrayAssert.itemsAreEqual(node.all('li').size(), nodelist.size(), 'refresh should affect size');
+            ArrayAssert.itemsAreEqual(node.all('li')._nodes, nodelist._nodes, 'refreshed nodelist should be in sync');
         }
     }));
 }, '@VERSION@' ,{requires:['node-base']});
