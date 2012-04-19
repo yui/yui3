@@ -84,6 +84,17 @@
 	        "useModules": ["datatable-scroll"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-masterdetail",
+            "displayName": "Master - Detail Linked Datatables",
+            "modules": ["datatable"],
+            "description": "Linked DataTables with master-detail",
+            "useModules": ["datatable"],
+
+            "hideTableOfContents": true
         }
+
     ]
 }

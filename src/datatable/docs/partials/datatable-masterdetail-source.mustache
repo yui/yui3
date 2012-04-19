@@ -1,0 +1,94 @@
+<div id="template" class="yui3-skin-sam dt-example">
+    Select an animal category below;
+    <div id="mtable"></div>
+
+    <div id="chars" style="display:none;">
+        <br/>Characters of the <span id="acategory"></span> category include;
+        <div id="dtable"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+YUI().use(   "datatable", function (Y) {
+
+    var animal_data = [
+        {  aname: 'Lions',  chars:[ 'Leo', 'Simba', 'Elsa', 'Cowardly Lion' ] },
+        {  aname: 'Amoebas' },
+        {  aname: 'Tigers', chars:[ 'Shere Kahn', 'Tigger', 'Tony' ] },
+        {  aname: 'Mules',  chars:[ 'Francis' ] },
+        {  aname: 'Bears',  chars:[ 'Smokey', 'Reginald', 'Winnie-the-Pooh', 'Baloo', 'Yogi' ] },
+        {  aname: 'Snakes', chars:[ 'Kaa', 'The Serpent', 'Nagini' ] }
+    ];
+
+
+//
+//   Create the "parent" DataTable
+//
+    var dt_master = new Y.DataTable({
+        columns : [
+            { key:'aname',  label:'Type' },
+            { name:'nchars', label:'No. of Chars',
+              formatter: function(o){
+                   return ( o.data.chars ) ? o.data.chars.length : 0;
+                 }
+            }
+        ],
+        data : animal_data,
+        width: 200
+    }).render("#mtable");
+
+    dt_master.get("srcNode").all("tbody tr").setStyle("cursor","pointer");
+
+//
+//   Create the characters DataTable and render it (it is hidden initially)
+//
+    var dt_detail = new Y.DataTable({
+        columns : [
+            { name:'aname', label:'Animal Category',
+              formatter:function(o){ return parent_rec.get('aname');}},
+            { key:'char_name', label:'Character' }
+         ],
+        data : [],
+        strings : {
+            emptyMessage : "No critter characters were found!"
+        },
+        width: 350
+    }).render("#dtable");
+
+
+//
+//  Setup TR click delegation on the master table
+//
+    var parent_rec = null,
+        parent_tr = null;
+
+    dt_master.delegate( "click", function(e){
+        var tr = e.currentTarget,
+            rec = this.getRecord(tr);
+
+        if ( parent_tr ) parent_tr.all("td").toggleClass("myhilite");
+
+        if (!parent_tr)  Y.one("#chars").show();
+
+        parent_rec = rec;
+        parent_tr  = tr;
+
+        tr.all("td").toggleClass("myhilite");
+
+        Y.one("#acategory").setContent(rec.get('aname'));   // update text preceding table
+
+        var detail_data =[];
+        if ( rec.get('chars') ) {
+            Y.each( rec.get('chars'), function(item){
+                detail_data.push( {char_name:item});
+            });
+        }
+
+    // Reset the detail DT, and if records exist,
+    //       update the details DT "data" with records
+        dt_detail.set('data', detail_data );
+
+    },"tr", dt_master );
+
+});
+</script>
