@@ -6,6 +6,10 @@
     .yui3-skin-sam .yui3-datatable td.myhilite {
         background-color: #C0ffc0;
     }
+
+    #mtable tbody tr {
+        cursor: pointer;
+    }
 </style>
 
 <div class="intro">
@@ -60,11 +64,6 @@ var dt_master = new Y.DataTable({
     data : animal_data,
     width: 200
 }).render("#mtable");
-
-// also ... after rendering, let's turn the "cursor" on for this DT so the
-//    user knows a click will do something ...
-
-dt_master.get("srcNode").all("tbody tr").setStyle("cursor","pointer");
 ```
 <h3>The "Detail" table</h3>
 
@@ -78,12 +77,14 @@ var dt_detail = new Y.DataTable({
     columns : [
         { name:'aname', label:'Animal Category',
           formatter: function(o){
-             return parent_rec.get('aname');
-           }
-         },
+                // just retrieve the current Master record and return the "aname" column
+                var parent_rec = dt_master.getRecord( dt_master.get('currentTR') );
+                return parent_rec.get('aname');
+            }
+        },
         { key:'char_name', label:'Character' }
      ],
-    data : [],      // the data is empty initially
+    data : [],
     strings : {
         emptyMessage : "No critter characters were found!"
     },
@@ -99,23 +100,28 @@ var dt_detail = new Y.DataTable({
      We also handle TR highlighting for the clicked row by toggling a background color within this delegate handler.
 </p>
 ```
-var parent_rec = null,      // local variable to hold the last clicked Master Record
-    parent_tr = null;       //   ... and the last clicked Master TR
-
 dt_master.delegate( "click", function(e){
-    var tr = e.currentTarget,
-        rec = this.getRecord(tr);
 
-    // turn off highlighting of last clicked row
-    if ( parent_tr ) parent_tr.all("td").toggleClass("myhilite");
+    var tr = e.currentTarget,       // this is the Node for the TR clicked ...
+        rec = this.getRecord(tr);   // returns the current Record for the clicked TR
 
-    if (!parent_tr)  Y.one("#chars").show();    // on first click, display the Detail DT
+//
+//  This if-block does double duty,
+//      (a) it tracks the first click to toggle the "details" DIV to visible
+//  and (b) it un-hightlights the last TR clicked
+//
+    if ( !this.get('currentTR') )
+        Y.one("#chars").show();     // first time thru ... display the Detail DT DIV that was hidden
+    else
+        this.get('currentTR').all("td").removeClass("myhilite");
 
-    parent_rec = rec;
-    parent_tr  = tr;
+//
+//  After unhighlighting, now set the currentTR, and highlight the clicked TR,
+//    also update the heading in "acategory"
+//
+    this.set('currentTR',tr);
 
-    // turn on highlighting of the current row
-    tr.all("td").toggleClass("myhilite");
+    tr.all("td").addClass("myhilite");
 
     Y.one("#acategory").setContent(rec.get('aname'));   // update text preceding table
 
@@ -153,6 +159,10 @@ setup to set the `data` attribute.
 .yui3-skin-sam .yui3-datatable td.myhilite {
     background-color: #C0ffc0;
 }
+
+#mtable tbody tr {      /*  Turn on cursor to show TR's are selectable on Master DataTable only  */
+    cursor: pointer;
+}
 ```
 
 <h3>HTML Markup</h3>
@@ -160,6 +170,7 @@ setup to set the `data` attribute.
 Select an animal category below;
 <div id="mtable"></div>
 
+<!-- This is the HTML section for the "Details" markup ... NOTE: it is hidden initially !!   -->
 <div id="chars" style="display:none;">
     <br/>Characters of the <span id="acategory"></span> category include;
     <div id="dtable"></div>
@@ -168,100 +179,5 @@ Select an animal category below;
 
 <h3>Javascript</h3>
 ```
-YUI().use( "datatable", function (Y) {
-
-    var animal_data = [
-        {  aname: 'Lions',  chars:[ 'Leo', 'Simba', 'Elsa', 'Cowardly Lion' ] },
-        {  aname: 'Amoebas' },
-        {  aname: 'Tigers', chars:[ 'Shere Kahn', 'Tigger', 'Tony' ] },
-        {  aname: 'Mules',  chars:[ 'Francis' ] },
-        {  aname: 'Bears',  chars:[ 'Smokey', 'Reginald', 'Winnie-the-Pooh', 'Baloo', 'Yogi' ] },
-        {  aname: 'Snakes', chars:[ 'Kaa', 'The Serpent', 'Nagini' ] }
-    ];
-
-
-//
-//   Create the "parent" DataTable
-//
-    var dt_master = new Y.DataTable({
-        columns : [
-            { key:'aname',  label:'Type' },
-            { name:'nchars', label:'No. of Chars',
-              formatter: function(o){
-                   return ( o.data.chars ) ? o.data.chars.length : 0;
-                 }
-            }
-        ],
-        data : animal_data,
-        width: 200
-    }).render("#mtable");
-
-    dt_master.get("srcNode").all("tbody tr").setStyle("cursor","pointer");
-
-//
-//   Create the characters DataTable and render it (it is hidden initially)
-//
-    var dt_detail = new Y.DataTable({
-        columns : [
-            { name:'aname', label:'Animal Category',
-              formatter: function(o){
-                 return parent_rec.get('aname');
-                 }
-             },
-            { key:'char_name', label:'Character',
-              formatter: function(o){
-                return o.value;
-                }
-             }
-         ],
-        data : [],    // the data is empty initially
-        strings : {
-            emptyMessage : "No critter characters were found!"
-        },
-        width: 350
-    }).render("#dtable");
-
-
-//
-//  Setup TR click delegation on the master table
-//
-    var parent_rec = null,
-        parent_tr = null;
-
-    dt_master.delegate( "click", function(e){
-        var tr = e.currentTarget,
-            rec = this.getRecord(tr);
-
-        // turn off highlighting of last clicked row
-        if ( parent_tr ) parent_tr.all("td").toggleClass("myhilite");
-
-        if (!parent_tr)  Y.one("#chars").show();    // on first click, display the Detail DT
-
-        parent_rec = rec;
-        parent_tr  = tr;
-
-        // turn on highlighting of the current row
-        tr.all("td").toggleClass("myhilite");
-
-        Y.one("#acategory").setContent(rec.get('aname'));   // update text preceding table
-
-    //
-    //  Collect the "chars" member of the parent record into an array of objects
-    //    with property name "aname"
-    //
-        var detail_data =[];
-        if ( rec.get('chars') ) {
-            Y.each( rec.get('chars'), function(item){
-                detail_data.push( {char_name:item});
-            });
-        }
-    //
-    //  Set the "detail_data" to the dt_detail DataTable
-    //   ( it automatically refreshes )
-    //
-        dt_detail.set('data', detail_data );
-
-    },"tr", dt_master );
-
-});
+{{>datatable-masterdetail-source}}
 ```
