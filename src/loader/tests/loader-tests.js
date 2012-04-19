@@ -1,6 +1,7 @@
 YUI.add('loader-tests', function(Y) {
 
     var Assert = Y.Assert,
+        ArrayAssert = Y.ArrayAssert,
         testY = YUI(),
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
@@ -1331,6 +1332,69 @@ YUI.add('loader-tests', function(Y) {
 
             Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
             Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+
+        },
+        'test: cascade dependencies': function() {
+            //helper method to get a named module from the meta
+            var getMod = function(name) {
+                var ret;
+                Y.Array.each(out.jsMods, function(item) {
+                    if (item.name === name) {
+                        ret = item;
+                    }
+                });
+                return ret;
+            };
+
+            var loader = new Y.Loader({
+                requires: [ 'cas1', 'cas2' ],
+                groups: {
+                    casgroup1: {
+                        requires: [ 'cas2mod1' ],
+                        modules: {
+                            cas1mod1: {
+                                fullpath: 'cas1mod1.js'
+                            }
+                        }
+                    },
+                    casgroup2: {
+                        modules: {
+                            cas2mod1: {
+                                fullpath: 'cas2mod1.js'
+                            }
+                        }
+                    }
+                },
+                modules: {
+                    cas1: {
+                        fullpath: 'cas1.js',
+                        requires: [ 'cas3' ]
+                    },
+                    cas2: {
+                        fullpath: 'cas2.js',
+                        requires: [ 'cas4' ]
+                    },
+                    cas3: {
+                        fullpath: 'cas3.js'
+                    },
+                    cas4: {
+                        fullpath: 'cas4.js'
+                    }
+                },
+                require: [ 'cas1mod1' ]
+            });
+
+            var out = loader.resolve(true);
+            
+            Assert.areEqual(6, out.js.length, 'Failed to resolve all cascaded modules');
+            
+            ArrayAssert.itemsAreEqual(getMod('cas1').requires.sort(), ['cas1', 'cas2', 'cas3'], 'cas1');
+            ArrayAssert.itemsAreEqual(getMod('cas2').requires.sort(), ['cas1', 'cas2', 'cas4'], 'cas2');
+            ArrayAssert.itemsAreEqual(getMod('cas3').requires.sort(), ['cas1', 'cas2'], 'cas3');
+            ArrayAssert.itemsAreEqual(getMod('cas4').requires.sort(), ['cas1', 'cas2'], 'cas4');
+            
+            ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
+            ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
 
         }
     });
