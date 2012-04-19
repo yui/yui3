@@ -5919,7 +5919,7 @@ Y.Loader = function(o) {
     */
     self.comboSep = '&';
     /**
-     * Max url length for combo urls.  The default is 2048. This is the URL
+     * Max url length for combo urls.  The default is 1024. This is the URL
      * limit for the Yahoo! hosted combo servers.  If consuming
      * a different combo service that has a different URL limit
      * it is possible to override this default by supplying
