@@ -6,10 +6,6 @@ App Framework Change History
 
 ### Router
 
-* The `req` object passed to routes now has a `pendingRoutes` property that
-  indicates the number of matching routes after the current route in the
-  dispatch chain. [Steven Olmsted]
-
 * Added a `removeQuery()` function that accepts a URL and returns it without a
   query string (if it had one). [Pat Cavit]
 
