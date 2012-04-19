@@ -34,6 +34,7 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
+
             Assert.areEqual(0, out.css.length, 'Failed to override CSS skin files');
             Assert.isTrue((out.js[0].indexOf('widget-base') > -1), 'Failed to find the widget-base module in the JS');
             Assert.isTrue((out.js[0].indexOf('widget-stack') > -1), 'Failed to find the widget-stack module in the JS');
@@ -1137,6 +1138,200 @@ YUI.add('loader-tests', function(Y) {
 
             var loader = new Y.Loader({});
             Assert.isTrue(loader.async, 'Failed to set default async config option');
+        },
+        'test: 2 loader instances with different skins': function() {
+ 
+            var groups = {
+                'foo': {
+                    ext: false,
+                    combine: true,
+                    comboBase: '/comboBase?',
+                    modules: {
+                        'bar': {
+                            'requires': [
+                                'overlay',
+                                'widget-autohide',
+                                'array-extras',
+                                'node-menunav',
+                                'node-focusmanager'
+                            ]
+                        },
+                        skinnable: true
+                    },
+                    root: ''
+                }
+            };
+
+            var loader1, loader2, loader1resolved, loader2resolved;
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                  defaultSkin: 'sam'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                  defaultSkin: 'night'
+                }
+            });
+
+            loader2resolved = loader2.resolve(true);
+
+            Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
+            Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+        },
+        'test: multiple loaders, different resolve order': function() {
+            var loader1, loader2, loader1resolved, loader2resolved,
+                groups = {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                };
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                  defaultSkin: 'sam'
+                }
+            });
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'night'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+            loader2resolved = loader2.resolve(true); 
+        
+            Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
+            Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+        },
+        'test: 2 loader instanced without shared module data': function() {
+
+            var loader1, loader2, loader1resolved, loader2resolved;
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                },
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'sam'
+                }
+            });
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                },
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'night'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+            loader2resolved = loader2.resolve(true);
+
+            Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
+            Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+
         }
     });
 
