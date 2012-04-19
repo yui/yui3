@@ -6655,13 +6655,34 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, when,
+            overrides, skinname, when, g,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
         
         this.moduleInfo[name] = o;
 
         o.requires = o.requires || [];
+        
+        /*
+        Only allowing the cascade of requires information, since
+        optional and supersedes are far more fine grained than
+        a blanket requires is.
+        */
+        if (this.requires) {
+            for (i = 0; i < this.requires.length; i++) {
+                o.requires.push(this.requires[i]);
+            }
+        }
+        if (o.group && this.groups && this.groups[o.group]) {
+            g = this.groups[o.group];
+            if (g.requires) {
+                for (i = 0; i < g.requires.length; i++) {
+                    o.requires.push(g.requires[i]);
+                }
+            }
+        }
+
+
         if (!o.defaults) {
             o.defaults = {
                 requires: o.requires ? [].concat(o.requires) : null,
