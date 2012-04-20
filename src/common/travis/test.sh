@@ -13,5 +13,9 @@ echo "YUITest: ${yuitest}"
 
 echo "Running Tests.."
 
-cd $root
-$yuitest ${root}/src/io/tests/cli/run.js ${root}/src/loader/tests/cli/loader.js
+tests=`${root}/src/common/travis/gettests.js ${root}`
+
+echo "Tests: ${tests}"
+
+cd ${root}
+${yuitest} ${tests}

@@ -1,0 +1,6 @@
+{
+    "tests": [
+        "/src/io/tests/cli/run.js",
+        "/src/loader/tests/cli/loader.js"
+    ]
+}
