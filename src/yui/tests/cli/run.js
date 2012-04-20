@@ -53,11 +53,11 @@ YUI({
             fullpath: 'object-test.js',
             requires: ['test']
         },
+        */
         'lang-test': {
             fullpath: 'lang-test.js',
             requires: ['test']
         },
-        */
         'seed-tests': {
             fullpath: './seed-tests.js',
             requires: [ 'test']
