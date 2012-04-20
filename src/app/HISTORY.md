@@ -15,6 +15,12 @@ App Framework Change History
   indicates the number of matching routes after the current route in the
   dispatch chain. [Steven Olmsted]
 
+
+3.5.1
+-----
+
+### Router
+
 * Added a `removeQuery()` function that accepts a URL and returns it without a
   query string (if it had one). [Pat Cavit]
 
