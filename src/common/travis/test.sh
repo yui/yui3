@@ -14,12 +14,4 @@ echo "YUITest: ${yuitest}"
 echo "Running Tests.."
 
 cd $root
-wait
-echo "Running IO Tests"
-cd src/io;
-make test
-wait
-cd $root
-echo "Running Loader Tests"
-cd src/loader;
-make test
+$yuitest ${root}/src/io/tests/cli/run.js ${root}/src/loader/tests/cli/loader.js
