@@ -44,11 +44,11 @@ YUI({
 
 
     var modules = {
-    /*
         'array-test': {
             fullpath: 'array-test.js',
             requires: ['test']
         },
+        /*
         'object-test': {
             fullpath: 'object-test.js',
             requires: ['test']

@@ -4,9 +4,16 @@ var Assert = Y.Assert,
 
     suite = new Y.Test.Suite('Y.Array (core)');
 
+Y.Test.Runner._ignoreEmpty = true;
+
 suite.add(new Y.Test.Case({
     name: 'Array tests',
-
+    _should: {
+        ignore: {
+            testArray: Y.UA.nodejs,
+            testTest_dom: Y.UA.nodejs
+        }
+    },
     testArray: function () {
         var els   = document.getElementById('tester').getElementsByTagName('span'),
             nodes = Y.all('#tester span');
@@ -41,7 +48,7 @@ suite.add(new Y.Test.Case({
 
     testDedupe: function () {
         var array = ['foo', 'bar', 'foo', 'baz', 'foo', 'baz'];
-
+        Assert.isArray(Y.Array.dedupe(array));
         Y.ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], Y.Array.dedupe(array));
     },
 
@@ -81,6 +88,8 @@ suite.add(new Y.Test.Case({
     },
 
     testHash: function () {
+        Assert.isObject(Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']));
+
         Y.ObjectAssert.areEqual(
             {a: 'foo', b: 'bar', c: true},
             Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']),
@@ -147,6 +156,7 @@ suite.add(new Y.Test.Case({
 
     testNumericSort: function () {
         // the stock sort behavior should fail to produce desired result
+
         Y.ArrayAssert.itemsAreEqual([1, 100, 2, 3], [3, 100, 1, 2].sort());
         Y.ArrayAssert.itemsAreEqual([1, 2, 3, 100], [3, 100, 1, 2].sort(Y.Array.numericSort));
     },
@@ -161,7 +171,9 @@ suite.add(new Y.Test.Case({
 
             Assert.areSame(data[index], v, 'the current item should be passed to the callback');
             Assert.areSame(data, array, 'the array should be passed to the callback');
-            Assert.areSame(Y.config.win, this, 'the `this` object should default to the global object');
+            if (!Y.UA.nodejs) {
+                Assert.areSame(Y.config.win, this, 'the `this` object should default to the global object');
+            }
 
             if (v === 2) { return 'truthy'; }
             if (v === 3) { Y.fail('truthy value did not stop iteration'); }
@@ -189,7 +201,6 @@ suite.add(new Y.Test.Case({
 
     testTest: function () {
         Y.Assert.areEqual(0, Y.Array.test(function(){})); // functions should fail
-        Y.Assert.areEqual(0, Y.Array.test(Y.one('#tester'))); // single nodes should fail
         Y.Assert.areEqual(0, Y.Array.test('string'));
         Y.Assert.areEqual(0, Y.Array.test(12345));
         Y.Assert.areEqual(0, Y.Array.test(null));
@@ -200,6 +211,9 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual(1, Y.Array.test([]));
         // Y.Assert.areEqual(1, Y.Array.test('string'.toCharArray()));
         Y.Assert.areEqual(2, Y.Array.test(arguments), 'arguments should be arraylike'); // arguments collection
+    },
+    testTest_dom: function() {
+        Y.Assert.areEqual(0, Y.Array.test(Y.one('#tester'))); // single nodes should fail
         Y.Assert.areEqual(2, Y.Array.test(document.getElementsByTagName('span')), 'htmlelement collections should be arraylike'); // HTMLElementsCollection
 
         // @TODO figure out what to do with this.  A NodeList does not contain a collection of Nodes; it
