@@ -17,8 +17,7 @@
     },
     "devDependencies": {
         "yuitest": "*",
-        "yuidocjs": "*",
-        "selleck": "*"
+        "yuidocjs": "*"
     },
     "licenses":[
         {
