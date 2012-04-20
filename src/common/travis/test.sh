@@ -25,12 +25,3 @@ echo "Tests: ${tests}"
 
 cd ${root}
 ${yuitest} ${tests}
-
-RETVAL=$?
-[ $RETVAL -ne 0 ] && exit 1
-
-# Skipping, this seems to hang Travis
-#echo "Starting Grover Tests"
-#
-#cd ${root}
-#${grover} -i src/common/node/batch.js
