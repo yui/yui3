@@ -1,11 +1,9 @@
 #!/bin/bash
 
-echo "Starting: `pwd`"
+echo "Starting install: `pwd`"
 
-cd "$(dirname "$0")"
+cd ./build-npm;
 
-echo "cd : `pwd`"
-
-cd ../../../build-npm;
+echo "NPM Build Dir: `pwd`"
 wait
 npm install
