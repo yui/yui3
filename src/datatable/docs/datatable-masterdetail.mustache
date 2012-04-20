@@ -3,7 +3,7 @@
         text-align: center;
     }
 
-    .yui3-skin-sam .yui3-datatable td.myhilite {
+    .yui3-skin-sam .yui3-datatable tr.myhilite td {
         background-color: #C0ffc0;
     }
 
@@ -65,6 +65,25 @@ var dt_master = new Y.DataTable({
     width: 200
 }).render("#mtable");
 ```
+
+<p>Since we will need a click handler to track TR clicks on the Master DataTable, we will define a new
+attribute `selectedRow` and setup a TR click handler that assigns this attribute on a click.</p>
+
+```
+//
+// Add a new attribute to track the last TR clicked,
+//   this is used in the details DT formatter below and later
+//   in the row click handler `delegate` for row highlighting
+//
+//  also setup a click listener to update the "selectedRow" attribute on TR clicks
+//
+dt_master.addAttr("selectedRow", { value: null });
+
+dt_master.delegate('click', function (e) {
+    this.set('selectedRow', e.currentTarget);
+ }, 'tr', dt_master);
+```
+
 <h3>The "Detail" table</h3>
 
 <p>We can proceed with defining the linked child table and rendering it initially because we have hidden
@@ -77,8 +96,8 @@ var dt_detail = new Y.DataTable({
     columns : [
         { name:'aname', label:'Animal Category',
           formatter: function(o){
-                // just retrieve the current Master record and return the "aname" column
-                var parent_rec = dt_master.getRecord( dt_master.get('currentTR') );
+                // just retrieve the selected Master record and return the "aname" column
+                var parent_rec = dt_master.getRecord( dt_master.get('selectedRow') );
                 return parent_rec.get('aname');
             }
         },
@@ -92,36 +111,35 @@ var dt_detail = new Y.DataTable({
 }).render("#dtable");
 ```
 
-<h2>The Click Handler</h2>
+<h2>The selectedRow Listener</h2>
 <p>
    The "glue" between the master and detail DataTables is the delegated click handler on
-   the Master DataTable's rows.   When a row is clicked, then underlying record from the Master table is
+   the Master DataTable's rows -- or more specifically, the `selectedRowChange` event handler.   When a row is clicked and the
+    `selectedRow` is changed, then underlying record from the Master table is
    determined and the Detail DataTable is populated with the corresponding `chars` data from the clicked record.
      We also handle TR highlighting for the clicked row by toggling a background color within this delegate handler.
 </p>
 ```
-dt_master.delegate( "click", function(e){
+dt_master.after('selectedRowChange', function (e) {
 
-    var tr = e.currentTarget,       // this is the Node for the TR clicked ...
+    var tr = e.newVal,              // this is the Node for the TR clicked ...
+        last_tr = e.prevVal,        //    "    "    "   "   the last TR clicked ...
         rec = this.getRecord(tr);   // returns the current Record for the clicked TR
-
 //
 //  This if-block does double duty,
 //      (a) it tracks the first click to toggle the "details" DIV to visible
 //  and (b) it un-hightlights the last TR clicked
 //
-    if ( !this.get('currentTR') )
+    if ( !last_tr )
         Y.one("#chars").show();     // first time thru ... display the Detail DT DIV that was hidden
     else
-        this.get('currentTR').all("td").removeClass("myhilite");
+        last_tr.removeClass("myhilite");
 
 //
-//  After unhighlighting, now set the currentTR, and highlight the clicked TR,
+//  After unhighlighting, now highlight the current TR,
 //    also update the heading in "acategory"
 //
-    this.set('currentTR',tr);
-
-    tr.all("td").addClass("myhilite");
+    tr.addClass("myhilite");
 
     Y.one("#acategory").setContent(rec.get('aname'));   // update text preceding table
 
@@ -140,10 +158,9 @@ dt_master.delegate( "click", function(e){
 //   ( it automatically refreshes )
 //
     dt_detail.set('data', detail_data );
-
-},"tr", dt_master );
+});
 ```
-<p>Note: In the case of the use of remote data via DataSource, the TR click handler could be modified to
+<p>Note: In the case of the use of remote data via DataSource, the `selectedRowChange` handler could be modified to
 generate a `sendRequest` or similar remote call for the Detail data and the `on:success` handler could be
 setup to set the `data` attribute.
 </p>

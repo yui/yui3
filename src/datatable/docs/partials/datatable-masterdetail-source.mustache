@@ -20,7 +20,6 @@ YUI().use(   "datatable", function (Y) {
         {  aname: 'Snakes', chars:[ 'Kaa', 'The Serpent', 'Nagini' ] }
     ];
 
-
 //
 //   Create the "parent" DataTable
 //
@@ -42,7 +41,13 @@ YUI().use(   "datatable", function (Y) {
 //   this is used in the details DT formatter below and later
 //   in the row click handler `delegate` for row highlighting
 //
-    dt_master.addAttr("currentTR", { value: null });
+//  also setup a click listener to update the "selectedRow" attribute on TR clicks
+//
+    dt_master.addAttr("selectedRow", { value: null });
+
+    dt_master.delegate('click', function (e) {
+        this.set('selectedRow', e.currentTarget);
+     }, 'tr', dt_master);
 
 //
 //   Create the characters DataTable and render it (it is hidden initially)
@@ -51,8 +56,8 @@ YUI().use(   "datatable", function (Y) {
         columns : [
             { name:'aname', label:'Animal Category',
               formatter: function(o){
-                    // just retrieve the current Master record and return the "aname" column
-                    var parent_rec = dt_master.getRecord( dt_master.get('currentTR') );
+                    // just retrieve the selected Master record and return the "aname" column
+                    var parent_rec = dt_master.getRecord( dt_master.get('selectedRow') );
                     return parent_rec.get('aname');
                 }
             },
@@ -66,30 +71,28 @@ YUI().use(   "datatable", function (Y) {
     }).render("#dtable");
 
 //
-//  Setup TR click delegation on the master table
+//  Setup a listener to the Master "selectedRowChange" event (i.e. after a row click)
 //
-    dt_master.delegate( "click", function(e){
+    dt_master.after('selectedRowChange', function (e) {
 
-        var tr = e.currentTarget,       // this is the Node for the TR clicked ...
+        var tr = e.newVal,              // this is the Node for the TR clicked ...
+            last_tr = e.prevVal,        //    "    "    "   "   the last TR clicked ...
             rec = this.getRecord(tr);   // returns the current Record for the clicked TR
-
     //
     //  This if-block does double duty,
     //      (a) it tracks the first click to toggle the "details" DIV to visible
     //  and (b) it un-hightlights the last TR clicked
     //
-        if ( !this.get('currentTR') )
+        if ( !last_tr )
             Y.one("#chars").show();     // first time thru ... display the Detail DT DIV that was hidden
         else
-            this.get('currentTR').all("td").removeClass("myhilite");
+            last_tr.removeClass("myhilite");
 
     //
-    //  After unhighlighting, now set the currentTR, and highlight the clicked TR,
+    //  After unhighlighting, now highlight the current TR,
     //    also update the heading in "acategory"
     //
-        this.set('currentTR',tr);
-
-        tr.all("td").addClass("myhilite");
+        tr.addClass("myhilite");
 
         Y.one("#acategory").setContent(rec.get('aname'));   // update text preceding table
 
@@ -108,8 +111,7 @@ YUI().use(   "datatable", function (Y) {
     //   ( it automatically refreshes )
     //
         dt_detail.set('data', detail_data );
-
-    },"tr", dt_master );
+    });
 
 });
 </script>
