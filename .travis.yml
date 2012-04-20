@@ -11,4 +11,5 @@ install:
     - ./src/common/travis/install.sh
 script:
     - ./src/common/travis/test.sh
-
+notifications:
+    irc: "irc.freenode.org:#yuidev"
