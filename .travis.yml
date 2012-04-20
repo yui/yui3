@@ -11,3 +11,7 @@ install:
     - ./src/common/travis/install.sh
 script:
     - ./src/common/travis/test.sh
+notifications:
+    email:
+        - davglass@gmail.com
+        - davglass@yahoo-inc.com
