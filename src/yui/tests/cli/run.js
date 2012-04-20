@@ -44,20 +44,6 @@ YUI({
 
 
     var modules = {
-        'array-test': {
-            fullpath: 'array-test.js',
-            requires: ['test']
-        },
-        /*
-        'object-test': {
-            fullpath: 'object-test.js',
-            requires: ['test']
-        },
-        */
-        'lang-test': {
-            fullpath: 'lang-test.js',
-            requires: ['test']
-        },
         'seed-tests': {
             fullpath: './seed-tests.js',
             requires: [ 'test']
@@ -86,6 +72,20 @@ YUI({
         'ua-tests': {
             fullpath: './ua-tests.js',
             requires: [ 'ua-data', 'ua-yui-data', 'test' ]
+        },
+        'array-test': {
+            fullpath: 'array-test.js',
+            requires: ['test']
+        },
+        
+        'object-test': {
+            fullpath: 'object-test.js',
+            requires: ['test']
+        },
+        
+        'lang-test': {
+            fullpath: 'lang-test.js',
+            requires: ['test']
         }
     };
 
