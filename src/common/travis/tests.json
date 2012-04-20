@@ -1,6 +1,7 @@
 {
     "tests": [
         "/src/io/tests/cli/run.js",
-        "/src/loader/tests/cli/loader.js"
+        "/src/loader/tests/cli/loader.js",
+        "/src/yui-throttle/tests/cli/run.js"
     ]
 }
