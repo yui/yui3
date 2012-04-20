@@ -5,5 +5,10 @@ node_js:
 branches:
     only:
         - travis
-
+script:
+    - ./src/common/travis/before.sh
+install:
+    - ./src/common/travis/install.sh
+test:
+    - ./src/common/travis/test.sh
 

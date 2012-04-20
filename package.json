@@ -15,9 +15,6 @@
     "dependencies": {
         "request": "2.9.100"
     },
-    "scripts": {
-        "test": "./src/common/node/run_tests.sh"
-    },
     "devDependencies": {
         "yuitest": "*",
         "yuidocjs": "*",
