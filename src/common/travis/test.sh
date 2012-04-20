@@ -15,6 +15,9 @@ echo "Running Tests.."
 
 tests=`${root}/src/common/travis/gettests.js ${root}`
 
+RETVAL=$?
+[ $RETVAL -ne 0 ] && exit 1
+
 echo "Tests: ${tests}"
 
 cd ${root}
