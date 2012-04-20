@@ -5,7 +5,7 @@ node_js:
 branches:
     only:
         - travis
-script:
+before_install:
     - ./src/common/travis/before.sh
 install:
     - ./src/common/travis/install.sh
