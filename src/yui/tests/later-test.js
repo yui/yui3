@@ -3,6 +3,12 @@ YUI.add('later-test', function(Y) {
     Y.SeedTests.add(new Y.Test.Case({
 
             name: "Later tests",
+            _should: {
+                ignore: {
+                    "test later(10, null, callback)": (Y.UA.nodejs ? true : false),
+                    "test later(10, null, callback, null, true)": (Y.UA.nodejs ? true : false)
+                }
+            },
 
             "test later(10, null, callback)": function() {
                 var test = this,

@@ -6,8 +6,8 @@ YUI.add('ua-tests', function(Y) {
         name: 'Node.js',
 
         'test: Node.js': function() {
-            Assert.areEqual(6, Y.UA.nodejs, 'Failed to get Node.js process version from process object');
-            Assert.areEqual('Win32', Y.UA.os, 'Failed to get Node.js process platform from process object');
+            Assert.areEqual(0.615, Y.UA.nodejs, 'Failed to get Node.js process version from process object');
+            Assert.areEqual(process.platform, Y.UA.os, 'Failed to get Node.js process platform from process object');
         }
     }));
 
