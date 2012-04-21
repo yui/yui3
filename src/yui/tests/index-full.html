@@ -12,6 +12,7 @@
 <script type="text/javascript">
 
 YUI.GlobalConfig = {
+    globalConfig: true,
     modules: {
         'global-mod': {
             fullpath: './assets/globalmod.js'
@@ -34,6 +35,9 @@ YUI({
         'seed-tests': {
             fullpath: './seed-tests.js',
             requires: [ 'test']
+        },
+        'browser-tests': {
+            fullpath: 'browser-tests.js'
         },
         'core-tests': {
             fullpath: './core-tests.js',

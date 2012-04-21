@@ -41,6 +41,7 @@ without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript">
 
 YUI.GlobalConfig = {
+    globalConfig: true,
     modules: {
         'global-mod': {
             fullpath: './assets/globalmod.js'
@@ -99,6 +100,9 @@ YUI({
 
         'later-test': {
             fullpath: 'later-test.js'
+        },
+        'browser-tests': {
+            fullpath: 'browser-tests.js'
         },
 
         'namespace-test': {

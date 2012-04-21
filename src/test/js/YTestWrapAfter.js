@@ -17,6 +17,13 @@ Y.ArrayAssert = Y.Test.ArrayAssert;
 Y.DateAssert = Y.Test.DateAssert;
 Y.Test.ResultsFormat = Y.Test.TestFormat;
 
+var itemsAreEqual = Y.Test.ArrayAssert.itemsAreEqual;
+
+Y.Test.ArrayAssert.itemsAreEqual = function(expected, actual, message) {
+    return itemsAreEqual.call(this, Y.Array(expected), Y.Array(actual), message);
+};
+
+
 /**
  * Asserts that a given condition is true. If not, then a Y.Assert.Error object is thrown
  * and the test fails.

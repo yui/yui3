@@ -1,6 +1,7 @@
 YUI.add('loader-tests', function(Y) {
 
     var Assert = Y.Assert,
+        ArrayAssert = Y.ArrayAssert,
         testY = YUI(),
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
@@ -13,6 +14,31 @@ YUI.add('loader-tests', function(Y) {
                 'test_failure': !jsFailure,
                 'test_timeout': !jsFailure
             }
+        },
+        'test: empty skin overrides': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                root: '',
+                base: '',
+                combine: true,
+                comboBase: '/combo?',
+                //So we can get a single response back to test against
+                maxURLLength: 5000,
+                skin: {
+                    overrides: {
+                        'widget-base': [],
+                        'widget-stack': [],
+                        'overlay': []
+                    }
+                },
+                require: [ 'widget-base', 'widget-stack', 'overlay' ]
+            });
+
+            var out = loader.resolve(true);
+
+            Assert.areEqual(0, out.css.length, 'Failed to override CSS skin files');
+            Assert.isTrue((out.js[0].indexOf('widget-base') > -1), 'Failed to find the widget-base module in the JS');
+            Assert.isTrue((out.js[0].indexOf('widget-stack') > -1), 'Failed to find the widget-stack module in the JS');
         },
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({
@@ -667,15 +693,15 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(1, out.css.length, 'Only one CSS module URL expected');
         },
         test_combine_no_core_top_level: function() {
-            /*
-                I don't like this test, it's not EXACTLY how I would do it..
-                This assumes that anything in the top level modules config
-                is to not obey the combine parameter unless the module def
-                contains the combine flag.
-
-                Maybe this needs a new flag for combineTopLevel: true or something
-                so that Loader can work stand-alone.
-            */
+            //
+            //    I don't like this test, it's not EXACTLY how I would do it..
+            //    This assumes that anything in the top level modules config
+            //    is to not obey the combine parameter unless the module def
+            //    contains the combine flag.
+            //
+            //    Maybe this needs a new flag for combineTopLevel: true or something
+            //    so that Loader can work stand-alone.
+            //
             var loader = new Y.Loader({
                 root: '',
                 base: '',
@@ -876,9 +902,9 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-
-            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[0], 'Failed to combine plugin with module path CSS');
-            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[1], 'Failed to combine plugin with module path CSS');
+            
+            Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
+            Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
         },
         test_fullpath_with_combine: function() {
@@ -1113,6 +1139,263 @@ YUI.add('loader-tests', function(Y) {
 
             var loader = new Y.Loader({});
             Assert.isTrue(loader.async, 'Failed to set default async config option');
+        },
+        'test: 2 loader instances with different skins': function() {
+ 
+            var groups = {
+                'foo': {
+                    ext: false,
+                    combine: true,
+                    comboBase: '/comboBase?',
+                    modules: {
+                        'bar': {
+                            'requires': [
+                                'overlay',
+                                'widget-autohide',
+                                'array-extras',
+                                'node-menunav',
+                                'node-focusmanager'
+                            ]
+                        },
+                        skinnable: true
+                    },
+                    root: ''
+                }
+            };
+
+            var loader1, loader2, loader1resolved, loader2resolved;
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                  defaultSkin: 'sam'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                  defaultSkin: 'night'
+                }
+            });
+
+            loader2resolved = loader2.resolve(true);
+
+            Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
+            Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+        },
+        'test: multiple loaders, different resolve order': function() {
+            var loader1, loader2, loader1resolved, loader2resolved,
+                groups = {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                };
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                  defaultSkin: 'sam'
+                }
+            });
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'night'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+            loader2resolved = loader2.resolve(true); 
+        
+            Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
+            Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+        },
+        'test: 2 loader instanced without shared module data': function() {
+
+            var loader1, loader2, loader1resolved, loader2resolved;
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                },
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'sam'
+                }
+            });
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                },
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'night'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+            loader2resolved = loader2.resolve(true);
+
+            Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
+            Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
+
+        },
+        'test: cascade dependencies': function() {
+            //helper method to get a named module from the meta
+            var getMod = function(name) {
+                var ret;
+                Y.Array.each(out.jsMods, function(item) {
+                    if (item.name === name) {
+                        ret = item;
+                    }
+                });
+                return ret;
+            };
+
+            var loader = new Y.Loader({
+                requires: [ 'cas1', 'cas2' ],
+                groups: {
+                    casgroup1: {
+                        requires: [ 'cas2mod1' ],
+                        modules: {
+                            cas1mod1: {
+                                fullpath: 'cas1mod1.js'
+                            }
+                        }
+                    },
+                    casgroup2: {
+                        modules: {
+                            cas2mod1: {
+                                fullpath: 'cas2mod1.js'
+                            }
+                        }
+                    }
+                },
+                modules: {
+                    cas1: {
+                        fullpath: 'cas1.js',
+                        requires: [ 'cas3' ]
+                    },
+                    cas2: {
+                        fullpath: 'cas2.js',
+                        requires: [ 'cas4' ]
+                    },
+                    cas3: {
+                        fullpath: 'cas3.js'
+                    },
+                    cas4: {
+                        fullpath: 'cas4.js'
+                    }
+                },
+                require: [ 'cas1mod1' ]
+            });
+
+            var out = loader.resolve(true);
+            
+            Assert.areEqual(6, out.js.length, 'Failed to resolve all cascaded modules');
+            
+            ArrayAssert.itemsAreEqual(getMod('cas1').requires.sort(), ['cas1', 'cas2', 'cas3'], 'cas1');
+            ArrayAssert.itemsAreEqual(getMod('cas2').requires.sort(), ['cas1', 'cas2', 'cas4'], 'cas2');
+            ArrayAssert.itemsAreEqual(getMod('cas3').requires.sort(), ['cas1', 'cas2'], 'cas3');
+            ArrayAssert.itemsAreEqual(getMod('cas4').requires.sort(), ['cas1', 'cas2'], 'cas4');
+            
+            ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
+            ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
+
         }
     });
 

@@ -692,11 +692,15 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                        try {
-                            mod.fn(Y, name);
-                        } catch (e) {
-                            Y.error('Attach error: ' + name, e, name);
-                            return false;
+                            if (Y.config.throwFail) {
+                                mod.fn(Y, name);
+                            } else {
+                                try {
+                                    mod.fn(Y, name);
+                                } catch (e) {
+                                    Y.error('Attach error: ' + name, e, name);
+                                return false;
+                            }
                         }
                     }
 
@@ -827,10 +831,14 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
-            try {
+            if (this.config.throwFail) {
                 callback(this, response);
-            } catch (e) {
-                this.error('use callback error', e, args);
+            } else {
+                try {
+                    callback(this, response);
+                } catch (e) {
+                    this.error('use callback error', e, args);
+                }
             }
         }
     },
@@ -1138,7 +1146,7 @@ with any configuration info required for the module.
             ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        if (Y.config.throwFail && !ret) {
+        if (!ret) {
             throw (e || new Error(msg));
         } else {
             Y.message(msg, 'error', ''+src); // don't scrub this one
@@ -3296,6 +3304,20 @@ YUI.Env.parseUA = function(subUA) {
          */
         air: 0,
         /**
+         * PhantomJS version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property phantomjs
+         * @type float
+         */
+        phantomjs: 0,
+        /**
+         * Adobe AIR version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property air
+         * @type float
+         */
+        air: 0,
+        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -3437,6 +3459,13 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
+            
+            if (/PhantomJS/.test(ua)) {
+                m = ua.match(/PhantomJS\/([^\s]*)/);
+                if (m && m[1]) {
+                    o.phantomjs = numberify(m[1]);
+                }
+            }
 
             // Mobile browser check
             if (/ Mobile\//.test(ua) || (/iPad|iPod|iPhone/).test(ua)) {
@@ -3557,7 +3586,7 @@ YUI.Env.parseUA = function(subUA) {
             if (process.versions && process.versions.node) {
                 //NodeJS
                 o.os = process.platform;
-                o.nodejs = process.versions.node;
+                o.nodejs = numberify(process.versions.node);
             }
         }
 
@@ -5033,8 +5062,19 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// graphics-canvas-default
+// history-hash-ie
 add('load', '1', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
+});
+// graphics-canvas-default
+add('load', '2', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5046,7 +5086,7 @@ add('load', '1', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '2', {
+add('load', '3', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -5064,62 +5104,23 @@ add('load', '2', {
 }, 
     "trigger": "autocomplete-list"
 });
-// graphics-svg
-add('load', '3', {
-    "name": "graphics-svg", 
+// dd-gestures
+add('load', '4', {
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
 // editor-para-ie
-add('load', '4', {
+add('load', '5', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
-// graphics-vml-default
-add('load', '5', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
-});
-// graphics-svg-default
-add('load', '6', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// history-hash-ie
-add('load', '7', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // transition-timer
-add('load', '8', {
+add('load', '6', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5134,8 +5135,33 @@ add('load', '8', {
 }, 
     "trigger": "transition"
 });
-// dom-style-ie
+// graphics-svg-default
+add('load', '7', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+}, 
+    "trigger": "graphics"
+});
+// scrollview-base-ie
+add('load', '8', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
+});
+// widget-base-ie
 add('load', '9', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// dom-style-ie
+add('load', '10', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5166,7 +5192,7 @@ add('load', '9', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '10', {
+add('load', '11', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5175,12 +5201,6 @@ add('load', '10', {
     return ret;
 }, 
     "trigger": "selector"
-});
-// widget-base-ie
-add('load', '11', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -5191,19 +5211,28 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// dd-gestures
+// graphics-svg
 add('load', '13', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
-// scrollview-base-ie
+// graphics-vml-default
 add('load', '14', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
 });
 // app-transitions-native
 add('load', '15', {
@@ -5534,7 +5563,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.04.12-13-50',
+            GALLERY_VERSION = 'gallery-2012.04.18-20-14',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -5619,6 +5648,8 @@ if (!YUI.Env[Y.version]) {
 }
 
 
+/*jslint forin: true */
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * information for the version of the library in use, and will automatically pull in
@@ -5640,6 +5671,7 @@ var NOT_FOUND = {},
     CSS = 'css',
     JS = 'js',
     INTL = 'intl',
+    DEFAULT_SKIN = 'sam',
     VERSION = Y.version,
     ROOT_LANG = '',
     YObject = Y.Object,
@@ -5653,14 +5685,14 @@ var NOT_FOUND = {},
     modulekey,
     cache,
     _path = function(dir, file, type, nomin) {
-                        var path = dir + '/' + file;
-                        if (!nomin) {
-                            path += '-min';
-                        }
-                        path += '.' + (type || CSS);
+        var path = dir + '/' + file;
+        if (!nomin) {
+            path += '-min';
+        }
+        path += '.' + (type || CSS);
 
-                        return path;
-                    };
+        return path;
+    };
 
 /**
  * The component metadata is stored in Y.Env.meta.
@@ -5855,7 +5887,7 @@ Y.Loader = function(o) {
     */
     self.comboSep = '&';
     /**
-     * Max url length for combo urls.  The default is 2048. This is the URL
+     * Max url length for combo urls.  The default is 1024. This is the URL
      * limit for the Yahoo! hosted combo servers.  If consuming
      * a different combo service that has a different URL limit
      * it is possible to override this default by supplying
@@ -6058,6 +6090,7 @@ Y.Loader = function(o) {
     * Should Loader fetch scripts in `async`, defaults to `true`
     * @property async
     */
+
     self.async = true;
 
     self._inspectPage();
@@ -6073,6 +6106,12 @@ Y.Loader = function(o) {
     if (Y.config.tests) {
         self.testresults = Y.config.tests;
     }
+    
+    /*
+    if (self.ignoreRegistered) {
+        self.loaded = {};
+    }
+    */
 
     /**
      * List of rollup files found in the library metadata
@@ -6139,9 +6178,39 @@ Y.Loader = function(o) {
      */
     //self.results = {};
 
+    if (self.ignoreRegistered) {
+        //Clear inpage already processed modules.
+        self.resetModules();
+    }
+
 };
 
 Y.Loader.prototype = {
+    resetModules: function() {
+        var self = this;
+        oeach(self.moduleInfo, function(mod) {
+            var name = mod.name,
+                details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);
+
+            if (details) {
+                self.moduleInfo[name]._reset = true;
+                self.moduleInfo[name].requires = details.requires || [];
+                self.moduleInfo[name].optional = details.optional || [];
+                self.moduleInfo[name].supersedes = details.supercedes || [];
+            }
+
+            if (mod.defaults) {
+                oeach(mod.defaults, function(val, key) {
+                    if (mod[key]) {
+                        mod[key] = mod.defaults[key];
+                    }
+                });
+            }
+            if (mod.skinnable) {
+                self._addSkin(self.skin.defaultSkin, mod.name);
+            }
+        });
+    },
     /**
     Regex that matches a CSS URL. Used to guess the file type when it's not
     specified.
@@ -6385,6 +6454,7 @@ Y.Loader.prototype = {
                 mdef = info[mod];
                 pkg = mdef.pkg || mod;
                 nmod = {
+                    skin: true,
                     name: name,
                     group: mdef.group,
                     type: 'css',
@@ -6549,15 +6619,43 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, when,
+            overrides, skinname, when, g,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
         
         this.moduleInfo[name] = o;
 
         o.requires = o.requires || [];
+        
+        /*
+        Only allowing the cascade of requires information, since
+        optional and supersedes are far more fine grained than
+        a blanket requires is.
+        */
+        if (this.requires) {
+            for (i = 0; i < this.requires.length; i++) {
+                o.requires.push(this.requires[i]);
+            }
+        }
+        if (o.group && this.groups && this.groups[o.group]) {
+            g = this.groups[o.group];
+            if (g.requires) {
+                for (i = 0; i < g.requires.length; i++) {
+                    o.requires.push(g.requires[i]);
+                }
+            }
+        }
 
-        if (o.skinnable) {
+
+        if (!o.defaults) {
+            o.defaults = {
+                requires: o.requires ? [].concat(o.requires) : null,
+                supersedes: o.supersedes ? [].concat(o.supersedes) : null,
+                optional: o.optional ? [].concat(o.optional) : null
+            };
+        }
+
+        if (o.skinnable && o.ext) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -6863,7 +6961,7 @@ Y.Loader.prototype = {
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
-            hash;
+            hash, reparse;
 
         // console.log(name);
 
@@ -6877,9 +6975,11 @@ Y.Loader.prototype = {
         }
 
         // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
+        
+        //If a skin or a lang is different, reparse..
+        reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));
 
-        // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
+        if (mod.expanded && !reparse) {
             return mod.expanded;
         }
         
@@ -6898,6 +6998,7 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
         mod.langCache = this.lang;
+        mod.skinCache = this.skin.defaultSkin;
 
         for (i = 0; i < r.length; i++) {
             if (!hash[r[i]]) {
@@ -7615,10 +7716,10 @@ Y.Loader.prototype = {
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
         if (!skipcalc) {
-            this.calculate(o);
+            //this.calculate(o);
         }
 
-        var modules = this.resolve(),
+        var modules = this.resolve(!skipcalc),
             self = this, comp = 0, actions = 0;
 
         if (type) {
@@ -7848,6 +7949,10 @@ Y.Loader.prototype = {
             inserted = (self.ignoreRegistered) ? {} : self.inserted,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
+
+        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { 
+            self.resetModules();
+        }
 
         if (calc) {
             self.calculate();

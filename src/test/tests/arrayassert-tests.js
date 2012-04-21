@@ -244,6 +244,12 @@ YUI.add('arrayassert-tests', function(Y) {
 
         testArrayAgainstObject: function(){
             ArrayAssert.itemsAreEqual(this.testArray, {});
+        },
+        'test: Against a NodeList': function() {
+            var els = document.getElementsByTagName('div'),
+                els2 = document.getElementsByTagName('div');
+
+            ArrayAssert.itemsAreEqual(els, els2);
         }
     }));
 

@@ -23,7 +23,7 @@ YUITest.Array = Y.Array;
 YUITest.Util = {
     mix: Y.mix,
     JSON: Y.JSON
-}
+};
 
 /**
  * Simple custom event implementation.
@@ -3588,6 +3588,13 @@ Y.ObjectAssert = Y.Test.ObjectAssert;
 Y.ArrayAssert = Y.Test.ArrayAssert;
 Y.DateAssert = Y.Test.DateAssert;
 Y.Test.ResultsFormat = Y.Test.TestFormat;
+
+var itemsAreEqual = Y.Test.ArrayAssert.itemsAreEqual;
+
+Y.Test.ArrayAssert.itemsAreEqual = function(expected, actual, message) {
+    return itemsAreEqual.call(this, Y.Array(expected), Y.Array(actual), message);
+};
+
 
 /**
  * Asserts that a given condition is true. If not, then a Y.Assert.Error object is thrown

@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+    - 0.4
+    - 0.6
+branches:
+    only:
+        - master
+before_install:
+    - ./src/common/travis/before.sh
+install:
+    - ./src/common/travis/install.sh
+script:
+    - ./src/common/travis/test.sh
+notifications:
+    email:
+        - davglass@gmail.com
+        - davglass@yahoo-inc.com

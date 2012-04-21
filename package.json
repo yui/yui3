@@ -1,6 +1,6 @@
 {
     "name": "yui",
-    "version": "3.5.0pre",
+    "version": "3.6.0pre",
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "url" : "http://yuilibrary.com/projects/yui3/" },
@@ -14,6 +14,11 @@
     "main": "./index.js",
     "dependencies": {
         "request": "2.9.100"
+    },
+    "devDependencies": {
+        "yuitest": "*",
+        "yuidocjs": "*",
+        "grover": "*"
     },
     "licenses":[
         {
