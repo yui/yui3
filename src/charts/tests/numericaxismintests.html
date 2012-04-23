@@ -14,7 +14,6 @@
     </head>		
 <body class="yui3-skin-sam">
 <h3>Numeric Axis Minimum Tests</h3>
-<div id="mychart"></div>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>            
 YUI({
@@ -44,12 +43,15 @@ YUI({
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
+            Y.one("#testbed").remove(true);
         }
     });
     
