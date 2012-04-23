@@ -514,6 +514,15 @@ Y.UAData["YUI Internal"] = [
                         "os": "android",
                         "mobile": "chrome"
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.5.0 Safari/534.34",
+                "data": {
+                        "webkit": 534.34,
+                        "safari": 534.34,
+                        "os": "linux",
+                        "phantomjs": 1.5
+                }
         }
 ];
 });

@@ -480,7 +480,7 @@ YUI().use('datatable-base', function (Y) {
 
 ```
 function currency(o) {
-    return Y.DataType.number.format(o.value, {
+    return Y.DataType.Number.format(o.value, {
         prefix            : o.column.currencySymbol     || '$',
         decimalPlaces     : o.column.decimalPlaces      || 2,
         decimalSeparator  : o.column.decimalSeparator   || '.',

@@ -924,9 +924,11 @@ Y.extend(Widget, Y.Base, {
             mouseHandle = this._hDocMouseDown;
 
         if (focusHandle) {
-            if (focusHandle.listeners > 0) {
+            if (focusHandle.listeners) {
                 focusHandle.listeners--;
-            } else {
+            }
+
+            if (focusHandle.listeners === 0) {
                 focusHandle.detach();
                 Widget._hDocFocus = null;
             }

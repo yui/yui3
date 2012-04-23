@@ -363,8 +363,11 @@ onload = function() {
                     $('#test\\:colon', null, true),
                     "$('#test\\:colon', null, true)");
                 */
-            }
+            },
 
+            'should find all queries in group': function() {
+                Assert.areEqual(14, Y.Selector.query('input[type=foo], input[type=hidden], input[type=checkbox], input[type=radio], input[type=button], input[type=bar]').length);                
+            }
         });
 
         var simpleTest = new Y.Test.Case({

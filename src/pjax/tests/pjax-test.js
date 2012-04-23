@@ -213,9 +213,9 @@ suite.add(new Y.Test.Case({
             '`navigate` event should be preventable': !html5,
             '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
             '`navigate` event should not fire when a modifier key is pressed': !html5,
-            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5,
+            '`navigate` event should not fire for a hash URL that resolves to the current page': !html5 || Y.UA.phantomjs,
             '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5,
-            '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': !html5
+            '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': !html5 || Y.UA.phantomjs
         }
     },
 
@@ -464,7 +464,8 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5
+            '`navigate()` should load the specified URL and fire a `load` event': disableXHR || !html5,
+            '`navigate()` should normalize the specified URL': Y.UA.phantomjs
         },
 
         error: {

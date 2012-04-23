@@ -34,13 +34,29 @@ YUI.add('core-tests', function(Y) {
         };
     /* }}} */
 
+    YUI.GlobalConfig = YUI.GlobalConfig || {};
+    YUI.GlobalConfig.useSync = true;
+
+    var resolvePath = function(p) {
+        if (Y.UA.nodejs) {
+            var path = require('path');
+            p = path.join(__dirname, p);
+        }
+        return p;
+    };
+
     var testCore = new Y.Test.Case({
 
         name: "Core tests",
         _should: {
+            error: {
+                test_attach_error: true,
+                test_attach_error_errFn: true
+            },
             ignore: {
-                'getLocation() should return the location object': Y.UA.nodejs,
-                'getLocation() should return `undefined` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)) //If there is a window object, ignore too
+                'getLocation() should return the location object': (Y.UA.nodejs ? true : false),
+                'getLocation() should return `null` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)), //If there is a window object, ignore too
+                test_log_params: (typeof console == "undefined" || !console.info || Y.UA.nodejs)
             }
         },
 
@@ -106,8 +122,8 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areSame(Y.config.win.location, Y.getLocation(), 'Did not return Y.config.win.location.');
         },
 
-        'getLocation() should return `undefined` when executing in node.js': function () {
-            Y.Assert.isUndefined(Y.getLocation(), 'Did not return `undefined`');
+        'getLocation() should return `null` when executing in node.js': function () {
+            Y.Assert.isNull(Y.getLocation(), 'Did not return `null`');
         },
 
         test_cached_undefined_null: function() {
@@ -154,16 +170,16 @@ YUI.add('core-tests', function(Y) {
         },
         test_use_array: function() {
             var Assert = Y.Assert;
-            YUI().use(['dd', 'node'], function(Y) {
-                Assert.isObject(Y.DD, 'DD was not loaded');
-                Assert.isObject(Y.Node, 'Node was not loaded');
+            YUI().use(['yui-throttle', 'oop'], function(Y) {
+                Assert.isObject(Y.throttle, 'Throttle was not loaded');
+                Assert.isObject(Y.each, 'OOP was not loaded');
             });
         },
         test_use_strings: function() {
             var Assert = Y.Assert;
-            YUI().use('dd', 'node', function(Y) {
-                Assert.isObject(Y.DD, 'DD was not loaded');
-                Assert.isObject(Y.Node, 'Node was not loaded');
+            YUI().use('yui-throttle', 'oop', function(Y) {
+                Assert.isObject(Y.throttle, 'Throttle was not loaded');
+                Assert.isObject(Y.each, 'OOP was not loaded');
             });
         },
         test_one_submodule: function() {
@@ -173,22 +189,13 @@ YUI.add('core-tests', function(Y) {
                       'something':{
                           'submodules':{
                               'something1':{
-                                    fullpath: './assets/sub.js'
+                                    fullpath: resolvePath('./assets/sub.js')
                               }
                           }
                       }
                   }
             }).use('something1', function(Y) {
                 Assert.isTrue(Y.something1);
-            });
-        },
-        test_rollup_false: function() {
-            var Assert = Y.Assert;
-            YUI().use('dd', function(Y) {
-                Assert.isUndefined(Y.Env._attached.dd, 'DD Alias Module was attached');
-            });
-            YUI().use('node', function(Y) {
-                Assert.isUndefined(Y.Env._attached.node, 'Node Alias Module was attached');
             });
         },
         test_base_path: function() {
@@ -249,7 +256,7 @@ YUI.add('core-tests', function(Y) {
             YUI.applyConfig({
                 modules: {
                     davglass: {
-                        fullpath: './assets/davglass.js'
+                        fullpath: resolvePath('./assets/davglass.js')
                     }
                 }
             });
@@ -257,7 +264,7 @@ YUI.add('core-tests', function(Y) {
             YUI.applyConfig({
                 modules: {
                     foo: {
-                        fullpath: './assets/foo.js'
+                        fullpath: resolvePath('./assets/foo.js')
                     }
                 }
             });
@@ -302,7 +309,7 @@ YUI.add('core-tests', function(Y) {
             var Assert = Y.Assert,
                 test = this;
             
-            YUI().use('global-mod', function(Y) {
+            YUI({useSync: false }).use('global-mod', function(Y) {
                 test.resume(function() {
                     Assert.isTrue(Y.GlobalMod, 'Module in global config failed to load');
                 });
@@ -376,6 +383,10 @@ YUI.add('core-tests', function(Y) {
 
         },
         test_attach_error: function() {
+            //
+            //    As of 3.6.0 this should now throw an error as the default
+            //    setting throwFail: false will supress the error #2531679
+            //
             var Assert = Y.Assert;
             YUI.add('attach-error', function() { Y.push(); });
 
@@ -386,18 +397,38 @@ YUI.add('core-tests', function(Y) {
                 }
             }).use('attach-error');
         },
-        test_attach_after: function() {
+        test_attach_error_silent: function() {
+            //
+            //    As of 3.6.0 this should NOT throw an error as
+            //    setting throwFail: false will supress the error #2531679
+            //
             var Assert = Y.Assert;
-            YUI.add('after-test', function(Y) {
-                Y.afterTest = true; 
-                Assert.isObject(Y.Node, 'Node not loaded before this module');
-            }, '1.0.0', {
-                after: [ 'node' ]
-            });
+            YUI.add('attach-error', function() { Y.push(); });
 
-            YUI().use('after-test', function(Y2) {
-                Assert.isTrue(Y2.afterTest, 'after-test module was not loaded');
-            });
+            YUI({
+                throwFail: false,
+                errorFn: function(str) {
+                    Assert.isTrue(str.indexOf('attach-error') > -1, 'Failed to fire errorFn on attach error');
+                    return true;
+                }
+            }).use('attach-error');
+        },
+        test_attach_error_errFn: function() {
+            //
+            //    As of 3.6.0 this should throw an error as
+            //    setting throwFail: false will supress the error and
+            //    errorFn returns false see #2531679
+            //
+            var Assert = Y.Assert;
+            YUI.add('attach-error', function() { Y.push(); });
+
+            YUI({
+                throwFail: false,
+                errorFn: function(str) {
+                    Assert.isTrue(str.indexOf('attach-error') > -1, 'Failed to fire errorFn on attach error');
+                    return false;
+                }
+            }).use('attach-error');
         },
         test_dump_core: function() {
             var Assert = Y.Assert,
@@ -429,15 +460,15 @@ YUI.add('core-tests', function(Y) {
                 Assert = Y.Assert;
 
             YUI({
+                useSync: false,
                 modules: {
                     mod: {
-                        fullpath: './assets/mod.js'
+                        fullpath: resolvePath('./assets/mod.js')
                     }
                 }
             }).use('mod', function(Y) {
                 test.resume(function() {
                     Assert.isTrue(Y.MOD, 'Failed to load external mod');
-                    Assert.isObject(Y.Node, 'Failed to load Node requirement');
                     Assert.isObject(Y.YQL, 'Failed to load YQL requirement');
                 });
             });

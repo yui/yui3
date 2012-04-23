@@ -359,6 +359,9 @@ suite.add( new Y.Test.Case({
     name: "Attributes",
 
     _should: {
+        ignore: {
+            "test clickableRail": Y.UA.phantomjs
+        },
         fail: {
             // TODO This is a bug. invalid construction value should fallback
             // to specified attribute default
@@ -645,7 +648,11 @@ suite.add( new Y.Test.Case({
 
 suite.add( new Y.Test.Case({
     name: "Mouse",
-
+    _should: {
+        ignore: {
+            "clicking on the rail should move the thumb": Y.UA.phantomjs
+        }
+    },
     setUp: function () {
         Y.one("body").append('<div id="testbed"></div>');
     },

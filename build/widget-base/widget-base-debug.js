@@ -926,9 +926,11 @@ Y.extend(Widget, Y.Base, {
             mouseHandle = this._hDocMouseDown;
 
         if (focusHandle) {
-            if (focusHandle.listeners > 0) {
+            if (focusHandle.listeners) {
                 focusHandle.listeners--;
-            } else {
+            }
+
+            if (focusHandle.listeners === 0) {
                 focusHandle.detach();
                 Widget._hDocFocus = null;
             }
@@ -1240,4 +1242,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});

@@ -80,7 +80,10 @@ YUI.add('pluginhost-base', function(Y) {
         
                     if (this.hasPlugin(ns)) {
                         // Update config
-                        this[ns].setAttrs(config);
+                        if (this[ns].setAttrs) {
+                            this[ns].setAttrs(config);
+                        }
+                        else { Y.log("Attempt to replug an already attached plugin, and we can't setAttrs, because it's not Attribute based: " + ns); }
                     } else {
                         // Create new instance
                         this[ns] = new Plugin(config);
@@ -116,7 +119,9 @@ YUI.add('pluginhost-base', function(Y) {
         
                 if (ns) {
                     if (this[ns]) {
-                        this[ns].destroy();
+                        if (this[ns].destroy) {
+                            this[ns].destroy();
+                        }
                         delete this[ns];
                     }
                     if (plugins[ns]) {

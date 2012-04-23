@@ -1,7 +1,7 @@
 Get Utility Change History
 ==========================
 
-3.6.0
+3.5.1
 -----
 
 * Fixed a bug that could cause CSS requests to hang on WebKit versions between

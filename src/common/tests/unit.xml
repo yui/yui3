@@ -102,6 +102,7 @@
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/event-touch.html</url>
         <url>event/tests/focusblur.html</url>
+        <url>event-custom/tests/aop.html</url>
         <url>event-custom/tests/customevent.html</url>
         <url>event-custom/tests/event-custom-base.html</url>
         <url>event-gestures/tests/index.html</url>

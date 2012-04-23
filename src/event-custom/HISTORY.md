@@ -1,6 +1,22 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+3.6.0
+-----
+
+ * Fixed memory consumption issue where Y.Do's internal touched object cache, 
+   Y.Do.objs, would never release object references.
+
+   The Y.Do.objs property has been deprecated as of 3.6.0, and will be null.
+
+   The cached state previously stored in Y.Do.objs has been moved onto the
+   AOP'd object itself, in the *private* `_yuiaop` property.
+
+   The only reason `_yuiaop` is mentioned here, is to provide a temporary 
+   migration path for users who may have been using Y.Do.objs. If you are using 
+   this property, please file a ticket with the use case, and we'll look at 
+   addressing the use case formally, while not impacting GC.
+
 3.5.0
 -----
 

@@ -4,10 +4,17 @@ YUI.add('ua-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: 'Node.js',
+        _should: {
+            fail: {
+                'test: Node.js version': (Y.UA.nodejs !== 0.615)
+            }
+        },
 
-        'test: Node.js': function() {
-            Assert.areEqual(6, Y.UA.nodejs, 'Failed to get Node.js process version from process object');
-            Assert.areEqual('Win32', Y.UA.os, 'Failed to get Node.js process platform from process object');
+        'test: Node.js version': function() {
+            Assert.areEqual(0.615, Y.UA.nodejs, 'Failed to get Node.js process version from process object');
+        },
+        'test: Node.js platform': function() {
+            Assert.areEqual(process.platform, Y.UA.os, 'Failed to get Node.js process platform from process object');
         }
     }));
 
