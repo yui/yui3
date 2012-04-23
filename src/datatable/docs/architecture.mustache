@@ -450,11 +450,142 @@ var table = new Y.DataTable({
 <h3>New Rendering Algorithm</h3>
 
 <p>
-    The last thing we'll cover in this article is DataTable's new default
-    rendering algorithm.
+    The last thing we'll cover in this article is DataTable's new, faster,
+    default rendering technique.
 </p>
 
+<p>
+    In 3.4.1 and prior, the rendering process relied heavily on the Node API.
+    Populating cells and rows was done by creating a Node instance for each
+    element and assembling them with the Nodes' DOM methods.  This approach
+    has two big disadvantages:
+</p>
 
+<ol>
+    <li>
+        Nodes are stored in an object cache so that future reference to the
+        same element will point to the same Node instance.  However, in nearly
+        all cases, the table elements weren't useful beyond their role in
+        rendering the table, so a fair bit of memory wound up getting reserved
+        for the life of the application unnecessarily.
+    </li>
+    <li>
+        Nodes are light weight objects, but they're not free.  Creating a Node
+        instance for each row, cell, and liner `<div>` in larger tables made
+        for a lot of new objects.  Also, while Node's DOM methods efficiently
+        proxy through to the native DOM method, they still need to preserve the
+        Node abstraction layer for return values.  So all those DOM methods
+        incurred the usual cost of DOM manipulation, plus some function
+        wrapping overhead.
+    </li>
+</ol>
+
+<p>
+    The way DataTable avoids this in 3.5.0 is by using HTML string
+    concatenation as much as possible.  The default View for rendering the
+    `<tbody>` rows creates a row template with substitution `{placeholder}`s
+    for the cell values and a few other things.  It then iterates over the
+    `data` ModelList items, calls any column `formatter`s with that row's Model
+    data, and appends a single HTML string with the row template string after
+    substituting the `{placeholder}` values.
+</p>
+
+<p>
+    The final string is then inserted into the `<tbody>` in a single DOM
+    operation, without creating any Node instances at all.  The resulting
+    performance looks like this:
+</p>
+
+<style>
+    #charts {
+        height: 250px;
+    }
+    #perf-chrome, #perf-ff, #perf-ie {
+        margin: 0 1em;
+        height: 200px;
+    }
+</style>
+<div class="yui3-g" style="height: 250px;">
+    <div class="yui3-u-1-3">
+        <h5>Chrome 18</h5>
+        <div id="perf-chrome"></div>
+    </div>
+    <div class="yui3-u-1-3">
+        <h5>Firefox 11</h5>
+        <div id="perf-ff"></div>
+    </div>
+    <div class="yui3-u-1-3">
+        <h5>IE 8</h5>
+        <div id="perf-ie"></div>
+    </div>
+</div>
+<script>
+YUI({ filter: 'raw' }).use('charts', function (Y) {
+
+    new Y.Chart({
+        categoryKey: 'rows',
+        axes: {
+            rows: {
+                keys: ['rows'],
+                title: "Table Rows"
+            },
+            values: {
+                title: 'Render time (ms)'
+            }
+        },
+        dataProvider: [
+            { rows: 10, "2.9.0": 5, "3.4.0": 43, "3.5.0": 13 },
+            { rows: 20, "2.9.0": 9, "3.4.0": 53, "3.5.0": 20 },
+            { rows: 50, "2.9.0": 13, "3.4.0": 71, "3.5.0": 30 },
+            { rows: 100, "2.9.0": 21, "3.4.0": 128, "3.5.0": 49 }
+        ]
+    }).render('#perf-chrome');
+
+    new Y.Chart({
+        categoryKey: 'rows',
+        axes: {
+            rows: {
+                keys: ['rows'],
+                title: "Table Rows"
+            },
+            values: {
+                title: 'Render time (ms)'
+            }
+        },
+        dataProvider: [
+            { rows: 10, "2.9.0": 16.4, "3.4.0": 65.6, "3.5.0": 22.3 },
+            { rows: 20, "2.9.0": 21.8, "3.4.0": 80.6, "3.5.0": 21.8 },
+            { rows: 50, "2.9.0": 32, "3.4.0": 120.6, "3.5.0": 44 },
+            { rows: 100, "2.9.0": 41.5, "3.4.0": 183.3, "3.5.0": 51.2 }
+        ]
+    }).render('#perf-ff');
+
+    new Y.Chart({
+        categoryKey: 'rows',
+        axes: {
+            rows: {
+                keys: ['rows'],
+                title: "Table Rows"
+            },
+            values: {
+                title: 'Render time (ms)'
+            }
+        },
+        dataProvider: [
+            { rows: 10, "2.9.0": 22, "3.4.0": 91, "3.5.0": 25 },
+            { rows: 20, "2.9.0": 32, "3.4.0": 146, "3.5.0": 42 },
+            { rows: 50, "2.9.0": 68, "3.4.0": 315, "3.5.0": 78 },
+            { rows: 100, "2.9.0": 135, "3.4.0": 621, "3.5.0": 132 }
+        ]
+    }).render('#perf-ie');
+
+});
+</script>
+
+<h4>But what if you need access to the cell Node for some reason?</h4>
+
+<p>
+</p>
 
 Rendering events
     render vs renderTable vs renderHeader, etc
