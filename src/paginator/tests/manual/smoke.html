@@ -7,6 +7,22 @@
     </style>
 </head>
 <body>
+    <label for="change-total">Total Items:</label>
+    <select id="change-total">
+        <option value="1000">1000 items</option>
+        <option value="100">100 items</option>
+        <option value="10">10 items</option>
+    </select>
+
+    <label for="change-ipp">Items per page:</label>
+    <select id="change-ipp">
+        <option value="100">100</option>
+        <option value="25" selected>25</option>
+        <option value="10">10</option>
+    </select>
+
+    <p id="current"></p>
+
     <div id="x"></div>
 
     <!--script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script-->
@@ -19,12 +35,27 @@
     YUI({ filter: 'raw' }).use('paginator-base', function (Y) {
 
         var paginator = new Y.Paginator({
-            totalItems: 100,
-            itemsPerPage: 20
+            totalItems: 1000,
+            itemsPerPage: 25
         });
 
         paginator.render('#x');
 
+        /*
+        paginator.on('pageChange', function () {
+            Y.one('#current').set('text', this.get('page'));
+        });
+        */
+
+        Y.one('#change-total').on('change', function () {
+            paginator.set('totalItems', +this.get('value'));
+            Y.one('#current').set('text', paginator.get('page'));
+        });
+
+        Y.one('#change-ipp').on('change', function () {
+            paginator.set('itemsPerPage', +this.get('value'));
+            Y.one('#current').set('text', paginator.get('page'));
+        });
     });
     </script>
 </body>
