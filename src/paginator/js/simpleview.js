@@ -27,8 +27,9 @@ Y.Paginator.SimpleView = Y.Base.create(PAGINATOR, Y.View, [], {
     },
 
     _bindUI: function () {
-        if (!this._pageChangeHandle) {
-            this._pageChangeHandle = this.get('host').after('pageChange',
+        if (!this._changeHandles) {
+            this._changeHandles = this.get('host').after(
+                ['pageChange', 'totalItemsChange', 'itemsPerPageChange'],
                 this.render, this);
         }
     },
@@ -68,9 +69,9 @@ Y.Paginator.SimpleView = Y.Base.create(PAGINATOR, Y.View, [], {
     events: events,
 
     destructor: function () {
-        if (this._pageChangeHandle) {
-            this._pageChangeHandle.detach();
-            delete this._pageChangeHandle;
+        if (this._changeHandles) {
+            this._changeHandles.detach();
+            delete this._changeHandles;
         }
     },
 
