@@ -4,6 +4,7 @@
         "/src/loader/tests/cli/loader.js",
         "/src/yui-throttle/tests/cli/run.js",
         "/src/yql/tests/cli/run.js",
+        "/src/querystring/tests/cli/run.js",
         "/src/yui/tests/cli/run.js"
     ]
 }
