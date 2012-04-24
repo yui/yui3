@@ -11,8 +11,7 @@ var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     SCROLL_Y = "scrollY",
     TOTAL = "total",
     BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox",
-    MAX_PAGE_COUNT = 3; // @TODO: Make configurable?
+    CONTENT_BOX = "contentBox";;
 
 /**
  * Scrollview plugin that adds support for paging
@@ -113,18 +112,21 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     initializer: function(config) { 
         var paginator = this,
+            host = paginator.get('host'),
+            pageSelector = paginator.get("selector"),
+            cb = host.get(CONTENT_BOX),
             optimizeMemory = config.optimizeMemory || optimizeMemory;
-        
-        paginator._host = paginator.get('host');
+            
+        paginator._host = host;
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
         paginator.afterHostEvent('render', paginator._afterRender);
         paginator.after('indexChange', paginator._afterIndexChange);
         paginator.optimizeMemory = optimizeMemory;
-        paginator._pageNodes = new Y.NodeList();
+        paginator._pageNodes = pageSelector ? cb.all(pageSelector) : cb.get("children");
     },
-
+    
     /**
      * Calculate the page boundary offsets
      * 
@@ -137,15 +139,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              bb = host.get(BOUNDING_BOX),
              vert = host._scrollsVertical,
              size = (vert) ? host._scrollHeight : host._scrollWidth,
-             pageSelector = this.get("selector"),
              optimizeMemory = this.optimizeMemory,
              currentIndex = this.get(INDEX),
-             pages,
-             offsets,
-             node;
-         
-         pages = pageSelector ? cb.all(pageSelector) : cb.get("children");
-         this._pageNodes = pages;
+             pages = this._pageNodes;
          
          //Set the total # of pages
          this.set(TOTAL, pages.size());
@@ -154,22 +150,23 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          this._pageOffsets = pages.get((vert) ? "offsetTop" : "offsetLeft");
 
          if (optimizeMemory) {
-             
-             this.set(PREVINDEX, currentIndex);
-
-             // Reduce the scroll width to the size of (3) pages (or whatever MAX_PAGE_COUNT is)
-             host._maxScrollX = this._pageOffsets[MAX_PAGE_COUNT-1];
-
-             // Empty the content-box. @TODO: leave {MAX_PAGE_COUNT} items in?
-             cb.empty(true);
-
-             // Now, fill it with the first set of items
-             for (var i=0; i < MAX_PAGE_COUNT; i++) {
-                 node = pages.item(currentIndex + i);
-                 cb.append(node);
-             }
+             this._hideNodes(pages.slice(2));
          }
      },
+     
+     _hideNodes : function(nodeList) {
+         var host = this._host;
+         if (nodeList) {
+             nodeList.addClass(host.getClassName('hidden')).setStyle('display', 'none');
+         }
+     },
+     _showNodes : function(nodeList) {
+          var host = this._host;
+          if (nodeList) {
+              nodeList.removeClass(host.getClassName('hidden')).setStyle('display', '');
+          }
+     },
+     
     /**
      * Return the offset value where scrollview should scroll to.
      * Neccesary because index # doesn't nessecarily map up to location in the DOM because of this._manageDOM()
@@ -267,28 +264,37 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
              pageCount = this.get(TOTAL),
              trans = PaginatorPlugin.SNAP_TO_CURRENT,
              optimizeMemory = this.optimizeMemory;
-             
-         if(e.onGestureMoveEnd && !host._flicking) {
-             if(host._scrolledHalfway) {
-                 if(host._scrolledForward && pageIndex < pageCount-1) {
-                     this.next();
-                 } else if (pageIndex > 0) {
-                     this.prev();
-                 } else {
-                     this.snapToCurrent(trans.duration, trans.easing);
-                 }
-             } else {
-                 this.snapToCurrent(trans.duration, trans.easing);
-             }
-         }
-         
-         if (!e.onGestureMoveEnd){
-             if (optimizeMemory) {
-              this._manageDOM();
-             }
-             
+
+
+        if (e.onGestureMoveEnd) {
+            if(!host._flicking) {
+                if(host._scrolledHalfway) {
+                    if(host._scrolledForward && pageIndex < pageCount-1) {
+                        this.next();
+                    } else if (pageIndex > 0) {
+                        this.prev();
+                    } else {
+                        this.snapToCurrent(trans.duration, trans.easing);
+                    }
+                } else {
+                    this.snapToCurrent(trans.duration, trans.easing);
+                }
+            }
+            
+            this._hostOriginalFlick = host.get('flick');
+            this._hostOriginalDrag = host.get('drag');
+            host.set('flick', false)
+            host.set('drag', false)
+        }
+        else {
+            host.set('flick', this._hostOriginalFlick);
+            host.set('drag', this._hostOriginalDrag);
+            if (optimizeMemory) {
+                this._manageDOM();
+            }
+            
             this.set(PREVINDEX, pageIndex);
-         }
+        }
      },
      
      /**
@@ -299,44 +305,18 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
       * @protected
       */
      _manageDOM: function(){
-         var newSlide, addSlideMethod, nodeToRemove, 
-             host = this._host,
-             cb = host.get(CONTENT_BOX),
+         var host = this._host,
              currentIndex = this.get(INDEX),
              previousIndex = this.get(PREVINDEX),
-             total = this.get(TOTAL),
              isForward = (previousIndex < currentIndex) ? true : false,
-             cbChildren = cb.get('children'),
              pageNodes = this._pageNodes,
-             targetOffset;
-            
-         if (pageNodes && pageNodes.size() > 0) {
-              if (isForward) {
-                  newSlide = pageNodes.item(currentIndex+1);
-                  addSlideMethod = cb.append;
-              }
-              else {
-                  newSlide = pageNodes.item(currentIndex-1);
-                  addSlideMethod = cb.prepend;
-              }
+             slideToShow = pageNodes.item(currentIndex + (isForward ? 1 : -1)),
+             slideToHide = pageNodes.item(currentIndex + (isForward ? -2 : 2));
 
-              // Append/Prepend the new item to the DOM
-              if (cbChildren.indexOf(newSlide) === -1) {
-                  addSlideMethod.call(cb, newSlide);
-              }
-
-             // Since we modified the DOM, get an updated reference
-             cbChildren = cb.get('children');
-         }
-         
-         // Are we over the max number of items allowed?
-         if (cbChildren.size() > MAX_PAGE_COUNT) {
-             nodeToRemove = (isForward) ? cb.one('li:first-of-type') : cb.one('li:last-of-type');
-             nodeToRemove.remove();
-             targetOffset = (currentIndex == total ? 2 : 1);
-             host.set('scrollX', this._pageOffsets[targetOffset]); // Center
-         }
-     },
+        this._showNodes(slideToShow);
+        this._hideNodes(slideToHide);
+        host.set('scrollX', pageNodes.item(currentIndex).get('offsetLeft')); // Center
+    },
 
     /**
      * index attr change handler
@@ -368,8 +348,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method next
      */
     next: function() {
-        var index = this.get(INDEX);
-        if(index < this.get(TOTAL)-1) {
+        var index = this.get(INDEX),
+            total = this.get(TOTAL);
+            
+        if(index < total-1) {
             this.set(INDEX, index+1);
         }
     },
