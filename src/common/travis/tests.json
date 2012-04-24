@@ -6,6 +6,7 @@
         "/src/yql/tests/cli/run.js",
         "/src/querystring/tests/cli/run.js",
         "/src/parallel/tests/cli/run.js",
+        "/src/arraysort/tests/cli/run.js",
         "/src/yui/tests/cli/run.js"
     ]
 }
