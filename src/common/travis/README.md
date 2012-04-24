@@ -146,7 +146,7 @@ YUI({useSync: true }).use('test', function(Y) {
         }
     });
 
-    Y.use('my-noejs-module');
+    Y.use('my-nodejs-module');
     
     Y.Test.Runner.setName('cli tests');
     
