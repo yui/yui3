@@ -120,7 +120,7 @@ containing the items for which the supplied function returned a truthy value.
 */
 A.filter = L._isNative(ArrayProto.filter) ?
     function(a, f, o) {
-        return a.filter(f, o);
+        return ArrayProto.filter.call(a, f, o);
     } :
     function(a, f, o) {
         var i       = 0,
@@ -173,7 +173,7 @@ supplied function does not return a truthy value.
 */
 A.every = L._isNative(ArrayProto.every) ?
     function(a, f, o) {
-        return a.every(f, o);
+        return ArrayProto.every.call(a, f, o);
     } :
     function(a, f, o) {
         for (var i = 0, l = a.length; i < l; ++i) {
@@ -207,12 +207,12 @@ containing all the values returned by the supplied function.
 */
 A.map = L._isNative(ArrayProto.map) ?
     function(a, f, o) {
-        return a.map(f, o);
+        return ArrayProto.map.call(a, f, o);
     } :
     function(a, f, o) {
         var i       = 0,
             len     = a.length,
-            results = a.concat();
+            results = ArrayProto.concat.call(a);
 
         for (; i < len; ++i) {
             if (i in a) {
@@ -248,7 +248,7 @@ A.reduce = L._isNative(ArrayProto.reduce) ?
     function(a, init, f, o) {
         // ES5 Array.reduce doesn't support a thisObject, so we need to
         // implement it manually.
-        return a.reduce(function(init, item, i, a) {
+        return ArrayProto.reduce.call(a, function(init, item, i, a) {
             return f.call(o, init, item, i, a);
         }, init);
     } :
