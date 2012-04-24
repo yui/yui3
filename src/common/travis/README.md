@@ -11,3 +11,10 @@ Scripts
    * `test.sh` - Runs in the `test` build step. It fetches the list of tests to execute, then executes YUITest on them.
 
 
+Running the tests locally
+-------------------------
+
+Clone the repo, then:
+
+    cd yui3;
+    ./src/common/travis/travis.sh
