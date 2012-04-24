@@ -47,7 +47,7 @@ var testCase = new Y.Test.Case({
     _should: {
         ignore: {
             'test that requires a DOM': Y.UA.nodejs,
-            'test that does not work in Node.js: Y.UA.nodejs
+            'test that does not work in Node.js': Y.UA.nodejs
         }
     }
 });
