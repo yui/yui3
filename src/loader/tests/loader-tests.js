@@ -6,13 +6,33 @@ YUI.add('loader-tests', function(Y) {
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
 
+    
+    var resolvePath = function(p) {
+        if (Y.UA.nodejs) {
+            var path = require('path');
+            p = path.join(__dirname, p);
+        }
+        return p;
+    };
+
 
     var testLoader = new Y.Test.Case({
         name: "Loader Tests",
         _should: {
             ignore: {
-                'test_failure': !jsFailure,
-                'test_timeout': !jsFailure
+                'test_failure': !jsFailure || Y.UA.nodejs,
+                'test_timeout': !jsFailure || Y.UA.nodejs,
+                test_module_attrs: Y.UA.nodejs,
+                test_global_attrs: Y.UA.nodejs,
+                test_iter: Y.UA.nodejs,
+                test_progress: Y.UA.nodejs,
+                'test: gallery skinnable': Y.UA.nodejs,
+                test_load: Y.UA.nodejs,
+                test_async: Y.UA.nodejs,
+                test_css_stamp: Y.UA.nodejs,
+                test_group_filters: Y.UA.nodejs,
+                test_cond_no_test_or_ua: Y.UA.nodejs,
+                test_condpattern: Y.UA.nodejs
             }
         },
         'test: empty skin overrides': function() {
@@ -192,7 +212,7 @@ YUI.add('loader-tests', function(Y) {
                 comboSep: '==!!==',
                 combine: true,
                 ignoreRegistered: true,
-                require: ['foo'],
+                require: ['foogg'],
                 groups: {
                     extra: {
                         combine: true,
@@ -201,10 +221,10 @@ YUI.add('loader-tests', function(Y) {
                         base: '',
                         comboBase: 'http://secondhost.com/combo?',
                         modules: {
-                            foo: {
-                                requires: ['yql', 'bar']
+                            foogg: {
+                                requires: ['yql', 'bargg']
                             },
-                            bar: {
+                            bargg: {
                                 requires: ['dd']
                             }
                         }
@@ -258,7 +278,7 @@ YUI.add('loader-tests', function(Y) {
             var loader = new testY.Loader({
                 combine: true,
                 ignoreRegistered: true,
-                require: ['foo'],
+                require: ['fooxx'],
                 groups: {
                     extra: {
                         combine: true,
@@ -267,10 +287,10 @@ YUI.add('loader-tests', function(Y) {
                         base: '',
                         comboBase: 'http://secondhost.com/combo?',
                         modules: {
-                            foo: {
-                                requires: ['yql', 'bar']
+                            fooxx: {
+                                requires: ['yql', 'barxx']
                             },
-                            bar: {
+                            barxx: {
                                 requires: ['dd']
                             }
                         }
@@ -300,13 +320,14 @@ YUI.add('loader-tests', function(Y) {
 
 
             YUI({
+                useSync: false,
                 debug: true,
                 filter: 'DEBUG',
                 groups: {
                     local: {
                         filter: 'raw',
                         combine: false,
-                        base: './assets/',
+                        base: resolvePath('./assets/'),
                         modules: {
                             foo: {
                                 requires: [ 'oop' ]
@@ -494,6 +515,7 @@ YUI.add('loader-tests', function(Y) {
             var test = this;
 
             YUI({
+                useSync: false,
                 groups: {
                     testpatterns: {
                         patterns: {
@@ -502,7 +524,7 @@ YUI.add('loader-tests', function(Y) {
                                     return (mname === 'mod');
                                 },
                                 configFn: function(me) {
-                                    me.fullpath = './assets/mod.js';
+                                    me.fullpath = resolvePath('./assets/mod.js');
                                 }
                             }
                         }
@@ -520,9 +542,10 @@ YUI.add('loader-tests', function(Y) {
             var test = this;
 
             YUI({
+                useSync: false,
                 modules: {
                     cond2: {
-                        fullpath: './assets/cond2.js',
+                        fullpath: resolvePath('./assets/cond2.js'),
                         condition: {
                             trigger: 'jsonp',
                             test: function() {
@@ -543,9 +566,10 @@ YUI.add('loader-tests', function(Y) {
             var test = this;
 
             YUI({
+                useSync: false,
                 modules: {
                     cond: {
-                        fullpath: './assets/cond.js',
+                        fullpath: resolvePath('./assets/cond.js'),
                         condition: {
                             trigger: 'yql'
                         }
@@ -624,6 +648,7 @@ YUI.add('loader-tests', function(Y) {
         },
         test_skin_overrides: function() {
             var loader = new Y.Loader({
+                ignoreRegistered: true,
                 skin: {
                     overrides: {
                         slider: [
@@ -642,7 +667,8 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            Assert.areSame(loader.skin.overrides.slider.length, out.css.length, 'Failed to load all override skins');
+            //+1 here for widget skin
+            Assert.areSame(loader.skin.overrides.slider.length + 1, out.css.length, 'Failed to load all override skins');
 
         },
         test_load_optional: function() {

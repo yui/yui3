@@ -10,6 +10,7 @@
         "/src/async-queue/tests/cli/run.js",
         "/src/base/tests/cli/run.js",
         "/src/classnamemanager/tests/cli/run.js",
-        "/src/yui/tests/cli/run.js"
+        "/src/yui/tests/cli/run.js",
+        "/src/loader/tests/cli/run.js"
     ]
 }
