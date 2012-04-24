@@ -84,6 +84,21 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    'map() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            var results = Y.Array.map(arguments, function () {
+                    calls += 1;
+                    return 'z';
+                });
+
+            Y.ArrayAssert.itemsAreSame(['z', 'z', 'z'], results);
+        }('a', 'b', 'c'));
+
+        Assert.areSame(3, calls);
+    },
+
     testReduce: function () {
         var obj = {};
 
@@ -119,6 +134,19 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, calls);
+    },
+
+    'reduce() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            Y.Array.reduce(arguments, true, function () {
+                calls += 1;
+                return true;
+            });
+        }('a', 'b', 'c'));
+
+        Assert.areSame(3, calls);
     },
 
     testFind: function () {
@@ -208,6 +236,21 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    'filter() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            var results = Y.Array.filter(arguments, function (value) {
+                    calls += 1;
+                    return value === 'a';
+                });
+
+            Y.ArrayAssert.itemsAreSame(['a'], results);
+        }('a', 'b', 'c'));
+
+        Assert.areSame(3, calls);
+    },
+
     testReject: function () {
         var data = this.data;
         var result = A.reject(data, function (item) {
@@ -291,6 +334,21 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, calls);
+    },
+
+    'every() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            var result = Y.Array.every(arguments, function (value) {
+                    calls += 1;
+                    return value === 'a';
+                });
+
+            Assert.isFalse(result);
+        }('a', 'b', 'c'));
+
+        Assert.areSame(2, calls);
     },
 
     testUnique: function() {

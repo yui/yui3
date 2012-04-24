@@ -1,12 +1,26 @@
 Collection Change History
 =========================
 
+3.6.0
+-----
+
+* The `every()`, `filter()`, `map()`, and `reduce()` functions now work
+  correctly on array-like objects in ES5 browsers. [Ticket #2531652]
+
+
+3.5.1
+-----
+
+* No changes.
+
+
 3.5.0
 -----
 
 * YUI now detects non-native ES5 shims added to native objects by other
   libraries and falls back to its own internal shims rather than relying on the
   potentially broken code from the other library.
+
 * Deprecated arraylist-add and arraylist-filter in favor of individual
   subclass implementations or ModelList.
 
@@ -32,8 +46,10 @@ Collection Change History
 * [!] The `sort` parameter of `Array.unique` has been deprecated. It still
   works, but you're encouraged not to use it as it will be removed from a
   future version of YUI.
+
 * `Array.lastIndexOf` now supports the `fromIndex` parameter as specified in
   ES5.
+
 * Improved the performance of `Array.filter`, `Array.map`, `Array.reduce`, and
   `Array.unique`, especially in browsers without native ES5 array extras.
 
@@ -54,8 +70,11 @@ Collection Change History
 ------
 
 * `array-extras` is the base submodule for the package.
+
 * Added `ArrayList` for generic iterable objects.
+
 * `Array.forEach` is an alias for `Array.each`.
+
 * Added `Array.invoke` to execute a named method on an array of objects.
 
 
