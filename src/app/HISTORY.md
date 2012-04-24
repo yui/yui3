@@ -4,11 +4,6 @@ App Framework Change History
 3.6.0
 -----
 
-### App
-
-* Added `render` and `update` options to the `showView()` method.
-  [PR #100 Pat Cavit]
-
 ### Router
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
@@ -18,6 +13,11 @@ App Framework Change History
 
 3.5.1
 -----
+
+### App
+
+* Added `render` and `update` options to the `showView()` method.
+  [PR #100 Pat Cavit]
 
 ### Router
 
