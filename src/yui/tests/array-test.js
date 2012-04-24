@@ -52,6 +52,12 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], Y.Array.dedupe(array));
     },
 
+    'dedupe() should work on array-like objects': function () {
+        (function () {
+            Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'], Y.Array.dedupe(arguments));
+        }('a', 'a', 'b', 'c'));
+    },
+
     testEach: function () {
         var calls = 0,
             data  = ['a', 'b', 'c', 'd'],
@@ -87,6 +93,18 @@ suite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    'each() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            Y.Array.each(arguments, function () {
+                calls += 1;
+            });
+        }('a', 'b', 'c'));
+
+        Assert.areSame(3, calls);
+    },
+
     testHash: function () {
         Assert.isObject(Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']));
 
@@ -116,6 +134,12 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2, Y.Object.size(hash));
         Y.Assert.areSame('baz', hash.foo);
         Y.Assert.isTrue(hash.bar);
+    },
+
+    'hash() should work on array-like objects': function () {
+        (function () {
+            Y.ObjectAssert.areEqual({a: true, b: true, c: true}, Y.Array.hash(arguments));
+        }('a', 'b', 'c'));
     },
 
     testIndexOf: function () {
@@ -151,7 +175,16 @@ suite.add(new Y.Test.Case({
         var array = ['a', 'b'];
         array[3] = undefined;
 
-        Y.Assert.areSame(3, Y.Array.indexOf(array, undefined));
+        Assert.areSame(3, Y.Array.indexOf(array, undefined));
+    },
+
+    'indexOf() should work on array-like objects': function () {
+        (function () {
+            Assert.areSame(0, Y.Array.indexOf(arguments, 'a'));
+            Assert.areSame(1, Y.Array.indexOf(arguments, 'b'));
+            Assert.areSame(2, Y.Array.indexOf(arguments, 'c'));
+            Assert.areSame(-1, Y.Array.indexOf(arguments, 'd'));
+        }('a', 'b', 'c'));
     },
 
     testNumericSort: function () {
@@ -197,6 +230,22 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.areSame(1, calls);
+    },
+
+    'some() should work on array-like objects': function () {
+        var calls = 0;
+
+        (function () {
+            Y.Array.some(arguments, function (value) {
+                calls += 1;
+
+                if (value === 'b') {
+                    return true;
+                }
+            });
+        }('a', 'b', 'c'));
+
+        Assert.areSame(2, calls);
     },
 
     testTest: function () {
