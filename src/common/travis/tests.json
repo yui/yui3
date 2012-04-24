@@ -16,6 +16,7 @@
         "/src/pluginhost/tests/cli/run.js",
         "/src/dump/tests/cli/run.js",
         "/src/event-custom/tests/cli/run.js",
+        "/src/collection/tests/cli/run.js",
         "/src/loader/tests/cli/run.js"
     ]
 }

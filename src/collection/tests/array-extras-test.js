@@ -106,7 +106,9 @@ suite.add(new Y.Test.Case({
             Assert.isNumber(item);
             Assert.isNumber(i);
             Assert.isArray(array);
-            Assert.areSame(Y.config.win, this);
+            if (Y.config.win) {
+                Assert.areSame(Y.config.win, this);
+            }
             return sum + item;
         }));
 
@@ -201,7 +203,9 @@ suite.add(new Y.Test.Case({
                 Assert.isNumber(item);
                 Assert.isNumber(i);
                 Assert.areSame(data, array);
-                Assert.areSame(this, Y.config.win);
+                if (Y.config.win) {
+                    Assert.areSame(this, Y.config.win);
+                }
 
                 return item % 2 == 0;
             });
