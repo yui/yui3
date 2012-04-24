@@ -12,6 +12,7 @@
         "/src/classnamemanager/tests/cli/run.js",
         "/src/yui/tests/cli/run.js",
         "/src/intl/tests/cli/run.js",
+        "/src/oop/tests/cli/run.js",
         "/src/loader/tests/cli/run.js"
     ]
 }
