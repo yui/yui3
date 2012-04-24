@@ -8,6 +8,7 @@
         "/src/parallel/tests/cli/run.js",
         "/src/arraysort/tests/cli/run.js",
         "/src/async-queue/tests/cli/run.js",
+        "/src/base/tests/cli/run.js",
         "/src/yui/tests/cli/run.js"
     ]
 }
