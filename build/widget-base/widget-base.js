@@ -897,10 +897,13 @@ Y.extend(Widget, Y.Base, {
         // Shared listener across all Widgets.
         if (!focusHandle) {
             focusHandle = Widget._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
-            focusHandle.listeners = 1;
-        } else {
-            focusHandle.listeners++; 
+            focusHandle.listeners = {
+                count: 0
+            };
         }
+
+        focusHandle.listeners[Y.stamp(this, true)] = true;
+        focusHandle.listeners.count++;
 
         //	Fix for Webkit:
         //	Document doesn't receive focus in Webkit when the user mouses 
@@ -919,14 +922,20 @@ Y.extend(Widget, Y.Base, {
     _unbindDOM : function(boundingBox) {
 
         var focusHandle = Widget._hDocFocus,
+            yuid = Y.stamp(this, true),
+            focusListeners,
             mouseHandle = this._hDocMouseDown;
 
         if (focusHandle) {
-            if (focusHandle.listeners) {
-                focusHandle.listeners--;
+
+            focusListeners = focusHandle.listeners;
+
+            if (focusListeners[yuid]) {
+                delete focusListeners[yuid];
+                focusListeners.count--;
             }
 
-            if (focusHandle.listeners === 0) {
+            if (focusListeners.count === 0) {
                 focusHandle.detach();
                 Widget._hDocFocus = null;
             }
@@ -1238,4 +1247,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
