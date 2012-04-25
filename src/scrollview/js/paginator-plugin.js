@@ -11,7 +11,11 @@ var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     SCROLL_Y = "scrollY",
     TOTAL = "total",
     BOUNDING_BOX = "boundingBox",
-    CONTENT_BOX = "contentBox";;
+    CONTENT_BOX = "contentBox",
+    FLICK = "flick",
+    DRAG = "drag",
+    CLASS_HIDDEN,
+    CLASS_PAGED;
 
 /**
  * Scrollview plugin that adds support for paging
@@ -111,18 +115,21 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method initializer
      */
-    initializer: function(config) { 
+    initializer: function (config) { 
         var paginator = this,
             host = paginator.get('host'),
             cb = host.get(CONTENT_BOX),
             pageSelector = paginator.get("selector"),
             optimizeMemory = config.optimizeMemory || paginator.optimizeMemory;
-            
+
+        CLASS_HIDDEN = host.getClassName('hidden');
+        CLASS_PAGED = host.getClassName("paged");
+        
         paginator._host = host;
         paginator.optimizeMemory = optimizeMemory;
         paginator._pageNodes = pageSelector ? cb.all(pageSelector) : cb.get("children");
-        paginator._hostOriginalFlick = host.get('flick');
-        paginator._hostOriginalDrag = host.get('drag');
+        paginator._hostOriginalFlick = host.get(FLICK);
+        paginator._hostOriginalDrag = host.get(DRAG);
         
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
@@ -138,10 +145,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param {Event.Facade}
      * @protected
      */
-    _afterRender: function(e) {
+    _afterRender: function (e) {
         var host = this._host;
         
-        host.get("boundingBox").addClass(host.getClassName("paged"));
+        host.get("boundingBox").addClass(CLASS_PAGED);
     },
     
     /**
@@ -150,7 +157,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method _calcOffsets
      * @protected
      */
-     _calcOffsets : function() {
+     _calcOffsets : function () {
          var paginator = this,
              host = paginator._host,
              cb = host.get(CONTENT_BOX),
@@ -179,14 +186,15 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @returns {Number}
      * @protected
      */
-    _getIndexOffset: function(index) {
+    _getIndexOffset: function (index) {
         var paginator = this,
             index = index || paginator.get(INDEX),
             previous = paginator.get(PREVINDEX),
             isForward = (index > previous) ? true : false,
             pageOffsets = paginator._pageOffsets,
             optimizeMemory = paginator.optimizeMemory,
-            offset, offsetModifier;
+            offset, 
+            offsetModifier;
             
         if (optimizeMemory) {    
             if (!isForward) {
@@ -216,7 +224,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method _flickFrame
      * @protected
      */
-    _flickFrame: function() {
+    _flickFrame: function () {
         var paginator = this,
             host = paginator._host,
             velocity = host._currentVelocity,
@@ -225,9 +233,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageCount = paginator.get(TOTAL);
             
         if (velocity) {
-            if (inc && pageIndex < pageCount-1) {
+            if (inc && pageIndex < pageCount - 1) {
                 paginator.next();
-            } else if (!inc && pageIndex > 0) {
+            }
+            else if (!inc && pageIndex > 0) {
                 paginator.prev();
             }
         }
@@ -242,7 +251,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param {Event.Facade}
      * @protected
      */
-     _scrollEnded: function(e) {
+     _scrollEnded: function (e) {
         var paginator = this,
             host = paginator._host,
             vert = host._scrollsVertical,
@@ -272,12 +281,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param {Event.Facade}
      * @protected
      */
-    _afterIndexChange: function(e) { 
-        var duration = PaginatorPlugin.SNAP_TO_CURRENT.duration,
+    _afterIndexChange: function (e) { 
+        var target = e.newVal,
+            duration = PaginatorPlugin.SNAP_TO_CURRENT.duration,
             easing = PaginatorPlugin.SNAP_TO_CURRENT.easing;
             
         if(e.src !== UI) {
-            this.scrollTo(e.newVal, duration, easing);
+            this.scrollTo(target, duration, easing);
         }
     },
 
@@ -288,10 +298,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param nodeList {nodeList}
      * @protected
      */
-    _hideNodes : function(nodeList) {
+    _hideNodes : function (nodeList) {
         var host = this._host;
         if (nodeList) {
-            nodeList.addClass(host.getClassName('hidden')).setStyle('display', 'none');
+            nodeList.addClass(CLASS_HIDDEN).setStyle('display', 'none');
         }
     },
     
@@ -302,10 +312,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param nodeList {nodeList}
      * @protected
      */
-    _showNodes : function(nodeList) {
+    _showNodes : function (nodeList) {
          var host = this._host;
          if (nodeList) {
-             nodeList.removeClass(host.getClassName('hidden')).setStyle('display', '');
+             nodeList.removeClass(CLASS_HIDDEN).setStyle('display', '');
          }
     },
     
@@ -315,13 +325,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method _uiEnable
      * @protected
      */
-    _uiEnable: function() {
+    _uiEnable: function () {
         var paginator = this,
             host = paginator._host;
             
         paginator._uiEnabled = true;
-        host.set('flick', paginator._hostOriginalFlick);
-        host.set('drag', paginator._hostOriginalDrag);
+        host.set(FLICK, paginator._hostOriginalFlick);
+        host.set(DRAG, paginator._hostOriginalDrag);
     },
     
     /**
@@ -330,13 +340,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @method _uiEnable
      * @protected
      */
-    _uiDisable: function() {
+    _uiDisable: function () {
         var paginator = this,
             host = paginator._host;
             
         paginator._uiEnabled = false;
-        host.set('flick', false);
-        host.set('drag', false);
+        host.set(FLICK, false);
+        host.set(DRAG, false);
     },
 
     /**
@@ -344,12 +354,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method next
      */
-    next: function() {
+    next: function () {
         var paginator = this,
             index = paginator.get(INDEX),
             total = paginator.get(TOTAL);
             
-        if(index < total-1 && paginator._uiEnabled) {
+        if(index < total - 1 && paginator._uiEnabled) {
             paginator.set(INDEX, index+1);
         }
     },
@@ -359,12 +369,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method prev
      */
-    prev: function() {
+    prev: function () {
         var paginator = this,
             index = paginator.get(INDEX);
             
         if(index > 0 && paginator._uiEnabled) {
-            paginator.set(INDEX, index-1);
+            paginator.set(INDEX, index - 1);
         }
     },
 
@@ -376,7 +386,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param duration {Number} The number of ms the animation should last
      * @param easing {String} The timing function to use in the animation
      */
-    scrollTo: function(index, duration, easing) {
+    scrollTo: function (index, duration, easing) {
         var paginator = this,
             host = paginator._host,
             vert = host._scrollsVertical,
@@ -389,9 +399,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             easing: easing
         });
     },
-
+    
     _prevent: new Y.Do.Prevent()
-
 });
 
 /**
