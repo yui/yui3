@@ -279,8 +279,8 @@ WidgetButtons.prototype = {
 
     The new button node will have the `Y.Plugin.Button` plugin applied, be added
     to this widget's `buttons`, and rendered in the specified `section` at the
-    specified `index` (or end of the section). If the section does not exist, it
-    will be created.
+    specified `index` (or end of the section when no `index` is provided). If
+    the section does not exist, it will be created.
 
     This fires the `buttonsChange` event and adds the following properties to
     the event facade:
@@ -288,11 +288,16 @@ WidgetButtons.prototype = {
       * `button`: The button node or config object to add.
 
       * `section`: The `WidgetStdMod` section (header/body/footer) where the
-        button should be added.
+        button will be added.
 
-      * `index`: The index at which to add the button to the section.
+      * `index`: The index at which the button will be in the section.
 
       * `src`: "add"
+
+    **Note:** The `index` argument will be passed to the Array `splice()`
+    method, therefore a negative value will insert the `button` that many items
+    from the end. The `index` property on the `buttonsChange` event facade is
+    the index at which the `button` was added.
 
     @method addButton
     @param {Node|Object|String} button The button to add. This can be a `Y.Node`
@@ -336,14 +341,16 @@ WidgetButtons.prototype = {
         (header/body/footer) where the button should be added. This takes
         precedence over the `button.section` configuration property.
     @param {Number} [index] The index at which the button should be inserted. If
-        not specified, the button will be added to the end of the section.
+        not specified, the button will be added to the end of the section. This
+        value is passed to the Array `splice()` method, therefore a negative
+        value will insert the `button` that many items from the end.
     @chainable
     @see Plugin.Button.createNode()
     @since 3.4.0
     **/
     addButton: function (button, section, index) {
         var buttons = this.get('buttons'),
-            sectionButtons;
+            sectionButtons, atIndex;
 
         // Makes sure we have the full config object.
         if (!Y.instanceOf(button, Y.Node)) {
@@ -358,10 +365,13 @@ WidgetButtons.prototype = {
         // Insert new button at the correct position.
         sectionButtons.splice(index, 0, button);
 
+        // Determine the index at which the `button` now exists in the array.
+        atIndex = YArray.indexOf(sectionButtons, button);
+
         this.set('buttons', buttons, {
             button : button,
             section: section,
-            index  : index,
+            index  : atIndex,
             src    : 'add'
         });
 
@@ -414,7 +424,7 @@ WidgetButtons.prototype = {
       * `section`: The `WidgetStdMod` section (header/body/footer) where the
         button should be removed from.
 
-      * `index`: The index at which at which the button exists in the section.
+      * `index`: The index at which the button exists in the section.
 
       * `src`: "remove"
 
@@ -442,6 +452,8 @@ WidgetButtons.prototype = {
         } else {
             // Supports `button` being the string name.
             if (isString(button)) {
+                // `getButton()` is called this way because its behavior is
+                // different based on the number of arguments.
                 button = this.getButton.apply(this, arguments);
             }
 
