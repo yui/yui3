@@ -277,10 +277,12 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'append',
 
-    /** Called on each Node instance
-      * @method insert
-      * @see Node.insert
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method insert
+     * @see Node.insert
+     */
     'insert',
 
     /**
@@ -291,42 +293,56 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      */
     'appendChild',
 
-    /** Called on each Node instance
-      * @method insertBefore
-      * @see Node.insertBefore
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method insertBefore
+     * @see Node.insertBefore
+     */
     'insertBefore',
 
-    /** Called on each Node instance
-      * @method prepend
-      * @see Node.prepend
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method prepend
+     * @see Node.prepend
+     */
     'prepend',
 
-    /** Called on each Node instance
-      * Note that this passes to innerHTML and is not escaped.
-      * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
-      * @method setContent
-      * @deprecated Use setHTML
-      */
+    /**
+     * Called on each Node instance
+     * Note that this passes to innerHTML and is not escaped.
+     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * @for NodeList
+     * @method setContent
+     * @deprecated Use setHTML
+     */
     'setContent',
 
-    /** Called on each Node instance
-      * @method getContent
-      * @deprecated Use getHTML
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method getContent
+     * @deprecated Use getHTML
+     */
     'getContent',
 
-    /** Called on each Node instance
-      * @method setHTML
-      * Note that this passes to innerHTML and is not escaped.
-      * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
-      */
+    /**
+     * Called on each Node instance
+     * Note that this passes to innerHTML and is not escaped.
+     * Use `Y.Escape.html()` to escape HTML, or `set('text')` to add as text.
+     * @for NodeList
+     * @method setHTML
+     * @see Node.setHTML
+     */
     'setHTML',
 
-    /** Called on each Node instance
-      * @method getHTML
-      */
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method getHTML
+     * @see Node.getHTML
+     */
     'getHTML'
 ]);
 /**
