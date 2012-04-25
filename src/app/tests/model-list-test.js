@@ -242,6 +242,66 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(model, list.item(0));
     },
 
+    'each() should iterate over the models in the list': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.add([
+            {name: 'one'},
+            {name: 'two'},
+            {name: 'three'}
+        ]);
+
+        list.each(function (item, index, _list) {
+            calls += 1;
+
+            Assert.areSame(list.item(index), item);
+            Assert.areSame(list, _list);
+            Assert.areSame(item, this, '`this` should be the current item');
+        });
+
+        Assert.areSame(3, calls);
+    },
+
+    'each() should accept an optional context': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.add([
+            {name: 'one'},
+            {name: 'two'},
+            {name: 'three'}
+        ]);
+
+        list.each(function (item, index, _list) {
+            calls += 1;
+
+            Assert.areSame(list.item(index), item);
+            Assert.areSame(list, _list);
+            Assert.areSame(list, this, '`this` should be the list');
+        }, list);
+
+        Assert.areSame(3, calls);
+    },
+
+    'each() should iterate over a copy of the list': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.add([
+            {name: 'one'},
+            {name: 'two'},
+            {name: 'three'}
+        ]);
+
+        list.each(function (item, index, _list) {
+            calls += 1;
+            list.remove(item);
+        });
+
+        Assert.areSame(3, calls);
+    },
+
     'filter() should filter the list and return an array': function () {
         var list = this.createList(),
             filtered;
@@ -618,6 +678,71 @@ modelListSuite.add(new Y.Test.Case({
     // 'setAttrs() should set multiple attribute values on all models in the list': function () {
     //
     // },
+
+    'some() should iterate over the models in the list and stop when the callback returns `true`': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.add([
+            {name: 'one'},
+            {name: 'two'},
+            {name: 'three'}
+        ]);
+
+        Assert.isTrue(list.some(function (item, index, _list) {
+            calls += 1;
+
+            Assert.areSame(list.item(index), item);
+            Assert.areSame(list, _list);
+            Assert.areSame(item, this, '`this` should be the current item');
+
+            if (item.get('name') === 'two') {
+                return true;
+            }
+        }));
+
+        Assert.isFalse(list.some(function () {}));
+        Assert.areSame(2, calls);
+    },
+
+    'some() should accept an optional context': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.add([
+            {name: 'one'},
+            {name: 'two'},
+            {name: 'three'}
+        ]);
+
+        list.some(function (item, index, _list) {
+            calls += 1;
+
+            Assert.areSame(list.item(index), item);
+            Assert.areSame(list, _list);
+            Assert.areSame(list, this, '`this` should be the list');
+        }, list);
+
+        Assert.areSame(3, calls);
+    },
+
+    'some() should iterate over a copy of the list': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.add([
+            {name: 'one'},
+            {name: 'two'},
+            {name: 'three'}
+        ]);
+
+        list.some(function (item, index, _list) {
+            calls += 1;
+            list.remove(item);
+        });
+
+        Assert.areSame(3, calls);
+    },
 
     'sort() should re-sort the list': function () {
         var list = this.createList();

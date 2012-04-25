@@ -4,6 +4,11 @@ App Framework Change History
 3.6.0
 -----
 
+### ModelList
+
+* The `each()` and `some()` methods now iterate over a copy of the list, so it's
+  safe to remove a model during iteration. [Ticket #2531910]
+
 ### Router
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
