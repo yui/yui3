@@ -1003,8 +1003,13 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        Lang.isValue(e.prevVal) && delete this._idMap[e.prevVal];
-        Lang.isValue(e.newVal) && (this._idMap[e.newVal] = e.target);
+        if (Lang.isValue(e.prevVal)) {
+            delete this._idMap[e.prevVal];
+        }
+
+        if (Lang.isValue(e.newVal)) {
+            this._idMap[e.newVal] = e.target;
+        }
     },
 
     // -- Default Event Handlers -----------------------------------------------
