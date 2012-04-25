@@ -107,7 +107,7 @@ button {
         <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
         <form id="test-form" class="test-class" action="#">
             <label for="test-text-value"><em>label</em></label>
-            <input name="test-text-value" id="test-text-value" value="text value">
+            <input name="test-text-value" id="test-text-value" readonly="read" value="text value">
             <input name="test-text-novalue">
     
             <textarea name="test-textarea-value" value="textarea value"></textarea>
@@ -1788,6 +1788,14 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node = Y.one(node.getElementsByTagName('div')[0]);
 
             Assert.areEqual(node, node.removeAttribute('id'));
+        },
+
+        'should remove readonly': function() {
+            var node = Y.one('#test-text-value');
+            node.removeAttribute('readonly');
+
+            Assert.isTrue(!node._node.readonly, 'readonly');
+            Assert.isTrue(!node._node.readOnly, 'readOnly'); // IE
         }
     }));
 
