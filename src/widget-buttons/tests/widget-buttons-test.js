@@ -675,6 +675,55 @@ suite.add(new Y.Test.Case({
         Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'Last header button was not "Bar".');
     },
 
+    '`addButton()` with an `index` that is too large should insert the new button at the end of the section': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            buttons: {
+                header: [{label: 'Foo'}]
+            }
+        });
+
+        this.widget.after('buttonsChange', function (e) {
+            called += 1;
+            Assert.areSame(1, e.index, '`index` was not 1.');
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Header did not have only 1 button.');
+
+        this.widget.addButton({label: 'Bar'}, 'header', 5);
+
+        Assert.areSame(called, 1, 'after `buttonsChange` handler was not called.');
+        Assert.areSame(2, this.widget.get('buttons.header').length, 'Header did not have only 2 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.header')[1].get('text'), 'Last header button was not "Bar".');
+    },
+
+    '`addButton()` with a negative `index` should insert the new button that many items from the end of the section': function () {
+        var called = 0;
+
+        this.widget = new TestWidget({
+            buttons: {
+                header: [
+                    {label: 'Foo'},
+                    {label: 'Eric'}
+                ]
+            }
+        });
+
+        this.widget.after('buttonsChange', function (e) {
+            called += 1;
+            Assert.areSame(0, e.index, '`index` was not 0.');
+        });
+
+        Assert.areSame(2, this.widget.get('buttons.header').length, 'Header did not have only 2 buttons.');
+
+        this.widget.addButton({label: 'Bar'}, 'header', -2);
+
+        Assert.areSame(called, 1, 'after `buttonsChange` handler was not called.');
+        Assert.areSame(3, this.widget.get('buttons.header').length, 'Header did not have only 3 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'First header button was not "Bar".');
+    },
+
     '`getButton()` should return a button by name': function () {
         var button;
 
