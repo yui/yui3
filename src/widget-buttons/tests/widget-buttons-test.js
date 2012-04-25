@@ -268,6 +268,28 @@ suite.add(new Y.Test.Case({
         ArrayAssert.isNotEmpty(this.widget.get('buttons.footer'), '`buttons.footer` was empty.');
     },
 
+    '`buttons` should be able to be specified as an Array of Y.Nodes from another YUI instance': function () {
+        var buttons;
+
+        YUI().use('*', function (Y) {
+            buttons = [
+                Y.Node.create('<button>foo</button>'),
+                Y.Node.create('<button>bar</button>')
+            ];
+        });
+
+        this.widget = new TestWidget({
+            buttons: buttons
+        });
+
+        // Reassign to the processed buttons.
+        buttons = this.widget.get('buttons.footer');
+
+        Assert.areSame(2, buttons.length, '`buttons.footer` did not have 2 buttons.');
+        Assert.areSame('foo', buttons[0].get('text'), 'First button did not have the test "foo".');
+        Assert.areSame('bar', buttons[1].get('text'), 'Second button did not have the test "bar".');
+    },
+
     '`buttons` should be able to be specified as a mixture of all possibile configurations': function () {
         var PanelWidget = Y.Base.create('panelWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons], {
             BUTTONS: {
