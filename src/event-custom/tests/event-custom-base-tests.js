@@ -4739,6 +4739,7 @@ suite.add(new Y.Test.Case({
             //"test before/after with falsy context binds args": "ticket pending"
         },
         ignore: {
+            "test before/after with falsy context binds args": "ticket pending", //No Asserts
             // Trac ticket noted as value
             "test originalRetVal not overwritten by nested call": 2530030
         }
@@ -4881,6 +4882,13 @@ suite.add(new Y.Test.Case({
     },
 
     "test target.before() is an alias for target.on()": function () {
+    },
+    _should: {
+        ignore: {
+            "test target.on(fn, host, noSuchMethod)": true,
+            "test target.on([fnA, fnB, fnC], host, noSuchMethod)": true,
+            "test target.before() is an alias for target.on()": true
+        }
     }
 }));
 

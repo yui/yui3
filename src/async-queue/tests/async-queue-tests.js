@@ -7,9 +7,6 @@ Y.AsyncQueue.defaults.timeout = -1;
 
 function f() {}
 
-if (!window.console) {
-    console = { log: f };
-}
 
 suite.add(new Y.Test.Case({
     name : "Queue isntantiation",
@@ -648,7 +645,13 @@ suite.add(new Y.Test.Case({
 
 suite.add(new Y.Test.Case({
     name : "Test Events",
-
+    _should: {
+        ignore: {
+            //Ignored because it uses IO to make a request
+            // and the request is not formatted propertly in Nodejs
+            test_events: Y.UA.nodejs
+        }
+    },
     test_events : function () {
         var results = [],
             self = this,

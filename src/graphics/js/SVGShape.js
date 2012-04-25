@@ -358,7 +358,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			stops = fill.stops,
 			w = this.get("width"),
 			h = this.get("height"),
-			rotation = fill.rotation,
+			rotation = fill.rotation || 0,
 			radCon = Math.PI/180,
             tanRadians = parseFloat(parseFloat(Math.tan(rotation * radCon)).toFixed(8)),
             i,
