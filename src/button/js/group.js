@@ -118,7 +118,7 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
             clickedNode.toggleClass(selectedClass, !isSelected);
             /**
              * @event selectionChange
-             * @description fires when  any button in the group changes its checked status
+             * @description fires when any button in the group changes its checked status
              * @param {Event} the event object. It contains an "originEvent" property
              * linking to the original DOM event that triggered the selection change
              */
