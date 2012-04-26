@@ -902,7 +902,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         facade = Y.merge(options, {
-            index: this._findIndex(model),
+            index: options.index || this._findIndex(model),
             model: model
         });
 
