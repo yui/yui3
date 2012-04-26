@@ -408,7 +408,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             vert = host._scrollsVertical,
             scrollAxis = (vert) ? SCROLL_Y : SCROLL_X, 
             scrollVal = paginator._getIndexOffset(index);
-            
+            console.log(index);
         paginator._uiDisable();
         host.set(scrollAxis, scrollVal, {
             duration: duration,
