@@ -10,6 +10,9 @@ Widget Buttons Change History
     event facade is now always the actual index at which the new button exists.
     [Ticket #253219]
 
+  * Fixed issue with properly handling `Y.Node` instances from other YUI
+    sandboxes. [Ticket #2532207]
+
 3.5.0
 -----
 
