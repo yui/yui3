@@ -623,6 +623,17 @@ modelListSuite.add(new Y.Test.Case({
 
         Assert.areSame('zero', list.remove(list.item(0)).get('foo'));
         Assert.areSame(1, list.size());
+        Assert.areSame('one', list.item(0).get('foo'));
+    },
+
+    'remove() should remove a single model from the list by index': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        Assert.areSame('zero', list.remove(0).get('foo'));
+        Assert.areSame(1, list.size());
+        Assert.areSame('one', list.item(0).get('foo'));
     },
 
     'remove() should remove an array of models from the list': function () {
@@ -635,6 +646,18 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('zero', removed[0].get('foo'));
         Assert.areSame('one', removed[1].get('foo'));
         Assert.areSame(0, list.size());
+    },
+
+    'remove() should remove an array of models from the list by index': function () {
+        var list = this.createList(),
+            removed;
+
+        list.add([{foo: 'zero'}, {foo: 'one'}, {foo: 'two'}]);
+        removed = list.remove([1, 2]);
+
+        Assert.areSame('one', removed[0].get('foo'));
+        Assert.areSame('two', removed[1].get('foo'));
+        Assert.areSame(1, list.size());
     },
 
     'remove() should remove models in another ModelList from the list': function () {

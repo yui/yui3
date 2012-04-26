@@ -12,6 +12,10 @@ App Framework Change History
 * The `each()` and `some()` methods now iterate over a copy of the list, so it's
   safe to remove a model during iteration. [Ticket #2531910]
 
+* The `remove()` method now optionally accepts the index of a model to remove
+  (or an array of indices). You no longer need to specify the actual model
+  instance(s), although that's still supported as well.
+
 ### Router
 
 * The `req` object passed to routes now has a `pendingRoutes` property that

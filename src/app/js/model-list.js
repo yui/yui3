@@ -666,10 +666,12 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     /**
     Removes the specified model or array of models from this list. You may also
     pass another ModelList instance to remove all the models that are in both
-    that instance and this instance.
+    that instance and this instance, or pass numerical indices to remove the
+    models at those indices.
 
     @method remove
-    @param {Model|Model[]|ModelList} models Models to remove.
+    @param {Model|Model[]|ModelList|Number|Number[]} models Models or indices of
+        models to remove.
     @param {Object} [options] Data to be mixed into the event facade of the
         `remove` event(s) for the removed models.
 
@@ -682,7 +684,18 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var isList = models._isYUIModelList;
 
         if (isList || Lang.isArray(models)) {
-            return YArray.map(isList ? models.toArray() : models, function (model) {
+            // We can't remove multiple models by index because the indices will
+            // change as we remove them, so we need to get the actual models
+            // first.
+            models = YArray.map(isList ? models.toArray() : models, function (model) {
+                if (Lang.isNumber(model)) {
+                    return this.item(model);
+                }
+
+                return model;
+            }, this);
+
+            return YArray.map(models, function (model) {
                 return this._remove(model, options);
             }, this);
         } else {
@@ -1033,7 +1046,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     Removes the specified _model_ if it's in this list.
 
     @method _remove
-    @param {Model} model Model to remove.
+    @param {Model|Number} model Model or index of the model to remove.
     @param {Object} [options] Data to be mixed into the event facade of the
         `remove` event for the removed model.
       @param {Boolean} [options.silent=false] If `true`, no `remove` event will
@@ -1042,14 +1055,21 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _remove: function (model, options) {
-        var index = this.indexOf(model),
-            facade;
+        var index, facade;
 
         options || (options = {});
 
-        if (index === -1) {
+        if (Lang.isNumber(model)) {
+            index = model;
+            model = this.item(index);
+        } else {
+            index = this.indexOf(model);
+        }
+
+        if (index === -1 || !model) {
             this.fire(EVT_ERROR, {
                 error: 'Model is not in the list.',
+                index: index,
                 model: model,
                 src  : 'remove'
             });
