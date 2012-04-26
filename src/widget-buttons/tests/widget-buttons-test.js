@@ -269,28 +269,38 @@ suite.add(new Y.Test.Case({
     },
 
     '`buttons` should be able to be specified as an Array of Y.Nodes from another YUI instance': function () {
-        var buttons, footerButtons;
+        var buttons, 
+            footerButtons, 
+            test = this,
 
-        YUI().use('*', function (Y) {
+            resumeTest = function() {
+                test.widget = new TestWidget({
+                    buttons: buttons
+                });
+
+                footerButtons = test.widget.get('buttons.footer');
+
+                Assert.areSame(2, footerButtons.length, '`buttons.footer` did not have 2 buttons.');
+                Assert.areSame('foo', footerButtons[0].get('text'), 'First button did not have the test "foo".');
+                Assert.areSame('bar', footerButtons[1].get('text'), 'Second button did not have the test "bar".');
+
+                Assert.areNotSame(buttons[0], footerButtons[0]);
+                Assert.isTrue(!!footerButtons[0].hasPlugin('button'), 'Node does not have button plugin.');
+                Assert.isFalse(!!buttons[0].hasPlugin('button'), 'Node from other sandbox has the button plugin.');
+            };
+
+        // use(*) was causing intermittent problems in FF 11 here.
+
+        YUI().use('node', function (Y1) {
             buttons = [
-                Y.Node.create('<button>foo</button>'),
-                Y.Node.create('<button>bar</button>')
+                Y1.Node.create('<button>foo</button>'),
+                Y1.Node.create('<button>bar</button>')
             ];
+
+            test.resume(resumeTest);
         });
 
-        this.widget = new TestWidget({
-            buttons: buttons
-        });
-
-        footerButtons = this.widget.get('buttons.footer');
-
-        Assert.areSame(2, footerButtons.length, '`buttons.footer` did not have 2 buttons.');
-        Assert.areSame('foo', footerButtons[0].get('text'), 'First button did not have the test "foo".');
-        Assert.areSame('bar', footerButtons[1].get('text'), 'Second button did not have the test "bar".');
-
-        Assert.areNotSame(buttons[0], footerButtons[0]);
-        Assert.isTrue(!!footerButtons[0].hasPlugin('button'), 'Node does not have button plugin.');
-        Assert.isFalse(!!buttons[0].hasPlugin('button'), 'Node from other sandbox has the button plugin.');
+        test.wait();
     },
 
     '`buttons` should be able to be specified as a mixture of all possibile configurations': function () {
