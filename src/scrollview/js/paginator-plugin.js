@@ -13,8 +13,8 @@ var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     CONTENT_BOX = "contentBox",
     FLICK = "flick",
     DRAG = "drag",
-    CLASS_HIDDEN,
-    CLASS_PAGED;
+    CLASS_HIDDEN, // Set in Initializer
+    CLASS_PAGED; // Set in Initializer
 
 /**
  * Scrollview plugin that adds support for paging
@@ -137,7 +137,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterRender: function (e) {
         var host = this._host;
-        
         host.get("boundingBox").addClass(CLASS_PAGED);
     },
     
@@ -167,6 +166,84 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          }
      },
      
+    /**
+     * Executed to respond to the flick event, by over-riding the default flickFrame animation. 
+     * This is needed to determine if the next or prev page should be activated.
+     *
+     * @method _flickFrame
+     * @protected
+     */
+    _flickFrame: function () {
+        var paginator = this,
+            host = paginator._host,
+            velocity = host._currentVelocity,
+            isForward = velocity < 0,
+            pageIndex = paginator.get(INDEX),
+            pageCount = paginator.get(TOTAL);
+            
+        if (velocity) {
+            if (isForward && pageIndex < pageCount - 1) {
+                paginator.next();
+            }
+            else if (!isForward && pageIndex > 0) {
+                paginator.prev();
+            }
+        }
+
+        return paginator._prevent;
+    },
+    
+    /**
+     * Executed to respond to the mousewheel event, by over-riding the default mousewheel method.
+     *
+     * @method _mousewheel
+     * @param {Event.Facade}
+     * @protected
+     */
+    _mousewheel: function (e) {
+        var paginator = this,
+            isForward = e.wheelDelta < 0 // down (negative) is forward.  @TODO Should revisit.
+            pageIndex = paginator.get(INDEX),
+            pageCount = paginator.get(TOTAL);
+            
+        if (isForward && pageIndex < pageCount - 1) {    
+            paginator.next();
+        }
+        else if (!isForward && pageIndex > 0) {
+            paginator.prev();
+        }
+
+        // prevent browser default behavior on mousewheel
+        e.preventDefault();
+
+        return paginator._prevent;
+    },
+
+    /**
+     * Scroll to a given page in the scrollview
+     *
+     * @method scrollTo
+     * @param index {Number} The index of the page to scroll to
+     * @param duration {Number} The number of ms the animation should last
+     * @param easing {String} The timing function to use in the animation
+     */
+    scrollTo: function (index, duration, easing) {
+        var paginator = this,
+            host = paginator._host,
+            vert = host._scrollsVertical,
+            scrollAxis = (vert) ? SCROLL_Y : SCROLL_X, 
+            scrollVal = paginator._getIndexOffset(index),
+            pageNodes = paginator._pageNodes,
+            pageIndex = pageNodes.item(index);
+        
+        paginator._showNodes(pageIndex);
+        paginator._uiDisable();
+        host.set(scrollAxis, scrollVal, {
+            duration: duration,
+            easing: easing
+        });
+    },
+    
     /**
      * Return the offset value where scrollview should scroll to.
      * Neccesary because index # doesn't nessecarily map up to location in the DOM because of this.optimizeMemory
@@ -205,59 +282,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
         
         return offset;
-    },
-    
-    /**
-     * Executed to respond to the flick event, by over-riding the default flickFrame animation. 
-     * This is needed to determine if the next or prev page should be activated.
-     *
-     * @method _flickFrame
-     * @protected
-     */
-    _flickFrame: function () {
-        var paginator = this,
-            host = paginator._host,
-            velocity = host._currentVelocity,
-            inc = velocity < 0,
-            pageIndex = paginator.get(INDEX),
-            pageCount = paginator.get(TOTAL);
-            
-        if (velocity) {
-            if (inc && pageIndex < pageCount - 1) {
-                paginator.next();
-            }
-            else if (!inc && pageIndex > 0) {
-                paginator.prev();
-            }
-        }
-
-        return paginator._prevent;
-    },
-    
-    /**
-     * Executed to respond to the mousewheel event, by over-riding the default mousewheel method.
-     *
-     * @method _mousewheel
-     * @param {Event.Facade}
-     * @protected
-     */
-    _mousewheel: function (e) {
-        var paginator = this,
-            isForward = e.wheelDelta < 0 // down (negative) is forward.  @TODO Should revisit.
-            currentIndex = paginator.get(INDEX),
-            pageCount = paginator.get(TOTAL);
-            
-        if (isForward && currentIndex < pageCount - 1) {    
-            paginator.next();
-        }
-        else if (!isForward && currentIndex > 0) {
-            paginator.prev();
-        }
-
-        // prevent browser default behavior on mouse scroll
-        e.preventDefault();
-
-        return paginator._prevent;
     },
     
     /**
@@ -392,28 +416,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if(index > 0 && paginator._uiEnabled) {
             paginator.set(INDEX, index - 1);
         }
-    },
-
-    /**
-     * Scroll to a given page in the scrollview
-     *
-     * @method scrollTo
-     * @param index {Number} The index of the page to scroll to
-     * @param duration {Number} The number of ms the animation should last
-     * @param easing {String} The timing function to use in the animation
-     */
-    scrollTo: function (index, duration, easing) {
-        var paginator = this,
-            host = paginator._host,
-            vert = host._scrollsVertical,
-            scrollAxis = (vert) ? SCROLL_Y : SCROLL_X, 
-            scrollVal = paginator._getIndexOffset(index);
-            console.log(index);
-        paginator._uiDisable();
-        host.set(scrollAxis, scrollVal, {
-            duration: duration,
-            easing: easing
-        });
     },
     
     _prevent: new Y.Do.Prevent()
