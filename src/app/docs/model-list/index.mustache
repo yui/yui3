@@ -159,6 +159,19 @@ pies.add(cheesecakes);
 ```
 
 <p>
+Models are automatically inserted into the list at the correct index based on the current sort comparator, so the list is always guaranteed to be sorted. By default, no sort comparator is defined, so models are sorted in insertion order. See [[#Creating a Custom Sort Comparator]] for details on customizing how a list is sorted.
+</p>
+
+<p>
+To add one or more models at a specific index in the list regardless of the current sort order, specify a value for the `index` option:
+</p>
+
+```
+// Add a pie at index 2, regardless of the current sort order.
+pies.add({type: 'lemon meringue'}, {index: 2});
+```
+
+<p>
 The `create()` method accepts an optional callback function, which will be executed when the save operation finishes. Provide a callback if you'd like to be notified of the success or failure of the save operation.
 </p>
 
@@ -194,10 +207,6 @@ You can also call `reset()` with no arguments to quickly empty the list.
 // Empty the list.
 pies.reset();
 ```
-
-<p>
-Models are automatically inserted into the list at the correct index based on the current sort comparator, so the list is always guaranteed to be sorted. By default, no sort comparator is defined, so models are sorted in insertion order. See [[#Creating a Custom Sort Comparator]] for details on customizing how a list is sorted.
-</p>
 
 <h4>Retrieving Models</h4>
 
@@ -248,14 +257,20 @@ var applePiesList = pies.filter({asList: true}, function (pie) {
 <h4>Removing Models</h4>
 
 <p>
-Pass a model or array of models to the <a href="{{apiDocs}}/classes/ModelList.html#method_remove">`remove()`</a> method to remove them from the list.
+Pass a model index, array of model indices, model instance, or array of model instances to the <a href="{{apiDocs}}/classes/ModelList.html#method_remove">`remove()`</a> method to remove them from the list.
 </p>
 
 ```
-// Remove a single model from the list.
+// Remove the model at index 1 from the list.
+pies.remove(1);
+
+// Remove multiple models from the list by index.
+pies.remove([0, 3, 4]);
+
+// Remove a specific model instance from the list, regardless of its index.
 pies.remove(pies.getById('1234'));
 
-// Remove multiple models from the list.
+// Remove multiple model instances from the list.
 pies.remove([
   pies.getById('1235'),
   pies.getById('1236')
@@ -263,11 +278,11 @@ pies.remove([
 ```
 
 <p>
-This will only remove the specified model instances from the list; it won't actually call the models' <a href="{{apiDocs}}/classes/Model.html#method_destroy">`destroy()`</a> methods or delete them via the models' sync layer. Calling a model's `destroy()` method will automatically remove it from any lists it's in, so that would be a better option if you want to both remove and destroy or delete a model.
+This will only remove the specified models from the list; it won't actually call the models' <a href="{{apiDocs}}/classes/Model.html#method_destroy">`destroy()`</a> methods or delete them via the models' sync layer. Calling a model's `destroy()` method will automatically remove it from any lists it's in, so that would be a better option if you want to both remove and destroy or delete a model.
 </p>
 
 <p>
-You can pass another ModelList instance to `remove()` to remove all the models that exist in that list from this list (note that you may get `error` events if some of the models in the other list don't exist in the list you're trying to remove them from).
+You can also pass another ModelList instance to `remove()` to remove all the models that exist in that list from this list (note that you may get `error` events if some of the models in the other list don't exist in the list you're trying to remove them from).
 </p>
 
 <h3>List Attributes</h3>
