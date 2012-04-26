@@ -6,7 +6,6 @@
 
 var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     INDEX = "index",
-    PREVINDEX = "prevIndex",
     SCROLL_X = "scrollX",
     SCROLL_Y = "scrollY",
     TOTAL = "total",
@@ -81,17 +80,6 @@ PaginatorPlugin.ATTRS = {
     },
     
     /**
-     * The active page number for a paged scrollview
-     *
-     * @attribute index
-     * @type {Number}
-     * @default 0
-     */
-    prevIndex: {
-        value: 0
-    },
-    
-    /**
      * The total number of pages
      *
      * @attribute total
@@ -109,6 +97,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _pageOffsets: null,
     _pageNodes: null,
     _uiEnabled: true,
+    _prevIndex: 0,
     
     /**
      * Designated initializer
@@ -131,6 +120,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator._hostOriginalFlick = host.get(FLICK);
         paginator._hostOriginalDrag = host.get(DRAG);
         
+        paginator.beforeHostMethod('_mousewheel', paginator._mousewheel);
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('render', paginator._afterRender);
@@ -189,7 +179,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _getIndexOffset: function (index) {
         var paginator = this,
             index = index || paginator.get(INDEX),
-            previous = paginator.get(PREVINDEX),
+            previous = paginator._prevIndex,
             isForward = (index > previous) ? true : false,
             pageOffsets = paginator._pageOffsets,
             optimizeMemory = paginator.optimizeMemory,
@@ -245,6 +235,29 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
+     * Executed to respond to the mousewheel event, by over-riding the default mousewheel method.
+     *
+     * @method _mousewheel
+     * @param {Event.Facade}
+     * @protected
+     */
+    _mousewheel: function (e) {
+        var paginator = this,
+            isForward = e.wheelDelta < 0 // down (negative) is forward
+            pageIndex = paginator.get(INDEX),
+            pageCount = paginator.get(TOTAL);
+            
+        if (isForward && pageIndex < pageCount - 1) {    
+            paginator.next();
+        }
+        else if (!isForward && pageIndex > 0) {
+            paginator.prev();
+        }
+
+        return paginator._prevent;
+    },
+    
+    /**
      * scrollEnd handler detects if a page needs to change
      *
      * @method _scrollEnded
@@ -258,7 +271,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             trans = PaginatorPlugin.SNAP_TO_CURRENT,
             optimizeMemory = paginator.optimizeMemory,
             currentIndex = paginator.get(INDEX),
-            previousIndex = paginator.get(PREVINDEX),
+            previousIndex = paginator._prevIndex,
             isForward = (previousIndex < currentIndex) ? true : false,
             pageNodes = paginator._pageNodes;
         
@@ -271,7 +284,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
         
         paginator._uiEnable();
-        paginator.set(PREVINDEX, currentIndex);
+        paginator._prevIndex = currentIndex;
      },
 
     /**
