@@ -316,6 +316,38 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Executes the supplied function on each model in this list.
+
+    By default, the callback function's `this` object will refer to the model
+    currently being iterated. Specify a `thisObj` to override the `this` object
+    if desired.
+
+    Note: Iteration is performed on a copy of the internal array of models, so
+    it's safe to delete a model from the list during iteration.
+
+    @method each
+    @param {Function} callback Function to execute on each model.
+        @param {Model} callback.model Model instance.
+        @param {Number} callback.index Index of the current model.
+        @param {ModelList} callback.list The ModelList being iterated.
+    @param {Object} [thisObj] Object to use as the `this` object when executing
+        the callback.
+    @chainable
+    @since 3.6.0
+    **/
+    each: function (callback, thisObj) {
+        var items = this._items.concat(),
+            i, item, len;
+
+        for (i = 0, len = items.length; i < len; i++) {
+            item = items[i];
+            callback.call(thisObj || item, item, i, this);
+        }
+
+        return this;
+    },
+
+    /**
     Executes the supplied function on each model in this list. Returns an array
     containing the models for which the supplied function returned a truthy
     value.
@@ -692,6 +724,43 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Executes the supplied function on each model in this list, and stops
+    iterating if the callback returns `true`.
+
+    By default, the callback function's `this` object will refer to the model
+    currently being iterated. Specify a `thisObj` to override the `this` object
+    if desired.
+
+    Note: Iteration is performed on a copy of the internal array of models, so
+    it's safe to delete a model from the list during iteration.
+
+    @method some
+    @param {Function} callback Function to execute on each model.
+        @param {Model} callback.model Model instance.
+        @param {Number} callback.index Index of the current model.
+        @param {ModelList} callback.list The ModelList being iterated.
+    @param {Object} [thisObj] Object to use as the `this` object when executing
+        the callback.
+    @return {Boolean} `true` if the callback returned `true` for any item,
+        `false` otherwise.
+    @since 3.6.0
+    **/
+    some: function (callback, thisObj) {
+        var items = this._items.concat(),
+            i, item, len;
+
+        for (i = 0, len = items.length; i < len; i++) {
+            item = items[i];
+
+            if (callback.call(thisObj || item, item, i, this)) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
+    /**
     Forcibly re-sorts the list.
 
     Usually it shouldn't be necessary to call this method since the list
@@ -1003,8 +1072,13 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        Lang.isValue(e.prevVal) && delete this._idMap[e.prevVal];
-        Lang.isValue(e.newVal) && (this._idMap[e.newVal] = e.target);
+        if (Lang.isValue(e.prevVal)) {
+            delete this._idMap[e.prevVal];
+        }
+
+        if (Lang.isValue(e.newVal)) {
+            this._idMap[e.newVal] = e.target;
+        }
     },
 
     // -- Default Event Handlers -----------------------------------------------

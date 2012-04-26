@@ -1,6 +1,11 @@
 DOM Change History
 ==================
 
+3.5.1
+-----
+  * Bug fix: Fix multiple grouped queries for IE. [Ticket 2532155]
+
+
 3.5.0
 -----
   * Bug fix: Comments are now filtered from IE child queries. [Ticket 2530101]
