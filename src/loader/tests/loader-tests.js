@@ -583,6 +583,87 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
         },
+        'test: conditional trigger is an array': function() {
+            
+            var loader = new Y.Loader({
+                modules: {
+                    test_one: {
+                        fullpath: 'one.js'
+                    },
+                    test_two: {
+                        fullpath: 'two.js'
+                    },
+                    cond_array: {
+                        fullpath: 'cond_array.js',
+                        condition: {
+                            trigger: ['test_one', 'test_two']
+                        }
+                    }
+                },
+                require: ['test_one']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of files returned');
+            Assert.areSame('one.js', out.js[0], 'Failed to load required module');
+            Assert.areSame('cond_array.js', out.js[1], 'Failed to load conditional from trigger array');
+        },
+        'test: conditional module in array second module': function() {
+
+            var loader = new Y.Loader({
+                modules: {
+                    test2_one: {
+                        fullpath: '2one.js'
+                    },
+                    test2_two: {
+                        fullpath: '2two.js'
+                    },
+                    test2_three: {
+                        fullpath: '2three.js'
+                    },
+                    cond2_array: {
+                        fullpath: '2cond_array.js',
+                        condition: {
+                            trigger: ['test2_one', 'test2_two']
+                        }
+                    }
+                },
+                require: ['test2_two']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
+            Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
+            Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
+        
+        },
+        'test: conditional array in modules not required': function() {
+            var loader = new Y.Loader({
+                modules: {
+                    test3_one: {
+                        fullpath: '3one.js'
+                    },
+                    test3_two: {
+                        fullpath: '3two.js'
+                    },
+                    test3_three: {
+                        fullpath: '3three.js'
+                    },
+                    cond3_array: {
+                        fullpath: '3cond_array.js',
+                        condition: {
+                            trigger: ['test3_one', 'test3_two']
+                        }
+                    }
+                },
+                require: ['test3_three']
+            });
+
+            var out = loader.resolve(true);
+            Assert.areEqual(1, out.js.length, 'Wrong number of files returned (3)');
+            Assert.areSame('3three.js', out.js[0], 'Failed to load required module (3)');
+            
+        },
         test_css_stamp: function() {
             var test = this,
                 links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
