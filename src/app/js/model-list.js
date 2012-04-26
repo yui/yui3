@@ -228,6 +228,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @param {Object} [options] Data to be mixed into the event facade of the
         `add` event(s) for the added models.
 
+        @param {Number} [options.index] Index at which to insert the added
+            models. If not specified, the models will automatically be inserted
+            in the appropriate place according to the current sort order as
+            dictated by the `comparator()` method, if any.
         @param {Boolean} [options.silent=false] If `true`, no `add` event(s)
             will be fired.
 
@@ -237,8 +241,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var isList = models._isYUIModelList;
 
         if (isList || Lang.isArray(models)) {
-            return YArray.map(isList ? models.toArray() : models, function (model) {
-                return this._add(model, options);
+            return YArray.map(isList ? models.toArray() : models, function (model, index) {
+                var modelOptions = options || {};
+
+                // When an explicit insertion index is specified, ensure that
+                // the index is increased by one for each subsequent item in the
+                // array.
+                if ('index' in modelOptions) {
+                    modelOptions = Y.merge(modelOptions, {
+                        index: modelOptions.index + index
+                    });
+                }
+
+                return this._add(model, modelOptions);
             }, this);
         } else {
             return this._add(models, options);
@@ -902,7 +917,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         facade = Y.merge(options, {
-            index: options.index || this._findIndex(model),
+            index: 'index' in options ? options.index : this._findIndex(model),
             model: model
         });
 

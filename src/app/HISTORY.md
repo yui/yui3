@@ -6,6 +6,9 @@ App Framework Change History
 
 ### ModelList
 
+* The `add()` method now accepts an `index` option, which can be used to insert
+  the specified model(s) at a specific index in the list. [Greg Hinch]
+
 * The `each()` and `some()` methods now iterate over a copy of the list, so it's
   safe to remove a model during iteration. [Ticket #2531910]
 

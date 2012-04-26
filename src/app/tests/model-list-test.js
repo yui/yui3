@@ -135,6 +135,17 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('foo', added.get('foo'));
     },
 
+    'add() should add a model to the list at the specified index': function () {
+        var list  = this.createList(),
+            model = this.createModel();
+
+        list.add([{name: 'first'}, {name: 'second'}, {name: 'third'}]);
+        list.add(model, {index: 0});
+
+        Assert.areSame(4, list.size(), 'list should contain 4 items');
+        Assert.areSame(model, list.item(0), 'model should be inserted at index 0');
+    },
+
     'add() should add an array of models to the list': function () {
         var list   = this.createList(),
             models = [this.createModel(), this.createModel()],
@@ -151,6 +162,21 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('bar', added[1].get('bar'));
     },
 
+    'add() should add an array of models to the list at the specified index': function () {
+        var list       = this.createList(),
+            modelOne   = this.createModel(),
+            modelTwo   = this.createModel(),
+            modelThree = this.createModel();
+
+        list.add([{name: 'first'}, {name: 'second'}, {name: 'third'}]);
+        list.add([modelOne, modelTwo, modelThree], {index: 0});
+
+        Assert.areSame(6, list.size(), 'list should contain 6 items');
+        Assert.areSame(modelOne, list.item(0), 'modelOne should be inserted at index 0');
+        Assert.areSame(modelTwo, list.item(1), 'modelTwo should be inserted at index 1');
+        Assert.areSame(modelThree, list.item(2), 'modelThree should be inserted at index 2');
+    },
+
     'add() should add models in another ModelList to the list': function () {
         var list        = this.createList(),
             otherList   = this.createList(),
@@ -162,6 +188,24 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, list.size(), 'list should contain 2 models');
         Assert.areSame(otherList.item(0), list.item(0));
         Assert.areSame(otherList.item(1), list.item(1));
+    },
+
+    'add() should add models in another ModelList to the list at the specified index': function () {
+        var list       = this.createList(),
+            otherList  = this.createList(),
+            modelOne   = this.createModel(),
+            modelTwo   = this.createModel(),
+            modelThree = this.createModel();
+
+        otherList.add([modelOne, modelTwo, modelThree]);
+
+        list.add([{name: 'first'}, {name: 'second'}, {name: 'third'}]);
+        list.add(otherList, {index: 0});
+
+        Assert.areSame(6, list.size(), 'list should contain 6 items');
+        Assert.areSame(modelOne, list.item(0), 'modelOne should be inserted at index 0');
+        Assert.areSame(modelTwo, list.item(1), 'modelTwo should be inserted at index 1');
+        Assert.areSame(modelThree, list.item(2), 'modelThree should be inserted at index 2');
     },
 
     'add() should support models created in other windows': function () {
