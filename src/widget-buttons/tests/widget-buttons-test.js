@@ -269,7 +269,7 @@ suite.add(new Y.Test.Case({
     },
 
     '`buttons` should be able to be specified as an Array of Y.Nodes from another YUI instance': function () {
-        var buttons;
+        var buttons, footerButtons;
 
         YUI().use('*', function (Y) {
             buttons = [
@@ -282,12 +282,15 @@ suite.add(new Y.Test.Case({
             buttons: buttons
         });
 
-        // Reassign to the processed buttons.
-        buttons = this.widget.get('buttons.footer');
+        footerButtons = this.widget.get('buttons.footer');
 
-        Assert.areSame(2, buttons.length, '`buttons.footer` did not have 2 buttons.');
-        Assert.areSame('foo', buttons[0].get('text'), 'First button did not have the test "foo".');
-        Assert.areSame('bar', buttons[1].get('text'), 'Second button did not have the test "bar".');
+        Assert.areSame(2, footerButtons.length, '`buttons.footer` did not have 2 buttons.');
+        Assert.areSame('foo', footerButtons[0].get('text'), 'First button did not have the test "foo".');
+        Assert.areSame('bar', footerButtons[1].get('text'), 'Second button did not have the test "bar".');
+
+        Assert.areNotSame(buttons[0], footerButtons[0]);
+        Assert.isTrue(!!footerButtons[0].hasPlugin('button'), 'Node does not have button plugin.');
+        Assert.isFalse(!!buttons[0].hasPlugin('button'), 'Node from other sandbox has the button plugin.');
     },
 
     '`buttons` should be able to be specified as a mixture of all possibile configurations': function () {
@@ -596,7 +599,7 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(null, this.widget.get('defaultButton'), '`defaultButton` was not null.');
         Assert.areSame(1, called, '`defaultButtonChange` was not called.');
-    },
+    }
 }));
 
 // -- Methods ------------------------------------------------------------------
@@ -936,10 +939,10 @@ suite.add(new Y.Test.Case({
         });
 
         headerButton = this.widget.getStdModNode('header').one('.yui3-button');
-        footerBotton = this.widget.getStdModNode('footer').one('.yui3-button');
+        footerButton = this.widget.getStdModNode('footer').one('.yui3-button');
 
         Assert.areSame('Foo', headerButton.get('text'), '`headerButton` text is not "Foo".');
-        Assert.areSame('Bar', footerBotton.get('text'), '`footerButton` text is not "Bar".');
+        Assert.areSame('Bar', footerButton.get('text'), '`footerButton` text is not "Bar".');
     },
 
     '`buttons` should move to the correct position': function () {
