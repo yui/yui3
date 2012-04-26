@@ -243,16 +243,19 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _mousewheel: function (e) {
         var paginator = this,
-            isForward = e.wheelDelta < 0 // down (negative) is forward
-            pageIndex = paginator.get(INDEX),
+            isForward = e.wheelDelta < 0 // down (negative) is forward.  @TODO Should revisit.
+            currentIndex = paginator.get(INDEX),
             pageCount = paginator.get(TOTAL);
             
-        if (isForward && pageIndex < pageCount - 1) {    
+        if (isForward && currentIndex < pageCount - 1) {    
             paginator.next();
         }
-        else if (!isForward && pageIndex > 0) {
+        else if (!isForward && currentIndex > 0) {
             paginator.prev();
         }
+
+        // prevent browser default behavior on mouse scroll
+        e.preventDefault();
 
         return paginator._prevent;
     },
