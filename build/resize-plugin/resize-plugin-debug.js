@@ -205,4 +205,4 @@ var ResizePlugin = function(config) {
         Y.Plugin.Resize = ResizePlugin;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['resize-base', 'plugin'], optional:['resize-constrain']});
+}, '@VERSION@' ,{skinnable:false, optional:['resize-constrain'], requires:['resize-base', 'plugin']});
