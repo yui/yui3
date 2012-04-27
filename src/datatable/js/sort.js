@@ -509,8 +509,8 @@ Y.mix(Sortable.prototype, {
                     cmp = col.sortFn(a, b, (dir === -1));
                 } else {
                     // FIXME? Requires columns without sortFns to have key
-                    aa = a.get(col.key);
-                    bb = b.get(col.key);
+                    aa = a.get(col.key) || '';
+                    bb = b.get(col.key) || '';
 
                     cmp = (aa > bb) ? dir : ((aa < bb) ? -dir : 0);
                 }
