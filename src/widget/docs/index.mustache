@@ -704,17 +704,3 @@ These code reuse mechanisms are known as <a href="../base/#plugins"><em>Plugins<
 <p>Additionally, the YUI Gallery is another source for plugins which provide additional functionality for YUI Widgets, such as the <a href="http://yuilibrary.com/gallery/show/overlay-modal">Modal Overlay Plugin</a> and the <a href="http://yuilibrary.com/gallery/show/widget-io">Widget IO Plugin</a>.</p>
 
 <p>The <a href="{{componentAssets}}/../plugin/myplugin.js.txt">"MyPlugin" template file</a> provides a starting point for you to create your own plugins.</p>
-
-<h2>Known Issues</h2>
-
-<ul>
-    <li>
-        <p>
-        <strong>`WidgetModality` mask node regression in 3.5.0.</strong> There was a regression where browsers which actually support `position: fixed` were also getting a `scroll` listener attached to their `window`. The bad behavior was the result of faulty logic when checking `Y.UA`. See: <a href="See: http://yuilibrary.com/projects/yui3/ticket/2532136">Ticket #2532136</a>.
-        </p>
-
-        <p>
-        A <strong><a href="http://yuilibrary.com/gallery/show/586">Gallery patch module</a></strong> has been created to fix this bug until the next release.
-        </p>
-    </li>
-</ul>
