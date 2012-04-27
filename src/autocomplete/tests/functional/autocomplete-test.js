@@ -1696,6 +1696,17 @@ listSuite.add(new Y.Test.Case({
         Assert.isTrue(this.ac.get('visible'));
         this.ac.hide();
         Assert.isTrue(this.ac.get('visible'));
+    },
+
+    '_ariaSay() should insert text only, not HTML': function () {
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['<b>foo</b>']));
+
+        var items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        this.ac.selectItem(items.item(0));
+
+        Assert.areSame('&lt;b&gt;foo&lt;/b&gt; selected.', this.ac._ariaNode.getHTML());
     }
 
     // Note: selectItem() is already covered by the select event test above. No
