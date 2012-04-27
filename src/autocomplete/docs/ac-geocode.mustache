@@ -9,9 +9,10 @@
         provides a direct way to access a geocoder via an HTTP request.
     </p>
     <p>
-        Google Geocoding Service returns a json object literal, but the
-        autocomplete cannot use it directly for security reasons. So the
-        workaround is calling the service using YQL as source.
+        Google Geocoding Service returns a JSON object literal. The service does
+        not provide a JSONP approach. Autocomplete cannot use that object
+        directly for security reasons. So the workaround is calling the service
+        using YQL as source.
     </p>
 </div>
 
