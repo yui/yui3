@@ -80,8 +80,8 @@
 
         {
             "name"       : "ac-geocode",
-            "displayName": "Address Completion on Google Maps service",
-            "description": "How to find an address using a YQL source calling Google Maps service",
+            "displayName": "Address Completion on Google Geocoding service",
+            "description": "How to find an address using a YQL source calling Google Geocoding service",
             "modules"    : ["autocomplete"],
             "tags"       : ["autocomplete", "yql", "geocode"],
 

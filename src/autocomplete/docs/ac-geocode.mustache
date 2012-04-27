@@ -1,13 +1,17 @@
 <div class="intro">
     <p>
         This example demonstrates how to provide autocomplete suggestions for
-        an address, using a YQL source calling Google Maps service.
+        an address calling Google Geocoding Service.
     </p>
     <p>
-        Notice {request} placeholder, instead of {query} one, in the source: it
-        will insert the requestTemplate value instead of the raw query value for
-        cases where, for instance, you actually want a double-encoded (or
-        otherwise customized) query.
+        Geocoding is the process of converting addresses into geographic
+        coordinates. The <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API</a>
+        provides a direct way to access a geocoder via an HTTP request.
+    </p>
+    <p>
+        Google Geocoding Service returns a json object literal, but the
+        autocomplete cannot use it directly for security reasons. So the
+        workaround is calling the service using YQL as source.
     </p>
 </div>
 
