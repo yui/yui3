@@ -1,0 +1,33 @@
+<div class="intro">
+    <p>
+        This example demonstrates how to provide autocomplete suggestions for
+        an address, using a YQL source calling Google Maps service.
+    </p>
+    <p>
+        Notice {request} placeholder, instead of {query} one, in the source: it
+        will insert the requestTemplate value instead of the raw query value for
+        cases where, for instance, you actually want a double-encoded (or
+        otherwise customized) query.
+    </p>
+</div>
+
+<div class="example">
+    {{>ac-geocode-html}}
+    <script>
+        {{>ac-geocode-js}}
+    </script>
+</div>
+
+<h2>Complete Example Source</h2>
+
+<h3>JavaScript</h3>
+```
+{{>ac-geocode-js}}
+```
+
+<h3>HTML</h3>
+```
+{{>ac-geocode-html}}
+```
+
+
