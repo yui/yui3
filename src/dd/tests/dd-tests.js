@@ -378,7 +378,29 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the region of #wrap');
             dd.destroy();
         },
-        
+        test_constrain_node_unplug: function() {
+            Y.one('#drag').setStyles({ top: '100px', left: '100px' });
+
+            dd = new Y.DD.Drag({
+                node: '#drag'
+            }).plug(Y.Plugin.DDConstrained, {
+                constrain2node: '#wrap'
+            });
+
+            var inRegion_before = dd.get('node').inRegion(Y.one('#wrap'));
+
+            Y.Assert.isTrue(inRegion_before, 'Drag Node is NOT in the region of #wrap');
+
+            dd.unplug(Y.Plugin.DDConstrained);
+
+            _fakeMove(dd, 1024);
+
+            var inRegion_after = dd.get('node').inRegion(Y.one('#wrap'));
+
+            Y.Assert.isFalse(inRegion_after, 'Drag Node is IN in the region of #wrap, should be outside');
+
+            dd.destroy();
+        },
         test_constrain_view_setup: function() {
             Y.one('#drag').setStyles({ top: '-150px', left: '200px' });
             dd = new Y.DD.Drag({
