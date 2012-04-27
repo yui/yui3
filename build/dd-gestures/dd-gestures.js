@@ -36,4 +36,4 @@ YUI.add('dd-gestures', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'event-synthetic', 'event-gestures']});
+}, '@VERSION@' ,{requires:['dd-drag', 'event-synthetic', 'event-gestures'], skinnable:false});
