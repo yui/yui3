@@ -97,7 +97,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _pageOffsets: null,
     _pageNodes: null,
     _uiEnabled: true,
-    _prevIndex: 0,
+    _prevIndex: 0,    
+    _prevent: new Y.Do.Prevent(),
     
     /**
      * Designated initializer
@@ -202,21 +203,27 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _mousewheel: function (e) {
         var paginator = this,
-            isForward = e.wheelDelta < 0 // down (negative) is forward.  @TODO Should revisit.
+            host = paginator._host,
+            isForward = e.wheelDelta < 0, // down (negative) is forward.  @TODO Should revisit.
+            cb = host.get(CONTENT_BOX),
             pageIndex = paginator.get(INDEX),
             pageCount = paginator.get(TOTAL);
+        
+        // Only if the mousewheel event occurred inside the CB
+        if (cb.contains(e.target)){
+            if (isForward && pageIndex < pageCount - 1) {    
+                paginator.next();
+            }
+            else if (!isForward && pageIndex > 0) {
+                paginator.prev();
+            }
             
-        if (isForward && pageIndex < pageCount - 1) {    
-            paginator.next();
+            // prevent browser default behavior on mousewheel
+            e.preventDefault();
+            
+            // Block host._mousewheel from running
+            return paginator._prevent;
         }
-        else if (!isForward && pageIndex > 0) {
-            paginator.prev();
-        }
-
-        // prevent browser default behavior on mousewheel
-        e.preventDefault();
-
-        return paginator._prevent;
     },
 
     /**
@@ -255,7 +262,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _getIndexOffset: function (index) {
         var paginator = this,
-            index = index || paginator.get(INDEX),
+            pageIndex = index || paginator.get(INDEX),
             previous = paginator._prevIndex,
             isForward = (index > previous) ? true : false,
             pageOffsets = paginator._pageOffsets,
@@ -278,7 +285,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             offset = offsetModifier * pageOffsets[1];
         }
         else {
-            offset = pageOffsets[index];
+            offset = pageOffsets[pageIndex];
         }
         
         return offset;
@@ -295,7 +302,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             vert = host._scrollsVertical,
-            trans = PaginatorPlugin.SNAP_TO_CURRENT,
             optimizeMemory = paginator.optimizeMemory,
             currentIndex = paginator.get(INDEX),
             previousIndex = paginator._prevIndex,
@@ -416,9 +422,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if(index > 0 && paginator._uiEnabled) {
             paginator.set(INDEX, index - 1);
         }
-    },
-    
-    _prevent: new Y.Do.Prevent()
+    }
 });
 
 /**
