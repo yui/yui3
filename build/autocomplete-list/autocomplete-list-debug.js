@@ -294,7 +294,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     **/
     _ariaSay: function (stringId, subs) {
         var message = this.get('strings.' + stringId);
-        this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
+        this._ariaNode.set('text', subs ? Lang.sub(message, subs) : message);
     },
 
     /**
@@ -884,4 +884,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{lang:['en'], skinnable:true, after:['autocomplete-sources'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
+}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true, after:['autocomplete-sources'], lang:['en']});
