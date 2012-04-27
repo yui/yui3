@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
+process.chdir(__dirname);
+
 var YUITest = require('yuitest'),
     path = require('path'),
     fs = require('fs'),
     server = require('./server'),
-    dir = path.join(process.cwd(), '../../../build-npm/'),
+    dir = path.join(__dirname, '../../../../build-npm/'),
     YUI = require(dir).YUI,
     json;
 

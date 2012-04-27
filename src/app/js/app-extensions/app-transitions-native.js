@@ -171,11 +171,18 @@ AppTransitionsNative.prototype = {
         after new `activeView` is ready to use, the function will be passed:
           @param {View} options.callback.view A reference to the new
             `activeView`.
-      @param {Boolean} [options.prepend] Whether the new view should be
+      @param {Boolean} [options.prepend=false] Whether the `view` should be
         prepended instead of appended to the `viewContainer`.
+      @param {Boolean} [options.render] Whether the `view` should be rendered.
+        **Note:** If no value is specified, a view instance will only be
+        rendered if it's newly created by this method.
       @param {Boolean|String} [options.transition] Optional transition override.
         A transition can be specified which will override the default, or
         `false` for no transition.
+      @param {Boolean} [options.update=false] Whether an existing view should
+        have its attributes updated by passing the `config` object to its
+        `setAttrs()` method. **Note:** This option does not have an effect if
+        the `view` instance is created as a result of calling this method.
     @protected
     @since 3.5.0
     **/

@@ -3,6 +3,7 @@
  * file.  This includes the script loading mechanism, a simple queue, and
  * the core utilities for the library.
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 
@@ -232,7 +233,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.3.0'; // dev time hack for cdn test
+    VERSION = '3.5.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -693,11 +694,15 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                        try {
-                            mod.fn(Y, name);
-                        } catch (e) {
-                            Y.error('Attach error: ' + name, e, name);
-                            return false;
+                            if (Y.config.throwFail) {
+                                mod.fn(Y, name);
+                            } else {
+                                try {
+                                    mod.fn(Y, name);
+                                } catch (e) {
+                                    Y.error('Attach error: ' + name, e, name);
+                                return false;
+                            }
                         }
                     }
 
@@ -829,10 +834,14 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
-            try {
+            if (this.config.throwFail) {
                 callback(this, response);
-            } catch (e) {
-                this.error('use callback error', e, args);
+            } else {
+                try {
+                    callback(this, response);
+                } catch (e) {
+                    this.error('use callback error', e, args);
+                }
             }
         }
     },
@@ -1151,7 +1160,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        if (Y.config.throwFail && !ret) {
+        if (!ret) {
             throw (e || new Error(msg));
         } else {
             Y.message(msg, 'error', ''+src); // don't scrub this one
@@ -3309,6 +3318,20 @@ YUI.Env.parseUA = function(subUA) {
          */
         air: 0,
         /**
+         * PhantomJS version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property phantomjs
+         * @type float
+         */
+        phantomjs: 0,
+        /**
+         * Adobe AIR version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property air
+         * @type float
+         */
+        air: 0,
+        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -3450,6 +3473,13 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
+            
+            if (/PhantomJS/.test(ua)) {
+                m = ua.match(/PhantomJS\/([^\s]*)/);
+                if (m && m[1]) {
+                    o.phantomjs = numberify(m[1]);
+                }
+            }
 
             // Mobile browser check
             if (/ Mobile\//.test(ua) || (/iPad|iPod|iPhone/).test(ua)) {
@@ -3504,7 +3534,7 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
             }
-            
+
             m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
             if (m && m[1] && m[2]) {
                 o.chrome = numberify(m[2]); // Chrome
@@ -3570,7 +3600,7 @@ YUI.Env.parseUA = function(subUA) {
             if (process.versions && process.versions.node) {
                 //NodeJS
                 o.os = process.platform;
-                o.nodejs = process.versions.node;
+                o.nodejs = numberify(process.versions.node);
             }
         }
 
@@ -3583,6 +3613,55 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+
+/**
+Performs a simple comparison between two version numbers, accounting for
+standard versioning logic such as the fact that "535.8" is a lower version than
+"535.24", even though a simple numerical comparison would indicate that it's
+greater. Also accounts for cases such as "1.1" vs. "1.1.0", which are
+considered equivalent.
+
+Returns -1 if version _a_ is lower than version _b_, 0 if they're equivalent,
+1 if _a_ is higher than _b_.
+
+Versions may be numbers or strings containing numbers and dots. For example,
+both `535` and `"535.8.10"` are acceptable. A version string containing
+non-numeric characters, like `"535.8.beta"`, may produce unexpected results.
+
+@method compareVersions
+@param {Number|String} a First version number to compare.
+@param {Number|String} b Second version number to compare.
+@return -1 if _a_ is lower than _b_, 0 if they're equivalent, 1 if _a_ is
+    higher than _b_.
+**/
+Y.UA.compareVersions = function (a, b) {
+    var aPart, aParts, bPart, bParts, i, len;
+
+    if (a === b) {
+        return 0;
+    }
+
+    aParts = (a + '').split('.');
+    bParts = (b + '').split('.');
+
+    for (i = 0, len = Math.max(aParts.length, bParts.length); i < len; ++i) {
+        aPart = parseInt(aParts[i], 10);
+        bPart = parseInt(bParts[i], 10);
+
+        isNaN(aPart) && (aPart = 0);
+        isNaN(bPart) && (bPart = 0);
+
+        if (aPart < bPart) {
+            return -1;
+        }
+
+        if (aPart > bPart) {
+            return 1;
+        }
+    }
+
+    return 0;
+};
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "app": ["app-base","app-transitions","model","model-list","router","view"],

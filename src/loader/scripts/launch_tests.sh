@@ -8,4 +8,4 @@ export NODE_PATH=$nodePath
 
 wait
 
-yuitest ../tests/cli/loader.js
+../../../node_modules/.bin/yuitest ../tests/cli/loader.js

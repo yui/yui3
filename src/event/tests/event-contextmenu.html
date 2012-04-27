@@ -65,6 +65,14 @@
             var suite = new Y.Test.Suite("ContextMenu");
 
             suite.add(new Y.Test.Case({
+                _should: {
+                    ignore: {
+                        test_xy_coords_for_shift10_or_ctrl_shift_option_m: Y.UA.phantomjs,
+                        test_multiple_on_listeners: Y.UA.phantomjs,
+                        test_multiple_delegate_listeners: Y.UA.phantomjs,
+                        test_multiple_on_and_delegate_listeners: Y.UA.phantomjs
+                    }
+                },
                 
                 name: "ContextMenu Synth Tests",
     

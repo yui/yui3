@@ -1,6 +1,12 @@
 Widget Change History
 =====================
 
+3.5.1
+-----
+
+ * Cleaned up logic to detach document focus listener after last Widget is destroyed.
+   The count was off by one, leaving one Widget in memory.
+
 3.5.0
 -----
 

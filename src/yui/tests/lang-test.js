@@ -9,7 +9,14 @@ var Assert = Y.Assert,
 
 suite.add(new Y.Test.Case({
     name: 'Lang tests',
-
+    _should: {
+        ignore: {
+            test_is_array_dom: (Y.UA.nodejs),
+            test_is_function_dom: (Y.UA.nodejs),
+            test_is_object_dom: (Y.UA.nodejs),
+            test_is_date_dom: (Y.UA.nodejs)
+        }
+    },
     '_isNative() should return true for native functions': function () {
         Assert.isTrue(Lang._isNative(Object.prototype.toString), 'Object.prototype.toString is native');
         Assert.isTrue(Lang._isNative(Array.prototype.concat), 'Array.prototype.concat is native');
@@ -36,7 +43,8 @@ suite.add(new Y.Test.Case({
         var a = [];
         a["one"] = "two";
         Assert.isTrue(Lang.isArray(a), "'Associative' arrays are arrays");
-
+    },
+    test_is_array_dom: function() {
         Assert.isFalse(Lang.isArray(document.getElementsByTagName("body")),
                 "Element collections are array-like, but not arrays");
 
@@ -67,7 +75,8 @@ suite.add(new Y.Test.Case({
     test_is_function: function() {
         Assert.isTrue(Lang.isFunction(function(){}), "a function is a function");
         Assert.isFalse(Lang.isFunction({foo: "bar"}), "an object is not a function");
-
+    },
+    test_is_function_dom: function() {
         Assert.isTrue(Lang.isFunction(xframe.fun), "Cross frame function failure");
         Assert.isFalse(Lang.isFunction(xframe.arr), "Cross frame array failure");
         Assert.isFalse(Lang.isFunction(xframe.obj), "Cross frame object failure");
@@ -98,7 +107,8 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(Lang.isObject(true), "boolean values are not objects");
         Assert.isFalse(Lang.isObject("{}"), "strings are not objects");
         Assert.isFalse(Lang.isObject(null), "null should return false even though it technically is an object");
-
+    },
+    test_is_object_dom: function() {
         Assert.isTrue(Lang.isObject(xframe.obj), "Cross frame object failure");
         Assert.isTrue(Lang.isObject(xframe.fun), "Cross frame function failure");
         Assert.isTrue(Lang.isObject(xframe.arr), "Cross frame array failure");
@@ -161,11 +171,13 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(Lang.isDate(new Date()), "date should be true");
         Assert.isFalse(Lang.isDate(""), "Empty string should be false");
         Assert.isFalse(Lang.isDate(false), "false should be false");
-        Assert.isFalse(Lang.isDate(xframe.fun), "Cross frame function should be false");
-        Assert.isTrue(Lang.isDate(xframe.dat), "Cross frame date should be true");
 
         var badDateObj = new Date('junk');
         Assert.isFalse(Lang.isDate(badDateObj), "A date object containing and invalid date should be false.");
+    },
+    test_is_date_dom: function() {
+        Assert.isFalse(Lang.isDate(xframe.fun), "Cross frame function should be false");
+        Assert.isTrue(Lang.isDate(xframe.dat), "Cross frame date should be true");
     },
 
     test_now: function () {

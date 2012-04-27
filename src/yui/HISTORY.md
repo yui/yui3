@@ -1,6 +1,21 @@
 YUI Core Change History
 =======================
 
+3.6.0
+-----
+
+* Changed the default `throwFail` behavior to act like it sounds, see ticket #2531679
+    If `throwFail` is `true` (default) we will not wrap modules or the use callback in
+    a try catch. If it's `false`, they will be wrapped (the old behavior).
+
+
+3.5.1
+-----
+
+* Added a `Y.UA.compareVersions()` function for performing simple version number
+  comparisons using version-safe logic rather than numerical logic.
+
+
 3.5.0
 -----
 
@@ -23,7 +38,7 @@ YUI Core Change History
   for testing).
 
 * `Y.Array.indexOf()` now supports a `fromIndex` argument for full ES5
-  compatibility. [Based on a patch from Ryuichi Okumurua]
+  compatibility. [Based on a patch from Ryuichi Okumura]
 
 * `Y.Object.isEmpty()` now casts the given value to an object if it isn't one
   already, which prevents exceptions when it's given a non-object.

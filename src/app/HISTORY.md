@@ -1,6 +1,50 @@
 App Framework Change History
 ============================
 
+3.6.0
+-----
+
+### ModelList
+
+* The `add()` method now accepts an `index` option, which can be used to insert
+  the specified model(s) at a specific index in the list. [Greg Hinch]
+
+* The `each()` and `some()` methods now iterate over a copy of the list, so it's
+  safe to remove a model during iteration. [Ticket #2531910]
+
+* The `remove()` method now optionally accepts the index of a model to remove
+  (or an array of indices). You no longer need to specify the actual model
+  instance(s), although that's still supported as well.
+
+### Router
+
+* The `req` object passed to routes now has a `pendingRoutes` property that
+  indicates the number of matching routes after the current route in the
+  dispatch chain. [Steven Olmsted]
+
+
+3.5.1
+-----
+
+### App
+
+* Added `render` and `update` options to the `showView()` method.
+  [PR #100 Pat Cavit]
+
+### Router
+
+* Added a `removeQuery()` function that accepts a URL and returns it without a
+  query string (if it had one). [Pat Cavit]
+
+* Fixed `hasRoute()` failing to match routes with query params. [Pat Cavit]
+
+* Fixed bad route regex generation if a placeholder was the last thing in the
+  route. [Pat Cavit]
+
+* Fixed generated route regexes matching hash/query params when they shouldn't
+  have. [Pat Cavit]
+
+
 3.5.0
 -----
 

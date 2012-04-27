@@ -1,0 +1,22 @@
+{
+    "tests": [
+        "/src/io/tests/cli/run.js",
+        "/src/loader/tests/cli/loader.js",
+        "/src/yui-throttle/tests/cli/run.js",
+        "/src/yql/tests/cli/run.js",
+        "/src/querystring/tests/cli/run.js",
+        "/src/parallel/tests/cli/run.js",
+        "/src/arraysort/tests/cli/run.js",
+        "/src/async-queue/tests/cli/run.js",
+        "/src/base/tests/cli/run.js",
+        "/src/classnamemanager/tests/cli/run.js",
+        "/src/yui/tests/cli/run.js",
+        "/src/intl/tests/cli/run.js",
+        "/src/oop/tests/cli/run.js",
+        "/src/pluginhost/tests/cli/run.js",
+        "/src/dump/tests/cli/run.js",
+        "/src/event-custom/tests/cli/run.js",
+        "/src/collection/tests/cli/run.js",
+        "/src/loader/tests/cli/run.js"
+    ]
+}

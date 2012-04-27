@@ -1,3 +1,5 @@
+/*jslint forin: true */
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * information for the version of the library in use, and will automatically pull in
@@ -19,6 +21,7 @@ var NOT_FOUND = {},
     CSS = 'css',
     JS = 'js',
     INTL = 'intl',
+    DEFAULT_SKIN = 'sam',
     VERSION = Y.version,
     ROOT_LANG = '',
     YObject = Y.Object,
@@ -32,14 +35,14 @@ var NOT_FOUND = {},
     modulekey,
     cache,
     _path = function(dir, file, type, nomin) {
-                        var path = dir + '/' + file;
-                        if (!nomin) {
-                            path += '-min';
-                        }
-                        path += '.' + (type || CSS);
+        var path = dir + '/' + file;
+        if (!nomin) {
+            path += '-min';
+        }
+        path += '.' + (type || CSS);
 
-                        return path;
-                    };
+        return path;
+    };
 
 /**
  * The component metadata is stored in Y.Env.meta.
@@ -77,6 +80,7 @@ Y.Env.meta = META;
  * @param {String|Object} config.filter A filter to apply to result urls. <a href="#property_filter">See filter property</a>
  * @param {Object} config.filters Per-component filter specification.  If specified for a given component, this overrides the filter config.
  * @param {Boolean} config.combine Use a combo service to reduce the number of http connections required to load your dependencies
+ * @param {Boolean} [config.async=true] Fetch files in async
  * @param {Array} config.ignore: A list of modules that should never be dynamically loaded
  * @param {Array} config.force A list of modules that should always be loaded when required, even if already present on the page
  * @param {HTMLElement|String} config.insertBefore Node or id for a node that should be used as the insertion point for new nodes
@@ -233,7 +237,7 @@ Y.Loader = function(o) {
     */
     self.comboSep = '&';
     /**
-     * Max url length for combo urls.  The default is 2048. This is the URL
+     * Max url length for combo urls.  The default is 1024. This is the URL
      * limit for the Yahoo! hosted combo servers.  If consuming
      * a different combo service that has a different URL limit
      * it is possible to override this default by supplying
@@ -431,6 +435,13 @@ Y.Loader = function(o) {
      */
     self.loaded = GLOBAL_LOADED[VERSION];
 
+    
+    /**
+    * Should Loader fetch scripts in `async`, defaults to `true`
+    * @property async
+    */
+
+    self.async = true;
 
     self._inspectPage();
 
@@ -445,6 +456,12 @@ Y.Loader = function(o) {
     if (Y.config.tests) {
         self.testresults = Y.config.tests;
     }
+    
+    /*
+    if (self.ignoreRegistered) {
+        self.loaded = {};
+    }
+    */
 
     /**
      * List of rollup files found in the library metadata
@@ -511,9 +528,39 @@ Y.Loader = function(o) {
      */
     //self.results = {};
 
+    if (self.ignoreRegistered) {
+        //Clear inpage already processed modules.
+        self.resetModules();
+    }
+
 };
 
 Y.Loader.prototype = {
+    resetModules: function() {
+        var self = this;
+        oeach(self.moduleInfo, function(mod) {
+            var name = mod.name,
+                details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);
+
+            if (details) {
+                self.moduleInfo[name]._reset = true;
+                self.moduleInfo[name].requires = details.requires || [];
+                self.moduleInfo[name].optional = details.optional || [];
+                self.moduleInfo[name].supersedes = details.supercedes || [];
+            }
+
+            if (mod.defaults) {
+                oeach(mod.defaults, function(val, key) {
+                    if (mod[key]) {
+                        mod[key] = mod.defaults[key];
+                    }
+                });
+            }
+            if (mod.skinnable) {
+                self._addSkin(self.skin.defaultSkin, mod.name);
+            }
+        });
+    },
     /**
     Regex that matches a CSS URL. Used to guess the file type when it's not
     specified.
@@ -759,6 +806,7 @@ Y.Loader.prototype = {
                 mdef = info[mod];
                 pkg = mdef.pkg || mod;
                 nmod = {
+                    skin: true,
                     name: name,
                     group: mdef.group,
                     type: 'css',
@@ -925,15 +973,43 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, when,
+            overrides, skinname, when, g,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
         
         this.moduleInfo[name] = o;
 
         o.requires = o.requires || [];
+        
+        /*
+        Only allowing the cascade of requires information, since
+        optional and supersedes are far more fine grained than
+        a blanket requires is.
+        */
+        if (this.requires) {
+            for (i = 0; i < this.requires.length; i++) {
+                o.requires.push(this.requires[i]);
+            }
+        }
+        if (o.group && this.groups && this.groups[o.group]) {
+            g = this.groups[o.group];
+            if (g.requires) {
+                for (i = 0; i < g.requires.length; i++) {
+                    o.requires.push(g.requires[i]);
+                }
+            }
+        }
 
-        if (o.skinnable) {
+
+        if (!o.defaults) {
+            o.defaults = {
+                requires: o.requires ? [].concat(o.requires) : null,
+                supersedes: o.supersedes ? [].concat(o.supersedes) : null,
+                optional: o.optional ? [].concat(o.optional) : null
+            };
+        }
+
+        if (o.skinnable && o.ext) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -1242,7 +1318,7 @@ Y.Loader.prototype = {
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
-            hash;
+            hash, reparse;
 
         // console.log(name);
 
@@ -1256,9 +1332,11 @@ Y.Loader.prototype = {
         }
 
         // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
+        
+        //If a skin or a lang is different, reparse..
+        reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));
 
-        // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
+        if (mod.expanded && !reparse) {
             //Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
@@ -1280,6 +1358,7 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
         mod.langCache = this.lang;
+        mod.skinCache = this.skin.defaultSkin;
 
         for (i = 0; i < r.length; i++) {
             //Y.log(name + ' requiring ' + r[i], 'info', 'loader');
@@ -1457,7 +1536,7 @@ Y.Loader.prototype = {
             style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        if (style && style['display'] === 'none') {
+        if (style && style.display === 'none') {
             ret = true;
         }
 
@@ -1688,6 +1767,16 @@ Y.Loader.prototype = {
         // Y.log('After explode: ' + YObject.keys(r));
     },
     /**
+    * The default method used to test a module against a pattern
+    * @method _patternTest
+    * @private
+    * @param {String} mname The module being tested
+    * @param {String} pname The pattern to match
+    */
+    _patternTest: function(mname, pname) {
+        return (mname.indexOf(pname) > -1);
+    },
+    /**
     * Get's the loader meta data for the requested module
     * @method getModule
     * @param {String} mname The module name to get
@@ -1715,9 +1804,7 @@ Y.Loader.prototype = {
                     //There is no test method, create a default one that tests
                     // the pattern against the mod name
                     if (!p.test) {
-                        p.test = function(mname, pname) {
-                            return (mname.indexOf(pname) > -1);
-                        };
+                        p.test = this._patternTest;
                     }
 
                     if (p.test(mname, pname)) {
@@ -2004,10 +2091,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
         if (!skipcalc) {
-            this.calculate(o);
+            //this.calculate(o);
         }
 
-        var modules = this.resolve(),
+        var modules = this.resolve(!skipcalc),
             self = this, comp = 0, actions = 0;
 
         if (type) {
@@ -2106,7 +2193,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 timeout: self.timeout,
                 autopurge: false,
                 context: self,
-                async: true,
+                async: self.async,
                 onProgress: function(e) {
                     self._onProgress.call(self, e);
                 },
@@ -2187,24 +2274,21 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-	        groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
+            groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
-	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
-	 	    modFilter = this.groups[groupName].filter;
-		    hasFilter = true;		
-	    };
+        if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
+            modFilter = this.groups[groupName].filter;
+            hasFilter = true;
+        }
 
         if (u) {
             if (hasFilter) {
-                f = (L.isString(modFilter)) ?
-                    this.FILTER_DEFS[modFilter.toUpperCase()] || null :
-                    modFilter;
+                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
             if (f) {
                 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }
-
         return u;
     },
 
@@ -2249,6 +2333,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
+        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { 
+            self.resetModules();
+        }
+
         if (calc) {
             self.calculate();
         }
@@ -2273,7 +2361,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         async: m.async
                     };
                     if (m.attributes) {
-                        url.attributes = m.attributes
+                        url.attributes = m.attributes;
                     }
                 }
                 resolved[m.type].push(url);
@@ -2393,7 +2481,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                                 if (tmpBase.length > maxURLLength) {
                                     m = u.pop();
-                                    tmpBase = base + u.join(comboSep)
+                                    tmpBase = base + u.join(comboSep);
                                     resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                                     u = [];
                                     if (m) {

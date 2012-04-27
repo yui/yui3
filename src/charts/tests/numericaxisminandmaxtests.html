@@ -14,8 +14,7 @@
     </head>		
 <body class="yui3-skin-sam">
 <h3>Numeric Axis Minimum and Maximum Tests</h3>
-<div id="mychart"></div>
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>            
 YUI({
     allowRollup: false,
@@ -24,7 +23,7 @@ YUI({
 { 
     Y.namespace("example.test");
     
-    var suite = new Y.Test.Suite("Y.NumericAxis"),
+    var suite = new Y.Test.Suite("Y.NumericAxisMinAndMaxTests"),
     
     AxisTestTemplate = function(cfg, globalCfg)
     {
@@ -44,12 +43,15 @@ YUI({
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
+            Y.one("#testbed").remove(true);
         }
     });
     
@@ -90,6 +92,8 @@ YUI({
                 {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
                 {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
             ];
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart({
                 width:400, 
                 height:300, 
@@ -100,6 +104,7 @@ YUI({
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
+            Y.one("#testbed").remove(true);
         },
 
         testAlwaysShowZero: function()
@@ -138,6 +143,8 @@ YUI({
                 {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
                 {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
             ];
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart({
                 width:400, 
                 height:300, 
@@ -153,6 +160,7 @@ YUI({
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
+            Y.one("#testbed").remove(true);
         },
         
         testAlwaysShowZeroEqualsFalse: function()
@@ -316,33 +324,11 @@ YUI({
         setMin: -5000,
         setMax: -500
     });
-  /*Move to max 
-    suite.add(AxisMaxTest);
-    suite.add(AxisNegativeMaxTest);
-    suite.add(AxisMaxWithDecimalsTest);
-    suite.add(AxisMaxIntegerDecimalDataTest);
-    suite.add(AxisMaxWithPositiveAndNegativeDataTest); 
-    suite.add(AxisMaxRoundingMethodAutoTest);
-    suite.add(AxisNegativeMaxRoundingMethodAutoTest);
-    suite.add(AxisMaxWithDecimalsRoundingMethodAutoTest);
-    suite.add(AxisMaxIntegerDecimalDataRoundingMethodAutoTest);
-    suite.add(AxisMaxWithPositiveAndNegativeDataRoundingMethodAutoTest);
-    suite.add(AxisMaxRoundingMethodNullTest);
-    suite.add(AxisNegativeMaxRoundingMethodNullTest);
-    suite.add(AxisMaxWithDecimalsRoundingMethodNullTest);
-    suite.add(AxisMaxIntegerDecimalDataRoundingMethodNullTest);
-    suite.add(AxisMaxWithPositiveAndNegativeDataRoundingMethodNullTest);
-    suite.add(AxisMaxRoundingMethodNumericTest);
-    suite.add(AxisNegativeMaxRoundingMethodNumericTest);
-    suite.add(AxisMaxWithDecimalsRoundingMethodNumericTest);
-    suite.add(AxisMaxIntegerDecimalDataRoundingMethodNumericTest);
-    suite.add(AxisMaxWithPositiveAndNegativeDataRoundingMethodNumericTest);
-*/
+    
     suite.add(AxisMinAndMaxTest);
     suite.add(AxisNegativeMinAndPositiveMaxTest);
     suite.add(AxisNegativeMinAndMaxTest);
     suite.add(AxisMinAndMaxWithDecimalsTest);
-    
     suite.add(AxisAlwaysShowZero);
     suite.add(AxisAlwaysShowZeroFalse);
 
@@ -355,7 +341,7 @@ YUI({
     r.render('#testLogger');
 
     //run the tests
-    Y.Test.Runner.setName("Y.NumericAxis");
+    Y.Test.Runner.setName("Y.NumericAxisMinAndMaxTests");
     Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });

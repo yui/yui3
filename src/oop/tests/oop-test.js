@@ -8,6 +8,11 @@ var Assert       = Y.Assert,
 
 suite.add(new Y.Test.Case({
     name: 'Core',
+    _should: {
+        ignore: {
+            test_clone_node: Y.UA.nodejs
+        }
+    },
 
     test_clone: function () {
         var a = {
@@ -131,6 +136,12 @@ suite.add(new Y.Test.Case({
 
 suite.add(new Y.Test.Case({
     name: 'augment()',
+
+    _should: {
+        ignore: {
+            'augmenting a Y.Node instance should not overwrite existing properties by default': Y.UA.nodejs
+        }
+    },
 
     setUp: function () {
         this.receiver = function () {};

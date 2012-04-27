@@ -1,6 +1,10 @@
 Node Change History
 ===================
 
+3.5.1
+-----
+  * Bug fix: Force case-insensitive removeAttribute in IE. [Ticket 2532192]
+
 3.5.0
 -----
 

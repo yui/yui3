@@ -3,6 +3,7 @@
  * file.  This includes the script loading mechanism, a simple queue, and
  * the core utilities for the library.
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 
@@ -232,7 +233,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.3.0'; // dev time hack for cdn test
+    VERSION = '3.5.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -693,11 +694,15 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                        try {
-                            mod.fn(Y, name);
-                        } catch (e) {
-                            Y.error('Attach error: ' + name, e, name);
-                            return false;
+                            if (Y.config.throwFail) {
+                                mod.fn(Y, name);
+                            } else {
+                                try {
+                                    mod.fn(Y, name);
+                                } catch (e) {
+                                    Y.error('Attach error: ' + name, e, name);
+                                return false;
+                            }
                         }
                     }
 
@@ -829,10 +834,14 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
-            try {
+            if (this.config.throwFail) {
                 callback(this, response);
-            } catch (e) {
-                this.error('use callback error', e, args);
+            } else {
+                try {
+                    callback(this, response);
+                } catch (e) {
+                    this.error('use callback error', e, args);
+                }
             }
         }
     },
@@ -1151,7 +1160,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        if (Y.config.throwFail && !ret) {
+        if (!ret) {
             throw (e || new Error(msg));
         } else {
             Y.message(msg, 'error', ''+src); // don't scrub this one

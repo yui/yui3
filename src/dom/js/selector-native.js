@@ -193,7 +193,7 @@ var Selector = {
             selector = replaced.selector;
 
         if (selector) {
-            selector = selector.replace(',', '\uE007', 'g');
+            selector = selector.replace(/,/g, '\uE007');
             replaced.selector = selector;
             selector = Y.Selector._restoreSelector(replaced);
         }
