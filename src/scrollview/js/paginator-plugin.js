@@ -325,18 +325,22 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             optimizeMemory = paginator.optimizeMemory,
-            currentIndex = paginator.get(INDEX),
             isVert = host._scrollsVertical,
-            pageCount = paginator.get(TOTAL),
             pageNodes = paginator._pageNodes,
-            pageNodesDirty = paginator._getPageNodes(), // Neccesary because we're going to modify this nodeList
-            start = currentIndex > 1 ? currentIndex - 1 : 0, 
-            count = 3;
-        
-        // TODO: Needs a perf tweak because of hoisting
+            count = 3,
+            start,
+            currentIndex,
+            pageCount,
+            pageNodesDirty;
+            
         if (!optimizeMemory) {
             return false;
         }
+        
+        pageNodesDirty = paginator._getPageNodes(); // Neccesary because we're going to modify this nodeList
+        pageCount = paginator.get(TOTAL);
+        currentIndex = paginator.get(INDEX);
+        start = currentIndex > 1 ? currentIndex - 1 : 0;
         
         // If we're focusing the first or last page, only show 2
         if (currentIndex === 0 || currentIndex === pageCount) {
