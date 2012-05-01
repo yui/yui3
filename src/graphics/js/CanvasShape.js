@@ -902,10 +902,6 @@ CanvasShape.ATTRS =  {
             this.matrix.init();	
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
-            if(this.initialized)
-            {
-                this._updateTransform();
-            }
             return val;
 		},
 
