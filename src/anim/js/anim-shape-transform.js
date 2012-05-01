@@ -1,3 +1,9 @@
+/**
+ * Adds support for the <code>transform</code> attribute of <code>Graphic</code>
+ * <code>Shape</code> instances.
+ * @module anim
+ * @submodule anim-shape-transform
+ */
     var NUM = Number,
         TO,
         TOSTRING;
@@ -70,10 +76,7 @@
                 }
                 else if(Y.MatrixUtil.compareTransformSequence(toArray, fromArray))
                 {
-                    //toAttr.transform = toArray;
-                    //anim.set("to", toAttr);
                     TO = toArray;
-                    //toAttr.transform = toArray;
                     from = fromArray;
                 }
                 else
