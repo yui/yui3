@@ -25,6 +25,7 @@
         <url>common/tests/prep.html</url>
 
 
+        <url>anim/tests/anim-shape-transform.html</url>
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>
