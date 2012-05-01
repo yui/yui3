@@ -1,6 +1,18 @@
 Widget Buttons Change History
 =============================
 
+3.5.1
+-----
+
+  * Fixed issue with `addButton()` receiving an `index` argument which was too
+    large or negative, both of which are okay because this value is passed to
+    the Array `splice()` method. The `index` property on the `buttonsChange`
+    event facade is now always the actual index at which the new button exists.
+    [Ticket #253219]
+
+  * Fixed issue with properly handling `Y.Node` instances from other YUI
+    sandboxes. [Ticket #2532207]
+
 3.5.0
 -----
 

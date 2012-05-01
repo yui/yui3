@@ -3834,6 +3834,7 @@ YUI.add('get', function(Y) {
         end(cb, 'success', 'success');
     }, fail = function(cb, er) {
         //Y.log('Get fail: ' + er);
+        er.errors = [er];
         if (Y.Lang.isFunction(cb.onFailure)) {
             cb.onFailure.call(Y, er, cb);
         }

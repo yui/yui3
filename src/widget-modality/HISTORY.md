@@ -1,7 +1,7 @@
 Widget Modality Change History
 ==============================
 
-3.6.0
+3.5.1
 -----
 
   * Fixed regression where browsers which actually support `position: fixed`

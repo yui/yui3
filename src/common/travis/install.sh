@@ -6,7 +6,14 @@ cd ./build-npm;
 
 echo "NPM Build Dir: `pwd`"
 wait
-npm install
+echo "Installing NPM Modules"
+npm install -loglevel silent
 wait
 cd  ../
-ln -s ./build-npm/node_modules ./
+
+if [ ! -L ./node_modules ]; then
+    ln -s ./build-npm/node_modules ./
+fi
+
+echo "NPM Install Complete"
+echo ""

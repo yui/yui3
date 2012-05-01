@@ -15,6 +15,7 @@ Links
   * [License](http://yuilibrary.com/license/)
   * [Contributor Info](http://yuilibrary.com/contribute/)
   * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
+  * [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
 
 
 Source Info
