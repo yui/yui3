@@ -1164,7 +1164,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this._skew.matrix = transform;
             this._skew.on = true;
             //use offset for translate
-            this._skew.offset = normalizedMatrix.dx + "px, " + normalizedMatrix.dy + "px";
+            this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
             this._skew.origin = tx + ", " + ty;
         }
         if(this._type != "path")
@@ -1173,6 +1173,22 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         }
         node.style.left = x + "px";
         node.style.top =  y + "px";
+    },
+    
+    /**
+     * Normalizes the skew offset values between -32767 and 32767.
+     *
+     * @method _getSkewOffsetValue
+     * @param {Number} val The value to normalize
+     * @return Number
+     * @private
+     */
+    _getSkewOffsetValue: function(val)
+    {
+        var sign = Y.MatrixUtil.sign(val),
+            absVal = Math.abs(val);
+        val = Math.min(absVal, 32767) * sign;
+        return val;
     },
 	
 	/**
@@ -1543,10 +1559,6 @@ VMLShape.ATTRS = {
                 transform = this._transforms[i];
             }
             this._transform = val;
-            if(this.initialized)
-            {
-                this._updateTransform();
-            }
             return val;
 		},
 

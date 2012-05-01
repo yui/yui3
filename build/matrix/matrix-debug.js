@@ -145,8 +145,7 @@ var MatrixUtil = {
                 inverse,
                 adjunct = [],
                 //vector representing 2x2 matrix
-                minor = [],
-                multiplier;
+                minor = [];
             if(len === 2) 
             {
                 determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
@@ -305,17 +304,15 @@ var MatrixUtil = {
          */
         decompose: function(matrix)
         {
-            var a = matrix[0][0],
-                b = matrix[1][0],
-                c = matrix[0][1],
-                d = matrix[1][1],
-                dx = matrix[0][2],
-                dy = matrix[1][2],
-                translate = [dx, dy],
+            var a = parseFloat(matrix[0][0]),
+                b = parseFloat(matrix[1][0]),
+                c = parseFloat(matrix[0][1]),
+                d = parseFloat(matrix[1][1]),
+                dx = parseFloat(matrix[0][2]),
+                dy = parseFloat(matrix[1][2]),
                 rotate,
                 sx,
                 sy,
-                sign = sign,
                 shear;
             if((a * d - b * c) === 0)
             {
@@ -335,16 +332,6 @@ var MatrixUtil = {
             c /= sy;
             d /= sy;
             shear /=sy;
-            if(a * b < c * d)
-            {
-                a = -a;
-                b = -b;
-                c = -c;
-                d = -d;
-                shear = -shear;
-                sx = -sx;
-                sy = -sy;
-            }
             shear = MatrixUtil._round(MatrixUtil.rad2deg(Math.atan(shear)));
             rotate = MatrixUtil._round(MatrixUtil.rad2deg(Math.atan2(matrix[1][0], matrix[0][0])));
 
@@ -520,12 +507,12 @@ Matrix.prototype = {
             matrix_dx = matrix.a * dx + matrix.c * dy + matrix.dx,
             matrix_dy = matrix.b * dx + matrix.d * dy + matrix.dy;
 
-        matrix.a = matrix_a;
-        matrix.b = matrix_b;
-        matrix.c = matrix_c;
-        matrix.d = matrix_d;
-        matrix.dx = matrix_dx;
-        matrix.dy = matrix_dy;
+        matrix.a = this._round(matrix_a);
+        matrix.b = this._round(matrix_b);
+        matrix.c = this._round(matrix_c);
+        matrix.d = this._round(matrix_d);
+        matrix.dx = this._round(matrix_dx);
+        matrix.dy = this._round(matrix_dy);
         return this;
     },
 
@@ -536,10 +523,11 @@ Matrix.prototype = {
      * @param {String} val A css transform string
      */
     applyCSSText: function(val) {
-        var re = /\s*([a-z]*)\(([\w,\s]*)\)/gi,
+        var re = /\s*([a-z]*)\(([\w,\.,\-,\s]*)\)/gi,
             args,
             m;
 
+        val = val.replace(/matrix/g, "multiply");
         while ((m = re.exec(val))) {
             if (typeof this[m[1]] === 'function') {
                 args = m[2].split(',');
@@ -644,12 +632,12 @@ Matrix.prototype = {
         y = y || 0;
 
         if (x !== undefined) { // null or undef
-            x = this._round(Math.tan(this.angle2rad(x)));
+            x = Math.tan(this.angle2rad(x));
 
         }
 
         if (y !== undefined) { // null or undef
-            y = this._round(Math.tan(this.angle2rad(y)));
+            y = Math.tan(this.angle2rad(y));
         }
 
         this.multiply(1, y, x, 1, 0, 0);
@@ -773,10 +761,9 @@ Matrix.prototype = {
      * @param {Number} deg The degree of the rotation.
      */
     rotate: function(deg, x, y) {
-        var matrix = [],
-            rad = this.angle2rad(deg),
-            sin = this._round(Math.sin(rad)),
-            cos = this._round(Math.cos(rad));
+        var rad = this.angle2rad(deg),
+            sin = Math.sin(rad),
+            cos = Math.cos(rad);
         this.multiply(cos, sin, 0 - sin, cos, 0, 0);
         return this;
     },
