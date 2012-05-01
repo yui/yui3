@@ -949,13 +949,25 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 y1 = ((tanRadians * (cx - x1)) - cy) * -1;
                 y2 = ((tanRadians * (cx - x2)) - cy) * -1;
             }
+
+            x1 = Math.round(100 * x1/w);
+            x2 = Math.round(100 * x2/w);
+            y1 = Math.round(100 * y1/h);
+            y2 = Math.round(100 * y2/h);
+            
+            //Set default value if not valid 
+            x1 = isNumber(x1) ? x1 : 0;
+            x2 = isNumber(x2) ? x2 : 100;
+            y1 = isNumber(y1) ? y1 : 0;
+            y2 = isNumber(y2) ? y2 : 0;
+            
             gradientNode.setAttribute("spreadMethod", "pad");
 			gradientNode.setAttribute("width", w);
 			gradientNode.setAttribute("height", h);
-            gradientNode.setAttribute("x1", Math.round(100 * x1/w) + "%");
-            gradientNode.setAttribute("y1", Math.round(100 * y1/h) + "%");
-            gradientNode.setAttribute("x2", Math.round(100 * x2/w) + "%");
-            gradientNode.setAttribute("y2", Math.round(100 * y2/h) + "%");
+            gradientNode.setAttribute("x1", x1 + "%");
+            gradientNode.setAttribute("x2", x2 + "%");
+            gradientNode.setAttribute("y1", y1 + "%");
+            gradientNode.setAttribute("y2", y2 + "%");
 		}
 		else
 		{
