@@ -41,6 +41,7 @@
         <url>charts/tests/groupmarkertests.html</url>
         <url>charts/tests/pielegend.html</url>
         <url>charts/tests/seriestests.html</url>
+        <url>charts/tests/planartests.html</url>
         <url>charts/tests/arialinetests.html</url>
         <url>charts/tests/ariasplinetests.html</url>
         <url>charts/tests/ariahistogramtests.html</url>
