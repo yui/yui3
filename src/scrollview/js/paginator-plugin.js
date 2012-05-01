@@ -15,7 +15,10 @@ var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     FLICK = "flick",
     DRAG = "drag",
     CLASS_HIDDEN, // Set in Initializer
-    CLASS_PAGED; // Set in Initializer
+    CLASS_PAGED, // Set in Initializer
+    _constrain = function (val, min, max) { 
+        return Math.min(Math.max(val, min), max);
+    };
 
 /**
  * Scrollview plugin that adds support for paging
@@ -126,6 +129,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         
         paginator.beforeHostMethod('_mousewheel', paginator._mousewheel);
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
+        paginator.beforeHostMethod('_onGestureMoveEnd', paginator._onGestureMoveEnd);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('render', paginator._afterHostRender);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
@@ -165,6 +169,21 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          paginator._pageOffsets = pages.get((isVert) ? "offsetTop" : "offsetLeft");
      },
      
+    /**
+     * Over-rides the host _onGestureMoveEnd method
+     * Executed on flicks at end of strip, or low velocity flicks that are not enough to advance the page.
+     *
+     * @method _onGestureMoveEnd
+     * @protected
+     */
+    _onGestureMoveEnd: function () {
+        var paginator = this,
+            currentIndex = paginator.get(INDEX);
+            
+        paginator.scrollTo(currentIndex);
+        return paginator._prevent;
+    },
+    
     /**
      * Executed to respond to the flick event, by over-riding the default flickFrame animation. 
      * This is needed to determine if the next or prev page should be activated.
@@ -256,14 +275,20 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _getIndexOffset: function (index) {
         var paginator = this,
             previous = paginator._prevIndex,
-            isForward = (index > previous) ? true : false,
+            isSame = index === previous,
+            isForward = index > previous,
             pageOffsets = paginator._pageOffsets,
+            pageCount = paginator.get(TOTAL),
             optimizeMemory = paginator.optimizeMemory,
             offset, 
             offsetModifier;
             
-        if (optimizeMemory) {    
-            if (!isForward) {
+        if (optimizeMemory) {
+            // @TODO Clean up.
+            if (isSame) {
+                offsetModifier = _constrain(index, 0, 1); // Go to slot 0 if index 0, slot 1 if any other index
+            }
+            else if (!isForward) {
                 offsetModifier = 0;
             }
             else if (index === 1) {
@@ -330,6 +355,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             count = 3,
             start,
             currentIndex,
+            cb,
             pageCount,
             pageNodesDirty;
             
@@ -339,8 +365,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         
         pageNodesDirty = paginator._getPageNodes(); // Neccesary because we're going to modify this nodeList
         pageCount = paginator.get(TOTAL);
+        cb = host.get(CONTENT_BOX);
         currentIndex = paginator.get(INDEX);
-        start = currentIndex > 1 ? currentIndex - 1 : 0;
+        start = _constrain(currentIndex-1, 0, pageCount);
         
         // If we're focusing the first or last page, only show 2
         if (currentIndex === 0 || currentIndex === pageCount) {
