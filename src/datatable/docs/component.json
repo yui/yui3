@@ -92,8 +92,18 @@
             "modules": ["datatable", "datatype"],
             "description": "Using DataTable's recordType attribute to create calculated, sortable columns.",
             "useModules": ["datatable-base"],
+            "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-masterdetail",
+            "displayName": "Master - Detail Linked Datatables",
+            "modules": ["datatable"],
+            "description": "Linked DataTables with master-detail",
+            "useModules": ["datatable"],
 
             "hideTableOfContents": true
         }
+
     ]
 }
