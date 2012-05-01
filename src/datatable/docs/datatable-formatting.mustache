@@ -19,80 +19,92 @@
 </style>
 
 <div class="intro">
-    <p>Custom format row data for display with string templates or custom functions.</p>
+    <p>
+        This example shows a few ways to configure your columns to populate
+        cells with formatted values.
+    </p>
 </div>
 
 <div class="example yui3-skin-sam">
-    {{>datatable-formatting-source}}
+    <div id="template" class="yui3-skin-sam dt-example"></div>
 </div>
+<script>
+{{>datatable-formatting-string}}
+</script>
 
-<h2>Formatting Row Data for Display</h2>
+<p>
+    Data can be stored in one format but displayed in a different format.
+    For instance, prices can be stored as numbers but displayed as "$2.99",
+    and birthdays can be stored as Date objects but displayed as
+    "12/9/2009".
+</p>
 
-<p>Data can be stored in one format but be displayed in a different format. For instance, prices can be stored as numbers but be displayed as "$2.99", and birthdays can be stored as date objects but be displayed as "12/9/2009".
-
-<p>Simple formatting can be defined with a string template on the column definition.</p>
+<p>
+    Simple formatting can be defined with a string template on the column
+    definition.
+</p>
 
 ```
-YUI().use("datatable", function(Y) {
-
-    var table = new Y.DataTable({
-        columns: [ "id", "name", { key: "price", formatter: "${value}" } ],
-        data   : [
-            { id: "ga-3475", name: "gadget",   price: 6.99 },
-            { id: "sp-9980", name: "sprocket", price: 3.75 },
-            { id: "wi-0650", name: "widget",   price: 4.25 }
-        ],
-        caption: "Data formatting with string template"
-
-    }).render("#template");
+{{>datatable-formatting-string}}
 ```
+
+<h2>Formatting With Functions</h2>
+
+<div class="example yui3-skin-sam">
+    <div id="function" class="yui3-skin-sam dt-example"></div>
+</div>
+<script>
+{{>datatable-formatting-function}}
+</script>
 
 <p>
     When a calculation is needed, define a custom function that generates
     markup for the data cell. The custom formatter function receives an object
     with the properties listed in <a href="index.html#formatter-props">Appendix
-    B</a> in the DataTable user guide.
+    B</a> in the DataTable user guide.  Also see the section on
+    <a href="index.html#formatter-function">setting content with `formatter`
+    functions</a>.
 </p>
 
 ```
-// See the DataTable user guide for a list of properties on o.
-function calculate(o) {
-    return "$" + (o.data.price - o.data.cost).toFixed(2);
-}
-
-var table = new Y.DataTable({
-    columns: [ "id", "name", { key: "profit", formatter: calculate } ],
-    data   : [
-        { id: "ga-3475", name: "gadget",   price: 6.99, cost: 4.99 },
-        { id: "sp-9980", name: "sprocket", price: 3.75, cost: 2.75 },
-        { id: "wi-0650", name: "widget",   price: 4.25, cost: 3.25 }
-    ],
-    caption: "Data formatting with custom function"
-}).render("#function");
+{{>datatable-formatting-function}}
 ```
 
-<p>The DataType utility can be used to help format date objects.  This example
-also uses the `emptyCellValue` column configuration to supply a custom cell
-value in the case of missing data.</p>
+<h2>Populating Cells With HTML</h2>
+
+<div class="example yui3-skin-sam">
+    <div id="allowhtml" class="yui3-skin-sam dt-example"></div>
+</div>
+<script>
+{{>datatable-formatting-allowhtml}}
+</script>
+
+<p>
+    By default, DataTable will HTML escape cell values (regardless of
+    formatters).  If you want HTML to be preserved, include `allowHTML: true`
+    in the column configuration.
+</p>
 
 ```
-YUI().use("datatype-date", "datatable", function (Y) {
-    function formatDates(o) {
-        return o.value &&
-            Y.DataType.Date.format(o.value, { format: "%m/%d/%Y" });
-    }
+{{>datatable-formatting-allowhtml}}
+```
 
-    dt = new Y.DataTable({
-        columns: [
-            "id",
-            "name",
-            { key: "date", formatter: formatDates, emptyCellValue: "(unknown)" }
-        ],
-        data   : [
-            { id: "ga-3475", name: "gadget",   date: new Date(2006, 5, 1) },
-            { id: "sp-9980", name: "sprocket", date: new Date(2004, 8, 16) },
-            { id: "wi-0650", name: "widget"} // no date for this record
-        ],
-        caption: "Data formatting with DataType.Date"
-    }).render("#dates");
+<h2>Using `emptyCellValue` for Missing Data</h2>
+
+<div class="example yui3-skin-sam">
+    <div id="dates" class="yui3-skin-sam dt-example"></div>
+</div>
+<script>
+{{>datatable-formatting-datatype}}
+</script>
+
+<p>
+    Use the `emptyCellValue` column configuration to supply a custom cell value
+    in the case of missing data.  If the `emptyCellValue` includes HTML
+    formatting, be sure to also set `allowHTML: true` for the column.  Note,
+    the DataType utility is also used by the formatter in this example.
+</p>
+
+```
+{{>datatable-formatting-datatype}}
 ```
