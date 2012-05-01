@@ -307,13 +307,22 @@ var table = new Y.DataTable({
 </p>
 
 <p>
+    `formatter` will automatically escape HTML for safe displaying unless the
+    `allowHTML` option is set to true in the column definition.
+</p>
+
+<p>
     For best performance, <strong><a href="#formatter-vs-nodeformatter">avoid
     `nodeFormatter`s unless absolutely necessary</a></strong>.
 </p>
 
 ```
 var columns = [
-    'item',
+    {
+        key: 'item',
+        formatter: '<a href="#{value}">{value}</a>',
+        allowHTML: true // Must be set or the html will be escaped
+    },
     {
         key: 'cost',
         formatter: '${value}' // formatter template string
@@ -387,7 +396,11 @@ var columns = [
 <script>
 YUI().use('datatable-base', function (Y) {
     var columns = [
-        'item',
+        {
+            key: 'item',
+            formatter: '<a href="#{value}">{value}</a>',
+            allowHTML: true // Must be set or the html will be escaped
+        },
         {
             key: 'cost',
             formatter: '${value}' // formatter template string
@@ -448,7 +461,9 @@ YUI().use('datatable-base', function (Y) {
 <p>
     The parameters passed to `formatter` functions and `nodeFormatter`
     functions are described in <a href="#formatter-props">Appendix B</a> and <a
-    href="#nodeformatter-props">Appendix C</a>, respectively.
+    href="#nodeformatter-props">Appendix C</a>, respectively. Also look for
+    what can be passed in to the columns in
+    <a href="#column-config">Appendix A</a>.
 </p>
 
 <p>

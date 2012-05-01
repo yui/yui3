@@ -61,7 +61,12 @@ function calculate(o) {
 }
 
 var table = new Y.DataTable({
-    columns: [ "id", "name", { key: "profit", formatter: calculate } ],
+    columns: [
+        { key: "id", formatter: "<a href=\"#{value}\">{value}</a>",
+            allowHTML : true },
+        "name",
+        { key: "profit", formatter: calculate }
+    ],
     data   : [
         { id: "ga-3475", name: "gadget",   price: 6.99, cost: 4.99 },
         { id: "sp-9980", name: "sprocket", price: 3.75, cost: 2.75 },
