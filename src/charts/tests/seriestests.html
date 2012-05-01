@@ -90,7 +90,7 @@
             function ChartMarkerEventTestCase()
             {
                 ChartMarkerEventTestCase.superclass.constructor.apply(this, arguments);
-                this.eventNode = ".yui3-seriesmarker";
+                this.eventNode = "." + Y.ClassNameManager.getClassName("seriesmarker");
             }
 
             Y.extend(ChartMarkerEventTestCase, ChartEventTestCase, {
@@ -410,6 +410,18 @@
                         }
                     ]
                 },
+                numericCategoryValuesDataProvider = [
+                    {category: 1, miscellaneous: 3000},
+                    {category: 2, miscellaneous: 3500},
+                    {category: 3, miscellaneous: 3750},
+                    {category: 4, miscellaneous: 4233},
+                    {category: 5, miscellaneous: 3800},
+                    {category: 6, miscellaneous: 4899},
+                    {category: 7, miscellaneous: 3333}, 
+                    {category: 8, miscellaneous: 5210},
+                    {category: 9, miscellaneous: 2011},
+                    {category: 10, miscellaneous: 3100}
+                ],
                 DataProvider,
                 suite  = new Y.Test.Suite("Chart Series Tests"),
                 zeroValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
@@ -474,7 +486,11 @@
                     dataProvider: DataProviderWithNull,
                     seriesKeys: SeriesKeys
                 }, "mouseover"),
-                missingSeriesAndSeriesStartingWithZero = new Y.ChartMarkerEventTestCase(MissingSeriesAndSeriesStartingWithZeroConfig, "mouseover");
+                missingSeriesAndSeriesStartingWithZero = new Y.ChartMarkerEventTestCase(MissingSeriesAndSeriesStartingWithZeroConfig, "mouseover"),
+                categoryWithNumericValuesChart = new Y.ChartMarkerEventTestCase({
+                    dataProvider: numericCategoryValuesDataProvider,
+                    render: "#mychart"
+                }, "mouseover");
             
             suite.add(zeroValueColumnMouseOverTests);
             suite.add(zeroValueBarMouseOverTests);
@@ -487,7 +503,7 @@
             suite.add(zeroValueComboMouseOverTests);
             suite.add(nullValueComboMouseOverTests);
             suite.add(missingSeriesAndSeriesStartingWithZero); 
-            
+            suite.add(categoryWithNumericValuesChart); 
             //return it
             return suite;
         
