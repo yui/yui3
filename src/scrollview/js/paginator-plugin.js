@@ -107,7 +107,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     
     optimizeMemory: false,
     padding: 1,
-    _pageOffsets: [],
     _uiEnabled: true,
     _prevIndex: 0,
     _prevent: new Y.Do.Prevent(),
@@ -122,7 +121,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator.get(HOST),
             optimizeMemory = config.optimizeMemory || paginator.optimizeMemory,
             padding = config.padding || paginator.padding;
-        
+            
         paginator.padding = padding;
         paginator.optimizeMemory = optimizeMemory;
         paginator._host = host;
@@ -132,7 +131,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.beforeHostMethod('_mousewheel', paginator._mousewheel);
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.beforeHostMethod('_onGestureMoveEnd', paginator._onGestureMoveEnd);
-        paginator.afterHostMethod('_uiDimensionsChange', paginator._calcOffsets);
         paginator.afterHostEvent('render', paginator._afterHostRender);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
         paginator.after('indexChange', paginator._afterIndexChange);
@@ -148,27 +146,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _afterHostRender: function (e) {
         var paginator = this,
             host = paginator._host,
+            pageNodes = paginator._getPageNodes(),
+            size = pageNodes.size(),
             bb = host.get(BOUNDING_BOX);
         
         bb.addClass(CLASS_PAGED); // @TODO Is this correct?
+        paginator.set(TOTAL, size);
         paginator._optimize();
     },
-    
-    /**
-     * Calculate the page boundary offsets
-     * 
-     * @method _calcOffsets
-     * @protected
-     */
-     _calcOffsets : function () {
-         var paginator = this,
-             host = paginator._host,
-             isVert = host._scrollsVertical,
-             pages = paginator._getPageNodes();
-
-         // Determine the offsets
-         paginator._pageOffsets = pages.get((isVert) ? "offsetTop" : "offsetLeft");
-     },
      
     /**
      * Over-rides the host _onGestureMoveEnd method
@@ -226,7 +211,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         
         // Only if the mousewheel event occurred on a DOM node inside the CB
         if (cb.contains(e.target)){
-            if (isForward) {    
+            if (isForward) {
                 paginator.next();
             }
             else {
@@ -255,28 +240,29 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             isVert = host._scrollsVertical,
             scrollAxis = (isVert) ? SCROLL_Y : SCROLL_X,
             pageNodes = paginator._getPageNodes(),
-            startPoint =  isVert ? host._startClientY : host._startClientX,
+            startPoint = isVert ? host._startClientY : host._startClientX,
             endPoint = isVert ? host._endClientY : host._endClientX,
             delta = startPoint - endPoint,
-            currentIndex = paginator.get(INDEX),
-            duration = (duration !== undefined) ? duration : PaginatorPlugin.SNAP_TO_CURRENT.duration,
-            easing = (easing !== undefined) ? duration : PaginatorPlugin.SNAP_TO_CURRENT.easing,
+            duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration,
+            easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing,
             scrollVal;
-            
-        // If the delta is 0 (no-movement click)
+        
+        // If the delta is 0 (a no-movement mouseclick)
         if (delta === 0) {
             return false;
         }
         
-        paginator._uiDisable();
-            
+        // Disable the UI while animating
+        if (duration > 0) {
+            paginator._uiDisable();
+        }
+        
         // Make sure the target node is visible
         paginator._showNodes(pageNodes.item(index));
         
         // Determine where to scroll to
-        paginator._calcOffsets(); // @todo probably move somewhere else
-        scrollVal = pageNodes.item(currentIndex).get(isVert ? "offsetTop" : "offsetLeft");
-
+        scrollVal = pageNodes.item(index).get(isVert ? "offsetTop" : "offsetLeft");
+        
         host.set(scrollAxis, scrollVal, {
             duration: duration,
             easing: easing
@@ -293,7 +279,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      _scrollEnded: function (e) {
         var paginator = this,
             currentIndex = paginator.get(INDEX);
-            
+        
         paginator._optimize();
         paginator._uiEnable();
         paginator._prevIndex = currentIndex;
@@ -328,23 +314,28 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             isVert = host._scrollsVertical,
             currentIndex = paginator.get(INDEX),
             pageNodes;
-            
+        
         if (!optimizeMemory) {
             return false;
         }
         
         // Show the pages in/near the viewport & hide the rest
-        pageNodes = paginator._getNodeVisiblity(currentIndex);
+        pageNodes = paginator._getViewport(currentIndex);
         paginator._showNodes(pageNodes.visible);
         paginator._hideNodes(pageNodes.hidden);
-        
-        // Since we modified the layout, recalc
-        paginator._calcOffsets();
         
         paginator.scrollTo(currentIndex, 0);
     },
     
-    _getNodeVisiblity : function (index) {
+    /**
+     * @todo
+     *
+     * @method _getViewport
+     * @param index {Number}
+     * @returns {object} 
+     * @protected
+     */
+    _getViewport : function (index) {
         var paginator = this,
             host = paginator._host,
             padding = paginator.padding,
@@ -353,6 +344,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageCount = paginator.get(TOTAL),
             start, visible, hidden;
         
+        // Somehow this works.  @TODO cleanup
         start = Math.max(index-padding, 0);
         if (start+visibleCount > pageCount) {
             start = start-(start+visibleCount-pageCount);
@@ -405,11 +397,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _uiEnable: function () {
         var paginator = this,
-            host = paginator._host;
-            
-        paginator._uiEnabled = true;
-        host.set(FLICK, paginator._hostOriginalFlick);
-        host.set(DRAG, paginator._hostOriginalDrag);
+            host = paginator._host,
+            disabled = !paginator._uiEnabled;
+        
+        if (disabled) {
+            paginator._uiEnabled = true;
+            host.set(FLICK, paginator._hostOriginalFlick);
+            host.set(DRAG, paginator._hostOriginalDrag);   
+        }
     },
     
     /**
@@ -421,7 +416,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _uiDisable: function () {
         var paginator = this,
             host = paginator._host;
-            
+        
         paginator._uiEnabled = false;
         host.set(FLICK, false);
         host.set(DRAG, false);
@@ -439,11 +434,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             cb = host.get(CONTENT_BOX),
             pageSelector = paginator.get(SELECTOR),
-            pageNodes = pageSelector ? cb.all(pageSelector) : cb.get("children"),
-            size = pageNodes.size();
-        
-        // @TODO This seems like it should be elsewhere
-        paginator.set(TOTAL, size);
+            pageNodes = pageSelector ? cb.all(pageSelector) : cb.get("children");
         
         return pageNodes;
     },
@@ -507,7 +498,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
  * @property SNAP_TO_CURRENT
  * @static
  */
-PaginatorPlugin.SNAP_TO_CURRENT = {
+PaginatorPlugin.TRANSITION = {
     duration : 300,
     easing : 'ease-out'
 };
