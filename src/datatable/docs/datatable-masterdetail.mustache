@@ -1,4 +1,10 @@
 <style scoped>
+  .yui3-skin-sam .yui3-datatable-caption {
+    font-size: 13px;
+    font-style: normal;
+    text-align: left;
+  }
+
   .yui3-datatable-col-nchars {
         text-align: center;
     }
@@ -19,9 +25,18 @@
     </p>
 </div>
 
-<div class="example yui3-skin-sam">
-    {{>datatable-masterdetail-source}}
+<div id="template" class="example yui3-skin-sam dt-example yui3-g">
+    <div class="yui3-u-1-3" id="mtable"></div>
+
+    <!-- This is the HTML section for the "Details" markup ...
+         NOTE: it is hidden initially !!   -->
+    <div class="yui3-u-2-3" id="chars" style="display:none;">
+        <div id="dtable"></div>
+    </div>
 </div>
+<script>
+{{>datatable-masterdetail-source}}
+</script>
 
 <h2>Sample Data</h2>
 
@@ -62,7 +77,8 @@ var dt_master = new Y.DataTable({
         }
     ],
     data : animal_data,
-    width: 200
+    width: 200,
+    caption: 'Select an animal category below:'
 }).render("#mtable");
 ```
 
@@ -81,7 +97,7 @@ dt_master.addAttr("selectedRow", { value: null });
 
 dt_master.delegate('click', function (e) {
     this.set('selectedRow', e.currentTarget);
- }, 'tr', dt_master);
+ }, '.yui3-datatable-data tr', dt_master);
 ```
 
 <h3>The "Detail" table</h3>
@@ -107,7 +123,8 @@ var dt_detail = new Y.DataTable({
     strings : {
         emptyMessage : "No critter characters were found!"
     },
-    width: 350
+    width: 350,
+    caption: 'Characters of the category include:'
 }).render("#dtable");
 ```
 
@@ -115,60 +132,76 @@ var dt_detail = new Y.DataTable({
 <p>
    The "glue" between the master and detail DataTables is the delegated click handler on
    the Master DataTable's rows -- or more specifically, the `selectedRowChange` event handler.   When a row is clicked and the
-    `selectedRow` is changed, then underlying record from the Master table is
+    `selectedRow` is changed, the underlying record from the Master table is
    determined and the Detail DataTable is populated with the corresponding `chars` data from the clicked record.
      We also handle TR highlighting for the clicked row by toggling a background color within this delegate handler.
 </p>
 ```
 dt_master.after('selectedRowChange', function (e) {
 
-    var tr = e.newVal,              // this is the Node for the TR clicked ...
-        last_tr = e.prevVal,        //    "    "    "   "   the last TR clicked ...
-        rec = this.getRecord(tr);   // returns the current Record for the clicked TR
-//
-//  This if-block does double duty,
-//      (a) it tracks the first click to toggle the "details" DIV to visible
-//  and (b) it un-hightlights the last TR clicked
-//
-    if ( !last_tr )
-        Y.one("#chars").show();     // first time thru ... display the Detail DT DIV that was hidden
-    else
-        last_tr.removeClass("myhilite");
+    var tr = e.newVal,              // the Node for the TR clicked ...
+        last_tr = e.prevVal,        //  "   "   "   the last TR clicked ...
+        rec = this.getRecord(tr);   // the current Record for the clicked TR
 
-//
-//  After unhighlighting, now highlight the current TR,
-//    also update the heading in "acategory"
-//
+    //
+    //  This if-block does double duty,
+    //  (a) it tracks the first click to toggle the "details" DIV to visible
+    //  (b) it un-hightlights the last TR clicked
+    //
+    if ( !last_tr ) {
+        // first time thru ... display the Detail DT DIV that was hidden
+        Y.one("#chars").show();
+    } else {
+        last_tr.removeClass("myhilite");
+    }
+
+    //
+    //  After unhighlighting, now highlight the current TR
+    //
     tr.addClass("myhilite");
 
-    Y.one("#acategory").setContent(rec.get('aname'));   // update text preceding table
 
-//
-//  Collect the "chars" member of the parent record into an array of objects
-//    with property name "aname"
-//
-    var detail_data =[];
+    //
+    //  Collect the "chars" member of the parent record into an array of
+    //  objects  with property name "aname"
+    //
+    var detail_data = [];
     if ( rec.get('chars') ) {
-        Y.each( rec.get('chars'), function(item){
+        Y.Array.each( rec.get('chars'), function(item){
             detail_data.push( {char_name:item});
         });
     }
-//
-//  Set the "detail_data" to the dt_detail DataTable
-//   ( it automatically refreshes )
-//
-    dt_detail.set('data', detail_data );
+
+    //
+    //  Set the "detail_data" to the dt_detail DataTable
+    //    also update the heading in "acategory"
+    //   ( it automatically refreshes )
+    //
+    dt_detail.setAttrs({
+        data: detail_data,
+        caption: 'Characters of the <strong>' + rec.get('aname') +
+                    '</strong> category include:'
+    });
 });
 ```
-<p>Note: In the case of the use of remote data via DataSource, the `selectedRowChange` handler could be modified to
-generate a `sendRequest` or similar remote call for the Detail data and the `on:success` handler could be
-setup to set the `data` attribute.
+
+<p>
+    Note: In the case of the use of remote data via DataSource, the
+    `selectedRowChange` handler could be modified to generate a `sendRequest`
+    or similar remote call for the Detail data and the `on:success` handler
+    could be setup to set the `data` attribute.
 </p>
 
 <h2>Full Source Code</h2>
 
 <h3>CSS</h3>
 ```
+.yui3-skin-sam .yui3-datatable-caption {
+    font-size: 13px;
+    font-style: normal;
+    text-align: left;
+}
+
 .yui3-datatable-col-nchars {
     text-align: center;
 }
@@ -184,13 +217,14 @@ setup to set the `data` attribute.
 
 <h3>HTML Markup</h3>
 ```
-Select an animal category below;
-<div id="mtable"></div>
+<div id="template" class="yui3-skin-sam dt-example yui3-g">
+    <div class="yui3-u-1-3" id="mtable"></div>
 
-<!-- This is the HTML section for the "Details" markup ... NOTE: it is hidden initially !!   -->
-<div id="chars" style="display:none;">
-    <br/>Characters of the <span id="acategory"></span> category include;
-    <div id="dtable"></div>
+    <!-- This is the HTML section for the "Details" markup ...
+         NOTE: it is hidden initially !!   -->
+    <div class="yui3-u-2-3" id="chars" style="display:none;">
+        <div id="dtable"></div>
+    </div>
 </div>
 ```
 
