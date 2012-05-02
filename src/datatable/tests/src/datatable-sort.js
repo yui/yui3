@@ -180,6 +180,57 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(1, table.get('sortBy')[0].a);
 
         table.destroy();
+    },
+
+    "sorting a column with null values should group the nulls": function () {
+        var table = new Y.DataTable({
+            columns: ['a', 'b'],
+            data: [
+                { a: 'a1', b: null },
+                { a: null, b: 'b1' },
+                { a: null, b: 'b4' },
+                { a: 'a6', b: 'b3' },
+                { a: 'a4', b: null },
+                { a: 'a5', b: 'b6' }
+            ],
+            sortable: true
+        });
+
+        // Unsorted
+        Y.Assert.isNull(table.data.item(0).get('b'));
+        Y.Assert.isNull(table.data.item(1).get('a'));
+        Y.Assert.isNull(table.data.item(2).get('a'));
+        Y.Assert.isNull(table.data.item(4).get('b'));
+
+        table.sort('a');
+
+        Y.Assert.isNull(table.data.item(0).get('a'));
+        Y.Assert.isNull(table.data.item(1).get('a'));
+        Y.Assert.isNull(table.data.item(2).get('b'));
+        Y.Assert.isNull(table.data.item(3).get('b'));
+
+        table.toggleSort();
+
+        Y.Assert.isNull(table.data.item(4).get('a'));
+        Y.Assert.isNull(table.data.item(5).get('a'));
+        Y.Assert.isNull(table.data.item(2).get('b'));
+        Y.Assert.isNull(table.data.item(3).get('b'));
+
+        table.sort('b');
+
+        Y.Assert.isNull(table.data.item(2).get('a'));
+        Y.Assert.isNull(table.data.item(4).get('a'));
+        Y.Assert.isNull(table.data.item(0).get('b'));
+        Y.Assert.isNull(table.data.item(1).get('b'));
+
+        table.toggleSort();
+
+        Y.Assert.isNull(table.data.item(1).get('a'));
+        Y.Assert.isNull(table.data.item(3).get('a'));
+        Y.Assert.isNull(table.data.item(4).get('b'));
+        Y.Assert.isNull(table.data.item(5).get('b'));
+
+        table.destroy();
     }
 
     // test sort state classes

@@ -6,8 +6,20 @@ App Framework Change History
 
 ### ModelList
 
+* The `add()` method now accepts an `index` option, which can be used to insert
+  the specified model(s) at a specific index in the list. [Greg Hinch]
+
 * The `each()` and `some()` methods now iterate over a copy of the list, so it's
   safe to remove a model during iteration. [Ticket #2531910]
+
+* The `remove()` method now optionally accepts the index of a model to remove
+  (or an array of indices). You no longer need to specify the actual model
+  instance(s), although that's still supported as well.
+
+* Fixed an issue where a list that received bubbled events from a model would
+  assume the model was in the list if its `id` changed, even if the model
+  actually wasn't in the list and was merely bubbling events to the list.
+  [Ticket #2532240]
 
 ### Router
 

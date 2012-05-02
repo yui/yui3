@@ -81,6 +81,13 @@ function AnimTransformTest()
 };
 
 Y.extend(AnimTransformTest, ShapeTestTemplate, {
+    _rounder: 100,
+
+    _round: function(val)
+    {
+        return Math.round(val * this._rounder)/this._rounder;
+    },
+
     test: function()
     {
             var anim = new Y.Anim({
@@ -91,11 +98,44 @@ Y.extend(AnimTransformTest, ShapeTestTemplate, {
                     transform: this.endTransform 
                 }
             }),
-            test = this;
+            test = this,
+            transform,
+            shapeMatrix,
+            testTransform,
+            shapeTransform,
+            transform,
+            testMatrix = new Y.Matrix(),
+            shape = this.shape;
 
             anim.on('end', function() {
                 test.resume(function() {
-                    Y.Assert.areEqual(this.endTransform, this.shape.get("transform"));
+                    shapeMatrix = shape.matrix,
+                    transform = shape.get("transform");
+                    testMatrix = new Y.Matrix();
+                    testMatrix.applyCSSText(transform);
+                    Y.Assert.areEqual(this.endTransform, transform, "The shape's transform attribute should be " + this.endTransform);
+                    Y.Assert.areEqual(this._round(testMatrix.a), this._round(shapeMatrix.a), "The shapes's matrix.a should be " + testMatrix.a);
+                    Y.Assert.areEqual(this._round(testMatrix.b), this._round(shapeMatrix.b), "The shapes's matrix.b should be " + testMatrix.b);
+                    Y.Assert.areEqual(this._round(testMatrix.c), this._round(shapeMatrix.c), "The shapes's matrix.c should be " + testMatrix.c);
+                    Y.Assert.areEqual(this._round(testMatrix.d), this._round(shapeMatrix.d), "The shapes's matrix.d should be " + testMatrix.d);
+                    Y.Assert.areEqual(this._round(testMatrix.dx), this._round(shapeMatrix.dx), "The shapes's matrix.dx should be " + testMatrix.dx);
+                    Y.Assert.areEqual(this._round(testMatrix.dy), this._round(shapeMatrix.dy), "The shapes's matrix.dx should be " + testMatrix.dy);
+                    testMatrix = testMatrix.decompose();
+                    shapeMatrix = shapeMatrix.decompose();
+                    while(testMatrix.length > 0 && shapeMatrix.length > 0)
+                    {
+                        testTransform = testMatrix.shift();
+                        shapeTransform = shapeMatrix.shift();
+                        transform = testTransform.shift();
+                        Y.Assert.areEqual(transform, shapeTransform.shift(), "The transform type should be " + transform + ".");
+                        while(testTransform.length > 0 && shapeTransform.length > 0)
+                        {
+                            Y.Assert.areEqual(this._round(testTransform.shift()), this._round(shapeTransform.shift()), "The argument for the " + transform + " transform is wrong.");
+                        }
+                    }
+                    testMatrix = testMatrix.toString();
+                    shapeMatrix = shapeMatrix.toString();
+                    //Y.Assert.areEqual(testMatrix, shapeMatrix, "The shape's end value should be " + testMatrix + " instead of " + shapeMatrix);
                 });
             });
 
@@ -242,7 +282,35 @@ var genericFill = {
             endTransform: "matrix(2, -3, 1, 2, 12, 5)",
             NAME: shape + "MatrixTest"
         });
-    }
+    },
+
+    multipleTransformSameSequenceTest = function(shape)
+    {
+        return new AnimTransformTest({
+            type: shape,
+            fill: genericFill,
+            stroke: genericStroke,
+            transform: "scale(1, 15);skewY(10);translate(-5, 5)"
+        },
+        {
+            endTransform: "scale(8, 5);skewY(110);translate(55, 50)",
+            NAME: shape + "ScaleSkewYTranslateTest"
+        });
+    },
+
+    multipleTransformDifferentSequenceTest = function(shape)
+    {
+        return new AnimTransformTest({
+            type: shape,
+            fill: genericFill,
+            stroke: genericStroke,
+            transform: "rotate(30);scale(2, 5)"
+        },
+        {
+            endTransform: "scale(8, 5);skewY(110);translate(55, 50)",
+            NAME: shape + "ScaleSkewYTranslateTest"
+        });
+    };
 
 suite.add(translateTest("rect"));
 suite.add(rotateTest("rect"));
@@ -254,6 +322,8 @@ suite.add(scaleRotateTranslateTest("rect"));
 suite.add(scaleSkewXTranslateTest("rect"));
 suite.add(scaleSkewYTranslateTest("rect"));
 suite.add(matrixTest("rect"));
+suite.add(multipleTransformSameSequenceTest("rect"));
+suite.add(multipleTransformDifferentSequenceTest("rect"));
 
 suite.add(translateTest("circle"));
 suite.add(rotateTest("circle"));
@@ -265,6 +335,8 @@ suite.add(scaleRotateTranslateTest("circle"));
 suite.add(scaleSkewXTranslateTest("circle"));
 suite.add(scaleSkewYTranslateTest("circle"));
 suite.add(matrixTest("circle"));
+suite.add(multipleTransformSameSequenceTest("circle"));
+suite.add(multipleTransformDifferentSequenceTest("circle"));
 
 suite.add(translateTest("ellipse"));
 suite.add(rotateTest("ellipse"));
@@ -276,6 +348,8 @@ suite.add(scaleRotateTranslateTest("ellipse"));
 suite.add(scaleSkewXTranslateTest("ellipse"));
 suite.add(scaleSkewYTranslateTest("ellipse"));
 suite.add(matrixTest("ellipse"));
+suite.add(multipleTransformSameSequenceTest("ellipse"));
+suite.add(multipleTransformDifferentSequenceTest("ellipse"));
 
 suite.add(translateTest(Y.RoundedRect));
 suite.add(rotateTest(Y.RoundedRect));
@@ -287,6 +361,8 @@ suite.add(scaleRotateTranslateTest(Y.RoundedRect));
 suite.add(scaleSkewXTranslateTest(Y.RoundedRect));
 suite.add(scaleSkewYTranslateTest(Y.RoundedRect));
 suite.add(matrixTest(Y.RoundedRect));
+suite.add(multipleTransformSameSequenceTest(Y.RoundedRect));
+suite.add(multipleTransformDifferentSequenceTest(Y.RoundedRect));
 
 Y.Test.Runner.add( suite );
 

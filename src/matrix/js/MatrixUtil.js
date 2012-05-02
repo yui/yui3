@@ -143,8 +143,7 @@ var MatrixUtil = {
                 inverse,
                 adjunct = [],
                 //vector representing 2x2 matrix
-                minor = [],
-                multiplier;
+                minor = [];
             if(len === 2) 
             {
                 determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
@@ -303,17 +302,15 @@ var MatrixUtil = {
          */
         decompose: function(matrix)
         {
-            var a = matrix[0][0],
-                b = matrix[1][0],
-                c = matrix[0][1],
-                d = matrix[1][1],
-                dx = matrix[0][2],
-                dy = matrix[1][2],
-                translate = [dx, dy],
+            var a = parseFloat(matrix[0][0]),
+                b = parseFloat(matrix[1][0]),
+                c = parseFloat(matrix[0][1]),
+                d = parseFloat(matrix[1][1]),
+                dx = parseFloat(matrix[0][2]),
+                dy = parseFloat(matrix[1][2]),
                 rotate,
                 sx,
                 sy,
-                sign = sign,
                 shear;
             if((a * d - b * c) === 0)
             {
@@ -333,16 +330,6 @@ var MatrixUtil = {
             c /= sy;
             d /= sy;
             shear /=sy;
-            if(a * b < c * d)
-            {
-                a = -a;
-                b = -b;
-                c = -c;
-                d = -d;
-                shear = -shear;
-                sx = -sx;
-                sy = -sy;
-            }
             shear = MatrixUtil._round(MatrixUtil.rad2deg(Math.atan(shear)));
             rotate = MatrixUtil._round(MatrixUtil.rad2deg(Math.atan2(matrix[1][0], matrix[0][0])));
 

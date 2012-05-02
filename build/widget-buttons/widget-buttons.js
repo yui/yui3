@@ -22,6 +22,12 @@ var YArray  = Y.Array,
     isString     = YLang.isString,
     isValue      = YLang.isValue;
 
+// Utility to determine if an object is a Y.Node instance, even if it was
+// created in a different YUI sandbox.
+function isNode(node) {
+    return !!node.getDOMNode;
+}
+
 /**
 Provides header/body/footer button support for Widgets that use the
 `WidgetStdMod` extension.
@@ -353,7 +359,7 @@ WidgetButtons.prototype = {
             sectionButtons, atIndex;
 
         // Makes sure we have the full config object.
-        if (!Y.instanceOf(button, Y.Node)) {
+        if (!isNode(button)) {
             button = this._mergeButtonConfig(button);
             section || (section = button.section);
         }
@@ -525,9 +531,10 @@ WidgetButtons.prototype = {
         var config, buttonConfig, nonButtonNodeCfg,
             i, len, action, context, handle;
 
-        // Plug and return an existing Y.Node instance.
-        if (Y.instanceOf(button, Y.Node)) {
-            return button.plug(ButtonPlugin);
+        // Makes sure the exiting `Y.Node` instance is from this YUI sandbox and
+        // is plugged with `Y.Plugin.Button`.
+        if (isNode(button)) {
+            return Y.one(button.getDOMNode()).plug(ButtonPlugin);
         }
 
         // Merge `button` config with defaults and back-compat.
@@ -626,7 +633,7 @@ WidgetButtons.prototype = {
     @since 3.5.0
     **/
     _getButtonDefault: function (button) {
-        var isDefault = Y.instanceOf(button, Y.Node) ?
+        var isDefault = isNode(button) ?
                 button.getData('default') : button.isDefault;
 
         if (isString(isDefault)) {
@@ -656,7 +663,7 @@ WidgetButtons.prototype = {
     _getButtonName: function (button) {
         var name;
 
-        if (Y.instanceOf(button, Y.Node)) {
+        if (isNode(button)) {
             name = button.getData('name') || button.get('name');
         } else {
             name = button && (button.name || button.type);
@@ -701,7 +708,7 @@ WidgetButtons.prototype = {
 
     @method _mapButton
     @param {Node} button The button node to map.
-    @param {String} section The `WidgetStdMod` section.
+    @param {String} section The `WidgetStdMod` section (header/body/footer).
     @protected
     @since 3.5.0
     **/
@@ -867,7 +874,7 @@ WidgetButtons.prototype = {
                 button  = buttonConfigs[i];
                 section = currentSection;
 
-                if (!Y.instanceOf(button, Y.Node)) {
+                if (!isNode(button)) {
                     button = this._mergeButtonConfig(button);
                     section || (section = button.section);
                 }
@@ -1101,11 +1108,13 @@ WidgetButtons.prototype = {
     },
 
     /**
-    Removes the specified `button` to the buttons map, and nulls-out the
-    `defaultButton` if it is currently the default button.
+    Removes the specified `button` from the buttons map (both name -> button and
+    section:name -> button), and nulls-out the `defaultButton` if it is
+    currently the default button.
 
     @method _unMapButton
     @param {Node} button The button node to remove from the buttons map.
+    @param {String} section The `WidgetStdMod` section (header/body/footer).
     @protected
     @since 3.5.0
     **/

@@ -135,6 +135,17 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('foo', added.get('foo'));
     },
 
+    'add() should add a model to the list at the specified index': function () {
+        var list  = this.createList(),
+            model = this.createModel();
+
+        list.add([{name: 'first'}, {name: 'second'}, {name: 'third'}]);
+        list.add(model, {index: 0});
+
+        Assert.areSame(4, list.size(), 'list should contain 4 items');
+        Assert.areSame(model, list.item(0), 'model should be inserted at index 0');
+    },
+
     'add() should add an array of models to the list': function () {
         var list   = this.createList(),
             models = [this.createModel(), this.createModel()],
@@ -151,6 +162,21 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('bar', added[1].get('bar'));
     },
 
+    'add() should add an array of models to the list at the specified index': function () {
+        var list       = this.createList(),
+            modelOne   = this.createModel(),
+            modelTwo   = this.createModel(),
+            modelThree = this.createModel();
+
+        list.add([{name: 'first'}, {name: 'second'}, {name: 'third'}]);
+        list.add([modelOne, modelTwo, modelThree], {index: 0});
+
+        Assert.areSame(6, list.size(), 'list should contain 6 items');
+        Assert.areSame(modelOne, list.item(0), 'modelOne should be inserted at index 0');
+        Assert.areSame(modelTwo, list.item(1), 'modelTwo should be inserted at index 1');
+        Assert.areSame(modelThree, list.item(2), 'modelThree should be inserted at index 2');
+    },
+
     'add() should add models in another ModelList to the list': function () {
         var list        = this.createList(),
             otherList   = this.createList(),
@@ -162,6 +188,24 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame(2, list.size(), 'list should contain 2 models');
         Assert.areSame(otherList.item(0), list.item(0));
         Assert.areSame(otherList.item(1), list.item(1));
+    },
+
+    'add() should add models in another ModelList to the list at the specified index': function () {
+        var list       = this.createList(),
+            otherList  = this.createList(),
+            modelOne   = this.createModel(),
+            modelTwo   = this.createModel(),
+            modelThree = this.createModel();
+
+        otherList.add([modelOne, modelTwo, modelThree]);
+
+        list.add([{name: 'first'}, {name: 'second'}, {name: 'third'}]);
+        list.add(otherList, {index: 0});
+
+        Assert.areSame(6, list.size(), 'list should contain 6 items');
+        Assert.areSame(modelOne, list.item(0), 'modelOne should be inserted at index 0');
+        Assert.areSame(modelTwo, list.item(1), 'modelTwo should be inserted at index 1');
+        Assert.areSame(modelThree, list.item(2), 'modelThree should be inserted at index 2');
     },
 
     'add() should support models created in other windows': function () {
@@ -579,6 +623,17 @@ modelListSuite.add(new Y.Test.Case({
 
         Assert.areSame('zero', list.remove(list.item(0)).get('foo'));
         Assert.areSame(1, list.size());
+        Assert.areSame('one', list.item(0).get('foo'));
+    },
+
+    'remove() should remove a single model from the list by index': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        Assert.areSame('zero', list.remove(0).get('foo'));
+        Assert.areSame(1, list.size());
+        Assert.areSame('one', list.item(0).get('foo'));
     },
 
     'remove() should remove an array of models from the list': function () {
@@ -591,6 +646,18 @@ modelListSuite.add(new Y.Test.Case({
         Assert.areSame('zero', removed[0].get('foo'));
         Assert.areSame('one', removed[1].get('foo'));
         Assert.areSame(0, list.size());
+    },
+
+    'remove() should remove an array of models from the list by index': function () {
+        var list = this.createList(),
+            removed;
+
+        list.add([{foo: 'zero'}, {foo: 'one'}, {foo: 'two'}]);
+        removed = list.remove([1, 2]);
+
+        Assert.areSame('one', removed[0].get('foo'));
+        Assert.areSame('two', removed[1].get('foo'));
+        Assert.areSame(1, list.size());
     },
 
     'remove() should remove models in another ModelList from the list': function () {
@@ -1215,6 +1282,36 @@ modelListSuite.add(new Y.Test.Case({
         list.remove(list.add([{}, {}]), {silent: true});
 
         Assert.areSame(0, list.size());
+    },
+
+    'list should update its id map when a model id changes': function () {
+        var list      = this.createList(),
+            bareModel = list.add({}),
+            idModel   = list.add({id: 1});
+
+        Assert.areSame(idModel, list.getById(1), 'model should initially be retrievable by id');
+
+        bareModel.set('id', 0);
+        idModel.set('id', 4);
+
+        Assert.areSame(bareModel, list.getById(0), 'model with no previous id should be retrievable by its new id');
+        Assert.areSame(idModel, list.getById(4), 'model with previous id should be retrievable by its new id');
+    },
+
+    'list should ignore id changes for models not in the list': function () {
+        var list      = this.createList(),
+            otherList = this.createList(),
+            bareModel = otherList.add({}),
+            idModel   = otherList.add({id: 1});
+
+        bareModel.addTarget(list);
+        idModel.addTarget(list);
+
+        bareModel.set('id', 0);
+        idModel.set('id', 4);
+
+        Assert.isNull(list.getById(0), 'model with no previous id should not suddenly appear in this list');
+        Assert.isNull(list.getById(4), 'model with previous id should not suddenly appear in this list');
     }
 }));
 
