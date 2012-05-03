@@ -103,6 +103,16 @@
             "useModules": ["datatable"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name": "datatable-chkboxselect",
+            "displayName": "Checkbox select column",
+            "modules": ["datatable"],
+            "description": "Checkbox column that retains checked state when sorting",
+            "useModules": ["datatable"],
+
+            "hideTableOfContents": true
         }
 
     ]

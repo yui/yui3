@@ -1,5 +1,4 @@
-<script type="text/javascript">
-YUI().use( "datatable-sort", "datatable-scroll", "cssbutton", function (Y) {
+YUI({ filter: 'raw' }).use( "datatable-sort", "datatable-scroll", "cssbutton", function (Y) {
 
     var ports = [
         { port:20,  pname:'FTP_data',ptitle:'File Transfer Process Data' },
@@ -28,85 +27,91 @@ YUI().use( "datatable-sort", "datatable-scroll", "cssbutton", function (Y) {
         { port:995, pname:'SPOP',   ptitle:'Secure POP Mail' }
     ];
 
-    var dt = new Y.DataTable({
+    var table = new Y.DataTable({
         columns : [
             {   key:        'select',
-                label:      'Select <input type="checkbox" class="myCheckboxALL" title="Click to toggle ALL records"/>',
-                allowHTML:  true,   // must use this if we insert HTML in the label AND the formatter!
-
-                formatter:  function(o) {
-                                var chkd = (o.data.select) ? "checked" : "";
-                                o.value = '<input type="checkbox" class="myCheckboxFmtr" ' + chkd + '/>';
-                                o.className += ' center';
-                             }
+                allowHTML:  true, // to avoid HTML escaping
+                label:      '<input type="checkbox" class="protocol-select-all" title="Toggle ALL records"/>',
+                formatter:      '<input type="checkbox" checked/>',
+                emptyCellValue: '<input type="checkbox"/>'
             },
-            {   key:'port',   label:'Port No.' },
-            {   key:'pname',  label:'Protocol' },
-            {   key:'ptitle', label:'Common Name' }
+            {   key: 'port',   label: 'Port No.' },
+            {   key: 'pname',  label: 'Protocol' },
+            {   key: 'ptitle', label: 'Common Name' }
         ],
-        data :      ports,
+        data      : ports,
         scrollable: 'y',
-        height:     '300px',
-        sortable :  ['port','pname'],
-        recordType: {
-            select: { value:false },     // a custom property ... defined to allow "checkbox" select to work easily !
-            port:{}, pname:{},  ptitle:{}
-        }
+        height    : '250px',
+        sortable  : ['port','pname'],
+        recordType: ['select', 'port', 'pname', 'ptitle']
     }).render("#dtable");
 
+    // To avoid checkbox click causing harmless error in sorting
+    // Workaround for bug #2532244
+    table.detach('*:change');
 
-//----------------
-//   "checkbox" Click listeners ...
-//----------------
+    //----------------
+    //   "checkbox" Click listeners ...
+    //----------------
 
-// Define a listener on the DT first column for each record's "checkbox",
-//   to set the value of `select` to the checkbox setting
-    dt.delegate("click",function(e){
-        var chk = e.target,
-            td  = chk.ancestor(),       // since e.target is on INPUT, parent is the containing TD
-            rec = this.getRecord(td);
+    // Define a listener on the DT first column for each record's "checkbox",
+    //   to set the value of `select` to the checkbox setting
+    table.delegate("click", function(e){
+        // undefined to trigger the emptyCellValue
+        var checked = e.target.get('checked') || undefined;
 
-        rec.set('select', chk.get('checked') );
-    },".myCheckboxFmtr", dt);
+        this.getRecord(e.target).set('select', checked);
+
+        // Uncheck the header checkbox
+        this.get('contentBox')
+            .one('.protocol-select-all').set('checked', false);
+    }, ".yui3-datatable-data .yui3-datatable-col-select input", table);
 
 
-// Also define a listener on the single TH "checkbox" to
-//   toggle all of the checkboxes
-    Y.one(".myCheckboxALL").on("click", function(e){
-        var chk = e.target.get('checked');
-        this.get('data').each(function(item){
-            item.set('select',chk);
+    // Also define a listener on the single TH "checkbox" to
+    //   toggle all of the checkboxes
+    table.delegate('click', function (e) {
+        // undefined to trigger the emptyCellValue
+        var checked = e.target.get('checked') || undefined;
+
+        // Set the selected attribute in all records in the ModelList silently
+        // to avoid each update triggering a table update
+        this.data.invoke('set', 'select', checked, { silent: true });
+
+        // Update the table now that all records have been updated
+        this.syncUI();
+    }, '.protocol-select-all', table);
+
+    //----------------
+    //  CSS-Button click handlers ....
+    //----------------
+    function process() {
+        var ml  = table.data,
+            msg = '',
+            template = '<li>Record index = {index} Data = {port} : {pname}</li>';
+
+        ml.each(function (item, i) {
+            var data = item.getAttrs(['select', 'port', 'pname']);
+
+            if (data.select) {
+                data.index = i;
+                msg += Y.Lang.sub(template, data);
+            }
         });
-    },dt);
 
-//----------------
-//  CSS-Button click handlers ....
-//----------------
-    Y.one("#btnSelected").on("click",function(){
-        var ml  = this.get('data'),
-            msg = '';
+        Y.one("#processed").setHTML(msg || '<li>(None)</li>');
+    }
 
-        ml.each(function(item){
-            if ( item.get('select') )
-                msg += "Record index = " + ml.indexOf(item)
-                        + ' Data = ' + item.get('port') + ' : ' + item.get('pname') + '<br/>';
-        });
+    Y.one("#btnSelected").on("click", process);
 
-        msg = ( msg.length === 0 ) ? 'None selected!' : msg;    // if no selections, null the 'msg' variable
+    Y.one("#btnClearSelected").on("click",function () {
+        table.data.invoke('set', 'select', undefined);
 
-        Y.one("#processed").setContent( msg );
+        // Uncheck the header checkbox
+        table.get('contentBox')
+            .one('.protocol-select-all').set('checked', false);
 
-    },dt);
-
-    Y.one("#btnClearSelected").on("click",function(){
-        var ml  = this.get('data');
-
-        ml.each(function(item){
-            item.set('select',false);
-        });
-        Y.one("#processed").setContent('Cleared.');
-
-    },dt);
+        process();
+    });
 
 });
-</script>

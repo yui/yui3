@@ -3,41 +3,48 @@
 .example table {
     width: auto;
 }
-.center { text-align: center; }
-#dstatus {
-   margin-top: 25px;
-   background-color: #0c0;
-   width: 420px;
+
+.yui3-skin-sam .yui3-datatable-col-select {
+    text-align: center;
 }
 
 #processed {
-    color: #00c;
-}
-.myCheckboxFmtr, .myCheckboxALL {
-    cursor: pointer;
+   margin-top: 2em;
+   border: 2px inset;
+   border-radius: 5px;
+   padding: 1em;
+   list-style: none;
 }
 </style>
 
 <div class="intro">
-    <p>A method of selecting certain records using the familiar "checkbox" HTML input control is demonstrated in this example.</p>
+    <p>
+        This example shows one method for managing a selection checkbox column
+        in a DataTable.
+    </p>
 </div>
 
 <div class="example yui3-skin-sam">
-    <div id="template" class="yui3-skin-sam dt-example">
-            <div id="dtable"></div>
-            <button id="btnSelected" class="yui3-button">Process Selections</button>
-            <button id="btnClearSelected" class="yui3-button">Clear Selections</button>
+    <div id="dtable"></div>
+    <button id="btnSelected" class="yui3-button">Process Selections</button>
+    <button id="btnClearSelected" class="yui3-button">Clear Selections</button>
 
-            <div id="dstatus">The following check selected records were processed;
-                <div id="processed">None.</div>
-            </div>
-    </div>
-    {{>datatable-chkboxselect-source}}
+    <h4>Processed:</h4>
+    <ul id="processed">
+        <li>(None)</li>
+    </ul>
 </div>
+<script>
+{{>datatable-chkboxselect-source}}
+</script>
 
 <h2>Sample Data</h2>
 
-<p>This example will use a local Javascript array of data that includes some common Internet port socket numbers and protocol names;</p>
+<p>
+    This example will use a local Javascript array of data that includes some
+    common Internet port socket numbers and protocol names:
+</p>
+
 ```
 var ports = [
     { port:20,  pname:'FTP_data',ptitle:'File Transfer Process Data' },
@@ -50,149 +57,188 @@ var ports = [
 
 <h2>The DataTable</h2>
 
-<p>Our DataTable for this example will utilize a custom formatter as the first column, to display a standard HTML INPUT[type=checkbox] element as an indication
- that the record is desired to be "selected" for additional processing.  But that checkbox won't work on it's own, because if a "sort" action happens after
- the checkbox is clicked the "check" status is lost!.</p>
-
-<p>A way to get around this is to create a binding of the "checkbox" to an attribute of <b>each record</b> which will remain with the record even upon
-sorts, edits, or other modifications to the record.  This is accomplished by defining a custom `recordType` for the DataTable that incorporates all of our
- standard `data` for our table but also defines a new Attribute (called `select` here) that is a boolean value to track whether the record is selected.
+<p>
+    Our DataTable for this example will utilize a custom formatter as the first
+    column, to display a standard HTML INPUT[type=checkbox] element as an
+    indication that the record is desired to be "selected" for additional
+    processing.  But that checkbox won't work on its own, because if a "sort"
+    action happens after the checkbox is clicked the "check" status is lost!
 </p>
 
-<p>The implementation of these methods is shown below, where we have defined a custom formatter that creates a "checkbox" for the first column, and defines a custom
-`recordType` with our new Attribute added.  Additionally, we incorporate (a) scrolling and (b) sorting to demonstrate that this technique works.</p>
+<p>
+    A way to get around this is to create a binding of the checkbox to an
+    attribute of <b>each record</b> which will remain with the record even upon
+    sorts, edits, or other modifications to the record.  This is accomplished
+    by defining a custom `recordType` for the DataTable that incorporates all
+    of our standard `data` for our table but also defines a new Attribute
+    (called `select` here) that is a boolean value to track whether the record
+    is selected.
+</p>
+
+<p>
+    The implementation of these methods is shown below, where we have defined a
+    custom `formatter` and `emptyCellValue` for the "select" column that
+    creates a checked or unchecked checkbox depending on the state of the
+    attribute, and defines a custom `recordType` with our new attribute added.
+    Additionally, we incorporate (a) scrolling and (b) sorting to demonstrate
+    that this technique works.
+</p>
 
 ```
-var dt = new Y.DataTable({
+var table = new Y.DataTable({
     columns : [
         {   key:        'select',
-            label:      'Select <input type="checkbox" class="classSelALL" title="Click to toggle ALL records"/>',
-            allowHTML:  true,   // must use this if we insert HTML in the label AND the formatter!
-
-            formatter:  function(o) {
-                            var chkd = (o.data.select) ? "checked" : "";
-                            o.value = '<input type="checkbox" class="myCheckboxFmtr" ' + chkd + '/>';
-                            o.className += ' center';
-                         }
+            allowHTML:  true, // to avoid HTML escaping
+            label:      '<input type="checkbox" class="protocol-select-all" title="Toggle ALL records"/>',
+            formatter:      '<input type="checkbox" checked/>',
+            emptyCellValue: '<input type="checkbox"/>'
         },
-        {   key:'port',   label:'Port No.' },
-        {   key:'pname',  label:'Protocol' },
-        {   key:'ptitle', label:'Common Name' }
+        {   key: 'port',   label: 'Port No.' },
+        {   key: 'pname',  label: 'Protocol' },
+        {   key: 'ptitle', label: 'Common Name' }
     ],
-    data :      ports,
+    data      : ports,
     scrollable: 'y',
-    height:     '300px',
-    sortable :  ['port','pname'],
-    recordType: {
-        select: { value:false },     // a custom property ... defined to allow "checkbox" select to work easily !
-        port:{}, pname:{},  ptitle:{}
-    }
+    height    : '250px',
+    sortable  : ['port','pname'],
+    recordType: ['select', 'port', 'pname', 'ptitle']
 }).render("#dtable");
 ```
 
-<h2>The 'checkbox' Listeners</h2>
-<p>Having a DataTable with a bunch of checkboxes in it may look cool (or not!), but we also need to define what to do when they
-are checked.   Since the column formatter for the first column creates the checkboxes, we will use Delegate on the DataTable container
-   to listen to any check "click" events.  (Some implementers may have defined a listener on each checkbox, which is a really
-   bad practice ... the source of memory leaks, and just plain awkward!).
-</p>
+<h2>The Checkbox Listeners</h2>
+
 <p>
+    Having a DataTable with a bunch of checkboxes in it may look cool (or
+    not!), but we also need to define what to do when they are checked.   Since
+    the column formatter for the first column creates the checkboxes, we 
+    delegate "click" listeners from the DataTable for the two types of
+    checkboxes&mdash;the "check all" checkbox in the header and the individual
+    checkboxes on each data row.
+</p>
 
+<p>
+    Be sure to <a href="../event/delegation.html">avoid subscribing to events
+    directly on elements in each row</a> of a DataTable.
 </p>
 
 ```
-// Define a listener on the DT first column for each record's "checkbox",
+// Define a listener on the DT first column for each record's checkbox,
 //   to set the value of `select` to the checkbox setting
-dt.delegate("click",function(e){
-    var chk = e.target,             // this is the INPUT[type='checkbox'] Node
-        td  = chk.ancestor(),       // since e.target is on INPUT, parent is the containing TD
-        rec = this.getRecord(td);   // we need the "record" (i.e. Model of the data)
+table.delegate("click", function(e){
+    // undefined to trigger the emptyCellValue
+    var checked = e.target.get('checked') || undefined;
 
-    rec.set('select', chk.get('checked') ); // updates the 'selected' attribute
-},".myCheckboxFmtr", dt);
+    this.getRecord(e.target).set('select', checked);
 
-// Also define a listener on the single TH "checkbox" to
+    // Uncheck the header checkbox
+    this.get('contentBox')
+        .one('.protocol-select-all').set('checked', false);
+}, ".yui3-datatable-data .yui3-datatable-col-select input", table);
+
+
+// Also define a listener on the single TH checkbox to
 //   toggle all of the checkboxes
-Y.one(".myCheckboxALL").on("click", function(e){
-    var chk = e.target.get('checked');      // gets the checked status
-    this.get('data').each(function(item){
-        item.set('select',chk);             // sets each record's `select` to this
-    });
-},dt);
+table.delegate('click', function (e) {
+    // undefined to trigger the emptyCellValue
+    var checked = e.target.get('checked') || undefined;
+
+    // Set the selected attribute in all records in the ModelList silently
+    // to avoid each update triggering a table update
+    this.data.invoke('set', 'select', checked, { silent: true });
+
+    // Update the table now that all records have been updated
+    this.syncUI();
+}, '.protocol-select-all', table);
 ```
 
-<h2>Button 'click' Handlers</h2>
+<h2>Button Click Handlers</h2>
 
-<p>The bulk of the nitty-gritty is done now.   We'll just define some css-button click handlers to
-process through the "checked" records and one to allow us to clear all the selections.</p>
+<p>
+    The bulk of the nitty-gritty is done now.   We'll just wire up a button to
+    process the checked records and another to clear the selection.
+</p>
+
 ```
-Y.one("#btnSelected").on("click",function(){
-    var ml  = this.get('data'),
-        msg = '';
+function process() {
+    var ml  = table.data,
+        msg = '',
+        template = '<li>Record index = {index} Data = {port} : {pname}</li>';
 
-    ml.each(function(item){
-        if ( item.get('select') )
-            msg += "Record index = " + ml.indexOf(item)
-                    + ' Data = ' + item.get('port') + ' : ' + item.get('pname') + '<br/>';
+    ml.each(function (item, i) {
+        var data = item.getAttrs(['select', 'port', 'pname']);
+
+        if (data.select) {
+            data.index = i;
+            msg += Y.Lang.sub(template, data);
+        }
     });
 
-    msg = ( msg.length === 0 ) ? 'None selected!' : msg;    // if no selections, null the 'msg' variable
+    Y.one("#processed").setHTML(msg || '<li>(None)</li>');
+}
 
-    Y.one("#processed").setContent( msg );
+Y.one("#btnSelected").on("click", process);
 
-}, dt);
+Y.one("#btnClearSelected").on("click",function () {
+    table.data.invoke('set', 'select', undefined);
 
-Y.one("#btnClearSelected").on("click",function(){
-    var ml  = this.get('data');
+    // Uncheck the header checkbox
+    table.get('contentBox')
+        .one('.protocol-select-all').set('checked', false);
 
-    ml.each(function(item){
-        item.set('select',false);
-    });
-
-    Y.one("#processed").setContent('Cleared.');
-
-}, dt);
+    process();
+});
 ```
 
-<p>Note that if we were certain that all clients were using a CSS3 compliant browser, it would be really
-easy to simply get the "checked" records using `dt.get("srcNode").all("input.myCheckboxFmtr:checked");`,
- but as we all know ... that isn't always assured.</p>
+<p>
+    Note that another option for capturing all the checked checkboxes would be
+    `table.get('contentBox').all('.yui3-datatable-col-select input:checked')`.
+    To make sure that was supported across all browsers, we'd then need to
+    include the `selector-css3` module in our `use()` statement.
+</p>
 
-<p>Another improvement that could be made for HTML5 compliant clients would be the ability to add in `localStorage`
-access to save the "checked" record data to the browser environment.   See for example the Y.App ToDo example.</p>
+<p>
+    Another improvement that could be made for HTML5 compliant clients would be
+    to add in `localStorage` access to save the checked record data to the
+    browser environment.   You can see how to do this in the
+    <a href="../app/app-todo.html">App Framework's Todo List example</a>.
+</p>
 
 
-<h2>Full Source Code</h2>
+<h2>Full Code Listing</h2>
 
 <h3>CSS</h3>
+
 ```
-.center { text-align: center; }
-
-.myCheckboxFmtr, .myCheckboxALL { cursor: pointer; }
-
-#dstatus {
-   margin-top: 25px;
-   background-color: #0c0;
-   width: 420px;
+.yui3-skin-sam .yui3-datatable-col-select {
+    text-align: center;
 }
 
 #processed {
-    color: #00c;
+   margin-top: 2em;
+   border: 2px inset;
+   border-radius: 5px;
+   padding: 1em;
+   list-style: none;
 }
 ```
 
 <h3>HTML Markup</h3>
-```
-<div id="dtable"></div>
-<button id="btnSelected" class="yui3-button">Process Selections</button>
-<button id="btnClearSelected" class="yui3-button">Clear Selections</button>
 
-<div id="dstatus">The following check selected records were processed;
-    <div id="processed">None.</div>
+```
+<div class="example yui3-skin-sam">
+    <div id="dtable"></div>
+    <button id="btnSelected" class="yui3-button">Process Selections</button>
+    <button id="btnClearSelected" class="yui3-button">Clear Selections</button>
+
+    <h4>Processed:</h4>
+    <ul id="processed">
+        <li>(None)</li>
+    </ul>
 </div>
 ```
 
 <h3>Javascript</h3>
+
 ```
 {{>datatable-chkboxselect-source}}
 ```
