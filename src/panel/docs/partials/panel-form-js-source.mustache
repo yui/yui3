@@ -1,7 +1,4 @@
-YUI({
-    // Uses a Gallery module to a WidgetModality regression in 3.5.0.
-    gallery: 'gallery-2012.04.12-13-50'
-}).use('gallery-patch-350-widget-modality', 'datatable-mutable', 'panel', 'dd-plugin', function (Y) {
+YUI().use('datatable-mutable', 'panel', 'dd-plugin', function (Y) {
 
     // Create the datatable with some gadget information.
     var idField    = Y.one('#productId'),
