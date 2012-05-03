@@ -1038,11 +1038,6 @@ SVGShape.ATTRS = {
 		}
 	},
 	
-	//Not used. Remove in future.
-    autoSize: {
-		value: false
-	},
-
 	// Only implemented in SVG
 	// Determines whether the instance will receive mouse events.
 	// 
@@ -1069,32 +1064,6 @@ SVGShape.ATTRS = {
 				node.setAttribute("pointer-events", val);
 			}
 			return val;
-		}
-	},
-
-	/**
-	 * The node used for gradient fills.
-	 *
-	 * @config gradientNode
-	 * @type HTMLElement
-     * @private
-	 */
-	gradientNode: {
-		setter: function(val)
-		{
-			if(Y_LANG.isString(val))
-			{
-				val = this._graphic.getGradientNode("linear", val);
-			}
-			return val;
-		}
-	},
-
-	//Not used. Remove in future.
-    autoDraw: {
-		getter: function()
-		{
-			return this._graphic.autoDraw;
 		}
 	},
 
