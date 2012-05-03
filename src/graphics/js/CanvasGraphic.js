@@ -438,6 +438,15 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     },
     
     /**
+     * Clears the graphics object.
+     *
+     * @method clear
+     */
+    clear: function() {
+        this.removeAllShapes();
+    },
+
+    /**
      * Removes all child nodes.
      *
      * @method _removeChildren
