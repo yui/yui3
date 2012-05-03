@@ -373,14 +373,14 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     removeShape: function(shape)
     {
-        if(!shape instanceof VMLShape)
+        if(!(shape instanceof VMLShape))
         {
             if(Y_LANG.isString(shape))
             {
                 shape = this._shapes[shape];
             }
         }
-        if(shape && shape instanceof VMLShape)
+        if(shape && (shape instanceof VMLShape))
         {
             shape._destroy();
             this._shapes[shape.get("id")] = null;
