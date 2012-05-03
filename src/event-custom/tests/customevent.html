@@ -776,6 +776,370 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
             test_async_fireonce: function() {
                 Y.Assert.isTrue(global_notified, 'asynchronous notification did not seem to work.');
             },
+            
+            "test fireOnce with broadcast 1": function () {
+                var et = new Y.EventTarget(),
+                    eventType = 'myEvent1';
+                et.publish(eventType, {
+                    fireOnce: true,
+                    broadcast:  1
+                });
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0;
+                    
+                et.on(eventType, function (e) {
+                    fired1++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired3++;
+                });
+                
+                et.fire(eventType);
+                et.fire(eventType);
+                
+                et.on(eventType, function (e) {
+                    fired4++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(0, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(0, fired6);
+            },
+            
+            "test fireOnce with broadcast 2": function () {
+                var et = new Y.EventTarget(),
+                    eventType = 'myEvent2';
+                et.publish(eventType, {
+                    fireOnce: true,
+                    broadcast:  2
+                });
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0
+                
+                et.on(eventType, function (e) {
+                    fired1++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired3++;
+                });
+                
+                et.fire(eventType);
+                et.fire(eventType);
+                
+                et.on(eventType, function (e) {
+                    fired4++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(1, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(1, fired6);
+        
+            },
+            
+            "test fireOnce with broadcast 2 publish twice": function () {
+                var et = new Y.EventTarget(),
+                    eventType = 'myEvent3';
+                et.publish(eventType, {
+                    fireOnce: false,
+                    broadcast:  2
+                });
+                
+                et.publish(eventType, {
+                    fireOnce: true
+                });
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0
+                
+                et.on(eventType, function (e) {
+                    fired1++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired3++;
+                });
+                
+                et.fire(eventType);
+                et.fire(eventType);
+                
+                et.on(eventType, function (e) {
+                    fired4++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(1, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(1, fired6);
+        
+            },
+            
+            "test fireOnce with broadcast 2 subscribe after": function () {
+                var et = new Y.EventTarget(),
+                    eventType = 'myEvent4';
+                et.publish(eventType, {
+                    fireOnce: true,
+                    broadcast:  2
+                });
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0
+                
+                et.after(eventType, function (e) {
+                    fired1++;
+                });
+                
+                Y.after(eventType, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.after(eventType, function (e) {
+                    fired3++;
+                });
+                
+                et.fire(eventType);
+                et.fire(eventType);
+                
+                et.after(eventType, function (e) {
+                    fired4++;
+                });
+                
+                Y.after(eventType, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.after(eventType, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(1, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(1, fired6);
+        
+            },
+            
+            "test fireOnce with default config": function () {
+                var et = new Y.EventTarget({fireOnce: true}),
+                    eventType = 'myEvent5';
+                et.publish(eventType, {
+                    broadcast:  2
+                });
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0
+                
+                et.on(eventType, function (e) {
+                    fired1++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired3++;
+                });
+                
+                et.fire(eventType);
+                et.fire(eventType);
+                
+                et.on(eventType, function (e) {
+                    fired4++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(1, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(1, fired6);
+        
+            },
+            
+            "test broadcast with default config": function () {
+                var et = new Y.EventTarget({broadcast: 2}),
+                    eventType = 'myEvent6';
+                et.publish(eventType, {
+                    fireOnce:  true
+                });
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0
+                
+                et.on(eventType, function (e) {
+                    fired1++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired3++;
+                });
+                
+                et.fire(eventType);
+                et.fire(eventType);
+                
+                et.on(eventType, function (e) {
+                    fired4++;
+                });
+                
+                Y.on(eventType, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.on(eventType, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(1, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(1, fired6);
+        
+            },
+            
+            "test config with multiple event type": function () {
+                var et = new Y.EventTarget(),
+                    cfg = {},
+                    eventType1 = 'myEvent7',
+                    eventType2 = 'anotherEvent1';
+                cfg[eventType1] = {
+                    fireOnce: true,
+                    broadcast:  2
+                };
+                cfg[eventType2] = {
+                    fireOnce: true,
+                    broadcast:  2
+                }
+                et.publish(cfg);
+                
+                var fired1 = 0,
+                    fired2 = 0,
+                    fired3 = 0,
+                    fired4 = 0,
+                    fired5 = 0,
+                    fired6 = 0;
+                
+                et.fire(eventType1);
+                et.fire(eventType2);
+                
+                et.on(eventType1, function (e) {
+                    fired1++;
+                });
+                
+                Y.on(eventType1, function (e) {
+                    fired2++;
+                });
+                
+                Y.Global.on(eventType1, function (e) {
+                    fired3++;
+                });
+                
+                et.on(eventType2, function (e) {
+                    fired4++;
+                });
+                
+                Y.on(eventType2, function (e) {
+                    fired5++;
+                });
+                
+                Y.Global.on(eventType2, function (e) {
+                    fired6++;
+                });
+                
+                Y.Assert.areEqual(1, fired1);
+                Y.Assert.areEqual(1, fired2);
+                Y.Assert.areEqual(1, fired3);
+                Y.Assert.areEqual(1, fired4);
+                Y.Assert.areEqual(1, fired5);
+                Y.Assert.areEqual(1, fired6);
+            },
 
             test_node_publish: function() {
                 var node = Y.one('#adiv');

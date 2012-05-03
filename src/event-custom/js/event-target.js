@@ -589,6 +589,13 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
                                   (opts) ? Y.merge(defaults, opts) : defaults);
             events[type] = ce;
         }
+        
+        if(ce && ce.broadcast && this !== Y && this !== Y.Global){
+            YArray.each((ce.broadcast == 2) ? [Y,Y.Global] : [Y], function(et){
+                defaults = Y.merge(et._yuievt.defaults);
+                et.publish(type, Y.mix(defaults, ce, true, ['fireOnce']));
+            });
+        }
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
