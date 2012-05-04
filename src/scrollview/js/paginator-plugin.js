@@ -20,10 +20,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     CONTENT_BOX = "contentBox",
     SELECTOR = "selector",
     FLICK = "flick",
-    DRAG = "drag",
-    _constrain = function (val, min, max) { 
-        return Math.min(Math.max(val, min), max);
-    };
+    DRAG = "drag";
 
 /**
  * Scrollview plugin that adds support for paging
@@ -108,7 +105,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     optimizeMemory: false,
     padding: 1,
     _uiEnabled: true,
-    _prevIndex: 0,
     _prevent: new Y.Do.Prevent(),
     
     /**
@@ -131,6 +127,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.beforeHostMethod('_mousewheel', paginator._mousewheel);
         paginator.beforeHostMethod('_flickFrame', paginator._flickFrame);
         paginator.beforeHostMethod('_onGestureMoveEnd', paginator._onGestureMoveEnd);
+        paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
         paginator.afterHostEvent('render', paginator._afterHostRender);
         paginator.afterHostEvent('scrollEnd', paginator._scrollEnded);
         paginator.after('indexChange', paginator._afterIndexChange);
@@ -149,10 +146,22 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             pageNodes = paginator._getPageNodes(),
             size = pageNodes.size(),
             bb = host.get(BOUNDING_BOX);
-        
-        bb.addClass(CLASS_PAGED); // @TODO Is this correct?
+            
+        bb.addClass(CLASS_PAGED);
         paginator.set(TOTAL, size);
         paginator._optimize();
+    },
+    
+    /**
+     * After host _uiDimensionsChange
+     *
+     * @method _afterHostUIDimensionsChange
+     * @param {Event.Facade}
+     * @protected
+     */
+    _afterHostUIDimensionsChange: function(e) {
+        var paginator = this;
+        paginator.set(TOTAL, paginator._getPageNodes().size());
     },
      
     /**
@@ -167,8 +176,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             currentIndex = paginator.get(INDEX);
         
         paginator.scrollTo(currentIndex);
-        
-        return paginator._prevent;
     },
     
     /**
@@ -227,49 +234,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to a given page in the scrollview
-     *
-     * @method scrollTo
-     * @param index {Number} The index of the page to scroll to
-     * @param duration {Number} The number of ms the animation should last
-     * @param easing {String} The timing function to use in the animation
-     */
-    scrollTo: function (index, duration, easing) {
-        var paginator = this,
-            host = paginator._host,
-            isVert = host._scrollsVertical,
-            scrollAxis = (isVert) ? SCROLL_Y : SCROLL_X,
-            pageNodes = paginator._getPageNodes(),
-            startPoint = isVert ? host._startClientY : host._startClientX,
-            endPoint = isVert ? host._endClientY : host._endClientX,
-            delta = startPoint - endPoint,
-            duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration,
-            easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing,
-            scrollVal;
-        
-        // If the delta is 0 (a no-movement mouseclick)
-        if (delta === 0) {
-            return false;
-        }
-        
-        // Disable the UI while animating
-        if (duration > 0) {
-            paginator._uiDisable();
-        }
-        
-        // Make sure the target node is visible
-        paginator._showNodes(pageNodes.item(index));
-        
-        // Determine where to scroll to
-        scrollVal = pageNodes.item(index).get(isVert ? "offsetTop" : "offsetLeft");
-        
-        host.set(scrollAxis, scrollVal, {
-            duration: duration,
-            easing: easing
-        });
-    },
-    
-    /**
      * scrollEnd handler to run some cleanup operations
      *
      * @method _scrollEnded
@@ -281,8 +245,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             currentIndex = paginator.get(INDEX);
         
         paginator._optimize();
-        paginator._uiEnable();
-        paginator._prevIndex = currentIndex;
+        this._uiEnable();
      },
 
     /**
@@ -320,7 +283,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
         
         // Show the pages in/near the viewport & hide the rest
-        pageNodes = paginator._getViewport(currentIndex);
+        pageNodes = paginator._getStage(currentIndex);
         paginator._showNodes(pageNodes.visible);
         paginator._hideNodes(pageNodes.hidden);
         
@@ -328,14 +291,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
-     * @todo
+     * Determines which nodes should be visible, and which should be hidden.
      *
-     * @method _getViewport
-     * @param index {Number}
+     * @method _getStage
+     * @param index {Number} The page index # intended to be in focus.
      * @returns {object} 
      * @protected
      */
-    _getViewport : function (index) {
+    _getStage : function (index) {
         var paginator = this,
             host = paginator._host,
             padding = paginator.padding,
@@ -360,6 +323,22 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
+     * A utility method to show node(s)
+     *
+     * @method _showNodes
+     * @param nodeList {nodeList}
+     * @protected
+     */
+    _showNodes : function (nodeList) {
+        var host = this._host,
+            cb = host.get(CONTENT_BOX);
+            
+        if (nodeList) {
+            nodeList.removeClass(CLASS_HIDDEN).setStyle('display', '');
+        }
+    },
+    
+    /**
      * A utility method to hide node(s)
      *
      * @method _hideNodes
@@ -372,21 +351,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (nodeList) {
             nodeList.addClass(CLASS_HIDDEN).setStyle('display', 'none');
         }
-    },
-    
-    /**
-     * A utility method to show node(s)
-     *
-     * @method _showNodes
-     * @param nodeList {nodeList}
-     * @protected
-     */
-    _showNodes : function (nodeList) {
-         var host = this._host;
-         
-         if (nodeList) {
-             nodeList.removeClass(CLASS_HIDDEN).setStyle('display', '');
-         }
     },
     
     /**
@@ -470,25 +434,46 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /**
-     * Inserts a new page
+     * Scroll to a given page in the scrollview
      *
-     * @method addPage
-     * @param node {object}
+     * @method scrollTo
+     * @param index {Number} The index of the page to scroll to
+     * @param duration {Number} The number of ms the animation should last
+     * @param easing {String} The timing function to use in the animation
      */
-    addPage: function (node) {
+    scrollTo: function (index, duration, easing) {
         var paginator = this,
             host = paginator._host,
-            optimizeMemory = paginator.optimizeMemory,
-            cb = host.get(CONTENT_BOX);
+            isVert = host._scrollsVertical,
+            scrollAxis = (isVert) ? SCROLL_Y : SCROLL_X,
+            pageNodes = paginator._getPageNodes(),
+            startPoint = isVert ? host._startClientY : host._startClientX,
+            endPoint = isVert ? host._endClientY : host._endClientX,
+            delta = startPoint - endPoint,
+            duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration,
+            easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing,
+            scrollVal;
         
-        if (optimizeMemory) {
-            paginator._hideNodes(node);
+        // If the delta is 0 (a no-movement mouseclick)
+        if (delta === 0) {
+            return false;
         }
         
-        cb.get('children').append(node);
+        // Disable the UI while animating
+        if (duration > 0) {
+            paginator._uiDisable();
+        }
         
-        paginator.set(TOTAL, paginator._getPageNodes().size());
-        host._uiDimensionsChange();
+        // Make sure the target node is visible
+        paginator._showNodes(pageNodes.item(index));
+        
+        // Determine where to scroll to
+        scrollVal = pageNodes.item(index).get(isVert ? "offsetTop" : "offsetLeft");
+
+        host.set(scrollAxis, scrollVal, {
+            duration: duration,
+            easing: easing
+        });
     }
 });
 
