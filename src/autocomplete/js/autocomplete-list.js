@@ -292,7 +292,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     **/
     _ariaSay: function (stringId, subs) {
         var message = this.get('strings.' + stringId);
-        this._ariaNode.setContent(subs ? Lang.sub(message, subs) : message);
+        this._ariaNode.set('text', subs ? Lang.sub(message, subs) : message);
     },
 
     /**

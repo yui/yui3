@@ -498,7 +498,7 @@ Y.Resize = Y.extend(
 		totalVSurrounding: 0,
 
 		/**
-		 * Stores the <a href="Resize.html#config_node">node</a>
+		 * Stores the <a href="Resize.html#attr_node">node</a>
 		 * surrounding information retrieved from
 		 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
 		 *
@@ -509,7 +509,7 @@ Y.Resize = Y.extend(
 		nodeSurrounding: null,
 
 		/**
-		 * Stores the <a href="Resize.html#config_wrapper">wrapper</a>
+		 * Stores the <a href="Resize.html#attr_wrapper">wrapper</a>
 		 * surrounding information retrieved from
 		 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
 		 *
@@ -601,6 +601,8 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		initializer: function() {
+			this._eventHandles = [];
+
 			this.renderer();
 		},
 
@@ -648,8 +650,8 @@ Y.Resize = Y.extend(
 		},
 
 	    /**
-	     * Descructor lifecycle implementation for the Resize class. Purges events attached
-	     * to the node (and all child nodes) and removes the Resize handles.
+	     * Destructor lifecycle implementation for the Resize class.
+	     * Detaches all previously attached listeners and removes the Resize handles.
 	     *
 	     * @method destructor
 	     * @protected
@@ -660,8 +662,14 @@ Y.Resize = Y.extend(
 				wrapper = instance.get(WRAPPER),
 				pNode = wrapper.get(PARENT_NODE);
 
-			// purgeElements on boundingBox
-			Y.Event.purgeElement(wrapper, true);
+			Y.each(
+				instance._eventHandles,
+				function(handle, index) {
+					handle.detach();
+				}
+			);
+
+			instance._eventHandles.length = 0;
 
 			// destroy handles dd and remove them from the dom
 			instance.eachHandle(function(handleEl) {
@@ -670,6 +678,8 @@ Y.Resize = Y.extend(
 				// remove handle
 				handleEl.remove(true);
 			});
+
+			instance.delegate.destroy();
 
 			// unwrap node
 			if (instance.get(WRAP)) {
@@ -749,10 +759,12 @@ Y.Resize = Y.extend(
 				}
 			);
 
-			instance.on('drag:drag', instance._handleResizeEvent);
-			instance.on('drag:dropmiss', instance._handleMouseUpEvent);
-			instance.on('drag:end', instance._handleResizeEndEvent);
-			instance.on('drag:start', instance._handleResizeStartEvent);
+			instance._eventHandles.push(
+				instance.on('drag:drag', instance._handleResizeEvent),
+				instance.on('drag:dropmiss', instance._handleMouseUpEvent),
+				instance.on('drag:end', instance._handleResizeEndEvent),
+				instance.on('drag:start', instance._handleResizeStartEvent)
+			);
 		},
 
 	    /**
@@ -765,10 +777,12 @@ Y.Resize = Y.extend(
 			var instance = this,
 				wrapper = instance.get(WRAPPER);
 
-			wrapper.on('mouseenter', Y.bind(instance._onWrapperMouseEnter, instance));
-			wrapper.on('mouseleave', Y.bind(instance._onWrapperMouseLeave, instance));
-			wrapper.delegate('mouseenter', Y.bind(instance._onHandleMouseEnter, instance), DOT+CSS_RESIZE_HANDLE);
-			wrapper.delegate('mouseleave', Y.bind(instance._onHandleMouseLeave, instance), DOT+CSS_RESIZE_HANDLE);
+			instance._eventHandles.push(
+				wrapper.on('mouseenter', Y.bind(instance._onWrapperMouseEnter, instance)),
+				wrapper.on('mouseleave', Y.bind(instance._onWrapperMouseLeave, instance)),
+				wrapper.delegate('mouseenter', Y.bind(instance._onHandleMouseEnter, instance), DOT+CSS_RESIZE_HANDLE),
+				wrapper.delegate('mouseleave', Y.bind(instance._onHandleMouseLeave, instance), DOT+CSS_RESIZE_HANDLE)
+			);
 		},
 
 	    /**
@@ -937,8 +951,8 @@ Y.Resize = Y.extend(
 		},
 
 	    /**
-	     * Copy relevant styles of the <a href="Resize.html#config_node">node</a>
-	     * to the <a href="Resize.html#config_wrapper">wrapper</a>.
+	     * Copy relevant styles of the <a href="Resize.html#attr_node">node</a>
+	     * to the <a href="Resize.html#attr_wrapper">wrapper</a>.
 	     *
 	     * @method _copyStyles
 	     * @param {Node} node Node from.
@@ -1493,7 +1507,7 @@ Y.Resize = Y.extend(
 		},
 
 		/**
-		 * Mouseenter event handler for the <a href="Resize.html#config_wrapper">wrapper</a>.
+		 * Mouseenter event handler for the <a href="Resize.html#attr_wrapper">wrapper</a>.
 		 *
 		 * @method _onWrapperMouseEnter
 	     * @param {EventFacade} event
@@ -1508,7 +1522,7 @@ Y.Resize = Y.extend(
 		},
 
 		/**
-		 * Mouseleave event handler for the <a href="Resize.html#config_wrapper">wrapper</a>.
+		 * Mouseleave event handler for the <a href="Resize.html#attr_wrapper">wrapper</a>.
 		 *
 		 * @method _onWrapperMouseLeave
 	     * @param {EventFacade} event
@@ -1630,4 +1644,4 @@ Y.each(Y.Resize.prototype.ALL_HANDLES, function(handle, i) {
 });
 
 
-}, '@VERSION@' ,{requires:['base', 'widget', 'substitute', 'event', 'oop', 'dd-drag', 'dd-delegate', 'dd-drop'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['base', 'widget', 'substitute', 'event', 'oop', 'dd-drag', 'dd-delegate', 'dd-drop']});

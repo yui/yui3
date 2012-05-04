@@ -1,0 +1,13 @@
+YUI().use("datatable", function (Y) {
+
+    var table = new Y.DataTable({
+        columns: ["id", "name", { key: "price", formatter: "${value}" }],
+        data: [
+            { id: "ga-3475", name: "gadget", price: 6.99 },
+            { id: "sp-9980", name: "sprocket", price: 3.75 },
+            { id: "wi-0650", name: "widget", price: 4.25 }
+        ],
+        caption:"Data formatting with string template"
+    }).render('#template');
+
+});
