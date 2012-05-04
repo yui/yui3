@@ -295,10 +295,30 @@ var table = new Y.DataTable({
 <h3 id="formatters">Formatting Cell Data</h3>
 
 <p>
-    To customize the display of cell data in a column, DataTable provides the
-    `formatter` and `nodeFormatter` column configurations.  Both configurations
-    accept functions, but `formatter` will also accept a template string.
+    Customizing the content of the cells in your table is done using column
+    configurations.  The most common formatting-related column configurations
+    are:
 </p>
+
+<ul>
+    <li>
+        `allowHTML` - set this to `true` if your cell data, `emptyCellValue`, or
+        `formatter` outputs HTML.  By default, cell data is HTML escaped for
+        security.
+    </li>
+    <li>
+        `emptyCellValue` - string to populate cells where no data (empty
+        string, `undefined`, or `null`) is available in a record.
+    </li>
+    <li>
+        `formatter` - string or function used to translate the raw record data
+        for each cell in a given column into a format better suited to display.
+    </li>
+    <li>
+        `nodeFormatter` - function used to customize the DOM structure of a
+        cell, its row, or its surrounding elements.  Use with caution.
+    </li>
+</ul>
 
 <p>
     `formatter`s are expected to return the string content to populate each
@@ -313,7 +333,11 @@ var table = new Y.DataTable({
 
 ```
 var columns = [
-    'item',
+    {
+        key: 'item',
+        formatter: '<a href="#{value}">{value}</a>',
+        allowHTML: true // Must be set or the html will be escaped
+    },
     {
         key: 'cost',
         formatter: '${value}' // formatter template string
@@ -322,7 +346,7 @@ var columns = [
         key: 'price',
         formatter: function (o) {
             if (o.value > 3) {
-                o.className += ' yellow-background';
+                o.className += 'expensive';
             }
 
             return '$' + o.value.toFixed(2);
@@ -387,7 +411,11 @@ var columns = [
 <script>
 YUI().use('datatable-base', function (Y) {
     var columns = [
-        'item',
+        {
+            key: 'item',
+            formatter: '<a href="#{value}">{value}</a>',
+            allowHTML: true // Must be set or the html will be escaped
+        },
         {
             key: 'cost',
             formatter: '${value}' // formatter template string
@@ -396,7 +424,7 @@ YUI().use('datatable-base', function (Y) {
             key: 'price',
             formatter: function (o) {
                 if (o.value > 10) {
-                    o.className += ' expensive';
+                    o.className += 'expensive';
                 }
 
                 return '$' + o.value.toFixed(2);
@@ -448,7 +476,9 @@ YUI().use('datatable-base', function (Y) {
 <p>
     The parameters passed to `formatter` functions and `nodeFormatter`
     functions are described in <a href="#formatter-props">Appendix B</a> and <a
-    href="#nodeformatter-props">Appendix C</a>, respectively.
+    href="#nodeformatter-props">Appendix C</a>, respectively. Also look for
+    what can be passed in to the columns in
+    <a href="#column-config">Appendix A</a>.
 </p>
 
 <p>

@@ -1111,12 +1111,28 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        if (Lang.isValue(e.prevVal)) {
-            delete this._idMap[e.prevVal];
+        var newVal  = e.newVal,
+            prevVal = e.prevVal,
+            target  = e.target;
+
+        if (Lang.isValue(prevVal)) {
+            if (this._idMap[prevVal] === target) {
+                delete this._idMap[prevVal];
+            } else {
+                // The model that changed isn't in this list. Probably just a
+                // bubbled change event from a nested Model List.
+                return;
+            }
+        } else {
+            // The model had no previous id. Verify that it exists in this list
+            // before continuing.
+            if (this.indexOf(target) === -1) {
+                return;
+            }
         }
 
-        if (Lang.isValue(e.newVal)) {
-            this._idMap[e.newVal] = e.target;
+        if (Lang.isValue(newVal)) {
+            this._idMap[newVal] = target;
         }
     },
 

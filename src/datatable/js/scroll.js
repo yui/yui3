@@ -356,7 +356,7 @@ Y.mix(Scrollable.prototype, {
 
         if (scrollbar && scroller && !this._scrollbarEventHandle) {
             this._scrollbarEventHandle = new Y.Event.Handle([
-                scrollbar.on('scroll', this._syncScrollPosition, this, 'virtual'),
+                scrollbar.on('scroll', this._syncScrollPosition, this),
                 scroller.on('scroll', this._syncScrollPosition, this)
             ]);
         }
@@ -775,14 +775,14 @@ Y.mix(Scrollable.prototype, {
 
     @method _syncScrollPosition
     @param {DOMEventFacade} e The scroll event
-    @param {String} [source] The string "virtual" if the event originated from
-                        the virtual scrollbar
     @protected
     @since 3.5.0
     **/
-    _syncScrollPosition: function (e, source) {
+    _syncScrollPosition: function (e) {
         var scrollbar = this._scrollbarNode,
-            scroller  = this._yScrollNode;
+            scroller  = this._yScrollNode,
+            source    = e.currentTarget,
+            other;
 
         if (scrollbar && scroller) {
             if (this._scrollLock && this._scrollLock.source !== source) {
@@ -793,11 +793,8 @@ Y.mix(Scrollable.prototype, {
             this._scrollLock = Y.later(300, this, this._clearScrollLock);
             this._scrollLock.source = source;
 
-            if (source === 'virtual') {
-                scroller.set('scrollTop', scrollbar.get('scrollTop'));
-            } else {
-                scrollbar.set('scrollTop', scroller.get('scrollTop'));
-            }
+            other = (source === scrollbar) ? scroller : scrollbar;
+            other.set('scrollTop', source.get('scrollTop'));
         }
     },
 

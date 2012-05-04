@@ -643,6 +643,14 @@ suite.add( new Y.Test.Case({
         Y.Assert.areSame(50, slider.get('value'));
 
         slider.destroy();
+    },
+
+    "instantiating with disabled: true should lock the thumb": function () {
+        var slider = new Y.Slider({ disabled: true }).render('#testbed');
+
+        Y.Assert.isTrue(slider._dd.get('lock'));
+
+        slider.destroy();
     }
 }));
 

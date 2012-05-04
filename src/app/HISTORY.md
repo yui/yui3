@@ -16,6 +16,11 @@ App Framework Change History
   (or an array of indices). You no longer need to specify the actual model
   instance(s), although that's still supported as well.
 
+* Fixed an issue where a list that received bubbled events from a model would
+  assume the model was in the list if its `id` changed, even if the model
+  actually wasn't in the list and was merely bubbling events to the list.
+  [Ticket #2532240]
+
 ### Router
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
