@@ -294,7 +294,8 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * @private
      */
     initializer: function() {
-        var render = this.get("render");
+        var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
 		this._contentBounds = {
             left: 0,
@@ -307,7 +308,9 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         this._node.style.position = "absolute";
         this._node.style.left = this.get("x") + "px";
         this._node.style.top = this.get("y") + "px";
+        this._node.style.visibility = visibility;
         this._contentNode = this._createGraphics();
+        this._contentNode.style.visibility = visibility;
         this._contentNode.setAttribute("id", this.get("id"));
         this._node.appendChild(this._contentNode);
         if(render)
@@ -369,6 +372,10 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -494,8 +501,14 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
                 }
             }
         }
-        this._contentNode.style.visibility = visibility;
-        this._node.style.visibility = visibility;
+        if(this._contentNode)
+        {
+            this._contentNode.style.visibility = visibility;
+        }
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**
