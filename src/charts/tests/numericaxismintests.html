@@ -14,8 +14,7 @@
     </head>		
 <body class="yui3-skin-sam">
 <h3>Numeric Axis Minimum Tests</h3>
-<div id="mychart"></div>
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>            
 YUI({
     allowRollup: false,
@@ -24,7 +23,7 @@ YUI({
 { 
     Y.namespace("example.test");
     
-    var suite = new Y.Test.Suite("Y.NumericAxis"),
+    var suite = new Y.Test.Suite("Y.NumericAxisMinTests"),
     
     AxisTestTemplate = function(cfg, globalCfg)
     {
@@ -44,12 +43,15 @@ YUI({
 
     Y.extend(AxisTestTemplate, Y.Test.Case, {
         setUp: function() {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
+            Y.one("#testbed").remove(true);
         }
     });
     
@@ -184,6 +186,35 @@ YUI({
         dataMax: positiveAndNegativeDataProviderDataMax
     }),
 
+    AxisPositiveAndNegativeMinTest = new Y.AxisMinTestTemplate({
+        axes: {
+            values: {
+                minimum: -1721
+            }
+        },
+        dataProvider: positiveAndNegativeDataProvider
+    },
+    {    
+        name: "Axes Negative Min Test",
+        setMin: -1721,
+        dataMax: positiveAndNegativeDataProviderDataMax
+    }),
+
+    AxisPositiveAndNegativeAlwaysShowZeroFalseMinTest = new Y.AxisMinTestTemplate({
+        axes: {
+            values: {
+                minimum: -1721,
+                alwaysShowZero: false
+            }
+        },
+        dataProvider: positiveAndNegativeDataProvider
+    },
+    {    
+        name: "Axes Negative Min Test",
+        setMin: -1721,
+        dataMax: positiveAndNegativeDataProviderDataMax
+    }),
+
     AxisNegativeMinWithAllNegativeDataTest = new Y.AxisMinTestTemplate({
         axes: {
             values: {
@@ -194,6 +225,21 @@ YUI({
     },
     {
         name: "Axes Negative Min with All Negative Data Test",
+        setMin: -1721,
+        dataMax: allNegativeDataProviderDataMax 
+    }),
+
+    AxisNegativeMinAlwaysShowZeroFalseTest = new Y.AxisMinTestTemplate({
+        axes: {
+            values: {
+                minimum: -1721,
+                alwaysShowZero: false
+            }
+        },
+        dataProvider: allNegativeDataProvider
+    },
+    {
+        name: "Axes Negative Min with All Negative Data and alwaysShowZero=false Test",
         setMin: -1721,
         dataMax: allNegativeDataProviderDataMax 
     }),
@@ -563,10 +609,11 @@ YUI({
         setMin: -100,
         dataMax: allPositiveDataProviderDataMax
     });
-   
+    
     suite.add(AxisMinTest);
     suite.add(AxisMinAlwaysShowZeroFalseTest);
     suite.add(AxisNegativeMinTest);
+    suite.add(AxisNegativeMinAlwaysShowZeroFalseTest);
     suite.add(AxisNegativeMinWithAllNegativeDataTest);
     suite.add(AxisMinWithDecimalsTest);
     suite.add(AxisMinIntegerDecimalDataTest);
@@ -592,6 +639,8 @@ YUI({
     suite.add(AxisMinWithDecimalsRoundingMethodNumericTest);
     suite.add(AxisMinIntegerDecimalDataRoundingMethodNumericTest);
     suite.add(AxisNegativeMinPositiveDataRoundingMethodNumericTest);
+    suite.add(AxisPositiveAndNegativeMinTest); 
+    suite.add(AxisPositiveAndNegativeAlwaysShowZeroFalseMinTest); 
     
     //create the console
     var r = new Y.Console({
@@ -602,7 +651,7 @@ YUI({
     r.render('#testLogger');
 
     //run the tests
-    Y.Test.Runner.setName("Y.NumericAxis");
+    Y.Test.Runner.setName("Y.NumericAxisMinTests");
     Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });

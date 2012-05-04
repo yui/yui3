@@ -11,6 +11,7 @@
         <url>common/tests/prep.html</url>
 
 
+        <url>anim/tests/anim-shape-transform.html</url>
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>
@@ -29,6 +30,9 @@
         <url>charts/tests/charts.html</url>
         <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/axestests.html</url>
+        <url>charts/tests/axislabeltests.html</url>
+        <url>charts/tests/axistitletests.html</url>
+        <url>charts/tests/numericaxistests.html</url>
         <url>charts/tests/numericaxismintests.html</url>
         <url>charts/tests/numericaxismaxtests.html</url>
         <url>charts/tests/numericaxisminandmaxtests.html</url>
@@ -38,6 +42,7 @@
         <url>charts/tests/groupmarkertests.html</url>
         <url>charts/tests/pielegend.html</url>
         <url>charts/tests/seriestests.html</url>
+        <url>charts/tests/planartests.html</url>
         <url>charts/tests/arialinetests.html</url>
         <url>charts/tests/ariasplinetests.html</url>
         <url>charts/tests/ariahistogramtests.html</url>
@@ -106,6 +111,8 @@
         <url>get/tests/get.html</url>
         <url>graphics/tests/graphics.html</url>
         <url>graphics/tests/shape-anim.html</url>
+        <url>graphics/tests/shape-fillandstroke.html</url>
+        <url>graphics/tests/shape-setfillandstroke.html</url>
         <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>

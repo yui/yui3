@@ -4520,12 +4520,13 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             max = 0;
                             roundingUnit = this._getMinimumUnit(max, min, units);
+                            min = max - (roundingUnit * units);
                         }
                         else
                         {
+                            min = this._roundDownToNearest(min, roundingUnit);
                             max = this._roundUpToNearest(max, roundingUnit);
                         }
-                        min = max - (roundingUnit * units);
                     }
                     else
                     {
@@ -4597,12 +4598,13 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             Math.ceil(roundingUnit);
                         }
+                        min = max - (roundingUnit * units);
                     }
                     else
                     {
+                        min = this._roundDownToNearest(min, roundingUnit);
                         max = this._roundUpToNearest(max, roundingUnit);
                     }
-                    min = max - (roundingUnit * units);
 
                 }
             }
@@ -4636,7 +4638,7 @@ Y.extend(NumericAxis, Y.AxisType,
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
                     min = minRound;
-                    max = min + minimumRange;
+                    max = maxRound;
                 }
                 else
                 {
@@ -12714,7 +12716,7 @@ ChartBase.prototype = {
         if(categoryAxis)
         {
             categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
-            if(Y_Lang.isString(categoryValue))
+            if(!Y_Lang.isObject(categoryValue))
             {
                 categoryValue = DOCUMENT.createTextNode(categoryValue);
             }
@@ -12732,7 +12734,7 @@ ChartBase.prototype = {
                 msg.appendChild(DOCUMENT.createElement("br"));
                 msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
                 msg.appendChild(DOCUMENT.createTextNode(": "));
-                if(Y_Lang.isString(seriesValue))
+                if(!Y_Lang.isObject(seriesValue))
                 {
                     seriesValue = DOCUMENT.createTextNode(seriesValue);
                 }
@@ -12773,7 +12775,7 @@ ChartBase.prototype = {
             seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
         msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName)); 
         msg.appendChild(DOCUMENT.createTextNode(": ")); 
-        if(Y_Lang.isString(categoryValue))
+        if(!Y_Lang.isObject(categoryValue))
         {
             categoryValue = DOCUMENT.createTextNode(categoryValue);
         }
@@ -12781,7 +12783,7 @@ ChartBase.prototype = {
         msg.appendChild(DOCUMENT.createElement("br"));
         msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName)); 
         msg.appendChild(DOCUMENT.createTextNode(": ")); 
-        if(Y_Lang.isString(seriesValue))
+        if(!Y_Lang.isObject(seriesValue))
         {
             seriesValue = DOCUMENT.createTextNode(seriesValue);
         }

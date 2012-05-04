@@ -1,19 +1,19 @@
 <!doctype html>
 <html>
 <head>
-    <title>Shape Animation Tests</title>
+    <title>Shape Set Fill and Stroke Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
-<script src="shape-anim-tests.js"></script>
+<script src="shape-setfillandstroke-tests.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     allowRollup: false,
     useBrowserConsole: false
-}).use('console-filters', 'shape-anim-tests', function (Y) {
+}).use('console-filters', 'shape-setfillandstroke-tests', function (Y) {
 
     new Y.Console({
         style: 'block',

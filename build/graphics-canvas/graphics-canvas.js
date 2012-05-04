@@ -529,7 +529,7 @@ CanvasDrawing.prototype = {
             y = 0,
             w = this.get("width"),
             h = this.get("height"),
-            r = fill.rotation,
+            r = fill.rotation || 0,
             x1, x2, y1, y2,
             cx = x + w/2,
             cy = y + h/2,
@@ -1653,10 +1653,6 @@ CanvasShape.ATTRS =  {
             this.matrix.init();	
 		    this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
-            if(this.initialized)
-            {
-                this._updateTransform();
-            }
             return val;
 		},
 
