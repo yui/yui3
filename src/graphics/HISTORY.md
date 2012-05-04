@@ -1,6 +1,13 @@
 Graphics Change History
 =======================
 
+
+3.5.1
+-----
+
+  * #2531921 Fixed issue in which gradients fills threw an exception in canvas implementations.
+  * #2532197 Fixed issue in which updating the transform attribute of a shape caused two redraws.
+
 3.5.0
 -----
 
