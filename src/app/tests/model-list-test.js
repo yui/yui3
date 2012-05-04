@@ -1282,6 +1282,36 @@ modelListSuite.add(new Y.Test.Case({
         list.remove(list.add([{}, {}]), {silent: true});
 
         Assert.areSame(0, list.size());
+    },
+
+    'list should update its id map when a model id changes': function () {
+        var list      = this.createList(),
+            bareModel = list.add({}),
+            idModel   = list.add({id: 1});
+
+        Assert.areSame(idModel, list.getById(1), 'model should initially be retrievable by id');
+
+        bareModel.set('id', 0);
+        idModel.set('id', 4);
+
+        Assert.areSame(bareModel, list.getById(0), 'model with no previous id should be retrievable by its new id');
+        Assert.areSame(idModel, list.getById(4), 'model with previous id should be retrievable by its new id');
+    },
+
+    'list should ignore id changes for models not in the list': function () {
+        var list      = this.createList(),
+            otherList = this.createList(),
+            bareModel = otherList.add({}),
+            idModel   = otherList.add({id: 1});
+
+        bareModel.addTarget(list);
+        idModel.addTarget(list);
+
+        bareModel.set('id', 0);
+        idModel.set('id', 4);
+
+        Assert.isNull(list.getById(0), 'model with no previous id should not suddenly appear in this list');
+        Assert.isNull(list.getById(4), 'model with previous id should not suddenly appear in this list');
     }
 }));
 

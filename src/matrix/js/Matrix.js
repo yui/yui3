@@ -39,12 +39,12 @@ Matrix.prototype = {
             matrix_dx = matrix.a * dx + matrix.c * dy + matrix.dx,
             matrix_dy = matrix.b * dx + matrix.d * dy + matrix.dy;
 
-        matrix.a = matrix_a;
-        matrix.b = matrix_b;
-        matrix.c = matrix_c;
-        matrix.d = matrix_d;
-        matrix.dx = matrix_dx;
-        matrix.dy = matrix_dy;
+        matrix.a = this._round(matrix_a);
+        matrix.b = this._round(matrix_b);
+        matrix.c = this._round(matrix_c);
+        matrix.d = this._round(matrix_d);
+        matrix.dx = this._round(matrix_dx);
+        matrix.dy = this._round(matrix_dy);
         return this;
     },
 
@@ -55,10 +55,11 @@ Matrix.prototype = {
      * @param {String} val A css transform string
      */
     applyCSSText: function(val) {
-        var re = /\s*([a-z]*)\(([\w,\s]*)\)/gi,
+        var re = /\s*([a-z]*)\(([\w,\.,\-,\s]*)\)/gi,
             args,
             m;
 
+        val = val.replace(/matrix/g, "multiply");
         while ((m = re.exec(val))) {
             if (typeof this[m[1]] === 'function') {
                 args = m[2].split(',');
@@ -163,12 +164,12 @@ Matrix.prototype = {
         y = y || 0;
 
         if (x !== undefined) { // null or undef
-            x = this._round(Math.tan(this.angle2rad(x)));
+            x = Math.tan(this.angle2rad(x));
 
         }
 
         if (y !== undefined) { // null or undef
-            y = this._round(Math.tan(this.angle2rad(y)));
+            y = Math.tan(this.angle2rad(y));
         }
 
         this.multiply(1, y, x, 1, 0, 0);
@@ -292,10 +293,9 @@ Matrix.prototype = {
      * @param {Number} deg The degree of the rotation.
      */
     rotate: function(deg, x, y) {
-        var matrix = [],
-            rad = this.angle2rad(deg),
-            sin = this._round(Math.sin(rad)),
-            cos = this._round(Math.cos(rad));
+        var rad = this.angle2rad(deg),
+            sin = Math.sin(rad),
+            cos = Math.cos(rad);
         this.multiply(cos, sin, 0 - sin, cos, 0, 0);
         return this;
     },

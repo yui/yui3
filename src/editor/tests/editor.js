@@ -211,7 +211,7 @@ YUI.add('editor-tests', function(Y) {
         },
         test_get_content: function() {
             var html = editor.getContent(),
-                ex = ((Y.UA.gecko) ? '<br>' : '');
+                ex = ((Y.UA.gecko && Y.UA.gecko < 12) ? '<br>' : '');
                 if (Y.UA.ie) {
                     html = html.replace(' style=""', '');
                 }
@@ -544,7 +544,7 @@ YUI.add('editor-tests', function(Y) {
             },
             error: { //These tests should error
                 'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
-                test_selection_methods: (Y.UA.ie || Y.UA.webkit ? true : false),
+                test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12)) ? true : false),
                 test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie === 9) || Y.UA.chrome) ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
