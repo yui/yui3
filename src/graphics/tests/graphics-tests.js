@@ -462,6 +462,24 @@ graphicTests = new Y.Test.Case({
         Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
     },
 
+    "test translateX(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "translateX(" + this.translateX + ")";
+        mypath.set("transform", "");
+        mypath.translateX(this.translateX);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
+    },
+
+    "test translateY(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "translateY(" + this.translateY + ")";
+        mypath.set("transform", "");
+        mypath.translateY(this.translateY);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
+    },
+
     "test removeShape(path)" : function()
     {
         var id,
@@ -1110,7 +1128,33 @@ canvasTests = new Y.Test.Case({
         height += weight * 2;
         Y.assert(node.getAttribute("height") == height);
     }
-});
+}),
+
+standaloneShape = new Y.Test.Case({
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        this.shape = new Y.Rect({
+                graphic: "#graphiccontainer",
+                type: "rect",
+                width: 100,
+                height: 100
+            });
+    },
+
+    tearDown: function () {
+        this.shape.destroy();
+        Y.one("#testbed").remove(true);
+    },
+
+    "testStandaloneShape()" : function()
+    {
+        var shape = this.shape;
+        Y.Assert.isTrue(shape instanceof Y.Shape);
+        Y.Assert.isTrue(shape instanceof Y.Rect);
+    }
+
+}),
 
 transformTests = new Y.Test.Case({
     name: "GraphicsTransformTests",
@@ -1183,37 +1227,119 @@ transformTests = new Y.Test.Case({
     }
 }),
 
-visibleUpFrontTest = new Y.Test.Case({
-    name: "Test visible attribute",
+visibleUpFrontTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "VisibleAttributeTest",
 
-    setUp: function () {
-        Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
-        this.graphic = new Y.Graphic({render: "#graphiccontainer"});
-        this.shape = this.graphic.addShape({
-                type: "rect",
-                visible: false,
-                width: 100,
-                height: 100
-            });
-    },
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    visible: false,
+                    width: 100,
+                    height: 100
+                });
+        },
 
-    tearDown: function () {
-        this.graphic.destroy();
-        Y.one("#testbed").remove(true);
-    },
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
 
-    "testSetVisibleUpfront()" : function()
-    {
-        var shape = this.shape,
-            node = shape.get("node");
-        Y.assert(!shape.get("visible"));
-        Y.assert(node.style.visibility == "hidden");
-    }
-});
+        "testSetVisibleUpfront()" : function()
+        {
+            var shape = this.shape,
+                node = shape.get("node");
+            Y.assert(!shape.get("visible"));
+            Y.assert(node.style.visibility == "hidden");
+        }
+    });
+},
+
+shapeSetIdTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "SetIdTest",
+
+        shapeId: "testIdForShape",
+
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    visible: false,
+                    width: 100,
+                    height: 100
+                });
+        },
+
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
+
+        "testShape.set(id)" : function()
+        {
+            var shape = this.shape,
+                node = shape.get("node");
+            shape.set("id", this.shapeId);
+            Y.Assert.areEqual(this.shapeId, shape.get("id"), "The id for the shape instance should be " + this.id + ".");
+            Y.Assert.areEqual(this.shapeId, node.id, "The id for the shape's dom element should be " + this.id + ".");
+        }
+    });
+},
+
+shapeSetIdUpFrontTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "SetIdUpFrontTest",
+
+        shapeId: "testIdForShape",
+
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    visible: false,
+                    width: 100,
+                    height: 100,
+                    id: this.shapeId
+                });
+        },
+
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
+
+        "testShape.set(id)" : function()
+        {
+            var shape = this.shape,
+                node = shape.get("node");
+            Y.Assert.areEqual(this.shapeId, shape.get("id"), "The id for the shape instance should be " + this.id + ".");
+            Y.Assert.areEqual(this.shapeId, node.id, "The id for the shape's dom element should be " + this.id + ".");
+        }
+    });
+};
 
 suite.add(graphicTests);
-suite.add(visibleUpFrontTest);
+suite.add(visibleUpFrontTest("rect"));
+suite.add(visibleUpFrontTest("circle"));
+suite.add(visibleUpFrontTest("ellipse"));
+suite.add(shapeSetIdTest("rect"));
+suite.add(shapeSetIdTest("circle"));
+suite.add(shapeSetIdTest("ellipse"));
+suite.add(shapeSetIdUpFrontTest("rect"));
+suite.add(shapeSetIdUpFrontTest("circle"));
+suite.add(shapeSetIdUpFrontTest("ellipse"));
+suite.add(standaloneShape);
 
 if(ENGINE == "svg")
 {
