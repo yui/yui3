@@ -1,6 +1,11 @@
 ScrollView Change History
 =========================
 
+3.5.1
+-----
+
+  * Fixed mousewheel bug (#2532214)
+  
 3.5.0
 -----
 
