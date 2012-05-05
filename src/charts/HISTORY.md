@@ -1,6 +1,10 @@
 Charts Change History
 =====================
 
+3.6.0
+-----
+
+  * #2531688 Fixed rounding bug in pie chart. 
 
 3.5.1
 -----
