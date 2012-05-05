@@ -1,7 +1,12 @@
 Uploader Utility (New) Change History
 =====================================
 
+3.5.1
+-----
+  * No changes.
+
 3.5.0
+-----
   * Added HTML5Uploader layer
   * Refactored queue management out of Uploader
   * Introduced new APIs (more details in documentation)
