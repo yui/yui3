@@ -144,7 +144,9 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this._paneProperties = {};
     this._calendarId = Y.guid('calendar');
     this._selectedDates = {};
-    this._rules = {};
+    if (isEmpty(this._rules)) {
+       this._rules = {};      
+    }
     this._storedDateCells = {};
   },
 
@@ -186,25 +188,10 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     this.after('enabledDatesRuleChange', this._afterCustomRendererChange);
     this.after('disabledDatesRuleChange', this._afterCustomRendererChange);
     this.after('focusedChange', this._afterFocusedChange);
+    this.after('selectionChange', this._renderSelectedDates);
     this._bindCalendarEvents();
   },
 
-  /**
-    * syncUI implementation
-    *
-    * Update the scroll position, based on the current value of scrollY
-    * @method syncUI
-    */  
-  syncUI : function () {
-      if (this.get('showPrevMonth')) {
-           this._afterShowPrevMonthChange();
-
-      }
-
-      if (this.get('showNextMonth')) {
-           this._afterShowNextMonthChange();
-      }
-  },
 
     /**
      * An internal utility method that generates a list of selected dates 
@@ -247,56 +234,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
       },
 
-    /**
-     * An internal rendering method that modifies a date cell to have the
-     * selected CSS class if the date cell is visible.
-     *
-     * @method _renderSelectedDate
-     * @param {Date} oDate The date corresponding to a specific date cell.
-     * @private
-     */
-    _renderSelectedDate : function (oDate) {
-        if (this._isDateVisible(oDate)) {
-            this._dateToNode(oDate).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
-        }
-    },
-
-    /**
-     * An internal rendering method that modifies a date cell to remove the
-     * selected CSS class if the date cell is visible.
-     *
-     * @method _renderUnelectedDate
-     * @param {Date} oDate The date corresponding to a specific date cell.
-     * @private
-     */
-    _renderUnselectedDate : function (oDate) {
-        if (this._isDateVisible(oDate)) {
-            this._dateToNode(oDate).removeClass(CAL_DAY_SELECTED).setAttribute("aria-selected", false);
-        }
-    },
-
-    /**
-     * An internal utility method that checks whether a particular date
-     * is in the current view of the calendar.
-     *
-     * @method _isDateVisible
-     * @param {Date} oDate The date corresponding to a specific date cell.
-     * @private
-     * @return {boolean} Returns true if the given date is in the current 
-     * view of the calendar.
-     */
-    _isDateVisible : function (oDate) {
-      var minDate = this.get("date"),
-          maxDate = ydate.addMonths(minDate, this._paneNumber - 1),
-          oDateTime = this._normalizeDate(oDate).getTime();
-          
-      if (minDate.getTime() <= oDateTime && oDateTime <= maxDate) {
-          return true;
-      }
-      else {
-          return false;
-      }
-    },
 
     /**
      * An internal parsing method that receives a String list of numbers
@@ -492,7 +429,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         }
 
         this._selectedDates = setVal(this._selectedDates, [year, month, day], oDate);
-        this._renderSelectedDate(oDate);
 
         if (!index) {
         this._fireSelectionChange();
@@ -519,6 +455,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _addDateRangeToSelection : function (startDate, endDate) {
+
         var timezoneDifference = (endDate.getTimezoneOffset() - startDate.getTimezoneOffset())*60000,
             startTime = startDate.getTime(),
             endTime   = endDate.getTime();
@@ -558,7 +495,6 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
             hasKey(this._selectedDates[year], month) && 
             hasKey(this._selectedDates[year][month], day)) {
                delete this._selectedDates[year][month][day];
-               this._renderUnselectedDate(oDate);
                if (!index) {
                  this._fireSelectionChange();
                }
@@ -572,7 +508,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @private
      */
     _removeDatesFromSelection : function (datesArray) {
-        each(datesArray, this._removeDateDromSelection);
+        each(datesArray, this._removeDateFromSelection, this);
         this._fireSelectionChange();
     },
 
@@ -598,7 +534,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * A utility method that removes all dates from selection.
      * @method _clearSelection
      * @param {boolean} noevent A Boolean specifying whether a selectionChange
-     * event should be fired.
+     * event should be fired. If true, the event is not fired.
      * @private
      */
     _clearSelection : function (noevent) {
@@ -648,7 +584,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
     _renderCustomRules : function () {
 
         this.get("contentBox").all("." + CAL_DAY + ",." + CAL_NEXTMONTH_DAY).removeClass(SELECTION_DISABLED).setAttribute("aria-disabled", false);
-        
+
         if (!isEmpty(this._rules)) {
         var enRule = this.get("enabledDatesRule"),
             disRule = this.get("disabledDatesRule");
@@ -691,7 +627,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
         var paneDate = ydate.addMonths(this.get("date"), paneNum);
         var dateArray = this._getSelectedDatesInMonth(paneDate);
         each(dateArray, function (date) {
-            this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("ari-selected", true);
+            this._dateToNode(date).addClass(CAL_DAY_SELECTED).setAttribute("aria-selected", true);
                         },
              this);
       }
@@ -1682,6 +1618,7 @@ Y.CalendarBase = Y.extend( CalendarBase, Y.Widget, {
      * @default {}
      */
         customRenderer : {
+            lazyAdd: false,
             value: {},
             setter: function (val) {
                 this._rules = val.rules;
