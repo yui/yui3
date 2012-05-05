@@ -74,16 +74,6 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   },
 
   /**
-    * syncUI implementation
-    *
-    * Update the scroll position, based on the current value of scrollY
-    * @method syncUI
-    */  
-  syncUI : function () {
-
-  },
-
-  /**
    * Overrides the _bindCalendarEvents placeholder in CalendarBase
    * and binds calendar events during bindUI stage.
    * @method _bindCalendarEvents
