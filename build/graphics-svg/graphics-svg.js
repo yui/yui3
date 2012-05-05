@@ -949,13 +949,25 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 y1 = ((tanRadians * (cx - x1)) - cy) * -1;
                 y2 = ((tanRadians * (cx - x2)) - cy) * -1;
             }
+
+            x1 = Math.round(100 * x1/w);
+            x2 = Math.round(100 * x2/w);
+            y1 = Math.round(100 * y1/h);
+            y2 = Math.round(100 * y2/h);
+            
+            //Set default value if not valid 
+            x1 = isNumber(x1) ? x1 : 0;
+            x2 = isNumber(x2) ? x2 : 100;
+            y1 = isNumber(y1) ? y1 : 0;
+            y2 = isNumber(y2) ? y2 : 0;
+            
             gradientNode.setAttribute("spreadMethod", "pad");
 			gradientNode.setAttribute("width", w);
 			gradientNode.setAttribute("height", h);
-            gradientNode.setAttribute("x1", Math.round(100 * x1/w) + "%");
-            gradientNode.setAttribute("y1", Math.round(100 * y1/h) + "%");
-            gradientNode.setAttribute("x2", Math.round(100 * x2/w) + "%");
-            gradientNode.setAttribute("y2", Math.round(100 * y2/h) + "%");
+            gradientNode.setAttribute("x1", x1 + "%");
+            gradientNode.setAttribute("x2", x2 + "%");
+            gradientNode.setAttribute("y1", y1 + "%");
+            gradientNode.setAttribute("y2", y2 + "%");
 		}
 		else
 		{
@@ -1566,11 +1578,6 @@ SVGShape.ATTRS = {
 		}
 	},
 	
-	//Not used. Remove in future.
-    autoSize: {
-		value: false
-	},
-
 	// Only implemented in SVG
 	// Determines whether the instance will receive mouse events.
 	// 
@@ -1597,32 +1604,6 @@ SVGShape.ATTRS = {
 				node.setAttribute("pointer-events", val);
 			}
 			return val;
-		}
-	},
-
-	/**
-	 * The node used for gradient fills.
-	 *
-	 * @config gradientNode
-	 * @type HTMLElement
-     * @private
-	 */
-	gradientNode: {
-		setter: function(val)
-		{
-			if(Y_LANG.isString(val))
-			{
-				val = this._graphic.getGradientNode("linear", val);
-			}
-			return val;
-		}
-	},
-
-	//Not used. Remove in future.
-    autoDraw: {
-		getter: function()
-		{
-			return this._graphic.autoDraw;
 		}
 	},
 
@@ -2387,7 +2368,8 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * @private
      */
     initializer: function() {
-        var render = this.get("render");
+        var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
 		this._contentBounds = {
             left: 0,
@@ -2400,7 +2382,9 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         this._node.style.position = "absolute";
         this._node.style.left = this.get("x") + "px";
         this._node.style.top = this.get("y") + "px";
+        this._node.style.visibility = visibility;
         this._contentNode = this._createGraphics();
+        this._contentNode.style.visibility = visibility;
         this._contentNode.setAttribute("id", this.get("id"));
         this._node.appendChild(this._contentNode);
         if(render)
@@ -2462,6 +2446,10 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -2587,8 +2575,14 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
                 }
             }
         }
-        this._contentNode.style.visibility = visibility;
-        this._node.style.visibility = visibility;
+        if(this._contentNode)
+        {
+            this._contentNode.style.visibility = visibility;
+        }
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**

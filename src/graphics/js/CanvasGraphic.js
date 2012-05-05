@@ -296,6 +296,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      */
     initializer: function(config) {
         var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden",
             w = this.get("width") || 0,
             h = this.get("height") || 0;
         this._shapes = {};
@@ -308,6 +309,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         };
         this._node = DOCUMENT.createElement('div');
         this._node.style.position = "absolute";
+        this._node.style.visibility = visibility;
         this.set("width", w);
         this.set("height", h);
         if(render)
@@ -364,6 +366,10 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -438,6 +444,15 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     },
     
     /**
+     * Clears the graphics object.
+     *
+     * @method clear
+     */
+    clear: function() {
+        this.removeAllShapes();
+    },
+
+    /**
      * Removes all child nodes.
      *
      * @method _removeChildren
@@ -480,7 +495,10 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
                 }
             }
         }
-        this._node.style.visibility = visibility;
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**

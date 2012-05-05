@@ -110,7 +110,9 @@
         <url>event-gestures/tests/index.html</url>
         <url>event-valuechange/tests/functional/event-valuechange.html</url>
         <url>get/tests/get.html</url>
+        <url>graphics/tests/graphic.html</url>
         <url>graphics/tests/graphics.html</url>
+        <url>graphics/tests/shape-path.html</url>
         <url>graphics/tests/shape-anim.html</url>
         <url>graphics/tests/shape-fillandstroke.html</url>
         <url>graphics/tests/shape-setfillandstroke.html</url>
