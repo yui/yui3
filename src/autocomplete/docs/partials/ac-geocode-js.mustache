@@ -19,26 +19,26 @@ YUI().use("autocomplete", function (Y) {
         // Handle the list of results is mandatory, because the service can
         // be unavailable, can return an error, one result or an array of
         // results. However resultListLocator needs to return an array.
-        resultListLocator: function (res) {
-            var r;
+        resultListLocator: function (response) {
+            var addresses;
 
-            if (res.error) {
+            if (response.error) {
                 return [];
             }
 
-            r = res.query.results.json;
+            addresses = response.query.results.json;
 
-            if (r.status !== "OK") {
+            if (addresses.status !== "OK") {
                 return [];
             }
 
-            r = r.results;
+            addresses = addresses.results;
 
-            if (r.length > 0) {
-                return r;
+            if (addresses.length > 0) {
+                return addresses;
             }
 
-            return [r];
+            return [addresses];
         },
 
         // When an item is selected, the value of the field indicated in the
@@ -66,9 +66,6 @@ YUI().use("autocomplete", function (Y) {
         width: 'auto'
     });
 
-    // Focus on the input field, so the user is ready to type.
-    acNode.focus();
-
     // Adjust the width of the input container.
     acNode.ac.after('resultsChange', function () {
         var newWidth = this.get('boundingBox').get('offsetWidth');
@@ -77,8 +74,8 @@ YUI().use("autocomplete", function (Y) {
 
     // Fill the lat and log fields when the user selects an item.
     acNode.ac.on('select', function (e) {
-        Y.one("#locationLat").setContent(e.result.raw.geometry.location.lat);
-        Y.one("#locationLng").setContent(e.result.raw.geometry.location.lng);
+        Y.one("#locationLat").set('text', e.result.raw.geometry.location.lat);
+        Y.one("#locationLng").set('text', e.result.raw.geometry.location.lng);
     });
 });
 
