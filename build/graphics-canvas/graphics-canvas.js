@@ -1044,45 +1044,58 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	_setStrokeProps: function(stroke)
 	{
-		var color = stroke.color,
-			weight = PARSE_FLOAT(stroke.weight),
-			opacity = PARSE_FLOAT(stroke.opacity),
-			linejoin = stroke.linejoin || "round",
-			linecap = stroke.linecap || "butt",
-			dashstyle = stroke.dashstyle;
-		this._miterlimit = null;
-		this._dashstyle = (dashstyle && Y.Lang.isArray(dashstyle) && dashstyle.length > 1) ? dashstyle : null;
-		this._strokeWeight = weight;
+		var color,
+			weight,
+			opacity,
+			linejoin,
+			linecap,
+			dashstyle;
+	    if(stroke)
+        {
+            color = stroke.color;
+            weight = PARSE_FLOAT(stroke.weight);
+            opacity = PARSE_FLOAT(stroke.opacity)
+            linejoin = stroke.linejoin || "round";
+            linecap = stroke.linecap || "butt";
+            dashstyle = stroke.dashstyle;
+            this._miterlimit = null;
+            this._dashstyle = (dashstyle && Y.Lang.isArray(dashstyle) && dashstyle.length > 1) ? dashstyle : null;
+            this._strokeWeight = weight;
 
-		if (IS_NUMBER(weight) && weight > 0) 
-		{
-			this._stroke = 1;
-		} 
-		else 
-		{
-			this._stroke = 0;
-		}
-		if (IS_NUMBER(opacity)) {
-			this._strokeStyle = this._toRGBA(color, opacity);
-		}
-		else
-		{
-			this._strokeStyle = color;
-		}
-		this._linecap = linecap;
-		if(linejoin == "round" || linejoin == "square")
-		{
-			this._linejoin = linejoin;
-		}
-		else
-		{
-			linejoin = parseInt(linejoin, 10);
-			if(IS_NUMBER(linejoin))
-			{
-				this._miterlimit =  Math.max(linejoin, 1);
-				this._linejoin = "miter";
-			}
-		}
+            if (IS_NUMBER(weight) && weight > 0) 
+            {
+                this._stroke = 1;
+            } 
+            else 
+            {
+                this._stroke = 0;
+            }
+            if (IS_NUMBER(opacity)) {
+                this._strokeStyle = this._toRGBA(color, opacity);
+            }
+            else
+            {
+                this._strokeStyle = color;
+            }
+            this._linecap = linecap;
+            if(linejoin == "round" || linejoin == "square")
+            {
+                this._linejoin = linejoin;
+            }
+            else
+            {
+                linejoin = parseInt(linejoin, 10);
+                if(IS_NUMBER(linejoin))
+                {
+                    this._miterlimit =  Math.max(linejoin, 1);
+                    this._linejoin = "miter";
+                }
+            }
+        }
+        else
+        {
+            this._stroke = 0;
+        }
 	},
 
     /**
@@ -1115,31 +1128,41 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	_setFillProps: function(fill)
 	{
 		var isNumber = IS_NUMBER,
-			color = fill.color,
+			color,
 			opacity,
-			type = fill.type;
-		if(type == "linear" || type == "radial")
-		{
-			this._fillType = type;
-		}
-		else if(color)
-		{
-			opacity = fill.opacity;
-			if (isNumber(opacity)) 
-			{
-				opacity = Math.max(0, Math.min(1, opacity));
-				color = this._toRGBA(color, opacity);
-			} 
-			else 
-			{
-				color = TORGB(color);
-			}
+			type;
+        if(fill)
+        {
+            color = fill.color;
+            type = fill.type;
+            if(type == "linear" || type == "radial")
+            {
+                this._fillType = type;
+            }
+            else if(color)
+            {
+                opacity = fill.opacity;
+                if (isNumber(opacity)) 
+                {
+                    opacity = Math.max(0, Math.min(1, opacity));
+                    color = this._toRGBA(color, opacity);
+                } 
+                else 
+                {
+                    color = TORGB(color);
+                }
 
-			this._fillColor = color;
-			this._fillType = 'solid';
-		}
+                this._fillColor = color;
+                this._fillType = 'solid';
+            }
+            else
+            {
+                this._fillColor = null;
+            }
+        }
 		else
 		{
+            this._fillType = null;
 			this._fillColor = null;
 		}
 	},
@@ -2597,6 +2620,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      */
     initializer: function(config) {
         var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden",
             w = this.get("width") || 0,
             h = this.get("height") || 0;
         this._shapes = {};
@@ -2609,6 +2633,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         };
         this._node = DOCUMENT.createElement('div');
         this._node.style.position = "absolute";
+        this._node.style.visibility = visibility;
         this.set("width", w);
         this.set("height", h);
         if(render)
@@ -2665,6 +2690,10 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -2739,6 +2768,15 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     },
     
     /**
+     * Clears the graphics object.
+     *
+     * @method clear
+     */
+    clear: function() {
+        this.removeAllShapes();
+    },
+
+    /**
      * Removes all child nodes.
      *
      * @method _removeChildren
@@ -2781,7 +2819,10 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
                 }
             }
         }
-        this._node.style.visibility = visibility;
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**

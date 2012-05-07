@@ -1,6 +1,21 @@
 Slider Change History
 =====================
 
+3.6.0
+-----
+
+  * `new Y.Slider({ disabled: true })` now locks thumb [#2532100]
+
+3.5.1
+-----
+
+  * No Changes.
+
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 

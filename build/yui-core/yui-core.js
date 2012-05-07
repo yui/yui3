@@ -1819,7 +1819,7 @@ overwriting other scripts configs.
  * always use its own fallback implementations instead of relying on ES5
  * functionality, even when it's available.
  *
- * @method useNativeES5
+ * @property useNativeES5
  * @type Boolean
  * @default true
  * @since 3.5.0

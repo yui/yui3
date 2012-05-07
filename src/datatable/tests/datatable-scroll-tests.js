@@ -616,7 +616,102 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "y scroll",
 
-    "": function () {
+    _should: {
+        ignore: {
+            "virtual scrollbar syncs scrollTop with y scroller": !Y.DOM.getScrollbarWidth(),
+            "test scroll lock between virtual scrollbar and y scroller": !Y.DOM.getScrollbarWidth()
+        }
+    },
+
+    setUp: function () {
+        var data = [], i;
+
+        for (i = 0; i < 100; ++i) {
+            data.push({ a: i });
+        }
+
+        this.table = new Y.DataTable({
+            columns: ['a'],
+            data: data,
+            scrollable: 'y',
+            height: '100px'
+        }).render();
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "test scroll lock between virtual scrollbar and y scroller": function () {
+        var test      = this,
+            table     = this.table,
+            scrollbar = table._scrollbarNode,
+            scroller  = table._yScrollNode;
+
+        Y.Assert.isInstanceOf(Y.Node, scrollbar);
+        Y.Assert.isInstanceOf(Y.Node, scroller);
+
+        Y.Assert.areSame(scrollbar.get('scrollTop'), scroller.get('scrollTop'));
+
+        var handle = scrollbar.on('scroll', function () {
+            handle.detach();
+
+            test.resume(function () {
+                Y.Assert.areSame(50, scroller.get('scrollTop'));
+
+                handle = scroller.once('scroll', function () {
+                    test.resume(function () {
+                        Y.Assert.areSame(50, scrollbar.get('scrollTop'),
+                            "scroll lock should have prevented an update of " +
+                            "the scrollbar.scrollTop for 300ms");
+                    });
+                });
+
+                scroller.set('scrollTop', 80);
+                test.wait();
+            });
+        });
+
+        scrollbar.set('scrollTop', 50);
+
+        test.wait();
+    },
+
+    "virtual scrollbar syncs scrollTop with y scroller": function () {
+        var test      = this,
+            table     = this.table,
+            scrollbar = table._scrollbarNode,
+            scroller  = table._yScrollNode;
+
+        Y.Assert.isInstanceOf(Y.Node, scrollbar);
+        Y.Assert.isInstanceOf(Y.Node, scroller);
+
+        Y.Assert.areSame(scrollbar.get('scrollTop'), scroller.get('scrollTop'));
+
+        var handle = scrollbar.on('scroll', function () {
+            handle.detach();
+
+            test.resume(function () {
+                Y.Assert.areSame(50, scroller.get('scrollTop'));
+
+                // Allow the scroll lock to lapse
+                Y.later(500, {}, function () {
+                    scroller.set('scrollTop', 80);
+
+                    handle = scroller.once('scroll', function () {
+                        test.resume(function () {
+                            Y.Assert.areSame(80, scrollbar.get('scrollTop'));
+                        });
+                    });
+                });
+
+                test.wait();
+            });
+        });
+
+        scrollbar.set('scrollTop', 50);
+
+        test.wait();
     }
 }));
 

@@ -2,6 +2,7 @@ Y.log('using VML');
 var Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
     IS_ARRAY = Y_LANG.isArray,
+    IS_STRING = Y_LANG.isString,
     Y_DOM = Y.DOM,
     Y_SELECTOR = Y.Selector,
     DOCUMENT = Y.config.doc,
@@ -28,7 +29,42 @@ function VMLDrawing() {}
  */
 VMLDrawing.prototype = {
     /**
-     * Current x position of the drqwing.
+     * Value for rounding up to coordsize
+     *
+     * @property _coordSpaceMultiplier
+     * @type Number
+     * @private
+     */
+    _coordSpaceMultiplier: 100,
+
+    /**
+     * Rounds dimensions and position values based on the coordinate space.
+     *
+     * @method _round
+     * @param {Number} The value for rounding
+     * @return Number
+     * @private
+     */
+    _round:function(val)
+    {
+        return Math.round(val * this._coordSpaceMultiplier);
+    },
+
+    /**
+     * Concatanates the path.
+     *
+     * @method _addToPath
+     * @param {String} val The value to add to the path string.
+     * @private
+     */
+    _addToPath: function(val)
+    {
+        this._path = this._path || "";
+        this._path += val;
+    },
+
+    /**
+     * Current x position of the drawing.
      *
      * @property _currentX
      * @type Number
@@ -61,9 +97,7 @@ VMLDrawing.prototype = {
             loX,
             hiY,
             loY;
-        x = Math.round(x);
-        y = Math.round(y);
-        this._path += ' c ' + Math.round(cp1x) + ", " + Math.round(cp1y) + ", " + Math.round(cp2x) + ", " + Math.round(cp2y) + ", " + x + ", " + y;
+        this._addToPath(" c " + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y));
         this._currentX = x;
         this._currentY = y;
         hiX = Math.max(x, Math.max(cp1x, cp2x));
@@ -150,10 +184,12 @@ VMLDrawing.prototype = {
         var startAngle = 0,
             endAngle = 360,
             circum = radius * 2;
+
         endAngle *= 65535;
         this._drawingComplete = false;
         this._trackSize(x + circum, y + circum);
-        this._path += " m " + (x + circum) + " " + (y + radius) + " ae " + (x + radius) + " " + (y + radius) + " " + radius + " " + radius + " " + startAngle + " " + endAngle;
+        this.moveTo((x + circum), (y + radius));
+        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(y + radius) + ", " + this._round(radius) + ", " + this._round(radius) + ", " + startAngle + ", " + endAngle);
         return this;
     },
     
@@ -175,7 +211,8 @@ VMLDrawing.prototype = {
         endAngle *= 65535;
         this._drawingComplete = false;
         this._trackSize(x + w, y + h);
-        this._path += " m " + (x + w) + " " + (y + yRadius) + " ae " + (x + radius) + " " + (y + yRadius) + " " + radius + " " + yRadius + " " + startAngle + " " + endAngle;
+        this.moveTo((x + w), (y + yRadius));
+        this._addToPath(" ae " + this._round(x + radius) + ", " + this._round(x + radius) + ", " + this._round(y + yRadius) + ", " + this._round(radius) + ", " + this._round(yRadius) + ", " + startAngle + ", " + endAngle);
         return this;
     },
     
@@ -213,24 +250,22 @@ VMLDrawing.prototype = {
      * @param {Number} yRadius [optional] y radius for wedge.
      * @private
      */
-    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
+    drawWedge: function(x, y, startAngle, arc, radius)
     {
         var diameter = radius * 2;
-        x = Math.round(x);
-        y = Math.round(y);
-        yRadius = yRadius || radius;
-        radius = Math.round(radius);
-        yRadius = Math.round(yRadius);
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
-        startAngle *= -65535;
-        arc *= 65536;
-        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
-        this._trackSize(diameter, diameter); 
         this._currentX = x;
         this._currentY = y;
+        startAngle *= -65535;
+        arc *= 65536;
+        startAngle = Math.round(startAngle);
+        arc = Math.round(arc);
+        this.moveTo(x, y);
+        this._addToPath(" ae " + this._round(x) + ", " + this._round(y) + ", " + this._round(radius) + " " + this._round(radius) + ", " +  startAngle + ", " + arc);
+        this._trackSize(diameter, diameter); 
         return this;
     },
 
@@ -244,22 +279,19 @@ VMLDrawing.prototype = {
     lineTo: function(point1, point2, etc) {
         var args = arguments,
             i,
-            len;
+            len,
+            path = ' l ';
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             args = [[point1, point2]];
         }
         len = args.length;
-        if(!this._path)
-        {
-            this._path = "";
-        }
-        this._path += ' l ';
         for (i = 0; i < len; ++i) {
-            this._path += ' ' + Math.round(args[i][0]) + ', ' + Math.round(args[i][1]);
+            path += ' ' + this._round(args[i][0]) + ', ' + this._round(args[i][1]);
             this._trackSize.apply(this, args[i]);
             this._currentX = args[i][0];
             this._currentY = args[i][1];
         }
+        this._addToPath(path);
         return this;
     },
 
@@ -271,11 +303,7 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
-        if(!this._path)
-        {
-            this._path = "";
-        }
-        this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
+        this._addToPath(" m " + this._round(x) + ", " + this._round(y));
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
@@ -295,7 +323,8 @@ VMLDrawing.prototype = {
             w = this.get("width"),
             h = this.get("height"),
             path = this._path,
-            pathEnd = "";
+            pathEnd = "",
+            multiplier = this._coordSpaceMultiplier;
         this._fillChangeHandler();
         this._strokeChangeHandler();
         if(path)
@@ -315,10 +344,11 @@ VMLDrawing.prototype = {
         }
         if(!isNaN(w) && !isNaN(h))
         {
-            node.coordSize =  w + ', ' + h;
+            node.coordOrigin = this._left + ", " + this._top;
+            node.coordSize = (w * multiplier) + ", " + (h * multiplier);
             node.style.position = "absolute";
-            node.style.width = w + "px";
-            node.style.height = h + "px";
+            node.style.width =  w + "px";
+            node.style.height =  h + "px";
         }
         this._path = path;
         this._updateTransform();
@@ -341,7 +371,7 @@ VMLDrawing.prototype = {
      */
     closePath: function()
     {
-        this._path += ' x e ';
+        this._addToPath(" x e");
     },
 
     /**

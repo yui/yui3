@@ -1,6 +1,17 @@
 Charts Change History
 =====================
 
+3.6.0
+-----
+
+  * #2531688 Fixed rounding bug in pie chart. 
+
+3.5.1
+-----
+
+  * #2532138 Fixed min/max issues with NumericAxis.
+  * #2532195 Fixed issues with tooltip when numeric values are used in a CategoryAxis.
+
 3.5.0
 -----
 
