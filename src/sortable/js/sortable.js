@@ -34,7 +34,7 @@
         delegate: null,
         /**
         * @property drop
-        * @type DD.Droü
+        * @type DD.Drop
         * @description A reference to the DD.Drop instance
         */
         drop: null,
