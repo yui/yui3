@@ -32,8 +32,14 @@
         * @description A reference to the DD.Delegate instance.
         */
         delegate: null,
+        /**
+        * @property drop
+        * @type DD.Droü
+        * @description A reference to the DD.Drop instance
+        */
+        drop: null,
         initializer: function() {
-            var id = 'sortable-' + Y.guid(), c,
+            var id = 'sortable-' + Y.guid(),
                 delConfig = {
                     container: this.get(CONT),
                     nodes: this.get(NODES),
@@ -56,11 +62,12 @@
                 cloneNode: true
             });
 
-            c = new Y.DD.Drop({
+            this.drop =  new Y.DD.Drop({
                 node: this.get(CONT),
                 bubbleTarget: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(this._onDropOver, this));
+            });
+            this.drop.on('drop:over', Y.bind(this._onDropOver, this));
             
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
@@ -223,6 +230,7 @@
             return this;
         },
         destructor: function() {
+            this.drop.destroy();
             this.delegate.destroy();
             Sortable.unreg(this);
         },
