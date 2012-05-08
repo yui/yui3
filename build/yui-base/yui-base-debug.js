@@ -4815,8 +4815,8 @@ Transaction.prototype = {
         }
 
         // Inject the node.
-        if (isScript && ua.ie && ua.ie < 9) {
-            // Script on IE6, 7, and 8.
+        if (isScript && ua.ie && (ua.ie < 9 || (document.documentMode && document.documentMode < 9))) {
+            // Script on IE < 9, and IE 9+ when in IE 8 or older modes, including quirks mode.
             node.onreadystatechange = function () {
                 if (/loaded|complete/.test(node.readyState)) {
                     node.onreadystatechange = null;
