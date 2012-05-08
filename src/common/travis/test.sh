@@ -30,4 +30,4 @@ RETVAL=$?
 [ $RETVAL -ne 0 ] && exit 1
 
 echo "Starting Grover Tests"
-${grover} -t 120 -c 10 -i ./src/common/node/batch.js
+${grover} -t 180 -c 5 -i ./src/common/node/batch.js
