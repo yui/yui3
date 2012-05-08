@@ -137,6 +137,14 @@ suite.add(new Y.Test.Case({
         Assert.areSame("O&#x27;Neal", Hi.allFold("O'Neal", ''));
     },
 
+    // bug #2530529: http://yuilibrary.com/projects/yui3/ticket/2530529
+    'allFold() should not ignore haystack remainders of length one': function () {
+        Assert.areSame(
+            'föo <b class="yui3-highlight">bá</b>r',
+            Hi.allFold('föo bár', ['bar'])
+        );
+    },
+
     // -- start() --------------------------------------------------------------
     'start() should be a shortcut for all() with startsWith option': function () {
         Assert.areSame(
