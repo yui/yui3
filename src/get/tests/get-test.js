@@ -71,6 +71,7 @@ YUI.add('get-test', function (Y) {
 
         _should: {
             ignore: {
+                'test: single script timeout callback': Y.UA.phantomjs,
                 'test: single script, failure': !supports.jsFailure,
                 'test: single script failure, end': !supports.jsFailure,
                 'test: multiple scripts, one failure': !supports.jsFailure,
