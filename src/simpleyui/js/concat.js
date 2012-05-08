@@ -3,6 +3,7 @@
  * file.  This includes the script loading mechanism, a simple queue, and
  * the core utilities for the library.
  * @module yui
+ * @main yui
  * @submodule yui-base
  */
 
@@ -232,7 +233,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.3.0'; // dev time hack for cdn test
+    VERSION = '3.5.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -693,11 +694,15 @@ with any configuration info required for the module.
                     }
 
                     if (mod.fn) {
-                        try {
-                            mod.fn(Y, name);
-                        } catch (e) {
-                            Y.error('Attach error: ' + name, e, name);
-                            return false;
+                            if (Y.config.throwFail) {
+                                mod.fn(Y, name);
+                            } else {
+                                try {
+                                    mod.fn(Y, name);
+                                } catch (e) {
+                                    Y.error('Attach error: ' + name, e, name);
+                                return false;
+                            }
                         }
                     }
 
@@ -829,10 +834,14 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
-            try {
+            if (this.config.throwFail) {
                 callback(this, response);
-            } catch (e) {
-                this.error('use callback error', e, args);
+            } else {
+                try {
+                    callback(this, response);
+                } catch (e) {
+                    this.error('use callback error', e, args);
+                }
             }
         }
     },
@@ -1151,7 +1160,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
             ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        if (Y.config.throwFail && !ret) {
+        if (!ret) {
             throw (e || new Error(msg));
         } else {
             Y.message(msg, 'error', ''+src); // don't scrub this one
@@ -1824,7 +1833,7 @@ overwriting other scripts configs.
  * always use its own fallback implementations instead of relying on ES5
  * functionality, even when it's available.
  *
- * @method useNativeES5
+ * @property useNativeES5
  * @type Boolean
  * @default true
  * @since 3.5.0
@@ -3309,6 +3318,20 @@ YUI.Env.parseUA = function(subUA) {
          */
         air: 0,
         /**
+         * PhantomJS version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property phantomjs
+         * @type float
+         */
+        phantomjs: 0,
+        /**
+         * Adobe AIR version number or 0.  Only populated if webkit is detected.
+         * Example: 1.0
+         * @property air
+         * @type float
+         */
+        air: 0,
+        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -3450,6 +3473,13 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
+            
+            if (/PhantomJS/.test(ua)) {
+                m = ua.match(/PhantomJS\/([^\s]*)/);
+                if (m && m[1]) {
+                    o.phantomjs = numberify(m[1]);
+                }
+            }
 
             // Mobile browser check
             if (/ Mobile\//.test(ua) || (/iPad|iPod|iPhone/).test(ua)) {
@@ -3504,7 +3534,7 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
             }
-            
+
             m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
             if (m && m[1] && m[2]) {
                 o.chrome = numberify(m[2]); // Chrome
@@ -3570,7 +3600,7 @@ YUI.Env.parseUA = function(subUA) {
             if (process.versions && process.versions.node) {
                 //NodeJS
                 o.os = process.platform;
-                o.nodejs = process.versions.node;
+                o.nodejs = numberify(process.versions.node);
             }
         }
 
@@ -3583,6 +3613,55 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+
+/**
+Performs a simple comparison between two version numbers, accounting for
+standard versioning logic such as the fact that "535.8" is a lower version than
+"535.24", even though a simple numerical comparison would indicate that it's
+greater. Also accounts for cases such as "1.1" vs. "1.1.0", which are
+considered equivalent.
+
+Returns -1 if version _a_ is lower than version _b_, 0 if they're equivalent,
+1 if _a_ is higher than _b_.
+
+Versions may be numbers or strings containing numbers and dots. For example,
+both `535` and `"535.8.10"` are acceptable. A version string containing
+non-numeric characters, like `"535.8.beta"`, may produce unexpected results.
+
+@method compareVersions
+@param {Number|String} a First version number to compare.
+@param {Number|String} b Second version number to compare.
+@return -1 if _a_ is lower than _b_, 0 if they're equivalent, 1 if _a_ is
+    higher than _b_.
+**/
+Y.UA.compareVersions = function (a, b) {
+    var aPart, aParts, bPart, bParts, i, len;
+
+    if (a === b) {
+        return 0;
+    }
+
+    aParts = (a + '').split('.');
+    bParts = (b + '').split('.');
+
+    for (i = 0, len = Math.max(aParts.length, bParts.length); i < len; ++i) {
+        aPart = parseInt(aParts[i], 10);
+        bPart = parseInt(bParts[i], 10);
+
+        isNaN(aPart) && (aPart = 0);
+        isNaN(bPart) && (bPart = 0);
+
+        if (aPart < bPart) {
+            return -1;
+        }
+
+        if (aPart > bPart) {
+            return 1;
+        }
+    }
+
+    return 0;
+};
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "app": ["app-base","app-transitions","model","model-list","router","view"],
@@ -4157,7 +4236,7 @@ Y.Get = Get = {
             // True if this browser fires an event when a dynamically injected
             // link node fails to load. This is currently true for Firefox 9+
             // and WebKit 535.24+.
-            cssFail: ua.gecko >= 9 || ua.webkit >= 535.24,
+            cssFail: ua.gecko >= 9 || ua.compareVersions(ua.webkit, 535.24) >= 0,
 
             // True if this browser fires an event when a dynamically injected
             // link node finishes loading. This is currently true for IE, Opera,
@@ -4165,8 +4244,10 @@ Y.Get = Get = {
             // DOM 0 "onload" event, but not "load". All versions of IE fire
             // "onload".
             // davglass: Seems that Chrome on Android needs this to be false.
-            cssLoad: ((!ua.gecko && !ua.webkit) || 
-                ua.gecko >= 9 || ua.webkit >= 535.24) && !(ua.chrome && ua.chrome <=18),
+            cssLoad: (
+                    (!ua.gecko && !ua.webkit) || ua.gecko >= 9 ||
+                    ua.compareVersions(ua.webkit, 535.24) >= 0
+                ) && !(ua.chrome && ua.chrome <= 18),
 
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
@@ -5013,8 +5094,19 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// graphics-canvas-default
+// history-hash-ie
 add('load', '1', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
+});
+// graphics-canvas-default
+add('load', '2', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5026,7 +5118,7 @@ add('load', '1', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '2', {
+add('load', '3', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -5044,62 +5136,23 @@ add('load', '2', {
 }, 
     "trigger": "autocomplete-list"
 });
-// graphics-svg
-add('load', '3', {
-    "name": "graphics-svg", 
+// dd-gestures
+add('load', '4', {
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
 // editor-para-ie
-add('load', '4', {
+add('load', '5', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
-// graphics-vml-default
-add('load', '5', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
-});
-// graphics-svg-default
-add('load', '6', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// history-hash-ie
-add('load', '7', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // transition-timer
-add('load', '8', {
+add('load', '6', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5114,8 +5167,33 @@ add('load', '8', {
 }, 
     "trigger": "transition"
 });
-// dom-style-ie
+// graphics-svg-default
+add('load', '7', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+}, 
+    "trigger": "graphics"
+});
+// scrollview-base-ie
+add('load', '8', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
+});
+// widget-base-ie
 add('load', '9', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// dom-style-ie
+add('load', '10', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5146,7 +5224,7 @@ add('load', '9', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '10', {
+add('load', '11', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5155,12 +5233,6 @@ add('load', '10', {
     return ret;
 }, 
     "trigger": "selector"
-});
-// widget-base-ie
-add('load', '11', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -5171,19 +5243,28 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// dd-gestures
+// graphics-svg
 add('load', '13', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
-// scrollview-base-ie
+// graphics-vml-default
 add('load', '14', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
 });
 // app-transitions-native
 add('load', '15', {
@@ -6016,8 +6097,19 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// graphics-canvas-default
+// history-hash-ie
 add('load', '1', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
+});
+// graphics-canvas-default
+add('load', '2', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -6029,7 +6121,7 @@ add('load', '1', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '2', {
+add('load', '3', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -6047,62 +6139,23 @@ add('load', '2', {
 }, 
     "trigger": "autocomplete-list"
 });
-// graphics-svg
-add('load', '3', {
-    "name": "graphics-svg", 
+// dd-gestures
+add('load', '4', {
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
 // editor-para-ie
-add('load', '4', {
+add('load', '5', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
-// graphics-vml-default
-add('load', '5', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
-});
-// graphics-svg-default
-add('load', '6', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// history-hash-ie
-add('load', '7', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // transition-timer
-add('load', '8', {
+add('load', '6', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6117,8 +6170,33 @@ add('load', '8', {
 }, 
     "trigger": "transition"
 });
-// dom-style-ie
+// graphics-svg-default
+add('load', '7', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+}, 
+    "trigger": "graphics"
+});
+// scrollview-base-ie
+add('load', '8', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
+});
+// widget-base-ie
 add('load', '9', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
+});
+// dom-style-ie
+add('load', '10', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -6149,7 +6227,7 @@ add('load', '9', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '10', {
+add('load', '11', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6158,12 +6236,6 @@ add('load', '10', {
     return ret;
 }, 
     "trigger": "selector"
-});
-// widget-base-ie
-add('load', '11', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -6174,19 +6246,28 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// dd-gestures
+// graphics-svg
 add('load', '13', {
-    "name": "dd-gestures", 
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
-// scrollview-base-ie
+// graphics-vml-default
 add('load', '14', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
 });
 // app-transitions-native
 add('load', '15', {
@@ -8730,7 +8811,7 @@ var Selector = {
             selector = replaced.selector;
 
         if (selector) {
-            selector = selector.replace(',', '\uE007', 'g');
+            selector = selector.replace(/,/g, '\uE007');
             replaced.selector = selector;
             selector = Y.Selector._restoreSelector(replaced);
         }
@@ -8951,8 +9032,15 @@ DO = {
      * Cache of objects touched by the utility
      * @property objs
      * @static
+     * @deprecated Since 3.6.0. The `_yuiaop` property on the AOP'd object 
+     * replaces the role of this property, but is considered to be private, and 
+     * is only mentioned to provide a migration path.
+     * 
+     * If you have a use case which warrants migration to the _yuiaop property, 
+     * please file a ticket to let us know what it's used for and we can see if 
+     * we need to expose hooks for that functionality more formally.
      */
-    objs: {},
+    objs: null,
 
     /**
      * <p>Execute the supplied method before the specified function.  Wrapping
@@ -9044,26 +9132,24 @@ DO = {
      * @static
      */
     _inject: function(when, fn, obj, sFn) {
-
         // object id
         var id = Y.stamp(obj), o, sid;
 
-        if (! this.objs[id]) {
-            // create a map entry for the obj if it doesn't exist
-            this.objs[id] = {};
+        if (!obj._yuiaop) {
+            // create a map entry for the obj if it doesn't exist, to hold overridden methods
+            obj._yuiaop = {};
         }
 
-        o = this.objs[id];
+        o = obj._yuiaop;
 
-        if (! o[sFn]) {
+        if (!o[sFn]) {
             // create a map entry for the method if it doesn't exist
             o[sFn] = new Y.Do.Method(obj, sFn);
 
             // re-route the method to our wrapper
-            obj[sFn] =
-                function() {
-                    return o[sFn].exec.apply(o[sFn], arguments);
-                };
+            obj[sFn] = function() {
+                return o[sFn].exec.apply(o[sFn], arguments);
+            };
         }
 
         // subscriber id
@@ -9073,7 +9159,6 @@ DO = {
         o[sFn].register(sid, fn, when);
 
         return new Y.EventHandle(o[sFn], sid);
-
     },
 
     /**
@@ -9084,15 +9169,12 @@ DO = {
      * @static
      */
     detach: function(handle) {
-
         if (handle.detach) {
             handle.detach();
         }
-
     },
 
     _unload: function(e, me) {
-
     }
 };
 
@@ -15777,7 +15859,10 @@ YUI.add('pluginhost-base', function(Y) {
         
                     if (this.hasPlugin(ns)) {
                         // Update config
-                        this[ns].setAttrs(config);
+                        if (this[ns].setAttrs) {
+                            this[ns].setAttrs(config);
+                        }
+                        else { Y.log("Attempt to replug an already attached plugin, and we can't setAttrs, because it's not Attribute based: " + ns); }
                     } else {
                         // Create new instance
                         this[ns] = new Plugin(config);
@@ -15813,7 +15898,9 @@ YUI.add('pluginhost-base', function(Y) {
         
                 if (ns) {
                     if (this[ns]) {
-                        this[ns].destroy();
+                        if (this[ns].destroy) {
+                            this[ns].destroy();
+                        }
                         delete this[ns];
                     }
                     if (plugins[ns]) {
