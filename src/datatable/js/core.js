@@ -137,6 +137,7 @@ Table.ATTRS = {
     @since 3.5.0
     **/
     recordType: {
+        getter: '_getRecordType',
         setter: '_setRecordType'
     },
 
@@ -158,9 +159,10 @@ Table.ATTRS = {
     @since 3.5.0
     **/
     data: {
-        value : [],
-        setter: '_setData',
-        getter: '_getData'
+        valueFn: '_initData',
+        setter : '_setData',
+        getter : '_getData',
+        lazyAdd: false
     },
 
     /**
@@ -698,6 +700,14 @@ Y.mix(Table.prototype, {
     _afterDataChange: function (e) {
         var modelList  = e.newVal;
 
+        this.data = modelList;
+
+        if (!this.get('columns') && modelList.size()) {
+            // TODO: this will cause a re-render twice because the Views are subscribed to
+            // columnsChange
+            this._initColumns();
+        }
+
         if (this.head) {
             this.head.set('modelList', modelList);
         }
@@ -724,8 +734,12 @@ Y.mix(Table.prototype, {
 
         this.data.reset(data);
 
-        if (!this.get('columns')) {
-            this._initColumns();
+        if (!this.get('columns') && data) {
+            if (data.length) {
+                this._initColumns();
+            } else {
+                this.set('columns', key(e.newVal.ATTRS));
+            }
         }
     },
 
@@ -738,7 +752,6 @@ Y.mix(Table.prototype, {
     **/
     bindUI: function () {
         // TODO: handle widget attribute changes
-        this.after('dataChange', Y.bind('_afterDataChange', this));
     },
 
     /**
@@ -976,8 +989,21 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Returns the Model class of the instance's `data` attribute ModelList.  If
+    not set, returns the explicitly configured value.
+
+    @method _getRecordType
+    @param {Model} val The currently configured value
+    @return {Model}
+    **/
+    _getRecordType: function (val) {
+        return (this.data && this.data.model) ? this.data.model : val;
+    },
+
+    /**
     Initializes the `_columnMap` property from the configured `columns`
-    attribute.  If `columns` is not set, but `recordType` is, it uses the
+    attribute.  If `columns` is not set, but there are records in the `data`
+    ModelList, use
     `ATTRS` of that class.
 
     @method _initColumns
@@ -985,17 +1011,37 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     _initColumns: function () {
-        var columns    = this.get('columns') || [],
-            recordType = this.get('recordType');
+        var columns = this.get('columns') || [];
         
         // Default column definition from the configured recordType
-        if (!columns.length && recordType) {
+        if (!columns.length && this.data.size()) {
             // TODO: merge superclass attributes up to Model?
-            this.set('columns', keys(recordType.ATTRS));
+            this.set('columns', keys(this.data.item(0).toJSON()));
         } else {
             this._setColumnMap(columns);
             this._setDisplayColumns(columns);
         }
+    },
+
+    /**
+    Defaults the `data` attribute to an empty ModelList if not set during
+    construction.  Uses the configured `recordType` for the ModelList's `model`
+    proeprty if set.
+
+    @method _initData
+    @protected
+    @return {ModelList}
+    @since 3.6.0
+    **/
+    _initData: function () {
+        var recordType = this.get('recordType'),
+            modelList = new Y.ModelList();
+
+        if (recordType) {
+            modelList.model = recordType;
+        }
+
+        return modelList;
     },
 
     /**
@@ -1005,30 +1051,35 @@ Y.mix(Table.prototype, {
     property is set to the configured `recordType` class, and it is seeded with
     the array data.  This ModelList is then assigned to `this.data`.
 
-    @method _initData
+    @method _initDataProperty
     @param {Array|ModelList|ArrayList} data Collection of data to populate the
             DataTable
     @protected
-    @since 3.5.0
+    @since 3.6.0
     **/
-    _initData: function (data) {
+    _initDataProperty: function (data) {
         var recordType = this.get('recordType');
 
         if (data && data.each && data.toJSON) {
             this.data = data;
 
-            if (data.model) {
-                this.set('recordType', data.model);
+            if (recordType) {
+                this.data.model = recordType;
             }
         } else {
             // TODO: customize the ModelList or read the ModelList class
             // from a configuration option?
             this.data = new Y.ModelList();
             
-            if (!recordType && isArray(data) && data.length) {
+            if (recordType) {
+                this.data.model = recordType;
+            /*
+             * commented out because Model supports ad-hoc attributes
+            } else if (isArray(data) && data.length) {
                 // Not checking _isYUIModel to avoid overspecificity
                 this.set('recordType', data[0].constructor.ATTRS ?
                     data[0].constructor : keys(data[0]));
+            */
             }
 
             // Allow the attribute setter to do its thing.
@@ -1041,6 +1092,7 @@ Y.mix(Table.prototype, {
         // Widget UI event 'change' from the DOM.
         this.data.addTarget(this);
     },
+
 
     /**
     Publishes core events.
@@ -1077,14 +1129,24 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     initializer: function (config) {
-        this.after({
-            columnsChange   : Y.bind('_afterColumnsChange', this),
-            recordTypeChange: Y.bind('_afterRecordTypeChange', this)
-        });
-
         // Referencing config.data to allow _setData to be more stringent
         // about its behavior
-        this._initData(config.data);
+        this._initDataProperty(config.data);
+
+        // Default columns from recordType if recordType is supplied at
+        // construction.  config.recordType is referenced because recordType
+        // uses a getter that relays this.data.model.
+        // Default columns from data if it's a non-empty array because trying
+        // to default from Model subclass attributes is imprecise.
+        if (!config.columns && isArray(config.data) && config.data.length) {
+            this.set('columns', keys(config.data[0]));
+        }
+
+        this.after({
+            columnsChange   : Y.bind('_afterColumnsChange', this),
+            recordTypeChange: Y.bind('_afterRecordTypeChange', this),
+            dataChange      :  Y.bind('_afterDataChange', this)
+        });
 
         this._initColumns();
 
@@ -1341,15 +1403,6 @@ Y.mix(Table.prototype, {
         // _initData. _initData will initially receive the array passed to the
         // config and process accordingly.
         if (this.data && isArray(val)) {
-            recordType = this.get('recordType');
-
-            // FIXME: this is a side effect in a setter.  This needs to be in an
-            // after() sub, but 
-            if (!recordType && val.length) {
-                this.data.reset({ silent: true });
-                this.set('recordType', keys(val[0]));
-            }
-
             // silent to prevent subscribers to both reset and dataChange
             // from reacting to the change twice.
             // TODO: would it be better to return INVALID to silence the
@@ -1374,7 +1427,8 @@ Y.mix(Table.prototype, {
     not have children, it is a display column.
 
     @method _setDisplayColumns
-    @param {Object[]} columns Column config array to extract display columns from
+    @param {Object[]} columns Column config array to extract display columns
+            from
     @protected
     @since 3.5.0
     **/
