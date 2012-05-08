@@ -2616,16 +2616,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1, "Module (resize-proxy) not found in sorted array");
         },
-     "Testing rls": function(data) {
-            var loader = new Y.Loader({
-                require: ["rls"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("rls")) > -1, "Module (rls) not found in sorted array");
-        },
      "Testing router": function(data) {
             var loader = new Y.Loader({
                 require: ["router"],
