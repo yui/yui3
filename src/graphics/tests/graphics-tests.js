@@ -39,6 +39,20 @@ graphicTests = new Y.Test.Case({
 
     updatedStrokeColor: "#99a",
 
+    skewX: 45,
+
+    skewY: 45,
+
+    scaleX: 4,
+
+    scaleY: 3,
+
+    translateX: 15,
+
+    translateY: 10,
+
+    rotate: 110,
+
     setUp: function () {
         Y.one("body").append('<div id="testbed"></div>');
     },
@@ -392,6 +406,60 @@ graphicTests = new Y.Test.Case({
         });
 
         Y.assert(this.updatedFillColor === mypath.get("fill").color);
+    },
+
+    "test rotate(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "rotate(" + this.rotate + ")";
+        mypath.set("transform", "");
+        mypath.rotate(this.rotate);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The rotate attribute should be " + transform + ".");
+    },
+
+    "test skewX(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "skewX(" + this.skewX + ")";
+        mypath.set("transform", "");
+        mypath.skewX(this.skewX);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The skewX attribute should be " + transform + ".");
+    },
+
+    "test skewY(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "skewY(" + this.skewY + ")";
+        mypath.set("transform", "");
+        mypath.skewY(this.skewY);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The skewY attribute should be " + transform + ".");
+    },
+
+    "test skew(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "skew(" + this.skewX + ", " + this.skewY + ")";
+        mypath.set("transform", "");
+        mypath.skew(this.skewX, this.skewY);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
+    },
+
+    "test scale(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "scale(" + this.scaleX + ", " + this.scaleY + ")";
+        mypath.set("transform", "");
+        mypath.scale(this.scaleX, this.scaleY);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
+    },
+
+    "test translate(path)" : function()
+    {
+        var mypath = this.mypath,
+            transform = "translate(" + this.translateX + ", " + this.translateY + ")";
+        mypath.set("transform", "");
+        mypath.translate(this.translateX, this.translateY);
+        Y.Assert.areEqual(transform, Y.Lang.trim(mypath.get("transform")), "The transform attribute should be " + transform + ".");
     },
 
     "test removeShape(path)" : function()

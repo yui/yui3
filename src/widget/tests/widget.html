@@ -7,29 +7,29 @@
     <!--script src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui.js"></script-->
 
     <style type="text/css">
-        #console .yui3-console-entry {
+        #testConsole .yui3-console-entry {
             padding:2px;
             margin:0px;
             min-height:0;
         }
-        
-        #console .yui3-console-entry-fail .yui3-console-entry-cat {
+
+        #testConsole .yui3-console-entry-fail .yui3-console-entry-cat {
             background-color:red;
         }
 
-        #console .yui3-console-entry-pass .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-pass .yui3-console-entry-cat {
             background-color:green;
         }
 
-        #console .yui3-console-entry-perf .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-perf .yui3-console-entry-cat {
             background-color:blue;
         }
         
-        #console .yui3-console-entry-content {
+        #testConsole .yui3-console-entry-content {
             font-family:monospace;
         }
 
-        #console .yui3-console-entry-cat {
+        #testConsole .yui3-console-entry-cat {
             padding:0;
             height:10px;
             width:10px;
@@ -40,7 +40,7 @@
             *zoom:1;
         }
 
-        #console {
+        #testConsole {
             position:static;
         }
         
@@ -89,7 +89,8 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
 
-        var yeti = Y.config.win && Y.config.win.$yetify;
+        var yeti = Y.config.win && Y.config.win.$yetify,
+            testConsole;
 
         // Extended Widget
         function MyWidget() {
@@ -121,7 +122,6 @@
                     "testFocusOnBoundingBox" : yeti && Y.UA.gecko,
                     "testMultiWidgetFocus" :  yeti && Y.UA.gecko,
                     "testWidgetOnFocus" :  yeti && Y.UA.gecko
-                    
                 }
             },
 
@@ -137,7 +137,7 @@
                 Y.Assert.isFunction(w.render);
                 Y.Assert.isFunction(w.renderUI);
                 Y.Assert.isFunction(w.bindUI);
-                Y.Assert.isFunction(w.syncUI);               
+                Y.Assert.isFunction(w.syncUI);
                 Y.Assert.isFunction(w.init);
                 Y.Assert.isFunction(w.destroy);
                 Y.Assert.isFunction(w.get);
@@ -458,7 +458,7 @@
             "testVisible" : function() {
                 var w = this.createWidget({render:true});
                 var bb = w.get("boundingBox");
-                
+
                 var className = w._cssPrefix + "-hidden";
 
                 Y.Assert.isTrue(w.get("visible"), "visible should be true by default");
@@ -856,6 +856,28 @@
                 Y.Assert.isTrue(gotFocus, "widget.on('focus') wasn't invoked");
             },
 
+            "testDetachFocusOnLastWidgetDestroy" : function() {
+                var w1 = this.createWidget({
+                    id : "foo",
+                    render: true
+                });
+
+                var w2 = this.createWidget({
+                   id : "bar",
+                   render: true
+                });
+
+                Y.Assert.areEqual(2, Y.Widget._hDocFocus.listeners.count);
+                
+                w1.destroy();
+                
+                Y.Assert.areEqual(1, Y.Widget._hDocFocus.listeners.count);
+                
+                w2.destroy();
+
+                Y.Assert.isNull(Y.Widget._hDocFocus);
+            },
+
             "testToString" : function() {
                 var w = this.createWidget({
                     id: "foo"
@@ -1212,7 +1234,7 @@
                 
                 w.destroy();
             }
-            
+
         }, true);
 
         suite.add(new Y.Test.Case(coreTests));
@@ -1552,7 +1574,7 @@
                     "afterDestroy"
                 ];
 
-                w = new MyLifecycleWidget({
+                var w = new MyLifecycleWidget({
                     on: {
                         init: function() {
                             this.__test.push("onInit");
@@ -1605,7 +1627,7 @@
                     "afterDestroy"
                 ];
 
-                w = new MyLifecycleWidget({
+                var w = new MyLifecycleWidget({
                     on: {
                         init: function() {
                             this.__test.push("onInit");
@@ -1879,17 +1901,21 @@
                 var w = new Y.Widget();
         
                 Y.Assert.isNull( w.getSkinName() );
+                
+                w.destroy();
             },
 
             "getSkinName should return name from BB if available": function () {
                 var bb = Y.Node.create( '<div class="yui3-skin-foo"><div></div></div>' ),
                     cb = bb.one( 'div' ),
                     w = new Y.Widget( {
-                    boundingBox: bb,
-                    contentBox:  cb
-                } );
+                        boundingBox: bb,
+                        contentBox:  cb
+                    } );
 
                 Y.Assert.areEqual( "foo", w.getSkinName() );
+                
+                w.destroy();                
             },
 
             "getSkinName should return name from body or null": function () {
@@ -1995,13 +2021,13 @@
                 }
             }        
         }));
-    
+
         suite.add(new Y.Test.Case({
     
             name:"UI Events",
     
             testSingleSimple: function() {
-    
+
                 var w, h, cb,
                     actualEvents = [],
                     expectedEvents = ["widget:click"];
@@ -2022,10 +2048,10 @@
     
                 w.destroy();
             },
-    
-            testSingleComplex: function() {
-    
-                var w, h, cb
+
+            testSingleComplex : function() {
+
+                var w, h, cb,
                     actualEvents = [],
                     expectedEvents = ["widget:render",
                                       "widget:renderedChange",
@@ -2040,6 +2066,7 @@
                                       "widget:click"];
     
                 w = new Y.Widget();
+
                 cb = w.get("contentBox");
     
                 cb.append("<p class='et'>Some Content For My Widget</p>");
@@ -2051,11 +2078,11 @@
                     "render": h,
                     "renderedChange": h
                 });
-    
+
                 w.on("widget:mouseup", h);
                 w.on("foo|widget:mouseup", h);
                 w.on("mouseup", h);
-    
+
                 w.after("widget:mouseup", h);
                 w.after("foo|widget:mouseup", h);
                 w.after("mouseup", h);
@@ -2064,7 +2091,7 @@
                     "mousedown" : h,
                     "render" : h
                 });
-    
+
                 w.render();
                 
                 cb.one(".et").simulate("mousedown");
@@ -2072,60 +2099,62 @@
                 cb.one(".et").simulate("click");
     
                 Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
-    
+
                 w.destroy();
             },
     
             testNested: function() {
-    
+
                 var outer = new Y.Widget();
                 var inner = new Y.Widget();
                 var ocb = outer.get('contentBox');
                 var icb = inner.get('contentBox');
-    
+
                 var expectedEvents = ["outerClick", "innerClick", "outerClick"];
                 var actualEvents = [];
-    
+
                 outer.render();
                 ocb.setContent("<span class='oet'>Outer Content</span>");
-    
+
                 inner.render(ocb);
                 icb.setContent("<span class='iet'>Inner Content</span>");
-    
+
                 inner.after('click', function() {actualEvents.push("innerClick");});
                 outer.after('click', function() {actualEvents.push("outerClick");});
-    
+
                 // Only outer
                 ocb.one(".oet").simulate("click");
-    
+
                 // One Inner, One Outer
                 ocb.one(".iet").simulate("click");
-    
+
                 Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
-                
+
                 outer.destroy();
                 inner.destroy();
             },
-    
+
             testMultipleInstances : function() {
-    
+
                 var actualEvents = [],
                     expectedEvents = ["clickOuter", "clickInner", "clickOuter"],
+                    Y1,
+                    Y2,
                     w1,
                     w2;
-    
-                YUI().use('widget', function (Y) {
-    
-                    w1 = new Y.Widget({render:true});
+
+                Y1 = YUI().use('widget', function (Y1) {
+
+                    w1 = new Y1.Widget({render:true});
                     w1.get('contentBox').append('<div class="w2-container"></div><span class="miouter">Outer</span>');
     
                     w1.on('click', function (e) {
                         actualEvents.push("clickOuter");
                     });
     
-                    YUI().use('widget', function (Y1) {
+                    Y2 = YUI().use('widget', function (Y2) {
     
-                        w2 = new Y1.Widget({render:".w2-container"});
+                        w2 = new Y2.Widget({render:".w2-container"});
                         w2.get('contentBox').append('<span class="miinner">Inner</span>');
     
                         w2.on('click', function (e) {
@@ -2136,11 +2165,14 @@
     
                 Y.Node.one(".miouter").simulate("click"); // only outer, once.
                 Y.Node.one(".miinner").simulate("click"); // inner, bubbled to outer (once each, without JS errors)
-                
+
                 Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
-    
+
                 w1.destroy();
                 w2.destroy();
+
+                Y1.destroy();
+                Y2.destroy();
             },
 
             testPublishDefaultFn : function() {
@@ -2164,9 +2196,9 @@
                 
                 w.destroy();
             }
-            
+
         }));
-    
+
         suite.add(new Y.Test.Case({
     
             name:"clone",
@@ -2202,6 +2234,10 @@
                 Y.Assert.isTrue(c1 instanceof Y.Widget);
                 Y.Assert.isTrue(c2 instanceof Y.Widget);
                 Y.Assert.isTrue(c3 instanceof Y.Widget);
+                
+                a.destroy();
+                b.destroy();
+                c.destroy();
             },
         
             testWidgetHashClone : function() {
@@ -2226,6 +2262,10 @@
                 Y.Assert.isTrue(o3.a instanceof Y.Widget);
                 Y.Assert.isTrue(o3.b instanceof Y.Widget);
                 Y.Assert.isTrue(o3.c instanceof Y.Widget);
+                
+                a.destroy();
+                b.destroy();
+                c.destroy();
             },
         
             testBaseClone : function() {
@@ -2295,13 +2335,17 @@
         Y.Test.Runner.once("complete", function() {
             Y.one("#automationmsg").addClass("msg-hidden");
 
-            var console, runButton = Y.one("#btnRun");
+            var runButton = Y.one("#btnRun");
 
             runButton.set("value", "Run Tests"); 
             runButton.set("disabled", false).on("click", function() {
-                if (!console) {
-                    console = new Y.Console({
-                        id:"console",
+                if (!testConsole) {
+                    
+                    // This test should be ignored if Console is instantiated.
+                    coreTests._should.ignore.testDetachFocusOnLastWidgetDestroy = true;
+                    
+                    testConsole = new Y.Console({
+                        id:"testConsole",
                         width:"100%",
                         height:"90%",
                         verbose : false,
@@ -2321,7 +2365,7 @@
         });
 
         Y.Test.Runner.run();
-        
+
     });
     </script>
 </body>

@@ -1,6 +1,13 @@
 AutoComplete Change History
 ===========================
 
+3.5.1
+-----
+
+* Fixed a potential XSS issue involving the ARIA live region and text results
+  that contain HTML markup.
+
+
 3.5.0
 -----
 

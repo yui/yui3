@@ -232,7 +232,9 @@ Y.Router = Y.extend(Router, Y.Base, {
             return false;
         }
 
-        return !!this.match(this.removeRoot(url)).length;
+        url = this.removeQuery(this.removeRoot(url));
+
+        return !!this.match(url).length;
     },
 
     /**
@@ -288,6 +290,18 @@ Y.Router = Y.extend(Router, Y.Base, {
         }
 
         return url.charAt(0) === '/' ? url : '/' + url;
+    },
+
+    /**
+    Removes a query string from the end of the _url_ (if one exists) and returns
+    the result.
+
+    @method removeQuery
+    @param {String} url URL.
+    @return {String} Queryless path.
+    **/
+    removeQuery: function (url) {
+        return url.replace(/\?.*$/, '');
     },
 
     /**
@@ -608,7 +622,7 @@ Y.Router = Y.extend(Router, Y.Base, {
         var path = (!this._html5 && this._getHashPath()) ||
                 Y.getLocation().pathname;
 
-        return this.removeRoot(path);
+        return this.removeQuery(this.removeRoot(path));
     },
 
     /**
@@ -661,7 +675,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             }
 
             keys.push(key);
-            return operator === '*' ? '(.*?)' : '([^/]*)';
+            return operator === '*' ? '(.*?)' : '([^/#?]*)';
         });
 
         return new RegExp('^' + path + '$');
