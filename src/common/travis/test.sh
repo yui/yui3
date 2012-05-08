@@ -25,3 +25,9 @@ echo "Tests: ${tests}"
 
 cd ${root}
 ${yuitest} ${tests}
+
+RETVAL=$?
+[ $RETVAL -ne 0 ] && exit 1
+
+echo "Starting Grover Tests"
+${grover} -t 80 -i ./src/common/node/batch.js
