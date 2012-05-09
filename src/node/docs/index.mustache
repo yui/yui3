@@ -65,7 +65,7 @@ var bodyNode = Y.one(document.body);
 var item = Y.Node.create('<li id="step3" class="highlight"><em>Profit</em></li>');
 
 // Replace the content in a Node
-Y.one("#hello").setContent("<h1>Hello, <em>World</em>!</h1>");
+Y.one("#hello").setHTML("<h1>Hello, <em>World</em>!</h1>");
 
 // Append new markup inside a Node
 bodyNode.append("<p>This is the end, beautiful friend, the end.</p>");
@@ -75,7 +75,7 @@ bodyNode.append("<p>This is the end, beautiful friend, the end.</p>");
     `Node`s have methods for
     <a href="{{apiDocs}}/classes/Node.html#method_append">appending</a>, 
     <a href="{{apiDocs}}/classes/Node.html#method_prepend">prepending</a>, 
-    <a href="{{apiDocs}}/classes/Node.html#method_setContent">replacing</a>, and
+    <a href="{{apiDocs}}/classes/Node.html#method_setHTML">replacing</a>, and
     <a href="{{apiDocs}}/classes/Node.html#method_insert">inserting</a>
     content. The static method
     <a href="{{apiDocs}}/classes/Node.html#method_create">`Y.Node.create()`</a>
@@ -99,7 +99,7 @@ var bigSrc = thumbnail.get('src').slice(0, -4) + '-big.jpg';
 
 imgNode.set('src', bigSrc);
 imgNode.set('title', thumbnail.get('title');
-labelNode.setContent(thumbnail.get('title'));
+labelNode.setHTML(thumbnail.get('title'));
 ```
 <p>
     Properties of the underlying DOM node are accessed via the `Node`
