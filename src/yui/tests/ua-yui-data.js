@@ -523,6 +523,13 @@ Y.UAData["YUI Internal"] = [
                         "os": "linux",
                         "phantomjs": 1.5
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+                "data": {
+                        "ie": 10,
+                        "os": "windows"
+                }
         }
 ];
 });
