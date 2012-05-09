@@ -4,11 +4,11 @@ YUI().use('node', function(Y){
 
     var handleBoxClick = function(e) {
         // boxes is a NodeList
-        boxes.setContent('neener');
+        boxes.setHTML('neener');
         boxes.setStyle('backgroundColor', '#F4E6B8');
     
         // e.currentTarget === .box-row li, just the one that was clicked
-        e.currentTarget.setContent('ouch!');        
+        e.currentTarget.setHTML('ouch!');        
         e.currentTarget.setStyle('backgroundColor', '#C4DAED');
     };    
     Y.one('.box-row').delegate('click', handleBoxClick, 'li');

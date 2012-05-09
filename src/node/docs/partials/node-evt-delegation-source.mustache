@@ -11,10 +11,10 @@ YUI().use('node', function(Y) {
 
     var onClick = function(e) {
         e.currentTarget.addClass('highlight'); // e.currentTarget === #demo li 
-        e.target.setContent('thanks for the click!'); // e.target === #demo li or #demo li em
+        e.target.setHTML('thanks for the click!'); // e.target === #demo li or #demo li em
         e.container.setStyle('border', '5px solid blue'); // e.container === #demo
 
-        nodes.filter(':not(.highlight)').setContent('Click me too please!');
+        nodes.filter(':not(.highlight)').setHTML('Click me too please!');
     };
 
     Y.one('#demo').delegate('click', onClick, 'li');

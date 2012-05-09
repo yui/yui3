@@ -76,7 +76,7 @@ YUI().use('transition', 'button', function (Y) {
         squawks = Y.all('.duck-row .set-up .squawk'); // a NodeList of the squawks of set-up ducks
         if (Y.one('#show-attitude')._node.checked) {  // only have ducks squawk if the checkbox is checked
             // fill voice bubbles with next text string
-            Y.all('.duck-row .set-up .squawk .text').setContent(squawkTextArr[squawkTextIndex]);
+            Y.all('.duck-row .set-up .squawk .text').setHTML(squawkTextArr[squawkTextIndex]);
             
             // increment the index to get the next squawk text
             squawkTextIndex = (squawkTextIndex += 1) % (squawkTextArr.length);
@@ -112,7 +112,7 @@ YUI().use('transition', 'button', function (Y) {
     // counts the ducks remaining, and updates the UI counter display
     var updateDucksRemaining = function() {
         ducksRemaining = Y.all('.gallery li.set-up').size();    
-        Y.one('.ducks-remain').setContent(ducksRemaining);    
+        Y.one('.ducks-remain').setHTML(ducksRemaining);    
     }
     
     // listeners
