@@ -4,6 +4,13 @@ Collection Change History
 3.6.0
 -----
 
+* [!] The `sort` parameter of `Array.unique()` has been removed. This parameter
+  was deprecated in YUI 3.3.0.
+
+* `Array.unique()` now accepts an optional test function as its second
+  parameter. This function can perform custom comparison logic to determine
+  whether two values should be considered equal. [Ticket #2527901]
+
 * The `every()`, `filter()`, `map()`, and `reduce()` functions now work
   correctly on array-like objects in ES5 browsers. [Ticket #2531652]
 
