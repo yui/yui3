@@ -1522,7 +1522,7 @@ Y.mix(Table.prototype, {
                 table.prepend(this._captionNode);
             }
 
-            caption.setContent(htmlContent);
+            caption.setHTML(htmlContent);
 
         } else if (caption) {
             caption.remove(true);
