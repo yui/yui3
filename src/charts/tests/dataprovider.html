@@ -1,200 +1,51 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <style>
-            /*Supplemental: CSS for the YUI distribution*/
-            #custom-doc { width: 95%; min-width: 950px; }
-            #pagetitle {background-image: url(../../assets/bg_hd.gif);}
-            #mychart {
-                padding:10px 10px 10px 10px;
-            }
-        </style>
-        <link rel="stylesheet" type="text/css" href="../../../build/cssfonts/fonts-min.css">
-    </head>		
+<head>
+    <title>Chart DataProvider Tests</title>
+</head>
 <body class="yui3-skin-sam">
-<h3>Unit Tests</h3>
-<div id="mychart"></div>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script>            
+
+<div id="log"></div>
+<script src="../../../build/yui/yui.js"></script>
+<script src="charts-dataprovider-tests.js"></script>
+<script>
 YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     allowRollup: false,
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-}).use('charts', 'test', 'console', function (Y) 
-{ 
-    Y.namespace("example.test");
-    //-------------------------------------------------------------------------
-    // Chart dataProvider Test Case
-    //-------------------------------------------------------------------------
-    function ChartDataProviderTestCase(cfg, type)
-    {
-        ChartDataProviderTestCase.superclass.constructor.call(this);
-        this.attrCfg = cfg;
-        this.name = type + " DataProvider Tests";
-    }
-        
-    Y.extend(ChartDataProviderTestCase, Y.Test.Case, {
-        //---------------------------------------------------------------------
-        // Setup and teardown of test harnesses
-        //---------------------------------------------------------------------
-        
-        /*
-         * Sets up several event handlers used to test UserAction mouse events.
-         */
-        setUp : function() 
-        {
-            
-            //create the chart 
-            this.chart = new Y.Chart(this.attrCfg);
-            this.contentBox = this.chart.get("contentBox");
-        },
-        
-        /*
-         * Removes event handlers that were used during the test.
-         */
-        tearDown : function() 
-        {
-            this.chart.destroy(true);
-        },
+    useBrowserConsole: false
+}).use('console-filters', 'charts-dataprovider-tests', function (Y) {
 
-        testKeys: ["revenue", "expenses", "miscellaneous"],
+    new Y.Console({
+        style: 'block',
+        entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
+        on: {
+            entry: function (e) {
+                var m = e.message,
+                    node;
 
-        testDefault: function()
-        {
-            var chart = this.chart,
-                testKeys = this.testKeys,
-                seriesCollection = chart.get("seriesCollection"),
-                i;
-            for(i in testKeys)
-            {
-                Y.Assert.isTrue(seriesCollection.hasOwnProperty(i));
-                Y.assert(seriesCollection[i] instanceof Y.CartesianSeries);
+                if (m.category === 'info' &&
+                    /\s(?:case|suite)\s|yuitests\d+|began/.test(m.message)) {
+                        m.category = 'status';
+                } else if (m.category === 'fail') {
+                    this.printBuffer();
+                    m.category = 'error';
+                }
+            }
+        },
+        after: {
+            render: function () {
+                this.get('contentBox').insertBefore( this._foot, this._body );
             }
         }
-    });
+    }).plug(Y.Plugin.ConsoleFilters, {
+        category: {
+            pass: false,
+            status: false
+        }
+      }).render( "#log" );
 
-    Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
-    
-    var suite = new Y.Test.Suite("Y.Charts.DataProvider"),
-
-    allPositiveDataProvider =  [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
-        {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
-    ],
-
-    positiveAndNegativeDataProvider = [ 
-        {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:-2800}, 
-        {category:"5/5/2010", values:5000, expenses:-5000, revenue:2650}
-    ],
-
-    allNegativeDataProvider = [ 
-        {category:"5/1/2010", values:-2000, expenses:-3700, revenue:-2200}, 
-        {category:"5/2/2010", values:-50, expenses:-9100, revenue:-100}, 
-        {category:"5/3/2010", values:-400, expenses:-1100, revenue:-1500}, 
-        {category:"5/4/2010", values:-200, expenses:-1900, revenue:-2800}, 
-        {category:"5/5/2010", values:-5000, expenses:-5000, revenue:-2650}
-    ],
-
-    decimalDataProvider = [ 
-        {category:"5/1/2010", values:2.45, expenses:3.71, revenue:2.2}, 
-        {category:"5/2/2010", values:0.5, expenses:9.1, revenue:0.16}, 
-        {category:"5/3/2010", values:1.4, expenses:1.14, revenue:1.25}, 
-        {category:"5/4/2010", values:0.05, expenses:1.9, revenue:2.8}, 
-        {category:"5/5/2010", values:5.53, expenses:5.21, revenue:2.65}
-    ],
-    
-    missingDataSmallDataProvider = [
-        {date: "1/1/2010", expenses: 3700},
-        {date: "1/2/2010", revenue: 2200},
-        {date: "2/1/2010", expenses: 9100},
-        {date: "2/2/2010", revenue: 100}
-    ],
-
-    missingDataLargeDataProvider = [
-        {date: "1/1/2010", expenses: 3700},
-        {date: "1/2/2010", revenue: 2200},
-        {date: "1/3/2010", expenses: 3000},
-        {date: "1/4/2010", revenue: 400},
-        {date: "2/1/2010", expenses: 9100},
-        {date: "2/2/2010", revenue: 100},
-        {date: "2/3/2010", expenses: 3300},
-        {date: "2/4/2010", revenue: 1500}
-    ],
-
-    nullValuesDataProvider =  [ 
-        {category:"5/1/2010", values:null, expenses:3700, revenue:2200}, 
-        {category:"5/2/2010", values:50, expenses:null, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:null}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
-        {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
-    ],
-
-    missingFirstValuesDataProvider =  [ 
-        {category:"5/1/2010"}, 
-        {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-        {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-        {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
-        {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
-    ],
-    
-    AllPositiveDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: allPositiveDataProvider
-    }, "All Positive"),
-
-    AllNegativeDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: allNegativeDataProvider
-    }, "All Negative"),
-    
-    PositiveAndNegativeDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: positiveAndNegativeDataProvider
-    }, "Positive and Negative"),
-
-    DecimalDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: decimalDataProvider
-    }, "Decimal");
-    
-    MissingSmallDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: missingDataSmallDataProvider
-    }, "Missing Small");
-    
-    MissingLargeDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: missingDataLargeDataProvider
-    }, "Missing Large"),
-    
-    NullValuesDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: nullValuesDataProvider
-    }, "Null Values"),
-    
-    MissingFirstValuesDataProviderTest = new Y.ChartDataProviderTestCase({
-        dataProvider: missingFirstValuesDataProvider
-    }, "Missing First Values");
-    
-    suite.add(AllPositiveDataProviderTest);
-    suite.add(PositiveAndNegativeDataProviderTest);
-    suite.add(AllNegativeDataProviderTest);
-    suite.add(DecimalDataProviderTest);
-    suite.add(MissingSmallDataProviderTest);
-    suite.add(MissingLargeDataProviderTest);
-    suite.add(NullValuesDataProviderTest);
-    suite.add(MissingFirstValuesDataProviderTest);
-
-    //create the console
-    var r = new Y.Console({
-        newestOnTop : false,
-        style: 'block' // to anchor in the example content
-    });
-    
-    r.render('#testLogger');
-
-    //run the tests
-    Y.Test.Runner.setName("Y.Charts.DataProvider");
-    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 </script>
