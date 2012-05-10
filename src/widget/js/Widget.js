@@ -241,7 +241,7 @@ ATTRS[DISABLED] = {
 
 /**
  * @attribute visible
- * @description Boolean indicating weather or not the Widget is visible.
+ * @description Boolean indicating whether or not the Widget is visible.
  * @default TRUE
  * @type boolean
  */
