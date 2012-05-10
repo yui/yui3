@@ -35,11 +35,11 @@ the event object is set to the current Node instance.</p>
 ```
 var handleBoxClick = function(e) {
     // this === boxes, which is a NodeList
-    this.setContent('neener');
+    this.setHTML('neener');
     this.setStyle('backgroundColor', '#F4E6B8');
 
     // e.currentTarget === .box-row li, just the one that was clicked
-    e.currentTarget.setContent('ouch!');        
+    e.currentTarget.setHTML('ouch!');        
     e.currentTarget.setStyle('backgroundColor', '#fff');
 };    
 boxes.on('click', handleBoxClick);
