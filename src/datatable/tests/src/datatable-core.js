@@ -473,8 +473,127 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "columns attribute",
 
+    _should: {
+        ignore: {
+            "columns should default from data array after empty instantiation": true,
+            "columns should default from data ModelList after empty instantiation": true
+        }
+    },
+
     setUp: function () {
         this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
+    },
+
+    "columns should default from data array": function () {
+        var table = new this.Table({ data: [{ a: 1, b: 2 }] }),
+            columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    "columns should default from data ModelList's model class": function () {
+        var table = new this.Table({
+                data: new Y.ModelList({
+                    model: Y.Base.create('record', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {} } })
+                })
+            }),
+            columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    "columns should default from recordType": function () {
+        var table = new this.Table({ recordType: [ 'a', 'b' ] }),
+            columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table({ recordType: { a: {}, b: {} } });
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table({
+            recordType: Y.Base.create('record', Y.Model, [], {}, {
+                ATTRS: { a: {}, b: {} } })
+        });
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    // IGNORED
+    "columns should default from data array after empty instantiation": function () {
+        var table = new this.Table(),
+            columns;
+
+        Y.Assert.isUndefined(table.get('columns'));
+
+        table.set('data', [{ a: 1, b: 2 }]);
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    // IGNORED
+    "columns should default from data ModelList after empty instantiation": function () {
+        var TestModel = Y.Base.create('record', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {} } }),
+            table = new this.Table(),
+            columns;
+
+        Y.Assert.isUndefined(table.get('columns'));
+
+        table.set('data', new Y.ModelList({ model: TestModel }));
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    "columns should default from recordType after empty instantiation": function () {
+        var table = new this.Table(),
+            columns;
+
+        Y.Assert.isUndefined(table.get('columns'));
+
+        table.set('recordType', [ 'a', 'b' ]);
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table();
+        table.set('recordType', { a: {}, b: {} });
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table();
+        table.set('recordType', Y.Base.create('record', Y.Model, [], {}, {
+            ATTRS: { a: {}, b: {} }
+        }));
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
     },
 
     "string columns should be converted to objects": function () {
@@ -757,9 +876,11 @@ suite.add(new Y.Test.Case({
     },
 
     "set('data', modelList) should fire a dataChange": function () {
-        var model = Y.Base.create('test-model', Y.Model, [], {}, {
-                ATTRS: { a: {}, b: {}, c: {} } }),
-            modelList = new Y.ModelList(),
+        var modelList = new Y.ModelList({
+                    model: Y.Base.create('test-model', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {}, c: {} }
+                    })
+                }).reset([{ a: 2, b: 2, c: 2 }]),
             instance  = new this.Table({
                 columns: ['a', 'b', 'c'],
                 data: [{ a: 1, b: 1, c: 1 }]
@@ -770,9 +891,6 @@ suite.add(new Y.Test.Case({
             Y.Assert.areSame(modelList, e.newVal);
             fired = true;
         });
-
-        modelList.model = model;
-        modelList.add([{ a: 2, b: 2, c: 2 }]);
 
         Y.Assert.isInstanceOf(Y.ModelList, instance.data);
         Y.Assert.areSame(1, instance.data.item(0).get('a'));
@@ -816,6 +934,12 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "recordType attribute",
 
+    _should: {
+        ignore: {
+            "recordType should default from keys of first object in data array": true
+        }
+    },
+
     setUp: function () {
         this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
     },
@@ -823,7 +947,9 @@ suite.add(new Y.Test.Case({
     "test instantiation with recordType: object": function () {
         var table = new this.Table({
             recordType: {
-                a: { setter: function (val) { return +val; } },
+                a: { setter: function (val) {
+                    return +val;
+                    } },
                 b: { value: 'b default' },
                 c: {}
             },
@@ -889,7 +1015,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2, table.getRecord(1).get('c'));
     },
 
-    "recordType should default from data modelList.model": function () {
+    "get('recordType') should return the data modelList.model": function () {
         var modelList = new Y.ModelList(),
             table;
             
@@ -911,9 +1037,25 @@ suite.add(new Y.Test.Case({
             data: modelList
         });
 
-        Y.Assert.areSame(table.get('recordType'), table.data.model);
+        Y.Assert.areSame(table.data.model, table.get('recordType'));
+
+        table = new this.Table();
+        modelList = new Y.ModelList({
+            model: Y.Base.create('test-model', Y.Model, [], {}, {
+                ATTRS: { a: {}, b: {}, c: {} }
+            })
+        });
+
+        Y.Assert.areSame(table.data.model, table.get('recordType'));
+
+        table.set('recordType', ['a', 'b', 'c']);
+
+        Y.Assert.areSame(table.data.model, table.get('recordType'));
+        Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'],
+            Y.Object.keys(table.get('recordType').ATTRS));
     },
 
+    // IGNORED
     "recordType should default from keys of first object in data array": function () {
         var table = new this.Table({
                 columns: ['a', 'b'],
@@ -925,33 +1067,8 @@ suite.add(new Y.Test.Case({
 
         Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'],
             Y.Object.keys(table.get('recordType').ATTRS));
-    },
-
-    "recordType should default from columns if no data is supplied": function () {
-        var table = new this.Table({
-                columns: ['a', 'b', 'c', 'a']
-            });
-
-        // including dup columns by their _id
-        Y.ArrayAssert.itemsAreSame(['a', 'b', 'c', 'a1'],
-            Y.Object.keys(table.get('recordType').ATTRS));
-    },
-
-    "recordType should default via change event if recordType, columns, and data are unset": function () {
-        var table = new this.Table(),
-            modelList = new Y.ModelList();
-
-        modelList.model = Y.Base.create('test-model', Y.Model, [], {}, {
-            ATTRS: { a: {}, b: {}, c: {} }
-        });
-
-        Y.Assert.isUndefined(table.get('recordType'));
-
-        table.set('recordType', ['a', 'b', 'c']);
-
-        Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'],
-            Y.Object.keys(table.get('recordType').ATTRS));
     }
+
 }));
 
 suite.add(new Y.Test.Case({

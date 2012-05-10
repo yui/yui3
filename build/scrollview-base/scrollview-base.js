@@ -214,7 +214,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Only enable for vertical scrollviews
         if (this._scrollsVertical) {
             if (mousewheel) {
-                cb.on("mousewheel", Y.bind(this._mousewheel, this), mousewheel);
+                Y.one(document).on("mousewheel", Y.bind(this._mousewheel, this));
             } else {
                 cb.detach('mousewheel|*');
             }
@@ -854,7 +854,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             contentBox = this._cb,
             scrollOffset = 10, // 10px
             scrollToY = scrollY - (e.wheelDelta * scrollOffset);
-
+        
+        if (!contentBox.contains(e.target)){
+            return false;
+        }
+        
         this.scrollTo(0, scrollToY);
         
         // if we have scrollbars plugin, update & set the flash timer on the scrollbar

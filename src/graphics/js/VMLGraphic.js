@@ -259,11 +259,19 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     getXY: function()
     {
-        var node = Y.one(this._node),
+        var node = this.parentNode,
+            x = this.get("x"),
+            y = this.get("y"),
             xy;
         if(node)
         {
-            xy = node.getXY();
+            xy = Y.one(node).getXY();
+            xy[0] += x;
+            xy[1] += y;
+        }
+        else
+        {
+            xy = Y.DOM._getOffset(this._node);
         }
         return xy;
     },
@@ -282,7 +290,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @private
      */
     initializer: function(config) {
-        var render = this.get("render");
+        var render = this.get("render"),
+            visibility = this.get("visible") ? "visible" : "hidden";
         this._shapes = {};
 		this._contentBounds = {
             left: 0,
@@ -291,6 +300,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             bottom: 0
         };
         this._node = this._createGraphic();
+        this._node.style.visibility = visibility;
         this._node.setAttribute("id", this.get("id"));
         if(render)
         {
@@ -338,6 +348,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     addShape: function(cfg)
     {
         cfg.graphic = this;
+        if(!this.get("visible"))
+        {
+            cfg.visible = false;
+        }
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
@@ -373,14 +387,14 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     removeShape: function(shape)
     {
-        if(!shape instanceof VMLShape)
+        if(!(shape instanceof VMLShape))
         {
             if(Y_LANG.isString(shape))
             {
                 shape = this._shapes[shape];
             }
         }
-        if(shape && shape instanceof VMLShape)
+        if(shape && (shape instanceof VMLShape))
         {
             shape._destroy();
             this._shapes[shape.get("id")] = null;
@@ -464,7 +478,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
                 }
             }
         }
-        this._node.style.visibility = visibility;
+        if(this._node)
+        {
+            this._node.style.visibility = visibility;
+        }
     },
 
     /**
@@ -504,9 +521,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @private
      */
     _createGraphic: function() {
-        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;zoom:1;" />');
-		group.style.display = "block";
-        group.style.position = 'absolute';
+        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
         return group;
     },
 

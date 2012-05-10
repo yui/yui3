@@ -12,7 +12,7 @@ YUI.add('date-tests', function(Y) {
         if (h === 0) {
             h = 12;
         }
-        if (h < 12 & pad) {
+        if (h < 10 & pad) {
             h = '0' + h;
         }
         return h;  

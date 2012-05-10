@@ -781,6 +781,29 @@ Matrix.prototype = {
         this.multiply(1, 0, 0, 1, x, y);
         return this;
     },
+    
+    /**
+     * Applies a translate to the x-coordinate
+     *
+     * @method translateX
+     * @param {Number} x x-coordinate
+     */
+    translateX: function(x) {
+        this.translate(x);
+        return this;
+    },
+
+    /**
+     * Applies a translate to the y-coordinate
+     *
+     * @method translateY
+     * @param {Number} y y-coordinate
+     */
+    translateY: function(y) {
+        this.translate(null, y);
+        return this;
+    },
+
 
     /**
      * Returns an identity matrix.

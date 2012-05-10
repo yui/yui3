@@ -555,6 +555,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         //this.get('boundingBox').toggleClass('');
         this.thumb.set('aria-valuemin', this.get('min'));
         this.thumb.set('aria-valuemax', this.get('max'));
+
+        this._dd.set('lock', this.get('disabled'));
     },
 
     /**
@@ -755,7 +757,6 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         }
     }
 });
-
 
 
 }, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain', 'event-key']});

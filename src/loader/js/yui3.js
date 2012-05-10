@@ -1976,12 +1976,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "resize-base"
         ]
     }, 
-    "rls": {
-        "requires": [
-            "get", 
-            "features"
-        ]
-    }, 
     "router": {
         "optional": [
             "querystring-parse"
@@ -2421,11 +2415,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "yui-rls": {}, 
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f5a3bc9bda2441a3b15fb52c567fc1f7';
+YUI.Env[Y.version].md5 = 'cbef8048f9a9861bf3d45fa1526688c7';

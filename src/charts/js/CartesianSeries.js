@@ -292,7 +292,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yValue = parseFloat(yData[i]);
             if(isNumber(xValue))
             {
-                nextX = Math.round((((xValue - xMin) * xScaleFactor) + leftPadding + xOffset));
+                nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
             }
             else
             {
@@ -300,7 +300,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             }
             if(isNumber(yValue))
             {
-			    nextY = Math.round(((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor));
+			    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
             }
             else
             {
