@@ -225,7 +225,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
                 }
             }
 
-            thead.setContent(html);
+            thead.setHTML(html);
         }
 
         this.bindUI();
