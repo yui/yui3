@@ -296,7 +296,7 @@ var table = new Y.DataTable({
                         cell.addClass('spendy');
                     }
 
-                    cell.setContent('$' + o.value);
+                    cell.setHTML('$' + o.value);
                   }
                 }
             ],
@@ -333,7 +333,7 @@ var table = new Y.DataTable({
                         o.cell.addClass('spendy');
                     }
 
-                    o.cell.setContent('$' + o.value);
+                    o.cell.setHTML('$' + o.value);
 
                     return false;
                   }

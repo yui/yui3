@@ -53,7 +53,7 @@ uploader.on("uploadcomplete", function (event) {
 
     ...
 
-    fileRow.one(".serverdata").setContent(event.data);
+    fileRow.one(".serverdata").setHTML(event.data);
 });
 
 ```

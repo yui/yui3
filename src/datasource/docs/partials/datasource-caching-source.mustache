@@ -23,7 +23,7 @@ YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "d
                 var when = Y.DataType.Date.format(new Date(), {format:"%F %r"}),
                     data = Y.JSON.stringify(e.response, null, 2);
 
-                output.setContent(
+                output.setHTML(
                     "<p>[" + when + "] Retrieved from " +
                     "<strong>" + source + "</strong></p>" +
                     "<pre>" +
@@ -37,7 +37,7 @@ YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "d
                     message = /fields retrieval/.test(e.error.message) ?
                         "User not found" : e.error.message;
 
-                output.setContent(
+                output.setHTML(
                     "<p>[" + when + "] Could not retrieve data: " +
                         "<em>" + message + "</em>" +
                     "</p>");
@@ -60,7 +60,7 @@ YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "d
         var when = Y.DataType.Date.format(new Date(), {format:"%F %r"});
 
         myDataSource.cache.flush();
-        output.setContent("<p>[" + when + "] Cache cleared.</p>");
+        output.setHTML("<p>[" + when + "] Cache cleared.</p>");
     });
 
     Y.on("submit", function(e){
@@ -78,7 +78,7 @@ YUI().use("json-stringify","node", "datasource-get", "datasource-jsonschema", "d
                 callback:callback
             });
         } else {
-            output.setContent("<p>Please enter a query.</p>");
+            output.setHTML("<p>Please enter a query.</p>");
         }
     }, "#demo");
 });

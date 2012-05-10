@@ -115,7 +115,7 @@ function isRTL(lang) {
 // Default Date Format (no language specified)
 YUI().use("node", "datatype-date", function (Y) {
     
-    Y.one("#default_lang_output").setContent(
+    Y.one("#default_lang_output").setHTML(
         Y.DataType.Date.format(new Date(), {format:"%x"})
     );
 
@@ -124,7 +124,7 @@ YUI().use("node", "datatype-date", function (Y) {
 // Configure the YUI instance to use fr-FR
 YUI({lang:"fr-FR"}).use("node", "datatype-date", function (Y) {
 
-    Y.one("#single_lang_output").setContent(
+    Y.one("#single_lang_output").setHTML(
         Y.DataType.Date.format(new Date(), {format:"%x"})
     );
     
@@ -147,7 +147,7 @@ YUI().use("node", "datatype-date", function (Y) {
 
     // Listen for language change
     Y.Intl.on("intl:langChange", function(e) {
-        Y.one("#event_output").setContent('Language for "' + e.module + '" changed to "' + e.newVal + '"');
+        Y.one("#event_output").setHTML('Language for "' + e.module + '" changed to "' + e.newVal + '"');
     });
 
     Y.on("click", function(e) {
@@ -165,7 +165,7 @@ YUI().use("node", "datatype-date", function (Y) {
             var formattedDate = Y.DataType.Date.format(new Date(), {format:"%c"}),
                 rtl = isRTL(lang);
 
-            output.setContent(formattedDate)
+            output.setHTML(formattedDate)
             output.setAttribute("dir", rtl ? "rtl" : "ltr")
             output.toggleClass("rtl", rtl);
         });

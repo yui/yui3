@@ -82,7 +82,7 @@ uploader.after("fileselect", function (event) {
 
    if (uploadDone) {
      uploadDone = false;
-     fileTable.setContent("");
+     fileTable.setHTML("");
    }
    
    Y.each(fileList, function (fileInstance) {
@@ -127,7 +127,7 @@ uploader.on("uploadcomplete", function (event) {
 
 ```
 uploader.on("totaluploadprogress", function (event) {
-         Y.one("#overallProgress").setContent("Total uploaded: <strong>" + event.percentLoaded + "%" + "</strong>");
+         Y.one("#overallProgress").setHTML("Total uploaded: <strong>" + event.percentLoaded + "%" + "</strong>");
 });
 ```
 
