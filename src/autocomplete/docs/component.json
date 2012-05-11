@@ -76,6 +76,16 @@
             "tags"       : ["autocomplete", "filter", "pie"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-geocode",
+            "displayName": "Address Completion on Google's Geocoding Service",
+            "description": "How to find an address using a YQL source calling Google's Geocoding Service",
+            "modules"    : ["autocomplete"],
+            "tags"       : ["autocomplete", "yql", "geocode"],
+
+            "hideTableOfContents": true
         }
     ]
 }
