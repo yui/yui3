@@ -1,0 +1,38 @@
+<div class="intro">
+    <p>
+        This example demonstrates how to provide AutoComplete suggestions for
+        an address calling Google's Geocoding Service.
+    </p>
+    <p>
+        Geocoding is the process of converting addresses into geographic
+        coordinates. The <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API</a>
+        provides a direct way to access a geocoder via an HTTP request.
+    </p>
+    <p>
+        Google's Geocoding Service returns a JSON object literal. The service does
+        not provide a JSONP API. AutoComplete cannot use that object
+        directly for security reasons. So the workaround is calling the service
+        using YQL as source.
+    </p>
+</div>
+
+<div class="example">
+    {{>ac-geocode-html}}
+    <script>
+        {{>ac-geocode-js}}
+    </script>
+</div>
+
+<h2>Complete Example Source</h2>
+
+<h3>JavaScript</h3>
+```
+{{>ac-geocode-js}}
+```
+
+<h3>HTML</h3>
+```
+{{>ac-geocode-html}}
+```
+
+

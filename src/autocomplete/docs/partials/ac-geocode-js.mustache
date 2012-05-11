@@ -1,0 +1,81 @@
+YUI().use("autocomplete", function (Y) {
+    var acNode = Y.one('#ac-input');
+
+    acNode.plug(Y.Plugin.AutoComplete, {
+        // Highlight the first result of the list.
+        activateFirstItem: true,
+
+        // The list of the results contains up to 10 results.
+        maxResults: 10,
+
+        // To display the suggestions, the mininum of typed chars is five.
+        minQueryLength: 5,
+
+        // Number of milliseconds to wait after user input before triggering a
+        // query event. This is useful to throttle queries to a remote data
+        // source.
+        queryDelay: 500,
+
+        // Handle the list of results is mandatory, because the service can
+        // be unavailable, can return an error, one result or an array of
+        // results. However resultListLocator needs to return an array.
+        resultListLocator: function (response) {
+            var addresses;
+
+            if (response.error) {
+                return [];
+            }
+
+            addresses = response.query.results.json;
+
+            if (addresses.status !== "OK") {
+                return [];
+            }
+
+            addresses = addresses.results;
+
+            if (addresses.length > 0) {
+                return addresses;
+            }
+
+            return [addresses];
+        },
+
+        // When an item is selected, the value of the field indicated in the
+        // resultTextLocator is displayed in the input field.
+        resultTextLocator: 'formatted_address',
+
+        // {query} placeholder is encoded, but to handle correctly the spaces,
+        // the query is supposed to be encoded again.
+        // "my address" -> "...my%2520address" // OK => {request}
+        // "my address" -> "...my%20address" // KO => {query}
+        requestTemplate: function (query) {
+            return encodeURI(query);
+        },
+
+        // {request} placeholder, instead of {query} one, will insert the
+        // requestTemplate value instead of the raw query value for
+        // cases where, for instance, you actually want a double-encoded (or
+        // otherwise customized) query.
+        source: 'select * from json where ' +
+            'url="http://maps.googleapis.com/maps/api/geocode/json?' +
+            'sensor=false&' +
+            'address={request}"',
+
+        // Adjust automatically the width of the dropdown list.
+        width: 'auto'
+    });
+
+    // Adjust the width of the input container.
+    acNode.ac.after('resultsChange', function () {
+        var newWidth = this.get('boundingBox').get('offsetWidth');
+        acNode.setStyle('width', Math.max(newWidth, 100));
+    });
+
+    // Fill the lat and log fields when the user selects an item.
+    acNode.ac.on('select', function (e) {
+        Y.one("#locationLat").set('text', e.result.raw.geometry.location.lat);
+        Y.one("#locationLng").set('text', e.result.raw.geometry.location.lng);
+    });
+});
+
