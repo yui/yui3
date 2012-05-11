@@ -30,7 +30,7 @@ YUI.add('parallel-tests', function(Y) {
                 Assert.areEqual(15, counter, 'Stack did not complete properly');
             });
         },
-        test_reults: function() {
+        test_results: function() {
             var stack = new Y.Parallel(),
             counter = 0;
 
@@ -121,6 +121,36 @@ YUI.add('parallel-tests', function(Y) {
                 Assert.areEqual(0, data.length, 'Data array is not right');
                 Assert.isFunction(this.use, 'Execution context is wrong in done handler');
             }, []);
+        },
+        test_add_nofn_one_arg: function() {
+            var stack = new Y.Parallel(),
+                callback;
+
+            // Calls `add()` with no args, then calls the returned callback fn.
+            callback = stack.add();
+            callback('foo');
+
+            stack.done(function(results, data) {
+                Assert.areEqual(1, stack.finished, 'Stack did not complete properly');
+                Assert.areEqual(1, results.length, 'Results array is not right');
+                Assert.areEqual('foo', results[0], 'Results is not right');
+            });
+        },
+        test_add_nofn_two_args: function() {
+            var stack = new Y.Parallel(),
+                callback;
+
+            // Calls `add()` with no args, then calls the returned callback fn.
+            callback = stack.add();
+            callback('foo', 'bar');
+
+            stack.done(function(results, data) {
+                Assert.areEqual(1, stack.finished, 'Stack did not complete properly');
+                Assert.areEqual(1, results.length, 'Results array is not right');
+                Assert.areEqual(2, results[0].length, 'Results[0] array is not right');
+                Assert.areEqual('foo', results[0][0], 'Results[0][0] is not right');
+                Assert.areEqual('bar', results[0][1], 'Results[0][1] is not right');
+            });
         }
     });
 
