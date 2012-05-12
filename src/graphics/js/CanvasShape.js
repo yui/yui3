@@ -327,7 +327,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
                 this._strokeStyle = color;
             }
             this._linecap = linecap;
-            if(linejoin == "round" || linejoin == "square")
+            if(linejoin == "round" || linejoin == "bevel")
             {
                 this._linejoin = linejoin;
             }
