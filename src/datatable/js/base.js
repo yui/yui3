@@ -215,14 +215,338 @@ to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
 @namespace DataTable
 @since 3.5.0
 **/
-Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core],
-    null, {
-        ATTRS: {
-            // Default head and body views
-            headerView: { value: Y.DataTable.HeaderView },
-            bodyView  : { value: Y.DataTable.BodyView }
+Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
+
+
+    /**
+    The object or instance of the class assigned to `bodyView` that is
+    responsible for rendering and managing the table's `<tbody>`(s) and its
+    content.
+
+    @property body
+    @type {Object}
+    @default undefined (initially unset)
+    @since 3.5.0
+    **/
+    //body: null,
+
+    /**
+    The object or instance of the class assigned to `footerView` that is
+    responsible for rendering and managing the table's `<tfoot>` and its
+    content.
+
+    @property foot
+    @type {Object}
+    @default undefined (initially unset)
+    @since 3.5.0
+    **/
+    //foot: null,
+
+    /**
+    The object or instance of the class assigned to `headerView` that is
+    responsible for rendering and managing the table's `<thead>` and its
+    content.
+
+    @property head
+    @type {Object}
+    @default undefined (initially unset)
+    @since 3.5.0
+    **/
+    //head: null,
+
+    /**
+    Pass through to `delegate()` called from the `contentBox`.
+
+    @method delegate
+    @param type {String} the event type to delegate
+    @param fn {Function} the callback function to execute.  This function
+                 will be provided the event object for the delegated event.
+    @param spec {String|Function} a selector that must match the target of the
+                 event or a function to test target and its parents for a match
+    @param context {Object} optional argument that specifies what 'this' refers to
+    @param args* {any} 0..n additional arguments to pass on to the callback
+                 function.  These arguments will be added after the event object.
+    @return {EventHandle} the detach handle
+    @since 3.5.0
+    **/
+    delegate: function () {
+        var contentBox = this.get('contentBox');
+
+        return contentBox.delegate.apply(contentBox, arguments);
+    },
+
+    /**
+    Returns the `<td>` Node from the given row and column index.  Alternately,
+    the `seed` can be a Node.  If so, the nearest ancestor cell is returned.
+    If the `seed` is a cell, it is returned.  If there is no cell at the given
+    coordinates, `null` is returned.
+
+    Optionally, include an offset array or string to return a cell near the
+    cell identified by the `seed`.  The offset can be an array containing the
+    number of rows to shift followed by the number of columns to shift, or one
+    of "above", "below", "next", or "previous".
+
+    <pre><code>// Previous cell in the previous row
+    var cell = table.getCell(e.target, [-1, -1]);
+
+    // Next cell
+    var cell = table.getCell(e.target, 'next');
+    var cell = table.getCell(e.taregt, [0, 1];</pre></code>
+
+    This is actually just a pass through to the `view` instance's method
+    by the same name.
+
+    @method getCell
+    @param {Number[]|Node} seed Array of row and column indexes, or a Node that
+        is either the cell itself or a descendant of one.
+    @param {Number[]|String} [shift] Offset by which to identify the returned
+        cell Node
+    @return {Node}
+    @since 3.5.0
+    **/
+    getCell: function (seed, shift) {
+        return this.view && this.view.getCell &&
+            this.view.getCell.apply(this.view, arguments);
+    },
+
+    /**
+    Returns the `<tr>` Node from the given row index, Model, or Model's
+    `clientId`.  If the rows haven't been rendered yet, or if the row can't be
+    found by the input, `null` is returned.
+
+    This is actually just a pass through to the `view` instance's method
+    by the same name.
+
+    @method getRow
+    @param {Number|String|Model} id Row index, Model instance, or clientId
+    @return {Node}
+    @since 3.5.0
+    **/
+    getRow: function (id) {
+        return this.view && this.view.getRow &&
+            this.view.getRow.apply(this.view, arguments);
+    },
+
+    bindUI: function () {
+    },
+
+    _defRenderViewFn: function (e) {
+        e.view.render();
+    },
+
+    initializer: function () {
+        var preventViewRender = Y.bind('_preventViewRenderFn', this);
+
+        this.publish({
+            renderView  : { defaultFn: Y.bind('_defRenderViewFn', this) },
+            renderTable : { preventedFn: preventViewRender },
+            renderHeader: { preventedFn: preventViewRender },
+            renderBody  : { preventedFn: preventViewRender },
+            renderFooter: { preventedFn: preventViewRender }
+        });
+    },
+
+    _onViewRender: function (e) {
+        // Relay event from DataTable instance for backward compatibility
+        this.fire(e.type.replace(/.*:/, ''), {
+            originEvent: e,
+            view       : e.view
+        });
+    },
+
+    _preventViewRenderFn: function (e) {
+        e.originEvent && e.originEvent.preventDefault();
+    },
+
+    renderUI: function () {
+        var View = this.get('view');
+
+        if (View) {
+            this.view = new View(
+                Y.merge(
+                    this.getAttrs(),
+                    {
+                        model    : this,
+                        container: this.get('contentBox'),
+                        modelList: this.data
+                    },
+                    this.get('viewConfig')));
+
+            this.view.on(
+                ['renderTable', 'renderHeader', 'renderBody', 'renderFooter'],
+                this._onViewRender, this);
+
+            this.fire('renderView', { view: this.view });
         }
-    });
+    },
+
+    /**
+    Updates the UI with the current attribute state.  Fires the `renderHeader`,
+    `renderBody`, and `renderFooter` events;
+
+    @method syncUI
+    @since 3.5.0
+    **/
+    syncUI: function () {
+        this._uiSetCaption(this.get('caption'));
+        this._uiSetSummary(this.get('summary'));
+
+        if (this.view) {
+            this.fire('renderTable', { view: this.view });
+        }
+    },
+
+    /**
+    Verifies the input value is a function with a `render` method on its
+    prototype.  `null` is also accepted to remove the default View.
+
+    @method _validateView
+    @protected
+    @since 3.5.0
+    **/
+    _validateView: function (val) {
+        // TODO support View instances?
+        return val === null || (Y.Lang.isFunction(val) && val.prototype.render);
+    }
+}, {
+    ATTRS: {
+        /**
+        The View class used to render the `<table>` into the Widget's
+        `contentBox`.  This View can handle the entire table rendering itself
+        or delegate to other Views.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        When the DataTable is rendered, an instance of this View will be
+        created and its `render()` method called.  The View instance will be
+        assigned to the DataTable instance's `view` property.
+
+        @attribute view
+        @type {Function}
+        @default Y.DataTable.TableView
+        @since 3.6.0
+        **/
+        view: {
+            value: Y.DataTable.TableView,
+            validator: '_validateView'
+        },
+
+        /**
+        Configuration object passed to the class constructor in `view`
+        during render.
+
+        @attribute viewConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        viewConfig: {}
+
+        /**
+        If the View class assigned to the DataTable's `view` attribute supports
+        it, this class will be used for rendering the contents of the
+        `<thead>`&mdash;the column headers for the table.
+        
+        Similar to `view`, the instance of this View will be assigned to the
+        DataTable instance's `head` property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute headerView
+        @type {Function|Object}
+        @default Y.DataTable.HeaderView
+        @since 3.5.0
+        **/
+        /*
+        headerView: {
+            value: Y.DataTable.HeaderView,
+            validator: '_validateView'
+        },
+        */
+
+        /**
+        Configuration object passed to the class constructor in `headerView`
+        during render.
+
+        @attribute headerConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        //headConfig: {},
+
+        /**
+        If the View class assigned to the DataTable's `view` attribute supports
+        it, this class will be used for rendering the contents of the `<tfoot>`.
+        
+        Similar to `view`, the instance of this View will be assigned to the
+        DataTable instance's `foot` property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute footerView
+        @type {Function|Object}
+        @since 3.5.0
+        **/
+        /*
+        footerView: {
+            validator: '_validateView'
+        },
+        */
+
+        /**
+        Configuration object passed to the class constructor in `footerView`
+        during render.
+
+        @attribute footerConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        //footerConfig: {},
+
+        /**
+        If the View class assigned to the DataTable's `view` attribute supports
+        it, this class will be used for rendering the contents of the `<tbody>`
+        including all data rows.
+        
+        Similar to `view`, the instance of this View will be assigned to the
+        DataTable instance's `body` property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute bodyView
+        @type {Function}
+        @default Y.DataTable.BodyView
+        @since 3.5.0
+        **/
+        /*
+        bodyView: {
+            value: Y.DataTable.BodyView,
+            validator: '_validateView'
+        },
+        */
+
+        /**
+        Configuration object passed to the class constructor in `bodyView`
+        during render.
+
+        @attribute bodyConfig
+        @type {Object}
+        @default undefined (initially unset)
+        @protected
+        @since 3.6.0
+        **/
+        //bodyConfig: {}
+    }
+});
 
 // The DataTable API docs are above DataTable.Base docs.
 Y.DataTable = Y.mix(
