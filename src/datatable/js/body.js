@@ -878,10 +878,4 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     //_rowTemplate: null
-}, {
-    ATTRS: {
-        modelList: {
-            setter: '_setModelList'
-        }
-    }
 });
