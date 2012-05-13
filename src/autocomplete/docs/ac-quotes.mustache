@@ -1,0 +1,59 @@
+<style scoped>
+    #ac-input {
+        width: 30em;
+    }
+
+    .yui3-aclist {
+        width: 30em;
+    }
+</style>
+
+<div class="intro">
+    <p>
+        This example demonstrates how to provide AutoComplete suggestions for
+        a ticker: a stock symbol is a short abbreviation used to uniquely
+        identify publicly traded shares of a particular stock on a particular
+        stock market.
+    </p>
+    <p>
+        You can get a quote on <a href="http://finance.yahoo.com/">Yahoo! Finance</a>
+        by entering either the company's symbol or the company's name in the
+        "Get Quotes" box.
+    </p>
+    <p>
+        The service, provided by Yahoo! Finance to locate a ticker, needs a
+        callback with a specific name: `YAHOO.util.ScriptNodeDataSource.callbacks`.
+    </p>
+    <p>
+        The implementation shows how to overwrite the `generateRequestCallback`
+        method of the DataSource and how integrate it in the AutoComplete
+        widget.
+    </p>
+</div>
+
+<div class="example">
+    {{>ac-quotes-html}}
+    <script>
+        {{>ac-quotes-js}}
+    </script>
+</div>
+
+<h2>Complete Example Source</h2>
+
+<h3>JavaScript</h3>
+```
+{{>ac-quotes-js}}
+```
+
+<h3>HTML</h3>
+```
+{{>ac-quotes-html}}
+```
+
+<h3>CSS</h3>
+```
+{{>ac-quotes-css}}
+```
+
+
+

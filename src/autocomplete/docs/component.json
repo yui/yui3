@@ -86,6 +86,16 @@
             "tags"       : ["autocomplete", "yql", "geocode"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name"       : "ac-quotes",
+            "displayName": "Quotes Completion within Yahoo! Finance",
+            "description": "How to use the Get Quotes search to locate a ticker within Yahoo! Finance.",
+            "modules"    : ["autocomplete", "datasource-get", "datasource-jsonschema"],
+            "tags"       : ["autocomplete", "get", "quotes"],
+
+            "hideTableOfContents": true
         }
     ]
 }

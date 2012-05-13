@@ -1,0 +1,69 @@
+YUI().use("datasource-get", "datasource-jsonschema", "autocomplete", function (Y) {
+    var oDS, acNode = Y.one('#ac-input');
+
+    // It is mandatory to use a DataSource instance, instead to use directly
+    // the source in the AutoComplete widget, because the custom name of the
+    // callback.
+    oDS = new Y.DataSource.Get({
+        // The source suggesting the autocompletion for the tickers.
+        source: "http://d.yimg.com/aq/autoc?query=",
+
+        generateRequestCallback: function (id) {
+            // To create the YAHOO object it is not possible to use
+            // YUI.namespace, because, if the first token in the namespace
+            // string is "YAHOO", that API discards the token.
+            YAHOO = {};
+            YAHOO.util = {};
+            YAHOO.util.ScriptNodeDataSource = {};
+
+            // Assign to the callback the name generated for the current `id`
+            // request.
+            YAHOO.util.ScriptNodeDataSource.callbacks =
+                YUI.Env.DataSource.callbacks[id];
+
+            return "&callback=YAHOO.util.ScriptNodeDataSource.callbacks";
+        }
+    });
+
+    // Define the schema of the source.
+    oDS.plug(Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            resultListLocator: "ResultSet.Result",
+            resultFields: ["symbol", "name", "exch", "type", "exchDisp"]
+        }
+    });
+
+    acNode.plug(Y.Plugin.AutoComplete, {
+        // The list of the results contains up to 10 results.
+        maxResults: 10,
+
+        // When an item is selected, the value of the field indicated in the
+        // `resultTextLocator` is displayed in the input field.
+        resultTextLocator: 'symbol',
+
+        // Just format the results to display the ticker data.
+        resultFormatter: function (query, results) {
+            return Y.Array.map(results, function (result) {
+                var ticker = result.raw;
+
+                return ticker.symbol +
+                    " " + ticker.name +
+                    " (" + ticker.type +
+                    " - " + ticker.exch + ")";
+            });
+        },
+
+        // Complete the request with additional info.
+        requestTemplate:  "{query}&region=US&lang=en-US",
+
+        // Use the DataSource instance.
+        source: oDS
+    });
+
+    // Fill the `quoteName` field when the user selects an item.
+    acNode.ac.on('select', function (e) {
+        var name = e.result.raw.name;
+
+        Y.one('#quoteName').set('text', name);
+    });
+});
