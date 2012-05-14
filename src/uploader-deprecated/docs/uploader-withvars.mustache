@@ -32,7 +32,7 @@ uploader.on("uploadcompletedata", uploadCompleteData);
 
 ```
 function uploadCompleteData (event) {
-	Y.one("#result").setContent("Data returned from the server:<br>" + event.data);
+	Y.one("#result").setHTML("Data returned from the server:<br>" + event.data);
 }
 ```
 

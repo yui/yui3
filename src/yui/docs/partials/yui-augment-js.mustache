@@ -27,12 +27,12 @@ YUI().use('node', function(Y) {
     // add some event listeners
     foo.on('interestingMoment', function (data) {
         var p = Y.one('#demo_p1');
-        p.setContent('I was notified of an interesting moment: ' + data.statusText);
+        p.setHTML('I was notified of an interesting moment: ' + data.statusText);
     });
 
     foo.on('interestingMoment', function (data) {
         var p = Y.one('#demo_p2');
-        p.setContent('I was also notified of an interesting moment: ' + data.statusText);
+        p.setHTML('I was also notified of an interesting moment: ' + data.statusText);
     });
 
     Y.on('click', function() { 

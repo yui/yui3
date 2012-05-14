@@ -1654,7 +1654,7 @@ Y.UserView = Y.Base.create('userView', Y.View, [], {
         var user    = this.get('user'),
             content = Y.Lang.sub(this.template, {name: user.get('name')});
 
-        this.get('container').setContent(content);
+        this.get('container').setHTML(content);
         return this;
     },
 
