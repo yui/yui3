@@ -155,6 +155,20 @@ graphicTests = new Y.Test.Case({
         Y.assert(this.updatedFillColor === mycircle.get("fill").color);
     },
 
+    "test mycircle.contains()" :function()
+    {
+        var mycircle = this.mycircle,
+            node = mycircle.get("node");
+        Y.Assert.isTrue(mycircle.contains(Y.one(node)), "The contains method should return true.");
+    },
+
+    "test mycircle.compareTo()" :function()
+    {
+        var mycircle = this.mycircle,
+            node = mycircle.get("node");
+        Y.Assert.isTrue(mycircle.compareTo(node), "The compareTo method should return true.");
+    },
+
     "testRemoveShape(circle)": function()
     {
         var id,
@@ -623,6 +637,18 @@ svgTests = new Y.Test.Case({
         Y.assert(node.getAttribute("stroke-linejoin") == "round");
     },
 
+    "testSVGRectNodeStrokeLineJoinBevel" : function()
+    {
+        var myrect = this.myrect,
+            node = myrect.get("node"),
+            bevel = "bevel";
+        myrect.set("stroke", {
+            linejoin: bevel
+        });
+        Y.Assert.areEqual(bevel, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + bevel + ".");
+        Y.Assert.areEqual(bevel, node.getAttribute("stroke-linejoin"), "The value of the shape's stroke-linejoin attribute should be " + bevel + ".");
+    },
+
     "testSVGRectNodeWidthAgainstShapeAttr" : function()
     {
         var node = this.myrect.get("node");
@@ -658,6 +684,25 @@ svgTests = new Y.Test.Case({
         Y.assert(stroke.linecap == node.getAttribute("stroke-linecap"));
         Y.assert(stroke.dashstyle == node.getAttribute("stroke-dasharray"));
         Y.assert(stroke.weight == node.getAttribute("stroke-width"));
+    },
+
+    "testSVGRectNodeStrokeLineJoinMiterLimit=3" : function()
+    {
+        var myrect = this.myrect,
+            node = myrect.get("node"),
+            miterlimit = 3;
+        myrect.set("stroke", {
+            linejoin: miterlimit
+        });
+        Y.Assert.areEqual(miterlimit, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + miterlimit + ".");
+        Y.Assert.areEqual("miter", node.getAttribute("stroke-linejoin"), "The value of the shape's stroke-linejoin attribute should be miter.");
+        Y.Assert.areEqual(miterlimit, node.getAttribute("stroke-miterlimit"), "The value of the shape's stroke-miterlimit attribute should be " + miterlimit + ".");
+    },
+
+    "testSVGRect.test()" :function()
+    {
+        Y.Assert.isTrue(this.myrect.test(".yui3-svgShape"), "The compareTo method should return true.");
+        Y.Assert.isTrue(this.myrect.test(".yui3-svgRect"), "The compareTo method should return true.");
     }
 });
 
@@ -892,6 +937,39 @@ vmlTests = new Y.Test.Case({
             fill = this.myrect.get("fill"),
             toHex = Y.Color.toHex;
         Y.assert(toHex(fill.color) == toHex(node.fillcolor));
+    },
+
+    "testVMLRectNodeStrokeLineJoinBevel" : function()
+    {
+        var myrect = this.myrect,
+            node = Y.one(myrect.get("node")),
+            strokeNode = node.one("stroke"),
+            bevel = "bevel";
+        myrect.set("stroke", {
+            linejoin: bevel
+        });
+        Y.Assert.areEqual(bevel, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + bevel + ".");
+        Y.Assert.areEqual(bevel, strokeNode.get("joinstyle"), "The value of the shape's joinstyle attribute should be " + bevel + ".");
+    },
+
+    "testVMLRectNodeStrokeLineJoinMiterLimit=3" : function()
+    {
+        var myrect = this.myrect,
+            node = Y.one(myrect.get("node")),
+            strokeNode = node.one("stroke"),
+            miterlimit = 3;
+        myrect.set("stroke", {
+            linejoin: miterlimit
+        });
+        Y.Assert.areEqual(miterlimit, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + miterlimit + ".");
+        Y.Assert.areEqual("miter", strokeNode.get("joinstyle"), "The value of the shape's joinstyle attribute should be miter.");
+        Y.Assert.areEqual(miterlimit, strokeNode.get("miterlimit"), "The value of the shape's miterlimit attribute should be " + miterlimit + ".");
+    },
+
+    "testVMLRect.test()" :function()
+    {
+        Y.Assert.isTrue(this.myrect.test(".yui3-vmlShape"), "The compareTo method should return true.");
+        Y.Assert.isTrue(this.myrect.test(".yui3-vmlRect"), "The compareTo method should return true.");
     }
 });
 
@@ -1127,6 +1205,37 @@ canvasTests = new Y.Test.Case({
             height = this.myrect.get("height");
         height += weight * 2;
         Y.assert(node.getAttribute("height") == height);
+    },
+
+    "testCanvasRectNodeStrokeLineJoinBevel" : function()
+    {
+        var myrect = this.myrect,
+            context = this.context,
+            bevel = "bevel";
+        myrect.set("stroke", {
+            linejoin: bevel
+        });
+        Y.Assert.areEqual(bevel, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + bevel + ".");
+        Y.Assert.areEqual(bevel, context.lineJoin, "The value of the shape's joinstyle attribute should be " + bevel + ".");
+    },
+
+    "testCanvasRectNodeStrokeLineJoinMiterLimit=3" : function()
+    {
+        var myrect = this.myrect,
+            context = this.context,
+            miterlimit = 3;
+        myrect.set("stroke", {
+            linejoin: miterlimit
+        });
+        Y.Assert.areEqual(miterlimit, myrect.get("stroke").linejoin, "The value of the linejoin attribute should be " + miterlimit + ".");
+        Y.Assert.areEqual("miter", context.lineJoin, "The value of the shape's joinstyle attribute should be miter.");
+        Y.Assert.areEqual(miterlimit, context.miterLimit, "The value of the shape's miterlimit attribute should be " + miterlimit + ".");
+    },
+
+    "testCanvasRect.test()" :function()
+    {
+        Y.Assert.isTrue(this.myrect.test(".yui3-canvasShape"), "The compareTo method should return true.");
+        Y.Assert.isTrue(this.myrect.test(".yui3-canvasRect"), "The compareTo method should return true.");
     }
 }),
 
@@ -1327,6 +1436,184 @@ shapeSetIdUpFrontTest = function(shape)
             Y.Assert.areEqual(this.shapeId, node.id, "The id for the shape's dom element should be " + this.id + ".");
         }
     });
+},
+
+shapeGetXYTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "GetXYTest",
+
+        shapeId: "getXYShape",
+
+        shapeX: 40,
+
+        shapeY: 20,
+
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    visible: false,
+                    width: 100,
+                    height: 100,
+                    x: this.shapeX,
+                    y: this.shapeY
+                });
+        },
+
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
+
+        "testShape.getXY()" : function()
+        {
+            var shape = this.shape,
+                x = this.shapeX,
+                y = this.shapeY,
+                parentXY = Y.one("#graphiccontainer").getXY(),
+                xy = shape.getXY(),
+                testX = parentXY[0] + x,
+                testY = parentXY[1] + y;
+            Y.Assert.areEqual(testX, xy[0], "The page x for the shape instance should be " + testX + ".");
+            Y.Assert.areEqual(testY, xy[1], "The page y for the shape instance should be " + testY + ".");
+        }
+    });
+},
+
+shapeSetXYTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "SetXYTest",
+
+        shapeId: "setXYShape",
+
+        setX: 100,
+
+        setY: 80,
+
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    visible: false,
+                    width: 100,
+                    height: 100,
+                    x: 0,
+                    y: 0
+                });
+            this.shape.setXY([this.setX, this.setY]);
+        },
+
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
+
+        "testShape.setXY()" : function()
+        {
+            var shape = this.shape,
+                setX = this.setX,
+                setY = this.setY,
+                parentXY = Y.one("#graphiccontainer").getXY(),
+                xy = shape.getXY(),
+                x = xy[0],
+                y = xy[1],
+                shapeX = x - parentXY[0],
+                shapeY = y - parentXY[1];
+            Y.Assert.areEqual(setX, x, "The page x for the shape instance should be " + setX + ".");
+            Y.Assert.areEqual(setY, y, "The page y for the shape instance should be " + setY + ".");
+            Y.Assert.areEqual(shapeX, shape.get("x"), "The x attribute for the shape instance should be " + shapeX + ".");
+            Y.Assert.areEqual(shapeY, shape.get("y"), "The y attribute for the shape instance should be " + shapeY + ".");
+        }
+    });
+},
+
+shapeAddClassTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "AddClassTest",
+
+        shapeId: "addClassShape",
+
+        myCustomClass: "myCustomClass",
+
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    width: 100,
+                    y: 0
+                });
+        },
+
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
+
+        "testShape.addClass()" : function()
+        {
+            var shape = this.shape,
+                myclass = this.myCustomClass,
+                classAttribute;
+            shape.addClass(myclass);
+            classAttribute = Y.one(shape.get("node")).get("className");
+            if(classAttribute && classAttribute.baseVal)
+            {
+                classAttribute = classAttribute.baseVal;
+            }
+            Y.Assert.isTrue(classAttribute.indexOf(myclass) > -1,  "The shape node's class attribute should contain " + myclass + ".");
+        }
+    });
+},
+
+shapeRemoveClassTest = function(shape)
+{
+    return new Y.Test.Case({
+        name: shape + "RemoveClassTest",
+
+        shapeId: "removeClassShape",
+
+        myCustomClass: "myCustomClass",
+
+        setUp: function () {
+            Y.one("body").append('<div id="testbed"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+            this.graphic = new Y.Graphic({render: "#graphiccontainer"});
+            this.shape = this.graphic.addShape({
+                    type: shape,
+                    width: 100,
+                    y: 0
+                });
+            this.shape.addClass(this.myCustomClass);
+        },
+
+        tearDown: function () {
+            this.graphic.destroy();
+            Y.one("#testbed").remove(true);
+        },
+
+        "testShape.removeClass()" : function()
+        {
+            var shape = this.shape,
+                myclass = this.myCustomClass,
+                classAttribute;
+            shape.removeClass(myclass);
+            classAttribute = Y.one(shape.get("node")).get("className");
+            if(classAttribute && classAttribute.baseVal)
+            {
+                classAttribute = classAttribute.baseVal;
+            }
+            Y.Assert.isTrue(classAttribute.indexOf(myclass) === -1,  "The shape node's class attribute should not contain " + myclass + ".");
+        }
+    });
 };
 
 suite.add(graphicTests);
@@ -1340,6 +1627,18 @@ suite.add(shapeSetIdUpFrontTest("rect"));
 suite.add(shapeSetIdUpFrontTest("circle"));
 suite.add(shapeSetIdUpFrontTest("ellipse"));
 suite.add(standaloneShape);
+suite.add(shapeGetXYTest("rect"));
+suite.add(shapeGetXYTest("circle"));
+suite.add(shapeGetXYTest("ellipse"));
+suite.add(shapeSetXYTest("rect"));
+suite.add(shapeSetXYTest("circle"));
+suite.add(shapeSetXYTest("ellipse"));
+suite.add(shapeAddClassTest("rect"));
+suite.add(shapeAddClassTest("circle"));
+suite.add(shapeAddClassTest("ellipse"));
+suite.add(shapeRemoveClassTest("rect"));
+suite.add(shapeRemoveClassTest("circle"));
+suite.add(shapeRemoveClassTest("ellipse"));
 
 if(ENGINE == "svg")
 {

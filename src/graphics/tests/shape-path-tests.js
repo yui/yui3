@@ -174,8 +174,136 @@ drawDiamondTest = function(name, attrs)
             Y.Assert.areEqual(h, mypath.get("height"), "The height of the path should be " + h + ".");
         }
     });
-};
+},
 
+drawMultipleRectsTest = function(name, attrs) 
+{
+    return new Y.PathTestTemplate({}, {
+        pathAttrs: attrs,
+
+        testDefault: function()
+        {
+            var w = 30,
+                h = 20,
+                x = -40,
+                y = -30,
+                i = 0,
+                len = 4,
+                strokeWidth = this.stroke ? this.stroke.weight : 0;
+                mypath = this.path;
+            mypath.clear();
+            for(; i < len; ++i)
+            {
+                x += 40;
+                y += 30;
+                mypath.drawRect(x, y, w, h);
+                mypath.closePath();
+            }
+            mypath.end();
+            w = w + x;
+            h = h + y;
+            Y.Assert.areEqual(w, mypath.get("width"), "The width of the path should be " + w + ".");
+            Y.Assert.areEqual(h, mypath.get("height"), "The height of the path should be " + h + ".");
+        }
+    });
+},
+
+drawMultipleEllipsesTest = function(name, attrs) 
+{
+    return new Y.PathTestTemplate({}, {
+        pathAttrs: attrs,
+
+        testDefault: function()
+        {
+            var w = 30,
+                h = 20,
+                x = -40,
+                y = -30,
+                i = 0,
+                len = 4,
+                strokeWidth = this.stroke ? this.stroke.weight : 0;
+                mypath = this.path;
+            mypath.clear();
+            for(; i < len; ++i)
+            {
+                x += 40;
+                y += 30;
+                mypath.drawEllipse(x, y, w, h);
+                mypath.closePath();
+            }
+            mypath.end();
+            w = w + x;
+            h = h + y;
+            Y.Assert.areEqual(w, mypath.get("width"), "The width of the path should be " + w + ".");
+            Y.Assert.areEqual(h, mypath.get("height"), "The height of the path should be " + h + ".");
+        }
+    });
+},
+
+drawMultipleCirclesTest = function(name, attrs) 
+{
+    return new Y.PathTestTemplate({}, {
+        pathAttrs: attrs,
+
+        testDefault: function()
+        {
+            var w = 30,
+                h = 30,
+                x = -40,
+                y = -40,
+                i = 0,
+                len = 4,
+                strokeWidth = this.stroke ? this.stroke.weight : 0;
+                mypath = this.path;
+            mypath.clear();
+            for(; i < len; ++i)
+            {
+                x += 40;
+                y += 40;
+                mypath.drawCircle(x, y, w/2);
+                mypath.closePath();
+            }
+            mypath.end();
+            w = w + x;
+            h = h + y;
+            Y.Assert.areEqual(w, mypath.get("width"), "The width of the path should be " + w + ".");
+            Y.Assert.areEqual(h, mypath.get("height"), "The height of the path should be " + h + ".");
+        }
+    });
+},
+
+drawMultipleDiamondsTest = function(name, attrs) 
+{
+    return new Y.PathTestTemplate({}, {
+        pathAttrs: attrs,
+
+        testDefault: function()
+        {
+            var w = 30,
+                h = 20,
+                x = -40,
+                y = -30,
+                i = 0,
+                len = 4,
+                strokeWidth = this.stroke ? this.stroke.weight : 0;
+                mypath = this.path;
+            mypath.clear();
+            for(; i < len; ++i)
+            {
+                x += 40;
+                y += 30;
+                mypath.drawDiamond(x, y, w, h);
+                mypath.closePath();
+            }
+            mypath.end();
+            w = w + x;
+            h = h + y;
+            Y.Assert.areEqual(w, mypath.get("width"), "The width of the path should be " + w + ".");
+            Y.Assert.areEqual(h, mypath.get("height"), "The height of the path should be " + h + ".");
+        }
+    });
+};
+ 
 suite.add(drawRectTest("DrawRectTestStrokeAndFill", strokeAndFill));
 suite.add(drawRectTest("DrawRectTestStrokeNoFill", strokeNoFill));
 suite.add(drawRectTest("DrawRectTestFillNoStroke", fillNoStroke));
@@ -191,6 +319,18 @@ suite.add(drawRoundRectTest("DrawRoundRectTestFillNoStroke", fillNoStroke));
 suite.add(drawDiamondTest("DrawDiamondTestStrokeAndFill", strokeAndFill));
 suite.add(drawDiamondTest("DrawDiamondTestStrokeNoFill", strokeNoFill));
 suite.add(drawDiamondTest("DrawDiamondTestFillNoStroke", fillNoStroke));
+suite.add(drawMultipleRectsTest("DrawMultipleRectsTestStrokeAndFill", strokeAndFill));
+suite.add(drawMultipleRectsTest("DrawMultipleRectsTestStrokeNoFill", strokeNoFill));
+suite.add(drawMultipleRectsTest("DrawMultipleRectsTestFillNoStroke", fillNoStroke));
+suite.add(drawMultipleEllipsesTest("DrawMultipleEllipsesTestStrokeAndFill", strokeAndFill));
+suite.add(drawMultipleEllipsesTest("DrawMultipleEllipsesTestStrokeNoFill", strokeNoFill));
+suite.add(drawMultipleEllipsesTest("DrawMultipleEllipsesTestFillNoStroke", fillNoStroke));
+suite.add(drawMultipleCirclesTest("DrawMultipleCirclesTestStrokeAndFill", strokeAndFill));
+suite.add(drawMultipleCirclesTest("DrawMultipleCirclesTestStrokeNoFill", strokeNoFill));
+suite.add(drawMultipleCirclesTest("DrawMultipleCirclesTestFillNoStroke", fillNoStroke));
+suite.add(drawMultipleDiamondsTest("DrawMultipleDiamondsTestStrokeAndFill", strokeAndFill));
+suite.add(drawMultipleDiamondsTest("DrawMultipleDiamondsTestStrokeNoFill", strokeNoFill));
+suite.add(drawMultipleDiamondsTest("DrawMultipleDiamondsTestFillNoStroke", fillNoStroke));
 
 Y.Test.Runner.add( suite );
 
