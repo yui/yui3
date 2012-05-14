@@ -30,7 +30,7 @@ HomePageView = Y.Base.create('homePageView', Y.View, [], {
 
         // Adds the "home-page" CSS class to aid styling and sets the resulting
         // HTML as the contents of this view's container.
-        this.get('container').addClass('home-page').setContent(content);
+        this.get('container').addClass('home-page').setHTML(content);
 
         return this;
     },

@@ -195,10 +195,10 @@ YUI().use('anim', 'dd-drag', 'graphics', 'cssbutton', function(Y){
 
     // Puts current XY values of points into displayed code snippet
     var updateCodeSnippetValues = function(){
-        Y.one('.arr0').setContent(arrDot[0][0] + ',' + arrDot[0][1]); // Start       
-        Y.one('.arr1').setContent(arrDot[1][0] + ',' + arrDot[1][1]); // Control point 1     
-        Y.one('.arr2').setContent(arrDot[2][0] + ',' + arrDot[2][1]); // Control point 2       
-        Y.one('.arr3').setContent(arrDot[3][0] + ',' + arrDot[3][1]); // End        
+        Y.one('.arr0').setHTML(arrDot[0][0] + ',' + arrDot[0][1]); // Start       
+        Y.one('.arr1').setHTML(arrDot[1][0] + ',' + arrDot[1][1]); // Control point 1     
+        Y.one('.arr2').setHTML(arrDot[2][0] + ',' + arrDot[2][1]); // Control point 2       
+        Y.one('.arr3').setHTML(arrDot[3][0] + ',' + arrDot[3][1]); // End        
     }
     
     /** 
