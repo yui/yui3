@@ -69,41 +69,41 @@ YUI().use("overlay", function(Y) {
     var steps = [
         function() {
             /* Align top-left corner of overlay, with top-right corner of #align1 */
-            alignment.setContent(declareA + 'overlay.set("align", {<br>    node: "#align1",<br>    points: [a.TL, a.TR]<br>});');
-            descr.setContent('Align top-left corner of overlay, with top-right corner of #align1');
+            alignment.setHTML(declareA + 'overlay.set("align", {<br>    node: "#align1",<br>    points: [a.TL, a.TR]<br>});');
+            descr.setHTML('Align top-left corner of overlay, with top-right corner of #align1');
             Y.one('#align1').addClass('aligned-to');
             overlay.set("align", {node:"#align1", points: [a.TL, a.TR]});
         },
         function() {
             /* Center overlay in #align2 */
-            alignment.setContent(dontDeclareA + 'overlay.set("centered", "#align2");');
-            descr.setContent('Center overlay in #align2 <br>(an image)');
+            alignment.setHTML(dontDeclareA + 'overlay.set("centered", "#align2");');
+            descr.setHTML('Center overlay in #align2 <br>(an image)');
             Y.one('#align2').addClass('aligned-to');
             overlay.set("centered", "#align2");
         },
         function() {
             /* Align top-center edge of overlay with bottom-center edge of #align3 */
-            alignment.setContent(declareA + 'overlay.set("align", {<br>    node: "#align3",<br>    points: [a.TC, a.BC]<br>});');
-            descr.setContent('Align top-center edge of overlay with bottom-center edge of #align3');
+            alignment.setHTML(declareA + 'overlay.set("align", {<br>    node: "#align3",<br>    points: [a.TC, a.BC]<br>});');
+            descr.setHTML('Align top-center edge of overlay with bottom-center edge of #align3');
             Y.one('#align3').addClass('aligned-to');
             overlay.set("align", {node:"#align3", points:[a.TC, a.BC]});
         },
         function() {
             /* Align right-center edge of overlay with right-center edge of viewport */
-            alignment.setContent(declareA + 'overlay.set("align", {<br>    points: [a.RC, a.RC]<br>});');
-            descr.setContent('Align right-center edge of overlay with right-center edge of viewport');
+            alignment.setHTML(declareA + 'overlay.set("align", {<br>    points: [a.RC, a.RC]<br>});');
+            descr.setHTML('Align right-center edge of overlay with right-center edge of viewport');
             overlay.set("align", {points:[a.RC, a.RC]});
         },
         function() {
             /* Center overlay in viewport */
-            alignment.setContent(dontDeclareA + 'overlay.set("centered", true);');
-            descr.setContent('Center overlay in viewport');
+            alignment.setHTML(dontDeclareA + 'overlay.set("centered", true);');
+            descr.setHTML('Center overlay in viewport');
             overlay.set("centered", true);
         },
         function() {
             /* Center in #overlay-align */
-            alignment.setContent(declareA + 'overlay.set("align", {<br>    node: "#overlay-align",<br>    points: [a.CC, a.CC]<br>});');
-            descr.setContent('Center in #overlay-align');
+            alignment.setHTML(declareA + 'overlay.set("align", {<br>    node: "#overlay-align",<br>    points: [a.CC, a.CC]<br>});');
+            descr.setHTML('Center in #overlay-align');
             Y.one('#overlay-align').addClass('aligned-to');
             overlay.set("align", {node:"#overlay-align", points:[a.CC, a.CC]});
         }
@@ -113,7 +113,7 @@ YUI().use("overlay", function(Y) {
     var totalSteps = steps.length;
 
     function alignNext() {
-        stepNumber.setContent((step+1) + " of " + totalSteps);
+        stepNumber.setHTML((step+1) + " of " + totalSteps);
         Y.all('.aligned-to').removeClass('aligned-to');
         steps[step]();
         step = (++step)%(totalSteps);

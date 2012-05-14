@@ -13,7 +13,7 @@
         var merged = Y.merge(set1, set2, set3);
         Y.log('merged = ' + Y.dump(merged));
 
-        result.setContent(Y.dump(merged));
+        result.setHTML(Y.dump(merged));
     };
 
     Y.on('click', doMerge, '#demo_btn1');

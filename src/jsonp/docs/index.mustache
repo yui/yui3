@@ -68,7 +68,7 @@ var url = "http://example.com/service.php?callback={callback}";
 
 function handleJSONP(response) {
     // response is a JavaScript object. No parsing necessary
-    Y.one("#output").setContent(response.outputHTML);
+    Y.one("#output").setHTML(response.outputHTML);
 }
 
 Y.jsonp(url, handleJSONP);
@@ -253,7 +253,7 @@ Y.jsonp(url, {
 
 ```
 Y.MyApp.handleJSONP = function (data) {
-    Y.one("#output").setContent(data.outputHTML);
+    Y.one("#output").setHTML(data.outputHTML);
 };
 
 Y.jsonp("http://example.com/service.php?callback=Y.MyApp.handleJSONP");

@@ -34,7 +34,7 @@ YUI().use("dump", "node", "dataschema-text", function (Y) {
                 fieldDelimiter: ",",
                 resultFields: [{key:"product"}, {key:"quantity"}, {key:"detail"}] // Or simply: ["product", "quantity", "detail"]
             };
-        Y.one("#demo_output").setContent(Y.dump(Y.DataSchema.Text.apply(schema, data_in)));
+        Y.one("#demo_output").setHTML(Y.dump(Y.DataSchema.Text.apply(schema, data_in)));
     }, "#demo_apply");
 });
 </script>

@@ -70,7 +70,7 @@ YUI().use("json-stringify", "node", "datasource-get", "datasource-jsonschema", f
             callback: {
                 success: function(e){
                     Y.one("#demo_output_json")
-                        .setContent("<pre>" +
+                        .setHTML("<pre>" +
                             Y.JSON.stringify(e.response, null, 4)
                                 .replace(/&/g,"&amp;")
                                 .replace(/</g,"&lt;")
@@ -79,7 +79,7 @@ YUI().use("json-stringify", "node", "datasource-get", "datasource-jsonschema", f
                 },
                 failure: function(e){
                     Y.one("#demo_output_json")
-                        .setContent("Could not retrieve data: " + e.error.message);
+                        .setHTML("Could not retrieve data: " + e.error.message);
                 }
             }
         });
