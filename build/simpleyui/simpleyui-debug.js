@@ -453,7 +453,11 @@ proto = {
             el = doc.createElement('div');
             el.innerHTML = '<div id="' + CSS_STAMP_EL + '" style="position: absolute !important; visibility: hidden !important"></div>';
             YUI.Env.cssStampEl = el.firstChild;
-            docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
+            if (doc.body) {
+                doc.body.appendChild(YUI.Env.cssStampEl);
+            } else {
+                docEl.insertBefore(YUI.Env.cssStampEl, docEl.firstChild);
+            }
         }
 
         Y.config.lang = Y.config.lang || 'en-US';
