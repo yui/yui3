@@ -1,6 +1,6 @@
 RepoView = Y.Base.create('repoView', Y.View, [], {
     // Compiles the Repo Template into a reusable Handlebars template.
-    template: Y.Handlebars.compile(Y.one('#t-repo').getContent()),
+    template: Y.Handlebars.compile(Y.one('#t-repo').getHTML()),
 
     render: function () {
         // Retrieves all of the model instance's data as a simple JSON struct.

@@ -1,6 +1,6 @@
 ContributorListView = Y.Base.create('contributorListView', Y.View, [], {
     // Compiles the ContributorList Template into a reusable Handlebars template.
-    template: Y.Handlebars.compile(Y.one('#t-contributor-list').getContent()),
+    template: Y.Handlebars.compile(Y.one('#t-contributor-list').getHTML()),
 
     render: function () {
         var contributors = this.get('modelList'),
