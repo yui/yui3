@@ -85,7 +85,7 @@
                 Y.DD.DDM._noShim = true;
                 this.set('currentNode', tar);
                 dd.set('node', tar);
-                if (config.dragNode) {
+                if (config && config.dragNode) {
                     dNode = config.dragNode;
                 } else if (dd.proxy) {
                     dNode = Y.DD.DDM._proxy;
