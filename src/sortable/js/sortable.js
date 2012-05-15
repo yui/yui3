@@ -99,9 +99,7 @@
         _onDropOver: function(e) {
             if (!e.drop.get(NODE).test(this.get(NODES))) {
                 var nodes = e.drop.get(NODE).all(this.get(NODES));
-                if (nodes.size() === 0) {
-                    e.drop.get(NODE).append(e.drag.get(NODE));
-                }
+                e.drop.get(NODE).append(e.drag.get(NODE));
             }
         },
         /**
