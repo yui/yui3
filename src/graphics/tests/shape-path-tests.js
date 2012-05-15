@@ -230,6 +230,29 @@ drawCubicCurvesTest = function(name, attrs)
     });
 },
 
+drawWedgeTest = function(name, attrs) 
+{
+    return new Y.PathTestTemplate({}, {
+        pathAttrs: attrs,
+
+        testDefault: function()
+        {
+            var radius = 200,
+                circum = 400,
+                arc = 90,
+                x = 200,
+                y = 200,
+                strokeWidth = this.stroke ? this.stroke.weight : 0;
+                mypath = this.path;
+            mypath.clear();
+            mypath.drawWedge(x, y, 0, arc, radius);
+            mypath.end();
+            Y.Assert.areEqual(circum, mypath.get("width"), "The width of the path should be " + circum + ".");
+            Y.Assert.areEqual(circum, mypath.get("height"), "The height of the path should be " + circum + ".");
+        }
+    });
+},
+
 drawMultipleRectsTest = function(name, attrs) 
 {
     return new Y.PathTestTemplate({}, {
@@ -428,6 +451,9 @@ suite.add(drawQuadraticCurvesTest("DrawQuadraticCurvesTestFillNoStroke", fillNoS
 suite.add(drawCubicCurvesTest("DrawCubicCurvesTestStrokeAndFill", strokeAndFill));
 suite.add(drawCubicCurvesTest("DrawCubicCurvesTestStrokeNoFill", strokeNoFill));
 suite.add(drawCubicCurvesTest("DrawCubicCurvesTestFillNoStroke", fillNoStroke));
+suite.add(drawWedgeTest("DrawWedgeTestStrokeAndFill", strokeAndFill));
+suite.add(drawWedgeTest("DrawWedgeTestStrokeNoFill", strokeNoFill));
+suite.add(drawWedgeTest("DrawWedgeTestFillNoStroke", fillNoStroke));
 
 Y.Test.Runner.add( suite );
 

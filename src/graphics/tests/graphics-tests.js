@@ -340,6 +340,26 @@ graphicTests = new Y.Test.Case({
         Y.assert(this.updatedFillColor === myellipse.get("fill").color);
     },
 
+    "test myellipse.set(xRadius)" : function()
+    {
+        var myellipse = this.myellipse,
+            xRadius = 40,
+            width = 80;
+        myellipse.set("xRadius", xRadius);
+        Y.Assert.areEqual(xRadius, myellipse.get("xRadius"), "The xRadius of the ellipse should be " + xRadius + ".");
+        Y.Assert.areEqual(width, myellipse.get("width"), "The width of the ellipse should be " + width + ".");
+    },
+
+    "test myellipse.set(yRadius)" : function()
+    {
+        var myellipse = this.myellipse,
+            yRadius = 40,
+            height = 80;
+        myellipse.set("yRadius", yRadius);
+        Y.Assert.areEqual(yRadius, myellipse.get("yRadius"), "The yRadius of the ellipse should be " + yRadius + ".");
+        Y.Assert.areEqual(height, myellipse.get("height"), "The height of the ellipse should be " + height + ".");
+    },
+
     "test removeShape(ellipse)" : function()
     {
         var id,
@@ -348,6 +368,32 @@ graphicTests = new Y.Test.Case({
         graphic.removeShape(this.myellipse);
         hasShape = (shapes.hasOwnProperty(id) && shapes[id] instanceof Y.Ellipse);
         Y.Assert.isFalse(hasShape);
+    },
+    
+    "test addEllipseWithXRadiusAndYRadius()": function()
+    {
+        var width = 50,
+            height = 100,
+            xRadius = 25,
+            yRadius = 50,
+            myellipse = graphic.addShape({
+                type: "ellipse",
+                stroke: {
+                    color: this.initialStrokeColor,
+                    weight: 2
+                },
+                fill: {
+                    color: this.initialFillColor
+                },
+                xRadius: xRadius,
+                yRadius: yRadius
+            });
+        Y.assert(myellipse instanceof Y.Ellipse);
+        Y.Assert.areEqual(xRadius, myellipse.get("xRadius"), "The xRadius of the ellipse should be " + xRadius + ".");
+        Y.Assert.areEqual(width, myellipse.get("width"), "The width of the ellipse should be " + width + ".");
+        Y.Assert.areEqual(yRadius, myellipse.get("yRadius"), "The yRadius of the ellipse should be " + yRadius + ".");
+        Y.Assert.areEqual(height, myellipse.get("height"), "The height of the ellipse should be " + height + ".");
+        myellipse.destroy();
     },
 
     "test addShape(path)": function()
