@@ -17,6 +17,11 @@ Custom Event Infrastructure Change History
    this property, please file a ticket with the use case, and we'll look at 
    addressing the use case formally, while not impacting GC.
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 

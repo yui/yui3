@@ -988,7 +988,7 @@ YUI.add('dial', function(Y) {
 
          */
         _setLabelString : function(str) {
-            this.get("contentBox").one("." + Dial.CSS_CLASSES.labelString).setContent(str);
+            this.get("contentBox").one("." + Dial.CSS_CLASSES.labelString).setHTML(str);
         },
 
         /**
@@ -1000,9 +1000,9 @@ YUI.add('dial', function(Y) {
          * @deprecated Use DialObjName.set('strings',{'resetStr':'My new reset string'});   before DialObjName.render();
          */
         _setResetString : function(str) {
-             this.get("contentBox").one("." + Dial.CSS_CLASSES.resetString).setContent(str);
+             this.get("contentBox").one("." + Dial.CSS_CLASSES.resetString).setHTML(str);
             // this._setXYResetString(); // This used to recenter the string in the button. Done with CSS now. Method has been removed.
-            // this._resetString.setContent(''); //We no longer show/hide the reset string with setContent but by addClass and removeClass .yui3-dial-reset-string-hidden
+            // this._resetString.setHTML(''); //We no longer show/hide the reset string with setHTML but by addClass and removeClass .yui3-dial-reset-string-hidden
         },
 
         /**
@@ -1250,7 +1250,7 @@ YUI.add('dial', function(Y) {
                 this._setNodeToFixedRadius(this._handleNode, false);
                 this._prevAng = this._getAngleFromValue(this.get('value'));
             }
-            this._valueStringNode.setContent(val.toFixed(this.get('decimalPlaces'))); // [#2530045]
+            this._valueStringNode.setHTML(val.toFixed(this.get('decimalPlaces'))); // [#2530045]
             this._handleNode.set('aria-valuenow', val);
             this._handleNode.set('aria-valuetext', val);
             this._setNodeToFixedRadius(this._markerNode, false);
@@ -1288,5 +1288,4 @@ YUI.add('dial', function(Y) {
     Y.Dial = Dial;
 
 
-
-}, '@VERSION@' ,{requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'event-key', 'transition', 'intl'], lang:['en','es' ], skinnable:true});
+}, '@VERSION@' ,{lang:['en','es' ], skinnable:true, requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'event-key', 'transition', 'intl']});

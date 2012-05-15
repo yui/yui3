@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.05.02-20-10',
+            GALLERY_VERSION = 'gallery-2012.05.09-20-27',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -1624,10 +1624,19 @@ Y.Loader.prototype = {
             Y.log('isCSSLoaded was skipped for ' + name, 'warn', 'loader');
             return false;
         }
-
+        if (!YUI.Env._cssLoaded) {
+            YUI.Env._cssLoaded = {};
+        }
         var el = YUI.Env.cssStampEl,
             ret = false,
+            mod = YUI.Env._cssLoaded[name],
             style = el.currentStyle; //IE
+
+        
+        if (mod !== undefined) {
+            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            return mod;
+        }
 
         //Add the classname to the element
         el.className = name;
@@ -1643,6 +1652,9 @@ Y.Loader.prototype = {
         Y.log('Has Skin? ' + name + ' : ' + ret, 'info', 'loader');
 
         el.className = ''; //Reset the classname to ''
+
+        YUI.Env._cssLoaded[name] = ret;
+
         return ret;
     },
 
@@ -4729,12 +4741,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "resize-base"
         ]
     }, 
-    "rls": {
-        "requires": [
-            "get", 
-            "features"
-        ]
-    }, 
     "router": {
         "optional": [
             "querystring-parse"
@@ -5174,14 +5180,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "yui-rls": {}, 
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f5a3bc9bda2441a3b15fb52c567fc1f7';
+YUI.Env[Y.version].md5 = 'cbef8048f9a9861bf3d45fa1526688c7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

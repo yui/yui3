@@ -1,0 +1,205 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style type="text/css">
+    body {
+        xbackground: #000;
+        font-family: arial, sans-serif;
+        font-size: 13px;
+    }
+    </style>
+</head>
+<body>
+    <!--button id="add">Add a row</button>
+    <button id="remove">Remove a row</button>
+    <button id="modify">Modify a row</button>
+    <button id="addcol">Add a column</button>
+    <button id="removecol">Remove a column</button>
+    <button id="modifycol">Modify a column</button>
+    <button id="modifywidth">Modify width</button>
+    <button id="sort">Sort</button>
+    <button id="showmessage">Show Message</button>
+    <button id="hidemessage">Hide Message</button>
+    <button id="seethru">Transparent headers</button-->
+
+    <!--div id="log"></div-->
+
+    <div class="yui3-skin-sam">
+
+        <h4>Basic table</h4>
+        <div id="basic"></div>
+
+        <h4>Sortable table</h4>
+        <div id="sortable"></div>
+
+        <h4>Vertically scrolling table</h4>
+        <div id="y-scroll"></div>
+
+        <h4>Horizontally scrolling table</h4>
+        <div id="x-scroll"></div>
+
+        <h4>Fully scrolling table</h4>
+        <div id="xy-scroll"></div>
+
+        <h4>Table with nested headers</h4>
+        <div id="nested-headers"></div>
+
+        <h4>Table mutation</h4>
+        <div id="mutation">
+            <div>
+                <button id="add">Add a row</button>
+                <button id="remove">Remove a row</button>
+                <button id="modify">Modify a row</button>
+                <button id="addcol">Add a column</button>
+                <button id="removecol">Remove a column</button>
+                <button id="modifycol">Modify a column</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <!--script src="build/yui/yui.js"></script-->
+    <script>
+    YUI({
+        filter: 'raw'
+    }).use(
+        'datatable', 'datatable-scroll',
+        //'datatable-sort', 'datatable-mutable', 'datatable-message',
+        //'datasource-io', 'datatable-datasource', 'datasource-jsonschema', 
+        function (Y) {
+
+        var data = [], i;
+        for (i = 0; i < 10; ++i) {
+            data.push({
+                apples   : 'Apple '  + Math.round(Math.random() * 100),
+                bananas  : 'Banana ' + Math.round(Math.random() * 100),
+                carrots  : 'Carrot ' + Math.round(Math.random() * 100),
+                daikon   : 'Daikon ' + Math.round(Math.random() * 100),
+                eggs     : 'Egg '    + Math.round(Math.random() * 100),
+                fennel   : 'Fennel ' + Math.round(Math.random() * 100),
+                guacamole: 'Guac '   + Math.round(Math.random() * 100)
+            });
+        }
+
+        var basic = new Y.DataTable({
+            data: data.slice(0,5),
+            columns: ['apples', 'bananas', 'carrots'],
+            caption: "Basic DataTable"
+        }).render('#basic');
+
+        var sortable = new Y.DataTable({
+            data: data.slice(0, 5),
+            sortable: true,
+            columns: ['apples', 'bananas', 'carrots'],
+            caption: "Sortable DataTable"
+        }).render('#sortable');
+
+        var yScroll = new Y.DataTable({
+            data: data,
+            scrollable: 'y',
+            height: '250px',
+            columns: ['apples', 'bananas', 'carrots'],
+            caption: 'Vertically scrolling table'
+        }).render('#y-scroll');
+
+        var xScroll = new Y.DataTable({
+            data: data.slice(0, 5),
+            scrollable: 'x',
+            width: '500px',
+            columns: ['apples', 'bananas', 'carrots', 'daikon', 'eggs', 'fennel', 'guacamole'],
+            caption: 'Horizontally scrolling table'
+        }).render('#x-scroll');
+
+        var xyScroll = new Y.DataTable({
+            data: data,
+            scrollable: 'xy',
+            height: '250px',
+            width: '500px',
+            columns: ['apples', 'bananas', 'carrots', 'daikon', 'eggs', 'fennel', 'guacamole'],
+            caption: 'Fully scrolling table'
+        }).render('#xy-scroll');
+
+        var basic = new Y.DataTable({
+            data: data,
+            caption: 'Nested headers',
+            columns: [
+                {
+                    key: 'apples',
+                    label: 'Apples',
+                    width: '150px',
+                    sortFn: function (a, b) {
+                        a = +a.get('apples').replace(/\D/g, ''),
+                        b = +b.get('apples').replace(/\D/g, '');
+
+                        return (a > b) ? 1 : (a < b) ? -1 : 0;
+                    }
+                },
+                { label: "Parent of B and C", children: [
+                    { key: 'bananas' },
+                    { key: 'carrots' }
+                ]},
+                { label: "Parent of D through G", children: [
+                    { label: 'Parent of D and E', children: [
+                        { key: 'daikon' },
+                        { key: 'eggs', xwidth: '200px' }
+                    ]},
+                    { label: 'Parent of F and G', children: [
+                        'fennel', 'guacamole'
+                    ]}
+                ]}
+            ]
+        }).render('#nested-headers');
+
+        var mutable = new Y.DataTable({
+            data: data,
+            columns: ['apples', 'bananas', 'carrots'],
+            caption: 'Mutable table'
+        }).render('#mutation');
+
+        Y.one('#add').on('click', function () {
+            mutable.addRow({
+                apples: 'Jan Comstock',
+                bananas: '1234',
+                carrots: 'The Diaries of Phil Collins',
+                daikon: 'What?',
+                eggs: 'scrambled',
+                fennel: 'raw, 2tbsp',
+                guacamole: 'For the chips!'
+            });
+        });
+
+        Y.one('#remove').on('click', function () {
+            mutable.removeRow(0);
+        });
+
+        Y.one('#modify').on('click', function () {
+            mutable.modifyRow(0, { apples: 'MOAR DAIKON!' });
+        });
+
+        Y.one('#addcol').on('click', function () {
+            mutable.addColumn({
+                key: 'daikon',
+                formatter: function (o) {
+                    return ('' + o.value).toUpperCase();
+                }
+            });
+        });
+
+        Y.one('#removecol').on('click', function () {
+            mutable.removeColumn(1);
+        });
+
+        Y.one('#modifycol').on('click', function () {
+            mutable.modifyColumn(0, {
+                allowHTML: true,
+                formatter: function (o) {
+                    return ('<strong>' + o.value).toLowerCase() + '</strong>';
+                }
+            });
+        });
+
+    });
+    </script>
+</body>
+</html>

@@ -15,7 +15,7 @@
     
     // handle the textarea keyup: put text in dialog, and update code snippet
     Y.one('#test-controls textarea').on('keyup', function(e){
-        Y.one('#dialog .message').setContent(Y.Escape.html(e.target.get('value')));
+        Y.one('#dialog .message').setHTML(Y.Escape.html(e.target.get('value')));
     });
     
     

@@ -1,6 +1,13 @@
 Widget Change History
 =====================
 
+3.6.0
+-----
+
+ * Widget no longer runs html parser against the default contentBox created from
+   CONTENT_TEMPLATE, so that html parser implementations don't need to check for 
+   null results for missing nodes.
+
 3.5.1
 -----
 

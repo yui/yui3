@@ -403,7 +403,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         this._createRowTemplate(columns);
 
         if (tbody && data) {
-            tbody.setContent(this._createDataHTML(columns));
+            tbody.setHTML(this._createDataHTML(columns));
 
             this._applyNodeFormatters(tbody, columns);
         }

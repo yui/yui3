@@ -4,7 +4,6 @@
     "description": "YUI 3 Source",
     "author": "Dav Glass <davglass@gmail.com>",
     "bugs": { "url" : "http://yuilibrary.com/projects/yui3/" },
-    "os": ["darwin", "linux", "win32"],
     "engines": {
         "node" : ">=0.4.0"
     },

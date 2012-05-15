@@ -77,7 +77,7 @@ YUI().use("dump", "node", "dataschema-array", function (Y) {
             schema = {
                 resultFields: [{key:"make"}, {key:"model"}, {key:"year"}] // Or simply: ["make", "model", "year"]
             };
-        Y.one("#demo_output_objects").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+        Y.one("#demo_output_objects").setHTML(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
     }, "#demo_apply_objects");
 
     Y.on("click", function(e){
@@ -87,7 +87,7 @@ YUI().use("dump", "node", "dataschema-array", function (Y) {
             schema = {
                 resultFields: [{key:"make"}, {key:"model"}, {key:"year"}] // Or simply: ["make", "model", "year"]
             };
-        Y.one("#demo_output_arrays").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+        Y.one("#demo_output_arrays").setHTML(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
     }, "#demo_apply_arrays");
 
     Y.on("click", function(e){
@@ -95,7 +95,7 @@ YUI().use("dump", "node", "dataschema-array", function (Y) {
             schema = {
                 resultFields: [{key:"make"}, {key:"model"}, {key:"year"}] // Or simply: ["make", "model", "year"]
             };
-        Y.one("#demo_output_simple").setContent(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
+        Y.one("#demo_output_simple").setHTML(Y.dump(Y.DataSchema.Array.apply(schema, data_in)));
     }, "#demo_apply_simple");
 });
 </script>

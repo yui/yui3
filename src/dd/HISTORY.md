@@ -1,18 +1,26 @@
 Drag and Drop Change History
 ============================
 
-### 3.5.0
+3.5.1
+-----
+
+  * No changes.
+
+3.5.0
+-----
 
 * 2530257 Avoid interference of Drag and Nodes Event Handles
 * 2531377 shim is not created if dd-ddm is loaded after the first drag is activated
 * 2531674 Issue with drag and drop and drop:hit event
 
 
-### 3.4.1
+3.4.1
+-----
 
 * No changes.
 
-### 3.4.0
+3.4.0
+-----
 
 * #2529889 Example for Delegate Drag and Drop has wrong parameters
 * #2529905 Using DDNodeScroll with DDDelegate causes JS error in Safari
@@ -21,7 +29,8 @@ Drag and Drop Change History
 * #2530576 change notest needed in history file
 
 
-### 3.3.0
+3.3.0
+-----
 
 * #2529382 DD Delegate breaks when a draggable is nested and uses a handle
 * #2529407 Add tickAlignX and tickAlignY events to Y.Plugin.DDConstrained
@@ -33,7 +42,8 @@ Drag and Drop Change History
 * #2529577 Slider thumb frozen on mousedown+mousemove in IE9
 
 
-### 3.2.0
+3.2.0
+-----
 
 **IMPORTANT** dd-plugin and dd-plugin-drop are no longer bundled with the dd module. They are
 now official plugins and need to be "used" on their own.
@@ -49,7 +59,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2529094 DD hard codes CSS prefix
 
 
-### 3.1.0
+3.1.0
+-----
 
 * #2527964 DD constrain2node cached position causes misalignment when that node is moved
 * #2528229 Configuration to override region caching in Constrain plugin
@@ -69,7 +80,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2528613 dragNode XY not sync with the mouse if it has its dimensions changed on drag:start
 
 
-### 3.0.0
+3.0.0
+-----
 
 * #2528096 Updated initialization routine so plugins load before DD attachs to the node.
 * #2528119 Added SELECT selector to invalidHandles.
@@ -77,7 +89,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2528149 Fixed _noShim use case
 
 
-### 3.0.0 Beta1
+3.0.0 Beta1
+-----------
 
 Added a plugin to support Window and Node based scrolling
 
@@ -127,12 +140,14 @@ Current - Constrained:
 Converted Everything to use setXY now that FF2 is not supported.
 Performance tweaks to dragging over a target.
 
-### 3.0.0 PR2
+3.0.0 PR2
+---------
 
 Added bubbles config option to help with extending later.
 Updated _checkRegion to perform Bottom, Top, Left, Right validation instead of Top, Bottom, Left, Right
 
-### 3.0.0 PR1
+3.0.0 PR1
+---------
 
 Known Issues:
 
