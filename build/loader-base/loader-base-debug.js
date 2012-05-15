@@ -1624,10 +1624,19 @@ Y.Loader.prototype = {
             Y.log('isCSSLoaded was skipped for ' + name, 'warn', 'loader');
             return false;
         }
-
+        if (!YUI.Env._cssLoaded) {
+            YUI.Env._cssLoaded = {};
+        }
         var el = YUI.Env.cssStampEl,
             ret = false,
+            mod = YUI.Env._cssLoaded[name],
             style = el.currentStyle; //IE
+
+        
+        if (mod !== undefined) {
+            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            return mod;
+        }
 
         //Add the classname to the element
         el.className = name;
@@ -1643,6 +1652,9 @@ Y.Loader.prototype = {
         Y.log('Has Skin? ' + name + ' : ' + ret, 'info', 'loader');
 
         el.className = ''; //Reset the classname to ''
+
+        YUI.Env._cssLoaded[name] = ret;
+
         return ret;
     },
 

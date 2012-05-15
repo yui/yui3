@@ -1611,10 +1611,18 @@ Y.Loader.prototype = {
         if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
             return false;
         }
-
+        if (!YUI.Env._cssLoaded) {
+            YUI.Env._cssLoaded = {};
+        }
         var el = YUI.Env.cssStampEl,
             ret = false,
+            mod = YUI.Env._cssLoaded[name],
             style = el.currentStyle; //IE
+
+        
+        if (mod !== undefined) {
+            return mod;
+        }
 
         //Add the classname to the element
         el.className = name;
@@ -1629,6 +1637,9 @@ Y.Loader.prototype = {
 
 
         el.className = ''; //Reset the classname to ''
+
+        YUI.Env._cssLoaded[name] = ret;
+
         return ret;
     },
 
