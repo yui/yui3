@@ -37,7 +37,7 @@ UserPageView = Y.Base.create('userPageView', Y.View, [], {
         // Adds the "user-page" CSS class to aid styling and sets the document
         // fragment containing the two rendered sub-views as the contents of
         // this view's container.
-        this.get('container').addClass('user-page').setContent(content);
+        this.get('container').addClass('user-page').setHTML(content);
 
         return this;
     }

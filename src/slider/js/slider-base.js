@@ -119,7 +119,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         this.thumb = this.renderThumb();
 
         this.rail.appendChild( this.thumb );
-        // @TODO: insert( contentBox, 'replace' ) or setContent?
+        // @TODO: insert( contentBox, 'replace' ) or setHTML?
         contentBox.appendChild( this.rail );
 
         // <span class="yui3-slider-x">

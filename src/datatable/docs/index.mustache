@@ -454,7 +454,7 @@ YUI().use('datatable-base', function (Y) {
                         'after');
                 }
 
-                o.cell.setContent(prefix + profit.toFixed(2));
+                o.cell.setHTML(prefix + profit.toFixed(2));
             }
         }
     ];
@@ -2309,7 +2309,7 @@ nodeFormatter: function (o) {
             'after');
     }
 
-    o.cell.setContent(o.value);
+    o.cell.setHTML(o.value);
 }
 ```
 

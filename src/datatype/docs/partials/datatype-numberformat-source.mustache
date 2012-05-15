@@ -34,7 +34,7 @@ YUI().use("node", "datatype-number", "escape", function (Y) {
             output += "(Invalid number)"
         }
 
-        Y.one("#demo_output").setContent(Y.Escape.html(output));
+        Y.one("#demo_output").setHTML(Y.Escape.html(output));
     }
 
     Y.one("#demo").on("submit", updateNumber);

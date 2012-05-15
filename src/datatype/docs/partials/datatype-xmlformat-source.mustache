@@ -12,7 +12,7 @@ YUI().use("node", "datatype-xml", function (Y) {
         if(output === "") {
             output += "(Invalid XML document)"
         }
-        Y.one("#demo_output").setContent(output.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
+        Y.one("#demo_output").setHTML(output.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
     }, "#demo_btn");
 });
 </script>

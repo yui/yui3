@@ -14,7 +14,7 @@ UserView = Y.Base.create('userView', Y.View, [], {
         // Applies the `User` model data to the User Template and sets the
         // resulting HTML as the contents of this view's container.
         content = this.template(user);
-        this.get('container').setContent(content);
+        this.get('container').setHTML(content);
 
         return this;
     }

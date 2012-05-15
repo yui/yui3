@@ -42,7 +42,7 @@ YUI().use("node", "io", "dump", "json-parse", function (Y) {
                 }
 
                 // Use the Node API to apply the new innerHTML to the target
-                target.setContent(html);
+                target.setHTML(html);
             },
 
             failure : function (x,o) {
