@@ -445,7 +445,8 @@ CanvasDrawing.prototype = {
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        var segs,
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
+            segs,
             segAngle,
             theta,
             angle,
@@ -506,8 +507,8 @@ CanvasDrawing.prototype = {
             // close the wedge by drawing a line to the center
             this._updateDrawingQueue(["lineTo", x, y]);
         }
-        this._trackSize(0 , 0);
-        this._trackSize(radius * 2, radius * 2);
+        this._trackSize(0 - wt , 0 - wt);
+        this._trackSize((radius * 2) + wt, (radius * 2) + wt);
         return this;
     },
     
@@ -2237,7 +2238,54 @@ Y.extend(CanvasEllipse, CanvasShape, {
 		this._closePath();
 	}
 });
-CanvasEllipse.ATTRS = CanvasShape.ATTRS;
+CanvasEllipse.ATTRS = Y.merge(CanvasShape.ATTRS, {
+	/**
+	 * Horizontal radius for the ellipse. 
+	 *
+	 * @config xRadius
+	 * @type Number
+	 */
+	xRadius: {
+		setter: function(val)
+		{
+			this.set("width", val * 2);
+		},
+
+		getter: function()
+		{
+			var val = this.get("width");
+			if(val) 
+			{
+				val *= 0.5;
+			}
+			return val;
+		}
+	},
+
+	/**
+	 * Vertical radius for the ellipse. 
+	 *
+	 * @config yRadius
+	 * @type Number
+	 * @readOnly
+	 */
+	yRadius: {
+		setter: function(val)
+		{
+			this.set("height", val * 2);
+		},
+
+		getter: function()
+		{
+			var val = this.get("height");
+			if(val) 
+			{
+				val *= 0.5;
+			}
+			return val;
+		}
+	}
+});
 Y.CanvasEllipse = CanvasEllipse;
 /**
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Circle.html">`Circle`</a> class. 
