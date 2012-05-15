@@ -235,7 +235,15 @@ YUI.add('dd-scroll', function(Y) {
             if (nl < 0) {
                 nl = xy[0];
             }
+            if (ho.con) {
+                if (!ho.con.inRegion([nl + sl, nt + st])) {
+                    move = false;
+                }
+            }
             if (move) {
+                ho.actXY = [nl, nt];
+                ho._alignNode([nl, nt], true); //We are srolling..
+                xy = ho.actXY;
                 ho.actXY = [nl, nt];
                 ho._moveNode({ node: win, top: st, left: sl});
                 if (!st && !sl) {
@@ -416,4 +424,4 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false, optional:['dd-proxy']});
+}, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});
