@@ -765,7 +765,7 @@ Y.extend(Widget, Y.Base, {
      * @return Node
      */
     _setBB: function(node) {
-        return this._setBox(this.get(ID), node, this.BOUNDING_TEMPLATE);
+        return this._setBox(this.get(ID), node, this.BOUNDING_TEMPLATE, true);
     },
 
     /**
@@ -777,7 +777,7 @@ Y.extend(Widget, Y.Base, {
      * @return Node
      */
     _setCB: function(node) {
-        return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
+        return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE, false);
     },
 
     /**
@@ -803,13 +803,27 @@ Y.extend(Widget, Y.Base, {
      * @param {String} id The node's id attribute
      * @param {Node|String} node The node reference
      * @param {String} template HTML string template for the node
+     * @param {boolean} true if this is the boundingBox, false if it's the contentBox
      * @return {Node} The node
      */
-    _setBox : function(id, node, template) {
-        node = Node.one(node) || Node.create(template);
+    _setBox : function(id, node, template, isBounding) {
+
+        node = Node.one(node);
+
+        if (!node) {
+            node = Node.create(template);
+
+            if (isBounding) {
+                this._bbFromTemplate = true;
+            } else {
+                this._cbFromTemplate = true;
+            }
+        }
+
         if (!node.get(ID)) {
             node.set(ID, id || Y.guid());
         }
+
         return node;
     },
 
@@ -1251,4 +1265,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});
