@@ -188,9 +188,13 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragStart event and initializes some settings.
         */
         _onDragStart: function(e) {
-            this.delegate.get('lastNode').setStyle(ZINDEX, '');
-            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
-            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '999');
+            var del = this.delegate,
+                lastNode = del.get('lastNode');
+            if (lastNode && lastNode.getDOMNode()) {
+                lastNode.setStyle(ZINDEX, '');
+            }
+            del.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
+            del.get(CURRENT_NODE).setStyle(ZINDEX, '999');
         },
         /**
         * @private
