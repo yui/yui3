@@ -76,11 +76,43 @@ suite.add(new Y.Test.Case({
             // should not throw
         });
 
+        Y.each([1], function(v, k) {
+            count++;
+        });
+
         Y.each({ foo: 1 }, function(v, k) {
             count++;
         });
 
-        Assert.areEqual(1, count);
+        Assert.areEqual(2, count);
+    },
+
+    test_some: function () {
+        var count = 0;
+
+        Y.some(null, function(v, k) {
+            // should not throw
+        });
+
+        Y.some('string', function(v, k) {
+            // should not throw
+        });
+
+        Y.some(12345, function(v, k) {
+            // should not throw
+        });
+
+        Y.some([1,2], function(v, k) {
+            count++;
+            return v == 1;
+        });
+
+        Y.some({ foo: 1, bar: 2 }, function(v, k) {
+            count++;
+            return v == 1;
+        });
+
+        Assert.areEqual(2, count);
     },
 
     test_extend: function () {
