@@ -443,7 +443,8 @@ CanvasDrawing.prototype = {
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        var segs,
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
+            segs,
             segAngle,
             theta,
             angle,
@@ -504,8 +505,8 @@ CanvasDrawing.prototype = {
             // close the wedge by drawing a line to the center
             this._updateDrawingQueue(["lineTo", x, y]);
         }
-        this._trackSize(0 , 0);
-        this._trackSize(radius * 2, radius * 2);
+        this._trackSize(0 - wt , 0 - wt);
+        this._trackSize((radius * 2) + wt, (radius * 2) + wt);
         return this;
     },
     

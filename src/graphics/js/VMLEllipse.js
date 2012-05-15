@@ -26,14 +26,12 @@ Y.extend(VMLEllipse, Y.VMLShape, {
 	_type: "oval"
 });
 VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
-	//
-	// Horizontal radius for the ellipse. This attribute is not implemented in Canvas.
-    // Will add in 3.4.1.
-	//
-	// @config xRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Horizontal radius for the ellipse. 
+	 *
+	 * @config xRadius
+	 * @type Number
+	 */
 	xRadius: {
 		lazyAdd: false,
 
@@ -52,14 +50,13 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 		}
 	},
 
-	//
-	// Vertical radius for the ellipse. This attribute is not implemented in Canvas. 
-    // Will add in 3.4.1.
-	//
-	// @config yRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Vertical radius for the ellipse. 
+	 *
+	 * @config yRadius
+	 * @type Number
+	 * @readOnly
+	 */
 	yRadius: {
 		lazyAdd: false,
 		
