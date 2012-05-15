@@ -4,7 +4,7 @@
     <title>Widget Test Suite</title>
 
     <script src="../../../build/yui/yui.js"></script>
-    <!--script src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui.js"></script-->
+    <!--script src="http://yui.yahooapis.com/3.5.1/build/yui/yui.js"></script-->
 
     <style type="text/css">
         #testConsole .yui3-console-entry {
@@ -1713,10 +1713,7 @@
                     // FIXME: Ideally we should be able to do a this.get("titleNode") here. However,
                     // HTML_PARSER is called during widget initializer, when sub-class attrs aren't yet configured
                     // Moving all attribute set up to before all initializers, should allow us to do this.
-                    var labelHolder = srcNode.one("> h1");
-                    if (labelHolder) { 
-                        return labelHolder.get("text");
-                    }
+                    return srcNode.one("> h1").get("text");
                 },
                 listNodes: ["> ul > li"],
                 titleNode: "> h1"
@@ -1848,6 +1845,35 @@
                 Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
                 Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
 
+                w.destroy();
+            },
+            
+            "testHTMLParserWithContentBox" : function() {
+
+                // HTML to Parse
+                var markup = Y.Node.create('<div id="customWidgetContent"><h1>My Label</h1><ul><li>Item1</li><li>Item2</li></ul></div>');
+                Y.Node.one("body").append(markup);
+
+                var w = new MyCustomWidget({
+                    contentBox: "#customWidgetContent"
+                });
+
+                Y.Assert.areEqual("My Label", w.get("label"), "label not picked up from markup");
+                Y.Assert.areEqual("h1", w.get("titleNode").get("tagName").toLowerCase(), "titleNode not picked up from markup");
+
+                Y.Assert.areEqual(2, w.get("listNodes").size(), "listNodes count does not match markup");
+
+                Y.Assert.areSame("li", w.get("listNodes").item(0).get("tagName").toLowerCase(), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("li", w.get("listNodes").item(1).get("tagName").toLowerCase(), "listNode 1 not picked up from markup");
+
+                Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
+                Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
+            },
+            
+            "testHTMLParserWithNoSrcNodeOrContentBox" : function() {
+                var w = new MyCustomWidget();
                 w.destroy();
             },
             
@@ -2143,6 +2169,7 @@
                     w1,
                     w2;
 
+                // Should be sync, because widget is already on the page
                 Y1 = YUI().use('widget', function (Y1) {
 
                     w1 = new Y1.Widget({render:true});
@@ -2152,6 +2179,7 @@
                         actualEvents.push("clickOuter");
                     });
     
+                    // Should be sync, because widget is already on the page
                     Y2 = YUI().use('widget', function (Y2) {
     
                         w2 = new Y2.Widget({render:".w2-container"});
@@ -2171,11 +2199,17 @@
                 w1.destroy();
                 w2.destroy();
 
-                Y1.destroy();
-                Y2.destroy();
+                // Destroying Y instances throws errors when re-using modules which have conditionally loaded parts.
+                // Looks like a setTimeout() is being introduced to the use. Need to look into, but it's not 
+                // related to this test. The lines below are effectively an async tearDown.
+                this.wait(function() {
+                    Y1.destroy();
+                    Y2.destroy();
+                }, 0);
             },
 
             testPublishDefaultFn : function() {
+                
                 var w = new Y.Widget({
                         render:true
                     }),
@@ -2340,10 +2374,10 @@
             runButton.set("value", "Run Tests"); 
             runButton.set("disabled", false).on("click", function() {
                 if (!testConsole) {
-                    
+
                     // This test should be ignored if Console is instantiated.
                     coreTests._should.ignore.testDetachFocusOnLastWidgetDestroy = true;
-                    
+
                     testConsole = new Y.Console({
                         id:"testConsole",
                         width:"100%",
