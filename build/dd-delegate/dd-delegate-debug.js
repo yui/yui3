@@ -78,18 +78,21 @@ YUI.add('dd-delegate', function(Y) {
         */
         _delMouseDown: function(e) {
             var tar = e.currentTarget,
-                dd = this.dd;
+                dd = this.dd,
+                dNode = tar,
+                config = this.get('dragConfig');
             
             if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
                 this.set('currentNode', tar);
                 dd.set('node', tar);
-                if (dd.proxy) {
-                    dd.set('dragNode', Y.DD.DDM._proxy);
-                } else {
-                    dd.set('dragNode', tar);
+                if (config.dragNode) {
+                    dNode = config.dragNode;
+                } else if (dd.proxy) {
+                    dNode = Y.DD.DDM._proxy;
                 }
+                dd.set('dragNode', dNode);
                 dd._prep();
                 
                 dd.fire('drag:mouseDown', { ev: e });
