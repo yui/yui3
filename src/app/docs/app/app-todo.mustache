@@ -293,7 +293,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     // template for this view. In this case, we'll use it to store the
     // contents of the #todo-stats-template element, which will serve as the
     // template for the statistics displayed at the bottom of the list.
-    template: Y.one('#todo-stats-template').getContent(),
+    template: Y.one('#todo-stats-template').getHTML(),
 
     // The initializer runs when a TodoAppView instance is created, and gives
     // us an opportunity to set up the view.
@@ -485,7 +485,7 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 
     // The template property holds the contents of the #todo-item-template
     // element, which will be used as the HTML template for each todo item.
-    template: Y.one('#todo-item-template').getContent(),
+    template: Y.one('#todo-item-template').getHTML(),
 
     initializer: function () {
         // The model property is set to a TodoModel instance by TodoAppView when

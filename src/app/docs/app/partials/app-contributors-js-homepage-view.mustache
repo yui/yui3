@@ -1,6 +1,6 @@
 HomePageView = Y.Base.create('homePageView', Y.View, [], {
     // Compiles the HomePage Template into a reusable Handlebars template.
-    template: Y.Handlebars.compile(Y.one('#t-home').getContent()),
+    template: Y.Handlebars.compile(Y.one('#t-home').getHTML()),
 
     // Attach DOM events for the view. The `events` object is a mapping of
     // selectors to an object containing one or more events to attach to the
