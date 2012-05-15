@@ -15,57 +15,70 @@ var L            = Y.Lang,
     hasOwn   = OP.hasOwnProperty,
     toString = OP.toString;
 
-function dispatch(o, f, c, proto, action) {
-    if (o && o[action] && o !== Y) {
-        return o[action].call(o, f, c);
-    } else {
-        switch (A.test(o)) {
-            case 1:
-                return A[action](o, f, c);
-            case 2:
-                return A[action](Y.Array(o, 0, true), f, c);
-            default:
-                return Y.Object[action](o, f, c, proto);
-        }
+/**
+ * Executes the named action for a collection by dispatching the call to
+ * either the object, Y.Object, or Y.Array, as appropriate.
+ * 
+ * @method dispatchIterator
+ * @param {String} name of the function to call
+ * @param {Array|Object} array or object to iterate
+ * @param {Mixed} ... arguments to pass to the function
+ * @return {Mixed} whatever the function returns
+ */
+Y.dispatchIterator = function(action, o) {
+    var args = A(arguments, 1, true);
+    switch (A.test(o)) {
+        case 1:     // array
+            return A[action].apply(null, args);
+        case 2:     // array-like
+            args[0] = A(o, 0, true);
+            return A[action].apply(null, args);
+        default:    // something else
+            if (o && o[action] && o !== Y) {
+                args.shift();
+                return o[action].apply(o, args);
+            } else {
+                return Y.Object[action].apply(null, args);
+            }
     }
-}
+};
 
 /**
-Augments the _receiver_ with prototype properties from the _supplier_. The
-receiver may be a constructor function or an object. The supplier must be a
-constructor function.
-
-If the _receiver_ is an object, then the _supplier_ constructor will be called
-immediately after _receiver_ is augmented, with _receiver_ as the `this` object.
-
-If the _receiver_ is a constructor function, then all prototype methods of
-_supplier_ that are copied to _receiver_ will be sequestered, and the
-_supplier_ constructor will not be called immediately. The first time any
-sequestered method is called on the _receiver_'s prototype, all sequestered
-methods will be immediately copied to the _receiver_'s prototype, the
-_supplier_'s constructor will be executed, and finally the newly unsequestered
-method that was called will be executed.
-
-This sequestering logic sounds like a bunch of complicated voodoo, but it makes
-it cheap to perform frequent augmentation by ensuring that suppliers'
-constructors are only called if a supplied method is actually used. If none of
-the supplied methods is ever used, then there's no need to take the performance
-hit of calling the _supplier_'s constructor.
-
-@method augment
-@param {Function|Object} receiver Object or function to be augmented.
-@param {Function} supplier Function that supplies the prototype properties with
-  which to augment the _receiver_.
-@param {Boolean} [overwrite=false] If `true`, properties already on the receiver
-  will be overwritten if found on the supplier's prototype.
-@param {String[]} [whitelist] An array of property names. If specified,
-  only the whitelisted prototype properties will be applied to the receiver, and
-  all others will be ignored.
-@param {Array|any} [args] Argument or array of arguments to pass to the
-  supplier's constructor when initializing.
-@return {Function} Augmented object.
-@for YUI
-**/
+ * Augments the _receiver_ with prototype properties from the _supplier_. The
+ * receiver may be a constructor function or an object. The supplier must be a
+ * constructor function.
+ * 
+ * If the _receiver_ is an object, then the _supplier_ constructor will be called
+ * immediately after _receiver_ is augmented, with _receiver_ as the `this` object.
+ * 
+ * If the _receiver_ is a constructor function, then all prototype methods of
+ * _supplier_ that are copied to _receiver_ will be sequestered, and the
+ * _supplier_ constructor will not be called immediately. The first time any
+ * sequestered method is called on the _receiver_'s prototype, all sequestered
+ * methods will be immediately copied to the _receiver_'s prototype, the
+ * _supplier_'s constructor will be executed, and finally the newly unsequestered
+ * method that was called will be executed.
+ * 
+ * This sequestering logic sounds like a bunch of complicated voodoo, but it makes
+ * it cheap to perform frequent augmentation by ensuring that suppliers'
+ * constructors are only called if a supplied method is actually used. If none of
+ * the supplied methods is ever used, then there's no need to take the performance
+ * hit of calling the _supplier_'s constructor.
+ * 
+ * @method augment
+ * @param {Function|Object} receiver Object or function to be augmented.
+ * @param {Function} supplier Function that supplies the prototype properties with
+ *   which to augment the _receiver_.
+ * @param {Boolean} [overwrite=false] If `true`, properties already on the receiver
+ *   will be overwritten if found on the supplier's prototype.
+ * @param {String[]} [whitelist] An array of property names. If specified,
+ *   only the whitelisted prototype properties will be applied to the receiver, and
+ *   all others will be ignored.
+ * @param {Array|any} [args] Argument or array of arguments to pass to the
+ *   supplier's constructor when initializing.
+ * @return {Function} Augmented object.
+ * @for YUI
+ */
 Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
     var rProto    = receiver.prototype,
         sequester = rProto && supplier,
@@ -210,7 +223,7 @@ Y.extend = function(r, s, px, sx) {
  * @return {YUI} the YUI instance.
  */
 Y.each = function(o, f, c, proto) {
-    return dispatch(o, f, c, proto, 'each');
+    return Y.dispatchIterator('each', o, f, c, proto);
 };
 
 /**
@@ -229,7 +242,7 @@ Y.each = function(o, f, c, proto) {
  * false otherwise.
  */
 Y.some = function(o, f, c, proto) {
-    return dispatch(o, f, c, proto, 'some');
+    return Y.dispatchIterator('some', o, f, c, proto);
 };
 
 /**
