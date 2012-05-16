@@ -996,13 +996,13 @@
                     Y.ObjectAssert.areEqual(expectedVals, h.getAttrs());
                 },
 
-                testModifiedAttrs : function() {
+                testGetChangedAttrs : function() {
                     var h = this.createHost();
 
                     h.setAttrs({
-                        A: "MyNewAVal",
-                        C: "MyNewCVal",
-                        D: "MyNewDVal"
+                        A : "MyNewAVal",
+                        C : "MyNewCVal",
+                        D : "MyNewDVal"
                     });
 
                     var expectedVals = {
@@ -1011,6 +1011,58 @@
                     };
 
                     Y.ObjectAssert.areEqual(expectedVals, h.getAttrs(true));
+                },
+
+                testSetAttrsChangeEvent : function() {
+
+                    var h = this.createHost(),
+
+                        afterListenerCalled = false,
+
+                        expectedChanged = {
+                            A : {
+                                newVal: "MyNewAVal",
+                                prevVal: "AVal",
+                                attrName: "A",
+                                subAttrName: undefined
+                            },
+                            B : {
+                                newVal: "MyNewBVal",
+                                prevVal: undefined,
+                                attrName: "B",
+                                subAttrName: undefined
+                            },
+                            C : {
+                                newVal : "MyNewCVal",
+                                prevVal: undefined,
+                                attrName: "C",
+                                subAttrName: undefined
+                            }
+                        };
+
+                    h.after("attrChange", function(e) {
+                        var changed = e.changed;
+
+                        afterListenerCalled = true;
+
+                        Y.Assert.areEqual(3, Y.Object.size(changed));
+                        Y.ObjectAssert.areEqual(changed.A , expectedChanged.A);
+                        Y.ObjectAssert.areEqual(changed.B , expectedChanged.B);
+                        Y.ObjectAssert.areEqual(changed.C , expectedChanged.C);
+
+                        Y.Assert.areEqual("UI", e.src);
+                    });
+
+                    h.setAttrs({
+                        A : "MyNewAVal",
+                        B : "MyNewBVal",
+                        C : "MyNewCVal",
+                        D : "MyNewDVal"
+                    }, {
+                        src : "UI"
+                    });
+
+                    Y.Assert.isTrue(afterListenerCalled);
                 },
 
                 testValidation : function() {

@@ -92,6 +92,58 @@
         },
 
         /**
+         * Implementation behind the public setAttrs method, to set multiple attribute values.
+         *
+         * @method _setAttrs
+         * @protected
+         * @param {Object} attrs  An object with attributes name/value pairs.
+         * @return {Object} A reference to the host object.
+         * @chainable
+         */
+        _setAttrs : function(attrs, opts) {
+
+            var transaction,
+                attr,
+                e,
+                changed;
+
+            opts = opts || {};
+            opts._tx = {};
+
+            for (attr in attrs) {
+                if (attrs.hasOwnProperty(attr)) {
+                    this._setAttr(attr, attrs[attr], opts);
+                }
+            }
+
+            transaction = opts._tx;
+
+            if (!Y.Object.isEmpty(transaction)) {
+
+                changed = [];
+
+                for (attr in transaction) {
+                    if (transaction.hasOwnProperty(attr)) {
+                        e = transaction[attr];
+    
+                        changed[attr] =  {
+                            attrName : e.attrName,
+                            subAttrName : e.subAttrName,
+                            newVal : e.newVal,
+                            prevVal : e.prevVal
+                        };
+                    }
+                }
+
+                opts.changed = changed;
+
+                this.fire(this._attrChangeEvent, opts);
+            }
+
+            return this;
+        },
+
+        /**
          * Utility method to help setup the event payload and fire the attribute change event.
          * 
          * @method _fireAttrChange
@@ -153,14 +205,22 @@
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            var attrName = e.attrName;
+
+            if (!this._setAttrVal(attrName, e.subAttrName, e.prevVal, e.newVal)) {
                 Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
-                e.newVal = this.get(e.attrName);
+                e.newVal = this.get(attrName);
+
+                if (e._tx) {
+                    e._tx[attrName] = e;
+                }
             }
-        }
+        },
+
+        _attrChangeEvent : "attrChange"
     };
 
     // Basic prototype augment - no lazy constructor invocation.
