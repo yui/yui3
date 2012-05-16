@@ -390,13 +390,11 @@ CanvasDrawing.prototype = {
     drawRect: function(x, y, w, h) {
         var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
-        this._updateDrawingQueue(["moveTo", x, y]);
-        this._updateDrawingQueue(["lineTo", x + w, y]);
-        this._updateDrawingQueue(["lineTo", x + w, y + h]);
-        this._updateDrawingQueue(["lineTo", x, y + h]);
-        this._updateDrawingQueue(["lineTo", x, y]);
-        this._trackSize(x - wt, y - wt);
-        this._trackSize(x + w + wt, y + h + wt);
+        this.moveTo(x, y);
+        this.lineTo(x + w, y);
+        this.lineTo(x + w, y + h);
+        this.lineTo(x, y + h);
+        this.lineTo(x, y);
         return this;
     },
 
@@ -414,18 +412,15 @@ CanvasDrawing.prototype = {
     drawRoundRect: function(x, y, w, h, ew, eh) {
         var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
-        this._updateDrawingQueue(["moveTo", x, y + eh]);
-        this._updateDrawingQueue(["lineTo", x, y + h - eh]);
-        this._updateDrawingQueue(["quadraticCurveTo", x, y + h, x + ew, y + h]);
-        this._updateDrawingQueue(["lineTo", x + w - ew, y + h]);
-        this._updateDrawingQueue(["quadraticCurveTo", x + w, y + h, x + w, y + h - eh]);
-        this._updateDrawingQueue(["lineTo", x + w, y + eh]);
-        this._updateDrawingQueue(["quadraticCurveTo", x + w, y, x + w - ew, y]);
-        this._updateDrawingQueue(["lineTo", x + ew, y]);
-        this._updateDrawingQueue(["quadraticCurveTo", x, y, x, y + eh]);
-        this._trackSize(x - wt, y - wt);
-        this._trackSize(x + w + wt, y + h + wt);
-        this._updateCoords(w, h);
+        this.moveTo( x, y + eh);
+        this.lineTo(x, y + h - eh);
+        this.quadraticCurveTo(x, y + h, x + ew, y + h);
+        this.lineTo(x + w - ew, y + h);
+        this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+        this.lineTo(x + w, y + eh);
+        this.quadraticCurveTo(x + w, y, x + w - ew, y);
+        this.lineTo(x + ew, y);
+        this.quadraticCurveTo(x, y, x, y + eh);
         return this;
     },
     
