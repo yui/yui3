@@ -38,6 +38,8 @@ graphicTests = new Y.Test.Case({
     updatedFillColor: "#9aa",
 
     updatedStrokeColor: "#99a",
+    
+    dashstyle: "3 7",
 
     skewX: 45,
 
@@ -256,6 +258,28 @@ graphicTests = new Y.Test.Case({
         });
 
         Y.assert(this.updatedFillColor === myrect.get("fill").color);
+    },
+
+    "test myrect.set(stroke===0)" : function()
+    {
+        var myrect = this.myrect,
+            wt = 0;
+        myrect.set("stroke", {
+            weight: wt
+        });
+        Y.Assert.areEqual(wt, myrect.get("stroke").weight, "The stroke weight should be " + wt + ".");
+    },
+
+    "test myrect.set(stroke-dashstyle)" : function()
+    {
+        var myrect = this.myrect,
+            dashstyle = this.dashstyle.split(' ');
+        myrect.set("stroke", {
+            weight: 2,
+            dashstyle: dashstyle
+        });
+        dashstyle = dashstyle.toString();
+        Y.Assert.areEqual(dashstyle, myrect.get("stroke").dashstyle.toString(), "The dashstyle should be " + dashstyle + ".");
     },
 
     "test removeShape(rect)" : function()
@@ -747,8 +771,31 @@ svgTests = new Y.Test.Case({
 
     "testSVGRect.test()" :function()
     {
-        Y.Assert.isTrue(this.myrect.test(".yui3-svgShape"), "The compareTo method should return true.");
-        Y.Assert.isTrue(this.myrect.test(".yui3-svgRect"), "The compareTo method should return true.");
+        var myrect = this.myrect;
+        Y.Assert.isTrue(myrect.test(".yui3-svgShape"), "The compareTo method should return true.");
+        Y.Assert.isTrue(myrect.test(".yui3-svgRect"), "The compareTo method should return true.");
+        myrect.destroy();
+    },
+    
+    "test addSVGPieSlice()" : function()
+    {
+        var pieslice = graphic.addShape({
+            type: "pieslice",
+            stroke: {
+                weight: 1,
+                color: this.initialStrokeColor
+            },
+            fill: {
+                color: this.initialFillColor
+            },
+            width: 420,
+            height: 420,
+            cx: 210,
+            cy: 210,
+            radius: 210,
+            arc: 90
+        });
+        Y.Assert.isTrue(pieslice instanceof Y.SVGPieSlice, "The shape should be an instance of Y.PieSlice.");
     }
 });
 
@@ -1016,6 +1063,28 @@ vmlTests = new Y.Test.Case({
     {
         Y.Assert.isTrue(this.myrect.test(".yui3-vmlShape"), "The compareTo method should return true.");
         Y.Assert.isTrue(this.myrect.test(".yui3-vmlRect"), "The compareTo method should return true.");
+        this.myrect.destroy();
+    },
+    
+    "test addVMLPieSlice()" : function()
+    {
+        var pieslice = graphic.addShape({
+            type: "pieslice",
+            stroke: {
+                weight: 1,
+                color: this.initialStrokeColor
+            },
+            fill: {
+                color: this.initialFillColor
+            },
+            width: 420,
+            height: 420,
+            cx: 210,
+            cy: 210,
+            radius: 210,
+            arc: 90
+        });
+        Y.Assert.isTrue(pieslice instanceof Y.VMLPieSlice, "The shape should be an instance of Y.PieSlice.");
     }
 });
 
@@ -1282,7 +1351,30 @@ canvasTests = new Y.Test.Case({
     {
         Y.Assert.isTrue(this.myrect.test(".yui3-canvasShape"), "The compareTo method should return true.");
         Y.Assert.isTrue(this.myrect.test(".yui3-canvasRect"), "The compareTo method should return true.");
+        this.myrect.destroy();
+    },
+    
+    "test addCanvasPieSlice()" : function()
+    {
+        var pieslice = graphic.addShape({
+            type: "pieslice",
+            stroke: {
+                weight: 1,
+                color: this.initialStrokeColor
+            },
+            fill: {
+                color: this.initialFillColor
+            },
+            width: 420,
+            height: 420,
+            cx: 210,
+            cy: 210,
+            radius: 210,
+            arc: 90
+        });
+        Y.Assert.isTrue(pieslice instanceof Y.CanvasPieSlice, "The shape should be an instance of Y.PieSlice.");
     }
+
 }),
 
 standaloneShape = new Y.Test.Case({

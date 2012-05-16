@@ -201,7 +201,12 @@ var solidTest = function()
         0.6,
         0.9
     ],
-    
+
+    noFill = {
+        type: "none",
+        color: "none"
+    },
+
     fourStops = {
         type: "linear",
         stops: [
@@ -608,6 +613,168 @@ var solidTest = function()
     suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, radialPointEights, fourRadialStops));
     suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, radialPointEights, fourRadialStops));
     suite.add(gradientFill("circle", "radial", threeColors, null, null, radialPointEights, fourRadialStops));
+    
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, null, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, null, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, null, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, null, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 45}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 45}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 45}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 45}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 90}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 90}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 90}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 90}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 135}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 135}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 135}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 135}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 180}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 180}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 180}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 180}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 225}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 225}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 225}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 225}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 270}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 270}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 270}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 270}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 315}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 315}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 315}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 315}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 360}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets, {rotation: 360}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, null, {rotation: 360}, noFill));
+    suite.add(gradientFill("rect", "linear", threeColors, null, null, {rotation: 360}, noFill));
+
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, null, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, null, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, null, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, null, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 45}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 45}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 45}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 45}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 90}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 90}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 90}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 90}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 135}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 135}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 135}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 135}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 180}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 180}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 180}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 180}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 225}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 225}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 225}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 225}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 270}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 270}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 270}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 270}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 315}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 315}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 315}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 315}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 360}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, threeOffsets, {rotation: 360}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, threeOpacities, null, {rotation: 360}, noFill));
+    suite.add(gradientFill("ellipse", "linear", threeColors, null, null, {rotation: 360}, noFill));
+
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, null, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, null, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, null, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, null, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 45}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 45}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 45}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 45}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 90}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 90}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 90}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 90}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 135}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 135}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 135}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 135}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 180}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 180}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 180}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 180}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 225}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 225}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 225}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 225}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 270}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 270}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 270}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 270}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 315}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 315}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 315}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 315}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, threeOffsets, {rotation: 360}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, threeOffsets, {rotation: 360}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, threeOpacities, null, {rotation: 360}, noFill));
+    suite.add(gradientFill("circle", "linear", threeColors, null, null, {rotation: 360}, noFill));
+    
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets, null, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, null, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, null, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, null, null, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets, radialPointTwos, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, radialPointTwos, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, radialPointTwos, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, null, radialPointTwos, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets, radialAssortedValues, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, radialAssortedValues, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, radialAssortedValues, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, null, radialAssortedValues, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, threeOffsets, radialPointEights, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, threeOffsets, radialPointEights, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, threeOpacities, null, radialPointEights, noFill));
+    suite.add(gradientFill("rect", "radial", threeColors, null, null, radialPointEights, noFill));
+
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, threeOffsets, null, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, threeOffsets, null, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, null, null, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, null, null, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, threeOffsets, radialPointTwos, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, threeOffsets, radialPointTwos, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, null, radialPointTwos, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, null, radialPointTwos, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, threeOffsets, radialAssortedValues, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, threeOffsets, radialAssortedValues, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, null, radialAssortedValues, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, null, radialAssortedValues, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, threeOffsets, radialPointEights, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, threeOffsets, radialPointEights, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, threeOpacities, null, radialPointEights, noFill));
+    suite.add(gradientFill("ellipse", "radial", threeColors, null, null, radialPointEights, noFill));
+
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, threeOffsets, null, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, null, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, null, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, null, null, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, threeOffsets, radialPointTwos, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, radialPointTwos, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, radialPointTwos, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, null, radialPointTwos, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, threeOffsets, radialAssortedValues, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, radialAssortedValues, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, radialAssortedValues, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, null, radialAssortedValues, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, threeOffsets, radialPointEights, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, threeOffsets, radialPointEights, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, threeOpacities, null, radialPointEights, noFill));
+    suite.add(gradientFill("circle", "radial", threeColors, null, null, radialPointEights, noFill));
 
 Y.Test.Runner.add( suite );
 
