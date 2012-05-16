@@ -727,6 +727,34 @@ with any configuration info required for the module.
 
         return true;
     },
+    /**
+    * Delays the `use` callback until another event has taken place. Like: window.onload, domready, contentready, available.
+    * @private
+    * @method _delayCallback
+    * @param {Callback} cb The original `use` callback
+    * @param {String|Object} until Either an event (load, domready) or an Object containing event/args keys for contentready/available
+    */
+    _delayCallback: function(cb, until) {
+
+        var Y = this,
+            mod = ['event-base'];
+
+        until = (Y.Lang.isObject(until) ? until : { event: until });
+
+        if (until.event === 'load') {
+            mod.push('event-synthetic');
+        }
+
+        return function() {
+            var args = arguments;
+            Y._use(mod, function() {
+                Y.on(until.event, function() {
+                    args[1].delayUntil = until.event;
+                    cb.apply(Y, args);
+                }, until.args);
+            });
+        };
+    },
 
     /**
      * Attaches one or more modules to the YUI instance.  When this
@@ -789,6 +817,9 @@ with any configuration info required for the module.
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
             args.pop();
+            if (Y.config.delayUntil) {
+                callback = Y._delayCallback(callback, Y.config.delayUntil);
+            }
         } else {
             callback = null;
         }
@@ -1828,6 +1859,36 @@ overwriting other scripts configs.
  * @default true
  * @since 3.5.0
  */
+
+/**
+Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
+@property delayUntil
+@type String|Object
+@since 3.6.0
+@example
+
+You can use `load` or `domready` strings by default:
+
+    YUI({
+        delayUntil: 'domready'
+    }, function(Y) {
+        //This will not fire until 'domeready'
+    });
+
+Or you can delay until a node is available (with `available` or `contentready`):
+
+    YUI({
+        delayUntil: {
+            event: 'available',
+            args: '#foo'
+        }
+    }, function(Y) {
+        //This will not fire until '#foo' is 
+        // available in the DOM
+    });
+    
+
+*/
 YUI.add('yui-base', function(Y) {
 
 /*

@@ -56,7 +56,11 @@ YUI.add('core-tests', function(Y) {
             ignore: {
                 'getLocation() should return the location object': (Y.UA.nodejs ? true : false),
                 'getLocation() should return `null` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)), //If there is a window object, ignore too
-                test_log_params: (typeof console == "undefined" || !console.info || Y.UA.nodejs)
+                test_log_params: (typeof console == "undefined" || !console.info || Y.UA.nodejs),
+                'test: domready delay': !Y.config.win,
+                'test: window.onload delay': !Y.config.win,
+                'test: contentready delay': !Y.config.win,
+                'test: available delay': !Y.config.win
             }
         },
 
@@ -470,6 +474,86 @@ YUI.add('core-tests', function(Y) {
                 test.resume(function() {
                     Assert.isTrue(Y.MOD, 'Failed to load external mod');
                     Assert.isObject(Y.YQL, 'Failed to load YQL requirement');
+                });
+            });
+
+            test.wait();
+        },
+        'test: domready delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            YUI({
+                delayUntil: 'domready'
+            }).use('node', function(Y, status) {
+                test.resume(function() {
+                    Assert.areSame('domready', status.delayUntil, 'domready did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'test: window.onload delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            YUI({
+                delayUntil: 'load'
+            }).use('dd-drag', function(Y, status) {
+                test.resume(function() {
+                    Assert.areSame('load', status.delayUntil, 'load did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'test: available delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            Assert.isNull(Y.one('#foobar'), 'Found trigger #foobar before it should have');
+
+            setTimeout(function() {
+                var div = document.createElement('div');
+                div.id = 'foobar';
+                document.body.appendChild(div);
+            }, 3000);
+
+            YUI({
+                delayUntil: {
+                    event: 'available',
+                    args: '#foobar'
+                }
+            }).use('dd-drop', function(Y, status) {
+              test.resume(function() {
+                    Assert.isNotNull(Y.one('#foobar'), 'Failed to find trigger #foobar');
+                    Assert.areSame('available', status.delayUntil, 'available did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'test: contentready delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            Assert.isNull(Y.one('#foobar2'), 'Found trigger #foobar2 before it should have');
+
+            setTimeout(function() {
+                var div = document.createElement('div');
+                div.id = 'foobar2';
+                document.body.appendChild(div);
+            }, 3000);
+
+            YUI({
+                delayUntil: {
+                    event: 'contentready',
+                    args: '#foobar2'
+                }
+            }).use('dd-drop', function(Y, status) {
+              test.resume(function() {
+                    Assert.isNotNull(Y.one('#foobar2'), 'Failed to find trigger #foobar2');
+                    Assert.areSame('contentready', status.delayUntil, 'contentready did not trigger this callback');
                 });
             });
 
