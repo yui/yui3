@@ -1,0 +1,271 @@
+<style scoped>
+/* custom styles for this example */
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
+
+/* css to counter global site css */
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
+
+.example th { text-align:center; }
+.red {
+    color:red;
+    font-weight:bold;
+}
+.green {
+    color:green;
+    font-weight:bold;
+}
+</style>
+
+<div class="intro">
+    <p>Demonstrates two different methods of "parsing" integer and date fields from a remote DataSource to ensure proper sorting and utilization with DataTable.</p>
+</div>
+
+<div id="template" class="example yui3-skin-sam dt-example">
+Table A -  <span class="red">INCORRECT</span> parsing ... results in each column 'sorting' as strings!
+<br/><br/>
+    <div id="dtableA"></div>
+</div>
+
+<div id="template" class="example yui3-skin-sam dt-example">
+Table B - <span class="green">CORRECT</span> parsing ... data was converted / stored and now sorts properly
+<br/><br/>
+    <div id="dtableB"></div>
+</div>
+
+<script type="text/javascript">
+{{>datatable-parsesort-source}}
+</script>
+
+<h2>Overview</h2>
+<p>We see a number of YUI Forum questions related to using data within a DataTable where developers are confused about the 'datatype' (i.e. string, integer, float, date) and how
+it is used.  This issue can often be magnified when using data from a remote source, as the returned data type may not be knwon with certainty prior to return from a particular source.
+</p>
+<p>A good piece of advice is to <i><strong>"consider converting the data to the datatype you desire it to be, prior to using it within your DataTable"</strong></i>, especially when dealing with data from a remote
+ source. For example, if you are dealing with "date" data, and if it comes from a remote source, it will almost certainly come in as a string in "mm/dd/yy"or "yyyy-mm-dd" format.
+It is therefore the developer's responsibility to make sure it is properly converted to a JavaScript Date object.
+Proper data type will result in "expected" performance in sorting, editing and calculations involved with the data down the line or within DataTable.</p>
+
+<p>REALLY IFFY HERE ...<br/>One final remark before we delve into this example;  The purpose of DataSource is NOT to be the holder of the remote data, but to function as a <strong>Conduit</strong> between
+the source of the data and the YUI client that consumes the data.   DataSource does not retain or "store" a copy of the data after the response is received, it merely passes it along,
+where (for example) DataTable stores the data in a ModelList.  Therefore, conversion of data is best achieved within DataSource prior to storage in the DataTable ModelList (???)</p>
+
+<h3>Sample Remote Data</h3>
+
+<p>In some situations we will have to rely on data transmitted from remote sources which may arrive in "improper" format, where numeric data (integers, floats) is transmitted as "string" data,
+or in the more classical situation, "date" data is formatted as a string.  This may occur when using third-party data sources and/or data farms that simply form a conduit of data from other sources.</p>
+
+<p>Consider the JSON data represented below which contains a mix of text, integer, float, currency and data fields.  Each field in this instance
+ was returned from a provider in string format, not in JSON numeric format (i.e. `"flt":76543.21` .)</p>
+```
+{ "num_records":"12", "data_code":"200",
+  "returned_data": [
+        { "txt":"a",   "int":"123", "cur":"$ 90.2",      "flt":"76543.21", "date":"12/05/2011" },
+        { "txt":"ab",  "int":"12",  "cur":"$ 9,990.2",   "flt":"7.6",      "date":"11/04/2010" },
+        { "txt":"abc", "int":"1",   "cur":"$-990.2",     "flt":"765.43",   "date":"10/03/2009" },
+        { "txt":"x",   "int":"987", "cur":"$ 12,345.67", "flt":"2.3",      "date":"3/22/08" },
+        { "txt":"xy",  "int":"98",  "cur":"$ 1.2",       "flt":"23456.78", "date":"4/23/09" },
+        { "txt":"xyz", "int":"9",   "cur":"$ 123.4",     "flt":"23.4",     "date":"5/24/12" }
+   ] }
+```
+<p>This data snippet is valid JSON format, but if we utilize this data within our DataTable "as-is" we quickly find that column sorting
+     and calculations may run awry.</p>
+
+<h3>Function DataSource</h3>
+<p>We'll demonstrate the use of "remote" data using a <i>simulation</i> of a remote data stream response via Function DataSource.  This method is ideal because it "looks and acts" like
+a typical AJAX-type request, but doesn't require us to maintain a sample remote source / or server just for this example.</p>
+
+<p>The JSON string presented above is defined as a variable `JSON_string` in this application.  The Function DataSource is defined and simply returns the JSON_string data when a request is sent to it.
+A key advantage of using DataSource is to use one of the many DataSchema plugins (JSON, XML, etc..) to assist in the conversion.</p>
+
+```
+var myFuncDS = new Y.DataSource.Function({
+    source: function (request) {
+        return JSON_string
+    }}).plug( Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            metaFields : {
+                nrecords : 'num_records',
+                data_code : 'data_code'
+            },
+            resultListLocator : "returned_data",
+            resultFields: [ "txt", "int", "cur", "flt", "date" ]
+        }
+ });
+```
+<p>In the `myFuncDS` above, the fields are defined in the `resultFields` attribute of the schema and the fields are prescribed for JSON parsing.  We don't utilize the `metaFields` data in this example, but
+we could have in some fashion.</p>
+
+<p>Note that our definition for this DataSource could have been based upon a DataSource.Get or DataSource.IO with the same JSONSchema plugin.</p>
+
+<h3>Create Table A - with "un-parsed" data</h3>
+<p>To simply apply the data <i>as-is</i> from the datasource within a datatable we use the following code snippet;</p>
+```
+//  Define Table A - setup sorting,
+var dtA = new Y.DataTable({
+    columns: [
+        { key:"txt",  label:"Text" },
+        { key:"int",  label:"Integer" },
+        { key:"cur",  label:"Currency" },
+        { key:"flt",  label:"Float" },
+        { key:"date", label:"Date" }
+    ],
+    sortable: true
+});
+
+// Hook-up the datasource to DataTable A
+dtA.plug(Y.Plugin.DataTableDataSource, { datasource: myFuncDS });
+
+dtA.render("#dtableA");
+
+// Fire off a datasource request to load the data into the datatable
+dtA.datasource.load({ request:'' });
+```
+<p>Hopefully you've identified very quickly that all of the columns OTHER than "Text" sort as strings, but not correctly according to our
+expected datatype.</p>
+
+<p>We will remedy this by creating a new DataSource and defining parsers to convert the incoming data as it passes through DataSource.</p>
+
+
+<h5>What about Custom Sorting?</h5>
+<p>
+Many implementers approach this problem by attempting to write a "custom sorting" function (see <a href="http://yuilibrary.com/yui/docs/datatable/#customsort">DataTable custom sorting</a>).  Let's go through and define a custom sorter and
+see how it may be accomplished.  Let us consider for the currency column `cur` how the sort function may be defined, where it is defined in the DataTable
+columns as;
+</p>
+```
+{ key:"cur",  label:"Currency",
+    //
+    //  Define a custom sort function for this column,
+    //    variables are;
+    //      a     =  first comparative record
+    //      b     =  second comparative record
+    //      desc  =  boolean flag indicating if DESC (true) or ASC(false)
+    //  NOTE: This function is similar to the standard Javascript sort compare function,
+    //        see MDN Array.sort() or other references
+    sortFn: function (a, b, desc) {
+            var a_data   = a.get('cur'),                        // retrieve 'cur' field values
+                b_data   = b.get('cur'),
+                a_value  = +(a_data.replace(/[^0-9.-]/g,'')),   // convert to number
+                b_value  = +(b_data.replace(/[^0-9.-]/g,''));
+            return ( desc ? -1 : 1) * (a_value-b_value);
+        }
+}
+```
+<p>Defining a custom sort function is perfectly workable, but not without some shortcomings, including;</p>
+<ul>
+<li>Each numeric column would require it's own unique `sortFn`, in this example that would mean four functions.</li>
+<li>Calculations based upon records (i.e. running totals / sums) would fail and/or require conversion to numeric type.</li>
+<li>Performance may be an issue - for hundreds or thousands of records the conversion is done on each sort operation, every row.</li>
+</ul>
+
+<h3>Create Table B - using "parsed" data</h3>
+
+<p>To remedy the problems with Table A, we define a custom parser for the numeric fields as function `parseNumber` in the code below.  We attach it to the DataSchema parser (JSON schema) using the
+`parser` attribute of the fields defined in `resultFields`.  Additionally, we use a YUI named parser "date"
+(see <a href="http://yuilibrary.com/yui/docs/datatype/#parsers">DataType parsers</a>) for the `date` field.
+ </p>
+
+```
+// Define a parser to convert an input value 'v' represented in string
+//  format to {Number} type;
+function parseNumber(v) {
+    return +(v.replace(/[^0-9.-]/g,''));
+}
+
+// Define a datasource which is identical to the prior one,
+//  BUT, include apply the data parsers on the numeric and date fields ...
+
+var myFuncDSparse = new Y.DataSource.Function({
+ source: function (request) {
+     return JSON_string
+   }}).plug( Y.Plugin.DataSourceJSONSchema, {
+    schema: {
+        metaFields : {
+            nrecords : 'num_records',
+            data_code : 'data_code'
+        },
+        resultListLocator : "returned_data",
+         resultFields: [
+             { key:"txt"},
+             { key:"int",  parser:parseNumber },
+             { key:"cur",  parser:parseNumber },
+             { key:"flt",  parser:parseNumber },
+             { key:"date", parser:'date'}    // use YUI's named "date" parser
+         ]
+    }
+});
+```
+<p>Since our data has been converted to proper type in our parser, we can define column formatters in order to "re-format" the
+last three columns into the desired format.  We define the formatters and apply them to Table B in the following final piece of code;</p>
+```
+// Define formatters for "currency", "float" and "date" types to restore the formatting
+//  that was within the original data
+function fmtCurrency(o){
+    return Y.DataType.Number.format(o.value,{ prefix: "$ ",
+        thousandsSeparator: ",",
+        decimalPlaces: 2
+    });
+}
+
+function fmtComma(o){
+   return Y.DataType.Number.format(o.value,{
+        thousandsSeparator: ",",
+        decimalPlaces: 2
+    });
+}
+function fmtDate(o){
+   return Y.DataType.Date.format(o.value,{format:"%D"});
+}
+
+// Create the Table B with and format using custom column formatters
+var dtB = new Y.DataTable({
+    columns: [
+        { key:"txt",  label:"Text" },
+        { key:"int",  label:"Integer" },
+        { key:"cur",  label:"Currency", formatter:fmtCurrency },
+        { key:"flt",  label:"Float",    formatter:fmtComma },
+        { key:"date", label:"Date",     formatter:fmtDate }
+    ],
+    sortable: true
+});
+
+// Hook-up the NEW datasource to DataTable B
+dtB.plug(Y.Plugin.DataTableDataSource, { datasource: myFuncDSparse });
+
+dtB.render("#dtableB");
+
+dtB.datasource.load({ request:'' });
+```
+
+<p>A quick review of our approach for Table B shows that we have  (a) taken formatted numeric data in string representation and (b) converted it to the proper
+numeric type using parsers, and then (c) re-formatted the data with a column formatter for display.</p>
+
+<p>This may seem a roundabout technique, but steps (a) and (b) only occured once, as the data flowed through the DataSource AND following this method
+leaves us with a simplified and performant approach to sorting the variety of data represented.</p>
+
+
+<h3>Other Techniques ...</h3>
+<p>This example demonstrates a method of converting data format and properly sorting column data in a straightforward fashion.  There may be
+other approaches to accomplish this, including;
+ <ul>
+ <li><strong>PREFERRED to this Approach</strong> Specifying a `recordType` attribute on DataTable with field `setter` functions (see <a href="http://yuilibrary.com/yui/docs/datatable/#recordtype">User Guide recordType)</a></li>
+ <li>Defining a Model List `sync` layer and custom `parse` method. (see <a href="http://yuilibrary.com/yui/docs/model-list/#the-parse-method">ModelList parse</a>)</li>
+ </p>
+
+
+<h2>Full Code Listing</h2>
+```
+{{>datatable-parsesort-source}}
+```
