@@ -77,6 +77,16 @@
         },
 
         {
+            "name": "datatable-parsesort",
+            "displayName": "Parsing and Sorting Remote Data",
+            "modules": ["datatable"],
+            "description": "Parsing remote data for proper DataTable sorting.",
+            "useModules": ["datatable-sort"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name": "datatable-scroll",
             "displayName": "Scrolling DataTable",
             "modules": ["datatable"],
