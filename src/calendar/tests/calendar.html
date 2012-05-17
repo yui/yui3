@@ -60,6 +60,32 @@
             },
 
 
+            testCalendarBase : function() {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5)
+                };
+
+                this.firstcalendar = new Y.CalendarBase(cfg);
+                this.firstcalendar.render();
+
+                //calendar is visible
+                Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
+                
+                //calendar date is normalized correctly
+                var calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2011, calendarDate.getFullYear());
+                Y.Assert.areEqual(11, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+
+                // Test that the first and last days of the month render correctly
+
+                // Test that showPreviousMonth and showNextMonth are false by default
+                Y.Assert.areEqual(false, this.firstcalendar.get("showPrevMonth"));
+                Y.Assert.areEqual(false, this.firstcalendar.get("showNextMonth"));
+            },
+
+
             testBasicCalendar : function() {
                 var cfg = {
                     contentBox: "#firstcontainer",
@@ -211,6 +237,8 @@
                 this.firstcalendar.set("date", new Date(2011,8,1));
                 this.secondcalendar.set("date", new Date(2012,0,1));
 
+                this.secondcalendar.set("customRenderer", {rules: myRules, filterFunction: myFilter});
+
 
             },
 
@@ -268,6 +296,12 @@
                 this.secondcalendar = new Y.Calendar(cfg2);
                 this.secondcalendar.render();
 
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);
+
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+
                 Y.Assert.areNotEqual(this.firstcalendar.get("id"), this.secondcalendar.get("id"));
                 Y.Assert.areNotEqual(this.firstcalendar._calendarId, this.secondcalendar._calendarId);             
             },
@@ -311,6 +345,156 @@
                 
             },
 
+
+           testFebruaries : function() {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(1990,1,1)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+
+                this.firstcalendar.render();
+
+                this.firstcalendar.set("date", new Date(1991, 1, 1));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1992, 1, 7));  
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1993, 1, 9));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1994, 1, 3));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1995, 1, 6));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1996, 1, 20));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1997, 1, 13));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1998, 1, 12));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(1999, 1, 18));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(2000, 1, 16));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(2001, 1, 5));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(2002, 1, 2));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(2003, 1, 14));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(2004, 1, 23));
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);
+                this.firstcalendar.set("date", new Date(2005, 1, 25));   
+                this.firstcalendar.set("showPrevMonth", false);
+                this.firstcalendar.set("showNextMonth", false);                
+                this.firstcalendar.set("showPrevMonth", true);
+                this.firstcalendar.set("showNextMonth", true);                                    
+            },            
+
+
+
+           testCalendarNavigation : function() {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+
+                this.firstcalendar.render();
+                
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                var calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2012, calendarDate.getFullYear());
+                Y.Assert.areEqual(0, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2012, calendarDate.getFullYear());
+                Y.Assert.areEqual(1, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2012, calendarDate.getFullYear());
+                Y.Assert.areEqual(2, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2012, calendarDate.getFullYear());
+                Y.Assert.areEqual(3, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2012, calendarDate.getFullYear());
+                Y.Assert.areEqual(4, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+
+                this.firstcalendar.set("date", new Date(2011, 3, 1));
+                Y.one(".yui3-calendarnav-prevmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2011, calendarDate.getFullYear());
+                Y.Assert.areEqual(2, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-prevmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2011, calendarDate.getFullYear());
+                Y.Assert.areEqual(1, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-prevmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2011, calendarDate.getFullYear());
+                Y.Assert.areEqual(0, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+                Y.one(".yui3-calendarnav-prevmonth").simulate("click");
+                calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2010, calendarDate.getFullYear());
+                Y.Assert.areEqual(11, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());                
+            },            
+
+
             testCustomHeader : function() {
                 var cfg = {
                     contentBox: "#firstcontainer",
@@ -336,7 +520,18 @@
                 Y.one(".yui3-calendarnav-nextmonth").simulate("click");
 
                 currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");
-                Y.Assert.areEqual("01 2012", currentHeaderString);                
+                Y.Assert.areEqual("01 2012", currentHeaderString);  
+
+                this.firstcalendar.set("headerRenderer", function (curDate) {
+                   var ydate = Y.DataType.Date,
+                       output = ydate.format(curDate, {
+                       format: "%m"
+                       });
+                   return output;
+                 });
+
+                currentHeaderString = this.firstcalendar.get("contentBox").one(".yui3-calendar-header-label").get("text");
+                Y.Assert.areEqual("01", currentHeaderString);                                 
             },            
 
             testMultiplePanes : function () {
