@@ -25,7 +25,9 @@
     }
 
     window.onerror = function(msg) {
-        YUI.Env.windowError = msg;
+        if (msg.indexOf('Error loading script') === -1) {
+            YUI.Env.windowError = msg;
+        }
         return true;
     };
     var mods = {
@@ -53,6 +55,22 @@
         };
 
         renderLogger();
+        
+        if (filter || showConsole) {
+            Y.all('a').each(function(item) {
+                var url = item.getAttribute('href');
+                if (url.indexOf('#') === -1) {
+                    var f = [];
+                    if (filter) {
+                        f.push('filter=' + filter);
+                    }
+                    if (showConsole) {
+                        f.push('console=' + showConsole);
+                    }
+                    item.set('href', url + '?' + f.join('&'));
+                }
+            });
+        }
 
 
         var counter = 0,
@@ -64,15 +82,18 @@
             'automated test script loaded': function() {
                 Y.Assert.isTrue(status.success, 'Automated script 404ed');
             },
-            'test: onerror': function() {
+            'window.onerror called': function() {
                 Y.Assert.isUndefined(YUI.Env.windowError, 'window.onerror fired');
             },
-            'check for automated test execution': function() {
-                Y.Assert.isTrue(Y.Test.Runner.masterSuite.items.length > 1, 'Automated script does not contain a test');
+            'check for automated Y.TestCase': function() {
+                Y.Assert.isTrue(Y.Test.Runner.masterSuite.items.length > 1, 'Automated script does not contain a Y.Test.Case');
             },
-            'check for assertions': function() {
+            'check for tests': function() {
                 var num = Y.Object.keys(this).length - 3; //name, _should & this test
-                Y.Assert.areNotSame(num, counter, 'Automated script contains no tests');
+                if (num === counter) {
+                    Y.Assert.fail('Automated script contains no tests');
+                }
+                Y.Assert.pass('All Good');
             }
         });
 
@@ -82,7 +103,7 @@
 
         Y.Test.Runner.add(testCase);
         
-        Y.Test.Runner._ignoreEmpty = false;
+        Y.Test.Runner._ignoreEmpty = false; //Throw on no assertions
         Y.Test.Runner.setName('Automated ' + name + ' tests');
         Y.Test.Runner.on('complete', function(e) {
             
