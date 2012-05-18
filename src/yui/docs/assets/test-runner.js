@@ -6,7 +6,20 @@
         name = YUI.Env.Tests.name,
         projectAssets = YUI.Env.Tests.project,
         assets = YUI.Env.Tests.assets,
-        auto = YUI.Env.Tests.auto;
+        auto = YUI.Env.Tests.auto || YUI().UA.phantomjs,
+        examples = YUI.Env.Tests.examples,
+        isExample = false, i;
+
+    
+    for (i = 0; i < examples.length; i++) {
+        if (name === examples[i]) {
+            isExample = true;
+        }
+    }
+
+    if (!isExample) { //Don't test landing pages
+        return false;
+    }
 
     if (auto) {
         filter = filter || 'raw';
