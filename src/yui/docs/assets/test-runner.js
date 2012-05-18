@@ -2,6 +2,7 @@
 
     var tests = (window.location.search.match(/[?&]tests=([^&]+)/) || [])[1] || null,
         filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || null,
+        showConsole = (window.location.search.match(/[?&]console=([^&]+)/) || [])[1] || null,
         name = YUI.Env.Tests.name,
         projectAssets = YUI.Env.Tests.project,
         assets = YUI.Env.Tests.assets,
@@ -38,12 +39,21 @@
     YUI({
         modules: mods
     }).use(name + '-tests', 'test-console', function(Y, status) {
-        
-        var log = Y.Node.create('<div id="logger" class="yui3-skin-sam"/>');
-        Y.one('body').prepend(log);
+        var log, testConsole,
+            renderLogger = function() {
+                if (!log) {
+                    log = Y.Node.create('<div id="logger" class="yui3-skin-sam"/>');
+                    Y.one('body').prepend(log);
+                    testConsole = (new Y.Test.Console()).render('#logger');
+                    testConsole.collapse();
+                    if (!auto && !showConsole) {
+                        testConsole.hide();
+                    }
+                }
+        };
 
-        var testConsole = (new Y.Test.Console()).render('#logger');
-        testConsole.collapse();
+        renderLogger();
+
 
         var counter = 0,
         count = function() {
@@ -75,15 +85,22 @@
         Y.Test.Runner._ignoreEmpty = false;
         Y.Test.Runner.setName('Automated ' + name + ' tests');
         Y.Test.Runner.on('complete', function(e) {
+            
+            if (e.results.failed) {
+                testConsole.show();
+            }
+
+            if (log) {
             var header = log.one('.yui3-console-hd h4');
 
-            if (e.results.failed) {
-                log.addClass('failed');
-                header.setHTML(e.results.failed + ' tests failed!');
-                testConsole.expand();
-            } else {
-                header.setHTML('All tests passed!');
-                log.addClass('passed');
+                if (e.results.failed) {
+                    log.addClass('failed');
+                    header.setHTML(e.results.failed + ' tests failed!');
+                    testConsole.expand();
+                } else {
+                    header.setHTML('All tests passed!');
+                    log.addClass('passed');
+                }
             }
         });
         Y.Test.Runner.run();

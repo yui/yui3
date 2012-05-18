@@ -5,6 +5,9 @@
     right: 10px;
     width: 300px;
 }
+#logger .yui3-testconsole-hidden {
+    display: none;
+}
 #logger .yui3-testconsole-content {
     background-color: #fff;
 }
