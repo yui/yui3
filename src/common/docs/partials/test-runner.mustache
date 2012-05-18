@@ -1,0 +1,9 @@
+<script>
+YUI.Env.Tests = {
+    project: '{{projectAssets}}',
+    assets: '{{componentAsssets}}',
+    name: '{{name}}',
+    auto: {{#if dist}} false {{else}} true {{/if}}
+};
+</script>
+<script src="{{projectAssets}}/yui/test-runner.js"></script>
