@@ -8,6 +8,7 @@
         assets = YUI.Env.Tests.assets,
         auto = YUI.Env.Tests.auto || YUI().UA.phantomjs,
         examples = YUI.Env.Tests.examples,
+        newWindow = YUI.Env.Tests.newWindow,
         isExample = false, i;
 
     
@@ -15,6 +16,9 @@
         if (name === examples[i]) {
             isExample = true;
         }
+    }
+    if (newWindow === 'true') {
+        isExample = false;
     }
 
     if (!isExample) { //Don't test landing pages

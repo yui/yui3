@@ -4,6 +4,7 @@ YUI.Env.Tests = {
     project: '{{projectAssets}}',
     assets: '{{componentAssets}}',
     name: '{{name}}',
+    newWindow: "{{newWindow}}",
     auto: {{#if dist}} false {{else}} true {{/if}}
 };
 {{#each examples}}YUI.Env.Tests.examples.push('{{name}}');
