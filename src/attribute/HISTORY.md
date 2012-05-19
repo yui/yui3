@@ -1,6 +1,12 @@
 Attribute Change History
 ========================
 
+3.6.0
+-----
+
+  * Optimized valueFn handling, so that valueFn is not called for Attribute,
+    if user provides a value.
+
 3.5.1
 -----
 

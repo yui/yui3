@@ -74,6 +74,7 @@
 
             var val = cfg.value,
                 valFn = cfg.valueFn,
+                initValSet = false,
                 simple,
                 complex,
                 i,
@@ -82,7 +83,16 @@
                 subval,
                 subvals;
 
-            if (valFn) {
+            if (!cfg.readOnly && initValues) {
+                // Simple Attributes
+                simple = initValues.simple;
+                if (simple && simple.hasOwnProperty(attr)) {
+                    val = simple[attr];
+                    initValSet = true;
+                }
+            }
+
+            if (!initValSet && valFn) {
                 if (!valFn.call) {
                     valFn = this[valFn];
                 }
@@ -91,16 +101,11 @@
                 }
             }
 
-            if (!cfg.readOnly && initValues) {
-
-                // Simple Attributes
-                simple = initValues.simple;
-                if (simple && simple.hasOwnProperty(attr)) {
-                    val = simple[attr];
-                }
+            if (val && !cfg.readOnly && initValues) {
 
                 // Complex Attributes (complex values applied, after simple, incase both are set)
                 complex = initValues.complex;
+
                 if (complex && complex.hasOwnProperty(attr)) {
                     subvals = complex[attr];
                     for (i = 0, l = subvals.length; i < l; ++i) {
