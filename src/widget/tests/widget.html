@@ -4,7 +4,6 @@
     <title>Widget Test Suite</title>
 
     <script src="../../../build/yui/yui.js"></script>
-    <!--script src="http://yui.yahooapis.com/3.5.1/build/yui/yui.js"></script-->
 
     <style type="text/css">
         #testConsole .yui3-console-entry {
@@ -1847,7 +1846,7 @@
 
                 w.destroy();
             },
-            
+
             "testHTMLParserWithContentBox" : function() {
 
                 // HTML to Parse
@@ -1871,12 +1870,12 @@
 
                 w.destroy();
             },
-            
+
             "testHTMLParserWithNoSrcNodeOrContentBox" : function() {
                 var w = new MyCustomWidget();
                 w.destroy();
             },
-            
+
             "testHTMLParserWithEmptyConfig" : function() {
 
                 // See http://yuilibrary.com/projects/yui3/ticket/2531501
@@ -1899,7 +1898,7 @@
                         }
                     },
                     NAME : "staticSrcNodeWidget"
-                })
+                });
 
                 var w = new StaticSrcNodeWidget();
 
@@ -1913,6 +1912,43 @@
 
                 Y.Assert.areSame("Item1", w.get("listNodes").item(0).get("text"), "listNode 0 not picked up from markup");
                 Y.Assert.areSame("Item2", w.get("listNodes").item(1).get("text"), "listNode 1 not picked up from markup");
+
+                w.destroy();
+            }, 
+            
+            "testValueFnNotCalledWhenHTMLParserValueFound" : function() {
+
+                var called = false;
+
+                function HTMLParserWidget() {
+                    HTMLParserWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(HTMLParserWidget, Y.Widget, null, {
+                    ATTRS : {
+                        testMe : {
+                            valueFn : function() {
+                                called = true;
+                                return "dontuseme";
+                            }
+                        }
+                    },
+
+                    HTML_PARSER : {
+                        testMe : function() {
+                            return "useme";
+                        }
+                    },
+
+                    NAME : "htmlParserWidget"
+                });
+
+                var w = new HTMLParserWidget({
+                    srcNode : Y.Node.create("<div></div>") // to get HTML_PARSER to run
+                });
+
+                Y.Assert.isFalse(called, "valueFn should not have been called");
+                Y.Assert.areEqual("useme", w.get("testMe"));
 
                 w.destroy();
             }
