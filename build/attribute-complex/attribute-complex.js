@@ -76,6 +76,7 @@ YUI.add('attribute-complex', function(Y) {
 
             var val = cfg.value,
                 valFn = cfg.valueFn,
+                initValSet = false,
                 simple,
                 complex,
                 i,
@@ -84,7 +85,16 @@ YUI.add('attribute-complex', function(Y) {
                 subval,
                 subvals;
 
-            if (valFn) {
+            if (!cfg.readOnly && initValues) {
+                // Simple Attributes
+                simple = initValues.simple;
+                if (simple && simple.hasOwnProperty(attr)) {
+                    val = simple[attr];
+                    initValSet = true;
+                }
+            }
+
+            if (!initValSet && valFn) {
                 if (!valFn.call) {
                     valFn = this[valFn];
                 }
@@ -94,13 +104,6 @@ YUI.add('attribute-complex', function(Y) {
             }
 
             if (!cfg.readOnly && initValues) {
-
-                // Simple Attributes
-                simple = initValues.simple;
-                if (simple && simple.hasOwnProperty(attr)) {
-                    val = simple[attr];
-                }
-
                 // Complex Attributes (complex values applied, after simple, incase both are set)
                 complex = initValues.complex;
                 if (complex && complex.hasOwnProperty(attr)) {
