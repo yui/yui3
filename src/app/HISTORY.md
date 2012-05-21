@@ -23,6 +23,9 @@ App Framework Change History
 
 ### Router
 
+* Fixed issue when multiple routers on were on the page and one router was
+  destroyed the remaining routers would stop dispatching. [Ticket #2532317]
+
 * The `req` object passed to routes now has a `pendingRoutes` property that
   indicates the number of matching routes after the current route in the
   dispatch chain. [Steven Olmsted]
