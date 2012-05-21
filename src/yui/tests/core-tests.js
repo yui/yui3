@@ -617,17 +617,14 @@ YUI.add('core-tests', function(Y) {
                 Assert = Y.Assert;
 
             YUI().use('no-such-module', function(Y, status) {
-                test.resume(function() {
+                Assert.isFalse(status.success, 'Failed to set false on bad module');
+                Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                Y.use('no-such-module', function(Y, status) {
                     Assert.isFalse(status.success, 'Failed to set false on bad module');
                     Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
-                    Y.use('no-such-module', function(Y, status) {
-                        Assert.isFalse(status.success, 'Failed to set false on bad module');
-                        Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
-                    });
                 });
             });
 
-            test.wait();
 
         }
     });
