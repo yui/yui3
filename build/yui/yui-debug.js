@@ -994,7 +994,7 @@ with any configuration info required for the module.
                     process(data);
                     redo = missing.length;
                     if (redo) {
-                        if (missing.sort().join() ==
+                        if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
                             redo = false;
                         }
@@ -1046,6 +1046,7 @@ with any configuration info required for the module.
         // use loader to expand dependencies and sort the
         // requirements if it is available.
         if (boot && Y.Loader && args.length) {
+            Y.log('Using loader to expand dependencies', 'info', 'yui');
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
@@ -6765,8 +6766,10 @@ Y.Loader.prototype = {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
-
-        o.requires = this.filterRequires(o.requires) || [];
+        
+        if (o.requires.length) {
+            o.requires = this.filterRequires(o.requires) || [];
+        }
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
