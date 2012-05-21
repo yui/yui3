@@ -590,7 +590,7 @@ You could also implement the server-side redirection logic using an Apache Mod R
 
 ```nohighlight
 RewriteEngine On
-RewriteRule ^(.+)$ /#/$1 [L]
+RewriteRule ^(.+)$ /#/$1 [NE,L]
 ```
 
 <h4>Full-path URLs Only</h4>
