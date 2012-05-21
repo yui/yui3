@@ -591,6 +591,44 @@ YUI.add('core-tests', function(Y) {
             });
 
             test.wait();
+        },
+        'status should be true': function() {
+            var test = this,
+                Assert = Y.Assert;
+                
+                YUI().use('oop', function(Y, status) {
+                    Assert.isTrue(status.success, 'Success callback failed');
+                });
+
+                YUI({
+                    useSync: false,
+                    modules: {
+                        good: {
+                            fullpath: resolvePath('./assets/good.js')
+                        }
+                    }
+                }).use('good', function(Y, status) {
+                    Assert.isTrue(Y.GOOD, 'Failed to load module');
+                    Assert.isTrue(status.success, 'Status is good');
+                });
+        },
+        'status should be false': function() {
+            var test = this,
+                Assert = Y.Assert;
+
+            YUI().use('no-such-module', function(Y, status) {
+                test.resume(function() {
+                    Assert.isFalse(status.success, 'Failed to set false on bad module');
+                    Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                    Y.use('no-such-module', function(Y, status) {
+                        Assert.isFalse(status.success, 'Failed to set false on bad module');
+                        Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                    });
+                });
+            });
+
+            test.wait();
+
         }
     });
 
