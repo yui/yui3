@@ -4,6 +4,12 @@ App Framework Change History
 3.6.0
 -----
 
+### App Transitions
+
+* Fixed issue with non-collapsing white space between views while transitioning.
+  White space is now fully collapsed and prevents views from jumping after a
+  cross-fade transition. [Ticket #2532298]
+
 ### ModelList
 
 * The `add()` method now accepts an `index` option, which can be used to insert
