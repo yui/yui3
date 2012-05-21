@@ -250,6 +250,19 @@ YUI.add('core-tests', function(Y) {
                 Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
                 Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
 
+                Y.applyConfig({
+                    logInclude: {
+                        davglass: true
+                    },
+                    logExclude: {
+                        '': true
+                    }
+                });
+                last = undefined;
+                Y.log('This should be ignored', 'info');
+                Assert.isUndefined(last, 'Failed to exclude log param with empty string');
+                Y.log('This should NOT be ignored', 'info', 'davglass');
+                Assert.areEqual(last, 'davglass', 'Failed to include log param');
             });
             console.info = l;
         },
