@@ -1013,8 +1013,10 @@ Y.Loader.prototype = {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
-
-        o.requires = this.filterRequires(o.requires) || [];
+        
+        if (o.requires.length) {
+            o.requires = this.filterRequires(o.requires) || [];
+        }
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);

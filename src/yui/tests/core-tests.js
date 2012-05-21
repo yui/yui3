@@ -60,8 +60,28 @@ YUI.add('core-tests', function(Y) {
                 'test: domready delay': !Y.config.win,
                 'test: window.onload delay': !Y.config.win,
                 'test: contentready delay': !Y.config.win,
-                'test: available delay': !Y.config.win
+                'test: available delay': !Y.config.win,
+                'test: pattern requires order': !Y.config.win
             }
+        },
+        'test: pattern requires order': function() {
+            var test = this,
+            Assert = Y.Assert;
+            //This test will throw if it fails..
+            YUI({
+                modules: {
+                    'pattern-module': {
+                        fullpath: './assets/pattern-module.js',
+                        async: false
+                    }
+                }
+            }).use('pattern-module', function(Y) {
+                test.resume(function() {
+                    Y.PatternModule();
+                });
+            });
+
+            test.wait();
         },
 
         'cached functions should execute only once per input': function() {
