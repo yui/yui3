@@ -438,7 +438,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 vSpacing: 5,
                 label: {
                     color:"#808080",
-                    fontSize:"85%"
+                    fontSize:"85%",
+                    whiteSpace: "nowrap"
                 }
             },
             background: {
@@ -514,12 +515,22 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      */
     destructor: function()
     {
-        var graphic = this.get("graphic");
+        var background = this.get("background"),
+            backgroundGraphic;
         this._destroyLegendItems();
-        if(graphic)
+        if(background)
         {
-            graphic.destroy();
+            backgroundGraphic = background.get("graphic");
+            if(backgroundGraphic)
+            {
+                backgroundGraphic.destroy();
+            }
+            else
+            {
+                background.destroy();
+            }
         }
+
     }
 }, {
     ATTRS: {
