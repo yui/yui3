@@ -5,9 +5,28 @@
 <project name="File" default="local">
     <description>File Build File</description>
 
+    <macrodef name="build-submodules">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="file-flash.xml" target="@{target}" />
+            <ant antfile="file-html5.xml" target="@{target}" />
+            <ant antfile="file.xml" target="@{target}" />
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-submodules target="local"/>
+    </target>
+    <target name="deploy">
+        <build-submodules target="deploy"/>
+    </target>
     <target name="all">
-    	<ant antfile="file-flash.xml" target="all" />
-    	<ant antfile="file-html5.xml" target="all" />   	
-     	<ant antfile="file.xml" target="all" />
+        <build-submodules target="all"/>
+    </target>
+    <target name="clean">
+        <build-submodules target="clean"/>
+    </target>
+    <target name="tests">
+        <build-submodules target="clean"/>
     </target>
 </project>

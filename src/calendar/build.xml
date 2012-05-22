@@ -5,10 +5,29 @@
 <project name="Calendar" default="local">
     <description>Calendar Build File</description>
 
+    <macrodef name="build-submodules">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="calendar-base.xml" target="@{target}" />
+            <ant antfile="calendarnavigator.xml" target="@{target}" />
+            <ant antfile="calendar.xml" target="@{target}" />
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-submodules target="local"/>
+    </target>
+    <target name="deploy">
+        <build-submodules target="deploy"/>
+    </target>
     <target name="all">
-    	<ant antfile="calendar-base.xml" target="all" />
-    	<ant antfile="calendarnavigator.xml" target="all" />
-    	<ant antfile="calendar.xml" target="all" />
+        <build-submodules target="all"/>
+    </target>
+    <target name="clean">
+        <build-submodules target="clean"/>
+    </target>
+    <target name="tests">
+        <build-submodules target="clean"/>
     </target>
 
 </project>

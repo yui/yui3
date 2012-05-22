@@ -5,10 +5,29 @@
 <project name="Uploader" default="local">
     <description>Uploader Build File</description>
 
+    <macrodef name="build-submodules">
+        <attribute name="target"/>
+        <sequential>
+    	    <ant antfile="uploader-queue.xml" target="@{target}" />
+    	    <ant antfile="uploader-html5.xml" target="@{target}" />   	
+    	    <ant antfile="uploader-flash.xml" target="@{target}" />
+    	    <ant antfile="uploader.xml" target="@{target}" />
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-submodules target="local"/>
+    </target>
+    <target name="deploy">
+        <build-submodules target="deploy"/>
+    </target>
     <target name="all">
-    	<ant antfile="uploader-queue.xml" target="all" />
-    	<ant antfile="uploader-html5.xml" target="all" />   	
-    	<ant antfile="uploader-flash.xml" target="all" />
-    	<ant antfile="uploader.xml" target="all" />
+        <build-submodules target="all"/>
+    </target>
+    <target name="clean">
+        <build-submodules target="clean"/>
+    </target>
+    <target name="tests">
+        <build-submodules target="clean"/>
     </target>
 </project>
