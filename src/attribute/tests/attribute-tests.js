@@ -495,7 +495,7 @@ YUI.add('attribute-tests', function(Y) {
 
             h.setAttrs({
                 A: "MyNewAVal",
-                B: "MyNewBVal",
+                B: "MyNewBVal"
             }, {foo:"bar"});
 
             Y.Assert.areEqual("MyNewAVal", h.get("A"));
@@ -1001,7 +1001,7 @@ YUI.add('attribute-tests', function(Y) {
                 "complex.Y.A": 12,
                 "complex.Z.A": 13,
                 "complex.W.A": 14, // Does not exist, not allowed to set
-                "B.bar": 10 , // B doesn't have a value
+                "B.bar": 10 // B doesn't have a value
             });
 
             Y.ObjectAssert.areEqual({A:11}, h.get("complex.X"));
