@@ -286,6 +286,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
+        if(yMin < 0)
+        {
+            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
+        }
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
