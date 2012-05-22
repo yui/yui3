@@ -997,6 +997,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method getData
+    * @for Node
     * @description Retrieves arbitrary data stored on a Node instance.
     * If no data is associated with the Node, it will attempt to retrieve
     * a value from the corresponding HTML data attribute. (e.g. node.getData('foo')
@@ -1065,6 +1066,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method setData
+    * @for Node
     * @description Stores arbitrary data on a Node instance.
     * This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
@@ -1085,6 +1087,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method clearData
+    * @for Node
     * @description Clears internally stored data.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
@@ -1106,6 +1109,7 @@ Y.mix(Y.Node.prototype, {
 Y.mix(Y.NodeList.prototype, {
     /**
     * @method getData
+    * @for NodeList
     * @description Retrieves arbitrary data stored on each Node instance
     * bound to the NodeList.
     * @see Node
@@ -1121,6 +1125,7 @@ Y.mix(Y.NodeList.prototype, {
 
     /**
     * @method setData
+    * @for NodeList
     * @description Stores arbitrary data on each Node instance bound to the
     *  NodeList. This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
@@ -1135,6 +1140,7 @@ Y.mix(Y.NodeList.prototype, {
 
     /**
     * @method clearData
+    * @for NodeList
     * @description Clears data on all Node instances bound to the NodeList.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
