@@ -41,7 +41,7 @@
                             attr = path.shift();
                             v = subvals[attr] = subvals[attr] || [];
                             v[v.length] = {
-                                path : path, 
+                                path : path,
                                 value: valueHash[k]
                             };
                         } else {
@@ -101,12 +101,12 @@
                 }
             }
 
-            if (val && !cfg.readOnly && initValues) {
+            if (!cfg.readOnly && initValues) {
 
-                // Complex Attributes (complex values applied, after simple, incase both are set)
+                // Complex Attributes (complex values applied, after simple, in case both are set)
                 complex = initValues.complex;
 
-                if (complex && complex.hasOwnProperty(attr)) {
+                if (complex && complex.hasOwnProperty(attr) && (val !== undefined) && (val !== null)) {
                     subvals = complex[attr];
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;
