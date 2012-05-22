@@ -9,22 +9,7 @@ UA properties set for your browser:
 // This method is in the core of the library, so we don't have to use() any
 // additional modules to access it.  However, this example requires 'node'.
 YUI().use('node', function(Y) {
-    var results = Y.one('#demo'), ua = '', platform = '';
-
-    Y.each(Y.UA, function(v, k) {
-        var info = k + ': ' + v;
-        results.append('<p>' + info + '</p>');
-
-        if (v) {
-            if (Y.Lang.isNumber(v)) {
-                ua = info;
-            } else {
-                platform = v;
-            }
-        }
-    });
-
-    results.append('<p>Your browser is ' + ua + ', ' + platform + '</p>');
+{{>yui-ua-js}}   
 });
 
 </script>
