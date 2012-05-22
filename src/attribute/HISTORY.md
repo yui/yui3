@@ -7,6 +7,9 @@ Attribute Change History
   * Optimized valueFn handling, so that valueFn is not called for Attribute,
     if user provides a value.
 
+  * Support opts argument for setAttrs() also. Passed through to set, and ends up
+    mixed into the event payload for all the attributes set through setAttrs()
+
 3.5.1
 -----
 

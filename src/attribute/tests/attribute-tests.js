@@ -446,6 +446,62 @@ YUI.add('attribute-tests', function(Y) {
             h.set("A", "Foo");
 
             Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+        },
+
+        testSetOptionalPayload : function() {
+            var h = this.createHost(),
+                actualEvents = [];
+
+            h.on("AChange", function(e) {
+                actualEvents.push("onAChange");
+                Y.Assert.areEqual("bar", e.foo);
+            });
+
+            h.after("AChange", function(e) {
+                actualEvents.push("afterAChange");
+                Y.Assert.areEqual("bar", e.foo);
+            });
+
+            h.set("A", "MyNewAVal", {foo:"bar"});
+
+            Y.Assert.areEqual("MyNewAVal", h.get("A"));
+
+            Y.ArrayAssert.itemsAreEqual(["onAChange", "afterAChange"], actualEvents);
+        },
+        
+        testSetAttrsEventOptionalPayload : function() {
+            var h = this.createHost(),
+                actualEvents = [];
+
+            h.on("AChange", function(e) {
+                actualEvents.push("onAChange");
+                Y.Assert.areEqual("bar", e.foo);
+            });
+
+            h.on("BChange", function(e) {
+                actualEvents.push("onBChange");
+                Y.Assert.areEqual("bar", e.foo);
+            });
+
+            h.after("AChange", function(e) {
+                actualEvents.push("afterAChange");
+                Y.Assert.areEqual("bar", e.foo);
+            });
+
+            h.after("BChange", function(e) {
+                actualEvents.push("afterBChange");
+                Y.Assert.areEqual("bar", e.foo);
+            });
+
+            h.setAttrs({
+                A: "MyNewAVal",
+                B: "MyNewBVal",
+            }, {foo:"bar"});
+
+            Y.Assert.areEqual("MyNewAVal", h.get("A"));
+            Y.Assert.areEqual("MyNewBVal", h.get("B"));
+
+            Y.ArrayAssert.itemsAreEqual(["onAChange", "afterAChange", "onBChange", "afterBChange"], actualEvents);
         }
     };
             
@@ -944,7 +1000,8 @@ YUI.add('attribute-tests', function(Y) {
                 "complex.X.A": 11,
                 "complex.Y.A": 12,
                 "complex.Z.A": 13,
-                "complex.W.A": 14 // Does not exist, not allowed to set
+                "complex.W.A": 14, // Does not exist, not allowed to set
+                "B.bar": 10 , // B doesn't have a value
             });
 
             Y.ObjectAssert.areEqual({A:11}, h.get("complex.X"));
@@ -952,6 +1009,9 @@ YUI.add('attribute-tests', function(Y) {
             Y.ObjectAssert.areEqual({A:13}, h.get("complex.Z"));
 
             Y.Assert.areEqual(undefined, h.get("complex.W"));
+
+            Y.Assert.areEqual(undefined, h.get("B"));
+            Y.Assert.areEqual(undefined, h.get("B.bar"));
         },
 
         testComplexSet : function() {
@@ -968,7 +1028,7 @@ YUI.add('attribute-tests', function(Y) {
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
  
-                    h.set("complex.Y", {B:222});
+            h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
         },
@@ -980,6 +1040,7 @@ YUI.add('attribute-tests', function(Y) {
 
             h.on("complexChange", function(e) {
                 actualEvents.push("Before" + e.subAttrName);
+
                 if (e.subAttrName == "complex.X.A") {
                     Y.Assert.areEqual(1111, e.newVal.X.A);
                     Y.ObjectAssert.areEqual({A:1111}, e.newVal.X);
