@@ -44,13 +44,13 @@ Using YUI on Node.js is very similar to using it inside the browser:
 var YUI = require('yui').YUI;
 
 YUI().use('yql', function(Y) {
-    Y.YQL('....');
+    Y.YQL('...');
 });
 ```
 
 <p>
-When you require the `yui` module in this fashion, you are returned the global YUI object. It will be
-re-used on each additional require. So if you load modules into one instance, then <em>re-require</em> YUI,
+When you `require()` the `yui` module in this fashion, you are returned the global YUI object. It will be
+re-used on each additional `require()`. So if you load modules into one instance, then <em>re-require</em> YUI,
 those modules will still be available without fetching them from disk again.
 </p>
 
@@ -96,7 +96,7 @@ module.exports.getYQLData = function(cb) {
 var mod = require('your-module');
 
 mod.getYQLData(function(r) {
-    //r will be the return from the above YQL call
+    // `r` will be the return from the above YQL call.
 });
 
 ```
@@ -119,12 +119,12 @@ mod.getYQLData(function(r) {
 #!/usr/bin/env node
 
 var Y = require('yui/yql');
-console.log('YQL #1?', (Y.YQL) ? true : false); //True
-console.log('Base #1?', (Y.Base) ? true : false); //False
+console.log('YQL #1?', Y.YQL ? true : false);   // => YQL #1? true
+console.log('Base #1?', Y.Base ? true : false); // => Base #1? false
 
 var Y = require('yui/base-base');
-console.log('YQL #2?', (Y.YQL) ? true : false); //True
-console.log('Base #2?', (Y.Base) ? true : false); //True
+console.log('YQL #2?', Y.YQL ? true : false);   // => YQL #2? true
+console.log('Base #2?', Y.Base ? true : false); // => Base #2? true
 ```
 
 <h3>In a batch</h3>
@@ -139,9 +139,9 @@ console.log('Base #2?', (Y.Base) ? true : false); //True
 
 var Y = require('yui').use('yql', 'oop', 'base-base');
 
-console.log('OOP?', (Y.rbind) ? true : false); //True
-console.log('YQL?', (Y.YQL) ? true : false); //True
-console.log('Base?', (Y.Base) ? true : false); //True
+console.log('OOP?', Y.rbind ? true : false); // => OOP? true
+console.log('YQL?', Y.YQL ? true : false);   // => YQL? true
+console.log('Base?', Y.Base ? true : false); // => Base? true
 ```
 
 <p>The above is exactly the same as this:</p>
@@ -174,8 +174,7 @@ var Y = YUI({
     }
 }).use('awesome');
 
-//If your module adds a Y.Awesome namespace
-
+// If your module adds a `Y.Awesome` namespace.
 module.exports.awesome = Y.Awesome;
 
 ```
@@ -190,7 +189,7 @@ module.exports.awesome = Y.Awesome;
 <h3>Load all modules in debug mode</h3>
 
 <p>
-    This will load the debug seed and force all modules to load in debug mode:        
+    This will load the debug seed and force all modules to load in debug mode:
 </p>
 
 ```
