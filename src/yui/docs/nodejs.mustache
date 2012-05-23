@@ -44,7 +44,11 @@ YUI().use('yql', function(Y) {
 ```
 
 <p>
-When you `require()` the `yui` module in this fashion, you are returned the global YUI object. It will be re-used on each additional `require()`. So if you load modules into one instance, then <em>re-require</em> YUI, those modules will still be available without fetching them from disk again.
+When you `require()` the `yui` module in this fashion, you are returned the global `YUI` object. It will be re-used on each additional `require()`. So if you load modules into one instance, then <em>re-require</em> YUI, those modules will still be available without fetching them from disk again.
+</p>
+
+<p>
+<strong>Note:</strong> Since the same global `YUI` object is used within the Node.js process, all calls to all YUI instances' `use()` methods share the same module loading queue. You should be aware of this when using multiple YUI instances configured with different `useSync` values.
 </p>
 
 
