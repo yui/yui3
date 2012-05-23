@@ -83,7 +83,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
     var contentBox = this.get('contentBox'),
         pane       = contentBox.one("." + CAL_PANE);
     pane.on("selectstart", function (ev) { ev.preventDefault();});
-    pane.delegate("click", this._clickCalendar, "." + CAL_DAY, this);
+    pane.delegate("click", this._clickCalendar, "." + CAL_DAY + ", ." + CAL_PREVMONTH_DAY + ", ." + CAL_NEXTMONTH_DAY, this);
     pane.delegate("keydown", this._keydownCalendar, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarGrid, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarCell, "." + CAL_DAY, this);
@@ -281,47 +281,49 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
                }
                break;
             case("multiple"):
-               if (!ev.metaKey && !ev.ctrlKey && !ev.shiftKey) {
-                    this._clearSelection(true);
-                    this._lastSelectedDate = this._nodeToDate(clickedCell);
-                    this._addDateToSelection(this._lastSelectedDate);
-               }
-               else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && !ev.shiftKey) {
-                  if (clickedCellIsSelected) {
-                    this._removeDateFromSelection(this._nodeToDate(clickedCell));
-                    this._lastSelectedDate = null;
-                  }
-                  else {
-                    this._lastSelectedDate = this._nodeToDate(clickedCell);
-                    this._addDateToSelection(this._lastSelectedDate);
-                  }
-               }
-               else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && ev.shiftKey) {
-                  if (this._lastSelectedDate) {
-                    var selectedDate = this._nodeToDate(clickedCell);
-                    this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
-                    this._lastSelectedDate = selectedDate;
-                  }
-                  else {
-                    this._lastSelectedDate = this._nodeToDate(clickedCell);
-                    this._addDateToSelection(this._lastSelectedDate);
-                  }
-
-               }
-               else if (ev.shiftKey) {
+               if (clickedCellIsDay) {
+                 if (!ev.metaKey && !ev.ctrlKey && !ev.shiftKey) {
+                      this._clearSelection(true);
+                      this._lastSelectedDate = this._nodeToDate(clickedCell);
+                      this._addDateToSelection(this._lastSelectedDate);
+                 }
+                 else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && !ev.shiftKey) {
+                    if (clickedCellIsSelected) {
+                      this._removeDateFromSelection(this._nodeToDate(clickedCell));
+                      this._lastSelectedDate = null;
+                    }
+                    else {
+                      this._lastSelectedDate = this._nodeToDate(clickedCell);
+                      this._addDateToSelection(this._lastSelectedDate);
+                    }
+                 }
+                 else if (((os == 'macintosh' && ev.metaKey) || (os != 'macintosh' && ev.ctrlKey)) && ev.shiftKey) {
                     if (this._lastSelectedDate) {
                       var selectedDate = this._nodeToDate(clickedCell);
-                      this._clearSelection(true);
                       this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
                       this._lastSelectedDate = selectedDate;
                     }
                     else {
-                      this._clearSelection(true);
                       this._lastSelectedDate = this._nodeToDate(clickedCell);
-                        this._addDateToSelection(this._lastSelectedDate);
+                      this._addDateToSelection(this._lastSelectedDate);
                     }
-               }
-               break;
+  
+                 }
+                 else if (ev.shiftKey) {
+                      if (this._lastSelectedDate) {
+                        var selectedDate = this._nodeToDate(clickedCell);
+                        this._clearSelection(true);
+                        this._addDateRangeToSelection(selectedDate, this._lastSelectedDate);
+                        this._lastSelectedDate = selectedDate;
+                      }
+                      else {
+                        this._clearSelection(true);
+                        this._lastSelectedDate = this._nodeToDate(clickedCell);
+                          this._addDateToSelection(this._lastSelectedDate);
+                      }
+                 }
+              }
+              break;
         }
 
       if (clickedCellIsDay) {
@@ -360,7 +362,9 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */   
   subtractMonth : function (e) {
     this.set("date", ydate.addMonths(this.get("date"), -1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
   },
 
   /**
@@ -369,7 +373,9 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */ 
   subtractYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), -1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
   },
 
   /**
@@ -378,7 +384,9 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */   
   addMonth : function (e) {    
     this.set("date", ydate.addMonths(this.get("date"), 1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
   },
 
   /**
@@ -387,7 +395,9 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    */   
   addYear : function (e) {
     this.set("date", ydate.addYears(this.get("date"), 1));
-    e.halt();
+    if (e) {
+      e.halt();
+    }
   }
 },
 
