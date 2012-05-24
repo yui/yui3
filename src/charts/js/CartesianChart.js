@@ -338,6 +338,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
             
             series.type = series.type || type;
+            series.direction = series.direction || dir;
             
             if((series.type == "combo" || series.type == "stackedcombo" || series.type == "combospline" || series.type == "stackedcombospline"))
             {
