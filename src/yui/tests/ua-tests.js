@@ -5,6 +5,9 @@ YUI.add('ua-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Node.js',
         _should: {
+            ignore: {
+                'test: Node.js platform': !Y.UA.nodejs
+            },
             fail: {
                 'test: Node.js version': (Y.UA.nodejs !== 0.615)
             }

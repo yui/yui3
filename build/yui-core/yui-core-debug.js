@@ -790,7 +790,7 @@ with any configuration info required for the module.
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * @param callback.Y {YUI} The `YUI` instance created for this sandbox
-     * @param callback.data {Object} Object data returned from `Loader`.
+     * @param callback.status {Object} Object containing `success`, `msg` and `data` properties
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -873,6 +873,10 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
+            if (this.Env._missed && this.Env._missed.length) {
+                response.msg = 'Missing modules: ' + this.Env._missed.join();
+                response.success = false;
+            }
             if (this.config.throwFail) {
                 callback(this, response);
             } else {
@@ -994,7 +998,7 @@ with any configuration info required for the module.
                     process(data);
                     redo = missing.length;
                     if (redo) {
-                        if (missing.sort().join() ==
+                        if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
                             redo = false;
                         }
@@ -1046,6 +1050,7 @@ with any configuration info required for the module.
         // use loader to expand dependencies and sort the
         // requirements if it is available.
         if (boot && Y.Loader && args.length) {
+            Y.log('Using loader to expand dependencies', 'info', 'yui');
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;

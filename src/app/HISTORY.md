@@ -4,6 +4,12 @@ App Framework Change History
 3.6.0
 -----
 
+### App Transitions
+
+* Fixed issue with non-collapsing white space between views while transitioning.
+  White space is now fully collapsed and prevents views from jumping after a
+  cross-fade transition. [Ticket #2532298]
+
 ### ModelList
 
 * The `add()` method now accepts an `index` option, which can be used to insert
@@ -22,6 +28,9 @@ App Framework Change History
   [Ticket #2532240]
 
 ### Router
+
+* Fixed issue when multiple routers on were on the page and one router was
+  destroyed the remaining routers would stop dispatching. [Ticket #2532317]
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
   indicates the number of matching routes after the current route in the

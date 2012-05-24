@@ -39,12 +39,32 @@ This package contains the following directories:
 The individual component directories under the <code>src</code> directory contain Ant build files (<code>build.xml</code> and others) which can be used to build individual modules using the YUI Builder. The YUI Builder is part of the "builder" project, available on GitHub at <a href="https://github.com/yui/builder">https://github.com/yui/builder</a>
 </p>
 
-<h2>Component User Guides</h2>
+<div class="yui3-g">
+    <div class="yui3-u-1-2">
+        <h2>Component User Guides</h2>
 
-<ul>
-  {{#components}}
-    {{#meta}}
-        <li><a href="{{name}}/index.html">{{displayName}}</a></li>
-    {{/meta}}
-  {{/components}}
-</ul>
+        <ul>
+          {{#components}}
+            {{#meta}}
+                <li><a href="{{name}}/index.html">{{displayName}}</a></li>
+            {{/meta}}
+          {{/components}}
+        </ul>
+    </div>
+    <div class="yui3-u-1-2">
+        <h2 id="examples">Examples list</h2>
+        <ul>
+            {{#components}}
+                {{#meta}}
+                <li><a href="{{name}}/index.html">{{displayName}}</a>
+                    <ul>
+                        {{#examples}}
+                            <li><a href="{{../name}}/{{name}}.html" title="{{description}}">{{displayName}}</a></li>
+                        {{/examples}}
+                    </ul>
+                </li>
+                {{/meta}}
+            {{/components}}
+        </ul>
+   </div>
+</div>

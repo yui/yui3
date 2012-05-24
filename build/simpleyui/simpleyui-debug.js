@@ -790,7 +790,7 @@ with any configuration info required for the module.
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * @param callback.Y {YUI} The `YUI` instance created for this sandbox
-     * @param callback.data {Object} Object data returned from `Loader`.
+     * @param callback.status {Object} Object containing `success`, `msg` and `data` properties
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -873,6 +873,10 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
+            if (this.Env._missed && this.Env._missed.length) {
+                response.msg = 'Missing modules: ' + this.Env._missed.join();
+                response.success = false;
+            }
             if (this.config.throwFail) {
                 callback(this, response);
             } else {
@@ -994,7 +998,7 @@ with any configuration info required for the module.
                     process(data);
                     redo = missing.length;
                     if (redo) {
-                        if (missing.sort().join() ==
+                        if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
                             redo = false;
                         }
@@ -1046,6 +1050,7 @@ with any configuration info required for the module.
         // use loader to expand dependencies and sort the
         // requirements if it is available.
         if (boot && Y.Loader && args.length) {
+            Y.log('Using loader to expand dependencies', 'info', 'yui');
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
@@ -5509,7 +5514,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
-        if (src) {
+        src = src || "";
+        if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
             if (incl && !(src in incl)) {
@@ -10245,7 +10251,7 @@ Y.Subscriber.prototype = {
         }
 
         // only catch errors if we will not re-throw them.
-        if (Y.config.throwFail) {
+        if (Y.config && Y.config.throwFail) {
             ret = this._notify(c, args, ce);
         } else {
             try {
@@ -14369,6 +14375,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method getData
+    * @for Node
     * @description Retrieves arbitrary data stored on a Node instance.
     * If no data is associated with the Node, it will attempt to retrieve
     * a value from the corresponding HTML data attribute. (e.g. node.getData('foo')
@@ -14437,6 +14444,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method setData
+    * @for Node
     * @description Stores arbitrary data on a Node instance.
     * This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
@@ -14457,6 +14465,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method clearData
+    * @for Node
     * @description Clears internally stored data.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
@@ -14478,6 +14487,7 @@ Y.mix(Y.Node.prototype, {
 Y.mix(Y.NodeList.prototype, {
     /**
     * @method getData
+    * @for NodeList
     * @description Retrieves arbitrary data stored on each Node instance
     * bound to the NodeList.
     * @see Node
@@ -14493,6 +14503,7 @@ Y.mix(Y.NodeList.prototype, {
 
     /**
     * @method setData
+    * @for NodeList
     * @description Stores arbitrary data on each Node instance bound to the
     *  NodeList. This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
@@ -14507,6 +14518,7 @@ Y.mix(Y.NodeList.prototype, {
 
     /**
     * @method clearData
+    * @for NodeList
     * @description Clears data on all Node instances bound to the NodeList.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
@@ -19622,7 +19634,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
-        if (src) {
+        src = src || "";
+        if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
             if (incl && !(src in incl)) {

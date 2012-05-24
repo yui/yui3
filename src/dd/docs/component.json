@@ -109,6 +109,7 @@
         {
             "name"       : "photo-browser",
             "displayName": "Photo Browser",
+            "newWindow"  : "true",
             "description": "Example Photo Browser application.",
 	        "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
             "tags"       : ["dd", "delegation", "animation", "target", "application", "photos", "yql"]
@@ -128,6 +129,7 @@
             "layout"     : "anim-drop-example"
         },
         "photo-browser-example": {
+            "name"       : "photo-browser",
             "displayName": "Photo Browser",
             "layout"     : "photo-browser-example"
         },

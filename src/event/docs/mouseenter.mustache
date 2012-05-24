@@ -35,7 +35,7 @@
 <p>Chances are, you don't care about any of these except the first.  That's where `mouseenter` and `mouseleave` come in.  They only fire when the `e.target` of the event is the node subscribed to.  That means no noise.</p>
 
 ```
-YUI().use('event-mouseenter', function (Y) {
+YUI().use('event-mouseenter', 'transition', function (Y) {
     var hoverMe = Y.one('#hover-me');
 
     hoverMe.on('mouseenter', function () {
@@ -65,7 +65,7 @@ lasts as long as the mouse is over an element.  To make that easier, the
 attaches the first to `mouseenter` and the second to `mouseleave`.</p>
 
 ```
-YUI().use('event-mouseenter', function (Y) {
+YUI().use('event-hover', 'transition', function (Y) {
     function over() {
         this.one('.header').transition('fadeIn');
     }
