@@ -84,12 +84,22 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   _bindCalendarEvents : function () {
     var contentBox = this.get('contentBox'),
         pane       = contentBox.one("." + CAL_PANE);
-    pane.on("selectstart", function (ev) { ev.preventDefault();});
+    pane.on("selectstart", this._preventSelectionStart);
     pane.delegate("click", this._clickCalendar, "." + CAL_DAY + ", ." + CAL_PREVMONTH_DAY + ", ." + CAL_NEXTMONTH_DAY, this);
     pane.delegate("keydown", this._keydownCalendar, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarGrid, "." + CAL_GRID, this);
     pane.delegate("focus", this._focusCalendarCell, "." + CAL_DAY, this);
     pane.delegate("blur", this._blurCalendarGrid, "." + CAL_GRID + ",." + CAL_DAY, this);
+  },
+
+  /**
+   * Prevents text selection if it is started within the calendar pane
+   * @method _preventSelectionStart
+   * @param event {Event} The selectstart event
+   * @protected
+   */   
+  _preventSelectionStart : function (event) {
+    event.preventDefault();
   },
 
   /**

@@ -534,6 +534,139 @@
             },            
 
 
+           testFocus : function () {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,6,1)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();              
+
+                var calgrid = this.firstcalendar.get("contentBox").one(".yui3-calendar-grid");
+                calgrid.focus();
+                calgrid.simulate("keydown", { charCode: 40 });
+                calgrid.simulate("keydown", { charCode: 40 });
+                calgrid.simulate("keydown", { charCode: 37 });
+                calgrid.simulate("keydown", { charCode: 38 });
+                calgrid.simulate("keydown", { charCode: 39 });
+                calgrid.simulate("keydown", { charCode: 32 });
+                calgrid.simulate("keydown", { charCode: 32 });
+                calgrid.simulate("keydown", { charCode: 40 });
+                calgrid.simulate("keydown", { charCode: 32 });
+           },
+
+           testSelectionModes : function () {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,1),
+                    selectionMode: "multiple-sticky"
+                };
+
+                var cfg2 = {
+                    contentBox: "#secondcontainer",
+                    date: new Date(2011,11,1),
+                    selectionMode: "multiple"
+                }
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.render();  
+
+                this.secondcalendar = new Y.Calendar(cfg2);
+                this.secondcalendar.render();            
+
+                var calgrid = this.firstcalendar.get("contentBox").one(".yui3-calendar-grid");
+                var calendarid = this.firstcalendar._calendarId;
+
+                var cell1 = calgrid.one("#" + calendarid + "_pane_0_3_5");
+                var cell2 = calgrid.one("#" + calendarid + "_pane_0_5_21");
+
+                cell1.simulate("click");
+                cell2.simulate("click"); 
+                cell1.simulate("click");
+
+                calgrid.focus();
+                calgrid.simulate("keydown", { charCode: 40 });
+                calgrid.simulate("keydown", { charCode: 40 });
+                calgrid.simulate("keydown", { charCode: 32 });
+                calgrid.simulate("keydown", { charCode: 32 });
+
+                this.firstcalendar.set("selectionMode", "multiple");
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell1,
+                   metaKey: true,
+                   ctrlKey: true,
+                   shiftKey: false
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell2,
+                   metaKey: true,
+                   ctrlKey: true,
+                   shiftKey: false
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell1,
+                   metaKey: true,
+                   ctrlKey: true,
+                   shiftKey: true
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell2,
+                   metaKey: false,
+                   ctrlKey: false,
+                   shiftKey: true
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell2,
+                   metaKey: false,
+                   ctrlKey: false,
+                   shiftKey: false
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell2,
+                   metaKey: false,
+                   ctrlKey: false,
+                   shiftKey: false
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell1,
+                   metaKey: true,
+                   ctrlKey: true,
+                   shiftKey: true
+                });
+
+                this.firstcalendar._clickCalendar ({
+                   target: cell2,
+                   metaKey: false,
+                   ctrlKey: false,
+                   shiftKey: false
+                });
+
+
+                var calgrid2 = this.secondcalendar.get("contentBox").one(".yui3-calendar-grid");
+                var calendarid2 = this.secondcalendar._calendarId;
+
+                var cell3 = calgrid2.one("#" + calendarid2 + "_pane_0_3_5");
+
+                this.secondcalendar._clickCalendar ({
+                   target: cell3,
+                   metaKey: false,
+                   ctrlKey: false,
+                   shiftKey: true
+                });
+
+                var e = new Y.DOMEventFacade({type:'selectstart', preventDefault: function () {}});
+                this.secondcalendar._preventSelectionStart(e);
+
+                Y.Assert.areEqual(1, e.prevented);
+           },
 
            testCalendarNavigation : function() {
                 var cfg = {
