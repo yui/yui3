@@ -166,7 +166,8 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @protected
     **/
     getClassName: function () {
-        var host = this.host,
+        // TODO: add setter? to host to use property this.host for performance
+        var host = this.get('host'),
             NAME = (host && host.constructor.NAME) ||
                     this.constructor.NAME;
 
@@ -199,6 +200,24 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     //-----------------------------------------------------------------------//
     // Protected and private methods
     //-----------------------------------------------------------------------//
+    /**
+    Attaches event subscriptions to relay attribute changes to the child Views.
+
+    @method _bindUI
+    @protected
+    @since 3.6.0
+    **/
+    _bindUI: function () {
+        if (!this._eventHandles) {
+            this._eventHandles = this.after({
+                columnsChange: Y.bind('_afterColumnsChange', this),
+                dataChange   : Y.bind('_afterDataChange', this),
+                summaryChange: Y.bind('_afterSummaryChange', this),
+                captionChange: Y.bind('_afterCaptionChange', this),
+                widthChange  : Y.bind('_afterWidthChange', this)
+            });
+        }
+    },
 
     /**
     Creates the `<table>`.
@@ -325,6 +344,8 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
             this.fire('renderHeader', { view: this.head });
         }
 
+        attrs.columns = this.displayColumns;
+
         if (this.foot || e.footerView) {
             if (!this.foot) {
                 this.foot = new e.footerView(Y.merge(attrs, e.footerConfig));
@@ -342,12 +363,85 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         }
 
         this.get('container').append(this._tableNode);
+
+        this._bindUI();
     },
 
-    _initColumns: function () {
+    /**
+    Cleans up state, destroys child views, etc.
+
+    @method destructor
+    @protected
+    **/
+    destructor: function () {
+        if (this.head && this.head.destroy) {
+            this.head.destroy();
+        }
+        delete this.head;
+
+        if (this.foot && this.foot.destroy) {
+            this.foot.destroy();
+        }
+        delete this.foot;
+
+        if (this.body && this.body.destroy) {
+            this.body.destroy();
+        }
+        delete this.body;
+
+        if (this._eventHandles) {
+            this._eventHandles.detach();
+            delete this._eventHandles;
+        }
+
+        if (this._tableNode) {
+            this._tableNode.remove().destroy(true);
+        }
+    },
+
+    /**
+    Processes the full column array, distilling the columns down to those that
+    correspond to cell data columns.
+
+    @method _extractDisplayColumns
+    @protected
+    **/
+    _extractDisplayColumns: function () {
         var columns = this.get('columns'),
+            displayColumns = [],
             i, len, column;
 
+        function process(cols) {
+            var i, len, col;
+
+            for (i = 0, len = cols.length; i < len; ++i) {
+                col = cols[i];
+
+                if (isArray(col.children)) {
+                    process(col.childre);
+                } else {
+                    displayColumns.push(col);
+                }
+            }
+        }
+
+        process(columns);
+
+        /**
+        Array of the columns that correspond to those with value cells in the
+        data rows. Excludes colspan header columns (configured with `children`).
+
+        @property displayColumns
+        @type {Object[]}
+        @since 3.6.0
+        **/
+        this.displayColumns = displayColumns;
+    },
+
+    /**
+    Creates a ModelList to store 
+    **/
+    _initData: function () {
     },
 
     /**
@@ -376,13 +470,20 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.6.0
     **/
     initializer: function () {
-        this.host = this.get('host');
-
         this._initEvents();
 
-        this._initColumns();
+        this._extractDisplayColumns();
+
+        this._initData();
     },
 
+    /**
+    Creates the UI in the configured `container`.
+
+    @method render
+    @return {TableView}
+    @chainable
+    **/
     render: function () {
         if (this.get('container')) {
             this.fire('renderTable', {
@@ -393,12 +494,11 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
                 bodyConfig  : this.get('bodyConfig'),
 
                 footerView  : this.get('footerView'),
-                footerConfig: this.get('footerConfig'),
-
-                rowView     : this.get('rowView'),
-                rowConfig   : this.get('rowConfig')
+                footerConfig: this.get('footerConfig')
             });
         }
+
+        return this;
     },
 
     /**

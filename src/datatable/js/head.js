@@ -132,6 +132,9 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     //TODO: should this be protected?
     //source: null,
 
+    /**
+    **/
+    THEAD_TEMPLATE: '<thead class="{className}">{content}</thead>',
 
     // -- Public methods ------------------------------------------------------
 
@@ -309,11 +312,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
     @since 3.5.0
     **/
     initializer: function (config) {
-        config || (config = {});
-
-        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix;
-
-        this.source  = config.source;
+        this.host  = config.host;
         this.columns = this._parseColumns(config.columns);
 
         this._eventHandles = [];

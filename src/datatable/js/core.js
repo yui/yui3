@@ -503,17 +503,6 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    Contains column configuration objects for those columns believed to be intended for display in the `<tbody>`. Populated by `_setDisplayColumns`.
-
-    @property _displayColumns
-    @type {Object[]}
-    @value undefined (initially not set)
-    @protected
-    @since 3.5.0
-    **/
-    //_displayColumns: null,
-
-    /**
     The getter for the `columns` attribute.  Returns the array of column
     configuration objects if `instance.get('columns')` is called, or the
     specific column object if `instance.get('columns.columnKey')` is called.
@@ -760,10 +749,38 @@ Y.mix(Table.prototype, {
     @protected
     @since 3.5.0
     **/
-    _parseColumns: function (columns) {
-        var map  = {},
-            keys = {};
+    _parseColumns: function (columnConfigs) {
+        var columns = [],
+            map  = {},
+            keys = {},
+            known = [],
+            knownCopies = [],
+            arrayIndex = Y.Array.indexOf;
         
+        function copyObj(o) {
+            var copy = {},
+                key, val, i;
+
+            known.push(o);
+            knownCopies.push(copy);
+
+            for (key in o) {
+                if (o.hasOwnProperty(key)) {
+                    val = o[key];
+
+                    if (isArray(val)) {
+                        copy[key] = val.slice();
+                    } else if (isObject(val, true)) {
+                        i = arrayIndex(val, known);
+
+                        copy[key] = i === -1 ? copyObj(val) : knownCopies[i];
+                    }
+                }
+            }
+
+            return copy;
+        }
+
         function genId(name) {
             // Sanitize the name for use in generated CSS classes.
             // TODO: is there more to do for other uses of _id?
@@ -782,13 +799,8 @@ Y.mix(Table.prototype, {
             var i, len, col, key, yuid;
 
             for (i = 0, len = cols.length; i < len; ++i) {
-                col = cols[i];
-
-                if (isString(col)) {
-                    // Update the array entry as well, so the attribute state array
-                    // contains the same objects.
-                    cols[i] = col = { key: col };
-                }
+                columns[i] = // chained assignment
+                col = isString(cols[i]) ? { key: cols[i] } : copyObj(cols[i]);
 
                 yuid = Y.stamp(col);
 
@@ -840,7 +852,7 @@ Y.mix(Table.prototype, {
             }
         }
 
-        process(columns);
+        process(columnConfigs);
 
         return map;
     },
@@ -932,38 +944,6 @@ Y.mix(Table.prototype, {
         }
 
         return val;
-    },
-
-    /**
-    Stores an array of columns intended for display in the `_displayColumns`
-    property.  This method assumes that if a column configuration object does
-    not have children, it is a display column.
-
-    @method _setDisplayColumns
-    @param {Object[]} columns Column config array to extract display columns
-            from
-    @protected
-    @since 3.5.0
-    **/
-    _setDisplayColumns: function (columns) {
-        function extract(cols) {
-            var display = [],
-                i, len, col;
-
-            for (i = 0, len = cols.length; i < len; ++i) {
-                col = cols[i];
-
-                if (col.children) {
-                    display.push.apply(display, extract(col.children));
-                } else {
-                    display.push(col);
-                }
-            }
-
-            return display;
-        }
-
-        this._displayColumns = extract(columns);
     },
 
     /**

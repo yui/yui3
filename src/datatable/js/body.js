@@ -162,6 +162,16 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     //TODO: should this be protected?
     //source: null,
 
+    /**
+    HTML templates used to create the `<tbody>` containing the table rows.
+
+    @property TBODY_TEMPLATE
+    @type {HTML}
+    @default '<tbody class="{className}">{content}</tbody>'
+    @since 3.6.0
+    **/
+    TBODY_TEMPLATE: '<tbody class="{className}">{content}</tbody>',
+
     // -- Public methods ------------------------------------------------------
 
     /**
@@ -191,7 +201,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     getCell: function (seed, shift) {
-        var tbody = this.get('container'),
+        var tbody = this.tbodyNode,
             row, cell, index, rowIndexOffset;
 
         if (seed && tbody) {
@@ -241,11 +251,16 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     getClassName: function () {
-        var args = toArray(arguments);
-        args.unshift(this._cssPrefix);
-        args.push(true);
+        var host = this.host,
+            args;
 
-        return _getClassName.apply(ClassNameManager, args);
+        if (host && host.getClassName) {
+            return host.getClassName.apply(host, arguments);
+        } else {
+            args = toArray(arguments);
+            args.unshift(this.constructor.NAME);
+            return _getClassName.apply(ClassNameManager, args);
+        }
     },
 
     /**
@@ -261,7 +276,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     getRecord: function (seed) {
         var modelList = this.get('modelList'),
-            tbody     = this.get('container'),
+            tbody     = this.tbodyNode,
             row       = null,
             record;
 
@@ -294,7 +309,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     getRow: function (id) {
-        var tbody = this.get('container') || null;
+        var tbody = this.tbodyNode;
 
         if (id) {
             id = this._idMap[id.get ? id.get('clientId') : id] || id;
@@ -395,17 +410,23 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     render: function () {
-        var tbody   = this.get('container'),
+        var table   = this.get('container'),
             data    = this.get('modelList'),
-            columns = this.columns;
-
+            columns = this.get('columns'),
+            tbody   = this.tbodyNode ||
+                      (this.tbodyNode = this._createTBodyNode());
+        
         // Needed for mutation
         this._createRowTemplate(columns);
 
-        if (tbody && data) {
+        if (data) {
             tbody.setHTML(this._createDataHTML(columns));
 
             this._applyNodeFormatters(tbody, columns);
+        }
+
+        if (tbody.get('parentNode') !== table) {
+            table.appendChild(tbody);
         }
 
         this.bindUI();
@@ -430,8 +451,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // 3. column additions
     // 4. column moves (preserve cells)
     _afterColumnsChange: function (e) {
-        this.columns = this._parseColumns(e.newVal);
-
         this.render();
     },
 
@@ -448,31 +467,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     _afterDataChange: function (e) {
         // Baseline view will just rerender the tbody entirely
         this.render();
-    },
-
-    /**
-    Reacts to a change in the instance's `modelList` attribute by breaking
-    down the bubbling relationship with the previous `modelList` and setting up
-    that relationship with the new one.
-
-    @method _afterModelListChange
-    @param {EventFacade} e The `modelListChange` event
-    @protected
-    @since 3.5.0
-    **/
-    _afterModelListChange: function (e) {
-        var old = e.prevVal,
-            now = e.newVal;
-
-        if (old && old.removeTarget) {
-            old.removeTarget(this);
-        }
-
-        if (now && now.addTarget(this)) {
-            now.addTarget(this);
-        }
-
-        this._idMap = {};
     },
 
     /**
@@ -745,6 +739,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
+    Creates the `<tbody>` node that will store the data rows.
+
+    @method _createTBodyNode
+    @return {Node}
+    @protected
+    @since 3.6.0
+    **/
+    _createTBodyNode: function () {
+        return Y.Node.create(fromTemplate(this.TBODY_TEMPLATE, {
+            className: this.getClassName('data')
+        }));
+    },
+
+    /**
     Destroys the instance.
 
     @method destructor
@@ -805,65 +813,15 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     initializer: function (config) {
-        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix,
-            modelList = this.get('modelList');
-
-        this.source  = config.source;
-        this.columns = this._parseColumns(config.columns);
+        this.host  = config.host;
 
         this._eventHandles = {};
         this._idMap = {};
-
-        if (cssPrefix) {
-            this._cssPrefix = cssPrefix;
-        }
 
         this.CLASS_ODD  = this.getClassName('odd');
         this.CLASS_EVEN = this.getClassName('even');
 
         this.after('modelListChange', bind('_afterModelListChange', this));
-
-        if (modelList && modelList.addTarget) {
-            modelList.addTarget(this);
-        }
-    },
-
-    /**
-    Flattens an array of potentially nested column configurations into a single
-    depth array of data columns.  Columns that have children are disregarded in
-    favor of searching their child columns.  The resulting array corresponds 1:1
-    with columns that will contain data in the `<tbody>`.
-
-    @method _parseColumns
-    @param {Object[]} data Array of unfiltered column configuration objects
-    @param {Object[]} columns Working array of data columns. Used for recursion.
-    @return {Object[]} Only those columns that will be rendered.
-    @protected
-    @since 3.5.0
-    **/
-    _parseColumns: function (data, columns) {
-        var col, i, len;
-        
-        columns || (columns = []);
-
-        if (isArray(data) && data.length) {
-            for (i = 0, len = data.length; i < len; ++i) {
-                col = data[i];
-
-                if (typeof col === 'string') {
-                    col = { key: col };
-                }
-
-                if (col.key || col.formatter || col.nodeFormatter) {
-                    col.index = columns.length;
-                    columns.push(col);
-                } else if (col.children) {
-                    this._parseColumns(col.children, columns);
-                }
-            }
-        }
-
-        return columns;
     }
 
     /**
