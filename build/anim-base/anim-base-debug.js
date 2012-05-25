@@ -121,16 +121,20 @@ YUI.add('anim-base', function(Y) {
         var node = anim._node,
             domNode = node._node,
             val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
-        //make sure node instance
-        if (domNode && (domNode.style || domNode.attributes)) {
-            if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
+
+        if (domNode) {
+            if ('style' in domNode && att in domNode.style) {
                 unit = unit || '';
                 node.setStyle(att, val + unit);
-            } else if (domNode.attributes[att]) {
+            } else if ('attributes' in domNode && att in domNode.attributes) {
                 node.setAttribute(att, val);
+            } else if (att in domNode) {
+                domNode[att] = val;
             }
         } else if (node.set) {
             node.set(att, val);
+        } else if (att in node) {
+            node[att] = val;
         }
     };
 
@@ -144,15 +148,19 @@ YUI.add('anim-base', function(Y) {
         var node = anim._node,
             domNode = node._node,
             val = '';
-        //make sure node instance
-        if (domNode && (domNode.style || domNode.attributes)) {
-            if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
+
+        if (domNode) {
+            if ('style' in domNode && att in domNode.style) {
                 val = node.getComputedStyle(att);
-            } else if (domNode.attributes[att]) {
+            } else if ('attributes' in domNode && att in domNode.attributes) {
                 val = node.getAttribute(att);
+            } else if (att in domNode) {
+                val = domNode[att];
             }
         } else if (node.get) {
             val = node.get(att);
+        } else if (att in node) {
+            val = node[att];
         }
 
         return val;
