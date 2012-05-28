@@ -399,6 +399,7 @@ VMLDrawing.prototype = {
         this._left = 0;
         this._top = 0;
         this._path = "";
+        this._movePath = null;
     },
     
     /**
