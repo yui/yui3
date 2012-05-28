@@ -4,6 +4,7 @@ Y.log('using VML');
 var Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
     IS_ARRAY = Y_LANG.isArray,
+    IS_STRING = Y_LANG.isString,
     Y_DOM = Y.DOM,
     Y_SELECTOR = Y.Selector,
     DOCUMENT = Y.config.doc,
@@ -61,6 +62,11 @@ VMLDrawing.prototype = {
     _addToPath: function(val)
     {
         this._path = this._path || "";
+        if(this._movePath)
+        {
+            this._path += this._movePath;
+            this._movePath = null;
+        }
         this._path += val;
     },
 
@@ -309,7 +315,7 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
-        this._addToPath(" m " + this._round(x) + ", " + this._round(y));
+        this._movePath = " m " + this._round(x) + ", " + this._round(y);
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
@@ -357,6 +363,7 @@ VMLDrawing.prototype = {
             node.style.height =  h + "px";
         }
         this._path = path;
+        this._movePath = null;
         this._updateTransform();
     },
 
@@ -394,6 +401,7 @@ VMLDrawing.prototype = {
         this._left = 0;
         this._top = 0;
         this._path = "";
+        this._movePath = null;
     },
     
     /**

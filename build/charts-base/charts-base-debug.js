@@ -3333,7 +3333,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Function
          */
         appendLabelFunction: {
-            getter: function()
+            valueFn: function()
             {
                 return this._setText;
             }
@@ -3354,7 +3354,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Function
          */
         appendTitleFunction: {
-            getter: function()
+            valueFn: function()
             {
                 return this._setText;
             }
@@ -7350,6 +7350,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
+        if(yMin < 0)
+        {
+            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
+        }
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
@@ -7608,11 +7612,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         categoryDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
+           },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._yDisplayName = val;
+                }
+                else
+                {
+                    this._xDisplayName = val;
+                }
+                return val;
             }
         },
 
@@ -7624,11 +7641,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         valueDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
+            },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._xDisplayName = val;
+                }
+                else
+                {
+                    this._yDisplayName = val;
+                }
+                return val;
             }
         },
         
@@ -8162,58 +8192,6 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
 
 		
 /**
- * AreaSplineSeries renders an area graph with data points connected by a curve.
- *
- * @module charts
- * @class AreaSplineSeries
- * @constructor
- * @extends CartesianSeries
- * @uses Fills
- * @uses CurveUtil
- */
-Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fills, Y.CurveUtil], {
-    /**
-     * @protected
-     *
-     * Draws the series.
-     *
-     * @method drawSeries
-     */
-    drawSeries: function()
-    {
-        this.drawAreaSpline();
-    }
-}, {
-	ATTRS : {
-        /**
-         * Read-only attribute indicating the type of series.
-         *
-         * @attribute type
-         * @type String
-         * @default areaSpline
-         */
-        type: {
-            value:"areaSpline"
-        }
-        
-        /**
-         * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
-         *
-         *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
-         *      retrieved from the following array:
-         *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
-         *      </dd>
-         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
-         *  </dl>
-         *
-         * @attribute styles
-         * @type Object
-         */
-    }
-});
-
-/**
  * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
@@ -8687,6 +8665,58 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 		
 
 		
+/**
+ * AreaSplineSeries renders an area graph with data points connected by a curve.
+ *
+ * @module charts
+ * @class AreaSplineSeries
+ * @constructor
+ * @extends CartesianSeries
+ * @uses Fills
+ * @uses CurveUtil
+ */
+Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUtil], {
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
+        this.drawAreaSpline();
+    }
+}, {
+	ATTRS : {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default areaSpline
+         */
+        type: {
+            value:"areaSpline"
+        }
+        
+        /**
+         * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
+         *
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      retrieved from the following array:
+         *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
+         *      </dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
+    }
+});
+
 /**
  * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
  *
@@ -13183,6 +13213,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
             
             series.type = series.type || type;
+            series.direction = series.direction || dir;
             
             if((series.type == "combo" || series.type == "stackedcombo" || series.type == "combospline" || series.type == "stackedcombospline"))
             {
@@ -13364,6 +13395,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 labelFunction:"labelFunction",
                 labelFunctionScope:"labelFunctionScope",
                 labelFormat:"labelFormat",
+                appendLabelFunction: "appendLabelFunction",
+                appendTitleFunction: "appendTitleFunction",
                 maximum:"maximum",
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
