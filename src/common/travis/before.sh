@@ -11,7 +11,7 @@ wait
 
 make npm
 
-# FUTURE
+# FUTURE CODE COVERAGE
 #wait
 #cd ../../
 #wait
@@ -21,8 +21,14 @@ make npm
 #jscoverage --encoding=utf-8 ./build ./build-coverage
 #wait
 #for file in build-coverage/*; do
-#    echo `basename $file`
 #    name=`basename $file`
-#    cp ./build-coverage/$name/$name.js ./build-coverage/$name/$name-min.js
-#    cp ./build-coverage/$name/$name.js ./build-coverage/$name/$name-debug.js
+#    if [ -f "./build-coverage/$name/$name.js" ]; then
+#        cp ./build-coverage/$name/$name.js ./build-coverage/$name/$name-min.js
+#        cp ./build-coverage/$name/$name.js ./build-coverage/$name/$name-debug.js
+#    fi
 #done
+#wait
+#mv ./build ./build.bak
+#wait
+#mv ./build-coverage ./build
+#wait
