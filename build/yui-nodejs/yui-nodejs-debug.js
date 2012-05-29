@@ -3790,7 +3790,8 @@ YUI.add('get', function(Y) {
     var path = require('path'),
         vm = require('vm'),
         fs = require('fs'),
-        request = require('request');
+        request = require('request'),
+        existsSync = fs.existsSync || path.existsSync;
 
 
     Y.Get = function() {
@@ -3877,7 +3878,7 @@ YUI.add('get', function(Y) {
         } else {
             if (Y.config.useSync) {
                 //Needs to be in useSync
-                if (path.existsSync(url)) {
+                if (existsSync(url)) {
                     var mod = fs.readFileSync(url,'utf8');
                     Y.Get._exec(mod, url, cb);
                 } else {
