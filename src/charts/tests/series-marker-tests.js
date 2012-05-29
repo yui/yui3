@@ -31,6 +31,7 @@ YUI.add('series-marker-tests', function(Y) {
             
             //create the chart 
             this.chart = new Y.Chart(this.attrCfg);
+
             this.contentBox = this.chart.get("contentBox");
         
             //reset the result
@@ -206,6 +207,14 @@ YUI.add('series-marker-tests', function(Y) {
             {category:"4/1/2010", expenses:500, revenue:2800},
             {category:"5/1/2010", expenses:null, revenue:2650},
             {category:"6/1/2010", expenses:null, revenue:1200}
+    ],
+    DataProviderWithMissingKeyEntries = [
+            {category:"1/1/2010"},
+            {category:"2/1/2010", revenue:100},
+            {category:"3/1/2010", expenses:400, revenue:1500},
+            {category:"4/1/2010", expenses:500, revenue:2800},
+            {category:"5/1/2010", expenses:1000, revenue:2650},
+            {category:"6/1/2010", expenses:900, revenue:1200}
     ],
     MissingSeriesAndSeriesStartingWithZeroConfig = {
         dataProvider: [
@@ -399,6 +408,13 @@ YUI.add('series-marker-tests', function(Y) {
         {category: 9, miscellaneous: 2011},
         {category: 10, miscellaneous: 3100}
     ],
+    regularDataProvider = [
+        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+    ],
     DataProvider,
     suite  = new Y.Test.Suite("Chart Series Tests"),
     zeroValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
@@ -467,6 +483,93 @@ YUI.add('series-marker-tests', function(Y) {
     categoryWithNumericValuesChart = new Y.ChartMarkerEventTestCase({
         dataProvider: numericCategoryValuesDataProvider,
         render: "#mychart"
+    }, "mouseover"),
+    missingValueComboMouseOverTests = new Y.ChartMarkerEventTestCase({
+        render: "#mychart",
+        dataProvider: DataProviderWithNull,
+        seriesKeys: SeriesKeys
+    }, "mouseover"),
+    missingValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
+        type: "column",
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+        testKeys: SeriesKeys
+    }, "mouseover"),
+    missingValueBarMouseOverTests = new Y.ChartMarkerEventTestCase({
+        type: "bar",
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+        testKeys: SeriesKeys
+    }, "mouseover"),
+    missingValueStackedColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
+        type: "column",
+        stacked: true,
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+        testKeys: SeriesKeys
+    }, "mouseover"),
+    missingValueStackedBarMouseOverTests = new Y.ChartMarkerEventTestCase({
+        type: "bar",
+        stacked: true,
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+        testKeys: SeriesKeys
+    }, "mouseover"),
+    categoryAndValueDisplayName = function(direction)
+    {
+        var cfg = {
+            dataProvider: regularDataProvider,
+            seriesCollection: [
+                {
+                    xKey: "category",
+                    yKey: "miscellaneous",
+                    categoryDisplayName: "Date",
+                    valueDisplayName: "Miscellaneous"
+                },
+                {
+                    xKey: "category",
+                    yKey: "expenses",
+                    categoryDisplayName: "Date",
+                    valueDisplayName: "Expenses"
+                },
+                {
+                    xKey: "category",
+                    yKey: "revenue",
+                    categoryDisplayName: "Date",
+                    valueDisplayName: "Revenue"
+                }
+            ],
+            render: "#mychart"
+        };
+        if(direction && direction == "vertical")
+        {
+            cfg.direction = direction;
+        }
+        return new Y.ChartMarkerEventTestCase(cfg, "mouseover");
+    },
+    xAndYDisplayName = new Y.ChartMarkerEventTestCase({
+        dataProvider: regularDataProvider,
+        seriesCollection: [
+            {
+                xKey: "category",
+                yKey: "miscellaneous",
+                xDisplayName: "Date",
+                yDisplayName: "Miscellaneous"
+            },
+            {
+                xKey: "category",
+                yKey: "expenses",
+                xDisplayName: "Date",
+                yDisplayName: "Expenses"
+            },
+            {
+                xKey: "category",
+                yKey: "revenue",
+                xDisplayName: "Date",
+                yDisplayName: "Revenue"
+            }
+        ],
+        render: "#mychart"
     }, "mouseover");
     
     suite.add(zeroValueColumnMouseOverTests);
@@ -480,7 +583,16 @@ YUI.add('series-marker-tests', function(Y) {
     suite.add(zeroValueComboMouseOverTests);
     suite.add(nullValueComboMouseOverTests);
     suite.add(missingSeriesAndSeriesStartingWithZero); 
-    suite.add(categoryWithNumericValuesChart); 
+    suite.add(missingValueComboMouseOverTests);
+    suite.add(missingValueColumnMouseOverTests);
+    suite.add(missingValueBarMouseOverTests);
+    suite.add(missingValueStackedColumnMouseOverTests);
+    suite.add(missingValueStackedBarMouseOverTests);
+    suite.add(categoryWithNumericValuesChart);
+    suite.add(categoryAndValueDisplayName());
+    suite.add(categoryAndValueDisplayName("vertical"));
+    suite.add(xAndYDisplayName);
+
 
     //add to the testrunner and run
     //Y.Test.Runner.add(Y.Tests.SeriesMarkerTests);

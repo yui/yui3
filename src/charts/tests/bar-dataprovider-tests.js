@@ -1,4 +1,4 @@
-YUI.add('charts-dataprovider-tests', function(Y) {
+YUI.add('bar-dataprovider-tests', function(Y) {
     //-------------------------------------------------------------------------
     // Chart dataProvider Test Case
     //-------------------------------------------------------------------------
@@ -6,6 +6,7 @@ YUI.add('charts-dataprovider-tests', function(Y) {
     {
         ChartDataProviderTestCase.superclass.constructor.call(this);
         this.attrCfg = cfg;
+        this.attrCfg.type = "bar";
         this.attrCfg.render = "#mychart";
         this.name = type + " DataProvider Tests";
     }
@@ -47,7 +48,7 @@ YUI.add('charts-dataprovider-tests', function(Y) {
 
     Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
     
-    var suite = new Y.Test.Suite("Y.Charts.DataProvider"),
+    var suite = new Y.Test.Suite("Y.Charts.BarDataProvider"),
 
     allPositiveDataProvider =  [ 
         {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
@@ -126,103 +127,7 @@ YUI.add('charts-dataprovider-tests', function(Y) {
             cfg.stacked = stacked;
         }
         return new Y.ChartDataProviderTestCase(cfg, name);
-    },
-
-    NullValuesDataProviderWithDashedLineTest = new Y.ChartDataProviderTestCase({
-        seriesCollection: [
-            {
-                styles: {
-                    line: {
-                        discontinuousType: "dashed",
-                        discontinuousDashLength: 3,
-                        discontinuousGapSpace: 4,
-                        connectDiscontinuousPoints: true
-                    }
-                }
-            },
-            {
-                styles: {
-                    line: {
-                        discontinuousType: "dashed",
-                        discontinuousDashLength: 3,
-                        discontinuousGapSpace: 4,
-                        connectDiscontinuousPoints: true
-                    }
-                }
-            },
-            {
-                styles: {
-                    line: {
-                        discontinuousType: "dashed",
-                        discontinuousDashLength: 3,
-                        discontinuousGapSpace: 4,
-                        connectDiscontinuousPoints: true
-                    }
-                }
-            }
-        ],
-        dataProvider: nullValuesDataProvider
-    }, "Null Values"),
-    
-    NullValuesDataProviderNullConnectDiscontinuousPointsFalseTest = new Y.ChartDataProviderTestCase({
-        seriesCollection: [
-            {
-                styles: {
-                    line: {
-                        connectDiscontinuousPoints: false
-                    }
-                }
-            },
-            {
-                styles: {
-                    line: {
-                        connectDiscontinuousPoints: false
-                    }
-                }
-            },
-            {
-                styles: {
-                    line: {
-                        connectDiscontinuousPoints: false
-                    }
-                }
-            }
-        ],
-        dataProvider: nullValuesDataProvider
-    }, "Null Values"),
-    
-    DataProviderWithDashedLineTest = new Y.ChartDataProviderTestCase({
-        seriesCollection: [
-            {
-                styles: {
-                    line: {
-                        lineType: "dashed",
-                        dashLength: 3,
-                        gapSpace: 4
-                    }
-                }
-            },
-            {
-                styles: {
-                    line: {
-                        lineType: "dashed",
-                        dashLength: 3,
-                        gapSpace: 4
-                    }
-                }
-            },
-            {
-                styles: {
-                    line: {
-                        lineType: "dashed",
-                        dashLength: 3,
-                        gapSpace: 4
-                    }
-                }
-            }
-        ],
-        dataProvider: allPositiveDataProvider
-    }, "Null Values");
+    };
     
     suite.add(getDataProviderTest(allPositiveDataProvider, "All Positive"));
     suite.add(getDataProviderTest(allNegativeDataProvider, "All Negative"));
@@ -232,9 +137,6 @@ YUI.add('charts-dataprovider-tests', function(Y) {
     suite.add(getDataProviderTest(missingDataLargeDataProvider, "Missing Large"));
     suite.add(getDataProviderTest(nullValuesDataProvider, "Null Values"));
     suite.add(getDataProviderTest(missingFirstValuesDataProvider, "Missing First Values"));
-    suite.add(NullValuesDataProviderWithDashedLineTest);
-    suite.add(NullValuesDataProviderNullConnectDiscontinuousPointsFalseTest);
-    suite.add(DataProviderWithDashedLineTest);
     suite.add(getDataProviderTest(allPositiveDataProvider, "All Positive", true));
     suite.add(getDataProviderTest(allNegativeDataProvider, "All Negative", true));
     suite.add(getDataProviderTest(positiveAndNegativeDataProvider, "Positive and Negative", true));      
@@ -243,6 +145,6 @@ YUI.add('charts-dataprovider-tests', function(Y) {
     suite.add(getDataProviderTest(missingDataLargeDataProvider, "Missing Large", true));
     suite.add(getDataProviderTest(nullValuesDataProvider, "Null Values", true));
     suite.add(getDataProviderTest(missingFirstValuesDataProvider, "Missing First Values", true));
-    
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

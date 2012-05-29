@@ -1,5 +1,5 @@
-YUI.add('charts-legend-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.Legend"),
+YUI.add('area-legendwrapitems-tests', function(Y) {
+    var suite = new Y.Test.Suite("Y.Charts.AreaLegendWrapItems"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {
@@ -19,7 +19,7 @@ YUI.add('charts-legend-tests', function(Y) {
     Y.extend(LegendTestTemplate, Y.Test.Case, {
         setUp: function() {
             Y.one("body").append('<div id="testbed"></div>');
-            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:800px;height:600px" id="mychart"></div>');
+            Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:' + this._width + 'px;height:' + this._height + 'px" id="mychart"></div>');
             this.chart = new Y.Chart(this.attrCfg);
         },
         
@@ -30,14 +30,6 @@ YUI.add('charts-legend-tests', function(Y) {
     });
 
     var basicDataValues = [ 
-            {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
-            {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
-            {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
-            {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
-            {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
-    ],
-    
-    bigDataValues = [ 
         {date:"5/1/2010", values:400, expenses:1100, revenue:1500, dog:8230, cat:7005, bird:6500, fish:5200, horse:4500, man:3400, shoe:2010, boat:1400}, 
         {date:"5/2/2010", values:2000, expenses:3700, revenue:2200, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400}, 
         {date:"5/3/2010", values:50, expenses:9100, revenue:100, dog:1230, cat:2005, bird:3500, fish:4200, horse:5500, man:6400, shoe:7010, boat:8400},
@@ -232,6 +224,10 @@ YUI.add('charts-legend-tests', function(Y) {
         }
         return new LegendTestTemplate(cfg, {
             name: "No Legend Tests" + nameSuffix,
+            
+            _width: 500,
+
+            _height: 400,
 
             testNoLegend: function()
             {
@@ -249,12 +245,29 @@ YUI.add('charts-legend-tests', function(Y) {
             type: type,
             render: "#mychart",
             dataProvider: basicDataValues,
-            legend: legend
-        };
+            legend: legend,
+        },
+        width,
+        height;
+        if(position == "top" || position == "bottom")
+        {
+            width = 225;
+            height = 350;
+        }
+        else
+        {
+            width = 350;
+            height = 225;
+        }
+
         return new LegendTestTemplate(cfg, {
             name: "Test with " + position + " positioned, " + align + " aligned legend",
 
             legendPosition: position,
+            
+            _width: width,
+
+            _height: height,
 
             testDefault: testLegend
         });
@@ -276,6 +289,10 @@ YUI.add('charts-legend-tests', function(Y) {
         }
         return new LegendTestTemplate(cfg, {
             name: "Legend Position Test" + nameSuffix,
+            
+            _width: 250,
+
+            _height: 225,
 
             testDefault: function()
             {
@@ -296,20 +313,20 @@ YUI.add('charts-legend-tests', function(Y) {
         });
     };
     
-    suite.add(NoLegendTest("combo"));
-    suite.add(LegendTest("combo", "top", topLegend(), "center"));
-    suite.add(LegendTest("combo", "right", rightLegend(), "middle"));
-    suite.add(LegendTest("combo", "bottom", bottomLegend(), "center"));
-    suite.add(LegendTest("combo", "left", leftLegend(), "middle"));
-    suite.add(LegendTest("combo", "top", topLegendLeft(), "left"));
-    suite.add(LegendTest("combo", "right", rightLegendTop(), "top"));
-    suite.add(LegendTest("combo", "bottom", bottomLegendLeft(), "left"));
-    suite.add(LegendTest("combo", "left", leftLegendTop(), "top"));
-    suite.add(LegendTest("combo", "top", topLegendRight(), "right"));
-    suite.add(LegendTest("combo", "right", rightLegendBottom(), "bottom"));
-    suite.add(LegendTest("combo", "bottom", bottomLegendRight(), "right"));
-    suite.add(LegendTest("combo", "left",  leftLegendBottom(), "bottom"));
-    suite.add(LegendPositionTest("combo"));
+    suite.add(NoLegendTest("area"));
+    suite.add(LegendTest("area", "top", topLegend(), "center"));
+    suite.add(LegendTest("area", "right", rightLegend(), "middle"));
+    suite.add(LegendTest("area", "bottom", bottomLegend(), "center"));
+    suite.add(LegendTest("area", "left", leftLegend(), "middle"));
+    suite.add(LegendTest("area", "top", topLegendLeft(), "left"));
+    suite.add(LegendTest("area", "right", rightLegendTop(), "top"));
+    suite.add(LegendTest("area", "bottom", bottomLegendLeft(), "left"));
+    suite.add(LegendTest("area", "left", leftLegendTop(), "top"));
+    suite.add(LegendTest("area", "top", topLegendRight(), "right"));
+    suite.add(LegendTest("area", "right", rightLegendBottom(), "bottom"));
+    suite.add(LegendTest("area", "bottom", bottomLegendRight(), "right"));
+    suite.add(LegendTest("area", "left",  leftLegendBottom(), "bottom"));
+    suite.add(LegendPositionTest("area"));
     
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts-legend', 'test']});

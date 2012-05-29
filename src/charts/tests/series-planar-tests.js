@@ -202,6 +202,14 @@ YUI.add('series-planar-tests', function(Y) {
             {category:"5/1/2010", expenses:null, revenue:2650},
             {category:"6/1/2010", expenses:null, revenue:1200}
     ],
+    DataProviderWithMissingKeyEntries = [
+            {category:"1/1/2010"},
+            {category:"2/1/2010", revenue:100},
+            {category:"3/1/2010", expenses:400, revenue:1500},
+            {category:"4/1/2010", expenses:500, revenue:2800},
+            {category:"5/1/2010", expenses:1000, revenue:2650},
+            {category:"6/1/2010", expenses:900, revenue:1200}
+    ],
     MissingSeriesAndSeriesStartingWithZeroConfig = {
         stacked: true,
         interactionType: "planar",
@@ -350,6 +358,37 @@ YUI.add('series-planar-tests', function(Y) {
         seriesKeys: SeriesKeys
     }),
     missingSeriesAndSeriesStartingWithZero = new Y.ChartPlanarEventTestCase(MissingSeriesAndSeriesStartingWithZeroConfig),
+    missingValueComboMouseOverTests = new Y.ChartPlanarEventTestCase({
+        interactionType: "planar",
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+    }),
+    missingValueColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
+        interactionType: "planar",
+        type: "column",
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+    }),
+    missingValueBarMouseOverTests = new Y.ChartPlanarEventTestCase({
+        interactionType: "planar",
+        type: "bar",
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+    }),
+    missingValueStackedColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
+        interactionType: "planar",
+        type: "column",
+        stacked: true,
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+    }),
+    missingValueStackedBarMouseOverTests = new Y.ChartPlanarEventTestCase({
+        interactionType: "planar",
+        type: "bar",
+        stacked: true,
+        render: "#mychart",
+        dataProvider: DataProviderWithMissingKeyEntries,
+    }),
     categoryWithNumericValuesChart = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         dataProvider: numericCategoryValuesDataProvider,
@@ -368,6 +407,12 @@ YUI.add('series-planar-tests', function(Y) {
     suite.add(zeroValueComboMouseOverTests);
     suite.add(nullValueComboMouseOverTests);
     suite.add(missingSeriesAndSeriesStartingWithZero); 
+    suite.add(missingSeriesAndSeriesStartingWithZero); 
+    suite.add(missingValueComboMouseOverTests);
+    suite.add(missingValueColumnMouseOverTests);
+    suite.add(missingValueBarMouseOverTests);
+    suite.add(missingValueStackedColumnMouseOverTests);
+    suite.add(missingValueStackedBarMouseOverTests);
     suite.add(categoryWithNumericValuesChart); 
     
     //add to the testrunner and run

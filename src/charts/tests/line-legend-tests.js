@@ -1,5 +1,5 @@
-YUI.add('charts-legend-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.Legend"),
+YUI.add('line-legend-tests', function(Y) {
+    var suite = new Y.Test.Suite("Y.Charts.LineLegend"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {
@@ -296,20 +296,20 @@ YUI.add('charts-legend-tests', function(Y) {
         });
     };
     
-    suite.add(NoLegendTest("combo"));
-    suite.add(LegendTest("combo", "top", topLegend(), "center"));
-    suite.add(LegendTest("combo", "right", rightLegend(), "middle"));
-    suite.add(LegendTest("combo", "bottom", bottomLegend(), "center"));
-    suite.add(LegendTest("combo", "left", leftLegend(), "middle"));
-    suite.add(LegendTest("combo", "top", topLegendLeft(), "left"));
-    suite.add(LegendTest("combo", "right", rightLegendTop(), "top"));
-    suite.add(LegendTest("combo", "bottom", bottomLegendLeft(), "left"));
-    suite.add(LegendTest("combo", "left", leftLegendTop(), "top"));
-    suite.add(LegendTest("combo", "top", topLegendRight(), "right"));
-    suite.add(LegendTest("combo", "right", rightLegendBottom(), "bottom"));
-    suite.add(LegendTest("combo", "bottom", bottomLegendRight(), "right"));
-    suite.add(LegendTest("combo", "left",  leftLegendBottom(), "bottom"));
-    suite.add(LegendPositionTest("combo"));
+    suite.add(NoLegendTest("line"));
+    suite.add(LegendTest("line", "top", topLegend(), "center"));
+    suite.add(LegendTest("line", "right", rightLegend(), "middle"));
+    suite.add(LegendTest("line", "bottom", bottomLegend(), "center"));
+    suite.add(LegendTest("line", "left", leftLegend(), "middle"));
+    suite.add(LegendTest("line", "top", topLegendLeft(), "left"));
+    suite.add(LegendTest("line", "right", rightLegendTop(), "top"));
+    suite.add(LegendTest("line", "bottom", bottomLegendLeft(), "left"));
+    suite.add(LegendTest("line", "left", leftLegendTop(), "top"));
+    suite.add(LegendTest("line", "top", topLegendRight(), "right"));
+    suite.add(LegendTest("line", "right", rightLegendBottom(), "bottom"));
+    suite.add(LegendTest("line", "bottom", bottomLegendRight(), "right"));
+    suite.add(LegendTest("line", "left",  leftLegendBottom(), "bottom"));
+    suite.add(LegendPositionTest("line"));
     
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts-legend', 'test']});

@@ -208,6 +208,80 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     },
     {
         name: "Ellipse Marker Test"
+    }),
+   
+    ColumnTest = new Y.GroupMarkerTestTemplate({
+        seriesKeys: ["miscellaneous", "expenses", "revenue"],
+        dataProvider: dataProvider,
+        seriesCollection: [
+            {
+                type: "column",
+                valueKey: "miscellaneous",
+                styles: {
+                    marker: {
+                        shape: "rect"
+                    }
+                }
+            },
+            {
+                type: "column",
+                valueKey: "expenses",
+                styles: {
+                    marker: {
+                        shape: "rect"
+                    }
+                }
+            },
+            {
+                type: "column",
+                valueKey: "revenue",
+                styles: {
+                    marker: {
+                        shape: "rect"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        name: "Column Marker Test"
+    }),
+   
+    BarTest = new Y.GroupMarkerTestTemplate({
+        seriesKeys: ["miscellaneous", "expenses", "revenue"],
+        dataProvider: dataProvider,
+        seriesCollection: [
+            {
+                type: "bar",
+                valueKey: "miscellaneous",
+                styles: {
+                    marker: {
+                        shape: "rect"
+                    }
+                }
+            },
+            {
+                type: "bar",
+                valueKey: "expenses",
+                styles: {
+                    marker: {
+                        shape: "rect"
+                    }
+                }
+            },
+            {
+                type: "bar",
+                valueKey: "revenue",
+                styles: {
+                    marker: {
+                        shape: "rect"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        name: "Bar Marker Test"
     });
     
     suite.add(GroupMarkerTest);
@@ -215,6 +289,8 @@ YUI.add('charts-groupmarker-tests', function(Y) {
     suite.add(RectMarkerTest);
     suite.add(DiamondMarkerTest);
     suite.add(EllipseMarkerTest);
-    
+    suite.add(ColumnTest);
+    suite.add(BarTest);
+
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

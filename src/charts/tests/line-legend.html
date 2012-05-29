@@ -1,19 +1,19 @@
 <!doctype html>
 <html>
 <head>
-    <title>Combo Legend Tests</title>
+    <title>Line Legend Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
-<script src="charts-legend-tests.js"></script>
+<script src="line-legend-tests.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     allowRollup: false,
     useBrowserConsole: false
-}).use('console-filters', 'charts-legend-tests', function (Y) {
+}).use('console-filters', 'line-legend-tests', function (Y) {
 
     new Y.Console({
         style: 'block',
