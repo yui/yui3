@@ -934,9 +934,9 @@ with any configuration info required for the module.
                         if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            if (!mods[names[i]]) {
+                            //if (!mods[names[i]]) {
                                 a.push(names[i]);
-                            }
+                            //}
                         }
                     }
                     names = a;
