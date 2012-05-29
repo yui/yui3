@@ -638,7 +638,7 @@ with any configuration info required for the module.
                 name = r[i];
                 mod = mods[name];
 
-                if (aliases && aliases[name]) {
+                if (aliases && aliases[name] && !mod) {
                     Y._attach(aliases[name]);
                     continue;
                 }
@@ -784,7 +784,7 @@ with any configuration info required for the module.
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * @param callback.Y {YUI} The `YUI` instance created for this sandbox
-     * @param callback.data {Object} Object data returned from `Loader`.
+     * @param callback.status {Object} Object containing `success`, `msg` and `data` properties
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -866,6 +866,10 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
+            if (this.Env._missed && this.Env._missed.length) {
+                response.msg = 'Missing modules: ' + this.Env._missed.join();
+                response.success = false;
+            }
             if (this.config.throwFail) {
                 callback(this, response);
             } else {
@@ -920,10 +924,12 @@ with any configuration info required for the module.
 
                 if (aliases) {
                     for (i = 0; i < names.length; i++) {
-                        if (aliases[names[i]]) {
+                        if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            a.push(names[i]);
+                            //if (!mods[names[i]]) {
+                                a.push(names[i]);
+                            //}
                         }
                     }
                     names = a;
@@ -987,7 +993,7 @@ with any configuration info required for the module.
                     process(data);
                     redo = missing.length;
                     if (redo) {
-                        if (missing.sort().join() ==
+                        if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
                             redo = false;
                         }
@@ -5473,7 +5479,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
-        if (src) {
+        src = src || "";
+        if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
             if (incl && !(src in incl)) {

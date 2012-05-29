@@ -11,7 +11,7 @@
 <script src="../../../build/yui/yui.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'test', 'io-base', function (Y) {
 
     (new Y.Test.Console()).render('log'),

@@ -12,7 +12,7 @@
 <script type="text/javascript">
 (function() {
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false,
         useBrowserConsole: false
     }).use("console", "profiler", "dump", "datasource", function(Y) {

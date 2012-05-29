@@ -60,8 +60,28 @@ YUI.add('core-tests', function(Y) {
                 'test: domready delay': !Y.config.win,
                 'test: window.onload delay': !Y.config.win,
                 'test: contentready delay': !Y.config.win,
-                'test: available delay': !Y.config.win
+                'test: available delay': !Y.config.win,
+                'test: pattern requires order': !Y.config.win
             }
+        },
+        'test: pattern requires order': function() {
+            var test = this,
+            Assert = Y.Assert;
+            //This test will throw if it fails..
+            YUI({
+                modules: {
+                    'pattern-module': {
+                        fullpath: './assets/pattern-module.js',
+                        async: false
+                    }
+                }
+            }).use('pattern-module', function(Y) {
+                test.resume(function() {
+                    Y.PatternModule();
+                });
+            });
+
+            test.wait();
         },
 
         'cached functions should execute only once per input': function() {
@@ -250,6 +270,19 @@ YUI.add('core-tests', function(Y) {
                 Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
                 Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
 
+                Y.applyConfig({
+                    logInclude: {
+                        davglass: true
+                    },
+                    logExclude: {
+                        '': true
+                    }
+                });
+                last = undefined;
+                Y.log('This should be ignored', 'info');
+                Assert.isUndefined(last, 'Failed to exclude log param with empty string');
+                Y.log('This should NOT be ignored', 'info', 'davglass');
+                Assert.areEqual(last, 'davglass', 'Failed to include log param');
             });
             console.info = l;
         },
@@ -558,6 +591,41 @@ YUI.add('core-tests', function(Y) {
             });
 
             test.wait();
+        },
+        'status should be true': function() {
+            var test = this,
+                Assert = Y.Assert;
+                
+                YUI().use('oop', function(Y, status) {
+                    Assert.isTrue(status.success, 'Success callback failed');
+                });
+
+                YUI({
+                    useSync: false,
+                    modules: {
+                        good: {
+                            fullpath: resolvePath('./assets/good.js')
+                        }
+                    }
+                }).use('good', function(Y, status) {
+                    Assert.isTrue(Y.GOOD, 'Failed to load module');
+                    Assert.isTrue(status.success, 'Status is good');
+                });
+        },
+        'status should be false': function() {
+            var test = this,
+                Assert = Y.Assert;
+
+            YUI().use('no-such-module', function(Y, status) {
+                Assert.isFalse(status.success, 'Failed to set false on bad module');
+                Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                Y.use('no-such-module', function(Y, status) {
+                    Assert.isFalse(status.success, 'Failed to set false on bad module');
+                    Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                });
+            });
+
+
         }
     });
 

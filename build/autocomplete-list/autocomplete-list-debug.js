@@ -611,9 +611,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var boundingBox = this._boundingBox,
             target      = e.target;
 
-        if (target !== this._inputNode && target !== boundingBox &&
-                !boundingBox.one(target.get('id'))) {
-
+        if(target !== this._inputNode && target !== boundingBox && 
+                target.ancestor('#' + boundingBox.get('id'), true)){
             this.hide();
         }
     },
@@ -884,4 +883,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true, after:['autocomplete-sources'], lang:['en']});
+}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], lang:['en'], skinnable:true, after:['autocomplete-sources']});

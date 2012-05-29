@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.05.09-20-27',
+            GALLERY_VERSION = 'gallery-2012.05.23-19-56',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -1109,8 +1109,10 @@ Y.Loader.prototype = {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
-
-        o.requires = this.filterRequires(o.requires) || [];
+        
+        if (o.requires.length) {
+            o.requires = this.filterRequires(o.requires) || [];
+        }
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);

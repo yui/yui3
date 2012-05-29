@@ -36,7 +36,7 @@
     <script type="text/javascript">
         YUI({
             useBrowserConsole:false,
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use("dump", "attribute-core", "console", "test", function(Y) {
             
             function TestAugment(attrs, values) {}
