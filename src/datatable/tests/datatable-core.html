@@ -12,7 +12,7 @@
     <script src="datatable-core-tests.js"></script>
 	<script>
 		YUI({
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             allowRollup: false
 		}).use('test-console', 'datatable-core-tests', function (Y) {
 			

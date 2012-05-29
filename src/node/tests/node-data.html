@@ -7,7 +7,7 @@
 <script type="text/javascript" src="node-data-test.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('node-data-test', function(Y) {
     new Y.Test.Console().render();
     Y.Test.Runner.run();

@@ -18,7 +18,7 @@
     
     YUI({
         allowRollup: false,
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use('charts', 'test', 'event-simulate', 'console', function (Y) {
 
     Y.namespace("Tests");
