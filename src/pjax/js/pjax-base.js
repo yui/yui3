@@ -460,7 +460,7 @@ PjaxBase.ATTRS = {
 
     @attribute linkSelector
     @type String|Function
-    @default "a.pjax"
+    @default "a.yui3-pjax"
     @initOnly
     @since 3.5.0
     **/
