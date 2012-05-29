@@ -638,7 +638,7 @@ with any configuration info required for the module.
                 name = r[i];
                 mod = mods[name];
 
-                if (aliases && aliases[name]) {
+                if (aliases && aliases[name] && !mod) {
                     Y._attach(aliases[name]);
                     continue;
                 }
@@ -924,10 +924,12 @@ with any configuration info required for the module.
 
                 if (aliases) {
                     for (i = 0; i < names.length; i++) {
-                        if (aliases[names[i]]) {
+                        if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            a.push(names[i]);
+                            if (!mods[names[i]]) {
+                                a.push(names[i]);
+                            }
                         }
                     }
                     names = a;
