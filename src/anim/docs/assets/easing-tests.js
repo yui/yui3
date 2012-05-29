@@ -1,7 +1,7 @@
 YUI.add('easing-tests', function(Y) {
 
     Y.Test.Runner.add(new Y.Test.Case({
-        name: 'Basic Tests',
+        name: 'Easing Tests',
 
         'should end at zero height': function() {
             var node = Y.one('#demo .yui3-toggle'),
