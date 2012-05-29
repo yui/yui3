@@ -609,9 +609,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var boundingBox = this._boundingBox,
             target      = e.target;
 
-        if (target !== this._inputNode && target !== boundingBox &&
-                !boundingBox.one(target.get('id'))) {
-
+        if(target !== this._inputNode && target !== boundingBox && 
+                target.ancestor('#' + boundingBox.get('id'), true)){
             this.hide();
         }
     },

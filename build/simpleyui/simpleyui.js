@@ -638,7 +638,7 @@ with any configuration info required for the module.
                 name = r[i];
                 mod = mods[name];
 
-                if (aliases && aliases[name]) {
+                if (aliases && aliases[name] && !mod) {
                     Y._attach(aliases[name]);
                     continue;
                 }
@@ -727,6 +727,34 @@ with any configuration info required for the module.
 
         return true;
     },
+    /**
+    * Delays the `use` callback until another event has taken place. Like: window.onload, domready, contentready, available.
+    * @private
+    * @method _delayCallback
+    * @param {Callback} cb The original `use` callback
+    * @param {String|Object} until Either an event (load, domready) or an Object containing event/args keys for contentready/available
+    */
+    _delayCallback: function(cb, until) {
+
+        var Y = this,
+            mod = ['event-base'];
+
+        until = (Y.Lang.isObject(until) ? until : { event: until });
+
+        if (until.event === 'load') {
+            mod.push('event-synthetic');
+        }
+
+        return function() {
+            var args = arguments;
+            Y._use(mod, function() {
+                Y.on(until.event, function() {
+                    args[1].delayUntil = until.event;
+                    cb.apply(Y, args);
+                }, until.args);
+            });
+        };
+    },
 
     /**
      * Attaches one or more modules to the YUI instance.  When this
@@ -756,7 +784,7 @@ with any configuration info required for the module.
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * @param callback.Y {YUI} The `YUI` instance created for this sandbox
-     * @param callback.data {Object} Object data returned from `Loader`.
+     * @param callback.status {Object} Object containing `success`, `msg` and `data` properties
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -789,6 +817,9 @@ with any configuration info required for the module.
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
             args.pop();
+            if (Y.config.delayUntil) {
+                callback = Y._delayCallback(callback, Y.config.delayUntil);
+            }
         } else {
             callback = null;
         }
@@ -835,6 +866,10 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
+            if (this.Env._missed && this.Env._missed.length) {
+                response.msg = 'Missing modules: ' + this.Env._missed.join();
+                response.success = false;
+            }
             if (this.config.throwFail) {
                 callback(this, response);
             } else {
@@ -889,10 +924,12 @@ with any configuration info required for the module.
 
                 if (aliases) {
                     for (i = 0; i < names.length; i++) {
-                        if (aliases[names[i]]) {
+                        if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            a.push(names[i]);
+                            //if (!mods[names[i]]) {
+                                a.push(names[i]);
+                            //}
                         }
                     }
                     names = a;
@@ -956,7 +993,7 @@ with any configuration info required for the module.
                     process(data);
                     redo = missing.length;
                     if (redo) {
-                        if (missing.sort().join() ==
+                        if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
                             redo = false;
                         }
@@ -1828,6 +1865,36 @@ overwriting other scripts configs.
  * @default true
  * @since 3.5.0
  */
+
+/**
+Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
+@property delayUntil
+@type String|Object
+@since 3.6.0
+@example
+
+You can use `load` or `domready` strings by default:
+
+    YUI({
+        delayUntil: 'domready'
+    }, function(Y) {
+        //This will not fire until 'domeready'
+    });
+
+Or you can delay until a node is available (with `available` or `contentready`):
+
+    YUI({
+        delayUntil: {
+            event: 'available',
+            args: '#foo'
+        }
+    }, function(Y) {
+        //This will not fire until '#foo' is 
+        // available in the DOM
+    });
+    
+
+*/
 YUI.add('yui-base', function(Y) {
 
 /*
@@ -5412,7 +5479,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
-        if (src) {
+        src = src || "";
+        if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
             if (incl && !(src in incl)) {
@@ -10124,7 +10192,7 @@ Y.Subscriber.prototype = {
         }
 
         // only catch errors if we will not re-throw them.
-        if (Y.config.throwFail) {
+        if (Y.config && Y.config.throwFail) {
             ret = this._notify(c, args, ce);
         } else {
             try {
@@ -14232,6 +14300,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method getData
+    * @for Node
     * @description Retrieves arbitrary data stored on a Node instance.
     * If no data is associated with the Node, it will attempt to retrieve
     * a value from the corresponding HTML data attribute. (e.g. node.getData('foo')
@@ -14300,6 +14369,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method setData
+    * @for Node
     * @description Stores arbitrary data on a Node instance.
     * This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
@@ -14320,6 +14390,7 @@ Y.mix(Y.Node.prototype, {
 
     /**
     * @method clearData
+    * @for Node
     * @description Clears internally stored data.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
@@ -14341,6 +14412,7 @@ Y.mix(Y.Node.prototype, {
 Y.mix(Y.NodeList.prototype, {
     /**
     * @method getData
+    * @for NodeList
     * @description Retrieves arbitrary data stored on each Node instance
     * bound to the NodeList.
     * @see Node
@@ -14356,6 +14428,7 @@ Y.mix(Y.NodeList.prototype, {
 
     /**
     * @method setData
+    * @for NodeList
     * @description Stores arbitrary data on each Node instance bound to the
     *  NodeList. This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
@@ -14370,6 +14443,7 @@ Y.mix(Y.NodeList.prototype, {
 
     /**
     * @method clearData
+    * @for NodeList
     * @description Clears data on all Node instances bound to the NodeList.
     * @param {string} name The name of the field to clear. If no name
     * is given, all data is cleared.
@@ -16479,18 +16553,45 @@ Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
 
 // allow batching of plug/unplug via NodeList
 // doesn't use NodeList.importMethod because we need real Nodes (not tmpNode)
+/**
+ * Adds a plugin to each node in the NodeList.
+ * This will instantiate the plugin and attach it to the configured namespace on each node
+ * @method plug
+ * @for NodeList
+ * @param P {Function | Object |Array} Accepts the plugin class, or an 
+ * object with a "fn" property specifying the plugin class and 
+ * a "cfg" property specifying the configuration for the Plugin.
+ * <p>
+ * Additionally an Array can also be passed in, with the above function or 
+ * object values, allowing the user to add multiple plugins in a single call.
+ * </p>
+ * @param config (Optional) If the first argument is the plugin class, the second argument
+ * can be the configuration for the plugin.
+ * @chainable
+ */
 Y.NodeList.prototype.plug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
         Y.Node.prototype.plug.apply(Y.one(node), args);
     });
+    return this;
 };
 
+/**
+ * Removes a plugin from all nodes in the NodeList. This will destroy the 
+ * plugin instance and delete the namespace each node. 
+ * @method unplug
+ * @for NodeList
+ * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,
+ * all registered plugins are unplugged.
+ * @chainable
+ */
 Y.NodeList.prototype.unplug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
         Y.Node.prototype.unplug.apply(Y.one(node), args);
     });
+    return this;
 };
 
 
@@ -19462,7 +19563,8 @@ INSTANCE.log = function(msg, cat, src, silent) {
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
-        if (src) {
+        src = src || "";
+        if (typeof src !== "undefined") {
             excl = c.logExclude;
             incl = c.logInclude;
             if (incl && !(src in incl)) {

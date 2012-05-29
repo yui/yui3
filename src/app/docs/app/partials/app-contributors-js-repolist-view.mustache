@@ -1,6 +1,6 @@
 RepoListView = Y.Base.create('repoListView', Y.View, [], {
     // Compiles the RepoList Template into a reusable Handlebars template.
-    template: Y.Handlebars.compile(Y.one('#t-repo-list').getContent()),
+    template: Y.Handlebars.compile(Y.one('#t-repo-list').getHTML()),
 
     // Attach DOM events for the view. The `events` object is a mapping of
     // selectors to an object containing one or more events to attach to the

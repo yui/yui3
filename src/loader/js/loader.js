@@ -1013,8 +1013,10 @@ Y.Loader.prototype = {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
-
-        o.requires = this.filterRequires(o.requires) || [];
+        
+        if (o.requires.length) {
+            o.requires = this.filterRequires(o.requires) || [];
+        }
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
@@ -1524,10 +1526,19 @@ Y.Loader.prototype = {
             Y.log('isCSSLoaded was skipped for ' + name, 'warn', 'loader');
             return false;
         }
-
+        if (!YUI.Env._cssLoaded) {
+            YUI.Env._cssLoaded = {};
+        }
         var el = YUI.Env.cssStampEl,
             ret = false,
+            mod = YUI.Env._cssLoaded[name],
             style = el.currentStyle; //IE
+
+        
+        if (mod !== undefined) {
+            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            return mod;
+        }
 
         //Add the classname to the element
         el.className = name;
@@ -1543,6 +1554,9 @@ Y.Loader.prototype = {
         Y.log('Has Skin? ' + name + ' : ' + ret, 'info', 'loader');
 
         el.className = ''; //Reset the classname to ''
+
+        YUI.Env._cssLoaded[name] = ret;
+
         return ret;
     },
 

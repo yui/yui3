@@ -639,7 +639,7 @@ with any configuration info required for the module.
                 name = r[i];
                 mod = mods[name];
 
-                if (aliases && aliases[name]) {
+                if (aliases && aliases[name] && !mod) {
                     Y._attach(aliases[name]);
                     continue;
                 }
@@ -729,6 +729,38 @@ with any configuration info required for the module.
 
         return true;
     },
+    /**
+    * Delays the `use` callback until another event has taken place. Like: window.onload, domready, contentready, available.
+    * @private
+    * @method _delayCallback
+    * @param {Callback} cb The original `use` callback
+    * @param {String|Object} until Either an event (load, domready) or an Object containing event/args keys for contentready/available
+    */
+    _delayCallback: function(cb, until) {
+
+        var Y = this,
+            mod = ['event-base'];
+
+        until = (Y.Lang.isObject(until) ? until : { event: until });
+
+        if (until.event === 'load') {
+            mod.push('event-synthetic');
+        }
+
+        Y.log('Delaying use callback until: ' + until.event, 'info', 'yui');
+        return function() {
+            Y.log('Use callback fired, waiting on delay', 'info', 'yui');
+            var args = arguments;
+            Y._use(mod, function() {
+                Y.log('Delayed use wrapper callback after dependencies', 'info', 'yui');
+                Y.on(until.event, function() {
+                    args[1].delayUntil = until.event;
+                    Y.log('Delayed use callback done after ' + until.event, 'info', 'yui');
+                    cb.apply(Y, args);
+                }, until.args);
+            });
+        };
+    },
 
     /**
      * Attaches one or more modules to the YUI instance.  When this
@@ -758,7 +790,7 @@ with any configuration info required for the module.
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * @param callback.Y {YUI} The `YUI` instance created for this sandbox
-     * @param callback.data {Object} Object data returned from `Loader`.
+     * @param callback.status {Object} Object containing `success`, `msg` and `data` properties
      *
      * @example
      *      // loads and attaches dd and its dependencies
@@ -791,6 +823,9 @@ with any configuration info required for the module.
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
             args.pop();
+            if (Y.config.delayUntil) {
+                callback = Y._delayCallback(callback, Y.config.delayUntil);
+            }
         } else {
             callback = null;
         }
@@ -838,6 +873,10 @@ with any configuration info required for the module.
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
         } else if (callback) {
+            if (this.Env._missed && this.Env._missed.length) {
+                response.msg = 'Missing modules: ' + this.Env._missed.join();
+                response.success = false;
+            }
             if (this.config.throwFail) {
                 callback(this, response);
             } else {
@@ -892,10 +931,12 @@ with any configuration info required for the module.
 
                 if (aliases) {
                     for (i = 0; i < names.length; i++) {
-                        if (aliases[names[i]]) {
+                        if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            a.push(names[i]);
+                            //if (!mods[names[i]]) {
+                                a.push(names[i]);
+                            //}
                         }
                     }
                     names = a;
@@ -959,7 +1000,7 @@ with any configuration info required for the module.
                     process(data);
                     redo = missing.length;
                     if (redo) {
-                        if (missing.sort().join() ==
+                        if ([].concat(missing).sort().join() ==
                                 origMissing.sort().join()) {
                             redo = false;
                         }
@@ -1011,6 +1052,7 @@ with any configuration info required for the module.
         // use loader to expand dependencies and sort the
         // requirements if it is available.
         if (boot && Y.Loader && args.length) {
+            Y.log('Using loader to expand dependencies', 'info', 'yui');
             loader = getLoader(Y);
             loader.require(args);
             loader.ignoreRegistered = true;
@@ -1842,3 +1884,33 @@ overwriting other scripts configs.
  * @default true
  * @since 3.5.0
  */
+
+/**
+Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
+@property delayUntil
+@type String|Object
+@since 3.6.0
+@example
+
+You can use `load` or `domready` strings by default:
+
+    YUI({
+        delayUntil: 'domready'
+    }, function(Y) {
+        //This will not fire until 'domeready'
+    });
+
+Or you can delay until a node is available (with `available` or `contentready`):
+
+    YUI({
+        delayUntil: {
+            event: 'available',
+            args: '#foo'
+        }
+    }, function(Y) {
+        //This will not fire until '#foo' is 
+        // available in the DOM
+    });
+    
+
+*/
