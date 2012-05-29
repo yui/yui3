@@ -18,10 +18,10 @@ YUI.add('anim-easing-test', function(Y) {
                 node: node,
                 easing: easing,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
-                duration: 0.25,
+                duration: 0.25
             });
             
             anim.on('end', onEnd, this);

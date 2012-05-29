@@ -14,9 +14,9 @@ YUI.add('anim-core-test', function(Y) {
         'should end at default duration': function() {
             var node = Y.one('.demo'),
                 anim = new Y.Anim({
-                node: node,
-                to: {height: 0}
-            }),
+                    node: node,
+                    to: {height: 0}
+                }),
 
                 test = this,
                 start;
@@ -43,11 +43,11 @@ YUI.add('anim-core-test', function(Y) {
         'should set initial value prior to running first frame': function() {
             var node = Y.one('.demo'),
                 test = this,
-                h = node.getComputedStyle('height'),
+                h = node.get('offsetHeight'),
                 ontween = function() {
-                    this.stop();
+                    this.detach('tween');
                     test.resume(function() {
-                        Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                        Y.Assert.isTrue(node.get('offsetHeight') < h);
                     });
                 };
 
@@ -79,7 +79,7 @@ YUI.add('anim-core-test', function(Y) {
             new Y.Anim({
                 node: node,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
                 duration: 0.5,
@@ -104,7 +104,7 @@ YUI.add('anim-core-test', function(Y) {
             new Y.Anim({
                 node: node,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
                 duration: 0.5,
@@ -128,7 +128,7 @@ YUI.add('anim-core-test', function(Y) {
             var anim = new Y.Anim({
                 node: node,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
                 duration: 0.5,
@@ -149,7 +149,7 @@ YUI.add('anim-core-test', function(Y) {
             var anim = new Y.Anim({
                 node: node,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
                 duration: 0.5,
@@ -172,7 +172,7 @@ YUI.add('anim-core-test', function(Y) {
                 reverse: true, 
                 node: node,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
                 duration: 0.5,
@@ -196,7 +196,7 @@ YUI.add('anim-core-test', function(Y) {
             var anim = new Y.Anim({
                 node: node,
                 to: {
-                    height: 0,
+                    height: 0
                 },
 
                 duration: 0.5,
@@ -262,7 +262,7 @@ YUI.add('anim-core-test', function(Y) {
 
             var anim = new Y.Anim({
                 node: node,
-                duration: 0.1,
+                duration: 0.1
             });
             anim.run();
             Y.Assert.isTrue(anim.get('running'));
@@ -274,7 +274,7 @@ YUI.add('anim-core-test', function(Y) {
 
             var anim = new Y.Anim({
                 node: node,
-                duration: 0.1,
+                duration: 0.1
             });
             anim.run();
             anim.stop(); 
@@ -285,7 +285,6 @@ YUI.add('anim-core-test', function(Y) {
             var node = Y.one('.demo'),
                 test = this,
                 onend = function() {
-                console.log('end');
                     test.resume(function() {
                         Y.Assert.areEqual('100', node.get('scrollLeft'));
                         Y.Assert.areEqual('50', node.get('scrollTop'));
