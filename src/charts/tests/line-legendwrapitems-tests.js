@@ -25,7 +25,7 @@ YUI.add('line-legendwrapitems-tests', function(Y) {
         
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         }
     });
 
@@ -245,7 +245,7 @@ YUI.add('line-legendwrapitems-tests', function(Y) {
             type: type,
             render: "#mychart",
             dataProvider: basicDataValues,
-            legend: legend,
+            legend: legend
         },
         width,
         height;

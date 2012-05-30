@@ -44,7 +44,7 @@ YUI.add('charts-ariaevent-tests', function(Y) {
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
        
         _seriesIndex: -1, 

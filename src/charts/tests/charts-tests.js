@@ -21,7 +21,7 @@ YUI.add('charts-tests', function(Y) {
 
         tearDown: function () {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
 
         //Test to ensure that all items in the series collection are of the correct type.

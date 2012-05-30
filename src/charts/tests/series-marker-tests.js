@@ -48,7 +48,7 @@ YUI.add('series-marker-tests', function(Y) {
         {
             Y.detach(this.handler);
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
         
         //---------------------------------------------------------------------

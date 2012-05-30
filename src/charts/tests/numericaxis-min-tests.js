@@ -27,7 +27,7 @@ YUI.add('numericaxis-min-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         }
     });
     

@@ -306,7 +306,7 @@ YUI.add('axes-display-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         }
     });
     
@@ -427,7 +427,7 @@ YUI.add('axes-display-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
 
         //Test axes data classes
@@ -502,7 +502,7 @@ YUI.add('axes-display-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
 
         testAlwaysShowZero: function()
@@ -558,7 +558,7 @@ YUI.add('axes-display-tests', function(Y) {
         tearDown: function() {
             this.eventListener.detach();
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
         
         testAlwaysShowZeroEqualsFalse: function()

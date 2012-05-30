@@ -26,7 +26,7 @@ YUI.add('charts-dataprovider-tests', function(Y) {
         tearDown : function() 
         {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
 
         testKeys: ["revenue", "expenses", "miscellaneous"],

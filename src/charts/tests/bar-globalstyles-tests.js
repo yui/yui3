@@ -92,7 +92,7 @@ YUI.add('bar-globalstyles-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         }
     });
 

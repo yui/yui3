@@ -41,7 +41,7 @@ YUI.add('charts-ariahistogram-tests', function(Y) {
         
         tearDown: function() {
             this.chart.destroy();
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
         
         "test:getAriaLabel()": function()

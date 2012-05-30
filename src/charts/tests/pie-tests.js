@@ -22,7 +22,7 @@ YUI.add('pie-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy();
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
 
         testWidthAndHeightEqual: function()

@@ -40,7 +40,7 @@ YUI.add('stackedverticalcombospline-gridlines-tests', function(Y) {
 
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         }
     });
 

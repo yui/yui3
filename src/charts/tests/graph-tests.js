@@ -21,7 +21,7 @@ YUI.add('graph-tests', function(Y) {
         
         tearDown: function() {
             this.chart.destroy(true);
-            Y.one("#testbed").remove(true);
+            Y.one("#testbed").destroy(true);
         },
 
         "test:graph._getSeries(line)": function()
