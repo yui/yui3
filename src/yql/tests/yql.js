@@ -7,18 +7,16 @@ YUI.add('yql-tests', function(Y) {
     var oldSend = Y.YQLRequest.prototype.send;
 
     //Look for a querystring value of live=xxx
-    var live = (window.location.search.match(/[?&]live=([^&]+)/) || [])[1] || null;
+    var live = (!Y.UA.nodejs && window.location.search.match(/[?&]live=([^&]+)/) || [])[1] || null;
     
     //If live, then don't do the mock, use a real YQL query
     if (!live) {
-    
         /*
             This creates a mock object to test YQL requests against.
             It doesn't actually send the request, it fakes a response
             from YQL to ensure that the logic is sound
         */
         Y.YQLRequest.prototype.send = function() {
-            console.log('YQLRequest.send override');
             var self = this;
             self._jsonp = {
                 _config: {
