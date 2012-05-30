@@ -66,6 +66,8 @@ After importing Handlebars files, run `ant all` to build the final YUI modules.
 The Handlebars API will be available at `Y.Handlebars` when you use one of the
 Handlebars modules.
 
+When you commit your changes you need to reference the latest Handlebars.js
+commit hash so others know the latest commit that was merged into the build.
 
 License
 =======
