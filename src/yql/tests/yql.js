@@ -1,5 +1,41 @@
 YUI.add('yql-tests', function(Y) {
 
+    //This is the callback for the current Mock operation
+    var currentMock;
+    
+    //Backup of the YQLRequest send method
+    var oldSend = Y.YQLRequest.prototype.send;
+
+    //Look for a querystring value of live=xxx
+    var live = (!Y.UA.nodejs && window.location.search.match(/[?&]live=([^&]+)/) || [])[1] || null;
+    
+    //If live, then don't do the mock, use a real YQL query
+    if (!live) {
+        /*
+            This creates a mock object to test YQL requests against.
+            It doesn't actually send the request, it fakes a response
+            from YQL to ensure that the logic is sound
+        */
+        Y.YQLRequest.prototype.send = function() {
+            var self = this;
+            self._jsonp = {
+                _config: {
+                    on: {}
+                },
+                send: function() {
+                    setTimeout(function() {
+                        var res = currentMock.call(self);
+                        self._internal.call(self, res);
+                    }, 100);
+                }
+            };
+
+            oldSend.call(self);
+
+            return self;
+        };
+    }
+
     var template = {
         name: 'YQL Test',
 
@@ -16,6 +52,14 @@ YUI.add('yql-tests', function(Y) {
 
         test_query: function() {
             var test = this;
+
+            currentMock = function() {
+                return {
+                    query: {
+                        count: 1
+                    }
+                }
+            };
             
             Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 test.resume(function() {
@@ -30,6 +74,14 @@ YUI.add('yql-tests', function(Y) {
 
         test_https: function() {
             var test = this;
+
+            currentMock = function() {
+                return {
+                    query: {
+                        count: 1
+                    }
+                }
+            };
 
             Y.YQL('select * from weather.forecast where location=62896', function(r) {
 
@@ -47,6 +99,12 @@ YUI.add('yql-tests', function(Y) {
         test_failed: function() {
             var test = this;
 
+            currentMock = function() {
+                return {
+                    error: {}
+                }
+            };
+
             Y.YQL('select * from weatherFOO.forecast where location=62896', function(r) {
                 test.resume(function() {
                     Y.Assert.isObject(r, 'Query Failure');
@@ -59,6 +117,13 @@ YUI.add('yql-tests', function(Y) {
         test_escaped: function() {
             var test = this;
             
+            currentMock = function() {
+                return {
+                    query: {
+                    }
+                }
+            };
+
             Y.YQL("select * from html where url = \"http://instantwatcher.com/genres/506\" and xpath='//div[@id=\"titles\"]/ul/li/a'", function(r) {
                 test.resume(function() {
                     Y.Assert.isObject(r, 'Query Failure');
@@ -72,6 +137,13 @@ YUI.add('yql-tests', function(Y) {
             var test = this,
                 counter = 0;
             
+            currentMock = function() {
+                return {
+                    query: {
+                    }
+                }
+            };
+
             var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 counter++;
                 if (counter === 1) {
@@ -89,6 +161,13 @@ YUI.add('yql-tests', function(Y) {
         },
         'test: context as option': function() {
             var test = this;
+            
+            currentMock = function() {
+                return {
+                    query: {
+                    }
+                }
+            };
 
             var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 var context = this;
@@ -106,6 +185,13 @@ YUI.add('yql-tests', function(Y) {
         'test: context as param': function() {
             var test = this;
 
+            currentMock = function() {
+                return {
+                    query: {
+                    }
+                }
+            };
+
             var q = Y.YQL('select * from weather.forecast where location=62896', function(r) {
                 var context = this;
                 test.resume(function() {
@@ -121,6 +207,14 @@ YUI.add('yql-tests', function(Y) {
         },
         'test: success handler': function() {
             var test = this;
+
+            currentMock = function() {
+                return {
+                    query: {
+                        results: {}
+                    }
+                }
+            };
 
             Y.YQL('select * from weather.forecast where location=62896', {
                 on: {
@@ -141,6 +235,12 @@ YUI.add('yql-tests', function(Y) {
         },
         'test: failure handler': function() {
             var test = this;
+
+            currentMock = function() {
+                return {
+                    error: {}
+                }
+            };
 
             Y.YQL('select * from weatherFOO.forecast where location=62896', {
                 on: {
