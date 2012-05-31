@@ -113,14 +113,16 @@
 						bb = scrollview.get('boundingBox'),
 						cb = scrollview.get('contentBox'),
 						id = cb.get('id'),
-						ul = Y.all('#'+ id +' > ul'),
-						li = Y.all('#'+ id +' > ul > li');
+						ul = cb.all('> ul'),
+						li = cb.all('> ul > li');
 
 					Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
 					Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
 					Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
 					
 					Y.Assert.areEqual(10, li.size());
+
+					// Check the default values
 					Y.Assert.areEqual(0.1, scrollview.get('bounce'));
 					Y.Assert.areEqual(0.93, scrollview.get('deceleration'));
 					Y.Assert.isTrue(scrollview.get('drag'));
@@ -141,13 +143,13 @@
 					// Set it to a valid value
 					scrollview.set('scrollX', distance);
 					Y.Assert.areEqual(distance, scrollview.get('scrollX'));
-					Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix
+					//Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix
 				},
 
 				test3: function() {
 					var scrollview = this.hScrollview,
-						distance = 20,
-						maxX = scrollview._maxScrollX;
+						maxX = scrollview._maxScrollX,
+						distance = 20;
 
 					// Assume it starts @ 0
 					Y.Assert.areEqual(0, scrollview.get('scrollX'));
@@ -161,21 +163,22 @@
 
 				//
 				test4: function() {
-					var scrollview = this.hScrollview,
-						distance = 20,
+					var Test = this,
+						scrollview = Test.hScrollview,
 						maxX = scrollview._maxScrollX,
-						eventsFired = 0,
-						Test = this;
+						distance = 20,
+						eventsFired = 0;
 
 					// Ensure scrollEnd fires
 					scrollview.on('scrollEnd', function(){
 						eventsFired++;
 						Test.resume(function(){
-							console.log(scrollview.get('scrollY'));
+							Y.Assert.areEqual(maxX, scrollview.get('scrollX'));
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
 							Y.Assert.areEqual(1, eventsFired);
 						})
 					});
-					scrollview.scrollTo(maxX, 0, 1);
+					scrollview.scrollTo(maxX, 0, 1); // args = x, y, duration, easing
 					Test.wait();
 				},
 
