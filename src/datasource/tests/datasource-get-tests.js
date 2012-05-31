@@ -132,6 +132,7 @@ suite.add(new Y.Test.Case({
             Assert.isUndefined(e.data, "error: Expected undefined data.");
             Assert.isObject(e.response, "error: Expected normalized response object.");
             Assert.isObject(e.error, "error: Expected error.");
+            Assert.areSame(e.error.message, "Planned failure");
             errorCallback = true;
         });
 
@@ -170,6 +171,7 @@ suite.add(new Y.Test.Case({
             Assert.isUndefined(e.data, "error: Expected undefined data.");
             Assert.isObject(e.response, "error: Expected normalized response object.");
             Assert.isObject(e.error, "error: Expected error.");
+            Assert.areSame(e.error.message, "Planned timeout");
             timeoutCallback = true;
         });
 
