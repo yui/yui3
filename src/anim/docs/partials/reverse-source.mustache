@@ -18,6 +18,7 @@ YUI().use('anim', function(Y) {
     });
 
     var onClick = function(e) {
+        e.preventDefault();
         module.toggleClass('yui3-closed');
         content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
         content.fx.run();
