@@ -1,0 +1,166 @@
+YUI().use( "datatable", "datatable-datasource", "datatype", "datasource-function",
+            "datasource-jsonschema", "cssgrids", function(Y) {
+
+
+// This string represents a response from a remote server ...
+//   where the data is returned in JSON format, but all fields are strings
+
+    var JSON_string = '{ "num_records":"12", "data_code":"200", '+
+        '"returned_data": ['+
+        '    { "txt":"a",   "int":"123", "cur":"$ 90.2",      "flt":"76543.21", "date":"12/05/2011" },  '+
+        '    { "txt":"ab",  "int":"12",  "cur":"$ 9,990.2",   "flt":"7.6",      "date":"11/04/2010" },  '+
+        '    { "txt":"abc", "int":"1",   "cur":"$- 990.2",     "flt":"765.43",   "date":"10/03/2009" },    '+
+        '    { "txt":"x",   "int":"987", "cur":"$ 12,345.67", "flt":"2.3",      "date":"3/22/08" },   '+
+        '    { "txt":"xy",  "int":"98",  "cur":"$ 1.2",       "flt":"23456.78", "date":"4/23/09" },   '+
+        '    { "txt":"xyz", "int":"9",   "cur":"$ 123.4",     "flt":"-23.4",     "date":"5/24/12" }  '+
+        '  ] }';
+
+//----------------------------------------------------------------------
+//  Construct Table A ... using "un-parsed" remote data just as-is,
+//     i.e. it sorts as "strings"
+//----------------------------------------------------------------------
+
+    var myFuncDS = new Y.DataSource.Function({
+        source: function (request) {
+            return JSON_string
+        }}).plug( Y.Plugin.DataSourceJSONSchema, {
+            schema: {
+                metaFields : {
+                    nrecords : 'num_records',
+                    data_code : 'data_code'
+                },
+                resultListLocator : "returned_data",
+                resultFields: [ "txt","int","cur","flt","date" ]
+            }
+        });
+
+    var dtA = new Y.DataTable({
+        columns: [
+            { key:"txt",  label:"Text" },
+            { key:"int",  label:"Integer" },
+            { key:"cur",  label:"Currency"
+
+/* Remove these comments to try out the custom sort function ...
+              , sortFn: function (a, b, desc) {
+                         var a_data   = a.get('cur'),
+                             b_data   = b.get('cur'),
+                             a_value  = +(a_data.replace(/[^0-9.-]/g,'')),
+                             b_value  = +(b_data.replace(/[^0-9.-]/g,''));
+
+                         return ( desc ? -1 : 1) * (a_value-b_value);
+                     }
+ */         },
+            { key:"flt",  label:"Float" },
+            { key:"date", label:"Date" }
+        ],
+        sortable: true
+    });
+
+    // Hook-up the datasource to DataTable A
+    dtA.plug(Y.Plugin.DataTableDataSource, { datasource: myFuncDS });
+
+    dtA.render("#dtableA");
+
+    // Fire off a datasource request to load the data into the datatable
+    dtA.datasource.load({ request:'' });
+
+//----------------------------------------------------------------------
+//  Construct Table B ... uses DataSource and schema "parsing" on remote data
+//     i.e. sorting works fine ...
+//----------------------------------------------------------------------
+
+    // Define a parser to convert an input value 'v' represented in string
+    //  format to {Number} type;
+    function parseNumber(v) {
+        return +(v.replace(/[^0-9.-]/g,''));
+    }
+
+    // Define a datasource which is identical to the prior one,
+    //  BUT, include apply the data parsers on the numeric and date fields ...
+
+    var myFuncDSparse = new Y.DataSource.Function({
+     source: function (request) {
+         return JSON_string
+       }}).plug( Y.Plugin.DataSourceJSONSchema, {
+        schema: {
+            metaFields : {
+                nrecords : 'num_records',
+                data_code : 'data_code'
+            },
+            resultListLocator : "returned_data",
+             resultFields: [
+                 { key:"txt"},
+                 { key:"int",  parser:parseNumber },
+                 { key:"cur",  parser:parseNumber },
+                 { key:"flt",  parser:parseNumber },
+                 { key:"date", parser:'date'}    // use YUI's named "date" parser
+             ]
+        }
+    });
+
+    // Define formatters for "currency" and "float" types to restore the formatting
+    //  that was in the original data
+    function fmtCurrency(o){
+        return Y.DataType.Number.format(o.value,{ prefix: "$ ",
+            thousandsSeparator: ",",
+            decimalPlaces: 2
+        });
+    }
+
+    function fmtComma(o){
+       return Y.DataType.Number.format(o.value,{
+            thousandsSeparator: ",",
+            decimalPlaces: 2
+        });
+    }
+    function fmtDate(o){
+       return Y.DataType.Date.format(o.value,{format:"%D"});
+    }
+
+    // Create the Table B with proper parsing, using the above formatters
+    var dtB = new Y.DataTable({
+        columns: [
+            { key:"txt",  label:"Text" },
+            { key:"int",  label:"Integer" },
+            { key:"cur",  label:"Currency", formatter:fmtCurrency },
+            { key:"flt",  label:"Float",    formatter:fmtComma },
+            { key:"date", label:"Date",     formatter:fmtDate }
+        ],
+        sortable: true
+    });
+
+    // Hook-up the NEW datasource to DataTable B
+    dtB.plug(Y.Plugin.DataTableDataSource, { datasource: myFuncDSparse });
+
+    dtB.render("#dtableB");
+
+    dtB.datasource.load({ request:'' });
+
+/*
+    var dtC = new Y.DataTable({
+        columns: [
+            "txt","int",
+            { key:"cur",  formatter:fmtCurrency },
+            { key:"flt",  formatter:fmtComma },
+            { key:"date", formatter:fmtDate }
+        ],
+        recordType : {
+            txt: {},
+            int: { setter: parseNumber },
+            cur: { setter: parseNumber },
+            flt: { setter: parseNumber },
+            date: {
+                setter: function(v){ return new Date(v);}
+            }
+        },
+        sortable: true
+    });
+
+    dtC.plug(Y.Plugin.DataTableDataSource, { datasource: myFuncDS });
+
+    dtC.render("#dtableC");
+
+    dtC.datasource.load({ request:'' });
+*/
+
+});
