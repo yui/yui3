@@ -92,7 +92,7 @@ The goal of the App component is to provide you a place to organize and connect 
 </p>
 
 <p>
-App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine craw-ability. The [[#Routing Coordination with Server]] section of this guide contain details on accomplishing this.
+App will enable you to seamlessly enhance the user experience and performance of traditional client/server apps. It enables you to create richer interactions without compromising standard browser behavior, URLs, or search engine crawl-ability. The [[#Routing Coordination with Server]] section of this guide contain details on accomplishing this.
 </p>
 
 <p>
@@ -590,7 +590,7 @@ You could also implement the server-side redirection logic using an Apache Mod R
 
 ```nohighlight
 RewriteEngine On
-RewriteRule ^(.+)$ /#/$1 [L]
+RewriteRule ^(.+)$ /#/$1 [NE,L]
 ```
 
 <h4>Full-path URLs Only</h4>
@@ -1654,7 +1654,7 @@ Y.UserView = Y.Base.create('userView', Y.View, [], {
         var user    = this.get('user'),
             content = Y.Lang.sub(this.template, {name: user.get('name')});
 
-        this.get('container').setContent(content);
+        this.get('container').setHTML(content);
         return this;
     },
 

@@ -1,8 +1,9 @@
 YUI.add('array-extras-test', function (Y) {
 
-var Assert      = Y.Assert,
-    ArrayAssert = Y.ArrayAssert,
-    A           = Y.Array,
+var Assert       = Y.Assert,
+    ArrayAssert  = Y.ArrayAssert,
+    A            = Y.Array,
+    ObjectAssert = Y.ObjectAssert,
 
     suite;
 
@@ -355,15 +356,41 @@ suite.add(new Y.Test.Case({
         Assert.areSame(2, calls);
     },
 
-    testUnique: function() {
-        var obj = {};
+    'unique() should return a copy of an array with duplicate items removed': function() {
+        var array = [],
+            obj   = {};
 
-        ArrayAssert.itemsAreSame([2, 1, 3, 5, 4], A.unique([2, 1, 2, 3, 5, 4, 4]));
-        ArrayAssert.itemsAreSame(['foo', null, obj, false], A.unique(['foo', 'foo', null, null, obj, obj, undefined, false, false]));
+        Assert.areNotSame(array, A.unique(array), 'returned array should be a copy');
+
+        ArrayAssert.itemsAreSame(
+            [2, 1, 3, 5, 4],
+            A.unique([2, 1, 2, 3, 5, 4, 4])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', null, obj, undefined, false],
+            A.unique(['foo', 'foo', null, null, obj, obj, undefined, false, false])
+        );
     },
 
-    testUniqueWithSort: function() {
-        ArrayAssert.itemsAreSame([1, 2, 3, 4, 5], A.unique([2, 1, 2, 3, 5, 4, 4], true));
+    'unique() should support a custom test function': function () {
+        var obj    = {},
+            values = [{value: 'a'}, {value: 'a'}, {value: 'b'}],
+            results;
+
+        results = A.unique(values, function (a, b, index, array) {
+            Assert.isObject(a, '`a` should be an object');
+            Assert.isObject(b, '`b` should be an object');
+            Assert.isNumber(index, '`index` should be a number');
+            Assert.areSame(values, array, '`array` should be the input array');
+            Assert.areSame(values, this, '`this` should be the input array');
+
+            return a.value === b.value;
+        });
+
+        Assert.areSame(2, results.length);
+        Assert.areSame('a', results[0].value);
+        Assert.areSame('b', results[1].value);
     }
 }));
 

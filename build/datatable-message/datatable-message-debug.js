@@ -92,7 +92,7 @@ Y.mix(Message.prototype, {
             if (content) {
                 this._messageNode.one(
                     '.' + this.getClassName('message', 'content'))
-                    .setContent(content);
+                    .setHTML(content);
 
                 this.get('boundingBox').addClass(
                     this.getClassName('message','visible'));

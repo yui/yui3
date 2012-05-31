@@ -27,6 +27,10 @@ YUI.add('editor-selection', function(Y) {
         }
         this._selection = sel;
 
+        if (!sel) {
+            return false;
+        }
+
         if (sel.pasteHTML) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
             if (this.isCollapsed) {
@@ -1019,4 +1023,4 @@ YUI.add('editor-selection', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});

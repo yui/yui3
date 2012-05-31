@@ -19,7 +19,7 @@ without Loader on the page, so Loader is fetched before tests are executed. -->
 var YUI_config = {
     loaderPath: 'loader/loader.js',
     gconfig: true,
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
 
@@ -38,6 +38,8 @@ YUI({
 
     //This is a YUITest hack to rename this test for reporting
     Y.Test.Runner.setName('Loader Main Seed Test Suite (fetch loader)');
+    //console.profile();
+    //Y.Test.Runner.on('complete', console.profileEnd);
     Y.Test.Runner.run();
 });
 

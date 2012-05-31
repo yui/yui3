@@ -20,7 +20,9 @@ if (!start) {
 
 start = path.resolve(start);
 
-if (!path.existsSync(start)) {
+var exists = (fs.existsSync) ? fs.existsSync : path.existsSync;
+
+if (!exists(start)) {
     console.error('Out directory does not exist, exiting..');
     process.exit(1);
 }

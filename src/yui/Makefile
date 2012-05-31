@@ -1,4 +1,7 @@
-all: aliases build docmods
+all: aliases build docmods simple
+
+simple:
+	cd ../simpleyui && make
 
 build:
 	ant all -q -Djshint.skip=true

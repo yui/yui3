@@ -20,7 +20,7 @@
     use.push('test-console'); //Attach all modules and the test-console module
 
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         modules: testModules //From index.js (so they can be reused in Nodejs)
     }).use(use, function(Y) {
 

@@ -137,7 +137,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
                 // Note that the XPath indexes are 1-based!
                 resultFields: [{key:"beverage", locator:"td[1]"}, {key:"price", locator:"td[2]"}]
             };
-        Y.one("#demo_output_basic").setContent(Y.dump(Y.DataSchema.XML.apply(schema, tableEl)));
+        Y.one("#demo_output_basic").setHTML(Y.dump(Y.DataSchema.XML.apply(schema, tableEl)));
     }, "#demo_apply_basic");
 
 
@@ -173,7 +173,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
             tbodyContainer.appendChild(Y.Node.getDOMNode(trNode).cloneNode(true));
         })
 
-        Y.one("#demo_output_complex").setContent(Y.dump(Y.DataSchema.XML.apply(schema, tbodyContainer)));
+        Y.one("#demo_output_complex").setHTML(Y.dump(Y.DataSchema.XML.apply(schema, tbodyContainer)));
     }, "#demo_apply_complex");
 });
 </script>

@@ -106,7 +106,7 @@ Table.ATTRS = {
     @since 3.5.0
     **/
     columns: {
-        // TODO: change to setter to coerce Columnset?
+        // TODO: change to setter to clone input array/objects
         validator: isArray,
         getter: '_getColumns'
     },
@@ -139,8 +139,8 @@ Table.ATTRS = {
     @since 3.5.0
     **/
     recordType: {
-        setter: '_setRecordType',
-        writeOnce: true
+        getter: '_getRecordType',
+        setter: '_setRecordType'
     },
 
     /**
@@ -161,9 +161,9 @@ Table.ATTRS = {
     @since 3.5.0
     **/
     data: {
-        value : [],
-        setter: '_setData',
-        getter: '_getData'
+        valueFn: '_initData',
+        setter : '_setData',
+        lazyAdd: false
     },
 
     /**
@@ -293,14 +293,11 @@ Table.ATTRS = {
     /**
     Deprecated as of 3.5.0. Passes through to the `columns` attribute.
 
-    If a Columnset object is passed, its raw object and array column data will
-    be extracted for use.
-
     WARNING: `get('columnset')` will NOT return a Columnset instance as of
     3.5.0.  This is a break in backward compatibility.
 
     @attribute columnset
-    @type {Object[]|Columnset}
+    @type {Object[]}
     @deprecated Use the `columns` attribute
     @since 3.5.0
     **/
@@ -699,7 +696,15 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     _afterDataChange: function (e) {
-        var modelList = e.newVal;
+        var modelList  = e.newVal;
+
+        this.data = e.newVal;
+
+        if (!this.get('columns') && modelList.size()) {
+            // TODO: this will cause a re-render twice because the Views are subscribed to
+            // columnsChange
+            this._initColumns();
+        }
 
         if (this.head) {
             this.head.set('modelList', modelList);
@@ -713,6 +718,30 @@ Y.mix(Table.prototype, {
     },
 
     /**
+    Assigns to the new recordType as the model for the data ModelList
+
+    @method _afterRecordTypeChange
+    @param {EventFacade} e recordTypeChange event
+    @protected
+    @since 3.6.0
+    **/
+    _afterRecordTypeChange: function (e) {
+        var data = this.data.toJSON();
+
+        this.data.model = e.newVal;
+
+        this.data.reset(data);
+
+        if (!this.get('columns') && data) {
+            if (data.length) {
+                this._initColumns();
+            } else {
+                this.set('columns', keys(e.newVal.ATTRS));
+            }
+        }
+    },
+
+    /**
     Subscribes to attribute change events to update the UI.
 
     @method bindUI
@@ -721,7 +750,6 @@ Y.mix(Table.prototype, {
     **/
     bindUI: function () {
         // TODO: handle widget attribute changes
-        this.after('dataChange', Y.bind('_afterDataChange', this));
     },
 
     /**
@@ -945,46 +973,65 @@ Y.mix(Table.prototype, {
     },
 
     /**
-    The getter for the `data` attribute.  Returns the ModelList stored in the
-    `data` property.  If the ModelList is not yet set, it returns the current
-    raw data (presumably an empty array or `undefined`).
+    Returns the Model class of the instance's `data` attribute ModelList.  If
+    not set, returns the explicitly configured value.
 
-    @method _getData
-    @param {Object[]|ModelList} val The current data stored in the attribute
-    @protected
-    @since 3.5.0
+    @method _getRecordType
+    @param {Model} val The currently configured value
+    @return {Model}
     **/
-    _getData: function (val) {
-        return this.data || val;
+    _getRecordType: function (val) {
+        // Prefer the value stored in the attribute because the attribute
+        // change event defaultFn sets e.newVal = this.get('recordType')
+        // before notifying the after() subs.  But if this getter returns
+        // this.data.model, then after() subs would get e.newVal === previous
+        // model before _afterRecordTypeChange can set
+        // this.data.model = e.newVal
+        return val || (this.data && this.data.model);
     },
 
     /**
     Initializes the `_columnMap` property from the configured `columns`
-    attribute.  If `columns` is not set, but `recordType` is, it uses the
-    `ATTRS` of that class.  If neither are set, it temporarily falls back to an
-    empty array. `_initRecordType` will call back into this method if it finds
-    the `columnMap` empty.
+    attribute.  If `columns` is not set, but there are records in the `data`
+    ModelList, use
+    `ATTRS` of that class.
 
     @method _initColumns
     @protected
     @since 3.5.0
     **/
     _initColumns: function () {
-        var columns    = this.get('columns'),
-            recordType = this.get('recordType');
+        var columns = this.get('columns') || [];
         
         // Default column definition from the configured recordType
-        if (!columns) {
+        if (!columns.length && this.data.size()) {
             // TODO: merge superclass attributes up to Model?
-            columns = (recordType && recordType.ATTRS) ?
-                      keys(recordType.ATTRS) : [];
+            this.set('columns', keys(this.data.item(0).toJSON()));
+        } else {
+            this._setColumnMap(columns);
+            this._setDisplayColumns(columns);
+        }
+    },
 
-            this.set('columns', columns, { silent: true });
+    /**
+    Defaults the `data` attribute to an empty ModelList if not set during
+    construction.  Uses the configured `recordType` for the ModelList's `model`
+    proeprty if set.
+
+    @method _initData
+    @protected
+    @return {ModelList}
+    @since 3.6.0
+    **/
+    _initData: function () {
+        var recordType = this.get('recordType'),
+            modelList = new Y.ModelList();
+
+        if (recordType) {
+            modelList.model = recordType;
         }
 
-        this._setColumnMap(columns);
-
-        this._setDisplayColumns(columns);
+        return modelList;
     },
 
     /**
@@ -994,37 +1041,42 @@ Y.mix(Table.prototype, {
     property is set to the configured `recordType` class, and it is seeded with
     the array data.  This ModelList is then assigned to `this.data`.
 
-    @method _initData
+    @method _initDataProperty
+    @param {Array|ModelList|ArrayList} data Collection of data to populate the
+            DataTable
     @protected
-    @since 3.5.0
+    @since 3.6.0
     **/
-    _initData: function () {
-        var data = this.get('data'),
-            recordType, values;
+    _initDataProperty: function (data) {
+        var recordType;
 
-        if (isArray(data)) {
+        if (!this.data) {
             recordType = this.get('recordType');
 
-            values = data;
-            data = new Y.ModelList();
+            if (data && data.each && data.toJSON) {
+                this.data = data;
 
-            // _initRecordType is run before this, so recordType will be set
-            // if the data array had any records.  Otherwise, values is an
-            // empty array, so no need to call reset();
-            if (recordType) {
-                data.model = recordType;
-                data.reset(values, { silent: true });
+                if (recordType) {
+                    this.data.model = recordType;
+                }
+            } else {
+                // TODO: customize the ModelList or read the ModelList class
+                // from a configuration option?
+                this.data = new Y.ModelList();
+                
+                if (recordType) {
+                    this.data.model = recordType;
+                }
             }
 
-            // Make sure the attribute state object contains the ModelList.
-            // TODO: maybe better would be to purge the attribute state value?
-            this.set('data', data, { silent: true });
+            // TODO: Remove this?  It's nice to obfuscate the class composition, but
+            // it becomes a trap to subscribe to component instance events from
+            // 'this'.  Also, the aggregated change event of Models conflicts with
+            // Widget UI event 'change' from the DOM.
+            this.data.addTarget(this);
         }
-
-        this.data = data;
-
-        this.data.addTarget(this);
     },
+
 
     /**
     Publishes core events.
@@ -1056,123 +1108,55 @@ Y.mix(Table.prototype, {
     Initializes the columns, `recordType` and data ModelList.
 
     @method initializer
+    @param {Object} config Configuration object passed to constructor
     @protected
     @since 3.5.0
     **/
-    initializer: function () {
+    initializer: function (config) {
+        var data       = config.data,
+            columns    = config.columns,
+            recordType;
+
+        // Referencing config.data to allow _setData to be more stringent
+        // about its behavior
+        this._initDataProperty(data);
+
+        // Default columns from recordType ATTRS if recordType is supplied at
+        // construction.  If no recordType is supplied, but the data is
+        // supplied as a non-empty array, use the keys of the first item
+        // as the columns.
+        if (!columns) {
+            recordType = (config.recordType || config.data === this.data) &&
+                            this.get('recordType');
+
+            if (recordType) {
+                columns = keys(recordType.ATTRS);
+            } else if (isArray(data) && data.length) {
+                columns = keys(data[0]);
+            }
+
+            if (columns) {
+                this.set('columns', columns);
+            }
+        }
+
+        this.after({
+            columnsChange   : Y.bind('_afterColumnsChange', this),
+            recordTypeChange: Y.bind('_afterRecordTypeChange', this),
+            dataChange      :  Y.bind('_afterDataChange', this)
+        });
+
         this._initColumns();
-
-        this._initRecordType();
-
-        this._initData();
 
         this._initViewConfig();
 
         this._initEvents();
-
-        this.after('columnsChange', this._afterColumnsChange);
 
         // FIXME: this needs to be added to Widget._buildCfg.custom
         this._UI_ATTRS = {
             BIND: this._UI_ATTRS.BIND.concat(['caption', 'summary']),
             SYNC: this._UI_ATTRS.SYNC.concat(['caption', 'summary'])
         };
-    },
-
-    /**
-    If the `recordType` attribute is not set, this method attempts to set a
-    default value.
-
-    It tries the following methods to determine a default:
-
-    1. If the `data` attribute is set with a ModelList with a `model` property,
-       that class is used.
-    2. If the `data` attribute is set with a non-empty ModelList, the
-       `constructor` of the first item is used.
-    3. If the `data` attribute is set with a non-empty array and the first item
-       is a Base subclass, its constructor is used.
-    4. If the `data` attribute is set with a non-empty array a custom Model
-       subclass is generated using the keys of the first item as its `ATTRS`.
-    5. If the `_columnMap` property has keys, a custom Model subclass is
-       generated using those keys as its `ATTRS`.
-
-    Of none of those are successful, it subscribes to the change events for
-    `columns`, `recordType`, and `data` to try again.
-
-    If defaulting the `recordType` and the current `_columnMap` property is
-    empty, it will call `_initColumns`.
-
-    @method _initRecordType
-    @protected
-    @since 3.5.0
-    **/
-    _initRecordType: function () {
-        var data, columns, recordType, handle, columnKeys;
-            
-        if (!this.get('recordType')) {
-            data    = this.get('data');
-            columns = this._columnMap;
-
-            // Use the ModelList's specified Model class
-            if (data.model) {
-                recordType = data.model;
-
-            // Or if not configured, use the construct of the first Model
-            } else if (data.size && data.size()) {
-                recordType = data.model = data.item(0).constructor;
-
-            // Or if the data is an array, build a class from the first item
-            } else if (isArray(data) && data.length) {
-                recordType = (data[0].constructor.ATTRS) ?
-                    data[0].constructor :
-                    this._createRecordClass(keys(data[0]));
-
-            // Or if the columns were defined, build a class from the keys
-            } else {
-                columnKeys = keys(columns);
-                
-                if (columnKeys.length) {
-                    recordType = this._createRecordClass(columnKeys);
-                }
-            }
-
-            if (recordType) {
-                this.set('recordType', recordType, { silent: true });
-
-                if (!columns || !columns.length) {
-                    this._initColumns();
-                }
-            } else {
-                // FIXME: Edge case race condition with
-                // new DT({ on/after: { <any of these changes> } }) OR
-                // new DT().on( <any of these changes> )
-                // where there's not enough info to assign this.data.model
-                // at construction. The on/constructor subscriptions will be
-                // executed before this subscription.
-                handle = this.after(
-                    ['columnsChange', 'recordTypeChange','dataChange'],
-                    function (e) {
-                        // manually batch detach rather than manage separate
-                        // subs in case the change was inadequate to populate
-                        // recordType. But subs must be detached because the
-                        // subscriber recurses to _initRecordType, which would
-                        // result in duplicate subs.
-                        handle.detach();
-
-                        if (!this.data.model) {
-                            // FIXME: resubscribing if there's still not enough
-                            // info to populate recordType will place the new
-                            // subs later in the callback queue, opening the
-                            // race condition even more.
-                            this._initRecordType();
-
-                            // If recordType isn't set yet, _initRecordType
-                            // will have recreated this subscription.
-                            this.data.model = this.get('recordType');
-                        }
-                    });
-            }
-        }
     },
 
     /**
@@ -1378,10 +1362,6 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     _setColumnset: function (val) {
-        if (val && Y.Columnset && val instanceof Y.Columnset) {
-            val = val.get('definitions');
-        }
-
         this.set('columns', val);
 
         return isArray(val) ? val : INVALID;
@@ -1410,27 +1390,20 @@ Y.mix(Table.prototype, {
         }
 
         if (isArray(val)) {
-            if (this.data) {
-                if (!this.data.model && val.length) {
-                    // FIXME: this should happen only once, but this is a side
-                    // effect in the setter.  Bad form, but I need the model set
-                    // before calling reset()
-                    this.set('recordType', keys(val[0]));
-                }
+            this._initDataProperty();
 
-                this.data.reset(val);
+            // silent to prevent subscribers to both reset and dataChange
+            // from reacting to the change twice.
+            // TODO: would it be better to return INVALID to silence the
+            // dataChange event, or even allow both events?
+            this.data.reset(val, { silent: true });
 
-                // Return the instance ModelList to avoid storing unprocessed
-                // data in the state and their vivified Model representations in
-                // the instance's data property.  Decreases memory consumption.
-                val = this.data;
-            }
-            // else pass through the array data, but don't assign this.data
-            // Let the _initData process clean up.
-        } else if (val && val.each && val.getAttrs) {
-            this.data = val;
-            // TODO: return true to decrease memory footprint?
-        } else {
+            // Return the instance ModelList to avoid storing unprocessed
+            // data in the state and their vivified Model representations in
+            // the instance's data property.  Decreases memory consumption.
+            val = this.data;
+        } else if (!val || !val.each || !val.toJSON) {
+            // ModelList/ArrayList duck typing
             val = INVALID;
         }
 
@@ -1443,7 +1416,8 @@ Y.mix(Table.prototype, {
     not have children, it is a display column.
 
     @method _setDisplayColumns
-    @param {Object[]} columns Column config array to extract display columns from
+    @param {Object[]} columns Column config array to extract display columns
+            from
     @protected
     @since 3.5.0
     **/
@@ -1516,7 +1490,7 @@ Y.mix(Table.prototype, {
         var modelClass;
 
         // Duck type based on known/likely consumed APIs
-        if (isFunction(val) && val.prototype.set && val.prototype.getAttrs) {
+        if (isFunction(val) && val.prototype.toJSON && val.prototype.setAttrs) {
             modelClass = val;
         } else if (isObject(val)) {
             modelClass = this._createRecordClass(val);
@@ -1548,7 +1522,7 @@ Y.mix(Table.prototype, {
                 table.prepend(this._captionNode);
             }
 
-            caption.setContent(htmlContent);
+            caption.setHTML(htmlContent);
 
         } else if (caption) {
             caption.remove(true);

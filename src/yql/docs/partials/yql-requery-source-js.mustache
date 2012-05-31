@@ -10,7 +10,7 @@ YUI().use('node', 'yql', function(Y) {
             success: function(r) {
                 if (r.query && r.query.results) {
                     count++;
-                    res.setContent('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
+                    res.setHTML('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
                     Y.each(r.query.results.photo, function(v) {
                         res.append(Y.Lang.sub(url, v));
                     });

@@ -38,7 +38,7 @@ RepoPageView = Y.Base.create('repoPageView', Y.View, [], {
         // Adds the "repo-page" CSS class to aid styling and sets the document
         // fragment containing the two rendered sub-views as the contents of
         // this view's container.
-        this.get('container').addClass('repo-page').setContent(content);
+        this.get('container').addClass('repo-page').setHTML(content);
 
         return this;
     }

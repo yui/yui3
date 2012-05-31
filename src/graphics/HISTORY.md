@@ -10,7 +10,8 @@ Graphics Change History
   * #2532252 Fix issue in which passing null to stroke/fill attributes in CanvasShape threw errors.
   * #2532253 Implement clear method in canvas graphic. 
   * #2532272 Fixed issues with VMLGraphic.getXY() in which the wrong values were returned after x and y attributes are updated.
-  * #2532243 Fixed issue in which setting the visible attribute of a graphic to false upon instantiation caused errors. 
+  * #2532243 Fixed issue in which setting the visible attribute of a graphic to false upon instantiation caused errors.
+  * #2532114 Add ability to draw subpixel paths in ie. 
 
 3.5.1
 -----

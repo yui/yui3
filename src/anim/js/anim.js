@@ -119,16 +119,20 @@
         var node = anim._node,
             domNode = node._node,
             val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
-        //make sure node instance
-        if (domNode && (domNode.style || domNode.attributes)) {
-            if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
+
+        if (domNode) {
+            if ('style' in domNode && (att in domNode.style || att in Y.DOM.CUSTOM_STYLES)) {
                 unit = unit || '';
                 node.setStyle(att, val + unit);
-            } else if (domNode.attributes[att]) {
+            } else if ('attributes' in domNode && att in domNode.attributes) {
                 node.setAttribute(att, val);
+            } else if (att in domNode) {
+                domNode[att] = val;
             }
         } else if (node.set) {
             node.set(att, val);
+        } else if (att in node) {
+            node[att] = val;
         }
     };
 
@@ -142,15 +146,19 @@
         var node = anim._node,
             domNode = node._node,
             val = '';
-        //make sure node instance
-        if (domNode && (domNode.style || domNode.attributes)) {
-            if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
+
+        if (domNode) {
+            if ('style' in domNode && (att in domNode.style || att in Y.DOM.CUSTOM_STYLES)) {
                 val = node.getComputedStyle(att);
-            } else if (domNode.attributes[att]) {
+            } else if ('attributes' in domNode && att in domNode.attributes) {
                 val = node.getAttribute(att);
+            } else if (att in domNode) {
+                val = domNode[att];
             }
         } else if (node.get) {
             val = node.get(att);
+        } else if (att in node) {
+            val = node[att];
         }
 
         return val;
@@ -210,7 +218,7 @@
          * If a function is used, the return value becomes the from value.
          * If no from value is specified, the DEFAULT_GETTER will be used.
          * Supports any unit, provided it matches the "to" (or default)
-         * unit (e.g. `{width: '10em', color: 'rgb(0, 0 0)', borderColor: '#ccc'}`).
+         * unit (e.g. `{width: '10em', color: 'rgb(0, 0, 0)', borderColor: '#ccc'}`).
          *
          * If using the default ('px' for length-based units), the unit may be omitted
          * (e.g. `{width: 100}, borderColor: 'ccc'}`, which defaults to pixels

@@ -1,6 +1,11 @@
 Anim Change History
 ===================
 
+3.5.1
+-----
+
+* No changes.
+
 3.5.0
 -----
   * No change.
@@ -49,6 +54,28 @@ Anim Change History
 
 App Framework Change History
 ============================
+
+3.5.1
+-----
+
+### App
+
+* Added `render` and `update` options to the `showView()` method.
+  [PR #100 Pat Cavit]
+
+### Router
+
+* Added a `removeQuery()` function that accepts a URL and returns it without a
+  query string (if it had one). [Pat Cavit]
+
+* Fixed `hasRoute()` failing to match routes with query params. [Pat Cavit]
+
+* Fixed bad route regex generation if a placeholder was the last thing in the
+  route. [Pat Cavit]
+
+* Fixed generated route regexes matching hash/query params when they shouldn't
+  have. [Pat Cavit]
+
 
 3.5.0
 -----
@@ -240,6 +267,11 @@ App Framework Change History
 ArraySort Change History
 ========================
 
+3.5.1
+-----
+
+* No changes.
+
 3.5.0
 -----
 
@@ -264,6 +296,11 @@ ArraySort Change History
 
 AsyncQueue Change History
 =========================
+
+3.5.1
+-----
+
+* No changes.
 
 3.5.0
 -----
@@ -329,6 +366,11 @@ AsyncQueue Change History
 
 Attribute Change History
 ========================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -548,6 +590,13 @@ Attribute Change History
 AutoComplete Change History
 ===========================
 
+3.5.1
+-----
+
+* Fixed a potential XSS issue involving the ARIA live region and text results
+  that contain HTML markup.
+
+
 3.5.0
 -----
 
@@ -674,6 +723,11 @@ AutoComplete Change History
 
 Base Change History
 ===================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -924,6 +978,11 @@ Base Change History
 Button Change History
 ====================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -933,6 +992,11 @@ Button Change History
 
 Cache Change History
 ====================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -990,6 +1054,12 @@ Cache Change History
 Calendar Change History
 =======================
 
+3.5.1
+-----
+
+  * No changes.
+
+
 3.5.0 - Updates
 ---------------
    * Calendar is now keyboard navigable [Ticket #2530348]
@@ -1014,6 +1084,13 @@ Calendar Change History
 
 Charts Change History
 =====================
+
+
+3.5.1
+-----
+
+  * #2532138 Fixed min/max issues with NumericAxis.
+  * #2532195 Fixed issues with tooltip when numeric values are used in a CategoryAxis.
 
 3.5.0
 -----
@@ -1099,6 +1176,11 @@ Charts Change History
 ClassName Manager Change History
 ================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -1160,6 +1242,11 @@ ClassName Manager Change History
 
 Collection Change History
 =========================
+
+3.5.1
+-----
+
+* No changes.
 
 3.5.0
 -----
@@ -1240,6 +1327,11 @@ Collection Change History
 
 Console Change History
 ======================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -1352,6 +1444,11 @@ Console Change History
 ConsoleFilters Plugin Change History
 ====================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -1402,6 +1499,11 @@ ConsoleFilters Plugin Change History
 
 Cookie Change History
 =====================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -1491,6 +1593,11 @@ Cookie Change History
 CSS Base Change History
 =======================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -1543,6 +1650,11 @@ CSS Base Change History
 CSS Fonts Change History
 ========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
   * No change.
@@ -1594,6 +1706,11 @@ Both Standards and Quirks modes are supported in A-grade browsers.
 
 CSS Grids Change History
 ========================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -1694,6 +1811,11 @@ over 1000 page layout combinations. Other features include:
 CSS Reset Change History
 ========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
   * No change.
@@ -1737,6 +1859,11 @@ CSS Reset Change History
 
 DataSchema Change History
 =========================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -1817,6 +1944,11 @@ DataSchema Change History
 
 DataSource Change History
 =========================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -1902,6 +2034,11 @@ DataSource Change History
 
 DataTable Change History
 ========================
+
+3.5.1
+-----
+
+ * No changes.
 
 3.5.0
 -----
@@ -2000,6 +2137,11 @@ can't upgrade to 3.5.0 or greater for whatever reason.
 DataType Change History
 =======================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
   * No change.
@@ -2052,18 +2194,26 @@ DataType Change History
 Drag and Drop Change History
 ============================
 
-### 3.5.0
+3.5.1
+-----
+
+  * No changes.
+
+3.5.0
+-----
 
 * 2530257 Avoid interference of Drag and Nodes Event Handles
 * 2531377 shim is not created if dd-ddm is loaded after the first drag is activated
 * 2531674 Issue with drag and drop and drop:hit event
 
 
-### 3.4.1
+3.4.1
+-----
 
 * No changes.
 
-### 3.4.0
+3.4.0
+-----
 
 * #2529889 Example for Delegate Drag and Drop has wrong parameters
 * #2529905 Using DDNodeScroll with DDDelegate causes JS error in Safari
@@ -2072,7 +2222,8 @@ Drag and Drop Change History
 * #2530576 change notest needed in history file
 
 
-### 3.3.0
+3.3.0
+-----
 
 * #2529382 DD Delegate breaks when a draggable is nested and uses a handle
 * #2529407 Add tickAlignX and tickAlignY events to Y.Plugin.DDConstrained
@@ -2084,7 +2235,8 @@ Drag and Drop Change History
 * #2529577 Slider thumb frozen on mousedown+mousemove in IE9
 
 
-### 3.2.0
+3.2.0
+-----
 
 **IMPORTANT** dd-plugin and dd-plugin-drop are no longer bundled with the dd module. They are
 now official plugins and need to be "used" on their own.
@@ -2100,7 +2252,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2529094 DD hard codes CSS prefix
 
 
-### 3.1.0
+3.1.0
+-----
 
 * #2527964 DD constrain2node cached position causes misalignment when that node is moved
 * #2528229 Configuration to override region caching in Constrain plugin
@@ -2120,7 +2273,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2528613 dragNode XY not sync with the mouse if it has its dimensions changed on drag:start
 
 
-### 3.0.0
+3.0.0
+-----
 
 * #2528096 Updated initialization routine so plugins load before DD attachs to the node.
 * #2528119 Added SELECT selector to invalidHandles.
@@ -2128,7 +2282,8 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2528149 Fixed _noShim use case
 
 
-### 3.0.0 Beta1
+3.0.0 Beta1
+-----------
 
 Added a plugin to support Window and Node based scrolling
 
@@ -2178,12 +2333,14 @@ Current - Constrained:
 Converted Everything to use setXY now that FF2 is not supported.
 Performance tweaks to dragging over a target.
 
-### 3.0.0 PR2
+3.0.0 PR2
+---------
 
 Added bubbles config option to help with extending later.
 Updated _checkRegion to perform Bottom, Top, Left, Right validation instead of Top, Bottom, Left, Right
 
-### 3.0.0 PR1
+3.0.0 PR1
+---------
 
 Known Issues:
 
@@ -2198,6 +2355,11 @@ Known Issues:
 
 Dial Change History
 ===================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -2289,6 +2451,11 @@ Dial Change History
 DOM Change History
 ==================
 
+3.5.1
+-----
+  * Bug fix: Fix multiple grouped queries for IE. [Ticket 2532155]
+
+
 3.5.0
 -----
   * Bug fix: Comments are now filtered from IE child queries. [Ticket 2530101]
@@ -2343,6 +2510,11 @@ DOM Change History
 
 Dump Change History
 ===================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -2404,7 +2576,13 @@ Dump Change History
 Rich Text Editor Change History
 ===============================
 
-### 3.5.0
+3.5.1
+-----
+
+  * No changes.
+
+3.5.0
+-----
 
 * 2530547 Frame: src attribute doesn't do anything
 * General fixes for Y! Mail deployment
@@ -2420,23 +2598,27 @@ Rich Text Editor Change History
 Bug #2531329 changed the old Y.Selection to Y.EditorSelection. This has been aliased until 3.6.0, bug #2531659
 created to track that change.
 
-###3.4.1
+3.4.1
+-----
 
 No changes.
 
-### 3.4.0
+3.4.0
+-----
 
 Third release of EditorBase. Considerable work was done on this component, but there are no
 public tickets associated with the issues that were resolved. This version of EditorBase is the 
 current version being used in the new Yahoo! Mail. It's production stable and ready to be used with
 the proper skins and GUI.
 
-### 3.3.0
+3.3.0
+-----
 
 Second release of EditorBase. Considerable work was done on this component, but there are no
 public tickets associated with the issues that were resolved.
 
-### 3.2.0
+3.2.0
+-----
 
 Initial Release
 
@@ -2447,6 +2629,11 @@ It's only the iframe rendering and event system.
 
 Escape Change History
 =====================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -2477,6 +2664,11 @@ Escape Change History
 
 Event Infrastructure Change History
 ===================================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -2755,6 +2947,11 @@ Event Infrastructure Change History
 Custom Event Infrastructure Change History
 ==========================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -2878,6 +3075,11 @@ Custom Event Infrastructure Change History
 Gestures Change History
 =======================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -2914,6 +3116,11 @@ Gestures Change History
 
 ValueChange Change History
 ==========================
+
+3.5.1
+-----
+
+* No changes.
 
 3.5.0
 -----
@@ -2989,12 +3196,26 @@ ValueChange Change History
 File Module Change History
 ==========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
-  * New modules
+-----
+  
+  * Initial release.
 
 
 Get Utility Change History
 ==========================
+
+3.5.1
+-----
+
+* Fixed a bug that could cause CSS requests to hang on WebKit versions between
+  535.3 and 535.9 (inclusive).
+
 
 3.5.0
 -----
@@ -3145,6 +3366,13 @@ Get Utility Change History
 Graphics Change History
 =======================
 
+
+3.5.1
+-----
+
+  * #2531921 Fixed issue in which gradients fills threw an exception in canvas implementations.
+  * #2532197 Fixed issue in which updating the transform attribute of a shape caused two redraws.
+
 3.5.0
 -----
 
@@ -3176,6 +3404,11 @@ Graphics Change History
 Handlebars Change History
 =========================
 
+3.5.1
+-----
+
+* No changes.
+
 3.5.0
 -----
 
@@ -3186,9 +3419,16 @@ Handlebars Change History
 Highlight Change History
 ========================
 
+3.5.1
+-----
+
+  * No changes.
+
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 
 3.4.1
@@ -3219,6 +3459,12 @@ Highlight Change History
 
 History Change History
 ======================
+
+3.5.1
+-----
+
+* No changes.
+
 
 3.5.0
 -----
@@ -3292,13 +3538,16 @@ History Change History
 ImageLoader Change History
 ==========================
 
+3.5.1
+-----
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+  * No changes.
 
 3.4.1
 -----
-
   * No changes.
 
 3.4.0
@@ -3346,6 +3595,11 @@ ImageLoader Change History
 Intl Change History
 ===================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -3385,6 +3639,11 @@ Intl Change History
 
 IO Utility Change History
 =========================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -3647,9 +3906,15 @@ IO Utility Change History
 JSON Utility Change History
 ===========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 3.4.1
 -----
@@ -3732,8 +3997,14 @@ JSON Utility Change History
 JSONP Change History
 ====================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
+
   * No changes.
 
 3.4.1
@@ -3758,14 +4029,20 @@ JSONP Change History
 3.2.0
 -----
 
-Initial release
+  * Initial release
 
 
 
 YUI Loader Change History
 =========================
 
-### 3.5.0
+3.5.1
+-----
+
+  * No changes.
+
+3.5.0
+-----
 
 The biggest change made was the use of the `async` flag on `Y.Get` requests. Loader will now use the
 `Y.Loader.resolve()` method under the hood to calculate all the dependencies that it is aware of, then
@@ -3801,31 +4078,40 @@ all of them asynchronously, then return to loader for post processing of the inj
    * 2531587 Loader will not load custom modules if combine: true
 
 
-### 3.4.1
+3.4.1
+-----
 
   * No changes.
 
-### 3.4.0
+3.4.0
+-----
     
    * Added Alias support and flattened the module structure.
    * Alias support: When asking for: "dd"
         Loader actually asks for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
    * Better RLS support
 
-### 3.3.0
+3.3.0
+-----
 
    * 'when' config for conditional modules (before, after, or instead).
 
-### 3.2.0
+3.2.0
+-----
+
    * Conditional module support based on user agent detection or test function.
    * Added gallery css support
    * performance optimizations, cached yui metadata, shared instances, etc
 
-### 3.1.1
+3.1.1
+-----
+
   * Fixed ticket #2528771 : Loader has incorrect default for "base" - uses Y.Env, instead of Y.Env.base
   * Fixed ticket #2528784 : Regression requesting language packs using Y.use("lang/datatype-date_xx", fn) in build yui3-2029
 
-### 3.1.0
+3.1.0
+-----
+
   * Added a 'patterns' property.  Modules that are not predefined will be created with the
     default values if it matches one of the patterns defined for the instance.
   * Added module groups.  This allows for specifying the base path and the combo properties
@@ -3839,7 +4125,9 @@ all of them asynchronously, then return to loader for post processing of the inj
   * Extremely long combo urls are split into multiple requests.
   * Loader defends itself against metadata that creates circular dependencies.
 
-### 3.0.0
+3.0.0
+-----
+
   * Extracted from the YUI seed.  Now fetched dynamically if
     there are missing dependencies if not included.
   * Reads metadata from on-page modules registered via Y.add if the module is not already known.
@@ -3850,6 +4138,11 @@ all of them asynchronously, then return to loader for post processing of the inj
 Matrix Change History
 =====================
 
+3.5.1
+-----
+
+  * #2532208 Fixed issue in which matrix animations were not ending correctly.  
+
 3.5.0
 -----
 
@@ -3859,6 +4152,10 @@ Matrix Change History
 
 Node Change History
 ===================
+
+3.5.1
+-----
+  * Bug fix: Force case-insensitive removeAttribute in IE. [Ticket 2532192]
 
 3.5.0
 -----
@@ -3961,6 +4258,11 @@ Node Change History
 Flick Node Plugin Change History
 ================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -3991,8 +4293,14 @@ Flick Node Plugin Change History
 Focus Manager Change History
 ============================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
+
   * No changes.
 
 
@@ -4057,6 +4365,11 @@ Focus Manager Change History
 
 MenuNav Change History
 ======================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -4133,6 +4446,11 @@ MenuNav Change History
 
 OOP Change History
 ==================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -4221,6 +4539,11 @@ OOP Change History
 Overlay Change History
 ======================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -4274,6 +4597,11 @@ Overlay Change History
 
 Panel Change History
 ====================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -4329,14 +4657,25 @@ Panel Change History
 Parallel Change History
 =======================
 
-### 3.5.0
+3.5.1
+-----
 
-Initial Release
+  * No changes.
+
+3.5.0
+-----
+
+  * Initial Release
 
 
 
 Pjax Change History
 ===================
+
+3.5.1
+-----
+
+* No changes.
 
 3.5.0
 -----
@@ -4347,6 +4686,11 @@ Pjax Change History
 
 Plugin Change History
 =====================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -4407,6 +4751,11 @@ Plugin Change History
 Plugin Host Change History
 ==========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -4461,9 +4810,15 @@ Plugin Host Change History
 QueryString Utility Change History
 ==================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 3.4.1
 -----
@@ -4518,9 +4873,15 @@ QueryString Utility Change History
 Queue Promote Change History
 ============================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 3.4.1
 -----
@@ -4578,6 +4939,11 @@ Queue Promote Change History
 Recordset Change History
 ========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -4603,28 +4969,42 @@ Recordset Change History
 Resize Utility Change History
 =============================
 
-### 3.5.0
+3.5.1
+-----
 
-No changes.
+   * No changes.
 
-### 3.4.1
+3.5.0
+-----
 
-No changes.
+   * No changes.
 
-### 3.4.0
+3.4.1
+-----
+
+   * No changes.
+
+3.4.0
+-----
 
    * #2529992 Allow Resizable nodes be used with DD.Delegate
    * #2530007 [Pull Request] - #2529992 Allow Resizable nodes be used with DD.Delegate
 
-### 3.3.0
+3.3.0
+-----
 
-Initial release
+   * Initial release
 
 
 
 ScrollView Change History
 =========================
 
+3.5.1
+-----
+
+  * Fixed mousewheel bug (#2532214)
+  
 3.5.0
 -----
 
@@ -4745,6 +5125,11 @@ ScrollView Change History
 Simple YUI Change History
 =========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -4774,6 +5159,11 @@ Simple YUI Change History
 
 Slider Change History
 =====================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -4881,23 +5271,33 @@ Slider Change History
 Sortable Utility Change History
 ===============================
 
-### 3.5.0
+3.5.1
+-----
 
-No changes.
+   * No changes.
 
-### 3.4.1
+3.5.0
+-----
 
-No changes.
+   * No changes.
 
-### 3.4.0
+3.4.1
+-----
 
-No changes.
+   * No changes.
 
-### 3.3.0
+3.4.0
+-----
+
+   * No changes.
+
+3.3.0
+-----
 
    * #2529220 Sortable does not allow dragging from original container to a different container back to original i...
 
-### 3.2.0
+3.2.0
+-----
 
    * #2529063 Sortable: add getOrdering method
    * #2528754 Sortable with nested lists
@@ -4907,22 +5307,30 @@ No changes.
    * #2529061 Sortable.destroy removes node
 
 
-### 3.1.1
+3.1.1
+-----
 
-No changes.
+   * No changes.
 
-### 3.1.0
+3.1.0
+-----
 
-Initial Release
+   * Initial Release
 
 
 
 StyleSheet Change History
 =========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 3.4.1
 -----
@@ -4969,9 +5377,15 @@ StyleSheet Change History
 Substitute Utility Change History
 =================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 3.4.1
 -----
@@ -5035,9 +5449,13 @@ Substitute Utility Change History
 SWF Utility Change History
 ==========================
 
+3.5.1
+-----
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+  * No changes.
 
 3.4.1
 -----
@@ -5073,8 +5491,14 @@ SWF Utility Change History
 SWFDetect Utility Change History
 ================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
+
   * No changes.
 
 3.4.1
@@ -5089,33 +5513,43 @@ SWFDetect Utility Change History
 
 3.3.0
 -----
+
   * Added API documentation
 
 3.2.0
 -----
+
   *	Contribution by Ryan Cannon: #2529113 fixed logic in isFlashVersionAtLeast() to 
 	account for omitted minor and revision versions of the Flash player.
 
 3.1.2
 -----
+
   * No changes
 	
 3.1.1
 -----
+
    * No changes
 	
 3.1.0
 -----
+
    * Initial Release
 
 
 TabView Change History
 ======================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
-  * No change.
+  * No changes.
 
 
 3.4.1
@@ -5159,6 +5593,11 @@ TabView Change History
 Test Console Change History
 ===========================
 
+3.5.1
+-----
+
+* No changes.
+
 3.5.0
 -----
 
@@ -5168,6 +5607,11 @@ Test Console Change History
 
 Text Change History
 ===================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -5199,14 +5643,21 @@ Text Change History
 Transition Change History
 =========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+
+  * No changes.
 
 
 3.4.1
 -----
-  * No change.
+
+  * No changes.
 
 3.4.0
 -----
@@ -5241,7 +5692,12 @@ Transition Change History
 Uploader Utility (New) Change History
 =====================================
 
+3.5.1
+-----
+  * No changes.
+
 3.5.0
+-----
   * Added HTML5Uploader layer
   * Refactored queue management out of Uploader
   * Introduced new APIs (more details in documentation)
@@ -5292,6 +5748,12 @@ Uploader Utility (DEPRECATED) Change History
 
 Widget Change History
 =====================
+
+3.5.1
+-----
+
+ * Cleaned up logic to detach document focus listener after last Widget is destroyed.
+   The count was off by one, leaving one Widget in memory.
 
 3.5.0
 -----
@@ -5566,6 +6028,11 @@ Widget Change History
 Widget Anim Change History
 ==========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -5606,6 +6073,11 @@ Widget Anim Change History
 Widget Autohide Change History
 ==============================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -5625,6 +6097,18 @@ Widget Autohide Change History
 
 Widget Buttons Change History
 =============================
+
+3.5.1
+-----
+
+  * Fixed issue with `addButton()` receiving an `index` argument which was too
+    large or negative, both of which are okay because this value is passed to
+    the Array `splice()` method. The `index` property on the `buttonsChange`
+    event facade is now always the actual index at which the new button exists.
+    [Ticket #253219]
+
+  * Fixed issue with properly handling `Y.Node` instances from other YUI
+    sandboxes. [Ticket #2532207]
 
 3.5.0
 -----
@@ -5742,6 +6226,11 @@ Widget Buttons Change History
 Widget Child Change History
 ===========================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -5786,6 +6275,13 @@ Widget Child Change History
 Widget Modality Change History
 ==============================
 
+3.5.1
+-----
+
+  * Fixed regression where browsers which actually support `position: fixed`
+    were also getting the fallback implementation to emulate fixed position,
+    causing the mask node to be repositioned incorrectly. [Ticket #2532136]
+
 3.5.0
 -----
 
@@ -5821,6 +6317,11 @@ Widget Modality Change History
 
 Widget Parent Change History
 ============================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -5897,6 +6398,11 @@ Widget Parent Change History
 Widget Position Change History
 ==============================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -5944,6 +6450,11 @@ Widget Position Change History
 
 Widget Position Align Change History
 ====================================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -5995,6 +6506,11 @@ Widget Position Align Change History
 Widget Position Constrain Change History
 ========================================
 
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
@@ -6034,6 +6550,11 @@ Widget Position Constrain Change History
 
 Widget Stack Change History
 ===========================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -6089,6 +6610,11 @@ Widget Stack Change History
 
 Widget Std Mod Change History
 =============================
+
+3.5.1
+-----
+
+  * No changes.
 
 3.5.0
 -----
@@ -6174,30 +6700,47 @@ Widget Std Mod Change History
 YQL Change History
 ==================
 
-### 3.5.0
+3.5.1
+-----
 
-No changes.
+  * No changes.
 
-### 3.4.1
+3.5.0
+-----
 
-    No changes.
+  * No changes.
 
-### 3.4.0
+3.4.1
+-----
+
+  * No changes.
+
+3.4.0
+-----
     
-    #2530246 - Fixed bug in yql module where options ('opts') were not actually being used.  This prevented use YQL calls over SSL, which some tables require.
+  * #2530246 - Fixed bug in yql module where options ('opts') were not actually being used.  This prevented use YQL calls over SSL, which some tables require.
 
-### 3.3.0
+3.3.0
+-----
 
-    #2529504 - Added support for JSONP allowCache setting to make YQL requests use the same callback
+  * #2529504 - Added support for JSONP allowCache setting to make YQL requests use the same callback
 
-### 3.2.0
+3.2.0
+-----
 
-    Initial Release
+  * Initial Release
 
 
 
 YUI Core Change History
 =======================
+
+3.5.1
+-----
+
+* Added a `Y.UA.compareVersions()` function for performing simple version number
+  comparisons using version-safe logic rather than numerical logic.
+
 
 3.5.0
 -----
@@ -6522,17 +7065,25 @@ YUI Core Change History
 YUI Throttle Change History
 ===========================
 
-## 3.5.0
+3.5.1
+-----
 
-No Changes.
+  * No changes.
 
-## 3.4.1
+3.5.0
+-----
 
-No changes.
+  * No Changes.
 
-## 3.4.0
+3.4.1
+-----
 
-Removed from yui-core and bumped to a stand alone module.
+  * No changes.
+
+3.4.0
+-----
+
+  * Removed from yui-core and bumped to a stand alone module.
 
 
 

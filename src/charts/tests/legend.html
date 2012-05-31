@@ -19,7 +19,7 @@
 <script>            
 YUI({
     allowRollup: false,
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('charts-legend', 'test', 'console', function (Y) 
 { 
     Y.namespace("example.test");

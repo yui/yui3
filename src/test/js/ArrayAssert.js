@@ -61,7 +61,7 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a value is present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur.
+     * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -80,7 +80,7 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a set of values are present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur. For this assertion to pass, all values must
+     * sign so no type coercion may occur. For this assertion to pass, all values must
      * be found.
      * @param {Object[]} needles An array of values that are expected in the array.
      * @param {Array} haystack An array of values to check.
@@ -126,7 +126,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that a value is not present in an array. This uses the triple equals 
      * Asserts that a value is not present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur.
+     * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -145,7 +145,7 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a set of values are not present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur. For this assertion to pass, all values must
+     * sign so no type coercion may occur. For this assertion to pass, all values must
      * not be found.
      * @param {Object[]} needles An array of values that are not expected in the array.
      * @param {Array} haystack An array of values to check.
@@ -192,7 +192,7 @@ YUITest.ArrayAssert = {
         
     /**
      * Asserts that the given value is contained in an array at the specified index.
-     * This uses the triple equals sign so no type cohersion will occur.
+     * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
      * @param {int} index The index at which the value should exist.
@@ -221,7 +221,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that the values in an array are equal, and in the same position,
      * as values in another array. This uses the double equals sign
-     * so type cohersion may occur. Note that the array objects themselves
+     * so type coercion may occur. Note that the array objects themselves
      * need not be the same for this test to pass.
      * @param {Array} expected An array of the expected values.
      * @param {Array} actual Any array of the actual values.
@@ -320,7 +320,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that the values in an array are the same, and in the same position,
      * as values in another array. This uses the triple equals sign
-     * so no type cohersion will occur. Note that the array objects themselves
+     * so no type coercion will occur. Note that the array objects themselves
      * need not be the same for this test to pass.
      * @param {Array} expected An array of the expected values.
      * @param {Array} actual Any array of the actual values.
@@ -349,7 +349,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that the given value is contained in an array at the specified index,
      * starting from the back of the array.
-     * This uses the triple equals sign so no type cohersion will occur.
+     * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
      * @param {int} index The index at which the value should exist.

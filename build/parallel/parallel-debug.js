@@ -71,7 +71,9 @@ Y.Parallel.prototype = {
         self.total += 1;
         return function () {
             self.finished++;
-            self.results.push(fn && fn.apply(self.context, arguments));
+            self.results.push(
+                (fn && fn.apply(self.context, arguments)) ||
+                (arguments.length === 1 ? arguments[0] : Y.Array(arguments)));
             self.test();
         };
     },

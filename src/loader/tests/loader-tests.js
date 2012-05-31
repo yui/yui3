@@ -1503,6 +1503,88 @@ YUI.add('loader-tests', function(Y) {
             ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
             ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
 
+        },
+        'test: local lang file include': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                lang :["fr-FR","en-US"],
+                modules : {
+                    "my-module": {
+                        combine : false,
+                        lang: ["fr", "en"],
+                        fullpath : 'scripts/my-module.js',
+                        base : 'scripts/'
+                    }
+                },
+                require: ['my-module']
+            });
+            var out = loader.resolve(true);
+            var mod = out.js.pop();
+            var lang = out.js.pop();
+            Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module/lang/my-module_fr.js', lang, 'Failed to resolve local lang file');
+        },
+        'test: local lang file include in a group': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                lang :["fr-FR","en-US"],
+                group: {
+                    'my-group': {
+                        combine : false,
+                        base : 'scripts/',
+                        modules : {
+                            "my-module": {
+                                lang: ["fr", "en"],
+                                fullpath : 'scripts/my-module.js'
+                            }
+                        }
+                    }
+                },
+                require: ['my-module']
+            });
+            var out = loader.resolve(true);
+            var mod = out.js.pop();
+            var lang = out.js.pop();
+            Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module/lang/my-module_fr.js', lang, 'Failed to resolve local lang file');
+        },
+        'test: local skin file include': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                modules : {
+                    "my-module": {
+                        combine : false,
+                        fullpath : 'scripts/my-module.js',
+                        base : 'scripts/',
+                        skinnable: true
+                    }
+                },
+                require: ['my-module']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual('scripts/my-module.js', out.js[0], 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module/assets/skins/sam/my-module.css', out.css[0], 'Failed to resolve local skin file');
+        },
+        'test: local skin file include in a group': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                group: {
+                    'my-group': {
+                        base : 'scripts/',
+                        combine : false,
+                        modules : {
+                            "my-module": {
+                                fullpath : 'scripts/my-module.js',
+                                skinnable: true
+                            }
+                        }
+                    }
+                },
+                require: ['my-module']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual('scripts/my-module.js', out.js[0], 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module/assets/skins/sam/my-module.css', out.css[0], 'Failed to resolve local skin file');
         }
     });
 

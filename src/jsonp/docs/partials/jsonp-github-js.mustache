@@ -26,7 +26,7 @@ YUI().use("jsonp", "node",function (Y) {
     '</table>';
 
     function handleJSONP(response) {
-        Y.one("#out").setContent(Y.Lang.sub(template, response.user));
+        Y.one("#out").setHTML(Y.Lang.sub(template, response.user));
     }
 
     Y.one("#demo_btn").on("click", function (e) {

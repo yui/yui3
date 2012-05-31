@@ -3,6 +3,11 @@
 <head>
 <title>Calendar Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<style>
+.testclass {
+    color: #ff0000;
+}
+</style>
 </head>
 
 <body class="yui3-skin-sam">
@@ -17,7 +22,7 @@
         logInclude:{"TestRunner":true},
         useConsole: true,
         allowRollup: false,
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use("console", "test", "dump", "calendar", "node-event-simulate", function(Y) {
         
         // Set up the page
@@ -51,6 +56,7 @@
                delete this.secondcalendar;
                Y.one('#firstcontainer').remove();
                Y.one('#secondcontainer').remove();
+               Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.ONE_PANE_TEMPLATE;
             },
 
 
@@ -77,6 +83,135 @@
                 // Test that showPreviousMonth and showNextMonth are false by default
                 Y.Assert.areEqual(false, this.firstcalendar.get("showPrevMonth"));
                 Y.Assert.areEqual(false, this.firstcalendar.get("showNextMonth"));
+            },
+
+
+            testSelection : function() {
+                var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5)
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.selectDates(new Date(2011,11,7));
+                this.firstcalendar.selectDates(new Date(2011,11,8));
+                this.firstcalendar.deselectDates(new Date(2011,11,8));
+                this.firstcalendar.selectDates([new Date(2011,9,10), new Date(2011,11,13)]);
+                this.firstcalendar.render();
+
+                //calendar is visible
+                Y.Assert.areEqual(this.firstcalendar.get('visible'), true);
+                
+                //calendar date is normalized correctly
+                var calendarDate = this.firstcalendar.get("date");
+                Y.Assert.areEqual(2011, calendarDate.getFullYear());
+                Y.Assert.areEqual(11, calendarDate.getMonth());
+                Y.Assert.areEqual(1, calendarDate.getDate());
+
+                //Selected dates are highlighted correctly
+                var calendarId = "#" + this.firstcalendar._calendarId;
+                var firstSelectedDate = Y.one(calendarId + "_pane_0_4_13");
+                var secondSelectedDate = Y.one(calendarId + "_pane_0_5_7");
+                var unselectedDate = Y.one(calendarId + "_pane_0_6_8");
+                Y.Assert.isTrue(firstSelectedDate.hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(secondSelectedDate.hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isFalse(unselectedDate.hasClass("yui3-calendar-day-selected"));
+
+                Y.one(".yui3-calendarnav-prevmonth").simulate("click");
+                Y.one(".yui3-calendarnav-prevmonth").simulate("click");
+
+                var thirdSelectedDate = Y.one(calendarId + "_pane_0_1_10");
+                Y.Assert.isTrue(thirdSelectedDate.hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isFalse(firstSelectedDate.hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isFalse(secondSelectedDate.hasClass("yui3-calendar-day-selected"));
+
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click");
+                Y.one(".yui3-calendarnav-nextmonth").simulate("click"); 
+                Y.Assert.isTrue(firstSelectedDate.hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(secondSelectedDate.hasClass("yui3-calendar-day-selected"));
+
+                // Deselect dates
+
+
+               this.firstcalendar.deselectDates([new Date(2011,11,7), new Date(2011,9,10)]);
+
+                this.firstcalendar.deselectDates(new Date(2011,11,13));
+
+                Y.Assert.isFalse(firstSelectedDate.hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isFalse(secondSelectedDate.hasClass("yui3-calendar-day-selected"));
+
+                this.firstcalendar.deselectDates();
+
+                this.firstcalendar._addDateRangeToSelection(new Date(2011,11,7), new Date(2011,11,18));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,11,8)).hasClass("yui3-calendar-day-selected"));
+                this.firstcalendar._removeDateRangeFromSelection(new Date(2011,11,7), new Date(2011,11,18));
+                Y.Assert.isFalse(this.firstcalendar._dateToNode(new Date(2011,11,8)).hasClass("yui3-calendar-day-selected"));
+
+                // Testing the crossing of the daylight savings time
+                this.firstcalendar.set("date", new Date(2011,2,1));
+                this.firstcalendar._addDateRangeToSelection(new Date(2011,2,10), new Date(2011,2,15));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,10)).hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,11)).hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,12)).hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,13)).hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,14)).hasClass("yui3-calendar-day-selected"));
+                Y.Assert.isTrue(this.firstcalendar._dateToNode(new Date(2011,2,15)).hasClass("yui3-calendar-day-selected"));
+                this.firstcalendar._removeDateRangeFromSelection(new Date(2011,2,10), new Date(2011,2,15));
+
+            },
+
+            testRules : function () {
+
+                var myRules = {
+                   "2011": "fullyear",
+                   "2010-2011": {
+                       "9-11": {
+                           "all": {
+                               "0,6": "theweekends"
+                           },
+                           "10-15": "tenthtofifteenth"
+                       },
+                       "11": "december",
+                       "10-11": {
+                           "5": "thefifths"
+                       }
+                   }
+                };
+        
+               function myFilter (oDate, oNode, rules) {
+               if (Y.Array.indexOf(rules, "theweekends") >= 0) {
+                   oNode.addClass('testclass');
+               }   
+               };
+
+               var cfg = {
+                    contentBox: "#firstcontainer",
+                    date: new Date(2011,11,5),
+                    customRenderer: {rules: myRules, filterFunction: myFilter},
+                    disabledDatesRule: "tenthtofifteenth"
+                };
+
+                this.firstcalendar = new Y.Calendar(cfg);
+                this.firstcalendar.selectDates(new Date(2011,11,10));
+                this.firstcalendar.render();
+
+
+               var cfg2 = {
+                    contentBox: "#secondcontainer",
+                    date: new Date(2011,11,5),
+                    customRenderer: {rules: myRules, filterFunction: myFilter},
+                    enabledDatesRule: "tenthtofifteenth"
+                };
+
+                this.secondcalendar = new Y.Calendar(cfg2);
+                this.secondcalendar.selectDates(new Date(2011,11,10));
+                this.secondcalendar.render();
+
+
+                this.firstcalendar.set("date", new Date(2011,8,1));
+                this.secondcalendar.set("date", new Date(2012,0,1));
+
+
             },
 
             testPrevAndNextMonth : function () {
@@ -108,6 +243,7 @@
                 Y.Assert.areEqual("5", Y.one("#firstcontainer").one(".calendar_col6.yui3-calendar-nextmonth-day").getContent());
                 Y.Assert.areEqual("6", Y.one("#firstcontainer").one(".calendar_col7.yui3-calendar-nextmonth-day").getContent());
                 Y.Assert.areEqual("7", Y.one("#firstcontainer").one(".calendar_col8.yui3-calendar-nextmonth-day").getContent());
+
             },
 
             testTwoCalendars : function () {

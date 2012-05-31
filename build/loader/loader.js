@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.05.02-20-10',
+            GALLERY_VERSION = 'gallery-2012.05.30-21-22',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -1109,8 +1109,10 @@ Y.Loader.prototype = {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
-
-        o.requires = this.filterRequires(o.requires) || [];
+        
+        if (o.requires.length) {
+            o.requires = this.filterRequires(o.requires) || [];
+        }
 
         if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
@@ -1611,10 +1613,18 @@ Y.Loader.prototype = {
         if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
             return false;
         }
-
+        if (!YUI.Env._cssLoaded) {
+            YUI.Env._cssLoaded = {};
+        }
         var el = YUI.Env.cssStampEl,
             ret = false,
+            mod = YUI.Env._cssLoaded[name],
             style = el.currentStyle; //IE
+
+        
+        if (mod !== undefined) {
+            return mod;
+        }
 
         //Add the classname to the element
         el.className = name;
@@ -1629,6 +1639,9 @@ Y.Loader.prototype = {
 
 
         el.className = ''; //Reset the classname to ''
+
+        YUI.Env._cssLoaded[name] = ret;
+
         return ret;
     },
 
@@ -1719,6 +1732,12 @@ Y.Loader.prototype = {
                 group: m.group,
                 supersedes: []
             };
+            if (m.root) {
+                conf.root = m.root;
+            }
+            if (m.base) {
+                conf.base = m.base;
+            }
 
             if (m.configFn) {
                 conf.configFn = m.configFn;
@@ -4688,12 +4707,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "resize-base"
         ]
     }, 
-    "rls": {
-        "requires": [
-            "get", 
-            "features"
-        ]
-    }, 
     "router": {
         "optional": [
             "querystring-parse"
@@ -5133,14 +5146,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "yui-rls": {}, 
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'f5a3bc9bda2441a3b15fb52c567fc1f7';
+YUI.Env[Y.version].md5 = 'cbef8048f9a9861bf3d45fa1526688c7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

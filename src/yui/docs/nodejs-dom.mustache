@@ -58,7 +58,7 @@ YUI({
     doc: document
 }).use('node', function(Y) {
     
-    Y.one('title').setContent('YUI Server Side DOM');
+    Y.one('title').setHTML('YUI Server Side DOM');
     console.log(Y.one('doc').get('outerHTML'));
 
 });
@@ -113,7 +113,7 @@ YUI({
     doc: document
 }).use('tabview', function(Y) {
 
-    Y.one('title').setContent('YUI Server Side DOM');
+    Y.one('title').setHTML('YUI Server Side DOM');
 
     Y.one('body').append('<div id="demo"></div>');
     

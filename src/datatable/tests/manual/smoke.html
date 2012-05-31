@@ -62,35 +62,43 @@
         'datasource-io', 'datatable-datasource', 'datasource-jsonschema', 
         function (Y) {
 
-        var data = [], i;
-        for (i = 0; i < 10; ++i) {
-            data.push({
-                apples   : 'Apple '  + Math.round(Math.random() * 100),
-                bananas  : 'Banana ' + Math.round(Math.random() * 100),
-                carrots  : 'Carrot ' + Math.round(Math.random() * 100),
-                daikon   : 'Daikon ' + Math.round(Math.random() * 100),
-                eggs     : 'Egg '    + Math.round(Math.random() * 100),
-                fennel   : 'Fennel ' + Math.round(Math.random() * 100),
-                guacamole: 'Guac '   + Math.round(Math.random() * 100)
-            });
+        function makeData(size) {
+            var data = [], i;
+
+            for (i = 0; i < size; ++i) {
+                data.push({
+                    apples   : 'Apple '  + Math.round(Math.random() * 100),
+                    bananas  : 'Banana ' + Math.round(Math.random() * 100),
+                    carrots  : 'Carrot ' + Math.round(Math.random() * 100),
+                    daikon   : 'Daikon ' + Math.round(Math.random() * 100),
+                    eggs     : 'Egg '    + Math.round(Math.random() * 100),
+                    fennel   : 'Fennel ' + Math.round(Math.random() * 100),
+                    guacamole: 'Guac '   + Math.round(Math.random() * 100)
+                });
+            }
+
+            i = Math.min(Math.round(Math.random() * size), size - 1);
+            data[i].eggs = data[i].fennel = data[i].guacamole = '';
+
+            i = Math.min(Math.round(Math.random() * size), size - 1);
+            data[i].eggs = data[i].fennel = data[i].guacamole = '';
+
+            return data;
         }
 
-        data[1].eggs = data[1].fennel = data[1].guacamole = '';
-
-        var start = new Date();
-
         var table = new Y.DataTable({
-            data: data,
-            scrollable: 'xy',
+            data: makeData(10),
+            recordType: ['apples', 'carrots', 'daikon', 'eggs', 'guacamole'],
+            //scrollable: 'xy',
             //width: '100%',
             //width: '750px',
-            width: '500px',
-            height: '250px',
+            //width: '500px',
+            //height: '250px',
             //autoSync: true,
-            sortable: true,
+            //sortable: true,
             //sortable: ['carrots'],
-            caption: 'Can you hear the caption?',
-            sortBy: [{ apples: 'desc' }],
+            //caption: 'Can you hear the caption?',
+            //sortBy: [{ apples: 'desc' }],
             columns: [
                 {
                     key: 'apples',
@@ -123,8 +131,8 @@
                 ]}
             ]
         });
-        var milestone = new Date();
-        //console.log('instantiation: ', milestone - start);
+
+        table.set('data', makeData(15));
 
         table.delegate('click', function (e) {
             console.log(table.getRecord(this).toJSON());
@@ -153,8 +161,6 @@
 
         table.render('#x');
 
-
-        //console.log('render: ', new Date() - milestone, 'overall: ', new Date() - start);
 
         //table.datasource.load();
 
