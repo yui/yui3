@@ -12,6 +12,10 @@ App Framework Change History
 
 ### ModelList
 
+* Added LazyModelList, a subclass of ModelList that manages a list of plain
+  objects rather than a list of Model instances. This can be more efficient when
+  working with large numbers of items. [Ryan Grove]
+
 * The `add()` method now accepts an `index` option, which can be used to insert
   the specified model(s) at a specific index in the list. [Greg Hinch]
 
