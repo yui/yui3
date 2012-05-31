@@ -17,6 +17,7 @@
 <script type="text/javascript">
 
 (function() {
+
     YUI({
         base: "../../../build/",
         logInclude:{"TestRunner":true},
@@ -25,6 +26,8 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "calendar", "node-event-simulate", function(Y) {
         
+
+
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
@@ -535,25 +538,39 @@
 
 
            testFocus : function () {
+                window.focus();
+
                 var cfg = {
                     contentBox: "#firstcontainer",
                     date: new Date(2011,6,1)
                 };
 
                 this.firstcalendar = new Y.Calendar(cfg);
-                this.firstcalendar.render();              
+                this.firstcalendar.render(); 
+
+                var test = this;             
 
                 var calgrid = this.firstcalendar.get("contentBox").one(".yui3-calendar-grid");
-                calgrid.focus();
-                calgrid.simulate("keydown", { charCode: 40 });
-                calgrid.simulate("keydown", { charCode: 40 });
-                calgrid.simulate("keydown", { charCode: 37 });
-                calgrid.simulate("keydown", { charCode: 38 });
-                calgrid.simulate("keydown", { charCode: 39 });
-                calgrid.simulate("keydown", { charCode: 32 });
-                calgrid.simulate("keydown", { charCode: 32 });
-                calgrid.simulate("keydown", { charCode: 40 });
-                calgrid.simulate("keydown", { charCode: 32 });
+
+                calgrid.on("focus", function () {
+                    test.resume(function () {
+                       calgrid.simulate("keydown", { charCode: 40, keyCode: 40});
+                       calgrid.simulate("keydown", { charCode: 40, keyCode: 40 });
+                       calgrid.simulate("keydown", { charCode: 37, keyCode: 37 });
+                       calgrid.simulate("keydown", { charCode: 38, keyCode: 38 });
+                       calgrid.simulate("keydown", { charCode: 39, keyCode: 39 });
+                       calgrid.simulate("keydown", { charCode: 32, keyCode: 32 });
+                       calgrid.simulate("keydown", { charCode: 32, keyCode: 32 });
+                       calgrid.simulate("keydown", { charCode: 40, keyCode: 40 });
+                       calgrid.simulate("keydown", { charCode: 32, keyCode: 32 });
+                   });
+                });
+
+                Y.later(10, this, function () {
+                    calgrid.focus();
+                });
+
+                test.wait();
            },
 
            testSelectionModes : function () {
@@ -584,12 +601,6 @@
                 cell1.simulate("click");
                 cell2.simulate("click"); 
                 cell1.simulate("click");
-
-                calgrid.focus();
-                calgrid.simulate("keydown", { charCode: 40 });
-                calgrid.simulate("keydown", { charCode: 40 });
-                calgrid.simulate("keydown", { charCode: 32 });
-                calgrid.simulate("keydown", { charCode: 32 });
 
                 this.firstcalendar.set("selectionMode", "multiple");
 
@@ -663,9 +674,25 @@
                 });
 
                 var e = new Y.DOMEventFacade({type:'selectstart', preventDefault: function () {}});
+
                 this.secondcalendar._preventSelectionStart(e);
 
-                Y.Assert.areEqual(1, e.prevented);
+                var test = this;
+
+                calgrid.on("focus", function () {
+                    test.resume(function () {
+                        calgrid.simulate("keydown", { charCode: 40, keyCode: 40 });
+                        calgrid.simulate("keydown", { charCode: 40, keyCode: 40 });
+                        calgrid.simulate("keydown", { charCode: 32, keyCode: 32 });
+                        calgrid.simulate("keydown", { charCode: 32, keyCode: 32 });
+                    });
+                });
+
+                Y.later(10, this, function () {
+                    calgrid.focus();
+                });
+
+                test.wait();
            },
 
            testCalendarNavigation : function() {
@@ -820,6 +847,7 @@
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
+
 })();
 </script>
 </body>

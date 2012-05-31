@@ -10,14 +10,17 @@
 </style>
 </head>
 <body class="yui3-skin-sam">
+<input type="submit" value="Hide calendar" id="hideButton"></input>
+<input type="submit" value="Show calendar" id="showButton"></input>
 <div id="mycalendar"></div>
 <div id="currentDate"></div>
+<div id="secondcalendar"></div>
 
 <script>
 YUI({
 base: '../../../../build/',
-    filter: "debug"
-}).use('array', 'calendar',  function(Y) {
+    filter: "raw"
+}).use('calendar',  function(Y) {
 
 
 Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.TWO_PANE_TEMPLATE;
@@ -62,7 +65,7 @@ newrules = addNewRule(newrules, [dYear, dMonth, dDate], "theweekends");
 //console.log(newrules);
 
 
-	     var myRules = {
+	     var myRules1 = {
 	     	"2011": {
                 "0-11": {
                 	"all": {
@@ -85,7 +88,7 @@ if (Y.Array.indexOf(rules, "theweekends") >= 0) {
 
          var calendar = new Y.Calendar({
 	        showNextMonth: true,
-	        showPrevMonth: true,
+	        showPrevMonth: false,
 	        selectionMode: "multiple",
 	        minimumDate: new Date(2011,0,1),
 	        maximumDate: new Date(2011,11,1),
@@ -93,29 +96,65 @@ if (Y.Array.indexOf(rules, "theweekends") >= 0) {
 	        headerRenderer: myHeaderRenderer,
 			width:'600px'});
 			
+
+		calendar.selectDates([new Date(2011,9,4), new Date(2011,9,3), new Date(2011,10,8)]);
 		calendar.render("#mycalendar");
 
-		calendar.set("customRenderer", {rules: myRules, filterFunction: myFilter});
+		calendar.set("customRenderer", {rules: myRules1, filterFunction: myFilter});
 
 		calendar.set("enabledDatesRule", null);
-		calendar.set("disabledDatesRule", "thefifths");
+    	calendar.set("disabledDatesRule", "thefifths");
 
 /*
 		calendar.on("dateChange", function (ev) {console.log("New date value: " + ev.newVal); console.log("What about..." + calendar.get("date"));});
 */
 
 
-		calendar.on("showPrevMonthChange", function (ev) {//console.log("New show prev month val: " + ev.newVal);
-														 });
 
-		calendar.set("showPrevMonth", true);
-
-		calendar.selectDates([new Date(2011,9,4), new Date(2011,9,3), new Date(2011,10,8)]);
 		calendar.selectDates([new Date(2011,9,5), new Date(2011,8,23), new Date(2011,11,21)]);
 
 		//console.log(calendar.get("selectedDates"));
 
+Y.CalendarBase.CONTENT_TEMPLATE = Y.CalendarBase.ONE_PANE_TEMPLATE;
 
+                var myRules2 = {
+                   "2011": "fullyear",
+                   "2010-2011": {
+                       "9-11": {
+                           "all": {
+                               "0,6": "theweekends"
+                           },
+                           "10-15": "tenthtofifteenth"
+                       },
+                       "11": "december",
+                       "10-11": {
+                           "5": "thefifths"
+                       }
+                   }
+                };
+        
+        
+               function myFilter (oDate, oNode, rules) {
+               if (Y.Array.indexOf(rules, "theweekends") >= 0) {
+                   oNode.addClass('redtext');
+               }   
+               };
+
+           var cfg = {
+                    contentBox: "#secondcalendar",
+                    date: new Date(2011,11,5),
+                    customRenderer: {rules: myRules2, filterFunction: myFilter}
+                };
+
+
+                var firstcalendar = new Y.Calendar(cfg);
+
+                firstcalendar.selectDates([new Date(2011,9,10), new Date(2011,11,13)]);
+                firstcalendar.deselectDates([new Date(2011,9,10)]);
+
+                firstcalendar.render();
+
+          //      firstcalendar.set("customRenderer", {rules: myRules, filterFunction: myFilter});
 
 });
 </script>
