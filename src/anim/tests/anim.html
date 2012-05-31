@@ -8,7 +8,7 @@
 <script type="text/javascript" src="anim-easing-test.js"></script>
 <script type="text/javascript">
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'test', 'anim-core-test', 'anim-easing-test', function (Y) {
     new Y.Test.Console().render();
     Y.Test.Runner.run();

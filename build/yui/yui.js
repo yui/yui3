@@ -1046,14 +1046,18 @@ with any configuration info required for the module.
             loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
+            missing = args;
             loader._boot = false;
         }
-
-        // process each requirement and any additional requirements
-        // the module metadata specifies
-        process(args);
+        
+        if (!Y.Loader) {
+            // process each requirement and any additional requirements
+            // the module metadata specifies
+            process(args);
+        }
 
         len = missing.length;
+
 
         if (len) {
             missing = Y.Object.keys(YArray.hash(missing));
@@ -5635,7 +5639,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.05.23-19-56',
+            GALLERY_VERSION = 'gallery-2012.05.30-21-22',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',

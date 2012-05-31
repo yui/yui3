@@ -39,7 +39,7 @@
 
         YUI({
             useBrowserConsole:false,
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use("node-event-simulate", "async-queue", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
             var RootWidget = Y.RootWidget = Y.Base.create("rootwidget", Y.Widget, [Y.WidgetParent]);

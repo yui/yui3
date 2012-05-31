@@ -13,7 +13,7 @@
 
 YUI({
     useBrowserConsole:false,
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'intl-tests': {
             fullpath: './intl-tests.js',

@@ -58,7 +58,7 @@ var YUI_config = {
     loaderPath: 'loader/loader.js',
     gconfig: true,
     core: ['get', 'features','intl-base','yui-log','yui-later','loader-base','loader-rollup','loader-yui3' ],
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
 YUI({

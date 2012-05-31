@@ -10,7 +10,7 @@
         using something like this in your test's YUI config:
 
             var Y = YUI({
-                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
             });
 
      Then make sure ?filter=raw only includes raw JS.
