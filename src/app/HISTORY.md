@@ -22,6 +22,10 @@ App Framework Change History
   (or an array of indices). You no longer need to specify the actual model
   instance(s), although that's still supported as well.
 
+* The `filter()` method now returns an instance of the subclass rather than
+  ModelList itself when called with `options.asList` set to `true` on a subclass
+  of ModelList. [Ryan Grove]
+
 * Fixed an issue where a list that received bubbled events from a model would
   assume the model was in the list if its `id` changed, even if the model
   actually wasn't in the list and was merely bubbling events to the list.
