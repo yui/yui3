@@ -81,6 +81,36 @@ lazyModelListSuite.add(new Y.Test.Case({
         Assert.isString(item.clientId);
     },
 
+    'free() should free the given model or model index': function () {
+        var model;
+
+        this.list.add({foo: 'bar'});
+        model = this.list.revive(0);
+
+        Assert.areSame(model, this.list._models[0]);
+        Assert.areSame(this.list, this.list.free(model));
+        Assert.isUndefined(this.list._models[0]);
+
+        model = this.list.revive(0);
+        Assert.areSame(model, this.list._models[0]);
+        this.list.free(0);
+        Assert.isUndefined(this.list._models[0]);
+    },
+
+    'free() with no args should free all models': function () {
+        this.list.add([{foo: 'bar'}, {foo: 'baz'}]);
+        this.list.revive(0);
+        this.list.revive(1);
+
+        Assert.areSame('bar', this.list._models[0].get('foo'));
+        Assert.areSame('baz', this.list._models[1].get('foo'));
+
+        this.list.free();
+
+        Assert.isUndefined(this.list._models[0]);
+        Assert.isUndefined(this.list._models[1]);
+    },
+
     'get() should get properties, not attributes': function () {
         this.list.add([{foo: 'one'}, {foo: 'two'}]);
         ArrayAssert.itemsAreSame(['one', 'two'], this.list.get('foo'));
@@ -182,6 +212,20 @@ lazyModelListSuite.add(new Y.Test.Case({
         Assert.areSame('bar', model.get('foo'));
         Assert.areSame(model, this.list._models[0], 'model instance should be cached');
         Assert.areSame(model, this.list.revive(this.list.item(0)), 'model instance should still be cached');
+    },
+
+    'revive() with no args should revive all models in the list': function () {
+        var models;
+
+        this.list.add([{foo: 'bar'}, {foo: 'baz'}]);
+        models = this.list.revive();
+
+        Assert.isArray(models);
+        Assert.areSame(2, models.length);
+        Assert.isInstanceOf(Y.Model, models[0]);
+        Assert.isInstanceOf(Y.Model, models[1]);
+        Assert.areSame('bar', models[0].get('foo'));
+        Assert.areSame('baz', models[1].get('foo'));
     },
 
     '_isInList() should indicate whether an item is in the list': function () {
