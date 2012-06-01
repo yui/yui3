@@ -7553,16 +7553,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if(this._path)
         {
             this._path.destroy();
+            this._path = null;
         }
         if(this._lineGraphic)
         {
             this._lineGraphic.destroy();
             this._lineGraphic = null;
         }
-        if(this.get("graphic"))
+        if(this._groupMarker)
         {
-            this.get("graphic").destroy();
-        }   
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
     }
 }, {
     ATTRS: {
@@ -10920,6 +10922,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this.after("widthChange", this._sizeChangeHandler);
         this.after("heightChange", this._sizeChangeHandler);
         this.after("stylesChange", this._updateStyles);
+        this.after("groupMarkersChange", this._drawSeries);
     },
 
     /**
@@ -11429,14 +11432,17 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         if(this._graphic)
         {
             this._graphic.destroy();
+            this._graphic = null;
         }
         if(this._background)
         {
             this._background.get("graphic").destroy();
+            this._background = null;
         }
         if(this._gridlines)
         {
             this._gridlines.get("graphic").destroy();
+            this._gridlines = null;
         }
     }
 }, {
@@ -11910,20 +11916,28 @@ ChartBase.ATTRS = {
      * @type Boolean
      */
     groupMarkers: {
-        value: false,
-
-        setter: function(val)
-        {
-            if(this.get("graph"))
-            {
-                this.get("graph").set("groupMarkers", val);
-            }
-            return val;
-        }
+        value: false
     }
 };
 
 ChartBase.prototype = {
+    /**
+     * Handles groupMarkers change event.
+     *
+     * @method _groupMarkersChangeHandler
+     * @param {Object} e Event object.
+     * @private
+     */
+    _groupMarkersChangeHandler: function(e)
+    {
+        var graph = this.get("graph"),
+            useGroupMarkers = e.newVal;
+        if(graph)
+        {
+            graph.set("groupMarkers", useGroupMarkers);
+        }
+    },
+
     /**
      * Handler for itemRendered event.
      *
@@ -12232,6 +12246,7 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
+        this.after("groupMarkersChange", this._groupMarkersChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
