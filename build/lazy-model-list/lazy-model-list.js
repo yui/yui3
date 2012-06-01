@@ -80,6 +80,43 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     // -- Public Methods -------------------------------------------------------
 
     /**
+    Deletes the specified model from the model cache to release memory. The
+    model won't be destroyed or removed from the list, just freed from the
+    cache; it can still be instantiated again using `revive()`.
+
+    If no model or model index is specified, all cached models in this list will
+    be freed.
+
+    Note: Specifying an index is faster than specifying a model instance, since
+    the latter requires an `indexOf()` call.
+
+    @method free
+    @param {Model|Number} [model] Model or index of the model to free. If not
+        specified, all instantiated models in this list will be freed.
+    @chainable
+    @see revive()
+    **/
+    free: function (model) {
+        var index;
+
+        if (model) {
+            index = Lang.isNumber(model) ? model : this.indexOf(model);
+
+            if (index >= 0) {
+                // We don't detach the model because it's not being removed from
+                // the list, just being freed from memory. If something else
+                // still holds a reference to it, it may still bubble events to
+                // the list, but that's okay.
+                delete this._models[index];
+            }
+        } else {
+            this._models = [];
+        }
+
+        return this;
+    },
+
+    /**
     Overrides ModelList#get() to return a map of property values rather than
     performing attribute lookups.
 
@@ -186,6 +223,44 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     },
 
     /**
+    Revives an item (or all items) into a full Model instance. The _item_
+    argument may be the index of an object in this list, an actual object (which
+    must exist in the list), or may be omitted to revive all items in the list.
+
+    Once revived, Model instances are attached to this list and cached so that
+    reviving them in the future doesn't require another Model instantiation.
+
+    Note: Specifying an index rather than an object will be faster, since
+    objects require an `indexOf()` lookup in order to retrieve the index.
+
+    @method revive
+    @param {Number|Object} [item] Index of the object to revive, or the object
+        itself. If an object, that object must exist in this list. If not
+        specified, all items in the list will be revived and an array of models
+        will be returned.
+    @return {Model|Model[]|null} Revived Model instance, array of revived Model
+        instances, or `null` if the given index or object was not found in this
+        list.
+    @see free()
+    **/
+    revive: function (item) {
+        var i, len, models;
+
+        if (item || item === 0) {
+            return this._revive(Lang.isNumber(item) ? item :
+                this.indexOf(item));
+        } else {
+            models = [];
+
+            for (i = 0, len = this._items.length; i < len; i++) {
+                models.push(this._revive(i));
+            }
+
+            return models;
+        }
+    },
+
+    /**
     Overrides ModelList#toJSON() to use toArray() instead, since it's more
     efficient for LazyModelList.
 
@@ -195,48 +270,6 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     **/
     toJSON: function () {
         return this.toArray();
-    },
-
-    /**
-    Revives an item into a full Model instance. The _item_ argument may be
-    either the index of an object in this LazyModelList, or an actual object
-    (the object must exist in the list).
-
-    Once revived, Model instances are attached to this list and cached so that
-    reviving them in the future doesn't require another Model instantiation.
-
-    Note: Specifying an index rather than an object will be faster, since
-    objects require an `indexOf()` lookup in order to retrieve the index.
-
-    @method revive
-    @param {Number|Object} Index of the object to revive, or the object itself.
-        If an object, that object must exist in this list.
-    @return {Model|null} Revived Model instance, or `null` if the given index or
-        object was not found in this list.
-    **/
-    revive: function (item) {
-        var index = Lang.isNumber(item) ? item : this.indexOf(item),
-            model;
-
-        if (index < 0) {
-            return null;
-        }
-
-        item = this._items[index];
-
-        if (!item) {
-            return null;
-        }
-
-        model = this._models[index];
-
-        if (!model) {
-            model = new this.model(item);
-            this._attachList(model);
-            this._models[index] = model;
-        }
-
-        return model;
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -366,6 +399,39 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
         }
 
         return Y.ModelList.prototype._remove.call(this, item, options);
+    },
+
+    /**
+    Revives a single model at the specified index and returns it. This is the
+    underlying implementation for `revive()`.
+
+    @method _revive
+    @param {Number} index Index of the item to revive.
+    @return {Model} Revived model.
+    @protected
+    **/
+    _revive: function (index) {
+        var model;
+
+        if (index < 0) {
+            return null;
+        }
+
+        item = this._items[index];
+
+        if (!item) {
+            return null;
+        }
+
+        model = this._models[index];
+
+        if (!model) {
+            model = new this.model(item);
+            this._attachList(model);
+            this._models[index] = model;
+        }
+
+        return model;
     },
 
     // -- Default Event Handlers -----------------------------------------------
