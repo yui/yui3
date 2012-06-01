@@ -1595,6 +1595,25 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
+         * Array of items contained in the legend. Each item is an object containing the following properties:
+         *
+         * <dl>
+         *      <dt>node</dt><dd>Node containing text for the legend item.</dd>
+         *      <dt>marker</dt><dd>Shape for the legend item.</dd>
+         * </dl>
+         *
+         * @attribute items
+         * @type Array
+         * @readOnly
+         */
+        items: {
+            getter: function()
+            {
+                return this._items;
+            }
+        },
+
+        /**
          * Background for the legend.
          *
          * @attribute background
