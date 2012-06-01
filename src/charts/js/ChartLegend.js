@@ -239,7 +239,6 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 items.push(item);
             }
         }
-        this.set("items", items);
         this._drawing = false;
         if(this._callLater)
         {
@@ -489,7 +488,8 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
                 item = this._items.shift();
                 item.shape.get("graphic").destroy();
                 item.node.empty();
-                item.node.remove(true);
+                item.node.destroy(true);
+                item.node = null;
                 item = null;
             }
         }

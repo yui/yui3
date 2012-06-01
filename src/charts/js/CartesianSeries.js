@@ -489,16 +489,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if(this._path)
         {
             this._path.destroy();
+            this._path = null;
         }
         if(this._lineGraphic)
         {
             this._lineGraphic.destroy();
             this._lineGraphic = null;
         }
-        if(this.get("graphic"))
+        if(this._groupMarker)
         {
-            this.get("graphic").destroy();
-        }   
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
     }
 }, {
     ATTRS: {

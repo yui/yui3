@@ -218,20 +218,28 @@ ChartBase.ATTRS = {
      * @type Boolean
      */
     groupMarkers: {
-        value: false,
-
-        setter: function(val)
-        {
-            if(this.get("graph"))
-            {
-                this.get("graph").set("groupMarkers", val);
-            }
-            return val;
-        }
+        value: false
     }
 };
 
 ChartBase.prototype = {
+    /**
+     * Handles groupMarkers change event.
+     *
+     * @method _groupMarkersChangeHandler
+     * @param {Object} e Event object.
+     * @private
+     */
+    _groupMarkersChangeHandler: function(e)
+    {
+        var graph = this.get("graph"),
+            useGroupMarkers = e.newVal;
+        if(graph)
+        {
+            graph.set("groupMarkers", useGroupMarkers);
+        }
+    },
+
     /**
      * Handler for itemRendered event.
      *
@@ -540,6 +548,7 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
+        this.after("groupMarkersChange", this._groupMarkersChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
