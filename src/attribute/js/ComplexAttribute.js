@@ -74,7 +74,9 @@
 
             var val = cfg.value,
                 valFn = cfg.valueFn,
+                tmpVal,
                 initValSet = false,
+                alwaysExecValueFn = this._alwaysExecValueFn, // Temp hack for Charts, until we can clean up sets happening in Charts axes valueFn
                 simple,
                 complex,
                 i,
@@ -92,12 +94,15 @@
                 }
             }
 
-            if (!initValSet && valFn) {
+            if (valFn && (!initValSet || alwaysExecValueFn)) {
                 if (!valFn.call) {
                     valFn = this[valFn];
                 }
                 if (valFn) {
-                    val = valFn.call(this, attr);
+                    tmpVal = valFn.call(this, attr);
+                    if (!initValSet) { 
+                        val = tmpVal;
+                    }
                 }
             }
 
