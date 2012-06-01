@@ -97,6 +97,34 @@ suite.add(new Y.Test.Case({
         Assert.areSame('200px', header.getStyle('height'), 'header is not 200px in height.');
     },
 
+    'fillHeight() should fill up the widget correctly with multiple nodes': function () {
+        var bb, header, body;
+        
+        this.widget = new TestWidget({
+            headerContent: 'foo',
+            bodyContent  : 'bar',
+            height       : 200,
+            render       : '#test'
+        });
+
+        bb     = this.widget.get('boundingBox');
+        header = this.widget.getStdModNode('header');
+        body   = this.widget.getStdModNode('body');
+
+        header.setStyle('height', '50px');
+        body.setStyle('height', '50px');
+
+        Assert.areSame('200px', bb.getStyle('height'), 'widget is not 200px in height before fill.');
+        Assert.areSame('50px', header.getStyle('height'), 'header is not 50px in height before fill.');
+        Assert.areSame('50px', body.getStyle('height'), 'body is not 50px in height before fill.');
+
+        this.widget.fillHeight(body);
+
+        Assert.areSame('200px', bb.getStyle('height'), 'widget is not 200px in height after fill.');
+        Assert.areSame('50px', header.getStyle('height'), 'header is not 50px in height after fill.');
+        Assert.areSame('150px', body.getStyle('height'), 'body is not 150px in height after fill.');
+    },
+
     'HTML_PARSER rules should return the proper inner HTML contents from markup': function () {
         var src, headerMarkup, footerMarkup, bodyMarkup;
         
