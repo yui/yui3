@@ -18,7 +18,7 @@
     <script type="text/javascript">
         YUI({
             //lazyEventFacade: true,
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             allowRollup: false
         }).use('test-console', 'test', 'node', 'event-simulate', function (Y) {
 

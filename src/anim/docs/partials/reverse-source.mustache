@@ -6,7 +6,7 @@ YUI().use('anim', function(Y) {
 
     // add fx plugin to module body
     var content = module.one('.yui3-bd').plug(Y.Plugin.NodeFX, {
-        from: { height: 1 },
+        from: { height: 0 },
         to: {
             height: function(node) { // dynamic in case of change
                 return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
@@ -18,6 +18,7 @@ YUI().use('anim', function(Y) {
     });
 
     var onClick = function(e) {
+        e.preventDefault();
         module.toggleClass('yui3-closed');
         content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
         content.fx.run();

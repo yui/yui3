@@ -12,7 +12,7 @@
 
 (function() {
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         modules: {
             'xml-tests': {
                 fullpath: './xml-tests.js',

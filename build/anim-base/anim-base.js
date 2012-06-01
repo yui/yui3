@@ -123,7 +123,7 @@ YUI.add('anim-base', function(Y) {
             val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
 
         if (domNode) {
-            if ('style' in domNode && att in domNode.style) {
+            if ('style' in domNode && (att in domNode.style || att in Y.DOM.CUSTOM_STYLES)) {
                 unit = unit || '';
                 node.setStyle(att, val + unit);
             } else if ('attributes' in domNode && att in domNode.attributes) {
@@ -150,7 +150,7 @@ YUI.add('anim-base', function(Y) {
             val = '';
 
         if (domNode) {
-            if ('style' in domNode && att in domNode.style) {
+            if ('style' in domNode && (att in domNode.style || att in Y.DOM.CUSTOM_STYLES)) {
                 val = node.getComputedStyle(att);
             } else if ('attributes' in domNode && att in domNode.attributes) {
                 val = node.getAttribute(att);
@@ -219,7 +219,7 @@ YUI.add('anim-base', function(Y) {
          * If a function is used, the return value becomes the from value.
          * If no from value is specified, the DEFAULT_GETTER will be used.
          * Supports any unit, provided it matches the "to" (or default)
-         * unit (e.g. `{width: '10em', color: 'rgb(0, 0 0)', borderColor: '#ccc'}`).
+         * unit (e.g. `{width: '10em', color: 'rgb(0, 0, 0)', borderColor: '#ccc'}`).
          *
          * If using the default ('px' for length-based units), the unit may be omitted
          * (e.g. `{width: 100}, borderColor: 'ccc'}`, which defaults to pixels

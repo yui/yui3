@@ -6,7 +6,7 @@
 <script type="text/javascript" src="dom-xy-test.js"></script>
 <script type="text/javascript">
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'dom-xy-test', function (Y) {
         Y.DOM._testXY();
         new Y.Test.Console().render();

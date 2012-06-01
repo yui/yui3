@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.05.23-19-56',
+            GALLERY_VERSION = 'gallery-2012.05.30-21-22',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -1732,6 +1732,12 @@ Y.Loader.prototype = {
                 group: m.group,
                 supersedes: []
             };
+            if (m.root) {
+                conf.root = m.root;
+            }
+            if (m.base) {
+                conf.base = m.base;
+            }
 
             if (m.configFn) {
                 conf.configFn = m.configFn;

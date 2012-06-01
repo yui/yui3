@@ -22,7 +22,7 @@
         logInclude:{"TestRunner":true},
         useConsole: true,
         allowRollup: false,
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use("console", "test", "dump", "calendar", "node-event-simulate", function(Y) {
         
         // Set up the page

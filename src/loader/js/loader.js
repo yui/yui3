@@ -1647,6 +1647,12 @@ Y.Loader.prototype = {
                 group: m.group,
                 supersedes: []
             };
+            if (m.root) {
+                conf.root = m.root;
+            }
+            if (m.base) {
+                conf.base = m.base;
+            }
 
             if (m.configFn) {
                 conf.configFn = m.configFn;
