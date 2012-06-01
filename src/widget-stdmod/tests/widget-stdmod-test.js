@@ -76,6 +76,21 @@ suite.add(new Y.Test.Case({
         Assert.areSame('qux', this.widget.get('headerContent').item(2).get('text'), 'section content was not inserted after');
     },
 
+    'setStdModContent() should also accept Node objects as input': function () {
+        this.widget = new TestWidget({
+            headerContent: 'foo',
+            render       : '#test'
+        });
+
+        this.widget.setStdModContent('header', Y.Node.create('<div class="yui3-widget-hd">bar</div>'));
+        this.widget.setStdModContent('header', Y.Node.create('<div class="yui3-widget-hd">baz</div>'), 'before');
+        this.widget.setStdModContent('header', Y.Node.create('<div class="yui3-widget-hd">qux</div>'), 'after');
+
+        Assert.areSame('bar', this.widget.get('headerContent').item(1).get('text'), 'section content was not replaced');
+        Assert.areSame('baz', this.widget.get('headerContent').item(0).get('text'), 'section content was not inserted before');
+        Assert.areSame('qux', this.widget.get('headerContent').item(2).get('text'), 'section content was not inserted after');
+    },
+
     'fillHeight() should fill the a widget height using the provided node': function () {
         var bb, header;
 
