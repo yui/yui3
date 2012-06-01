@@ -7456,7 +7456,8 @@ Y.Loader.prototype = {
                     m.requires = YArray.dedupe(m.requires);
 
                     // Create lang pack modules
-                    if (m.lang && m.lang.length) {
+                    //if (m.lang && m.lang.length) {
+                    if (m.lang) {
                         // Setup root package if the module has lang defined,
                         // it needs to provide a root language pack
                         packName = this.getLangPackName(ROOT_LANG, name);
