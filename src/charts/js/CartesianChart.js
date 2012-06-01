@@ -1655,7 +1655,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             msg += (itemIndex + 1) + " of " + dataLength + ". ";
         }
         return msg;
-    }
+    },
+
+    _alwaysExecValueFn : true
+
 }, {
     ATTRS: {
         /**
