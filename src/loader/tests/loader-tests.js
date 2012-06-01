@@ -1585,6 +1585,51 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.areEqual('scripts/my-module.js', out.js[0], 'Failed to resolve module');
             Assert.areEqual('scripts/my-module/assets/skins/sam/my-module.css', out.css[0], 'Failed to resolve local skin file');
+        },
+        'test: rootlang empty array': function() {
+            var loader = new Y.Loader({
+                combine: false,
+                filter: "raw",
+                lang: "en-GB",
+                groups: {
+                    "local": {
+                        base: "./",
+                        modules: {
+                            "root-lang-fail": {
+                                lang: []
+                            },
+                            "root-lang-win": {
+                                lang: [""]
+                            },
+                            "de-lang": {
+                                lang: ["de"]
+                            }
+                        }
+                    }
+                },
+                ignoreRegistered: true,
+                require: ["root-lang-fail", "root-lang-win", "de-lang"]
+            });
+
+            var out = loader.resolve(true),
+                other = []
+            Y.Array.each(out.js, function(i) {
+                if (i.indexOf('yahooapis') === -1) {
+                    other.push(i);
+                }
+            });
+
+            Assert.areEqual(6, other.length, 'Failed to resolve all modules and languages');
+            var expected = [
+                "./root-lang-fail/lang/root-lang-fail.js",
+                "./root-lang-fail/root-lang-fail.js",
+                "./root-lang-win/lang/root-lang-win.js",
+                "./root-lang-win/root-lang-win.js",
+                "./de-lang/lang/de-lang.js",
+                "./de-lang/de-lang.js"
+            ];
+            ArrayAssert.itemsAreEqual(expected, other, 'Failed to resolve the proper modules');
+
         }
     });
 
