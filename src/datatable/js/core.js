@@ -14,7 +14,6 @@ var INVALID = Y.Attribute.INVALID_VALUE,
     isArray      = Lang.isArray,
     isString     = Lang.isString,
     isNumber     = Lang.isNumber,
-    fromTemplate = Lang.sub,
 
     toArray = Y.Array,
 
@@ -22,32 +21,13 @@ var INVALID = Y.Attribute.INVALID_VALUE,
 
     Table;
     
-// TODO: add this to Y.Object
-function flatten(o) {
-    var flat = {},
-        key;
-
-    for (key in o) {
-        // Not doing a hasOwnProperty check on purpose
-        flat[key] = o[key];
-    }
-
-    return flat;
-}
-
 /**
 _API docs for this extension are included in the DataTable class._
 
 Class extension providing the core API and structure for the DataTable Widget.
 
 Use this class extension with Widget or another Base-based superclass to create
-the basic DataTable API and composing class structure.
-
-Notable about this architecture is that rendering and UI event management for
-the header, body, and footer of the table are deferred to configurable classes
-in the `headerView`, `bodyView`, and `footerView` attributes.  In this extension
-they have no default values, requiring implementers to supply their own classes
-to render the table content.
+the basic DataTable model API and composing class structure.
 
 @class DataTable.Core
 @for DataTable
@@ -68,13 +48,7 @@ Table.ATTRS = {
     `columns: [{ key: 'first' }, { key: 'last' }]`.
 
     DataTable.Core only concerns itself with a few properties of columns.
-    All other properties are for use by the `headerView`, `bodyView`,
-    `footerView`, and any class extensions or plugins on the final class or
-    instance. See the descriptions of the view classes and feature class
-    extensions and plugins for details on the specific properties they read or
-    add to column definitions.
-
-    The properties that are referenced or assigned are:
+    These properties are:
 
     * `key` - Used to identify the record field/attribute containing content for
       this column.  Also used to create a default Model if no `recordType` or
@@ -91,7 +65,7 @@ Table.ATTRS = {
     * `field` - For backward compatibility.  Implementers should use `name`.
     * `_id` - Assigned unique-within-this-instance id for a column.  By order
       of preference, assumes the value of `name`, `key`, `id`, or `_yuid`.
-      This is used by the `bodyView` and `headerView` as well as feature module
+      This is used by the rendering views as well as feature module
       as a means to identify a specific column without ambiguity (such as
       multiple columns using the same `key`.
     * `_yuid` - Guid stamp assigned to the column object.
@@ -106,6 +80,7 @@ Table.ATTRS = {
     columns: {
         // TODO: change to setter to clone input array/objects
         validator: isArray,
+        setter: '_setColumns',
         getter: '_getColumns'
     },
 
@@ -173,12 +148,7 @@ Table.ATTRS = {
     @default '' (empty string)
     @since 3.5.0
     **/
-    summary: {
-        value: '',
-        // For paranoid reasons, the value is escaped on its way in because
-        // rendering can be based on string concatenation.
-        setter: Y.Escape.html
-    },
+    //summary: {},
 
     /**
     HTML content of an optional `<caption>` element to appear above the table.
@@ -189,9 +159,7 @@ Table.ATTRS = {
     @default '' (empty string)
     @since 3.5.0
     **/
-    caption: {
-        value: ''
-    },
+    //caption: {},
 
     /**
     Deprecated as of 3.5.0. Passes through to the `data` attribute.
@@ -294,7 +262,7 @@ Y.mix(Table.prototype, {
     /**
     Returns the Model associated to the record `id`, `clientId`, or index (not
     row index).  If none of those yield a Model from the `data` ModelList, the
-    arguments will be passed to the `bodyView` instance's `getRecord` method
+    arguments will be passed to the `view` instance's `getRecord` method
     if it has one.
 
     If no Model can be found, `null` is returned.
@@ -313,8 +281,9 @@ Y.mix(Table.prototype, {
                 record = this.data.item(seed);
             }
             
-            if (!record && this.body && this.body.getRecord) {
-                record = this.body.getRecord.apply(this.body, arguments);
+            // TODO: this should be split out to base somehow
+            if (!record && this.view && this.view.getRecord) {
+                record = this.view.getRecord.apply(this.view, arguments);
             }
         }
 
@@ -323,7 +292,18 @@ Y.mix(Table.prototype, {
 
     // -- Protected and private properties and methods ------------------------
 
-    //_bodyConfig: null,
+    /**
+    This tells `Y.Base` that it should create ad-hoc attributes for config
+    properties passed to DataTable's constructor. This is useful for setting
+    configurations on the DataTable that are intended for the rendering View(s).
+
+    @property _allowAdHocAttrs
+    @type Boolean
+    @default true
+    @protected
+    @since 3.6.0
+    **/
+    _allowAdHocAttrs: true,
 
     /**
     A map of column key to column configuration objects parsed from the
@@ -336,34 +316,6 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     //_columnMap: null,
-
-    /**
-    Configuration object passed to the class constructor in `footerView` during
-    render.
-
-    This property is set by the `_initViewConfig` method at instantiation.
-
-    @property _footerConfig
-    @type {Object}
-    @default undefined (initially unset)
-    @protected
-    @since 3.5.0
-    **/
-    //_footerConfig: null,
-
-    /**
-    Configuration object passed to the class constructor in `headerView` during
-    render.
-
-    This property is set by the `_initViewConfig` method at instantiation.
-
-    @property _headerConfig
-    @type {Object}
-    @default undefined (initially unset)
-    @protected
-    @since 3.5.0
-    **/
-    //_headerConfig: null,
 
     /**
     The Node instance of the table containing the data rows.  This is set when
@@ -379,21 +331,6 @@ Y.mix(Table.prototype, {
     //_tableNode: null,
 
     /**
-    Configuration object used as the prototype of `_headerConfig`,
-    `_bodyConfig`, and `_footerConfig`. Add properties to this object if you
-    want them in all three of the other config objects.
-
-    This property is set by the `_initViewConfig` method at instantiation.
-
-    @property _viewConfig
-    @type {Object}
-    @default undefined (initially unset)
-    @protected
-    @since 3.5.0
-    **/
-    //_viewConfig: null,
-
-    /**
     Updates the `_columnMap` property in response to changes in the `columns`
     attribute.
 
@@ -404,7 +341,6 @@ Y.mix(Table.prototype, {
     **/
     _afterColumnsChange: function (e) {
         this._setColumnMap(e.newVal);
-        this._setDisplayColumns(e.newVal);
     },
 
     /**
@@ -417,24 +353,14 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     _afterDataChange: function (e) {
-        var modelList  = e.newVal;
+        var modelList = e.newVal;
 
         this.data = e.newVal;
 
         if (!this.get('columns') && modelList.size()) {
-            // TODO: this will cause a re-render twice because the Views are subscribed to
-            // columnsChange
+            // TODO: this will cause a re-render twice because the Views are
+            // subscribed to columnsChange
             this._initColumns();
-        }
-
-        if (this.head) {
-            this.head.set('modelList', modelList);
-        }
-        if (this.body) {
-            this.body.set('modelList', modelList);
-        }
-        if (this.foot) {
-            this.foot.set('modelList', modelList);
         }
     },
 
@@ -460,17 +386,6 @@ Y.mix(Table.prototype, {
                 this.set('columns', keys(e.newVal.ATTRS));
             }
         }
-    },
-
-    /**
-    Subscribes to attribute change events to update the UI.
-
-    @method bindUI
-    @protected
-    @since 3.5.0
-    **/
-    bindUI: function () {
-        // TODO: handle widget attribute changes
     },
 
     /**
@@ -500,6 +415,17 @@ Y.mix(Table.prototype, {
         }
 
         return Y.Base.create('record', Y.Model, [], null, { ATTRS: ATTRS });
+    },
+
+    /**
+    Tears down the instance.
+
+    @method destructor
+    @protected
+    @since 3.6.0
+    **/
+    destructor: function () {
+        new Y.EventHandle(Y.Object.values(this._eventHandles)).detach();
     },
 
     /**
@@ -570,16 +496,37 @@ Y.mix(Table.prototype, {
     @since 3.5.0
     **/
     _initColumns: function () {
-        var columns = this.get('columns') || [];
+        var columns = this.get('columns') || [],
+            item;
         
         // Default column definition from the configured recordType
         if (!columns.length && this.data.size()) {
             // TODO: merge superclass attributes up to Model?
-            this.set('columns', keys(this.data.item(0).toJSON()));
-        } else {
-            this._setColumnMap(columns);
-            this._setDisplayColumns(columns);
+            item = this.data.item(0);
+
+            if (item.toJSON) {
+                item = item.toJSON();
+            }
+
+            this.set('columns', keys(item));
         }
+
+        this._setColumnMap(columns);
+    },
+
+    /**
+    Sets up the change event subscriptions to maintain internal state.
+
+    @method _initCoreEvents
+    @protected
+    @since 3.6.0
+    **/
+    _initCoreEvents: function () {
+        this._eventHandles.coreAttrChanges = this.after({
+            columnsChange   : Y.bind('_afterColumnsChange', this),
+            recordTypeChange: Y.bind('_afterRecordTypeChange', this),
+            dataChange      : Y.bind('_afterDataChange', this)
+        });
     },
 
     /**
@@ -594,6 +541,7 @@ Y.mix(Table.prototype, {
     **/
     _initData: function () {
         var recordType = this.get('recordType'),
+            // TODO: LazyModelList if recordType doesn't have complex ATTRS
             modelList = new Y.ModelList();
 
         if (recordType) {
@@ -638,10 +586,10 @@ Y.mix(Table.prototype, {
                 }
             }
 
-            // TODO: Remove this?  It's nice to obfuscate the class composition, but
-            // it becomes a trap to subscribe to component instance events from
-            // 'this'.  Also, the aggregated change event of Models conflicts with
-            // Widget UI event 'change' from the DOM.
+            // TODO: Replace this with an event relay for specific events.
+            // Using bubbling causes subscription conflicts with the models'
+            // aggregated change event and 'change' events from DOM elements
+            // inside the table (via Widget UI event).
             this.data.addTarget(this);
         }
     },
@@ -682,54 +630,60 @@ Y.mix(Table.prototype, {
             }
         }
 
-        this.after({
-            columnsChange   : Y.bind('_afterColumnsChange', this),
-            recordTypeChange: Y.bind('_afterRecordTypeChange', this),
-            dataChange      :  Y.bind('_afterDataChange', this)
-        });
-
         this._initColumns();
 
-        // FIXME: this needs to be added to Widget._buildCfg.custom
-        this._UI_ATTRS = {
-            BIND: this._UI_ATTRS.BIND.concat(['caption', 'summary']),
-            SYNC: this._UI_ATTRS.SYNC.concat(['caption', 'summary'])
-        };
-    },
+        this._eventHandles = {};
 
-    /**
-    Initializes the `_viewConfig`, `_headerConfig`, `_bodyConfig`, and
-    `_footerConfig` properties with the configuration objects that will be
-    passed to the constructors of the `headerView`, `bodyView`, and
-    `footerView`.
-    
-    Extensions can add to the config objects to deliver custom parameters at
-    view instantiation.  `_viewConfig` is used as the prototype of the other
-    three config objects, so properties added here will be inherited by all
-    configs.
-
-    @method _initViewConfig
-    @protected
-    @since 3.5.0
-    **/
-    _initViewConfig: function () {
-        this._viewConfig = {
-            source   : this,
-            cssPrefix: this._cssPrefix
-        };
-
-        // Use prototypal inheritance to share common configs from _viewConfig
-        this._headerConfig = Y.Object(this._viewConfig);
-        this._bodyConfig   = Y.Object(this._viewConfig);
-        this._footerConfig = Y.Object(this._viewConfig);
+        this._initCoreEvents();
     },
 
     /**
     Iterates the array of column configurations to capture all columns with a
-    `key` property.  Columns that are represented as strings will be replaced
-    with objects with the string assigned as the `key` property.  If a column
-    has a `children` property, it will be iterated, adding any nested column
-    keys to the returned map. There is no limit to the levels of nesting.
+    `key` property.  An map is built with column keys as the property name and
+    the corresponding column object as the associated value.  This map is then
+    assigned to the instance's `_columnMap` property.
+
+    @method _setColumnMap
+    @param {Object[]|String[]} columns The array of column config objects
+    @protected
+    @since 3.6.0
+    **/
+    _setColumnMap: function (columns) {
+        var map = {};
+        
+        function process(cols) {
+            var i, len, col, key;
+
+            for (i = 0, len = cols.length; i < len; ++i) {
+                col = cols[i];
+                key = col.key;
+
+                // First in wins for multiple columns with the same key
+                // because the first call to genId (in _setColumns) will
+                // return the same key, which will then be overwritten by the
+                // subsequent same-keyed column.  So table.getColumn(key) would
+                // return the last same-keyed column.
+                if (key && !map[key]) {
+                    map[key] = col;
+                }
+
+                //TODO: named columns can conflict with keyed columns
+                map[col._id] = col;
+
+                if (col.children) {
+                    process(col.children);
+                }
+            }
+        }
+
+        process(columns);
+
+        this._columnMap = map;
+    },
+
+    /**
+    Translates string columns into objects with that string as the value of its
+    `key` property.
 
     All columns are assigned a `_yuid` stamp and `_id` property corresponding
     to the column's configured `name` or `key` property with any spaces
@@ -740,19 +694,13 @@ Y.mix(Table.prototype, {
     of "foo1").  Columns that are children of other columns will have the
     `_parent` property added, assigned the column object to which they belong.
 
-    The result is an object map with column keys as the property name and the
-    corresponding column object as the associated value.
-
-    @method _parseColumns
-    @param {Object[]|String[]} columns The array of column names or
-                configuration objects to scan
+    @method _setColumns
+    @param {null|Object[]|String[]} val Array of config objects or strings
+    @return {null|Object[]}
     @protected
-    @since 3.5.0
     **/
-    _parseColumns: function (columnConfigs) {
-        var columns = [],
-            map  = {},
-            keys = {},
+    _setColumns: function (val) {
+        var keys = {},
             known = [],
             knownCopies = [],
             arrayIndex = Y.Array.indexOf;
@@ -774,6 +722,8 @@ Y.mix(Table.prototype, {
                         i = arrayIndex(val, known);
 
                         copy[key] = i === -1 ? copyObj(val) : knownCopies[i];
+                    } else {
+                        copy[key] = o[key];
                     }
                 }
             }
@@ -796,7 +746,8 @@ Y.mix(Table.prototype, {
         }
 
         function process(cols, parent) {
-            var i, len, col, key, yuid;
+            var columns = [],
+                i, len, col, yuid;
 
             for (i = 0, len = cols.length; i < len; ++i) {
                 columns[i] = // chained assignment
@@ -822,67 +773,20 @@ Y.mix(Table.prototype, {
                     delete col._parent;
                 }
 
+                // Unique id based on the column's configured name or key,
+                // falling back to the yuid.  Duplicates will have a counter
+                // added to the end.
+                col._id = genId(col.name || col.key || col.id);
+
                 if (isArray(col.children)) {
-                    // Allow getColumn for parent columns if they have a name
-                    if (col.name) {
-                        map[genId(col.name)] = col;
-                    }
-
-                    process(col.children, col);
-                } else {
-                    key = col.key;
-
-                    // First in wins for multiple columns with the same key
-                    // because the first call to genId will return the same key,
-                    // which will then be overwritten by the subsequent
-                    // same-keyed column.  So table.getColumn(key) would return
-                    // the last same-keyed column.
-                    if (key && !map[key]) {
-                        map[key] = col;
-                    }
-
-                    // Unique id based on the column's configured name or key,
-                    // falling back to the yuid.  Duplicates will have a counter
-                    // added to the end.
-                    col._id = genId(col.name || col.key || col.id);
-
-                    //TODO: named columns can conflict with keyed columns
-                    map[col._id] = col;
+                    col.children = process(col.children, col);
                 }
             }
+
+            return columns;
         }
 
-        process(columnConfigs);
-
-        return map;
-    },
-
-    /**
-    Builds the table and attaches it to the DOM.  This requires the host class
-    to provide a `contentBox` attribute.  This is typically provided by Widget.
-
-    @method renderUI
-    @protected
-    @since 3.5.0
-    **/
-    renderUI: function () {
-        var contentBox = this.get('contentBox'),
-            table;
-
-    },
-
-    /**
-    Assigns the `_columnMap` property with the parsed results of the array of
-    column definitions passed.
-
-    @method _setColumnMap
-    @param {Object[]|String[]} columns the raw column configuration objects or
-                                       key names
-    @protected
-    @since 3.5.0
-    **/
-    _setColumnMap: function (columns) {
-        this._columnMap = this._parseColumns(columns);
+        return val && process(val);
     },
 
     /**
@@ -1001,6 +905,6 @@ Y.mix(Table.prototype, {
         }
 
         return modelClass || INVALID;
-    },
+    }
 
 });

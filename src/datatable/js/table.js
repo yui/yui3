@@ -7,8 +7,11 @@ the default `view` for `Y.DataTable.Base` and `Y.DataTable` classes.
 @since 3.6.0
 **/
 var toArray = Y.Array,
-    getClassName = Y.ClassNameManager.getClassName,
-    fromTemplate = Y.Lang.sub;
+    YLang   = Y.Lang,
+    fromTemplate = YLang.sub,
+
+    isArray    = YLang.isArray,
+    isFunction = YLang.isFunction;
 
 /**
 View class responsible for rendering a `<table>` from provided data.  Used as
@@ -43,39 +46,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.6.0
     **/
     TABLE_TEMPLATE  : '<table cellspacing="0" class="{className}"/>',
-
-    /**
-    HTML template used to create table's `<tbody>` if configured with a
-    `bodyView`.
-
-    @property TBODY_TEMPLATE
-    @type {HTML}
-    @default '<tbody class="{className}"/>'
-    @since 3.6.0
-    **/
-    TBODY_TEMPLATE: '<tbody class="{className}"/>',
-
-    /**
-    Template used to create the table's `<tfoot>` if configured with a
-    `footerView`.
-
-    @property TFOOT_TEMPLATE
-    @type {HTML}
-    @default '<tfoot class="{className}"/>'
-    @since 3.5.0
-    **/
-    TFOOT_TEMPLATE: '<tfoot class="{className}"/>',
-
-    /**
-    Template used to create the table's `<thead>` if configured with a
-    `headerView`.
-
-    @property THEAD_TEMPLATE
-    @type {HTML}
-    @default '<thead class="{className}"/>'
-    @since 3.5.0
-    **/
-    THEAD_TEMPLATE: '<thead class="{className}"/>',
 
     /**
     The object or instance of the class assigned to `bodyView` that is
@@ -166,16 +136,31 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @protected
     **/
     getClassName: function () {
-        // TODO: add setter? to host to use property this.host for performance
-        var host = this.get('host'),
+        // TODO: add attr with setter for host?
+        var host = this.host,
             NAME = (host && host.constructor.NAME) ||
                     this.constructor.NAME;
 
         if (host && host.getClassName) {
             return host.getClassName.apply(host, arguments);
         } else {
-            return getClassName([NAME].concat(toArray(arguments, 0, true)));
+            return Y.ClassNameManager.getClassName
+                .apply(Y.ClassNameManager,
+                       [NAME].concat(toArray(arguments, 0, true)));
         }
+    },
+
+    /**
+    Relays call to the `bodyView`'s `getRecord` method if it has one.
+
+    @method getRecord
+    @param {String|Node} seed Node or identifier for a row or child element
+    @return {Model}
+    @since 3.6.0
+    **/
+    getRecord: function () {
+        return this.body && this.body.getRecord &&
+            this.body.getRecord.apply(this.body, arguments);
     },
 
     /**
@@ -201,6 +186,42 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     // Protected and private methods
     //-----------------------------------------------------------------------//
     /**
+    Updates the table's `summary` attribute.
+
+    @method _afterSummaryChange
+    @param {EventHandle} e The change event
+    @protected
+    @since 3.6.0
+    **/
+    _afterSummaryChange: function (e) {
+        this._uiSetSummary(e.newVal);
+    },
+
+    /**
+    Updates the table's `<caption>`.
+
+    @method _afterCaptionChange
+    @param {EventHandle} e The change event
+    @protected
+    @since 3.6.0
+    **/
+    _afterCaptionChange: function (e) {
+        this._uiSetCaption(e.newVal);
+    },
+
+    /**
+    Updates the table's width.
+
+    @method _afterWidthChange
+    @param {EventHandle} e The change event
+    @protected
+    @since 3.6.0
+    **/
+    _afterWidthChange: function (e) {
+        this._uiSetWidth(e.newVal);
+    },
+
+    /**
     Attaches event subscriptions to relay attribute changes to the child Views.
 
     @method _bindUI
@@ -208,13 +229,17 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.6.0
     **/
     _bindUI: function () {
+        var relay;
+
         if (!this._eventHandles) {
+            relay = Y.bind('_relayAttrChange', this);
+
             this._eventHandles = this.after({
-                columnsChange: Y.bind('_afterColumnsChange', this),
-                dataChange   : Y.bind('_afterDataChange', this),
-                summaryChange: Y.bind('_afterSummaryChange', this),
-                captionChange: Y.bind('_afterCaptionChange', this),
-                widthChange  : Y.bind('_afterWidthChange', this)
+                columnsChange  : relay,
+                modelListChange: relay,
+                summaryChange  : Y.bind('_afterSummaryChange', this),
+                captionChange  : Y.bind('_afterCaptionChange', this),
+                widthChange    : Y.bind('_afterWidthChange', this)
             });
         }
     },
@@ -231,45 +256,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         return Y.Node.create(fromTemplate(this.TABLE_TEMPLATE, {
             className: this.getClassName('table')
         })).empty();
-    },
-
-    /**
-    Creates a `<tbody>` node from the `TBODY_TEMPLATE`.
-
-    @method _createTBody
-    @protected
-    @since 3.5.0
-    **/
-    _createTBody: function () {
-        return Y.Node.create(fromTemplate(this.TBODY_TEMPLATE, {
-            className: this.getClassName('data')
-        }));
-    },
-
-    /**
-    Creates a `<tfoot>` node from the `TFOOT_TEMPLATE`.
-
-    @method _createTFoot
-    @protected
-    @since 3.5.0
-    **/
-    _createTFoot: function () {
-        return Y.Node.create(fromTemplate(this.TFOOT_TEMPLATE, {
-            className: this.getClassName('footer')
-        }));
-    },
-
-    /**
-    Creates a `<thead>` node from the `THEAD_TEMPLATE`.
-
-    @method _createTHead
-    @protected
-    @since 3.5.0
-    **/
-    _createTHead: function () {
-        return Y.Node.create(fromTemplate(this.THEAD_TEMPLATE, {
-            className: this.getClassName('columns')
-        }));
     },
 
     /**
@@ -323,18 +309,19 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.5.0
     **/
     _defRenderTableFn: function (e) {
-        var attrs = this.getAttrs(),
-            config;
+        var attrs = this.getAttrs();
 
         if (!this._tableNode) {
             this._tableNode = this._createTable();
         }
 
+        attrs.host  = this.get('host') || this;
         attrs.table = this;
         attrs.container = this._tableNode;
 
         this._uiSetCaption(this.get('caption'));
         this._uiSetSummary(this.get('summary'));
+        this._uiSetWidth(this.get('width'));
 
         if (this.head || e.headerView) {
             if (!this.head) {
@@ -344,8 +331,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
             this.fire('renderHeader', { view: this.head });
         }
 
-        attrs.columns = this.displayColumns;
-
         if (this.foot || e.footerView) {
             if (!this.foot) {
                 this.foot = new e.footerView(Y.merge(attrs, e.footerConfig));
@@ -353,6 +338,8 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
 
             this.fire('renderFooter', { view: this.foot });
         }
+
+        attrs.columns = this.displayColumns;
 
         if (this.body || e.bodyView) {
             if (!this.body) {
@@ -408,8 +395,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     **/
     _extractDisplayColumns: function () {
         var columns = this.get('columns'),
-            displayColumns = [],
-            i, len, column;
+            displayColumns = [];
 
         function process(cols) {
             var i, len, col;
@@ -418,7 +404,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
                 col = cols[i];
 
                 if (isArray(col.children)) {
-                    process(col.childre);
+                    process(col.children);
                 } else {
                     displayColumns.push(col);
                 }
@@ -436,12 +422,6 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         @since 3.6.0
         **/
         this.displayColumns = displayColumns;
-    },
-
-    /**
-    Creates a ModelList to store 
-    **/
-    _initData: function () {
     },
 
     /**
@@ -469,12 +449,43 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @protected
     @since 3.6.0
     **/
-    initializer: function () {
+    initializer: function (config) {
+        this.host = config.host;
+
         this._initEvents();
 
         this._extractDisplayColumns();
 
-        this._initData();
+        this.after('columnsChange', this._extractDisplayColumns, this);
+    },
+
+    /**
+    Relays attribute changes to the child Views.
+
+    @method _relayAttrChange
+    @param {EventHandle} e The change event
+    @protected
+    @since 3.6.0
+    **/
+    _relayAttrChange: function (e) {
+        var attr = e.attrName,
+            val  = e.newVal;
+
+        if (this.head) {
+            this.head.set(attr, val);
+        }
+
+        if (this.foot) {
+            this.foot.set(attr, val);
+        }
+
+        if (this.body) {
+            if (attr === 'columns') {
+                val = this.displayColumns;
+            }
+
+            this.body.set(attr, val);
+        }
     },
 
     /**
@@ -559,58 +570,176 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     _uiSetWidth: function (width) {
         var table = this._tableNode;
 
-        if (isNumber(width)) {
-            // DEF_UNIT from Widget
-            width += this.DEF_UNIT;
-        }
+        // Table width needs to account for borders
+        table.setStyle('width', !width ? '' :
+            (this.get('container').get('offsetWidth') -
+             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
+             (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
+             'px');
 
-        if (isString(width)) {
-            this._uiSetDim('width', width);
-
-            // Table width needs to account for borders
-            table.setStyle('width', !width ? '' :
-                (this.get('boundingBox').get('offsetWidth') -
-                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0) -
-                 (parseInt(table.getComputedStyle('borderLeftWidth'), 10)|0)) +
-                 'px');
-
-            table.setStyle('width', width);
-        }
+        table.setStyle('width', width);
     },
+
+    /**
+    Ensures that the input is a View class or at least has a `render` method.
+
+    @method _validateView
+    @param {View|Function} val The View class
+    @return {Boolean}
+    @protected
+    **/
+    _validateView: function (val) {
+        return isFunction(val) && val.prototype.render;
+    }
 }, {
     ATTRS: {
-        summary: {
-        },
+        /**
+        Content for the `<table summary="ATTRIBUTE VALUE HERE">`.  Values
+        assigned to this attribute will be HTML escaped for security.
 
-        caption: {
-        },
+        @attribute summary
+        @type {String}
+        @default '' (empty string)
+        @since 3.5.0
+        **/
+        //summary: {},
 
+        /**
+        HTML content of an optional `<caption>` element to appear above the
+        table.  Leave this config unset or set to a falsy value to remove the
+        caption.
+
+        @attribute caption
+        @type HTML
+        @default undefined (initially unset)
+        @since 3.6.0
+        **/
+        //caption: {},
+
+        /**
+        Columns to include in the rendered table.
+
+        This attribute takes an array of objects. Each object is considered a
+        data column or header cell to be rendered.  How the objects are
+        translated into markup is delegated to the `headerView`, `bodyView`,
+        and `footerView`.
+
+        The raw value is passed to the `headerView` and `footerView`.  The
+        `bodyView` receives the instance's `displayColumns` array, which is
+        parsed from the columns array.  If there are no nested columns (columns
+        configured with a `children` array), the `displayColumns` is the same
+        as the raw value.
+        
+        @attribute columns
+        @type {Object[]}
+        @since 3.6.0
+        **/
         columns: {
+            validator: isArray
         },
 
+        /**
+        Width of the table including borders.  This value requires units, so
+        `200` is invalid, but `'200px'` is valid.  Setting the empty string
+        (the default) will allow the browser to set the table width.
+
+        @attribute width
+        @type {String}
+        @default ''
+        @since 3.6.0
+        **/
+        width: {
+            value: '',
+            validator: YLang.isString
+        },
+
+        /**
+        An instance of this class is used to render the contents of the
+        `<thead>`&mdash;the column headers for the table.
+        
+        The instance of this View will be assigned to the instance's `head`
+        property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute headerView
+        @type {Function|Object}
+        @default Y.DataTable.HeaderView
+        @since 3.6.0
+        **/
         headerView: {
+            value: Y.DataTable.HeaderView,
+            validator: '_validateView'
         },
 
-        headerConfig: {
-        },
+        /**
+        Configuration overrides used when instantiating the `headerView`
+        instance.
 
+        @attribute headerConfig
+        @type {Object}
+        @since 3.6.0
+        **/
+        //headerConfig: {},
+
+        /**
+        An instance of this class is used to render the contents of the
+        `<tfoot>` (if appropriate).
+        
+        The instance of this View will be assigned to the instance's `foot`
+        property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute footerView
+        @type {Function|Object}
+        @since 3.6.0
+        **/
         footerView: {
+            validator: '_validateView'
         },
 
-        footerConfig: {
-        },
+        /**
+        Configuration overrides used when instantiating the `footerView`
+        instance.
 
+        @attribute footerConfig
+        @type {Object}
+        @since 3.6.0
+        **/
+        //footerConfig: {},
+
+        /**
+        An instance of this class is used to render the contents of the table's
+        `<tbody>`&mdash;the data cells in the table.
+        
+        The instance of this View will be assigned to the instance's `body`
+        property.
+
+        It is not strictly necessary that the class function assigned here be
+        a View subclass.  It must however have a `render()` method.
+
+        @attribute bodyView
+        @type {Function|Object}
+        @default Y.DataTable.BodyView
+        @since 3.6.0
+        **/
         bodyView: {
-        },
-
-        bodyConfig: {
-        },
-
-        rowView: {
-        },
-
-        rowConfig: {
+            value: Y.DataTable.BodyView,
+            validator: '_validateView'
         }
+
+        /**
+        Configuration overrides used when instantiating the `bodyView`
+        instance.
+
+        @attribute bodyConfig
+        @type {Object}
+        @since 3.6.0
+        **/
+        //bodyConfig: {}
     }
 });
 

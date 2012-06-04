@@ -217,43 +217,6 @@ to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
 **/
 Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
 
-
-    /**
-    The object or instance of the class assigned to `bodyView` that is
-    responsible for rendering and managing the table's `<tbody>`(s) and its
-    content.
-
-    @property body
-    @type {Object}
-    @default undefined (initially unset)
-    @since 3.5.0
-    **/
-    //body: null,
-
-    /**
-    The object or instance of the class assigned to `footerView` that is
-    responsible for rendering and managing the table's `<tfoot>` and its
-    content.
-
-    @property foot
-    @type {Object}
-    @default undefined (initially unset)
-    @since 3.5.0
-    **/
-    //foot: null,
-
-    /**
-    The object or instance of the class assigned to `headerView` that is
-    responsible for rendering and managing the table's `<thead>` and its
-    content.
-
-    @property head
-    @type {Object}
-    @default undefined (initially unset)
-    @since 3.5.0
-    **/
-    //head: null,
-
     /**
     Pass through to `delegate()` called from the `contentBox`.
 
@@ -273,6 +236,19 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         var contentBox = this.get('contentBox');
 
         return contentBox.delegate.apply(contentBox, arguments);
+    },
+
+    /**
+    Destroys the table `View` if it's been created.
+
+    @method destructor
+    @protected
+    @since 3.6.0
+    **/
+    destructor: function () {
+        if (this.view) {
+            this.view.destroy();
+        }
     },
 
     /**
@@ -327,7 +303,19 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
             this.view.getRow.apply(this.view, arguments);
     },
 
+    /**
+    Attaches subscriptions to relay core change events to the view.
+
+    @method bindUI
+    @protected
+    @since 3.6.0
+    **/
     bindUI: function () {
+        var relay = Y.bind('_relayCoreAttrChange', this);
+
+        this._eventHandles.relayCoreChanges = this.after(
+            ['columnsChange', 'dataChange', 'summaryChange',
+             'captionChange', 'widthChange'], relay);
     },
 
     _defRenderViewFn: function (e) {
@@ -348,14 +336,36 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
 
     _onViewRender: function (e) {
         // Relay event from DataTable instance for backward compatibility
-        this.fire(e.type.replace(/.*:/, ''), {
+        this.fire(e.type.slice(e.type.lastIndexOf(':') + 1), {
             originEvent: e,
             view       : e.view
         });
     },
 
+    /**
+    Relays the `preventDefault` to the originating event.
+
+    @method _preventViewRenderFn
+    @param {EventFacade} e The render event
+    @protected
+    @since 3.6.0
+    **/
     _preventViewRenderFn: function (e) {
         e.originEvent && e.originEvent.preventDefault();
+    },
+
+    /**
+    Relays attribute changes to the instance's `view`.
+
+    @method _relayCoreAttrChange
+    @param {EventFacade} e The change event
+    @protected
+    @since 3.6.0
+    **/
+    _relayCoreAttrChange: function (e) {
+        var attr = (e.attrName === 'data') ? 'modelList' : e.attrName;
+
+        this.view.set(attr, e.newVal);
     },
 
     renderUI: function () {
@@ -366,7 +376,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
                 Y.merge(
                     this.getAttrs(),
                     {
-                        model    : this,
+                        host     : this,
                         container: this.get('contentBox'),
                         modelList: this.data
                     },
@@ -376,7 +386,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
                 ['renderTable', 'renderHeader', 'renderBody', 'renderFooter'],
                 this._onViewRender, this);
 
-            this.fire('renderView', { view: this.view });
+            //this.fire('renderView', { view: this.view });
         }
     },
 
@@ -388,11 +398,8 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @since 3.5.0
     **/
     syncUI: function () {
-        this._uiSetCaption(this.get('caption'));
-        this._uiSetSummary(this.get('summary'));
-
         if (this.view) {
-            this.fire('renderTable', { view: this.view });
+            this.fire('renderView', { view: this.view });
         }
     },
 
