@@ -166,6 +166,9 @@
         <!-- Failing in CI
         <url>transition/tests/transition.html</url>
         -->
+        <url>uploader/tests/uploaderflash.html</url>
+        <url>uploader/tests/uploaderhtml5.html</url>
+        <url>uploader/tests/uploaderqueue.html</url>
         <url>widget/tests/widget.html</url>
         <url>widget-anim/tests/widget-anim.html</url>
         <url>widget-autohide/tests/widget-autohide.html</url>
