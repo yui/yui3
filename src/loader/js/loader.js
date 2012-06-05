@@ -100,8 +100,7 @@ Y.Env.meta = META;
  */
 Y.Loader = function(o) {
 
-    var defaults = META.modules,
-        self = this;
+    var self = this;
     
     //Catch no config passed.
     o = o || {};
@@ -406,24 +405,7 @@ Y.Loader = function(o) {
     self.config = o;
     self._internal = true;
 
-
-    cache = GLOBAL_ENV._renderedMods;
-
-    if (cache) {
-        oeach(cache, function modCache(v, k) {
-            self.moduleInfo[k] = Y.merge(v);
-        });
-
-        cache = GLOBAL_ENV._conditions;
-
-        oeach(cache, function condCache(v, k) {
-            self.conditions[k] = Y.merge(v);
-        });
-
-    } else {
-        oeach(defaults, self.addModule, self);
-    }
-
+    self._populateCache();
 
     /**
      * Set when beginning to compute the dependency tree.
@@ -536,30 +518,64 @@ Y.Loader = function(o) {
 };
 
 Y.Loader.prototype = {
+    _populateCache: function() {
+        var self = this,
+            defaults = META.modules,
+            cache = GLOBAL_ENV._renderedMods,
+            i;
+
+        if (cache) {
+            for (i in cache) {
+                if (cache.hasOwnProperty(i)) {
+                    self.moduleInfo[i] = Y.merge(cache[i]);
+                }
+            }
+
+            cache = GLOBAL_ENV._conditions;
+            for (i in cache) {
+                if (cache.hasOwnProperty(i)) {
+                    self.conditions[i] = Y.merge(cache[i]);
+                }
+            }
+
+        } else {
+            for (i in defaults) {
+                if (defaults.hasOwnProperty(i)) {
+                    self.addModule(defaults[i], i);
+                }
+            }
+        }
+
+    },
     resetModules: function() {
-        var self = this;
-        oeach(self.moduleInfo, function(mod) {
-            var name = mod.name,
-                details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);
+        var self = this, i, o;
+        for (i in self.moduleInfo) {
+            if (self.moduleInfo.hasOwnProperty(i)) {
+                var mod = self.moduleInfo[i],
+                    name = mod.name,
+                    details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);
 
-            if (details) {
-                self.moduleInfo[name]._reset = true;
-                self.moduleInfo[name].requires = details.requires || [];
-                self.moduleInfo[name].optional = details.optional || [];
-                self.moduleInfo[name].supersedes = details.supercedes || [];
-            }
+                if (details) {
+                    self.moduleInfo[name]._reset = true;
+                    self.moduleInfo[name].requires = details.requires || [];
+                    self.moduleInfo[name].optional = details.optional || [];
+                    self.moduleInfo[name].supersedes = details.supercedes || [];
+                }
 
-            if (mod.defaults) {
-                oeach(mod.defaults, function(val, key) {
-                    if (mod[key]) {
-                        mod[key] = mod.defaults[key];
+                if (mod.defaults) {
+                    for (o in mod.defaults) {
+                        if (mod.defaults.hasOwnProperty(o)) {
+                            if (mod[o]) {
+                                mod[o] = mod.defaults[o];
+                            }
+                        }
                     }
-                });
+                }
+                if (mod.skinnable) {
+                    self._addSkin(self.skin.defaultSkin, mod.name);
+                }
             }
-            if (mod.skinnable) {
-                self._addSkin(self.skin.defaultSkin, mod.name);
-            }
-        });
+        }
     },
     /**
     Regex that matches a CSS URL. Used to guess the file type when it's not
@@ -596,33 +612,40 @@ Y.Loader.prototype = {
     * @private
     */
     _inspectPage: function() {
-        
+        var self = this, v, m, req, mr, i;
+
         //Inspect the page for CSS only modules and mark them as loaded.
-        oeach(this.moduleInfo, function(v, k) {
-            if (v.type && v.type === CSS) {
-                if (this.isCSSLoaded(v.name)) {
-                    Y.log('Found CSS module on page: ' + v.name, 'info', 'loader');
-                    this.loaded[k] = true;
+        for (i in self.moduleInfo) {
+            if (self.moduleInfo.hasOwnProperty(i)) {
+                v = self.moduleInfo[i];
+                if (v.type && v.type === CSS) {
+                    if (self.isCSSLoaded(v.name)) {
+                        Y.log('Found CSS module on page: ' + v.name, 'info', 'loader');
+                        self.loaded[i] = true;
+                    }
                 }
             }
-        }, this);
-        
-        oeach(ON_PAGE, function(v, k) {
-           if (v.details) {
-               var m = this.moduleInfo[k],
-                   req = v.details.requires,
-                   mr = m && m.requires;
-               if (m) {
-                   if (!m._inspected && req && mr.length != req.length) {
-                       // console.log('deleting ' + m.name);
-                       delete m.expanded;
+        }
+        for (i in ON_PAGE) {
+            if (ON_PAGE.hasOwnProperty(i)) {
+                v = ON_PAGE[i];
+                if (v.details) {
+                    m = self.moduleInfo[v.name];
+                    req = v.details.requires;
+                    mr = m && m.requires;
+
+                   if (m) {
+                       if (!m._inspected && req && mr.length != req.length) {
+                           // console.log('deleting ' + m.name);
+                           delete m.expanded;
+                       }
+                   } else {
+                       m = self.addModule(v.details, i);
                    }
-               } else {
-                   m = this.addModule(v.details, k);
+                   m._inspected = true;
                }
-               m._inspected = true;
-           }
-       }, this);
+            }
+        }
     },
     /*
     * returns true if b is not loaded, and is required directly or by means of modules it supersedes.
@@ -697,7 +720,7 @@ Y.Loader.prototype = {
     * @param {Object} o The new configuration
     */
     _config: function(o) {
-        var i, j, val, f, group, groupName, self = this;
+        var i, j, val, a, f, group, groupName, self = this;
         // apply config values
         if (o) {
             for (i in o) {
@@ -723,16 +746,28 @@ Y.Loader.prototype = {
                                 group = val[j];
                                 self.addGroup(group, groupName);
                                 if (group.aliases) {
-                                    oeach(group.aliases, self.addAlias, self);
+                                    for (a in group.aliases) {
+                                        if (group.aliases.hasOwnProperty(a)) {
+                                            self.addAlias(group.aliases[a], a);
+                                        }
+                                    }
                                 }
                             }
                         }
 
                     } else if (i == 'modules') {
                         // add a hash of module definitions
-                        oeach(val, self.addModule, self);
+                        for (j in val) {
+                            if (val.hasOwnProperty(j)) {
+                                self.addModule(val[j], j);
+                            }
+                        }
                     } else if (i === 'aliases') {
-                        oeach(val, self.addAlias, self);
+                        for (j in val) {
+                            if (val.hasOwnProperty(j)) {
+                                self.addAlias(val[j], j);
+                            }
+                        }
                     } else if (i == 'gallery') {
                         this.groups.gallery.update(val, o);
                     } else if (i == 'yui2' || i == '2in3') {
@@ -874,26 +909,32 @@ Y.Loader.prototype = {
      */
     addGroup: function(o, name) {
         var mods = o.modules,
-            self = this;
+            self = this, i, v;
+
         name = name || o.name;
         o.name = name;
         self.groups[name] = o;
 
         if (o.patterns) {
-            oeach(o.patterns, function(v, k) {
-                v.group = name;
-                self.patterns[k] = v;
-            });
+            for (i in o.patterns) {
+                if (o.patterns.hasOwnProperty(i)) {
+                    o.patterns[i].group = name;
+                    self.patterns[i] = o.patterns[i];
+                }
+            }
         }
 
         if (mods) {
-            oeach(mods, function(v, k) {
-                if (typeof v === 'string') {
-                    v = { name: k, fullpath: v };
+            for (i in mods) {
+                if (mods.hasOwnProperty(i)) {
+                    v = mods[i];
+                    if (typeof v === 'string') {
+                        v = { name: i, fullpath: v };
+                    }
+                    v.group = name;
+                    self.addModule(v, i);
                 }
-                v.group = name;
-                self.addModule(v, k);
-            }, self);
+            }
         }
     },
 
@@ -1203,7 +1244,7 @@ Y.Loader.prototype = {
             if (!GLOBAL_ENV._renderedMods) {
                 GLOBAL_ENV._renderedMods = {};
             }
-            GLOBAL_ENV._renderedMods[name] = Y.merge(o);
+            GLOBAL_ENV._renderedMods[name] = Y.mix(GLOBAL_ENV._renderedMods[name] || {}, o);
             GLOBAL_ENV._conditions = conditions;
         }
 
@@ -1232,26 +1273,29 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this, m,
+        var self = this, m, i, a, v, len, len2,
         r = self.required;
+
         if (!self.allowRollup) {
-            oeach(r, function(v, name) {
-                m = self.getModule(name);
-                if (m && m.use) {
-                    //delete r[name];
-                    YArray.each(m.use, function(v) {
-                        m = self.getModule(v);
-                        if (m && m.use) {
-                            //delete r[v];
-                            YArray.each(m.use, function(v) {
-                                r[v] = true;
-                            });
-                        } else {
-                            r[v] = true;
+            for (i in r) {
+                if (r.hasOwnProperty(i)) {
+                    m = self.getModule(i);
+                    if (m && m.use) {
+                        len = m.use.length;
+                        for (a = 0; a < len; a++) {
+                            m = self.getModule(m.use[a]);
+                            if (m && m.use) {
+                                len2 = m.use.length;
+                                for (v = 0; v < len2; v++) {
+                                    r[m.use[v]] = true;
+                                }
+                            } else {
+                                r[m.use[a]] = true;
+                            }
                         }
-                    });
+                    }
                 }
-            });
+            }
             self.required = r;
         }
 
@@ -1314,7 +1358,7 @@ Y.Loader.prototype = {
         var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
-            d, k, m1,
+            d, k, m1, go, def,
             r, old_mod,
             o, skinmod, skindef, skinpar, skinname,
             intl = mod.lang || mod.intl,
@@ -1441,39 +1485,44 @@ Y.Loader.prototype = {
                     }
                 });
             } else {
-                oeach(cond, function(def, condmod) {
-                    if (!hash[condmod]) {
-                        //first see if they've specfied a ua check
-                        //then see if they've got a test fn & if it returns true
-                        //otherwise just having a condition block is enough
-                        var go = def && ((!def.ua && !def.test) || (def.ua && Y.UA[def.ua]) ||
-                                    (def.test && def.test(Y, r)));
+                for (i in cond) {
+                    if (cond.hasOwnProperty(i)) {
+                        if (!hash[i]) {
+                            def = cond[i];
+                            //first see if they've specfied a ua check
+                            //then see if they've got a test fn & if it returns true
+                            //otherwise just having a condition block is enough
+                            go = def && ((!def.ua && !def.test) || (def.ua && Y.UA[def.ua]) ||
+                                        (def.test && def.test(Y, r)));
 
-                        if (go) {
-                            hash[condmod] = true;
-                            d.push(condmod);
-                            m = this.getModule(condmod);
-                            if (m) {
-                                add = this.getRequires(m);
-                                for (j = 0; j < add.length; j++) {
-                                    d.push(add[j]);
+                            if (go) {
+                                hash[i] = true;
+                                d.push(i);
+                                m = this.getModule(i);
+                                if (m) {
+                                    add = this.getRequires(m);
+                                    for (j = 0; j < add.length; j++) {
+                                        d.push(add[j]);
+                                    }
+
                                 }
-
                             }
                         }
                     }
-                }, this);
+                }
             }
         }
 
         // Create skin modules
         if (mod.skinnable) {
             skindef = this.skin.overrides;
-            oeach(YUI.Env.aliases, function(o, n) {
-                if (Y.Array.indexOf(o, name) > -1) {
-                    skinpar = n;
+            for (i in YUI.Env.aliases) {
+                if (YUI.Env.aliases.hasOwnProperty(i)) {
+                    if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
+                        skinpar = i;
+                    }
                 }
-            });
+            }
             if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
                 skinname = name;
                 if (skindef[skinpar]) {
@@ -1691,7 +1740,8 @@ Y.Loader.prototype = {
                     m.requires = YArray.dedupe(m.requires);
 
                     // Create lang pack modules
-                    if (m.lang && m.lang.length) {
+                    //if (m.lang && m.lang.length) {
+                    if (m.lang) {
                         // Setup root package if the module has lang defined,
                         // it needs to provide a root language pack
                         packName = this.getLangPackName(ROOT_LANG, name);
@@ -1757,32 +1807,34 @@ Y.Loader.prototype = {
     _explode: function() {
         //TODO Move done out of scope
         var r = this.required, m, reqs, done = {},
-            self = this;
+            self = this, name;
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
 
         self._explodeRollups();
         r = self.required;
-        
-        oeach(r, function(v, name) {
-            if (!done[name]) {
-                done[name] = true;
-                m = self.getModule(name);
-                if (m) {
-                    var expound = m.expound;
+       
+        for (name in r) {
+            if (r.hasOwnProperty(name)) {
+                if (!done[name]) {
+                    done[name] = true;
+                    m = self.getModule(name);
+                    if (m) {
+                        var expound = m.expound;
 
-                    if (expound) {
-                        r[expound] = self.getModule(expound);
-                        reqs = self.getRequires(r[expound]);
+                        if (expound) {
+                            r[expound] = self.getModule(expound);
+                            reqs = self.getRequires(r[expound]);
+                            Y.mix(r, YArray.hash(reqs));
+                        }
+
+                        reqs = self.getRequires(m);
                         Y.mix(r, YArray.hash(reqs));
                     }
-
-                    reqs = self.getRequires(m);
-                    Y.mix(r, YArray.hash(reqs));
                 }
             }
-        });
+        }
 
         // Y.log('After explode: ' + YObject.keys(r));
     },
@@ -1927,22 +1979,26 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     _onSuccess: function() {
         var self = this, skipped = Y.merge(self.skipped), fn,
             failed = [], rreg = self.requireRegistration,
-            success, msg;
-
-        oeach(skipped, function(k) {
-            delete self.inserted[k];
-        });
+            success, msg, i, mod;
+        
+        for (i in skipped) {
+            if (skipped.hasOwnProperty(i)) {
+                delete self.inserted[i];
+            }
+        }
 
         self.skipped = {};
-
-        oeach(self.inserted, function(v, k) {
-            var mod = self.getModule(k);
-            if (mod && rreg && mod.type == JS && !(k in YUI.Env.mods)) {
-                failed.push(k);
-            } else {
-                Y.mix(self.loaded, self.getProvides(k));
+        
+        for (i in self.inserted) {
+            if (self.inserted.hasOwnProperty(i)) {
+                mod = self.getModule(i);
+                if (mod && rreg && mod.type == JS && !(i in YUI.Env.mods)) {
+                    failed.push(i);
+                } else {
+                    Y.mix(self.loaded, self.getProvides(i));
+                }
             }
-        });
+        }
 
         fn = self.onSuccess;
         msg = (failed.length) ? 'notregistered' : 'success';
