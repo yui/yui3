@@ -304,6 +304,20 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     },
 
     /**
+    Updates the `_displayColumns` property.
+
+    @method _afterDisplayColumnsChange
+    @param {EventFacade} e The `columnsChange` event
+    @protected
+    @since 3.6.0
+    **/
+    // FIXME: This is a kludge for back compat with features that reference
+    // _displayColumns.  They should be updated to TableView plugins.
+    _afterDisplayColumnsChange: function (e) {
+        this._extractDisplayColumns(e.newVal || []);
+    },
+
+    /**
     Attaches subscriptions to relay core change events to the view.
 
     @method bindUI
@@ -320,10 +334,74 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
             Y.bind('_relayCoreAttrChange', this));
     },
 
+    /**
+    The default behavior of the `renderView` event.  Calls `render()` on the
+    `View` instance on the event.
+
+    @method _defRenderViewFn
+    @param {EventFacade} e The `renderView` event
+    @protected
+    **/
     _defRenderViewFn: function (e) {
         e.view.render();
+
+        // For back compat, share the view instances and primary nodes
+        // on this instance.
+        // TODO: Remove this?
+        this._tableNode = e.view._tableNode;
+        this.head = e.view.head;
+        this.body = e.view.body;
+        this.foot = e.view.foot;
     },
 
+    /**
+    Processes the full column array, distilling the columns down to those that
+    correspond to cell data columns.
+
+    @method _extractDisplayColumns
+    @param {Object[]} columns The full set of table columns
+    @protected
+    **/
+    // FIXME: this is a kludge for back compat, duplicating logic in the
+    // tableView
+    _extractDisplayColumns: function (columns) {
+        var displayColumns = [];
+
+        function process(cols) {
+            var i, len, col;
+
+            for (i = 0, len = cols.length; i < len; ++i) {
+                col = cols[i];
+
+                if (Y.Lang.isArray(col.children)) {
+                    process(col.children);
+                } else {
+                    displayColumns.push(col);
+                }
+            }
+        }
+
+        process(columns);
+
+        /**
+        Array of the columns that correspond to those with value cells in the
+        data rows. Excludes colspan header columns (configured with `children`).
+
+        @property _displayColumns
+        @type {Object[]}
+        @since 3.5.0
+        **/
+        this._displayColumns = displayColumns;
+    },
+
+    /**
+    Sets up the instance's events.
+
+    @method initializer
+    @param {Object} [config] Configuration object passed at construction
+    @protected
+    @since 3.6.0
+    **/
     initializer: function () {
         var preventViewRender = Y.bind('_preventViewRenderFn', this);
 
@@ -334,6 +412,15 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
             renderBody  : { preventedFn: preventViewRender },
             renderFooter: { preventedFn: preventViewRender }
         });
+
+        // Have to use get('columns'), not config.columns because the setter
+        // needs to transform string columns to objects.
+        this._extractDisplayColumns(this.get('columns') || []);
+
+        // FIXME: kludge for back compat of features that reference
+        // _displayColumns on the instance.  They need to be updated to
+        // TableView plugins, most likely.
+        this.after('columnsChange', Y.bind('_afterDisplayColumnsChange', this));
     },
 
     _onViewRender: function (e) {
