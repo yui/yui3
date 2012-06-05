@@ -298,7 +298,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     Renders the `<table>` and, if there are associated Views, the `<thead>`,
     `<tfoot>`, and `<tbody>` (empty until `syncUI`).
 
-    Assigns the generated table nodes to the `_tableNode`, `_theadNode`,
+    Assigns the generated table nodes to the `tableNode`, `_theadNode`,
     `_tfootNode`, and `_tbodyNode` properties.  Assigns the instantiated Views
     to the `head`, `foot`, and `body` properties.
 
@@ -311,13 +311,13 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     _defRenderTableFn: function (e) {
         var attrs = this.getAttrs();
 
-        if (!this._tableNode) {
-            this._tableNode = this._createTable();
+        if (!this.tableNode) {
+            this.tableNode = this._createTable();
         }
 
         attrs.host  = this.get('host') || this;
         attrs.table = this;
-        attrs.container = this._tableNode;
+        attrs.container = this.tableNode;
 
         this._uiSetCaption(this.get('caption'));
         this._uiSetSummary(this.get('summary'));
@@ -349,7 +349,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
             this.fire('renderBody', { view: this.body });
         }
 
-        this.get('container').append(this._tableNode);
+        this.get('container').append(this.tableNode);
 
         this._bindUI();
     },
@@ -381,8 +381,8 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
             delete this._eventHandles;
         }
 
-        if (this._tableNode) {
-            this._tableNode.remove().destroy(true);
+        if (this.tableNode) {
+            this.tableNode.remove().destroy(true);
         }
     },
 
@@ -522,17 +522,17 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.5.0
     **/
     _uiSetCaption: function (htmlContent) {
-        var table   = this._tableNode,
-            caption = this._captionNode;
+        var table   = this.tableNode,
+            caption = this.captionNode;
 
         if (htmlContent) {
             if (!caption) {
-                this._captionNode = caption = Y.Node.create(
+                this.captionNode = caption = Y.Node.create(
                     fromTemplate(this.CAPTION_TEMPLATE, {
                         className: this.getClassName('caption')
                     }));
 
-                table.prepend(this._captionNode);
+                table.prepend(this.captionNode);
             }
 
             caption.setHTML(htmlContent);
@@ -540,7 +540,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
         } else if (caption) {
             caption.remove(true);
 
-            delete this._captionNode;
+            delete this.captionNode;
         }
     },
 
@@ -553,9 +553,9 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     **/
     _uiSetSummary: function (summary) {
         if (summary) {
-            this._tableNode.setAttribute('summary', summary);
+            this.tableNode.setAttribute('summary', summary);
         } else {
-            this._tableNode.removeAttribute('summary');
+            this.tableNode.removeAttribute('summary');
         }
     },
 
@@ -568,7 +568,7 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.5.0
     **/
     _uiSetWidth: function (width) {
-        var table = this._tableNode;
+        var table = this.tableNode;
 
         // Table width needs to account for borders
         table.setStyle('width', !width ? '' :
