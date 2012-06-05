@@ -207,14 +207,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _bindMousewheel : function(mousewheel) {
-        var cb = this._cb;
-        
+        var bb = this._bb;
+
         // Only enable for vertical scrollviews
         if (this._scrollsVertical) {
             if (mousewheel) {
                 Y.one(document).on("mousewheel", Y.bind(this._mousewheel, this));
             } else {
-                cb.detach('mousewheel|*');
+                bb.detach('mousewheel|*');
             }
         }
     },
@@ -243,7 +243,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param easing {String} An easing equation if duration is set
      */
     scrollTo: function(x, y, duration, easing) {
-        
         // TODO: Figure out a better way to detect mousewheel events
         if (easing === undefined) {
             if ( y < this._minScrollY) {
@@ -279,9 +278,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 // ANDROID WORKAROUND - try and stop existing transition, before kicking off new one.
                 cb.setStyle(TRANS.DURATION, ZERO).setStyle(TRANS.PROPERTY, EMPTY);
             }
-    
+
             if (duration !== 0) {
-    
                 transition = {
                     easing : easing,
                     duration : duration/1000
@@ -301,7 +299,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 }
     
                 cb.transition(transition, callback);
-    
             } else {
                 if (NATIVE_TRANSITIONS) {
                     cb.setStyle('transform', this._transform(xMove, yMove));
@@ -851,27 +848,26 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
     _mousewheel: function(e) {
         var scrollY = this.get('scrollY'),
+            boundingBox = this._bb,
             contentBox = this._cb,
             scrollOffset = 10, // 10px
             scrollToY = scrollY - (e.wheelDelta * scrollOffset);
-        
-        if (!contentBox.contains(e.target)){
-            return false;
-        }
-        
-        this.scrollTo(0, scrollToY);
-        
-        // if we have scrollbars plugin, update & set the flash timer on the scrollbar
-        if (this.scrollbars) {
-            // TODO: The scrollbars should handle this themselves
-            this.scrollbars._update();
-            this.scrollbars.flash();
-            // or just this
-            // this.scrollbars._hostDimensionsChange();
-        }
 
-        // prevent browser default behavior on mouse scroll
-        e.preventDefault();
+        if (boundingBox.contains(e.target)){
+            this.scrollTo(0, scrollToY);
+            
+            // if we have scrollbars plugin, update & set the flash timer on the scrollbar
+            if (this.scrollbars) {
+                // TODO: The scrollbars should handle this themselves
+                this.scrollbars._update();
+                this.scrollbars.flash();
+                // or just this
+                // this.scrollbars._hostDimensionsChange();
+            }
+
+            // prevent browser default behavior on mouse scroll
+            e.preventDefault();
+        }
     },
 
     /**
