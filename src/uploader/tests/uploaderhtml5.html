@@ -11,7 +11,7 @@
 </head>
 
 <body class="yui3-skin-sam">
-<h1>Calendar Tests</h1>
+<h1>HTML5 Uploader Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 <div id="container"></div>
 <div id="droparea"></div>
@@ -43,7 +43,7 @@
 
 
         var BasicUploader = new Y.Test.Case({
-            name: "Basic Uploader Tests",
+            name: "Basic Uploader HTML5 Tests",
 
             setUp : function () {
                 
@@ -222,13 +222,63 @@
 
                 e.type = "uploaderqueue:uploaderror";
                 this.basicuploader._uploadEventHandler(e);
+            },
+
+            testUploadCalls: function () {
+               var cfg = {
+                  tabIndex: "0",
+                  width: "100%",
+                  height: "100%",
+                  dragAndDropArea: "#droparea"
+                };
+
+                this.basicuploader = new Y.UploaderHTML5(cfg);
+                this.basicuploader.render("#basicuploader");
+
+
+                Y.FileHTML5.prototype.isValidFile = function () { return true; };
+                Y.FileHTML5.prototype.canUpload = function () { return true; };
+
+                var filearray = [];
+
+                for (var i = 0; i <= 10; i++) {
+                    filearray.push({name: i + ".jpg", size: i*1000, type: "jpg"});
+                }
+
+                var e = new Y.DOMEventFacade({type:'filelist', preventDefault: function () {}, stopPropagation: function () {}});
+
+                e.target = {};
+
+                e.target.getDOMNode = function () {
+                    return {files: filearray};
+                }
+
+                this.basicuploader._updateFileList(e);
+
+                this.basicuploader.uploadAll("testurl.html");
+
+                this.basicuploader.upload(new Y.FileHTML5(filearray[0]), "testurl.html", {foo: "bar"});
+            },
+
+            testOpenFileSelect : function () {
+               var cfg = {
+                  tabIndex: "0",
+                  width: "100%",
+                  height: "100%",
+                  dragAndDropArea: "#droparea"
+                };
+
+                this.basicuploader = new Y.UploaderHTML5(cfg);
+                this.basicuploader.render("#basicuploader");
+
+                this.basicuploader.openFileSelectDialog();
             }
         });
 
-        var suite = new Y.Test.Suite({name:"Basic Uploader Test Suite"});
+        var suite = new Y.Test.Suite({name:"Basic HTML5 Uploader Test Suite"});
         suite.add(BasicUploader);
 
-        Y.Test.Runner.setName("Uploader Test Runner");
+        Y.Test.Runner.setName("HTML5 Uploader Test Runner");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
