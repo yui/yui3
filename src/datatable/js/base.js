@@ -343,15 +343,34 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @protected
     **/
     _defRenderViewFn: function (e) {
-        e.view.render();
-
         // For back compat, share the view instances and primary nodes
         // on this instance.
         // TODO: Remove this?
-        this._tableNode = e.view._tableNode;
-        this.head = e.view.head;
-        this.body = e.view.body;
-        this.foot = e.view.foot;
+        var self = this;
+        if (!this._eventHandles.legacyFeatureProps) {
+            this._eventHandles.legacyFeatureProps = e.view.after({
+                renderHeader: function (e) {
+                    self.head = e.view;
+                    self._theadNode = e.view.theadNode;
+                    // TODO: clean up the repetition.
+                    // This is here so that subscribers to renderHeader etc
+                    // have access to this._tableNode from the DT instance
+                    self._tableNode = e.view.get('container');
+                },
+                renderFooter: function (e) {
+                    self.foot = e.view;
+                    self._tfootNode = e.view.tfootNode;
+                    self._tableNode = e.view.get('container');
+                },
+                renderBody: function (e) {
+                    self.body = e.view;
+                    self._tbodyNode = e.view.tbodyNode;
+                    self._tableNode = e.view.get('container');
+                }
+            });
+        }
+
+        e.view.render();
     },
 
     /**
