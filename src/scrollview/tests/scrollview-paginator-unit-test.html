@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>ScrollView Example</title>
+        <title>scrollview-paginator unit tests</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -10,18 +10,14 @@
         <script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
         
         <style>
-            #horizontal {
-                margin:10px;
+        	.horizontal {
                 width:300px;
                 height:200px;
                 overflow:hidden;
-            }
-            
-            #horizontal {
                 white-space: nowrap;
             }
             
-            #horizontal li { 
+            .horizontal li { 
                 width:300px;
                 height:200px;
                 display: inline-block;
@@ -32,187 +28,91 @@
                 text-align:center;
             }
 
-            #vertical li {
-            	height: 30px;
+            .vertical li {
+            	height: 100px;
+                width:300px;
+                color:black;
+                font-size:5em;
+                opacity: 0.4;
+                text-align:center;
+                background-image: -webkit-linear-gradient(top, green, white, blue);
             }
         </style>
         
         <script type="text/javascript" charset="utf-8">
+
+        
         var s;
         YUI({
             debug: true,
             filter:"raw"
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
-	        // Set up the page
-	        var ASSERT = Y.Assert,
-	            ARRAYASSERT = Y.ArrayAssert;
-
-	        var myConsole = new Y.Console().render();
+	        var myConsole = new Y.Console({height:'100%'}).render();
 			
 	        var testBasic = new Y.Test.Case({
 	            name: "API Tests",
-				
-				config01: {
-					scrollview: {
-		                srcNode : '#myScrollview',
-		                //width: "300px",
-		                height: "100px"
-					},
-					paginator: {
-			            selector: 'li',
-		                optimizeMemory: true
-					}
-				},
 
 			    //---------------------------------------------
 			    // Setup and tear down
 			    //---------------------------------------------
 
 	            setUp : function () {
-	                var html = "<div id='vertical'><div id='myScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>";
-	                Y.one('#container').append(html);
-	                //this.scrollview = null;
+	                var hID = Y.guid(),
+	                	vID = Y.guid(),
+	                	horizontalHTML = "<div id='"+ hID +"' class='horizontal'><div id='myHScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
+	                	verticalHTML = "<div id='"+ vID +"' class='vertical'><div id='myVScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>";
+
+	                Y.one('#container').append(horizontalHTML);
+	                Y.one('#container').append(verticalHTML);
+
+					this.hScrollview = new Y.ScrollView({
+		                srcNode : '#' + hID + " div",
+		                width: "300px",
+	                    plugins: [{
+	                        fn:Y.Plugin.ScrollViewPaginator, 
+	                        cfg:{
+	                            selector:">ul>li"
+	                        }
+	                    }],    
+	                    render:true
+					});
+
+					this.vScrollview = new Y.ScrollView({
+		                srcNode : '#' + vID + " div",
+		                height: "100px",
+	                    plugins: [{
+	                        fn:Y.Plugin.ScrollViewPaginator, 
+	                        cfg:{
+	                            selector:">ul>li"
+	                        }
+	                    }],    
+	                    render:true
+					});
 
 	            },
 
 	            tearDown : function () {
-	            	console.log('tearDown');
-	               	//delete this.scrollview;
-					//Y.one('#container').empty(true);
+	            	this.hScrollview.destroy();
+	            	this.vScrollview.destroy();
 	            },
-			
-				//---------------------------------------------
-			    // Instantiation
-			    //---------------------------------------------
 
-				// testBasicPaginatorRendering: function() {
-				// 	var scrollviewConfig = this.config01.scrollview,
-				// 		paginatorConfig = this.config01.paginator,
-				// 		sv, cb, id, ul, li;
+			    // Tests go here.
+			    
+			    // Some unfinished work can be found @ https://github.com/derek/yui/blob/25865590e0b2051a6a98b517e927d396a562b253/src/scrollview/tests/scrollview-paginator-unit-test.html
 
-				// 	scrollview = new Y.ScrollView(scrollviewConfig);
-				// 	this.scrollview = scrollview;
-		  //           scrollview.plug(Y.Plugin.ScrollViewPaginator, paginatorConfig);
-				// 	scrollview.render();
+			});
 
-				// 	bb = scrollview.get('boundingBox');
-				// 	cb = scrollview.get('contentBox');
-				// 	id = cb.get('id');
-				// 	ul = Y.all('#'+ id +' > ul')
-				// 	li = Y.all('#'+ id +' > ul > li');
-
-				// 	Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
-				// 	//Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
-				// 	Y.Assert.isTrue(bb.hasClass('yui3-scrollview-paged'), "BoundingBox does not contain class 'yui3-scrollview-paged'");
-				// 	Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
-				// },
-
-				// testPaginatorPagingNextOptimized: function() {
-
-				// 	var test = this,
-				// 		scrollviewConfig = this.config01.scrollview,
-				// 		paginatorConfig = this.config01.paginator,
-				// 		duration = Y.Plugin.ScrollViewPaginator.TRANSITION.duration,
-				// 		i = 0,
-				// 		scrollview, paginator, timer, total, cb, bb;
-
-				// 	scrollview = new Y.ScrollView(scrollviewConfig);
-				// 	this.scrollview = scrollview;
-		  //           scrollview.plug(Y.Plugin.ScrollViewPaginator, paginatorConfig);
-				// 	paginator = scrollview.pages;
-				// 	scrollview.render();
-				// 	bb = scrollview.get('boundingBox');
-				// 	cb = scrollview.get('contentBox');
-				// 	total = paginator.get('total'),
-
-				// 	scrollview.on('scrollEnd', function(){
-				// 		var index = paginator.get('index'),
-				// 			pageNodes = paginator._getPageNodes(),
-				// 			node = pageNodes.item(index),
-				// 			width = node.getComputedStyle('height').replace('px', '') * ( index <= 1 ? 1 : 2),
-				// 			offset = node.get('offsetWidth');
-
-				// 		i+=1;
-				// 		//Y.Assert.areEqual(width, scrollview.get('scrollY'));
-				// 		Y.Assert.areEqual(i, index);
-
-				// 		// end this test
-				// 		if (i === (total-1)) {
-				// 			timer.cancel();
-				// 			test.resume();
-				// 		}
-				// 	});
-
-				// 	timer = Y.later(duration, null, function(paginator){
-				// 		paginator.next();
-				// 	}, paginator, true);
-
-				// 	test.wait();
-				// },
-
-				testPaginatorPagingNextOptimizedMousewheel: function() {
-
-					var test = this,
-						scrollviewConfig = this.config01.scrollview,
-						paginatorConfig = this.config01.paginator,
-						duration = Y.Plugin.ScrollViewPaginator.TRANSITION.duration,
-						i = 0,
-						scrollview, paginator, timer, total, cb, bb;
-
-					scrollview = new Y.ScrollView(scrollviewConfig);
-					this.scrollview = scrollview;
-		            scrollview.plug(Y.Plugin.ScrollViewPaginator, paginatorConfig);
-					paginator = scrollview.pages;
-
-					bb = scrollview.get('boundingBox');
-					cb = scrollview.get('contentBox');
-
-					scrollview.render();
-
-					scrollview.on('scrollEnd', function(){
-						console.log('scrollend');
-					});
-					scrollview.on('transitionEnd', function(){
-						console.log("caught: transitionEnd");
-						cb.simulate('mousewheel', {wheelDeltaY: -1});
-						//test.resume();
-
-	// 					var index = paginator.get('index'),
-	// 						pageNodes = paginator._getPageNodes(),
-	// 						node = pageNodes.item(index),
-	// 						width = node.getComputedStyle('height').replace('px', '') * ( index <= 1 ? 1 : 2),
-	// 						offset = node.get('offsetWidth'),
-	// 						total = pageNodes.size();
- // console.log(index);
- // console.log(total-1);
-
-	// 					i+=1;
-	// 					Y.Assert.areEqual(width, scrollview.get('scrollY'));
-	// 					Y.Assert.areEqual(i, index);
-
-	// 					// end this test
-	// 					if (i === (total-1)) {
-	// 						console.log('resume()');
-	// 						timer.cancel();
-	// 						//test.resume();
-// 						}
-					});
-
-					cb.simulate('mousewheel', {wheelDeltaY: -1});
-					test.wait();
-				}
-
-	        });
-
-	        var suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
+	        var suite = new Y.Test.Suite({name:"scrollview-paginator test suite"});
 	        suite.add(testBasic);
 
-	        Y.Test.Runner.setName("Scrollview Test Runner");
+	        Y.Test.Runner.setName("scrollview-paginator test runner");
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
         });
+
+
         </script>
     </head>
 

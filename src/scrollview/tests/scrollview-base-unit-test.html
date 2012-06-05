@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>ScrollView Example</title>
+        <title>scrollview-base unit tests</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -99,15 +99,15 @@
 	            },
 
 	            tearDown : function () {
-	            	console.log('tearDown');
-	            	// this.hScrollview.destroy();
-	            	// this.vScrollview.destroy();
+	            	this.hScrollview.destroy();
+	            	this.vScrollview.destroy();
 	            },
 			
 				// ---------------------------------------------
 				// Instantiation
 				// ---------------------------------------------
 
+				// Ensure rendering & initial state are correct
 				test1: function() {
 					var scrollview = this.hScrollview,
 						bb = scrollview.get('boundingBox'),
@@ -132,6 +132,7 @@
 					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 				},
 
+				// Ensure set('scrollX') works properly
 				test2: function() {
 					var scrollview = this.hScrollview,
 						distance = 20,
@@ -146,10 +147,10 @@
 					//Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix
 				},
 
+				// Ensure scrolling outside the range isn't allowed
 				test3: function() {
 					var scrollview = this.hScrollview,
-						maxX = scrollview._maxScrollX,
-						distance = 20;
+						maxX = scrollview._maxScrollX;
 
 					// Assume it starts @ 0
 					Y.Assert.areEqual(0, scrollview.get('scrollX'));
@@ -161,7 +162,7 @@
 					// Y.Assert.areEqual(maxX, scrollview.get('scrollX')); // @TODO: fix
 				},
 
-				//
+				// ensure the 'scrollEnd' event fires
 				test4: function() {
 					var Test = this,
 						scrollview = Test.hScrollview,
@@ -180,7 +181,7 @@
 					});
 					scrollview.scrollTo(maxX, 0, 1); // args = x, y, duration, easing
 					Test.wait();
-				},
+				}
 
 				// Additional tests
 				// Don't scroll Y if a X axis
