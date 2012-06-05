@@ -311,11 +311,13 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @since 3.6.0
     **/
     bindUI: function () {
-        var relay = Y.bind('_relayCoreAttrChange', this);
-
         this._eventHandles.relayCoreChanges = this.after(
-            ['columnsChange', 'dataChange', 'summaryChange',
-             'captionChange', 'widthChange'], relay);
+            ['columnsChange',
+             'dataChange',
+             'summaryChange',
+             'captionChange',
+             'widthChange'],
+            Y.bind('_relayCoreAttrChange', this));
     },
 
     _defRenderViewFn: function (e) {

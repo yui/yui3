@@ -427,6 +427,10 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                     Y.stamp(col);
 
+                    if (!col.id) {
+                        col.id = Y.guid();
+                    }
+
                     if (isArray(children) && children.length) {
                         stack.push([children, -1]);
                         entry[1] = i;

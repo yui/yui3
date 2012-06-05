@@ -308,14 +308,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     getRow: function (id) {
-        var tbody = this.tbodyNode;
+        var tbody = this.tbodyNode,
+            row = null;
 
-        if (id) {
-            id = this._idMap[id.get ? id.get('clientId') : id] || id;
+        if (tbody) {
+            if (id) {
+                id = this._idMap[id.get ? id.get('clientId') : id] || id;
+            }
+
+            row = isNumber(id) ?
+                tbody.get('children').item(id) :
+                tbody.one('#' + id);
         }
 
-        return tbody &&
-            Y.one(isNumber(id) ? tbody.get('children').item(id) : '#' + id);
+        return row;
     },
 
     /**
@@ -577,11 +583,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 bind('_afterColumnsChange', this));
         }
 
-        if (!handles.modelListChange) {
-            handles.modelListChange = this.after('modelListChange',
-                bind('afterModelListChange', this));
-        }
-
         if (modelList && !handles.dataChange) {
             handles.dataChange = modelList.after(
                 ['add', 'remove', 'reset', changeEvent],
@@ -665,7 +666,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
             value = data[col.key];
-            token = col._id;
+            token = col._id || col.key;
 
             values[token + '-className'] = '';
 
@@ -731,7 +732,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         for (i = 0, len = columns.length; i < len; ++i) {
             col     = columns[i];
             key     = col.key;
-            token   = col._id;
+            token   = col._id || key;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';

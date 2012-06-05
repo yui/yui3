@@ -386,6 +386,143 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: "render",
+
+    setUp: function () {
+        this.table = new Y.DataTable.TableView({
+            columns: [{ key: 'a' }],
+            container: Y.Node.create('<div></div>'),
+            modelList: new Y.ModelList().reset([{ a: 1 }])
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "render() should create a <table>": function () {
+        this.table.render();
+
+        Y.Assert.isInstanceOf(Y.Node, this.table.get('container').one('table'));
+    },
+
+    "render() should fire the renderTable event": function () {
+        var pass;
+
+        this.table.on('renderTable', function () { pass = true; });
+
+        this.table.render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    "render() should fire renderHeader if headerView is set": function () {
+        var pass;
+
+        this.table.set('headerView', Y.View).on('renderHeader', function () {
+            pass = true;
+        });
+
+        this.table.render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    "render() should fire renderBody if bodyView is set": function () {
+        var pass;
+
+        this.table.set('bodyView', Y.View).on('renderBody', function () {
+            pass = true;
+        });
+
+        this.table.render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    "render() should fire renderFooter if footerView is set": function () {
+        var pass;
+
+        this.table.set('footerView', Y.View).on('renderFooter', function () {
+            pass = true;
+        });
+
+        this.table.render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    "render() should call render() on the headerView if set": function () {
+        var pass;
+
+        this.table.set('headerView',
+            Y.Base.create('testView', Y.View, [], {
+                render: function () {
+                    pass = true;
+                }
+            })).render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    "render() should call render() on the bodyView if set": function () {
+        var pass;
+
+        this.table.set('bodyView',
+            Y.Base.create('testView', Y.View, [], {
+                render: function () {
+                    pass = true;
+                }
+            })).render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    "render() should call render() on the footerView if set": function () {
+        var pass;
+
+        this.table.set('footerView',
+            Y.Base.create('testView', Y.View, [], {
+                render: function () {
+                    pass = true;
+                }
+            })).render();
+
+        Y.Assert.isTrue(pass);
+    },
+
+    // This is really a joint responsibility of the table view and its
+    // child views, so there's not really a single best place to test
+    "Shared ModelList should not generate duplicate ids": function () {
+        var modelList = new Y.ModelList().reset([{ a: 1 }]),
+            table1 = new Y.DataTable.TableView({
+                container: Y.Node.create('<div></div>'),
+                columns: [{ key: 'a' }],
+                modelList: modelList
+            }).render(),
+            table2 = new Y.DataTable.TableView({
+                container: Y.Node.create('<div></div>'),
+                columns: [{ key: 'a' }],
+                modelList: modelList
+            }).render(),
+            ids = Y.Array.hash(table1.get('container').all('[id]').get('id')),
+            dups = 0;
+
+        Y.Array.each(table2.get('container').all('[id]').get('id'),
+            function (id) {
+                if (ids[id]) {
+                    dups++;
+                }
+            });
+
+        table1.destroy();
+        table2.destroy();
+
+        Y.Assert.areSame(0, dups, dups + " duplicate IDs found");
+    }
+}));
+
 /*
 suite.add(new Y.Test.Case({
     name: "destroy",
