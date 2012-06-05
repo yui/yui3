@@ -246,6 +246,7 @@ This is a YUI port of the original Handlebars project, which can be found at
 
 @module handlebars
 @main handlebars
+@since 3.5.0
 */
 
 /**
@@ -263,6 +264,7 @@ This is a YUI port of the original Handlebars project, which can be found at
 <https://github.com/wycats/handlebars.js>.
 
 @class Handlebars
+@since 3.5.0
 */
 Y.Handlebars = Handlebars;
 
@@ -284,7 +286,7 @@ can also receive arguments passed by the template.
             Y.Escape.html(this.text) + '</a>';
     });
 
-    var source = '<ul>{{#each links}}<li>{{linkify}}</li>{{/each}}</ul>';
+    var source = '<ul>{{#links}}<li>{{{linkify}}}</li>{{/links}}</ul>';
 
     Y.Handlebars.render(source, {
         links: [

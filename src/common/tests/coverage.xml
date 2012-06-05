@@ -10,7 +10,7 @@
         using something like this in your test's YUI config:
 
             var Y = YUI({
-                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
             });
 
      Then make sure ?filter=raw only includes raw JS.
@@ -26,6 +26,7 @@
 
 
         <url>anim/tests/anim-shape-transform.html</url>
+        <url>anim/tests/anim.html</url>
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>

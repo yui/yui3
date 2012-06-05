@@ -41,7 +41,7 @@
                             attr = path.shift();
                             v = subvals[attr] = subvals[attr] || [];
                             v[v.length] = {
-                                path : path, 
+                                path : path,
                                 value: valueHash[k]
                             };
                         } else {
@@ -74,6 +74,9 @@
 
             var val = cfg.value,
                 valFn = cfg.valueFn,
+                tmpVal,
+                initValSet = false,
+                alwaysExecValueFn = this._alwaysExecValueFn, // Temp hack for Charts, until we can clean up sets happening in Charts axes valueFn
                 simple,
                 complex,
                 i,
@@ -82,26 +85,33 @@
                 subval,
                 subvals;
 
-            if (valFn) {
+            if (!cfg.readOnly && initValues) {
+                // Simple Attributes
+                simple = initValues.simple;
+                if (simple && simple.hasOwnProperty(attr)) {
+                    val = simple[attr];
+                    initValSet = true;
+                }
+            }
+
+            if (valFn && (!initValSet || alwaysExecValueFn)) {
                 if (!valFn.call) {
                     valFn = this[valFn];
                 }
                 if (valFn) {
-                    val = valFn.call(this, attr);
+                    tmpVal = valFn.call(this, attr);
+                    if (!initValSet) { 
+                        val = tmpVal;
+                    }
                 }
             }
 
             if (!cfg.readOnly && initValues) {
 
-                // Simple Attributes
-                simple = initValues.simple;
-                if (simple && simple.hasOwnProperty(attr)) {
-                    val = simple[attr];
-                }
-
-                // Complex Attributes (complex values applied, after simple, incase both are set)
+                // Complex Attributes (complex values applied, after simple, in case both are set)
                 complex = initValues.complex;
-                if (complex && complex.hasOwnProperty(attr)) {
+
+                if (complex && complex.hasOwnProperty(attr) && (val !== undefined) && (val !== null)) {
                     subvals = complex[attr];
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;

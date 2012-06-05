@@ -9,7 +9,7 @@
 <script src="datasource-get-tests.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     allowRollup: false,
     useBrowserConsole: true
 }).use("datasource-get-tests", "console", function (Y) {

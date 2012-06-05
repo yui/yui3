@@ -25,7 +25,7 @@ var myObject = {
     
     
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'profiler-tests': {
             fullpath: './profiler-tests.js',
