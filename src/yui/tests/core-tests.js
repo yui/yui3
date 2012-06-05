@@ -61,7 +61,8 @@ YUI.add('core-tests', function(Y) {
                 'test: window.onload delay': !Y.config.win,
                 'test: contentready delay': !Y.config.win,
                 'test: available delay': !Y.config.win,
-                'test: pattern requires order': !Y.config.win
+                'test: pattern requires order': !Y.config.win,
+                'test: fetch with external dependencies redefined in external file': !Y.config.win
             }
         },
         'test: pattern requires order': function() {
@@ -624,8 +625,89 @@ YUI.add('core-tests', function(Y) {
                     Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
                 });
             });
+        },
+        'test: fetch with external dependencies redefined in external file': function() {
+            var test = this;
+            Y.applyConfig({ useSync: true });
+            Y.use('parallel', function() {
+                var stack = new Y.Parallel();
+                YUI.applyConfig({
+                    useSync: true,
+                    groups: {
+                        'mygroup': {
+                            base    : './assets/',
+                            combine : false,
+                            ext     : false,
+                            root    : "",
+                            patterns: { 
+                                'mygroup-': {
+                                    test: function(name) {
+                                        return /^mygroup-/.test(name);
+                                    },
+                                    configFn: function(me) {
+                                        var parts = me.name.split("-"),
+                                            mygroup = parts.shift(),
+                                            version = parts.pop(),
+                                            name = parts.join("-"),
+                                            cssname, jsname;
+                                        if (name.match(/-css/)) {
+                                            name = name.replace("-css", "");
+                                            cssname = name + ".css";    
+                                            me.type = 'css';
+                                            me.path = [name, version, "assets", cssname].join("/");
+                                        } else {
+                                            jsname = name + '.js';
+                                            me.path = [name, version, jsname].join("/");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                YUI.add("lang/mygroup-util-1.4", function(Y) {
+                    Y.Intl.add("mygroup-util-1.4", '', {
+                            'test': 'CIAO CIAO CIAO'
+                        });
+                }, '1.4', {'requires': ['intl']});
+                YUI.add("lang/mygroup-util-1.4_it", function(Y) {
+                    Y.Intl.add("mygroup-util-1.4", 'it', {
+                            'test': 'CIAO CIAO CIAO'
+                        });
+                }, '1.4', {'requires': ['intl']});
+                YUI.add("lang/mygroup-util-1.4_en", function(Y) {
+                    Y.Intl.add("mygroup-util-1.4", 'en', {
+                            'test': 'HELLO HELLO HELLO'
+                        });
+                }, '1.4', {'requires': ['intl']});
+                
+                var results = [];
+                YUI({ lang: '' }).use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[0] = t;
+                }));
+                YUI().use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[1] = t;
+                }));
+                YUI({ lang: 'it' }).use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[2] = t;
+                }));
+                YUI({ lang: 'en' }).use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[3] = t;
+                }));
+                stack.done(function() {
+                    test.resume(function() {
+                        var exp = ["CIAO CIAO CIAO", "HELLO HELLO HELLO", "CIAO CIAO CIAO", "HELLO HELLO HELLO"];
+                        Y.ArrayAssert.itemsAreEqual(exp, results, 'Failed to load external dependencies');
+                    });
+                });
+            
+            });
 
-
+            test.wait();
         }
     });
 

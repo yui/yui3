@@ -203,7 +203,7 @@ YUI.add('editor-base', function(Y) {
                 * a class to the BLOCKQUOTE that adds left/right margin to it
                 * This strips that style so it is just a normal BLOCKQUOTE
                 */
-                var bq = inst.all('.webkit-indent-blockquote');
+                var bq = inst.all('.webkit-indent-blockquote, blockquote');
                 if (bq.size()) {
                     bq.setStyle('margin', '');
                 }

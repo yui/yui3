@@ -9,6 +9,9 @@ wait
 echo "Installing NPM Modules"
 npm install -loglevel silent
 wait
+echo "Installing testing tools"
+npm install -loglevel silent yuitest grover yuidocjs
+wait
 cd  ../
 
 if [ ! -L ./node_modules ]; then

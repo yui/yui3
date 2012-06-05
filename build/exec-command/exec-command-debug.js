@@ -413,6 +413,12 @@ YUI.add('exec-command', function(Y) {
                 */
                 list: function(cmd, tag) {
                     var inst = this.getInstance(), html, self = this,
+                        /*
+                        The yui3- class name below is not a skinnable class,
+                        it's a utility class used internally by editor and 
+                        stripped when completed, calling getClassName on this
+                        is a waste of resources.
+                        */
                         DIR = 'dir', cls = 'yui3-touched',
                         dir, range, div, elm, n, str, s, par, list, lis,
                         useP = (inst.host.editorPara ? true : false),
