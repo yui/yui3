@@ -507,7 +507,7 @@ YUI.add('attribute-core', function(Y) {
          * the event facade passed to subscribers of the attribute's change event.
          * This is currently a hack. There's no real need for the AttributeCore implementation
          * to support this parameter, but breaking it out into AttributeEvents, results in
-         * additional function hops for the critical path. May change in 3.5.0 PR3.
+         * additional function hops for the critical path.
          * @param {boolean} force If true, allows the caller to set values for 
          * readOnly or writeOnce attributes which have already been set.
          *

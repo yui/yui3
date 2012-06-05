@@ -616,6 +616,7 @@ with any configuration info required for the module.
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
             Y = this, j,
+            cache = YUI.Env._renderedMods,
             loader = Y.Env._loader,
             done = Y.Env._attached,
             len = r.length, loader,
@@ -675,10 +676,25 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+                    /*
+                        If it's a temp module, we need to redo it's requirements if it's already loaded
+                        since it may have been loaded by another instance and it's dependencies might
+                        have been redefined inside the fetched file.
+                    */
+                    if (loader && cache && cache[name] && cache[name].temp) {
+                        loader.getRequires(cache[name]);
+                        Y._attach(Y.Object.keys(loader.moduleInfo[name].expanded_map));
+                    }
+                    
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
                     after = details.after;
+                    //Force Intl load if there is a language (Loader logic) @todo fix this shit
+                    if (details.lang) {
+                        req = req || [];
+                        req.unshift('intl');
+                    }
 
                     if (req) {
                         for (j = 0; j < req.length; j++) {
