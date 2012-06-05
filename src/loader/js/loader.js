@@ -1244,7 +1244,7 @@ Y.Loader.prototype = {
             if (!GLOBAL_ENV._renderedMods) {
                 GLOBAL_ENV._renderedMods = {};
             }
-            GLOBAL_ENV._renderedMods[name] = Y.merge(o);
+            GLOBAL_ENV._renderedMods[name] = Y.mix(GLOBAL_ENV._renderedMods[name] || {}, o);
             GLOBAL_ENV._conditions = conditions;
         }
 
