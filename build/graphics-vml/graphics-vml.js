@@ -61,6 +61,11 @@ VMLDrawing.prototype = {
     _addToPath: function(val)
     {
         this._path = this._path || "";
+        if(this._movePath)
+        {
+            this._path += this._movePath;
+            this._movePath = null;
+        }
         this._path += val;
     },
 
@@ -94,19 +99,24 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        var hiX,
-            loX,
-            hiY,
-            loY;
+        var w,
+            h,
+            pts,
+            right,
+            left,
+            bottom,
+            top;
         this._addToPath(" c " + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y));
+        right = Math.max(x, Math.max(cp1x, cp2x));
+        bottom = Math.max(y, Math.max(cp1y, cp2y));
+        left = Math.min(x, Math.min(cp1x, cp2x));
+        top = Math.min(y, Math.min(cp1y, cp2y));
+        w = Math.abs(right - left);
+        h = Math.abs(bottom - top);
+        pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
+        this._setCurveBoundingBox(pts, w, h);
         this._currentX = x;
         this._currentY = y;
-        hiX = Math.max(x, Math.max(cp1x, cp2x));
-        hiY = Math.max(y, Math.max(cp1y, cp2y));
-        loX = Math.min(x, Math.min(cp1x, cp2x));
-        loY = Math.min(y, Math.min(cp1y, cp2y));
-        this._trackSize(hiX, hiY);
-        this._trackSize(loX, loY);
     },
 
     /**
@@ -304,7 +314,7 @@ VMLDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
-        this._addToPath(" m " + this._round(x) + ", " + this._round(y));
+        this._movePath = " m " + this._round(x) + ", " + this._round(y);
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
@@ -352,6 +362,7 @@ VMLDrawing.prototype = {
             node.style.height =  h + "px";
         }
         this._path = path;
+        this._movePath = null;
         this._updateTransform();
     },
 
@@ -389,6 +400,70 @@ VMLDrawing.prototype = {
         this._left = 0;
         this._top = 0;
         this._path = "";
+        this._movePath = null;
+    },
+    
+    /**
+     * Returns the points on a curve
+     *
+     * @method getBezierData
+     * @param Array points Array containing the begin, end and control points of a curve.
+     * @param Number t The value for incrementing the next set of points.
+     * @return Array
+     * @private
+     */
+    getBezierData: function(points, t) {  
+        var n = points.length,
+            tmp = [],
+            i,
+            j;
+
+        for (i = 0; i < n; ++i){
+            tmp[i] = [points[i][0], points[i][1]]; // save input
+        }
+        
+        for (j = 1; j < n; ++j) {
+            for (i = 0; i < n - j; ++i) {
+                tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+            }
+        }
+        return [ tmp[0][0], tmp[0][1] ]; 
+    },
+  
+    /**
+     * Calculates the bounding box for a curve
+     *
+     * @method _setCurveBoundingBox
+     * @param Array pts Array containing points for start, end and control points of a curve.
+     * @param Number w Width used to calculate the number of points to describe the curve.
+     * @param Number h Height used to calculate the number of points to describe the curve.
+     * @private
+     */
+    _setCurveBoundingBox: function(pts, w, h)
+    {
+        var i = 0,
+            left = this._currentX,
+            right = left,
+            top = this._currentY,
+            bottom = top,
+            len = Math.round(Math.sqrt((w * w) + (h * h))),
+            t = 1/len,
+            xy;
+        for(; i < len; ++i)
+        {
+            xy = this.getBezierData(pts, t * i);
+            left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
+            right = isNaN(right) ? xy[0] : Math.max(xy[0], right);
+            top = isNaN(top) ? xy[1] : Math.min(xy[1], top);
+            bottom = isNaN(bottom) ? xy[1] : Math.max(xy[1], bottom);
+        }
+        left = Math.round(left * 10)/10;
+        right = Math.round(right * 10)/10;
+        top = Math.round(top * 10)/10;
+        bottom = Math.round(bottom * 10)/10;
+        this._trackSize(right, bottom);
+        this._trackSize(left, top);
     },
 
     /**
@@ -1052,7 +1127,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fx = fill.fx,
 			fy = fill.fy,
 			r = fill.r,
-			actualPct,
             pct,
 			rotation = fill.rotation || 0;
 		if(type === "linear")
@@ -1982,14 +2056,12 @@ Y.extend(VMLEllipse, Y.VMLShape, {
 	_type: "oval"
 });
 VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
-	//
-	// Horizontal radius for the ellipse. This attribute is not implemented in Canvas.
-    // Will add in 3.4.1.
-	//
-	// @config xRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Horizontal radius for the ellipse. 
+	 *
+	 * @config xRadius
+	 * @type Number
+	 */
 	xRadius: {
 		lazyAdd: false,
 
@@ -2008,14 +2080,13 @@ VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 		}
 	},
 
-	//
-	// Vertical radius for the ellipse. This attribute is not implemented in Canvas. 
-    // Will add in 3.4.1.
-	//
-	// @config yRadius
-	// @type Number
-	// @readOnly
-	//
+	/**
+	 * Vertical radius for the ellipse. 
+	 *
+	 * @config yRadius
+	 * @type Number
+	 * @readOnly
+	 */
 	yRadius: {
 		lazyAdd: false,
 		

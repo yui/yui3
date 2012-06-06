@@ -1,6 +1,12 @@
 Widget Modality Change History
 ==============================
 
+3.6.0
+-----
+
+  * Removed hard-coded "yui3-" CSS classname where the mask node was being
+    retrieved via the ".yui3-widget-mask" CSS selector. [Ticket #2532363]
+
 3.5.1
 -----
 

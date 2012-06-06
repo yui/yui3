@@ -303,7 +303,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         {
             color = stroke.color;
             weight = PARSE_FLOAT(stroke.weight);
-            opacity = PARSE_FLOAT(stroke.opacity)
+            opacity = PARSE_FLOAT(stroke.opacity);
             linejoin = stroke.linejoin || "round";
             linecap = stroke.linecap || "butt";
             dashstyle = stroke.dashstyle;
@@ -327,7 +327,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
                 this._strokeStyle = color;
             }
             this._linecap = linecap;
-            if(linejoin == "round" || linejoin == "square")
+            if(linejoin == "round" || linejoin == "bevel")
             {
                 this._linejoin = linejoin;
             }
