@@ -1,41 +1,114 @@
-<link href="{{componentAssets}}/node.css" rel="stylesheet" type="text/css">
 <div class="intro">
-    <p>This example demonstrates how insert content when working with <code>NodeList</code> instances.</p>
-    <p>Clicking a box will update its content.</p>
+    <p>This example demonstrates how to insert content when working with <code>NodeList</code> instances.</p>
+    <p>Click buttons to build your burger.</p>
 </div>
 
 <div class="example">
-{{>node-insert-source}}
+{{>node-insert-css}}
+{{>node-insert-html}}
+{{>node-insert-js}}
 </div>
 
 <h2>Setting up the NodeList</h2>
 <p>First we need some HTML to work with.</p>
 ```
-<ul id="demo">
-    <li>foo</li>
-    <li>bar</li>
+<ul class="demo">
+    <li class="bun-top"><img src="assets/images/bun_top.png"/></li>
+    <li class="bun-bottom"><img src="assets/images/bun_bottom.png"/></li>
+</ul>
+```
+<p>Next we'll add some buttons to be clicked.</p>
+```
+<ul class="buttons-list">
+    <li><button class='yui3-button patty'> Patty &#183; Before Last Bun</button></li>
+    <li><button class='yui3-button lettuce'> Lettuce &#183; Before Last Bun</button></li>
+    <li><button class='yui3-button cheese' disabled="disabled"> Cheese &#183; Before First Patty</button></li>
+    <li><button class='yui3-button tomato'> Tomato &#183; After First Bun</button></li>
+    <li><button class='yui3-button onions'> Onions &#183; After First Bun</button></li>
+    <li><button class='yui3-button pickles'> Pickles &#183; After First Bun</button></li>
+    <li><button class='yui3-button ketchup'> Ketchup &#183; After First Bun</button></li>
+    <li><button class='yui3-button done'> Done</button></li>
+    <li><button class='yui3-button another'> Another Please</button></li>
 </ul>
 ```
 <h2>Adding Content</h2>
-<p>Next we will add a handler to run when the event is fired. In our handler we will add content to the node.</p>
-<p>Note that the event handler receives an event object with its <code>currentTarget</code> set to the current Node instance, and the actual node clicked as the <code>target</code>.  The context of the handler is the NodeList instance, so <code>this</code> refers to our NodeList instance.</p>
-<p>Note also that <code>prepend</code> inserts content as the <code>firstChild</code> of the Node instance, <code>append</code> inserts content as the <code>lastChild</code>, and <code>insert</code> places content before the specified node or childNode index.</p>
+<p>After defining some convenience `var`s we'll
+add a handler to run when an event is fired. 
+It will add content to the `demo` node.</p>
+<p>Note that the `this` in the handler is the object that was clicked.</p>
 ```
-    var onClick = function(e) {
-        var node = e.currentTarget;
-        node.prepend('<em>prepended</em> &nbsp;'); // added as firstChild
-        node.append('&nbsp; <em>appended</em>');  // added as lastChild
-        node.insert('&nbsp; <strong>before last child</strong> &nbsp;', node.get('lastChild')); // added before lastChild
-        node.insert('&nbsp; <strong>before childNodes[1]</strong> &nbsp;', 1); // added before childNodes[1]
-    };
+var demo = Y.one('.demo'),
+btnList = Y.all('.buttons-list .yui3-button');
+
+
+var buttonClicks = function(e){
+    if (this.hasClass('patty')) {
+        var obj = Y.Node.create('<li class="patty"><img src="assets/images/patty.png"/></li>');
+        demo.insert(obj, Y.one('.bun-bottom')); // note the next line would do the same thing
+        // demo.insert(obj, demo.get('lastChild');
+        // ...
+    }
+//...
 ```
+<p>The handler inserts different objects into the `demo` container object 
+in different places based on these methods:
+<ul>
+    <li>`prepend` - as firstChild</li>
+    <li>`append` - as lastChild</li>
+    <li>`insert` - before a specified node or childNode index</li>
+</ul> 
+</p>
 
 <h2>Attaching Events</h2>
-<p>We can assign our handler to all of the items by using the <code>all</code> method to get a <code>NodeList</code> instance and using the <code>on</code> method to subscribe to the event.</p>
+<p>We assign our handler to all of the `yui3-button` objects through
+event subscription to the matching selector.</p>
 ```
-Y.all('#demo li').on('click', onClick);
+Y.on('click', buttonClicks, '.example .buttons-list .yui3-button');
 ```
+<h2>Transitions</h2>
+<p>When the `buttonClicks` handler inserts an object, it appears instantly, which
+can be a visually jarring experience.
+</p>
+<p>
+In this example, we've added a `transitionObject` function to smooth things out.
+</p>
+```
+var transitionObject = function (obj) {
+    obj.transition({
+        duration: 0.8,
 
+        // height grows from initial 0, to height of contained image
+        height: obj.one('img').getStyle('height'),
+        opacity: {
+            delay: 0.2,    
+            duration: 0.5,
+            value: 1
+        }
+    });    
+} 
+```
+<p>
+In this example, inserted burger elements have an initial CSS `height` of 0.
+After each insertion, we call the `transitionObject` function, 
+passing the inserted object. It begins growing to equal the height of the image
+it contains (images are different heights). This pushes open a space for itself,
+while it fades in.
+</p>
+```
+var buttonClicks = function (e) {
+    var obj;
+    if (this.hasClass('patty')) {
+        obj = Y.Node.create('<li class="patty"><img src="{{{componentAssets}}}/images/burg_patty.png"/></li>');
+        demo.insert(obj, Y.one('.bun-bottom'));
+
+        transitionObject(obj);  // Smooth out the insert with a transition
+        
+        // Add cheese button is disabled until after there's a patty
+        // because cheese is inserted before the patty object
+        Y.one('.buttons-list .cheese')._node.disabled = false;
+    }else if (this.hasClass('lettuce')) {
+    //... other buttons...
+```
 <h2>Complete Example Source</h2>
 ```
 {{>node-insert-source}}
