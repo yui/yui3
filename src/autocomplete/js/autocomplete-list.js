@@ -540,6 +540,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // becomes visible. Toggling a bogus class on the body forces a repaint
         // that fixes the issue.
         if (Y.UA.ie === 7) {
+            // Note: We don't actually need to use ClassNameManager here. This
+            // class isn't applying any actual styles; it's just frobbing the
+            // body element to force a repaint. The actual class name doesn't
+            // really matter.
             Y.one('body')
                 .addClass('yui3-ie7-sucks')
                 .removeClass('yui3-ie7-sucks');
@@ -609,7 +613,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var boundingBox = this._boundingBox,
             target      = e.target;
 
-        if(target !== this._inputNode && target !== boundingBox && 
+        if(target !== this._inputNode && target !== boundingBox &&
                 target.ancestor('#' + boundingBox.get('id'), true)){
             this.hide();
         }
