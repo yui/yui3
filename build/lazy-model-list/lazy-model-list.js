@@ -204,7 +204,8 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
 
         // Convert `items` into an array of plain objects, since we don't want
         // model instances.
-        items = items.map(this._modelToObject);
+        items = items._isYUIModelList ? items.map(this._modelToObject) :
+            YArray.map(items, this._modelToObject);
 
         facade.models = items;
 
@@ -228,7 +229,9 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     must exist in the list), or may be omitted to revive all items in the list.
 
     Once revived, Model instances are attached to this list and cached so that
-    reviving them in the future doesn't require another Model instantiation.
+    reviving them in the future doesn't require another Model instantiation. Use
+    the `free()` method to explicitly uncache and detach a previously revived
+    Model instance.
 
     Note: Specifying an index rather than an object will be faster, since
     objects require an `indexOf()` lookup in order to retrieve the index.
@@ -411,7 +414,7 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     @protected
     **/
     _revive: function (index) {
-        var model;
+        var item, model;
 
         if (index < 0) {
             return null;
