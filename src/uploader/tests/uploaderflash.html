@@ -72,6 +72,7 @@
                 Y.Assert.areEqual(this.basicuploader.get('visible'), true);
             },
 
+/*
             testEnabled : function () {
                 var cfg = {
                   tabIndex: "0",
@@ -114,7 +115,7 @@
                 this.basicuploader._swfReference.fire("mouseup");
                 this.basicuploader._swfReference.fire("click");
             },
-
+*/
             testMultiple : function () {
                 var cfg = {
                   tabIndex: "0",
@@ -132,7 +133,7 @@
                 this.basicuploader.set("multipleFiles", false);
                 Y.Assert.areEqual(this.basicuploader.get('multipleFiles'), false);   
             },
-
+/*
             testUpdateList : function () {
                 var cfg = {
                   tabIndex: "0",
@@ -160,7 +161,7 @@
 
                 this.basicuploader._updateFileList(e);
             },
-
+*/
             testUploadEvent : function () {
                 var cfg = {
                   tabIndex: "0",
@@ -189,7 +190,7 @@
 
                 e.type = "uploaderqueue:uploaderror";
                 this.basicuploader._uploadEventHandler(e);
-            },
+            }/*,
 
             testTabElements : function () {
                var cfg = {
@@ -246,6 +247,7 @@
 
                 this.basicuploader.upload(new Y.FileFlash(filearray[0]), "testurl.html", {foo: "bar"});
             }
+            */
         });
 
         var suite = new Y.Test.Suite({name:"Basic Flash Uploader Test Suite"});
