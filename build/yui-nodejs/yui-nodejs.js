@@ -615,9 +615,10 @@ with any configuration info required for the module.
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
             Y = this, j,
+            cache = YUI.Env._renderedMods,
             loader = Y.Env._loader,
             done = Y.Env._attached,
-            len = r.length, loader,
+            len = r.length, loader, def, go,
             c = [];
 
         //Check for conditional modules (in a second+ instance) and add their requirements
@@ -627,12 +628,15 @@ with any configuration info required for the module.
             mod = mods[name];
             c.push(name);
             if (loader && loader.conditions[name]) {
-                Y.Object.each(loader.conditions[name], function(def) {
-                    var go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
-                    if (go) {
-                        c.push(def.name);
+                for (j in loader.conditions[name]) {
+                    if (loader.conditions[name].hasOwnProperty(j)) {
+                        def = loader.conditions[name][j];
+                        go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+                        if (go) {
+                            c.push(def.name);
+                        }
                     }
-                });
+                }
             }
         }
         r = c;
@@ -673,10 +677,31 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+                    /*
+                        If it's a temp module, we need to redo it's requirements if it's already loaded
+                        since it may have been loaded by another instance and it's dependencies might
+                        have been redefined inside the fetched file.
+                    */
+                    if (loader && cache && cache[name] && cache[name].temp) {
+                        loader.getRequires(cache[name]);
+                        req = [];
+                        for (j in loader.moduleInfo[name].expanded_map) {
+                            if (loader.moduleInfo[name].expanded_map.hasOwnProperty(j)) {
+                                req.push(j);
+                            }
+                        }
+                        Y._attach(req);
+                    }
+                    
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
                     after = details.after;
+                    //Force Intl load if there is a language (Loader logic) @todo fix this shit
+                    if (details.lang) {
+                        req = req || [];
+                        req.unshift('intl');
+                    }
 
                     if (req) {
                         for (j = 0; j < req.length; j++) {
@@ -921,38 +946,40 @@ with any configuration info required for the module.
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
 
-                var i = 0, a = [];
+                var i = 0, a = [], name, len, m, req, use;
 
                 if (!names.length) {
                     return;
                 }
 
                 if (aliases) {
-                    for (i = 0; i < names.length; i++) {
+                    len = names.length;
+                    for (i = 0; i < len; i++) {
                         if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            //if (!mods[names[i]]) {
-                                a.push(names[i]);
-                            //}
+                            a.push(names[i]);
                         }
                     }
                     names = a;
                 }
-
-                YArray.each(names, function(name) {
-
-                    // add this module to full list of things to attach
+                
+                len = names.length;
+                
+                for (i = 0; i < len; i++) {
+                    name = names[i];
                     if (!skip) {
                         r.push(name);
                     }
 
                     // only attach a module once
                     if (used[name]) {
-                        return;
+                        continue;
                     }
-
-                    var m = mods[name], req, use;
+                    
+                    m = mods[name];
+                    req = null;
+                    use = null;
 
                     if (m) {
                         used[name] = true;
@@ -977,7 +1004,8 @@ with any configuration info required for the module.
                     if (use && use.length) {
                         process(use, 1);
                     }
-                });
+                }
+
             },
 
             handleLoader = function(fromLoader) {
@@ -1030,7 +1058,13 @@ with any configuration info required for the module.
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            ret = Y._attach(Y.Object.keys(mods));
+            args = [];
+            for (i in mods) {
+                if (mods.hasOwnProperty(i)) {
+                    args.push(i);
+                }
+            }
+            ret = Y._attach(args);
             if (ret) {
                 handleLoader();
             }
@@ -1065,7 +1099,7 @@ with any configuration info required for the module.
 
 
         if (len) {
-            missing = Y.Object.keys(YArray.hash(missing));
+            missing = YArray.dedupe(missing);
             len = missing.length;
         }
 
@@ -5991,7 +6025,7 @@ Y.Loader.prototype = {
             if (!GLOBAL_ENV._renderedMods) {
                 GLOBAL_ENV._renderedMods = {};
             }
-            GLOBAL_ENV._renderedMods[name] = Y.merge(o);
+            GLOBAL_ENV._renderedMods[name] = Y.mix(GLOBAL_ENV._renderedMods[name] || {}, o);
             GLOBAL_ENV._conditions = conditions;
         }
 

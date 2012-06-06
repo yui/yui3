@@ -219,6 +219,8 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
     },
 
 
+
+
     /**
      * Private render assist method that renders the previous month control
      * 
@@ -228,7 +230,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
     _renderPrevControls : function () {
       var prevControlNode = create(substitute (CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE,
                                CalendarNavigator.CALENDARNAV_STRINGS));
-      prevControlNode.on("selectstart", function (ev) {ev.preventDefault();});
+      prevControlNode.on("selectstart", this.get(HOST)._preventSelectionStart);
 
       return prevControlNode;        
     },
@@ -242,7 +244,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
     _renderNextControls : function () {
       var nextControlNode = create(substitute (CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE,
                                CalendarNavigator.CALENDARNAV_STRINGS));
-      nextControlNode.on("selectstart", function (ev) {ev.preventDefault();});
+      nextControlNode.on("selectstart", this.get(HOST)._preventSelectionStart);
       
       return nextControlNode;     
     },

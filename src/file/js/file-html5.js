@@ -77,6 +77,8 @@
         * @protected
         */      
         _uploadEventHandler: function (event) {
+            console.log("EVENT " + event.type);
+            console.log(event);
             switch (event.type) {
                 case "progress":
                   /**
@@ -118,19 +120,26 @@
                    *          <dd>The data returned by the server.</dd>
                    *  </dl>
                    */
-                    this.fire("uploadcomplete", {originEvent: event,
-                                                 data: event.target.responseText});
-                    var xhrupload = this.get("xhr").upload,
-                        xhr = this.get("xhr"),
-                        boundEventHandler = this.get("boundEventHandler");
 
-                    xhrupload.removeEventListener ("progress", boundEventHandler);
-                    xhrupload.removeEventListener ("error", boundEventHandler);
-                    xhrupload.removeEventListener ("abort", boundEventHandler);
-                    xhr.removeEventListener ("load", boundEventHandler); 
-                    xhr.removeEventListener ("readystatechange", boundEventHandler);
-                    
-                    this._set("xhr", null);                   
+                   if (xhr.status >= 200 && xhr.status <= 299) {
+                        this.fire("uploadcomplete", {originEvent: event,
+                                                     data: event.target.responseText});
+                        var xhrupload = this.get("xhr").upload,
+                            xhr = this.get("xhr"),
+                            boundEventHandler = this.get("boundEventHandler");
+    
+                        xhrupload.removeEventListener ("progress", boundEventHandler);
+                        xhrupload.removeEventListener ("error", boundEventHandler);
+                        xhrupload.removeEventListener ("abort", boundEventHandler);
+                        xhr.removeEventListener ("load", boundEventHandler); 
+                        xhr.removeEventListener ("error", boundEventHandler);
+                        xhr.removeEventListener ("readystatechange", boundEventHandler);
+                        
+                        this._set("xhr", null);
+                   }
+                   else {
+                        this.fire("uploaderror", {})
+                   }                   
                    break;
 
                 case "error":
@@ -203,7 +212,8 @@
         startUpload: function(url, parameters, fileFieldName) {
          
             this._set("bytesUploaded", 0);
-
+            
+            try {
                  this._set("xhr", new XMLHttpRequest());
                  this._set("boundEventHandler", Bind(this._uploadEventHandler, this));
                          
@@ -216,16 +226,25 @@
             Y.each(parameters, function (value, key) {uploadData.append(key, value);});
             uploadData.append(fileField, this.get("file"));
 
+
+
+
+             xhr.addEventListener ("loadstart", boundEventHandler, false);
              xhrupload.addEventListener ("progress", boundEventHandler, false);
+             xhr.addEventListener ("load", boundEventHandler, false);
+             xhr.addEventListener ("error", boundEventHandler, false);
              xhrupload.addEventListener ("error", boundEventHandler, false);
              xhrupload.addEventListener ("abort", boundEventHandler, false);
+             xhr.addEventListener ("abort", boundEventHandler, false);
+             xhr.addEventListener ("loadend", boundEventHandler, false);
 
-             xhr.addEventListener ("load", boundEventHandler, false); 
              xhr.addEventListener ("readystatechange", boundEventHandler, false);
 
 
-             xhr.open("POST", url, true);
-             xhr.send(uploadData);
+               xhr.open("POST", url, true);
+               xhr.send(uploadData);
+             } catch (e) {
+             }
 
             /**
              * Signals that this file's upload has started. 
