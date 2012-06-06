@@ -48,31 +48,7 @@ var Lang    = Y.Lang,
 
     win = Y.config.win,
 
-    App = Y.namespace('App');
-
-/**
-CSS classes used by `Y.App`.
-
-@property CLASS_NAMES
-@type Object
-@default {}
-@static
-@since 3.6.0
-**/
-App.CLASS_NAMES = {
-    app     : getClassName('app'),
-    appViews: getClassName('app', 'views')
-};
-
-/**
-Default `serverRouting` attribute value for all apps.
-
-@property serverRouting
-@type Boolean
-@default undefined
-@static
-@since 3.6.0
-**/
+    AppBase;
 
 /**
 Provides a top-level application component which manages navigation and views.
@@ -96,7 +72,7 @@ management.
 @uses PjaxBase
 @since 3.5.0
 **/
-App.Base = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
+AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     // -- Public Properties ----------------------------------------------------
 
     /**
@@ -307,14 +283,15 @@ App.Base = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see View.render()
     **/
     render: function () {
-        var container           = this.get('container'),
+        var CLASS_NAMES         = Y.App.CLASS_NAMES,
+            container           = this.get('container'),
             viewContainer       = this.get('viewContainer'),
             activeView          = this.get('activeView'),
             activeViewContainer = activeView && activeView.get('container'),
             areSame             = container.compareTo(viewContainer);
 
-        container.addClass(App.CLASS_NAMES.app);
-        viewContainer.addClass(App.CLASS_NAMES.appViews);
+        container.addClass(CLASS_NAMES.app);
+        viewContainer.addClass(CLASS_NAMES.views);
 
         // Prevents needless shuffling around of nodes and maintains DOM order.
         if (activeView && !viewContainer.contains(activeViewContainer)) {
@@ -496,7 +473,8 @@ App.Base = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see View._destroyContainer()
     **/
     _destroyContainer: function () {
-        var container     = this.get('container'),
+        var CLASS_NAMES   = Y.App.CLASS_NAMES,
+            container     = this.get('container'),
             viewContainer = this.get('viewContainer'),
             areSame       = container.compareTo(viewContainer);
 
@@ -506,11 +484,11 @@ App.Base = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             this.detachEvents();
 
             // Clean-up `yui3-app` CSS class on the `container`.
-            container && container.removeClass(App.CLASS_NAMES.app);
+            container && container.removeClass(CLASS_NAMES.app);
 
             if (areSame) {
                 // Clean-up `yui3-app-views` CSS class on the `container`.
-                container && container.removeClass(App.CLASS_NAMES.appViews);
+                container && container.removeClass(CLASS_NAMES.views);
             } else {
                 // Destroy and purge the `viewContainer`.
                 viewContainer && viewContainer.remove(true);
@@ -1096,6 +1074,7 @@ App.Base = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 });
 
 // -- Namespace ----------------------------------------------------------------
+Y.namespace('App').Base = AppBase;
 
 /**
 Provides a top-level application component which manages navigation and views.
@@ -1128,7 +1107,31 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
 @uses App.Transitions
 @since 3.5.0
 **/
-Y.App = Y.mix(Y.Base.create('app', App.Base, []), App, true);
+Y.App = Y.mix(Y.Base.create('app', AppBase, []), Y.App, true);
+
+/**
+CSS classes used by `Y.App`.
+
+@property CLASS_NAMES
+@type Object
+@default {}
+@static
+@since 3.6.0
+**/
+Y.App.CLASS_NAMES = {
+    app  : getClassName('app'),
+    views: getClassName('app', 'views')
+};
+
+/**
+Default `serverRouting` attribute value for all apps.
+
+@property serverRouting
+@type Boolean
+@default undefined
+@static
+@since 3.6.0
+**/
 
 
 }, '@VERSION@' ,{requires:['classnamemanager', 'pjax-base', 'router', 'view']});
