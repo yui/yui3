@@ -144,36 +144,30 @@ var WIDGET       = 'widget',
         if (mask) {
             return mask;
         }
-        else {
 
-            mask = Y.Node.create('<div></div>');
-            mask.addClass(MODAL_CLASSES.mask);
-            if (supportsPosFixed) {
-                mask.setStyles({
-                    position    : 'fixed',
-                    width       : '100%',
-                    height      : '100%',
-                    top         : '0',
-                    left        : '0',
-                    display     : 'block'
-                });
-            }
-            else {
-                mask.setStyles({
-                    position    : 'absolute',
-                    width       : win.get('winWidth') +'px',
-                    height      : win.get('winHeight') + 'px',
-                    top         : '0',
-                    left        : '0',
-                    display     : 'block'
-                });
-            }
+        mask = Y.Node.create('<div></div>').addClass(MODAL_CLASSES.mask);
 
-
-
-            return mask;
+        if (supportsPosFixed) {
+            mask.setStyles({
+                position: 'fixed',
+                width   : '100%',
+                height  : '100%',
+                top     : '0',
+                left    : '0',
+                display : 'block'
+            });
+        } else {
+            mask.setStyles({
+                position: 'absolute',
+                width   : win.get('winWidth') +'px',
+                height  : win.get('winHeight') + 'px',
+                top     : '0',
+                left    : '0',
+                display : 'block'
+            });
         }
 
+        return mask;
     };
 
     /**
