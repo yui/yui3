@@ -138,8 +138,8 @@ var WIDGET       = 'widget',
      */
     WidgetModal._GET_MASK = function() {
 
-        var mask = Y.one(".yui3-widget-mask") || null,
-        win = Y.one('window');
+        var mask = Y.one('.' + MODAL_CLASSES.mask),
+            win  = Y.one('win');
 
         if (mask) {
             return mask;
