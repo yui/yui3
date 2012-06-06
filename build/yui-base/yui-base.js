@@ -941,6 +941,7 @@ with any configuration info required for the module.
             config = Y.config,
             boot = config.bootstrap,
             missing = [],
+            i,
             r = [],
             ret = true,
             fetchCSS = config.fetchCSS,
