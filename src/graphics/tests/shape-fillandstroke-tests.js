@@ -42,8 +42,9 @@ Y.extend(FillAndStrokeTest, ShapeTestTemplate);
 var solidTest = function()
     {
         var shape = this.shape,
-            fill = shape.get("fill");
-        Y.Assert.areEqual(this.fillColor, fill.color, "The fill color should be " + this.fillColor + ".");
+            fill = shape.get("fill"),
+            fillColor = this.fillColor != "none" ? this.fillColor : null;
+        Y.Assert.areEqual(fillColor, fill.color, "The fill color should be " + fillColor + ".");
         Y.Assert.areEqual(this.fillOpacity, fill.opacity, "The fill opacity should be " + this.fillOpacity + ".");
     },
 
@@ -82,25 +83,35 @@ var solidTest = function()
         }, props);
     },
 
-    solidFill = function(shape, opacity)
+    solidFillTest = function(shape, opacity, fillColor)
     {
         return new fillTest(shape, {
             type: "solid",
             opacity: opacity,
-            color: "#f00"
+            color: fillColor
         },
         {
             color: "#00f",
             opacity: opacity
         },
         {
-            fillColor: "#f00",
+            fillColor: fillColor,
             fillOpacity: opacity,
             strokeColor: "#00f",
             strokeOpacity: opacity,
             test: solidTest,
             NAME: shape + " with solid fill with opacity of " + opacity + " for stroke and fill."
         });
+    },
+
+    solidFill = function(shape, opacity)
+    {
+        return solidFillTest(shape, opacity, "#f00");
+    },
+
+    solidFillNone = function(shape, opacity)
+    {
+        return solidFillTest(shape, opacity, "none");
     },
 
     gradientFill = function(shape, type, color, opacity, offset, opts)
@@ -229,6 +240,40 @@ var solidTest = function()
     suite.add(solidFill("circle", 0.8));
     suite.add(solidFill("circle", 0.9));
     suite.add(solidFill("circle", 1));
+    
+    suite.add(solidFillNone("rect", 0));
+    suite.add(solidFillNone("rect", 0.1));
+    suite.add(solidFillNone("rect", 0.2));
+    suite.add(solidFillNone("rect", 0.3));
+    suite.add(solidFillNone("rect", 0.4));
+    suite.add(solidFillNone("rect", 0.5));
+    suite.add(solidFillNone("rect", 0.6));
+    suite.add(solidFillNone("rect", 0.7));
+    suite.add(solidFillNone("rect", 0.8));
+    suite.add(solidFillNone("rect", 0.9));
+    suite.add(solidFillNone("rect", 1));
+    suite.add(solidFillNone("ellipse", 0));
+    suite.add(solidFillNone("ellipse", 0.1));
+    suite.add(solidFillNone("ellipse", 0.2));
+    suite.add(solidFillNone("ellipse", 0.3));
+    suite.add(solidFillNone("ellipse", 0.4));
+    suite.add(solidFillNone("ellipse", 0.5));
+    suite.add(solidFillNone("ellipse", 0.6));
+    suite.add(solidFillNone("ellipse", 0.7));
+    suite.add(solidFillNone("ellipse", 0.8));
+    suite.add(solidFillNone("ellipse", 0.9));
+    suite.add(solidFillNone("ellipse", 1));
+    suite.add(solidFillNone("circle", 0));
+    suite.add(solidFillNone("circle", 0.1));
+    suite.add(solidFillNone("circle", 0.2));
+    suite.add(solidFillNone("circle", 0.3));
+    suite.add(solidFillNone("circle", 0.4));
+    suite.add(solidFillNone("circle", 0.5));
+    suite.add(solidFillNone("circle", 0.6));
+    suite.add(solidFillNone("circle", 0.7));
+    suite.add(solidFillNone("circle", 0.8));
+    suite.add(solidFillNone("circle", 0.9));
+    suite.add(solidFillNone("circle", 1));
     
     suite.add(gradientFill("rect", "linear", threeColors, threeOpacities, threeOffsets));
     suite.add(gradientFill("rect", "linear", threeColors, null, threeOffsets));

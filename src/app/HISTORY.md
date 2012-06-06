@@ -4,6 +4,13 @@ App Framework Change History
 3.6.0
 -----
 
+### App
+
+* Added static property: `Y.App.serverRouting`, which serves as the default
+  value for the `serverRouting` attribute of all apps. [Ticket #2532319]
+
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
 ### App Transitions
 
 * Fixed issue with non-collapsing white space between views while transitioning.

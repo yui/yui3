@@ -9,6 +9,59 @@ function ChartBase() {}
 
 ChartBase.ATTRS = {
     /**
+     * Data used to generate the chart.
+     * 
+     * @attribute dataProvider
+     * @type Array
+     */
+    dataProvider: {
+        lazyAdd: false,
+
+        valueFn: function()
+        {
+            var defDataProvider = [];
+            if(!this._seriesKeysExplicitlySet)
+            {
+                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
+            }
+            return defDataProvider;
+        },
+
+        setter: function(val)
+        {
+            var dataProvider = this._setDataValues(val),
+                seriesKeys = this.get("seriesKeys");
+            if(!this._seriesKeysExplicitlySet)
+            {
+                this._seriesKeys = this._buildSeriesKeys(dataProvider);
+            }
+            return dataProvider;
+        }
+    },
+
+    /**
+     * A collection of keys that map to the series axes. If no keys are set,
+     * they will be generated automatically depending on the data structure passed into 
+     * the chart.
+     *
+     * @attribute seriesKeys
+     * @type Array
+     */
+    seriesKeys: {
+        getter: function()
+        {
+            return this._seriesKeys;
+        },
+
+        setter: function(val)
+        {
+            this._seriesKeysExplicitlySet = true;
+            this._seriesKeys = val;
+            return val;
+        }
+    },
+
+    /**
      * Sets the `aria-label` for the chart.
      *
      * @attribute ariaLabel
@@ -171,29 +224,6 @@ ChartBase.ATTRS = {
     },
 
     /**
-     * Data used to generate the chart.
-     * 
-     * @attribute dataProvider
-     * @type Array
-     */
-    dataProvider: {
-        setter: function(val)
-        {
-            return this._setDataValues(val);
-        }
-    },
-        
-    /**
-     * A collection of keys that map to the series axes. If no keys are set,
-     * they will be generated automatically depending on the data structure passed into 
-     * the chart.
-     *
-     * @attribute seriesKeys
-     * @type Array
-     */
-    seriesKeys: {},
-
-    /**
      * Reference to all the axes in the chart.
      *
      * @attribute axesCollection
@@ -218,20 +248,28 @@ ChartBase.ATTRS = {
      * @type Boolean
      */
     groupMarkers: {
-        value: false,
-
-        setter: function(val)
-        {
-            if(this.get("graph"))
-            {
-                this.get("graph").set("groupMarkers", val);
-            }
-            return val;
-        }
+        value: false
     }
 };
 
 ChartBase.prototype = {
+    /**
+     * Handles groupMarkers change event.
+     *
+     * @method _groupMarkersChangeHandler
+     * @param {Object} e Event object.
+     * @private
+     */
+    _groupMarkersChangeHandler: function(e)
+    {
+        var graph = this.get("graph"),
+            useGroupMarkers = e.newVal;
+        if(graph)
+        {
+            graph.set("groupMarkers", useGroupMarkers);
+        }
+    },
+
     /**
      * Handler for itemRendered event.
      *
@@ -540,6 +578,7 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
+        this.after("groupMarkersChange", this._groupMarkersChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
@@ -793,7 +832,7 @@ ChartBase.prototype = {
      */
     _dataProviderChangeHandler: function(e)
     {
-        var dataProvider = this.get("dataProvider"),
+        var dataProvider = e.newVal,
             axes = this.get("axes"),
             i,
             axis;
@@ -930,7 +969,7 @@ ChartBase.prototype = {
      */
     _updateTooltip: function(val)
     {
-        var tt = this._tooltip,
+        var tt = this.get("tooltip") || this._getTooltip(),
             i,
             styles,
             node,
@@ -1018,7 +1057,6 @@ ChartBase.prototype = {
         node.setStyle("whiteSpace", "noWrap");
         node.setStyle("visibility", "hidden");
         tt.node = Y.one(node);
-        this._tooltip = tt;
         return tt;
     },
 
@@ -1178,6 +1216,63 @@ ChartBase.prototype = {
             val = DOCUMENT.createTextNode(val);
         }
         textField.appendChild(val);
+    },
+
+    /**
+     * Returns all the keys contained in a  `dataProvider`.
+     *
+     * @method _getAllKeys
+     * @param {Array} dp Collection of objects to be parsed.
+     * @return Object
+     */
+    _getAllKeys: function(dp)
+    {
+        var i = 0,
+            len = dp.length,
+            item,
+            key,
+            keys = {};
+        for(; i < len; ++i)
+        {
+            item = dp[i];
+            for(key in item)
+            {
+                if(item.hasOwnProperty(key))
+                {
+                    keys[key] = true;
+                }
+            }
+        }
+        return keys;
+    },
+    
+    /**
+     * Constructs seriesKeys if not explicitly specified.
+     *
+     * @method _buildSeriesKeys
+     * @param {Array} dataProvider The dataProvider for the chart.
+     * @return Array
+     * @private
+     */
+    _buildSeriesKeys: function(dataProvider)
+    {
+        var allKeys,
+            catKey = this.get("categoryKey"),
+            keys = [],
+            i;
+        if(this._seriesKeys)
+        {
+            return this._seriesKeys;
+        }
+        allKeys = this._getAllKeys(dataProvider);
+        for(i in allKeys)
+        {
+            if(allKeys.hasOwnProperty(i) && i != catKey)
+            {
+                keys.push(i);
+            }
+        }
+        return keys;
     }
 };
 Y.ChartBase = ChartBase;
