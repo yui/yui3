@@ -946,7 +946,7 @@ with any configuration info required for the module.
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
 
-                var i = 0, a = [], name, len, req, use;
+                var i = 0, a = [], name, len, m, req, use;
 
                 if (!names.length) {
                     return;
