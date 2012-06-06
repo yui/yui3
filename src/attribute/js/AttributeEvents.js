@@ -59,7 +59,10 @@
          * @return {Object} A reference to the host object.
          */
         set : function(name, val, opts) {
-            return this._setAttr(name, val, opts);
+            var attrs = {};
+            attrs[name] = val;
+
+            return this._setAttrs(attrs, opts);
         },
 
         /**
