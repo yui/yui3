@@ -226,7 +226,9 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     must exist in the list), or may be omitted to revive all items in the list.
 
     Once revived, Model instances are attached to this list and cached so that
-    reviving them in the future doesn't require another Model instantiation.
+    reviving them in the future doesn't require another Model instantiation. Use
+    the `free()` method to explicitly uncache and detach a previously revived
+    Model instance.
 
     Note: Specifying an index rather than an object will be faster, since
     objects require an `indexOf()` lookup in order to retrieve the index.
