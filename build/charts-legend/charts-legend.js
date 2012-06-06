@@ -1160,30 +1160,33 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      */
     _getStylesBySeriesType: function(series)
     {
-        var styles = series.get("styles");
+        var styles = series.get("styles"),
+            color;
         if(series instanceof Y.LineSeries || series instanceof Y.StackedLineSeries)
         {
             styles = series.get("styles").line;
+            color = styles.color || series._getDefaultColor(series.get("graphOrder"), "line");
             return {
                 border: {
                     weight: 1,
-                    color: styles.color
+                    color: color
                 },
                 fill: {
-                    color: styles.color
+                    color: color
                 }
             };
         }
         else if(series instanceof Y.AreaSeries || series instanceof Y.StackedAreaSeries)
         {
-            series = series.get("styles").fill;
+            styles = series.get("styles").area;
+            color = styles.color || series._getDefaultColor(series.get("graphOrder"), "slice");
             return {
                 border: {
                     weight: 1,
-                    color: styles.color
+                    color: color
                 },
                 fill: {
-                    color: styles.color
+                    color: color
                 }
             };
         }
