@@ -202,7 +202,8 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
 
         // Convert `items` into an array of plain objects, since we don't want
         // model instances.
-        items = items.map(this._modelToObject);
+        items = items._isYUIModelList ? items.map(this._modelToObject) :
+            YArray.map(items, this._modelToObject);
 
         facade.models = items;
 
