@@ -618,7 +618,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fx = fill.fx,
 			fy = fill.fy,
 			r = fill.r,
-			actualPct,
             pct,
 			rotation = fill.rotation || 0;
 		if(type === "linear")

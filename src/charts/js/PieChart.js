@@ -216,24 +216,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     _getDefaultAxes: function()
     {
         var catKey = this.get("categoryKey"),
-            seriesKeys = this.get("seriesKeys") || [], 
-            seriesAxis = "numeric",
-            i, 
-            dv = this.get("dataProvider")[0];
-        if(seriesKeys.length < 1)
-        {
-            for(i in dv)
-            {
-                if(i != catKey)
-                {
-                    seriesKeys.push(i);
-                }
-            }
-            if(seriesKeys.length > 0)
-            {
-                this.set("seriesKeys", seriesKeys);
-            }
-        }
+            seriesKeys = this.get("seriesKeys").concat(), 
+            seriesAxis = "numeric";
         return {
             values:{
                 keys:seriesKeys,

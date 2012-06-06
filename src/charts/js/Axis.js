@@ -1435,7 +1435,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Function
          */
         appendLabelFunction: {
-            getter: function()
+            valueFn: function()
             {
                 return this._setText;
             }
@@ -1456,7 +1456,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Function
          */
         appendTitleFunction: {
-            getter: function()
+            valueFn: function()
             {
                 return this._setText;
             }
