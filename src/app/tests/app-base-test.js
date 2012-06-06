@@ -166,7 +166,7 @@ appBaseSuite.add(new Y.Test.Case({
         Assert.isTrue(Y.one('body').compareTo(app.get('container')));
         Assert.isTrue(Y.one('body').inDoc(Y.config.doc));
         Assert.isFalse(Y.one('body').hasClass(Y.App.CLASS_NAMES.app));
-        Assert.isFalse(Y.one('body').hasClass(Y.App.CLASS_NAMES.appViews));
+        Assert.isFalse(Y.one('body').hasClass(Y.App.CLASS_NAMES.views));
     }
 }));
 
@@ -232,8 +232,8 @@ appBaseSuite.add(new Y.Test.Case({
     '`viewContainer` should be stamped with the App Views CSS class when the app is rendered': function () {
         var app = this.app = new Y.App();
         app.render();
-        Assert.isTrue(app.get('viewContainer').hasClass(Y.App.CLASS_NAMES.appViews));
-        Assert.areSame('yui3-app-views', Y.App.CLASS_NAMES.appViews);
+        Assert.isTrue(app.get('viewContainer').hasClass(Y.App.CLASS_NAMES.views));
+        Assert.areSame('yui3-app-views', Y.App.CLASS_NAMES.views);
     },
 
     '`viewContainer` should only be settable during initialization': function () {
