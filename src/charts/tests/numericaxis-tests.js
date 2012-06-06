@@ -430,13 +430,19 @@ YUI.add('numericaxis-tests', function(Y) {
         dataMin: allNegativeDataProviderDataMin
     }),
     
-    AxisWithNoDataProvider = new Y.NumericAxisTestTemplate({
+    AxisWithEmptyDataProvider = new Y.NumericAxisTestTemplate({
         dataProvider: []
     },
     {
         name: "No Data"
+    }),
+    
+    AxisWithNoDataProvider = new Y.NumericAxisTestTemplate({
+    },
+    {
+        name: "No Data"
     });
-  
+    
     suite.add(AxisAllPositiveDataTest);
     suite.add(AxisPositiveAndNegativeDataTest);
     suite.add(AxisAllNegativeDataTest);
@@ -457,6 +463,7 @@ YUI.add('numericaxis-tests', function(Y) {
     suite.add(AxisAllNegativeDataAutoRoundingMethodAlwaysShowZeroFalseTest);
     suite.add(AxisAllPositiveDataNumericRoundingMethodAlwaysShowZeroFalseTest);
     suite.add(AxisAllNegativeDataNumericRoundingMethodAlwaysShowZeroFalseTest);
+    suite.add(AxisWithEmptyDataProvider);
     suite.add(AxisWithNoDataProvider);
 
     Y.Test.Runner.add(suite);
