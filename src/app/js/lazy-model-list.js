@@ -409,7 +409,7 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     @protected
     **/
     _revive: function (index) {
-        var model;
+        var item, model;
 
         if (index < 0) {
             return null;
