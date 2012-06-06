@@ -598,10 +598,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
         if (file instanceof Y.FileFlash) {
            
-            file.on("uploadstart", this._uploadStartHandler, this);
-            file.on("uploadprogress", this._uploadProgressHandler, this);
-            file.on("uploadcomplete", this._uploadCompleteHandler, this);
-            file.on("uploaderror", this._uploadErrorHandler, this);
+            file.on("uploadstart", this._uploadEventHandler, this);
+            file.on("uploadprogress", this._uploadEventHandler, this);
+            file.on("uploadcomplete", this._uploadEventHandler, this);
+            file.on("uploaderror", this._uploadEventHandler, this);
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
         }
