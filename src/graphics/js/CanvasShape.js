@@ -263,7 +263,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
+		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
 	},
 	
 	/**

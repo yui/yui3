@@ -8,7 +8,8 @@ var SHAPE = "svgShape",
 	SVGPath,
 	SVGEllipse,
     SVGPieSlice,
-    DOCUMENT = Y.config.doc;
+    DOCUMENT = Y.config.doc,
+    _getClassName = Y.ClassNameManager.getClassName;
 
 function SVGDrawing(){}
 

@@ -234,7 +234,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			id = this.get("id"),
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
+		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
         if(id)
 		{
 			node.setAttribute("id", id);
