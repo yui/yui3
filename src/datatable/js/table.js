@@ -309,7 +309,8 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
     @since 3.5.0
     **/
     _defRenderTableFn: function (e) {
-        var attrs = this.getAttrs();
+        var container = this.get('container'),
+            attrs = this.getAttrs();
 
         if (!this.tableNode) {
             this.tableNode = this._createTable();
@@ -349,7 +350,9 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
             this.fire('renderBody', { view: this.body });
         }
 
-        this.get('container').append(this.tableNode);
+        if (!container.contains(this.tableNode)) {
+            container.append(this.tableNode);
+        }
 
         this._bindUI();
     },
