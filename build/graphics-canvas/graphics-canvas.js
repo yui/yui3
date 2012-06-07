@@ -16,7 +16,8 @@ var SHAPE = "canvasShape",
     IS_NUMBER = Y_LANG.isNumber,
     RE = RegExp,
     TORGB = Y_Color.toRGB,
-    TOHEX = Y_Color.toHex;
+    TOHEX = Y_Color.toHex,
+    _getClassName = Y.ClassNameManager.getClassName;
 
 /**
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 
@@ -1106,7 +1107,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
+		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
 	},
 	
 	/**
@@ -2075,7 +2076,7 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 		node.setAttribute("id", id);
 		id = "#" + id;
 		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
+		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
 	},
 
     /**
