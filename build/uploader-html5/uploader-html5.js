@@ -275,6 +275,22 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
 
     /**
+     * Recreates the file field to null out the previous list of files and
+     * thus allow for an identical file list selection.
+     * 
+     * @method _rebindFileField
+     * @protected
+     */
+    _rebindFileField : function () {
+        this._fileInputField.remove(true);
+        this._fileInputField = Y.Node.create(UploaderHTML5.HTML5FILEFIELD_TEMPLATE);
+        this.get("contentBox").append(this._fileInputField);
+        this._fileInputField.on("change", this._updateFileList, this);
+        this._setMultipleFiles();
+    },
+
+
+    /**
      * Binds the specified drop area's drag and drop events to the
      * uploader's custom handler.
      * 
@@ -346,10 +362,13 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
                    this.fire("fileselect", {fileList: parsedFiles});
 
+                   if (parsedFiles.length > 0) {
                    var oldfiles = this.get("fileList");
-
                    this.set("fileList", 
                             this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+                   }
+
+                   this.fire("drop");
                 break;
        }
     },
@@ -435,6 +454,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
        this.set("fileList", 
                 this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
+       this._rebindFileField();
     },
 
     /**
