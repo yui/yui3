@@ -209,7 +209,6 @@
             },
 
             testTabElements : function () {
-                console.log("testing tab elements");
                
                 var cfg = {
                   tabIndex: "0",
@@ -217,10 +216,9 @@
                   height: "100%"
                 };
 
-                console.log("initializing the uploader");
                 this.basicuploader = new Y.UploaderFlash(cfg);
                 this.basicuploader.render("#basicuploader");
-                console.log("initialized the uploader");
+
                 this.basicuploader._swfReference._swf = {};
                 this.basicuploader._swfReference._swf._node = {};
                 this.basicuploader._swfReference._swf.setAttribute = function () {};
@@ -228,7 +226,7 @@
                 this.basicuploader._swfReference._swf.on = function () { return {detach: function () {}}};
 
                 this.basicuploader._swfReference.fire("swfReady");
-                console.log("what now?");
+
                 this.basicuploader.set("tabElements", {from: Y.one("#tabbefore"), to: Y.one("#tabafter")});
                 Y.one("#tabbefore").simulate("keydown", { charCode: 9, keyCode: 9, shiftKey: false});
                 Y.one("#tabafter").simulate("keydown", { charCode: 9, keyCode: 9, shiftKey: true});
