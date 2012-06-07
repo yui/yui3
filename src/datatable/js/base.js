@@ -343,33 +343,6 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @protected
     **/
     _defRenderViewFn: function (e) {
-        // For back compat, share the view instances and primary nodes
-        // on this instance.
-        // TODO: Remove this?
-        var self = this;
-        if (!this._eventHandles.legacyFeatureProps) {
-            this._eventHandles.legacyFeatureProps = e.view.after({
-                renderHeader: function (e) {
-                    self.head = e.view;
-                    self._theadNode = e.view.theadNode;
-                    // TODO: clean up the repetition.
-                    // This is here so that subscribers to renderHeader etc
-                    // have access to this._tableNode from the DT instance
-                    self._tableNode = e.view.get('container');
-                },
-                renderFooter: function (e) {
-                    self.foot = e.view;
-                    self._tfootNode = e.view.tfootNode;
-                    self._tableNode = e.view.get('container');
-                },
-                renderBody: function (e) {
-                    self.body = e.view;
-                    self._tbodyNode = e.view.tbodyNode;
-                    self._tableNode = e.view.get('container');
-                }
-            });
-        }
-
         e.view.render();
     },
 
@@ -442,14 +415,6 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         this.after('columnsChange', Y.bind('_afterDisplayColumnsChange', this));
     },
 
-    _onViewRender: function (e) {
-        // Relay event from DataTable instance for backward compatibility
-        this.fire(e.type.slice(e.type.lastIndexOf(':') + 1), {
-            originEvent: e,
-            view       : e.view
-        });
-    },
-
     /**
     Relays the `preventDefault` to the originating event.
 
@@ -477,7 +442,8 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     },
 
     renderUI: function () {
-        var View = this.get('view');
+        var self = this,
+            View = this.get('view');
 
         if (View) {
             this.view = new View(
@@ -490,11 +456,67 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
                     },
                     this.get('viewConfig')));
 
-            this.view.on(
-                ['renderTable', 'renderHeader', 'renderBody', 'renderFooter'],
-                this._onViewRender, this);
+            // For back compat, share the view instances and primary nodes
+            // on this instance.
+            // TODO: Remove this?
+            if (!this._eventHandles.legacyFeatureProps) {
+                this._eventHandles.legacyFeatureProps = this.view.after({
+                    renderHeader: function (e) {
+                        self.head = e.view;
+                        self._theadNode = e.view.theadNode;
+                        // TODO: clean up the repetition.
+                        // This is here so that subscribers to renderHeader etc
+                        // have access to this._tableNode from the DT instance
+                        self._tableNode = e.view.get('container');
+                    },
+                    renderFooter: function (e) {
+                        self.foot = e.view;
+                        self._tfootNode = e.view.tfootNode;
+                        self._tableNode = e.view.get('container');
+                    },
+                    renderBody: function (e) {
+                        self.body = e.view;
+                        self._tbodyNode = e.view.tbodyNode;
+                        self._tableNode = e.view.get('container');
+                    },
+                    // FIXME: guarantee that the properties are available, even
+                    // if the configured (or omitted) views don't create them
+                    renderTable: function (e) {
+                        var contentBox = this.get('container');
 
-            //this.fire('renderView', { view: this.view });
+                        self._tableNode = this.tableNode ||
+                            contentBox.one('.' + this.getClassName('table') +
+                                           ', table');
+
+                        // FIXME: _captionNode isn't available until after
+                        // renderTable unless in the renderX subs I look for
+                        // it under the container's parentNode (to account for
+                        // scroll breaking out the caption table).
+                        self._captionNode = this.captionNode ||
+                            contentBox.one('caption');
+
+                        if (!self._theadNode) {
+                            self._theadNode = contentBox.one(
+                                '.' + this.getClassName('columns') + ', thead');
+                        }
+
+                        if (!self._tbodyNode) {
+                            self._tbodyNode = contentBox.one(
+                                '.' + this.getClassName('data') + ', tbody');
+                        }
+
+                        if (!self._tfootNode) {
+                            self._tfootNode = contentBox.one(
+                                '.' + this.getClassName('footer') + ', tfoot');
+                        }
+                    }
+                });
+            }
+
+            // To *somewhat* preserve table.on('renderHeader', fn) in the
+            // form of table.on('table:renderHeader', fn), because I couldn't
+            // figure out another option.
+            this.view.addTarget(this);
         }
     },
 
