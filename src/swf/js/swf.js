@@ -104,8 +104,9 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
         }
 
         objstring += "</object>";
-        oElement.setContent(objstring);
-
+        //using innerHTML as setHTML/setContent causes some issues with ExternalInterface for IE versions of the player
+        oElement.set("innerHTML", objstring);
+        
         this._swf = Node.one("#" + _id);
     } else {
         /**
