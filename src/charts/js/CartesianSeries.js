@@ -323,6 +323,48 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
+     * Finds the first valid index of an array coordinates.
+     *
+     * @method _getFirstValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getFirstValidIndex: function(coords)
+    {
+        var coord,
+            i = -1,
+            limit = coords.length;
+        while(!Y_Lang.isNumber(coord) && i < limit)
+        {
+            i += 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
+     * Finds the last valid index of an array coordinates.
+     *
+     * @method _getLastValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getLastValidIndex: function(coords)
+    {
+        var coord,
+            i = coords.length,
+            limit = -1;
+        while(!Y_Lang.isNumber(coord) && i > limit)
+        {
+            i -= 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
      * Draws the series.
      *
      * @method draw
