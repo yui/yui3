@@ -467,14 +467,16 @@ Y.mix(Sortable.prototype, {
         this._initSortStrings();
 
         this.after({
-            renderHeader  : Y.bind('_renderSortable', this),
-            dataChange    : Y.bind('_afterSortDataChange', this),
-            sortByChange  : Y.bind('_afterSortByChange', this),
-            sortableChange: boundParseSortable,
-            columnsChange : boundParseSortable,
-            "*:change"    : Y.bind('_afterSortRecordChange', this)
+            'table:renderHeader': Y.bind('_renderSortable', this),
+            dataChange          : Y.bind('_afterSortDataChange', this),
+            sortByChange        : Y.bind('_afterSortByChange', this),
+            sortableChange      : boundParseSortable,
+            columnsChange       : boundParseSortable
         });
+        this.data.after(this.data.model.NAME + ":change",
+            Y.bind('_afterSortRecordChange', this));
 
+        // TODO: this event needs magic, allowing async remote sorting
         this.publish('sort', {
             defaultFn: Y.bind('_defSortFn', this)
         });
