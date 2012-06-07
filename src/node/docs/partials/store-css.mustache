@@ -43,6 +43,7 @@
     width: 70px;
     height: 125px;
     vertical-align: bottom;
+    border: none;
 }
 .example ul#demo .description, .example ul#demo .price {
     display: none;
@@ -51,7 +52,10 @@
     box-shadow: 0 0 5px rgba(255, 187, 71, 0.9);
 }
 .example ul#demo a:hover .price {
-    background-color: rgba(255, 200, 100, 0.53);
+    background: -ms-linear-gradient(top, rgba(255,200,100,0.5) 0%,rgba(255,200,100,0.5) 100%); /* IE10+ */
+    background: linear-gradient(top, rgba(255,200,100,0.5) 0%,rgba(255,200,100,0.5) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffc864', endColorstr='#80ffc864',GradientType=0 ); /* IE6-8 */
+    background-color: rgba(250, 200, 100, 0.50);
     display: block;
     left: -8px;
     position: absolute;
@@ -67,6 +71,9 @@
     width: 295px;
 }
 .example ul#demo2 a:hover{
+    background: -ms-linear-gradient(top, rgba(255,33,33,0.1) 0%,rgba(255,33,33,0.1) 100%); /* IE10+ */
+    background: linear-gradient(top, rgba(255,33,33,0.1) 0%,rgba(255,33,33,0.1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1aff2121', endColorstr='#1aff2121',GradientType=0 ); /* IE6-8 */
     background-color: rgba(255, 33, 33, 0.10);
 }
 .example ul#demo2 li a{
@@ -77,6 +84,7 @@
     width: 25px;
     height: 41.5px;
     vertical-align: bottom;
+    border: none;
 }
 .example ul#demo2 .cart-head{
     border-bottom: solid 1px #eee;
