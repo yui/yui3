@@ -56,21 +56,6 @@ AppTransitions.ATTRS = {
 };
 
 /**
-CSS classes used by `App.Transitions`.
-
-When an app is transitioning between `activeView`s, its `container` node will
-have the "yui3-app-transitioning" CSS class added.
-
-@property CLASS_NAMES
-@type Object
-@static
-@since 3.5.0
-**/
-AppTransitions.CLASS_NAMES = {
-    transitioning: Y.ClassNameManager.getClassName('app', 'transitioning')
-};
-
-/**
 Collect of transitions -> fx.
 
 A transition (e.g. "fade") is a simple name given to a configuration of fx to
@@ -244,3 +229,7 @@ AppTransitions.prototype = {
 // -- Namespace ----------------------------------------------------------------
 Y.App.Transitions = AppTransitions;
 Y.Base.mix(Y.App, [AppTransitions]);
+
+Y.mix(Y.App.CLASS_NAMES, {
+    transitioning: Y.ClassNameManager.getClassName('app', 'transitioning')
+});

@@ -74,13 +74,11 @@ YUI.add('file-html5', function(Y) {
        /**
         * Handler of events dispatched by the XMLHTTPRequest.
         *
-        * @method _uplodEventHandler
+        * @method _uploadEventHandler
         * @param {Event} event The event object received from the XMLHTTPRequest.
         * @protected
         */      
         _uploadEventHandler: function (event) {
-            console.log("EVENT " + event.type);
-            console.log(event);
             switch (event.type) {
                 case "progress":
                   /**

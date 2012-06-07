@@ -266,7 +266,7 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
    * @private
    */   
     _clickCalendar : function (ev) {
-        var clickedCell = ev.target,
+        var clickedCell = ev.currentTarget,
             clickedCellIsDay = clickedCell.hasClass(CAL_DAY) && 
                                !clickedCell.hasClass(CAL_PREVMONTH_DAY) && 
                                !clickedCell.hasClass(CAL_NEXTMONTH_DAY),

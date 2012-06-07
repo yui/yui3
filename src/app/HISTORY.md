@@ -17,6 +17,8 @@ App Framework Change History
   White space is now fully collapsed and prevents views from jumping after a
   cross-fade transition. [Ticket #2532298]
 
+* Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
 ### ModelList
 
 * The `add()` method now accepts an `index` option, which can be used to insert
