@@ -1099,15 +1099,10 @@ with any configuration info required for the module.
             loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
-            missing = args;
             loader._boot = false;
         }
         
-        if (!Y.Loader) {
-            // process each requirement and any additional requirements
-            // the module metadata specifies
-            process(args);
-        }
+        process(args);
 
         len = missing.length;
 
