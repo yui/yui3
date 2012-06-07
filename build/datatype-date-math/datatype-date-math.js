@@ -111,7 +111,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 		newMonth = (newMonth % 12 + 12) % 12;
 		
 		var newDate = new Date (oDate.getTime());
-		newDate.setYear(newYear);
+		newDate.setFullYear(newYear);
 		newDate.setMonth(newMonth);
 		
 		return newDate;
@@ -130,7 +130,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 		var newYear = oDate.getFullYear() + numYears;
 		var newDate = new Date(oDate.getTime());
 		
-		newDate.setYear(newYear);
+		newDate.setFullYear(newYear);
 		return newDate;
 	},
 
