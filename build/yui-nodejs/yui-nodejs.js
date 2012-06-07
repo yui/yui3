@@ -3659,7 +3659,7 @@ YUI.Env.aliases = {
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
+    "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
@@ -4004,19 +4004,8 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// history-hash-ie
-add('load', '1', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // graphics-canvas-default
-add('load', '2', {
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -4028,7 +4017,7 @@ add('load', '2', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '3', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -4046,23 +4035,62 @@ add('load', '3', {
 }, 
     "trigger": "autocomplete-list"
 });
-// dd-gestures
-add('load', '4', {
-    "name": "dd-gestures", 
+// graphics-svg
+add('load', '3', {
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
 // editor-para-ie
-add('load', '5', {
+add('load', '4', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
-// transition-timer
+// graphics-vml-default
+add('load', '5', {
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
+});
+// graphics-svg-default
 add('load', '6', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+}, 
+    "trigger": "graphics"
+});
+// history-hash-ie
+add('load', '7', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
+});
+// transition-timer
+add('load', '8', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4077,33 +4105,8 @@ add('load', '6', {
 }, 
     "trigger": "transition"
 });
-// graphics-svg-default
-add('load', '7', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// scrollview-base-ie
-add('load', '8', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
-});
-// widget-base-ie
-add('load', '9', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
-});
 // dom-style-ie
-add('load', '10', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -4134,7 +4137,7 @@ add('load', '10', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '11', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -4143,6 +4146,12 @@ add('load', '11', {
     return ret;
 }, 
     "trigger": "selector"
+});
+// widget-base-ie
+add('load', '11', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -4153,28 +4162,19 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// graphics-svg
+// dd-gestures
 add('load', '13', {
-    "name": "graphics-svg", 
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
-// graphics-vml-default
+// scrollview-base-ie
 add('load', '14', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
 });
 // app-transitions-native
 add('load', '15', {
@@ -7957,6 +7957,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable": {
         "use": [
             "datatable-core", 
+            "datatable-table", 
             "datatable-head", 
             "datatable-body", 
             "datatable-base", 
@@ -7970,8 +7971,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable-base": {
         "requires": [
             "datatable-core", 
-            "datatable-head", 
-            "datatable-body", 
+            "datatable-table", 
             "base-build", 
             "widget"
         ], 
@@ -8079,6 +8079,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base-deprecated", 
             "plugin", 
             "recordset-sort"
+        ]
+    }, 
+    "datatable-table": {
+        "requires": [
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
+            "view", 
+            "classnamemanager"
         ]
     }, 
     "datatype": {
@@ -9705,7 +9714,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cbef8048f9a9861bf3d45fa1526688c7';
+YUI.Env[Y.version].md5 = 'e5b4221411e7a6f5c6c8941309f849e8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

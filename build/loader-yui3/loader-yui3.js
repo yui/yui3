@@ -675,6 +675,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable": {
         "use": [
             "datatable-core", 
+            "datatable-table", 
             "datatable-head", 
             "datatable-body", 
             "datatable-base", 
@@ -688,8 +689,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "datatable-base": {
         "requires": [
             "datatable-core", 
-            "datatable-head", 
-            "datatable-body", 
+            "datatable-table", 
             "base-build", 
             "widget"
         ], 
@@ -797,6 +797,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-base-deprecated", 
             "plugin", 
             "recordset-sort"
+        ]
+    }, 
+    "datatable-table": {
+        "requires": [
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
+            "view", 
+            "classnamemanager"
         ]
     }, 
     "datatype": {
@@ -2423,7 +2432,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cbef8048f9a9861bf3d45fa1526688c7';
+YUI.Env[Y.version].md5 = 'e5b4221411e7a6f5c6c8941309f849e8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

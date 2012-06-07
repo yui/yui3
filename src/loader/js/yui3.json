@@ -644,6 +644,7 @@
     "datatable": {
         "use": [
             "datatable-core", 
+            "datatable-table", 
             "datatable-head", 
             "datatable-body", 
             "datatable-base", 
@@ -657,8 +658,7 @@
     "datatable-base": {
         "requires": [
             "datatable-core", 
-            "datatable-head", 
-            "datatable-body", 
+            "datatable-table", 
             "base-build", 
             "widget"
         ], 
@@ -766,6 +766,15 @@
             "datatable-base-deprecated", 
             "plugin", 
             "recordset-sort"
+        ]
+    }, 
+    "datatable-table": {
+        "requires": [
+            "datatable-core", 
+            "datatable-head", 
+            "datatable-body", 
+            "view", 
+            "classnamemanager"
         ]
     }, 
     "datatype": {
