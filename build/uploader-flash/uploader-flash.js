@@ -321,15 +321,16 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
       this._setMultipleFiles();
       this._setFileFilters();
       this._triggerEnabled();
+      this._attachTabElements();
       this.after("multipleFilesChange", this._setMultipleFiles, this);
       this.after("fileFiltersChange", this._setFileFilters, this);
       this.after("enabledChange", this._triggerEnabled, this);
+      this.after("tabElementsChange", this._attachTabElements);
     }, this);
         
     this._swfReference.on("fileselect", this._updateFileList, this);
 
-        this.after("tabElementsChange", this._attachTabElements);
-        this._attachTabElements();
+
 
         // this._swfReference.on("trace", function (ev) {console.log(ev.message);});
 

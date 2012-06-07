@@ -19,7 +19,7 @@ YUI.add('swf', function(Y) {
         FLASH_VER = "10.0.22",
         EXPRESS_INSTALL_URL = "http://fpdownload.macromedia.com/pub/flashplayer/update/current/swf/autoUpdater.swf?" + Math.random(),
         EVENT_HANDLER = "SWF.eventHandler",
-        possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", menu:"", name:"", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
+        possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", loop:"", menu:"", name:"", play: "", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
 
         /**
          * The SWF utility is a tool for embedding Flash applications in HTML pages.
@@ -106,8 +106,9 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
         }
 
         objstring += "</object>";
-        oElement.setContent(objstring);
-
+        //using innerHTML as setHTML/setContent causes some issues with ExternalInterface for IE versions of the player
+        oElement.set("innerHTML", objstring);
+        
         this._swf = Node.one("#" + _id);
     } else {
         /**

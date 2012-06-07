@@ -145,7 +145,7 @@ YUI.add('file-flash', function(Y) {
                  *          <dd>The text of the error event reported by the Flash player instance</dd>
                  *  </dl>
                  */
-                 this.fire("uploaderror", {originEvent: event, statusText: event.text, status: event.status});         
+                 this.fire("uploaderror", {originEvent: event, status: event.status, statusText: event.message, source: event.source});         
 
           }
         }
