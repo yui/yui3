@@ -213,6 +213,8 @@ suite.add(new Y.Test.Case({
             '`navigate` event should be preventable': !html5,
             '`navigate` event should not fire when a link is clicked with a button other than the left button': !html5,
             '`navigate` event should not fire when a modifier key is pressed': !html5,
+            '`navigate` event should not fire when a click element is not an anchor': !html5,
+            '`navigate` event should not fire when a link is clicked with a URL from another origin': !html5,
             '`navigate` event should not fire for a hash URL that resolves to the current page': !html5 || Y.UA.phantomjs,
             '`navigate` event should fire for a hash-less URL that resolves to the current page': !html5,
             '`navigate` event should fire for a hash URL that resolves to the current page when `navigateOnHash` is `true`': !html5 || Y.UA.phantomjs
@@ -395,6 +397,32 @@ suite.add(new Y.Test.Case({
             button        : 1,
             metaKey       : true,
             currentTarget : Y.one('#link-full'),
+            preventDefault: function () {}
+        });
+    },
+
+    '`navigate` event should not fire when a click element is not an anchor': function () {
+        this.pjax.once('navigate', function (e) {
+            Assert.fail();
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-fake'),
+            preventDefault: function () {}
+        });
+    },
+
+    '`navigate` event should not fire when a link is clicked with a URL from another origin': function () {
+        this.pjax.once('navigate', function (e) {
+            Assert.fail();
+        });
+
+        // Fake click event.
+        this.pjax._onLinkClick({
+            button        : 1,
+            currentTarget : Y.one('#link-mailto'),
             preventDefault: function () {}
         });
     },
