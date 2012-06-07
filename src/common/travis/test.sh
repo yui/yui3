@@ -37,3 +37,4 @@ fi
 
 echo "Starting Grover Tests"
 ${grover} -t 180 -c ${con} -i ./src/common/node/batch.js
+

@@ -1086,15 +1086,10 @@ with any configuration info required for the module.
             loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
-            missing = args;
             loader._boot = false;
         }
         
-        if (!Y.Loader) {
-            // process each requirement and any additional requirements
-            // the module metadata specifies
-            process(args);
-        }
+        process(args);
 
         len = missing.length;
 
@@ -4833,6 +4828,12 @@ var NOT_FOUND = {},
         return path;
     };
 
+
+    if (!YUI.Env._cssLoaded) {
+        YUI.Env._cssLoaded = {};
+    }
+
+
 /**
  * The component metadata is stored in Y.Env.meta.
  * Part of the loader module.
@@ -5042,7 +5043,7 @@ Y.Loader = function(o) {
      * @property ignoreRegistered
      * @default false
      */
-    //self.ignoreRegistered = false;
+    self.ignoreRegistered = o.ignoreRegistered;
 
     /**
      * Root path to prepend to module path for the combo
@@ -5228,12 +5229,6 @@ Y.Loader = function(o) {
         self.testresults = Y.config.tests;
     }
     
-    /*
-    if (self.ignoreRegistered) {
-        self.loaded = {};
-    }
-    */
-
     /**
      * List of rollup files found in the library metadata
      * @property rollups
@@ -5301,19 +5296,25 @@ Y.Loader = function(o) {
 
     if (self.ignoreRegistered) {
         //Clear inpage already processed modules.
-        self.resetModules();
+        self._resetModules();
     }
 
 };
 
 Y.Loader.prototype = {
+    /**
+    * Checks the cache for modules and conditions, if they do not exist
+    * process the default metadata and populate the local moduleInfo hash.
+    * @method _populateCache
+    * @private
+    */
     _populateCache: function() {
         var self = this,
             defaults = META.modules,
             cache = GLOBAL_ENV._renderedMods,
             i;
 
-        if (cache) {
+        if (cache && !self.ignoreRegistered) {
             for (i in cache) {
                 if (cache.hasOwnProperty(i)) {
                     self.moduleInfo[i] = Y.merge(cache[i]);
@@ -5336,7 +5337,12 @@ Y.Loader.prototype = {
         }
 
     },
-    resetModules: function() {
+    /**
+    * Reset modules in the module cache to a pre-processed state so additional
+    * computations with a different skin or language will work as expected.
+    * @private _resetModules
+    */
+    _resetModules: function() {
         var self = this, i, o;
         for (i in self.moduleInfo) {
             if (self.moduleInfo.hasOwnProperty(i)) {
@@ -5360,6 +5366,8 @@ Y.Loader.prototype = {
                         }
                     }
                 }
+                delete mod.langCache;
+                delete mod.skinCache;
                 if (mod.skinnable) {
                     self._addSkin(self.skin.defaultSkin, mod.name);
                 }
@@ -6351,9 +6359,6 @@ Y.Loader.prototype = {
         if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
             return false;
         }
-        if (!YUI.Env._cssLoaded) {
-            YUI.Env._cssLoaded = {};
-        }
         var el = YUI.Env.cssStampEl,
             ret = false,
             mod = YUI.Env._cssLoaded[name],
@@ -7165,7 +7170,7 @@ Y.Loader.prototype = {
             type = self.loadType || 'js';
 
         if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { 
-            self.resetModules();
+            self._resetModules();
         }
 
         if (calc) {
