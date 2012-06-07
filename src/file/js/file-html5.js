@@ -77,6 +77,8 @@
         * @protected
         */      
         _uploadEventHandler: function (event) {
+            var xhr = this.get("xhr");
+
             switch (event.type) {
                 case "progress":
                   /**
@@ -122,8 +124,7 @@
                    if (xhr.status >= 200 && xhr.status <= 299) {
                         this.fire("uploadcomplete", {originEvent: event,
                                                      data: event.target.responseText});
-                        var xhrupload = this.get("xhr").upload,
-                            xhr = this.get("xhr"),
+                        var xhrupload = xhr.upload,
                             boundEventHandler = this.get("boundEventHandler");
     
                         xhrupload.removeEventListener ("progress", boundEventHandler);
@@ -141,7 +142,6 @@
                    break;
 
                 case "error":
-                   var xhr = this.get("xhr");
                   /**
                    * Signals that this file's upload has encountered an error. 
                    *
