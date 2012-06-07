@@ -332,6 +332,9 @@ YUI.add('uploader-queue', function(Y) {
             if (this.currentFiles[id]) {
               this.currentFiles[id].cancelUpload();
               this._unregisterUpload(this.currentFiles[id]);
+              if (this._currentState === UploaderQueue.UPLOADING) {
+                this._startNextFile();
+              }
             }
             else {
               for (var i = 0, len = this.queuedFiles.length; i < len; i++) {
