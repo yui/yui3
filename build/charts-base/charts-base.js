@@ -6042,14 +6042,17 @@ Fills.prototype = {
         {
             return;
         }
-        var len = xcoords.length,
+        var isNumber = Y_Lang.isNumber,
+            len = xcoords.length,
             firstX = xcoords[0],
             firstY = ycoords[0],
             lastValidX = firstX,
             lastValidY = firstY,
             nextX,
             nextY,
-            i = 1,
+            pointValid,
+            noPointsRendered = true,
+            i = 0,
             styles = this.get("styles").area,
             path = this._getPath(),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
@@ -6059,21 +6062,31 @@ Fills.prototype = {
             opacity: styles.alpha
         });
         path.set("stroke", {weight: 0});
-        path.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
         {
             nextX = xcoords[i];
             nextY = ycoords[i];
-            if(isNaN(nextY))
+            pointValid = isNumber(nextX) && isNumber(nextY); 
+            if(!pointValid)
             {
-                lastValidX = nextX;
-                lastValidY = nextY;
                 continue;
             }
-            path.lineTo(nextX, nextY);
+            if(noPointsRendered)
+            {
+                this._firstValidX = nextX;
+                this._firstValidY = nextY;
+                noPointsRendered = false;
+                path.moveTo(nextX, nextY);
+            }
+            else
+            {
+                path.lineTo(nextX, nextY);
+            }
             lastValidX = nextX;
             lastValidY = nextY;
         }
+        this._lastValidX = lastValidX;
+        this._lastValidY = lastValidY;
         path.end();
     },
 	
@@ -6245,18 +6258,24 @@ Fills.prototype = {
     _getClosingPoints: function()
     {
         var xcoords = this.get("xcoords").concat(),
-            ycoords = this.get("ycoords").concat();
+            ycoords = this.get("ycoords").concat(),
+            firstValidIndex,
+            lastValidIndex;
         if(this.get("direction") === "vertical")
         {
+            lastValidIndex = this._getLastValidIndex(xcoords);
+            firstValidIndex = this._getFirstValidIndex(xcoords);
+            ycoords.push(ycoords[lastValidIndex]);
+            ycoords.push(ycoords[firstValidIndex]);
             xcoords.push(this._leftOrigin);
             xcoords.push(this._leftOrigin);
-            ycoords.push(ycoords[ycoords.length - 1]);
-            ycoords.push(ycoords[0]);
         }
         else
         {
-            xcoords.push(xcoords[xcoords.length - 1]);
-            xcoords.push(xcoords[0]);
+            lastValidIndex = this._getLastValidIndex(ycoords);
+            firstValidIndex = this._getFirstValidIndex(ycoords);
+            xcoords.push(xcoords[lastValidIndex]);
+            xcoords.push(xcoords[firstValidIndex]);
             ycoords.push(this._bottomOrigin);
             ycoords.push(this._bottomOrigin);
         }
@@ -6264,7 +6283,7 @@ Fills.prototype = {
         ycoords.push(ycoords[0]);
         return [xcoords, ycoords];
     },
-
+    
     /**
      * Concatenates coordinate array with the correct coordinates for closing an area stack.
      *
@@ -7384,6 +7403,48 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
         this._dataLength = dataLength;
+    },
+
+    /**
+     * Finds the first valid index of an array coordinates.
+     *
+     * @method _getFirstValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getFirstValidIndex: function(coords)
+    {
+        var coord,
+            i = -1,
+            limit = coords.length;
+        while(!Y_Lang.isNumber(coord) && i < limit)
+        {
+            i += 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
+     * Finds the last valid index of an array coordinates.
+     *
+     * @method _getLastValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getLastValidIndex: function(coords)
+    {
+        var coord,
+            i = coords.length,
+            limit = -1;
+        while(!Y_Lang.isNumber(coord) && i > limit)
+        {
+            i -= 1;
+            coord = coords[i];
+        }
+        return i;
     },
 
     /**
@@ -11727,8 +11788,7 @@ ChartBase.ATTRS = {
 
         setter: function(val)
         {
-            var dataProvider = this._setDataValues(val),
-                seriesKeys = this.get("seriesKeys");
+            var dataProvider = this._setDataValues(val);
             if(!this._seriesKeysExplicitlySet)
             {
                 this._seriesKeys = this._buildSeriesKeys(dataProvider);
