@@ -1323,7 +1323,8 @@
             "node", 
             "event-custom", 
             "pluginhost", 
-            "matrix"
+            "matrix", 
+            "classnamemanager"
         ]
     }, 
     "graphics-canvas": {
@@ -1931,7 +1932,8 @@
     }, 
     "scrollview-paginator": {
         "requires": [
-            "plugin"
+            "plugin", 
+            "classnamemanager"
         ]
     }, 
     "scrollview-scrollbars": {
