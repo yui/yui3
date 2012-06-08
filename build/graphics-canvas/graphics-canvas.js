@@ -3135,4 +3135,4 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
 Y.CanvasGraphic = CanvasGraphic;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['graphics']});
+}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
