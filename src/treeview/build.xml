@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- YUI 3 Gallery Component Build File -->
+<project name="yui3treeview" default="local">
+    <description>yui3treeview Build File</description>
+    <property file="build.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>

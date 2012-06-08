@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
+		<link rel="stylesheet" type="text/css" href="../assets/treeview-menu.css">
+	</head>
+	<body class="yui3-skin-sam">
+		   <div id="myTree"></div>
+		   <button id="add">Add more</button>
+  
+        <script src="http://yui.yahooapis.com/3.5.1/build/yui/yui-min.js"></script>
+        <script src="../../../build/gallery-yui3treeview/gallery-yui3treeview.js"></script>
+
+
+        <script type="text/javascript">
+        YUI({
+            filter:"raw", 
+            combine:false
+        }).use('gallery-yui3treeview',function (Y) {
+        
+            var tree = new Y.TreeView({
+               id: "tree",
+               label : "This my tree",
+               children: [
+                   {  id: "leaf-1", label: "Leaf One" },
+                   { id: "leaf-2", label: "Leaf Two" },
+                   { type: "TreeView",id: "subtree", label: "Subtree", children: [
+                      { id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                      {  id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                      { id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                      { id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+                   ]}
+               ]
+            });
+            
+            tree.render("#myTree");
+            //console.log(child.item(0).get("label"));
+            
+            Y.one("#add").on("click",function(e){
+                var child = tree.add({ type: "Treeview",id: "subtree2", label: "Subtree2",                lazyLoad : true,
+children: [
+                      { id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                      {  id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                      { id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                      { id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+                   ]},0);
+
+            });
+
+         });
+        	</script>
+
+	</body>
+</html>

@@ -1,0 +1,81 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Treeview</title>
+
+<style type="text/css">
+.title {
+    margin-bottom: 10px;
+}
+
+</style>
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.1/build/cssreset/reset-min.css">
+<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0pr3/build/yui/yui.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../assets/treeview-menu.css">
+
+<!--end custom header content for this example-->
+
+</head>
+
+<body class="yui3-skin-sam  yui-skin-sam">
+
+
+			
+<div class="playground">
+<h1 class='title'>YUI3 Treeview example: Constructing via an object literal</h1>
+<ul id="mytree">
+
+
+</ul>
+</div>
+<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+
+
+<script type="text/javascript">
+    //difference between init and initalizer
+   //REVIEW: if not type specified, then everything is a trealeaf, but a leaf could contain a tree in that case it's treated as  a tree eventho is a leaf that contains another tree. 
+   //REVIEW: Events no longer fire twice. 
+   //REVIEW: Should I move the tree tempplate into an atribute?
+    YUI({ 
+        modules: {
+             "gallery-yui3treeview": {
+                fullpath : "../../../../yui3-gallery/build/gallery-yui3treeview/gallery-yui3treeview.js",
+                requires : ["substitute", "widget", "widget-parent", "widget-child","node-focusmanager"]
+            }        },
+        filter:"raw",
+        combine : false
+     }).use("gallery-yui3treeview", function (Y) {
+
+        var treeview = new Y.TreeView({  
+            srcNode: '#mytree',
+            type: "TreeView",
+            children: [
+                {
+                    label: "level1-1",
+                    type: "TreeView",
+                    children: [
+                        {label: "level2-1"},
+                        {label: "level2-2"}
+                    ]
+                },
+                {
+                    label : "level1-2"
+                }
+            ]
+        });
+       
+        treeview.render();
+      });
+    
+    </script>
+<!--END SOURCE CODE FOR EXAMPLE =============================== -->
+
+
+<!--MyBlogLog instrumentation-->
+</body>
+</html>
+
