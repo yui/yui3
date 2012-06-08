@@ -78,8 +78,18 @@ YUI.add('io-nodejs', function(Y) {
                     method: config.method,
                     uri: uri
                 };
+
                 if (config.data) {
-                    rconf.body = config.data;
+                    if (Y.Lang.isObject(config.data)) {
+                        if (Y.QueryString && Y.QueryString.stringify) {
+                            Y.log('Stringifying config.data for request', 'info', 'io');
+                            rconf.body = Y.QueryString.stringify(config.data);
+                        } else {
+                            Y.log('Failed to stringify config.data object, likely because `querystring-stringify-simple` is missing.', 'warn', 'io');
+                        }
+                    } else if (Y.Lang.isString(config.data)) {
+                        rconf.body = config.data;
+                    }
                 }
                 if (config.headers) {
                     rconf.headers = config.headers;
