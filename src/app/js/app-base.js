@@ -377,7 +377,7 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // Support the callback function being either the third or fourth arg.
         if (callback) {
-            options.callback = callback;
+            options = Y.merge(options, {callback: callback});
         } else if (Lang.isFunction(options)) {
             options = {callback: options};
         }
@@ -679,13 +679,11 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     _navigate: function (url, options) {
         url = this._upgradeURL(url);
 
-        options || (options = {});
-
         if (!this.get('serverRouting')) {
             // Force navigation to be enhanced and handled by the app when
             // `serverRouting` is falsy because the server might not be able to
             // properly handle the request.
-            'force' in options || (options.force = true);
+            options = Y.merge({force: true}, options);
         }
 
         return PjaxBase.prototype._navigate.call(this, url, options);
