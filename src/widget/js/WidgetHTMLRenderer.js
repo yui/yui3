@@ -147,7 +147,7 @@ Y.WidgetHTMLRenderer.prototype = {
     _renderBox: function(buffer, context) {
 
         context.id = this.get(ID);
-        
+
         this._renderBoxClassNames(context);
 
         if (this.CONTENT_TEMPLATE) {
@@ -251,7 +251,7 @@ Y.WidgetHTMLRenderer.prototype = {
      * When overriding this value, tokens should be maintained.
      * 
      * @property BOUNDING_TEMPLATE
-     * @type String 
+     * @type String
      */
     BOUNDING_TEMPLATE : '<div id="{{id}}" class="{{boundingClasses}}">{{{contentBox}}}</div>',
 
@@ -289,5 +289,32 @@ Y.WidgetHTMLRenderer.prototype = {
         }
 
         return node;
+    }
+};
+
+Y.WidgetHTMLRenderer.ATTRS = {
+
+    boundingBox: {
+        getter : function(val) {
+            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                this._handling = true;
+                this.render();
+                val = this._state.get("boundingBox", "value");
+            }
+            return val;
+        }
+    },
+
+    contentBox: {
+        getter : function(val) {
+            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                this._handling = true;
+                console.log("foo");
+ 
+                                this.render();
+                                val = this._state.get("contentBox", "value");
+            }
+            return val;
+        }
     }
 };

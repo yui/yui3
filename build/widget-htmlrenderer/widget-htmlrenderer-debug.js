@@ -149,7 +149,7 @@ Y.WidgetHTMLRenderer.prototype = {
     _renderBox: function(buffer, context) {
 
         context.id = this.get(ID);
-        
+
         this._renderBoxClassNames(context);
 
         if (this.CONTENT_TEMPLATE) {
@@ -291,6 +291,33 @@ Y.WidgetHTMLRenderer.prototype = {
         }
 
         return node;
+    }
+};
+
+Y.WidgetHTMLRenderer.ATTRS = {
+
+    boundingBox: {
+        getter : function(val) {
+            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                this._handling = true;
+                this.render();
+                val = this._state.get("boundingBox", "value");
+            }
+            return val;
+        }
+    },
+
+    contentBox: {
+        getter : function(val) {
+            if (this.get("initialized") && !this.get("rendered") && !this._handling) {
+                this._handling = true;
+                console.log("foo");
+ 
+                                this.render();
+                                val = this._state.get("contentBox", "value");
+            }
+            return val;
+        }
     }
 };
 
