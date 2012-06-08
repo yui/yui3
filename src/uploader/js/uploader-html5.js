@@ -258,10 +258,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
         this._bindSelectButton();
         this._setMultipleFiles();
+        this._setFileFilters();
         this._bindDropArea();
         this._triggerEnabled();
 
         this.after("multipleFilesChange", this._setMultipleFiles, this);
+        this.after("fileFiltersChange", this._setFileFilters, this);
         this.after("enabledChange", this._triggerEnabled, this);
         this.after("selectFilesButtonChange", this._bindSelectButton, this);
         this.after("dragAndDropAreaChange", this._bindDropArea, this);
@@ -285,6 +287,7 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         this.get("contentBox").append(this._fileInputField);
         this._fileInputField.on("change", this._updateFileList, this);
         this._setMultipleFiles();
+        this._setFileFilters();
     },
 
 
@@ -351,19 +354,28 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                 case "drop":
 
                    var newfiles = event._event.dataTransfer.files,
-                       parsedFiles = [];
-
-                   Y.each(newfiles, function (value) {
-                     parsedFiles.push(new Y.FileHTML5(value));
-                   });
-
-
-                   this.fire("fileselect", {fileList: parsedFiles});
+                       parsedFiles = [],
+                       filterFunc = this.get("fileFilterFunction");
+              
+                   if (filterFunc) {
+                        Y.each(newfiles, function (value) {
+                          var newfile = new Y.FileHTML5(value);
+                          if (filterFunc(newfile)) {
+                              parsedFiles.push(newfile);
+                          }
+                        });
+                   }
+                   else {
+                        Y.each(newfiles, function (value) {
+                              parsedFiles.push(new Y.FileHTML5(value));
+                        });
+                   }
 
                    if (parsedFiles.length > 0) {
                    var oldfiles = this.get("fileList");
                    this.set("fileList", 
-                            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+                            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles);
+                   this.fire("fileselect", {fileList: parsedFiles});
                    }
 
                    this.fire("drop");
@@ -406,6 +418,23 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     },
 
     /**
+     * Syncs the state of the `fileFilters` attribute between this class
+     * and the file input field.
+     * 
+     * @method _setFileFilters
+     * @protected
+     */
+    _setFileFilters : function () {
+            if (this.get("fileFilters").length > 0) {
+                this._fileInputField.set("accept", this.get("fileFilters").join(","));
+            }
+            else {
+                this._fileInputField.set("accept", "");
+            }
+    },
+
+
+    /**
      * Syncs the state of the `enabled` attribute between this class
      * and the underlying button.
      * 
@@ -438,22 +467,35 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      */
     _updateFileList : function (ev) {
        var newfiles = ev.target.getDOMNode().files,
-           parsedFiles = [];
+           parsedFiles = [],
+           filterFunc = this.get("fileFilterFunction");
 
-       Y.each(newfiles, function (value) {
-         parsedFiles.push(new Y.FileHTML5(value));
-       });
+       if (filterFunc) {
+          Y.each(newfiles, function (value) {
+            var newfile = new Y.FileHTML5(value);
+            if (filterFunc(newfile)) {
+                parsedFiles.push(newfile);
+            }
+          });
+       }
+       else {
+          Y.each(newfiles, function (value) {
+                parsedFiles.push(new Y.FileHTML5(value));
+          });
+       }
 
+       if (parsedFiles.length > 0) {
+           var oldfiles = this.get("fileList");
 
-       this.fire("fileselect", {fileList: parsedFiles});
+           this.set("fileList", 
+                    this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
-       var oldfiles = this.get("fileList");
-
-       this.set("fileList", 
-                this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+           this.fire("fileselect", {fileList: parsedFiles});
+       }
 
        this._rebindFileField();
     },
+
 
     /**
      * Handles and retransmits events fired by `Y.File` and `Y.Uploader.Queue`.
@@ -710,6 +752,40 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
             value: "continue",
             validator: function (val, name) {
                  return (val === UploaderQueue.CONTINUE || val === UploaderQueue.STOP || val === UploaderQueue.RESTART_ASAP || val === UploaderQueue.RESTART_AFTER);           }
+        },
+
+        /**
+         * An array indicating what fileFilters should be applied to the file
+         * selection dialog. Each element in the array should be a string
+         * indicating the Media (MIME) type for the files that should be supported
+         * for selection. The Media type strings should be properly formatted
+         * or this parameter will be ignored. Examples of valid strings include: 
+         * "audio/*", "video/*", "application/pdf", etc. More information
+         * on valid Media type strings is available here: 
+         * http://www.iana.org/assignments/media-types/index.html
+         * @attribute fileFilters
+         * @type {Array}
+         * @default null
+         */
+        fileFilters: {
+          value: null
+        },
+
+        /**
+         * A filtering function that is applied to every file selected by the user.
+         * The function receives the `Y.File` object and must return a Boolean value.
+         * If a `false` value is returned, the file in question is not added to the
+         * list of files to be uploaded.
+         * Use this function to put limits on file sizes or check the file names for
+         * correct extension, but make sure that a server-side check is also performed,
+         * since any client-side restrictions are only advisory and can be circumvented.
+         *
+         * @attribute fileFilterFunction
+         * @type {Function}
+         * @default null
+         */
+        fileFilterFunction: {
+          value: null
         },
 
         /**
