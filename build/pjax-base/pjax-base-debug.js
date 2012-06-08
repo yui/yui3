@@ -208,8 +208,8 @@ PjaxBase.prototype = {
             return false;
         }
 
-        options || (options = {});
-        options.url = url;
+        // Make a copy of `options` before modifying it.
+        options = Y.merge(options, {url: url});
 
         var currentURL = this._getURL(),
             hash, hashlessURL;
