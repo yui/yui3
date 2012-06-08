@@ -3002,4 +3002,4 @@ Y.SVGGraphic = SVGGraphic;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['graphics']});
+}, '@VERSION@' ,{requires:['graphics'], skinnable:false});

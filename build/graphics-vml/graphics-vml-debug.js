@@ -2981,4 +2981,4 @@ Y.VMLGraphic = VMLGraphic;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['graphics']});
+}, '@VERSION@' ,{requires:['graphics'], skinnable:false});

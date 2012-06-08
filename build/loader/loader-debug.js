@@ -4221,7 +4221,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node", 
             "event-custom", 
             "pluginhost", 
-            "matrix"
+            "matrix", 
+            "classnamemanager"
         ]
     }, 
     "graphics-canvas": {
@@ -4868,7 +4869,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "scrollview-paginator": {
         "requires": [
-            "plugin"
+            "plugin", 
+            "classnamemanager"
         ]
     }, 
     "scrollview-scrollbars": {
@@ -5269,7 +5271,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e5b4221411e7a6f5c6c8941309f849e8';
+YUI.Env[Y.version].md5 = '5415290572140b1a40708a1ba1e554a6';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
