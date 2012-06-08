@@ -517,7 +517,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      var newfiles = ev.fileList,
          fileConfObjects = [],
          parsedFiles = [],
-         swfRef = this._swfReference;
+         swfRef = this._swfReference,
+         filterFunc = this.get("fileFilterFunction");
  
      Y.each(newfiles, function (value) {
        var newFileConf = {};
@@ -532,16 +533,28 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
        fileConfObjects.push(newFileConf);
      });
 
-     Y.each(fileConfObjects, function (value) {
-       parsedFiles.push(new Y.FileFlash(value));
-     });
+       if (filterFunc) {
+          Y.each(fileConfObjects, function (value) {
+            var newfile = new Y.FileFlash(value);
+            if (filterFunc(newfile)) {
+                parsedFiles.push(newfile);
+            }
+          });
+       }
+       else {
+          Y.each(fileConfObjects, function (value) {
+            parsedFiles.push(new Y.FileFlash(value));
+          });
+       }
 
-     this.fire("fileselect", {fileList: parsedFiles});
+     if (parsedFiles.length > 0) {
+        var oldfiles = this.get("fileList");
 
-     var oldfiles = this.get("fileList");
+        this.set("fileList", 
+                 this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
-   this.set("fileList", 
-             this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+        this.fire("fileselect", {fileList: parsedFiles});
+     }
 
   },
 
@@ -802,6 +815,23 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default null
          */
         fileFilters: {
+          value: null
+        },
+
+        /**
+         * A filtering function that is applied to every file selected by the user.
+         * The function receives the `Y.File` object and must return a Boolean value.
+         * If a `false` value is returned, the file in question is not added to the
+         * list of files to be uploaded.
+         * Use this function to put limits on file sizes or check the file names for
+         * correct extension, but make sure that a server-side check is also performed,
+         * since any client-side restrictions are only advisory and can be circumvented.
+         *
+         * @attribute fileFilterFunction
+         * @type {Function}
+         * @default null
+         */
+        fileFilterFunction: {
           value: null
         },
          
