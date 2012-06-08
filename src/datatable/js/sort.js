@@ -358,11 +358,16 @@ Y.mix(Sortable.prototype, {
     @since 3.5.0
     **/
     _bindSortUI: function () {
-        this.after(['sortableChange', 'sortByChange', 'columnsChange'],
-            Y.bind('_uiSetSortable', this));
+        var handles = this._eventHandles;
+        
+        if (!handles.sortAttrs) {
+            handles.sortAttrs = this.after(
+                ['sortableChange', 'sortByChange', 'columnsChange'],
+                Y.bind('_uiSetSortable', this));
+        }
 
-        if (this._theadNode) {
-            this._sortHandle = this.delegate(['click','keydown'],
+        if (!handles.sortUITrigger && this._theadNode) {
+            handles.sortUITrigger = this.delegate(['click','keydown'],
                 Y.rbind('_onUITriggerSort', this),
                 '.' + this.getClassName('sortable', 'column'));
         }
@@ -378,19 +383,6 @@ Y.mix(Sortable.prototype, {
     **/
     _defSortFn: function (e) {
         this.set.apply(this, ['sortBy', e.sortBy].concat(e.details));
-    },
-
-    /**
-    Removes the click subscription from the header for sorting.
-
-    @method destructor
-    @protected
-    @since 3.5.0
-    **/
-    destructor: function () {
-        if (this._sortHandle) {
-            this._sortHandle.detach();
-        }
     },
 
     /**
