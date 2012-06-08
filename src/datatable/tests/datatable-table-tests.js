@@ -242,7 +242,7 @@ suite.add(new Y.Test.Case({
         var caption = this.table.get('container').one('caption');
 
         Y.Assert.isInstanceOf(Y.Node, caption);
-        Y.Assert.areSame(caption, this.table._captionNode);
+        Y.Assert.areSame(caption, this.table.captionNode);
         Y.Assert.areSame('caption content', caption.get('text'));
     },
 
@@ -254,7 +254,7 @@ suite.add(new Y.Test.Case({
         var caption = this.table.get('container').one('caption');
 
         Y.Assert.isNull(caption);
-        Y.Assert.isUndefined(this.table._captionNode);
+        Y.Assert.isUndefined(this.table.captionNode);
     },
 
     "set('caption', '') should remove caption": function () {
@@ -265,7 +265,7 @@ suite.add(new Y.Test.Case({
         var caption = this.table.get('container').one('caption');
 
         Y.Assert.isNull(caption);
-        Y.Assert.isUndefined(this.table._captionNode);
+        Y.Assert.isUndefined(this.table.captionNode);
     },
 
     "set('caption', newVal) should update DOM": function () {
@@ -276,7 +276,7 @@ suite.add(new Y.Test.Case({
         var caption = this.table.get('container').one('caption');
 
         Y.Assert.isInstanceOf(Y.Node, caption);
-        Y.Assert.areSame(caption, this.table._captionNode);
+        Y.Assert.areSame(caption, this.table.captionNode);
         Y.Assert.areSame('new caption text', caption.get('text'));
     }
 }));
@@ -299,7 +299,7 @@ suite.add(new Y.Test.Case({
     "configured summary should render to DOM": function () {
         this.table.set('summary', 'summary content').render();
 
-        var summary = this.table._tableNode.getAttribute('summary');
+        var summary = this.table.tableNode.getAttribute('summary');
 
         Y.Assert.areSame('summary content', summary);
     },
@@ -309,7 +309,7 @@ suite.add(new Y.Test.Case({
 
         this.table.set('summary', null);
 
-        var summary = this.table._tableNode.getAttribute('summary');
+        var summary = this.table.tableNode.getAttribute('summary');
 
         Y.Assert.areSame('', summary);
     },
@@ -319,7 +319,7 @@ suite.add(new Y.Test.Case({
 
         this.table.set('summary', '');
 
-        var summary = this.table._tableNode.getAttribute('summary');
+        var summary = this.table.tableNode.getAttribute('summary');
 
         Y.Assert.areSame('', summary);
     },
@@ -329,7 +329,7 @@ suite.add(new Y.Test.Case({
 
         this.table.set('summary', 'new summary text');
 
-        var summary = this.table._tableNode.getAttribute('summary');
+        var summary = this.table.tableNode.getAttribute('summary');
 
         Y.Assert.areSame('new summary text', summary);
     }
@@ -356,33 +356,33 @@ suite.add(new Y.Test.Case({
     "configured width should set table width": function () {
         this.table.set('width', '200px').render();
 
-        Y.Assert.areSame(200, this.table._tableNode.get('offsetWidth'));
+        Y.Assert.areSame(200, this.table.tableNode.get('offsetWidth'));
     },
 
     "set('width', newVal) should update table width": function () {
         this.table.set('width', '200px').render();
 
-        Y.Assert.areSame(200, this.table._tableNode.get('offsetWidth'));
+        Y.Assert.areSame(200, this.table.tableNode.get('offsetWidth'));
 
         this.table.set('width', '300px');
 
-        Y.Assert.areSame(300, this.table._tableNode.get('offsetWidth'));
+        Y.Assert.areSame(300, this.table.tableNode.get('offsetWidth'));
     },
 
     "set('width', '') should allow natural table width": function () {
         this.table.render();
 
-        var naturalWidth = this.table._tableNode.get('offsetWidth'),
+        var naturalWidth = this.table.tableNode.get('offsetWidth'),
             wide = naturalWidth + 100;
 
         this.table.set('width', wide + 'px');
 
-        Y.Assert.areSame(wide, this.table._tableNode.get('offsetWidth'));
+        Y.Assert.areSame(wide, this.table.tableNode.get('offsetWidth'));
 
         this.table.set('width', '');
 
         Y.Assert.areSame(naturalWidth,
-            this.table._tableNode.get('offsetWidth'));
+            this.table.tableNode.get('offsetWidth'));
     }
 }));
 

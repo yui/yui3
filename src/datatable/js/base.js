@@ -71,10 +71,10 @@ of the row data need to have a corresponding column.  However, only those
 columns included in the `columns` configuration attribute will be rendered.
 
 Other column configuration properties are supported by the configured
-`headerView`, `bodyView`, `footerView` classes as well as any features added by
-plugins or class extensions.  See the description of DataTable.HeaderView,
-DataTable.BodyView, and other DataTable feature classes to see what column
-properties they support.
+`view`, class as well as any features added by plugins or class extensions.
+See the description of DataTable.TableView and its subviews
+DataTable.HeaderView, DataTable.BodyView, and DataTable.FooterView (and other
+DataTable feature classes) to see what column properties they support.
 
 Some examples of column configurations would be:
 
@@ -147,17 +147,15 @@ property on the DataTable instance.
 ### Rendering
 
 Table rendering is a collaborative process between the DataTable and its
-configured `headerView`, `bodyView`, and `footerView`.  The DataTable renders
-the `<table>` and `<caption>`, but the contents of the table are delegated to
-instances of the classes provided to the `headerView`, `bodyView`, and
-`footerView` attributes. If any of these attributes is unset, that portion of
-the table won't be rendered.
-
-DataTable.Base assigns the default `headerView` to `Y.DataTable.HeaderView` and
-the default `bodyView` to `Y.DataTable.BodyView`, though either can be
-overridden for custom rendering.  No default `footerView` is assigned. See
-those classes for more details about how they operate.
-
+configured `view`. The DataTable creates an instance of the configured `view`
+(DataTable.TableView by default), and calls its `render()` method.
+DataTable.TableView, for instance, then creates the `<table>` and `<caption>`,
+then delegates the rendering of the specific sections of the table to subviews,
+which can be configured as `headerView`, `bodyView`, and `footerView`.
+DataTable.TableView defaults the `headerView` to DataTable.HeaderView and the
+`bodyView` to DataTable.BodyView, but leaves the `footerView` unassigned.
+Setting any subview to `null` will result in that table section not being
+rendered.
 
 @class DataTable
 @extends DataTable.Base
@@ -206,8 +204,8 @@ var table = new Y.DataTable.Base({
 table.render('#in-here');
 </code></pre>
 
-DataTable.Base is built from DataTable.Core, and sets the default `headerView`
-to `Y.DataTable.HeaderView` and default `bodyView` to `Y.DataTable.BodyView`.
+DataTable.Base is built from DataTable.Core, and sets the default `view`
+to `Y.DataTable.TableView`.
 
 @class Base
 @extends Widget
@@ -395,14 +393,8 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @since 3.6.0
     **/
     initializer: function () {
-        var preventViewRender = Y.bind('_preventViewRenderFn', this);
-
-        this.publish({
-            renderView  : { defaultFn: Y.bind('_defRenderViewFn', this) },
-            renderTable : { preventedFn: preventViewRender },
-            renderHeader: { preventedFn: preventViewRender },
-            renderBody  : { preventedFn: preventViewRender },
-            renderFooter: { preventedFn: preventViewRender }
+        this.publish('renderView', {
+            defaultFn: Y.bind('_defRenderViewFn', this)
         });
 
         // Have to use get('columns'), not config.columns because the setter
@@ -413,18 +405,6 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         // _displayColumns on the instance.  They need to be updated to
         // TableView plugins, most likely.
         this.after('columnsChange', Y.bind('_afterDisplayColumnsChange', this));
-    },
-
-    /**
-    Relays the `preventDefault` to the originating event.
-
-    @method _preventViewRenderFn
-    @param {EventFacade} e The render event
-    @protected
-    @since 3.6.0
-    **/
-    _preventViewRenderFn: function (e) {
-        e.originEvent && e.originEvent.preventDefault();
     },
 
     /**
@@ -441,6 +421,14 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         this.view.set(attr, e.newVal);
     },
 
+    /**
+    Instantiates the configured `view` class that will be responsible for
+    setting up the View class.
+
+    @method @renderUI
+    @protected
+    @since 3.6.0
+    **/
     renderUI: function () {
         var self = this,
             View = this.get('view');
@@ -521,8 +509,7 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     },
 
     /**
-    Updates the UI with the current attribute state.  Fires the `renderHeader`,
-    `renderBody`, and `renderFooter` events;
+    Fires the `renderView` event, delegating UI updates to the configured View.
 
     @method syncUI
     @since 3.5.0

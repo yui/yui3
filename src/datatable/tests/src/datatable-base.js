@@ -259,48 +259,23 @@ suite.add(new Y.Test.Case({
         Y.Assert.isTrue(pass);
     },
 
-    "render() should relay renderX events": function () {
-        var pass = {};
+    "render() should bubble renderX events from view": function () {
+        var pass = {},
+            body = Y.one('body'),
+            sectionView = {
+                get: function () { return Y.one('body'); }
+            };
 
         this.table.set('view', Y.Base.create('table', Y.View, [], {
             render: function () {
-                this.fire('renderHeader', { view: true });
-                this.fire('renderFooter', { view: true });
-                this.fire('renderBody', { view: true });
+                this.fire('renderHeader', { view: sectionView });
+                this.fire('renderFooter', { view: sectionView });
+                this.fire('renderBody', { view: sectionView });
             }
-        })).on(['renderHeader', 'renderFooter', 'renderBody'], function (e) {
-            pass[e.type.slice(e.type.lastIndexOf(':') + 1)] = true;
-        });
-
-        this.table.render();
-
-        Y.Assert.isTrue(pass.renderHeader);
-        Y.Assert.isTrue(pass.renderFooter);
-        Y.Assert.isTrue(pass.renderBody);
-    },
-
-    "Preventing relayed renderX events should prevent the originEvent": function () {
-        var pass = {};
-
-        function preventedFn(e) {
-            pass[e.type.slice(e.type.lastIndexOf(':') + 1)] = true;
-        }
-
-        this.table.set('view', Y.Base.create('table', Y.View, [], {
-            render: function () {
-                this.publish({
-                    renderHeader: { preventedFn: preventedFn },
-                    renderFooter: { preventedFn: preventedFn },
-                    renderBody  : { preventedFn: preventedFn }
-                });
-
-                this.fire('renderHeader', { view: true });
-                this.fire('renderFooter', { view: true });
-                this.fire('renderBody', { view: true });
-            }
-        })).on(['renderHeader', 'renderFooter', 'renderBody'], function (e) {
-            e.preventDefault();
-        });
+        })).on(['table:renderHeader', 'table:renderFooter', 'table:renderBody'],
+            function (e) {
+                pass[e.type.slice(e.type.lastIndexOf(':') + 1)] = true;
+            });
 
         this.table.render();
 
