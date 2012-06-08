@@ -157,7 +157,7 @@ YUI({...}).use('uploader', function (Y) {
    }
    else if (Y.Uploader.TYPE == "flash") {
        uploader.set("fileFilters", [{description:"Images", extensions:"*.jpg;*.png;*.gif"},
-                                    {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}];);
+                                    {description:"Videos", extensions:"*.avi;*.mov;*.mpg"}]);
        uploader.render("#selectFilesButtonContainer");
    }
    else {

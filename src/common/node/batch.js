@@ -1,32 +1,41 @@
 #!/usr/bin/env node
 
-var fs = require('fs'),
-    path = require('path');
+var path = require('path');
 
 var base = path.join(__dirname, '../../');
 
-var unitXML = fs.readFileSync(path.join(__dirname, '../tests/unit.xml'), 'utf8');
+var paths = require('./parse');
 
-var lines = unitXML.split('\n');
+var travis = process.env.TRAVIS;
 
-var paths = [];
+//Skip this long running tests in travis
+var skipping = [
+    'anim',
+    'dd',
+    'charts',
+    'graphics'
+];
 
-var inComment = false;
-lines.forEach(function(line) {
-    if (line.indexOf('<!--') > -1) {
-        inComment = true;
+var skip = function(p) {
+    var ret = false;
+    if (!travis) { //Not in travis, run all tests
+        return false;
     }
-    if (line.indexOf('-->') > -1) {
-        inComment = false;
-    }
-    if (!inComment) {
-        if (line.indexOf('<url>') > -1) {
-            var p = line.replace('<url>', '').replace('</url>', '').replace(/ /g, '').replace('\t', '');
-            paths.push(path.join(base, p));
+    skipping.forEach(function(i) {
+        if (p.indexOf(path.join(i, 'tests/')) === 0) {
+            ret = true;
         }
+    });
+
+    return ret;
+};
+
+var out = [];
+
+paths.forEach(function(p, i) {
+    if (!skip(p)) {
+        out.push(path.join(base, p));
     }
 });
 
-paths.shift();
-
-module.exports = paths;
+module.exports = out;

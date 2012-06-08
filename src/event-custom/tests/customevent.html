@@ -31,7 +31,7 @@
 
     //YUI.add("selector-native", function(){});
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false,
         onCSS: function(Y) {
             Y.log('CSS is done loading', 'info', 'testcase');
@@ -41,7 +41,7 @@
         filters: {
             base: 'raw',
             // dom: null,
-            attribute: 'min'
+            attribute: 'raw'
         }
     }).use("dump", "test", "anim", "console", function(Y) {
 

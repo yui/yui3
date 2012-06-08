@@ -35,6 +35,30 @@ YUI.add('loader-tests', function(Y) {
                 test_condpattern: Y.UA.nodejs
             }
         },
+        test_skin_overrides: function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                skin: {
+                    overrides: {
+                        slider: [
+                            'sam',
+                            'sam-dark',
+                            'round',
+                            'round-dark',
+                            'capsule',
+                            'capsule-dark',
+                            'audio',
+                            'audio-light'
+                        ]
+                    }
+                },
+                require: [ 'slider' ]
+            });
+
+            var out = loader.resolve(true);
+            //+1 here for widget skin
+            Assert.areSame(loader.skin.overrides.slider.length + 1, out.css.length, 'Failed to load all override skins');
+        },
         'test: empty skin overrides': function() {
             var loader = new Y.Loader({
                 ignoreRegistered: true,
@@ -726,31 +750,6 @@ YUI.add('loader-tests', function(Y) {
             });
 
             Assert.areSame(loader.skin.defaultSkin, 'foobar', 'Default skin was not set from object');
-        },
-        test_skin_overrides: function() {
-            var loader = new Y.Loader({
-                ignoreRegistered: true,
-                skin: {
-                    overrides: {
-                        slider: [
-                            'sam',
-                            'sam-dark',
-                            'round',
-                            'round-dark',
-                            'capsule',
-                            'capsule-dark',
-                            'audio',
-                            'audio-light'
-                        ]
-                    }
-                },
-                require: [ 'slider' ]
-            });
-
-            var out = loader.resolve(true);
-            //+1 here for widget skin
-            Assert.areSame(loader.skin.overrides.slider.length + 1, out.css.length, 'Failed to load all override skins');
-
         },
         test_load_optional: function() {
             var loader = new Y.Loader({
@@ -1502,6 +1501,169 @@ YUI.add('loader-tests', function(Y) {
             
             ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
             ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
+
+        },
+        'test: local lang file include': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                lang :["fr-FR","en-US"],
+                modules : {
+                    "my-module": {
+                        combine : false,
+                        lang: ["fr", "en"],
+                        fullpath : 'scripts/my-module.js',
+                        base : 'scripts/'
+                    }
+                },
+                require: ['my-module']
+            });
+            var out = loader.resolve(true);
+            var mod = out.js.pop();
+            var lang = out.js.pop();
+            Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module/lang/my-module_fr.js', lang, 'Failed to resolve local lang file');
+        },
+        'test: local lang file include in a group': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                lang :["fr-FR","en-US"],
+                groups: {
+                    'my-group-group': {
+                        combine : false,
+                        base : 'scripts/',
+                        modules : {
+                            "my-module-group": {
+                                lang: ["fr", "en"],
+                                fullpath : 'scripts/my-module.js'
+                            }
+                        }
+                    }
+                },
+                require: ['my-module-group']
+            });
+            var out = loader.resolve(true);
+            var mod = out.js.pop();
+            var lang = out.js.pop();
+            Assert.areEqual('scripts/my-module.js', mod, 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module-group/lang/my-module-group_fr.js', lang, 'Failed to resolve local lang file');
+        },
+        'test: local skin file include': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                modules : {
+                    "my-module": {
+                        combine : false,
+                        fullpath : 'scripts/my-module.js',
+                        base : 'scripts/',
+                        skinnable: true
+                    }
+                },
+                require: ['my-module']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual('scripts/my-module.js', out.js[0], 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module/assets/skins/sam/my-module.css', out.css[0], 'Failed to resolve local skin file');
+        },
+        'test: local skin file include in a group': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                groups: {
+                    'my-group-2': {
+                        base : 'scripts/',
+                        combine : false,
+                        modules : {
+                            "my-module-2": {
+                                fullpath : 'scripts/my-module-2.js',
+                                skinnable: true
+                            }
+                        }
+                    }
+                },
+                require: ['my-module-2']
+            });
+            var out = loader.resolve(true);
+            Assert.areEqual('scripts/my-module-2.js', out.js[0], 'Failed to resolve module');
+            Assert.areEqual('scripts/my-module-2/assets/skins/sam/my-module-2.css', out.css[0], 'Failed to resolve local skin file');
+        },
+        'test: rootlang empty array': function() {
+            var loader = new Y.Loader({
+                combine: false,
+                filter: "raw",
+                lang: "en-GB",
+                groups: {
+                    "local": {
+                        base: "./",
+                        modules: {
+                            "root-lang-fail": {
+                                lang: []
+                            },
+                            "root-lang-win": {
+                                lang: [""]
+                            },
+                            "de-lang": {
+                                lang: ["de"]
+                            }
+                        }
+                    }
+                },
+                ignoreRegistered: true,
+                require: ["root-lang-fail", "root-lang-win", "de-lang"]
+            });
+
+            var out = loader.resolve(true),
+                other = [];
+            Y.Array.each(out.js, function(i) {
+                if (i.indexOf('yahooapis') === -1) {
+                    other.push(i);
+                }
+            });
+
+            Assert.areEqual(6, other.length, 'Failed to resolve all modules and languages');
+            var expected = [
+                "./root-lang-fail/lang/root-lang-fail.js",
+                "./root-lang-fail/root-lang-fail.js",
+                "./root-lang-win/lang/root-lang-win.js",
+                "./root-lang-win/root-lang-win.js",
+                "./de-lang/lang/de-lang.js",
+                "./de-lang/de-lang.js"
+            ];
+            ArrayAssert.itemsAreEqual(expected, other, 'Failed to resolve the proper modules');
+
+        },
+        'test: mojito loader calculate bleeding over': function() {
+            var test = this,
+                modules, required, expected, sorted,
+                Y = YUI({ win: null, doc: null }),
+                sort = function(modules, groupName, required) {
+                    var loader;
+
+                    //------------------------------------------------------------------------
+                    // This is the workaround, which causes the tests to pass.
+                    //delete YUI.Env._renderedMods;
+                    //------------------------------------------------------------------------
+
+                    loader = new Y.Loader({
+                        ignoreRegistered: true
+                    });
+                    loader.addGroup({ modules: modules}, groupName);
+                    loader.calculate({ required: required });
+                    // not sure if we need to copy, but it can't hurt
+                    return loader.sorted.slice();
+                };
+
+            Y.UA.nodejs = false;
+
+            modules = {"mojito-analytics-addon-tests":{"requires":["mojito-analytics-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/analytics-tests.common.js"},"mojito-assets-addon-tests":{"requires":["mojito-assets-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/asset-tests.common.js"},"mojito-carrier-tests":{"requires":["mojito-carrier-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/carrier.common-test.js"},"mojito-composite-addon-tests":{"requires":["mojito-composite-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/composite-tests.common.js"},"mojito-config-addon-tests":{"requires":["mojito-config-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/config-tests.common.js"},"mojito-device-tests":{"requires":["mojito-device-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/device.common-test.js"},"mojito-i13n-tests":{"requires":["mojito-i13n-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/i13.common-tests.js"},"mojito-intl-addon-tests":{"requires":["mojito-intl-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/intl-tests.common.js"},"mojito-meta-addon-tests":{"requires":["mojito-meta-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/meta-tests.common.js"},"mojito-output-adapter-addon-tests":{"requires":["mojito-output-adapter-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/output-adapter-tests.common.js"},"mojito-params-addon-tests":{"requires":["mojito-params-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/params-tests.common.js"},"mojito-partial-addon-tests":{"requires":["mojito-partial-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/partial-tests.common.js"},"mojito-url-addon-tests":{"requires":["mojito-url-addon"],"fullpath":"/static/tests/autoload/app/addons/ac/url-tests.common.js"},"mojito-action-context-tests":{"requires":["mojito-action-context"],"fullpath":"/static/tests/autoload/app/autoload/action-context-tests.common.js"},"mojito-controller-context-tests":{"requires":["mojito-controller-context"],"fullpath":"/static/tests/autoload/app/autoload/controller-context-tests.common.js"},"mojito-dispatcher-tests":{"requires":["mojito-dispatcher"],"fullpath":"/static/tests/autoload/app/autoload/dispatch-tests.common.js"},"mojito-loader-tests":{"requires":["mojito-loader"],"fullpath":"/static/tests/autoload/app/autoload/loader-tests.common.js"},"mojito-logger-tests":{"requires":["mojito-logger"],"fullpath":"/static/tests/autoload/app/autoload/logger-tests.common.js"},"mojito-mojit-proxy-tests":{"requires":["mojito-mojit-proxy"],"fullpath":"/static/tests/autoload/app/autoload/mojit-proxy-tests.client.js"},"mojito-client-tests":{"requires":["mojito-client"],"fullpath":"/static/tests/autoload/app/autoload/mojito-client-tests.client.js"},"mojito-resource-store-adapter-tests":{"requires":["mojito-resource-store-adapter"],"fullpath":"/static/tests/autoload/app/autoload/resource-store-adapter-tests.common.js"},"mojito-rest-lib-tests":{"requires":["mojito-rest-lib"],"fullpath":"/static/tests/autoload/app/autoload/rest-tests.common.js"},"mojito-route-maker-tests":{"requires":["mojito-route-maker"],"fullpath":"/static/tests/autoload/app/autoload/route-maker-tests.common.js"},"mojito-view-renderer-tests":{"requires":["mojito-view-renderer"],"fullpath":"/static/tests/autoload/app/autoload/view-renderer-tests.common.js"},"mojito-analytics-addon":{"requires":["mojito-util","mojito-meta-addon"],"fullpath":"/static/mojito/addons/ac/analytics.common.js"},"mojito-assets-addon":{"requires":["mojito-util"],"fullpath":"/static/mojito/addons/ac/assets.common.js"},"mojito-composite-addon":{"requires":["mojito-util","mojito-params-addon"],"fullpath":"/static/mojito/addons/ac/composite.common.js"},"mojito-config-addon":{"requires":["mojito"],"fullpath":"/static/mojito/addons/ac/config.common.js"},"mojito-cookie-addon":{"requires":["cookie","mojito"],"fullpath":"/static/mojito/addons/ac/cookie.client.js"},"mojito-i13n-addon":{"requires":["mojito"],"fullpath":"/static/mojito/addons/ac/i13n.common.js"},"mojito-intl-addon":{"requires":["intl","datatype-date","mojito","mojito-config-addon"],"fullpath":"/static/mojito/addons/ac/intl.common.js"},"mojito-meta-addon":{"requires":["mojito-util","mojito-output-adapter-addon"],"fullpath":"/static/mojito/addons/ac/meta.common.js"},"mojito-output-adapter-addon":{"requires":["json-stringify","event-custom-base","mojito-view-renderer","mojito-util"],"fullpath":"/static/mojito/addons/ac/output-adapter.common.js"},"mojito-params-addon":{"requires":["mojito"],"fullpath":"/static/mojito/addons/ac/params.common.js"},"mojito-partial-addon":{"requires":["mojito-util","mojito-params-addon","mojito-view-renderer"],"fullpath":"/static/mojito/addons/ac/partial.common.js"},"mojito-url-addon":{"requires":["querystring-stringify-simple","mojito-route-maker","mojito-util"],"fullpath":"/static/mojito/addons/ac/url.common.js"},"mojito-mu":{"requires":["mojito-util","io-base"],"fullpath":"/static/mojito/addons/view-engines/mu.client.js"},"mojito-action-context":{"requires":["mojito-config-addon","mojito-output-adapter-addon","mojito-url-addon","mojito-assets-addon","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon"],"fullpath":"/static/mojito/autoload/action-context.common.js"},"mojito-controller-context":{"requires":["mojito-action-context","mojito-util"],"fullpath":"/static/mojito/autoload/controller-context.common.js"},"mojito-dispatcher":{"requires":["mojito-controller-context","mojito-util","mojito-resource-store-adapter","intl"],"fullpath":"/static/mojito/autoload/dispatch.common.js"},"mojito-loader":{"requires":["get","mojito"],"fullpath":"/static/mojito/autoload/loader.common.js"},"mojito-logger":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/logger.common.js"},"mojito-mojit-proxy":{"requires":["mojito-util"],"fullpath":"/static/mojito/autoload/mojit-proxy.client.js"},"mojito-client":{"requires":["io-base","event-delegate","node-base","querystring-stringify-simple","mojito","mojito-logger","mojito-loader","mojito-dispatcher","mojito-route-maker","mojito-client-store","mojito-resource-store-adapter","mojito-mojit-proxy","mojito-tunnel-client","mojito-output-handler","mojito-util"],"fullpath":"/static/mojito/autoload/mojito-client.client.js"},"mojito-test":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/mojito-test.common.js"},"mojito":{"requires":["mojito-perf"],"fullpath":"/static/mojito/autoload/mojito.common.js"},"mojito-output-handler":{"requires":["mojito","json"],"fullpath":"/static/mojito/autoload/output-handler.client.js"},"mojito-perf":{"fullpath":"/static/mojito/autoload/perf.client.js"},"mojito-resource-store-adapter":{"requires":["mojito-util"],"fullpath":"/static/mojito/autoload/resource-store-adapter.common.js"},"mojito-rest-lib":{"requires":["io-base","mojito"],"fullpath":"/static/mojito/autoload/rest.common.js"},"mojito-route-maker":{"requires":["querystring-stringify-simple","querystring-parse","mojito-util"],"fullpath":"/static/mojito/autoload/route-maker.common.js"},"mojito-client-store":{"requires":["mojito-util","querystring-stringify-simple"],"fullpath":"/static/mojito/autoload/store.client.js"},"dali-bean":{"requires":["breg","oop","event-custom"],"fullpath":"/static/mojito/autoload/transport/beanregistry/dali_bean.client-optional.js"},"bean-performance-watcher":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/beanregistry/performance_monitor.client-optional.js"},"breg":{"requires":["oop","event-custom"],"fullpath":"/static/mojito/autoload/transport/beanregistry/registry.client-optional.js"},"io-facade":{"requires":["breg","dali-bean"],"fullpath":"/static/mojito/autoload/transport/io_facade.client-optional.js"},"simple-request-formatter":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/request_formatter.client-optional.js"},"request-handler":{"requires":["dali-bean","breg"],"fullpath":"/static/mojito/autoload/transport/request_handler.client-optional.js"},"requestor":{"requires":["json","breg"],"fullpath":"/static/mojito/autoload/transport/requestor.client-optional.js"},"response-formatter":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/response_formatter.client-optional.js"},"response-processor":{"requires":["dali-bean","breg"],"fullpath":"/static/mojito/autoload/transport/response_processor.client-optional.js"},"dali-transport-base":{"requires":["event-custom","breg","dali-bean"],"fullpath":"/static/mojito/autoload/transport/transport.client-optional.js"},"transport-utils":{"requires":["breg"],"fullpath":"/static/mojito/autoload/transport/transport_utils.client-optional.js"},"mojito-tunnel-client":{"requires":["breg","querystring-stringify-simple","mojito","dali-transport-base","request-handler","simple-request-formatter","requestor","io-facade","response-formatter","response-processor"],"fullpath":"/static/mojito/autoload/tunnel.client-optional.js"},"mojito-util":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/util.common.js"},"mojito-view-renderer":{"requires":["mojito"],"fullpath":"/static/mojito/autoload/view-renderer.common.js"},"LazyLoadBinderIndex":{"requires":["mojito-client","node","json"],"fullpath":"/static/LazyLoad/binders/index.js"},"LazyLoad":{"requires":["mojito","json"],"fullpath":"/static/LazyLoad/controller.common.js"}};
+            required = {"mojito":true,"LazyLoadBinderIndex":true,"LazyLoad":true,"mojito-mu":true,"mojito-dispatcher":true};
+            expected = ["mojito-perf","mojito","yui-base","oop","event-custom-base","intl-base","event-custom-complex","intl","querystring-stringify-simple","mojito-config-addon","json-stringify","mojito-view-renderer","mojito-util","mojito-output-adapter-addon","array-extras","querystring-parse","mojito-route-maker","mojito-url-addon","mojito-assets-addon","cookie","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon","mojito-action-context","mojito-controller-context","mojito-resource-store-adapter","mojito-dispatcher","io-base","features","dom-core","dom-base","selector-native","selector","node-core","node-base","event-base","event-delegate","mojito-logger","get","mojito-loader","mojito-client-store","mojito-mojit-proxy","breg","dali-bean","dali-transport-base","request-handler","simple-request-formatter","json-parse","requestor","io-facade","response-formatter","response-processor","mojito-tunnel-client","mojito-output-handler","mojito-client","node-event-delegate","pluginhost-base","pluginhost-config","node-pluginhost","dom-style","dom-style-ie","dom-screen","node-screen","node-style","LazyLoadBinderIndex","LazyLoad","mojito-mu"];
+            sorted = sort(modules, 'LazyLoad', required);
+            ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate first set of modules');
+
+            modules = {"ModelFlickr":{"requires":["yql","jsonp-url"],"fullpath":"/app/models/flickr.common.js"},"mojito-analytics-addon":{"requires":["mojito-util","mojito-meta-addon"],"fullpath":"/fw/addons/ac/analytics.common.js"},"mojito-assets-addon":{"requires":["mojito-util"],"fullpath":"/fw/addons/ac/assets.common.js"},"mojito-composite-addon":{"requires":["mojito-util","mojito-params-addon"],"fullpath":"/fw/addons/ac/composite.common.js"},"mojito-config-addon":{"requires":["mojito"],"fullpath":"/fw/addons/ac/config.common.js"},"mojito-cookie-addon":{"requires":["cookie","mojito"],"fullpath":"/fw/addons/ac/cookie.client.js"},"mojito-i13n-addon":{"requires":["mojito"],"fullpath":"/fw/addons/ac/i13n.common.js"},"mojito-intl-addon":{"requires":["intl","datatype-date","mojito","mojito-config-addon"],"fullpath":"/fw/addons/ac/intl.common.js"},"mojito-meta-addon":{"requires":["mojito-util","mojito-output-adapter-addon"],"fullpath":"/fw/addons/ac/meta.common.js"},"mojito-output-adapter-addon":{"requires":["json-stringify","event-custom-base","mojito-view-renderer","mojito-util"],"fullpath":"/fw/addons/ac/output-adapter.common.js"},"mojito-params-addon":{"requires":["mojito"],"fullpath":"/fw/addons/ac/params.common.js"},"mojito-partial-addon":{"requires":["mojito-util","mojito-params-addon","mojito-view-renderer"],"fullpath":"/fw/addons/ac/partial.common.js"},"mojito-url-addon":{"requires":["querystring-stringify-simple","mojito-route-maker","mojito-util"],"fullpath":"/fw/addons/ac/url.common.js"},"mojito-mu":{"requires":["mojito-util","io-base"],"fullpath":"/fw/addons/view-engines/mu.client.js"},"mojito-action-context":{"requires":["mojito-config-addon","mojito-output-adapter-addon","mojito-url-addon","mojito-assets-addon","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon"],"fullpath":"/fw/autoload/action-context.common.js"},"mojito-controller-context":{"requires":["mojito-action-context","mojito-util"],"fullpath":"/fw/autoload/controller-context.common.js"},"mojito-dispatcher":{"requires":["mojito-controller-context","mojito-util","mojito-resource-store-adapter","intl"],"fullpath":"/fw/autoload/dispatch.common.js"},"mojito-loader":{"requires":["get","mojito"],"fullpath":"/fw/autoload/loader.common.js"},"mojito-logger":{"requires":["mojito"],"fullpath":"/fw/autoload/logger.common.js"},"mojito-mojit-proxy":{"requires":["mojito-util"],"fullpath":"/fw/autoload/mojit-proxy.client.js"},"mojito-client":{"requires":["io-base","event-delegate","node-base","querystring-stringify-simple","mojito","mojito-logger","mojito-loader","mojito-dispatcher","mojito-route-maker","mojito-client-store","mojito-resource-store-adapter","mojito-mojit-proxy","mojito-tunnel-client","mojito-output-handler","mojito-util"],"fullpath":"/fw/autoload/mojito-client.client.js"},"mojito-test":{"requires":["mojito"],"fullpath":"/fw/autoload/mojito-test.common.js"},"mojito":{"requires":["mojito-perf"],"fullpath":"/fw/autoload/mojito.common.js"},"mojito-output-handler":{"requires":["mojito","json"],"fullpath":"/fw/autoload/output-handler.client.js"},"mojito-perf":{"fullpath":"/fw/autoload/perf.client.js"},"mojito-resource-store-adapter":{"requires":["mojito-util"],"fullpath":"/fw/autoload/resource-store-adapter.common.js"},"mojito-rest-lib":{"requires":["io-base","mojito"],"fullpath":"/fw/autoload/rest.common.js"},"mojito-route-maker":{"requires":["querystring-stringify-simple","querystring-parse","mojito-util"],"fullpath":"/fw/autoload/route-maker.common.js"},"mojito-client-store":{"requires":["mojito-util","querystring-stringify-simple"],"fullpath":"/fw/autoload/store.client.js"},"mojito-util":{"requires":["mojito"],"fullpath":"/fw/autoload/util.common.js"},"mojito-view-renderer":{"requires":["mojito"],"fullpath":"/fw/autoload/view-renderer.common.js"},"LazyLoadBinderIndex":{"requires":["mojito-client","node","json"],"fullpath":"/LazyLoad/binders/index.js"},"LazyLoad":{"requires":["mojito","json"],"fullpath":"/LazyLoad/controller.common.js"}};
+            required = {"mojito":true,"LazyLoadBinderIndex":true,"LazyLoad":true,"mojito-mu":true,"mojito-dispatcher":true};
+            expected = ["mojito-perf","mojito","yui-base","oop","event-custom-base","intl-base","event-custom-complex","intl","querystring-stringify-simple","mojito-config-addon","json-stringify","mojito-view-renderer","mojito-util","mojito-output-adapter-addon","array-extras","querystring-parse","mojito-route-maker","mojito-url-addon","mojito-assets-addon","cookie","mojito-cookie-addon","mojito-params-addon","mojito-composite-addon","mojito-action-context","mojito-controller-context","mojito-resource-store-adapter","mojito-dispatcher","io-base","features","dom-core","dom-base","selector-native","selector","node-core","node-base","event-base","event-delegate","mojito-logger","get","mojito-loader","mojito-client-store","mojito-mojit-proxy","json-parse","mojito-output-handler","mojito-client","node-event-delegate","pluginhost-base","pluginhost-config","node-pluginhost","dom-style","dom-style-ie","dom-screen","node-screen","node-style","LazyLoadBinderIndex","LazyLoad","mojito-mu","mojito-tunnel-client"];
+            sorted = sort(modules, 'LazyLoad', required);
+            ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate second set of modules');
 
         }
     });

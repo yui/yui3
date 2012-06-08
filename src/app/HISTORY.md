@@ -4,6 +4,21 @@ App Framework Change History
 3.6.0
 -----
 
+### App
+
+* Added static property: `Y.App.serverRouting`, which serves as the default
+  value for the `serverRouting` attribute of all apps. [Ticket #2532319]
+
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
+### App Transitions
+
+* Fixed issue with non-collapsing white space between views while transitioning.
+  White space is now fully collapsed and prevents views from jumping after a
+  cross-fade transition. [Ticket #2532298]
+
+* Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
 ### ModelList
 
 * The `add()` method now accepts an `index` option, which can be used to insert
@@ -22,6 +37,9 @@ App Framework Change History
   [Ticket #2532240]
 
 ### Router
+
+* Fixed issue when multiple routers on were on the page and one router was
+  destroyed the remaining routers would stop dispatching. [Ticket #2532317]
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
   indicates the number of matching routes after the current route in the

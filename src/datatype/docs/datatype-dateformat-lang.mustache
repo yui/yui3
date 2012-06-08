@@ -41,14 +41,14 @@
 ```
 // Default (no language specified)
 YUI().use("datatype-date", function (Y) {
-    Y.one("#default_lang_output").setContent(
+    Y.one("#default_lang_output").setHTML(
         Y.DataType.Date.format(new Date(), {format:"%x"})
     );
 });
 
 // Format Date For fr-FR
 YUI({lang:"fr-FR"}).use("datatype-date", function (Y) {
-    Y.one("#single_lang_output").setContent(
+    Y.one("#single_lang_output").setHTML(
         Y.DataType.Date.format(new Date(), {format:"%x"})
     );
 });

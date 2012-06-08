@@ -73,7 +73,7 @@ function handleJSONP(response) {
     // populate template from the response object and add to the output div
     ...
 
-    Y.one("#out").setContent( Y.Lang.sub(template, module) );
+    Y.one("#out").setHTML( Y.Lang.sub(template, module) );
 
     // After 7 seconds, call the API for a new module
     Y.later(7000, this, this.send);
@@ -94,14 +94,14 @@ var gallery = new Y.JSONPRequest(url, {
                 // populate output div from the template and response object
                 ...
 
-                Y.one("#out").setContent( Y.Lang.sub(template, module) );
+                Y.one("#out").setHTML( Y.Lang.sub(template, module) );
 
                 // After 7 seconds, call the API for a new module
                 Y.later(7000, this, this.send);
             },
 
             failure: function () {
-                Y.one("#out").setContent( failureTemplate );
+                Y.one("#out").setHTML( failureTemplate );
             }
         }
     });
@@ -120,7 +120,7 @@ var gallery = new Y.JSONPRequest(url, {
                 // populate output div from the template and response object
                 ...
 
-                Y.one("#out").setContent( Y.Lang.sub(template, module) );
+                Y.one("#out").setHTML( Y.Lang.sub(template, module) );
 
                 // Add some flare to the poll interval by showing a "time left"
                 // indicator via the header's border
@@ -135,7 +135,7 @@ var gallery = new Y.JSONPRequest(url, {
             },
 
             failure: function () {
-                Y.one("#out").setContent( failureTemplate );
+                Y.one("#out").setHTML( failureTemplate );
             }
         }
     });

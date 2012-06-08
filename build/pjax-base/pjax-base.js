@@ -11,8 +11,6 @@ implemented using the pjax technique (HTML5 pushState + Ajax).
 
 var win = Y.config.win,
 
-    Lang = Y.Lang,
-
     // The CSS class name used to filter link clicks from only the links which
     // the pjax enhanced navigation should be used.
     CLASS_PJAX = Y.ClassNameManager.getClassName('pjax'),
@@ -435,11 +433,28 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
     _onLinkClick: function (e) {
-        var url;
+        var location, link, url;
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
         if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
+
+        location = Y.getLocation(),
+        link     = e.currentTarget;
+
+        // Only allow anchor elements because we need access to its `protocol`,
+        // `host`, and `href` attributes.
+        if (link.get('tagName').toUpperCase() !== 'A') {
+            return;
+        }
+
+        // Same origin check to prevent trying to navigate to URLs from other
+        // sites or things like mailto links.
+        if (link.get('protocol') !== location.protocol ||
+                link.get('host') !== location.host) {
+
+            return;
+        }
 
         // All browsers fully resolve an anchor's `href` property.
         url = e.currentTarget.get('href');
@@ -462,7 +477,7 @@ PjaxBase.ATTRS = {
 
     @attribute linkSelector
     @type String|Function
-    @default "a.pjax"
+    @default "a.yui3-pjax"
     @initOnly
     @since 3.5.0
     **/

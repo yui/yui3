@@ -395,12 +395,14 @@
 		    if (event is IOErrorEvent) {
 				this.log("The event text is " + (event as IOErrorEvent).text);
 		        newEvent.source="io";
+		        newEvent.status = -1;
 		        newEvent.message = (event as IOErrorEvent).text;
 		    }
 		    else if (event is HTTPStatusEvent) {
 		        this.log("The event status is " + (event as HTTPStatusEvent).status);		    	
 		        newEvent.source="http";
-		        newEvent.message = (event as HTTPStatusEvent).status;
+		        newEvent.status = (event as HTTPStatusEvent).status;
+		        newEvent.message = "HTTP " + newEvent.status + " status code received.";
 		    }
 			for (var itemName:String in event) {
 				newEvent[itemName] = event[itemName];
@@ -408,6 +410,7 @@
 			}
             
 	        newEvent.id = event.target.fileId;
+	        newEvent.type = "uploaderror";
             yuiBridge.sendEvent(newEvent);
 		}
 

@@ -15,7 +15,7 @@ var myuploader;
 
 if (Y.Uploader.TYPE != "none") {
             myuploader = new Y.Uploader({ multipleFiles: true, 
-                                          uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
+                                          uploadURL: "http://localhost/yui3/src/uploader/tests/manual/simpleupload.php?error=400",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
                                           width: "100%",
@@ -62,6 +62,7 @@ if (Y.Uploader.TYPE != "none") {
             myuploader.on("uploadcomplete", function (ev) {
                     out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "Finished!");
             	 	out.one("#" + ev.file.get("id")).append("<p>DATA:<br> " + ev.data + "</p>");
+                    console.log(ev.file.get("xhr").status);
             });
             	 
             	 
@@ -71,6 +72,10 @@ if (Y.Uploader.TYPE != "none") {
 
             myuploader.on("alluploadscomplete", function (ev) {
             	 	Y.one("#totalpercent").setContent("<p>Upload complete!</p>");
+            });
+
+            myuploader.on("uploaderror", function (ev) {
+                    out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "ERROR!");
             });	                                    	                                       
 
             Y.one("#uploadButton").on("click", function () {

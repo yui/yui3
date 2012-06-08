@@ -79,6 +79,15 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
 
     /**
+    History event handle for the `history:change` or `hashchange` event
+    subscription.
+
+    @property _historyEvents
+    @type EventHandle
+    @protected
+    **/
+
+    /**
     Cached copy of the `html5` attribute for internal use.
 
     @property _html5
@@ -147,10 +156,12 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         // Set up a history instance or hashchange listener.
         if (self._html5) {
-            self._history = new Y.HistoryHTML5({force: true});
-            Y.after('history:change', self._afterHistoryChange, self);
+            self._history       = new Y.HistoryHTML5({force: true});
+            self._historyEvents =
+                    Y.after('history:change', self._afterHistoryChange, self);
         } else {
-            Y.on('hashchange', self._afterHistoryChange, win, self);
+            self._historyEvents =
+                    Y.on('hashchange', self._afterHistoryChange, win, self);
         }
 
         // Fire a `ready` event once we're ready to route. We wait first for all
@@ -173,11 +184,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     destructor: function () {
-        if (this._html5) {
-            Y.detach('history:change', this._afterHistoryChange, this);
-        } else {
-            Y.detach('hashchange', this._afterHistoryChange, win);
-        }
+        this._historyEvents && this._historyEvents.detach();
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -1076,4 +1083,4 @@ version of YUI.
 Y.Controller = Y.Router;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});

@@ -56,8 +56,33 @@ YUI.add('core-tests', function(Y) {
             ignore: {
                 'getLocation() should return the location object': (Y.UA.nodejs ? true : false),
                 'getLocation() should return `null` when executing in node.js': (!Y.UA.nodejs || (Y.UA.nodejs && Y.config.win)), //If there is a window object, ignore too
-                test_log_params: (typeof console == "undefined" || !console.info || Y.UA.nodejs)
+                test_log_params: (typeof console == "undefined" || !console.info || Y.UA.nodejs),
+                'test: domready delay': !Y.config.win,
+                'test: window.onload delay': !Y.config.win,
+                'test: contentready delay': !Y.config.win,
+                'test: available delay': !Y.config.win,
+                'test: pattern requires order': !Y.config.win,
+                'test: fetch with external dependencies redefined in external file': !Y.config.win
             }
+        },
+        'test: pattern requires order': function() {
+            var test = this,
+            Assert = Y.Assert;
+            //This test will throw if it fails..
+            YUI({
+                modules: {
+                    'pattern-module': {
+                        fullpath: './assets/pattern-module.js',
+                        async: false
+                    }
+                }
+            }).use('pattern-module', function(Y) {
+                test.resume(function() {
+                    Y.PatternModule();
+                });
+            });
+
+            test.wait();
         },
 
         'cached functions should execute only once per input': function() {
@@ -246,6 +271,19 @@ YUI.add('core-tests', function(Y) {
                 Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
                 Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
 
+                Y.applyConfig({
+                    logInclude: {
+                        davglass: true
+                    },
+                    logExclude: {
+                        '': true
+                    }
+                });
+                last = undefined;
+                Y.log('This should be ignored', 'info');
+                Assert.isUndefined(last, 'Failed to exclude log param with empty string');
+                Y.log('This should NOT be ignored', 'info', 'davglass');
+                Assert.areEqual(last, 'davglass', 'Failed to include log param');
             });
             console.info = l;
         },
@@ -471,6 +509,202 @@ YUI.add('core-tests', function(Y) {
                     Assert.isTrue(Y.MOD, 'Failed to load external mod');
                     Assert.isObject(Y.YQL, 'Failed to load YQL requirement');
                 });
+            });
+
+            test.wait();
+        },
+        'test: domready delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            YUI({
+                delayUntil: 'domready'
+            }).use('node', function(Y, status) {
+                test.resume(function() {
+                    Assert.areSame('domready', status.delayUntil, 'domready did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'test: window.onload delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            YUI({
+                delayUntil: 'load'
+            }).use('dd-drag', function(Y, status) {
+                test.resume(function() {
+                    Assert.areSame('load', status.delayUntil, 'load did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'test: available delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            Assert.isNull(Y.one('#foobar'), 'Found trigger #foobar before it should have');
+
+            setTimeout(function() {
+                var div = document.createElement('div');
+                div.id = 'foobar';
+                document.body.appendChild(div);
+            }, 3000);
+
+            YUI({
+                delayUntil: {
+                    event: 'available',
+                    args: '#foobar'
+                }
+            }).use('dd-drop', function(Y, status) {
+              test.resume(function() {
+                    Assert.isNotNull(Y.one('#foobar'), 'Failed to find trigger #foobar');
+                    Assert.areSame('available', status.delayUntil, 'available did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'test: contentready delay': function() {
+            var test = this,
+            Assert = Y.Assert;
+
+            Assert.isNull(Y.one('#foobar2'), 'Found trigger #foobar2 before it should have');
+
+            setTimeout(function() {
+                var div = document.createElement('div');
+                div.id = 'foobar2';
+                document.body.appendChild(div);
+            }, 3000);
+
+            YUI({
+                delayUntil: {
+                    event: 'contentready',
+                    args: '#foobar2'
+                }
+            }).use('dd-drop', function(Y, status) {
+              test.resume(function() {
+                    Assert.isNotNull(Y.one('#foobar2'), 'Failed to find trigger #foobar2');
+                    Assert.areSame('contentready', status.delayUntil, 'contentready did not trigger this callback');
+                });
+            });
+
+            test.wait();
+        },
+        'status should be true': function() {
+            var test = this,
+                Assert = Y.Assert;
+                
+                YUI().use('oop', function(Y, status) {
+                    Assert.isTrue(status.success, 'Success callback failed');
+                });
+
+                YUI({
+                    useSync: false,
+                    modules: {
+                        good: {
+                            fullpath: resolvePath('./assets/good.js')
+                        }
+                    }
+                }).use('good', function(Y, status) {
+                    Assert.isTrue(Y.GOOD, 'Failed to load module');
+                    Assert.isTrue(status.success, 'Status is good');
+                });
+        },
+        'status should be false': function() {
+            var test = this,
+                Assert = Y.Assert;
+
+            YUI().use('no-such-module', function(Y, status) {
+                Assert.isFalse(status.success, 'Failed to set false on bad module');
+                Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                Y.use('no-such-module', function(Y, status) {
+                    Assert.isFalse(status.success, 'Failed to set false on bad module');
+                    Assert.areSame(status.msg, 'Missing modules: no-such-module', 'Failed to set missing status');
+                });
+            });
+        },
+        'test: fetch with external dependencies redefined in external file': function() {
+            var test = this;
+            Y.applyConfig({ useSync: true });
+            Y.use('parallel', function() {
+                var stack = new Y.Parallel();
+                YUI.applyConfig({
+                    useSync: true,
+                    groups: {
+                        'mygroup': {
+                            base    : './assets/',
+                            combine : false,
+                            ext     : false,
+                            root    : "",
+                            patterns: { 
+                                'mygroup-': {
+                                    test: function(name) {
+                                        return /^mygroup-/.test(name);
+                                    },
+                                    configFn: function(me) {
+                                        var parts = me.name.split("-"),
+                                            mygroup = parts.shift(),
+                                            version = parts.pop(),
+                                            name = parts.join("-"),
+                                            cssname, jsname;
+                                        if (name.match(/-css/)) {
+                                            name = name.replace("-css", "");
+                                            cssname = name + ".css";    
+                                            me.type = 'css';
+                                            me.path = [name, version, "assets", cssname].join("/");
+                                        } else {
+                                            jsname = name + '.js';
+                                            me.path = [name, version, jsname].join("/");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                YUI.add("lang/mygroup-util-1.4", function(Y) {
+                    Y.Intl.add("mygroup-util-1.4", '', {
+                            'test': 'CIAO CIAO CIAO'
+                        });
+                }, '1.4', {'requires': ['intl']});
+                YUI.add("lang/mygroup-util-1.4_it", function(Y) {
+                    Y.Intl.add("mygroup-util-1.4", 'it', {
+                            'test': 'CIAO CIAO CIAO'
+                        });
+                }, '1.4', {'requires': ['intl']});
+                YUI.add("lang/mygroup-util-1.4_en", function(Y) {
+                    Y.Intl.add("mygroup-util-1.4", 'en', {
+                            'test': 'HELLO HELLO HELLO'
+                        });
+                }, '1.4', {'requires': ['intl']});
+                
+                var results = [];
+                YUI({ lang: '' }).use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[0] = t;
+                }));
+                YUI().use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[1] = t;
+                }));
+                YUI({ lang: 'it' }).use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[2] = t;
+                }));
+                YUI({ lang: 'en' }).use('mygroup-util-1.4', stack.add(function(Y) {
+                    var t = Y.mygroup.test();
+                    results[3] = t;
+                }));
+                stack.done(function() {
+                    test.resume(function() {
+                        var exp = ["CIAO CIAO CIAO", "HELLO HELLO HELLO", "CIAO CIAO CIAO", "HELLO HELLO HELLO"];
+                        Y.ArrayAssert.itemsAreEqual(exp, results, 'Failed to load external dependencies');
+                    });
+                });
+            
             });
 
             test.wait();

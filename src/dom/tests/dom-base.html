@@ -10,7 +10,7 @@
 <script type="text/javascript" src="dom-deprecated-test.js"></script>
 <script type="text/javascript">
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
     new Y.Test.Console().render();
     Y.Test.Runner.masterSuite.name = 'Dom Test Suite';

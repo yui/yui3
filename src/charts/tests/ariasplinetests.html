@@ -1,156 +1,51 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8">
-        <style>
-            /*Supplemental: CSS for the YUI distribution*/
-            #custom-doc { width: 95%; min-width: 950px; }
-            #pagetitle {background-image: url(../../assets/bg_hd.gif);}
-            #mychart {
-                padding:10px 10px 10px 10px;
-            }
-        </style>
-        <link rel="stylesheet" type="text/css" href="../../../build/cssfonts/fonts-min.css">
-    </head>		
+<head>
+    <title>Chart Aria Spline Tests</title>
+</head>
 <body class="yui3-skin-sam">
-<h3>Aria Spline Tests</h3>
-<div id="mychart"></div>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script>            
+
+<div id="log"></div>
+<script src="../../../build/yui/yui.js"></script>
+<script src="charts-ariaspline-tests.js"></script>
+<script>
 YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     allowRollup: false,
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-}).use('charts', 'test', 'console', function (Y) 
-{ 
-    Y.namespace("example.test");
+    useBrowserConsole: false
+}).use('console-filters', 'charts-ariaspline-tests', function (Y) {
 
-    var suite = new Y.Test.Suite("Y.Charts.AriaSpline"),
-        myDataValues = [ 
-            {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
-            {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
-            {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
-            {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
-            {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
-        ],
-        pieDataValues = [
-            {category:"5/1/2010", revenue:2200}, 
-            {category:"5/2/2010", revenue:100}, 
-            {category:"5/3/2010", revenue:1500}, 
-            {category:"5/4/2010", revenue:2800}, 
-            {category:"5/5/2010", revenue:2650}
-        ],
-        defaultAriaDescription = "Use the up and down keys to navigate between series. Use the left and right keys to navigate through items in a series.",
-        defaultPieAriaDescription = "Use the left and right keys to navigate through items.",
-        seriesKeys = ["values", "revenue"],
-        width = 400,
-        height = 300;
+    new Y.Console({
+        style: 'block',
+        entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
+        on: {
+            entry: function (e) {
+                var m = e.message,
+                    node;
 
-    function AriaTests(cfg, testConfig)
-    {
-        AriaTests.superclass.constructor.apply(this);
-        this.attrConfig = cfg;
-        this.name = testConfig.type + " Aria Tests";
-        this.defaultAriaDescription = testConfig.defaultAriaDescription;;
-    }
-    Y.extend(AriaTests, Y.Test.Case, {
-        defaultAriaLabel: "Chart Application",
-
-        changedAriaLabel: "This is a new ariaLabel value.",
-
-        setUp: function() {
-            var mychart = new Y.Chart(this.attrConfig);
-            this.chart = mychart;
+                if (m.category === 'info' &&
+                    /\s(?:case|suite)\s|yuitests\d+|began/.test(m.message)) {
+                        m.category = 'status';
+                } else if (m.category === 'fail') {
+                    this.printBuffer();
+                    m.category = 'error';
+                }
+            }
         },
-        
-        tearDown: function() {
-            this.chart.destroy();
-        },
-        
-        "test:getAriaLabel()": function()
-        {
-            Y.Assert.isTrue(this.chart.get("ariaLabel") == this.defaultAriaLabel);
-        },
-
-        "test:setAriaLabel()": function()
-        {
-            var chart = this.chart;
-            chart.set("ariaLabel", this.changedAriaLabel);
-            Y.Assert.isTrue(chart.get("ariaLabel") == this.changedAriaLabel);
-        },
-
-        "test:getAriaDescription()": function()
-        {
-            Y.Assert.isTrue(this.chart.get("ariaDescription") == this.defaultAriaDescription);
-        },
-        
-        "test:setAriaDescription()": function()
-        {
-            var chart = this.chart;
-            chart.set("ariaDescription", this.changedAriaLabel);
-            Y.Assert.isTrue(chart.get("ariaDescription") == this.changedAriaLabel);
+        after: {
+            render: function () {
+                this.get('contentBox').insertBefore( this._foot, this._body );
+            }
         }
-    });
-    Y.AriaTests = AriaTests;
-    
-    var splineTests = new Y.AriaTests({
-        dataProvider: myDataValues,
-        render: "#mychart",
-        type: "spline",
-        width: width,
-        height: height
-    }, {
-        type: "Spline",
-        defaultAriaDescription: defaultAriaDescription
-    }),
-    stackedSplineTests = new Y.AriaTests({
-        dataProvider: myDataValues,
-        render: "#mychart",
-        type: "spline",
-        stacked: true,
-        width: width,
-        height: height
-    }, {
-        type: "StackedSpline",
-        defaultAriaDescription: defaultAriaDescription
-    }),
-    comboSplineTests = new Y.AriaTests({
-        dataProvider: myDataValues,
-        render: "#mychart",
-        type: "combospline",
-        width: width,
-        height: height
-    }, {
-        type: "ComboSpline",
-        defaultAriaDescription: defaultAriaDescription
-    }),
-    stackedComboSplineTests = new Y.AriaTests({
-        dataProvider: myDataValues,
-        render: "#mychart",
-        type: "combospline",
-        stacked: true,
-        width: width,
-        height: height
-    }, {
-        type: "StackedComboSpline",
-        defaultAriaDescription: defaultAriaDescription
-    });
+    }).plug(Y.Plugin.ConsoleFilters, {
+        category: {
+            pass: false,
+            status: false
+        }
+      }).render( "#log" );
 
-    suite.add(splineTests);
-    suite.add(stackedSplineTests);
-    suite.add(comboSplineTests);
-    suite.add(stackedComboSplineTests);
-
-    //create the console
-    var r = new Y.Console({
-        newestOnTop : false,
-        style: 'block' // to anchor in the example content
-    });
-    
-    r.render('#testLogger');
-
-    //run the tests
-    Y.Test.Runner.setName("Y.Charts.AriaSpline");
-    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 </script>

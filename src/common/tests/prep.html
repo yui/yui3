@@ -8,7 +8,7 @@
 <script>
 
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test', function(Y) {
     
     var suite = new Y.Test.Suite('Test Prep Suite');

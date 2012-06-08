@@ -30,7 +30,7 @@
 }
 ```
 
-<p>We'll use these objects to populate HTML templates with data <em>{placeholder}</em>s using `Y.Lang.sub( template, object )`.  The resulting HTML can then simply be passed to any of YUI 3's DOM creation methods, such as `node.setContent( html )` or `node.append( html )`.  We'll do this in the function that will receive the JSONP response (seen below).</p>
+<p>We'll use these objects to populate HTML templates with data <em>{placeholder}</em>s using `Y.Lang.sub( template, object )`.  The resulting HTML can then simply be passed to any of YUI 3's DOM creation methods, such as `node.setHTML( html )` or `node.append( html )`.  We'll do this in the function that will receive the JSONP response (seen below).</p>
 
 <h3>Format the JSONP url</h3>
 <p>Typical JSONP urls are formatted like</p>
@@ -49,7 +49,7 @@ var url = "http://github.com/api/v2/json/user/show/yui?callback={callback}";
 
 ```
 function handleJSONP(response) {
-    Y.one("#out").setContent(Y.Lang.sub(template, response.user));
+    Y.one("#out").setHTML(Y.Lang.sub(template, response.user));
 }
 
 Y.one("#demo_btn").on("click", function (e) {

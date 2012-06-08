@@ -20,6 +20,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this.after("widthChange", this._sizeChangeHandler);
         this.after("heightChange", this._sizeChangeHandler);
         this.after("stylesChange", this._updateStyles);
+        this.after("groupMarkersChange", this._drawSeries);
     },
 
     /**
@@ -529,14 +530,17 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         if(this._graphic)
         {
             this._graphic.destroy();
+            this._graphic = null;
         }
         if(this._background)
         {
             this._background.get("graphic").destroy();
+            this._background = null;
         }
         if(this._gridlines)
         {
             this._gridlines.get("graphic").destroy();
+            this._gridlines = null;
         }
     }
 }, {

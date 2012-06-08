@@ -1174,7 +1174,7 @@ Y.Subscriber.prototype = {
         }
 
         // only catch errors if we will not re-throw them.
-        if (Y.config.throwFail) {
+        if (Y.config && Y.config.throwFail) {
             ret = this._notify(c, args, ce);
         } else {
             try {
