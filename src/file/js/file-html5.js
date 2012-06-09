@@ -137,7 +137,10 @@
                         this._set("xhr", null);
                    }
                    else {
-                        this.fire("uploaderror", {})
+                        this.fire("uploaderror", {originEvent: event,
+                                                  status: xhr.status,
+                                                  statusText: xhr.statusText,
+                                                  source: "http"});
                    }                   
                    break;
 
@@ -152,14 +155,20 @@
                    *      <dt>originEvent</dt>
                    *          <dd>The original event fired by the XMLHttpRequest instance.</dd>
                    *      <dt>status</dt>
-                   *          <dd>The status code reported by the XMLHttpRequest</dd>
+                   *          <dd>The status code reported by the XMLHttpRequest. If it's an HTTP error,
+                                  then this corresponds to the HTTP status code received by the uploader.</dd>
                    *      <dt>statusText</dt>
                    *          <dd>The text of the error event reported by the XMLHttpRequest instance</dd>
+                   *      <dt>source</dt>
+                   *          <dd>Either "http" (if it's an HTTP error), or "io" (if it's a network transmission 
+                   *              error.)</dd>
+                   *
                    *  </dl>
                    */
                    this.fire("uploaderror", {originEvent: event,
                                                   status: xhr.status,
-                                                  statusText: xhr.statusText});
+                                                  statusText: xhr.statusText,
+                                                  source: "io"});
                    break;
 
                 case "abort":
@@ -211,15 +220,14 @@
          
             this._set("bytesUploaded", 0);
             
-            try {
-                 this._set("xhr", new XMLHttpRequest());
-                 this._set("boundEventHandler", Bind(this._uploadEventHandler, this));
+            this._set("xhr", new XMLHttpRequest());
+            this._set("boundEventHandler", Bind(this._uploadEventHandler, this));
                          
-                 var uploadData = new FormData(),
-                     fileField = fileFieldName || "Filedata",
-                     xhr = this.get("xhr"),
-                     xhrupload = this.get("xhr").upload,
-                     boundEventHandler = this.get("boundEventHandler");
+            var uploadData = new FormData(),
+                fileField = fileFieldName || "Filedata",
+                xhr = this.get("xhr"),
+                xhrupload = this.get("xhr").upload,
+                boundEventHandler = this.get("boundEventHandler");
 
             Y.each(parameters, function (value, key) {uploadData.append(key, value);});
             uploadData.append(fileField, this.get("file"));
@@ -227,23 +235,26 @@
 
 
 
-             xhr.addEventListener ("loadstart", boundEventHandler, false);
-             xhrupload.addEventListener ("progress", boundEventHandler, false);
-             xhr.addEventListener ("load", boundEventHandler, false);
-             xhr.addEventListener ("error", boundEventHandler, false);
-             xhrupload.addEventListener ("error", boundEventHandler, false);
-             xhrupload.addEventListener ("abort", boundEventHandler, false);
-             xhr.addEventListener ("abort", boundEventHandler, false);
-             xhr.addEventListener ("loadend", boundEventHandler, false);
+            xhr.addEventListener ("loadstart", boundEventHandler, false);
+            xhrupload.addEventListener ("progress", boundEventHandler, false);
+            xhr.addEventListener ("load", boundEventHandler, false);
+            xhr.addEventListener ("error", boundEventHandler, false);
+            xhrupload.addEventListener ("error", boundEventHandler, false);
+            xhrupload.addEventListener ("abort", boundEventHandler, false);
+            xhr.addEventListener ("abort", boundEventHandler, false);
+            xhr.addEventListener ("loadend", boundEventHandler, false); 
+            xhr.addEventListener ("readystatechange", boundEventHandler, false);
 
-             xhr.addEventListener ("readystatechange", boundEventHandler, false);
+            xhr.withCredentials = this.get("xhrWithCredentials");
 
+            xhr.open("POST", url, true);
 
-               xhr.open("POST", url, true);
-               xhr.send(uploadData);
-             } catch (e) {
-             }
+            Y.each(this.get("xhrHeaders"), function (value, key) {
+                 xhr.setRequestHeader(key, value);
+            });
 
+            xhr.send(uploadData);
+      
             /**
              * Signals that this file's upload has started. 
              *
@@ -415,6 +426,30 @@
         xhr: {
             readOnly: true,
             value: null
+        },
+
+       /**
+        * The dictionary of headers that should be set on the XMLHttpRequest object before
+        * sending it.
+        *
+        * @attribute xhrHeaders
+        * @type {Object}
+        * @initOnly
+        */
+        xhrHeaders: {
+            value: {}
+        },
+
+       /**
+        * A Boolean indicating whether the XMLHttpRequest should be sent with user credentials.
+        * This does not affect same-site requests. 
+        *
+        * @attribute xhrWithCredentials
+        * @type {Boolean}
+        * @initOnly
+        */
+        xhrWithCredentials: {
+            value: true
         },
 
        /**

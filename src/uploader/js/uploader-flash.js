@@ -108,6 +108,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     this._buttonState = "up";
     this._buttonFocus = null;
     this._tabElementBindings = null;
+    this._fileList = [];
 
     // Publish available events
 
@@ -455,7 +456,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
    * @private
    */
   _setFileFilters : function () {
-          if (this._swfReference && this.get("fileFilters") !== null) {
+          if (this._swfReference && this.get("fileFilters").length > 0) {
             this._swfReference.callSWF("setFileFilters", [this.get("fileFilters")]);
           } 
 
@@ -495,6 +496,27 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
         this._setButtonClass("disabled", true);
       }
   },
+
+  /**
+   * Getter for the `fileList` attribute
+   * 
+   * @method _getFileList
+   * @private
+   */
+    _getFileList : function (arr) {
+        return this._fileList.concat();
+    },
+
+  /**
+   * Setter for the `fileList` attribute
+   * 
+   * @method _setFileList
+   * @private
+   */
+    _setFileList : function (val) {
+        this._fileList = val.concat();
+        return this._fileList.concat();
+    },
 
   /**
    * Adjusts the content of the `fileList` based on the results of file selection
@@ -584,8 +606,14 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                    this.queue = null;
                    this.fire("alluploadscomplete", event);
                 break;
+                case "file:uploaderror":
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
+                break;
+                case "file:uploadcancel":
+                case "uploaderqueue:uploadcancel":
+                   this.fire("uploadcancel", event);
+                break;
     }   
 
   },
@@ -612,10 +640,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
         if (file instanceof Y.FileFlash) {
            
-            file.on("uploadstart", this._uploadStartHandler, this);
-            file.on("uploadprogress", this._uploadProgressHandler, this);
-            file.on("uploadcomplete", this._uploadCompleteHandler, this);
-            file.on("uploaderror", this._uploadErrorHandler, this);
+            file.on("uploadstart", this._uploadEventHandler, this);
+            file.on("uploadprogress", this._uploadEventHandler, this);
+            file.on("uploadcomplete", this._uploadEventHandler, this);
+            file.on("uploaderror", this._uploadEventHandler, this);
+            file.on("uploadcancel", this._uploadEventHandler, this);
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
         }
@@ -648,11 +677,12 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
             postVars = postvars || this.get("postVarsPerFile");
 
            this.queue = new UploaderQueue({simUploads: this.get("simLimit"), 
-                                                errorAction: this.get("errorAction"),
-                                                fileFieldName: this.get("fileFieldName"),
-                                                fileList: files,
-                                                uploadURL: uploadURL,
-                                                perFileParameters: postVars
+                                           errorAction: this.get("errorAction"),
+                                           fileFieldName: this.get("fileFieldName"),
+                                           fileList: files,
+                                           uploadURL: uploadURL,
+                                           perFileParameters: postVars,
+                                           retryCount: this.get("retryCount")
                                                });
            this.queue.on("uploadstart", this._uploadEventHandler, this);
            this.queue.on("uploadprogress", this._uploadEventHandler, this);
@@ -810,10 +840,10 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * }
          * @attribute fileFilters
          * @type {Array}
-         * @default null
+         * @default []
          */
         fileFilters: {
-          value: null
+          value: []
         },
 
         /**
@@ -855,7 +885,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default []
          */
         fileList: {
-          value: []
+          value: [],
+          getter: "_getFileList",
+          setter: "_setFileList"
         },
 
         /**
@@ -977,7 +1009,19 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          */
         uploadURL: {
           value: ""
-        }
+        },
+
+        /**
+         * The number of times to try re-uploading a file that failed to upload before
+         * cancelling its upload.
+         *
+         * @attribute retryCount
+         * @type {Number}
+         * @default 3
+         */ 
+         retryCount: {
+           value: 3
+         }
   }
 });
 
