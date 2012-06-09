@@ -15,7 +15,7 @@ var myuploader;
 
 if (Y.Uploader.TYPE != "none") {
             myuploader = new Y.Uploader({ multipleFiles: true, 
-                                          uploadURL: "http://home.joelcorbo.com:3030/yui3/src/uploader/tests/manual/uploadwithrandomerrors.php",
+                                          uploadURL: "http://localhost/yui3/src/uploader/tests/manual/uploadwithrandomerrors.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
                                           width: "100%",
