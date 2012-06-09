@@ -14,10 +14,7 @@ var Lang         = Y.Lang,
     htmlEscape   = Y.Escape.html,
     toArray      = Y.Array,
     bind         = Y.bind,
-    YObject      = Y.Object,
-
-    ClassNameManager = Y.ClassNameManager,
-    _getClassName    = ClassNameManager.getClassName;
+    YObject      = Y.Object;
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -114,8 +111,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     CELL_TEMPLATE: '<td {headers} class="{className}">{content}</td>',
 
     /**
-    CSS class applied to even rows.  This is assigned at instantiation after
-    setting up the `_cssPrefix` for the instance.
+    CSS class applied to even rows.  This is assigned at instantiation.
     
     For DataTable, this will be `yui3-datatable-even`.
 
@@ -127,8 +123,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     //CLASS_EVEN: null
 
     /**
-    CSS class applied to odd rows.  This is assigned at instantiation after
-    setting up the `_cssPrefix` for the instance.
+    CSS class applied to odd rows.  This is assigned at instantiation.
     
     When used by DataTable instances, this will be `yui3-datatable-odd`.
 
@@ -151,16 +146,26 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
     /**
     The object that serves as the source of truth for column and row data.
-    This property is assigned at instantiation from the `source` property of
+    This property is assigned at instantiation from the `host` property of
     the configuration object passed to the constructor.
 
-    @property source
+    @property host
     @type {Object}
     @default (initially unset)
     @since 3.5.0
     **/
     //TODO: should this be protected?
-    //source: null,
+    //host: null,
+
+    /**
+    HTML templates used to create the `<tbody>` containing the table rows.
+
+    @property TBODY_TEMPLATE
+    @type {HTML}
+    @default '<tbody class="{className}">{content}</tbody>'
+    @since 3.6.0
+    **/
+    TBODY_TEMPLATE: '<tbody class="{className}"></tbody>',
 
     // -- Public methods ------------------------------------------------------
 
@@ -191,7 +196,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     getCell: function (seed, shift) {
-        var tbody = this.get('container'),
+        var tbody = this.tbodyNode,
             row, cell, index, rowIndexOffset;
 
         if (seed && tbody) {
@@ -229,23 +234,32 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
-    Builds a CSS class name from the provided tokens.  If the instance is
-    created with `cssPrefix` or `source` in the configuration, it will use this
-    prefix (the `_cssPrefix` of the `source` object) as the base token.  This
-    allows class instances to generate markup with class names that correspond
-    to the parent class that is consuming them.
+    Returns the generated CSS classname based on the input.  If the `host`
+    attribute is configured, it will attempt to relay to its `getClassName`
+    or use its static `NAME` property as a string base.
+    
+    If `host` is absent or has neither method nor `NAME`, a CSS classname
+    will be generated using this class's `NAME`.
 
     @method getClassName
-    @param {String} token* Any number of tokens to include in the class name
-    @return {String} The generated class name
+    @param {String} token* Any number of token strings to assemble the
+        classname from.
+    @return {String}
+    @protected
     @since 3.5.0
     **/
     getClassName: function () {
-        var args = toArray(arguments);
-        args.unshift(this._cssPrefix);
-        args.push(true);
+        var host = this.host,
+            args;
 
-        return _getClassName.apply(ClassNameManager, args);
+        if (host && host.getClassName) {
+            return host.getClassName.apply(host, arguments);
+        } else {
+            args = toArray(arguments);
+            args.unshift(this.constructor.NAME);
+            return Y.ClassNameManager.getClassName
+                .apply(Y.ClassNameManager, args);
+        }
     },
 
     /**
@@ -261,7 +275,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     **/
     getRecord: function (seed) {
         var modelList = this.get('modelList'),
-            tbody     = this.get('container'),
+            tbody     = this.tbodyNode,
             row       = null,
             record;
 
@@ -294,24 +308,30 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     getRow: function (id) {
-        var tbody = this.get('container') || null;
+        var tbody = this.tbodyNode,
+            row = null;
 
-        if (id) {
-            id = this._idMap[id.get ? id.get('clientId') : id] || id;
+        if (tbody) {
+            if (id) {
+                id = this._idMap[id.get ? id.get('clientId') : id] || id;
+            }
+
+            row = isNumber(id) ?
+                tbody.get('children').item(id) :
+                tbody.one('#' + id);
         }
 
-        return tbody &&
-            Y.one(isNumber(id) ? tbody.get('children').item(id) : '#' + id);
+        return row;
     },
 
     /**
     Creates the table's `<tbody>` content by assembling markup generated by
     populating the `ROW\_TEMPLATE`, and `CELL\_TEMPLATE` templates with content
-    from the `columns` property and `modelList` attribute.
+    from the `columns` and `modelList` attributes.
 
     The rendering process happens in three stages:
 
-    1. A row template is assembled from the `columns` property (see
+    1. A row template is assembled from the `columns` attribute (see
        `_createRowTemplate`)
 
     2. An HTML string is built up by concatening the application of the data in
@@ -395,17 +415,23 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     render: function () {
-        var tbody   = this.get('container'),
+        var table   = this.get('container'),
             data    = this.get('modelList'),
-            columns = this.columns;
-
+            columns = this.get('columns'),
+            tbody   = this.tbodyNode ||
+                      (this.tbodyNode = this._createTBodyNode());
+        
         // Needed for mutation
         this._createRowTemplate(columns);
 
-        if (tbody && data) {
+        if (data) {
             tbody.setHTML(this._createDataHTML(columns));
 
             this._applyNodeFormatters(tbody, columns);
+        }
+
+        if (tbody.get('parentNode') !== table) {
+            table.appendChild(tbody);
         }
 
         this.bindUI();
@@ -430,8 +456,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     // 3. column additions
     // 4. column moves (preserve cells)
     _afterColumnsChange: function (e) {
-        this.columns = this._parseColumns(e.newVal);
-
         this.render();
     },
 
@@ -446,33 +470,33 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     _afterDataChange: function (e) {
-        // Baseline view will just rerender the tbody entirely
+        //var type = e.type.slice(e.type.lastIndexOf(':') + 1);
+
+        // TODO: Isolate changes
         this.render();
     },
 
     /**
-    Reacts to a change in the instance's `modelList` attribute by breaking
-    down the bubbling relationship with the previous `modelList` and setting up
-    that relationship with the new one.
+    Handles replacement of the modelList.
+
+    Rerenders the `<tbody>` contents.
 
     @method _afterModelListChange
     @param {EventFacade} e The `modelListChange` event
     @protected
-    @since 3.5.0
+    @since 3.6.0
     **/
     _afterModelListChange: function (e) {
-        var old = e.prevVal,
-            now = e.newVal;
+        var handles = this._eventHandles;
 
-        if (old && old.removeTarget) {
-            old.removeTarget(this);
+        if (handles.dataChange) {
+            handles.dataChange.detach();
+            this.bindUI();
         }
 
-        if (now && now.addTarget(this)) {
-            now.addTarget(this);
+        if (this.tbodyNode) {
+            this.render();
         }
-
-        this._idMap = {};
     },
 
     /**
@@ -486,7 +510,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     _applyNodeFormatters: function (tbody, columns) {
-        var source = this.source,
+        var host = this.host,
             data = this.get('modelList'),
             formatters = [],
             linerQuery = '.' + this.getClassName('liner'),
@@ -525,7 +549,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                             formatterData.td    = cell;
                             formatterData.cell  = cell.one(linerQuery) || cell;
 
-                            keep = col.nodeFormatter.call(source,formatterData);
+                            keep = col.nodeFormatter.call(host,formatterData);
 
                             if (keep === false) {
                                 // Remove from the Node cache to reduce
@@ -543,37 +567,28 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
-    Binds event subscriptions from the UI and the source (if assigned).
+    Binds event subscriptions from the UI and the host (if assigned).
 
     @method bindUI
     @protected
     @since 3.5.0
     **/
     bindUI: function () {
-        var handles = this._eventHandles;
+        var handles     = this._eventHandles,
+            modelList   = this.get('modelList'),
+            changeEvent = modelList.model.NAME + ':change';
 
-        if (this.source && !handles.columnsChange) {
-            handles.columnsChange = this.source.after('columnsChange',
+        if (!handles.columnsChange) {
+            handles.columnsChange = this.after('columnsChange',
                 bind('_afterColumnsChange', this));
         }
 
-        if (!handles.dataChange) {
-            handles.dataChange = this.after(
-                ['modelListChange', '*:change', '*:add', '*:remove', '*:reset'],
+        if (modelList && !handles.dataChange) {
+            handles.dataChange = modelList.after(
+                ['add', 'remove', 'reset', changeEvent],
                 bind('_afterDataChange', this));
         }
     },
-
-    /**
-    The base token for classes created with the `getClassName` method.
-
-    @property _cssPrefix
-    @type {String}
-    @default 'yui3-table'
-    @protected
-    @since 3.5.0
-    **/
-    _cssPrefix: ClassNameManager.getClassName('table'),
 
     /**
     Iterates the `modelList` and applies each Model to the `_rowTemplate`,
@@ -595,7 +610,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         if (data) {
             data.each(function (model, index) {
-                html += this._createRowHTML(model, index);
+                html += this._createRowHTML(model, index, columns);
             }, this);
         }
 
@@ -632,11 +647,12 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @method _createRowHTML
     @param {Model} model The Model instance to apply to the row template
     @param {Number} index The index the row will be appearing
+    @param {Object[]} columns The column configurations
     @return {HTML} The markup for the provided Model, less any `nodeFormatter`s
     @protected
     @since 3.5.0
     **/
-    _createRowHTML: function (model, index) {
+    _createRowHTML: function (model, index, columns) {
         var data     = model.toJSON(),
             clientId = model.get('clientId'),
             values   = {
@@ -644,14 +660,13 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                 clientId: clientId,
                 rowClass: (index % 2) ? this.CLASS_ODD : this.CLASS_EVEN
             },
-            source  = this.source || this,
-            columns = this.columns,
+            host = this.host || this,
             i, len, col, token, value, formatterData;
 
         for (i = 0, len = columns.length; i < len; ++i) {
             col   = columns[i];
             value = data[col.key];
-            token = col._id;
+            token = col._id || col.key;
 
             values[token + '-className'] = '';
 
@@ -673,7 +688,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
                     }
                 } else {
                     // Formatters can either return a value
-                    value = col.formatter.call(source, formatterData);
+                    value = col.formatter.call(host, formatterData);
 
                     // or update the value property of the data obj passed
                     if (value === undefined) {
@@ -717,7 +732,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
         for (i = 0, len = columns.length; i < len; ++i) {
             col     = columns[i];
             key     = col.key;
-            token   = col._id;
+            token   = col._id || key;
             // Only include headers if there are more than one
             headers = (col._headers || []).length > 1 ?
                         'headers="' + col._headers.join(' ') + '"' : '';
@@ -745,6 +760,20 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     },
 
     /**
+    Creates the `<tbody>` node that will store the data rows.
+
+    @method _createTBodyNode
+    @return {Node}
+    @protected
+    @since 3.6.0
+    **/
+    _createTBodyNode: function () {
+        return Y.Node.create(fromTemplate(this.TBODY_TEMPLATE, {
+            className: this.getClassName('data')
+        }));
+    },
+
+    /**
     Destroys the instance.
 
     @method destructor
@@ -752,9 +781,6 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     destructor: function () {
-        // will unbind the bubble relationship and clear the table if necessary
-        this.set('modelList', null);
-
         (new Y.EventHandle(YObject.values(this._eventHandles))).detach();
     },
 
@@ -796,8 +822,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     addition to the instance attributes:
 
       * `columns` - (REQUIRED) The initial column information
-      * `cssPrefix` - The base string for classes generated by `getClassName`
-      * `source` - The object to serve as source of truth for column info
+      * `host`    - The object to serve as source of truth for column info and
+                    for generating class names
 
     @method initializer
     @param {Object} config Configuration data
@@ -805,65 +831,17 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     initializer: function (config) {
-        var cssPrefix = config.cssPrefix || (config.source || {}).cssPrefix,
-            modelList = this.get('modelList');
+        this.host = config.host;
 
-        this.source  = config.source;
-        this.columns = this._parseColumns(config.columns);
-
-        this._eventHandles = {};
+        this._eventHandles = {
+            modelListChange: this.after('modelListChange',
+                bind('_afterModelListChange', this))
+        };
         this._idMap = {};
-
-        if (cssPrefix) {
-            this._cssPrefix = cssPrefix;
-        }
 
         this.CLASS_ODD  = this.getClassName('odd');
         this.CLASS_EVEN = this.getClassName('even');
 
-        this.after('modelListChange', bind('_afterModelListChange', this));
-
-        if (modelList && modelList.addTarget) {
-            modelList.addTarget(this);
-        }
-    },
-
-    /**
-    Flattens an array of potentially nested column configurations into a single
-    depth array of data columns.  Columns that have children are disregarded in
-    favor of searching their child columns.  The resulting array corresponds 1:1
-    with columns that will contain data in the `<tbody>`.
-
-    @method _parseColumns
-    @param {Object[]} data Array of unfiltered column configuration objects
-    @param {Object[]} columns Working array of data columns. Used for recursion.
-    @return {Object[]} Only those columns that will be rendered.
-    @protected
-    @since 3.5.0
-    **/
-    _parseColumns: function (data, columns) {
-        var col, i, len;
-        
-        columns || (columns = []);
-
-        if (isArray(data) && data.length) {
-            for (i = 0, len = data.length; i < len; ++i) {
-                col = data[i];
-
-                if (typeof col === 'string') {
-                    col = { key: col };
-                }
-
-                if (col.key || col.formatter || col.nodeFormatter) {
-                    col.index = columns.length;
-                    columns.push(col);
-                } else if (col.children) {
-                    this._parseColumns(col.children, columns);
-                }
-            }
-        }
-
-        return columns;
     }
 
     /**
@@ -878,10 +856,4 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
     @since 3.5.0
     **/
     //_rowTemplate: null
-}, {
-    ATTRS: {
-        modelList: {
-            setter: '_setModelList'
-        }
-    }
 });

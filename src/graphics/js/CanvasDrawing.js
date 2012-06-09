@@ -14,7 +14,8 @@ var SHAPE = "canvasShape",
     IS_NUMBER = Y_LANG.isNumber,
     RE = RegExp,
     TORGB = Y_Color.toRGB,
-    TOHEX = Y_Color.toHex;
+    TOHEX = Y_Color.toHex,
+    _getClassName = Y.ClassNameManager.getClassName;
 
 /**
  * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the <a href="Drawing.html">`Drawing`</a> class. 

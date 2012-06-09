@@ -29,8 +29,7 @@ ChartBase.ATTRS = {
 
         setter: function(val)
         {
-            var dataProvider = this._setDataValues(val),
-                seriesKeys = this.get("seriesKeys");
+            var dataProvider = this._setDataValues(val);
             if(!this._seriesKeysExplicitlySet)
             {
                 this._seriesKeys = this._buildSeriesKeys(dataProvider);

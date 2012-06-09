@@ -75,8 +75,16 @@ YUI.add('io-nodejs', function(Y) {
                     method: config.method,
                     uri: uri
                 };
+
                 if (config.data) {
-                    rconf.body = config.data;
+                    if (Y.Lang.isObject(config.data)) {
+                        if (Y.QueryString && Y.QueryString.stringify) {
+                            rconf.body = Y.QueryString.stringify(config.data);
+                        } else {
+                        }
+                    } else if (Y.Lang.isString(config.data)) {
+                        rconf.body = config.data;
+                    }
                 }
                 if (config.headers) {
                     rconf.headers = config.headers;

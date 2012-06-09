@@ -25,6 +25,7 @@ build/autocomplete-sources/assets/autocomplete-list-core.css
 build/datatable-body/assets/
 build/datatable-core/assets/
 build/datatable-head/assets/
+build/datatable-table/assets/
 build/datatable-column-widths/assets/
 build/datatable-mutable/assets/
 build/datatable-datasource/assets/

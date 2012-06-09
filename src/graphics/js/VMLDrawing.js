@@ -1,5 +1,6 @@
 Y.log('using VML');
-var Y_LANG = Y.Lang,
+var SHAPE = "vmlShape",
+    Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
     IS_ARRAY = Y_LANG.isArray,
     IS_STRING = Y_LANG.isString,
@@ -13,7 +14,8 @@ var Y_LANG = Y.Lang,
 	VMLRect,
 	VMLEllipse,
 	VMLGraphic,
-    VMLPieSlice;
+    VMLPieSlice,
+    _getClassName = Y.ClassNameManager.getClassName;
 
 function VMLDrawing() {}
 

@@ -123,6 +123,8 @@ Y.mix(Message.prototype, {
                 '.' + this.getClassName('message', 'content'));
 
             if (contentNode) {
+                // FIXME: This needs to become a class extension plus a view or
+                // plugin for the table view.
                 contentNode.set('colSpan', this._displayColumns.length);
             }
         }
