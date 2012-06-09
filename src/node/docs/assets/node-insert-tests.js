@@ -54,7 +54,9 @@ YUI.add('node-insert-tests', function(Y) {
 
             Y.one('.example .buttons-list .done').simulate("click");
             test.wait( function() {
-                Assert.isTrue((parseInt(Y.one('.demo').getStyle('height'), 10) < 115), 'Done button failed to collapse burger <ul> to < 115 height');
+                //alert('height: ' + parseInt(Y.one('.demo').getStyle('height'), 10));
+                // modern browsers height is about 108px 111px etc. IE6 is 145px
+                Assert.isTrue((parseInt(Y.one('.demo').getStyle('height'), 10) < 146), 'Done button failed to collapse burger <ul> to < 115 height');
             }, 1000);
             anotherButton = Y.one('.example .buttons-list .another'),
             anotherDisplayState = anotherButton.getStyle('display');

@@ -1,10 +1,20 @@
 <script>
-YUI().use('node', 'cssbutton', 'transition', function (Y) {
+YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
     var demo = Y.one('.demo'),
         btnList = Y.all('.buttons-list .yui3-button'),
         i = 0,
         objList,
-        myZIndex;
+        myZIndex,
+        imgPath = '{{{componentAssets}}}/images/';
+
+    if (Y.UA.ie && Y.UA.ie < 7) {
+
+        // Add a prefix to the image file name in the imgPath.
+        // This is needed to work around IE6 non-support of alpha pngs
+        imgPath = imgPath + '8bit_';
+        Y.one('.example .demo .bun-top img').setAttribute('src', imgPath + 'burg_bun_top.png');
+        Y.one('.example .demo .bun-bottom img').setAttribute('src', imgPath + 'burg_bun_bottom.png');
+    }
 
     // This smoothes out the visual experience of adding
     // an element to the burger
@@ -14,6 +24,7 @@ YUI().use('node', 'cssbutton', 'transition', function (Y) {
 
             // height grows from initial 0, to height of contained image
             height: obj.one('img').getStyle('height'),
+            marginLeft: '0px',
             opacity: {
                 delay: 0.2,
                 duration: 0.5,
@@ -22,12 +33,39 @@ YUI().use('node', 'cssbutton', 'transition', function (Y) {
         });
     }
 
+    // This removes an element of the burger
+    var removeObject = function(e) {
+        e.currentTarget.transition({
+            duration: 0.8,
+
+            // height grows from initial 0, to height of contained image
+            height: 0,
+            marginLeft: '-400px',
+            opacity: {
+                delay: 0.2,
+                duration: 0.5,
+                value: 0
+            }
+        },
+            function(){
+                e.currentTarget.remove(); // remove the clicked item from the burger
+
+                // If there's no patty
+                if (Y.one('.example .demo').getHTML().indexOf('patty') === -1) {
+                    // Disable the cheese button
+                    // Cheese is inserted before first patty.
+                    // The cheese button will be enabled when there's a patty
+                    Y.one('.buttons-list .cheese')._node.disabled = true;
+                }
+        });
+    }
+
     // This inserts burger parts and manages the display of buttons
     var buttonClicks = function (e) {
         var obj;
         if (this.hasClass('patty')) {
             // Create a node with an image of the burger part
-            obj = Y.Node.create('<li class="patty"><img src="{{{componentAssets}}}/images/burg_patty.png"/></li>');
+            obj = Y.Node.create('<li class="patty"><img src="' + imgPath + 'burg_patty.png"/></li>');
 
             // Insert it before the bottom bun
             demo.insert(obj, Y.one('.bun-bottom'));
@@ -39,27 +77,27 @@ YUI().use('node', 'cssbutton', 'transition', function (Y) {
             // only when there's a patty to insert before
             Y.one('.buttons-list .cheese')._node.disabled = false; 
         } else if (this.hasClass('lettuce')) {
-            obj = Y.Node.create('<li class="lettuce"><img src="{{{componentAssets}}}/images/burg_lettuce.png"/></li>');
+            obj = Y.Node.create('<li class="lettuce"><img src="' + imgPath + 'burg_lettuce.png"/></li>');
             demo.insert(obj, Y.one('.bun-bottom'));
             transitionObject(obj);        
         } else if (this.hasClass('cheese')) {
-            obj = Y.Node.create('<li class="cheese"><img src="{{{componentAssets}}}/images/burg_cheese.png"/></li>');
+            obj = Y.Node.create('<li class="cheese"><img src="' + imgPath + 'burg_cheese.png"/></li>');
             demo.insert(obj, Y.one('.patty'));
             transitionObject(obj);
         } else if (this.hasClass('ketchup')) {
-            obj = Y.Node.create('<li class="ketchup"><img src="{{{componentAssets}}}/images/burg_ketchup.png"/></li>');
+            obj = Y.Node.create('<li class="ketchup"><img src="' + imgPath + 'burg_ketchup.png"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('pickles')) {
-            obj = Y.Node.create('<li class="pickles"><img src="{{{componentAssets}}}/images/burg_pickles.png"/></li>');
+            obj = Y.Node.create('<li class="pickles"><img src="' + imgPath + 'burg_pickles.png"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('onions')) {
-            obj = Y.Node.create('<li class="onions"><img src="{{{componentAssets}}}/images/burg_onions.png"/></li>');
+            obj = Y.Node.create('<li class="onions"><img src="' + imgPath + 'burg_onions.png"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('tomato')) {
-            obj = Y.Node.create('<li class="tomato"><img src="{{{componentAssets}}}/images/burg_tomato.png"/></li>');
+            obj = Y.Node.create('<li class="tomato"><img src="' + imgPath + 'burg_tomato.png"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('done')) {
@@ -89,8 +127,8 @@ YUI().use('node', 'cssbutton', 'transition', function (Y) {
             demo.setContent('');
 
             // Insert just the buns
-            demo.append('<li class="bun-top"><img src="{{{componentAssets}}}/images/burg_bun_top.png"/></li>');
-            demo.append('<li class="bun-bottom"><img src="{{{componentAssets}}}/images/burg_bun_bottom.png"/></li>');
+            demo.append('<li class="bun-top"><img src="' + imgPath + 'burg_bun_top.png"/></li>');
+            demo.append('<li class="bun-bottom"><img src="' + imgPath + 'burg_bun_bottom.png"/></li>');
 
             // Disable the cheese button
             // Cheese is inserted before first patty.
@@ -103,5 +141,6 @@ YUI().use('node', 'cssbutton', 'transition', function (Y) {
         }
     }
     Y.on('click', buttonClicks, '.example .buttons-list .yui3-button');
+    Y.one('.example .demo').delegate('click', removeObject, 'li');
 });
 </script>

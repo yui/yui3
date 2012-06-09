@@ -26,13 +26,22 @@
     display: none;
 }
 .example .demo li {
+    position: relative;
     list-style: none;
     height: 0;
     width: 302px;
     opacity: 0;
+    margin: 0 0 0 -800px;
+    cursor: no-drop;
+}
+.example .demo li img {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 .example .demo .bun-top, .example .demo .bun-bottom{
     opacity: 1;
-    height: auto;
+    height: 106px;
+    margin: 0;
 }
 </style>
