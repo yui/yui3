@@ -27,6 +27,7 @@ YUI.add('uploader-queue', function(Y) {
      */
     var UploaderQueue = function(o) {
         this.queuedFiles = [];
+        this.uploadRetries = {};
         this.numberOfUploads = 0;
         this.currentUploadedByteValues = {};
         this.currentFiles = {};
@@ -88,7 +89,8 @@ YUI.add('uploader-queue', function(Y) {
 
            this.numberOfUploads-=1;
            delete this.currentFiles[event.target.get("id")];
-           
+           this._detachFileEvents(event.target);
+
            event.target.cancelUpload();
 
            if (errorAction === UploaderQueue.STOP) {
@@ -96,12 +98,22 @@ YUI.add('uploader-queue', function(Y) {
            }
 
            else if (errorAction === UploaderQueue.RESTART_ASAP) {
-             this.queuedFiles.unshift(event.target);
-             this._startNextFile();
+            var fileid = event.target.get("id"),
+                retries = this.uploadRetries[fileid] || 0;
+            if (retries < this.get("retryCount")) {
+               this.uploadRetries[fileid] = retries + 1;
+               this.addToQueueTop(event.target);
+            }
+               this._startNextFile();
            }
            else if (errorAction === UploaderQueue.RESTART_AFTER) {
-            this.queuedFiles.push(event.target);
-            this._startNextFile();
+            var fileid = event.target.get("id"),
+                retries = this.uploadRetries[fileid] || 0;
+            if (retries < this.get("retryCount")) {
+               this.uploadRetries[fileid] = retries + 1;
+               this.addToQueueBottom(event.target);
+            }
+              this._startNextFile();
            }
 
            this.fire("uploaderror", updatedEvent);  
@@ -126,6 +138,10 @@ YUI.add('uploader-queue', function(Y) {
                currentFile.on("uploadprogress", this._uploadProgressHandler, this);
                currentFile.on("uploadcomplete", this._uploadCompleteHandler, this);
                currentFile.on("uploaderror", this._uploadErrorHandler, this);
+               currentFile.on("uploadcancel", this._uploadCancelHandler, this);
+
+               currentFile.set("xhrHeaders", this.get("uploadHeaders"));
+               currentFile.set("xhrWithCredentials", this.get("withCredentials"));
 
                currentFile.startUpload(this.get("uploadURL"), fileParameters, this.get("fileFieldName"));
 
@@ -155,6 +171,17 @@ YUI.add('uploader-queue', function(Y) {
             this.numberOfUploads -=1;
           }
           delete this.currentFiles[file.get("id")];
+          delete this.uploadRetries[file.get("id")];
+
+          this._detachFileEvents(file);
+        },
+
+        _detachFileEvents : function (file) {
+          file.detach("uploadstart", this._uploadStartHandler);
+          file.detach("uploadprogress", this._uploadProgressHandler);
+          file.detach("uploadcomplete", this._uploadCompleteHandler);
+          file.detach("uploaderror", this._uploadErrorHandler);
+          file.detach("uploadcancel", this._uploadCancelHandler);
         },
 
        /**
@@ -201,6 +228,24 @@ YUI.add('uploader-queue', function(Y) {
 
 
         },
+
+       /**
+        * Handles and retransmits upload cancel event.
+        * 
+        * @method _uploadCancelHandler
+        * @param event The event dispatched during the upload process.
+        * @private
+        */
+        _uploadCancelHandler : function (event) {
+          
+          var updatedEvent = event;
+          updatedEvent.originEvent = event;
+          updatedEvent.file = event.target;
+
+          this.fire("uploadcacel", updatedEvent);
+        },
+
+
 
        /**
         * Handles and retransmits upload progress event.
@@ -288,7 +333,7 @@ YUI.add('uploader-queue', function(Y) {
             if (this.currentFiles.hasOwnProperty(id)) {
               file.cancelUpload();
               this._unregisterUpload(file);
-              this.queuedFiles.unshift(file);
+              this.addToQueueTop(file);
               this._startNextFile();
             }
         },
@@ -535,7 +580,7 @@ YUI.add('uploader-queue', function(Y) {
               value: "Filedata"
            },
 
-           /**
+          /**
            * The URL to POST the file upload requests to.
            *
            * @attribute uploadURL
@@ -545,6 +590,36 @@ YUI.add('uploader-queue', function(Y) {
            uploadURL: {
              value: ""
            },
+
+          /**
+           * Additional HTTP headers that should be included
+           * in the upload request. Due to Flash Player security
+           * restrictions, this attribute is only honored in the
+           * HTML5 Uploader.
+           *
+           * @attribute uploadHeaders
+           * @type {Object}
+           * @default {}
+           */  
+           uploadHeaders: {
+             value: {}
+           },
+
+          /**
+           * A Boolean that specifies whether the file should be
+           * uploaded with the appropriate user credentials for the
+           * domain. Due to Flash Player security restrictions, this
+           * attribute is only honored in the HTML5 Uploader.
+           *
+           * @attribute withCredentials
+           * @type {Boolean}
+           * @default true
+           */  
+           withCredentials: {
+             value: true
+           },
+
+
           /**
            * An object, keyed by `fileId`, containing sets of key-value pairs
            * that should be passed as POST variables along with each corresponding
@@ -556,6 +631,18 @@ YUI.add('uploader-queue', function(Y) {
            */   
            perFileParameters: {
              value: {}
+           },
+
+          /**
+           * The number of times to try re-uploading a file that failed to upload before
+           * cancelling its upload.
+           *
+           * @attribute retryCount
+           * @type {Number}
+           * @default 3
+           */ 
+           retryCount: {
+             value: 3
            }
 
         }

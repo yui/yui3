@@ -140,9 +140,13 @@ YUI.add('file-flash', function(Y) {
                  *      <dt>originEvent</dt>
                  *          <dd>The original event fired by the Flash player instance.</dd>
                  *      <dt>status</dt>
-                 *          <dd>The status code reported by the Flash player instance.</dd>
+                 *          <dd>The status code reported by the Flash Player. If it's an HTTP error,
+                 *                then this corresponds to the HTTP status code received by the uploader.</dd>
                  *      <dt>statusText</dt>
-                 *          <dd>The text of the error event reported by the Flash player instance</dd>
+                 *          <dd>The text of the error event reported by the Flash Player.</dd>
+                 *      <dt>source</dt>
+                 *          <dd>Either "http" (if it's an HTTP error), or "io" (if it's a network transmission 
+                 *              error.)</dd>
                  *  </dl>
                  */
                  this.fire("uploaderror", {originEvent: event, status: event.status, statusText: event.message, source: event.source});         
@@ -189,6 +193,7 @@ YUI.add('file-flash', function(Y) {
         cancelUpload: function () {
          if (this.get("uploader")) {
            this.get("uploader").callSWF("cancel", [this.get("id")]);
+           this.fire("uploadcancel");
          }
         }
 

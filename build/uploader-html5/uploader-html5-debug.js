@@ -75,6 +75,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     this._fileInputField = null;
     this.queue = null;
     this._buttonBinding = null;
+    this._fileList = [];
+
   // Publish available events
 
    /**
@@ -457,6 +459,27 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         }
     },
 
+  /**
+   * Getter for the `fileList` attribute
+   * 
+   * @method _getFileList
+   * @private
+   */
+    _getFileList : function (arr) {
+        return this._fileList.concat();
+    },
+
+  /**
+   * Setter for the `fileList` attribute
+   * 
+   * @method _setFileList
+   * @private
+   */
+    _setFileList : function (val) {
+        this._fileList = val.concat();
+        return this._fileList.concat();
+    },
+
     /**
      * Adjusts the content of the `fileList` based on the results of file selection
      * and the `appendNewFiles` attribute. If the `appendNewFiles` attribute is true,
@@ -525,8 +548,13 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                    this.queue = null;
                    this.fire("alluploadscomplete", event);
                 break;
+                case "file:uploaderror":
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
+                break;
+                case "file:uploadcancel":
+                case "uploaderqueue:uploadcancel":
+                   this.fire("uploadcancel", event);
                 break;
     }   
 
@@ -563,10 +591,11 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
         if (file instanceof Y.FileHTML5) {
            
-            file.on("uploadstart", this._uploadStartHandler, this);
-            file.on("uploadprogress", this._uploadProgressHandler, this);
-            file.on("uploadcomplete", this._uploadCompleteHandler, this);
-            file.on("uploaderror", this._uploadErrorHandler, this);
+            file.on("uploadstart", this._uploadEventHandler, this);
+            file.on("uploadprogress", this._uploadEventHandler, this);
+            file.on("uploadcomplete", this._uploadEventHandler, this);
+            file.on("uploaderror", this._uploadEventHandler, this);
+            file.on("uploadcancel", this._uploadEventHandler, this);
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
         }
@@ -599,21 +628,31 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
             postVars = postvars || this.get("postVarsPerFile");
 
            this.queue = new UploaderQueue({simUploads: this.get("simLimit"), 
-                                                errorAction: this.get("errorAction"),
-                                                fileFieldName: this.get("fileFieldName"),
-                                                fileList: files,
-                                                uploadURL: uploadURL,
-                                                perFileParameters: postVars
+                                           errorAction: this.get("errorAction"),
+                                           fileFieldName: this.get("fileFieldName"),
+                                           fileList: files,
+                                           uploadURL: uploadURL,
+                                           perFileParameters: postVars,
+                                           retryCount: this.get("retryCount"),
+                                           uploadHeaders: this.get("uploadHeaders"),
+                                           withCredentials: this.get("withCredentials")
                                                });
            this.queue.on("uploadstart", this._uploadEventHandler, this);
            this.queue.on("uploadprogress", this._uploadEventHandler, this);
            this.queue.on("totaluploadprogress", this._uploadEventHandler, this);
            this.queue.on("uploadcomplete", this._uploadEventHandler, this);
            this.queue.on("alluploadscomplete", this._uploadEventHandler, this);
+           this.queue.on("uploadcancel", this._uploadEventHandler, this);
            this.queue.on("uploaderror", this._uploadEventHandler, this);
            this.queue.startUpload();  
            
            this.fire("uploadstart"); 
+       }
+       else if (this.queue._currentState === UploaderQueue.UPLOADING) {
+           this.queue.set("perFileParameters", this.get("postVarsPerFile"));
+           Y.each(files, function (file) {
+             this.queue.addToQueueBottom(file);
+           }, this);
        }
     }
 },
@@ -767,10 +806,10 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * http://www.iana.org/assignments/media-types/index.html
          * @attribute fileFilters
          * @type {Array}
-         * @default null
+         * @default []
          */
         fileFilters: {
-          value: null
+          value: []
         },
 
         /**
@@ -812,7 +851,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @default []
          */
         fileList: {
-            value: []
+            value: [],
+            getter: "_getFileList",
+            setter: "_setFileList"
         },
 
         /**
@@ -893,7 +934,45 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          */
         uploadURL: {
             value: ""
-        }
+        },
+
+        /**
+         * Additional HTTP headers that should be included
+         * in the upload request.
+         *
+         *
+         * @attribute uploadHeaders
+         * @type {Object}
+         * @default {}
+         */  
+        uploadHeaders: {
+           value: {}
+        },
+
+        /**
+         * A Boolean that specifies whether the file should be
+         * uploaded with the appropriate user credentials for the
+         * domain. 
+         *
+         * @attribute withCredentials
+         * @type {Boolean}
+         * @default true
+         */  
+        withCredentials: {
+           value: true
+        },
+
+        /**
+         * The number of times to try re-uploading a file that failed to upload before
+         * cancelling its upload.
+         *
+         * @attribute retryCount
+         * @type {Number}
+         * @default 3
+         */ 
+         retryCount: {
+           value: 3
+         }
     }
 });
 
