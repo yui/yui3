@@ -319,13 +319,16 @@ routerSuite.add(new Y.Test.Case({
 
         Y.HistoryHash.setHash('/hashpath');
 
-        var test       = this,
-            router = this.router = new Y.Router();
+        var test   = this,
+            router = this.router = new Y.Router(),
+            root   = router._getPathRoot();
+
+        router.set('root', root);
 
         router.route('/hashpath', function (req) {
             test.resume(function () {
                 Assert.areSame('/hashpath', req.path);
-                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
+                Assert.areSame(Y.config.win.location.pathname, root + 'hashpath');
             });
         });
 
