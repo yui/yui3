@@ -1,13 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-    <title>Widget Parent Child Test Suite</title>
+    <title>TreeView Test Suite</title>
     
-    		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
-
-
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/reset-min.css">
     <script src="http://yui.yahooapis.com/3.5.1/build/yui/yui-min.js"></script>
-    <script src="../../../build/gallery-yui3treeview/gallery-yui3treeview.js"></script>
+    <script src="../../../build/treeview/treeview.js"></script>
     <link rel="stylesheet" type="text/css" href="../assets/treeview-menu.css">
 
 
@@ -47,7 +45,7 @@
 
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-        }).use("node-event-simulate", "async-queue", "test", "console",'gallery-yui3treeview', function (Y) {
+        }).use("node-event-simulate", "async-queue", "test", "console",'treeview', function (Y) {
             var suite = new Y.Test.Suite(" TreeView Suite");
             
             
@@ -63,7 +61,7 @@
                     var tree = new Y. TreeView({
                            id: "tree",
                            label : "This my tree",
-                           lazyLoad : true
+                           lazyLoad : false
                            }),
                            child;
 
@@ -91,7 +89,7 @@
                     var tree = new Y. TreeView({
                            id: "tree",
                            label : "This my tree",
-                           lazyLoad : true,
+                           lazyLoad : false,
                             children: [
                              { type: "TreeLeaf", label: "Child One", id: "child-1" },
                              { type: "TreeLeaf", label: "Child Two", id: "child-2" },
@@ -128,7 +126,7 @@
                     var tree = new Y. TreeView({
                         id:"widget-1",
                         label : "tree",
-                        lazyLoad : true
+                        lazyLoad : false
                     });
 
                     tree.add({type: "TreeLeaf", label: "Child Two", id: "child-2" }, 1);
@@ -147,6 +145,7 @@
                 testRemove: function () {
                     var tree = new Y. TreeView({
                          id: "widget-1",
+                         lazyLoad : false,
                          children: [
                              { type: "TreeLeaf", label: "Child One", id: "child-1" },
                              { type: "TreeLeaf", label: "Child Two", id: "child-2" },
@@ -183,6 +182,7 @@
                 testRemoveSelectedChild : function() {
                     var tree = new Y. TreeView({
                          id: "widget-1",
+                         lazyLoad : false,
                          children: [
                              { type: "TreeLeaf", label: "Child One", id: "child-1" },
                              { type: "TreeLeaf", label: "Child Two", id: "child-2" },
@@ -215,6 +215,7 @@
 
                     var tree = new Y. TreeView({
                          id: "widget-1",
+                        lazyLoad : false,
                          children: [
                              { label: "Child One", id: "child-1" },
                              { label: "Child Two", id: "child-2" },
@@ -248,6 +249,7 @@
 
                     var root = new Y. TreeView({
                         id: "new-widget",
+                        lazyLoad : false,
                         children: [
                             {  label: "Child One" },
                             {   label: "Child Two" },
@@ -294,11 +296,12 @@
 
                     var tree = new Y. TreeView({
                        id: "tree",
+                       lazyLoad : false,
                        children: [
 
                            {   id: "leaf-1", label: "Leaf One" },
                            {   id: "leaf-2", label: "Leaf Two" },
-                           { type: Y. TreeView, id: "subtree", label: "Subtree", children: [
+                           { type: Y. TreeView, lazyLoad : false,id: "subtree", label: "Subtree", children: [
 
                               {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
                               {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
@@ -380,6 +383,7 @@
                     var root = new Y. TreeView({
                         id: "m-s-widget",
                         multiple: true,
+                        lazyLoad : false,
                         children: [
                             {   label: "Child One" },
                             {   label: "Child Two" },
@@ -465,6 +469,7 @@
 
                     var widget = new Y. TreeView({
                          id: "widget-1",
+                         lazyLoad : false,
                          children: [
                              {   label: "Child One", id: "child-1" },
                              {   label: "Child Two", id: "child-2" },
@@ -491,6 +496,7 @@
 
                     var tree = new Y. TreeView({
                        id: "tree",
+                       lazyLoad : false,
                        children: [
                            {   id: "leaf-1", label: "Leaf One" },
                            {   id: "leaf-2", label: "Leaf Two" },
@@ -523,6 +529,7 @@
                     var tree = new Y. TreeView({
                        id: "tree",
                        label : "tree",
+                       lazyLoad : false,
                        children: [
                            {   id: "leaf-1", label: "Leaf One" },
                            {   id: "leaf-2", label: "Leaf Two" },
@@ -550,10 +557,11 @@
 
                     var tree = new Y. TreeView({
                        id: "tree",
+                       lazyLoad : false,
                        children: [
                            {   id: "leaf-1", label: "Leaf One" },
                            {   id: "leaf-2", label: "Leaf Two" },
-                           { type: Y. TreeView, id: "subtree", label: "Subtree", children: [
+                           { type: Y. TreeView,lazyLoad : false, id: "subtree", label: "Subtree", children: [
                               {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
                               {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
                            ]}
@@ -599,6 +607,7 @@
 
                     var widget = new Y. TreeView({
                          id: "widget-1",
+                         lazyLoad : false,
                          children: [
                              {   label: '<span class="uitarget">Child One - Click Target</span>', id: "child-1" },
                              {   label: '<span class="uitarget">Child Two - Click Target</span>', id: "child-2" }
@@ -629,6 +638,117 @@
                 }
                 
             }));
+            
+             suite.add(
+                new Y.Test.Case({
+
+                name: " TreeView API test",
+                
+                testFullRender : function () {
+                     var tree = new Y. TreeView({
+                         id: "widget-1",
+                         lazyLoad : false,
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render();
+                    tree.destroy();
+                    
+                    Y.Assert.areEqual(tree.item(1).get("DOMReady"), true,"Item should be rendedered");
+                },
+                
+                testLazyLoadRender : function () {
+                     var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render();
+                    
+                    Y.Assert.areEqual(tree.item(1).get("DOMReady"), false,"Item should not be rendered");
+                    
+                    tree.expand();
+                    
+                    Y.Assert.areEqual(tree.item(1).get("DOMReady"), true,"Item should now be rendered");
+
+                    
+                    tree.destroy();
+
+                    
+                },
+                
+                testExpand : function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render();
+                    
+                    
+                    tree.expand();
+                                        
+                    Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
+                    
+                    tree.destroy();
+
+                },
+                
+                testCollapse : function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render();
+                    
+                    
+                    tree.expand();
+                    tree.collapse();
+
+                    Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be expanded");
+                    
+                    tree.destroy();
+                    
+                },
+                
+                testToggle : function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render();
+                    
+                    tree.toggleTreeState();
+
+                    Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
+                    
+                    tree.toggleTreeState();
+
+                    Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be collapsed");
+
+                    tree.destroy();
+                    
+                }
+                
+            }));
+
 
         Y.Test.Runner.setName(" TreeView Tests");
         Y.Test.Runner.add(suite);

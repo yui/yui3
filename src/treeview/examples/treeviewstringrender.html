@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title></title>
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/reset-min.css">
 		<link rel="stylesheet" type="text/css" href="../assets/treeview-menu.css">
 	</head>
 	<body class="yui3-skin-sam">
@@ -9,14 +9,14 @@
 		   <button id="add">Add more</button>
   
         <script src="http://yui.yahooapis.com/3.5.1/build/yui/yui-min.js"></script>
-        <script src="../../../build/gallery-yui3treeview/gallery-yui3treeview.js"></script>
+        <script src="../../../build/treeview/treeview.js"></script>
 
 
         <script type="text/javascript">
         YUI({
             filter:"raw", 
             combine:false
-        }).use('gallery-yui3treeview',function (Y) {
+        }).use('treeview',function (Y) {
         
             var tree = new Y.TreeView({
                id: "tree",
