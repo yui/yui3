@@ -569,20 +569,6 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     },
 
     /**
-    Gets the current full URL. When `html5` is false, the URL will first be
-    upgraded before it's returned.
-
-    @method _getURL
-    @return {String} URL.
-    @protected
-    @see Router._getURL()
-    **/
-    _getURL: function () {
-        var url = Y.getLocation().toString();
-        return this._html5 ? url : this._upgradeURL(url);
-    },
-
-    /**
     Provides the default value for the `html5` attribute.
 
     The value returned is dependent on the value of the `serverRouting`
@@ -679,8 +665,6 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see PjaxBase._navigate()
     **/
     _navigate: function (url, options) {
-        url = this._upgradeURL(url);
-
         if (!this.get('serverRouting')) {
             // Force navigation to be enhanced and handled by the app when
             // `serverRouting` is falsy because the server might not be able to
@@ -794,47 +778,6 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         this._detachView(oldView);
 
         callback && callback.call(this, newView);
-    },
-
-    /**
-    Upgrades a hash-based URL to a full-path URL, if necessary.
-
-    The specified `url` will be upgraded if its of the same origin as the
-    current URL and has a path-like hash. URLs that don't need upgrading will be
-    returned as-is.
-
-    @example
-        app._upgradeURL('http://example.com/#/foo/'); // => 'http://example.com/foo/';
-
-    @method _upgradeURL
-    @param {String} url The URL to upgrade from hash-based to full-path.
-    @return {String} The upgraded URL, or the specified URL untouched.
-    @protected
-    @since 3.5.0
-    **/
-    _upgradeURL: function (url) {
-        // We should not try to upgrade paths for external URLs.
-        if (!this._hasSameOrigin(url)) {
-            return url;
-        }
-
-        // TODO: Should the `root` be removed first, and the hash only
-        // considered if in the form of '/#/'?
-        var hash       = (url.match(/#(.*)$/) || [])[1] || '',
-            hashPrefix = Y.HistoryHash.hashPrefix;
-
-        // Strip any hash prefix, like hash-bangs.
-        if (hashPrefix && hash.indexOf(hashPrefix) === 0) {
-            hash = hash.replace(hashPrefix, '');
-        }
-
-        // If the hash looks like a URL path, assume it is, and upgrade it!
-        if (hash && hash.charAt(0) === '/') {
-            // Re-join with configured `root` before resolving.
-            url = this._resolveURL(this._joinURL(hash));
-        }
-
-        return url;
     },
 
     // -- Protected Event Handlers ---------------------------------------------
