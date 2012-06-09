@@ -15,23 +15,37 @@ var myuploader;
 
 if (Y.Uploader.TYPE != "none") {
             myuploader = new Y.Uploader({ multipleFiles: true, 
-                                          uploadURL: "http://localhost/yui3/src/uploader/tests/manual/simpleupload.php?error=400",
+                                          uploadURL: "http://home.joelcorbo.com:3030/yui3/src/uploader/tests/manual/uploadwithrandomerrors.php",
                                           dragAndDropArea: "#droparea",
                                           tabIndex: "0",
                                           width: "100%",
                                           height: "100%",
                                           swfURL: "assets/flashuploader.swf?t=" + Math.random(),
-                                          tabElements: {from: "#pageTitle", to: "#uploadButton"}
+                                          tabElements: {from: "#pageTitle", to: "#uploadButton"},
+                                          errorAction: Y.UploaderHTML5.Queue.RESTART_ASAP,
+                                          withCredentials: false
                                         });
 
+            myuploader.set("fileFilterFunction", function (file) { 
+                if (file.get("size") < 50 || file.get("size") > 8000000) { 
+                    return false;
+                } 
+                else { 
+                    return true; 
+                }
+            });
+
+
             if (Y.Uploader.TYPE === "html5") {
-            Y.one("#pageTitle").setContent("Using uploader: HTML5");
-            var dropArea = Y.Node.create('<div id="droparea" style="width:500px;height:150px;background:#cccccc;">Drop some files here!</div>');
-            Y.one("body").prepend(dropArea);
-            myuploader.set("dragAndDropArea", dropArea);
+              myuploader.set("fileFilters", ["image/*","video/avi"]);
+              Y.one("#pageTitle").setContent("Using uploader: HTML5");
+              var dropArea = Y.Node.create('<div id="droparea" style="width:500px;height:150px;background:#cccccc;">Drop some files here!</div>');
+              Y.one("body").prepend(dropArea);
+              myuploader.set("dragAndDropArea", dropArea);
             }
 
             else if (Y.Uploader.TYPE === "flash") {
+              myuploader.set("fileFilters", [{description: "Images", extensions: "*.jpg;*.gif;*.png"}, {description: "Videos", extensions: "*.avi"}]);
               Y.one("#pageTitle").setContent("Using uploader: Flash");
              }
 
@@ -76,6 +90,7 @@ if (Y.Uploader.TYPE != "none") {
 
             myuploader.on("uploaderror", function (ev) {
                     out.one("#" + ev.file.get("id")).setContent(ev.file.get("name") + " | " + "ERROR!");
+                    console.log("There's been an error uploading " + ev.file.get("name"));
             });	                                    	                                       
 
             Y.one("#uploadButton").on("click", function () {
