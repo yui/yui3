@@ -293,19 +293,6 @@ Y.mix(Table.prototype, {
     // -- Protected and private properties and methods ------------------------
 
     /**
-    This tells `Y.Base` that it should create ad-hoc attributes for config
-    properties passed to DataTable's constructor. This is useful for setting
-    configurations on the DataTable that are intended for the rendering View(s).
-
-    @property _allowAdHocAttrs
-    @type Boolean
-    @default true
-    @protected
-    @since 3.6.0
-    **/
-    _allowAdHocAttrs: true,
-
-    /**
     A map of column key to column configuration objects parsed from the
     `columns` attribute.
 

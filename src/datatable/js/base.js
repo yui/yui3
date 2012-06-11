@@ -250,6 +250,28 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     },
 
     /**
+    Overrides Attribute's `get` method to relay fetch requests to the `view`
+    instance or `viewConfig` for unknown attributes.
+
+    @method get
+    @param {String} attr The attribute to fetch.
+    @return {Any} The value of the attribute.
+    **/
+    get: function (attr) {
+        var dotIndex = attr.indexOf('.'),
+            name     = dotIndex === -1 ? attr : attr.slice(0, dotIndex);
+
+        if (this.attrAdded(name) || !this.attrAdded('viewConfig')) {
+            return Y.Widget.prototype.get.apply(this, arguments);
+        } else if (this.view) {
+            return this.view.get.apply(this.view, arguments);
+        } else {
+            return Y.Object.getValue(
+                this._getAttr('viewConfig'), attr.split('.'));
+        }
+    },
+
+    /**
     Returns the `<td>` Node from the given row and column index.  Alternately,
     the `seed` can be a Node.  If so, the nearest ancestor cell is returned.
     If the `seed` is a cell, it is returned.  If there is no cell at the given
@@ -300,6 +322,38 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         return this.view && this.view.getRow &&
             this.view.getRow.apply(this.view, arguments);
     },
+
+    /**
+    Overrides Attribute's `set` method to relay assignments to the `view`
+    instance or `viewConfig` for unknown attributes.
+
+    @method set
+    @param {String} attr The attribute to assign.
+    @param {Any} value The value to set the attribute to.
+    @return {DataTable} The instance
+    @chainable
+    **/
+    set: function (attr, val) {
+        var dotIndex = attr.indexOf('.'),
+            name     = dotIndex === -1 ? attr : attr.slice(0, dotIndex);
+
+        if (this.attrAdded(name)) {
+            Y.Widget.prototype.set.apply(this, arguments);
+        } else {
+            if (this.view) {
+                this.view.set.apply(this.view, arguments);
+            } else {
+                Y.Object.setValue(this._getAttr('viewConfig'),
+                    attr.split('.'), val);
+            }
+        }
+
+        return this;
+    },
+
+    //------------------------------------------------------------------------
+    // Protected and private methods
+    //------------------------------------------------------------------------
 
     /**
     Updates the `_displayColumns` property.
@@ -385,14 +439,15 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     },
 
     /**
-    Sets up the instance's events.
+    Sets up the instance's events and copies all unknown configurations to the
+    `viewConfig`.
 
     @method initializer
     @param {Object} [config] Configuration object passed at construction
     @protected
     @since 3.6.0
     **/
-    initializer: function () {
+    initializer: function (config) {
         this.publish('renderView', {
             defaultFn: Y.bind('_defRenderViewFn', this)
         });
@@ -557,16 +612,18 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         },
 
         /**
-        Configuration object passed to the class constructor in `view`
-        during render.
+        Configuration object passed when instantiating the `view`.
 
         @attribute viewConfig
         @type {Object}
-        @default undefined (initially unset)
+        @default (Empty object)
         @protected
         @since 3.6.0
         **/
-        viewConfig: {}
+        viewConfig: {
+            value: {},
+            validator: Y.Lang.isObject
+        }
 
         /**
         If the View class assigned to the DataTable's `view` attribute supports

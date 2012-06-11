@@ -316,6 +316,171 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(new Y.Test.Case({
+    name: "get",
+
+    setUp: function () {
+        this.Table = Y.Base.create('datatable', Y.DataTable.Base, [], {}, {
+            ATTRS: {
+                dtAttr: { value: true },
+                dtObj: {
+                    valueFn: function () {
+                        return { property: true };
+                    }
+                }
+            }
+        });
+
+        this.View = Y.Base.create('table', Y.View, [], {
+            render: function () {}
+        }, {
+            ATTRS: {
+                viewAttr: { value: true }
+            }
+        });
+
+        this.table = new this.Table({
+            columns: ['a'],
+            data: [{ a: 1 }],
+            view: this.View
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "table.get(known) should pull from DT attrs": function () {
+        Y.Assert.isTrue(this.table.get('dtAttr'));
+    },
+
+    "table.get(known.subattr) should pull from DT attrs": function () {
+        Y.Assert.isTrue(this.table.get('dtObj.property'));
+    },
+
+    "table.get(unknown) should pull from viewConfig before rendered": function () {
+        Y.Assert.isUndefined(this.table.get('viewAttr'));
+
+        this.table.destroy();
+
+        this.table = new this.Table({
+            columns: ['a'],
+            data: [{ a: 1 }],
+            view: this.View,
+            viewConfig: {
+                unknown: true
+            }
+        });
+
+        Y.Assert.isTrue(this.table.get('unknown'));
+    },
+
+    "table.get(unknown) should pull from view after rendered": function () {
+        this.table.render();
+
+        Y.Assert.isTrue(this.table.get('viewAttr'));
+    },
+
+    "test table.getAttrs([known, unknown])": function () {
+        var vals = this.table.getAttrs(['dtAttr', 'dtObj.property', 'viewAttr']);
+
+        Y.Assert.isObject(vals);
+        Y.Assert.isTrue(vals.dtAttr);
+        Y.Assert.isTrue(vals['dtObj.property']);
+        Y.Assert.isUndefined(vals.viewAttr);
+
+        this.table.render();
+
+        vals = this.table.getAttrs(['dtAttr', 'dtObj.property', 'viewAttr']);
+
+        Y.Assert.isObject(vals);
+        Y.Assert.isTrue(vals.dtAttr);
+        Y.Assert.isTrue(vals['dtObj.property']);
+        Y.Assert.isTrue(vals.viewAttr);
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: "set",
+
+    setUp: function () {
+        this.Table = Y.Base.create('datatable', Y.DataTable.Base, [], {}, {
+            ATTRS: {
+                dtAttr: { value: false },
+                dtObj: {
+                    valueFn: function () {
+                        return { property: false };
+                    }
+                }
+            }
+        });
+
+        this.View = Y.Base.create('table', Y.View, [], {
+            render: function () {}
+        }, {
+            ATTRS: {
+                viewAttr: { value: false }
+            }
+        });
+
+        this.table = new this.Table({
+            columns: ['a'],
+            data: [{ a: 1 }],
+            view: this.View
+        });
+    },
+
+    tearDown: function () {
+        this.table.destroy();
+    },
+
+    "table.set(known) should assign DT attr": function () {
+        this.table.set('dtAttr', true);
+
+        Y.Assert.isTrue(this.table._state.get('dtAttr', 'value'));
+    },
+
+    "table.set(known.subattr) should assign DT attr": function () {
+        this.table.set('dtObj.property', true);
+
+        Y.Assert.isTrue(this.table._state.get('dtObj', 'value').property);
+    },
+
+    "table.set(unknown) should assign to viewConfig before render()": function () {
+        this.table.set('unknown', true);
+
+        Y.Assert.isTrue(this.table.get('viewConfig').unknown);
+    },
+
+    "table.set(unknown) should assign to view after render()": function () {
+        this.table.render();
+
+        this.table.set('viewAttr', true);
+
+        Y.Assert.isTrue(this.table.view.get('viewAttr'));
+    },
+
+    "test table.setAttrs({ known: val, unknown: val })": function () {
+        this.table.setAttrs({
+            dtAttr: true,
+            unknown: true
+        });
+
+        Y.Assert.isTrue(this.table.get('dtAttr'));
+        Y.Assert.isTrue(this.table.get('viewConfig').unknown);
+
+        this.table.render();
+
+        this.table.setAttrs({
+            dtAttr: false,
+            viewAttr: true
+        });
+
+        Y.Assert.isFalse(this.table.get('dtAttr'));
+        Y.Assert.isTrue(this.table.view.get('viewAttr'));
+    }
+}));
+
 /*
 suite.add(new Y.Test.Case({
     name: "destroy",
