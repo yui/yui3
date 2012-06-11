@@ -1,6 +1,6 @@
 /**
-Class extension for DataTable that extracts `data` and `columns` configuration
-from the markup `srcNode`.
+Class extension for DataTable that extracts various configurations from the
+markup `srcNode`.
 
 @module datatable-pe-data
 @since 3.6.0
@@ -13,8 +13,32 @@ var toArray = Y.Array,
     PE;
 
 /**
-Class extension for DataTable that extracts `data` and `columns` configuration
-from the markup `srcNode`.
+Class extension for DataTable that extracts various configurations from the
+markup.  All parsed configurations that aren't represented in the DataTable's
+own attributes will be added to the `viewConfig` attribute.  The following
+configuration properties are extracted from the `srcNode`:
+
+ * `columns` - See below for details.
+ * `data` - Cell content from inside '.yui3-datatable-data .yui3-datatable-cell'
+   nodes.  If no matching nodes are found, a generic 'td' tag selector is used.
+ * `caption` - HTML content from a node matching
+   '.yui3-datatable-caption, caption'
+ * `summary` - Text content from the `<table>`'s `summary` attribute
+ * `tableNode` - The `<table>` Node
+ * `theadNode` - The `<thead>` Node
+ * `tbodyNode` - The `<tbody>` Node. Preference is given to the one matching
+   '.yui3-datatable-data'.
+ * `tfootNode` - The `<tfoot>` Node
+ * `captionNode` - The `<caption>` Node
+
+Column extraction involves capturing nodes matching '.yui3-datatable-header',
+or if no matching nodes are found, a generic 'th' tag selector is used.  Each
+Node's `innerHTML` is used as the column's `label` and the default `key`.  Each
+is then inspected for data attributes in the form of _data-y-configName_ or
+_data-yui3-configName_.  Numeric values for these attributes, booleans, and
+`null` are parsed to their native representation.  If the `json-parse` module
+is used and the data attribute value starts with _{_ or _[_, it will
+be parsed to its native object or array value.  
 
 @class ProgressiveEnhancement
 @namespace DataTable
@@ -54,9 +78,13 @@ PE.Parser = {
 };
 
 /**
-Map of attributes-to-functions for extracting data from the configured `srcNode`
+Map of attributes-to-functions for extracting configuration data from the
+`srcNode`.
 
-@
+@property HTML_PARSER
+@static
+@type {Object}
+@since 3.6.0
 **/
 PE.HTML_PARSER = {
     caption: function (srcNode) {
@@ -75,18 +103,34 @@ PE.HTML_PARSER = {
         return this._parseColumnsFromMarkup(srcNode);
     },
 
-    peData : function (srcNode) {
+    // Needs to be peData, not data, because I don't know what column keys
+    // to assign values to yet, so this creates an array of arrays to convert
+    // in the initializer.
+    _peData: function (srcNode) {
         return this._parseDataFromMarkup(srcNode);
-    }
-};
+    },
 
-// FIXME: This is needed to allow HTML_PARSER assigned attributes to be assigned
-// when those attributes aren't explicitly in the host class ATTRS.  In this
-// case, because the DT.Base class doesn't use them.  It just passes them to
-// the TableView.  Ticket #2532394 filed to see if this is intentional.
-PE.ATTRS = {
-    caption: {},
-    summary: {}
+    tableNode: function (srcNode) {
+        var selector = '.' + this.getClassName('table') + ', table';
+
+        return srcNode.test(selector) ? srcNode : srcNode.one(selector);
+    },
+
+    theadNode: function (srcNode) {
+        return srcNode.one('.' + this.getClassName('columns') + ', thead');
+    },
+
+    tbodyNode: function (srcNode) {
+        return srcNode.one('.' + this.getClassName('data') + ', tbody');
+    },
+
+    tfootNode: function (srcNode) {
+        return srcNode.one('.' + this.getClassName('foot') + ', tfoot');
+    },
+
+    captionNode: function (srcNode) {
+        return srcNode.one('.' + this.getClassName('caption') + ', caption');
+    }
 };
 
 Y.mix(PE.prototype, {
@@ -149,14 +193,19 @@ Y.mix(PE.prototype, {
     @since 3.6.0
     **/
     initializer: function (config) {
-        var data    = config.data,
-            peData  = config.peData;
+        var data   = config.data,
+            peData = config._peData,
+            viewConfig = this.get('viewConfig') || {};
 
         if ((!data || !data.length) && isArray(peData)) {
             this.set('data',
                 this._convertDataArray(peData, this._displayColumns),
                 { silent: true });
         }
+
+        // Pass all non-attributes along to the viewConfig
+        delete config._peData;
+        delete viewConfig._peData;
     },
 
     /**
@@ -167,27 +216,33 @@ Y.mix(PE.prototype, {
     @since 3.6.0
     **/
     _parseColumnsFromMarkup: function (srcNode) {
-        var columns = [];
+        var thead   = srcNode.one('thead'),
+            headers = thead && thead.all('>tr>.' + this.getClassName('header')),
+            columns = [];
+
+        if (thead && !headers.size()) {
+            headers = thead.all('>tr>th');
+        }
 
         // TODO: nested header support
         // Getting a thead first to avoid getting nested table ths
-        srcNode.one('thead').all('> tr > th').each(function (th) {
+        headers.each(function (th) {
             var attrs = th.getData(),
                 label = th.get('text'),
                 column = {
+                    id   : th.get('id'),
                     label: label
                 },
-                attr, config, val;
+                attr, config;
 
             for (attr in attrs) {
                 if (attrs.hasOwnProperty(attr)) {
-                    val = this._parseColumnConfigValue(attrs[attr]);
-
                     // data-y-key="key" or data-yui3-type="number"
-                    config = (attr.match(/y(?:ui3?)-([\w\-]+)/) || [])[1];
+                    config = (attr.match(/y(?:ui3?)?-([\w\-]+)/) || [])[1];
 
                     if (config) {
-                        column[config] = val;
+                        column[config] =
+                            this._parseColumnConfigValue(attrs[attr]);
                     }
                 }
             }
@@ -238,9 +293,15 @@ Y.mix(PE.prototype, {
     @since 3.6.0
     **/
     _parseDataFromMarkup: function (srcNode) {
-        var cells   = srcNode.one('tbody').all('> tr > td')._nodes,
-            data    = [],
+        var tbody = srcNode.one('.' + this.getClassName('data')) ||
+                    srcNode.one('tbody'),
+            cells = tbody && srcNode.all('.'+this.getClassName('cell'))._nodes,
+            data  = [],
             i, len, rec, index, cell;
+
+        if (tbody && !cells.length) {
+            cells = tbody.all('> tr > td')._nodes;
+        }
 
         for (i = 0, len = cells.length; i < len; ++i) {
             cell  = cells[i];
