@@ -13,8 +13,7 @@ var skipping = [
     'anim',
     'dd',
     'charts',
-    'graphics',
-    'app'
+    'graphics'
 ];
 
 var skip = function(p) {
