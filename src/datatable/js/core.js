@@ -577,19 +577,15 @@ Y.mix(Table.prototype, {
                     this.data.model = recordType;
                 }
             } else {
-                // TODO: customize the ModelList or read the ModelList class
-                // from a configuration option?
-                this.data = new Y.ModelList();
-                
-                if (recordType) {
-                    this.data.model = recordType;
-                }
+                this.data = this._initData();
             }
 
             // TODO: Replace this with an event relay for specific events.
             // Using bubbling causes subscription conflicts with the models'
             // aggregated change event and 'change' events from DOM elements
             // inside the table (via Widget UI event).
+            // On the flip side, relaying events doesn't preserve the on,
+            // defaultFn, after phases.
             this.data.addTarget(this);
         }
     },
