@@ -75,6 +75,7 @@ var server = http.createServer(function (req, res) {
 
             break;
         case '/get':
+            
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(url[1]);
             break;
