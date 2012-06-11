@@ -35,6 +35,32 @@ YUI.add('loader-tests', function(Y) {
                 test_condpattern: Y.UA.nodejs
             }
         },
+        'test: empty skin overrides': function() {
+            var loader = new Y.Loader({
+                ignoreRegistered: true,
+                root: '',
+                base: '',
+                combine: true,
+                comboBase: '/combo?',
+                //So we can get a single response back to test against
+                maxURLLength: 5000,
+                skin: {
+                    overrides: {
+                        'widget-base': [],
+                        'widget-stack': [],
+                        'overlay': []
+                    }
+                },
+                require: [ 'widget-base', 'widget-stack', 'overlay' ]
+            });
+
+            var out = loader.resolve(true);
+            console.log(out.css);
+
+            Assert.areEqual(0, out.css.length, 'Failed to override CSS skin files');
+            Assert.isTrue((out.js[0].indexOf('widget-base') > -1), 'Failed to find the widget-base module in the JS');
+            Assert.isTrue((out.js[0].indexOf('widget-stack') > -1), 'Failed to find the widget-stack module in the JS');
+        },
         test_skin_overrides: function() {
             var loader = new Y.Loader({
                 ignoreRegistered: true,
@@ -58,31 +84,6 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             //+1 here for widget skin
             Assert.areSame(loader.skin.overrides.slider.length + 1, out.css.length, 'Failed to load all override skins');
-        },
-        'test: empty skin overrides': function() {
-            var loader = new Y.Loader({
-                ignoreRegistered: true,
-                root: '',
-                base: '',
-                combine: true,
-                comboBase: '/combo?',
-                //So we can get a single response back to test against
-                maxURLLength: 5000,
-                skin: {
-                    overrides: {
-                        'widget-base': [],
-                        'widget-stack': [],
-                        'overlay': []
-                    }
-                },
-                require: [ 'widget-base', 'widget-stack', 'overlay' ]
-            });
-
-            var out = loader.resolve(true);
-
-            Assert.areEqual(0, out.css.length, 'Failed to override CSS skin files');
-            Assert.isTrue((out.js[0].indexOf('widget-base') > -1), 'Failed to find the widget-base module in the JS');
-            Assert.isTrue((out.js[0].indexOf('widget-stack') > -1), 'Failed to find the widget-stack module in the JS');
         },
         test_resolve_no_calc: function() {
             var loader = new testY.Loader({

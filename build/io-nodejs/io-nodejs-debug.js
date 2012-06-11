@@ -13,6 +13,8 @@ YUI.add('io-nodejs', function(Y) {
         Y.IO.request = require('request');
     }
 
+    var codes = require('http').STATUS_CODES;
+
     Y.log('Loading NodeJS Request Transport', 'info', 'io');
 
     /**
@@ -73,6 +75,7 @@ YUI.add('io-nodejs', function(Y) {
                 Y.log('Starting Request Transaction', 'info', 'io');
                 config.notify('start', transaction, config);
                 config.method = config.method || 'GET';
+                config.method = config.method.toUpperCase();
 
                 var rconf = {
                     method: config.method,
@@ -89,6 +92,10 @@ YUI.add('io-nodejs', function(Y) {
                         }
                     } else if (Y.Lang.isString(config.data)) {
                         rconf.body = config.data;
+                    }
+                    if (rconf.method === 'GET') {
+                        rconf.uri += (rconf.uri.indexOf('?') > -1 ? '&' : '?') + rconf.body;
+                        rconf.body = '';
                     }
                 }
                 if (config.headers) {
@@ -114,6 +121,7 @@ YUI.add('io-nodejs', function(Y) {
                         transaction.c = {
                             status: data.statusCode,
                             statusCode: data.statusCode,
+                            statusText: codes[data.statusCode],
                             headers: data.headers,
                             responseText: data.body,
                             responseXML: null,
