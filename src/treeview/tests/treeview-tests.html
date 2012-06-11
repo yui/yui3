@@ -40,14 +40,12 @@
 <body class="yui3-skin-sam">
 
     <div id="tree"></div>
-
     <script type="text/javascript">
 
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use("node-event-simulate", "async-queue", "test", "console",'treeview', function (Y) {
             var suite = new Y.Test.Suite(" TreeView Suite");
-            
             
             suite.add(
                 new Y.Test.Case({
@@ -73,8 +71,6 @@
 
                      child = tree.add({ childType: "TreeLeaf", label: "Child Two" });
                      
-                     console.log(child.item(0));
-
                      Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
                      Y.assert((tree.size() == 2), "The root Widget should have two children");
                     
@@ -749,11 +745,8 @@
                 
             }));
 
-
         Y.Test.Runner.setName(" TreeView Tests");
         Y.Test.Runner.add(suite);
-        //Y.Test.Runner.disableLogging();
-        //Y.Test.Runner.run();
 
         var console;
 
