@@ -10,7 +10,8 @@
             "datatable-message",
             "datatable-mutable",
             "datatable-sort",
-            "datatable-datasource"
+            "datatable-datasource",
+            "datatable-pe-data"
         ],
         "submodules": {
             "datatable-core": {
@@ -90,7 +91,12 @@
 					"dom-screen"
 				],
                 "skinnable": true
-			}
+			},
+            "datatable-pe-data": {
+                "requires": [
+                    "datatable-base"
+                ]
+            }
         }
     }
 }
