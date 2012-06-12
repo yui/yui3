@@ -73,6 +73,8 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     this._fileInputField = null;
     this.queue = null;
     this._buttonBinding = null;
+    this._fileList = [];
+
   // Publish available events
 
    /**
@@ -258,10 +260,12 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
         this._bindSelectButton();
         this._setMultipleFiles();
+        this._setFileFilters();
         this._bindDropArea();
         this._triggerEnabled();
 
         this.after("multipleFilesChange", this._setMultipleFiles, this);
+        this.after("fileFiltersChange", this._setFileFilters, this);
         this.after("enabledChange", this._triggerEnabled, this);
         this.after("selectFilesButtonChange", this._bindSelectButton, this);
         this.after("dragAndDropAreaChange", this._bindDropArea, this);
@@ -269,6 +273,23 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         this._fileInputField.on("change", this._updateFileList, this);
 
         this.get("selectFilesButton").set("tabIndex", this.get("tabIndex"));
+    },
+
+
+    /**
+     * Recreates the file field to null out the previous list of files and
+     * thus allow for an identical file list selection.
+     * 
+     * @method _rebindFileField
+     * @protected
+     */
+    _rebindFileField : function () {
+        this._fileInputField.remove(true);
+        this._fileInputField = Y.Node.create(UploaderHTML5.HTML5FILEFIELD_TEMPLATE);
+        this.get("contentBox").append(this._fileInputField);
+        this._fileInputField.on("change", this._updateFileList, this);
+        this._setMultipleFiles();
+        this._setFileFilters();
     },
 
 
@@ -335,19 +356,31 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                 case "drop":
 
                    var newfiles = event._event.dataTransfer.files,
-                       parsedFiles = [];
+                       parsedFiles = [],
+                       filterFunc = this.get("fileFilterFunction");
+              
+                   if (filterFunc) {
+                        Y.each(newfiles, function (value) {
+                          var newfile = new Y.FileHTML5(value);
+                          if (filterFunc(newfile)) {
+                              parsedFiles.push(newfile);
+                          }
+                        });
+                   }
+                   else {
+                        Y.each(newfiles, function (value) {
+                              parsedFiles.push(new Y.FileHTML5(value));
+                        });
+                   }
 
-                   Y.each(newfiles, function (value) {
-                     parsedFiles.push(new Y.FileHTML5(value));
-                   });
-
-
-                   this.fire("fileselect", {fileList: parsedFiles});
-
+                   if (parsedFiles.length > 0) {
                    var oldfiles = this.get("fileList");
-
                    this.set("fileList", 
-                            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+                            this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles);
+                   this.fire("fileselect", {fileList: parsedFiles});
+                   }
+
+                   this.fire("drop");
                 break;
        }
     },
@@ -387,6 +420,23 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
     },
 
     /**
+     * Syncs the state of the `fileFilters` attribute between this class
+     * and the file input field.
+     * 
+     * @method _setFileFilters
+     * @protected
+     */
+    _setFileFilters : function () {
+            if (this.get("fileFilters").length > 0) {
+                this._fileInputField.set("accept", this.get("fileFilters").join(","));
+            }
+            else {
+                this._fileInputField.set("accept", "");
+            }
+    },
+
+
+    /**
      * Syncs the state of the `enabled` attribute between this class
      * and the underlying button.
      * 
@@ -407,6 +457,27 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         }
     },
 
+  /**
+   * Getter for the `fileList` attribute
+   * 
+   * @method _getFileList
+   * @private
+   */
+    _getFileList : function (arr) {
+        return this._fileList.concat();
+    },
+
+  /**
+   * Setter for the `fileList` attribute
+   * 
+   * @method _setFileList
+   * @private
+   */
+    _setFileList : function (val) {
+        this._fileList = val.concat();
+        return this._fileList.concat();
+    },
+
     /**
      * Adjusts the content of the `fileList` based on the results of file selection
      * and the `appendNewFiles` attribute. If the `appendNewFiles` attribute is true,
@@ -419,21 +490,35 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
      */
     _updateFileList : function (ev) {
        var newfiles = ev.target.getDOMNode().files,
-           parsedFiles = [];
+           parsedFiles = [],
+           filterFunc = this.get("fileFilterFunction");
 
-       Y.each(newfiles, function (value) {
-         parsedFiles.push(new Y.FileHTML5(value));
-       });
+       if (filterFunc) {
+          Y.each(newfiles, function (value) {
+            var newfile = new Y.FileHTML5(value);
+            if (filterFunc(newfile)) {
+                parsedFiles.push(newfile);
+            }
+          });
+       }
+       else {
+          Y.each(newfiles, function (value) {
+                parsedFiles.push(new Y.FileHTML5(value));
+          });
+       }
 
+       if (parsedFiles.length > 0) {
+           var oldfiles = this.get("fileList");
 
-       this.fire("fileselect", {fileList: parsedFiles});
+           this.set("fileList", 
+                    this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
-       var oldfiles = this.get("fileList");
+           this.fire("fileselect", {fileList: parsedFiles});
+       }
 
-       this.set("fileList", 
-                this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
-
+       this._rebindFileField();
     },
+
 
     /**
      * Handles and retransmits events fired by `Y.File` and `Y.Uploader.Queue`.
@@ -461,8 +546,13 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
                    this.queue = null;
                    this.fire("alluploadscomplete", event);
                 break;
+                case "file:uploaderror":
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
+                break;
+                case "file:uploadcancel":
+                case "uploaderqueue:uploadcancel":
+                   this.fire("uploadcancel", event);
                 break;
     }   
 
@@ -499,10 +589,11 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
 
         if (file instanceof Y.FileHTML5) {
            
-            file.on("uploadstart", this._uploadStartHandler, this);
-            file.on("uploadprogress", this._uploadProgressHandler, this);
-            file.on("uploadcomplete", this._uploadCompleteHandler, this);
-            file.on("uploaderror", this._uploadErrorHandler, this);
+            file.on("uploadstart", this._uploadEventHandler, this);
+            file.on("uploadprogress", this._uploadEventHandler, this);
+            file.on("uploadcomplete", this._uploadEventHandler, this);
+            file.on("uploaderror", this._uploadEventHandler, this);
+            file.on("uploadcancel", this._uploadEventHandler, this);
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
         }
@@ -535,21 +626,31 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
             postVars = postvars || this.get("postVarsPerFile");
 
            this.queue = new UploaderQueue({simUploads: this.get("simLimit"), 
-                                                errorAction: this.get("errorAction"),
-                                                fileFieldName: this.get("fileFieldName"),
-                                                fileList: files,
-                                                uploadURL: uploadURL,
-                                                perFileParameters: postVars
+                                           errorAction: this.get("errorAction"),
+                                           fileFieldName: this.get("fileFieldName"),
+                                           fileList: files,
+                                           uploadURL: uploadURL,
+                                           perFileParameters: postVars,
+                                           retryCount: this.get("retryCount"),
+                                           uploadHeaders: this.get("uploadHeaders"),
+                                           withCredentials: this.get("withCredentials")
                                                });
            this.queue.on("uploadstart", this._uploadEventHandler, this);
            this.queue.on("uploadprogress", this._uploadEventHandler, this);
            this.queue.on("totaluploadprogress", this._uploadEventHandler, this);
            this.queue.on("uploadcomplete", this._uploadEventHandler, this);
            this.queue.on("alluploadscomplete", this._uploadEventHandler, this);
+           this.queue.on("uploadcancel", this._uploadEventHandler, this);
            this.queue.on("uploaderror", this._uploadEventHandler, this);
            this.queue.startUpload();  
            
            this.fire("uploadstart"); 
+       }
+       else if (this.queue._currentState === UploaderQueue.UPLOADING) {
+           this.queue.set("perFileParameters", this.get("postVarsPerFile"));
+           Y.each(files, function (file) {
+             this.queue.addToQueueBottom(file);
+           }, this);
        }
     }
 },
@@ -693,6 +794,40 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
         },
 
         /**
+         * An array indicating what fileFilters should be applied to the file
+         * selection dialog. Each element in the array should be a string
+         * indicating the Media (MIME) type for the files that should be supported
+         * for selection. The Media type strings should be properly formatted
+         * or this parameter will be ignored. Examples of valid strings include: 
+         * "audio/*", "video/*", "application/pdf", etc. More information
+         * on valid Media type strings is available here: 
+         * http://www.iana.org/assignments/media-types/index.html
+         * @attribute fileFilters
+         * @type {Array}
+         * @default []
+         */
+        fileFilters: {
+          value: []
+        },
+
+        /**
+         * A filtering function that is applied to every file selected by the user.
+         * The function receives the `Y.File` object and must return a Boolean value.
+         * If a `false` value is returned, the file in question is not added to the
+         * list of files to be uploaded.
+         * Use this function to put limits on file sizes or check the file names for
+         * correct extension, but make sure that a server-side check is also performed,
+         * since any client-side restrictions are only advisory and can be circumvented.
+         *
+         * @attribute fileFilterFunction
+         * @type {Function}
+         * @default null
+         */
+        fileFilterFunction: {
+          value: null
+        },
+
+        /**
          * A String specifying what should be the POST field name for the file
          * content in the upload request.
          *
@@ -714,7 +849,9 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          * @default []
          */
         fileList: {
-            value: []
+            value: [],
+            getter: "_getFileList",
+            setter: "_setFileList"
         },
 
         /**
@@ -795,7 +932,45 @@ Y.UploaderHTML5 = Y.extend( UploaderHTML5, Y.Widget, {
          */
         uploadURL: {
             value: ""
-        }
+        },
+
+        /**
+         * Additional HTTP headers that should be included
+         * in the upload request.
+         *
+         *
+         * @attribute uploadHeaders
+         * @type {Object}
+         * @default {}
+         */  
+        uploadHeaders: {
+           value: {}
+        },
+
+        /**
+         * A Boolean that specifies whether the file should be
+         * uploaded with the appropriate user credentials for the
+         * domain. 
+         *
+         * @attribute withCredentials
+         * @type {Boolean}
+         * @default true
+         */  
+        withCredentials: {
+           value: true
+        },
+
+        /**
+         * The number of times to try re-uploading a file that failed to upload before
+         * cancelling its upload.
+         *
+         * @attribute retryCount
+         * @type {Number}
+         * @default 3
+         */ 
+         retryCount: {
+           value: 3
+         }
     }
 });
 

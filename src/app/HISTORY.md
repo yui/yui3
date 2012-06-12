@@ -38,6 +38,10 @@ App Framework Change History
 
 ### Router
 
+* [!] Changed how hash-based paths interact with the URL's real path. The
+  path-like hash fragments are now treated as a continuation of the URL's path
+  when the router has been configured with a `root`. [Ticket #2532318]
+
 * Fixed issue when multiple routers on were on the page and one router was
   destroyed the remaining routers would stop dispatching. [Ticket #2532317]
 
