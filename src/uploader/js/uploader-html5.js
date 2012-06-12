@@ -1,4 +1,3 @@
-
     /**
      * This module provides a UI for file selection and multiple file upload capability using
      * HTML5 XMLHTTPRequest Level 2 as a transport engine.
