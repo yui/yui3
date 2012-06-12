@@ -1177,7 +1177,7 @@ YUI.add('get-test', function (Y) {
                             // Let the CSS kick in ??
                             test.wait(function() {
                                 Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            }, 0);
+                            }, 100);
                         }
                     });
                 }
@@ -1213,7 +1213,7 @@ YUI.add('get-test', function (Y) {
                                 Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
                                 Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
                                 Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
-                            }, 0);
+                            }, 100);
                         }
                     });
                 }
@@ -1389,7 +1389,7 @@ YUI.add('get-test', function (Y) {
                                 Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
                                 Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
                                 Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
-                            }, 0);
+                            }, 100);
                         }
 
                     });
