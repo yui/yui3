@@ -3451,7 +3451,7 @@ YUI.Env.parseUA = function(subUA) {
         /**
          * General truthy check for iPad, iPhone or iPod
          * @property ios
-         * @type float
+         * @type Boolean
          * @default null
          * @static
          */
