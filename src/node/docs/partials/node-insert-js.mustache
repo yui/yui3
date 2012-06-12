@@ -24,7 +24,7 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
 
             // height grows from initial 0, to height of contained image
             height: obj.one('img').getStyle('height'),
-            marginLeft: '0px',
+            marginLeft: '0px', // transition into place from offscreen left.
             opacity: {
                 delay: 0.2,
                 duration: 0.5,
@@ -34,11 +34,10 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
     }
 
     // This removes an element of the burger
+    // the height transitions to 0, it moves left, and fades out
     var removeObject = function(e) {
         e.currentTarget.transition({
             duration: 0.8,
-
-            // height grows from initial 0, to height of contained image
             height: 0,
             marginLeft: '-400px',
             opacity: {
@@ -47,10 +46,11 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
                 value: 0
             }
         },
+            // after the transition finishes...
             function(){
-                e.currentTarget.remove(); // remove the clicked item from the burger
+                e.currentTarget.remove(); // remove the clicked item from the DOM
 
-                // If there's no patty
+                // If there's no patty in the burger
                 if (Y.one('.example .demo').getHTML().indexOf('patty') === -1) {
                     // Disable the cheese button
                     // Cheese is inserted before first patty.
@@ -117,6 +117,8 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
                 objList.item(i).setStyle('zIndex', myZIndex);
                 myZIndex -= 1;
                 objList.item(i).setStyle('position', 'relative');
+                // transition the height of the elements proportionally smaller
+                // so you could get your mouth around it
                 objList.item(i).transition({
                     duration: 0.5,
                     height: parseInt(objList.item(i).one('img').getStyle('height'), 10) * 0.15 + 'px'

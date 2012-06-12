@@ -32,23 +32,27 @@
 </ul>
 ```
 <h2>Adding Content</h2>
-<p>After defining some convenience `var`s we'll
-add a handler to run when an event is fired. 
+<p>After defining some `var`s, we'll
+add a `buttonClicks` handler to run when an event is fired.
 It will add content to the `demo` node.</p>
 <p>Note that the `this` in the handler is the object that was clicked.</p>
 ```
 var demo = Y.one('.demo'),
-btnList = Y.all('.buttons-list .yui3-button');
+    btnList = Y.all('.buttons-list .yui3-button'),
+    ...;
 
+    // This inserts burger parts and manages the display of buttons
+    var buttonClicks = function (e) {
+        var obj;
+        if (this.hasClass('patty')) {
+            // Create a node with an image of the burger part
+            obj = Y.Node.create('<li class="patty"><img src="' + imgPath + 'burg_patty.png"/></li>');
 
-var buttonClicks = function(e){
-    if (this.hasClass('patty')) {
-        var obj = Y.Node.create('<li class="patty"><img src="assets/images/patty.png"/></li>');
-        demo.insert(obj, Y.one('.bun-bottom')); // note the next line would do the same thing
-        // demo.insert(obj, demo.get('lastChild');
-        // ...
-    }
-//...
+            // Insert it before the bottom bun
+            demo.insert(obj, Y.one('.bun-bottom'));
+
+            // ...
+        } else if // other buttons follow...
 ```
 <p>The handler inserts different objects into the `demo` container object 
 in different places based on these methods:
@@ -66,11 +70,17 @@ event subscription to the matching selector.</p>
 Y.on('click', buttonClicks, '.example .buttons-list .yui3-button');
 ```
 <h2>Transitions</h2>
-<p>When the `buttonClicks` handler inserts an object, it appears instantly, which
+<p>When an event handler simply inserts an object, it appears instantly, and
+other DOM objects are rendered in their new locations, which
 can be a visually jarring experience.
 </p>
 <p>
 In this example, we've added a `transitionObject` function to smooth things out.
+Inserted burger elements have an initial CSS `height` of 0.
+After each insertion, we call the `transitionObject` function,
+passing the inserted object. It begins growing to a height equal to the image
+it contains (the images are different heights). This gradually pushes open a space
+for itself, while it moves in from offscreen left, and fades in.
 </p>
 ```
 var transitionObject = function (obj) {
@@ -79,37 +89,47 @@ var transitionObject = function (obj) {
 
         // height grows from initial 0, to height of contained image
         height: obj.one('img').getStyle('height'),
+        marginLeft: '0px', // transition into place from offscreen left.
         opacity: {
-            delay: 0.2,    
+            delay: 0.2,
             duration: 0.5,
             value: 1
         }
-    });    
-} 
+    });
+}
 ```
 <p>
-In this example, inserted burger elements have an initial CSS `height` of 0.
-After each insertion, we call the `transitionObject` function, 
-passing the inserted object. It begins growing to equal the height of the image
-it contains (images are different heights). This pushes open a space for itself,
-while it fades in.
+Here's more code in the `buttonClicks` handler where we call `transitionObject`,
+and do some special handling for the cheese button state.
 </p>
 ```
+// This inserts burger parts and manages the display of buttons
 var buttonClicks = function (e) {
     var obj;
     if (this.hasClass('patty')) {
-        obj = Y.Node.create('<li class="patty"><img src="{{{componentAssets}}}/images/burg_patty.png"/></li>');
+        // Create a node with an image of the burger part
+        obj = Y.Node.create('<li class="patty"><img src="' + imgPath + 'burg_patty.png"/></li>');
+
+        // Insert it before the bottom bun
         demo.insert(obj, Y.one('.bun-bottom'));
 
-        transitionObject(obj);  // Smooth out the insert with a transition
-        
-        // Add cheese button is disabled until after there's a patty
-        // because cheese is inserted before the patty object
+        // Smooth out insert with transition
+        transitionObject(obj);
+
+        // Cheese button becomes available
+        // only when there's a patty to insert before
         Y.one('.buttons-list .cheese')._node.disabled = false;
-    }else if (this.hasClass('lettuce')) {
-    //... other buttons...
+    } else if // other buttons follow...
 ```
 <h2>Complete Example Source</h2>
+<p>
+In the complete source you'll see we also added handling for:
+<ul>
+<li>Removing elements from the burger</li>
+<li>Clicking the Done button to vertically compress the burger</li>
+<li>Requesting another</li>
+</ul>
+</p>
 ```
 {{>node-insert-source}}
 ```
