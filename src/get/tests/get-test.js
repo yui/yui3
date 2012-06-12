@@ -1170,13 +1170,15 @@ YUI.add('get-test', function (Y) {
 
                         Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
 
-                        // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
-                        if (!Y.UA.ie) {
-                            Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                        }
-
                         test.o = o;
 
+                        // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
+                        if (!Y.UA.ie) {
+                            // Let the CSS kick in ??
+                            test.wait(function() {
+                                Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                            }, 0);
+                        }
                     });
                 }
             });
@@ -1202,14 +1204,17 @@ YUI.add('get-test', function (Y) {
                             insertBefore = n;
                         }
 
+                        test.o = o;
+
                         // TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion?
                         if (!Y.UA.ie) {
-                            Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
-                            Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
+                            // Let the CSS kick in ??
+                            test.wait(function() {
+                                Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                                Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
+                                Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
+                            }, 0);
                         }
-
-                        test.o = o;
                     });
                 }
             });
@@ -1376,13 +1381,17 @@ YUI.add('get-test', function (Y) {
                         counts.failure++;
                         Assert.areEqual(1, counts.failure, "onFailure called more than once");
 
+                        test.o = o;
+
                         if (!Y.UA.ie) {
-                            Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
-                            Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
-                            Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
+                            // Let the CSS kick in?
+                            test.wait(function() { 
+                                Assert.areEqual("1111", this.na.getComputedStyle("zIndex"), "a.css does not seem to be loaded");
+                                Assert.areNotEqual("1234", this.nb.getComputedStyle("zIndex"), "b.css was loaded when it shouldn't have been");
+                                Assert.areEqual("4321", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be loaded");
+                            }, 0);
                         }
 
-                        test.o = o;
                     });
                 },
 
@@ -1408,6 +1417,7 @@ YUI.add('get-test', function (Y) {
                     Assert.isNull(err, '`err` should be null');
                     Assert.areEqual('b', Y.one(nodes[0]).next('link,style').get('id'), 'b.css should have been inserted after a.css');
                     Assert.areEqual('c', Y.one(nodes[1]).next('link,style').get('id'), 'b.css should have been inserted after a.css');
+
                 });
             });
 
