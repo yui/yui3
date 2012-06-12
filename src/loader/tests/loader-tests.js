@@ -6,7 +6,7 @@ YUI.add('loader-tests', function(Y) {
         ua = Y.UA,
         jsFailure = !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0));
 
-    
+
     var resolvePath = function(p) {
         if (Y.UA.nodejs) {
             var path = require('path');
@@ -609,7 +609,7 @@ YUI.add('loader-tests', function(Y) {
             test.wait();
         },
         'test: conditional trigger is an array': function() {
-            
+
             var loader = new Y.Loader({
                 modules: {
                     test_one: {
@@ -660,7 +660,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(2, out.js.length, 'Wrong number of files returned (2)');
             Assert.areSame('2two.js', out.js[0], 'Failed to load required module (2)');
             Assert.areSame('2cond_array.js', out.js[1], 'Failed to load conditional from trigger array (2)');
-        
+
         },
         'test: conditional array in modules not required': function() {
             var loader = new Y.Loader({
@@ -687,7 +687,7 @@ YUI.add('loader-tests', function(Y) {
             var out = loader.resolve(true);
             Assert.areEqual(1, out.js.length, 'Wrong number of files returned (3)');
             Assert.areSame('3three.js', out.js[0], 'Failed to load required module (3)');
-            
+
         },
         test_css_stamp: function() {
             var test = this,
@@ -1009,7 +1009,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areSame('plug1/lang/subplug1.js', out.js[1], 'Failed to combine plugin with module path LANG JS');
             Assert.areSame('plug1/subplug1.js', out.js[2], 'Failed to combine plugin with module path JS');
             Assert.areSame('plug1/subplug2.js', out.js[3], 'Failed to combine plugin with module path JS');
-            
+
             Assert.areSame('plug1/assets/skins/sam/subplug1.css', out.css[0], 'Failed to combine plugin with module path CSS');
             Assert.areSame('plug1/assets/skins/sam/subplug2.css', out.css[1], 'Failed to combine plugin with module path CSS');
             Assert.areEqual(2, out.css.length, 'Failed to skin plugins');
@@ -1248,7 +1248,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(loader.async, 'Failed to set default async config option');
         },
         'test: 2 loader instances with different skins': function() {
- 
+
             var groups = {
                 'foo': {
                     ext: false,
@@ -1359,8 +1359,8 @@ YUI.add('loader-tests', function(Y) {
             });
 
             loader1resolved = loader1.resolve(true);
-            loader2resolved = loader2.resolve(true); 
-        
+            loader2resolved = loader2.resolve(true);
+
             Assert.isTrue((loader1resolved.css[0].indexOf('/sam/') > -1), '#1 Instance should have a sam skin');
             Assert.isTrue((loader2resolved.css[0].indexOf('/night/') > -1), '#2 Instance should have a night skin');
         },
@@ -1492,14 +1492,14 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            
+
             Assert.areEqual(6, out.js.length, 'Failed to resolve all cascaded modules');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1').requires.sort(), ['cas1', 'cas2', 'cas3'], 'cas1');
             ArrayAssert.itemsAreEqual(getMod('cas2').requires.sort(), ['cas1', 'cas2', 'cas4'], 'cas2');
             ArrayAssert.itemsAreEqual(getMod('cas3').requires.sort(), ['cas1', 'cas2'], 'cas3');
             ArrayAssert.itemsAreEqual(getMod('cas4').requires.sort(), ['cas1', 'cas2'], 'cas4');
-            
+
             ArrayAssert.itemsAreEqual(getMod('cas1mod1').requires.sort(), ['cas1', 'cas2', 'cas2mod1'], 'cas1mod1');
             ArrayAssert.itemsAreEqual(getMod('cas2mod1').requires.sort(), ['cas1', 'cas2'], 'cas2mod1');
 
@@ -1666,6 +1666,336 @@ YUI.add('loader-tests', function(Y) {
             sorted = sort(modules, 'LazyLoad', required);
             ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate second set of modules');
 
+        },
+        'test: skin.order should fall back to the defaultSkin when a module does not support any of the skins in skin.order': function() {
+            var loader = new Y.Loader({
+                    base: '',
+                    ignoreRegistered: true,
+                    require: ['test'],
+                    root: '',
+                    skin: {
+                        // defaultSkin: 'sam' by default
+                        order: 'night'
+                    }
+                }),
+                out = loader.resolve(true);
+
+            Assert.areSame('test/assets/skins/sam/test.css', out.css[0]);
+            Assert.areSame(1, out.css.length, 'Test should only fetch sam skin.')
+        },
+        'test: skin.order should fetch the defaultSkin for a skinnable module that does not provide mod.skins metadata': function() {
+            var loader = new Y.Loader({
+                    ignoreRegistered: true,
+                    modules: {
+                        'bar': {
+                            'requires': [
+                                'test'
+                            ],
+                            skinnable: true
+                        }
+
+                    },
+                    requires: ['bar'],
+                    skin: {
+                        defaultSkin: 'sam',
+                        order: 'night'
+                    }
+                }),
+                out = loader.resolve(true);
+
+
+        },
+        'test: skin.order should not fetch any skin if a module supplies mod.skins and none of them are available in skin.order or skin.defaultSkin': function() {
+            var loader = new Y.Loader({
+                    ignoreRegistered: true,
+                    requires: ['test'],
+                    skin: {
+                        defaultSkin: 'night',
+                        order: 'night'
+                    }
+                }),
+                out = loader.resolve(true);
+
+            ArrayAssert.isEmpty(out.css);
+        },
+        'test: skin.order === "night,sam" should get night for overlay and sam for test': function() {
+            var loader = new Y.Loader({
+                    base: '',
+                    ignoreRegistered: true,
+                    require: ['overlay', 'test'],
+                    root: '',
+                    skin: {
+                        order: 'night,sam'
+                    }
+                }),
+                out = loader.resolve(true),
+                css = out.css.join(' ');
+
+            Assert.isTrue(css.indexOf('assets/skins/sam/test.css') > -1, 'Test should use sam skin when skin.order === "night,sam"');
+            Assert.areEqual(-1, css.indexOf('assets/skins/night/test.css'), 'Test should not request night skin when skin.order === "night,sam"');
+
+            Assert.areNotEqual(-1, css.indexOf('assets/skins/night/overlay.css'), 'Overlay should use night skin when skin.order === "night,sam"');
+            Assert.areEqual(-1, css.indexOf('assets/skins/sam/overlay.css'), 'Overlay should not request sam skin when skin.order === "night,sam"');
+
+        },
+        'test: skin.order should allow csv with spaces': function() {
+            var loader1 = new Y.Loader({
+                    base: '',
+                    ignoreRegistered: true,
+                    require: ['overlay', 'test'],
+                    root: '',
+                    skin: {
+                        order: 'night, sam'
+                    }
+                }),
+                loader2 = new Y.Loader({
+                    base: '',
+                    ignoreRegistered: true,
+                    require: ['overlay', 'test'],
+                    root: '',
+                    skin: {
+                        order: 'night,sam'
+                    }
+                }),
+                out1 = loader1.resolve(true),
+                out2 = loader2.resolve(true);
+
+            ArrayAssert.itemsAreEqual(out1.css, out2.css);
+
+        },
+        'test: skin.order for a module with use meta data': function() {
+            var loader = new Y.Loader({
+                    base: '',
+                    require: ['slider'],
+                    root: '',
+                    skin: {
+                        order: 'round,night'
+                    }
+                }),
+                resolved = loader.resolve(true),
+                css = resolved.css.join(' ');
+
+            Assert.isTrue(css.indexOf('slider-base/assets/skins/round/slider-base.css') > -1, 'Loader should fetch round skin for slider-base');
+            Assert.areSame(-1, css.indexOf('slider-base/assets/skins/night/slider-base.css'), 'Loader should not fetch night skin for slider-base');
+            Assert.isTrue(css.indexOf('widget-base/assets/skins/night/widget-base.css') > -1, 'Loader should fetch night skin for widget-base');
+            Assert.areSame(-1, css.indexOf('sam'), 'Loader should not fetch any sam skins');
+
+
+        },
+        'test: skin.order for 2 loader instances with different orders': function() {
+
+            var groups = {
+                'foo': {
+                    ext: false,
+                    combine: true,
+                    comboBase: '/comboBase?',
+                    modules: {
+                        'bar': {
+                            'requires': [
+                                'slider',
+                                'overlay',
+                                'widget-autohide',
+                                'array-extras',
+                                'node-menunav',
+                                'node-focusmanager',
+                                'test'
+                            ],
+                            skinnable: true
+                        }
+                    },
+                    root: ''
+                }
+            };
+
+            var css1, css2, loader1, loader2, loader1resolved, loader2resolved
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'baz', // not necessary, but here as a reminder
+                    order: 'round,night'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+            css1 = loader1resolved.css.join(' ');
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: groups,
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'sam', // not necessary, but here as a reminder
+                    order: 'night'
+                }
+            });
+
+            loader2resolved = loader2.resolve(true);
+            css2 = loader2resolved.css.join(' ');
+
+            Assert.areEqual(-1, css1.indexOf('test/assets/skins/'), 'loader1 should not load skin for test');
+            Assert.isTrue(css1.indexOf('slider-base/assets/skins/round/slider-base.css') > -1, 'loader1 should load round skin for slider');
+            Assert.isTrue(css1.indexOf('overlay/assets/skins/night/overlay.css') > -1, 'loader1 should load night skin for overlay');
+            Assert.isTrue(css1.indexOf('bar/assets/skins/baz/bar.css') > -1, 'loader1 should load baz skin for bar');
+
+            Assert.isTrue(css2.indexOf('test/assets/skins/sam/test.css') > -1, 'loader2 should load sam skin for test');
+            Assert.isTrue(css2.indexOf('slider-base/assets/skins/night/slider-base.css') > -1, 'loader2 should load night skin for slider');
+            Assert.isTrue(css2.indexOf('overlay/assets/skins/night/overlay.css') > -1, 'loader2 should load night skin for overlay');
+            Assert.areEqual(-1, css2.indexOf('overlay/assets/skins/sam/overlay.css'), 'loader2 should not load sam skin for overlay');
+            Assert.areEqual(-1, css2.indexOf('round'), 'loader2 should not load any round skins');
+
+        },
+        'test: skin.order for 2 loader instances without shared module data': function() {
+
+            var loader1, loader2, loader1resolved, loader2resolved, css1, css2;
+
+            loader1 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'slider',
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                },
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'sam',
+                    order: 'night'
+                }
+            });
+
+            loader2 = new Y.Loader({
+                base: '',
+                combine: true,
+                comboBase: '/comboBase?',
+                ext: false,
+                groups: {
+                    'foo': {
+                        ext: false,
+                        combine: true,
+                        comboBase: '/comboBase?',
+                        modules: {
+                            'bar': {
+                                'requires': [
+                                    'slider',
+                                    'overlay',
+                                    'widget-autohide',
+                                    'array-extras',
+                                    'node-menunav',
+                                    'node-focusmanager'
+                                ]
+                            },
+                            skinnable: true
+                        },
+                        root: ''
+                    }
+                },
+                ignoreRegistered: true, // force loader to include modules already on the page
+                require: ['bar'],
+                root: '',
+                skin: {
+                    defaultSkin: 'night',
+                    order: 'sam'
+                }
+            });
+
+            loader1resolved = loader1.resolve(true);
+            loader2resolved = loader2.resolve(true);
+            css1 = loader1resolved.css.join(' ');
+            css2 = loader2resolved.css.join(' ');
+
+
+            Assert.isTrue(css1.indexOf('overlay/assets/skins/night/overlay.css') > -1, 'loader1 should load night skin for overlay');
+            Assert.isTrue(css1.indexOf('overlay/assets/skins/sam/overlay.css') === -1, 'loader1 should not load sam skin for overlay');
+
+            Assert.isTrue(css2.indexOf('overlay/assets/skins/sam/overlay.css') > -1, 'loader2 should load sam skin for overlay');
+            Assert.isTrue(css2.indexOf('overlay/assets/skins/night/overlay.css') === -1, 'loader2 should not load night skin for overlay');
+
+            Assert.isTrue((css1.indexOf('/night/') > -1), '#1 Instance should have a night skin');
+            Assert.isTrue((css1.indexOf('/sam/') === -1), '#1 Instance should not have a sam skin');
+            Assert.isTrue((css2.indexOf('/sam/') > -1), '#2 Instance should have a sam skin');
+            Assert.isTrue((css2.indexOf('/night/') === -1), '#2 Instance should have a sam skin');
+
+        },
+        'test: skin.order should honor external module mod.skins definitions': function() {
+            var getConfig = function(skinConfig) {
+                    return {
+                        base: '',
+                        modules: {
+                            'foo': {
+                                'requires': [
+                                    'slider',
+                                    'overlay'
+                                ],
+                                'skins': 'round-dark,baz,night'
+                            }
+                        },
+                        require: ['foo'],
+                        root: '',
+                        skin: skinConfig
+                    };
+                },
+
+                // loader 1
+                loader1 = new Y.Loader(getConfig({
+                    defaultSkin: 'baz'
+                })),
+                loader1resolved = loader1.resolve(true),
+                css1 = loader1resolved.css.join(' '),
+                // loader 2
+                loader2 = new Y.Loader(getConfig({
+                    order: 'round-dark'
+                })),
+                loader2resolved = loader2.resolve(true),
+                css2 = loader2resolved.css.join(' '),
+                // loader 3
+                loader3 = new Y.Loader(getConfig({
+                    defaultSkin: 'buz'
+                })),
+                loader3resolved = loader3.resolve(true);
+
+                // loader 1 assertions
+                Assert.isTrue(css1.indexOf('foo/assets/skins/baz/foo.css') > -1, 'loader1 should fetch baz skin for foo');
+                Assert.areSame(1, loader1resolved.css.length, 'loader1 should request only 1 skin');
+                // loader 2 assertions
+                Assert.isTrue(css2.indexOf('foo/assets/skins/round-dark/foo.css') > -1, 'loader2 should fetch round-dark skin for foo');
+                Assert.isTrue(css2.indexOf('slider-base/assets/skins/round-dark/slider-base.css') > -1, 'loader2 should fetch round-dark skin for slider-base');
+                Assert.isTrue(css2.indexOf('widget-stack/assets/skins/sam/widget-stack.css') > -1, 'loader2 should fetch sam skin for widget-stack');
+                Assert.areSame(-1, css2.indexOf('baz'), 'loader2 should not load baz skin for any module');
+                // loader 3 assertions
+                ArrayAssert.isEmpty(loader3resolved.css, 'loader3 should not fetch any skins');
         }
     });
 
