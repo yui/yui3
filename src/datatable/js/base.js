@@ -448,6 +448,10 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
     @since 3.6.0
     **/
     initializer: function (config) {
+        var attrs      = this._state.data,
+            viewConfig = this.get('viewConfig'),
+            attr;
+
         this.publish('renderView', {
             defaultFn: Y.bind('_defRenderViewFn', this)
         });
@@ -460,6 +464,12 @@ Y.DataTable.Base = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core], {
         // _displayColumns on the instance.  They need to be updated to
         // TableView plugins, most likely.
         this.after('columnsChange', Y.bind('_afterDisplayColumnsChange', this));
+
+        for (attr in config) {
+            if (config.hasOwnProperty(attr) && !(attr in attrs)) {
+                viewConfig[attr] = config[attr];
+            }
+        }
     },
 
     /**
