@@ -32,7 +32,7 @@ Pollable.prototype = {
      *
      * @method setInterval
      * @param msec {Number} Length of interval in milliseconds.
-     * @param request {Object} An object literal with the following properties:
+     * @param [request] {Object} An object literal with the following properties:
      *     <dl>
      *     <dt><code>request</code></dt>
      *     <dd>The request to send to the live data source, if any.</dd>
