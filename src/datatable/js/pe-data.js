@@ -88,15 +88,17 @@ Map of attributes-to-functions for extracting configuration data from the
 **/
 PE.HTML_PARSER = {
     caption: function (srcNode) {
-        var caption = srcNode.one('caption');
+        var caption = srcNode.one(
+                        '.' + this.getClassName('caption') + ', caption');
 
         return caption && caption.getHTML();
     },
 
     summary: function (srcNode) {
-        var table = srcNode.test('table') ? srcNode : srcNode.one('table');
+        var selector = '.' + this.getClassName('table') + ', table',
+            table = srcNode.test(selector) ? srcNode : srcNode.one(selector);
 
-        return table && table.get('summary');
+        return table && (table.get('summary') || table.getData('y-summary'));
     },
 
     columns: function (srcNode) {
@@ -125,7 +127,7 @@ PE.HTML_PARSER = {
     },
 
     tfootNode: function (srcNode) {
-        return srcNode.one('.' + this.getClassName('foot') + ', tfoot');
+        return srcNode.one('.' + this.getClassName('footer') + ', tfoot');
     },
 
     captionNode: function (srcNode) {
@@ -216,12 +218,13 @@ Y.mix(PE.prototype, {
     @since 3.6.0
     **/
     _parseColumnsFromMarkup: function (srcNode) {
-        var thead   = srcNode.one('thead'),
-            headers = thead && thead.all('>tr>.' + this.getClassName('header')),
+        var headers = srcNode.all(
+                        '.' + this.getClassName('columns') + ' ' +
+                        '.' + this.getClassName('header')),
             columns = [];
 
-        if (thead && !headers.size()) {
-            headers = thead.all('>tr>th');
+        if (!headers.size()) {
+            headers = srcNode.all('thead th');
         }
 
         // TODO: nested header support
