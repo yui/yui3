@@ -21,6 +21,22 @@ SVGShape.NAME = "svgShape";
 
 Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
+     * Storage for x attribute.
+     *
+     * @property _x
+     * @protected
+     */
+    _x: 0,
+
+    /**
+     * Storage for y attribute.
+     *
+     * @property _y
+     * @protected
+     */
+    _y: 0,
+    
+    /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
      *
@@ -112,8 +128,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	{
 		var graphic = this._graphic,
 			parentXY = graphic.getXY(),
-			x = this.get("x"),
-			y = this.get("y");
+			x = this._x,
+			y = this._y;
 		return [parentXY[0] + x, parentXY[1] + y];
 	},
 
@@ -127,8 +143,9 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	{
 		var graphic = this._graphic,
 			parentXY = graphic.getXY();
-		this.set("x", xy[0] - parentXY[0]);
-		this.set("y", xy[1] - parentXY[1]);
+		this._x = xy[0] - parentXY[0];
+		this._y = xy[1] - parentXY[1];
+        this.set("transform", this.get("transform"));
 	},
 
 	/**
@@ -217,7 +234,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 			id = this.get("id"),
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
-		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
+		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
         if(id)
 		{
 			node.setAttribute("id", id);
@@ -633,8 +650,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 
         if(isPath || (this._transforms && this._transforms.length > 0))
 		{
-            x = this.get("x");
-            y = this.get("y");
+            x = this._x;
+            y = this._y;
             transformOrigin = this.get("transformOrigin");
             tx = x + (transformOrigin[0] * this.get("width"));
             ty = y + (transformOrigin[1] * this.get("height")); 
@@ -693,10 +710,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		var node = this.node;
 		node.setAttribute("width", this.get("width"));
 		node.setAttribute("height", this.get("height"));
-		node.setAttribute("x", this.get("x"));
-		node.setAttribute("y", this.get("y"));
-		node.style.left = this.get("x") + "px";
-		node.style.top = this.get("y") + "px";
+		node.setAttribute("x", this._x);
+		node.setAttribute("y", this._y);
+		node.style.left = this._x + "px";
+		node.style.top = this._y + "px";
 		this._fillChangeHandler();
 		this._strokeChangeHandler();
 		this._updateTransform();
@@ -737,8 +754,8 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             stroke = this.get("stroke"),
 			w = this.get("width"),
 			h = this.get("height"),
-			x = type == "path" ? 0 : this.get("x"),
-			y = type == "path" ? 0 : this.get("y"),
+			x = type == "path" ? 0 : this._x,
+			y = type == "path" ? 0 : this._y,
             wt = 0;
         if(stroke && stroke.weight)
 		{
@@ -879,7 +896,20 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	x: {
-		value: 0
+	    getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            var transform = this.get("transform");
+            this._x = val;
+            if(transform) 
+            {
+                this.set("transform", transform);
+            }
+        }
 	},
 
 	/**
@@ -889,7 +919,20 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	y: {
-		value: 0
+	    getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            var transform = this.get("transform");
+            this._y = val;
+            if(transform) 
+            {
+                this.set("transform", transform);
+            }
+        }
 	},
 
 	/**

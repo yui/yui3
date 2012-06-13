@@ -242,7 +242,8 @@ suite.add(new Y.Test.Case({
 
         Y.Assert.isObject(table.get('columns.d'));
         Y.Assert.isObject(column);
-        Y.Assert.areSame(column, table.get('columns.d'));
+        Y.Assert.areSame('d', table.get('columns.d').key);
+        Y.Assert.areSame(column.key, table.get('columns.d').key);
         Y.Assert.areSame(3, index);
     },
 

@@ -42,11 +42,10 @@ var fs = require('fs'),
     YUI = require(path.join(__dirname, '../../../../build/yui-nodejs/yui-nodejs')).YUI,
     comboHandler = require('combohandler'),
     mods = {},
-    Y;
+    Y = YUI();
 
-    YUI().use('loader', function(iY) {
-        Y = iY;
-    });
+    Y.UA.nodejs = null;
+
 
 } catch (e) {
     console.error('Express and YUI3 need to be installed globally:');
@@ -66,7 +65,7 @@ var testMod = function(v) {
     //Removes YUI core modules
     if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('compat') === -1) &&
         (v.indexOf('css') === -1) && (v !== 'queue-run') && (v !== 'pluginattr') && (v !== 'rls') &&
-        (v !== 'alias') && (v !== 'get')) {
+        (v !== 'alias') && (v !== 'get') && (v.indexOf('-nodejs') === -1) && (v.indexOf('graphics-') === -1) && (v.indexOf('charts') === -1)) {
 
         var ret = true;
         if (filter.length) {

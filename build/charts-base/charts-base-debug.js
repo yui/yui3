@@ -3333,7 +3333,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Function
          */
         appendLabelFunction: {
-            getter: function()
+            valueFn: function()
             {
                 return this._setText;
             }
@@ -3354,7 +3354,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Function
          */
         appendTitleFunction: {
-            getter: function()
+            valueFn: function()
             {
                 return this._setText;
             }
@@ -6042,14 +6042,17 @@ Fills.prototype = {
         {
             return;
         }
-        var len = xcoords.length,
+        var isNumber = Y_Lang.isNumber,
+            len = xcoords.length,
             firstX = xcoords[0],
             firstY = ycoords[0],
             lastValidX = firstX,
             lastValidY = firstY,
             nextX,
             nextY,
-            i = 1,
+            pointValid,
+            noPointsRendered = true,
+            i = 0,
             styles = this.get("styles").area,
             path = this._getPath(),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
@@ -6059,21 +6062,31 @@ Fills.prototype = {
             opacity: styles.alpha
         });
         path.set("stroke", {weight: 0});
-        path.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
         {
             nextX = xcoords[i];
             nextY = ycoords[i];
-            if(isNaN(nextY))
+            pointValid = isNumber(nextX) && isNumber(nextY); 
+            if(!pointValid)
             {
-                lastValidX = nextX;
-                lastValidY = nextY;
                 continue;
             }
-            path.lineTo(nextX, nextY);
+            if(noPointsRendered)
+            {
+                this._firstValidX = nextX;
+                this._firstValidY = nextY;
+                noPointsRendered = false;
+                path.moveTo(nextX, nextY);
+            }
+            else
+            {
+                path.lineTo(nextX, nextY);
+            }
             lastValidX = nextX;
             lastValidY = nextY;
         }
+        this._lastValidX = lastValidX;
+        this._lastValidY = lastValidY;
         path.end();
     },
 	
@@ -6245,18 +6258,24 @@ Fills.prototype = {
     _getClosingPoints: function()
     {
         var xcoords = this.get("xcoords").concat(),
-            ycoords = this.get("ycoords").concat();
+            ycoords = this.get("ycoords").concat(),
+            firstValidIndex,
+            lastValidIndex;
         if(this.get("direction") === "vertical")
         {
+            lastValidIndex = this._getLastValidIndex(xcoords);
+            firstValidIndex = this._getFirstValidIndex(xcoords);
+            ycoords.push(ycoords[lastValidIndex]);
+            ycoords.push(ycoords[firstValidIndex]);
             xcoords.push(this._leftOrigin);
             xcoords.push(this._leftOrigin);
-            ycoords.push(ycoords[ycoords.length - 1]);
-            ycoords.push(ycoords[0]);
         }
         else
         {
-            xcoords.push(xcoords[xcoords.length - 1]);
-            xcoords.push(xcoords[0]);
+            lastValidIndex = this._getLastValidIndex(ycoords);
+            firstValidIndex = this._getFirstValidIndex(ycoords);
+            xcoords.push(xcoords[lastValidIndex]);
+            xcoords.push(xcoords[firstValidIndex]);
             ycoords.push(this._bottomOrigin);
             ycoords.push(this._bottomOrigin);
         }
@@ -6264,7 +6283,7 @@ Fills.prototype = {
         ycoords.push(ycoords[0]);
         return [xcoords, ycoords];
     },
-
+    
     /**
      * Concatenates coordinate array with the correct coordinates for closing an area stack.
      *
@@ -7350,6 +7369,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
+        if(yMin < 0)
+        {
+            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
+        }
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
@@ -7380,6 +7403,48 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
         this._dataLength = dataLength;
+    },
+
+    /**
+     * Finds the first valid index of an array coordinates.
+     *
+     * @method _getFirstValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getFirstValidIndex: function(coords)
+    {
+        var coord,
+            i = -1,
+            limit = coords.length;
+        while(!Y_Lang.isNumber(coord) && i < limit)
+        {
+            i += 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
+     * Finds the last valid index of an array coordinates.
+     *
+     * @method _getLastValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getLastValidIndex: function(coords)
+    {
+        var coord,
+            i = coords.length,
+            limit = -1;
+        while(!Y_Lang.isNumber(coord) && i > limit)
+        {
+            i -= 1;
+            coord = coords[i];
+        }
+        return i;
     },
 
     /**
@@ -7549,16 +7614,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if(this._path)
         {
             this._path.destroy();
+            this._path = null;
         }
         if(this._lineGraphic)
         {
             this._lineGraphic.destroy();
             this._lineGraphic = null;
         }
-        if(this.get("graphic"))
+        if(this._groupMarker)
         {
-            this.get("graphic").destroy();
-        }   
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
     }
 }, {
     ATTRS: {
@@ -7608,11 +7675,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         categoryDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
+           },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._yDisplayName = val;
+                }
+                else
+                {
+                    this._xDisplayName = val;
+                }
+                return val;
             }
         },
 
@@ -7624,11 +7704,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         valueDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
+            },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._xDisplayName = val;
+                }
+                else
+                {
+                    this._yDisplayName = val;
+                }
+                return val;
             }
         },
         
@@ -8162,58 +8255,6 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
 
 		
 /**
- * AreaSplineSeries renders an area graph with data points connected by a curve.
- *
- * @module charts
- * @class AreaSplineSeries
- * @constructor
- * @extends CartesianSeries
- * @uses Fills
- * @uses CurveUtil
- */
-Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fills, Y.CurveUtil], {
-    /**
-     * @protected
-     *
-     * Draws the series.
-     *
-     * @method drawSeries
-     */
-    drawSeries: function()
-    {
-        this.drawAreaSpline();
-    }
-}, {
-	ATTRS : {
-        /**
-         * Read-only attribute indicating the type of series.
-         *
-         * @attribute type
-         * @type String
-         * @default areaSpline
-         */
-        type: {
-            value:"areaSpline"
-        }
-        
-        /**
-         * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
-         *
-         *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
-         *      retrieved from the following array:
-         *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
-         *      </dd>
-         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
-         *  </dl>
-         *
-         * @attribute styles
-         * @type Object
-         */
-    }
-});
-
-/**
  * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
  * to indicate their contribution to a cumulative total.
  *
@@ -8687,6 +8728,58 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 		
 
 		
+/**
+ * AreaSplineSeries renders an area graph with data points connected by a curve.
+ *
+ * @module charts
+ * @class AreaSplineSeries
+ * @constructor
+ * @extends CartesianSeries
+ * @uses Fills
+ * @uses CurveUtil
+ */
+Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUtil], {
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
+        this.drawAreaSpline();
+    }
+}, {
+	ATTRS : {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default areaSpline
+         */
+        type: {
+            value:"areaSpline"
+        }
+        
+        /**
+         * Style properties used for drawing area fills. This attribute is inherited from `Renderer`. Below are the default values:
+         *
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      retrieved from the following array:
+         *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
+         *      </dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
+    }
+});
+
 /**
  * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
  *
@@ -10890,6 +10983,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this.after("widthChange", this._sizeChangeHandler);
         this.after("heightChange", this._sizeChangeHandler);
         this.after("stylesChange", this._updateStyles);
+        this.after("groupMarkersChange", this._drawSeries);
     },
 
     /**
@@ -11399,14 +11493,17 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         if(this._graphic)
         {
             this._graphic.destroy();
+            this._graphic = null;
         }
         if(this._background)
         {
             this._background.get("graphic").destroy();
+            this._background = null;
         }
         if(this._gridlines)
         {
             this._gridlines.get("graphic").destroy();
+            this._gridlines = null;
         }
     }
 }, {
@@ -11671,6 +11768,58 @@ function ChartBase() {}
 
 ChartBase.ATTRS = {
     /**
+     * Data used to generate the chart.
+     * 
+     * @attribute dataProvider
+     * @type Array
+     */
+    dataProvider: {
+        lazyAdd: false,
+
+        valueFn: function()
+        {
+            var defDataProvider = [];
+            if(!this._seriesKeysExplicitlySet)
+            {
+                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
+            }
+            return defDataProvider;
+        },
+
+        setter: function(val)
+        {
+            var dataProvider = this._setDataValues(val);
+            if(!this._seriesKeysExplicitlySet)
+            {
+                this._seriesKeys = this._buildSeriesKeys(dataProvider);
+            }
+            return dataProvider;
+        }
+    },
+
+    /**
+     * A collection of keys that map to the series axes. If no keys are set,
+     * they will be generated automatically depending on the data structure passed into 
+     * the chart.
+     *
+     * @attribute seriesKeys
+     * @type Array
+     */
+    seriesKeys: {
+        getter: function()
+        {
+            return this._seriesKeys;
+        },
+
+        setter: function(val)
+        {
+            this._seriesKeysExplicitlySet = true;
+            this._seriesKeys = val;
+            return val;
+        }
+    },
+
+    /**
      * Sets the `aria-label` for the chart.
      *
      * @attribute ariaLabel
@@ -11833,29 +11982,6 @@ ChartBase.ATTRS = {
     },
 
     /**
-     * Data used to generate the chart.
-     * 
-     * @attribute dataProvider
-     * @type Array
-     */
-    dataProvider: {
-        setter: function(val)
-        {
-            return this._setDataValues(val);
-        }
-    },
-        
-    /**
-     * A collection of keys that map to the series axes. If no keys are set,
-     * they will be generated automatically depending on the data structure passed into 
-     * the chart.
-     *
-     * @attribute seriesKeys
-     * @type Array
-     */
-    seriesKeys: {},
-
-    /**
      * Reference to all the axes in the chart.
      *
      * @attribute axesCollection
@@ -11880,20 +12006,28 @@ ChartBase.ATTRS = {
      * @type Boolean
      */
     groupMarkers: {
-        value: false,
-
-        setter: function(val)
-        {
-            if(this.get("graph"))
-            {
-                this.get("graph").set("groupMarkers", val);
-            }
-            return val;
-        }
+        value: false
     }
 };
 
 ChartBase.prototype = {
+    /**
+     * Handles groupMarkers change event.
+     *
+     * @method _groupMarkersChangeHandler
+     * @param {Object} e Event object.
+     * @private
+     */
+    _groupMarkersChangeHandler: function(e)
+    {
+        var graph = this.get("graph"),
+            useGroupMarkers = e.newVal;
+        if(graph)
+        {
+            graph.set("groupMarkers", useGroupMarkers);
+        }
+    },
+
     /**
      * Handler for itemRendered event.
      *
@@ -12202,6 +12336,7 @@ ChartBase.prototype = {
         this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
+        this.after("groupMarkersChange", this._groupMarkersChangeHandler);
         var tt = this.get("tooltip"),
             hideEvent = "mouseout",
             showEvent = "mouseover",
@@ -12455,7 +12590,7 @@ ChartBase.prototype = {
      */
     _dataProviderChangeHandler: function(e)
     {
-        var dataProvider = this.get("dataProvider"),
+        var dataProvider = e.newVal,
             axes = this.get("axes"),
             i,
             axis;
@@ -12592,7 +12727,7 @@ ChartBase.prototype = {
      */
     _updateTooltip: function(val)
     {
-        var tt = this._tooltip,
+        var tt = this.get("tooltip") || this._getTooltip(),
             i,
             styles,
             node,
@@ -12680,7 +12815,6 @@ ChartBase.prototype = {
         node.setStyle("whiteSpace", "noWrap");
         node.setStyle("visibility", "hidden");
         tt.node = Y.one(node);
-        this._tooltip = tt;
         return tt;
     },
 
@@ -12840,6 +12974,63 @@ ChartBase.prototype = {
             val = DOCUMENT.createTextNode(val);
         }
         textField.appendChild(val);
+    },
+
+    /**
+     * Returns all the keys contained in a  `dataProvider`.
+     *
+     * @method _getAllKeys
+     * @param {Array} dp Collection of objects to be parsed.
+     * @return Object
+     */
+    _getAllKeys: function(dp)
+    {
+        var i = 0,
+            len = dp.length,
+            item,
+            key,
+            keys = {};
+        for(; i < len; ++i)
+        {
+            item = dp[i];
+            for(key in item)
+            {
+                if(item.hasOwnProperty(key))
+                {
+                    keys[key] = true;
+                }
+            }
+        }
+        return keys;
+    },
+    
+    /**
+     * Constructs seriesKeys if not explicitly specified.
+     *
+     * @method _buildSeriesKeys
+     * @param {Array} dataProvider The dataProvider for the chart.
+     * @return Array
+     * @private
+     */
+    _buildSeriesKeys: function(dataProvider)
+    {
+        var allKeys,
+            catKey = this.get("categoryKey"),
+            keys = [],
+            i;
+        if(this._seriesKeys)
+        {
+            return this._seriesKeys;
+        }
+        allKeys = this._getAllKeys(dataProvider);
+        for(i in allKeys)
+        {
+            if(allKeys.hasOwnProperty(i) && i != catKey)
+            {
+                keys.push(i);
+            }
+        }
+        return keys;
     }
 };
 Y.ChartBase = ChartBase;
@@ -13183,6 +13374,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
             
             series.type = series.type || type;
+            series.direction = series.direction || dir;
             
             if((series.type == "combo" || series.type == "stackedcombo" || series.type == "combospline" || series.type == "stackedcombospline"))
             {
@@ -13364,6 +13556,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 labelFunction:"labelFunction",
                 labelFunctionScope:"labelFunctionScope",
                 labelFormat:"labelFormat",
+                appendLabelFunction: "appendLabelFunction",
+                appendTitleFunction: "appendTitleFunction",
                 maximum:"maximum",
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
@@ -13604,34 +13798,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
     },
-   
-    /**
-     * Returns all the keys contained in a  `dataProvider`.
-     *
-     * @method _getAllKeys
-     * @param {Array} dp Collection of objects to be parsed.
-     * @return Object
-     */
-    _getAllKeys: function(dp)
-    {
-        var i = 0,
-            len = dp.length,
-            item,
-            key,
-            keys = {};
-        for(; i < len; ++i)
-        {
-            item = dp[i];
-            for(key in item)
-            {
-                if(item.hasOwnProperty(key))
-                {
-                    keys[key] = true;
-                }
-            }
-        }
-        return keys;
-    },
     
     /**
      * Default Function for the axes attribute.
@@ -13663,14 +13829,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             claimedKeys = [],
             categoryAxisName = this.get("categoryAxisName") || this.get("categoryKey"),
             valueAxisName = this.get("valueAxisName"),
-            seriesKeys = this.get("seriesKeys") || [], 
+            seriesKeys = this.get("seriesKeys").concat(),
             i, 
             l,
             ii,
             ll,
             cIndex,
-            dv,
-            dp = this.get("dataProvider"),
             direction = this.get("direction"),
             seriesPosition,
             categoryPosition,
@@ -13731,17 +13895,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                             this._setBaseAttribute(newAxes[i], "position", this._getDefaultAxisPosition(newAxes[i], valueAxes, seriesPosition));
                         }
                     }
-                }
-            }
-        }
-        if(seriesKeys.length < 1)
-        {
-            dv = this._getAllKeys(dp);
-            for(i in dv)
-            {
-                if(dv.hasOwnProperty(i) && i != catKey && Y.Array.indexOf(claimedKeys, i) == -1)
-                {
-                    seriesKeys.push(i);
                 }
             }
         }
@@ -13808,7 +13961,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
             }
         } 
-        this.set("seriesKeys", seriesKeys);
+        if(!this._seriesKeysExplicitlySet)
+        {
+            this._seriesKeys = seriesKeys;
+        }
         return newAxes;
     },
 
@@ -14490,17 +14646,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
                 msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
             }
-            else
+           else
             {
                 msg += "No data available.";
             }
             msg += (itemIndex + 1) + " of " + dataLength + ". ";
         }
         return msg;
-    },
-
-    _alwaysExecValueFn : true
-
+    }
 }, {
     ATTRS: {
         /**
@@ -15195,24 +15348,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     _getDefaultAxes: function()
     {
         var catKey = this.get("categoryKey"),
-            seriesKeys = this.get("seriesKeys") || [], 
-            seriesAxis = "numeric",
-            i, 
-            dv = this.get("dataProvider")[0];
-        if(seriesKeys.length < 1)
-        {
-            for(i in dv)
-            {
-                if(i != catKey)
-                {
-                    seriesKeys.push(i);
-                }
-            }
-            if(seriesKeys.length > 0)
-            {
-                this.set("seriesKeys", seriesKeys);
-            }
-        }
+            seriesKeys = this.get("seriesKeys").concat(), 
+            seriesAxis = "numeric";
         return {
             values:{
                 keys:seriesKeys,

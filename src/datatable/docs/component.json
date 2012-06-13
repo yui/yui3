@@ -51,9 +51,7 @@
             "displayName": "Formatting Row Data for Display",
             "modules": ["datatable"],
             "description": "Custom format data for display.",
-	        "useModules": ["datatype-date", "datatable-base"],
-
-            "hideTableOfContents": true
+	        "useModules": ["datatype-date", "datatable-base"]
         },
 
         {

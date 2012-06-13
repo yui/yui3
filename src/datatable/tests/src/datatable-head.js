@@ -9,36 +9,6 @@ suite.add(new Y.Test.Case({
         });
 
         Y.Assert.isInstanceOf(Y.DataTable.HeaderView, view);
-    },
-
-    "DataTable.Base default headerView should be DataTable.HeaderView": function () {
-        var table = new Y.DataTable.Base({
-            columns: ['a'],
-            data: [{ a: 1 }]
-        });
-
-        Y.Assert.areSame(Y.DataTable.HeaderView, table.get('headerView'));
-
-        table.render();
-
-        Y.Assert.isInstanceOf(Y.DataTable.HeaderView, table.head);
-
-        table.destroy();
-    },
-
-    "DataTable default headerView should be DataTable.HeaderView": function () {
-        var table = new Y.DataTable({
-            columns: ['a'],
-            data: [{ a: 1 }]
-        });
-
-        Y.Assert.areSame(Y.DataTable.HeaderView, table.get('headerView'));
-
-        table.render();
-
-        Y.Assert.isInstanceOf(Y.DataTable.HeaderView, table.head);
-
-        table.destroy();
     }
 
 }));
@@ -47,22 +17,34 @@ suite.add(new Y.Test.Case({
     name: "nested headers",
 
     tearDown: function () {
-        if (this.table) {
-            this.table.destroy();
+        if (this.view) {
+            this.view.destroy();
         }
     },
 
     "columns configured with children should result in multiple thead rows": function () {
-        var table = this.table = new Y.DataTable({
+        var view = this.view = new Y.DataTable.HeaderView({
+            container: Y.Node.create('<table></table>'),
             columns: [
-                { label: 'abX', children: [ 'a', 'b' ] },
-                'c', 'd'
+                {
+                    label: 'abX',
+                    children: [
+                        { key: 'a' },
+                        { label: 'bX',
+                          children: [
+                            { key: 'b' }
+                          ]
+                        }
+                    ]
+                },
+                { key: 'c' },
+                { key: 'd' }
             ],
-            data: []
+            modelList: new Y.ModelList().reset([{ a: 1, b: 1, c: 1, d: 1 }])
         }).render();
 
-        Y.Assert.areSame(2, table._tableNode.all('thead > tr').size());
-        Y.Assert.areSame(5, table._tableNode.all('thead th').size());
+        Y.Assert.areSame(3, view.get('container').all('thead > tr').size());
+        Y.Assert.areSame(6, view.get('container').all('thead th').size());
     }
 }));
 
@@ -70,19 +52,20 @@ suite.add(new Y.Test.Case({
     name: "abbr column config",
 
     tearDown: function () {
-        if (this.table) {
-            this.table.destroy();
+        if (this.view) {
+            this.view.destroy();
         }
     },
 
     "column abbr should be added to the <th> as attribute": function () {
-        var table = this.table = new Y.DataTable({
-            columns: [ { key: 'a', abbr: 'abbr content' } ],
-            data: []
+        var view = this.view = new Y.DataTable.HeaderView({
+            container: Y.Node.create('<table></table>'),
+            columns: [{ key: 'a', abbr: 'abbr content' }],
+            modelList: new Y.ModelList().reset([{ a: 1 }])
         }).render();
 
         Y.Assert.areSame('abbr content',
-            table._tableNode.one('th').getAttribute('abbr'));
+            view.get('container').one('th').getAttribute('abbr'));
     }
 }));
 
@@ -90,51 +73,115 @@ suite.add(new Y.Test.Case({
     name: "className column config",
 
     tearDown: function () {
-        if (this.table) {
-            this.table.destroy();
+        if (this.view) {
+            this.view.destroy();
         }
     },
 
     "column className should be added to the <th>'s class attribute": function () {
-        var table = this.table = new Y.DataTable({
-            columns: [ { key: 'a', className: 'testClass' } ],
-            data: []
+        var view = this.view = new Y.DataTable.HeaderView({
+            container: Y.Node.create('<table></table>'),
+            columns: [{ key: 'a', className: 'testClass' }],
+            modelList: new Y.ModelList().reset([{ a: 1 }])
         }).render();
 
-        Y.Assert.isTrue(table._tableNode.one('th').hasClass('testClass'));
+        Y.Assert.isTrue(view.get('container').one('th').hasClass('testClass'));
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: "_id column config",
+
+    tearDown: function () {
+        if (this.view) {
+            this.view.destroy();
+        }
+    },
+
+    "column _id should be added to the <th>'s class attribute": function () {
+        var view = this.view = new Y.DataTable.HeaderView({
+            container: Y.Node.create('<table></table>'),
+            columns: [{ key: 'a', _id: 'foo' }],
+            modelList: new Y.ModelList().reset([{ a: 1 }])
+        }).render();
+
+        Y.Assert.isTrue(view.get('container').one('th').hasClass(
+            view.getClassName('col', 'foo')));
     }
 }));
 
 suite.add(new Y.Test.Case({
     name: "columns attribute",
 
+    setUp: function () {
+        this.view = new Y.DataTable.HeaderView({
+            container: Y.Node.create('<table></table>'),
+            columns: [{ key: 'a' }],
+            modelList: new Y.ModelList().reset([{ a: 1 }])
+        }).render();
+    },
+
     tearDown: function () {
-        if (this.table) {
-            this.table.destroy();
-        }
+        this.view.destroy();
     },
 
     "changing columns should rerender headers": function () {
-        var table = this.table = new Y.DataTable({
-            columns: [ 'a' ],
-            data: []
-        }).render();
 
-        Y.Assert.areSame(1, table._tableNode.all('th').size());
+        Y.Assert.areSame(1, this.view.get('container').all('th').size());
 
-        table.set('columns', ['a', 'b']);
+        this.view.set('columns', [{ key: 'a' }, { key: 'b' }]);
 
-        Y.Assert.areSame(2, table._tableNode.all('th').size());
+        Y.Assert.areSame(2, this.view.get('container').all('th').size());
     }
 }));
 
 suite.add(new Y.Test.Case({
-    name: "destroy",
+    name: "getClassName",
+
+    setUp: function () {
+        this.view = new Y.DataTable.HeaderView({
+            columns: [{ key: 'a' }],
+            container: Y.Node.create('<table></table>'),
+            modelList: new Y.ModelList().reset([{ a: 1 }])
+        });
+    },
 
     tearDown: function () {
-        if (this.table) {
-            this.table.destroy();
-        }
+        this.view.destroy();
+    },
+
+    "test standalone getClassName()": function () {
+        Y.Assert.areSame('yui3-tableHeader-foo', this.view.getClassName('foo'));
+        Y.Assert.areSame('yui3-tableHeader-foo-bar',
+            this.view.getClassName('foo', 'bar'));
+    },
+
+    "test host-relayed getClassName()": function () {
+        this.view.host = {
+            getClassName: function () {
+                return arguments.length;
+            }
+        };
+
+        Y.Assert.areSame(1, this.view.getClassName('foo'));
+        Y.Assert.areSame(2, this.view.getClassName('foo', 'bar'));
+    }
+}));
+
+/*
+suite.add(new Y.Test.Case({
+    name: "destroy",
+
+    setUp: function () {
+        this.view = new Y.DataTable.HeaderView({
+            container: Y.Node.create('<table></table>'),
+            columns: [{ key: 'a' }],
+            modelList: new Y.ModelList().reset([{ a: 1 }])
+        });
+    },
+
+    tearDown: function () {
+        this.view.destroy();
     },
 
     "destroying the headerView instance should prevent further column changes propagating to the UI": function () {
@@ -152,5 +199,6 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(1, table._tableNode.all('th').size());
     }
 }));
+*/
 
 Y.Test.Runner.add(suite);

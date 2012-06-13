@@ -9,8 +9,6 @@ implemented using the pjax technique (HTML5 pushState + Ajax).
 
 var win = Y.config.win,
 
-    Lang = Y.Lang,
-
     // The CSS class name used to filter link clicks from only the links which
     // the pjax enhanced navigation should be used.
     CLASS_PJAX = Y.ClassNameManager.getClassName('pjax'),
@@ -159,32 +157,6 @@ PjaxBase.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Returns the current path root after popping off the last path segment,
-    making it useful for resolving other URL paths against.
-
-    The path root will always begin and end with a '/'.
-
-    @method _getRoot
-    @return {String} The URL's path root.
-    @protected
-    @since 3.5.0
-    **/
-    _getRoot: function () {
-        var slash = '/',
-            path  = Y.getLocation().pathname,
-            segments;
-
-        if (path.charAt(path.length - 1) === slash) {
-            return path;
-        }
-
-        segments = path.split(slash);
-        segments.pop();
-
-        return segments.join(slash) + slash;
-    },
-
-    /**
     Underlying implementation for `navigate()`.
 
     @method _navigate
@@ -203,15 +175,17 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
     _navigate: function (url, options) {
+        url = this._upgradeURL(url);
+
         // Navigation can only be enhanced if there is a route-handler.
         if (!this.hasRoute(url)) {
             return false;
         }
 
-        options || (options = {});
-        options.url = url;
+        // Make a copy of `options` before modifying it.
+        options = Y.merge(options, {url: url});
 
-        var currentURL = this._getURL(),
+        var currentURL = this._upgradeURL(this._getURL()),
             hash, hashlessURL;
 
         // Captures the `url`'s hash and returns a URL without that hash.
@@ -252,48 +226,6 @@ PjaxBase.prototype = {
     },
 
     /**
-    Returns a normalized path, ridding it of any '..' segments and properly
-    handling leading and trailing slashes.
-
-    @method _normalizePath
-    @param {String} path URL path to normalize.
-    @return {String} Normalized path.
-    @protected
-    @since 3.5.0
-    **/
-    _normalizePath: function (path) {
-        var dots  = '..',
-            slash = '/',
-            i, len, normalized, segments, segment, stack;
-
-        if (!path || path === slash) {
-            return slash;
-        }
-
-        segments = path.split(slash);
-        stack    = [];
-
-        for (i = 0, len = segments.length; i < len; ++i) {
-            segment = segments[i];
-
-            if (segment === dots) {
-                stack.pop();
-            } else if (segment) {
-                stack.push(segment);
-            }
-        }
-
-        normalized = slash + stack.join(slash);
-
-        // Append trailing slash if necessary.
-        if (normalized !== slash && path.charAt(path.length - 1) === slash) {
-            normalized += slash;
-        }
-
-        return normalized;
-    },
-
-    /**
     Binds the delegation of link-click events that match the `linkSelector` to
     the `_onLinkClick()` handler.
 
@@ -310,81 +242,6 @@ PjaxBase.prototype = {
             this._pjaxEvents = Y.one('body').delegate('click',
                 this._onLinkClick, this.get('linkSelector'), this);
         }
-    },
-
-    /**
-    Returns the normalized result of resolving the `path` against the current
-    path. Falsy values for `path` will return just the current path.
-
-    @method _resolvePath
-    @param {String} path URL path to resolve.
-    @return {String} Resolved path.
-    @protected
-    @since 3.5.0
-    **/
-    _resolvePath: function (path) {
-        if (!path) {
-            return this._getPath();
-        }
-
-        // Path is host-relative and assumed to be resolved and normalized,
-        // meaning silly paths like: '/foo/../bar/' will be returned as-is.
-        if (path.charAt(0) === '/') {
-            return this._normalizePath(path);
-        }
-
-        return this._normalizePath(this._getRoot() + path);
-    },
-
-    /**
-    Resolves the specified URL against the current URL.
-
-    This method resolves URLs like a browser does and will always return an
-    absolute URL. When the specified URL is already absolute, it is assumed to
-    be fully resolved and is simply returned as is. Scheme-relative URLs are
-    prefixed with the current protocol. Relative URLs are giving the current
-    URL's origin and are resolved and normalized against the current path root.
-
-    @method _resolveURL
-    @param {String} url URL to resolve.
-    @return {String} Resolved URL.
-    @protected
-    @since 3.5.0
-    **/
-    _resolveURL: function (url) {
-        var parts    = url && url.match(this._regexURL),
-            origin, path, query, hash, resolved;
-
-        if (!parts) {
-            return this._getURL();
-        }
-
-        origin = parts[1];
-        path   = parts[2];
-        query  = parts[3];
-        hash   = parts[4];
-
-        // Absolute and scheme-relative URLs are assumed to be fully-resolved.
-        if (origin) {
-            // Prepend the current scheme for scheme-relative URLs.
-            if (origin.indexOf('//') === 0) {
-                origin = Y.getLocation().protocol + origin;
-            }
-
-            return origin + (path || '/') + (query || '') + (hash || '');
-        }
-
-        // Will default to the current origin and current path.
-        resolved = this._getOrigin() + this._resolvePath(path);
-
-        // A path or query for the specified URL trumps the current URL's.
-        if (path || query) {
-            return resolved + (query || '') + (hash || '');
-        }
-
-        query = this._getQuery();
-
-        return resolved + (query ? ('?' + query) : '') + (hash || '');
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -433,11 +290,29 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
     _onLinkClick: function (e) {
-        var url;
+        var location, link, url;
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
         if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
+
+        location = Y.getLocation(),
+        link     = e.currentTarget;
+
+        // Only allow anchor elements because we need access to its `protocol`,
+        // `host`, and `href` attributes.
+        if (link.get('tagName').toUpperCase() !== 'A') {
+            Y.log('pjax link-click navigation requires an anchor element.', 'warn', 'PjaxBase');
+            return;
+        }
+
+        // Same origin check to prevent trying to navigate to URLs from other
+        // sites or things like mailto links.
+        if (link.get('protocol') !== location.protocol ||
+                link.get('host') !== location.host) {
+
+            return;
+        }
 
         // All browsers fully resolve an anchor's `href` property.
         url = e.currentTarget.get('href');

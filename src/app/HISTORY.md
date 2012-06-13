@@ -4,11 +4,20 @@ App Framework Change History
 3.6.0
 -----
 
+### App
+
+* Added static property: `Y.App.serverRouting`, which serves as the default
+  value for the `serverRouting` attribute of all apps. [Ticket #2532319]
+
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
 ### App Transitions
 
 * Fixed issue with non-collapsing white space between views while transitioning.
   White space is now fully collapsed and prevents views from jumping after a
   cross-fade transition. [Ticket #2532298]
+
+* Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
 
 ### ModelList
 
@@ -28,6 +37,10 @@ App Framework Change History
   [Ticket #2532240]
 
 ### Router
+
+* [!] Changed how hash-based paths interact with the URL's real path. The
+  path-like hash fragments are now treated as a continuation of the URL's path
+  when the router has been configured with a `root`. [Ticket #2532318]
 
 * Fixed issue when multiple routers on were on the page and one router was
   destroyed the remaining routers would stop dispatching. [Ticket #2532317]

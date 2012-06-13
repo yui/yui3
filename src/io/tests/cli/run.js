@@ -16,6 +16,11 @@ Object.keys(modules).forEach(function(name) {
     modules[name].fullpath = path.join(__dirname, '../', modules[name].fullpath);
 });
 
+modules['nodejs-tests'] = {
+    fullpath: path.join(__dirname, './nodejs-tests.js'),
+    requires: [ 'test', 'querystring-parse-simple' ]
+}
+
 console.log('Starting up test server');
 server.start();
 

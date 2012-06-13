@@ -222,7 +222,7 @@ AppTransitionsNative.prototype = {
         this._transitioning = true;
 
         container     = this.get('container');
-        transitioning = AppTransitions.CLASS_NAMES.transitioning;
+        transitioning = Y.App.CLASS_NAMES.transitioning;
 
         container.addClass(transitioning);
 

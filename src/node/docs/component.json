@@ -29,6 +29,16 @@
         },
 
         {
+            "name"       : "store",
+            "displayName": "DOM Methods - Store",
+            "description": "Building a simple store and shopping cart.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "shopping", "cart"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name"       : "events",
             "displayName": "Handling DOM Events",
             "description": "Listening for DOM events with Node instances.",
