@@ -65,7 +65,7 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
         var obj;
         if (this.hasClass('patty')) {
             // Create a node with an image of the burger part
-            obj = Y.Node.create('<li class="patty"><img src="' + imgPath + 'burg_patty.png"/></li>');
+            obj = Y.Node.create('<li class="patty"><img src="' + imgPath + 'burg_patty.png" width="268" height="75" alt="Burger patty"/></li>');
 
             // Insert it before the bottom bun
             demo.insert(obj, Y.one('.bun-bottom'));
@@ -77,27 +77,27 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
             // only when there's a patty to insert before
             Y.one('.buttons-list .cheese')._node.disabled = false; 
         } else if (this.hasClass('lettuce')) {
-            obj = Y.Node.create('<li class="lettuce"><img src="' + imgPath + 'burg_lettuce.png"/></li>');
+            obj = Y.Node.create('<li class="lettuce"><img src="' + imgPath + 'burg_lettuce.png" width="302" height="87" alt="Lettuce"/></li>');
             demo.insert(obj, Y.one('.bun-bottom'));
             transitionObject(obj);        
         } else if (this.hasClass('cheese')) {
-            obj = Y.Node.create('<li class="cheese"><img src="' + imgPath + 'burg_cheese.png"/></li>');
+            obj = Y.Node.create('<li class="cheese"><img src="' + imgPath + 'burg_cheese.png" width="274" height="89" alt="Cheese"/></li>');
             demo.insert(obj, Y.one('.patty'));
             transitionObject(obj);
         } else if (this.hasClass('ketchup')) {
-            obj = Y.Node.create('<li class="ketchup"><img src="' + imgPath + 'burg_ketchup.png"/></li>');
+            obj = Y.Node.create('<li class="ketchup"><img src="' + imgPath + 'burg_ketchup.png" width="208" height="66" alt="Ketchup"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('pickles')) {
-            obj = Y.Node.create('<li class="pickles"><img src="' + imgPath + 'burg_pickles.png"/></li>');
+            obj = Y.Node.create('<li class="pickles"><img src="' + imgPath + 'burg_pickles.png" width="236" height="61" alt="Pickles"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('onions')) {
-            obj = Y.Node.create('<li class="onions"><img src="' + imgPath + 'burg_onions.png"/></li>');
+            obj = Y.Node.create('<li class="onions"><img src="' + imgPath + 'burg_onions.png" width="248" height="77" alt="Onions"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('tomato')) {
-            obj = Y.Node.create('<li class="tomato"><img src="' + imgPath + 'burg_tomato.png"/></li>');
+            obj = Y.Node.create('<li class="tomato"><img src="' + imgPath + 'burg_tomato.png" width="225" height="68" alt="Tomato slice"/></li>');
             Y.one('.bun-top').insert(obj, 'after');
             transitionObject(obj);
         } else if (this.hasClass('done')) {
@@ -129,8 +129,8 @@ YUI().use('node', 'cssbutton', 'transition', 'UA', function (Y) {
             demo.setContent('');
 
             // Insert just the buns
-            demo.append('<li class="bun-top"><img src="' + imgPath + 'burg_bun_top.png"/></li>');
-            demo.append('<li class="bun-bottom"><img src="' + imgPath + 'burg_bun_bottom.png"/></li>');
+            demo.append('<li class="bun-top"><img src="' + imgPath + 'burg_bun_top.png" width="271" height="106" alt="Burger bun top"/></li>');
+            demo.append('<li class="bun-bottom"><img src="' + imgPath + 'burg_bun_bottom.png" width="291" height="115" alt="Burger bun bottom"/></li>');
 
             // Disable the cheese button
             // Cheese is inserted before first patty.
