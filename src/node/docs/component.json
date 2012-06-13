@@ -92,7 +92,7 @@
             "name"       : "node-insert",
             "displayName": "Adding Node Content - Burger Builder",
             "description": "This example demonstrates how to insert content into a Node.",
-            "modules"    : ["node"],
+            "modules"    : ["node", "transition"],
             "tags"       : ["dom", "node", "burger"],
 
             "hideTableOfContents": true
