@@ -1,5 +1,5 @@
 <script type="text/javascript">
-YUI().use('node', function(Y) {
+YUI().use('node', 'event-touch', function(Y) {
     var onClick = function(e) {
         e.preventDefault();
         var item = e.currentTarget,
@@ -16,6 +16,8 @@ YUI().use('node', function(Y) {
     };
 
     Y.one('#demo').delegate('click', onClick, 'li');
+    Y.one('#demo').delegate('touchstart', onClick, 'li');
     Y.one('#demo2').delegate('click', onClick, 'li');
+    Y.one('#demo2').delegate('touchstart', onClick, 'li');
 });
 </script>
