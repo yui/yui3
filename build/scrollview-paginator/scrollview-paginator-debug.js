@@ -493,4 +493,4 @@ PaginatorPlugin.TRANSITION = {
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
 
 
-}, '@VERSION@' ,{requires:['plugin']});
+}, '@VERSION@' ,{requires:['plugin', 'classnamemanager']});

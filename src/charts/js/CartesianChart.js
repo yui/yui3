@@ -338,6 +338,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
             
             series.type = series.type || type;
+            series.direction = series.direction || dir;
             
             if((series.type == "combo" || series.type == "stackedcombo" || series.type == "combospline" || series.type == "stackedcombospline"))
             {
@@ -519,6 +520,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 labelFunction:"labelFunction",
                 labelFunctionScope:"labelFunctionScope",
                 labelFormat:"labelFormat",
+                appendLabelFunction: "appendLabelFunction",
+                appendTitleFunction: "appendTitleFunction",
                 maximum:"maximum",
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
@@ -759,34 +762,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
     },
-   
-    /**
-     * Returns all the keys contained in a  `dataProvider`.
-     *
-     * @method _getAllKeys
-     * @param {Array} dp Collection of objects to be parsed.
-     * @return Object
-     */
-    _getAllKeys: function(dp)
-    {
-        var i = 0,
-            len = dp.length,
-            item,
-            key,
-            keys = {};
-        for(; i < len; ++i)
-        {
-            item = dp[i];
-            for(key in item)
-            {
-                if(item.hasOwnProperty(key))
-                {
-                    keys[key] = true;
-                }
-            }
-        }
-        return keys;
-    },
     
     /**
      * Default Function for the axes attribute.
@@ -818,14 +793,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             claimedKeys = [],
             categoryAxisName = this.get("categoryAxisName") || this.get("categoryKey"),
             valueAxisName = this.get("valueAxisName"),
-            seriesKeys = this.get("seriesKeys") || [], 
+            seriesKeys = this.get("seriesKeys").concat(),
             i, 
             l,
             ii,
             ll,
             cIndex,
-            dv,
-            dp = this.get("dataProvider"),
             direction = this.get("direction"),
             seriesPosition,
             categoryPosition,
@@ -886,17 +859,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                             this._setBaseAttribute(newAxes[i], "position", this._getDefaultAxisPosition(newAxes[i], valueAxes, seriesPosition));
                         }
                     }
-                }
-            }
-        }
-        if(seriesKeys.length < 1)
-        {
-            dv = this._getAllKeys(dp);
-            for(i in dv)
-            {
-                if(dv.hasOwnProperty(i) && i != catKey && Y.Array.indexOf(claimedKeys, i) == -1)
-                {
-                    seriesKeys.push(i);
                 }
             }
         }
@@ -963,7 +925,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
             }
         } 
-        this.set("seriesKeys", seriesKeys);
+        if(!this._seriesKeysExplicitlySet)
+        {
+            this._seriesKeys = seriesKeys;
+        }
         return newAxes;
     },
 
@@ -1645,17 +1610,14 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 msg += categoryItem.displayName + ": " + categoryItem.axis.formatLabel.apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + ", ";
                 msg += valueItem.displayName + ": " + valueItem.axis.formatLabel.apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]) + ", "; 
             }
-            else
+           else
             {
                 msg += "No data available.";
             }
             msg += (itemIndex + 1) + " of " + dataLength + ". ";
         }
         return msg;
-    },
-
-    _alwaysExecValueFn : true
-
+    }
 }, {
     ATTRS: {
         /**

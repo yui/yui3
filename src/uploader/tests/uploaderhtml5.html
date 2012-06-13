@@ -282,9 +282,10 @@
 
                 this.basicuploader._updateFileList(e);
 
-                this.basicuploader.uploadAll("testurl.html");
-
-                this.basicuploader.upload(new Y.FileHTML5(filearray[0]), "testurl.html", {foo: "bar"});
+                if (!Y.UA.ie || Y.UA.ie >= 10) {
+                    this.basicuploader.uploadAll("testurl.html");
+                    this.basicuploader.upload(new Y.FileHTML5(filearray[0]), "testurl.html", {foo: "bar"});
+                }
             }
         });
 

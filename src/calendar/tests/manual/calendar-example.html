@@ -100,6 +100,8 @@ if (Y.Array.indexOf(rules, "theweekends") >= 0) {
 		calendar.selectDates([new Date(2011,9,4), new Date(2011,9,3), new Date(2011,10,8)]);
 		calendar.render("#mycalendar");
 
+    calendar.set("tabIndex", 1);
+
 		calendar.set("customRenderer", {rules: myRules1, filterFunction: myFilter});
 
 		calendar.set("enabledDatesRule", null);

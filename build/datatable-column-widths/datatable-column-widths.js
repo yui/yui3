@@ -171,10 +171,9 @@ Y.mix(ColumnWidths.prototype, {
         return this;
     },
 
-    //----------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Protected properties and methods
-    //----------------------------------------------------------------------------
-
+    //--------------------------------------------------------------------------
     /**
     Renders the table's `<colgroup>` and populates the `_colgroupNode` property.
 
@@ -195,11 +194,7 @@ Y.mix(ColumnWidths.prototype, {
     @since 3.5.0
     **/
     initializer: function (config) {
-        this.after('renderTable', function (e) {
-            this._uiSetColumns();
-
-            this.after('columnsChange', this._uiSetColumns);
-        });
+        this.after(['renderView', 'columnsChange'], this._uiSetColumnWidths);
     },
 
     /**
@@ -226,7 +221,7 @@ Y.mix(ColumnWidths.prototype, {
         // cells' calculated width.
         var colgroup  = this._colgroupNode,
             col       = colgroup && colgroup.all('col').item(colIndex),
-            firstRow, cell, getCStyle;
+            cell, getCStyle;
 
         if (col) {
             if (width && isNumber(width)) {
@@ -238,8 +233,7 @@ Y.mix(ColumnWidths.prototype, {
             // Adjust the width for browsers that make
             // td.style.width === col.style.width
             if  (width && Y.Features.test('table', 'badColWidth')) {
-                firstRow = this._tbodyNode && this._tbodyNode.one('tr');
-                cell     = firstRow && firstRow.all('td').item(colIndex);
+                cell = this.getCell([0, colIndex]);
                 
                 if (cell) {
                     getCStyle = function (prop) {
@@ -264,11 +258,15 @@ Y.mix(ColumnWidths.prototype, {
     attribute without children.  It is assumed that these are the columns that
     have data cells renderered for them.
 
-    @method _uiSetColumns
+    @method _uiSetColumnWidths
     @protected
     @since 3.5.0
     **/
-    _uiSetColumns: function () {
+    _uiSetColumnWidths: function () {
+        if (!this.view) {
+            return;
+        }
+
         var template = this.COL_TEMPLATE,
             colgroup = this._colgroupNode,
             columns  = this._displayColumns,
