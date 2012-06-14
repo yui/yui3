@@ -6,19 +6,8 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// history-hash-ie
-add('load', '1', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // graphics-canvas-default
-add('load', '2', {
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -30,7 +19,7 @@ add('load', '2', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '3', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -49,12 +38,18 @@ add('load', '3', {
     "trigger": "autocomplete-list"
 });
 // dd-gestures
-add('load', '4', {
+add('load', '3', {
     "name": "dd-gestures", 
     "test": function(Y) {
     return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
     "trigger": "dd-drag"
+});
+// scrollview-base-ie
+add('load', '4', {
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
 });
 // editor-para-ie
 add('load', '5', {
@@ -63,21 +58,15 @@ add('load', '5', {
     "ua": "ie", 
     "when": "instead"
 });
-// transition-timer
+// graphics-vml-default
 add('load', '6', {
-    "name": "transition-timer", 
-    "test": function (Y) {
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
-        ret = true;
-
-    if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
-
-    return ret;
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
-    "trigger": "transition"
+    "trigger": "graphics"
 });
 // graphics-svg-default
 add('load', '7', {
@@ -92,17 +81,32 @@ add('load', '7', {
 }, 
     "trigger": "graphics"
 });
-// scrollview-base-ie
+// history-hash-ie
 add('load', '8', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
 });
-// widget-base-ie
+// transition-timer
 add('load', '9', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+    "name": "transition-timer", 
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+}, 
+    "trigger": "transition"
 });
 // dom-style-ie
 add('load', '10', {
@@ -168,15 +172,11 @@ add('load', '13', {
 }, 
     "trigger": "graphics"
 });
-// graphics-vml-default
+// widget-base-ie
 add('load', '14', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
 });
 // app-transitions-native
 add('load', '15', {

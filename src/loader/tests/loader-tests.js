@@ -1144,6 +1144,24 @@ YUI.add('loader-tests', function(Y) {
             Assert.isTrue(out.js[0].indexOf('node-base') > 0, 'Failed to load node-base');
 
         },
+        test_resolve_loadOptional: function() {
+            var loader = new testY.Loader({
+                combine: false,
+                loadOptional: false,
+                loadOptionalCfg: { "autocomplete-sources": false, "dd-plugin": true},
+                require:['autocomplete-sources', "dd-plugin"]
+                        });
+            var out = loader.resolve(true);
+            var m = {}
+            for (i in out.js){m[out.js[i].substring(out.js[i].lastIndexOf('/')+1, out.js[i].length)]=i}
+            Assert.isTrue((m['jsonp-min.js'] === undefined)
+            && (m['json-parse-min.js'] === undefined)
+            && (m['io-base-min.js'] === undefined)
+            && (m['yql-min.js'] === undefined)
+            && (m['dd-proxy-min.js'] !== undefined)
+            && (m['dd-constrain-min.js'] !== undefined),
+            'loadoptionalCfg didn\'t work');
+        },
         'test: aliases config option inside group': function() {
             var loader = new Y.Loader({
                 ignoreRegistered: true,
