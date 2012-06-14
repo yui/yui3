@@ -1474,7 +1474,7 @@ Y.Loader.prototype = {
             }
         }
 
-        isLoadOptional = (typeof this.loadOptionalCfg[name] == "undefined")? this.loadOptional: this.loadOptionalCfg[name];
+        isLoadOptional = (this.loadOptionalCfg[name] === undefined)? this.loadOptional: this.loadOptionalCfg[name];
         if (o && isLoadOptional) {
             for (i = 0; i < o.length; i++) {
                 if (!hash[o[i]]) {
