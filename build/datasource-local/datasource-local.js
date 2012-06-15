@@ -351,7 +351,7 @@ Y.extend(DSLocal, Y.Base, {
      * property described below.
      *
      * @method sendRequest
-     * @param request {Object} An object literal with the following properties:
+     * @param [request] {Object} An object literal with the following properties:
      *     <dl>
      *     <dt><code>request</code></dt>
      *     <dd>The request to send to the live data source, if any.</dd>

@@ -29,6 +29,16 @@
         },
 
         {
+            "name"       : "store",
+            "displayName": "DOM Methods - Store",
+            "description": "Building a simple store and shopping cart.",
+            "modules"    : ["node"],
+            "tags"       : ["dom", "node", "shopping", "cart"],
+
+            "hideTableOfContents": true
+        },
+
+        {
             "name"       : "events",
             "displayName": "Handling DOM Events",
             "description": "Listening for DOM events with Node instances.",
@@ -90,10 +100,10 @@
 
         {
             "name"       : "node-insert",
-            "displayName": "Adding Node Content",
+            "displayName": "Adding Node Content - Burger Builder",
             "description": "This example demonstrates how to insert content into a Node.",
-            "modules"    : ["node"],
-            "tags"       : ["dom", "node"],
+            "modules"    : ["node", "transition"],
+            "tags"       : ["dom", "node", "burger"],
 
             "hideTableOfContents": true
         },
