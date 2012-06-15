@@ -157,14 +157,14 @@ CEProto.fireComplex = function(args) {
 
     self.target = self.target || host;
 
-    events = new Y.EventTarget({
-        fireOnce: true,
-        context: host
-    });
-
-    self.events = events;
-
     if (self.stoppedFn) {
+        events = new Y.EventTarget({
+            fireOnce: true,
+            context: host
+        });
+        
+        self.events = events;
+
         events.on('stopped', self.stoppedFn);
     }
 
@@ -185,9 +185,7 @@ CEProto.fireComplex = function(args) {
         args.unshift(ef);
     }
 
-    // if (subCount) {
     if (subs[0]) {
-        // self._procSubs(Y.merge(self.subscribers), args, ef);
         self._procSubs(subs[0], args, ef);
     }
 
@@ -196,10 +194,8 @@ CEProto.fireComplex = function(args) {
 
         oldbubble = es.bubbling;
 
-        // self.bubbling = true;
         es.bubbling = self.type;
 
-        // if (host !== ef.target || es.type != self.type) {
         if (es.type != self.type) {
             es.stopped = 0;
             es.prevented = 0;
@@ -210,9 +206,7 @@ CEProto.fireComplex = function(args) {
         self.stopped = Math.max(self.stopped, es.stopped);
         self.prevented = Math.max(self.prevented, es.prevented);
 
-        // self.bubbling = false;
         es.bubbling = oldbubble;
-
     }
 
     if (self.prevented) {
@@ -336,7 +330,9 @@ CEProto.stopPropagation = function() {
     if (this.stack) {
         this.stack.stopped = 1;
     }
-    this.events.fire('stopped', this);
+    if (this.events) {
+        this.events.fire('stopped', this);
+    }
 };
 
 /**
@@ -349,7 +345,9 @@ CEProto.stopImmediatePropagation = function() {
     if (this.stack) {
         this.stack.stopped = 2;
     }
-    this.events.fire('stopped', this);
+    if (this.events) {
+        this.events.fire('stopped', this);
+    }
 };
 
 /**
