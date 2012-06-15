@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Benchmarks</title>
+</head>
+<body class="yui3-skin-sam">
+
+<p><button id="start">Start Benchmarks</button></p>
+
+<div id="log"></div>
+
+<applet code="nano" archive="http://localhost/benchmark/nano.jar" style="display: none;"></applet>
+<script src="http://localhost/benchmark/benchmark.js"></script>
+
+<script src="http://yui.yahooapis.com/3.6.0pr2/build/yui/yui.js"></script>
+<!--script src="../../../../build/yui/yui.js"></script-->
+<script>
+var Y = YUI({
+    modules: {
+
+        'event-custom-benchmark': {
+            fullpath: 'event-custom-benchmark.js',
+            requires: ['event-custom']
+        },
+
+        'test-console': {
+            fullpath : '../../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../../common/tests/assets/test-console.css',
+            type    : 'css'
+        }
+    },
+
+    useBrowserConsole: false
+
+}).use('event-custom-benchmark', 'node-base', 'test-console', function (Y) {
+
+    var suite = Y.BenchmarkSuite,
+        start = Y.one('#start');
+
+    suite.on('start', function () {
+        start.set('disabled', true);
+        Y.log('Starting benchmarks.');
+    });
+
+    suite.on('cycle', function (ev, bench) {
+        Y.log(String(bench));
+    });
+
+    suite.on('complete', function () {
+        start.set('disabled', false);
+        Y.log('Finished.');
+    });
+
+    start.on('click', function () {
+        suite.run(true);
+    });
+});
+</script>
+
+</body>
+</html>

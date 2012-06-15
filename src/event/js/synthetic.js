@@ -259,8 +259,7 @@ Y.mix(SyntheticEvent, {
             var synth = this.eventDef,
                 method = (sub.filter) ? 'detachDelegate' : 'detach';
 
-            this.subscribers = {};
-            this.subCount = 0;
+            this._subscribers = [];
 
             synth[method](sub.node, sub, this.notifier, sub.filter);
             this.registry.unregister(sub);
