@@ -39,14 +39,14 @@ YUI.add('dial-interactive-tests', function(Y) {
 
         'dial keyboard major increment changes value and scene': function() {
             input.key(33); // up
-            Assert.areEqual('10.00', output.getContent(), 'Failed to initialize dial to zero');
+            Assert.areEqual('10.00', output.getContent(), 'Key "pageup" failed to increment value by major value');
             Assert.areEqual('-5490px', Y.one('#scene').getStyle('top'), 'Failed to move scene when 1 major keyboard increment');
         },
 
         'dial keyboard minor increment': function() {
             input.key(37); // left
             input.key(37); // left
-            Assert.areEqual('-5510px', Y.one('#scene').getStyle('top'), 'Failed to move scene when 2 minor keyboard increments');
+            Assert.areEqual('-5510px', Y.one('#scene').getStyle('top'), '2 key arrow lefts failed to move scene 2 minor keyboard increments');
         },
 
         'scene goes to Hubble when Hubble link is clicked.': function() {
@@ -63,7 +63,7 @@ YUI.add('dial-interactive-tests', function(Y) {
 
         'dial keyboard end goes to max (Hubble) value': function() {
             input.key(35); // end
-            Assert.areEqual('559.00', output.getContent(), 'Home key failed to set dial to min');
+            Assert.areEqual('559.00', output.getContent(), 'End key failed to set dial to min');
             Assert.areEqual('0px', Y.one('#scene').getStyle('top'), 'Failed to move scene to show Hubble');
         },
 
