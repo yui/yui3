@@ -404,11 +404,11 @@ Y.Loader = function(o) {
      * The following skin definition would result in 'skin1' and 'skin2'
      * being loaded for calendar (if calendar was requested), 'round' for
      * components that support it (e.g. slider-base), 'night' for skinnable
-     * components that do not support 'round', and 'sam' for other skinnable
-     * components that support 'sam' and/or components that do not explicity
-     * declare a list of skins that they support. No skin will be loaded for
-     * components that declare a list of supported skins if that list does not
-     * include one of 'round', 'night', or 'sam':
+     * components that do not support 'round', but do support 'night', and
+     * 'sam' for other skinnable components that support 'sam' and/or components
+     * that do not explicity declare a list of skins that they support. No skin
+     * will be loaded for components that declare a list of supported skins if that
+     * list does not include one of 'round', 'night', or 'sam':
      *
      *      skin: {
      *
@@ -416,7 +416,7 @@ Y.Loader = function(o) {
      *          // the default root directory for a skin. ex:
      *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
      *          base: 'assets/skins/',
-
+     *
      *          // The default skin, which is automatically applied if not
      *          // overriden by a component-specific skin definition.
      *          // Change this in to apply a different skin globally
@@ -2558,7 +2558,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
-        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { 
+        // @TODO find a good way to see if requested modules include erroneous skins, and if so,
+        // reset them
+        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
         }
 

@@ -1738,7 +1738,7 @@ YUI.add('loader-tests', function(Y) {
             Assert.areEqual(-1, css.indexOf('assets/skins/sam/overlay.css'), 'Overlay should not request sam skin when skin.order === "night,sam"');
 
         },
-        'test: skin.order should allow csv with spaces': function() {
+        'test: skin.order allows csv with spaces': function() {
             var loader1 = new Y.Loader({
                     base: '',
                     ignoreRegistered: true,
@@ -1763,7 +1763,7 @@ YUI.add('loader-tests', function(Y) {
             ArrayAssert.itemsAreEqual(out1.css, out2.css);
 
         },
-        'test: skin.order for a module with use meta data': function() {
+        'test: skin.order correctly calculates skins for a module with use meta data': function() {
             var loader = new Y.Loader({
                     base: '',
                     require: ['slider'],
@@ -1782,7 +1782,7 @@ YUI.add('loader-tests', function(Y) {
 
 
         },
-        'test: skin.order for 2 loader instances with different orders': function() {
+        "test: skin.order for 2 loader instances with different orders should honor each loader instance's order": function() {
 
             var groups = {
                 'foo': {
