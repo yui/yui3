@@ -1,6 +1,11 @@
 Widget Parent Change History
 ============================
 
+3.6.0
+-----
+
+  * No changes.
+
 3.5.1
 -----
 
@@ -17,9 +22,9 @@ Widget Parent Change History
   * Fixed issue with children not being destroyed, when
     parent.destroy() is called.
 
-  * Added if (sibling.get("rendered")) check before trying to insert 
+  * Added if (sibling.get("rendered")) check before trying to insert
     children after/before siblings. This is not required for the out of
-    the box Parent/Child implementation, but is useful for custom 
+    the box Parent/Child implementation, but is useful for custom
     implementations which customize children to render asynchronously.
 
     See #2529863
@@ -65,7 +70,7 @@ Widget Parent Change History
   *   "childRemoved" event renamed to "removeChild"
   *   Now augmented with Y.ArrayList
   *   "selection" attribute now returns an Y.ArrayList or Widget
-  *   Removed "children" attribute since that functionality is provided 
+  *   Removed "children" attribute since that functionality is provided
       by Y.ArrayList
 	  -  Can retrieve # of child via the size() method
 	  -  Can iterate children via this.each()

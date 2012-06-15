@@ -247,9 +247,9 @@ YUI.add('file-html5', function(Y) {
             xhr.addEventListener ("loadend", boundEventHandler, false); 
             xhr.addEventListener ("readystatechange", boundEventHandler, false);
 
-            xhr.withCredentials = this.get("xhrWithCredentials");
-
             xhr.open("POST", url, true);
+
+            xhr.withCredentials = this.get("xhrWithCredentials");
 
             Y.each(this.get("xhrHeaders"), function (value, key) {
                  xhr.setRequestHeader(key, value);

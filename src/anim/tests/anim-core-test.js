@@ -47,7 +47,7 @@ YUI.add('anim-core-test', function(Y) {
                 ontween = function() {
                     this.detach('tween');
                     test.resume(function() {
-                        Y.Assert.isTrue(node.get('offsetHeight') < h);
+                        Y.Assert.isTrue(node.get('offsetHeight') <= h);
                     });
                 };
 
