@@ -1,0 +1,10 @@
+{
+    "name"       : "treeview",
+    "displayName": "treeview",
+    "description": "Provides a visual representation and helper methods herarchical structures",
+    "author"     : "allenr",
+
+    "tags": ["beta", "widget", "treeview"],
+    "use" : ["treeview"]
+
+}
