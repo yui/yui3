@@ -152,3 +152,23 @@ YUI({useSync: true }).use('test', function(Y) {
     
 });
 ```
+
+Grover Tests
+------------
+
+After running the Node.js tests, Travis will run a subset of our main unit tests with (Grover)[http://github.com/davglass/grover].
+
+It runs this command:
+
+```
+grover -t 180 -c 5  -i src/common/node/batch.js
+```
+
+This tells Grover to run the tests with a 180 second timeout and 5 concurrent processes.
+
+It checks the env variable called `TRAVIS` and changes it's defaults.
+
+On your local machine it will run 20 concurrent tests and all of the unit tests in the system.
+
+On Travis, it runs 5 concurrent (for resourcing issues) and it removes the DD, Charts & Graphics tests from the list
+due to them taking so long to execute that it was failing some builds.
