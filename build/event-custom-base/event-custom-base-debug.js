@@ -549,7 +549,7 @@ Y.CustomEvent = function(type, o) {
      * 'After' subscribers
      * @property _afters
      * @type Subscriber []
-     * @deprecated
+     * @private
      */
     this._afters = [];
 
