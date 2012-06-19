@@ -10,7 +10,20 @@ var FACADE,
     FACADE_KEYS,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype;
+    ETProto = Y.EventTarget.prototype, 
+
+    mixFacadeProps = function(facade, payload) {
+        var p;
+
+        for (p in payload) {
+            // I really think the payload.hasOwnProperty check can go also
+            // Leaving it in for now, since i wanted one commit, with the same
+            // hasOwnProperty criteria as the original
+            if (payload.hasOwnProperty(p) && !FACADE.hasOwnProperty(p)) {
+                facade[p] = payload[p];
+            }
+        }
+    };
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -73,7 +86,7 @@ Y.EventFacade = function(e, currentTarget) {
 
 };
 
-Y.extend(Y.EventFacade, Object, {
+Y.mix(Y.EventFacade.prototype, {
 
     /**
      * Stops the propagation to the next bubble target
@@ -273,7 +286,7 @@ CEProto.fireComplex = function(args) {
 
 CEProto._getFacade = function() {
 
-    var ef = this._facade, o, o2,
+    var ef = this._facade, o,
     args = this.details;
 
     if (!ef) {
@@ -286,16 +299,8 @@ CEProto._getFacade = function() {
 
     if (Y.Lang.isObject(o, true)) {
 
-        o2 = {};
-
         // protect the event facade properties
-        Y.mix(o2, ef, true, FACADE_KEYS);
-
-        // mix the data
-        Y.mix(ef, o, true);
-
-        // restore ef
-        Y.mix(ef, o2, true, FACADE_KEYS);
+        mixFacadeProps(ef, o);
 
         // Allow the event type to be faked
         // http://yuilibrary.com/projects/yui3/ticket/2528376
@@ -472,7 +477,6 @@ ETProto.bubble = function(evt, args, target, es) {
                     ce.broadcast = bc;
                     ce.originalTarget = null;
 
-
                     // stopPropagation() was called
                     if (ce.stopped) {
                         break;
@@ -489,4 +493,3 @@ ETProto.bubble = function(evt, args, target, es) {
 
 FACADE = new Y.EventFacade();
 FACADE_KEYS = Y.Object.keys(FACADE);
-
