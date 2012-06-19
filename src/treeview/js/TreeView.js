@@ -30,7 +30,7 @@
          * @property TREEVIEWLABEL_TEMPLATE
          * @type String
         */
-        TREEVIEWLABEL_TEMPLATE : "<a class='{{{treelabelClassName}}}' role='treeitem' tabindex='0'><span class={{{labelcontentClassName}}}>{{{label}}}</span></a>",
+        TREEVIEWLABEL_TEMPLATE : "<span class='{{{treelabelClassName}}}' role='treeitem' tabindex='0'><span class={{{labelcontentClassName}}}>{{{label}}}</span></span>",
         
         /**
          * Property defining the markup template for the expand controller.
@@ -129,6 +129,9 @@
             
             classes = target.get("className").split(" ");
             cLength = classes.length;
+            
+            //prevent hrefs
+            
             
             for (i=0;i<cLength;i++) {
                 className = classes[i];
