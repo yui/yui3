@@ -2,13 +2,7 @@
 <html>
 <head>
     <title>TreeView Test Suite</title>
-    
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/reset-min.css">
-    <script src="http://yui.yahooapis.com/3.5.1/build/yui/yui-min.js"></script>
-    <script src="../../../build/treeview/treeview.js"></script>
-    <link rel="stylesheet" type="text/css" href="../assets/treeview-menu.css">
-
-
+    <script src="../../../build/yui/yui-min.js"></script>
     <style type="text/css">
         #console .yui3-console-entry {
             padding:2px;
@@ -49,11 +43,8 @@
             
             suite.add(
                 new Y.Test.Case({
-
                 name: " TreeView Widget-Parent API & Widget Child API Tests",
-                          
-
-
+                
                 testAdd: function() {
                    
                     var tree = new Y. TreeView({
@@ -63,21 +54,17 @@
                            }),
                            child;
 
-
                      child = tree.add({ type: "TreeLeaf", label: "Child One" });
-
                      Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     
                      Y.assert((tree.size() == 1), "The root Widget should have one child");
-
                      child = tree.add({ childType: "TreeLeaf", label: "Child Two" });
                      
                      Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
                      Y.assert((tree.size() == 2), "The root Widget should have two children");
-                    
+                     
                      tree.render("#tree");
-
                      tree.destroy();
-
                 },
                 
                 testInsert: function () {
@@ -96,7 +83,7 @@
                            child;
 
 
-                    tree.render();
+                    tree.render("#tree");
 
                     tree.add({ type: "TreeLeaf", label: "Child One", id: "inserted-child-1" }, 0);
 
@@ -114,7 +101,6 @@
                     Y.Assert.areEqual(tree.size(), 7, "The widget should have seven children.");
 
                     tree.destroy();
-
                 },
                 
                 testAddOutOfOrderPreRender : function() {
@@ -129,7 +115,7 @@
                     tree.add({type: "TreeLeaf", label: "Child One", id: "child-1" }, 0);
                     tree.add({type: "TreeLeaf", label: "Child Three", id: "child-3" }, 2);
                     
-                    tree.render();
+                    tree.render("#tree");
                     tree.expand();
 
                     Y.Assert.areEqual(tree.item(0).get("id"), "child-1", "child-1 is out of order");
@@ -150,8 +136,7 @@
                          ]
                     });
                     
-                    tree.render();
-                    
+                    tree.render("#tree");
 
                     var childSelector = "." + tree.item(0).getClassName(),
                         parentBB = tree.get("boundingBox");
@@ -187,7 +172,7 @@
                          ]
                     });
                     
-                    tree.render();
+                    tree.render("#tree");
 
                     var childSelector = "." + tree.item(0).getClassName(),
                         parentBB = tree.get("boundingBox");
@@ -219,7 +204,7 @@
                              { label: "Child Four", id: "child-4" }
                          ]
                     });
-                    tree.render();
+                    tree.render("#tree");
 
                     var childSelector = "." + tree.item(0).getClassName(),
                         parentBB = tree.get("boundingBox");
@@ -288,8 +273,6 @@
 
                     root.destroy();
 
-
-
                     var tree = new Y. TreeView({
                        id: "tree",
                        lazyLoad : false,
@@ -309,7 +292,7 @@
 
                     });
 
-                    tree.render();
+                    tree.render("#tree");
 
                     //  Select a child in the subtree to test if the selection is represented at the root level
 
@@ -319,7 +302,6 @@
                     Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
                     Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
                     Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-1", "The subtree's \"selection\" attribute should return the first child.");
-
 
                     //  Select a child in the root to confirm that the subtree's selection is cleared
 
@@ -485,7 +467,6 @@
                     Y.Assert.areEqual(widget.item(0).previous(true).get("id"), "child-4", "Calling the \"previous\" method with the circular flag should return  a reference to \"child-4\"");
 
                     widget.destroy();
-
                 },
 
                 testActiveDescendant: function () {
@@ -507,7 +488,7 @@
 
                     });
 
-                    tree.render();
+                    tree.render("#tree");
 
                     tree.item(2).item(0).focus();
 
@@ -536,7 +517,7 @@
                        ]
                     });
 
-                    tree.render();
+                    tree.render("#tree");
 
                     
                     var rootId = tree.get("id");
@@ -564,7 +545,7 @@
                        ]
                     });
 
-                    tree.render();
+                    tree.render("#tree");
 
                     var subtree = tree.item(2);
 
@@ -650,7 +631,7 @@
                          ]
                     });
 
-                    tree.render();
+                    tree.render("#tree");
                     tree.destroy();
                     
                     Y.Assert.areEqual(tree.item(1).get("DOMReady"), true,"Item should be rendedered");
@@ -665,18 +646,15 @@
                          ]
                     });
 
-                    tree.render();
+                    tree.render("#tree");
                     
                     Y.Assert.areEqual(tree.item(1).get("DOMReady"), false,"Item should not be rendered");
                     
                     tree.expand();
                     
                     Y.Assert.areEqual(tree.item(1).get("DOMReady"), true,"Item should now be rendered");
-
                     
                     tree.destroy();
-
-                    
                 },
                 
                 testExpand : function () {
@@ -688,15 +666,13 @@
                          ]
                     });
 
-                    tree.render();
-                    
+                    tree.render("#tree");
                     
                     tree.expand();
                                         
                     Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
                     
                     tree.destroy();
-
                 },
                 
                 testCollapse : function () {
@@ -708,8 +684,7 @@
                          ]
                     });
 
-                    tree.render();
-                    
+                    tree.render("#tree");
                     
                     tree.expand();
                     tree.collapse();
@@ -717,7 +692,6 @@
                     Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be expanded");
                     
                     tree.destroy();
-                    
                 },
                 
                 testToggle : function () {
@@ -729,29 +703,24 @@
                          ]
                     });
 
-                    tree.render();
-                    
+                    tree.render("#tree");
                     tree.toggleTreeState();
 
                     Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
                     
                     tree.toggleTreeState();
-
                     Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be collapsed");
 
                     tree.destroy();
-                    
                 }
-                
             }));
 
         Y.Test.Runner.setName(" TreeView Tests");
         Y.Test.Runner.add(suite);
-
+        
         var console;
-
-        Y.one("#btnRun").set("disabled", false).on("click", function() {
-            if (!console) {
+        
+        if (!console) {
                 console = new Y.Console({
                     id:"console",
                     width:"100%",
@@ -766,11 +735,9 @@
                 }).render();
             }
     
-            Y.Test.Runner.enableLogging();
-            Y.Test.Runner.run();
-        });
+        Y.Test.Runner.enableLogging();
+        Y.Test.Runner.run();
     });
     </script>
-    <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 </body>
 </html>

@@ -1,20 +1,20 @@
 <div class="intro">
 <h1>YUI Treeview</h1>
 <p>
-<img src="{{componentAssets}}/calendar.png" alt="Screenshot of the Calendar widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
-The Treeview widget provides a visual representation of a herarchical structure one or more elements. Treeview implementation is based on Widget-Parent & Widget-Child. 
+<img src="{{componentAssets}}/treeview.png" alt="Screenshot of the TreeView widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
+The TreeView widget provides a visual representation of hierarchical data.  This TreeView implementation is based on the WidgetParent and WidgetChild infrastructure classes. 
 </p>
+
 
 <p>
-Treeview provide a set of methods and properties that alllows you create wide range of different herarchical structures, from simple to the more complex ones. Treeview is highly modular and easy to extend so that it can be modified or used as the basis for custom implementations and widgets.
+TreeView provides a set of methods and properties that allows you to create a wide range of hierarchical structures, from simple to very complex. TreeView is highly modular and easy to extend so that it can be modified or used as the basis for custom implementations and widgets.
 </p>
-
 <h2>String based</h2>
 
-<p>Treeview is the first widget that is completely string based rendered. This brings really good performance gains, specially when dealing with a large set of nodes. In addition, Treeview loads all it's node on demand, that is, it only creates and render them when they're actually needed. Although it's not recommended, you can turn this off if you want to, via a configuration attrbute - <span>lazyLoad</span></p>
+<p>TreeView's rendering mechanism is entirely string based, which provides great performance, even when dealing wi
+th a large set of DOM nodes. Additionally, TreeView loads all its nodes on demand -- that is, it only creates and renders them when they're actually needed. Although it's not recommended, you can turn this off if you want to, via the configuration attrbute `lazyLoad`.</p>
 
-<p>A Treeview widget(based on Widget-parent) is composed of none to many Treeleafs(Widget-child).</p>
-
+<p>A TreeView widget (based on WidgetParent) is composed of zero to many TreeLeafs (each based on WidgetChild).</p>
 
 </div>
 
@@ -54,7 +54,7 @@ For a more complete discussion of how to use, configure, and customize Treeview,
 <h3>Configuring Treeview</h3>
 
 <p>
-Except for `label`, all configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="{{apiDocs}}/Treeview.html">API docs</a>.
+Except for `label`, all configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="{{apiDocs}}/TreeView.html">API docs</a>.
 </p>
 
 <h4>Treeview Config Attributes</h4>
@@ -73,7 +73,7 @@ Except for `label`, all configuration attributes are optional. This list only co
   <tbody>
     <tr>
       <td>`label`</td>
-      <td>`This is my tree`</td>
+      <td>Empty value</td>
       <td>
         The Label of the tree.
       </td>
@@ -87,10 +87,12 @@ Except for `label`, all configuration attributes are optional. This list only co
     </tr>
     <tr>
       <td>`collapsed`</td>
+      <td>True</td>
       <td>Flag to indicate if the tree's state is collapsed</td>
     </tr>
     <tr>
       <td>`children`</td>
+      <td>Empty array</td>
       <td>Array of children objects. This is inherited from Widget-Parent</td>
     </tr>
   </tbody>
@@ -112,37 +114,39 @@ Except for `label`, all configuration attributes are optional. This list only co
   <tbody>
     <tr>
       <td>`label`</td>
-      <td>`This is a treeleaf`</td>
+      <td>Empty value</td>
       <td>
       	The treeleaf label
       </td>
     </tr>
     <tr>
       <td>`parent`</td>
-      <td>
+       <td>null</td>
+       <td>
       	Retrieves the parent of the Widget in the object hierarchy. This attribute is inherted from Widget-Child
       </td>
     </tr>
     <tr>
       <td>`depth`</td>
+      <td>0</td>
       <td>
       	Number representing the depth of this Widget relative to the root Widget in the object heirarchy. This attribute is inherted from Widget-Child
       </td>
     </tr>
      <tr>
       <td>`root`</td>
+      <td>null</td>
       <td>
       	Returns the root Widget in the object hierarchy.
       </td>
     </tr>
-
   </tbody>
 </table>
 
 
 <h3>Responding to events</h3>
 
-<p>Just like any other Widget you can easily subscribe to events so you can react acordingly. For example, let's say you'd like to detect when a treeleaf has been clicked, all you'd need to do is:</p>
+<p>Like other YUI widgets, TreeView offers a suite of custom events. For example, let's say you'd like to detect when a TreeLeaf has been clicked, all you'd need to do is:</p>
 
 ```
 mytree.on("treeleaf:click",function (e) {
@@ -152,8 +156,7 @@ mytree.on("treeleaf:click",function (e) {
 ```
 
 <h3>Expanding/Collapsing a tree</h3>
-<p>Treeview offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
-
+<p>TreeView offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
 ```
 //Collapses a tree
 mytree.collapse();
@@ -190,7 +193,7 @@ tree.render();
 ```
 
 <h3>Adding & Removing Tree nodes</h3>
-<p>Adding and removing tree nodes is really simple. Treeview provide two methods to do so : add() and remove().</p>
+<p>Adding and removing tree nodes is really simple. TreeView provides two methods to do so: `add()` and `remove()`.</p>
 
 ```
 //adding a new treeleaf with a custom label

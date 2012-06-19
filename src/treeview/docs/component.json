@@ -1,10 +1,40 @@
 {
     "name"       : "treeview",
-    "displayName": "treeview",
+    "displayName": "Treeview",
     "description": "Provides a visual representation and helper methods herarchical structures",
-    "author"     : "allenr",
+    "author"     : "gonzalocordero",
 
     "tags": ["beta", "widget", "treeview"],
-    "use" : ["treeview"]
+    "use" : ["treeview"],
+    
+    "examples": [
+        {
+            "name"       : "treeview-simple",
+            "displayName": "Simple Treeview with some leaves",
+            "description": "How to create a simple Treeview with some leaves",
+            "modules"    : ["treeview", "datatype-date"],
+            "tags"       : ["treeview"],
+    
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "treeview-subtree",
+            "displayName": "Nested treeview structure",
+            "description": "How to create a tree that contains another tree as a child",
+            "modules"    : ["treeview"],
+            "tags"       : ["treeview"],
+    
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "treeview-operations",
+            "displayName": "Add/Remove leafs from a tree",
+            "description": "How to remove and add treeleafs into a tree",
+            "modules"    : ["treeview"],
+            "tags"       : ["treeview"],
+    
+            "hideTableOfContents": true
+        }
 
+    ]
 }
