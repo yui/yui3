@@ -1,5 +1,6 @@
 <div class="intro">
-<p>This example shows how to apply the Drag Plugin to a node.</p>
+<p>This shows two examples of applying the Drag Plugin to nodes.
+The luggage only allows a drag by its handle.</p>
 </div>
 
 <div class="example">
@@ -7,33 +8,51 @@
 </div>
 
 <h3>Setting up the Node</h3>
-<p>First we need to create an HTML Node to make draggable.</p>
+<p>First we'll create the HTML for the blue box node.</p>
 
 ```
-<div id="demo"><h2>Drag Me Here</h2>Can't drag me here</div>
+<div class="demo">
+    <div class="yui-hd"><span>Head</span></div>
+    <div class="yui-bd">
+        Only drags from the head
+    </div>
+</div>
 ```
 
-<p>Now we give that Node some CSS to make it visible.</p>
+<p>Now we give that Node some CSS visible style.</p>
 
 ```
-#demo {
-    height: 100px;
-    width: 150px;
-    border: 1px solid black;
-    background-color: #8DD5E7;
-    position: relative;
-}
-#demo h2 {
-    padding: 5px;
-    margin: 0;
-    height: 30px;
-    font-size: 120%;
-    color: black;
-    font-weight: bold;
+/* Blue box example */
+.example .demo {
+    position:relative;
+    width:22em;
+    border: 1px solid #9EA8C6;
+    background: #ECEFFB;
+    border-radius: 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
     text-align: center;
+}
+
+.example .demo .yui-hd {
+    padding: 0 0.3em;
+    background: #B6BFDA url({{{componentAssets}}}/images/drag_handle_hd_bkg.png) repeat-x;
+    font-weight: bold;
+    border: solid #B6BFDA;
+    border-width: 0 8px;
+    color: #30418C;
+    line-height: 1.8;
+    font-size: 139%;
     cursor: move;
-    background-color: #CDCDCD;
-    border-bottom: 1px solid black;
+}
+
+.example .demo .yui-hd span{
+    background-color: #B6BFDA;
+    padding: 0.1em 0.4em;
+    text-align: center;
+}
+
+.example .demo .yui-bd {
+    padding: 2em 0.5em 2.5em;
 }
 ```
 
@@ -44,18 +63,21 @@
 YUI().use('dd-plugin');
 ```
 
-<h3>Making the Node draggable with the Drag Plugin</h3>
-<p>Now that we have a YUI instance with the `dd-plugin` module, we can plug the `Drag` plugin into `Node` instances to make them draggable.</p>
+<h3>Making the blue box draggable with the Drag Plugin</h3>
+<p>Now that we have a YUI instance with the `dd-plugin` module, we can plug the
+`Drag` plugin into `Node` instances to make them draggable.</p>
 
 ```
 YUI().use('dd-plugin', function(Y) {
-    var node = Y.one('#demo');
+    // The blue box
+    var node = Y.one('.example .demo');
     node.plug(Y.Plugin.Drag);
 });
 ```
 
 <h3>Accessing the Drag instance</h3>
-<p>Now that we have a draggable Node, you can get access to the Drag Instance from the `dd` namespace on the `Node` instance.</p>
+<p>Now that we have a draggable Node, you can get access to the Drag
+Instance from the `dd` namespace on the `Node` instance.</p>
 
 <h4>Using a drag handle</h4>
 
@@ -66,11 +88,56 @@ a drag, like an `input` or an `anchor`).</p>
 
 ```
 YUI().use('dd-plugin', function(Y) {
-    var node = Y.one('#demo');
+    // The blue box
+    var node = Y.one('.example .demo');
     node.plug(Y.Plugin.Drag);
-    
-    //Now you can only drag it from the h2 at the top of the box
-    node.dd.addHandle('h2'); 
+
+    //Now you can only drag it from the .yui-hd at the top of the blue box
+    node.dd.addHandle('.yui-hd');
 });
 ```
+<h3>The Luggage</h3>
+<p>The draggable luggage is much the same as the blue box.
+The HTML looks like this...
+</p>
+```
+<div class="luggage">
+    <div class="handle"></div>
+</div>
+```
+<p>This is the YUI instance with the `dd-plugin` module for luggage.</p>
+```
+YUI().use('dd-plugin', function(Y) {
+    var luggage = Y.one('.example .luggage');
+    luggage.plug(Y.Plugin.Drag);
+    luggage.dd.addHandle('.example .luggage .handle');
+});
+```
+<p>The last rule of CSS for luggage makes the handle pop up.</p>
+```
+/* Luggage */
+.example .luggage{
+    position: relative;
+    background: url({{{componentAssets}}}/images/luggage.png) no-repeat;
+    width: 377px;
+    height: 155px;
+    margin-top: 3em;
+}
 
+.example .handle{
+    position: absolute;
+    bottom: 1px;
+    left: 125px;
+    width: 115px;
+    height: 60px;
+    cursor: move;
+}
+
+.example .handle:hover{
+    background: url({{{componentAssets}}}/images/luggage_handle.png) no-repeat;
+}
+```
+<h3>The Full Source</h3>
+```
+{{>drag-plugin-source}}
+```
