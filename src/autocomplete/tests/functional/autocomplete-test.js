@@ -1672,6 +1672,15 @@ listSuite.add(new Y.Test.Case({
 
         this.ac.selectItem(items.item(0));
         Assert.areSame(1, fired);
+    },
+
+    'list events should be detached when the list is destroyed': function () {
+        this.ac.render();
+
+        Assert.isTrue(this.ac._listEvents.length > 0);
+        this.ac.destroy();
+        Assert.areSame(0, this.ac._listEvents.length);
+
     }
 }));
 

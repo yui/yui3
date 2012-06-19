@@ -74,8 +74,7 @@ Y.mix(ACBase.prototype, {
         // Private internal _sendRequest method that will be assigned to
         // ioSource.sendRequest once io-base and json-parse are available.
         function _sendRequest(request) {
-            var cacheKey = request.request,
-                query    = request.query;
+            var cacheKey = request.request;
 
             // Return immediately on a cached response.
             if (that._cache && cacheKey in that._cache) {
