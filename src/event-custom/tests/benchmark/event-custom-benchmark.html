@@ -13,15 +13,15 @@
 <applet code="nano" archive="http://localhost/benchmark/nano.jar" style="display: none;"></applet>
 <script src="http://localhost/benchmark/benchmark.js"></script>
 
-<script src="http://yui.yahooapis.com/3.6.0pr2/build/yui/yui.js"></script>
-<!--script src="../../../../build/yui/yui.js"></script-->
+<!--script src="http://yui.yahooapis.com/3.6.0pr2/build/yui/yui.js"></script-->
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     modules: {
 
         'event-custom-benchmark': {
             fullpath: 'event-custom-benchmark.js',
-            requires: ['event-custom']
+            requires: ['event-custom', 'widget']
         },
 
         'test-console': {
