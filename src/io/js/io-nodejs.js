@@ -11,6 +11,8 @@
         Y.IO.request = require('request');
     }
 
+    var codes = require('http').STATUS_CODES;
+
     Y.log('Loading NodeJS Request Transport', 'info', 'io');
 
     /**
@@ -71,13 +73,28 @@
                 Y.log('Starting Request Transaction', 'info', 'io');
                 config.notify('start', transaction, config);
                 config.method = config.method || 'GET';
+                config.method = config.method.toUpperCase();
 
                 var rconf = {
                     method: config.method,
                     uri: uri
                 };
+
                 if (config.data) {
-                    rconf.body = config.data;
+                    if (Y.Lang.isObject(config.data)) {
+                        if (Y.QueryString && Y.QueryString.stringify) {
+                            Y.log('Stringifying config.data for request', 'info', 'io');
+                            rconf.body = Y.QueryString.stringify(config.data);
+                        } else {
+                            Y.log('Failed to stringify config.data object, likely because `querystring-stringify-simple` is missing.', 'warn', 'io');
+                        }
+                    } else if (Y.Lang.isString(config.data)) {
+                        rconf.body = config.data;
+                    }
+                    if (rconf.method === 'GET') {
+                        rconf.uri += (rconf.uri.indexOf('?') > -1 ? '&' : '?') + rconf.body;
+                        rconf.body = '';
+                    }
                 }
                 if (config.headers) {
                     rconf.headers = config.headers;
@@ -102,6 +119,7 @@
                         transaction.c = {
                             status: data.statusCode,
                             statusCode: data.statusCode,
+                            statusText: codes[data.statusCode],
                             headers: data.headers,
                             responseText: data.body,
                             responseXML: null,

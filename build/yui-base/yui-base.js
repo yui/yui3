@@ -615,9 +615,10 @@ with any configuration info required for the module.
             mods = YUI.Env.mods,
             aliases = YUI.Env.aliases,
             Y = this, j,
+            cache = YUI.Env._renderedMods,
             loader = Y.Env._loader,
             done = Y.Env._attached,
-            len = r.length, loader,
+            len = r.length, loader, def, go,
             c = [];
 
         //Check for conditional modules (in a second+ instance) and add their requirements
@@ -627,12 +628,15 @@ with any configuration info required for the module.
             mod = mods[name];
             c.push(name);
             if (loader && loader.conditions[name]) {
-                Y.Object.each(loader.conditions[name], function(def) {
-                    var go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
-                    if (go) {
-                        c.push(def.name);
+                for (j in loader.conditions[name]) {
+                    if (loader.conditions[name].hasOwnProperty(j)) {
+                        def = loader.conditions[name][j];
+                        go = def && ((def.ua && Y.UA[def.ua]) || (def.test && def.test(Y)));
+                        if (go) {
+                            c.push(def.name);
+                        }
                     }
-                });
+                }
             }
         }
         r = c;
@@ -673,10 +677,31 @@ with any configuration info required for the module.
                             Y.Env._missed.splice(j, 1);
                         }
                     }
+                    /*
+                        If it's a temp module, we need to redo it's requirements if it's already loaded
+                        since it may have been loaded by another instance and it's dependencies might
+                        have been redefined inside the fetched file.
+                    */
+                    if (loader && cache && cache[name] && cache[name].temp) {
+                        loader.getRequires(cache[name]);
+                        req = [];
+                        for (j in loader.moduleInfo[name].expanded_map) {
+                            if (loader.moduleInfo[name].expanded_map.hasOwnProperty(j)) {
+                                req.push(j);
+                            }
+                        }
+                        Y._attach(req);
+                    }
+                    
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
                     after = details.after;
+                    //Force Intl load if there is a language (Loader logic) @todo fix this shit
+                    if (details.lang) {
+                        req = req || [];
+                        req.unshift('intl');
+                    }
 
                     if (req) {
                         for (j = 0; j < req.length; j++) {
@@ -916,43 +941,46 @@ with any configuration info required for the module.
             config = Y.config,
             boot = config.bootstrap,
             missing = [],
+            i,
             r = [],
             ret = true,
             fetchCSS = config.fetchCSS,
             process = function(names, skip) {
 
-                var i = 0, a = [];
+                var i = 0, a = [], name, len, m, req, use;
 
                 if (!names.length) {
                     return;
                 }
 
                 if (aliases) {
-                    for (i = 0; i < names.length; i++) {
+                    len = names.length;
+                    for (i = 0; i < len; i++) {
                         if (aliases[names[i]] && !mods[names[i]]) {
                             a = [].concat(a, aliases[names[i]]);
                         } else {
-                            //if (!mods[names[i]]) {
-                                a.push(names[i]);
-                            //}
+                            a.push(names[i]);
                         }
                     }
                     names = a;
                 }
-
-                YArray.each(names, function(name) {
-
-                    // add this module to full list of things to attach
+                
+                len = names.length;
+                
+                for (i = 0; i < len; i++) {
+                    name = names[i];
                     if (!skip) {
                         r.push(name);
                     }
 
                     // only attach a module once
                     if (used[name]) {
-                        return;
+                        continue;
                     }
-
-                    var m = mods[name], req, use;
+                    
+                    m = mods[name];
+                    req = null;
+                    use = null;
 
                     if (m) {
                         used[name] = true;
@@ -977,7 +1005,8 @@ with any configuration info required for the module.
                     if (use && use.length) {
                         process(use, 1);
                     }
-                });
+                }
+
             },
 
             handleLoader = function(fromLoader) {
@@ -1030,7 +1059,13 @@ with any configuration info required for the module.
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
-            ret = Y._attach(Y.Object.keys(mods));
+            args = [];
+            for (i in mods) {
+                if (mods.hasOwnProperty(i)) {
+                    args.push(i);
+                }
+            }
+            ret = Y._attach(args);
             if (ret) {
                 handleLoader();
             }
@@ -1051,21 +1086,16 @@ with any configuration info required for the module.
             loader._boot = true;
             loader.calculate(null, (fetchCSS) ? null : 'js');
             args = loader.sorted;
-            missing = args;
             loader._boot = false;
         }
         
-        if (!Y.Loader) {
-            // process each requirement and any additional requirements
-            // the module metadata specifies
-            process(args);
-        }
+        process(args);
 
         len = missing.length;
 
 
         if (len) {
-            missing = Y.Object.keys(YArray.hash(missing));
+            missing = YArray.dedupe(missing);
             len = missing.length;
         }
 
@@ -3421,7 +3451,7 @@ YUI.Env.parseUA = function(subUA) {
         /**
          * General truthy check for iPad, iPhone or iPod
          * @property ios
-         * @type float
+         * @type Boolean
          * @default null
          * @static
          */
@@ -3739,7 +3769,7 @@ YUI.Env.aliases = {
     "controller": ["router"],
     "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
-    "datatable": ["datatable-core","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
+    "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
     "datatype-date": ["datatype-date-parse","datatype-date-format"],
@@ -5142,19 +5172,8 @@ add('load', '0', {
     "trigger": "io-base", 
     "ua": "nodejs"
 });
-// history-hash-ie
-add('load', '1', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
 // graphics-canvas-default
-add('load', '2', {
+add('load', '1', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
@@ -5166,7 +5185,7 @@ add('load', '2', {
     "trigger": "graphics"
 });
 // autocomplete-list-keys
-add('load', '3', {
+add('load', '2', {
     "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
@@ -5184,23 +5203,62 @@ add('load', '3', {
 }, 
     "trigger": "autocomplete-list"
 });
-// dd-gestures
-add('load', '4', {
-    "name": "dd-gestures", 
+// graphics-svg
+add('load', '3', {
+    "name": "graphics-svg", 
     "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
 }, 
-    "trigger": "dd-drag"
+    "trigger": "graphics"
 });
 // editor-para-ie
-add('load', '5', {
+add('load', '4', {
     "name": "editor-para-ie", 
     "trigger": "editor-para", 
     "ua": "ie", 
     "when": "instead"
 });
-// transition-timer
+// graphics-vml-default
+add('load', '5', {
+    "name": "graphics-vml-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+    "trigger": "graphics"
+});
+// graphics-svg-default
 add('load', '6', {
+    "name": "graphics-svg-default", 
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+}, 
+    "trigger": "graphics"
+});
+// history-hash-ie
+add('load', '7', {
+    "name": "history-hash-ie", 
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+    "trigger": "history-hash"
+});
+// transition-timer
+add('load', '8', {
     "name": "transition-timer", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5215,33 +5273,8 @@ add('load', '6', {
 }, 
     "trigger": "transition"
 });
-// graphics-svg-default
-add('load', '7', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// scrollview-base-ie
-add('load', '8', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
-});
-// widget-base-ie
-add('load', '9', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
-});
 // dom-style-ie
-add('load', '10', {
+add('load', '9', {
     "name": "dom-style-ie", 
     "test": function (Y) {
 
@@ -5272,7 +5305,7 @@ add('load', '10', {
     "trigger": "dom-style"
 });
 // selector-css2
-add('load', '11', {
+add('load', '10', {
     "name": "selector-css2", 
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5281,6 +5314,12 @@ add('load', '11', {
     return ret;
 }, 
     "trigger": "selector"
+});
+// widget-base-ie
+add('load', '11', {
+    "name": "widget-base-ie", 
+    "trigger": "widget-base", 
+    "ua": "ie"
 });
 // event-base-ie
 add('load', '12', {
@@ -5291,28 +5330,19 @@ add('load', '12', {
 }, 
     "trigger": "node-base"
 });
-// graphics-svg
+// dd-gestures
 add('load', '13', {
-    "name": "graphics-svg", 
+    "name": "dd-gestures", 
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
 }, 
-    "trigger": "graphics"
+    "trigger": "dd-drag"
 });
-// graphics-vml-default
+// scrollview-base-ie
 add('load', '14', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
+    "name": "scrollview-base-ie", 
+    "trigger": "scrollview-base", 
+    "ua": "ie"
 });
 // app-transitions-native
 add('load', '15', {

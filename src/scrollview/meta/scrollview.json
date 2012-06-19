@@ -31,7 +31,8 @@
             },
             "scrollview-paginator" : {
                 "requires" : [
-                    "plugin"
+                    "plugin",
+                    "classnamemanager"
                 ]
             },
             "scrollview-list" : {

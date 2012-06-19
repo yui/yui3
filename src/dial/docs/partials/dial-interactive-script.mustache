@@ -38,7 +38,8 @@ YUI().use('dial', function(Y) {
     // Function that calls a method in Dial that sets its value to the value of the max config attribute 
     // Other methods available include,
     // _setToMin(), _resetDial(), _incrMinor(), _decrMinor(), _incrMajor(), _decrMajor(),  
-    var setDialToMax = function(){
+    var setDialToMax = function(e){
+        e.preventDefault();
         this._setToMax();
     }
     

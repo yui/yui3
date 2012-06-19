@@ -115,7 +115,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fillstring;
 			id = this.get("id");
 			type = this._type == "path" ? "shape" : this._type;
-			classString = 'vml' + type + ' yui3-vmlShape yui3-' + this.constructor.NAME; 
+			classString = 'vml' + type + ' ' + _getClassName(SHAPE) + " " + _getClassName(this.constructor.NAME); 
 			stroke = this._getStrokeProps();
 			fill = this._getFillProps();
 			
@@ -618,7 +618,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fx = fill.fx,
 			fy = fill.fy,
 			r = fill.r,
-			actualPct,
             pct,
 			rotation = fill.rotation || 0;
 		if(type === "linear")

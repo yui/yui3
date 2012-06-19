@@ -143,6 +143,18 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
     },
 
     /**
+     * Private utility method that focuses on a navigation button when it is clicked
+     * or pressed with a keyboard.
+     * 
+     * @method _focusNavigation
+     * @param {Event} ev Click or keydown event from the controls
+     * @protected
+     */
+    _focusNavigation : function (ev) {
+        ev.currentTarget.focus();
+    },
+
+    /**
      * Private utility method that subtracts months from the host calendar date
      * based on the control click and the shiftByMonths property.
      * 
@@ -178,6 +190,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 
 
     _updateControlState : function () {
+
         var host = this.get(HOST);
         if (ydate.areEqual(host.get("minimumDate"), host.get("date"))) {
             if (this._eventAttachments.prevMonth) {
@@ -216,7 +229,12 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
               this._controls.nextMonth.removeClass(CAL_DIS_M).setAttribute("aria-disabled", "false");
             }
         }
+
+        this._controls.prevMonth.on(["click", "keydown"], this._focusNavigation, this);
+        this._controls.nextMonth.on(["click", "keydown"], this._focusNavigation, this);
     },
+
+
 
 
     /**
@@ -228,7 +246,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
     _renderPrevControls : function () {
       var prevControlNode = create(substitute (CalendarNavigator.PREV_MONTH_CONTROL_TEMPLATE,
                                CalendarNavigator.CALENDARNAV_STRINGS));
-      prevControlNode.on("selectstart", function (ev) {ev.preventDefault();});
+      prevControlNode.on("selectstart", this.get(HOST)._preventSelectionStart);
 
       return prevControlNode;        
     },
@@ -242,7 +260,7 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
     _renderNextControls : function () {
       var nextControlNode = create(substitute (CalendarNavigator.NEXT_MONTH_CONTROL_TEMPLATE,
                                CalendarNavigator.CALENDARNAV_STRINGS));
-      nextControlNode.on("selectstart", function (ev) {ev.preventDefault();});
+      nextControlNode.on("selectstart", this.get(HOST)._preventSelectionStart);
       
       return nextControlNode;     
     },

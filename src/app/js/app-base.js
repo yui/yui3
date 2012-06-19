@@ -46,7 +46,7 @@ var Lang    = Y.Lang,
 
     win = Y.config.win,
 
-    App;
+    AppBase;
 
 /**
 Provides a top-level application component which manages navigation and views.
@@ -70,7 +70,7 @@ management.
 @uses PjaxBase
 @since 3.5.0
 **/
-App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
+AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     // -- Public Properties ----------------------------------------------------
 
     /**
@@ -281,14 +281,15 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see View.render()
     **/
     render: function () {
-        var container           = this.get('container'),
+        var CLASS_NAMES         = Y.App.CLASS_NAMES,
+            container           = this.get('container'),
             viewContainer       = this.get('viewContainer'),
             activeView          = this.get('activeView'),
             activeViewContainer = activeView && activeView.get('container'),
             areSame             = container.compareTo(viewContainer);
 
-        container.addClass(App.CSS_CLASS);
-        viewContainer.addClass(App.VIEWS_CSS_CLASS);
+        container.addClass(CLASS_NAMES.app);
+        viewContainer.addClass(CLASS_NAMES.views);
 
         // Prevents needless shuffling around of nodes and maintains DOM order.
         if (activeView && !viewContainer.contains(activeViewContainer)) {
@@ -376,7 +377,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 
         // Support the callback function being either the third or fourth arg.
         if (callback) {
-            options.callback = callback;
+            options = Y.merge(options, {callback: callback});
         } else if (Lang.isFunction(options)) {
             options = {callback: options};
         }
@@ -470,7 +471,8 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see View._destroyContainer()
     **/
     _destroyContainer: function () {
-        var container     = this.get('container'),
+        var CLASS_NAMES   = Y.App.CLASS_NAMES,
+            container     = this.get('container'),
             viewContainer = this.get('viewContainer'),
             areSame       = container.compareTo(viewContainer);
 
@@ -480,11 +482,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
             this.detachEvents();
 
             // Clean-up `yui3-app` CSS class on the `container`.
-            container && container.removeClass(App.CSS_CLASS);
+            container && container.removeClass(CLASS_NAMES.app);
 
             if (areSame) {
                 // Clean-up `yui3-app-views` CSS class on the `container`.
-                container && container.removeClass(App.VIEWS_CSS_CLASS);
+                container && container.removeClass(CLASS_NAMES.views);
             } else {
                 // Destroy and purge the `viewContainer`.
                 viewContainer && viewContainer.remove(true);
@@ -562,20 +564,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
 
         return value;
-    },
-
-    /**
-    Gets the current full URL. When `html5` is false, the URL will first be
-    upgraded before it's returned.
-
-    @method _getURL
-    @return {String} URL.
-    @protected
-    @see Router._getURL()
-    **/
-    _getURL: function () {
-        var url = Y.getLocation().toString();
-        return this._html5 ? url : this._upgradeURL(url);
     },
 
     /**
@@ -675,15 +663,11 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
     @see PjaxBase._navigate()
     **/
     _navigate: function (url, options) {
-        url = this._upgradeURL(url);
-
-        options || (options = {});
-
         if (!this.get('serverRouting')) {
             // Force navigation to be enhanced and handled by the app when
             // `serverRouting` is falsy because the server might not be able to
             // properly handle the request.
-            'force' in options || (options.force = true);
+            options = Y.merge({force: true}, options);
         }
 
         return PjaxBase.prototype._navigate.call(this, url, options);
@@ -792,47 +776,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         this._detachView(oldView);
 
         callback && callback.call(this, newView);
-    },
-
-    /**
-    Upgrades a hash-based URL to a full-path URL, if necessary.
-
-    The specified `url` will be upgraded if its of the same origin as the
-    current URL and has a path-like hash. URLs that don't need upgrading will be
-    returned as-is.
-
-    @example
-        app._upgradeURL('http://example.com/#/foo/'); // => 'http://example.com/foo/';
-
-    @method _upgradeURL
-    @param {String} url The URL to upgrade from hash-based to full-path.
-    @return {String} The upgraded URL, or the specified URL untouched.
-    @protected
-    @since 3.5.0
-    **/
-    _upgradeURL: function (url) {
-        // We should not try to upgrade paths for external URLs.
-        if (!this._hasSameOrigin(url)) {
-            return url;
-        }
-
-        // TODO: Should the `root` be removed first, and the hash only
-        // considered if in the form of '/#/'?
-        var hash       = (url.match(/#(.*)$/) || [])[1] || '',
-            hashPrefix = Y.HistoryHash.hashPrefix;
-
-        // Strip any hash prefix, like hash-bangs.
-        if (hashPrefix && hash.indexOf(hashPrefix) === 0) {
-            hash = hash.replace(hashPrefix, '');
-        }
-
-        // If the hash looks like a URL path, assume it is, and upgrade it!
-        if (hash && hash.charAt(0) === '/') {
-            // Re-join with configured `root` before resolving.
-            url = this._resolveURL(this._joinURL(hash));
-        }
-
-        return url;
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -1019,7 +962,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         @since 3.5.0
         **/
         serverRouting: {
-            value    : undefined,
+            valueFn  : function () { return Y.App.serverRouting; },
             writeOnce: 'initOnly'
         },
 
@@ -1056,31 +999,6 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         }
     },
 
-    // TODO: Should these go on the `prototype`?
-    // TODO: These should also just go in a `CLASS_NAMES` object.
-
-    /**
-    CSS class added to an app's `container` node.
-
-    @property CSS_CLASS
-    @type String
-    @default "yui3-app"
-    @static
-    @since 3.5.0
-    **/
-    CSS_CLASS: getClassName('app'),
-
-    /**
-    CSS class added to an app's `viewContainer` node.
-
-    @property VIEWS_CSS_CLASS
-    @type String
-    @default "yui3-app-views"
-    @static
-    @since 3.5.0
-    **/
-    VIEWS_CSS_CLASS: getClassName('app', 'views'),
-
     /**
     Properties that shouldn't be turned into ad-hoc attributes when passed to
     App's constructor.
@@ -1095,7 +1013,7 @@ App = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
 });
 
 // -- Namespace ----------------------------------------------------------------
-Y.namespace('App').Base = App;
+Y.namespace('App').Base = AppBase;
 
 /**
 Provides a top-level application component which manages navigation and views.
@@ -1128,4 +1046,28 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
 @uses App.Transitions
 @since 3.5.0
 **/
-Y.App = Y.mix(Y.Base.create('app', Y.App.Base, []), Y.App, true);
+Y.App = Y.mix(Y.Base.create('app', AppBase, []), Y.App, true);
+
+/**
+CSS classes used by `Y.App`.
+
+@property CLASS_NAMES
+@type Object
+@default {}
+@static
+@since 3.6.0
+**/
+Y.App.CLASS_NAMES = {
+    app  : getClassName('app'),
+    views: getClassName('app', 'views')
+};
+
+/**
+Default `serverRouting` attribute value for all apps.
+
+@property serverRouting
+@type Boolean
+@default undefined
+@static
+@since 3.6.0
+**/

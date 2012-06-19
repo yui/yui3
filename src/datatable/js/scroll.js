@@ -610,8 +610,9 @@ Y.mix(Scrollable.prototype, {
         this.after(['scrollableChange', 'heightChange', 'widthChange'],
             this._setScrollProperties);
 
+        this.after('renderView', Y.bind('_syncScrollUI', this));
+
         Y.Do.after(this._bindScrollUI, this, 'bindUI');
-        Y.Do.after(this._syncScrollUI, this, 'syncUI');
     },
 
     /**
