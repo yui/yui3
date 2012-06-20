@@ -30,16 +30,9 @@
          * @property TREEVIEWLABEL_TEMPLATE
          * @type String
         */
-        TREEVIEWLABEL_TEMPLATE : "<span class='{{{treelabelClassName}}}' role='treeitem' tabindex='0'><span class={{{labelcontentClassName}}}>{{{label}}}</span></span>",
+        TREEVIEWLABEL_TEMPLATE : "<li class='{{{treelabelClassName}}}' role='treeitem' tabindex='0'><span class={{{labelcontentClassName}}}>{{{label}}}</span></li>",
         
-        /**
-         * Property defining the markup template for the expand controller.
-         *
-         * @property EXPANDCONTROL_TEMPLATE
-         * @type String
-        */
-        EXPANDCONTROL_TEMPLATE : "<span class='{{{labelcontentClassName}}}'>{{{label}}}</span>",
-               
+                      
         /**
          * Flag to indicate whether a content Box/Bounding box has been returned from the getter attribute.
          *
@@ -103,7 +96,9 @@
         bindUI: function() {
             //only attaching to the root element
             if (this.isRoot()) {
-                this.get("boundingBox").on("click",this._onViewEvents,this);
+                this.get("boundingBox").delegate("click",this._onViewEvents,"." + classNames.labelcontent,this);
+                //this.get("boundingBox").delegate("click",this._onViewEvents,this);
+
                 this.get("boundingBox").on("keydown",this._onKeyDown,this);
                 
                 this._keyEvents = [];
@@ -120,26 +115,9 @@
          * @protected
          */
         _onViewEvents : function (event) {
-            var target = event.target,
-                classes,
-                className,
-                i,
-                cLength;
-                
-            
-            classes = target.get("className").split(" ");
-            cLength = classes.length;
-            
-            //prevent hrefs
-            
-            
-            for (i=0;i<cLength;i++) {
-                className = classes[i];
-                if (className === classNames.labelcontent) {
-                    this.fire('toggleTreeState',{actionNode:target});
-                    break;
-                }
-            }
+            var target = event.target;
+               
+            this.toggleTreeState(target);
         },
         
         /**
@@ -153,7 +131,7 @@
                 handler = this._keyEvents[keyCode];
                 
             if (handler) {
-                handler.call(this, target);
+                handler.call(this,e,target);
             }
         },
         
@@ -163,8 +141,10 @@
          * @method _keyDown
          * @protected
          */
-        _onUpKey : function (target) {
+        _onUpKey : function (e,target) {
             var prevEl = target.previous("li");
+            
+            e.preventDefault();
             
             if (prevEl) {
                 prevEl.focus();
@@ -178,8 +158,10 @@
          * @method _keyDown
          * @protected
          */
-        _onDownKey : function (target) {
+        _onDownKey : function (e,target) {
             var nextEl = target.next("li");
+            
+            e.preventDefault();
             
             if (nextEl) {
                 nextEl.focus();
@@ -193,7 +175,7 @@
          * @method _keyDown
          * @protected
          */
-        _onRightArrowKey : function (target) {
+        _onRightArrowKey : function (e,target) {
             this.expand(target);
         },
         
@@ -204,8 +186,8 @@
          * @method _keyDown
          * @protected
          */
-        _onLeftArrowKey : function (target) {
-            this.collapseTree(target);
+        _onLeftArrowKey : function (e,target) {
+            this.collapse(target);
         },
         
        /**
@@ -321,7 +303,7 @@
         * @protected
         */
        toggleTreeState : function (target) {
-            var treeNode = target ? target.actionNode.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
+            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
                 treeWidget = Y.Widget.getByNode(treeNode),
                 isPopulated = treeWidget.get("populated");
             
