@@ -2119,6 +2119,17 @@
             "transition"
         ]
     }, 
+    "treeview": {
+        "requires": [
+            "base", 
+            "widget", 
+            "widget-parent", 
+            "widget-child", 
+            "node-focusmanager", 
+            "handlebars"
+        ], 
+        "skinnable": true
+    }, 
     "uploader": {
         "requires": [
             "uploader-html5", 

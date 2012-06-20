@@ -223,6 +223,7 @@
         <!-- Failing in CI
         <url>transition/tests/transition.html</url>
         -->
+        <url>treeview/tests/treeview-tests.html</url>
         <url>uploader/tests/uploaderflash.html</url>
         <url>uploader/tests/uploaderhtml5.html</url>
         <url>uploader/tests/uploaderqueue.html</url>

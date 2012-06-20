@@ -29,8 +29,11 @@
 }
 
 .yui3-treeview-treelabel {
-    cursor: pointer;
-    
+    cursor: pointer;   
+}
+
+.yui3-treeview {
+    zoom : 1;
 }
 
 
