@@ -28,6 +28,11 @@
     display : none;
 }
 
+.yui3-treeview-treelabel {
+    cursor: pointer;
+    
+}
+
 
 .yui3-treeview  .yui3-treeview-content {
     margin-left: 22px;
