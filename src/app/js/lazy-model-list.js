@@ -185,7 +185,7 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     @see ModelList.indexOf()
     **/
     indexOf: function (model) {
-        return YArray.indexOf(model._isYUIModel ?
+        return YArray.indexOf(model && model._isYUIModel ?
             this._models : this._items, model);
     },
 
