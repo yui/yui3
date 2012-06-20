@@ -176,7 +176,9 @@
          * @protected
          */
         _onRightArrowKey : function (e,target) {
-            this.expand(target);
+            if (target.hasClass(classNames.treeLabel)) {
+                this.expand(target);
+            }
         },
         
          /**
@@ -187,7 +189,9 @@
          * @protected
          */
         _onLeftArrowKey : function (e,target) {
-            this.collapse(target);
+            if (target.hasClass(classNames.treeLabel)) {
+                this.collapse(target);
+            }
         },
         
        /**
