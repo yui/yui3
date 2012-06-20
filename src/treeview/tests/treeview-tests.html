@@ -1,0 +1,743 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>TreeView Test Suite</title>
+    <script src="../../../build/yui/yui-min.js"></script>
+    <style type="text/css">
+        #console .yui3-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+
+        #console .yui3-console-entry-fail .yui3-console-entry-cat {
+            background-color:red;
+        }
+
+        #console .yui3-console-entry-pass .yui3-console-entry-cat {
+            background-color:green;
+        }
+
+        #console .yui3-console-entry-perf .yui3-console-entry-cat {
+            background-color:blue;
+        }
+
+        #console {
+            position:static;
+        }
+
+        html, body {
+            height:100%;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+    <div id="tree"></div>
+    <script type="text/javascript">
+
+        YUI({
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use("node-event-simulate", "async-queue", "test", "console",'treeview', function (Y) {
+            var suite = new Y.Test.Suite(" TreeView Suite");
+            
+            suite.add(
+                new Y.Test.Case({
+                name: " TreeView Widget-Parent API & Widget Child API Tests",
+                
+                testAdd: function() {
+                   
+                    var tree = new Y. TreeView({
+                           id: "tree",
+                           label : "This my tree",
+                           lazyLoad : false
+                           }),
+                           child;
+
+                     child = tree.add({ type: "TreeLeaf", label: "Child One" });
+                     Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     
+                     Y.assert((tree.size() == 1), "The root Widget should have one child");
+                     child = tree.add({ childType: "TreeLeaf", label: "Child Two" });
+                     
+                     Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     Y.assert((tree.size() == 2), "The root Widget should have two children");
+                     
+                     tree.render("#tree");
+                     tree.destroy();
+                },
+                
+                testInsert: function () {
+                                      
+                    var tree = new Y. TreeView({
+                           id: "tree",
+                           label : "This my tree",
+                           lazyLoad : false,
+                            children: [
+                             { type: "TreeLeaf", label: "Child One", id: "child-1" },
+                             { type: "TreeLeaf", label: "Child Two", id: "child-2" },
+                             { type: "TreeLeaf", label: "Child Three", id: "child-3" },
+                             { type: "TreeLeaf", label: "Child Four", id: "child-4" }
+                           ]
+                           }),
+                           child;
+
+
+                    tree.render("#tree");
+
+                    tree.add({ type: "TreeLeaf", label: "Child One", id: "inserted-child-1" }, 0);
+
+                    Y.Assert.areEqual(tree.item(0).get("id"), "inserted-child-1", "The newly inserted child should be the parent's first child.");
+                    Y.Assert.areEqual(tree.size(), 5, "The widget should have five children.");
+
+                    tree.add([
+                            { type: "TreeLeaf", label: "Child One", id: "inserted-child-2" },
+                            { type: "TreeLeaf", label: "Child One", id: "inserted-child-3" }
+                        ], 2);
+
+                    Y.Assert.areEqual(tree.item(2).get("id"), "inserted-child-2", "The child with the id of \"inserted-child-2\" should be the parent's third child.");
+                    Y.Assert.areEqual(tree.item(3).get("id"), "inserted-child-3", "The child with the id of \"inserted-child-3\" should be the parent's fourth child.");
+                    Y.Assert.areEqual(tree.item(4).get("id"), "child-2", "The child with the id of \"child-2\" should now be the parent's fith child.");
+                    Y.Assert.areEqual(tree.size(), 7, "The widget should have seven children.");
+
+                    tree.destroy();
+                },
+                
+                testAddOutOfOrderPreRender : function() {
+                    
+                    var tree = new Y. TreeView({
+                        id:"widget-1",
+                        label : "tree",
+                        lazyLoad : false
+                    });
+
+                    tree.add({type: "TreeLeaf", label: "Child Two", id: "child-2" }, 1);
+                    tree.add({type: "TreeLeaf", label: "Child One", id: "child-1" }, 0);
+                    tree.add({type: "TreeLeaf", label: "Child Three", id: "child-3" }, 2);
+                    
+                    tree.render("#tree");
+                    tree.expand();
+
+                    Y.Assert.areEqual(tree.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(tree.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(tree.item(2).get("id"), "child-3", "child-3 is out of order");
+                    tree.destroy();
+                },
+                
+                testRemove: function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         lazyLoad : false,
+                         children: [
+                             { type: "TreeLeaf", label: "Child One", id: "child-1" },
+                             { type: "TreeLeaf", label: "Child Two", id: "child-2" },
+                             { type: "TreeLeaf", label: "Child Three", id: "child-3" },
+                             { type: "TreeLeaf", label: "Child Four", id: "child-4" }
+                         ]
+                    });
+                    
+                    tree.render("#tree");
+
+                    var childSelector = "." + tree.item(0).getClassName(),
+                        parentBB = tree.get("boundingBox");
+
+                    Y.Assert.areEqual(tree.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(tree.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.areEqual(tree.item(0).remove().get("id"), "child-1", "If a child calls the \"remove\" method on itself, the \"remove\" method should return a reference to the child.");
+                    Y.Assert.areEqual(parentBB.one("#child-1"), null, "child-1's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 2, "The widget should now have two children bounding boxes.");
+                    Y.Assert.areEqual(tree.size(), 2, "The widget should now have two children.");
+
+                    var removed = tree.removeAll();
+
+                    Y.Assert.areEqual(removed.size(), 2, "The \"removeAll\" method should return a Y.ArrayList instance with a size of 2.");
+                    Y.Assert.areEqual(tree.size(), 0, "The widget should now have no children.");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 0, "The widget should now have no children bounding boxes.");
+
+                    tree.destroy();
+                },
+
+                testRemoveSelectedChild : function() {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         lazyLoad : false,
+                         children: [
+                             { type: "TreeLeaf", label: "Child One", id: "child-1" },
+                             { type: "TreeLeaf", label: "Child Two", id: "child-2" },
+                             { type: "TreeLeaf", label: "Child Three", id: "child-3" },
+                             { type: "TreeLeaf", label: "Child Four", id: "child-4" }
+                         ]
+                    });
+                    
+                    tree.render("#tree");
+
+                    var childSelector = "." + tree.item(0).getClassName(),
+                        parentBB = tree.get("boundingBox");
+
+                    tree.selectChild(1);
+
+                    Y.Assert.areSame(tree.item(1), tree.get("selection"));
+                    
+                    Y.Assert.areEqual(tree.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(tree.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.areEqual(0, tree.get("selected"));
+                    Y.Assert.isNull(tree.get("selection"));
+
+                    tree.destroy();
+                },
+
+                testRemoveFocusedChild : function() {
+
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                        lazyLoad : false,
+                         children: [
+                             { label: "Child One", id: "child-1" },
+                             { label: "Child Two", id: "child-2" },
+                             { label: "Child Three", id: "child-3" },
+                             { label: "Child Four", id: "child-4" }
+                         ]
+                    });
+                    tree.render("#tree");
+
+                    var childSelector = "." + tree.item(0).getClassName(),
+                        parentBB = tree.get("boundingBox");
+
+                    tree.item(1).focus();
+
+                    Y.Assert.areSame(tree.item(1), tree.get("activeDescendant"));
+
+                    var removedChild = tree.remove(1); 
+
+                    Y.Assert.isFalse(removedChild.get("focused"));
+                    Y.Assert.areEqual(removedChild.get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(tree.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.isNull(tree.get("activeDescendant"));
+
+                    tree.destroy();
+                },
+                
+                testSingleSelection: function () {
+
+                    var root = new Y. TreeView({
+                        id: "new-widget",
+                        lazyLoad : false,
+                        children: [
+                            {  label: "Child One" },
+                            {   label: "Child Two" },
+                            {   label: "Child Three" },
+                            {   label: "Child Four" }
+                        ]
+
+                    });
+
+                    root.render();
+
+                    root.item(0).set("selected", 1);
+                    root.item(1).set("selected", 1);
+
+                    //  Confirm the selection
+
+                    Y.Assert.areEqual(root.item(1).get("selected"), 1, "The second child of the parent widget should be selected");
+                    Y.Assert.areEqual(root.get("selected"), 2, "The root's \"selected\" attribute should return  2");
+                    Y.Assert.areEqual(root.get("selection"), root.item(1), "The parent's \"selection\" attribute should return a reference to its second child.");
+
+
+                    //  Select another child and confirm the previously selected
+                    //  child is deselected and and the parent's selection is
+                    //  correctly updated.
+
+                    root.item(2).set("selected", 1);
+
+                    Y.Assert.areEqual(root.item(1).get("selected"), 0, "The parent's second child should not be selected");
+                    Y.Assert.areEqual(root.item(2).get("selected"), 1, "The parent's third child should be selected");
+                    Y.Assert.areEqual(root.get("selection"), root.item(2), "The parent's \"selection\" attribute should return a reference to its third child.");
+
+
+                    //  Confirm deselection
+
+                    root.item(2).set("selected", 0);
+
+                    Y.Assert.areEqual(root.item(2).get("selected"), 0, "The parent's third child should not be selected");
+                    Y.Assert.areEqual(root.get("selected"), 0, "The parent's \"selected\" attribute should return  0");
+                    Y.Assert.isNull(root.get("selection"), "The parent's \"selection\" attribute should return null.");
+
+                    root.destroy();
+
+                    var tree = new Y. TreeView({
+                       id: "tree",
+                       lazyLoad : false,
+                       children: [
+
+                           {   id: "leaf-1", label: "Leaf One" },
+                           {   id: "leaf-2", label: "Leaf Two" },
+                           { type: Y. TreeView, lazyLoad : false,id: "subtree", label: "Subtree", children: [
+
+                              {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                              {   id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                              {   id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                           ]}
+                       ]
+
+                    });
+
+                    tree.render("#tree");
+
+                    //  Select a child in the subtree to test if the selection is represented at the root level
+
+                    tree.item(2).selectChild(0);
+
+                    Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
+                    Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-1", "The subtree's \"selection\" attribute should return the first child.");
+
+                    //  Select a child in the root to confirm that the subtree's selection is cleared
+
+                    tree.item(0).set("selected", 1);
+
+                    Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.get("selection").get("id"), "leaf-1", "The root's \"selection\" attribute should return a reference to its first child.");
+                    Y.Assert.areEqual(tree.item(2).get("selected"), 0, "The subtree should no longer be selected.");
+                    Y.Assert.areEqual(tree.item(2).get("selection"), null, "The subtree's \"selection\" attribute should return null.");
+
+
+                    //  Select a new child in the subtree to test if the selection is represented at the root level
+
+                    tree.item(2).item(2).set("selected", 1);
+
+                    Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
+                    Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-3", "The subtree's \"selection\" attribute should return its third child.");
+
+                    // Confirm that we can't do a multiple selection 
+                    var evts = [];
+
+                    tree.on("selectedChange", function() {
+                        evts.push("root:onSelectedChange");
+                    });
+
+                    tree.after("selectedChange", function() {
+                        evts.push("root:afterSelectedChange");
+                    });
+
+                    tree.set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
+                    
+                    evts = [];
+
+                    tree.item(2).on("selectedChange", function() {
+                        evts.push("subTree:onSelectedChange");
+                    });
+                    
+                    tree.item(2).after("selectedChange", function() {
+                        evts.push("subTree:afterSelectedChange");
+                    });
+
+                    tree.item(2).set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["subTree:onSelectedChange", "root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
+
+                    tree.destroy();
+                },
+
+                testMultipleSelection: function () {
+
+                    var root = new Y. TreeView({
+                        id: "m-s-widget",
+                        multiple: true,
+                        lazyLoad : false,
+                        children: [
+                            {   label: "Child One" },
+                            {   label: "Child Two" },
+                            {   label: "Child Three" },
+                            {   label: "Child Four" }
+                        ]
+                    });
+
+                    root.render();
+
+
+                    root.item(0).set("selected", 1);
+                    root.item(1).set("selected", 1);
+
+                    //  Confirm that both children are selected and
+                    //  represented in the parent's selection.
+
+                    Y.Assert.areEqual(root.item(0).get("selected"), 1, "The first child of the parent widget should be selected.");
+                    Y.Assert.areEqual(root.item(1).get("selected"), 1, "The second child of the parent widget should be selected.");
+                    Y.Assert.areEqual(root.get("selection").size(), 2, "The \"selection\" attribute should return an ArrayList with a size of 2.");
+                    Y.Assert.areEqual(root.get("selected"), 2, "The root's \"selection\" attribute should be 2 (indicating partially selected).");
+
+
+                    //  Select remaining children to confirm all children
+                    //  are represented in the parent's selection and that
+                    //  the parent's "selected" attribute returns 1.
+
+                    root.item(2).set("selected", 1);
+                    root.item(3).set("selected", 1);
+
+                    Y.Assert.areEqual(root.get("selection").size(), 4, "The \"selection\" attribute should return an ArrayList with a size of 4.");
+                    Y.Assert.areEqual(root.get("selected"), 1, "The root's \"selected\" attribute should return 1 (indicating fully selected).");
+
+
+                    //  Deselect all children and confirm the results
+
+                    root.get("selection").each(function (child) {
+                       child.set("selected", 0);
+                    });
+
+                    Y.Assert.isNull(root.get("selection"), "The root's \"selection\" attribute should return null.");
+                    Y.Assert.areEqual(root.get("selected"), 0, "The root's \"selected\" attribute should return  0");
+
+
+                    //  Select all children via selectAll() to confirm all
+                    //  children are represented in the parent's selection and
+                    //  that the parent's "selected" attribute returns 1.
+
+                    root.selectAll();
+                    Y.Assert.areEqual(root.get("selected"), 1, "The root's \"selected\" attribute should return  1");
+                    Y.Assert.areEqual(root.get("selection").size(), 4, "The root's \"selection\" attribute should return an ArrayList with a size of 4.");
+
+
+                    //  Deselect all children via deselectAll() to confirm all
+                    //  children are no longer selected and that the parent's
+                    //  selection is empty.
+
+                    root.deselectAll();
+
+                    Y.Assert.areEqual(root.get("selected"), 0, "The root's \"selected\" attribute should return  0");
+                    Y.Assert.areEqual(root.get("selection"), null, "The root's \"selection\" attribute should return an ArrayList with a size of 4.");
+
+
+                    root.add({ type: Y. TreeView, id: "subtree", label: "Subtree", children: [
+
+                          {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                          {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                          {   id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                          {   id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                       ]});
+
+                    root.render();
+
+                    Y.Assert.isTrue(root.item(4).get("multiple"), "The \"multiple\" attribute of the nested parent widget should be true.");
+
+                    root.destroy();
+                },
+                
+     
+
+                testSiblingNavigation: function () {
+
+                    var widget = new Y. TreeView({
+                         id: "widget-1",
+                         lazyLoad : false,
+                         children: [
+                             {   label: "Child One", id: "child-1" },
+                             {   label: "Child Two", id: "child-2" },
+                             {   label: "Child Three", id: "child-3" },
+                             {   label: "Child Four", id: "child-4" }
+                         ]
+
+                     });
+
+                    widget.render();
+
+                    Y.Assert.areEqual(widget.item(3).get("index"), 3, "The \"index\" attribute of \"child-4\" should return 3.");
+                    Y.Assert.isUndefined(widget.item(3).next(), "\"child-4\" should have no next sibling");
+                    Y.Assert.areEqual(widget.item(3).next(true).get("id"), "child-1", "Calling the \"next\" method with the circular flag should return  a reference to \"child-1\"");
+
+                    Y.Assert.isUndefined(widget.item(0).previous(), "\"child-1\" should have no previous sibling");
+                    Y.Assert.areEqual(widget.item(0).previous(true).get("id"), "child-4", "Calling the \"previous\" method with the circular flag should return  a reference to \"child-4\"");
+
+                    widget.destroy();
+                },
+
+                testActiveDescendant: function () {
+
+                    var tree = new Y. TreeView({
+                       id: "tree",
+                       lazyLoad : false,
+                       children: [
+                           {   id: "leaf-1", label: "Leaf One" },
+                           {   id: "leaf-2", label: "Leaf Two" },
+                           { type: Y. TreeView, id: "subtree", label: "Subtree", children: [
+                              {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                              {   id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                              {   id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                           ]}
+                       ]
+
+                    });
+
+                    tree.render("#tree");
+
+                    tree.item(2).item(0).focus();
+
+                    Y.Assert.areEqual(tree.item(2).get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of \"subtree\" should return a reference to \"subtree-leaf-1\"");
+                    Y.Assert.areEqual(tree.get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of the root widget should return a reference to the \"subtree\"");
+
+                    tree.destroy();
+                },
+
+                testFullDestroy: function () {
+
+                    var expected = ["leaf-1", "leaf-2", "subtree-leaf-1", "subtree-leaf-2", "subtree", "tree"];
+                    var destroyed = [];
+
+                    var tree = new Y. TreeView({
+                       id: "tree",
+                       label : "tree",
+                       lazyLoad : false,
+                       children: [
+                           {   id: "leaf-1", label: "Leaf One" },
+                           {   id: "leaf-2", label: "Leaf Two" },
+                           { type: Y. TreeView, id: "subtree", label: "Subtree", children: [
+                              {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render("#tree");
+
+                    
+                    var rootId = tree.get("id");
+                    
+                    tree.after("destroy", function(e) {
+                        destroyed.push(rootId);
+                        Y.Assert.isNull(Y.Node.one("#" + rootId), "Root Bounding box still in DOM");
+                    });
+
+                    tree.destroy();
+                },
+
+                testRemoveChildOnDestroy: function () {
+
+                    var tree = new Y. TreeView({
+                       id: "tree",
+                       lazyLoad : false,
+                       children: [
+                           {   id: "leaf-1", label: "Leaf One" },
+                           {   id: "leaf-2", label: "Leaf Two" },
+                           { type: Y. TreeView,lazyLoad : false, id: "subtree", label: "Subtree", children: [
+                              {   id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              {   id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render("#tree");
+
+                    var subtree = tree.item(2);
+
+                    Y.Assert.areEqual(3, tree.size(), "Initial tree size is incorrect");
+                    Y.Assert.areEqual(2, subtree.size(), "Initial tree size is incorrect");
+
+                    tree.item(1).destroy();
+
+                    Y.Assert.areEqual(2, tree.size(), "Item 1 doesn't seem to have been removed. Tree size is the same");
+                    Y.Assert.areEqual("subtree", tree.item(1).get("id"), "Item 1 doesn't seem to have been removed");  
+
+                    subree = tree.item(1); 
+
+                    subtree.item(0).destroy();
+
+                    Y.Assert.areEqual(1, subtree.size(), "Subtree item 0 doesn't seem to have been removed. subtree size is the same");
+                    Y.Assert.areEqual("subtree-leaf-2", subtree.item(0).get("id"), "Subtree item 0 doesn't seem to have been removed");
+                    Y.Assert.areEqual(subtree.item(1), null, "Subtree item 1 should have moved up to item 0");  
+
+                    tree.destroy();
+                },
+
+                testUIEvents : function() {
+
+                    var expectedEvents = [
+                            "treeview:click",
+                            "treeview:click"
+                        ],
+                        actualEvents = [],
+
+                        expectedChildEvents = [
+                            "treeleaf:click", 
+                            "treeleaf:click"
+                        ],
+                        actualChildEvents = [];
+
+                    var widget = new Y. TreeView({
+                         id: "widget-1",
+                         lazyLoad : false,
+                         children: [
+                             {   label: '<span class="uitarget">Child One - Click Target</span>', id: "child-1" },
+                             {   label: '<span class="uitarget">Child Two - Click Target</span>', id: "child-2" }
+                         ]
+                    });
+
+                    widget.render();
+
+                    widget.on("click", function(e) {
+                        actualEvents.push(e.type);
+                    });
+
+                    widget.item(0).on("click", function(e) {
+                        actualChildEvents.push(e.type);
+                    });
+
+                    widget.item(1).on("click", function(e) {
+                        actualChildEvents.push(e.type);
+                    });
+
+                    Y.Node.one("#child-1 .uitarget").simulate("click");
+                    Y.Node.one("#child-2 .uitarget").simulate("click");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents, "Unexpected UI events");
+                    Y.ArrayAssert.itemsAreEqual(expectedChildEvents, actualChildEvents, "Unexpected Child UI events");
+
+                    widget.destroy();
+                }
+                
+            }));
+            
+             suite.add(
+                new Y.Test.Case({
+
+                name: " TreeView API test",
+                
+                testFullRender : function () {
+                     var tree = new Y. TreeView({
+                         id: "widget-1",
+                         lazyLoad : false,
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render("#tree");
+                    tree.destroy();
+                    
+                    Y.Assert.areEqual(tree.item(1).get("DOMReady"), true,"Item should be rendedered");
+                },
+                
+                testLazyLoadRender : function () {
+                     var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render("#tree");
+                    
+                    Y.Assert.areEqual(tree.item(1).get("DOMReady"), false,"Item should not be rendered");
+                    
+                    tree.expand();
+                    
+                    Y.Assert.areEqual(tree.item(1).get("DOMReady"), true,"Item should now be rendered");
+                    
+                    tree.destroy();
+                },
+                
+                testExpand : function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render("#tree");
+                    
+                    tree.expand();
+                                        
+                    Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
+                    
+                    tree.destroy();
+                },
+                
+                testCollapse : function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render("#tree");
+                    
+                    tree.expand();
+                    tree.collapse();
+
+                    Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be expanded");
+                    
+                    tree.destroy();
+                },
+                
+                testToggle : function () {
+                    var tree = new Y. TreeView({
+                         id: "widget-1",
+                         children: [
+                             {   label: 'Child One - Click Target', id: "child-1" },
+                             {   label: 'Child Two - Click Target', id: "child-2" }
+                         ]
+                    });
+
+                    tree.render("#tree");
+                    tree.toggleTreeState();
+
+                    Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
+                    
+                    tree.toggleTreeState();
+                    Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be collapsed");
+
+                    tree.destroy();
+                }
+            }));
+
+        Y.Test.Runner.setName(" TreeView Tests");
+        Y.Test.Runner.add(suite);
+        
+        var console;
+        
+        if (!console) {
+                console = new Y.Console({
+                    id:"console",
+                    width:"100%",
+                    height:"90%",
+                    verbose : false,
+                    printTimeout: 0,
+                    newestOnTop : false,
+                    entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
+                            '<span class="{entry_cat_class}">{label}</span>'+
+                            '<span class="{entry_content_class}">{message}</span>'+
+                    '</pre>'
+                }).render();
+            }
+    
+        Y.Test.Runner.enableLogging();
+        Y.Test.Runner.run();
+    });
+    </script>
+</body>
+</html>

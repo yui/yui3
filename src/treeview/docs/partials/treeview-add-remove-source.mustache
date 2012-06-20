@@ -1,0 +1,37 @@
+
+<div id="demo" class="yui3-skin-sam  yui3-cssreset">
+    <div id="mytree"></div>
+    <button id="add">Add more leaves</button>
+    <button id="remove">Remove First leaf</button>
+</div>
+
+<script type="text/javascript">
+YUI().use('treeview', 'event', 'node' ,function(Y) {
+    
+    // Create a new instance of treeview, placing it in 
+    // #mytree container   
+    
+    var tree = new Y.TreeView({
+       label : "This my tree",
+       children: [
+           { label: "Leaf One" },
+           {label: "Leaf Two"}
+       ]
+    });
+    
+    tree.render("#mytree");
+    tree.expand();
+    
+    Y.one("#add").on("click",function(e) {
+        //Adds accepts an array of new children
+        tree.add([{label : "<span class='new'>New leaf 1</span>"}, {label : "<span class='new'>New Leaf 2</span>"}]);
+    });
+    
+    Y.one("#remove").on("click",function(e) {
+        //remove the first element of the tree if present
+        if (tree.item(0)) {
+            tree.item(0).remove();
+        } 
+    });
+});
+</script>
