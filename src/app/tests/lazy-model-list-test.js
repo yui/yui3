@@ -163,6 +163,17 @@ lazyModelListSuite.add(new Y.Test.Case({
         Assert.areSame(0, this.list.size());
     },
 
+    'remove() should maintain indices for revived models': function () {
+        this.list.add([{foo: 'zero'}, {foo: 'one'}, {foo: 'two'}]);
+
+        Assert.areSame('one', this.list.revive(1).get('foo'));
+        this.list.remove(0);
+
+        Assert.areSame('two', this.list.item(1).foo);
+        Assert.areSame('two', this.list.revive(1).get('foo'));
+        Assert.areSame('one', this.list.revive(0).get('foo'))
+    },
+
     'reset() should accept an array of objects/models or a ModelList': function () {
         var items     = [{foo: 'one'}, {foo: 'two'}],
             models    = [new Y.Model({foo: 'three'}), new Y.Model({foo: 'four'})],

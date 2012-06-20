@@ -480,9 +480,9 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
 
         if (model) {
             this._detachList(model);
-            this._models.splice(index, 1);
         }
 
         this._items.splice(index, 1);
+        this._models.splice(index, 1);
     }
 });
