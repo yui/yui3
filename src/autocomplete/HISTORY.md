@@ -1,6 +1,13 @@
 AutoComplete Change History
 ===========================
 
+3.6.0
+-----
+
+* Fixed an issue that prevented events from being detached when the AutoComplete
+  widget was destroyed. [Ticket #2532419]
+
+
 3.5.1
 -----
 

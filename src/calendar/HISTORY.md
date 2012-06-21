@@ -1,6 +1,11 @@
 Calendar Change History
 =======================
 
+3.6.0
+-----
+  * Bug fixes for 2532262, 2532277, 2531828.
+  * Near 100% unit test coverage
+
 3.5.1
 -----
 

@@ -182,6 +182,12 @@ routerSuite.add(new Y.Test.Case({
 routerSuite.add(new Y.Test.Case({
     name: 'Methods',
 
+    _should: {
+        ignore: {
+            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs
+        }
+    },
+
     setUp: function () {
         this.errorFn   = Y.config.errorFn;
         this.throwFail = Y.config.throwFail;
