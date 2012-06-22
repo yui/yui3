@@ -180,6 +180,7 @@
          * @private
          */
         _initBase : function(config) {
+            Y.log('init called', 'life', 'base');
 
             Y.stamp(this);
 
