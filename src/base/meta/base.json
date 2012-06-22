@@ -2,15 +2,20 @@
     "base": {
         "use": ["base-base", "base-pluginhost", "base-build"],
         "submodules": {
-	    "base-core": {
-		"requires": [
+            "base-core": {
+                "requires": [
                     "attribute-core"
                 ]
-	    },
+            },
+            "base-events": {
+                "requires": [
+                    "attribute-base"
+                ]
+            },
             "base-base": {
                 "requires": [
                     "base-core",
-                    "attribute-base"
+                    "base-events"
                 ],
                 "after": [
                     "attribute-complex"
@@ -20,10 +25,10 @@
                 "requires": [
                     "base-base"
                 ]
-            }, 
+            },
             "base-pluginhost": {
                 "requires": [
-                    "base-base", 
+                    "base-base",
                     "pluginhost"
                 ]
             }

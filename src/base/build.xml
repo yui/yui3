@@ -7,6 +7,7 @@
         <sequential>
             <ant antfile="base-base.xml" target="@{target}"/>
             <ant antfile="base-core.xml" target="@{target}"/>
+            <ant antfile="base-events.xml" target="@{target}"/>
             <ant antfile="base-build.xml" target="@{target}"/>
             <ant antfile="base-pluginhost.xml" target="@{target}"/>
         </sequential>
