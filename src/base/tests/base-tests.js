@@ -1456,6 +1456,59 @@ YUI.add('base-tests', function(Y) {
 
             /* Currently broken. Will fix in 3.6.0pr1. Too late at this point, given the extreme edge caseness. */
             // Y.Assert.areEqual("abc", MyBuiltClass.MY_CUSTOM);
+        },
+
+        "test:base-core-subclass": function () {
+            var calls = 0,
+                Foo, foo;
+
+            Foo = Y.Base.create('foo', Y.BaseCore, [], {
+                initializer: function () {
+                    calls += 1;
+                }
+            }, {
+                ATTRS: {
+                    bar: {
+                        value: 'bar',
+                        getter: function (val) {
+                            return val.toUpperCase();
+                        }
+                    }
+                }
+            });
+
+            foo = new Foo();
+
+            Y.Assert.areSame('BAR', foo.get('bar'));
+            Y.Assert.areSame(1, calls);
+        },
+
+        "test:base-core-with-base-events-ext": function () {
+            var calls = 0,
+                Foo, foo;
+
+            Foo = Y.Base.create('foo', Y.BaseCore, [Y.BaseEvents], {
+                initializer: function () {
+                    this.after('barChange', function () {
+                        calls += 1;
+                    });
+                }
+            }, {
+                ATTRS: {
+                    bar: {
+                        value: 'bar',
+                        getter: function (val) {
+                            return val.toUpperCase();
+                        }
+                    }
+                }
+            });
+
+            foo = new Foo();
+            foo.set('bar', 'baz');
+
+            Y.Assert.areSame('BAZ', foo.get('bar'));
+            Y.Assert.areSame(1, calls);
         }
 
     }));

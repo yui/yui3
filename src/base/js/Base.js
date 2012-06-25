@@ -73,7 +73,6 @@
      * @private
      */
     Base._ATTR_CFG      = Y.BaseCore._ATTR_CFG.concat(Y.BaseEvents._ATTR_CFG);
-    Base._ATTR_CFG_HASH = Y.Array.hash(Base._ATTR_CFG);
 
     /**
      * The array of non-attribute configuration properties supported by this class.
@@ -123,21 +122,6 @@
      * @static
      */
     Base.ATTRS = Y.AttributeCore.prototype._protectAttrs(Y.BaseCore.ATTRS);
-
-    Base.prototype = {
-
-        /**
-         * Utility method to define the attribute hash used to filter/whitelist property mixes for
-         * this class.
-         *
-         * @method _attrCfgHash
-         * @private
-         */
-        _attrCfgHash: function() {
-            return Base._ATTR_CFG_HASH;
-        }
-
-    };
 
     Y.mix(Base, Y.BaseCore, false, null, 1);
 

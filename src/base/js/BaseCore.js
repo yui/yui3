@@ -81,7 +81,6 @@
      * @private
      */
     BaseCore._ATTR_CFG = AttributeCore._ATTR_CFG.concat("cloneDefaultValue");
-    BaseCore._ATTR_CFG_HASH = Y.Array.hash(BaseCore._ATTR_CFG);
 
     /**
      * The array of non-attribute configuration properties supported by this class. 
@@ -309,6 +308,18 @@
             return this._attrs;
         },
 
+
+        /**
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
+         * this class. 
+         * 
+         * @method _getAttrCfgHash
+         * @private
+         */
+        _getAttrCfgHash: function() {
+            return this._attrCfgHash;
+        },
+
         /**
          * A helper method used when processing ATTRS across the class hierarchy during 
          * initialization. Returns a disposable object with the attributes defined for 
@@ -383,6 +394,8 @@
             var c = this.constructor,
                 i,
                 l,
+                attrCfg,
+                attrCfgHash = {},
                 nonAttrsCfg,
                 nonAttrs = (this._allowAdHocAttrs) ? {} : null,
                 classes = [],
@@ -395,6 +408,14 @@
                 // Add to attributes
                 if (c.ATTRS) {
                     attrs[attrs.length] = c.ATTRS;
+                }
+
+                // Aggregate ATTR cfg whitelist.
+                attrCfg = c._ATTR_CFG;
+                if (attrCfg) {
+                    for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                        attrCfgHash[attrCfg[i]] = true;
+                    }
                 }
 
                 if (this._allowAdHocAttrs) {
@@ -410,19 +431,9 @@
             }
 
             this._classes = classes;
+            this._attrCfgHash = attrCfgHash;
             this._nonAttrs = nonAttrs;
             this._attrs = this._aggregateAttrs(attrs);
-        },
-
-        /**
-         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
-         * this class. 
-         * 
-         * @method _attrCfgHash
-         * @private
-         */
-        _attrCfgHash: function() {
-            return BaseCore._ATTR_CFG_HASH;
         },
 
         /**
@@ -447,7 +458,7 @@
                 path,
                 i,
                 clone,
-                cfgPropsHash = this._attrCfgHash(),
+                cfgPropsHash = this._getAttrCfgHash(),
                 aggAttr,
                 aggAttrs = {};
 

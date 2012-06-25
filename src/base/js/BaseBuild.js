@@ -7,7 +7,8 @@
      * @submodule base-build
      * @for Base
      */
-    var Base = Y.Base,
+    var BaseCore = Y.BaseCore,
+        Base = Y.Base,
         L = Y.Lang,
         INITIALIZER = "initializer",
         DESTRUCTOR = "destructor",
@@ -15,7 +16,7 @@
         arrayAggregator = function (prop, r, s) {
             if (s[prop]) {
                 r[prop] = (r[prop] || []).concat(s[prop]);
-            }    
+            }
         };
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
@@ -391,10 +392,9 @@
      * @final
      * @private
      */
-    Base._buildCfg = {
+    Base._buildCfg = BaseCore._buildCfg = {
         custom : {
             ATTRS : function(prop, r, s) {
-
                 r.ATTRS = r.ATTRS || {};
 
                 if (s.ATTRS) {
@@ -411,6 +411,8 @@
                     }
                 }
             },
+
+            _ATTR_CFG : arrayAggregator,
             _NON_ATTRS_CFG : arrayAggregator
         },
         aggregates : ["_PLUG", "_UNPLUG"]
