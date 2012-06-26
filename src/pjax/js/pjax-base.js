@@ -175,7 +175,7 @@ PjaxBase.prototype = {
         var location = Y.getLocation(),
             protocol = location.protocol,
             hostname = location.hostname,
-            port     = location.port,
+            port     = parseInt(location.port, 10) || null,
             linkPort;
 
         // Link must have the same `protocol` and `hostname` as the page's
@@ -186,18 +186,18 @@ PjaxBase.prototype = {
             return false;
         }
 
-        linkPort = link.get('port');
+        linkPort = parseInt(link.get('port'), 10) || null;
 
         // Normalize ports. In most cases browsers use an empty string when the
         // port is the default port, but IE does weird things with anchor
         // elements, so to be sure, this will re-assign the default ports before
         // they are compared.
         if (protocol === 'http:') {
-            port     || (port     = '80');
-            linkPort || (linkPort = '80');
+            port     || (port     = 80);
+            linkPort || (linkPort = 80);
         } else if (protocol === 'https:') {
-            port     || (port     = '443');
-            linkPort || (linkPort = '443');
+            port     || (port     = 443);
+            linkPort || (linkPort = 443);
         }
 
         // Finally, to be from the same origin, the link's `port` must match the
