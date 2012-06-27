@@ -42,17 +42,18 @@ var getClassName = Y.ClassNameManager.getClassName,
         };
             
 /**
- * Provides the WidgetHTMLRenderer extensions, which overrides the base Widget API 
- * to allow widgets to be rendered purely using HTML from templates, without any Node references. 
+ * Provides the WidgetHTMLRenderer extensions, which override the base Widget API 
+ * to allow widgets to be rendered purely using HTML from templates, without any 
+ * Node references. 
  * 
  * This allows Widgets to be rendered on the server, and also optimizes rendering 
  * in high-scale applications such as TreeView.
  * 
- * NOTE: When applied, Node references to boundingBox and contentBox won't be 
- * available until the Widget is rendered.
+ * <strong>Note</strong: When applied, Node references to boundingBox and contentBox 
+ * won't be available until the Widget is rendered.
  * 
  * Although not required of widget implementors, the Widget base class uses
- * Handlebars to render it's boundingBox and contentBox templates. If overriding
+ * Handlebars to render its boundingBox and contentBox templates. If overriding
  * the CONTENT_TEMPLATE or BOUNDING_TEMPLATE values, you should use Handlebars 
  * token syntax, and maintain tokens used by the default templates.
  *
@@ -62,21 +63,21 @@ var getClassName = Y.ClassNameManager.getClassName,
 
 /**
  * WidgetHTMLRenderer is an Extension for Widget, to be used with Y.Base.create or
- * Y.Base.mix and provides a renderHTML method which can be used to generate the 
+ * Y.Base.mix. It provides a `renderHTML()` method which can be used to generate the 
  * initial markup for the widget purely from templates, without creating Node 
  * references.
  *
- * When mixed in, renderHTML() will generate the markup for the widget and the 
+ * When mixed in, `renderHTML()` will generate the markup for the widget and the 
  * caller is responsible for adding it to the DOM. 
  *
- * Widget developers need to implement a renderUI(buffer) method which writes
+ * Widget developers need to implement a `renderUI(buffer)` method which writes
  * string content to the buffer passed in. This buffer gets added as the contents
  * of the contentBox.
  *
- * render() will generate boundingBox and contentBox node references, and invoke 
- * bindUI() and syncUI() to bind them.
+ * `render()` will generate boundingBox and contentBox node references, and invoke 
+ * `bindUI()` and `syncUI()` to bind them.
  *
- * If render() is called and renderHTML() hasn't been invoked already, 
+ * If `render()` is called and `renderHTML()` hasn't been invoked already, 
  * it will be invoked, before bindUI and syncUI are called.
  *
  * @class WidgetHTMLRenderer
@@ -144,7 +145,7 @@ Y.WidgetHTMLRenderer.prototype = {
      */
     _renderHTML: function() {
 
-        // HACK - Widget should extract this logic into a method for easy reuse
+        // TODO: Widget should extract this logic into a method for easy reuse
         var defParentNode = this.DEF_PARENT_NODE,
             parentNode = this._parentNode || (defParentNode && Node.one(defParentNode)),
             buffer = parentNode || [],
