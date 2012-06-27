@@ -44,17 +44,18 @@ var getClassName = Y.ClassNameManager.getClassName,
         };
             
 /**
- * Provides the WidgetHTMLRenderer extensions, which overrides the base Widget API 
- * to allow widgets to be rendered purely using HTML from templates, without any Node references. 
+ * Provides the WidgetHTMLRenderer extensions, which override the base Widget API 
+ * to allow widgets to be rendered purely using HTML from templates, without any 
+ * Node references. 
  * 
  * This allows Widgets to be rendered on the server, and also optimizes rendering 
  * in high-scale applications such as TreeView.
  * 
- * NOTE: When applied, Node references to boundingBox and contentBox won't be 
- * available until the Widget is rendered.
+ * <strong>Note</strong: When applied, Node references to boundingBox and contentBox 
+ * won't be available until the Widget is rendered.
  * 
  * Although not required of widget implementors, the Widget base class uses
- * Handlebars to render it's boundingBox and contentBox templates. If overriding
+ * Handlebars to render its boundingBox and contentBox templates. If overriding
  * the CONTENT_TEMPLATE or BOUNDING_TEMPLATE values, you should use Handlebars 
  * token syntax, and maintain tokens used by the default templates.
  *
@@ -64,21 +65,21 @@ var getClassName = Y.ClassNameManager.getClassName,
 
 /**
  * WidgetHTMLRenderer is an Extension for Widget, to be used with Y.Base.create or
- * Y.Base.mix and provides a renderHTML method which can be used to generate the 
+ * Y.Base.mix. It provides a `renderHTML()` method which can be used to generate the 
  * initial markup for the widget purely from templates, without creating Node 
  * references.
  *
- * When mixed in, renderHTML() will generate the markup for the widget and the 
+ * When mixed in, `renderHTML()` will generate the markup for the widget and the 
  * caller is responsible for adding it to the DOM. 
  *
- * Widget developers need to implement a renderUI(buffer) method which writes
+ * Widget developers need to implement a `renderUI(buffer)` method which writes
  * string content to the buffer passed in. This buffer gets added as the contents
  * of the contentBox.
  *
- * render() will generate boundingBox and contentBox node references, and invoke 
- * bindUI() and syncUI() to bind them.
+ * `render()` will generate boundingBox and contentBox node references, and invoke 
+ * `bindUI()` and `syncUI()` to bind them.
  *
- * If render() is called and renderHTML() hasn't been invoked already, 
+ * If `render()` is called and `renderHTML()` hasn't been invoked already, 
  * it will be invoked, before bindUI and syncUI are called.
  *
  * @class WidgetHTMLRenderer
@@ -146,7 +147,7 @@ Y.WidgetHTMLRenderer.prototype = {
      */
     _renderHTML: function() {
 
-        // HACK - Widget should extract this logic into a method for easy reuse
+        // TODO: Widget should extract this logic into a method for easy reuse
         var defParentNode = this.DEF_PARENT_NODE,
             parentNode = this._parentNode || (defParentNode && Node.one(defParentNode)),
             buffer = parentNode || [],
@@ -327,19 +328,53 @@ Y.WidgetHTMLRenderer.prototype = {
         return node;
     }
 };
-
-
 /**
- * The Treeview component is a UI widget that allows users
- * to create a hierarchical-like structure of elements.
- * Extends Y.WidgetParent, Y.WidgetChild, Y.WidgetHTMLRenderer
- * Treeview can be generated either by providing a configuration object  
- * @module TreeView
+ * The Treeview module is a UI widget that allows users
+ * to create a visual representation of a hierarchical list
+ * of elements.
+ * Extends Y.WidgetParent, Y.WidgetChild, and Y.WidgetHTMLRenderer.
+ * @module treeview
  */
+
+/** 
+Creates a treeview to visually represent a hierarchical list of elements 
+and provides interactivity for showing and hiding subsections of that list.
+
+Example usage:
+
+    var tree = new Y.TreeView({
+        label : "This my tree",
+        children: [
+            { label: "Leaf One" },
+            { label: "Leaf Two" },
+            { type: "TreeView", label: "Subtree", children: [
+               {  label: "Subtree - Leaf One" },
+               {  label: "Subtree - Leaf Two" },
+               {  label: "Subtree - Leaf Three" },
+               {  label: "Subtree - Leaf Four" }
+            ]}
+        ]
+    });
+ 
+    tree.render("#mytree"); 
+
+@class TreeView
+@constructor
+@extends Widget
+@uses WidgetParent
+@uses WidgetChild
+@uses WidgetHTMLRenderer
+@param {Object} [config] The following are configuration properties that can be
+    specified _in addition_ to default attribute values and the non-attribute
+    properties provided by `Y.Widget`:
+  @param {Object} [config.children] An array of child objects that can be individual
+    tree leaves or sub-trees.
+*/
+
     Y.TreeView = Y.Base.create("treeview", WIDGET, [Y.WidgetParent, Y.WidgetChild, Y.WidgetHTMLRenderer], {
     
         /**
-         * Property defining the markup template for bounding box.
+         * Property defining the markup template for the bounding box.
          *
          * @property BOUNDING_TEMPLATE
          * @type String
@@ -347,38 +382,23 @@ Y.WidgetHTMLRenderer.prototype = {
         BOUNDING_TEMPLATE : '<ul id="{{id}}" class="{{boundingClasses}}">{{{contentBox}}}</ul>',
         
         /**
-         * Property defining the markup template for content box.          
+         * Property defining the markup template for the content box.          
          *
          * @property CONTENT_TEMPLATE
          * @type String
         */
         
         /**
-         * Property defining the markup template for the trewview label .
+         * Property defining the markup template for the treeview label.
          *
          * @property TREEVIEWLABEL_TEMPLATE
          * @type String
         */
         TREEVIEWLABEL_TEMPLATE : "<li class='{{{treelabelClassName}}}' role='treeitem' tabindex='0'><span class={{{labelcontentClassName}}}>{{{label}}}</span></li>",
-        
-                      
-        /**
-         * Flag to indicate whether a content Box/Bounding box has been returned from the getter attribute.
-         *
-         * @property _handling
-         * @type Boolean
-        */
-        
-        /**
-         * The template for a branch element.
-         *
-         * @property branchTemplate
-         * @type String
-        */
 
         /**
          * Initializer lifecycle implementation for the Treeview class. 
-         * <p>Registers the Treeview instance. It subscribes to the onParentChange 
+         * <p>Registers the TreeView instance. It subscribes to the onParentChange 
          *    event which is triggered each time a new tree is added.</p>
          * <p>It publishes the toggleTreeState event, which gets fired everytime a node is
          *    collapsed/expanded</p>
@@ -396,7 +416,7 @@ Y.WidgetHTMLRenderer.prototype = {
         },
         
         /**
-         * renderUI implementation
+         * renderUI implementation.
          *
          * Creates a visual representation of the treeview based on existing parameters. 
          * @method renderUI
@@ -418,8 +438,7 @@ Y.WidgetHTMLRenderer.prototype = {
         /**
          * bindUI implementation
          *
-         * Assigns listeners to relevant events that change the state
-         * of the treeview.
+         * Assigns listeners to relevant events that change the state of the treeview.
          * @method bindUI
         */ 
         bindUI: function() {
@@ -451,7 +470,7 @@ Y.WidgetHTMLRenderer.prototype = {
         
         /**
          * Handles all the internal keydown events.          
-         * @method onViewEvents
+         * @method _onKeyDown
          * @protected
          */
         _onKeyDown : function (e) {
@@ -467,7 +486,7 @@ Y.WidgetHTMLRenderer.prototype = {
          /**
          * Called when the up arrow key is pressed.
          *
-         * @method _keyDown
+         * @method _onUpKey
          * @protected
          */
         _onUpKey : function (e,target) {
@@ -484,7 +503,7 @@ Y.WidgetHTMLRenderer.prototype = {
          * Called when the down arrow key is pressed.
          * @param {Y.Node} The target element
          *
-         * @method _keyDown
+         * @method _onDownKey
          * @protected
          */
         _onDownKey : function (e,target) {
@@ -501,7 +520,7 @@ Y.WidgetHTMLRenderer.prototype = {
          * Called when the right arrow key is pressed.
          *
          * @param {Y.Node} The target element
-         * @method _keyDown
+         * @method _onRightArrowKey
          * @protected
          */
         _onRightArrowKey : function (e,target) {
@@ -514,7 +533,7 @@ Y.WidgetHTMLRenderer.prototype = {
          * Called when the left arrow key is pressed.
          *
          * @param {Y.Node} The target element
-         * @method _keyDown
+         * @method _onLeftArrowKey
          * @protected
          */
         _onLeftArrowKey : function (e,target) {
@@ -526,12 +545,11 @@ Y.WidgetHTMLRenderer.prototype = {
        /**
         * Renders all child Widgets for the parent.  
         * <p>
-        * This method in invoked after renderUI is invoked for the Widget class
+        * This method is invoked after renderUI is called for the Widget class
         * using YUI's aop infrastructure. 
-        * OVERWRITE : Overwritting for string rendering mode, if lazyLoad is enabled
-        * it will not prepare the children strings until is needed.
+        * If lazyLoad is enabled, it will not prepare the children strings until is needed.
         * </p>
-        * @param {Object} The contentBuffer 
+        * @param contentBuffer {Object} The content buffer.
         * @method _renderChildren
         * @protected
         */ 
@@ -545,12 +563,10 @@ Y.WidgetHTMLRenderer.prototype = {
         },
         
         /**
-        * Renders all child Widgets for the parent.  
-        * <p>
-        * Giving a tree, it concatenates all the strings for it's children
-        * </p>
-        * @param {Object} The tree we are trying to obtain the children from
-        * @method getChildrenHTML
+        * Returns the combined HTML string for all of the treeview's children.  
+        * 
+        * @param tree {TreeView} The tree we are trying to obtain the children from
+        * @method _getChildrenHTML
         * @protected
         */ 
         _getChildrenHTML : function (tree) {
@@ -565,14 +581,13 @@ Y.WidgetHTMLRenderer.prototype = {
         },
         
       /**
-        *  
-        * <p>
         * This method in invoked on demand when children are required
-        * to be displayed. Gets the strings, then append it to its parent
-        * </p>
+        * to be displayed. It gets the children's HTML strings, and then 
+        * appends them to the parent.
+        * 
         * @method _lazyRenderChildren
-        * @param {Object} treeWidget, the widget Object 
-        * @param {Y.Node} treeNode 
+        * @param treeWidget {Object} The instance of treeview widget.
+        * @param treeNode {Y.Node} The tree node.
         * @protected
         */ 
         _lazyRenderChildren : function (treeWidget,treeNode) {
@@ -580,14 +595,12 @@ Y.WidgetHTMLRenderer.prototype = {
             var childrenHTML = treeWidget._getChildrenHTML(treeWidget);
             
             treeNode.append(childrenHTML);
-            treeWidget.set("populated",true);
+            treeWidget.set("populated", true);
         },
         
        /**
-        * <p>
-        *   Collapses a tree.
-        * </p>
-        * @param {Y.Node} This param is optional - The target that triggered the event
+        * Collapses a tree.
+        * @param target {Y.Node} An optional parameter specifying the target that triggered the event.
         * @method collapse
         * @protected
         */ 
@@ -604,10 +617,8 @@ Y.WidgetHTMLRenderer.prototype = {
         },
         
        /**
-        * <p>
-        *   Expands a tree. If the tree hasn't been rendered yet, it will render it before, then expand it.
-        * </p>
-        * @param {Y.Node} This param is optional - The target that triggered the event
+        * Expands a tree. If the tree hasn't been rendered yet, it will be rendered, then expanded. 
+        * @param target{Y.Node} An optional parameter specifying the target that triggered the event.
         * @method expand
         * @protected
         */ 
@@ -630,8 +641,8 @@ Y.WidgetHTMLRenderer.prototype = {
         },
         
        /**
-        * Toggles the tree. If the Tree hasn't been rendered it will render it before.
-        * @param {Y.Node} This param is optional - The target that triggered the event
+        * Toggles the tree state. If the Tree hasn't been rendered, it will be rendered first, then toggled.
+        * @param target{Y.Node} An optional parameter specifying the target that triggered the event.
         * @method _toggleTreeState
         * @protected
         */
@@ -648,28 +659,26 @@ Y.WidgetHTMLRenderer.prototype = {
             treeWidget.set("collapsed", !treeWidget.get("collapsed"));        
             treeNode.toggleClass(classNames.collapsed);
         },
-
-        
-        /******************* OVERWRITE **************************/
                 
          
         /**
          * Sets the container for children to renderTo when using _uiAddChild
          *
          * @method _setChildrenContainer
+         * @protected
         */  
         _setChildrenContainer : function () {
              var renderTo = this._childrenContainer || this.get("contentBox");
              this._childrenContainer = renderTo;
         },
         
-          /**
+       /**
         * Utility method to add the boundingClasses and contentClasses property values
         * to the Handlebars context passed in. Similar to _renderBoxClassNames() on
         * the Node based renderer.
         *
         * @method _renderBoxClassNames
-        * @param {Object} context The Handlebars context object on which the
+        * @param context {Object} The Handlebars context object to which the
         * boundingClasses and contentClasses properties get added.
         */
         _renderBoxClassNames: function(context) {
@@ -686,8 +695,6 @@ Y.WidgetHTMLRenderer.prototype = {
                 cl = classes[i];
                 boundingClasses[boundingClasses.length] = Y.ClassNameManager.getClassName(cl.NAME.toLowerCase()) || this.getClassName(cl.NAME.toLowerCase());
             }
-            
-            
             
             if (this.CONTENT_TEMPLATE === null) {
                 boundingClasses.push(contentClass);
@@ -765,25 +772,27 @@ Y.WidgetHTMLRenderer.prototype = {
              *
              * @attribute label
              * @type String
+             * @default ""
              */
             label : {
                 value:""
             },
             
             /**
-             * Flag to indicate if a tree has been rendered to the DOM or not
+             * Flag to indicate if a tree has been rendered to the DOM or not.
              *
-             * @attribute _populated
-             * @type Boolean
+             * @attribute DOMReady
+             * @type Object
             */
             DOMReady : {}, 
 
-             
             /**
-             * Configuration to set lazyLoad enabled. When enabled, all the children rendering will be done on demand.
+             * Configuration to enabled lazy loading. When enabled, all the child rendering will be done only on demand.
              *
              * @attribute lazyLoad
              * @type Boolean
+             * @default true
+             * @initOnly
             */
             
             lazyLoad : {
@@ -793,10 +802,11 @@ Y.WidgetHTMLRenderer.prototype = {
             
             
             /**
-             * Attribute to indicate whether a tree has been populated with it's children or not.
+             * A read-only attribute to indicate whether a tree has been populated with its children or not.
              *
              * @attribute populated
              * @type Boolean
+             * @readOnly
             */
 
             populated : {
@@ -804,10 +814,11 @@ Y.WidgetHTMLRenderer.prototype = {
             },
             
             /**
-             * Attribute to indicate whether a tree is in a collapsed state or not
+             * Attribute to indicate whether a tree is in a collapsed state or not.
              *
              * @attribute collapsed
              * @type Boolean
+             * @default true
             */
             
             collapsed : {
@@ -815,17 +826,18 @@ Y.WidgetHTMLRenderer.prototype = {
             },
             
             /**
-             * The default children type.
+             * The class type of the tree child nodes.
              *
              * @attribute defaultChildType
              * @type String
+             * @default "TreeLeaf"
              */
             defaultChildType: {  
                 value: "TreeLeaf"
             },
             
             /**
-             * Specifying a custom getter for the Bounding box so that
+             * The attribute contains a custom getter for the Bounding box so that
              * it's only rendered when needed. 
              * @attribute boundingBox
              * @type BoundingBox
@@ -838,7 +850,7 @@ Y.WidgetHTMLRenderer.prototype = {
             },
             
             /**
-             * Specifying a custom getter for the Content box so that
+             * The attribute contains a custom getter for the Content box so that
              * it's only rendered when needed. 
              * @attribute contentBox
              * @type contentBox
@@ -850,16 +862,22 @@ Y.WidgetHTMLRenderer.prototype = {
             }
         }
     });
-    
-    /**
-    *  Treeleaf component of Treeview. Defines a Y.Widget that extends from Y.WidgetChild,
-    * this is the default child type of a tree unless specified otherwise.
-    * @module Y.TreeLeaf
-    */
+
+
+    /** 
+     * An individual Treeleaf of a Treeview. Extends `Y.WidgetChild` and acts as a default
+     * child type of a tree, unless specified otherwise.
+     * 
+     * @class TreeLeaf
+     * @constructor
+     * @extends Widget
+     * @uses WidgetChild
+     * @uses WidgetHTMLRenderer
+     */
     Y.TreeLeaf = Y.Base.create("treeleaf", WIDGET, [Y.WidgetChild,Y.WidgetHTMLRenderer], {
     
         /**
-         * Property defining the markup template for bounding box.
+         * Property defining the markup template for the bounding box.
          *
          * @property BOUNDING_TEMPLATE
          * @type String
@@ -867,7 +885,7 @@ Y.WidgetHTMLRenderer.prototype = {
         BOUNDING_TEMPLATE : '<li id="{{id}}" role="treeitem" class="{{boundingClasses}}" tabindex="-1">{{{contentBox}}}</li>',
         
         /**
-         * Property defining the markup template for content box.
+         * Property defining the markup template for the content box.
          *
          * @property CONTENT_TEMPLATE
          * @type String
@@ -877,7 +895,7 @@ Y.WidgetHTMLRenderer.prototype = {
         /**
          * renderUI implementation
          *
-         * Creates a visual representation of the treeview based on existing parameters. 
+         * Creates a visual representation of the tree leaf based on existing parameters. 
          * @method renderUI
         */  
         renderUI: function (contentBuffer) {
@@ -887,17 +905,18 @@ Y.WidgetHTMLRenderer.prototype = {
     
         ATTRS: {
             /**
-             * Flag to indicate if a leaf has been rendered to the DOM or not
+             * Flag to indicate if a leaf has been rendered to the DOM or not.
              *
              * @attribute DOMReady
              * @type Boolean
+             * @default false
             */
             DOMReady : {
                 value : false
             }, 
 
             /**
-             * The label attribute for the tree.
+             * The label for the tree leaf.
              *
              * @attribute label
              * @type String
@@ -905,7 +924,7 @@ Y.WidgetHTMLRenderer.prototype = {
             label: {},
             
             /**
-             * Specifying a custom getter for the Bounding box so that
+             * The attribute contains a custom getter for the Bounding box so that
              * it's only rendered when needed. 
              * @attribute boundingBox
              * @type BoundingBox
@@ -917,7 +936,7 @@ Y.WidgetHTMLRenderer.prototype = {
             },
             
             /**
-             * Specifying a custom getter for the Content box so that
+             * The attribute contains a custom getter for the Content box so that
              * it's only rendered when needed. 
              * @attribute contentBox
              * @type contentBox
