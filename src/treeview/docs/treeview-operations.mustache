@@ -34,7 +34,7 @@ This example demonstrates how to add and remove new elements to a tree.
 </div>
 
 <p>
-First we are just going to render a simple tree:
+Start with rendering a simple tree:
 </p>
 
 ```
@@ -51,26 +51,25 @@ YUI().use('treeview',  function(Y) {
        ]
     });
     
-    tree.render(#mytree);
+    tree.render('#mytree');
 ```
 
 <p>
-    Now let's add some more custom leaves
+Call the tree's `add()` method to add some leaves
+with some custom markup:
 </p>
 
 ```
     tree.add([{label : "<span class='new'>New leaf 1</span>"}, {label : "<span class='new'>New Leaf 2</span>"}]);
-
 ```
 
 
 <p>
-    Then remove the first leaf
+Then remove the first leaf:
 </p>
 
 ```
     tree.item(0).remove();
-
 ```
 
 

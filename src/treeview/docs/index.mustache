@@ -1,66 +1,69 @@
 <div class="intro">
-<h1>YUI Treeview</h1>
+<h1>YUI TreeView</h1>
 <p>
 <img src="{{componentAssets}}/treeview.png" alt="Screenshot of the TreeView widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
-The TreeView widget provides a visual representation of hierarchical data.  This TreeView implementation is based on the WidgetParent and WidgetChild infrastructure classes. 
-</p>
+<p>The TreeView widget provides a visual representation of hierarchical data.</p>  
 
+<p>A given "TreeView" is actually a nested structure of YUI widgets:</p>
 
-<p>
-TreeView provides a set of methods and properties that allows you to create a wide range of hierarchical structures, from simple to very complex. TreeView is highly modular and easy to extend so that it can be modified or used as the basis for custom implementations and widgets.
-</p>
-<h2>String based</h2>
+<ul>
+    <li>`TreeLeaf`, a `Widget` that mixes in the generic `WidgetChild` class. 
+    A TreeLeaf has no children.</li>
+    <li>`TreeView`, a `Widget` that mixes in the `WidgetParent` <em>and</em> `WidgetChild` classes.
+    A TreeView may contain zero or more child TreeLeaf or TreeView objects.</li>
+</ul>
 
-<p>TreeView's rendering mechanism is entirely string based, which provides great performance, even when dealing wi
-th a large set of DOM nodes. Additionally, TreeView loads all its nodes on demand -- that is, it only creates and renders them when they're actually needed. Although it's not recommended, you can turn this off if you want to, via the configuration attrbute `lazyLoad`.</p>
-
-<p>A TreeView widget (based on WidgetParent) is composed of zero to many TreeLeafs (each based on WidgetChild).</p>
+<p>YUI 3 TreeView is built for high performance.
+Its rendering mechanism is entirely string based, 
+which provides support even for very large sets of DOM nodes. 
+By default, TreeView loads all its nodes on demand, 
+creating and rendering child nodes only when they're actually needed.</p> 
 
 </div>
 
 {{>getting-started}}
 
-<h2>Using Treeview</h2>
+<h2>Using TreeView</h2>
 <h3>Quick Start</h3>
 
 <p>
-Here's an easy way to create an instance of a Treeview with just a few lines of code.
+To create a basic TreeView instance, 
+first create a div to render the tree into,
+with a class of `yui3-sam-skin`:
 </p>
+
+```
+<div id="toc" class="yui3-skin-sam">
+```
+
+<p>Alternatively, you can set `yui3-sam-skin` on 
+the body or some other containing element.</p>
+
+<p>Once the markup is ready,
+give the tree a label and some child leaves,
+and render it into the target div:</p>
 
 ```
 YUI().use('treeview', function (Y) {
-
-  // Add the yui3-skin-sam class to the body so the default
-  // Treeview widget skin will be applied.
-  Y.one('body').addClass('yui3-skin-sam');
-
-  // Create a new instance of Treeview
-   var tree = new Y.TreeView({
-	   id: "tree",
-	   label : "This my tree",
-	   children: [
-	       { label: "Leaf One" },
-	       { label: "Leaf Two" }
-	   ]
-	});
+    var tree = new Y.TreeView({
+            label: "My Novel",
+            children: [
+                { label: "Chapter One" },
+                { label: "Chapter Two" }
+            ]
+        });
                 
-  tree.render();
+    tree.render('#toc');
+});
 ```
 
-<p>
-For a more complete discussion of how to use, configure, and customize Treeview, read on.
-</p>
-
-<h3>Configuring Treeview</h3>
+<h3>Configuring TreeView</h3>
 
 <p>
 Except for `label`, all configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="{{apiDocs}}/TreeView.html">API docs</a>.
 </p>
 
-<h4>Treeview Config Attributes</h4>
-
-<p>
-</p>
+<h4>TreeView Attributes</h4>
 
 <table>
   <thead>
@@ -72,36 +75,50 @@ Except for `label`, all configuration attributes are optional. This list only co
   </thead>
   <tbody>
     <tr>
-      <td>`label`</td>
-      <td>Empty value</td>
+      <td>`collapsed`</td>
+      <td>`true`</td>
       <td>
-        The Label of the tree.
+        A boolean indicating whether the TreeView is collapsed.
+        `true` if the tree's children are currently hidden,
+        `false` if they are currently expanded.
+        To change the tree's expansion state, 
+        call `expand()` or `collapse()`.   
+      </td>
+    </tr>
+    <tr>
+      <td>`label`</td>
+      <td>Empty string</td>
+      <td>
+          [<b>Required</b>] A String snippet of text or HTML 
+          to display at the top level of the tree. 
+          Individual `TreeLeaf` objects have their own `label` attribute.
       </td>
     </tr>
     <tr>
       <td>`lazyLoad`</td>
-      <td>true</td>
+      <td>`true`</td>
       <td>
-      	Flag to indicate whether the tree should run it's leaves on demand. 
+          Specifies whether the tree should generate DOM nodes 
+          for its hidden child leaves on demand, 
+          when the user expands that branch of the tree.
+          Setting `lazyLoad` to `false` causes the TreeView to
+          generate child DOM nodes ahead of time, 
+          which will likely decrease perceived performance for large trees.
+          You can only change `lazyLoad` when you first instantiate the tree.</p>
       </td>
-    </tr>
-    <tr>
-      <td>`collapsed`</td>
-      <td>True</td>
-      <td>Flag to indicate if the tree's state is collapsed</td>
     </tr>
     <tr>
       <td>`children`</td>
       <td>Empty array</td>
-      <td>Array of children objects. This is inherited from Widget-Parent</td>
+      <td>An array of child `TreeView` or `TreeLeaf` objects.</td>
     </tr>
   </tbody>
 </table>
 
-<p>For the full list of Widget-Parent attributes supported by Treeview, please visit Widget-Parent</p>
+<p>For the full list of attributes TreeView inherits from `WidgetParent`, 
+refer to the <a href="{{apiDocs}}/WidgetParent.html">WidgetParent API documentation</a>.</p>
 
-<h4>Treeleaf Config Attributes</h4>
-
+<h4>TreeLeaf Attributes</h4>
 
 <table>
   <thead>
@@ -114,34 +131,43 @@ Except for `label`, all configuration attributes are optional. This list only co
   <tbody>
     <tr>
       <td>`label`</td>
-      <td>Empty value</td>
+      <td>Empty string</td>
       <td>
-      	The treeleaf label
+          [<b>Required</b>] A String that provides a snippet of text or HTML
+          to display for the leaf.
       </td>
     </tr>
     <tr>
       <td>`parent`</td>
        <td>null</td>
        <td>
-      	Retrieves the parent of the Widget in the object hierarchy. This attribute is inherted from Widget-Child
-      </td>
+            A reference to the `TreeLeaf`'s parent `TreeView` object.
+       </td>
     </tr>
     <tr>
       <td>`depth`</td>
       <td>0</td>
       <td>
-      	Number representing the depth of this Widget relative to the root Widget in the object heirarchy. This attribute is inherted from Widget-Child
+          A Number indicating the depth of this leaf 
+          relative to the root of the tree hierarchy.
+          You cannot change this attribute directly, 
+          but this attribute will correctly reflect the depth
+          if you use `add()` and `remove()` to mutate the 
+          tree's structure. 
       </td>
     </tr>
-     <tr>
+    <tr>
       <td>`root`</td>
       <td>null</td>
       <td>
-      	Returns the root Widget in the object hierarchy.
+      	    A reference to the root TreeView object.
       </td>
     </tr>
   </tbody>
 </table>
+
+<p>For the full list of attributes TreeLeaf inherits from `WidgetChild`, 
+refer to the <a href="{{apiDocs}}/WidgetChild.html">WidgetChild API documentation</a>.</p>
 
 
 <h3>Responding to events</h3>
@@ -169,26 +195,35 @@ mytree.toggleTreeState();
 
 ```
 
-<h3>Subtrees</h3>
-A tree could be part of another tree, becoming a parent and child at the same time. For example:
+<h4>Creating Subtrees</h4>
+
+A TreeView's `children` attribute 
+provides some sugar for creating child nodes.
+If you add a simple object with just a label,
+the TreeView creates a child TreeLeaf node.
+However, if you also give the object a `type` of `"TreeView"`, 
+the TreeView creates a child TreeView node: 
+
+Since TreeViews mix in the behaviors of WidgetParent and WidgetChild,
+you can use them to create sub trees.
+
 
 ```
 var tree = new Y.TreeView({
-   id: "tree",
-   label : "This my tree",
-   children: [
-       {  label: "Leaf One" },
-       {  label: "Leaf Two" },
-       { type: "TreeView",id: "subtree", label: "Subtree", children: [
-          {  label: "Subtree - Leaf One" },
-          {   label: "Subtree - Leaf Two" },
-          { label: "Subtree - Leaf Three" },
-          {  label: "Subtree - Leaf Four" }
-       ]}
-   ]
+    label : "Main Tree",
+    children: [
+        { label: "Leaf One" },
+        { label: "Leaf Two" },
+        { type: "TreeView", label: "Subtree", children: [
+            { label: "Subtree - Leaf One" },
+            { label: "Subtree - Leaf Two" },
+            { label: "Subtree - Leaf Three" },
+            { label: "Subtree - Leaf Four" }
+        ]}
+    ]
 });
 
-tree.render();
+tree.render('#demo');
 
 ```
 
@@ -205,12 +240,4 @@ mytree.add({label: "<span class='new-node'>New leaf</span>"});
 mytree.item(1).remove();
 
 ```
-
-
-
-
-
-
-
-
 
