@@ -1,5 +1,25 @@
 YUI.add('treeview', function(Y) {
 
+/**
+ * Provides the WidgetHTMLRenderer extensions, which override the base Widget API 
+ * to allow widgets to be rendered purely using HTML from templates, without any 
+ * Node references. 
+ * 
+ * This allows Widgets to be rendered on the server, and also optimizes rendering 
+ * in high-scale applications such as TreeView.
+ * 
+ * **Note:** When applied, Node references to `boundingBox` and `contentBox` 
+ * won't be available until the Widget is rendered.
+ * 
+ * Although not required of widget implementors, the Widget base class uses
+ * Handlebars to render its `boundingBox` and `contentBox` templates. If 
+ * overriding the `CONTENT_TEMPLATE` or `BOUNDING_TEMPLATE` values, you should 
+ * use Handlebars token syntax, and maintain tokens used by the default 
+ * templates.
+ *
+ * @module widget-htmlrenderer
+ */
+
 var getClassName = Y.ClassNameManager.getClassName,
         TREEVIEW = 'treeview',
         TREE = 'tree',
@@ -42,27 +62,7 @@ var getClassName = Y.ClassNameManager.getClassName,
             }
             return value;
         };
-            
-/**
- * Provides the WidgetHTMLRenderer extensions, which override the base Widget API 
- * to allow widgets to be rendered purely using HTML from templates, without any 
- * Node references. 
- * 
- * This allows Widgets to be rendered on the server, and also optimizes rendering 
- * in high-scale applications such as TreeView.
- * 
- * <strong>Note</strong: When applied, Node references to boundingBox and contentBox 
- * won't be available until the Widget is rendered.
- * 
- * Although not required of widget implementors, the Widget base class uses
- * Handlebars to render its boundingBox and contentBox templates. If overriding
- * the CONTENT_TEMPLATE or BOUNDING_TEMPLATE values, you should use Handlebars 
- * token syntax, and maintain tokens used by the default templates.
- *
- * @module widget-htmlrenderer
- */
-
-
+        
 /**
  * WidgetHTMLRenderer is an Extension for Widget, to be used with Y.Base.create or
  * Y.Base.mix. It provides a `renderHTML()` method which can be used to generate the 
@@ -331,7 +331,7 @@ Y.WidgetHTMLRenderer.prototype = {
  * The Treeview module is a UI widget that allows users
  * to create a visual representation of a hierarchical list
  * of elements.
- * Extends Y.WidgetParent, Y.WidgetChild, and Y.WidgetHTMLRenderer.
+ * 
  * @module treeview
  */
 
