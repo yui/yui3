@@ -58,7 +58,22 @@ YUI().use('treeview', function (Y) {
 });
 ```
 
-<p>Optionally, you can supply an `id` property
+<h3>Creating Fancier Nodes</h3>
+
+<p>Labels don't necessarily have to be plain text.
+You can also insert HTML:</p>
+
+```
+var tree = new Y.TreeView({
+        label: '<b>My Novel</b>',
+        children: [
+            { label: '<a href="./ch01.html">Chapter One</a>' },
+            { label: '<a href="./ch02.html">Chapter Two</a>' }
+        ]
+    });
+``` 
+
+<p>You can also supply an `id` property
 along with the `label`:</p>
 
 ```
@@ -69,9 +84,16 @@ children: [
 ```
 
 <p>This enables you to provide a known, user-friendly `id` attribute
-on each list item that comprises the tree.
+on each `<li>` that contains the node.
 Otherwise, YUI automatically generates an `id`
 using `Y.guid()`.</p>
+
+<p>For more advanced label customization,
+you can override the Handlebars template 
+that defines the `<li>` container,
+`TreeView.TREEVIEWLABEL_TEMPLATE`.
+For an example, refer to 
+<a href="./treeview-templates.html">TreeView Template Customization</a>.</p>
 
 <h3>Creating Subtrees</h3>
 
