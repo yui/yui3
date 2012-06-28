@@ -101,7 +101,7 @@ var sum = md5sum.digest('hex');
 
 console.log('Using MD5:', sum);
 
-var header = fs.readFileSync(path.join('../template/meta.js'), 'utf8');
+var header = fs.readFileSync(path.join(__dirname, '../template/meta.js'), 'utf8');
 
 header = header.replace(MD5_TOKEN, sum).replace('join.py', 'join.js');
 
