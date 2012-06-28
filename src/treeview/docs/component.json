@@ -9,6 +9,15 @@
     
     "examples": [
         {
+            "name"       : "treeview-templates",
+            "displayName": "Customizing TreeView Templates",
+            "description": "How to override the default TreeView Handlebars templates and supply custom data",
+            "modules"    : ["treeview", "handlebars"],
+            "tags"       : ["treeview", "handlebars"],
+    
+            "hideTableOfContents": true
+        },
+        {
             "name"       : "treeview-operations",
             "displayName": "Add/Remove Leaves From a Tree",
             "description": "How to remove and add treeleafs into a tree",
