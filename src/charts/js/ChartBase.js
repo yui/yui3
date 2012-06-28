@@ -17,16 +17,6 @@ ChartBase.ATTRS = {
     dataProvider: {
         lazyAdd: false,
 
-        valueFn: function()
-        {
-            var defDataProvider = [];
-            if(!this._seriesKeysExplicitlySet)
-            {
-                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
-            }
-            return defDataProvider;
-        },
-
         setter: function(val)
         {
             var dataProvider = this._setDataValues(val);
@@ -832,11 +822,14 @@ ChartBase.prototype = {
     _dataProviderChangeHandler: function(e)
     {
         var dataProvider = e.newVal,
-            axes = this.get("axes"),
+            axes,
             i,
             axis;
         this._seriesIndex = -1;
         this._itemIndex = -1;
+        this.set("axes", this.get("axes"));
+        axes = this.get("axes");
+        this.set("seriesCollection", this.get("seriesCollection"));
         if(axes)
         {
             for(i in axes)
@@ -1259,7 +1252,7 @@ ChartBase.prototype = {
             catKey = this.get("categoryKey"),
             keys = [],
             i;
-        if(this._seriesKeys)
+        if(this._seriesKeysExplicitlySet)
         {
             return this._seriesKeys;
         }
