@@ -12,13 +12,13 @@ visual representation of hierarchical data.</p>
     <li>`TreeLeaf`, a `Widget` that mixes in the generic `WidgetChild` class. 
     A TreeLeaf has no children.</li>
     <li>`TreeView`, a `Widget` that mixes in the `WidgetParent` <em>and</em> `WidgetChild` classes.
-    A TreeView may contain zero or more child TreeLeaf or TreeView objects.</li>
+    A `TreeView` may contain zero or more child `TreeLeaf` or `TreeView` objects.</li>
 </ul>
 
-<p>YUI 3 TreeView is built for high performance.
+<p>YUI 3 `TreeView` is built for high performance.
 Its rendering mechanism is entirely string based, 
 which provides support even for very large sets of DOM nodes. 
-By default, TreeView loads all its nodes on demand, 
+By default, `TreeView` loads all its nodes on demand, 
 creating and rendering child nodes only when they're actually needed.</p> 
 
 </div>
@@ -29,7 +29,7 @@ creating and rendering child nodes only when they're actually needed.</p>
 <h3>Quick Start</h3>
 
 <p>
-To create a basic TreeView instance, 
+To create a basic `TreeView` instance, 
 first create a div to render the tree into,
 with a class of `yui3-sam-skin`:
 </p>
@@ -80,7 +80,7 @@ Except for `label`, all configuration attributes are optional. This list only co
       <td>`collapsed`</td>
       <td>`true`</td>
       <td>
-        A boolean indicating whether the TreeView is collapsed.
+        A boolean indicating whether the `TreeView` is collapsed.
         `true` if the tree's children are currently hidden,
         `false` if they are currently expanded.
         To change the tree's expansion state, 
@@ -103,7 +103,7 @@ Except for `label`, all configuration attributes are optional. This list only co
           Specifies whether the tree should generate DOM nodes 
           for its hidden child leaves on demand, 
           when the user expands that branch of the tree.
-          Setting `lazyLoad` to `false` causes the TreeView to
+          Setting `lazyLoad` to `false` causes the `TreeView` to
           generate child DOM nodes ahead of time, 
           which will likely decrease perceived performance for large trees.
           You can only change `lazyLoad` when you first instantiate the tree.</p>
@@ -117,8 +117,9 @@ Except for `label`, all configuration attributes are optional. This list only co
   </tbody>
 </table>
 
-<p>For the full list of attributes TreeView inherits from `WidgetParent`, 
-refer to the <a href="{{apiDocs}}/WidgetParent.html">WidgetParent API documentation</a>.</p>
+<p>For the full list of attributes `TreeView` inherits from `WidgetParent` and `WidgetChild`, 
+refer to the <a href="{{apiDocs}}/WidgetParent.html">WidgetParent</a>
+and <a href="{{apiDocs}}/WidgetChild.html">WidgetChild API documentation</a>.</p>
 
 <h4>TreeLeaf Attributes</h4>
 
@@ -162,19 +163,19 @@ refer to the <a href="{{apiDocs}}/WidgetParent.html">WidgetParent API documentat
       <td>`root`</td>
       <td>null</td>
       <td>
-      	    A reference to the root TreeView object.
+      	    A reference to the root `TreeView` object.
       </td>
     </tr>
   </tbody>
 </table>
 
-<p>For the full list of attributes TreeLeaf inherits from `WidgetChild`, 
+<p>For the full list of attributes `TreeLeaf` inherits from `WidgetChild`, 
 refer to the <a href="{{apiDocs}}/WidgetChild.html">WidgetChild API documentation</a>.</p>
 
 
 <h3>Responding to events</h3>
 
-<p>Like other YUI widgets, TreeView offers a suite of custom events. For example, let's say you'd like to detect when a TreeLeaf has been clicked, all you'd need to do is:</p>
+<p>Like other YUI widgets, `TreeView` offers a suite of custom events. For example, let's say you'd like to detect when a `TreeLeaf` has been clicked, all you'd need to do is:</p>
 
 ```
 mytree.on("treeleaf:click",function (e) {
@@ -184,7 +185,7 @@ mytree.on("treeleaf:click",function (e) {
 ```
 
 <h3>Expanding/Collapsing a tree</h3>
-<p>TreeView offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
+<p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
 ```
 //Collapses a tree
 mytree.collapse();
@@ -199,14 +200,14 @@ mytree.toggleTreeState();
 
 <h4>Creating Subtrees</h4>
 
-A TreeView's `children` attribute 
+A `TreeView`'s `children` attribute 
 provides some sugar for creating child nodes.
 If you add a simple object with just a label,
-the TreeView creates a child TreeLeaf node.
+the `TreeView` creates a child `TreeLeaf` node.
 However, if you also give the object a `type` of `"TreeView"`, 
-the TreeView creates a child TreeView node: 
+the `TreeView` creates a child `TreeView` node: 
 
-Since TreeViews mix in the behaviors of WidgetParent and WidgetChild,
+Since `TreeView`s mix in the behaviors of `WidgetParent` and `WidgetChild`,
 you can use them to create sub trees.
 
 
