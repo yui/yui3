@@ -7,9 +7,9 @@
     {{> sortable-events-source-css}}
     {{> sortable-indent-css}}
     </style>
-    
+
     {{> sortable-events-source-indent-html}}
-    
+
     <script>
     {{>sortable-events-source-js-pre}}
     {{>sortable-events-source-js-dd}}
@@ -20,11 +20,13 @@
 <h3>Setting Up the List</h3>
 <p>First we need to create the HTML structure for the list. Since `Sortable` uses `Y.DD.Delegate`, we need to set up a delegation container (`#demo`) and the list items (`li`). We also set up a log list (`#log`) which will inform us of the drag events.</p>
 
+<p><strong>Note:</strong> This example is using <a href="../cssgrids/index.html">CSS Grids</a> to create a two-column layout.</p>
+
 ```
 {{>sortable-events-source-html}}
 ```
 
-<p>Now we give the list and the log some CSS to make it visible.</p>
+<p>Now we style the list and the log with some CSS to make them visible.</p>
 
 ```
 {{>sortable-events-source-css}}

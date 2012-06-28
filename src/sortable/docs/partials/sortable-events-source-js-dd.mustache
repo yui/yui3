@@ -2,18 +2,17 @@
         var node = sortable.delegate.get('currentNode'),
             prev = node.previous(),
             next = node.next(),
-            log  = Y.one('#log'),
-            msg;
+            msg  = 'Moved ' + node.get('text');
 
+        // Customize the log message based on where the `node` moved to.
         if (prev && next) {
-            msg = "moved " + node.get('text') + " between " + prev.get('text') + " and " + next.get('text');
-        }
-        else if (prev) {
-            msg = "moved " + node.get('text') + " to the end, after " + prev.get('text');
-        }
-        else if (next) {
-            msg = "moved " + node.get('text') + " to the beginning, before " + next.get('text');
+            msg += ' between ' + prev.get('text') + ' and ' + next.get('text');
+        } else if (prev) {
+            msg += ' to the end, after ' + prev.get('text');
+        } else if (next) {
+            msg += ' to the beginning, before ' + next.get('text');
         }
 
-        log.append("<li>" + msg + "</li>");
+        // Create a new list item and append it to our log of events.
+        log.append(Y.Node.create('<li />').set('text', msg));
     });
