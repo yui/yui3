@@ -2,7 +2,7 @@
  * The Treeview module is a UI widget that allows users
  * to create a visual representation of a hierarchical list
  * of elements.
- * Extends Y.WidgetParent, Y.WidgetChild, and Y.WidgetHTMLRenderer.
+ * 
  * @module treeview
  */
 
