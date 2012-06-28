@@ -47,10 +47,10 @@ Then render it into the container:</p>
 ```
 YUI().use('treeview', function (Y) {
     var tree = new Y.TreeView({
-            label: "My Novel",
+            label: 'My Novel',
             children: [
-                { label: "Chapter One" },
-                { label: "Chapter Two" }
+                { label: 'Chapter One' },
+                { label: 'Chapter Two' }
             ]
         });
                 
@@ -72,15 +72,15 @@ the `TreeView` creates a child `TreeView` node instead:
 
 ```
 var tree = new Y.TreeView({
-    label : "Main Tree",
+    label : 'Main Tree',
     children: [
-        { label: "Leaf One" },
-        { label: "Leaf Two" },
-        { type: "TreeView", label: "Subtree", children: [
-            { label: "Subtree - Leaf One" },
-            { label: "Subtree - Leaf Two" },
-            { label: "Subtree - Leaf Three" },
-            { label: "Subtree - Leaf Four" }
+        { label: 'Leaf One' },
+        { label: 'Leaf Two' },
+        { type: 'TreeView', label: 'Subtree', children: [
+            { label: 'Subtree - Leaf One' },
+            { label: 'Subtree - Leaf Two' },
+            { label: 'Subtree - Leaf Three' },
+            { label: 'Subtree - Leaf Four' }
         ]}
     ]
 });
@@ -104,8 +104,8 @@ that contained various `TreeNode` objects.
 <p>Like other YUI widgets, `TreeView` offers a suite of custom events. For example, let's say you'd like to detect when a `TreeLeaf` has been clicked, all you'd need to do is:</p>
 
 ```
-mytree.on("treeleaf:click",function (e) {
-	Y.log("You clicked on: " + e.target.get("label"));
+mytree.on('treeleaf:click', function (e) {
+	Y.log('You clicked on: ' + e.target.get('label'));
 });
 
 ```
@@ -130,7 +130,7 @@ mytree.toggleTreeState();
 
 ```
 //adding a new treeleaf with a custom label
-mytree.add({label: "<span class='new-node'>New leaf</span>"});
+mytree.add({label: '<span class='new-node'>New leaf</span>'});
 
 ```
 ```
