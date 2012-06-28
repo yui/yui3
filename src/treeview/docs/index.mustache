@@ -75,14 +75,16 @@ using `Y.guid()`.</p>
 
 <h3>Creating Subtrees</h3>
 
-A `TreeView`'s `children` attribute 
-provides some sugar for creating child nodes.
+A `TreeView`'s constructor provides a 
+`children` configuration property that  
+enables you to initially populate the tree with child nodes.
 As shown in the <a href="#quick-start">Quick Start</a>,
 if you add a simple object with just a label,
 the `TreeView` creates a child `TreeLeaf` node.
 
 However, if you also supply a `type` of `"TreeView"`, 
-the `TreeView` creates a child `TreeView` node instead: 
+the `TreeView` creates a child `TreeView` node,
+which can itself have child nodes: 
 
 
 ```
@@ -289,11 +291,6 @@ Except for `label`, all configuration attributes are optional. This list only co
           which will likely decrease perceived performance for large trees.
           You can only change `lazyLoad` when you first instantiate the tree.</p>
       </td>
-    </tr>
-    <tr>
-      <td>`children`</td>
-      <td>Empty array</td>
-      <td>An array of child `TreeView` or `TreeLeaf` objects.</td>
     </tr>
   </tbody>
 </table>
