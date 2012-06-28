@@ -55,7 +55,6 @@ YUI.add('loader-tests', function(Y) {
             });
 
             var out = loader.resolve(true);
-            console.log(out.css);
 
             Assert.areEqual(0, out.css.length, 'Failed to override CSS skin files');
             Assert.isTrue((out.js[0].indexOf('widget-base') > -1), 'Failed to find the widget-base module in the JS');
