@@ -60,6 +60,13 @@
             "modules"    : ["sortable"],
             "tags"       : ["sortable", "list", "simple", "multi", "join", "fish"],
             "sortArrow"  : "arrow-out"
+        },
+        {
+            "name"       : "sortable-events",
+            "displayName": "Sortable Events",
+            "description": "Create a sortable list with drag-and-drop notifications.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "dd", "event"]
         }
     ]
 }
