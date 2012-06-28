@@ -58,6 +58,78 @@ YUI().use('treeview', function (Y) {
 });
 ```
 
+
+<h3>Responding to events</h3>
+
+<p>Like other YUI widgets, `TreeView` offers a suite of custom events. For example, let's say you'd like to detect when a `TreeLeaf` has been clicked, all you'd need to do is:</p>
+
+```
+mytree.on("treeleaf:click",function (e) {
+	Y.log("You clicked on: " + e.target.get("label"));
+});
+
+```
+
+<h3>Expanding/Collapsing a tree</h3>
+<p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
+```
+//Collapses a tree
+mytree.collapse();
+
+//Expands a tree
+mytree.expand();
+
+//Toggles the state, if collapsed it will expand it and viceversa.
+mytree.toggleTreeState();
+
+```
+
+<h4>Creating Subtrees</h4>
+
+A `TreeView`'s `children` attribute 
+provides some sugar for creating child nodes.
+If you add a simple object with just a label,
+the `TreeView` creates a child `TreeLeaf` node.
+However, if you also give the object a `type` of `"TreeView"`, 
+the `TreeView` creates a child `TreeView` node: 
+
+Since `TreeView`s mix in the behaviors of `WidgetParent` and `WidgetChild`,
+you can use them to create sub trees.
+
+
+```
+var tree = new Y.TreeView({
+    label : "Main Tree",
+    children: [
+        { label: "Leaf One" },
+        { label: "Leaf Two" },
+        { type: "TreeView", label: "Subtree", children: [
+            { label: "Subtree - Leaf One" },
+            { label: "Subtree - Leaf Two" },
+            { label: "Subtree - Leaf Three" },
+            { label: "Subtree - Leaf Four" }
+        ]}
+    ]
+});
+
+tree.render('#demo');
+
+```
+
+<h3>Adding & Removing Tree nodes</h3>
+<p>Adding and removing tree nodes is really simple. TreeView provides two methods to do so: `add()` and `remove()`.</p>
+
+```
+//adding a new treeleaf with a custom label
+mytree.add({label: "<span class='new-node'>New leaf</span>"});
+
+```
+```
+//remove first leaf
+mytree.item(1).remove();
+
+```
+
 <h3>Configuring TreeView</h3>
 
 <p>
@@ -170,76 +242,4 @@ and <a href="{{apiDocs}}/WidgetChild.html">WidgetChild API documentation</a>.</p
 
 <p>For the full list of attributes `TreeLeaf` inherits from `WidgetChild`, 
 refer to the <a href="{{apiDocs}}/WidgetChild.html">WidgetChild API documentation</a>.</p>
-
-
-<h3>Responding to events</h3>
-
-<p>Like other YUI widgets, `TreeView` offers a suite of custom events. For example, let's say you'd like to detect when a `TreeLeaf` has been clicked, all you'd need to do is:</p>
-
-```
-mytree.on("treeleaf:click",function (e) {
-	Y.log("You clicked on: " + e.target.get("label"));
-});
-
-```
-
-<h3>Expanding/Collapsing a tree</h3>
-<p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
-```
-//Collapses a tree
-mytree.collapse();
-
-//Expands a tree
-mytree.expand();
-
-//Toggles the state, if collapsed it will expand it and viceversa.
-mytree.toggleTreeState();
-
-```
-
-<h4>Creating Subtrees</h4>
-
-A `TreeView`'s `children` attribute 
-provides some sugar for creating child nodes.
-If you add a simple object with just a label,
-the `TreeView` creates a child `TreeLeaf` node.
-However, if you also give the object a `type` of `"TreeView"`, 
-the `TreeView` creates a child `TreeView` node: 
-
-Since `TreeView`s mix in the behaviors of `WidgetParent` and `WidgetChild`,
-you can use them to create sub trees.
-
-
-```
-var tree = new Y.TreeView({
-    label : "Main Tree",
-    children: [
-        { label: "Leaf One" },
-        { label: "Leaf Two" },
-        { type: "TreeView", label: "Subtree", children: [
-            { label: "Subtree - Leaf One" },
-            { label: "Subtree - Leaf Two" },
-            { label: "Subtree - Leaf Three" },
-            { label: "Subtree - Leaf Four" }
-        ]}
-    ]
-});
-
-tree.render('#demo');
-
-```
-
-<h3>Adding & Removing Tree nodes</h3>
-<p>Adding and removing tree nodes is really simple. TreeView provides two methods to do so: `add()` and `remove()`.</p>
-
-```
-//adding a new treeleaf with a custom label
-mytree.add({label: "<span class='new-node'>New leaf</span>"});
-
-```
-```
-//remove first leaf
-mytree.item(1).remove();
-
-```
 
