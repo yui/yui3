@@ -161,22 +161,26 @@ over listening for DOM events:</p>
     <li>It future-proofs your code against other user actions that might expand the tree, such as touches or keystrokes.</li>
 </ul>
 
-<h3>Manipulating a Tree</h3>
+<h3>Manipulating Tree State</h3>
 
+<h4>Expanding/Collapsing a Tree</h4>
 
-<h4>Expanding/Collapsing a tree</h4>
-<p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
-```
-//Collapses a tree
-mytree.collapse();
-
-//Expands a tree
-mytree.expand();
-
-//Toggles the state, if collapsed it will expand it and viceversa.
-mytree.toggleTreeState();
+<p>By default, a `TreeView` node automatically toggles 
+its expand/collapse state in response to user clicks.
+If you need to programatically expand or collapse a tree,
+the `TreeView` API offers these methods:
 
 ```
+// Collapses a tree node (non-recursive)
+tree.collapse();
+
+// Expands a tree node (non-recursive)
+tree.expand();
+
+// Toggles the state; if collapsed, expand (and vice-versa).
+tree.toggleTreeState();
+```
+
 
 
 <h3>Adding & Removing Tree nodes</h3>
