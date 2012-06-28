@@ -99,16 +99,62 @@ which had a master `TreeView` widget
 that contained various `TreeNode` objects.
 
 
-<h3>Responding to events</h3>
+<h3>Listening to the Trees</h3>
 
-<p>Like other YUI widgets, `TreeView` offers a suite of custom events. For example, let's say you'd like to detect when a `TreeLeaf` has been clicked, all you'd need to do is:</p>
+<p>Like all YUI widgets, `TreeView` offers a suite of custom events, 
+including a suite of <a href="../widget/#uievents">"Default UI" custom events</a> 
+that mirror DOM events that occur within the tree. 
+For example, to detect when a `TreeLeaf` 
+(but not a `TreeView`) has been clicked, 
+you can set an event handler on the `TreeView` instance 
+and listen for the `treeleaf:click` custom event:</p>
 
 ```
-mytree.on('treeleaf:click', function (e) {
-	Y.log('You clicked on: ' + e.target.get('label'));
+var tree = new Y.TreeView({
+        label: 'Far Out',
+        children: [
+            { label: 'Groovy' },
+            { label: 'Moonflower' }
+            { label: 'Star Child' }
+        ]
+    });
+            
+tree.render('#gaia');
+
+tree.on('treeleaf:click', function (ev) {
+	Y.log('You clicked on: ' + ev.target.get('label'));
 });
 
 ```
+
+<p>Listening for custom UI events has some advantages 
+over listening for DOM events,  
+but sometimes the <em>actual</em> thing you want to listen for
+is an <a href="../attribute/#events">attribute change event</a>.
+For example, every `TreeView` has a `collapsed` attribute
+indicating the expand/collapse state of the tree. 
+If you wanted to detect node expansions,
+you could set an event handler for `collapsedChange` events:</p>
+
+
+```
+// Use 'after()' rather than 'on()' to listen only for 
+// *successful* (i.e. un-prevented) state changes.
+tree.after('collapsedChange', function (ev) {
+    if (ev.newVal === false) { 
+        Y.log('Tree expanded!');
+    }
+});
+```
+
+<p>If you specifically care about checking for tree state changes,
+listening for state change events has several advantages:</p>
+
+<ul>
+    <li>It avoids being confused by repeated clicks on the same node.</li>
+    <li>It avoids depending on the internal DOM structure of the tree.</li>
+    <li>It future-proofs your code against other user actions that might expand the tree, such as touches or keystrokes.</li>
+</ul>
 
 <h3>Expanding/Collapsing a tree</h3>
 <p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
