@@ -4,14 +4,14 @@
     "description": "Provides a visual representation and helper methods for hierarchical structures",
     "author"     : "gonzalocordero",
 
-    "tags": ["beta", "widget", "treeview"],
-    "use" : ["treeview"],
+    "tags": ["beta", "widget", "treeview", "escape"],
+    "use" : ["treeview", "escape"],
     
     "examples": [
         {
             "name"       : "treeview-operations",
-            "displayName": "Add/Remove Leaves From a Tree",
-            "description": "How to remove and add treeleafs into a tree",
+            "displayName": "Add and Remove Leaves",
+            "description": "How to safely enable users to add and remove leaves",
             "modules"    : ["treeview"],
             "tags"       : ["treeview"],
     
