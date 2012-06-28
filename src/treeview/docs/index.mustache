@@ -58,6 +58,21 @@ YUI().use('treeview', function (Y) {
 });
 ```
 
+<p>Optionally, you can supply an `id` property
+along with the `label`:</p>
+
+```
+children: [
+    { id: 'ch01', label: 'Chapter One' },
+    { id: 'ch02', label: 'Chapter Two' }
+]
+```
+
+<p>This enables you to provide a known, user-friendly `id` attribute
+on each list item that comprises the tree.
+Otherwise, YUI automatically generates an `id`
+using `Y.guid()`.</p>
+
 <h3>Creating Subtrees</h3>
 
 A `TreeView`'s `children` attribute 
