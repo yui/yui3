@@ -196,20 +196,49 @@ tree.expand();
 tree.toggleTreeState();
 ```
 
+<h4>Traversing and Mutating a Tree as an ArrayList</h4>
 
+<p>`TreeView` provides a number of methods and attributes for 
+inspecting and mutating its own contents, 
+nearly all of which inherit from the
+<a href="{{apiDocs}}/WidgetParent.html">WidgetParent API</a>,
+which in turn inherit from or override the 
+<a href="{{apiDocs}}/ArrayList.html">ArrayList API</a>.
+If you are familiar with hierarchical widgets such as 
+<a href="../TabView/">TabView</a>, 
+or even if you've at least used a YUI `ArrayList` or `NodeList` before, 
+you probably have most of the `TreeView` API at your fingertips.</p>
 
-<h3>Adding & Removing Tree nodes</h3>
-<p>Adding and removing tree nodes is really simple. TreeView provides two methods to do so: `add()` and `remove()`.</p>
+<p>To determine the number of direct children of a tree node:</p>
+```
+var numChildren = tree.size();
+```
+<p>To grab the second child of a tree node:</p>
 
 ```
-//adding a new treeleaf with a custom label
-mytree.add({label: '<span class='new-node'>New leaf</span>'});
+var secondChild = tree.item(2);
+```
+
+<p>To remove the second child of a tree node:</p>
 
 ```
-```
-//remove first leaf
-mytree.item(1).remove();
+tree.item(2).remove();
 
+// or alternatively
+tree.remove(2);
+```
+
+<p>To add a new leaf node dynamically:</p>
+
+```
+tree.add({label: '<span class='new-node'>New leaf</span>'});
+
+```
+<p>To iterate over the tree's children:</p>
+```
+tree.each(function (leaf) {
+    leaf.set('label', 'CHANGED');
+});
 ```
 
 <h3>Configuring TreeView</h3>
