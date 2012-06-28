@@ -4,9 +4,9 @@
 <img src="{{componentAssets}}/treeview.png" alt="Screenshot of the TreeView widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
 <p>The TreeView widget provides a rich, 
 <a href="http://www.w3.org/TR/wai-aria/roles#tree">ARIA-enhanced</a>
-visual representation of hierarchical data.</p>  
-
-<p>A given "TreeView" is actually a nested structure of YUI widgets:</p>
+visual representation of hierarchical data.
+Any given "TreeView" is actually a nested structure of YUI widgets
+consisting of:</p>
 
 <ul>
     <li>`TreeLeaf`, a `Widget` that mixes in the generic `WidgetChild` class. 
@@ -16,8 +16,9 @@ visual representation of hierarchical data.</p>
 </ul>
 
 <p>YUI 3 `TreeView` is built for high performance.
-Its rendering mechanism is entirely string based, 
-which provides support even for very large sets of DOM nodes. 
+Its rendering mechanism uses 
+<a href="../handlebars/">Y.Handlebars</a>,
+which is fast enough to support even very large sets of DOM nodes. 
 By default, `TreeView` loads all its nodes on demand, 
 creating and rendering child nodes only when they're actually needed.</p> 
 
@@ -31,19 +32,17 @@ creating and rendering child nodes only when they're actually needed.</p>
 <p>
 To create a basic `TreeView` instance, 
 first create a div to render the tree into,
-with a class of `yui3-sam-skin`:
-</p>
+with a class of `yui3-sam-skin`
+(or alternatively, set `yui3-sam-skin` on 
+the body or some other containing element):</p>
 
 ```
 <div id="toc" class="yui3-skin-sam">
 ```
 
-<p>Alternatively, you can set `yui3-sam-skin` on 
-the body or some other containing element.</p>
-
-<p>Once the markup is ready,
-give the tree a label and some child leaves,
-and render it into the target div:</p>
+<p>Once you have a container div,
+give the tree a label and some child leaves.
+Then render it into the container:</p>
 
 ```
 YUI().use('treeview', function (Y) {
