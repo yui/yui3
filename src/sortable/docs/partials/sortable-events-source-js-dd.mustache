@@ -1,0 +1,19 @@
+    sortable.delegate.after('drag:end', function (e) {
+        var node = sortable.delegate.get('currentNode'),
+            prev = node.previous(),
+            next = node.next(),
+            log  = Y.one('#log'),
+            msg;
+
+        if (prev && next) {
+            msg = "moved " + node.get('text') + " between " + prev.get('text') + " and " + next.get('text');
+        }
+        else if (prev) {
+            msg = "moved " + node.get('text') + " to the end, after " + prev.get('text');
+        }
+        else if (next) {
+            msg = "moved " + node.get('text') + " to the beginning, before " + next.get('text');
+        }
+
+        log.append("<li>" + msg + "</li>");
+    });
