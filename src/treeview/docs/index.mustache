@@ -93,7 +93,8 @@ It's worth reiterating that
 a YUI 3 `TreeView` mixes in the behaviors of both `WidgetParent` and `WidgetChild`,
 and thus can serve as either a parent node, a child node, or both.
 As a corollary, in a YUI 3 `TreeView` 
-there is also nothing special about the top-level `TreeView` object. 
+there is also nothing terribly special 
+about the top-level `TreeView` object. 
 This is in contrast with YUI 2 `TreeView`, 
 which had a master `TreeView` widget
 that contained various `TreeNode` objects.
@@ -148,13 +149,15 @@ tree.after('collapsedChange', function (ev) {
 ```
 
 <p>If you specifically care about checking for tree state changes,
-listening for state change events has several advantages:</p>
+listening for state change events has several advantages
+over listening for DOM events:</p>
 
 <ul>
     <li>It avoids being confused by repeated clicks on the same node.</li>
     <li>It avoids depending on the internal DOM structure of the tree.</li>
     <li>It future-proofs your code against other user actions that might expand the tree, such as touches or keystrokes.</li>
 </ul>
+
 
 <h3>Expanding/Collapsing a tree</h3>
 <p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
