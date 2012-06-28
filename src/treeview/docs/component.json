@@ -1,6 +1,6 @@
 {
     "name"       : "treeview",
-    "displayName": "Treeview",
+    "displayName": "TreeView",
     "description": "Provides a visual representation and helper methods for hierarchical structures",
     "author"     : "gonzalocordero",
 
