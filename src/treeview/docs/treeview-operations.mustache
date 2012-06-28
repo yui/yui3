@@ -1,79 +1,111 @@
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset-context/cssreset-context-min.css">
 
-<style>
-.example {
-	font-size:15px;
-}
-
-.example h4 {
-	border: none;
-	text-transform: none;
-}
-
-.example th {
-	background: none;
-	color: #000;
-	text-transform: none;
-	border: none;
-}
-
-.new {
-    color : blue;
-}
-</style>
-
 <div class="intro">
-<p>
-This example demonstrates how to add and remove new elements to a tree.
-</p>
+<p>This example demonstrates how to enable users 
+to mutate a tree's contents, 
+while preventing malicious XSS attacks.</p>
 
 </div>
 
-<div class="example yui3-skin-sam">
+<div class="yui3-skin-sam">
     {{>treeview-add-remove-source}}
 </div>
 
+
+<h2>The Markup</h2>
+
+<p>The only markup you need to create a `TreeView`
+is an empty container element, wrapped in the 
+`yui3-skin-sam` class. 
+You'll also need to include some form controls
+for adding and removing leaves from the tree.</p> 
+
+```
+<div class="yui3-skin-sam yui3-cssreset">
+    <form>
+        <input id="label-text" type="text" value="New Leaf">
+        <button id="add">Add Leaf</button>
+        <button id="remove">Remove Leaf</button>
+    </form>
+    <div id="mytree"></div>
+</div>
+```
+
+<h2>The CSS</h2>
+
+<p>To make sure that newly added leaves are visually distinct,
+add a single CSS class:</p>
+
+```
+<style>
+.new { color: green; }
+</style>
+```
+
+<h2>The JavaScript</h2>
+
 <p>
-First we are just going to render a simple tree:
+Create a YUI sandbox and load the `treeview` and 
+`escape` modules (to be used later).
+Then render a simple tree and expand it:
 </p>
 
 ```
-YUI().use('treeview',  function(Y) {
-    
-    // Create a new instance of treeview, placing it in 
-    // #mytree container   
-    
+YUI().use('treeview', 'escape', function (Y) {
     var tree = new Y.TreeView({
-       label : "This my tree",
-       children: [
-           {label: "Leaf One" },
-           {label: "Leaf Two"}
-       ]
-    });
+            label: "This my tree",
+            children: [
+               { label: "Leaf One" },
+               { label: "Leaf Two" }
+            ]
+        });
     
-    tree.render(#mytree);
+    tree.render("#mytree");
+    tree.expand();
 ```
 
 <p>
-    Now let's add some more custom leaves
+Create an event listener for the "Add" button.
+When the user clicks the button, 
+get the value of the text field and
+pass it in to the tree's `add()` method 
+to create a new leaf with a new label.
+Since clicking the button submits the form,
+call `preventDefault()` to prevent a page reload.
 </p>
 
 ```
-    tree.add([{label : "<span class='new'>New leaf 1</span>"}, {label : "<span class='new'>New Leaf 2</span>"}]);
-
+Y.one("#add").on("click", function (ev) {
+    var text = Y.one('#label-text').get('value');
+    tree.add({ label: '<span class="new">' + Y.Escape.html(text) + '</span>' });
+    ev.preventDefault();
+});
 ```
-
 
 <p>
-    Then remove the first leaf
+The label is wrapped in an HTML `<span>` element 
+that applies the "new" class, turning the leaf green.
+However, the code uses `Y.Escape.html()` to escape
+possibly dangerous user input. 
+Since the default `TreeView` templates 
+allow the label to be arbitrary HTML,
+it's important to keep track of the HTML <em>you</em> 
+want to add versus the HTML that a user might try to inject.
+</p>
+
+<p>
+Finally, create an event listener for the "Remove" button
+to select and remove the first element of the tree.
 </p>
 
 ```
-    tree.item(0).remove();
-
+Y.one("#remove").on("click", function (ev) {
+    if (tree.item(0)) {
+        tree.item(0).remove();
+    }
+    ev.preventDefault();
+});
 ```
-
-
 
 <h2>Complete Example Source</h2>
 
@@ -81,6 +113,3 @@ YUI().use('treeview',  function(Y) {
  {{>treeview-add-remove-source}}
 
 ```
-
-
-
