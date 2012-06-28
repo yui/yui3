@@ -58,6 +58,46 @@ YUI().use('treeview', function (Y) {
 });
 ```
 
+<h3>Creating Subtrees</h3>
+
+A `TreeView`'s `children` attribute 
+provides some sugar for creating child nodes.
+As shown in the <a href="#quick-start">Quick Start</a>,
+if you add a simple object with just a label,
+the `TreeView` creates a child `TreeLeaf` node.
+
+However, if you also supply a `type` of `"TreeView"`, 
+the `TreeView` creates a child `TreeView` node instead: 
+
+
+```
+var tree = new Y.TreeView({
+    label : "Main Tree",
+    children: [
+        { label: "Leaf One" },
+        { label: "Leaf Two" },
+        { type: "TreeView", label: "Subtree", children: [
+            { label: "Subtree - Leaf One" },
+            { label: "Subtree - Leaf Two" },
+            { label: "Subtree - Leaf Three" },
+            { label: "Subtree - Leaf Four" }
+        ]}
+    ]
+});
+
+tree.render('#demo');
+
+```
+
+It's worth reiterating that 
+a YUI 3 `TreeView` mixes in the behaviors of both `WidgetParent` and `WidgetChild`,
+and thus can serve as either a parent node, a child node, or both.
+As a corollary, in a YUI 3 `TreeView` 
+there is also nothing special about the top-level `TreeView` object. 
+This is in contrast with YUI 2 `TreeView`, 
+which had a master `TreeView` widget
+that contained various `TreeNode` objects.
+
 
 <h3>Responding to events</h3>
 
@@ -84,37 +124,6 @@ mytree.toggleTreeState();
 
 ```
 
-<h4>Creating Subtrees</h4>
-
-A `TreeView`'s `children` attribute 
-provides some sugar for creating child nodes.
-If you add a simple object with just a label,
-the `TreeView` creates a child `TreeLeaf` node.
-However, if you also give the object a `type` of `"TreeView"`, 
-the `TreeView` creates a child `TreeView` node: 
-
-Since `TreeView`s mix in the behaviors of `WidgetParent` and `WidgetChild`,
-you can use them to create sub trees.
-
-
-```
-var tree = new Y.TreeView({
-    label : "Main Tree",
-    children: [
-        { label: "Leaf One" },
-        { label: "Leaf Two" },
-        { type: "TreeView", label: "Subtree", children: [
-            { label: "Subtree - Leaf One" },
-            { label: "Subtree - Leaf Two" },
-            { label: "Subtree - Leaf Three" },
-            { label: "Subtree - Leaf Four" }
-        ]}
-    ]
-});
-
-tree.render('#demo');
-
-```
 
 <h3>Adding & Removing Tree nodes</h3>
 <p>Adding and removing tree nodes is really simple. TreeView provides two methods to do so: `add()` and `remove()`.</p>
