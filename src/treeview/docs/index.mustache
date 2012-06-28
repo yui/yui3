@@ -94,10 +94,13 @@ a YUI 3 `TreeView` mixes in the behaviors of both `WidgetParent` and `WidgetChil
 and thus can serve as either a parent node, a child node, or both.
 As a corollary, in a YUI 3 `TreeView` 
 there is also nothing terribly special 
-about the top-level `TreeView` object. 
-This is in contrast with YUI 2 `TreeView`, 
+about the top-level `TreeView` object.
+(There is one minor difference in that 
+the top-level `TreeView` has an ARIA role of `"tree"`,
+while lower-level `TreeView`s have an ARIA role of `"group"`.)
+This architecture is in contrast with YUI 2 `TreeView`, 
 which had a master `TreeView` widget
-that contained various `TreeNode` objects.
+that contained various `TreeNode`-derived objects.
 
 
 <h3>Listening to the Trees</h3>
@@ -158,8 +161,10 @@ over listening for DOM events:</p>
     <li>It future-proofs your code against other user actions that might expand the tree, such as touches or keystrokes.</li>
 </ul>
 
+<h3>Manipulating a Tree</h3>
 
-<h3>Expanding/Collapsing a tree</h3>
+
+<h4>Expanding/Collapsing a tree</h4>
 <p>`TreeView` offers three methods to change the collapsed state of a tree: collapse, expand, toggleTreeState.</p>
 ```
 //Collapses a tree
