@@ -12340,6 +12340,16 @@ ChartBase.ATTRS = {
     dataProvider: {
         lazyAdd: false,
 
+        valueFn: function()
+        {
+            var defDataProvider = [];
+            if(!this._seriesKeysExplicitlySet)
+            {
+                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
+            }
+            return defDataProvider;
+        },
+
         setter: function(val)
         {
             var dataProvider = this._setDataValues(val);
