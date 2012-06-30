@@ -5,6 +5,7 @@ node_js:
     - 0.8
 branches:
     only:
+        - master
         - fix-node-gc
 before_install:
     - ./src/common/travis/before.sh
