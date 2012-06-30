@@ -8,13 +8,11 @@
 
 //shortcuts
 var L   = Y.Lang,
-    array       = Y.Array,
     isFunction  = L.isFunction,
     isString    = L.isString,
     isBoolean   = L.isBoolean,
     isObject    = L.isObject,
     isNumber    = L.isNumber,
-    doc         = Y.config.doc,
 
     //mouse events supported
     mouseEvents = {
@@ -159,12 +157,12 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
     var customEvent /*:MouseEvent*/ = null;
 
     //check for DOM-compliant browsers first
-    if (isFunction(doc.createEvent)){
+    if (isFunction(Y.config.doc.createEvent)){
 
         try {
 
             //try to create key event
-            customEvent = doc.createEvent("KeyEvents");
+            customEvent = Y.config.doc.createEvent("KeyEvents");
 
             /*
              * Interesting problem: Firefox implemented a non-standard
@@ -192,12 +190,12 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
             try {
 
                 //try to create generic event - will fail in Safari 2.x
-                customEvent = doc.createEvent("Events");
+                customEvent = Y.config.doc.createEvent("Events");
 
             } catch (uierror /*:Error*/){
 
                 //the above failed, so create a UIEvent for Safari 2.x
-                customEvent = doc.createEvent("UIEvents");
+                customEvent = Y.config.doc.createEvent("UIEvents");
 
             } finally {
 
@@ -219,10 +217,10 @@ function simulateKeyEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(doc.createEventObject)){ //IE
+    } else if (isObject(Y.config.doc.createEventObject)){ //IE
 
         //create an IE event object
-        customEvent = doc.createEventObject();
+        customEvent = Y.config.doc.createEventObject();
 
         //assign available properties
         customEvent.bubbles = bubbles;
@@ -373,9 +371,9 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     var customEvent /*:MouseEvent*/ = null;
 
     //check for DOM-compliant browsers first
-    if (isFunction(doc.createEvent)){
+    if (isFunction(Y.config.doc.createEvent)){
 
-        customEvent = doc.createEvent("MouseEvents");
+        customEvent = Y.config.doc.createEvent("MouseEvents");
 
         //Safari 2.x (WebKit 418) still doesn't implement initMouseEvent()
         if (customEvent.initMouseEvent){
@@ -386,7 +384,7 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         } else { //Safari
 
             //the closest thing available in Safari 2.x is UIEvents
-            customEvent = doc.createEvent("UIEvents");
+            customEvent = Y.config.doc.createEvent("UIEvents");
             customEvent.initEvent(type, bubbles, cancelable);
             customEvent.view = view;
             customEvent.detail = detail;
@@ -422,10 +420,10 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(doc.createEventObject)){ //IE
+    } else if (isObject(Y.config.doc.createEventObject)){ //IE
 
         //create an IE event object
-        customEvent = doc.createEventObject();
+        customEvent = Y.config.doc.createEventObject();
 
         //assign available properties
         customEvent.bubbles = bubbles;
@@ -538,19 +536,19 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
     }
 
     //check for DOM-compliant browsers first
-    if (isFunction(doc.createEvent)){
+    if (isFunction(Y.config.doc.createEvent)){
 
         //just a generic UI Event object is needed
-        customEvent = doc.createEvent("UIEvents");
+        customEvent = Y.config.doc.createEvent("UIEvents");
         customEvent.initUIEvent(type, bubbles, cancelable, view, detail);
 
         //fire the event
         target.dispatchEvent(customEvent);
 
-    } else if (isObject(doc.createEventObject)){ //IE
+    } else if (isObject(Y.config.doc.createEventObject)){ //IE
 
         //create an IE event object
-        customEvent = doc.createEventObject();
+        customEvent = Y.config.doc.createEventObject();
 
         //assign available properties
         customEvent.bubbles = bubbles;
