@@ -62,13 +62,19 @@ YUI.add('core-tests', function(Y) {
                 'test: contentready delay': !Y.config.win,
                 'test: available delay': !Y.config.win,
                 'test: pattern requires order': !Y.config.win,
-                'test: fetch with external dependencies redefined in external file': !Y.config.win
+                'test: fetch with external dependencies redefined in external file': !Y.config.win,
+                'test: double skin loading from seed': !Y.config.win
             }
         },
         'test: double skin loading from seed': function() {
             var test = this,
                 Assert = Y.Assert,
-                ArrayAssert = Y.ArrayAssert;
+                ArrayAssert = Y.ArrayAssert,
+                green = Y.Node.create('<div id="skin-test-green"/>'),
+                sam = Y.Node.create('<div id="skin-test-sam"/>');
+
+            Y.one('body').append(green);
+            Y.one('body').append(sam);
 
             YUI({
                 filter: 'raw',
@@ -91,13 +97,13 @@ YUI.add('core-tests', function(Y) {
                 test.resume(function() {
                     var modules = status.data.sort();
                     Assert.isTrue(Y.SKIN_TEST, 'Failed to load external module');
-                    ArrayAssert.itemsAreEqual(["skin-green-skin-test", "skin-test"], modules, 'Failed to load all modules');
+                    Assert.areEqual('underline', green.getStyle('textDecoration').toLowerCase(), 'Green Skin Failed to Load');
+                    Assert.areNotEqual('underline', sam.getStyle('textDecoration').toLowerCase(), 'Sam Skin Loaded');
                 });
             });
 
             test.wait();
         },
-/*
         'test: pattern requires order': function() {
             var test = this,
             Assert = Y.Assert;
@@ -741,7 +747,7 @@ YUI.add('core-tests', function(Y) {
             });
 
             test.wait();
-        }*/
+        }
     });
 
     Y.SeedTests.add(testCore);
