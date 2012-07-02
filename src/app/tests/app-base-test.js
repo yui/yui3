@@ -384,6 +384,34 @@ appBaseSuite.add(new Y.Test.Case({
             Assert.areSame(1, eventCalls, 'Event should fire once.');
             Assert.areSame(1, routeCalls, 'Route should dispatch once.');
         }, 200);
+    },
+
+    '`navigate` event should fire when a link is clicked': function () {
+        var app    = this.app = new Y.App(),
+            called = 0,
+            event;
+
+        event = {
+            button        : 1,
+            currentTarget : Y.one('#link-foo'),
+            preventDefault: function () {}
+        };
+
+        app.route('/foo/', function () {});
+
+        app.once('navigate', function (e) {
+            called += 1;
+
+            e.preventDefault();
+
+            Assert.areSame(event, e.originEvent);
+            Assert.areSame(Y.one('#link-foo').get('href'), e.url);
+        });
+
+        // Fake click event.
+        app._onLinkClick(event);
+
+        Assert.areSame(1, called);
     }
 }));
 

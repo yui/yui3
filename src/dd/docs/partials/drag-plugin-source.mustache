@@ -1,31 +1,88 @@
 <style>
-    #demo {
-        height: 100px;
-        width: 150px;
-        border: 1px solid black;
-        background-color: #8DD5E7;
-        position: relative;
-    }
-    #demo h2 {
-        padding: 5px;
-        margin: 0;
-        height: 30px;
-        font-size: 120%;
-        color: black;
-        font-weight: bold;
-        text-align: center;
-        cursor: move;
-        background-color: #CDCDCD;
-        border-bottom: 1px solid black;
-    }
+
+/* Blue box example */
+.example .demo {
+    position:relative;
+    width:22em;
+    border: 1px solid #9EA8C6;
+    background: #ECEFFB;
+    border-radius: 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.example .demo .yui-hd {
+    padding: 0 0.3em;
+    background: #B6BFDA url({{{componentAssets}}}/images/drag_handle_hd_bkg.png) repeat-x;
+    font-weight: bold;
+    border: solid #B6BFDA;
+    border-width: 0 8px;
+    color: #30418C;
+    line-height: 180%;
+    font-size: 139%;
+    cursor: move;
+}
+
+.example .demo .yui-hd span{
+    background-color: #B6BFDA;
+    padding: 0.1em 0.4em;
+    text-align: center;
+}
+
+.example .demo .yui-bd {
+    padding: 2em 0.5em 2.5em;
+}
+
+/* Luggage */
+.example .luggage{
+    position: relative;
+    background: url({{{componentAssets}}}/images/luggage.png) no-repeat;
+    width: 377px;
+    height: 155px;
+    margin-top: 3em;
+}
+
+.example .handle{
+    position: absolute;
+    bottom: 1px;
+    left: 125px;
+    width: 115px;
+    height: 60px;
+    cursor: move;
+}
+
+.example .handle:hover{
+    background: url({{{componentAssets}}}/images/luggage_handle.png) no-repeat;
+}
 </style>
 
-<div id="demo"><h2 class="no-toc">Drag Me Here</h2>Can't drag me here</div>
+
+<div class="demo">
+    <div class="yui-hd"><span>Head</span></div>
+    <div class="yui-bd">
+        Only drags from the head
+    </div>
+</div>
+
+<div class="luggage">
+    <div class="handle"></div>
+</div>
+
 
 <script>
 YUI().use('dd-plugin', function(Y) {
-    var node = Y.one('#demo');
+    var node,
+        luggage;
+
+    // Draggable blue box
+    node = Y.one('.example .demo');
     node.plug(Y.Plugin.Drag);
-    node.dd.addHandle('h2');
+    node.dd.addHandle('.yui-hd');
+
+    // Luggage
+    luggage = Y.one('.example .luggage');
+    luggage.plug(Y.Plugin.Drag);
+    luggage.dd.addHandle('.example .luggage .handle');
+
 });
 </script>
