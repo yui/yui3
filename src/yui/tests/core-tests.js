@@ -66,9 +66,11 @@ YUI.add('core-tests', function(Y) {
             }
         },
         'test: double skin loading from seed': function() {
-            var test = this;
+            var test = this,
+                Assert = Y.Assert,
+                ArrayAssert = Y.ArrayAssert;
+
             YUI({
-                useSync: true,
                 filter: 'raw',
                 groups: {
                     skins: {
@@ -86,9 +88,14 @@ YUI.add('core-tests', function(Y) {
                     }
                 }
             }).use('skin-test', function(Y, status) {
-                console.log('Status', status);
-                console.log(Object.keys(Y).sort());
+                test.resume(function() {
+                    var modules = status.data.sort();
+                    Assert.isTrue(Y.SKIN_TEST, 'Failed to load external module');
+                    ArrayAssert.itemsAreEqual(["skin-green-skin-test", "skin-test"], modules, 'Failed to load all modules');
+                });
             });
+
+            test.wait();
         },
 /*
         'test: pattern requires order': function() {
