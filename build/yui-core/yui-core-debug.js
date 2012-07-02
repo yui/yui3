@@ -3656,7 +3656,7 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
             if (m && m[1] && m[2]) {
                 o.chrome = numberify(m[2]); // Chrome
                 o.safari = 0; //Reset safari back to 0
