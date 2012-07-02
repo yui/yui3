@@ -530,6 +530,17 @@ Y.UAData["YUI Internal"] = [
                         "ie": 10,
                         "os": "windows"
                 }
+        },
+        {
+                "ua": "Mozilla/5.0 (iPhone; U; CPU iPhone OS 6_0 like Mac OS X; en-us) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/10A5338d Safari/7534.48.3",
+                "data": {
+                        "webkit": 534.46,
+                        "chrome": 19.01084,
+                        "mobile": "Apple",
+                        "iphone": 6,
+                        "ios": 6,
+                        "os": "ios"
+                }
         }
 ];
 });
