@@ -65,6 +65,32 @@ YUI.add('core-tests', function(Y) {
                 'test: fetch with external dependencies redefined in external file': !Y.config.win
             }
         },
+        'test: double skin loading from seed': function() {
+            var test = this;
+            YUI({
+                useSync: true,
+                filter: 'raw',
+                groups: {
+                    skins: {
+                        base: resolvePath('./assets/'),
+                        modules: {
+                            'skin-test': {
+                                skinnable: true
+                            }
+                        }
+                    }
+                },
+                skin: {
+                    overrides:{
+                        'skin-test': ['green']
+                    }
+                }
+            }).use('skin-test', function(Y, status) {
+                console.log('Status', status);
+                console.log(Object.keys(Y).sort());
+            });
+        },
+/*
         'test: pattern requires order': function() {
             var test = this,
             Assert = Y.Assert;
@@ -708,7 +734,7 @@ YUI.add('core-tests', function(Y) {
             });
 
             test.wait();
-        }
+        }*/
     });
 
     Y.SeedTests.add(testCore);
