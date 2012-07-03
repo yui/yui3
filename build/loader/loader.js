@@ -4114,7 +4114,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "event-simulate": {
         "requires": [
-            "event-base"
+            "event-base",
+            "gesture-simulate"
         ]
     },
     "event-synthetic": {
@@ -4167,6 +4168,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "selector-css3",
             "substitute",
             "yui-throttle"
+        ]
+    },
+    "gesture-simulate": {
+        "requires": [
+            "async-queue",
+            "event-simulate",
+            "node-screen"
         ]
     },
     "get": {
@@ -4533,7 +4541,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "node-event-simulate": {
         "requires": [
             "node-base",
-            "event-simulate"
+            "event-simulate",
+            "gesture-simulate"
         ]
     },
     "node-flick": {
@@ -5229,7 +5238,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = 'd94e60bd73f76cb0842918b4f3557e17';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

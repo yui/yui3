@@ -1258,7 +1258,8 @@
     },
     "event-simulate": {
         "requires": [
-            "event-base"
+            "event-base",
+            "gesture-simulate"
         ]
     },
     "event-synthetic": {
@@ -1311,6 +1312,13 @@
             "selector-css3",
             "substitute",
             "yui-throttle"
+        ]
+    },
+    "gesture-simulate": {
+        "requires": [
+            "async-queue",
+            "event-simulate",
+            "node-screen"
         ]
     },
     "get": {
@@ -1638,7 +1646,8 @@
     "node-event-simulate": {
         "requires": [
             "node-base",
-            "event-simulate"
+            "event-simulate",
+            "gesture-simulate"
         ]
     },
     "node-flick": {

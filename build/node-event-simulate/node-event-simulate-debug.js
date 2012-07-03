@@ -6,18 +6,22 @@ YUI.add('node-event-simulate', function(Y) {
  * @submodule node-event-simulate
  */
 
-    /**
-     * Simulates an event on the node.
-     * @param {String} type The type of event to simulate (i.e., "click").
-     * @param {Object} options (Optional) Extra options to copy onto the event object.
-     * @return {void}
-     * @for Node
-     * @method simulate
-     */     
-    Y.Node.prototype.simulate = function(type, options) {
-        Y.Event.simulate(Y.Node.getDOMNode(this), type, options);
-    };
+/**
+ * Simulates an event on the node.
+ * @param {String} type The type of event or name of gesture to simulate (i.e., "click").
+ * @param {Object} options (Optional) Extra options to copy onto the event object.
+ * @return {void}
+ * @for Node
+ * @method simulate
+ */
+Y.Node.prototype.simulate = function (type, options) {
 
+    if (Y.Event.GESTURES[type]) {
+        Y.Event.simulateGesture(this, type, options);
+    } else {
+        Y.Event.simulate(Y.Node.getDOMNode(this), type, options);
+    }
+};
 
 
 }, '@VERSION@' ,{requires:['node-base', 'event-simulate']});
