@@ -245,10 +245,10 @@
                     cmds.italic = 1;
                 }
 
-                if (s.textDecoration == 'underline') {
+                if (s.textDecoration.indexOf('underline') > -1) {
                     cmds.underline = 1;
                 }
-                if (s.textDecoration == 'line-through') {
+                if (s.textDecoration.indexOf('line-through') > -1) {
                     cmds.strikethrough = 1;
                 }
                 
