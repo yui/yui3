@@ -338,56 +338,6 @@ StackingUtil.prototype = {
                 nextValidIndex = NaN;
             }
         }
-    },
-
-    /**
-     * Returns a coordinate to add to the current coordinate for stacking. 
-     *
-     * @method _getPrevCoord
-     * @param {Number} index Index of the coordinate for item.
-     * @param {Number} order The order of the current series.
-     * @param {Array} prevCoords Indexed array containing coordinate arrays for all series of the current series' type.
-     * @return Number
-     * @private
-     */
-    _getPrevCoord: function(index, order, xcoords, ycoords, direction, recursive)
-    {
-        var valCoords = direction == "vertical" ? xcoords : ycoords,
-            coord = valCoords[order][index],
-            lastValidIndex = this._getLastValidIndex(valCoords[order]),
-            firstValidIndex = this._getFirstValidIndex(valCoords[order]);
-        if(isNaN(coord))
-        {
-            if(index <= lastValidIndex && index >= firstValidIndex)
-            {
-                coord = this._normalizeMissingCoord(index, firstValidIndex, lastValidIndex, xcoords[order], ycoords[order], direction);
-            }
-            else if(order > 0 && recursive)
-            {
-                coord = this._getPrevCoord(index, order - 1, xcoords, ycoords, direction, recursive);
-            }
-        }
-        return coord;
-    },
-
-    /**
-     * Returns a series indexed array containing coordinate arrays for each series.
-     *
-     * @param {String} coords String value indicating which coordinates to retrieve. (`xcoords` or `ycoords`)
-     * @param {Number} order Index value of the current series.
-     * @param {Array} seriesCollection Array of all series of the same type.
-     * @return Array
-     * @private
-     */
-    _getPrevCoords: function(coords, order, seriesCollection)
-    {
-        var i = 0,
-            prevCoords = [];
-        for(; i < order; ++i)
-        {
-            prevCoords[i] = seriesCollection[i].get(coords).concat();
-        }
-        return prevCoords;
     }
 };
 Y.StackingUtil = StackingUtil;
