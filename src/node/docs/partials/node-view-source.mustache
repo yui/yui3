@@ -1,7 +1,22 @@
-<button id="hide">hide</button>
-<button id="show">show</button>
+<link rel="stylesheet" href='{{yuiBuildUrl}}/cssbutton/cssbutton.css'></link>
 
-<div id="demo"><p>lorem ipsum dolor sit</p></div>
+<style>
+.example #demo {
+    background-color: #D4D8EB;
+    text-align: center;
+    border: 1px solid #9EA8C6;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    width: 23em;
+    margin-top: 0.3em;
+}
+
+</style>
+
+<button id="hide" class="yui3-button">Hide</button>
+<button id="show" class="yui3-button">Show</button>
+
+<div id="demo"><p>Show or hide me with the buttons above.</p></div>
 
 <script type="text/javascript">
 YUI().use('node', function(Y) {
