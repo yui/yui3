@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>gesture-simulate tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<style type="text/css">
+#touchable {
+    height: 250px;
+    margin: 5px;
+    min-width: 100%;
+    background-color: yellowgreen;
+}
+</style>
+</head>
+<body class="yui3-skin-sam">
+    <h1>Gesture-Simulate Tests</h1>
+    <div id="touchable"></div>
+    <div id="c"></div>
+<script type="text/javascript">
+
+YUI({
+    filter: "debug",
+    logInclude: { TestRunner: 1}
+}).use('test' ,'node', 'gesture-simulate', 'console', function (Y) {
+    
+    Y.namespace("Tests");
+    
+    Y.Tests.GestureSimulate = (function(){
+    
+        var Assert = Y.Assert,
+            touchable = Y.one("#touchable"),
+            events = [
+                "touchstart", "touchmove", "touchend", "touchcancel",
+                "mousedown", "mousemove", "mouseup", "mouseout", "mouseover", "click", "dblclick",
+                "gesturestart", "gesturechange", "gestureend"
+            ];
+        
+        //-------------------------------------------------------------------------
+        // Generic Event Test Case
+        //-------------------------------------------------------------------------
+        function GenericGestureTestCase(name /*:String*/){
+            GenericGestureTestCase.superclass.constructor.call(this);
+            this.gestureName = name;
+            this.name = "Gesture '" + name + "' Tests";
+            this.result = [];
+        }
+    
+        Y.extend(GenericGestureTestCase, Y.Test.Case, {
+        
+            //---------------------------------------------------------------------
+            // Setup and teardown of test harnesses
+            //---------------------------------------------------------------------
+            setUp : function() /*:Void*/{
+                
+                //reset the result
+                this.result = [];
+                
+                events.forEach(Y.bind(function(one) {
+                    // Y.one("#touchable").on(one, function(e) {});
+                    document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
+                        e.preventDefault();
+                        e = e || window.event;
+                        e.timestamp = new Date();
+                        this.result.push(e);
+                    }, this); 
+                }, this));
+            },
+            
+            /*
+             * Removes event handlers that were used during the test.
+             */
+            tearDown : function() /*:Void*/{
+                 events.forEach(function(one) {
+                    document.getElementById("touchable")['on'+one]= null; 
+                });
+            }
+        });
+        
+        //-------------------------------------------------------------------------
+        // Tap Test Case
+        //-------------------------------------------------------------------------
+    
+        function TapTestCase(){
+            TapTestCase.superclass.constructor.call(this, "tap");
+        }
+    
+        Y.extend(TapTestCase, GenericGestureTestCase, {
+            /*
+            testXXX: function() {
+                var that = this,
+                    options = {
+                    };
+        
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                    } else {
+                        // devices falling back to mouse events
+                    }
+                }, 3000);
+            }
+            */
+            testDefault: function() {
+                var that = this;
+                Y.Event.simulateGesture(touchable, this.gestureName);
+                
+                this.wait(function() {
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchend
+                        Assert.areSame(2, that.result.length, "should be two");
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchend");
+                    } else {
+                        // devices falling back to mouse events
+                        // mousedown, mouseup and click events.
+                        Assert.areSame(3, that.result.length, "should be three");
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mouseup");
+                        Assert.areSame(that.result[2].type, "click");
+                    }
+                }, 3000);
+            },
+            
+            testOptions: function() {
+                var that = this,
+                
+                    // 500ms/touchstart/1000ms/touchend/500ms/touchstart/1000ms/touchend/
+                    // should take at least 3sec in total at element coordination at (95,100).
+                    options = {
+                        point: [95, 100],
+                        times: 2,
+                        hold: 1000,
+                        delay: 500
+                    },
+                    expectedX = touchable.getX()+95, 
+                    expectedY = touchable.getX()+100;
+                    
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchend(x2)
+                        Assert.areSame(4, that.result.length, "should be 4 events");
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchend");
+                        Assert.areSame(that.result[2].type, "touchstart");
+                        Assert.areSame(that.result[3].type, "touchend");
+                        
+                        Assert.areSame(1, that.results[0].touches.length);
+                        Assert.areSame(expectedX, that.results[0].touches.item(0).clientX);
+                        Assert.areSame(expectedY, that.results[0].touches.item(0).clientY);
+                    } else {
+                        // devices falling back to mouse events
+                        // mousedown, mouseup, click(x2), dblclick
+                        Assert.areSame(7, that.result.length);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mouseup");
+                        Assert.areSame(that.result[2].type, "click");
+                        Assert.areSame(that.result[3].type, "mousedown");
+                        Assert.areSame(that.result[4].type, "mouseup");
+                        Assert.areSame(that.result[5].type, "click");
+                        Assert.areSame(that.result[6].type, "dblclick");
+                    }
+                    Assert.isTrue(that.result[6].timestamp - that.result[0].timestamp > 3000);
+                }, 3000);
+            }
+        });
+        
+        //-------------------------------------------------------------------------
+        // UserAction Tests
+        //-------------------------------------------------------------------------
+    
+        //the user action suite
+        var suite = new Y.Test.Suite("Gesture Simulate Tests");
+        var singleTouchSuite = new Y.Test.Suite("Single Touch Tests");
+        suite.add(singleTouchSuite);
+    
+        //-------------------------------------------------------------------------
+        // Single Touch Tests
+        //-------------------------------------------------------------------------
+        singleTouchSuite.add(new TapTestCase());
+        //singleTouchSuite.add(new MultiTouchTestCase());
+        
+        //return it
+        return suite;
+    
+    })();
+
+    var r = new Y.Console({
+        verbose : true,
+        //consoleLimit : 10,
+        newestOnTop : false
+    });
+    
+    r.render('#c');
+    
+    //add to the testrunner and run
+    Y.Test.Runner.add(Y.Tests.GestureSimulate);
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>
