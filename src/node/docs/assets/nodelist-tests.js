@@ -10,9 +10,7 @@ YUI.add('nodelist-tests', function(Y) {
             boxes.item(2).simulate('click');
 
             Assert.areEqual('ouch!', boxes.item(2).getHTML(), 'Failed to change text when clicked');
-// IE9 returns #C4DAED, other browsers return rgb(...),   || doesn't seem to work either
-//            Assert.isTrue((('rgb(196, 218, 237)' === boxes.item(2).getStyle('backgroundColor')) || ('#C4DAED' === boxes.item(2).getStyle('backgroundColor'))), 'Failed to change background color when clicked')/
-//            Assert.areEqual('#C4DAED', boxes.item(2).getStyle('backgroundColor')), ";laksjdfl.askjd"
+            Assert.areEqual('rgb(196, 218, 237)', boxes.item(2).getComputedStyle('backgroundColor'), 'Failed to change background color when clicked')/
             Assert.areEqual('neener', boxes.item(0).getHTML(), 'Failed to change text of unclicked boxes when another one was clicked');
         }
     }));

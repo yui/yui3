@@ -35,7 +35,7 @@ YUI.add('ducks-tests', function(Y) {
             setTimeout(function() {
                 node.simulate('click');
             }, 0);
-            test.wait(1500);
+            test.wait(2000);
         },
         'show NO attitude and click another': function() {
             var node = Y.one('.duck-row .set-up'),
