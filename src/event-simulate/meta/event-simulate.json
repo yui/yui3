@@ -1,7 +1,8 @@
 {
     "event-simulate": {
         "requires": [
-            "event-base"
+            "event-base",
+            "gesture-simulate"
         ]
     }
 }
