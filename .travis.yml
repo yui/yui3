@@ -6,10 +6,13 @@ node_js:
 branches:
     only:
         - master
-        - fix-node-gc
 before_install:
     - ./src/common/travis/before.sh
 install:
     - ./src/common/travis/install.sh
 script:
     - ./src/common/travis/test.sh
+notifications:
+    email:
+        - davglass@gmail.com
+        - davglass@yahoo-inc.com
