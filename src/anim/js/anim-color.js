@@ -26,7 +26,7 @@ Y.Anim.behaviors.color = {
     // TODO: default bgcolor const
     get: function(anim, att) {
         var val = anim._node.getComputedStyle(att);
-        val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
+        val = (val.toLowerCase() === 'transparent') ? 'rgb(255, 255, 255)' : val;
         return val;
     }
 };
