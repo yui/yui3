@@ -11,10 +11,10 @@
 <p>First we need some HTML to work with.</p>
 ```
 <ul id="demo">
-    <li>click me if you don't mind...</li>
-    <li>click me if you don't mind...</li>
-    <li>click me if you don't mind...</li>
-    <li>click me if you don't mind...</li>
+    <li>Click me if you don't mind...</li>
+    <li>Click me if you don't mind...</li>
+    <li>Click me if you don't mind...</li>
+    <li>Click me if you don't mind...</li>
 </ul>
 ```
 
@@ -28,11 +28,11 @@ var nodes = Y.all('#demo li');
 <p>In this example, we will listen for a <code>click</code> event on the list and handle it at the item level and use information from the <code>event</code> object to update the nodes.</p>
 ```
 var onClick = function(e) {
-    e.currentTarget.addClass('yui-pass'); // e.currentTarget === #demo li
-    e.target.setHTML('thanks for the click!'); // e.target === #demo li or #demo li em
-    e.container.setStyle('border', '5px solid blue'); // e.container === #demo
+    e.currentTarget.addClass('highlight'); // e.currentTarget === #demo li
+    e.target.setHTML('Thanks for the click!'); // e.target === #demo li or #demo li em
+    e.container.setStyle('border', '5px solid #FFA100'); // e.container === #demo
 
-    nodes.filter(':not(.yui3-pass)').setHTML('Click me too please!');
+    nodes.filter(':not(.highlight)').setHTML('What about me?');
 };
 ```
 

@@ -35,6 +35,26 @@ YUI.add('loader-tests', function(Y) {
                 test_condpattern: Y.UA.nodejs
             }
         },
+        'test: skin overrides double loading': function() {
+            var loader = new Y.Loader({
+                base: './',
+                modules:{
+                        'gallery-fb-statusfield':{
+                            fullpath: 'build_tmp/gallery-fb-statusfield-debug.js',
+                            skinnable: true
+                        }
+                    },
+                skin:{
+                    overrides:{
+                        'gallery-fb-statusfield': ['green']
+                    }
+                },
+                require: ['gallery-fb-statusfield']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame('./gallery-fb-statusfield/assets/skins/green/gallery-fb-statusfield.css', out.css[0], 'Failed to load skin override');
+            Assert.areEqual(1, out.css.length, 'Loaded too many css files');
+        },
         'test: empty skin overrides': function() {
             var loader = new Y.Loader({
                 ignoreRegistered: true,
