@@ -1,6 +1,6 @@
 (function() {
 /**
- * Simulate user gestuires by generating a set of native DOM events.
+ * Simulate high-level user gestures by generating a set of native DOM events.
  *
  * @module gesture-simulate
  * @requires event-simulate, async-queue, node-screen
@@ -46,6 +46,9 @@ var gestureNames = {
     X_AXIS = 'x',
     Y_AXIS = 'y';
 
+/**
+ *
+ */
 function Simulations(node) {
     if(!node) {
         Y.error(NAME+': invalid target node');
@@ -62,11 +65,28 @@ function Simulations(node) {
 }
 
 Simulations.prototype = {
-
+    
+    /**
+     * Helper method to convert a degree to a radian.
+     * 
+     * @method _toRadian
+     * @private
+     * @param {Number} deg A degree to be converted to a radian.
+     * @return {Number} The degree in radian. 
+     */
     _toRadian: function(deg) {
         return deg * (Math.PI/180);
     },
 
+    /**
+     * Helper method to convert a point relative to the node element into 
+     * the point in the page coordination.
+     * 
+     * @method _calculateDefaultPoint
+     * @private
+     * @param {Array} point A point relative to the node element.
+     * @return {Array} The same point in the page coordination. 
+     */
     _calculateDefaultPoint: function(point) {
 
         if(!Y.Lang.isArray(point) || point.length === 0) {
@@ -82,7 +102,28 @@ Simulations.prototype = {
 
         return point;
     },
-
+    
+    /**
+     * The "rotate" and "pinch" methods are essencially same with the exact same 
+     * arguments. Only difference is the required parameters. The rotate method 
+     * requires "rotation" parameter while the pinch method requires "startRadius" 
+     * and "endRadius" parameters.
+     *
+     * @method rotate
+     * @param {Array} center A center point where the pinch gesture of two fingers
+     *      should happen. It is relative to the top left corner of the target 
+     *      node element.
+     * @param {Number} startRadius A radius of start circle where 2 fingers are 
+     *      on when the gesture starts. This is optional. The default is half of 
+     *      either target node width or height whichever is less.
+     * @param {Number} endRadius A radius of end circle where 2 fingers will be on when
+     *      the pinch or spread gestures are completed. This is optional. 
+     *      The default is half of either target node width or height whichever is less.
+     * @param {Number} duration A duration of the gesture in millisecond.
+     * @param {Number} start A start angle(0 degree at 12 o'clock) where the 
+     *      gesture should start. Default is 0.  
+     * @param {Number} rotation A rotation in degree. It is required.
+     */
     rotate: function(center, startRadius, endRadius, duration, start, rotation) {
         var radius,
             r1 = startRadius,   // optional
@@ -102,7 +143,32 @@ Simulations.prototype = {
 
         this.pinch(center, r1, r2, duration, start, rotation);
     },
-
+    
+    /**
+     * The "rotate" and "pinch" methods are essencially same with the exact same 
+     * arguments. Only difference is the required parameters. The rotate method 
+     * requires "rotation" parameter while the pinch method requires "startRadius" 
+     * and "endRadius" parameters.
+     *
+     * The "pinch" gesture can simulate various 2 finger gestures such as pinch, 
+     * spread and/or rotation. The "startRadius" and "endRadius" are required.
+     * If endRadius is larger than startRadius, it becomes a spread gesture 
+     * otherwise a pinch gesture. 
+     *
+     * @method pinch
+     * @param {Array} center A center point where the pinch gesture of two fingers
+     *      should happen. It is relative to the top left corner of the target 
+     *      node element.
+     * @param {Number} startRadius A radius of start circle where 2 fingers are 
+     *      on when the gesture starts. This paramenter is required.
+     * @param {Number} endRadius A radius of end circle where 2 fingers will be on when
+     *      the pinch or spread gestures are completed. This parameter is required.
+     * @param {Number} duration A duration of the gesture in millisecond.
+     * @param {Number} start A start angle(0 degree at 12 o'clock) where the 
+     *      gesture should start. Default is 0.  
+     * @param {Number} rotation If rotation is desired during the pinch or 
+     *      spread gestures, this parameter can be used. Default is 0 degree.  
+     */
     pinch: function(center, startRadius, endRadius, duration, start, rotation) {
         var eventQueue,
             interval = DEFAULTS.EVENT_INTERVAL,
@@ -348,7 +414,22 @@ Simulations.prototype = {
 
         eventQueue.run();
     },
-
+    
+    /**
+     * The "tap" gesture can be used for various single touch point gestures 
+     * such as single tap, N number of taps, long press. The default is a single 
+     * tap.
+     * 
+     * @method tap
+     * @param {Array} point A point(relative to the top left corner of the 
+     *      target node element) where the tap gesture should start. The default 
+     *      is the center of the taget node.
+     * @param {Number} times The number of taps. Default is 1.
+     * @param {Number} hold The hold time in milliseconds between "touchstart" and
+     *      "touchend" event generation. Default is 10ms.
+     * @param {Number} delay The time gap in millisecond between taps if this
+     *      gesture has more than 1 tap. Default is 10ms.
+     */
     tap: function(point, times, hold, delay) {            
         var eventQueue = new Y.AsyncQueue(),
             emptyTouchList = this._getEmptyTouchList(),
@@ -416,7 +497,23 @@ Simulations.prototype = {
 
         eventQueue.run();
     },
-
+    
+    /**
+     * The "flick" gesture is a specialized "gesturemove" that has some velocity 
+     * and the movement always runs either x or y axis. The velocity is calculated
+     * with "distance" and "duration" arguments. If the calculated velocity is 
+     * below than the minimum velocity, the given duration will be ignored and 
+     * new duration will be created to make a valid flick gesture.
+     *   
+     * @method flick
+     * @param {Array} point A point(relative to the top left corner of the 
+     *      target node element) where the flick gesture should start. The default 
+     *      is the center of the taget node.
+     * @param {String} axis Either "x" or "y".
+     * @param {Number} distance A distance in pixels to flick.
+     * @param {Number} duration A duration of the gesture in millisecond.
+     * 
+     */
     flick: function(point, axis, distance, duration) {
         var path;
 
@@ -462,7 +559,24 @@ Simulations.prototype = {
 
         this._gesturemove(path, duration);
     },
-
+    
+    /**
+     * The "gesturemove" gesture simulate the movement of any direction between 
+     * the straight line of start and end point for the given duration.
+     * The path argument is an object with "point", "xdist" and "ydist" properties.
+     * The "point" property is an array with x and y coordinations(relative to the
+     * top left corner of the target node element) while "xdist" and "ydist" 
+     * properties are used for the distance along the x and y axis. A negative 
+     * distance number can be used to drag either left or up direction. 
+     * 
+     * If no arguments are given, it will simulate the default gesturemove, which
+     * is moving 200 pixels from the center of the element to the positive X-axis 
+     * direction for 1 sec.
+     * 
+     * @method gesturemove
+     * @param {Object} path An object with "point", "xdist" and "ydist".
+     * @param {Number} duration A duration of the gesture in millisecond.
+     */
     gesturemove: function(path, duration) {
         var convertedPath;
 
@@ -496,7 +610,18 @@ Simulations.prototype = {
 
         this._gesturemove(convertedPath, duration);
     },
-
+    
+    /**
+     * A base method on top of "gesturemove" and "flick" methods. The method takes
+     * the path with start/end properties and duration to generate a set of 
+     * touch events for the movement gesture. 
+     *
+     * @method _gesturemove
+     * @private
+     * @param {Object} path An object with "start" and "end" properties. Each 
+     *      property should be an array with x and y coordination (e.g. start: [100, 50])
+     * @param {Number} duration A duration of the gesture in millisecond. 
+     */
     _gesturemove: function(path, duration) {
         var eventQueue,
             interval = DEFAULTS.EVENT_INTERVAL,
@@ -642,7 +767,14 @@ Simulations.prototype = {
 
         eventQueue.run();
     },
-
+    
+    /**
+     * Helper method to return a singleton instance of empty touch list.
+     * 
+     * @method _getEmptyTouchList
+     * @private
+     * @return {TouchList | Array} An empty touch list object.
+     */
     _getEmptyTouchList: function() {
         if(!emptyTouchList) {
             emptyTouchList = this._createTouchList([]);
@@ -650,7 +782,18 @@ Simulations.prototype = {
 
         return emptyTouchList;
     },
-
+    
+    /**
+     * Helper method to convert an array with touch points to TouchList object as
+     * defined in http://www.w3.org/TR/touch-events/
+     * 
+     * @method _createTouchList
+     * @private
+     * @param {Array} touchPoints 
+     * @return {TouchList | Array} If underlaying platform support creating touch list
+     *      a TouchList object will be returned otherwise a fake Array object 
+     *      will be returned.
+     */
     _createTouchList: function(touchPoints) {
         /*
         * Android 4.0.3 emulator:
@@ -723,11 +866,39 @@ Simulations.prototype = {
     }
 };
 
-// high level gesture names that YUI knows how to simulate.
+/**
+ * The high level gesture names that YUI knows how to simulate.
+ */
 Y.Event.GESTURES = gestureNames;
-Y.Event.GestureSimulation = Simulations;          // should make private?
+
+/**
+ * A gesture simulation class.
+ */
+Y.Event.GestureSimulation = Simulations;
+
+
+/**
+ * Various simulation default behavior properties. If user override 
+ * Y.Event.GestureSimulation.defaults, overriden values will be used and this 
+ * should be done before the gesture simulation.  
+ */
 Y.Event.GestureSimulation.defaults = DEFAULTS;
 
+/**
+ * Simulates the high level(user) gesture with the given name on a target.
+ * Y.Event.simulate method provides the entry point to the gesture simulation. 
+ * If the given type to Y.Event.simulate method is a supported gesture, 
+ * the gesture simulation is deligated to this static method.
+ *  
+ * @param {Node} target The YUI node element that's the target of the event.
+ * @param {String} name The name of the supported gesture to simulate(i.e. "flick").
+ * @param {Object} options (Optional) Extra options that are used to refine the 
+ *      gesture behavior.
+ * @return {void}
+ * @for Event
+ * @method simulateGesture
+ * @static
+ */
 Y.Event.simulateGesture = function(node, name, options) {
 
     var sim = new Y.Event.GestureSimulation(node);

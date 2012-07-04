@@ -5,9 +5,12 @@
  */
 
 /**
- * Simulates an event on the node.
- * @param {String} type The type of event or name of gesture to simulate (i.e., "click").
+ * Simulates an event or gesture on the node. On desktop, single touch gestures
+ * such as tap, flick are simulated by using mouse events.
+ * @param {String} type The type of event or name of the supported gesture to simulate 
+ *      (i.e., "click", "doubletap", "flick").
  * @param {Object} options (Optional) Extra options to copy onto the event object.
+ *      For gestures, options are used to refine the gesture behavior.
  * @return {void}
  * @for Node
  * @method simulate

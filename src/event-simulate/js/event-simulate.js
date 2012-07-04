@@ -850,8 +850,6 @@ function simulateTouchEvent(target, type,
                 customEvent.touches = touches;
                 customEvent.targetTouches = targetTouches;
                 customEvent.changedTouches = changedTouches;
-                customEvent.scale = scale;
-                customEvent.rotation = rotation;
             } else {
                 customEvent = doc.createEvent("TouchEvent");
 
@@ -887,10 +885,12 @@ function simulateTouchEvent(target, type,
 }
 
 /**
- * Simulates the event with the given name on a target.
+ * Simulates the event or gesture with the given name on a target.
  * @param {HTMLElement} target The DOM element that's the target of the event.
- * @param {String} type The type of event to simulate (i.e., "click").
- * @param {Object} options (Optional) Extra options to copy onto the event object.
+ * @param {String} type The type of event or name of the supported gesture to simulate 
+ *      (i.e., "click", "doubletap", "flick").
+ * @param {Object} options (Optional) Extra options to copy onto the event object. 
+ *      For gestures, options are used to refine the gesture behavior.
  * @return {void}
  * @for Event
  * @method simulate
@@ -914,7 +914,8 @@ Y.Event.simulate = function(target, type, options){
     } else if (uiEvents[type]){
         simulateUIEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.detail);
-    // touch event simulation        
+            
+    // touch low-level event simulation        
     } else if (touchEvents[type]) {
         if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
             simulateTouchEvent(target, type, 
@@ -924,7 +925,7 @@ Y.Event.simulate = function(target, type, options){
                 options.touches, options.targetTouches, options.changedTouches,
                 options.scale, options.rotation);
         } else {
-            // simulate using a mouse event if touch is not applicable.
+            // simulate using mouse events if touch is not applicable.
             type = {
                 touchstart: MOUSE_DOWN,
                 touchmove: MOUSE_MOVE,
@@ -950,7 +951,7 @@ Y.Event.simulate = function(target, type, options){
             }
         }
 
-    // ios gesture event simulation (iOS v2+ only)        
+    // ios gesture low-level event simulation (iOS v2+ only)        
     } else if(Y.UA.ios && Y.UA.ios >= 2.0 && gestureEvents[type]) {
         simulateGestureEvent(target, type, 
             options.bubbles, options.cancelable, options.view, options.detail, 
@@ -958,7 +959,7 @@ Y.Event.simulate = function(target, type, options){
             options.ctrlKey, options.altKey, options.shiftKey, options.metaKey,
             options.scale, options.rotation);
             
-    // high level gesture events        
+    // high level (user) gestures        
     } else if (Y.Event.GESTURES[type]) {
         Y.Event.simulateGesture(Y.Node.one(target), type, options);   
     
