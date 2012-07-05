@@ -263,8 +263,31 @@ RESTSync.prototype = {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Communicates with a RESTful HTTP server by sending and receiving JSON data
-    via XHRs.
+    Serializes `this` model to be used as the HTTP request entity body.
+
+    By default this model will be serialized to a JSON string via its `toJSON()`
+    method.
+
+    You can override this method when the HTTP server expects a different
+    representation of this model's data that is different from the default JSON
+    serialization. If you're sending and receive content other than JSON, be
+    sure change the `Accept` and `Content-Type` `HTTP_HEADERS` as well.
+
+    **Note:** A model's `toJSON()` method can also be overridden. If you only
+    need to modify which attributes are serialized to JSON, that's a better
+    place to start.
+
+    @method serialize
+    @return {String} serialized HTTP request entity body.
+    @since 3.6.0
+    **/
+    serialize: function () {
+        return Y.JSON.stringify(this);
+    },
+
+    /**
+    Communicates with a RESTful HTTP server by sending and receiving data via
+    XHRs.
 
     This method is called internally by load(), save(), and destroy().
 
@@ -306,7 +329,7 @@ RESTSync.prototype = {
 
         // Prepare the content if we are sending data to the server.
         if (method === 'POST' || method === 'PUT') {
-            entity = this._serialize();
+            entity = this.serialize();
         } else {
             // Remove header, no content is being sent.
             delete headers['Content-Type'];
@@ -380,7 +403,7 @@ RESTSync.prototype = {
         if (this._isYUIModel) {
             data = {};
 
-            Y.Object.each(this.toJSON(), function (v, k) {
+            Y.Object.each(this.getAttrs(), function (v, k) {
                 if (Lang.isString(v) || Lang.isNumber(v)) {
                     // URL-encode any String or Number values.
                     data[k] = encodeURIComponent(v);
@@ -423,28 +446,6 @@ RESTSync.prototype = {
         return root && root.charAt(root.length - 1) === '/' ?
                 root + url :
                 root + '/' + url;
-    },
-
-    /**
-    Serializes `this` model to be used as the HTTP request entity body. By
-    default this model will be serialized to a JSON string via its `toJSON()`
-    method.
-
-    You can override this method when the HTTP server expects a different
-    representation of this model's data that is different from the default JSON
-    serialization.
-
-    **Note:** A model's `toJSON()` method can also be overridden; if you just
-    need to modify which attributes are serialized to JSON, that's a better
-    place to start.
-
-    @method _serialize
-    @return {String} serialized HTTP request entity body.
-    @protected
-    @since 3.6.0
-    **/
-    _serialize: function () {
-        return Y.JSON.stringify(this);
     }
 };
 
