@@ -146,9 +146,9 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         });
 
         model.addAttrs({
-            foo : { value: [1, 2, 3] },
-            bar : { value: { zee: 'zee' } },
-            baz : { value: true }
+            foo : {value: [1, 2, 3]},
+            bar : {value: {zee: 'zee'}},
+            baz : {value: true}
         });
 
         Assert.areSame('/model/{foo}/{bar}/{baz}/asdf', model._getURL());
@@ -157,8 +157,8 @@ modelSyncRESTSuite.add(new Y.Test.Case({
     '_getURL() should return `root` if `url` is falsy' : function () {
         var model = new this.TestModel();
 
-        model.root  = '/model/';
-        model.url   = '';
+        model.root = '/model/';
+        model.url  = '';
 
         Assert.areSame('/model/', model._getURL());
     },
@@ -174,7 +174,7 @@ modelSyncRESTSuite.add(new Y.Test.Case({
     },
 
     'url() should return a URL that ends with a / only if Model’s `root` ends with a /' : function () {
-        var model = new this.TestModel({ id: 123 });
+        var model = new this.TestModel({id: 123});
 
         model.root = '/model';
         Assert.areSame('/model/123', model.url());
@@ -184,22 +184,22 @@ modelSyncRESTSuite.add(new Y.Test.Case({
     },
 
     'url() should return a URL determined from the sync action' : function () {
-        var model = new this.TestModel({ id: 123 });
+        var model = new this.TestModel({id: 123});
 
         model.url = function(action) { return '/model/' + action; };
 
         Assert.areSame('/model/read', model._getURL('read'));
     },
 
-    '_serialize() can modify the data' : function () {
-        var model = new this.TestModel({ id: 123 });
+    'serialize() can modify the data' : function () {
+        var model = new this.TestModel({id: 123});
 
-        model._serialize = function() {
+        model.serialize = function() {
           var data = this.toJSON();
-          return Y.JSON.stringify({ body: data });
+          return Y.JSON.stringify({body: data});
         };
 
-        Assert.areSame(Y.JSON.stringify({ body: { id: 123 } }), model._serialize());
+        Assert.areSame(Y.JSON.stringify({body: {id: 123}}), model.serialize());
     }
 
 }));
