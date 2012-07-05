@@ -36,6 +36,10 @@ App Framework Change History
   actually wasn't in the list and was merely bubbling events to the list.
   [Ticket #2532240]
 
+### ModelSync.REST
+
+* Initial release.
+
 ### Router
 
 * [!] Changed how hash-based paths interact with the URL's real path. The
