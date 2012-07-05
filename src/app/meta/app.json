@@ -56,6 +56,14 @@
                 ]
             },
 
+            "model-sync-rest": {
+                "requires": [
+                    "model",
+                    "io-base",
+                    "json-stringify"
+                ]
+            },
+
             "router": {
                 "optional": ["querystring-parse"],
                 "requires": ["array-extras", "base-build", "history"]

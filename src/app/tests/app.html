@@ -22,6 +22,7 @@ var Y = YUI({
             use: [
                 'model-test',
                 'model-list-test',
+                'model-sync-rest-test',
                 'router-test',
                 'view-test',
                 'view-node-map-test',
@@ -37,6 +38,11 @@ var Y = YUI({
         'model-list-test': {
             fullpath: 'model-list-test.js',
             requires: ['model-list', 'test']
+        },
+
+        'model-sync-rest-test': {
+            fullpath: 'model-sync-rest-test.js',
+            requires: ['model', 'model-list', 'model-sync-rest', 'test']
         },
 
         'router-test': {
