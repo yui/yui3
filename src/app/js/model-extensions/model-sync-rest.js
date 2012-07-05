@@ -41,10 +41,10 @@ Static lookup hash table of RESTful HTTP methods corresponding to CRUD actions.
 @type Object
 @default
     {
-        'create': 'POST',
-        'read'  : 'GET',
-        'update': 'PUT',
-        'delete': 'DELETE'
+        "create": "POST",
+        "read"  : "GET",
+        "update": "PUT",
+        "delete": "DELETE"
     }
 @static
 @since 3.6.0
@@ -72,8 +72,8 @@ the request-specific headers will take precedence.
 @type Object
 @default
     {
-        'Accept'      : 'application/json',
-        'Content-Type': 'application/json'
+        "Accept"      : "application/json",
+        "Content-Type": "application/json"
     }
 @static
 @since 3.6.0
@@ -147,7 +147,7 @@ Model or ModelList constructor.
 
 @property _NON_ATTRS_CFG
 @type Array
-@default ['root', 'url']
+@default ["root", "url"]
 @static
 @protected
 @since 3.6.0
