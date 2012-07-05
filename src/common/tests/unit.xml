@@ -182,6 +182,7 @@
         <url>history/tests/functional/history-html5.html</url>
         <url>imageloader/tests/imageloader.html</url>
         <url>intl/tests/intl.html</url>
+        <url>io/tests/index.html</url>
         <url>json/tests/json.html</url>
         <!--
         <url>jsonp/tests/jsonp-url.html</url>
