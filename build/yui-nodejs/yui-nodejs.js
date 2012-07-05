@@ -417,7 +417,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_');
+                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -581,7 +581,9 @@ with any configuration info required for the module.
                 version: version,
                 details: details
             },
-            loader,
+            //Instance hash so we don't apply it to the same instance twice
+            applied = {},
+            loader, inst,
             i, versions = env.versions;
 
         env.mods[name] = mod;
@@ -590,10 +592,14 @@ with any configuration info required for the module.
 
         for (i in instances) {
             if (instances.hasOwnProperty(i)) {
-                loader = instances[i].Env._loader;
-                if (loader) {
-                    if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
-                        loader.addModule(details, name);
+                inst = instances[i];
+                if (!applied[inst.id]) {
+                    applied[inst.id] = true;
+                    loader = inst.Env._loader;
+                    if (loader) {
+                        if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
+                            loader.addModule(details, name);
+                        }
                     }
                 }
             }
@@ -3631,7 +3637,7 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
             if (m && m[1] && m[2]) {
                 o.chrome = numberify(m[2]); // Chrome
                 o.safari = 0; //Reset safari back to 0
@@ -5843,7 +5849,7 @@ Y.Loader.prototype = {
             };
         }
 
-        if (o.skinnable && o.ext) {
+        if (o.skinnable && o.ext && o.temp) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
