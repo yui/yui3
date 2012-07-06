@@ -251,7 +251,16 @@ RESTSync.prototype = {
         var root = this.root,
             url;
 
-        if (this._isYUIModelList || this.isNew()) {
+        // A model list's `url` should default to its `root` or its `model`'s
+        // `root`. By convention the a model's `root` locates a collection/list.
+        if (this._isYUIModelList) {
+            return root || this.model.prototype.root;
+        }
+
+        // By convention a model's `root` locates a collection/list and when
+        // creating a new representation on the server no resource exits for it
+        // yet, therefore the collection URL is used.
+        if (this.isNew()) {
             return root;
         }
 
