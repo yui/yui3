@@ -2,6 +2,14 @@
     display:none;
 }
 
+
+.yui3-treeview,
+.yui3-treeview-content {
+    list-style-type : none;
+    margin: 0;
+    padding: 0;
+}
+
 .yui3-treeview a {
     text-decoration: none;
     color: black;

@@ -28,7 +28,8 @@ var getClassName = Y.ClassNameManager.getClassName,
             treeview : getClassName(TREEVIEW),
             treeviewcontent : getClassName(TREEVIEW,"content"),
             collapsed : getClassName(TREE,"collapsed"),
-            leaf : getClassName(TREELEAF)
+            leaf : getClassName(TREELEAF),
+            treeleafContent : getClassName(TREELEAF,"content")
         },
         _getBox = function (widget,box) {
             var value;

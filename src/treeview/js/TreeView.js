@@ -9,44 +9,16 @@
  */
     Y.TreeView = Y.Base.create("treeview", WIDGET, [Y.WidgetParent, Y.WidgetChild, Y.WidgetHTMLRenderer], {
     
-        /**
-         * Property defining the markup template for bounding box.
-         *
-         * @property BOUNDING_TEMPLATE
-         * @type String
-        */
-        BOUNDING_TEMPLATE : '<ul id="{{id}}" class="{{boundingClasses}}">{{{contentBox}}}</ul>',
-        
-        /**
-         * Property defining the markup template for content box.          
-         *
-         * @property CONTENT_TEMPLATE
-         * @type String
-        */
-        
+                
         /**
          * Property defining the markup template for the trewview label .
          *
          * @property TREEVIEWLABEL_TEMPLATE
          * @type String
         */
-        TREEVIEWLABEL_TEMPLATE : "<li class='{{{treelabelClassName}}}' role='treeitem' tabindex='0'><span class={{{labelcontentClassName}}}>{{{label}}}</span></li>",
+        _TREEVIEWLABEL_TEMPLATE : "<li class='{{{treelabelClassName}}}' role='treeitem'><span tabindex='0' class={{{labelcontentClassName}}}>{{{label}}}</span></li>",
         
-                      
-        /**
-         * Flag to indicate whether a content Box/Bounding box has been returned from the getter attribute.
-         *
-         * @property _handling
-         * @type Boolean
-        */
-        
-        /**
-         * The template for a branch element.
-         *
-         * @property branchTemplate
-         * @type String
-        */
-
+             
         /**
          * Initializer lifecycle implementation for the Treeview class. 
          * <p>Registers the Treeview instance. It subscribes to the onParentChange 
@@ -59,8 +31,8 @@
          * @param  config {Object} Configuration object literal for the widget
          */
         initializer : function (config) {
-            this.publish('toggleTreeState', { 
-                defaultFn: this.toggleTreeState
+            this.publish('toggle', { 
+                defaultFn: this.toggle
             });
             
             Y.after(this._setChildrenContainer, this, "render");
@@ -79,9 +51,11 @@
                 treelabelClassName = this.getClassName("treelabel"),
                 labelcontentClassName = classNames.labelcontent;
                 
-                this.BOUNDING_TEMPLATE = isBranch ? '<li id="{{{id}}}" role="presentation" class="{{{boundingClasses}}}">{{{contentBox}}}</li>' : '<ul id="{{{id}}}" role="tree" class="{{{boundingClasses}}}">{{{contentBox}}}</ul>';
-                this.CONTENT_TEMPLATE = isBranch ? '<ul id="{{id}}" role="group" class="{{{contentClasses}}}">{{{content}}}</ul>' : null;
-                labelContent = Y.Handlebars.render(this.TREEVIEWLABEL_TEMPLATE, {label:label, treelabelClassName : treelabelClassName, labelcontentClassName : labelcontentClassName});
+                //adding tabindex to the root element
+                              
+                this.BOUNDING_TEMPLATE = isBranch ? '<li id="{{{id}}}" role="presentation" class="{{{boundingClasses}}}">{{{contentBox}}}</li>' : '<ol id="{{{id}}}" role="tree" class="{{{boundingClasses}}}">{{{contentBox}}}</ol>';
+                this.CONTENT_TEMPLATE = isBranch ? '<ol id="{{id}}" role="group" class="{{{contentClasses}}}">{{{content}}}</ol>' : null;
+                labelContent = Y.Handlebars.render(this._TREEVIEWLABEL_TEMPLATE, {label:label, treelabelClassName : treelabelClassName, labelcontentClassName : labelcontentClassName});
                 contentBuffer.push(labelContent);
         },
         
@@ -96,10 +70,10 @@
         bindUI: function() {
             //only attaching to the root element
             if (this.isRoot()) {
-                this.get("boundingBox").delegate("click",this._onViewEvents,"." + classNames.labelcontent,this);
+                this.get(BOUNDING_BOX).delegate("click",this._onViewEvents,"." + classNames.labelcontent,this);
                 //this.get("boundingBox").delegate("click",this._onViewEvents,this);
 
-                this.get("boundingBox").on("keydown",this._onKeyDown,this);
+                this.get(BOUNDING_BOX).on("keydown",this._onKeyDown,this);
                 
                 this._keyEvents = [];
                 this._keyEvents[KEY_UP] = this._onUpKey;
@@ -117,7 +91,7 @@
         _onViewEvents : function (event) {
             var target = event.target;
                
-            this.toggleTreeState(target);
+            this.toggle(target);
         },
         
         /**
@@ -142,14 +116,43 @@
          * @protected
          */
         _onUpKey : function (e,target) {
-            var prevEl = target.previous("li");
+            var treeLabel,
+                branch = target.previous("." + classNames.treeLabel),
+                tree,
+                prevEl;
+                
             
+            //it could be either a treeleaf or a treelabel element.
+            //it's a treeview label, walk up to the tree label
+            if (target.hasClass(classNames.labelcontent)) {
+                treeLabel = target.ancestor("." + classNames.treeLabel);
+                prevEl = treeLabel.previous("."  + classNames.treeleafContent);
+            } 
+            
+            if (target.hasClass(classNames.treeleafContent)) {
+                prevEl = target.previous("."+ classNames.treeleafContent);
+            }  
+            
+            
+            if (!prevEl && branch) {
+                prevEl = branch.one("."  + classNames.labelcontent);
+            }  
+            
+            //prev Element is a branch
+            if (target.hasClass(classNames.labelcontent)) {
+                tree = target.ancestor("." + classNames.treeview);
+                prevEl = tree ? tree.previous ("." + classNames.treeleafContent) : null;
+            }
+          
+            
+                
             e.preventDefault();
             
             if (prevEl) {
                 prevEl.focus();
             }
         },
+        
         
          /**
          * Called when the down arrow key is pressed.
@@ -159,8 +162,27 @@
          * @protected
          */
         _onDownKey : function (e,target) {
-            var nextEl = target.next("li");
+            var treeLabel,
+                branch = target.next("." + classNames.treeview),
+                nextEl;
+                
             
+            //it could be either a treeleaf or a treelabel element.
+            //it's a treeview label, walk up to the tree label
+            if (target.hasClass(classNames.labelcontent)) {
+                treeLabel = target.ancestor("." + classNames.treeLabel);
+                nextEl = treeLabel.next("."  + classNames.treeleafContent);
+            } 
+            
+            if (target.hasClass(classNames.treeleafContent)) {
+                nextEl = target.next("."+ classNames.treeleafContent);
+            }  
+            
+            //next Element is a branch
+            if (!nextEl && branch) {
+                nextEl = branch.one("."  + classNames.labelcontent);
+            }  
+                
             e.preventDefault();
             
             if (nextEl) {
@@ -176,7 +198,7 @@
          * @protected
          */
         _onRightArrowKey : function (e,target) {
-            if (target.hasClass(classNames.treeLabel)) {
+            if (target.hasClass(classNames.labelcontent)) {
                 this.expand(target);
             }
         },
@@ -189,7 +211,7 @@
          * @protected
          */
         _onLeftArrowKey : function (e,target) {
-            if (target.hasClass(classNames.treeLabel)) {
+            if (target.hasClass(classNames.labelcontent)) {
                 this.collapse(target);
             }
         },
@@ -263,13 +285,11 @@
         * @protected
         */ 
         collapse : function (target) {
-            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
+            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get(CONTENT_BOX),
                 treeWidget = Y.Widget.getByNode(treeNode);
             
             if (!treeWidget.get("collapsed")) {
                 treeWidget.set("collapsed", true);   
-                treeNode.addClass(classNames.collapsed);
-                treeNode.setAttrs({'aria-collapsed': true });
             }
             
         },
@@ -283,7 +303,7 @@
         * @protected
         */ 
         expand : function (target) {
-            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
+            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get(CONTENT_BOX),
                 treeWidget = Y.Widget.getByNode(treeNode),
                 isPopulated = treeWidget.get("populated");
             
@@ -295,19 +315,17 @@
             
             if (treeWidget.get("collapsed")) {
                 treeWidget.set("collapsed", false); 
-                treeNode.removeClass(classNames.collapsed);
-                treeNode.setAttrs({'aria-collapsed': false });
             }        
         },
         
        /**
         * Toggles the tree. If the Tree hasn't been rendered it will render it before.
         * @param {Y.Node} This param is optional - The target that triggered the event
-        * @method _toggleTreeState
+        * @method _toggle
         * @protected
         */
-       toggleTreeState : function (target) {
-            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
+       toggle : function (target) {
+            var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get(CONTENT_BOX),
                 treeWidget = Y.Widget.getByNode(treeNode),
                 isPopulated = treeWidget.get("populated");
             
@@ -317,7 +335,6 @@
             }
             
             treeWidget.set("collapsed", !treeWidget.get("collapsed"));        
-            treeNode.toggleClass(classNames.collapsed);
         },
 
         
@@ -330,7 +347,7 @@
          * @method _setChildrenContainer
         */  
         _setChildrenContainer : function () {
-             var renderTo = this._childrenContainer || this.get("contentBox");
+             var renderTo = this._childrenContainer || this.get(CONTENT_BOX);
              this._childrenContainer = renderTo;
         },
         
@@ -389,7 +406,7 @@
             
             if (parent.get("populated")) {
                 child.render(parentNode);
-                childBB = child.get("boundingBox");
+                childBB = child.get(BOUNDING_BOX);
                 nextSibling = child.next(false);
 
             
@@ -482,7 +499,17 @@
             */
             
             collapsed : {
-                value : true
+                value : true,
+                setter : function (collapsed) {
+                    var cb = this.get(CONTENT_BOX);
+                    
+                    if (collapsed) {
+                        cb.addClass(classNames.collapsed);          
+                    } else {
+                        cb.removeClass(classNames.collapsed);          
+                    }
+                
+                }
             },
             
             /**

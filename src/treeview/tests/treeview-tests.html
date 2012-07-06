@@ -704,11 +704,11 @@
                     });
 
                     tree.render("#tree");
-                    tree.toggleTreeState();
+                    tree.toggle();
 
                     Y.Assert.areEqual(tree.get("collapsed"), false,"Tree should be expanded");
                     
-                    tree.toggleTreeState();
+                    tree.toggle();
                     Y.Assert.areEqual(tree.get("collapsed"), true,"Tree should be collapsed");
 
                     tree.destroy();
