@@ -12,4 +12,4 @@ Files
    * `layouts/example.mustache`: Default wrapper for example pages
    * `partials/getting-started.mustache`: The default header in most landing pages
    * `partials/test-runner.mustache`: Automated test harness for our examples
-   * `partials/selleck-head.mustache`: Includes the `test-runner` partial in all pages dynamically
+   * `partials/selleck-foot.mustache`: Includes the `test-runner` partial in all pages dynamically
