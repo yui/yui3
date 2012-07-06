@@ -54,7 +54,7 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         delete this.TestModelList;
     },
 
-    '`root` property should have a default value' : function () {
+    '`root` property should be an empty string by default' : function () {
         var model = new this.TestModel();
         Assert.areSame('', model.root);
 
@@ -62,12 +62,12 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame('', modelList.root);
     },
 
-    '`url` should be a function by default' : function () {
+    '`url` property should be an empty string by default' : function () {
         var model = new this.TestModel();
-        Assert.isTrue(Y.Lang.isFunction(model.url));
+        Assert.areSame('', model.url);
 
         var modelList = new this.TestModelList();
-        Assert.isTrue(Y.Lang.isFunction(modelList.url));
+        Assert.areSame('', modelList.url);
     }
 }));
 
@@ -87,59 +87,59 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         delete this.TestModelList;
     },
 
-    '_getURL() should return a String' : function () {
+    'getURL() should return a String' : function () {
         var model = new this.TestModel();
-        Assert.isString(model._getURL());
+        Assert.isString(model.getURL());
 
         var modelList = new this.TestModelList();
-        Assert.isString(modelList._getURL());
+        Assert.isString(modelList.getURL());
     },
 
-    '_getURL() should return locally set `url` property' : function () {
+    'getURL() should return locally set `url` property' : function () {
         var model = new this.TestModel({ url: '/model/123' });
-        Assert.areSame('/model/123', model._getURL());
+        Assert.areSame('/model/123', model.getURL());
 
         model.url = '/model/abc';
-        Assert.areSame('/model/abc', model._getURL());
+        Assert.areSame('/model/abc', model.getURL());
 
         var modelList = new this.TestModelList({ url: '/model' });
-        Assert.areSame('/model', modelList._getURL());
+        Assert.areSame('/model', modelList.getURL());
 
         modelList.url = '/models';
-        Assert.areSame('/models', modelList._getURL());
+        Assert.areSame('/models', modelList.getURL());
     },
 
-    '_getURL() should substitute placeholder values of Models’ `url`' : function () {
+    'getURL() should substitute placeholder values of Models’ `url`' : function () {
         var model = new this.TestModel({
             id : 123,
             url: '/model/{id}/'
         });
 
-        Assert.areSame('/model/123/', model._getURL());
+        Assert.areSame('/model/123/', model.getURL());
 
         model.addAttr('foo', { value: 'bar' });
         model.url = '/{foo}/{id}';
-        Assert.areSame('/bar/123', model._getURL());
+        Assert.areSame('/bar/123', model.getURL());
     },
 
-    '_getURL() should not substitute placeholder values of ModelLists’ `url`' : function () {
+    'getURL() should not substitute placeholder values of ModelLists’ `url`' : function () {
         var modelList = new this.TestModelList({ url: '/{foo}/' });
 
         modelList.addAttr('foo', { value: 'bar' });
         Assert.areSame('bar', modelList.get('foo'));
-        Assert.areSame('/{foo}/', modelList._getURL());
+        Assert.areSame('/{foo}/', modelList.getURL());
     },
 
-    '_getURL() should URL-encode the substitutions of placeholder values of Models’ `url`' : function () {
+    'getURL() should URL-encode the substitutions of placeholder values of Models’ `url`' : function () {
         var model = new this.TestModel({
             id : '123 456',
             url: '/model/{id}'
         });
 
-        Assert.areSame('/model/123%20456', model._getURL());
+        Assert.areSame('/model/123%20456', model.getURL());
     },
 
-    '_getURL() should not substitute Arrays, Objects, or Boolean values of Models’ `url`' : function () {
+    'getURL() should not substitute Arrays, Objects, or Boolean values of Models’ `url`' : function () {
         var model = new this.TestModel({
             id : 'asdf',
             url: '/model/{foo}/{bar}/{baz}/{id}'
@@ -151,44 +151,43 @@ modelSyncRESTSuite.add(new Y.Test.Case({
             baz : {value: true}
         });
 
-        Assert.areSame('/model/{foo}/{bar}/{baz}/asdf', model._getURL());
+        Assert.areSame('/model/{foo}/{bar}/{baz}/asdf', model.getURL());
     },
 
-    '_getURL() should return `root` if `url` is falsy' : function () {
+    'getURL() should return `root` if `url` is falsy' : function () {
         var model = new this.TestModel();
 
         model.root = '/model/';
         model.url  = '';
 
-        Assert.areSame('/model/', model._getURL());
+        Assert.areSame('/model/', model.getURL());
     },
 
-    'url() should return `root` if ModelList or Model is new' : function () {
+    'getURL() should return `root` if the Model is new' : function () {
         var model = new this.TestModel();
         model.root = '/model';
-        Assert.areSame(model.root, model.url());
-
-        var modelList = new this.TestModelList();
-        modelList.root = '/model';
-        Assert.areSame(modelList.root, modelList.url());
+        model.url  = '/foo';
+        Assert.areSame(model.root, model.getURL());
     },
 
-    'url() should return a URL that ends with a / only if Model’s `root` ends with a /' : function () {
+    'getURL() should return a URL that ends with a / only if Model’s `root` ends with a /' : function () {
         var model = new this.TestModel({id: 123});
 
         model.root = '/model';
-        Assert.areSame('/model/123', model.url());
+        Assert.areSame('/model/123', model.getURL());
 
         model.root = '/model/';
-        Assert.areSame('/model/123/', model.url());
+        Assert.areSame('/model/123/', model.getURL());
     },
 
-    'url() should return a URL determined from the sync action' : function () {
+    'getURL() should return a URL determined from the sync action' : function () {
         var model = new this.TestModel({id: 123});
 
-        model.url = function(action) { return '/model/' + action; };
+        model.getURL = function (action) {
+            return '/model/' + action;
+        };
 
-        Assert.areSame('/model/read', model._getURL('read'));
+        Assert.areSame('/model/read', model.getURL('read'));
     },
 
     'serialize() can modify the data' : function () {
