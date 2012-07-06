@@ -147,12 +147,12 @@ Model or ModelList constructor.
 
 @property _NON_ATTRS_CFG
 @type Array
-@default ["root", "url"]
+@default ["url"]
 @static
 @protected
 @since 3.6.0
 **/
-RESTSync._NON_ATTRS_CFG = ['root', 'url'];
+RESTSync._NON_ATTRS_CFG = ['url'];
 
 RESTSync.prototype = {
 
