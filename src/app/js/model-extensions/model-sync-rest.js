@@ -1,5 +1,5 @@
 /**
-An Extension which provides a RESTful HTTP sync implementation that can be mixed
+An extension which provides a RESTful XHR sync implementation that can be mixed
 into a Model or ModelList subclass.
 
 @module app
@@ -10,21 +10,32 @@ into a Model or ModelList subclass.
 var Lang = Y.Lang;
 
 /**
-An Extension which provides a RESTful HTTP sync implementation that can be mixed
+An extension which provides a RESTful XHR sync implementation that can be mixed
 into a Model or ModelList subclass.
 
 This makes it trivial for your Model or ModelList subclasses communicate and
-transmit its data via RESTful HTTP. In most cases you'll only need to provide a
-value for `root` when sub-classing `Y.Model`, and only provide a value for `url`
-when sub-classing `Y.ModelList`.
+transmit their data via RESTful XHRs. In most cases you'll only need to provide
+a value for `root` when sub-classing `Y.Model`.
 
-    var User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
+    Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
         root: '/users'
     });
 
-    var Users = Y.Base.create('users', Y.ModelList, [Y.ModelSync.REST], {
-        model: User,
-        url  : '/users'
+    Y.Users = Y.Base.create('users', Y.ModelList, [Y.ModelSync.REST], {
+        // By convention `Y.User`'s `root` will be used for the lists' URL.
+        model: Y.User
+    });
+
+    var users = new Y.Users();
+
+    // GET users list from: "/users"
+    users.load(function () {
+        var firstUser = users.item(0);
+
+        firstUser.get('id'); // => "1"
+
+        // PUT updated user data at: "/users/1"
+        firstUser.set('name', 'Eric').save();
     });
 
 @class ModelSync.REST
@@ -33,85 +44,6 @@ when sub-classing `Y.ModelList`.
 @since 3.6.0
 **/
 function RESTSync() {}
-
-/**
-Static lookup hash table of RESTful HTTP methods corresponding to CRUD actions.
-
-@property HTTP_METHODS
-@type Object
-@default
-    {
-        "create": "POST",
-        "read"  : "GET",
-        "update": "PUT",
-        "delete": "DELETE"
-    }
-@static
-@since 3.6.0
-**/
-RESTSync.HTTP_METHODS = {
-    'create': 'POST',
-    'read'  : 'GET',
-    'update': 'PUT',
-    'delete': 'DELETE'
-};
-
-/**
-Default headers used with all XHRs.
-
-By default the `Accept` and `Content-Type` headers are set to
-"application/json", this singals to the HTTP server to process the resquest
-bodies as JSON and send JSON responses. If you're sending and receiving content
-other than JSON, you can override these headers and the `parse()` and
-`serialize()` methods.
-
-**Note:** These headers will be merged with any request-specific headers, and
-the request-specific headers will take precedence.
-
-@property HTTP_HEADERS
-@type Object
-@default
-    {
-        "Accept"      : "application/json",
-        "Content-Type": "application/json"
-    }
-@static
-@since 3.6.0
-**/
-RESTSync.HTTP_HEADERS = {
-    'Accept'      : 'application/json',
-    'Content-Type': 'application/json'
-};
-
-/**
-The number of milliseconds before the XHRs will timeout/abort. This defaults to
-30 seconds.
-
-**Note:** This can be overridden on a per-request basis. See `sync()` method.
-
-@property HTTP_TIMEOUT
-@type Number
-@default 30000
-@static
-@since 3.6.0
-**/
-RESTSync.HTTP_TIMEOUT = 30000;
-
-/**
-Static flag to use the HTTP POST method instead of PUT or DELETE.
-
-If the server-side HTTP framework isn't RESTful, setting this flag to `true`
-will cause all PUT and DELETE requests to instead use the POST HTTP method, and
-add a `X-HTTP-Method-Override` HTTP header with the value of the method type
-which was overridden.
-
-@property EMULATE_HTTP
-@type Boolean
-@default false
-@static
-@since 3.6.0
-**/
-RESTSync.EMULATE_HTTP = false;
 
 /**
 A request authenticity token to validate HTTP requests made by this extension
@@ -142,6 +74,85 @@ will have a `X-CSRF-Token` header added with the token value.
 RESTSync.CSRF_TOKEN = YUI.Env.CSRF_TOKEN;
 
 /**
+Static flag to use the HTTP POST method instead of PUT or DELETE.
+
+If the server-side HTTP framework isn't RESTful, setting this flag to `true`
+will cause all PUT and DELETE requests to instead use the POST HTTP method, and
+add a `X-HTTP-Method-Override` HTTP header with the value of the method type
+which was overridden.
+
+@property EMULATE_HTTP
+@type Boolean
+@default false
+@static
+@since 3.6.0
+**/
+RESTSync.EMULATE_HTTP = false;
+
+/**
+Default headers used with all XHRs.
+
+By default the `Accept` and `Content-Type` headers are set to
+"application/json", this signals to the HTTP server to process the request
+bodies as JSON and send JSON responses. If you're sending and receiving content
+other than JSON, you can override these headers and the `parse()` and
+`serialize()` methods.
+
+**Note:** These headers will be merged with any request-specific headers, and
+the request-specific headers will take precedence.
+
+@property HTTP_HEADERS
+@type Object
+@default
+    {
+        "Accept"      : "application/json",
+        "Content-Type": "application/json"
+    }
+@static
+@since 3.6.0
+**/
+RESTSync.HTTP_HEADERS = {
+    'Accept'      : 'application/json',
+    'Content-Type': 'application/json'
+};
+
+/**
+Static mapping of RESTful HTTP methods corresponding to CRUD actions.
+
+@property HTTP_METHODS
+@type Object
+@default
+    {
+        "create": "POST",
+        "read"  : "GET",
+        "update": "PUT",
+        "delete": "DELETE"
+    }
+@static
+@since 3.6.0
+**/
+RESTSync.HTTP_METHODS = {
+    'create': 'POST',
+    'read'  : 'GET',
+    'update': 'PUT',
+    'delete': 'DELETE'
+};
+
+/**
+The number of milliseconds before the XHRs will timeout/abort. This defaults to
+30 seconds.
+
+**Note:** This can be overridden on a per-request basis. See `sync()` method.
+
+@property HTTP_TIMEOUT
+@type Number
+@default 30000
+@static
+@since 3.6.0
+**/
+RESTSync.HTTP_TIMEOUT = 30000;
+
+/**
 Properties that shouldn't be turned into ad-hoc attributes when passed to a
 Model or ModelList constructor.
 
@@ -169,19 +180,21 @@ RESTSync.prototype = {
     "/", and if the `root` does not end with a slash, neither will the XHR URLs.
 
     @example
-        var User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
-            root: '/users/'
+        Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
+            root: '/users'
         });
 
-        var myUser = new User({id: '123'});
-        myUser.load(); // Will GET the User data from: /users/123/
+        var currentUser, newUser;
 
-        var newUser = new User({name: 'Eric Ferraiuolo'});
-        newUser.save(); // Will POST the User data to: /users/
+        // GET the user data from: "/users/123"
+        currentUser = new Y.User({id: '123'}).load();
+
+        // POST the new user data to: "/users"
+        newUser = new Y.User({name: 'Eric Ferraiuolo'}).save();
 
     When sub-classing `Y.ModelList`, usually you'll want to ignore configuring
-    the `root` and instead set the `url` to a string; but if you only specify a
-    value for `root`, things will work correctly.
+    the `root` and simply rely on the build-in convention of the list's
+    generated URLs defaulting to the `root` specified by the list's `model`.
 
     @property root
     @type String
