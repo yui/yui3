@@ -30,7 +30,7 @@ function sendResponse(res, filepath, delay) {
         // Convert to "server" root
         var filepath = __dirname + filepath;
 
-        path.exists(filepath, function(exists) {
+        fs.exists(filepath, function(exists) {
             if (exists) {
                 fs.readFile(filepath, function(e, content) {
                     if (!e) {
