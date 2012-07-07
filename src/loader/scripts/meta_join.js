@@ -2,7 +2,7 @@
 
 var fs = require('fs'),
     path = require('path'),
-    exists = fs.existsSync || path.existsSync,
+    exists = fs.existsSync || fs.existsSync,
     base = path.join(__dirname, '../../'),
     jsonOut = path.join(__dirname, '../', 'js', 'yui3.json'),
     jsOut = path.join(__dirname, '../', 'js', 'yui3.js'),
