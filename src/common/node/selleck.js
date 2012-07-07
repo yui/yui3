@@ -2,7 +2,7 @@
 
 var fs = require('fs'),
     path = require('path'),
-    exists = fs.existsSync || path.existsSync;
+    exists = fs.existsSync || fs.existsSync;
 
 var base = path.join(__dirname, '../../');
 
