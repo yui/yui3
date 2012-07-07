@@ -105,7 +105,7 @@
         <url>datatype/datatype-numberparse.html</url>
         <url>datatype/datatype-xmlformat.html</url>
         <url>datatype/datatype-xmlparse.html</url>
-        <url>dd/anim-drop.html</url>
+        <url>dd/anim-drop-example.html</url>
         <url>dd/constrained-drag.html</url>
         <url>dd/delegate-drop.html</url>
         <url>dd/delegate-plugins.html</url>
@@ -114,8 +114,8 @@
         <url>dd/drop-code.html</url>
         <url>dd/groups-drag.html</url>
         <url>dd/list-drag.html</url>
-        <url>dd/photo-browser.html</url>
-        <url>dd/portal-drag.html</url>
+        <url>dd/photo-browser-example.html</url>
+        <url>dd/portal-example.html</url>
         <url>dd/proxy-drag.html</url>
         <url>dd/scroll-list.html</url>
         <url>dd/shim-drag.html</url>
