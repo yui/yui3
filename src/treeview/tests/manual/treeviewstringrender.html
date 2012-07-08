@@ -1,0 +1,62 @@
+<html>
+	<head>
+		<title></title>
+		<style type="text/css">
+		  #myTree {
+    		  margin: 20px;
+    		  
+		  }
+		
+		</style>
+	</head>
+	<body class="yui3-skin-sam">
+    	<div id="myTree"></div>
+    	<button id="add">Add more</button>
+		<script src="../../../../build/yui/yui.js"></script>
+        <script type="text/javascript">
+            YUI({
+                filter:"raw", 
+                combine:false
+            }).use('treeview',function (Y) {
+            
+                var tree = new Y.TreeView({
+                   id: "tree",
+                   label : "This my tree",
+                   children: [
+                       {  id: "leaf-1", label: "Leaf One" },
+                       { id: "leaf-2", label: "Leaf Two" },
+                       { type: "TreeView",id: "subtree", label: "Subtree", children: [
+                          { id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                          {  id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                          { id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                          { id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+                       ]}
+                   ]
+                });
+                
+                tree.render("#myTree");
+                
+                
+                
+                Y.one("#add").on("click",function(e){
+                    /*
+var child = tree.add({ 
+                    type: "Treeview",
+                    id: "subtree2", 
+                    label: "Subtree2",
+                    lazyLoad : true,
+                    children: [
+                          { id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                          {  id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                          { id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                          { id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+                       ]},0);
+                    */
+                    
+                    tree.add([{label : "foo"}, {label : "hi"}]);
+
+                });
+             });
+         </script>
+	</body>
+</html>
