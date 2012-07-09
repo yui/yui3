@@ -95,6 +95,10 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
                 // the list, just being freed from memory. If something else
                 // still holds a reference to it, it may still bubble events to
                 // the list, but that's okay.
+                //
+                // `this._models` is a sparse array, which ensures that the
+                // indices of models and items match even if we don't have model
+                // instances for all items.
                 delete this._models[index];
             }
         } else {
@@ -171,7 +175,7 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
     @see ModelList.indexOf()
     **/
     indexOf: function (model) {
-        return YArray.indexOf(model._isYUIModel ?
+        return YArray.indexOf(model && model._isYUIModel ?
             this._models : this._items, model);
     },
 
@@ -466,9 +470,9 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
 
         if (model) {
             this._detachList(model);
-            this._models.splice(index, 1);
         }
 
         this._items.splice(index, 1);
+        this._models.splice(index, 1);
     }
 });
