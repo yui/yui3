@@ -4,6 +4,7 @@
         filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || null,
         showConsole = (window.location.search.match(/[?&]console=([^&]+)/) || [])[1] || null,
         name = YUI.Env.Tests.name,
+        title = YUI.Env.Tests.title,
         projectAssets = YUI.Env.Tests.project,
         assets = YUI.Env.Tests.assets,
         auto = YUI.Env.Tests.auto || YUI().UA.phantomjs,
@@ -148,7 +149,7 @@
         Y.Test.Runner.add(testCase);
         
         Y.Test.Runner._ignoreEmpty = false; //Throw on no assertions
-        Y.Test.Runner.setName('Automated ' + name + ' tests');
+        Y.Test.Runner.setName(title);
         Y.Test.Runner.on('complete', function(e) {
             
             if (e.results.failed) {
@@ -156,7 +157,7 @@
             }
 
             if (log) {
-            var header = log.one('.yui3-console-hd h4');
+                var header = log.one('.yui3-console-hd h4');
 
                 if (e.results.failed) {
                     log.addClass('failed');
@@ -172,5 +173,3 @@
     });
 
 }());
-
-
