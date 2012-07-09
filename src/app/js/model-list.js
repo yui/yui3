@@ -192,7 +192,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     destructor: function () {
-        YArray.each(this._items, this._detachList, this);
+        this._clear();
     },
 
     // -- Public Methods -------------------------------------------------------
