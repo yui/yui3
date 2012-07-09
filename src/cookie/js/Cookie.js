@@ -186,7 +186,9 @@
                         cookieName = decode(cookieParts[i]);
                         cookieValue = "";
                     }
-                    cookies[cookieName] = cookieValue;
+                    if (isUndefined(cookies[cookieName])) {
+                        cookies[cookieName] = cookieValue;
+                    }
                 }
 
             }
