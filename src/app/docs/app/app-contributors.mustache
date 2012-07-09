@@ -76,8 +76,7 @@ To make our app look nice, we'll add some CSS to style the markup we've setup in
 
 <div class="scrollable">
 ```
-<link rel="stylesheet" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssgrids/grids-min.css" />
-
+{{>css-yui-grids}}
 {{>app-contributors-css}}
 ```
 </div>
@@ -112,9 +111,7 @@ All of these things will live inside the following YUI instance:
 </p>
 
 ```
-<!-- Include YUI on the page if you haven't already. -->
-<script src="http://yui.yahooapis.com/{{yuiVersion}}/build/yui/yui-min.js"></script>
-
+{{>js-yui-seed}}
 {{>app-contributors-js-yui-start}}
     // ... Add the code from the following sections here! ...
 {{>app-contributors-js-yui-end}}
@@ -425,7 +422,9 @@ Finally we can create a new instance of our `ContributorsApp`, render it to the 
 <h2>Complete Example Source</h2>
 
 ```
+{{>css-yui-grids}}
 {{>app-contributors-css}}
 {{>app-contributors-templates}}
+{{>js-yui-seed}}
 {{>app-contributors-js}}
 ```
