@@ -761,9 +761,9 @@ As of 3.4.0, IO is instantiatiable.  An IO instance avails its public and privat
 
 ```
 // Create a new instance of IO.
-var io = new IO();
+var io = new Y.IO();
 
-// Send a request using the new IO instance.
+// Send a request using the new Y.IO instance.
 // This is analogous to the static method
 // Y.io()
 io.send(uri, configuration);
@@ -776,9 +776,9 @@ In addition to being instantiable, IO is now an EventTarget, and IO's global eve
 ```
 // This simple example creates a new instance of IO and passes
 // Custom Event configurations that instructs IO to emit
-// Event Facades for all its events, and allow the events to 
+// Event Facades for all its events, and allow the events to
 // bubble to other registered event targets, if any.
-var io = new IO({
+var io = new Y.IO({
     emitFacade: true, // Event handlers will receive an Event Facade.
     bubbles: true, // Events will bubble to registered event targets.
 });
@@ -806,7 +806,7 @@ var configuration = {
     }
 };
 
-// For comparison, this is the regular event handler, when 
+// For comparison, this is the regular event handler, when
 // not emitting Event Facades as described in the previous
 // sections on "The Response Object" and "Events."
 var configuration = {
