@@ -500,7 +500,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     @protected
     **/
     _syncShim: useShim ? function () {
-        this._boundingBox.shim.sync();
+        var shim = this._boundingBox.shim;
+
+        if (shim) {
+            shim.sync();
+        }
     } : function () {},
 
     /**
