@@ -422,7 +422,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         if (options.asList) {
-            list = new Y.ModelList({model: this.model});
+            list = new this.constructor({model: this.model});
 
             if (filtered.length) {
                 list.add(filtered, {silent: true});
