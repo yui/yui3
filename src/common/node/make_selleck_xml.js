@@ -12,6 +12,8 @@ var examples = require('./selleck'),
         tab + '<tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">'
     ];
 
+    str.push(tab + tab + '<url>common/tests/prep.html</url>');
+
     examples.forEach(function(url) {
         str.push(tab + tab + '<url>' + url + '</url>');
     });
