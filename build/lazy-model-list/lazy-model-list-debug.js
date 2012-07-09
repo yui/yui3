@@ -67,16 +67,6 @@ var AttrProto = Y.Attribute.prototype,
     EVT_RESET = 'reset';
 
 Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
-    // -- Lifecycle Methods ----------------------------------------------------
-
-    // Overrides ModelList#destructor() to detach only instantiated models.
-    destructor: function () {
-        // Have to do a full clear here instead of just detaching models, or
-        // ModelList's chained destructor will try to detach the objects in
-        // this._items, which will cause an exception.
-        this._clear();
-    },
-
     // -- Public Methods -------------------------------------------------------
 
     /**
