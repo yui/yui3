@@ -114,10 +114,10 @@ YUI().use("dump", "node", "datasource-io", "datasource-jsonschema", "datasource-
     var myDataSourceJSON = new Y.DataSource.IO({source:"../assets/datasource/ysearch.json"}),
         myCallbackJSON = {
             success: function(e){
-                Y.one("#demo_output_json").setContent(Y.dump(e.response));
+                Y.one("#demo_output_json").setHTML(Y.dump(e.response));
             },
             failure: function(e){
-                Y.one("#demo_output_json").setContent("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_json").setHTML("Could not retrieve data: " + e.error.message);
             }
         };
 
@@ -138,10 +138,10 @@ YUI().use("dump", "node", "datasource-io", "datasource-jsonschema", "datasource-
     var myDataSourceXML = new Y.DataSource.IO({source:"../assets/datasource/ysearch.xml"}),
         myCallbackXML = {
             success: function(e){
-                Y.one("#demo_output_xml").setContent(Y.dump(e.response).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
+                Y.one("#demo_output_xml").setHTML(Y.dump(e.response).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"));
             },
             failure: function(e){
-                Y.one("#demo_output_xml").setContent("Could not retrieve data: " + e.error.message);
+                Y.one("#demo_output_xml").setHTML("Could not retrieve data: " + e.error.message);
             }
         };
 

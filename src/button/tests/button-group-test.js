@@ -157,6 +157,30 @@ YUI.add('button-group-test', function (Y) {
             Assert.areSame(1, ButtonGroup.getSelectedButtons().length);
         }
     }));
+
+    // -- MISC ----------------------------------------------------------------
+    suite.add(new Y.Test.Case({
+        name: 'MISC',
+
+        setUp : function () {
+            Y.one("#container").setContent('<div id="group"><button><div class="yui3-button-label">Button A</div></button></div>');
+            this.ButtonGroup = new Y.ButtonGroup({
+                srcNode: '#group'
+            }).render();
+        },
+    
+        tearDown: function () {
+            Y.one('#container').empty(true);
+        },
+    
+        'ButtonGroups should apply yui3-button-selected to anscestor button div, not the nested element that was clicked': function () {
+            var ButtonGroup = this.ButtonGroup;
+            var buttons = ButtonGroup.getButtons();
+
+            Y.one('#group>button>div').simulate('click');
+            Assert.areSame('button', Y.one('#group .yui3-button-selected').get('tagName').toLowerCase());
+        }
+    }));
     
     Y.Test.Runner.add(suite);
 

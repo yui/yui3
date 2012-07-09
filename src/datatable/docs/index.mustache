@@ -454,7 +454,7 @@ YUI().use('datatable-base', function (Y) {
                         'after');
                 }
 
-                o.cell.setContent(prefix + profit.toFixed(2));
+                o.cell.setHTML(prefix + profit.toFixed(2));
             }
         }
     ];
@@ -2201,7 +2201,7 @@ pies.on('pie:slicesChange', function (e) {
             <td>
                 ```
                 formatter: function (o) {
-                    return '<a href="/service/' + o.record.get('id') + '"> +
+                    return '<a href="/service/' + o.record.get('id') + '">' +
                         o.value + '</a>';
                 }
                 ```
@@ -2309,7 +2309,7 @@ nodeFormatter: function (o) {
             'after');
     }
 
-    o.cell.setContent(o.value);
+    o.cell.setHTML(o.value);
 }
 ```
 
@@ -2395,7 +2395,7 @@ YUI.add('datatable-node', function (Y) {
                 var record = (i % count) ?
                         data[data.length - 1] :
                         (data[data.length] = {});
-                record[columns[i % count]] = node.getContent();
+                record[columns[i % count]] = node.getHTML();
             });
 
             for (i = columns.length - 1; i >= 0; --i) {

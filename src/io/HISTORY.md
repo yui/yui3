@@ -1,16 +1,26 @@
 IO Utility Change History
 =========================
 
+3.6.0
+-----
+
+  * Fixed issue when running in Node.js where `config.data` wasn't automatically
+    stringified. [Ticket #2532390]
+
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 
-  * Configuration data can now include an instance of FormData for HTTP
-    POST requests. [Ticket #2531274]
+  * Configuration data can now include an instance of FormData for HTTP POST
+    requests. [Ticket #2531274]
 
   * Implemented FormData file upload in io-base. [Ticket #2531274]
 
-  * Fixed transport error in io-base [Ticket #2531308][Ticket #2531941]
-    [Ticket #2531947]
+  * Fixed transport error in io-base [Ticket #2531308, #2531941, #2531947]
 
   * Fixed IO loader meta-data [Ticket #2531320]
 
@@ -24,29 +34,29 @@ IO Utility Change History
 
   * Fixed error in sending an XML document as POST data. [Ticket #2531257]
 
-  * success/failure/complete/etc callbacks that throw errors no longer
-    hijack all future transactions. [Ticket #2532107]
+  * success/failure/complete/etc callbacks that throw errors no longer hijack
+    all future transactions. [Ticket #2532107]
 
 3.4.1
 -----
 
   * HTTP 304 now treated as a success condition. [Ticket #2530931]
 
-  * Fixed transport creation error when both io-xdr and io-upload-iframe
-    modules are in use. [Ticket #2530999]
+  * Fixed transport creation error when both io-xdr and io-upload-iframe modules
+    are in use. [Ticket #2530999]
 
   * Querystring stringify added to io-upload-iframe. [Ticket #2531037]
 
   * Fixed request abort error in IE. [Ticket #2531038]
 
-  * Add try/catch to io-upload-iframe response to handle failure cases
-    where the document may be inaccessible. [Ticket #2531041]
+  * Add try/catch to io-upload-iframe response to handle failure cases where the
+    document may be inaccessible. [Ticket #2531041]
 
   * Add IO support for XHR basic user authentication. [Ticket #2530023]
 
   * Revert Y.mix usage for synchronous requests. [Ticket #2531056]
 
-  * Fixed io-upload-iframe transport destruction.  [Ticket #2531058]
+  * Fixed io-upload-iframe transport destruction. [Ticket #2531058]
 
 3.4.0
 -----
@@ -102,7 +112,7 @@ IO Utility Change History
   * [!] Fixed security vulnerability in `io-xdr` when using the Flash transport.
     Removed: `Security.allowDomain("*")` setting from `io.as` (source) and
     `io.swf` (compiled). The implementation reverts back to the version in
-3.0.0.
+    3.0.0.
 
     This reversion prevents third-party sites from being able to load `io.swf`
     from a disparate domain, and make HTTP requests with the SWF's domain

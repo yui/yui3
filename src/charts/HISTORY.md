@@ -1,6 +1,20 @@
 Charts Change History
 =====================
 
+3.6.0
+-----
+
+  * #2531796 Addressed issue in which a combo series with discontinuous data and discontinuousType set to dashed broke the chart.
+  * #2532102 Addressed issue in which Area Charts with null values at the start or beginning do not close accurately.
+  * #2532186 Addressed issue in which categoryDisplayName and valueDisplayName in seriesCollection were not accepted on init.
+  * #2532234 Addressed issue in which axis appendTitleFunction and appendLabelFunction attributes were not being set properly.
+  * #2532284 Addressed issue in which legend item text with spaces wrapped.
+  * #2532285 Cleaned up legend destructor method.
+  * #2532327 Addressed issue in which negative values in a column series displayed incorrectly.
+  * #2532348 Addressed issue in which AreaSpline style object returned null.
+  * #2532353 Addressed issue in which vertical attribute was not being set properly on non-histogram cartesian series.
+  * #2532292 Filled out testing coverage
+  * #2531688 Fixed rounding bug in pie chart. 
 
 3.5.1
 -----

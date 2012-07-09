@@ -115,7 +115,6 @@ suite.add(new Y.Test.Case({
 
 }));
 
-Y.Test.Runner.add(suite);
 suite.add(new Y.Test.Case({
     name: "setColumnWidth",
 

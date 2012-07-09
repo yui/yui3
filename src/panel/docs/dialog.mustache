@@ -86,7 +86,7 @@ If you use a callback, you'll need to add it every time the dialog is shown.
 ```
 Y.one('.btn-show').on('click', function(){
     // set the content you want in the message
-    Y.one('#dialog .message').setContent('Are you sure you want to [take some action]?');
+    Y.one('#dialog .message').setHTML('Are you sure you want to [take some action]?');
     
     // set the icon (or none) that appears next to the message.
     // the Class 'message' also needs to be maintained.

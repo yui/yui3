@@ -132,6 +132,7 @@ suite.add(new Y.Test.Case({
             Assert.isUndefined(e.data, "error: Expected undefined data.");
             Assert.isObject(e.response, "error: Expected normalized response object.");
             Assert.isObject(e.error, "error: Expected error.");
+            Assert.areSame(e.error.message, "Planned failure");
             errorCallback = true;
         });
 
@@ -142,6 +143,45 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.isTrue(errorCallback);
+    },
+
+    testGetTimeout: function () {
+        var ds = new Y.DataSource.Get({
+                source: "http://query.yahooapis.com/v1/public/yql?format=json&",
+                get: {
+                    script: function (uri, config) {
+                        config.onTimeout({ msg: "Planned timeout" });
+                    }
+                }
+            }),
+            timeoutCallback;
+        
+        ds.plug(Y.Plugin.DataSourceJSONSchema, {
+            schema: {
+                resultListLocator: "query.results.result",
+                resultFields: ["title"]
+            }
+        });
+
+        ds.on("error", function (e) {
+            Assert.areSame("dataSourceGet:error", e.type);
+            Assert.isNumber(e.tId, "error: Expected transaction ID.");
+            Assert.areSame("b", e.request, "error: Expected request.");
+            Assert.areSame("callback", e.callback, "error: Expected callback.");
+            Assert.isUndefined(e.data, "error: Expected undefined data.");
+            Assert.isObject(e.response, "error: Expected normalized response object.");
+            Assert.isObject(e.error, "error: Expected error.");
+            Assert.areSame(e.error.message, "Planned timeout");
+            timeoutCallback = true;
+        });
+
+        ds.set("source", "bar");
+        ds.sendRequest({
+            request: "b",
+            callback: "callback"
+        });
+
+        Assert.isTrue(timeoutCallback);
     }
 }));
 

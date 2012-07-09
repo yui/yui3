@@ -1,6 +1,6 @@
 UserView = Y.Base.create('userView', Y.View, [], {
     // Compiles the User Template into a reusable Handlebars template.
-    template: Y.Handlebars.compile(Y.one('#t-user').getContent()),
+    template: Y.Handlebars.compile(Y.one('#t-user').getHTML()),
 
     render: function () {
         // Retrieves all of the model instance's data as a simple JSON struct.
@@ -14,7 +14,7 @@ UserView = Y.Base.create('userView', Y.View, [], {
         // Applies the `User` model data to the User Template and sets the
         // resulting HTML as the contents of this view's container.
         content = this.template(user);
-        this.get('container').setContent(content);
+        this.get('container').setHTML(content);
 
         return this;
     }

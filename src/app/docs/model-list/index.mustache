@@ -580,7 +580,7 @@ function (a, b) {
 ```
 
 <p>
-If necessary, you can override ModelList's protected `_sync()` method (note the underscore prefix) to further customize this sorting logic.
+If necessary, you can override ModelList's protected <a href="{{apiDocs}}/classes/ModelList.html#method__sort">`_sort()`</a> method (note the underscore prefix) to further customize this sorting logic.
 </p>
 
 <h2>Implementing a List Sync Layer</h2>
@@ -702,3 +702,74 @@ parse: function (response) {
   });
 }
 ```
+
+<h2>LazyModelList</h2>
+
+<p>
+The <a href="{{apiDocs}}/classes/LazyModelList.html">LazyModelList</a> class is a subclass of ModelList that stores plain objects instead of fully instantiated Model instances. This can be useful when you're dealing with a large number of items that you don't want to instantiate up front for performance or memory usage reasons. To use a LazyModelList, load the `lazy-model-list` module and instantiate `Y.LazyModelList` instead of `Y.ModelList`.
+</p>
+
+```
+YUI().use('lazy-model-list', function (Y) {
+  var list = new Y.LazyModelList();
+
+  // ...
+});
+```
+
+<p>
+LazyModelList shares the same API as ModelList, but in all cases where ModelList provides or accepts a Model instance, LazyModelList provides or accepts a plain JavaScript object. An object in a LazyModelList can be revived into a full Model instance by passing it (or its index) to the list's <a href="{{apiDocs}}/classes/LazyModelList.html#method_revive">`revive()`</a> method.
+</p>
+
+<p>
+Once an item is revived, its model instance is cached internally for future use. To delete a cached model instance and free up memory, pass it (or its index) to the <a href="{{apiDocs}}/classes/LazyModelList.html#method_free">`free()`</a> method.
+</p>
+
+<p>
+Since the items stored in a LazyModelList are plain objects and not full Model instances, there are a few caveats to be aware of:
+</p>
+
+<ul>
+  <li>
+    <p>
+    Items contain properties rather than Model attributes. To retrieve a property, use
+    `item.foo` rather than `item.get('foo')`. To set a property, use
+    `item.foo = 'bar'` rather than `item.set('foo', 'bar')`.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Model attribute getters and setters aren't supported, since items in the
+    LazyModelList are stored and manipulated as plain objects with simple
+    properties.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Changes made to the plain object version of an item will not trigger or
+    bubble up Model `change` events. However, once an item is revived into a
+    full Model using the `revive()` method, changes to that Model instance
+    will trigger and bubble change events as expected.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    Custom `idAttribute` fields are not supported.
+    </p>
+  </li>
+
+  <li>
+    <p>
+    `id` and `clientId` properties <em>are</em> supported. If an item doesn't have a
+    `clientId` property, one will be generated automatically when the item is
+    added to a LazyModelList.
+    </p>
+  </li>
+</ul>
+
+<p>
+LazyModelList is generally much more memory efficient than ModelList when managing large numbers of items, and adding/removing items is significantly faster. However, the tradeoff is that LazyModelList is only well-suited for storing very simple items without complex attributes, and consumers must explicitly revive items into full Model instances as needed (this is not done transparently for performance reasons).
+</p>

@@ -1,6 +1,25 @@
 DataTable Change History
 ========================
 
+3.6.0
+-----
+
+ * Extracted all rendering logic into new class Y.DataTable.TableView.  Added
+   `view` and `viewConfig` attributes to configure which view to use to render
+   the table.  `headerView`, `bodyView`, and `footerView` are all passed along
+   to this View class to delegate rendering (if appropriate).  You can now have
+   a single `view` config on DT to render the entire table and contents.
+   NOTE: if you were subscribing to `renderHeader`, `renderBody`, or
+   `renderFooter` events, they now have to be prefixed with 'table' (E.g.
+   `table.after('table:renderBody', fn);`
+ * Column configuration array is now copied when assigned.  This allows the same
+   array and column config objects to be used for multiple tables.
+
+3.5.1
+-----
+
+ * No changes.
+
 3.5.0
 -----
 

@@ -105,12 +105,12 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
     * @private
     */
     _handleClick: function(e){
-        var buttons,
-            clickedNode = e.target,
-            group = this,
+        var group = this,
+            clickedNode = e.target.ancestor('.' + ButtonGroup.CLASS_NAMES.BUTTON, true),
             type = group.get('type'),
             selectedClass = ButtonGroup.CLASS_NAMES.SELECTED,
-            isSelected = clickedNode.hasClass(selectedClass);
+            isSelected = clickedNode.hasClass(selectedClass),
+            buttons;
 
         // TODO: Anything for 'push' groups?
 

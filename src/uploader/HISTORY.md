@@ -1,7 +1,25 @@
 Uploader Utility (New) Change History
 =====================================
 
+3.6.0
+-----
+  * Bug fix for 2532150 (empty fileList after fileselect event)
+  * Bug fix for 2532140 (can't select the same set of files twice)
+  * Bug fix for 2532111 (drop event is not being fired)
+  * New feature: a `fileFilterFunction` attribute and improved
+    `fileList` handling for filtering selected files.
+  * New feature: Added support for file type filters to the HTML5 
+    uploader's "Select Files" dialog.
+  * New feature: allow setting custom headers and `withCredentials`
+    property for the HTML5 uploader (passed through to the underlying
+    XMLHttpRequest Level 2 instance).
+
+3.5.1
+-----
+  * No changes.
+
 3.5.0
+-----
   * Added HTML5Uploader layer
   * Refactored queue management out of Uploader
   * Introduced new APIs (more details in documentation)

@@ -286,13 +286,17 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin = Math.round((dataHeight + topPadding + yOffset)); 
+        if(yMin < 0)
+        {
+            this._bottomOrigin = this._bottomOrigin - ((0 - yMin) * yScaleFactor);
+        }
         for (; i < dataLength; ++i) 
 		{
             xValue = parseFloat(xData[i]);
             yValue = parseFloat(yData[i]);
             if(isNumber(xValue))
             {
-                nextX = Math.round((((xValue - xMin) * xScaleFactor) + leftPadding + xOffset));
+                nextX = (((xValue - xMin) * xScaleFactor) + leftPadding + xOffset);
             }
             else
             {
@@ -300,7 +304,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             }
             if(isNumber(yValue))
             {
-			    nextY = Math.round(((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor));
+			    nextY = ((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor);
             }
             else
             {
@@ -316,6 +320,48 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this.set("xMarkerPlane", xMarkerPlane);
         this.set("yMarkerPlane", yMarkerPlane);
         this._dataLength = dataLength;
+    },
+
+    /**
+     * Finds the first valid index of an array coordinates.
+     *
+     * @method _getFirstValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getFirstValidIndex: function(coords)
+    {
+        var coord,
+            i = -1,
+            limit = coords.length;
+        while(!Y_Lang.isNumber(coord) && i < limit)
+        {
+            i += 1;
+            coord = coords[i];
+        }
+        return i;
+    },
+
+    /**
+     * Finds the last valid index of an array coordinates.
+     *
+     * @method _getLastValidIndex
+     * @param {Array} coords An array of x or y coordinates.
+     * @return Number
+     * @private
+     */
+    _getLastValidIndex: function(coords)
+    {
+        var coord,
+            i = coords.length,
+            limit = -1;
+        while(!Y_Lang.isNumber(coord) && i > limit)
+        {
+            i -= 1;
+            coord = coords[i];
+        }
+        return i;
     },
 
     /**
@@ -485,16 +531,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if(this._path)
         {
             this._path.destroy();
+            this._path = null;
         }
         if(this._lineGraphic)
         {
             this._lineGraphic.destroy();
             this._lineGraphic = null;
         }
-        if(this.get("graphic"))
+        if(this._groupMarker)
         {
-            this.get("graphic").destroy();
-        }   
+            this._groupMarker.destroy();
+            this._groupMarker = null;
+        }
     }
 }, {
     ATTRS: {
@@ -544,11 +592,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         categoryDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("yDisplayName") : this.get("xDisplayName");
+           },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._yDisplayName = val;
+                }
+                else
+                {
+                    this._xDisplayName = val;
+                }
+                return val;
             }
         },
 
@@ -560,11 +621,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          * @readOnly
          */
         valueDisplayName: {
-            readOnly: true,
+            lazyAdd: false,
 
             getter: function()
             {
                 return this.get("direction") == "vertical" ? this.get("xDisplayName") : this.get("yDisplayName");
+            },
+
+            setter: function(val)
+            {
+                if(this.get("direction") == "vertical")
+                {
+                    this._xDisplayName = val;
+                }
+                else
+                {
+                    this._yDisplayName = val;
+                }
+                return val;
             }
         },
         

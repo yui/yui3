@@ -1,6 +1,6 @@
 <div class="intro">
     <p>The `event-touch` module extends the <a
-    href="index.html#appendixA">whitelist of DOM events</a> to include the
+    href="index.html#event-whitelist">whitelist of DOM events</a> to include the
     native touch and gesture events and adds  relevant information to event
     facades.</p>
 
@@ -36,8 +36,8 @@ do expose multi-touch information in the lower level touch events, we can build
 in cross-platform support for multi-touch gestures.</p>
 
 ```
-node.on('touchstart`, function () {
-    this.addClass('detached');
+node.on("touchstart", function () {
+    this.addClass("detached");
 });
 ```
 

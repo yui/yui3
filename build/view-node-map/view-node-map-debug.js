@@ -48,6 +48,7 @@ a mapping of Nodes to View instances.
     HTMLElement.
 @return {View} Closest View instance associated with the given Node, or `null`
     if no associated View instance was found.
+@static
 @since 3.5.0
 **/
 NodeMap.getByNode = function (node) {

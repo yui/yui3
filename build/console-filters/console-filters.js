@@ -361,7 +361,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
                 }
             }
 
-            body.setContent(EMPTY);
+            body.setHTML(EMPTY);
             host.buffer = buffer;
             host.printBuffer();
         }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>App `root` Tests</title>
+</head>
+<body>
+
+    <h1>App `root` Tests</h1>
+
+    <ul>
+        <li><a href="#/app/foo/">Foo</a></li>
+        <li><a href="#/app/bar/">Bar</a></li>
+    </ul>
+
+    <h2 id="page-title"></h2>
+
+    <script src="../../../../../build/yui/yui.js"></script>
+    <script>
+    YUI({filter: 'raw'}).use('app-base', function (Y) {
+
+        var app = new Y.App({
+            serverRouting: false
+        });
+
+        app.set('root', app._getPathRoot() + 'app/');
+
+        app.route('/foo/', function () {
+            Y.one('#page-title').set('text', 'Foo');
+        });
+
+        app.route('/bar/', function () {
+            Y.one('#page-title').set('text', 'Bar');
+        });
+
+        app.render().dispatch();
+
+    });
+    </script>
+
+</body>
+</html>

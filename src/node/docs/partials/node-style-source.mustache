@@ -1,21 +1,48 @@
+<style>
+.example #demo {
+    background-color: #D4D8EB;
+    border: 1px solid #9EA8C6;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    width: 20em;
+    margin-bottom: 1em;
+}
+.example #demo em{
+    font-size: 150%;
+    font-style: normal;
+    margin-right: 0.3em;
+}
+.example dt {
+    font-weight: normal;
+}
+.example dd {
+    font-size: 150%;
+    line-height: 0.5em;
+}
+</style>
+
 <div id="demo">
-    <p>Click me to change my color and show some style information.</p>
+    <p><em>Click me</em> to change my text color and show some style information.</p>
 </div>
+<dl>
+    <dt>style.color</dt>
+    <dd>black</dd>
+    <dt>computedStyle.color</dt>
+    <dd>rgb(0, 0, 0)</dd>
+</dl>
 
 <script type="text/javascript">
 YUI().use('node', function(Y) {
     var onClick = function(e) {
         var node = e.currentTarget;
-        if (!node.one('dl')) { // only create the DL once
-            node.setStyle('color', 'green');
+            node.setStyle('color', 'red');
             var styleColor = node.getStyle('color'),
                 computedColor = node.getComputedStyle('color');
 
-            node.append('<dl>' +
-                '<dt>style.color</dt><dd>' + styleColor + '</dd>' + 
-                '<dt>computedStyle.color</dt><dd>' + computedColor + '</dd>' +
-            '</dl>');
-        }
+            Y.one('.example dl').setContent('<dt>style.color</dt><dd>' +
+            styleColor + '</dd>' +
+            '<dt>computedStyle.color</dt><dd>' +
+            computedColor + '</dd>');
     };
 
     Y.one('#demo').on('click', onClick);

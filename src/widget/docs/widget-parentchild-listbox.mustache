@@ -274,7 +274,7 @@ Y.Option = Y.Base.create("option", Y.Widget, [Y.WidgetChild], {
 
     // Handle rendering the label attribute
     renderUI: function () {
-        this.get("contentBox").setContent(this.get("label"));
+        this.get("contentBox").setHTML(this.get("label"));
     }
 
 }, {
@@ -398,7 +398,7 @@ YUI.add('listbox', function(Y) {
         }
 
         if (selection) {
-            Y.one("#selection").setContent(selection.get("label"));
+            Y.one("#selection").setHTML(selection.get("label"));
         }
 
     });

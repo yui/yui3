@@ -4,7 +4,26 @@ App Framework Change History
 3.6.0
 -----
 
+### App
+
+* Added static property: `Y.App.serverRouting`, which serves as the default
+  value for the `serverRouting` attribute of all apps. [Ticket #2532319]
+
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
+### App Transitions
+
+* Fixed issue with non-collapsing white space between views while transitioning.
+  White space is now fully collapsed and prevents views from jumping after a
+  cross-fade transition. [Ticket #2532298]
+
+* Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
 ### ModelList
+
+* Added LazyModelList, a subclass of ModelList that manages a list of plain
+  objects rather than a list of Model instances. This can be more efficient when
+  working with large numbers of items. [Ryan Grove]
 
 * The `add()` method now accepts an `index` option, which can be used to insert
   the specified model(s) at a specific index in the list. [Greg Hinch]
@@ -16,12 +35,23 @@ App Framework Change History
   (or an array of indices). You no longer need to specify the actual model
   instance(s), although that's still supported as well.
 
+* The `filter()` method now returns an instance of the subclass rather than
+  ModelList itself when called with `options.asList` set to `true` on a subclass
+  of ModelList. [Ryan Grove]
+
 * Fixed an issue where a list that received bubbled events from a model would
   assume the model was in the list if its `id` changed, even if the model
   actually wasn't in the list and was merely bubbling events to the list.
   [Ticket #2532240]
 
 ### Router
+
+* [!] Changed how hash-based paths interact with the URL's real path. The
+  path-like hash fragments are now treated as a continuation of the URL's path
+  when the router has been configured with a `root`. [Ticket #2532318]
+
+* Fixed issue when multiple routers on were on the page and one router was
+  destroyed the remaining routers would stop dispatching. [Ticket #2532317]
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
   indicates the number of matching routes after the current route in the

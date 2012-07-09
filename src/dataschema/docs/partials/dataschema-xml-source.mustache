@@ -147,7 +147,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
                 resultListLocator: "song",
                 resultFields: [{key:"title"}, {key:"artist"}, {key:"rank"}] // Or simply ["title", "artist", "rank"]
             };
-        Y.one("#demo_output_basic").setContent(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
+        Y.one("#demo_output_basic").setHTML(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
     }, "#demo_apply_basic");
 
 
@@ -158,7 +158,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
                 resultListLocator: "//Track",
                 resultFields: [{key:"song", locator:"@title"}, {key:"artist", locator:"Artist"}, {key:"rank", locator:"ItemInfo/ChartPosition/@this"}]
             };
-        Y.one("#demo_output_complex").setContent(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
+        Y.one("#demo_output_complex").setHTML(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
     }, "#demo_apply_complex");
 
     Y.on("click", function(e){
@@ -176,7 +176,7 @@ YUI().use("dump", "node", "datatype-xml", "dataschema-xml", function (Y) {
                     }}
                 ]
             };
-        Y.one("#demo_output_nested").setContent(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
+        Y.one("#demo_output_nested").setHTML(Y.dump(Y.DataSchema.XML.apply(schema, data_in)));
     }, "#demo_apply_nested");
 });
 </script>

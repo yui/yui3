@@ -1,5 +1,7 @@
 YUI.add('test', function(Y) {
 
+
+
 /**
  * YUI Test Framework
  * @module test
@@ -10,9 +12,15 @@ YUI.add('test', function(Y) {
  * The root namespace for YUI Test.
  */
 
-var YUITest = {
-    version: "@VERSION@"
-};
+//So we only ever have one YUITest object that's shared
+if (YUI.YUITest) {
+    Y.Test = YUI.YUITest;
+} else { //Ends after the YUITest definitions
+
+    //Make this global for back compat
+    YUITest = {
+        version: "@VERSION@"
+    };
 
 Y.namespace('Test');
 
@@ -1864,7 +1872,7 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a value is present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur.
+     * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -1883,7 +1891,7 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a set of values are present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur. For this assertion to pass, all values must
+     * sign so no type coercion may occur. For this assertion to pass, all values must
      * be found.
      * @param {Object[]} needles An array of values that are expected in the array.
      * @param {Array} haystack An array of values to check.
@@ -1929,7 +1937,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that a value is not present in an array. This uses the triple equals 
      * Asserts that a value is not present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur.
+     * sign so no type coercion may occur.
      * @param {Object} needle The value that is expected in the array.
      * @param {Array} haystack An array of values.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -1948,7 +1956,7 @@ YUITest.ArrayAssert = {
 
     /**
      * Asserts that a set of values are not present in an array. This uses the triple equals 
-     * sign so no type cohersion may occur. For this assertion to pass, all values must
+     * sign so no type coercion may occur. For this assertion to pass, all values must
      * not be found.
      * @param {Object[]} needles An array of values that are not expected in the array.
      * @param {Array} haystack An array of values to check.
@@ -1995,7 +2003,7 @@ YUITest.ArrayAssert = {
         
     /**
      * Asserts that the given value is contained in an array at the specified index.
-     * This uses the triple equals sign so no type cohersion will occur.
+     * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
      * @param {int} index The index at which the value should exist.
@@ -2024,7 +2032,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that the values in an array are equal, and in the same position,
      * as values in another array. This uses the double equals sign
-     * so type cohersion may occur. Note that the array objects themselves
+     * so type coercion may occur. Note that the array objects themselves
      * need not be the same for this test to pass.
      * @param {Array} expected An array of the expected values.
      * @param {Array} actual Any array of the actual values.
@@ -2123,7 +2131,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that the values in an array are the same, and in the same position,
      * as values in another array. This uses the triple equals sign
-     * so no type cohersion will occur. Note that the array objects themselves
+     * so no type coercion will occur. Note that the array objects themselves
      * need not be the same for this test to pass.
      * @param {Array} expected An array of the expected values.
      * @param {Array} actual Any array of the actual values.
@@ -2152,7 +2160,7 @@ YUITest.ArrayAssert = {
     /**
      * Asserts that the given value is contained in an array at the specified index,
      * starting from the back of the array.
-     * This uses the triple equals sign so no type cohersion will occur.
+     * This uses the triple equals sign so no type coercion will occur.
      * @param {Object} needle The value to look for.
      * @param {Array} haystack The array to search in.
      * @param {int} index The index at which the value should exist.
@@ -2278,7 +2286,7 @@ YUITest.Assert = {
     
     /**
      * Asserts that a value is equal to another. This uses the double equals sign
-     * so type cohersion may occur.
+     * so type coercion may occur.
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2294,7 +2302,7 @@ YUITest.Assert = {
     
     /**
      * Asserts that a value is not equal to another. This uses the double equals sign
-     * so type cohersion may occur.
+     * so type coercion may occur.
      * @param {Object} unexpected The unexpected value.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2311,7 +2319,7 @@ YUITest.Assert = {
     
     /**
      * Asserts that a value is not the same as another. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} unexpected The unexpected value.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2327,7 +2335,7 @@ YUITest.Assert = {
 
     /**
      * Asserts that a value is the same as another. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} expected The expected value.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
@@ -2347,7 +2355,7 @@ YUITest.Assert = {
     
     /**
      * Asserts that a value is false. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method isFalse
@@ -2362,7 +2370,7 @@ YUITest.Assert = {
     
     /**
      * Asserts that a value is true. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method isTrue
@@ -2410,7 +2418,7 @@ YUITest.Assert = {
     
     /**
      * Asserts that a value is not null. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method isNotNull
@@ -2425,7 +2433,7 @@ YUITest.Assert = {
 
     /**
      * Asserts that a value is not undefined. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method isNotUndefined
@@ -2440,7 +2448,7 @@ YUITest.Assert = {
 
     /**
      * Asserts that a value is null. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method isNull
@@ -2455,7 +2463,7 @@ YUITest.Assert = {
         
     /**
      * Asserts that a value is undefined. This uses the triple equals sign
-     * so no type cohersion may occur.
+     * so no type coercion may occur.
      * @param {Object} actual The actual value to test.
      * @param {String} message (Optional) The message to display if the assertion fails.
      * @method isUndefined
@@ -3579,6 +3587,8 @@ Y.Object.each(YUITest, function(item, name) {
     Y.Test[name] = item;
 });
 
+} //End of else in top wrapper
+
 Y.Assert = YUITest.Assert;
 Y.Assert.Error = Y.Test.AssertionError;
 Y.Assert.ComparisonFailure = Y.Test.ComparisonFailure;
@@ -3621,88 +3631,6 @@ Y.assert = function(condition, message){
  */
 Y.fail = Y.Assert.fail; 
 
-var logEvent = function(event) {
-    
-    //data variables
-    var message = "";
-    var messageType = "";
-    
-    switch(event.type){
-        case this.BEGIN_EVENT:
-            message = "Testing began at " + (new Date()).toString() + ".";
-            messageType = "info";
-            break;
-            
-        case this.COMPLETE_EVENT:
-            message = Y.substitute("Testing completed at " +
-                (new Date()).toString() + ".\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-            
-        case this.TEST_FAIL_EVENT:
-            message = event.testName + ": failed.\n" + event.error.getMessage();
-            messageType = "fail";
-            break;
-            
-        case this.TEST_IGNORE_EVENT:
-            message = event.testName + ": ignored.";
-            messageType = "ignore";
-            break;
-            
-        case this.TEST_PASS_EVENT:
-            message = event.testName + ": passed.";
-            messageType = "pass";
-            break;
-            
-        case this.TEST_SUITE_BEGIN_EVENT:
-            message = "Test suite \"" + event.testSuite.name + "\" started.";
-            messageType = "info";
-            break;
-            
-        case this.TEST_SUITE_COMPLETE_EVENT:
-            message = Y.substitute("Test suite \"" +
-                event.testSuite.name + "\" completed" + ".\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-            
-        case this.TEST_CASE_BEGIN_EVENT:
-            message = "Test case \"" + event.testCase.name + "\" started.";
-            messageType = "info";
-            break;
-            
-        case this.TEST_CASE_COMPLETE_EVENT:
-            message = Y.substitute("Test case \"" +
-                event.testCase.name + "\" completed.\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-        default:
-            message = "Unexpected event " + event.type;
-            message = "info";
-    }
-    
-    if (Y.Test.Runner._log) {
-        Y.log(message, messageType, "TestRunner");
-    }
-}
-
-var i, name;
-
-for (i in Y.Test.Runner) {
-    name = Y.Test.Runner[i];
-    if (i.indexOf('_EVENT') > -1) {
-        Y.Test.Runner.subscribe(name, logEvent);
-    }
-};
-
 Y.Test.Runner.once = Y.Test.Runner.subscribe;
 
 Y.Test.Runner.disableLogging = function() {
@@ -3718,10 +3646,100 @@ Y.Test.Runner._log = true;
 
 Y.Test.Runner.on = Y.Test.Runner.attach;
 
-if (Y.config.win) {
-    Y.config.win.YUITest = YUITest;
-}
+//Only allow one instance of YUITest
+if (!YUI.YUITest) {
 
+    if (Y.config.win) {
+        Y.config.win.YUITest = YUITest;
+    }
+
+    YUI.YUITest = Y.Test;
+
+    
+    //Only setup the listeners once.
+    var logEvent = function(event) {
+        
+        //data variables
+        var message = "";
+        var messageType = "";
+        
+        switch(event.type){
+            case this.BEGIN_EVENT:
+                message = "Testing began at " + (new Date()).toString() + ".";
+                messageType = "info";
+                break;
+                
+            case this.COMPLETE_EVENT:
+                message = Y.substitute("Testing completed at " +
+                    (new Date()).toString() + ".\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+                
+            case this.TEST_FAIL_EVENT:
+                message = event.testName + ": failed.\n" + event.error.getMessage();
+                messageType = "fail";
+                break;
+                
+            case this.TEST_IGNORE_EVENT:
+                message = event.testName + ": ignored.";
+                messageType = "ignore";
+                break;
+                
+            case this.TEST_PASS_EVENT:
+                message = event.testName + ": passed.";
+                messageType = "pass";
+                break;
+                
+            case this.TEST_SUITE_BEGIN_EVENT:
+                message = "Test suite \"" + event.testSuite.name + "\" started.";
+                messageType = "info";
+                break;
+                
+            case this.TEST_SUITE_COMPLETE_EVENT:
+                message = Y.substitute("Test suite \"" +
+                    event.testSuite.name + "\" completed" + ".\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+                
+            case this.TEST_CASE_BEGIN_EVENT:
+                message = "Test case \"" + event.testCase.name + "\" started.";
+                messageType = "info";
+                break;
+                
+            case this.TEST_CASE_COMPLETE_EVENT:
+                message = Y.substitute("Test case \"" +
+                    event.testCase.name + "\" completed.\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+            default:
+                message = "Unexpected event " + event.type;
+                message = "info";
+        }
+        
+        if (Y.Test.Runner._log) {
+            Y.log(message, messageType, "TestRunner");
+        }
+    }
+
+    var i, name;
+
+    for (i in Y.Test.Runner) {
+        name = Y.Test.Runner[i];
+        if (i.indexOf('_EVENT') > -1) {
+            Y.Test.Runner.subscribe(name, logEvent);
+        }
+    };
+
+} //End if for YUI.YUITest
 
 
 }, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});

@@ -10,7 +10,7 @@
         using something like this in your test's YUI config:
 
             var Y = YUI({
-                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
             });
 
      Then make sure ?filter=raw only includes raw JS.
@@ -26,6 +26,7 @@
 
 
         <url>anim/tests/anim-shape-transform.html</url>
+        <url>anim/tests/anim.html</url>
         <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>
@@ -40,28 +41,84 @@
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
+        <url>charts/tests/area-globalstyles.html</url>
+        <url>charts/tests/area-gridlines.html</url>
+        <url>charts/tests/area-legend.html</url>
+        <url>charts/tests/area-legendwrapitems.html</url>
+        <url>charts/tests/areaspline-gridlines.html</url>
+        <url>charts/tests/areaspline-legend.html</url>
+        <url>charts/tests/areaspline-legendwrapitems.html</url>
+        <url>charts/tests/ariaeventtests.html</url>
+        <url>charts/tests/ariahistogramtests.html</url>
+        <url>charts/tests/arialinetests.html</url>
+        <url>charts/tests/ariapietests.html</url>
+        <url>charts/tests/ariasplinetests.html</url>
         <url>charts/tests/axesattrs.html</url>
-        <url>charts/tests/charts.html</url>
-        <url>charts/tests/dataprovider.html</url>
         <url>charts/tests/axestests.html</url>
         <url>charts/tests/axislabeltests.html</url>
         <url>charts/tests/axistitletests.html</url>
-        <url>charts/tests/numericaxistests.html</url>
-        <url>charts/tests/numericaxismintests.html</url>
+        <url>charts/tests/charts.html</url>
+        <url>charts/tests/bar-dataprovider.html</url>
+        <url>charts/tests/bar-globalstyles.html</url>
+        <url>charts/tests/bar-gridlines.html</url>
+        <url>charts/tests/bar-legend.html</url>
+        <url>charts/tests/bar-legendwrapitems.html</url>
+        <url>charts/tests/column-dataprovider.html</url>
+        <url>charts/tests/column-globalstyles.html</url>
+        <url>charts/tests/column-gridlines.html</url>
+        <url>charts/tests/column-legend.html</url>
+        <url>charts/tests/column-legendwrapitems.html</url>
+        <url>charts/tests/combo-globalstyles.html</url>
+        <url>charts/tests/combo-gridlines.html</url>
+        <url>charts/tests/combo-legendwrapitems.html</url>
+        <url>charts/tests/comboshowareafill-globalstyles.html</url>
+        <url>charts/tests/combospline-globalstyles.html</url>
+        <url>charts/tests/combospline-gridlines.html</url>
+        <url>charts/tests/combospline-legend.html</url>
+        <url>charts/tests/combospline-legendwrapitems.html</url>
+        <url>charts/tests/combosplineshowareafill-globalstyles.html</url>
+        <url>charts/tests/combo-tooltip.html</url>
+        <url>charts/tests/dataprovider.html</url>
+        <url>charts/tests/graph.html</url>
+        <url>charts/tests/groupmarkertests.html</url>
+        <url>charts/tests/legend.html</url>
+        <url>charts/tests/line-globalstyles.html</url>
+        <url>charts/tests/line-legend.html</url>
+        <url>charts/tests/line-legendwrapitems.html</url>
         <url>charts/tests/numericaxismaxtests.html</url>
         <url>charts/tests/numericaxisminandmaxtests.html</url>
-        <url>charts/tests/graph.html</url>
-        <url>charts/tests/legend.html</url>
+        <url>charts/tests/numericaxismintests.html</url>
+        <url>charts/tests/numericaxistests.html</url>
         <url>charts/tests/pie.html</url>
-        <url>charts/tests/groupmarkertests.html</url>
         <url>charts/tests/pielegend.html</url>
-        <url>charts/tests/seriestests.html</url>
         <url>charts/tests/planartests.html</url>
-        <url>charts/tests/arialinetests.html</url>
-        <url>charts/tests/ariasplinetests.html</url>
-        <url>charts/tests/ariahistogramtests.html</url>
-        <url>charts/tests/ariapietests.html</url>
-        <url>charts/tests/ariaeventtests.html</url>
+        <url>charts/tests/seriestests.html</url>
+        <url>charts/tests/spline-gridlines.html</url>
+        <url>charts/tests/spline-legend.html</url>
+        <url>charts/tests/spline-legendwrapitems.html</url>
+        <url>charts/tests/stackedarea-gridlines.html</url>
+        <url>charts/tests/stackedareaspline-gridlines.html</url>
+        <url>charts/tests/stackedbar-gridlines.html</url>
+        <url>charts/tests/stackedcolumn-gridlines.html</url>
+        <url>charts/tests/stackedcombo-gridlines.html</url>
+        <url>charts/tests/stackedcombospline-gridlines.html</url>
+        <url>charts/tests/stackedspline-gridlines.html</url>
+        <url>charts/tests/stackedverticalarea-gridlines.html</url>
+        <url>charts/tests/stackedverticalareaspline-gridlines.html</url>
+        <url>charts/tests/stackedverticalcombo-gridlines.html</url>
+        <url>charts/tests/stackedverticalcombospline-gridlines.html</url>
+        <url>charts/tests/stackedverticalspline-gridlines.html</url>
+        <url>charts/tests/verticalarea-globalstyles.html</url>
+        <url>charts/tests/verticalarea-gridlines.html</url>
+        <url>charts/tests/verticalareaspline-gridlines.html</url>
+        <url>charts/tests/verticalcombo-globalstyles.html</url>
+        <url>charts/tests/verticalcombo-gridlines.html</url>
+        <url>charts/tests/verticalcomboshowareafill-globalstyles.html</url>
+        <url>charts/tests/verticalcombospline-globalstyles.html</url>
+        <url>charts/tests/verticalcombospline-gridlines.html</url>
+        <url>charts/tests/verticalcombosplineshowareafill-globalstyles.html</url>
+        <url>charts/tests/verticalline-globalstyles.html</url>
+        <url>charts/tests/verticalspline-gridlines.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
         <url>collection/tests/arraylist.html</url>
         <url>collection/tests/array-extras.html</url>
@@ -134,6 +191,7 @@
         <url>history/tests/functional/history-html5.html</url>
         <url>imageloader/tests/imageloader.html</url>
         <url>intl/tests/intl.html</url>
+        <url>io/tests/index.html</url>
         <url>json/tests/json.html</url>
         <!--
         <url>jsonp/tests/jsonp.html</url>
@@ -166,6 +224,9 @@
         <!-- Failing in CI
         <url>transition/tests/transition.html</url>
         -->
+        <url>uploader/tests/uploaderflash.html</url>
+        <url>uploader/tests/uploaderhtml5.html</url>
+        <url>uploader/tests/uploaderqueue.html</url>
         <url>widget/tests/widget.html</url>
         <url>widget-anim/tests/widget-anim.html</url>
         <url>widget-autohide/tests/widget-autohide.html</url>

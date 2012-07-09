@@ -14,13 +14,15 @@
     <a href="assets/page-text.html" id="link-text" class="yui3-pjax">text page</a>
     <a href="#log" id="link-in-page" class="yui3-pjax">in-page</a>
     <a href="" id="link-current" class="yui3-pjax">current page</a>
+    <span id="link-fake" class="yui3-pjax">fake</span>
+    <a href="mailto:foo@example.com" id="link-mailto" class="yui3-pjax">mailto</a>
 </div>
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'pjax-test': {
             fullpath: 'pjax-test.js',

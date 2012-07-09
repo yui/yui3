@@ -82,7 +82,7 @@ pieView.render = function () {
       html      = Y.Lang.sub(this.template, this.get('model').toJSON());
 
   // Render this view's HTML into the container element.
-  container.setContent(html);
+  container.setHTML(html);
 
   // Append the container element to the DOM if it's not on the page already.
   if (!container.inDoc()) {
@@ -165,7 +165,7 @@ Y.PieView = Y.Base.create('pieView', Y.View, [], {
         html      = Y.Lang.sub(this.template, this.get('model').toJSON());
 
     // Render this view's HTML into the container element.
-    container.setContent(html);
+    container.setHTML(html);
 
     // Append the container element to the DOM if it's not on the page already.
     if (!container.inDoc()) {

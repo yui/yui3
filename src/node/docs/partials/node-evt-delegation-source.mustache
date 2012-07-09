@@ -1,8 +1,13 @@
+<style>
+#demo li {
+    height: 3em;
+}
+</style>
 <ul id="demo">
-    <li><em>click me if you don't mind...</em></li>
-    <li><em>click me if you don't mind...</em></li>
-    <li><em>click me if you don't mind...</em></li>
-    <li><em>click me if you don't mind...</em></li>
+    <li><em>Click me if you don't mind...</em></li>
+    <li><em>Click me if you don't mind...</em></li>
+    <li><em>Click me if you don't mind...</em></li>
+    <li><em>Click me if you don't mind...</em></li>
 </ul>
 
 <script type="text/javascript">
@@ -11,10 +16,10 @@ YUI().use('node', function(Y) {
 
     var onClick = function(e) {
         e.currentTarget.addClass('highlight'); // e.currentTarget === #demo li 
-        e.target.setContent('thanks for the click!'); // e.target === #demo li or #demo li em
-        e.container.setStyle('border', '5px solid blue'); // e.container === #demo
+        e.target.setHTML('Thanks for the click!'); // e.target === #demo li or #demo li em
+        e.container.setStyle('border', '5px solid #FFA100'); // e.container === #demo
 
-        nodes.filter(':not(.highlight)').setContent('Click me too please!');
+        nodes.filter(':not(.highlight)').setHTML('What about me?');
     };
 
     Y.one('#demo').delegate('click', onClick, 'li');

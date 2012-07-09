@@ -1,39 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Test Page</title>
-    <link rel="stylesheet" href="../../../build/test/assets/test-console.css">
-    <style>
-    body {
-        font-size:16px;
-    }
-    script.mine {
-        clear:left;
-        white-space:pre;
-        display:block;
-        font-family:monospace;
-        background:#eef;
-    }
-    script::before, script::after {
-        content:"<script>";
-    }
-    script::after {
-        content:"</script>";
-    }
-    script[src]::before {
-        content:"<script src=\"" attr(src) "\">";
-        white-space:nowrap;
-    }
-    script[src] {
-        background:#fff;
-    }
-    .yui3-console, .yui3-console-bd {
-        height:auto!important;
-        overflow:auto!important;
-        overflow-y:auto!important;
-    }
-
-    </style>
+    <title>Query String Test Page</title>
 </head>
 <body class="yui3-skin-sam">
 
@@ -44,7 +12,7 @@
 <script src="../../../build/yui/yui.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'querystring-tests': {
             fullpath: './querystring-tests.js',

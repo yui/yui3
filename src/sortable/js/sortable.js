@@ -32,8 +32,14 @@
         * @description A reference to the DD.Delegate instance.
         */
         delegate: null,
+        /**
+        * @property drop
+        * @type DD.Drop
+        * @description A reference to the DD.Drop instance
+        */
+        drop: null,
         initializer: function() {
-            var id = 'sortable-' + Y.guid(), c,
+            var id = 'sortable-' + Y.guid(),
                 delConfig = {
                     container: this.get(CONT),
                     nodes: this.get(NODES),
@@ -56,11 +62,12 @@
                 cloneNode: true
             });
 
-            c = new Y.DD.Drop({
+            this.drop =  new Y.DD.Drop({
                 node: this.get(CONT),
                 bubbleTarget: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(this._onDropOver, this));
+            });
+            this.drop.on('drop:over', Y.bind(this._onDropOver, this));
             
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
@@ -92,9 +99,7 @@
         _onDropOver: function(e) {
             if (!e.drop.get(NODE).test(this.get(NODES))) {
                 var nodes = e.drop.get(NODE).all(this.get(NODES));
-                if (nodes.size() === 0) {
-                    e.drop.get(NODE).append(e.drag.get(NODE));
-                }
+                e.drop.get(NODE).append(e.drag.get(NODE));
             }
         },
         /**
@@ -179,9 +184,13 @@
         * @description Handles the DragStart event and initializes some settings.
         */
         _onDragStart: function(e) {
-            this.delegate.get('lastNode').setStyle(ZINDEX, '');
-            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
-            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '999');
+            var del = this.delegate,
+                lastNode = del.get('lastNode');
+            if (lastNode && lastNode.getDOMNode()) {
+                lastNode.setStyle(ZINDEX, '');
+            }
+            del.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
+            del.get(CURRENT_NODE).setStyle(ZINDEX, '999');
         },
         /**
         * @private
@@ -223,6 +232,7 @@
             return this;
         },
         destructor: function() {
+            this.drop.destroy();
             this.delegate.destroy();
             Sortable.unreg(this);
         },

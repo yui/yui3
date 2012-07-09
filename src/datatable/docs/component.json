@@ -51,9 +51,7 @@
             "displayName": "Formatting Row Data for Display",
             "modules": ["datatable"],
             "description": "Custom format data for display.",
-	        "useModules": ["datatype-date", "datatable-base"],
-
-            "hideTableOfContents": true
+	        "useModules": ["datatype-date", "datatable-base"]
         },
 
         {
@@ -97,9 +95,9 @@
 
         {
             "name": "datatable-masterdetail",
-            "displayName": "Master - Detail Linked Datatables",
+            "displayName": "Master and detail tables",
             "modules": ["datatable"],
-            "description": "Linked DataTables with master-detail",
+            "description": "Populating one DataTable from details in the data of another.",
             "useModules": ["datatable"],
 
             "hideTableOfContents": true
@@ -109,7 +107,7 @@
             "name": "datatable-chkboxselect",
             "displayName": "Checkbox select column",
             "modules": ["datatable"],
-            "description": "Checkbox column that retains checked state when sorting",
+            "description": "Checkbox column that retains checked state when sorting.",
             "useModules": ["datatable"],
 
             "hideTableOfContents": true

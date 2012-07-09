@@ -19,7 +19,7 @@
     <script>
         YUI({
             //lazyEventFacade: true,
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             allowRollup: false
         }).use('console', 'test', 'event', 'event-simulate', 'node-event-delegate', 'window-focus', function (Y) {
 

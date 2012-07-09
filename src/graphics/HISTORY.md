@@ -4,13 +4,21 @@ Graphics Change History
 3.6.0
 -----
 
+  * #2532293 Filled out testing coverage. 
+  * #2532307 Added xRadius and yRadius attributes for ellipses. 
+  * #2532362 Removed hard-coded "yui3-" from class names.
+  * #2532306 Addressed issue in which too large a bounding box was being created for quadratic and cubic bezier curves. 
+  * #2532305 Addressed issue in which linejoin bevel was not being set.
+  * #2532243 Addressed issues caused by setting visible to false on a graphic instance. 
+  * #2532222 Addressed issue in which a rotated shape did not drag correctly.  
   * #2531989 Address issues with invalid gradient values for x1,x2,y1,y2.
   * #2532242 Fixed issue with VMLGraphic.removeShape in which shapes were not removed when an id is passed instead of an instance.
   * #2532255 Fixed bug with shape attribute translateX and translateY.
   * #2532252 Fix issue in which passing null to stroke/fill attributes in CanvasShape threw errors.
   * #2532253 Implement clear method in canvas graphic. 
   * #2532272 Fixed issues with VMLGraphic.getXY() in which the wrong values were returned after x and y attributes are updated.
-  * #2532243 Fixed issue in which setting the visible attribute of a graphic to false upon instantiation caused errors. 
+  * #2532243 Fixed issue in which setting the visible attribute of a graphic to false upon instantiation caused errors.
+  * #2532114 Add ability to draw subpixel paths in ie. 
 
 3.5.1
 -----

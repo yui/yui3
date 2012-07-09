@@ -203,7 +203,7 @@ YUI.add('editor-base', function(Y) {
                 * a class to the BLOCKQUOTE that adds left/right margin to it
                 * This strips that style so it is just a normal BLOCKQUOTE
                 */
-                var bq = inst.all('.webkit-indent-blockquote');
+                var bq = inst.all('.webkit-indent-blockquote, blockquote');
                 if (bq.size()) {
                     bq.setStyle('margin', '');
                 }
@@ -245,10 +245,10 @@ YUI.add('editor-base', function(Y) {
                     cmds.italic = 1;
                 }
 
-                if (s.textDecoration == 'underline') {
+                if (s.textDecoration.indexOf('underline') > -1) {
                     cmds.underline = 1;
                 }
-                if (s.textDecoration == 'line-through') {
+                if (s.textDecoration.indexOf('line-through') > -1) {
                     cmds.strikethrough = 1;
                 }
                 

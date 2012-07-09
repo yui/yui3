@@ -108,6 +108,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
     this._buttonState = "up";
     this._buttonFocus = null;
     this._tabElementBindings = null;
+    this._fileList = [];
 
     // Publish available events
 
@@ -319,15 +320,16 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
       this._setMultipleFiles();
       this._setFileFilters();
       this._triggerEnabled();
+      this._attachTabElements();
       this.after("multipleFilesChange", this._setMultipleFiles, this);
       this.after("fileFiltersChange", this._setFileFilters, this);
       this.after("enabledChange", this._triggerEnabled, this);
+      this.after("tabElementsChange", this._attachTabElements);
     }, this);
         
     this._swfReference.on("fileselect", this._updateFileList, this);
 
-        this.after("tabElementsChange", this._attachTabElements);
-        this._attachTabElements();
+
 
         // this._swfReference.on("trace", function (ev) {console.log(ev.message);});
 
@@ -454,7 +456,7 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
    * @private
    */
   _setFileFilters : function () {
-          if (this._swfReference && this.get("fileFilters") !== null) {
+          if (this._swfReference && this.get("fileFilters").length > 0) {
             this._swfReference.callSWF("setFileFilters", [this.get("fileFilters")]);
           } 
 
@@ -496,6 +498,27 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
   },
 
   /**
+   * Getter for the `fileList` attribute
+   * 
+   * @method _getFileList
+   * @private
+   */
+    _getFileList : function (arr) {
+        return this._fileList.concat();
+    },
+
+  /**
+   * Setter for the `fileList` attribute
+   * 
+   * @method _setFileList
+   * @private
+   */
+    _setFileList : function (val) {
+        this._fileList = val.concat();
+        return this._fileList.concat();
+    },
+
+  /**
    * Adjusts the content of the `fileList` based on the results of file selection
    * and the `appendNewFiles` attribute. If the `appendNewFiles` attribute is true,
    * then selected files are appended to the existing list; otherwise, the list is
@@ -514,7 +537,8 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
      var newfiles = ev.fileList,
          fileConfObjects = [],
          parsedFiles = [],
-         swfRef = this._swfReference;
+         swfRef = this._swfReference,
+         filterFunc = this.get("fileFilterFunction");
  
      Y.each(newfiles, function (value) {
        var newFileConf = {};
@@ -529,16 +553,28 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
        fileConfObjects.push(newFileConf);
      });
 
-     Y.each(fileConfObjects, function (value) {
-       parsedFiles.push(new Y.FileFlash(value));
-     });
+       if (filterFunc) {
+          Y.each(fileConfObjects, function (value) {
+            var newfile = new Y.FileFlash(value);
+            if (filterFunc(newfile)) {
+                parsedFiles.push(newfile);
+            }
+          });
+       }
+       else {
+          Y.each(fileConfObjects, function (value) {
+            parsedFiles.push(new Y.FileFlash(value));
+          });
+       }
 
-     this.fire("fileselect", {fileList: parsedFiles});
+     if (parsedFiles.length > 0) {
+        var oldfiles = this.get("fileList");
 
-     var oldfiles = this.get("fileList");
+        this.set("fileList", 
+                 this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
 
-   this.set("fileList", 
-             this.get("appendNewFiles") ? oldfiles.concat(parsedFiles) : parsedFiles );
+        this.fire("fileselect", {fileList: parsedFiles});
+     }
 
   },
 
@@ -570,8 +606,14 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
                    this.queue = null;
                    this.fire("alluploadscomplete", event);
                 break;
+                case "file:uploaderror":
                 case "uploaderqueue:uploaderror":
                    this.fire("uploaderror", event);
+                break;
+                case "file:uploadcancel":
+                case "uploaderqueue:uploadcancel":
+                   this.fire("uploadcancel", event);
+                break;
     }   
 
   },
@@ -598,10 +640,11 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
 
         if (file instanceof Y.FileFlash) {
            
-            file.on("uploadstart", this._uploadStartHandler, this);
-            file.on("uploadprogress", this._uploadProgressHandler, this);
-            file.on("uploadcomplete", this._uploadCompleteHandler, this);
-            file.on("uploaderror", this._uploadErrorHandler, this);
+            file.on("uploadstart", this._uploadEventHandler, this);
+            file.on("uploadprogress", this._uploadEventHandler, this);
+            file.on("uploadcomplete", this._uploadEventHandler, this);
+            file.on("uploaderror", this._uploadEventHandler, this);
+            file.on("uploadcancel", this._uploadEventHandler, this);
 
             file.startUpload(uploadURL, postVars, this.get("fileFieldName"));
         }
@@ -634,11 +677,12 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
             postVars = postvars || this.get("postVarsPerFile");
 
            this.queue = new UploaderQueue({simUploads: this.get("simLimit"), 
-                                                errorAction: this.get("errorAction"),
-                                                fileFieldName: this.get("fileFieldName"),
-                                                fileList: files,
-                                                uploadURL: uploadURL,
-                                                perFileParameters: postVars
+                                           errorAction: this.get("errorAction"),
+                                           fileFieldName: this.get("fileFieldName"),
+                                           fileList: files,
+                                           uploadURL: uploadURL,
+                                           perFileParameters: postVars,
+                                           retryCount: this.get("retryCount")
                                                });
            this.queue.on("uploadstart", this._uploadEventHandler, this);
            this.queue.on("uploadprogress", this._uploadEventHandler, this);
@@ -796,9 +840,26 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * }
          * @attribute fileFilters
          * @type {Array}
-         * @default null
+         * @default []
          */
         fileFilters: {
+          value: []
+        },
+
+        /**
+         * A filtering function that is applied to every file selected by the user.
+         * The function receives the `Y.File` object and must return a Boolean value.
+         * If a `false` value is returned, the file in question is not added to the
+         * list of files to be uploaded.
+         * Use this function to put limits on file sizes or check the file names for
+         * correct extension, but make sure that a server-side check is also performed,
+         * since any client-side restrictions are only advisory and can be circumvented.
+         *
+         * @attribute fileFilterFunction
+         * @type {Function}
+         * @default null
+         */
+        fileFilterFunction: {
           value: null
         },
          
@@ -824,7 +885,9 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          * @default []
          */
         fileList: {
-          value: []
+          value: [],
+          getter: "_getFileList",
+          setter: "_setFileList"
         },
 
         /**
@@ -946,7 +1009,19 @@ Y.UploaderFlash = Y.extend(UploaderFlash, Y.Widget, {
          */
         uploadURL: {
           value: ""
-        }
+        },
+
+        /**
+         * The number of times to try re-uploading a file that failed to upload before
+         * cancelling its upload.
+         *
+         * @attribute retryCount
+         * @type {Number}
+         * @default 3
+         */ 
+         retryCount: {
+           value: 3
+         }
   }
 });
 

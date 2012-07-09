@@ -727,6 +727,8 @@ Y.mix(Y_Node.prototype, {
                 instance = Y_Node._instances[node[UID]];
                 if (instance) {
                    instance.destroy();
+                } else { // purge in case added by other means
+                    Y.Event.purgeElement(node);
                 }
             });
         }
@@ -1176,26 +1178,46 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Nulls internal node references, 
+      * removes any plugins and event listeners
       * @method destroy
+      * @param {Boolean} recursivePurge (optional) Whether or not to 
+      * remove listeners from the node's subtree (default is false)
       * @see Node.destroy
       */
     'destroy',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Removes and destroys all of the nodes 
+      * within the node
       * @method empty
+      * @chainable
       * @see Node.empty
       */
     'empty',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Removes the node from its parent.
+      * Shortcut for myNode.get('parentNode').removeChild(myNode);
       * @method remove
+      * @param {Boolean} destroy whether or not to call destroy() on the node
+      * after removal.
+      * @chainable
       * @see Node.remove
       */
     'remove',
 
-    /** Called on each Node instance
+     /** 
+      * Called on each Node instance. Sets an attribute on the Node instance.
+      * Unless pre-configured (via Node.ATTRS), set hands
+      * off to the underlying DOM node.  Only valid
+      * attributes/properties for the node will be set.
+      * To set custom attributes use setAttribute.
       * @method set
+      * @param {String} attr The attribute to be set.
+      * @param {any} val The value to set the attribute to.
+      * @chainable
       * @see Node.set
       */
     'set'
@@ -1453,7 +1475,7 @@ Y.Array.each([
 Y.Node.prototype.removeAttribute = function(attr) {
     var node = this._node;
     if (node) {
-        node.removeAttribute(attr);
+        node.removeAttribute(attr, 0); // comma zero for IE < 8 to force case-insensitive
     }
 
     return this;

@@ -23,12 +23,12 @@ your tests to a few small files to avoid overloading the system.</p>
 ```
 if (Y.Uploader.TYPE == "html5") {
    uploader.set("dragAndDropArea", "body");
-   Y.one("#ddmessage").setContent("<strong>Drag and drop files here.</strong>");   
+   Y.one("#ddmessage").setHTML("<strong>Drag and drop files here.</strong>");   
  
    uploader.on(["dragenter", "dragover"], function (event) {
        var ddmessage = Y.one("#ddmessage");
        if (ddmessage) {
-         ddmessage.setContent("<strong>Files detected, drop them here!</strong>");
+         ddmessage.setHTML("<strong>Files detected, drop them here!</strong>");
          ddmessage.addClass("yellowBackground");
        }
     });
@@ -36,7 +36,7 @@ if (Y.Uploader.TYPE == "html5") {
     uploader.on(["dragleave", "drop"], function (event) {
        var ddmessage = Y.one("#ddmessage");
        if (ddmessage) {
-         ddmessage.setContent("<strong>Drag and drop files here.</strong>");
+         ddmessage.setHTML("<strong>Drag and drop files here.</strong>");
          ddmessage.removeClass("yellowBackground");
        }
     });

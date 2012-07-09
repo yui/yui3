@@ -898,6 +898,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("datatable-core")) > -1, "Module (datatable-core) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatable-table")) > -1, "Module (datatable-table) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-head")) > -1, "Module (datatable-head) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-body")) > -1, "Module (datatable-body) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1, "Module (datatable-base) not found in sorted array");
@@ -1059,6 +1060,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-sort-deprecated")) > -1, "Module (datatable-sort-deprecated) not found in sorted array");
+        },
+     "Testing datatable-table": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-table"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-table")) > -1, "Module (datatable-table) not found in sorted array");
         },
      "Testing datatype": function(data) {
             var loader = new Y.Loader({
@@ -2145,6 +2156,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("jsonp-url")) > -1, "Module (jsonp-url) not found in sorted array");
         },
+     "Testing lazy-model-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["lazy-model-list"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("lazy-model-list")) > -1, "Module (lazy-model-list) not found in sorted array");
+        },
      "Testing matrix": function(data) {
             var loader = new Y.Loader({
                 require: ["matrix"],
@@ -2615,16 +2636,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1, "Module (resize-proxy) not found in sorted array");
-        },
-     "Testing rls": function(data) {
-            var loader = new Y.Loader({
-                require: ["rls"],
-                ignoreRegistered: true,
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("rls")) > -1, "Module (rls) not found in sorted array");
         },
      "Testing router": function(data) {
             var loader = new Y.Loader({

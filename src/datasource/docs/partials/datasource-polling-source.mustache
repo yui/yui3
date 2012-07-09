@@ -16,12 +16,12 @@ YUI().use("dump", "node", "datasource-function", "datasource-polling", function 
             callback: {
                 success: function(e){
                     Y.one("#demo_output_polling")
-                     .setContent("At the tone the time will be: " +
+                     .setHTML("At the tone the time will be: " +
                                 Y.dump(e.response.results[0].toString()));
                 },
                 failure: function(e){
                     Y.one("#demo_output_polling")
-                     .setContent("Could not retrieve data: " + e.error.message);
+                     .setHTML("Could not retrieve data: " + e.error.message);
                 }
             }
         };

@@ -165,8 +165,8 @@ appBaseSuite.add(new Y.Test.Case({
 
         Assert.isTrue(Y.one('body').compareTo(app.get('container')));
         Assert.isTrue(Y.one('body').inDoc(Y.config.doc));
-        Assert.isFalse(Y.one('body').hasClass(Y.App.Base.CSS_CLASS));
-        Assert.isFalse(Y.one('body').hasClass(Y.App.Base.VIEWS_CSS_CLASS));
+        Assert.isFalse(Y.one('body').hasClass(Y.App.CLASS_NAMES.app));
+        Assert.isFalse(Y.one('body').hasClass(Y.App.CLASS_NAMES.views));
     }
 }));
 
@@ -175,12 +175,16 @@ appBaseSuite.add(new Y.Test.Case({
     name: 'Attributes',
 
     setUp: function () {
-        this.html5 = Y.Router.html5;
+        this.html5         = Y.Router.html5;
+        this.serverRouting = Y.App.serverRouting;
     },
 
     tearDown: function () {
         Y.Router.html5 = this.html5;
         delete this.html5;
+
+        Y.App.serverRouting = this.serverRouting;
+        delete this.serverRouting;
 
         this.app && this.app.destroy({remove: true});
         delete this.app;
@@ -221,13 +225,15 @@ appBaseSuite.add(new Y.Test.Case({
     '`container` should be stamped with the App CSS class': function () {
         var app = this.app = new Y.App();
         app.render();
-        Assert.isTrue(app.get('container').hasClass(Y.App.Base.CSS_CLASS));
+        Assert.isTrue(app.get('container').hasClass(Y.App.CLASS_NAMES.app));
+        Assert.areSame('yui3-app', Y.App.CLASS_NAMES.app);
     },
 
     '`viewContainer` should be stamped with the App Views CSS class when the app is rendered': function () {
         var app = this.app = new Y.App();
         app.render();
-        Assert.isTrue(app.get('viewContainer').hasClass(Y.App.Base.VIEWS_CSS_CLASS));
+        Assert.isTrue(app.get('viewContainer').hasClass(Y.App.CLASS_NAMES.views));
+        Assert.areSame('yui3-app-views', Y.App.CLASS_NAMES.views);
     },
 
     '`viewContainer` should only be settable during initialization': function () {
@@ -236,6 +242,25 @@ appBaseSuite.add(new Y.Test.Case({
 
         app.set('viewContainer', viewContainer);
         Assert.areNotSame(viewContainer, app.get('viewContainer'));
+    },
+
+    '`Y.App.serverRouting` should be `undefined` by default': function () {
+        Assert.areSame(undefined, Y.App.serverRouting);
+    },
+
+    '`serverRouting` should default to the value of `Y.App.serverRouting`': function () {
+        var app = this.app = new Y.App();
+
+        Assert.areSame(undefined, Y.App.serverRouting);
+        Assert.areSame(Y.App.serverRouting, app.get('serverRouting'));
+
+        app.destroy();
+
+        Y.App.serverRouting = true;
+        app = this.app = new Y.App();
+
+        Assert.isTrue(Y.App.serverRouting);
+        Assert.areSame(Y.App.serverRouting, app.get('serverRouting'));
     },
 
     '`serverRouting` should only be settable during initialization': function () {
@@ -359,6 +384,34 @@ appBaseSuite.add(new Y.Test.Case({
             Assert.areSame(1, eventCalls, 'Event should fire once.');
             Assert.areSame(1, routeCalls, 'Route should dispatch once.');
         }, 200);
+    },
+
+    '`navigate` event should fire when a link is clicked': function () {
+        var app    = this.app = new Y.App(),
+            called = 0,
+            event;
+
+        event = {
+            button        : 1,
+            currentTarget : Y.one('#link-foo'),
+            preventDefault: function () {}
+        };
+
+        app.route('/foo/', function () {});
+
+        app.once('navigate', function (e) {
+            called += 1;
+
+            e.preventDefault();
+
+            Assert.areSame(event, e.originEvent);
+            Assert.areSame(Y.one('#link-foo').get('href'), e.url);
+        });
+
+        // Fake click event.
+        app._onLinkClick(event);
+
+        Assert.areSame(1, called);
     }
 }));
 

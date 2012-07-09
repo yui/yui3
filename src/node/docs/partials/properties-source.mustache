@@ -60,7 +60,7 @@ YUI().use('node', 'button', function(Y) {
 
     var getWidth = function(){
        var width = corn.get('offsetWidth');
-       output.setContent(width + 'px'); // display width near the get button
+       output.setHTML(width + 'px'); // display width near the get button
     }
     
     Y.one('.example .btn-get').on('click', getWidth);
@@ -73,7 +73,7 @@ YUI().use('node', 'button', function(Y) {
             input.set('value', width);
         } else if (!isNaN(parseInt(value))) { // if the value in the input is a number
             corn.set('offsetWidth', value);
-            output.setContent('? ' + 'px'); // clear out the width label on the ruler
+            output.setHTML('? ' + 'px'); // clear out the width label on the ruler
         }
     });
 });

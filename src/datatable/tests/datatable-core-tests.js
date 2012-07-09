@@ -26,97 +26,11 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name: "delegate",
-
-    setUp: function () {
-        this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
-    },
-
-    "test table.delegate() pases through to node.delegate()": function () {
-        var table = new this.Table(),
-            hold = Y.delegate,
-            pass;
-
-        Y.delegate = function () {
-            pass = true;
-        };
-
-        table.render();
-
-        table.delegate('click', function () {}, '.test-yes');
-
-        Y.delegate = hold;
-
-        table.destroy();
-
-        Y.Assert.isTrue(pass);
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "getCell",
-
-    setUp: function () {
-        this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
-    },
-
-    "test getCell() passes through to bodyView": function () {
-        var pass = {},
-            table = new this.Table({
-                bodyView: Y.Base.create('testView', Y.View, [], {
-                    getCell: function () {
-                        return pass;
-                    }
-                })
-            }).render(),
-            result = table.getCell('testing');
-
-        table.destroy();
-
-        Y.Assert.areSame(pass, result);
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "getRow",
-
-    setUp: function () {
-        this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
-    },
-
-    "test getRow() passes through to bodyView": function () {
-        var pass = {},
-            table = new this.Table({
-                bodyView: Y.Base.create('testView', Y.View, [], {
-                    getRow: function () {
-                        return pass;
-                    }
-                })
-            }).render(),
-            result = table.getRow('testing');
-
-        table.destroy();
-
-        Y.Assert.areSame(pass, result);
-    }
-}));
-
-suite.add(new Y.Test.Case({
     name: "getRecord",
 
     setUp: function () {
         var pass = this.pass = {},
-            Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core], {}, {
-                ATTRS: {
-                    bodyView: {
-                        value: Y.Base.create('testView', Y.View, [], {
-                                getRecord: function () {
-                                    return pass;
-                                }
-                            })
-                    }
-                }
-            });
+            Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
 
         this.table = new Table({
             columns: ['a'],
@@ -147,12 +61,6 @@ suite.add(new Y.Test.Case({
             this.table.getRecord(this.table.data.item(0).get('clientId')));
         Y.Assert.areSame(this.table.data.item(1),
             this.table.getRecord(this.table.data.item(1).get('clientId')));
-    },
-
-    "test getRecord(unknown) passes through to bodyView": function () {
-        this.table.render();
-
-        Y.Assert.areSame(this.pass, this.table.getRecord('testing'));
     }
 
 }));
@@ -201,282 +109,129 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name: "render",
-
-    setUp: function () {
-        var Table = Y.Base.create('datatable', Y.Widget, [Y.DataTable.Core]);
-
-        this.table = new Table({
-            columns: ['a', 'b', 'c'],
-            data: [
-                { a: 1, b: 1, c: 1 },
-                { a: 2, b: 2, c: 2 },
-                { a: 3, b: 3, c: 3 }
-            ]
-        });
-    },
-
-    tearDown: function () {
-        this.table.destroy();
-    },
-
-    "render() should create a <table>": function () {
-        this.table.render();
-
-        var table = this.table.get('contentBox').one('table');
-
-        Y.Assert.isInstanceOf(Y.Node, table);
-        Y.Assert.isTrue(table.test('.yui3-datatable-table'));
-    },
-
-    "render() should fire the renderTable event": function () {
-        var pass;
-
-        this.table.on('renderTable', function () { pass = true; });
-
-        this.table.render();
-
-        Y.Assert.isTrue(pass);
-    },
-
-    "render() should assign the instance's _tableNode property": function () {
-        this.table.render();
-
-        Y.Assert.isInstanceOf(Y.Node, this.table._tableNode);
-    },
-
-    "render() should create a <caption> if configured to do so": function () {
-        this.table.set('caption', 'caption content').render();
-
-        Y.Assert.isInstanceOf(Y.Node, this.table._captionNode);
-
-        Y.Assert.areSame('caption content',
-            this.table._tableNode.one('caption').get('text'));
-    },
-
-    "render() should create a <table summary='VALUE'> if configured to do so": function () {
-        this.table.set('summary', 'summary content').render();
-
-        Y.Assert.areSame('summary content',
-            this.table._tableNode.getAttribute('summary'));
-    },
-
-    "render() should fire renderHeader if headerView is set": function () {
-        var pass;
-
-        this.table.set('headerView', Y.View).on('renderHeader', function () {
-            pass = true;
-        });
-
-        this.table.render();
-
-        Y.Assert.isTrue(pass);
-    },
-
-    "render() should fire renderBody if bodyView is set": function () {
-        var pass;
-
-        this.table.set('bodyView', Y.View).on('renderBody', function () {
-            pass = true;
-        });
-
-        this.table.render();
-
-        Y.Assert.isTrue(pass);
-    },
-
-    "render() should fire renderFooter if footerView is set": function () {
-        var pass;
-
-        this.table.set('footerView', Y.View).on('renderFooter', function () {
-            pass = true;
-        });
-
-        this.table.render();
-
-        Y.Assert.isTrue(pass);
-    },
-
-    "render() should call render() on the headerView if set": function () {
-        var pass;
-
-        this.table.set('headerView',
-            Y.Base.create('testView', Y.View, [], {
-                render: function () {
-                    pass = true;
-                }
-            })).render();
-
-        Y.Assert.isTrue(pass);
-    },
-
-    "render() should call render() on the bodyView if set": function () {
-        var pass;
-
-        this.table.set('bodyView',
-            Y.Base.create('testView', Y.View, [], {
-                render: function () {
-                    pass = true;
-                }
-            })).render();
-
-        Y.Assert.isTrue(pass);
-    },
-
-    "render() should call render() on the footerView if set": function () {
-        var pass;
-
-        this.table.set('footerView',
-            Y.Base.create('testView', Y.View, [], {
-                render: function () {
-                    pass = true;
-                }
-            })).render();
-
-        Y.Assert.isTrue(pass);
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "syncUI",
-
-    setUp: function () {
-        var Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core], {}, {
-                ATTRS: {
-                    headerView: {
-                        value: Y.Base.create('testHeader', Y.View, [], {
-                            initializer: function () { this.count = 0; },
-                            render: function () { this.count++; }
-                        })
-                    },
-                    bodyView: {
-                        value: Y.Base.create('testBody', Y.View, [], {
-                            initializer: function () { this.count = 0; },
-                            render: function () { this.count++; }
-                        })
-                    },
-                    footerView: {
-                        value: Y.Base.create('testFooter', Y.View, [], {
-                            initializer: function () { this.count = 0; },
-                            render: function () { this.count++; }
-                        })
-                    }
-                }
-            });
-
-        this.table = new Table({
-            columns: ['a'],
-            data: [{ a: 1 }]
-        }).render();
-    },
-
-    tearDown: function () {
-        this.table.destroy();
-    },
-
-    "syncUI should call render() on all views": function () {
-        Y.Assert.areSame(1, this.table.head.count);
-        Y.Assert.areSame(1, this.table.body.count);
-        Y.Assert.areSame(1, this.table.foot.count);
-
-        this.table.syncUI();
-
-        Y.Assert.areSame(2, this.table.head.count);
-        Y.Assert.areSame(2, this.table.body.count);
-        Y.Assert.areSame(2, this.table.foot.count);
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "caption attribute",
-
-    setUp: function () {
-        var Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
-
-        this.withCaption = new Table({
-            caption: 'caption content',
-            columns: ['a'],
-            data: []
-        });
-
-        this.noCaption = new Table({
-            columns: ['a'],
-            data: []
-        });
-    },
-
-    tearDown: function () {
-        this.withCaption.destroy();
-        this.noCaption.destroy();
-    },
-
-    "set('caption', VALUE) should update UI": function () {
-        var table   = this.withCaption.render(),
-            caption = table._captionNode;
-
-        Y.Assert.isInstanceOf(Y.Node, caption);
-        Y.Assert.areSame('caption content', caption.get('text'));
-
-        table.set('caption', 'new caption content');
-
-        Y.Assert.areSame('new caption content', caption.get('text'));
-        Y.Assert.areSame(table._tableNode, caption.get('parentNode'));
-    },
-
-    "set('caption', VALUE) after unset at render() should add <caption>": function () {
-        var table   = this.noCaption.render(),
-            caption;
-
-        Y.Assert.isUndefined(table._captionNode);
-        Y.Assert.isNull(table._tableNode.one('caption'));
-
-        table.set('caption', 'new caption content');
-
-        caption = table._tableNode.one('caption');
-
-        Y.Assert.isInstanceOf(Y.Node, caption);
-        Y.Assert.areSame('new caption content', caption.get('text'));
-        Y.Assert.areSame(table._tableNode, caption.get('parentNode'));
-    },
-
-    "set('caption', FALSEY_VALUE) after set at render() should remove <caption>": function () {
-        var table = this.withCaption.render();
-
-        Y.Assert.isInstanceOf(Y.Node, table._captionNode);
-        Y.Assert.areSame('caption content', table._captionNode.get('text'));
-
-        table.set('caption', '');
-
-        Y.Assert.isUndefined(table._captionNode);
-        Y.Assert.isNull(table._tableNode.one('caption'));
-
-        table.set('caption', 'back');
-
-        Y.Assert.isInstanceOf(Y.Node, table._tableNode.one('caption'));
-
-        table.set('caption', null);
-        Y.Assert.isUndefined(table._captionNode);
-        Y.Assert.isNull(table._tableNode.one('caption'));
-    },
-
-    "set('caption', FALSEY_VALUE) after unset at render() should do nothing": function () {
-        var table = this.noCaption.render();
-
-        Y.Assert.isUndefined(table._captionNode);
-
-        table.set('caption', '');
-
-        Y.Assert.isUndefined(table._captionNode);
-        Y.Assert.isNull(table._tableNode.one('caption'));
-    }
-
-}));
-
-suite.add(new Y.Test.Case({
     name: "columns attribute",
+
+    _should: {
+        ignore: {
+            "columns should default from data array after empty instantiation": true,
+            "columns should default from data ModelList after empty instantiation": true
+        }
+    },
 
     setUp: function () {
         this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
+    },
+
+    "columns should default from data array": function () {
+        var table = new this.Table({ data: [{ a: 1, b: 2 }] }),
+            columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    "columns should default from data ModelList's model class": function () {
+        var table = new this.Table({
+                data: new Y.ModelList({
+                    model: Y.Base.create('record', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {} } })
+                })
+            }),
+            columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    "columns should default from recordType": function () {
+        var table = new this.Table({ recordType: [ 'a', 'b' ] }),
+            columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table({ recordType: { a: {}, b: {} } });
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table({
+            recordType: Y.Base.create('record', Y.Model, [], {}, {
+                ATTRS: { a: {}, b: {} } })
+        });
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    // IGNORED
+    "columns should default from data array after empty instantiation": function () {
+        var table = new this.Table(),
+            columns;
+
+        Y.Assert.isUndefined(table.get('columns'));
+
+        table.set('data', [{ a: 1, b: 2 }]);
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    // IGNORED
+    "columns should default from data ModelList after empty instantiation": function () {
+        var TestModel = Y.Base.create('record', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {} } }),
+            table = new this.Table(),
+            columns;
+
+        Y.Assert.isUndefined(table.get('columns'));
+
+        table.set('data', new Y.ModelList({ model: TestModel }));
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+    },
+
+    "columns should default from recordType after empty instantiation": function () {
+        var table = new this.Table(),
+            columns;
+
+        Y.Assert.isUndefined(table.get('columns'));
+
+        table.set('recordType', [ 'a', 'b' ]);
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table();
+        table.set('recordType', { a: {}, b: {} });
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
+
+        table = new this.Table();
+        table.set('recordType', Y.Base.create('record', Y.Model, [], {}, {
+            ATTRS: { a: {}, b: {} }
+        }));
+        columns = table.get('columns');
+
+        Y.Assert.areSame(2, columns.length);
+        Y.Assert.areSame('a', columns[0].key);
+        Y.Assert.areSame('b', columns[1].key);
     },
 
     "string columns should be converted to objects": function () {
@@ -725,43 +480,12 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2, modelList.size());
     },
 
-    "set('data', modelList) after render() should update view modelList attrs": function () {
-        var View = Y.Base.create('testHeader', Y.View, [], {
-                initializer: function () { this.count = 0; }
-            }, {
-                ATTRS: {
-                    modelList: {
-                        setter: function () { this.count++; }
-                    }
-                }
-            }),
-            table = new this.Table({
-                headerView: View,
-                bodyView: View,
-                footerView: View,
-                columns: ['a', 'b', 'c'],
-                data: this.data
-            }).render();
-
-        Y.Assert.areSame(0, table.head.count);
-        Y.Assert.areSame(0, table.body.count);
-        Y.Assert.areSame(0, table.foot.count);
-
-        table.set('data', this.modelList);
-
-        // 0 to 2 because lazy assignment calls the setter the first time
-        // the modelList is fetched, which happens to be as part of the
-        // set() logic.  So the setter is called for the original value to
-        // populate the change event's e.prevVal.
-        Y.Assert.areSame(2, table.head.count);
-        Y.Assert.areSame(2, table.body.count);
-        Y.Assert.areSame(2, table.foot.count);
-    },
-
     "set('data', modelList) should fire a dataChange": function () {
-        var model = Y.Base.create('test-model', Y.Model, [], {}, {
-                ATTRS: { a: {}, b: {}, c: {} } }),
-            modelList = new Y.ModelList(),
+        var modelList = new Y.ModelList({
+                    model: Y.Base.create('test-model', Y.Model, [], {}, {
+                        ATTRS: { a: {}, b: {}, c: {} }
+                    })
+                }).reset([{ a: 2, b: 2, c: 2 }]),
             instance  = new this.Table({
                 columns: ['a', 'b', 'c'],
                 data: [{ a: 1, b: 1, c: 1 }]
@@ -772,9 +496,6 @@ suite.add(new Y.Test.Case({
             Y.Assert.areSame(modelList, e.newVal);
             fired = true;
         });
-
-        modelList.model = model;
-        modelList.add([{ a: 2, b: 2, c: 2 }]);
 
         Y.Assert.isInstanceOf(Y.ModelList, instance.data);
         Y.Assert.areSame(1, instance.data.item(0).get('a'));
@@ -818,6 +539,12 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "recordType attribute",
 
+    _should: {
+        ignore: {
+            "recordType should default from keys of first object in data array": true
+        }
+    },
+
     setUp: function () {
         this.Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
     },
@@ -825,7 +552,9 @@ suite.add(new Y.Test.Case({
     "test instantiation with recordType: object": function () {
         var table = new this.Table({
             recordType: {
-                a: { setter: function (val) { return +val; } },
+                a: { setter: function (val) {
+                    return +val;
+                    } },
                 b: { value: 'b default' },
                 c: {}
             },
@@ -891,7 +620,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2, table.getRecord(1).get('c'));
     },
 
-    "recordType should default from data modelList.model": function () {
+    "get('recordType') should return the data modelList.model": function () {
         var modelList = new Y.ModelList(),
             table;
             
@@ -913,9 +642,25 @@ suite.add(new Y.Test.Case({
             data: modelList
         });
 
-        Y.Assert.areSame(table.get('recordType'), table.data.model);
+        Y.Assert.areSame(table.data.model, table.get('recordType'));
+
+        table = new this.Table();
+        modelList = new Y.ModelList({
+            model: Y.Base.create('test-model', Y.Model, [], {}, {
+                ATTRS: { a: {}, b: {}, c: {} }
+            })
+        });
+
+        Y.Assert.areSame(table.data.model, table.get('recordType'));
+
+        table.set('recordType', ['a', 'b', 'c']);
+
+        Y.Assert.areSame(table.data.model, table.get('recordType'));
+        Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'],
+            Y.Object.keys(table.get('recordType').ATTRS));
     },
 
+    // IGNORED
     "recordType should default from keys of first object in data array": function () {
         var table = new this.Table({
                 columns: ['a', 'b'],
@@ -927,96 +672,6 @@ suite.add(new Y.Test.Case({
 
         Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'],
             Y.Object.keys(table.get('recordType').ATTRS));
-    },
-
-    "recordType should default from columns if no data is supplied": function () {
-        var table = new this.Table({
-                columns: ['a', 'b', 'c', 'a']
-            });
-
-        // including dup columns by their _id
-        Y.ArrayAssert.itemsAreSame(['a', 'b', 'c', 'a1'],
-            Y.Object.keys(table.get('recordType').ATTRS));
-    },
-
-    "recordType should default via change event if recordType, columns, and data are unset": function () {
-        var table = new this.Table(),
-            modelList = new Y.ModelList();
-
-        modelList.model = Y.Base.create('test-model', Y.Model, [], {}, {
-            ATTRS: { a: {}, b: {}, c: {} }
-        });
-
-        Y.Assert.isUndefined(table.get('recordType'));
-
-        table.set('recordType', ['a', 'b', 'c']);
-
-        Y.ArrayAssert.itemsAreSame(['a', 'b', 'c'],
-            Y.Object.keys(table.get('recordType').ATTRS));
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "summary attribute",
-
-    setUp: function () {
-        var Table = Y.Base.create('table', Y.Widget, [Y.DataTable.Core]);
-
-        this.withSummary = new Table({
-            summary: 'summary content',
-            columns: ['a'],
-            data: []
-        });
-
-        this.noSummary = new Table({
-            columns: ['a'],
-            data: []
-        });
-    },
-
-    tearDown: function () {
-        this.withCaption.destroy();
-        this.noCaption.destroy();
-    },
-
-    "set('summary', VALUE) should update UI": function () {
-        var table = this.withSummary.render();
-
-        Y.Assert.areSame('summary content',
-            table._tableNode.getAttribute('summary'));
-
-        table.set('summary', 'new summary content');
-
-        Y.Assert.areSame('new summary content',
-            table._tableNode.getAttribute('summary'));
-    },
-
-    "set('summary', VALUE) after unset at render() should add table summary": function () {
-        var table = this.noSummary.render(),
-            summary;
-
-        Y.Assert.areSame('', table._tableNode.getAttribute('summary'));
-
-        table.set('summary', 'new summary content');
-
-        Y.Assert.areSame('new summary content',
-            table._tableNode.getAttribute('summary'));
-    },
-
-    "set('summary', '') after set at render() should empty table summary": function () {
-        var table = this.withSummary.render();
-
-        table.set('summary', '');
-
-        Y.Assert.areSame('', table._tableNode.getAttribute('summary'));
-    },
-
-    "set('summary', '') after unset at render() should do nothing": function () {
-        var table = this.noSummary.render();
-
-        table.set('summary', '');
-
-        Y.Assert.areSame('', table._tableNode.getAttribute('summary'));
     }
 
 }));

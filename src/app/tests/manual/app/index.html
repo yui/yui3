@@ -114,7 +114,7 @@
         Foo App
         **/
         fooApp = new Y.App({
-            root         : '/src/app/tests/manual/app/',
+            root         : Y.getLocation().pathname,
             serverRouting: false,
 
             container  : Y.one('#content'),

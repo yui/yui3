@@ -1543,4 +1543,4 @@ AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{optional:['autocomplete-sources'], requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});

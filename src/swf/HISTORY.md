@@ -1,9 +1,18 @@
 SWF Utility Change History
 ==========================
 
+3.6.0
+-----
+  * Changed how the `<object>` tag is written to the DOM
+    to fix an issue in IE (bug 2529891).
+
+3.5.1
+-----
+  * No changes.
+
 3.5.0
 -----
-  * No change.
+  * No changes.
 
 3.4.1
 -----

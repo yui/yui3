@@ -1,6 +1,24 @@
 Base Change History
 ===================
 
+3.6.0
+-----
+
+  * "value" defined in a subclass ATTRS definition, will now override 
+    "valueFn" for the same attribute from the superclass chain. 
+    
+    Previously, "value" would only override "value" and "valueFn" 
+    would only overide "valueFn", and in the aggregated set of 
+    attributes, "valueFn" would take precedence over "value". 
+    
+    This meant that subclasses had to define a "valueFn" to overide 
+    superclasses, if the superclass used "valueFn".
+
+3.5.1
+-----
+
+  * No changes.
+
 3.5.0
 -----
 

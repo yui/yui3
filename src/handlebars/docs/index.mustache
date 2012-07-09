@@ -65,7 +65,7 @@ Once you have a template string, the next step is to <strong>compile</strong> th
 <script>
 YUI().use('handlebars', 'node-base', function (Y) {
     // Extract the template string and compile it into a reusable function.
-    var source   = Y.one('#list-template').get('text'),
+    var source   = Y.one('#list-template').getHTML(),
         template = Y.Handlebars.compile(source),
         html;
 
@@ -990,7 +990,7 @@ A partial will inherit the current context of the position at which it's include
 
 ```
 // Register a couple of reusable partials.
-Y.Handlebars.registerPartial('header', '<h1>{{title}}</h1>');
+Y.Handlebars.registerPartial('header', '<h1>\{{title}}</h1>');
 Y.Handlebars.registerPartial('footer', '<p>Copyright (c) 2012 by Me.</p>');
 ```
 

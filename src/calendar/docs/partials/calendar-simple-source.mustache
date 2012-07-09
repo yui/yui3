@@ -51,7 +51,7 @@ YUI().use('calendar', 'datatype-date', 'cssbutton',  function(Y) {
 
       // Format the date and output it to a DOM
       // element.
-      Y.one("#selecteddate").setContent(dtdate.format(newDate));
+      Y.one("#selecteddate").setHTML(dtdate.format(newDate));
     });
 
 

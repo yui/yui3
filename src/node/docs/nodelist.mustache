@@ -9,7 +9,7 @@
 
 <h2>Setting up the Node</h2>
 <p>First we need some HTML to work with.</p>
-```
+```html
 {{>nodelist-html}}
 ```
 <h2>CSS</h2>
@@ -35,12 +35,12 @@ the event object is set to the current Node instance.</p>
 ```
 var handleBoxClick = function(e) {
     // this === boxes, which is a NodeList
-    this.setContent('neener');
+    this.setHTML('neener');
     this.setStyle('backgroundColor', '#F4E6B8');
 
     // e.currentTarget === .box-row li, just the one that was clicked
-    e.currentTarget.setContent('ouch!');        
-    e.currentTarget.setStyle('backgroundColor', '#fff');
+    e.currentTarget.setHTML('ouch!');        
+    e.currentTarget.setStyle('backgroundColor', '#C4DAED');
 };    
 boxes.on('click', handleBoxClick);
 
