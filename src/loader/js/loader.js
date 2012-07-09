@@ -1063,7 +1063,7 @@ Y.Loader.prototype = {
             };
         }
 
-        if (o.skinnable && o.ext) {
+        if (o.skinnable && o.ext && o.temp) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -1595,7 +1595,7 @@ Y.Loader.prototype = {
 
         
         if (mod !== undefined) {
-            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            //Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
             return mod;
         }
 
