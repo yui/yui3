@@ -8,7 +8,7 @@ Importing
 ---------
 
    * Clone the yuitest main repository as a sibling of the `yui3` repo.
-   * Clone the builder main repository as a sibiling of the `yui3` repo.
+   * Clone the builder main repository as a sibling of the `yui3` repo.
    * Change to: `yui3/src/test`
    * Run: `make`
 
