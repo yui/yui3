@@ -184,7 +184,10 @@ routerSuite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs
+            'getPath() should return the current location `pathname` when no hash is set in all browsers': Y.UA.phantomjs,
+            'getPath() should return the `pathname` in HTML5 browsers and otherwise return the hash path': Y.UA.phantomjs,
+            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs,
+            'save() should dispath in non HTML5 browsers even when the `hash` does not change': Y.UA.phantomjs
         }
     },
 
@@ -530,7 +533,7 @@ routerSuite.add(new Y.Test.Case({
         this.wait(1000);
     },
 
-    'save() should dispath in non HTML5 browser even when the `hash` does not change': function () {
+    'save() should dispath in non HTML5 browsers even when the `hash` does not change': function () {
         var test   = this,
             router = this.router = new Y.Router({html5: false});
 
@@ -631,7 +634,6 @@ routerSuite.add(new Y.Test.Case({
 
     '_dispatch() should pass `src` through to request object passed to route handlers': function () {
         var router = this.router = new Y.Router(),
-            calls  = 0,
             src    = 'API';
 
         router.route('/foo', function (req, res, next) {
@@ -817,7 +819,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'calling `res()` should have the same result as calling `next()`': function () {
-        var calls  = 0;
+        var calls  = 0,
             router = this.router = new Y.Router();
 
         router.route('/foo', function (req, res, next) {
