@@ -620,8 +620,7 @@ Y.Router = Y.extend(Router, Y.Base, {
 
         // Make sure the `hash` is path-like.
         if (hash && hash.charAt(0) === '/') {
-            return (this.get('root') ?
-                    this._resolvePath(hash.substring(1)) : hash);
+            return this._joinURL(hash);
         }
 
         return '';
@@ -1058,7 +1057,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     **/
     _save: function (url, replace) {
         var urlIsString = typeof url === 'string',
-            currentPath;
+            currentPath, root;
 
         // Perform same-origin check on the specified URL.
         if (urlIsString && !this._hasSameOrigin(url)) {
@@ -1066,6 +1065,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             return this;
         }
 
+        // Joins the `url` with the `root`.
         urlIsString && (url = this._joinURL(url));
 
         // Force _ready to true to ensure that the history change is handled
@@ -1076,13 +1076,13 @@ Y.Router = Y.extend(Router, Y.Base, {
             this._history[replace ? 'replace' : 'add'](null, {url: url});
         } else {
             currentPath = Y.getLocation().pathname;
+            root        = this.get('root');
 
-            // Remove the path segments from the hash-based path that already
-            // exist in the page's `location.pathname`. This leads to better
-            // URLs by not duplicating the `root` path segment(s).
-            if (currentPath.length > 1 && url.indexOf(currentPath) === 0) {
-                url = url.substring(currentPath.length);
-                url.charAt(0) === '/' || (url = '/' + url);
+            // Determine if the `root` already exists in the current location's
+            // `pathname`, and if it does then we can exclude it from the
+            // hash-based path. No need to duplicate the info in the URL.
+            if (root === currentPath || root === this._getPathRoot()) {
+                url = this.removeRoot(url);
             }
 
             // The `hashchange` event only fires when the new hash is actually

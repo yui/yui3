@@ -21,6 +21,10 @@ App Framework Change History
 
 ### ModelList
 
+* Added LazyModelList, a subclass of ModelList that manages a list of plain
+  objects rather than a list of Model instances. This can be more efficient when
+  working with large numbers of items. [Ryan Grove]
+
 * The `add()` method now accepts an `index` option, which can be used to insert
   the specified model(s) at a specific index in the list. [Greg Hinch]
 
@@ -30,6 +34,10 @@ App Framework Change History
 * The `remove()` method now optionally accepts the index of a model to remove
   (or an array of indices). You no longer need to specify the actual model
   instance(s), although that's still supported as well.
+
+* The `filter()` method now returns an instance of the subclass rather than
+  ModelList itself when called with `options.asList` set to `true` on a subclass
+  of ModelList. [Ryan Grove]
 
 * Fixed an issue where a list that received bubbled events from a model would
   assume the model was in the list if its `id` changed, even if the model

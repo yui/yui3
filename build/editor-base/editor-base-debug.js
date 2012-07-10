@@ -247,10 +247,10 @@ YUI.add('editor-base', function(Y) {
                     cmds.italic = 1;
                 }
 
-                if (s.textDecoration == 'underline') {
+                if (s.textDecoration.indexOf('underline') > -1) {
                     cmds.underline = 1;
                 }
-                if (s.textDecoration == 'line-through') {
+                if (s.textDecoration.indexOf('line-through') > -1) {
                     cmds.strikethrough = 1;
                 }
                 
@@ -905,4 +905,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'editor-selection'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'editor-selection']});

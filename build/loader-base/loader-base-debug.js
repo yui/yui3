@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.06.13-20-30',
+            GALLERY_VERSION = 'gallery-2012.07.05-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -1163,7 +1163,7 @@ Y.Loader.prototype = {
             };
         }
 
-        if (o.skinnable && o.ext) {
+        if (o.skinnable && o.ext && o.temp) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -1695,7 +1695,7 @@ Y.Loader.prototype = {
 
         
         if (mod !== undefined) {
-            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            //Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
             return mod;
         }
 

@@ -2,7 +2,7 @@
  *  Binds an Anim instance to a Node instance
  * @module anim
  * @class Plugin.NodeFX
- * @extends Base
+ * @extends Anim
  * @submodule anim-node-plugin
  */
 

@@ -184,7 +184,10 @@ routerSuite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs
+            'getPath() should return the current location `pathname` when no hash is set in all browsers': Y.UA.phantomjs,
+            'getPath() should return the `pathname` in HTML5 browsers and otherwise return the hash path': Y.UA.phantomjs,
+            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs,
+            'save() should dispath in non HTML5 browsers even when the `hash` does not change': Y.UA.phantomjs
         }
     },
 
@@ -202,6 +205,41 @@ routerSuite.add(new Y.Test.Case({
 
         Y.config.throwFail = this.throwFail;
         delete this.throwFail;
+    },
+
+    'getPath() should return the current location `pathname` when no hash is set in all browsers': function () {
+        Y.HistoryHash.setHash('');
+
+        var router = this.router = new Y.Router();
+
+        Assert.areSame(Y.getLocation().pathname, router.getPath());
+    },
+
+    'getPath() should return the `pathname` in HTML5 browsers and otherwise return the hash path': function () {
+        var path     = Y.getLocation().pathname,
+            hashPath = '/foo/bar',
+            router;
+
+        Y.HistoryHash.setHash(hashPath);
+
+        router = this.router = new Y.Router();
+
+        if (html5) {
+            Assert.areSame(path, router.getPath());
+        } else {
+            Assert.areSame(hashPath, router.getPath());
+        }
+    },
+
+    'getPath() should return the hash path in non HTML5 browsers': function () {
+        var hashPath = '/foo/bar',
+            router;
+
+        Y.HistoryHash.setHash(hashPath);
+
+        router = this.router = new Y.Router({html5: false});
+
+        Assert.areSame(hashPath, router.getPath());
     },
 
     'route() should add a route': function () {
@@ -334,7 +372,7 @@ routerSuite.add(new Y.Test.Case({
         router.route('/hashpath', function (req) {
             test.resume(function () {
                 Assert.areSame('/hashpath', req.path);
-                Assert.areSame(Y.config.win.location.pathname, root + 'hashpath');
+                Assert.areSame(Y.getLocation().pathname, root + 'hashpath');
             });
         });
 
@@ -452,6 +490,70 @@ routerSuite.add(new Y.Test.Case({
         this.wait(2000);
     },
 
+    'save() should not include the `root` in the hash path if it is already in the `pathname`': function () {
+        var test     = this,
+            router   = this.router = new Y.Router({html5: false}),
+            pathRoot = router._getPathRoot();
+
+        router.set('root', pathRoot);
+        router.route('/save', function (req) {
+            test.resume(function () {
+                Assert.areSame('/save', req.path);
+                Assert.areSame('/save', Y.HistoryHash.getHash());
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.save('/save');
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'save() should include the `root` in the hash path if it is not already in the `pathname`': function () {
+        var test   = this,
+            router = this.router = new Y.Router({html5: false});
+
+        router.set('root', '/app');
+        router.route('/save', function (req) {
+            test.resume(function () {
+                Assert.areSame('/save', req.path);
+                Assert.areSame('/app/save', Y.HistoryHash.getHash());
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.save('/save');
+        }, 1);
+
+        this.wait(1000);
+    },
+
+    'save() should dispath in non HTML5 browsers even when the `hash` does not change': function () {
+        var test   = this,
+            router = this.router = new Y.Router({html5: false});
+
+        Y.HistoryHash.setHash('/save');
+
+        router.route('/save', function (req) {
+            test.resume(function () {
+                Assert.areSame('/save', req.path);
+            });
+        });
+
+        // Wrapped in a setTimeout to make the async test work on iOS<5, which
+        // performs this action synchronously.
+        setTimeout(function () {
+            router.save('/save');
+        }, 1);
+
+        this.wait(1000);
+    },
+
     'replace() should error when the URL is not from the same origin': function () {
         var router = this.router = new Y.Router(),
             origin = 'http://something.really.random.com',
@@ -532,7 +634,6 @@ routerSuite.add(new Y.Test.Case({
 
     '_dispatch() should pass `src` through to request object passed to route handlers': function () {
         var router = this.router = new Y.Router(),
-            calls  = 0,
             src    = 'API';
 
         router.route('/foo', function (req, res, next) {
@@ -718,7 +819,7 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'calling `res()` should have the same result as calling `next()`': function () {
-        var calls  = 0;
+        var calls  = 0,
             router = this.router = new Y.Router();
 
         router.route('/foo', function (req, res, next) {

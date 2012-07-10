@@ -7,7 +7,9 @@
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
-<div id="test"></div>
+<div id="test" style="visibility: hidden;">
+    <a href="/foo/" id="link-foo" class="yui3-pjax">foo</a>
+</div>
 <iframe src="app-iframe.html" id="test-iframe" style="visibility:hidden"></iframe>
 
 <script src="../../../build/yui/yui.js"></script>
@@ -18,6 +20,7 @@ var Y = YUI({
     modules: {
         'app-test': {
             use: [
+                'lazy-model-list-test',
                 'model-test',
                 'model-list-test',
                 'router-test',
@@ -25,6 +28,11 @@ var Y = YUI({
                 'view-node-map-test',
                 'app-base-test'
             ]
+        },
+
+        'lazy-model-list-test': {
+            fullpath: 'lazy-model-list-test.js',
+            requires: ['model-list', 'test']
         },
 
         'model-test': {
