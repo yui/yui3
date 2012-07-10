@@ -180,7 +180,7 @@ Example usage might look like this:
 // Custom subclass with only sorting and mutability added.  If other datatable
 // feature modules are loaded, this class will not be affected.
 var MyTableClass = Y.Base.create('table', Y.DataTable.Base,
-                       [ Y.DataTable.Sort, Y.DataTable.Mutable ]);
+                       [ Y.DataTable.Sortable, Y.DataTable.Mutable ]);
 
 var table = new MyTableClass({
     columns: ['firstName', 'lastName', 'age'],
