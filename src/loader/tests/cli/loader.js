@@ -2156,6 +2156,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("jsonp-url")) > -1, "Module (jsonp-url) not found in sorted array");
         },
+     "Testing lazy-model-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["lazy-model-list"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("lazy-model-list")) > -1, "Module (lazy-model-list) not found in sorted array");
+        },
      "Testing matrix": function(data) {
             var loader = new Y.Loader({
                 require: ["matrix"],

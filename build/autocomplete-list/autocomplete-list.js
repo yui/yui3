@@ -502,7 +502,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     @protected
     **/
     _syncShim: useShim ? function () {
-        this._boundingBox.shim.sync();
+        var shim = this._boundingBox.shim;
+
+        if (shim) {
+            shim.sync();
+        }
     } : function () {},
 
     /**
@@ -887,4 +891,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], lang:['en'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
