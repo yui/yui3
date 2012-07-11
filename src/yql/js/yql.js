@@ -123,11 +123,11 @@
 
             o.on = o.on || {};
 
-            if (o.on.failure) {
+            if (o.on.failure && !this._failure) {
                 this._failure = o.on.failure;
             }
 
-            if (o.on.success) {
+            if (o.on.success && !this._success) {
                 this._success = o.on.success;
             }
 
