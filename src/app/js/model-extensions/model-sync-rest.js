@@ -454,26 +454,23 @@ RESTSync.prototype = {
 
         // Setup and send the XHR.
         Y.io(url, {
+            'arguments': {
+                action  : action,
+                callback: callback,
+                url     : url
+            },
+
+            context: this,
             method : method,
             headers: headers,
             data   : entity,
             timeout: timeout,
 
             on: {
-                success: function (txId, res) {
-                    if (Lang.isFunction(callback)) {
-                        callback(null, res.responseText);
-                    }
-                },
-
-                failure: function (txId, res) {
-                    if (Lang.isFunction(callback)) {
-                        callback({
-                            code: res.status,
-                            msg : res.statusText
-                        }, res.responseText);
-                    }
-                }
+                start  : this._onSyncIOStart,
+                failure: this._onSyncIOFailure,
+                success: this._onSyncIOSuccess,
+                end    : this._onSyncIOEnd
             }
         });
     },
@@ -516,6 +513,90 @@ RESTSync.prototype = {
                 root + url + '/' :
                 root + '/' + url;
     },
+
+    /**
+    Called when the `Y.io` request has finished, after "success" or "failure"
+    has been determined.
+
+    This is a no-op by default, but provides a hook for overriding.
+
+    @method _onSyncIOEnd
+    @param {String} txId The `Y.io` transaction id.
+    @param {Object} details Extra details carried through from `sync()`:
+      @param {String} action The sync action performed.
+      @param {Function} [callback] The function to call after syncing.
+      @param {String} url The URL of the resource the request was made to.
+    @protected
+    @since 3.6.0
+    **/
+    _onSyncIOEnd: function (txId, details) {},
+
+    /**
+    Called when the `Y.io` request has finished successfully.
+
+    By default this calls the `details.callback` function passing it the
+    response body.
+
+    @method _onSyncIOSuccess
+    @param {String} txId The `Y.io` transaction id.
+    @param {Object} res The `Y.io` response object.
+    @param {Object} details Extra details carried through from `sync()`:
+      @param {String} action The sync action performed.
+      @param {Function} [callback] The function to call after syncing.
+      @param {String} url The URL of the resource the request was made to.
+    @protected
+    @since 3.6.0
+    **/
+    _onSyncIOSuccess: function (txId, res, details) {
+        var callback = details.callback;
+
+        if (Lang.isFunction(callback)) {
+            callback(null, res.responseText);
+        }
+    },
+
+    /**
+    Called when the `Y.io` request has finished unsuccessfully.
+
+    By default this calls the `details.callback` function passing it the HTTP
+    status code and message as an error object along with the response body.
+
+    @method _onSyncIOFailure
+    @param {String} txId The `Y.io` transaction id.
+    @param {Object} res The `Y.io` response object.
+    @param {Object} details Extra details carried through from `sync()`:
+      @param {String} action The sync action performed.
+      @param {Function} [callback] The function to call after syncing.
+      @param {String} url The URL of the resource the request was made to.
+    @protected
+    @since 3.6.0
+    **/
+    _onSyncIOFailure: function (txId, res, details) {
+        var callback = details.callback;
+
+        if (Lang.isFunction(callback)) {
+            callback({
+                code: res.status,
+                msg : res.statusText
+            }, res.responseText);
+        }
+    },
+
+    /**
+    Called when the `Y.io` request is made.
+
+    This is a no-op by default, but provides a hook for overriding.
+
+    @method _onSyncIOStart
+    @param {String} txId The `Y.io` transaction id.
+    @param {Object} details Extra details carried through from `sync()`:
+      @param {String} action The sync action performed.
+      @param {Function} [callback] The function to call after syncing.
+      @param {String} url The URL of the resource the request was made to.
+    @protected
+    @since 3.6.0
+    **/
+    _onSyncIOStart: function (txId, details) {},
 
     /**
     Utility which takes a tokenized `url` string and substitutes its
