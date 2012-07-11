@@ -1976,7 +1976,7 @@ Y.Loader.prototype = {
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
-        if (!m) {
+        if (!m || (m && m.ext)) {
            // Y.log('testing patterns ' + YObject.keys(patterns));
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
@@ -1997,7 +1997,9 @@ Y.Loader.prototype = {
                     }
                 }
             }
+        }
 
+        if (!m) {
             if (found) {
                 if (p.action) {
                     // Y.log('executing pattern action: ' + pname);
@@ -2007,8 +2009,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
+                    if (found.configFn) {
+                        m.configFn = found.configFn;
+                    }
                     m.temp = true;
                 }
+            }
+        } else {
+            if (found && m && found.configFn && !m.configFn) {
+                m.configFn = found.configFn;
+                m.configFn(m);
             }
         }
 
@@ -5276,7 +5286,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
