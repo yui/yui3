@@ -23,7 +23,7 @@ YUI.add('overlay-stdmod-tests', function(Y) {
             Assert.areEqual('Overlay Footer', ft.getHTML(),' - Failed correct text for ft');
         },
 
-        // header
+////////////////////////////// header
         'test new text *before* Header': function() {
             text.set('value', 'before Header...');
             section.set('value', 'header');
@@ -50,7 +50,7 @@ YUI.add('overlay-stdmod-tests', function(Y) {
             Assert.areEqual('Overlay Footer', ft.getHTML(),' - Failed correct text for ft');
         },
 
-        // body
+/////////////////////////////// body
         'test new text *before* Body': function() {
             text.set('value', 'before Body...');
             section.set('value', 'body');
@@ -77,7 +77,7 @@ YUI.add('overlay-stdmod-tests', function(Y) {
             Assert.areEqual('Overlay Footer', ft.getHTML(),' - Failed correct text for ft');
         },
 
-        // footer
+//////////////////////////////// footer
         'test new text *before* Footer': function() {
             text.set('value', 'before Footer...');
             section.set('value', 'footer');

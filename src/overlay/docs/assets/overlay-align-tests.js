@@ -4,10 +4,10 @@ YUI.add('overlay-align-tests', function(Y) {
         Assert = Y.Assert,
         overlay = Y.one('.example .yui3-overlay'),
         nextAlignBtn = Y.one('#align'),
-        offBy = 4; // IE exact pixels do not match the expected.
+        offBy = 3; // IE exact pixels do not match the expected.
 
-    var closeEnough = function(shouldBe, is) {
-        if ( (is >= shouldBe - offBy) && (is <= shouldBe + offBy) ){
+    var closeEnough = function(expected, actual) {
+        if ( (actual >= expected - offBy) && (actual <= expected + offBy) ){
             return true;
         } else {
             return false;
@@ -25,7 +25,7 @@ YUI.add('overlay-align-tests', function(Y) {
             Assert.isTrue((overlay !== null), ' - Failed to render overlay container');
             Assert.isTrue((Y.one('.example #overlay-align') !== null), ' - Failed to render #overlay-align');
         },
-        'test align1 position': function() {
+        'test #align1 position': function() {
             var alignedTo = Y.one('.aligned-to'),
                 left = overlay.getX(),
                 leftTarget =  (alignedTo.getX() + alignedTo.get('offsetWidth')),
@@ -34,7 +34,7 @@ YUI.add('overlay-align-tests', function(Y) {
             Assert.isTrue((closeEnough(leftTarget, left)), ' - Failed to position left');
             Assert.isTrue((closeEnough(topTarget, top)), ' - Failed to position top');
         },
-        'test align2 position': function() {
+        'test align2 position - centered in image': function() {
             nextAlignBtn.simulate('click');
             var alignedTo = Y.one('.aligned-to'),
                 left = overlay.getX(),
@@ -44,7 +44,7 @@ YUI.add('overlay-align-tests', function(Y) {
             Assert.isTrue((closeEnough(leftTarget, left)), ' - Failed to position left');
             Assert.isTrue((closeEnough(topTarget, top)), ' - Failed to position top');
         },
-        'test align3 position': function() {
+        'test align3 position - centered under #align3': function() {
             nextAlignBtn.simulate('click');
 
             var alignedTo = Y.one('.aligned-to'),
@@ -55,13 +55,29 @@ YUI.add('overlay-align-tests', function(Y) {
             Assert.isTrue((closeEnough(leftTarget, left)), ' - Failed to position left');
             Assert.isTrue((closeEnough(topTarget, top)), ' - Failed to position top');
         },
-//         'test align4 position': function() {    // align to r of window
-//             nextAlignBtn.simulate('click');
-//             // skipping over this one
-//         },
-        'test align6 position': function() {
-            nextAlignBtn.simulate('click'); //skipping the align to window right
-            nextAlignBtn.simulate('click'); //skipping the align to window center
+        'test align4 position - align to center right of viewport': function() {
+            nextAlignBtn.simulate('click');
+            var viewportWidth = overlay.get('viewportRegion').right,
+                viewportHeight = overlay.get('viewportRegion').bottom,
+                left = overlay.getX(),
+                leftTarget =  viewportWidth - overlay.get('offsetWidth'),
+                top = overlay.getY(),
+                topTarget =  (viewportHeight - overlay.get('offsetHeight')) / 2;
+            Assert.isTrue((closeEnough(leftTarget, left)), ' - Failed to position left');
+            Assert.isTrue((closeEnough(topTarget, top)), ' - Failed to position top');
+         },
+        'test align5 position - align to viewport center': function() {
+            nextAlignBtn.simulate('click');
+            var viewportWidth = overlay.get('viewportRegion').right,
+                viewportHeight = overlay.get('viewportRegion').bottom,
+                left = overlay.getX(),
+                leftTarget =  (viewportWidth - overlay.get('offsetWidth')) / 2,
+                top = overlay.getY(),
+                topTarget =  (viewportHeight - overlay.get('offsetHeight')) / 2;
+            Assert.isTrue((closeEnough(leftTarget, left)), ' - Failed to position left');
+            Assert.isTrue((closeEnough(topTarget, top)), ' - Failed to position top');
+         },
+        'test align6 position - centered in .overlay-example': function() {
             nextAlignBtn.simulate('click');
             var left = parseInt(overlay.getStyle('left'), 10),
                 top = parseInt(overlay.getStyle('top'), 10),
