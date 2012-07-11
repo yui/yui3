@@ -294,10 +294,15 @@ RESTSync.prototype = {
     initializer: function (config) {
         config || (config = {});
 
-        // Use instance-level values passed into the constructor and default
-        // falsy values to empty strings.
-        ('root' in config) && (this.root = config.root || '');
-        ('url' in config) && (this.url = config.url || '');
+        // Overrides `root` at the instance level.
+        if ('root' in config) {
+            this.root = config.root || '';
+        }
+
+        // Overrides `url` at the instance level.
+        if ('url' in config) {
+            this.url = config.url || '';
+        }
     },
 
     // -- Public Methods -------------------------------------------------------
