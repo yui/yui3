@@ -27,6 +27,7 @@
         <url>cache/tests/cache-offline.html</url>
         <url>cache/tests/cache-plugin.html</url>
         <url>calendar/tests/calendar.html</url>
+        <url>charts/tests/area-dataprovider.html</url>
         <url>charts/tests/area-globalstyles.html</url>
         <url>charts/tests/area-gridlines.html</url>
         <url>charts/tests/area-legend.html</url>
@@ -61,7 +62,10 @@
         <url>charts/tests/combospline-globalstyles.html</url>
         <url>charts/tests/combospline-gridlines.html</url>
         <url>charts/tests/combospline-legend.html</url>
-        <url>charts/tests/combospline-legendwrapitems.html</url>
+        <!--
+             Times out in IE8 coverage. Removed until it can be resolved.
+             <url>charts/tests/combospline-legendwrapitems.html</url>
+        -->
         <url>charts/tests/combosplineshowareafill-globalstyles.html</url>
         <url>charts/tests/combo-tooltip.html</url>
         <url>charts/tests/dataprovider.html</url>
@@ -94,6 +98,7 @@
         <url>charts/tests/stackedverticalcombo-gridlines.html</url>
         <url>charts/tests/stackedverticalcombospline-gridlines.html</url>
         <url>charts/tests/stackedverticalspline-gridlines.html</url>
+        <url>charts/tests/verticalarea-dataprovider.html</url>
         <url>charts/tests/verticalarea-globalstyles.html</url>
         <url>charts/tests/verticalarea-gridlines.html</url>
         <url>charts/tests/verticalareaspline-gridlines.html</url>
@@ -182,6 +187,7 @@
         <url>history/tests/functional/history-html5.html</url>
         <url>imageloader/tests/imageloader.html</url>
         <url>intl/tests/intl.html</url>
+        <url>io/tests/index.html</url>
         <url>json/tests/json.html</url>
         <!--
         <url>jsonp/tests/jsonp-url.html</url>

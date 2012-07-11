@@ -68,38 +68,38 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yAxis = this.get("yAxis");
         if(xAxis)
         {
-            xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
-            xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
+            this._xDataReadyHandle = xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
+            this._xDataUpdateHandle = xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
         }
         if(yAxis)
         {
-            yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
-            yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
+            this._yDataReadyHandle = yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
+            this._yDataUpdateHandle = yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
         }
-        this.after("xAxisChange", this._xAxisChangeHandler);
-        this.after("yAxisChange", this._yAxisChangeHandler);
-        this.after("stylesChange", function(e) {
+        this._xAxisChangeHandle = this.after("xAxisChange", this._xAxisChangeHandler);
+        this._yAxisChangeHandle = this.after("yAxisChange", this._yAxisChangeHandler);
+        this._stylesChangeHandle = this.after("stylesChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("widthChange", function(e) {
+        this._widthChangeHandle = this.after("widthChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("heightChange", function(e) {
+        this._heightChangeHandle = this.after("heightChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("visibleChange", this._handleVisibleChange);
+        this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
   
     /**
@@ -528,6 +528,41 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     destructor: function()
     {
+        var marker,
+            markers = this.get("markers");
+        if(this.get("rendered"))
+        {
+            if(this._xDataReadyHandle)
+            {
+                this._xDataReadyHandle.detach();
+            }
+            if(this._xDataUpdateHandle)
+            {
+                this._xDataUpdateHandle.detach();
+            }
+            if(this._yDataReadyHandle)
+            {
+                this._yDataReadyHandle.detach();
+            }
+            if(this._yDataUpdateHandle)
+            {
+                this._yDataUpdateHandle.detach();
+            }
+            this._xAxisChangeHandle.detach();
+            this._yAxisChangeHandle.detach();
+            this._stylesChangeHandle.detach();
+            this._widthChangeHandle.detach();
+            this._heightChangeHandle.detach();
+            this._visibleChangeHandle.detach();
+        }
+        while(markers && markers.length > 0)
+        {
+            marker = markers.shift();
+            if(marker && marker instanceof Y.Shape)
+            {
+                marker.destroy();
+            }
+        }
         if(this._path)
         {
             this._path.destroy();
@@ -544,6 +579,78 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             this._groupMarker = null;
         }
     }
+        /**
+         * Event handle for the x-axis' dataReady event.
+         * 
+         * @property _xDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+        
+        /**
+         * Event handle for the x-axis dataUpdate event.
+         *
+         * @property _xDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+        
+        /**
+         * Event handle for the y-axis dataReady event.
+         *
+         * @property _yDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the y-axis dataUpdate event.
+         * @property _yDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the xAxisChange event.
+         * @property _xAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the yAxisChange event.
+         * @property _yAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the stylesChange event.
+         * @property _stylesChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the widthChange event.
+         * @property _widthChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the heightChange event.
+         * @property _heightChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the visibleChange event.
+         * @property _visibleChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
 }, {
     ATTRS: {
         /**

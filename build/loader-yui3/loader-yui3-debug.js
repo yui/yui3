@@ -1659,6 +1659,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp"
         ]
     },
+    "lazy-model-list": {
+        "requires": [
+            "model-list"
+        ]
+    },
     "loader": {
         "use": [
             "loader-base",

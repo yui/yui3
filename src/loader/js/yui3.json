@@ -1559,6 +1559,11 @@
             "jsonp"
         ]
     },
+    "lazy-model-list": {
+        "requires": [
+            "model-list"
+        ]
+    },
     "loader": {
         "use": [
             "loader-base",
