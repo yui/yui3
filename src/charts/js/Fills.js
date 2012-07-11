@@ -314,6 +314,60 @@ Fills.prototype = {
         ycoords.push(ycoords[0]);
         return [xcoords, ycoords];
     },
+
+    /**
+     * Returns the order of the series closest to the current series that has a valid value for the current index.
+     *
+     * @method _getHighestValidOrder
+     * @param {Array} seriesCollection Array of series of a given type.
+     * @param {Number} index Index of the series item.
+     * @param {Number} order Index of the the series in the seriesCollection
+     * @param {String} direction Indicates the direction of the series
+     * @return Number
+     * @private
+     */
+    _getHighestValidOrder: function(seriesCollection, index, order, direction)
+    {
+        var coords = direction == "vertical" ? "stackedXCoords" : "stackedYCoords",
+            coord;
+        while(isNaN(coord) && order > -1)
+        {
+          order = order - 1;
+          if(order > -1)
+          {
+            coord = seriesCollection[order].get(coords)[index];
+          }
+        }
+        return order;
+    },
+    
+    /**
+     * Returns an array containing the x and y coordinates for a given series and index.
+     *
+     * @method _getCoordsByOrderAndIndex
+     * @param {Array} seriesCollection Array of series of a given type.
+     * @param {Number} index Index of the series item.
+     * @param {Number} order Index of the the series in the seriesCollection
+     * @param {String} direction Indicates the direction of the series
+     * @return Array
+     * @private
+     */
+    _getCoordsByOrderAndIndex: function(seriesCollection, index, order, direction)
+    {
+        var xcoord,
+            ycoord;
+        if(direction == "vertical")
+        {
+            xcoord = order < 0 ? this._leftOrigin : seriesCollection[order].get("stackedXCoords")[index];
+            ycoord = this.get("stackedYCoords")[index];
+        }
+        else
+        {
+            xcoord = this.get("stackedXCoords")[index];
+            ycoord = order < 0 ? this._bottomOrigin : seriesCollection[order].get("stackedYCoords")[index];
+        }
+        return [xcoord, ycoord];
+    },
     
     /**
      * Concatenates coordinate array with the correct coordinates for closing an area stack.
@@ -329,40 +383,112 @@ Fills.prototype = {
             graph = this.get("graph"),
             direction = this.get("direction"),
             seriesCollection = graph.seriesTypes[type],
-            prevXCoords,
-            prevYCoords,
-            allXCoords = this.get("xcoords").concat(),
-            allYCoords = this.get("ycoords").concat(),
-            firstX = allXCoords[0],
-            firstY = allYCoords[0];
+            firstValidIndex,
+            lastValidIndex,
+            xcoords = this.get("stackedXCoords"),
+            ycoords = this.get("stackedYCoords"),
+            limit,
+            previousSeries,
+            previousSeriesFirstValidIndex,
+            previousSeriesLastValidIndex,
+            previousXCoords,
+            previousYCoords,
+            coords,
+            closingXCoords,
+            closingYCoords,
+            currentIndex,
+            highestValidOrder,
+            oldOrder;
+        if(order < 1)
+        {    
+          return this._getClosingPoints();
+        }
         
-        if(order > 0)
+        previousSeries = seriesCollection[order - 1];
+        previousXCoords = previousSeries.get("stackedXCoords").concat();
+        previousYCoords = previousSeries.get("stackedYCoords").concat();
+        if(direction == "vertical")
         {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
-            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
-            allXCoords.push(allXCoords[0]);
-            allYCoords.push(allYCoords[0]);
+            firstValidIndex = this._getFirstValidIndex(xcoords);
+            lastValidIndex = this._getLastValidIndex(xcoords);
+            previousSeriesFirstValidIndex = previousSeries._getFirstValidIndex(previousXCoords);
+            previousSeriesLastValidIndex = previousSeries._getLastValidIndex(previousXCoords);
         }
         else
         {
-            if(direction === "vertical")
-            {
-                allXCoords.push(this._leftOrigin);
-                allXCoords.push(this._leftOrigin);
-                allYCoords.push(allYCoords[allYCoords.length-1]);
-                allYCoords.push(firstY);
-            }
-            else
-            {
-                allXCoords.push(allXCoords[allXCoords.length-1]);
-                allXCoords.push(firstX);
-                allYCoords.push(this._bottomOrigin);
-                allYCoords.push(this._bottomOrigin);
-            }
+            firstValidIndex = this._getFirstValidIndex(ycoords);
+            lastValidIndex = this._getLastValidIndex(ycoords);
+            previousSeriesFirstValidIndex = previousSeries._getFirstValidIndex(previousYCoords);
+            previousSeriesLastValidIndex = previousSeries._getLastValidIndex(previousYCoords);
         }
-        return [allXCoords, allYCoords];
+        if(previousSeriesLastValidIndex >= firstValidIndex && previousSeriesFirstValidIndex <= lastValidIndex)
+        {
+            previousSeriesFirstValidIndex = Math.max(firstValidIndex, previousSeriesFirstValidIndex);
+            previousSeriesLastValidIndex = Math.min(lastValidIndex, previousSeriesLastValidIndex);
+            previousXCoords = previousXCoords.slice(previousSeriesFirstValidIndex, previousSeriesLastValidIndex + 1);
+            previousYCoords = previousYCoords.slice(previousSeriesFirstValidIndex, previousSeriesLastValidIndex + 1);
+            limit = previousSeriesFirstValidIndex;
+        }
+        else
+        {
+            limit = lastValidIndex;
+        }
+
+        closingXCoords = [xcoords[firstValidIndex]];
+        closingYCoords = [ycoords[firstValidIndex]];
+        currentIndex = firstValidIndex;
+        while((isNaN(highestValidOrder) || highestValidOrder < order - 1) && currentIndex <= limit)
+        {
+            oldOrder = highestValidOrder;
+            highestValidOrder = this._getHighestValidOrder(seriesCollection, currentIndex, order, direction);
+            if(!isNaN(oldOrder) && highestValidOrder > oldOrder)
+            {
+                coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, oldOrder, direction);
+                closingXCoords.push(coords[0]);
+                closingYCoords.push(coords[1]);
+            }
+            coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, highestValidOrder, direction);
+            closingXCoords.push(coords[0]);
+            closingYCoords.push(coords[1]);
+            currentIndex = currentIndex + 1;
+        }
+        if(previousXCoords && previousXCoords.length > 0 && previousSeriesLastValidIndex > firstValidIndex && previousSeriesFirstValidIndex < lastValidIndex)
+        {
+            closingXCoords = closingXCoords.concat(previousXCoords);
+            closingYCoords = closingYCoords.concat(previousYCoords);
+            highestValidOrder = order -1; 
+        }
+        currentIndex = Math.max(firstValidIndex, previousSeriesLastValidIndex);
+        order = order - 1;
+        highestValidOrder = NaN;
+        while(currentIndex <= lastValidIndex)
+        {
+            oldOrder = highestValidOrder;
+            highestValidOrder = this._getHighestValidOrder(seriesCollection, currentIndex, order, direction);
+            if(!isNaN(oldOrder))
+            {
+                if(highestValidOrder > oldOrder)
+                {
+                    coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, oldOrder, direction);
+                    closingXCoords.push(coords[0]);
+                    closingYCoords.push(coords[1]);
+                }
+                else if(highestValidOrder < oldOrder)
+                {
+                    coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex - 1, highestValidOrder, direction);
+                    closingXCoords.push(coords[0]);
+                    closingYCoords.push(coords[1]);
+                }
+            }
+            coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, highestValidOrder, direction);
+            closingXCoords.push(coords[0]);
+            closingYCoords.push(coords[1]);
+            currentIndex = currentIndex + 1;
+        }
+
+        closingXCoords.reverse();
+        closingYCoords.reverse();
+        return [xcoords.concat(closingXCoords), ycoords.concat(closingYCoords)];
     },
 
     /**
