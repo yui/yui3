@@ -303,11 +303,11 @@ RESTSync.prototype = {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Returns the URL for this model or model list for the given `action`, if
-    specified.
+    Returns the URL for this model or model list for the given `action` and
+    `options`, if specified.
 
     This method correctly handles the variations of `root` and `url` values and
-    is used by the `sync()` method to get the URLs used to make the XHRs.
+    is called by the `sync()` method to get the URLs used to make the XHRs.
 
     You can override this method if you need to provide a specific
     implementation for how the URLs of your Model and ModelList subclasses need
@@ -316,38 +316,46 @@ RESTSync.prototype = {
     @method getURL
     @param {String} [action] Optional `sync()` action for which to generate the
         URL.
+    @param {Object} [options] Optional options which may be used to help
+        generate the URL.
     @return {String} this model's or model list's URL for the the given
-        `action`, if specified.
+        `action` and `options`.
     @since 3.6.0
     **/
-    getURL: function (action) {
+    getURL: function (action, options) {
         var root = this.root,
             url  = this.url;
 
-        // If this is a model list, use its `url`, but default to the `root`
-        // of its `model`. By convention a model's `root` is the location to a
-        // collection resource.
+        // If this is a model list, use its `url` and substitute placeholders,
+        // but default to the `root` of its `model`. By convention a model's
+        // `root` is the location to a collection resource.
         if (this._isYUIModelList) {
-            return url || this.model.prototype.root;
+            if (!url) {
+                return this.model.prototype.root;
+            }
+
+            return this._substituteURL(url, Y.merge(this.getAttrs(), options));
         }
+
+        // Assume `this` is a model.
 
         // When a model is new, i.e. has no `id`, the `root` should be used. By
         // convention a model's `root` is the location to a collection resource.
         // The model's `url` will be used as a fallback if `root` isn't defined.
-        if (root && (this.isNew() || action === 'create')) {
+        if (root && (action === 'create' || this.isNew())) {
             return root;
         }
 
-        // When a model's `url` is not defined, we'll generate a URL to use by
+        // When a model's `url` is not provided, we'll generate a URL to use by
         // convention. This will combine the model's `id` with its configured
         // `root` and add a trailing-slash if the root ends with "/".
         if (!url) {
             return this._joinURL(this.getAsURL('id') || '');
         }
 
-        // Substitute placeholders in the `url` with the model's URL-encoded
-        // attribute values.
-        return this._substituteURL(url);
+        // Substitute placeholders in the `url` with URL-encoded values from the
+        // model's attribute values or the specified `options`.
+        return this._substituteURL(url, Y.merge(this.getAttrs(), options));
     },
 
     /**
@@ -406,7 +414,7 @@ RESTSync.prototype = {
     sync: function (action, options, callback) {
         options || (options = {});
 
-        var url       = this.getURL(action),
+        var url       = this.getURL(action, options),
             method    = RESTSync.HTTP_METHODS[action],
             headers   = Y.merge(RESTSync.HTTP_HEADERS, options.headers),
             timeout   = options.timeout || RESTSync.HTTP_TIMEOUT,
@@ -505,31 +513,40 @@ RESTSync.prototype = {
     },
 
     /**
+    Utility which takes a tokenized `url` string and substitutes its
+    placeholders using a specified `data` object.
+
+    This method will property URL-encode any values before substituting them.
+    Also, only expect it to work with String and Number values.
+
+    @example
+        var url = this._substituteURL('/users/{name}', {id: 'Eric F'});
+        // => "/users/Eric%20F"
 
     @method _substituteURL
     @param {String} url Tokenized URL string to substitute placeholder values.
+    @param {Object} data Set of data to fill in the `url`'s placeholders.
     @return {String} Substituted URL.
     @protected
     @since 3.6.0
     **/
-    _substituteURL: function (url) {
+    _substituteURL: function (url, data) {
         if (!url) {
             return '';
         }
 
-        var data = {};
+        var values = {};
 
-        // Creates a hash of URL-encoded values for a model's string and number
-        // attributes. These values are then used to replace any placeholders in
-        // a tokenized `url`.
-        Y.Object.each(this.getAttrs(), function (v, k) {
+        // Creates a hash of the string and number values only to be used to
+        // replace any placeholders in a tokenized `url`.
+        Y.Object.each(data, function (v, k) {
             if (Lang.isString(v) || Lang.isNumber(v)) {
                 // URL-encode any string or number values.
-                data[k] = encodeURIComponent(v);
+                values[k] = encodeURIComponent(v);
             }
         });
 
-        return Lang.sub(url, data);
+        return Lang.sub(url, values);
     }
 };
 
