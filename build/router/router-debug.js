@@ -14,6 +14,10 @@ var HistoryHash = Y.HistoryHash,
 
     win = Y.config.win,
 
+    // Holds all the active router instances. This supports the static
+    // `dispatch()` method which causes all routers to dispatch.
+    instances = [],
+
     // We have to queue up pushState calls to avoid race conditions, since the
     // popstate event doesn't actually provide any info on what URL it's
     // associated with.
@@ -181,9 +185,19 @@ Y.Router = Y.extend(Router, Y.Base, {
                 }, 20);
             });
         });
+
+        // Store this router in the collection of all active router instances.
+        instances.push(this);
     },
 
     destructor: function () {
+        var instanceIndex = Y.Array.indexOf(instances, this);
+
+        // Remove this router from the collection of active router instances.
+        if (instanceIndex > -1) {
+            instances.splice(instanceIndex, 1);
+        }
+
         this._historyEvents && this._historyEvents.detach();
     },
 
@@ -1088,10 +1102,10 @@ Y.Router = Y.extend(Router, Y.Base, {
             }
 
             // The `hashchange` event only fires when the new hash is actually
-            // different. This makes sure we'll always dequeue and dispatch,
-            // mimicking the HTML5 behavior.
+            // different. This makes sure we'll always dequeue and dispatch
+            // _all_ router instances, mimicking the HTML5 behavior.
             if (url === HistoryHash.getHash()) {
-                this._dispatch(this._getPath(), this._getURL());
+                Y.Router.dispatch();
             } else {
                 HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
             }
@@ -1275,7 +1289,34 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     // Used as the default value for the `html5` attribute, and for testing.
-    html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3)
+    html5: Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
+
+    // To make this testable.
+    _instances: instances,
+
+    /**
+    Dispatches to the first route handler that matches the specified `path` for
+    all active router instances.
+
+    This provides a mechanism to cause all active router instances to dispatch
+    to their route handlers without needing to change the URL or fire the
+    `history:change` or `hashchange` event.
+
+    @method dispatch
+    @static
+    @since 3.6.0
+    **/
+    dispatch: function () {
+        var i, len, router;
+
+        for (i = 0, len = instances.length; i < len; i += 1) {
+            router = instances[i];
+
+            if (router) {
+                router._dispatch(router._getPath(), router._getURL());
+            }
+        }
+    }
 });
 
 /**
