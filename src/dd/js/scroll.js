@@ -96,6 +96,15 @@
         horizontal: {
             value: true,
             validator: Y.Lang.isBoolean
+        },
+        /**
+        * @attribute contained
+        * @description When scrolling is only applied in a single direction, setting this to true will only perform the scroll if the mouse is inside the scroll node's region, default: false
+        * @type Boolean
+        */
+        contained: {
+            value: false,
+            validator: Y.Lang.isBoolean
         }
     };
 
@@ -189,31 +198,38 @@
                 nt = top,
                 nl = left,
                 st = sTop,
-                sl = sLeft;
+                sl = sLeft,
+                horiz = this.get('horizontal'),
+                vert = this.get('vertical'),
+                contain = this.get('contained');
             
-            if (this.get('horizontal')) {
-                if (left <= r.left) {
-                    scroll = true;
-                    nl = xy[0] - ((ws) ? b : 0);
-                    sl = sLeft - b;
-                }
-                if (right >= r.right) {
-                    scroll = true;
-                    nl = xy[0] + ((ws) ? b : 0);
-                    sl = sLeft + b;
+            if (horiz) {
+                if (vert || (!contain || (top > r.top && bottom < r.bottom))) {
+                    if (left <= r.left) {
+                        scroll = true;
+                        nl = xy[0] - ((ws) ? b : 0);
+                        sl = sLeft - b;
+                    }
+                    if (right >= r.right) {
+                        scroll = true;
+                        nl = xy[0] + ((ws) ? b : 0);
+                        sl = sLeft + b;
+                    }
                 }
             }
-            if (this.get('vertical')) {
-                if (bottom >= r.bottom) {
-                    scroll = true;
-                    nt = xy[1] + ((ws) ? b : 0);
-                    st = sTop + b;
+            if (vert) {
+                if (horiz || (!contain || (left > r.left && right < r.right))) {
+                    if (bottom >= r.bottom) {
+                        scroll = true;
+                        nt = xy[1] + ((ws) ? b : 0);
+                        st = sTop + b;
 
-                }
-                if (top <= r.top) {
-                    scroll = true;
-                    nt = xy[1] - ((ws) ? b : 0);
-                    st = sTop - b;
+                    }
+                    if (top <= r.top) {
+                        scroll = true;
+                        nt = xy[1] - ((ws) ? b : 0);
+                        st = sTop - b;
+                    }
                 }
             }
 
