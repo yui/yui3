@@ -62,7 +62,10 @@
         <url>charts/tests/combospline-globalstyles.html</url>
         <url>charts/tests/combospline-gridlines.html</url>
         <url>charts/tests/combospline-legend.html</url>
-        <url>charts/tests/combospline-legendwrapitems.html</url>
+        <!--
+             Times out in IE8 coverage. Removed until it can be resolved.
+             <url>charts/tests/combospline-legendwrapitems.html</url>
+        -->
         <url>charts/tests/combosplineshowareafill-globalstyles.html</url>
         <url>charts/tests/combo-tooltip.html</url>
         <url>charts/tests/dataprovider.html</url>
