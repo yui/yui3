@@ -532,30 +532,6 @@ RESTSync.prototype = {
     _onSyncIOEnd: function (txId, details) {},
 
     /**
-    Called when the `Y.io` request has finished successfully.
-
-    By default this calls the `details.callback` function passing it the
-    response body.
-
-    @method _onSyncIOSuccess
-    @param {String} txId The `Y.io` transaction id.
-    @param {Object} res The `Y.io` response object.
-    @param {Object} details Extra details carried through from `sync()`:
-      @param {String} action The sync action performed.
-      @param {Function} [callback] The function to call after syncing.
-      @param {String} url The URL of the resource the request was made to.
-    @protected
-    @since 3.6.0
-    **/
-    _onSyncIOSuccess: function (txId, res, details) {
-        var callback = details.callback;
-
-        if (Lang.isFunction(callback)) {
-            callback(null, res.responseText);
-        }
-    },
-
-    /**
     Called when the `Y.io` request has finished unsuccessfully.
 
     By default this calls the `details.callback` function passing it the HTTP
@@ -579,6 +555,30 @@ RESTSync.prototype = {
                 code: res.status,
                 msg : res.statusText
             }, res.responseText);
+        }
+    },
+
+    /**
+    Called when the `Y.io` request has finished successfully.
+
+    By default this calls the `details.callback` function passing it the
+    response body.
+
+    @method _onSyncIOSuccess
+    @param {String} txId The `Y.io` transaction id.
+    @param {Object} res The `Y.io` response object.
+    @param {Object} details Extra details carried through from `sync()`:
+      @param {String} action The sync action performed.
+      @param {Function} [callback] The function to call after syncing.
+      @param {String} url The URL of the resource the request was made to.
+    @protected
+    @since 3.6.0
+    **/
+    _onSyncIOSuccess: function (txId, res, details) {
+        var callback = details.callback;
+
+        if (Lang.isFunction(callback)) {
+            callback(null, res.responseText);
         }
     },
 
