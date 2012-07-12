@@ -17,11 +17,6 @@ var L   = Y.Lang,
     isObject    = L.isObject,
     isNumber    = L.isNumber,
     doc         = Y.config.doc,
-    
-    MOUSE_UP    = 'mouseup',
-    MOUSE_MOVE  = 'mousemove',
-    MOUSE_DOWN  = 'mousedown',
-    MOUSE_CLICK = 'click',
 
     //mouse events supported
     mouseEvents = {
@@ -853,8 +848,6 @@ function simulateTouchEvent(target, type,
                 customEvent.touches = touches;
                 customEvent.targetTouches = targetTouches;
                 customEvent.changedTouches = changedTouches;
-                customEvent.scale = scale;
-                customEvent.rotation = rotation;
             } else {
                 customEvent = doc.createEvent("TouchEvent");
 
@@ -890,10 +883,12 @@ function simulateTouchEvent(target, type,
 }
 
 /**
- * Simulates the event with the given name on a target.
+ * Simulates the event or gesture with the given name on a target.
  * @param {HTMLElement} target The DOM element that's the target of the event.
- * @param {String} type The type of event to simulate (i.e., "click").
- * @param {Object} options (Optional) Extra options to copy onto the event object.
+ * @param {String} type The type of event or name of the supported gesture to simulate 
+ *      (i.e., "click", "doubletap", "flick").
+ * @param {Object} options (Optional) Extra options to copy onto the event object. 
+ *      For gestures, options are used to refine the gesture behavior.
  * @return {void}
  * @for Event
  * @method simulate
@@ -917,7 +912,8 @@ Y.Event.simulate = function(target, type, options){
     } else if (uiEvents[type]){
         simulateUIEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.detail);
-    // touch event simulation        
+            
+    // touch low-level event simulation        
     } else if (touchEvents[type]) {
         if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
             simulateTouchEvent(target, type, 
@@ -927,43 +923,16 @@ Y.Event.simulate = function(target, type, options){
                 options.touches, options.targetTouches, options.changedTouches,
                 options.scale, options.rotation);
         } else {
-            // simulate using a mouse event if touch is not applicable.
-            type = {
-                touchstart: MOUSE_DOWN,
-                touchmove: MOUSE_MOVE,
-                touchend: MOUSE_UP
-            }[type];
-
-            options.button = 0;
-            options.relatedTarget = null; // since we are not using mouseover event.
-
-            if(options.touches && options.touches.length === 1) {
-                options = Y.mix(options, {
-                    screenX: options.touches.item(0).screenX,
-                    screenY: options.touches.item(0).screenY,
-                    clientX: options.touches.item(0).clientX,
-                    clientY: options.touches.item(0).clientY
-                }, true);
-            }
-
-            Y.Event.simulate(target, type, options);
-
-            if(type == MOUSE_UP) {
-                Y.Event.simulate(target, MOUSE_CLICK, options);
-            }
+            Y.error("simulate(): Event '" + type + "' can't be simulated. Use gesture-simulate module instead.");
         }
 
-    // ios gesture event simulation (iOS v2+ only)        
+    // ios gesture low-level event simulation (iOS v2+ only)        
     } else if(Y.UA.ios && Y.UA.ios >= 2.0 && gestureEvents[type]) {
         simulateGestureEvent(target, type, 
             options.bubbles, options.cancelable, options.view, options.detail, 
             options.screenX, options.screenY, options.clientX, options.clientY, 
             options.ctrlKey, options.altKey, options.shiftKey, options.metaKey,
             options.scale, options.rotation);
-            
-    // high level gesture events        
-    } else if (Y.Event.GESTURES[type]) {
-        Y.Event.simulateGesture(Y.Node.one(target), type, options);   
     
     // anything else
     } else {

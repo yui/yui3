@@ -2,7 +2,7 @@ YUI.add('gesture-simulate', function(Y) {
 
 (function() {
 /**
- * Simulate user gestuires by generating a set of native DOM events.
+ * Simulate high-level user gestures by generating a set of native DOM events.
  *
  * @module gesture-simulate
  * @requires event-simulate, async-queue, node-screen
@@ -12,27 +12,50 @@ var gestureNames = {
         tap: 1,
         doubletap: 1,
         press: 1,
-        gesturemove: 1,
+        move: 1,
         flick: 1,
         pinch: 1,
         rotate: 1
     },
+    
+    touchEvents = {
+        touchstart: 1,
+        touchmove: 1,
+        touchend: 1, 
+        touchcancel: 1
+    },
+    
     document = Y.config.doc,
     emptyTouchList,
 
     DEFAULTS = {
+        // common for all gestures
         EVENT_INTERVAL: 20,     // 20ms
         START_PAGEX: 0,         // will be adjusted to the node element center
         START_PAGEY: 0,         // will be adjusted to the node element center
-        DISTANCE: 200,          // 200 pixels
-        DURATION: 1000,         // 1sec
-        HOLD_PRESS: 3000,       // 3sec
+        
+        // tap gestures
         HOLD_TAP: 10,           // 10ms
         DELAY_TAP: 10,          // 10ms
-        MAX_DURATION_MOVE: 5000,// 5sec
+        
+        // press gesture
+        HOLD_PRESS: 3000,       // 3sec
         MIN_HOLD_PRESS: 1000,   // 1sec
         MAX_HOLD_PRESS: 60000,  // 1min
-        MIN_VELOCITY: 1.3
+        
+        // move gesture
+        DISTANCE_MOVE: 200,     // 200 pixels
+        DURATION_MOVE: 1000,    // 1sec
+        MAX_DURATION_MOVE: 5000,// 5sec
+        
+        // flick gesture
+        MIN_VELOCITY_FLICK: 1.3,
+        DISTANCE_FLICK: 200,     // 200 pixels
+        DURATION_FLICK: 1000,    // 1sec
+        MAX_DURATION_FLICK: 5000,// 5sec
+        
+        // pinch/rotation
+        DURATION_PINCH: 1000     // 1sec
     },
 
     TOUCH_START = 'touchstart',
@@ -43,11 +66,18 @@ var gestureNames = {
     GESTURE_CHANGE = 'gesturechange',
     GESTURE_END = 'gestureend',
 
+    MOUSE_UP    = 'mouseup',
+    MOUSE_MOVE  = 'mousemove',
+    MOUSE_DOWN  = 'mousedown',
+    MOUSE_CLICK = 'click',
     MOUSE_DBLCLICK = 'dblclick',
 
     X_AXIS = 'x',
     Y_AXIS = 'y';
 
+/**
+ *
+ */
 function Simulations(node) {
     if(!node) {
         Y.error(NAME+': invalid target node');
@@ -57,18 +87,31 @@ function Simulations(node) {
 
     DEFAULTS.START_PAGEX = this.node.getX() + this.target.getBoundingClientRect().width/2;
     DEFAULTS.START_PAGEY = this.node.getY() + this.target.getBoundingClientRect().height/2;
-
-    if(Y.Event.GestureSimulation.defaults) {
-        DEFAULTS = Y.merge(DEFAULTS, Y.Event.GestureSimulation.defaults);
-    }
 }
 
 Simulations.prototype = {
-
+    
+    /**
+     * Helper method to convert a degree to a radian.
+     * 
+     * @method _toRadian
+     * @private
+     * @param {Number} deg A degree to be converted to a radian.
+     * @return {Number} The degree in radian. 
+     */
     _toRadian: function(deg) {
         return deg * (Math.PI/180);
     },
 
+    /**
+     * Helper method to convert a point relative to the node element into 
+     * the point in the page coordination.
+     * 
+     * @method _calculateDefaultPoint
+     * @private
+     * @param {Array} point A point relative to the node element.
+     * @return {Array} The same point in the page coordination. 
+     */
     _calculateDefaultPoint: function(point) {
 
         if(!Y.Lang.isArray(point) || point.length === 0) {
@@ -84,8 +127,31 @@ Simulations.prototype = {
 
         return point;
     },
-
-    rotate: function(center, startRadius, endRadius, duration, start, rotation) {
+    
+    /**
+     * The "rotate" and "pinch" methods are essencially same with the exact same 
+     * arguments. Only difference is the required parameters. The rotate method 
+     * requires "rotation" parameter while the pinch method requires "startRadius" 
+     * and "endRadius" parameters.
+     *
+     * @method rotate
+     * @param {Function} cb The callback to execute when the gesture simulation 
+     *      is completed.
+     * @param {Array} center A center point where the pinch gesture of two fingers
+     *      should happen. It is relative to the top left corner of the target 
+     *      node element.
+     * @param {Number} startRadius A radius of start circle where 2 fingers are 
+     *      on when the gesture starts. This is optional. The default is half of 
+     *      either target node width or height whichever is less.
+     * @param {Number} endRadius A radius of end circle where 2 fingers will be on when
+     *      the pinch or spread gestures are completed. This is optional. 
+     *      The default is half of either target node width or height whichever is less.
+     * @param {Number} duration A duration of the gesture in millisecond.
+     * @param {Number} start A start angle(0 degree at 12 o'clock) where the 
+     *      gesture should start. Default is 0.  
+     * @param {Number} rotation A rotation in degree. It is required.
+     */
+    rotate: function(cb, center, startRadius, endRadius, duration, start, rotation) {
         var radius,
             r1 = startRadius,   // optional
             r2 = endRadius;     // optional
@@ -102,10 +168,37 @@ Simulations.prototype = {
             Y.error(NAME+'Invalid rotation detected.');
         }
 
-        this.pinch(center, r1, r2, duration, start, rotation);
+        this.pinch(cb, center, r1, r2, duration, start, rotation);
     },
-
-    pinch: function(center, startRadius, endRadius, duration, start, rotation) {
+    
+    /**
+     * The "rotate" and "pinch" methods are essencially same with the exact same 
+     * arguments. Only difference is the required parameters. The rotate method 
+     * requires "rotation" parameter while the pinch method requires "startRadius" 
+     * and "endRadius" parameters.
+     *
+     * The "pinch" gesture can simulate various 2 finger gestures such as pinch, 
+     * spread and/or rotation. The "startRadius" and "endRadius" are required.
+     * If endRadius is larger than startRadius, it becomes a spread gesture 
+     * otherwise a pinch gesture. 
+     *
+     * @method pinch
+     * @param {Function} cb The callback to execute when the gesture simulation 
+     *      is completed.
+     * @param {Array} center A center point where the pinch gesture of two fingers
+     *      should happen. It is relative to the top left corner of the target 
+     *      node element.
+     * @param {Number} startRadius A radius of start circle where 2 fingers are 
+     *      on when the gesture starts. This paramenter is required.
+     * @param {Number} endRadius A radius of end circle where 2 fingers will be on when
+     *      the pinch or spread gestures are completed. This parameter is required.
+     * @param {Number} duration A duration of the gesture in millisecond.
+     * @param {Number} start A start angle(0 degree at 12 o'clock) where the 
+     *      gesture should start. Default is 0.  
+     * @param {Number} rotation If rotation is desired during the pinch or 
+     *      spread gestures, this parameter can be used. Default is 0 degree.  
+     */
+    pinch: function(cb, center, startRadius, endRadius, duration, start, rotation) {
         var eventQueue,
             interval = DEFAULTS.EVENT_INTERVAL,
             touches,
@@ -127,7 +220,7 @@ Simulations.prototype = {
         }
 
         if(!Y.Lang.isNumber(duration) || duration <= 0) {
-            duration = DEFAULTS.DURATION;
+            duration = DEFAULTS.DURATION_PINCH;
         }
 
         if(!Y.Lang.isNumber(start)) {
@@ -208,7 +301,7 @@ Simulations.prototype = {
                     clientY: (path1.start[0] + path2.start[1])/2
                 };
 
-                Y.Event.simulate(this.target, TOUCH_START, Y.merge({
+                this._simulateEvent(this.target, TOUCH_START, Y.merge({
                     touches: touches,
                     targetTouches: touches,
                     changedTouches: touches,
@@ -221,7 +314,7 @@ Simulations.prototype = {
                     * The implementation will fire 1 touch start event for both fingers,
                     * simulating 2 fingers touched on the screen at the same time.
                     */
-                    Y.Event.simulate(this.target, GESTURE_START, Y.merge({
+                    this._simulateEvent(this.target, GESTURE_START, Y.merge({
                         scale: startScale,
                         rotation: startRot
                     }, coord));
@@ -277,7 +370,7 @@ Simulations.prototype = {
                         clientY: py
                     };
 
-                    Y.Event.simulate(this.target, TOUCH_MOVE, Y.merge({
+                    this._simulateEvent(this.target, TOUCH_MOVE, Y.merge({
                         touches: touches,
                         targetTouches: touches,
                         changedTouches: touches,
@@ -286,7 +379,7 @@ Simulations.prototype = {
                     }, coord));
 
                     if(Y.UA.ios >= 2.0) {
-                        Y.Event.simulate(this.target, GESTURE_CHANGE, Y.merge({
+                        this._simulateEvent(this.target, GESTURE_CHANGE, Y.merge({
                             scale: startScale + scalePerStep*i,
                             rotation: startRot + rotPerStep*i
                         }, coord));
@@ -331,13 +424,13 @@ Simulations.prototype = {
                 };  
 
                 if(Y.UA.ios >= 2.0) {
-                    Y.Event.simulate(this.target, GESTURE_END, Y.merge({
+                    this._simulateEvent(this.target, GESTURE_END, Y.merge({
                         scale: endScale,
                         rotation: endRot
                     }, coord));
                 }
 
-                Y.Event.simulate(this.target, TOUCH_END, Y.merge({
+                this._simulateEvent(this.target, TOUCH_END, Y.merge({
                     touches: emptyTouchList,
                     targetTouches: emptyTouchList,
                     changedTouches: touches,
@@ -347,11 +440,41 @@ Simulations.prototype = {
             },
             context: this
         });
-
+        
+        if(cb && Y.Lang.isFunction(cb)) {
+            eventQueue.add({
+                fn: cb,
+                
+                // by default, the callback runs the node context where 
+                // simulateGesture method is called.
+                context: this.node
+                
+                //TODO: Use args to pass error object as 1st param if there is an error.
+                //args: 
+            });
+        }
+        
         eventQueue.run();
     },
-
-    tap: function(point, times, hold, delay) {            
+    
+    /**
+     * The "tap" gesture can be used for various single touch point gestures 
+     * such as single tap, N number of taps, long press. The default is a single 
+     * tap.
+     * 
+     * @method tap
+     * @param {Function} cb The callback to execute when the gesture simulation 
+     *      is completed.
+     * @param {Array} point A point(relative to the top left corner of the 
+     *      target node element) where the tap gesture should start. The default 
+     *      is the center of the taget node.
+     * @param {Number} times The number of taps. Default is 1.
+     * @param {Number} hold The hold time in milliseconds between "touchstart" and
+     *      "touchend" event generation. Default is 10ms.
+     * @param {Number} delay The time gap in millisecond between taps if this
+     *      gesture has more than 1 tap. Default is 10ms.
+     */
+    tap: function(cb, point, times, hold, delay) {           
         var eventQueue = new Y.AsyncQueue(),
             emptyTouchList = this._getEmptyTouchList(),
             touches,
@@ -384,7 +507,7 @@ Simulations.prototype = {
         for(i=0; i<times; i++) {
             eventQueue.add({
                 fn: function() {
-                    Y.Event.simulate(this.target, TOUCH_START, Y.merge({
+                    this._simulateEvent(this.target, TOUCH_START, Y.merge({
                         touches: touches,
                         targetTouches: touches,
                         changedTouches: touches
@@ -396,7 +519,7 @@ Simulations.prototype = {
 
             eventQueue.add({
                 fn: function() {
-                    Y.Event.simulate(this.target, TOUCH_END, Y.merge({
+                    this._simulateEvent(this.target, TOUCH_END, Y.merge({
                         touches: emptyTouchList,
                         targetTouches: emptyTouchList,
                         changedTouches: touches
@@ -410,16 +533,47 @@ Simulations.prototype = {
         if(times > 1 && !((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6))) {
             eventQueue.add({
                 fn: function() {
-                    Y.Event.simulate(this.target, MOUSE_DBLCLICK, coord);
+                    this._simulateEvent(this.target, MOUSE_DBLCLICK, coord);
                 },
                 context: this
             });
         }
-
+        
+        if(cb && Y.Lang.isFunction(cb)) {
+            eventQueue.add({
+                fn: cb,
+                
+                // by default, the callback runs the node context where 
+                // simulateGesture method is called.
+                context: this.node
+                
+                //TODO: Use args to pass error object as 1st param if there is an error.
+                //args: 
+            });
+        }
+        
         eventQueue.run();
     },
-
-    flick: function(point, axis, distance, duration) {
+    
+    /**
+     * The "flick" gesture is a specialized "move" that has some velocity 
+     * and the movement always runs either x or y axis. The velocity is calculated
+     * with "distance" and "duration" arguments. If the calculated velocity is 
+     * below than the minimum velocity, the given duration will be ignored and 
+     * new duration will be created to make a valid flick gesture.
+     *   
+     * @method flick
+     * @param {Function} cb The callback to execute when the gesture simulation 
+     *      is completed.
+     * @param {Array} point A point(relative to the top left corner of the 
+     *      target node element) where the flick gesture should start. The default 
+     *      is the center of the taget node.
+     * @param {String} axis Either "x" or "y".
+     * @param {Number} distance A distance in pixels to flick.
+     * @param {Number} duration A duration of the gesture in millisecond.
+     * 
+     */
+    flick: function(cb, point, axis, distance, duration) {
         var path;
 
         point = this._calculateDefaultPoint(point);
@@ -434,14 +588,14 @@ Simulations.prototype = {
         }
 
         if(!Y.Lang.isNumber(distance)) { 
-            distance = DEFAULTS.DISTANCE; 
+            distance = DEFAULTS.DISTANCE_FLICK; 
         }
 
         if(!Y.Lang.isNumber(duration)){
-            duration = DEFAULTS.DURATION; // ms
+            duration = DEFAULTS.DURATION_FLICK; // ms
         } else {
-            if(duration > DEFAULTS.MAX_DURATION_MOVE) {
-                duration = DEFAULTS.MAX_DURATION_MOVE;
+            if(duration > DEFAULTS.MAX_DURATION_FLICK) {
+                duration = DEFAULTS.MAX_DURATION_FLICK;
             }
         }
 
@@ -450,8 +604,8 @@ Simulations.prototype = {
             * Adjust duration if the calculated velocity is less than 
             * the minimum velcocity to be claimed as a flick.
             */
-        if(Math.abs(distance)/duration < DEFAULTS.MIN_VELOCITY) {
-            duration = Math.abs(distance)/DEFAULTS.MIN_VELOCITY;
+        if(Math.abs(distance)/duration < DEFAULTS.MIN_VELOCITY_FLICK) {
+            duration = Math.abs(distance)/DEFAULTS.MIN_VELOCITY_FLICK;
         }
 
         path = {
@@ -462,16 +616,35 @@ Simulations.prototype = {
             ]
         };
 
-        this._gesturemove(path, duration);
+        this._move(cb, path, duration);
     },
-
-    gesturemove: function(path, duration) {
+    
+    /**
+     * The "move" gesture simulate the movement of any direction between 
+     * the straight line of start and end point for the given duration.
+     * The path argument is an object with "point", "xdist" and "ydist" properties.
+     * The "point" property is an array with x and y coordinations(relative to the
+     * top left corner of the target node element) while "xdist" and "ydist" 
+     * properties are used for the distance along the x and y axis. A negative 
+     * distance number can be used to drag either left or up direction. 
+     * 
+     * If no arguments are given, it will simulate the default move, which
+     * is moving 200 pixels from the center of the element to the positive X-axis 
+     * direction for 1 sec.
+     * 
+     * @method move
+     * @param {Function} cb The callback to execute when the gesture simulation 
+     *      is completed.
+     * @param {Object} path An object with "point", "xdist" and "ydist".
+     * @param {Number} duration A duration of the gesture in millisecond.
+     */
+    move: function(cb, path, duration) {
         var convertedPath;
 
         if(!Y.Lang.isObject(path)) {
             path = {
                 point: this._calculateDefaultPoint([]),
-                xdist: DEFAULTS.DISTANCE,
+                xdist: DEFAULTS.DISTANCE_MOVE,
                 ydist: 0
             };
         } else {
@@ -483,11 +656,19 @@ Simulations.prototype = {
             }
 
             if(!Y.Lang.isNumber(path.xdist)) {
-                path.xdist = DEFAULTS.DISTANCE;
+                path.xdist = DEFAULTS.DISTANCE_MOVE;
             }
 
             if(!Y.Lang.isNumber(path.ydist)) {
                 path.ydist = 0;
+            }
+        }
+        
+        if(!Y.Lang.isNumber(duration)){
+            duration = DEFAULTS.DURATION_MOVE; // ms
+        } else {
+            if(duration > DEFAULTS.MAX_DURATION_MOVE) {
+                duration = DEFAULTS.MAX_DURATION_MOVE;
             }
         }
 
@@ -496,17 +677,30 @@ Simulations.prototype = {
             end: [path.point[0]+path.xdist, path.point[1]+path.ydist]
         };
 
-        this._gesturemove(convertedPath, duration);
+        this._move(cb, convertedPath, duration);
     },
-
-    _gesturemove: function(path, duration) {
+    
+    /**
+     * A base method on top of "move" and "flick" methods. The method takes
+     * the path with start/end properties and duration to generate a set of 
+     * touch events for the movement gesture. 
+     *
+     * @method _move
+     * @private
+     * @param {Function} cb The callback to execute when the gesture simulation 
+     *      is completed.
+     * @param {Object} path An object with "start" and "end" properties. Each 
+     *      property should be an array with x and y coordination (e.g. start: [100, 50])
+     * @param {Number} duration A duration of the gesture in millisecond. 
+     */
+    _move: function(cb, path, duration) {
         var eventQueue,
             interval = DEFAULTS.EVENT_INTERVAL,
             steps, stepX, stepY,
             id = 0;
 
         if(!Y.Lang.isNumber(duration)){
-            duration = DEFAULTS.DURATION; // ms
+            duration = DEFAULTS.DURATION_MOVE; // ms
         } else {
             if(duration > DEFAULTS.MAX_DURATION_MOVE) {
                 duration = DEFAULTS.MAX_DURATION_MOVE;
@@ -520,7 +714,7 @@ Simulations.prototype = {
                     DEFAULTS.START_PAGEY
                 ], 
                 end: [
-                    DEFAULTS.START_PAGEX + DEFAULTS.DISTANCE, 
+                    DEFAULTS.START_PAGEX + DEFAULTS.DISTANCE_MOVE, 
                     DEFAULTS.START_PAGEY
                 ]
             };
@@ -533,7 +727,7 @@ Simulations.prototype = {
             }
             if(!Y.Lang.isArray(path.end)) {
                 path.end = [
-                    DEFAULTS.START_PAGEX + DEFAULTS.DISTANCE, 
+                    DEFAULTS.START_PAGEX + DEFAULTS.DISTANCE_MOVE, 
                     DEFAULTS.START_PAGEY
                 ];
             }
@@ -555,7 +749,7 @@ Simulations.prototype = {
                         Y.merge({identifier: id++}, coord)
                     ]);
 
-                Y.Event.simulate(this.target, TOUCH_START, Y.merge({
+                this._simulateEvent(this.target, TOUCH_START, Y.merge({
                     touches: touches,
                     targetTouches: touches,
                     changedTouches: touches
@@ -585,7 +779,7 @@ Simulations.prototype = {
                             Y.merge({identifier: id++}, coord)
                         ]);
 
-                    Y.Event.simulate(this.target, TOUCH_MOVE, Y.merge({
+                    this._simulateEvent(this.target, TOUCH_MOVE, Y.merge({
                         touches: touches,
                         targetTouches: touches,
                         changedTouches: touches
@@ -609,7 +803,7 @@ Simulations.prototype = {
                         Y.merge({identifier: id}, coord)
                     ]);
 
-                Y.Event.simulate(this.target, TOUCH_MOVE, Y.merge({
+                this._simulateEvent(this.target, TOUCH_MOVE, Y.merge({
                     touches: touches,
                     targetTouches: touches,
                     changedTouches: touches
@@ -633,7 +827,7 @@ Simulations.prototype = {
                     Y.merge({identifier: id}, coord)
                 ]);
 
-                Y.Event.simulate(this.target, TOUCH_END, Y.merge({
+                this._simulateEvent(this.target, TOUCH_END, Y.merge({
                     touches: emptyTouchList,
                     targetTouches: emptyTouchList,
                     changedTouches: touches
@@ -641,10 +835,30 @@ Simulations.prototype = {
             },
             context: this
         });
-
+        
+        if(cb && Y.Lang.isFunction(cb)) {
+            eventQueue.add({
+                fn: cb,
+                
+                // by default, the callback runs the node context where 
+                // simulateGesture method is called.
+                context: this.node
+                
+                //TODO: Use args to pass error object as 1st param if there is an error.
+                //args: 
+            });
+        }
+        
         eventQueue.run();
     },
-
+    
+    /**
+     * Helper method to return a singleton instance of empty touch list.
+     * 
+     * @method _getEmptyTouchList
+     * @private
+     * @return {TouchList | Array} An empty touch list object.
+     */
     _getEmptyTouchList: function() {
         if(!emptyTouchList) {
             emptyTouchList = this._createTouchList([]);
@@ -652,7 +866,18 @@ Simulations.prototype = {
 
         return emptyTouchList;
     },
-
+    
+    /**
+     * Helper method to convert an array with touch points to TouchList object as
+     * defined in http://www.w3.org/TR/touch-events/
+     * 
+     * @method _createTouchList
+     * @private
+     * @param {Array} touchPoints 
+     * @return {TouchList | Array} If underlaying platform support creating touch list
+     *      a TouchList object will be returned otherwise a fake Array object 
+     *      will be returned.
+     */
     _createTouchList: function(touchPoints) {
         /*
         * Android 4.0.3 emulator:
@@ -688,9 +913,9 @@ Simulations.prototype = {
                 // and desktops among all others. 
 
                 /**
-                    * Touch APIs are broken in androids older than 4.0. We will use 
-                    * simulated touch apis for these versions. 
-                    */
+                 * Touch APIs are broken in androids older than 4.0. We will use 
+                 * simulated touch apis for these versions. 
+                 */
                 touchList = [];
                 Y.each(touchPoints, function(point) {
                     if(!point.identifier) {point.identifier = 0;}
@@ -722,28 +947,118 @@ Simulations.prototype = {
         }
 
         return touchList;
+    },
+    
+    /**
+     * @method _simulateEvent
+     * @param {HTMLElement} target The DOM element that's the target of the event.
+     * @param {String} type The type of event or name of the supported gesture to simulate 
+     *      (i.e., "click", "doubletap", "flick").
+     * @param {Object} options (Optional) Extra options to copy onto the event object. 
+     *      For gestures, options are used to refine the gesture behavior.
+     * @return {void}
+     */
+    _simulateEvent: function(target, type, options) {
+        
+        if (touchEvents[type]) {
+            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                Y.Event.simulate(target, type, options);
+            } else {
+                // simulate using mouse events if touch is not applicable on this platform.
+                // but only single touch event can be simulated.
+                if(options.touches && options.touches.length === 1) {
+                    type = {
+                        touchstart: MOUSE_DOWN,
+                        touchmove: MOUSE_MOVE,
+                        touchend: MOUSE_UP
+                    }[type];
+
+                    options.button = 0;
+                    options.relatedTarget = null; // since we are not using mouseover event.
+
+                    options = Y.mix(options, {
+                        screenX: options.touches.item(0).screenX,
+                        screenY: options.touches.item(0).screenY,
+                        clientX: options.touches.item(0).clientX,
+                        clientY: options.touches.item(0).clientY
+                    }, true);
+
+
+                    Y.Event.simulate(target, type, options);
+
+                    if(type == MOUSE_UP) {
+                        Y.Event.simulate(target, MOUSE_CLICK, options);
+                    }
+                } else {
+                    Y.error("_simulateEvent(): Event '" + type + "' has multi touch objects that can't be simulated in your platform.");
+                }
+            }
+        } else {
+            // pass thru for all non touch events
+            Y.Event.simulate(target, type, options);
+        }
     }
 };
 
-// high level gesture names that YUI knows how to simulate.
-Y.Event.GESTURES = gestureNames;
-Y.Event.GestureSimulation = Simulations;          // should make private?
-Y.Event.GestureSimulation.defaults = DEFAULTS;
 
-Y.Event.simulateGesture = function(node, name, options) {
+/**
+ * A gesture simulation class.
+ */
+Y.GestureSimulation = Simulations;
 
-    var sim = new Y.Event.GestureSimulation(node);
+/**
+ * Various simulation default behavior properties. If user override 
+ * Y.GestureSimulation.defaults, overriden values will be used and this 
+ * should be done before the gesture simulation.  
+ */
+Y.GestureSimulation.defaults = DEFAULTS;
+
+/**
+ * The high level gesture names that YUI knows how to simulate.
+ */
+Y.GestureSimulation.GESTURES = gestureNames;
+
+/**
+ * Simulates the high level(user) gesture with the given name on a target.
+ * Y.Event.simulate method provides the entry point to the gesture simulation. 
+ * If the given type to Y.Event.simulate method is a supported gesture, 
+ * the gesture simulation is deligated to this static method.
+ *  
+ * @param {HTMLElement|Node} node The YUI node element that's the target of the event.
+ * @param {String} name The name of the supported gesture to simulate(i.e. "flick").
+ * @param {Object} options (Optional) Extra options that are used to refine the 
+ *      gesture behavior.
+ * @param {Function} cb The callback to execute when the gesture simulation 
+ *      is completed.   
+ * @return {void}
+ * @for Event
+ * @method simulateGesture
+ * @static
+ */
+Y.Event.simulateGesture = function(node, name, options, cb) {
+    
+    if(node instanceof HTMLElement) {
+        node = Y.Node.one(node);
+    }
+
+    var sim = new Y.GestureSimulation(node);
     name = name.toLowerCase();
+    
+    if(!cb) {
+        cb = options;
+        options = {};
+    }
+    
     options = options || {};
 
-    if (Y.Event.GESTURES[name]) {
+    if (gestureNames[name]) {
         switch(name) {
             // single-touch: point gestures 
             case 'tap':
-                sim.tap(options.point, options.times, options.hold, options.delay);
+                sim.tap(cb, options.point, options.times, options.hold, options.delay);
                 break;
             case 'doubletap':
-                sim.tap(options.point, 2);
+                sim.tap(cb, options.point, 2);
                 break;
             case 'press':
                 if(!Y.Lang.isNumber(options.hold)) {
@@ -753,26 +1068,25 @@ Y.Event.simulateGesture = function(node, name, options) {
                 } else if(options.hold > DEFAULTS.MAX_HOLD_PRESS) {
                     options.hold = DEFAULTS.MAX_HOLD_PRESS;
                 }
-                sim.tap(options.point, 1, options.hold);
+                sim.tap(cb, options.point, 1, options.hold);
                 break;
 
-            // single-touch: move gestures
-            // as per Satyen's suggestion, changed "move" to "gesturemove". 
-            case 'gesturemove':
-                sim.gesturemove(options.path, options.duration);
+            // single-touch: move gestures 
+            case 'move':
+                sim.move(cb, options.path, options.duration);
                 break;
             case 'flick':
-                sim.flick(options.point, options.axis, options.distance, 
+                sim.flick(cb, options.point, options.axis, options.distance, 
                     options.duration);
                 break;
 
             // multi-touch: pinch/rotation gestures
             case 'pinch':
-                sim.pinch(options.center, options.r1, options.r2, 
+                sim.pinch(cb, options.center, options.r1, options.r2, 
                     options.duration, options.start, options.rotation);
                 break;    
             case 'rotate':
-                sim.rotate(options.center, options.r1, options.r2, 
+                sim.rotate(cb, options.center, options.r1, options.r2, 
                     options.duration, options.start, options.rotation);
                 break;
         }
