@@ -42,7 +42,7 @@ YUI.add('swipe-example-tests', function(Y) {
 
         simulateSwipeRight : function(node, distance, duration) {
             // TODO: Waiting on gesture simulation to be rolled in
-            node.simulate("gesturemove", {
+            node.simulateGesture("move", {
                 path : {
                     xdist: distance
                 },
@@ -52,7 +52,7 @@ YUI.add('swipe-example-tests', function(Y) {
 
         simulateSwipeLeft : function(node, distance, duration) {
             // TODO: Waiting on gesture simulation to be rolled in            
-            node.simulate("gesturemove", {
+            node.simulateGesture("move", {
                 path : {
                     xdist: -distance
                 },

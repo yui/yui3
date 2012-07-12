@@ -4,6 +4,7 @@ YUI.add('attribute-event-speeddate-tests', function(Y) {
         Assert = Y.Assert;
 
     suite.add(new Y.Test.Case({
+
         name: 'Example Tests',
 
         johnHi : Y.one("#john .hi"),
@@ -34,6 +35,20 @@ YUI.add('attribute-event-speeddate-tests', function(Y) {
             Y.Assert.areEqual(pqi, shirt.one(".sd-personality").get("text"));
             Y.Assert.areEqual(interests, shirt.one(".sd-interests").get("text"));
             Y.Assert.areEqual(status, shirt.one(".sd-availability").get("text"));
+        },
+
+        clickCheckbox : function(checkbox, expectedState) {
+
+            if (Y.UA.ie && Y.UA.ie < 9) {
+                checkbox.set("checked", expectedState);
+            } else {
+                // Just in case it's already at that state, and the test wants to flip it with the click
+                if (checkbox.get("checked") === expectedState) {
+                    checkbox.set("checked", !expectedState);
+                }
+            }
+
+            checkbox.simulate("click");
         },
 
         "Initial State" : function() {
@@ -83,17 +98,22 @@ YUI.add('attribute-event-speeddate-tests', function(Y) {
         },
 
         "Impress Jane" : function() {
-            this.sunsets.simulate("click");
+
+            this.clickCheckbox(this.sunsets, true);
+
             this.checkNameTag(this.johnShirt, "John", "78", "Sunsets", "");
 
-            this.specs.simulate("click");
+            this.clickCheckbox(this.specs, true);
+
             this.checkNameTag(this.johnShirt, "John", "78", "Sunsets, Reading Specifications", "");
             this.checkNameTag(this.janeShirt, "Jane", "82", "Popcorn, Saving Whales, Reading Specifications", "");
 
-            this.whales.simulate("click");
+            this.clickCheckbox(this.whales, true);
+
             this.checkNameTag(this.johnShirt, "John", "78", "Sunsets, Reading Specifications, Saving Whales", "");
 
-            this.knitting.simulate("click");
+            this.clickCheckbox(this.knitting, true);
+
             this.checkNameTag(this.johnShirt, "John", "78", "Sunsets, Reading Specifications, Saving Whales, Knitting", "");
         },
 
@@ -106,7 +126,8 @@ YUI.add('attribute-event-speeddate-tests', function(Y) {
 
         "Jane is still not impressed" : function() {
 
-            this.whales.simulate("click");
+            this.clickCheckbox(this.whales, false);
+
             this.likeJohn.simulate("click");
 
             this.checkNameTag(this.johnShirt, "John", "78", "Sunsets, Reading Specifications, Knitting", "");
@@ -115,8 +136,9 @@ YUI.add('attribute-event-speeddate-tests', function(Y) {
 
         "Jane is finally impressed" : function() {
 
-            this.whales.simulate("click");
-            this.knitting.simulate("click");
+            this.clickCheckbox(this.whales, true);
+            this.clickCheckbox(this.knitting, false);
+
             this.likeJohn.simulate("click");
 
             this.checkNameTag(this.johnShirt, "John", "78", "Sunsets, Reading Specifications, Saving Whales", "");

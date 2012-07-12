@@ -17,7 +17,20 @@ YUI.add('attribute-event-tests', function(Y) {
 
         changeValue : Y.one("#changeValue button[type=submit]"),
 
+        changeValueForm : Y.one("#changeValue"),
+
         preventBox : Y.one("#preventFoobar"), 
+
+        clickFormSubmit : function(form) {
+
+            // In non-IE browsers, clicking the submit will peform the default action,
+            // of submitting the form. In IE, we need to do both
+            form.one("button[type=submit]").simulate("click");
+
+            if (Y.UA.ie && Y.UA.ie < 9) {
+                form.simulate("submit");
+            }
+        },
 
         'initial state' : function() {
 
@@ -34,7 +47,8 @@ YUI.add('attribute-event-tests', function(Y) {
         'foo change' : function() {
 
             this.attrNewValue.set("value", 10);
-            this.changeValue.simulate("click");
+
+            this.clickFormSubmit(this.changeValueForm);
 
             var event = Y.one("#example-out .event"),
                 eventData = event.all(".event-props li");
@@ -48,7 +62,7 @@ YUI.add('attribute-event-tests', function(Y) {
 
             this.attrNewValue.set("value", 10);
 
-            this.changeValue.simulate("click");
+            this.clickFormSubmit(this.changeValueForm);
 
             var events = Y.all("#example-out .event"),
                 eventData = events.item(0).all(".event-props li");
@@ -63,7 +77,8 @@ YUI.add('attribute-event-tests', function(Y) {
         'foo change again' : function() {
 
             this.attrNewValue.set("value", "qwerty");
-            this.changeValue.simulate("click");
+
+            this.clickFormSubmit(this.changeValueForm);
 
             var events = Y.all("#example-out .event"),
                 eventData = events.item(0).all(".event-props li");
@@ -96,7 +111,8 @@ YUI.add('attribute-event-tests', function(Y) {
             Y.Assert.areEqual("Hello World!", this.attrCurrValue.get("text"));
 
             this.attrNewValue.set("value", "asdfg");
-            this.changeValue.simulate("click");
+
+            this.clickFormSubmit(this.changeValueForm);
 
             var events = Y.all("#example-out .event"),
                 eventData = events.item(0).all(".event-props li");
@@ -122,7 +138,7 @@ YUI.add('attribute-event-tests', function(Y) {
 
         'bar unchanged' : function() {
 
-            this.changeValue.simulate("click");
+            this.clickFormSubmit(this.changeValueForm);
 
             var events = Y.all("#example-out .event"),
                 eventData = events.item(0).all(".event-props li");
@@ -161,7 +177,8 @@ YUI.add('attribute-event-tests', function(Y) {
             Y.Assert.areEqual("true", this.attrCurrValue.get("text"));
 
             this.attrNewValue.set("value", "1111");
-            this.changeValue.simulate("click");
+
+            this.clickFormSubmit(this.changeValueForm);
 
             var events = Y.all("#example-out .event"),
                 eventData = events.item(0).all(".event-props li"),
@@ -175,7 +192,8 @@ YUI.add('attribute-event-tests', function(Y) {
             this.attrPrevent.set("checked", false);
 
             this.attrNewValue.set("value", "2222");
-            this.changeValue.simulate("click");
+
+            this.clickFormSubmit(this.changeValueForm);
 
             var events = Y.all("#example-out .event"),
                 eventData = events.item(0).all(".event-props li");
