@@ -13300,6 +13300,7 @@ ChartBase.prototype = {
     _getTooltip: function()
     {
         var node = DOCUMENT.createElement("div"),
+            tooltipClass = _getClassName("chart-tooltip"),
             tt = {
                 setTextFunction: this._setText,
                 markerLabelFunction: this._tooltipLabelFunction,
@@ -13337,6 +13338,7 @@ ChartBase.prototype = {
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
         node.setStyle("visibility", "hidden");
+        node.addClass(tooltipClass);
         tt.node = Y.one(node);
         return tt;
     },
@@ -13594,6 +13596,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
             this._overlay = Y.one(overlay); 
+            this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
