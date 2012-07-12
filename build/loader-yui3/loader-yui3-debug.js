@@ -1319,8 +1319,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "event-simulate": {
         "requires": [
-            "event-base",
-            "gesture-simulate"
+            "event-base"
         ]
     },
     "event-synthetic": {
@@ -2448,11 +2447,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-<<<<<<< HEAD
 YUI.Env[Y.version].md5 = 'd94e60bd73f76cb0842918b4f3557e17';
-=======
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
->>>>>>> b3c10eecf1de0c29a851a2afa92b87bc48f8e981
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

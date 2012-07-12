@@ -1258,8 +1258,7 @@
     },
     "event-simulate": {
         "requires": [
-            "event-base",
-            "gesture-simulate"
+            "event-base"
         ]
     },
     "event-synthetic": {
