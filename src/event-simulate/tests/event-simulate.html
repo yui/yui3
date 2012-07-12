@@ -51,7 +51,7 @@ YUI({
                 
                 //reset the result
                 this.result = null;
-                
+
                 this.element["on" + this.eventType] = Y.bind(function(event){
                     this.handleEvent(event || window.event);
                 }, this);
@@ -80,6 +80,15 @@ YUI({
              * @param {Event} event The event object created from the event.
              */
             handleEvent : function(event /*:Event*/) /*:Void*/ {
+
+                if (this.eventType === "submit") {
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                };
+
                 this.result = event;
             }
         });
@@ -90,7 +99,7 @@ YUI({
     
         function UIEventTestCase(type){
             UIEventTestCase.superclass.constructor.call(this, type);
-            this.elementTagName = "input";
+            this.elementTagName = (type === "submit") ? "form": "input";
         }
     
         Y.extend(UIEventTestCase, GenericEventTestCase, { 
@@ -107,7 +116,11 @@ YUI({
                 Assert.areSame(this.element, this.result.target || this.result.srcElement, "Target is not correct.");
                 Assert.areEqual(this.eventType, this.result.type, "Event type is incorrect.");
                 Assert.isTrue(this.result.bubbles, "bubbles is incorrect.");
-                Assert.isFalse(this.result.cancelable, "Cancelable is incorrect.");
+                if (this.eventType === "submit") {
+                    Assert.isTrue(this.result.cancelable, "Cancelable is incorrect.");
+                } else {
+                    Assert.isFalse(this.result.cancelable, "Cancelable is incorrect.");
+                }
                 Assert.areSame(window, this.result.view, "View is incorrect.");
                 Assert.areEqual(1, this.result.detail, "Details is incorrect.");
                 
@@ -575,6 +588,7 @@ YUI({
         //-------------------------------------------------------------------------
         uiEventsSuite.add(new UIEventTestCase("change"));
         uiEventsSuite.add(new UIEventTestCase("select"));
+        uiEventsSuite.add(new UIEventTestCase("submit"));
         uiEventsSuite.add(new FocusBlurEventTestCase("blur"));
         uiEventsSuite.add(new FocusBlurEventTestCase("focus"));
         

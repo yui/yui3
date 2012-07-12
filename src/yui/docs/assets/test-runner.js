@@ -100,24 +100,7 @@
             this._poll(condition, period, timeout, success, failure);
             this.wait(timeout + 1000);
         };
-
-        if (filter || showConsole) {
-            Y.all('a').each(function(item) {
-                var url = item.getAttribute('href');
-                if (url.indexOf('#') === -1) {
-                    var f = [];
-                    if (filter) {
-                        f.push('filter=' + filter);
-                    }
-                    if (showConsole) {
-                        f.push('console=' + showConsole);
-                    }
-                    item.set('href', url + '?' + f.join('&'));
-                }
-            });
-        }
-
-
+        
         var counter = 0,
         count = function() {
             counter++;

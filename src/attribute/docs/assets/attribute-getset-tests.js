@@ -14,12 +14,6 @@ YUI.add('attribute-getset-tests', function(Y) {
 
         color : Y.one("#color"),
 
-        setX : Y.one("#setX button[type=submit]"),
-
-        setY : Y.one("#setY button[type=submit]"),
-
-        setColor : Y.one("#setColor button[type=submit]"),
-
         setXY : Y.one("#setXY"),
 
         setAll : Y.one("#setAll"),
@@ -29,6 +23,23 @@ YUI.add('attribute-getset-tests', function(Y) {
         container : Y.one("#boxParent"),
 
         box : Y.one("#boxParent .yui3-box"),
+
+        xForm : Y.one("#setX"),
+
+        yForm : Y.one("#setY"),
+
+        colorForm : Y.one("#setColor"),
+
+        clickFormSubmit : function(form) {
+
+            // In non-IE browsers, clicking the submit will peform the default action,
+            // of submitting the form. In IE, we need to do both
+            form.one("button[type=submit]").simulate("click");
+
+            if (Y.UA.ie && Y.UA.ie < 9) {
+                form.simulate("submit");
+            }
+        },
 
         getBounds : function() {
 
@@ -75,7 +86,8 @@ YUI.add('attribute-getset-tests', function(Y) {
                 xValue = this.random(xy[0][0], xy[0][1]);
 
             this.x.set("value", xValue);
-            this.setX.simulate("click");
+
+            this.clickFormSubmit(this.xForm);
 
             region = this.box.get("region");
 
@@ -88,7 +100,8 @@ YUI.add('attribute-getset-tests', function(Y) {
                 xValue = xy[0][1] + this.random(10, 2000); // some random range above the max
 
             this.x.set("value", xValue);
-            this.setX.simulate("click");
+
+            this.clickFormSubmit(this.xForm);
 
             region = this.box.get("region");
 
@@ -97,7 +110,7 @@ YUI.add('attribute-getset-tests', function(Y) {
             xValue = xy[0][0] - this.random(10, 2000); // some random range below the min
 
             this.x.set("value", xValue);
-            this.setX.simulate("click");
+            this.clickFormSubmit(this.xForm);
 
             region = this.box.get("region");
 
@@ -110,7 +123,7 @@ YUI.add('attribute-getset-tests', function(Y) {
                 yValue = this.random(xy[1][0], xy[1][1]);
 
             this.y.set("value", yValue);
-            this.setY.simulate("click");
+            this.clickFormSubmit(this.yForm);
 
             region = this.box.get("region");
 
@@ -124,7 +137,7 @@ YUI.add('attribute-getset-tests', function(Y) {
                 yValue = xy[1][1] + this.random(10, 2000);
 
             this.y.set("value", yValue);
-            this.setY.simulate("click");
+            this.clickFormSubmit(this.yForm);
 
             region = this.box.get("region");
 
@@ -133,7 +146,7 @@ YUI.add('attribute-getset-tests', function(Y) {
             yValue = xy[1][0] - this.random(10, 2000);
 
             this.y.set("value", yValue);
-            this.setY.simulate("click");
+            this.clickFormSubmit(this.yForm);
 
             region = this.box.get("region");
 
@@ -189,7 +202,7 @@ YUI.add('attribute-getset-tests', function(Y) {
 
         'set valid colors' : function() {
             this.color.set("value", "red");
-            this.setColor.simulate("click");
+            this.clickFormSubmit(this.colorForm);
 
             // To normalize the fact that IE removes spaces in between rgb values.
             var red = /rgb\(255,\s?0,\s?0\)/;
@@ -198,7 +211,7 @@ YUI.add('attribute-getset-tests', function(Y) {
             Y.Assert.isTrue(red.test(this.box.getComputedStyle("backgroundColor")));
 
             this.color.set("value", "#00ff00");
-            this.setColor.simulate("click");
+            this.clickFormSubmit(this.colorForm);
 
             Y.Assert.isTrue(green.test(this.box.getComputedStyle("backgroundColor")));
         },
@@ -207,7 +220,7 @@ YUI.add('attribute-getset-tests', function(Y) {
             var prevVal = this.box.getComputedStyle("backgroundColor");
 
             this.color.set("value", "#00ff00ff");
-            this.setColor.simulate("click");
+            this.clickFormSubmit(this.colorForm);
 
             Y.Assert.areEqual(prevVal, this.box.getComputedStyle("backgroundColor"));
         },

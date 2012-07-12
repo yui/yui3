@@ -48,18 +48,22 @@
 
     "pages": {
         "scrollview-base-example": {
+            "name"       : "scrollview-base",
             "displayName": "ScrollView: Basic ScrollView Without a Scroll Indicator",
             "layout"     : "scrollview-vertical-example"
         },
         "scrollview-example": {
+            "name"       : "scrollview",
             "displayName": "ScrollView: ScrollView with Scroll Indicator and Link Suppression Behavior",
             "layout"     : "scrollview-vertical-example"
         },
         "scrollview-horiz-example": {
+            "name"       : "scrollview-horiz",
             "displayName": "ScrollView: Horizontal ScrollView",
             "layout"     : "scrollview-horizontal-example"
         },
         "scrollview-paging-example": {
+            "name"       : "scrollview-paging",
             "displayName": "ScrollView: ScrollView with Pagination",
             "layout"     : "scrollview-horizontal-example"
         }
