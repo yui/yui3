@@ -388,9 +388,12 @@ RESTSync.prototype = {
 
     /**
     Communicates with a RESTful HTTP server by sending and receiving data via
-    XHRs.
+    XHRs. This method is called internally by load(), save(), and destroy().
 
-    This method is called internally by load(), save(), and destroy().
+    The URL used for each XHR will be retrieved by calling the `getURL()` method
+    and passing it the specified `action` and `options`.
+
+    This method relies heavily on standard RESTful HTTP conventions
 
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
@@ -445,7 +448,8 @@ RESTSync.prototype = {
             method = 'POST';
         }
 
-        // Add CSRF token to HTTP request headers if one is specified.
+        // Add CSRF token to HTTP request headers if one is specified and the
+        // request will cause side effects on the server.
         if (csrfToken &&
                 (method === 'POST' || method === 'PUT' || method === 'DELETE')) {
 
