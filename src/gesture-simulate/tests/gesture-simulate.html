@@ -135,6 +135,19 @@ YUI({
                 }, 5000);
             },
             
+            testDefault2: function() {
+                var wasCalled = false;
+                
+                // test callback function
+                Y.Event.simulateGesture(touchable, this.gestureName, function() {
+                    wasCalled = true;
+                });
+                
+                this.wait(function() {
+                    Assert.isTrue(wasCalled, "callback wasn't called");
+                }, 5000);
+            },
+            
             testOptions: function() {
                 var that = this,
                     options = {
@@ -287,6 +300,19 @@ YUI({
                 }, 5000);
             },
             
+            testDefault2: function() {
+                var wasCalled = false;
+                
+                // test callback function
+                Y.Event.simulateGesture(touchable, this.gestureName, function() {
+                    wasCalled = true;
+                });
+                
+                this.wait(function() {
+                    Assert.isTrue(wasCalled, "callback wasn't called");
+                }, 5000);
+            },
+            
             testOptions: function() {
                 var that = this,
                     options = {
@@ -383,6 +409,19 @@ YUI({
                 }, 5000);
             },
             
+            testDefault2: function() {
+                var wasCalled = false;
+                
+                // test callback function
+                Y.Event.simulateGesture(touchable, this.gestureName, function() {
+                    wasCalled = true;
+                });
+                
+                this.wait(function() {
+                    Assert.isTrue(wasCalled, "callback wasn't called");
+                }, 5000);
+            },
+            
             testOptions: function() {
                 var that = this,
                 
@@ -439,7 +478,7 @@ YUI({
                         Assert.areSame(expectedY, that.result[0].clientY);    
                     }
                     Assert.isTrue(that.result[6].timestamp - that.result[0].timestamp > 2500);
-                }, 3000);
+                }, 5000);
             }
         });
         

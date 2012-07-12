@@ -28,12 +28,12 @@ var gestureNames = {
     document = Y.config.doc,
     emptyTouchList,
 
+    EVENT_INTERVAL = 20,        // 20ms
+    START_PAGEX,                // will be adjusted to the node element center
+    START_PAGEY,                // will be adjusted to the node element center
+
+    // defaults that user can override.
     DEFAULTS = {
-        // common for all gestures
-        EVENT_INTERVAL: 20,     // 20ms
-        START_PAGEX: 0,         // will be adjusted to the node element center
-        START_PAGEY: 0,         // will be adjusted to the node element center
-        
         // tap gestures
         HOLD_TAP: 10,           // 10ms
         DELAY_TAP: 10,          // 10ms
@@ -85,8 +85,8 @@ function Simulations(node) {
     this.node = node;
     this.target = Y.Node.getDOMNode(node);
 
-    DEFAULTS.START_PAGEX = this.node.getX() + this.target.getBoundingClientRect().width/2;
-    DEFAULTS.START_PAGEY = this.node.getY() + this.target.getBoundingClientRect().height/2;
+    START_PAGEX = this.node.getX() + this.target.getBoundingClientRect().width/2;
+    START_PAGEY = this.node.getY() + this.target.getBoundingClientRect().height/2;
 }
 
 Simulations.prototype = {
@@ -115,7 +115,7 @@ Simulations.prototype = {
     _calculateDefaultPoint: function(point) {
 
         if(!Y.Lang.isArray(point) || point.length === 0) {
-            point = [DEFAULTS.START_PAGEX, DEFAULTS.START_PAGEY];
+            point = [START_PAGEX, START_PAGEY];
         } else {
             if(point.length == 1) {
                 point[1] = this.target.getBoundingClientRect().height/2;
@@ -200,7 +200,7 @@ Simulations.prototype = {
      */
     pinch: function(cb, center, startRadius, endRadius, duration, start, rotation) {
         var eventQueue,
-            interval = DEFAULTS.EVENT_INTERVAL,
+            interval = EVENT_INTERVAL,
             touches,
             id = 0,
             r1 = startRadius,   // required
@@ -503,7 +503,7 @@ Simulations.prototype = {
         };
 
         touches = this._createTouchList([Y.merge({identifier: 0}, coord)]);
-
+        
         for(i=0; i<times; i++) {
             eventQueue.add({
                 fn: function() {
@@ -600,10 +600,10 @@ Simulations.prototype = {
         }
 
         /**
-            * Check if too slow for a flick.
-            * Adjust duration if the calculated velocity is less than 
-            * the minimum velcocity to be claimed as a flick.
-            */
+         * Check if too slow for a flick.
+         * Adjust duration if the calculated velocity is less than 
+         * the minimum velcocity to be claimed as a flick.
+         */
         if(Math.abs(distance)/duration < DEFAULTS.MIN_VELOCITY_FLICK) {
             duration = Math.abs(distance)/DEFAULTS.MIN_VELOCITY_FLICK;
         }
@@ -695,7 +695,7 @@ Simulations.prototype = {
      */
     _move: function(cb, path, duration) {
         var eventQueue,
-            interval = DEFAULTS.EVENT_INTERVAL,
+            interval = EVENT_INTERVAL,
             steps, stepX, stepY,
             id = 0;
 
@@ -710,25 +710,25 @@ Simulations.prototype = {
         if(!Y.Lang.isObject(path)) {
             path = {
                 start: [
-                    DEFAULTS.START_PAGEX, 
-                    DEFAULTS.START_PAGEY
+                    START_PAGEX, 
+                    START_PAGEY
                 ], 
                 end: [
-                    DEFAULTS.START_PAGEX + DEFAULTS.DISTANCE_MOVE, 
-                    DEFAULTS.START_PAGEY
+                    START_PAGEX + DEFAULTS.DISTANCE_MOVE, 
+                    START_PAGEY
                 ]
             };
         } else {
             if(!Y.Lang.isArray(path.start)) {
                 path.start = [
-                    DEFAULTS.START_PAGEX, 
-                    DEFAULTS.START_PAGEY
+                    START_PAGEX, 
+                    START_PAGEY
                 ];
             }
             if(!Y.Lang.isArray(path.end)) {
                 path.end = [
-                    DEFAULTS.START_PAGEX + DEFAULTS.DISTANCE_MOVE, 
-                    DEFAULTS.START_PAGEY
+                    START_PAGEX + DEFAULTS.DISTANCE_MOVE, 
+                    START_PAGEY
                 ];
             }
         }
@@ -951,6 +951,7 @@ Simulations.prototype = {
     
     /**
      * @method _simulateEvent
+     * @private
      * @param {HTMLElement} target The DOM element that's the target of the event.
      * @param {String} type The type of event or name of the supported gesture to simulate 
      *      (i.e., "click", "doubletap", "flick").
@@ -959,6 +960,7 @@ Simulations.prototype = {
      * @return {void}
      */
     _simulateEvent: function(target, type, options) {
+        var touches;
         
         if (touchEvents[type]) {
             if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
@@ -966,7 +968,7 @@ Simulations.prototype = {
             } else {
                 // simulate using mouse events if touch is not applicable on this platform.
                 // but only single touch event can be simulated.
-                if(options.touches && options.touches.length === 1) {
+                if(this._isSingleTouch(options.touches, options.targetTouches, options.changedTouches)) {
                     type = {
                         touchstart: MOUSE_DOWN,
                         touchmove: MOUSE_MOVE,
@@ -975,12 +977,15 @@ Simulations.prototype = {
 
                     options.button = 0;
                     options.relatedTarget = null; // since we are not using mouseover event.
-
+                    
+                    // touchend has none in options.touches.
+                    touches = (type === MOUSE_UP)? options.changedTouches : options.touches;
+                    
                     options = Y.mix(options, {
-                        screenX: options.touches.item(0).screenX,
-                        screenY: options.touches.item(0).screenY,
-                        clientX: options.touches.item(0).clientX,
-                        clientY: options.touches.item(0).clientY
+                        screenX: touches.item(0).screenX,
+                        screenY: touches.item(0).screenY,
+                        clientX: touches.item(0).clientX,
+                        clientY: touches.item(0).clientY
                     }, true);
 
 
@@ -997,6 +1002,20 @@ Simulations.prototype = {
             // pass thru for all non touch events
             Y.Event.simulate(target, type, options);
         }
+    },
+    
+    /**
+     * Helper method to check the single touch.
+     * @method _isSingleTouch
+     * @private
+     * @param {TouchList} touches
+     * @param {TouchList} targetTouches
+     * @param {TouchList} changedTouches
+     */
+    _isSingleTouch: function(touches, targetTouches, changedTouches) {
+        return (touches && (touches.length <= 1)) && 
+            (targetTouches && (targetTouches.length <= 1)) &&
+            (changedTouches && (changedTouches.length <= 1));
     }
 };
 
@@ -1044,7 +1063,7 @@ Y.Event.simulateGesture = function(node, name, options, cb) {
     var sim = new Y.GestureSimulation(node);
     name = name.toLowerCase();
     
-    if(!cb) {
+    if(!cb && Y.Lang.isFunction(options)) {
         cb = options;
         options = {};
     }
