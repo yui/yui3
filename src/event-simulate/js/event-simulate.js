@@ -15,11 +15,6 @@ var L   = Y.Lang,
     isObject    = L.isObject,
     isNumber    = L.isNumber,
     doc         = Y.config.doc,
-    
-    MOUSE_UP    = 'mouseup',
-    MOUSE_MOVE  = 'mousemove',
-    MOUSE_DOWN  = 'mousedown',
-    MOUSE_CLICK = 'click',
 
     //mouse events supported
     mouseEvents = {
@@ -925,30 +920,7 @@ Y.Event.simulate = function(target, type, options){
                 options.touches, options.targetTouches, options.changedTouches,
                 options.scale, options.rotation);
         } else {
-            // simulate using mouse events if touch is not applicable.
-            type = {
-                touchstart: MOUSE_DOWN,
-                touchmove: MOUSE_MOVE,
-                touchend: MOUSE_UP
-            }[type];
-
-            options.button = 0;
-            options.relatedTarget = null; // since we are not using mouseover event.
-
-            if(options.touches && options.touches.length === 1) {
-                options = Y.mix(options, {
-                    screenX: options.touches.item(0).screenX,
-                    screenY: options.touches.item(0).screenY,
-                    clientX: options.touches.item(0).clientX,
-                    clientY: options.touches.item(0).clientY
-                }, true);
-            }
-
-            Y.Event.simulate(target, type, options);
-
-            if(type == MOUSE_UP) {
-                Y.Event.simulate(target, MOUSE_CLICK, options);
-            }
+            Y.error("simulate(): Event '" + type + "' can't be simulated. Use gesture-simulate module instead.");
         }
 
     // ios gesture low-level event simulation (iOS v2+ only)        
@@ -958,10 +930,6 @@ Y.Event.simulate = function(target, type, options){
             options.screenX, options.screenY, options.clientX, options.clientY, 
             options.ctrlKey, options.altKey, options.shiftKey, options.metaKey,
             options.scale, options.rotation);
-            
-    // high level (user) gestures        
-    } else if (Y.Event.GESTURES[type]) {
-        Y.Event.simulateGesture(Y.Node.one(target), type, options);   
     
     // anything else
     } else {
