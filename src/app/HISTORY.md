@@ -50,12 +50,20 @@ App Framework Change History
   path-like hash fragments are now treated as a continuation of the URL's path
   when the router has been configured with a `root`. [Ticket #2532318]
 
-* Fixed issue when multiple routers on were on the page and one router was
-  destroyed the remaining routers would stop dispatching. [Ticket #2532317]
+* Fixed issue when multiple routers are on the page and one router is destroyed
+  the remaining routers would stop dispatching. [Ticket #2532317]
+
+* Fixed a multi-router issue where creating a router instance after a previous
+  router's `save()`/`replace()` method was called would cause in infinite
+  History replace loop. [Ticket #2532340]
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
   indicates the number of matching routes after the current route in the
   dispatch chain. [Steven Olmsted]
+
+* Added a static `Y.Router.dispatch()` method which provides a mechanism to
+  cause all active router instances to dispatch to their route handlers without
+  needing to change the URL or fire the `history:change` or `hashchange` event.
 
 
 3.5.1

@@ -203,11 +203,11 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isNull(dd.region);
             dd.stopDrag();
         },
-        'test: selectionFix': function() {
+        'test: selectionFix with valid click': function() {
             var ret = dd._ieSelectFix(),
                 fired = false;
             Y.Assert.isFalse(ret);
-            
+            dd.validClick = function() { return true; };
             dd._fixDragStart({
                 preventDefault: function() {
                     fired = true;
@@ -215,6 +215,22 @@ YUI.add('dd-tests', function(Y) {
             });
 
             Y.Assert.isTrue(fired);
+
+        },
+        'test: selectionFix without valid click': function() {
+            var ret = dd._ieSelectFix(),
+                fired = false;
+
+            Y.Assert.isFalse(ret);
+
+            dd.validClick = function() { return false; };
+            dd._fixDragStart({
+                preventDefault: function() {
+                    fired = true;
+                }
+            });
+
+            Y.Assert.isFalse(fired);
 
         },
         test_drag_drop_group_setup: function() {
