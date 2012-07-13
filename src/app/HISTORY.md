@@ -9,15 +9,19 @@ App Framework Change History
 * Added static property: `Y.App.serverRouting`, which serves as the default
   value for the `serverRouting` attribute of all apps. [Ticket #2532319]
 
-* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
-
-### App Transitions
-
 * Fixed issue with non-collapsing white space between views while transitioning.
   White space is now fully collapsed and prevents views from jumping after a
   cross-fade transition. [Ticket #2532298]
 
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
 * Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
+### Model
+
+* Added ModelSync.REST, an extension which provides a RESTful XHR `sync()`
+  implementation that can be mixed into a Model or ModelList subclass.
+
 
 ### ModelList
 
@@ -35,10 +39,6 @@ App Framework Change History
   assume the model was in the list if its `id` changed, even if the model
   actually wasn't in the list and was merely bubbling events to the list.
   [Ticket #2532240]
-
-### ModelSync.REST
-
-* Initial release.
 
 ### Router
 
