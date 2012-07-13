@@ -22,7 +22,6 @@ App Framework Change History
 * Added ModelSync.REST, an extension which provides a RESTful XHR `sync()`
   implementation that can be mixed into a Model or ModelList subclass.
 
-
 ### ModelList
 
 * Added LazyModelList, a subclass of ModelList that manages a list of plain
