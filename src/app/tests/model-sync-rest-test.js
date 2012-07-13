@@ -15,123 +15,253 @@ modelSyncRESTSuite = new Y.Test.Suite('ModelSync.REST');
 
 // -- ModelSync.REST: Lifecycle ------------------------------------------------
 modelSyncRESTSuite.add(new Y.Test.Case({
-    name : 'Lifecycle',
+    name: 'Lifecycle',
 
-    setUp : function () {
-        this.TestModel      = Y.Base.create('testModel', Y.Model, [Y.ModelSync.REST]);
-        this.TestModelList  = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
-            model : this.TestModel
+    setUp: function () {
+        Y.TestModel = Y.Base.create('customModel', Y.Model, [Y.ModelSync.REST]);
+
+        Y.TestModelList = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
+            model: Y.TestModel
         });
     },
 
-    tearDown : function () {
-        delete this.TestModel;
-        delete this.TestModelList;
+    tearDown: function () {
+        delete Y.TestModel;
+        delete Y.TestModelList;
     },
 
-    'initializer should set local `url` property' : function () {
-        var model = new this.TestModel({ url: '/model/123' });
-        Assert.areSame('/model/123', model.url);
+    'initializer should set the `root` property on the instance': function () {
+        var model     = new Y.TestModel({root: '/model/'}),
+            modelList = new Y.TestModelList({root: '/list/'});
 
-        var modelList = new this.TestModelList({ url: '/model' });
+        Assert.areSame('/model/', model.root);
+        Assert.areSame('/list/', modelList.root);
+    },
+
+    'initializer should set the `url` property on the instance': function () {
+        var model     = new Y.TestModel({url: '/model/123'}),
+            modelList = new Y.TestModelList({url: '/model'});
+
+        Assert.areSame('/model/123', model.url);
         Assert.areSame('/model', modelList.url);
     }
 }));
 
 // -- ModelSync.REST: Properties -----------------------------------------------
 modelSyncRESTSuite.add(new Y.Test.Case({
-    name : 'Properties',
+    name: 'Properties',
 
-    setUp : function () {
-        this.TestModel      = Y.Base.create('testModel', Y.Model, [Y.ModelSync.REST]);
-        this.TestModelList  = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
-            model : this.TestModel
+    setUp: function () {
+        Y.TestModel = Y.Base.create('customModel', Y.Model, [Y.ModelSync.REST]);
+
+        Y.TestModelList = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
+            model: Y.TestModel
         });
     },
 
-    tearDown : function () {
-        delete this.TestModel;
-        delete this.TestModelList;
+    tearDown: function () {
+        delete Y.TestModel;
+        delete Y.TestModelList;
     },
 
-    '`root` property should be an empty string by default' : function () {
-        var model = new this.TestModel();
-        Assert.areSame('', model.root);
+    '`root` property should be an empty string by default': function () {
+        var model     = new Y.TestModel(),
+            modelList = new Y.TestModelList();
 
-        var modelList = new this.TestModelList();
+        Assert.areSame('', model.root);
         Assert.areSame('', modelList.root);
     },
 
-    '`url` property should be an empty string by default' : function () {
-        var model = new this.TestModel();
-        Assert.areSame('', model.url);
+    '`url` property should be an empty string by default': function () {
+        var model     = new Y.TestModel(),
+            modelList = new Y.TestModelList();
 
-        var modelList = new this.TestModelList();
+        Assert.areSame('', model.url);
         Assert.areSame('', modelList.url);
+    },
+
+    'Static `CSRF_TOKEN` should default to the value of `YUI.Env.CSRF_TOKEN`': function () {
+        Assert.areSame('asdf1234', YUI.Env.CSRF_TOKEN);
+        Assert.areSame(YUI.Env.CSRF_TOKEN, Y.ModelSync.REST.CSRF_TOKEN);
     }
 }));
 
 // -- ModelSync.REST: Methods --------------------------------------------------
 modelSyncRESTSuite.add(new Y.Test.Case({
-    name : 'Methods',
+    name: 'Methods',
 
-    setUp : function () {
-        this.TestModel      = Y.Base.create('testModel', Y.Model, [Y.ModelSync.REST]);
-        this.TestModelList  = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
-            model : this.TestModel
+    setUp: function () {
+        Y.TestModel = Y.Base.create('customModel', Y.Model, [Y.ModelSync.REST]);
+
+        Y.TestModelList = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
+            model: Y.TestModel
         });
     },
 
-    tearDown : function () {
-        delete this.TestModel;
-        delete this.TestModelList;
+    tearDown: function () {
+        delete Y.TestModel;
+        delete Y.TestModelList;
     },
 
-    'getURL() should return a String' : function () {
-        var model = new this.TestModel();
+    'getURL() should return an empty string by default': function () {
+        var model     = new Y.TestModel(),
+            modelList = new Y.TestModelList();
+
         Assert.isString(model.getURL());
-
-        var modelList = new this.TestModelList();
         Assert.isString(modelList.getURL());
+
+        Assert.areSame('', model.getURL());
+        Assert.areSame('', modelList.getURL());
     },
 
-    'getURL() should return locally set `url` property' : function () {
-        var model = new this.TestModel({ url: '/model/123' });
-        Assert.areSame('/model/123', model.getURL());
+    'getURL() of a model list should return the `root` of its model by default': function () {
+        Y.TestModel.prototype.root = '/root/';
 
-        model.url = '/model/abc';
-        Assert.areSame('/model/abc', model.getURL());
+        var modelList = new Y.TestModelList();
 
-        var modelList = new this.TestModelList({ url: '/model' });
-        Assert.areSame('/model', modelList.getURL());
-
-        modelList.url = '/models';
-        Assert.areSame('/models', modelList.getURL());
+        Assert.areSame('/root/', modelList.getURL());
     },
 
-    'getURL() should substitute placeholder values of Models’ `url`' : function () {
-        var model = new this.TestModel({
-            id : 123,
-            url: '/model/{id}/'
+    'getURL() of a model list should return its `url` if defined': function () {
+        Y.TestModel.prototype.root    = '/root/';
+        Y.TestModelList.prototype.url = '/list/';
+
+        var modelList = new Y.TestModelList();
+
+        Assert.areSame('/list/', modelList.getURL());
+
+        modelList.url = '/users/';
+
+        Assert.areSame('/users/', modelList.getURL());
+    },
+
+    'getURL() of a new model should return its `root` if defined': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel();
+
+        Assert.isTrue(model.isNew());
+        Assert.areSame('/root/', model.getURL());
+
+        model.root = '/users/';
+
+        Assert.areSame('/users/', model.getURL());
+    },
+
+    'getURL() of a model should return its `root` when the `action` is "create"': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({id: 1});
+
+        Assert.isFalse(model.isNew());
+        Assert.areSame('/root/', model.getURL('create'));
+
+        model.root = '/users/';
+
+        Assert.areSame('/users/', model.getURL('create'));
+    },
+
+    'getURL() of a model should return its `root` joined with its `id` by default': function () {
+        Y.TestModel.prototype.root = '/root';
+
+        var model = new Y.TestModel({id: 1});
+
+        Assert.isFalse(model.isNew());
+        Assert.areSame('/root/1', model.getURL());
+
+        model.root = '/users';
+
+        Assert.areSame('/users/1', model.getURL());
+    },
+
+    'getURL() of a model should return its `root` joined with its `id` and normalize slashes': function () {
+        var model = new Y.TestModel({id: 1});
+
+        model.root = 'users';
+        Assert.areSame('users/1', model.getURL());
+
+        model.root = 'users/';
+        Assert.areSame('users/1/', model.getURL());
+
+        model.root = '/users';
+        Assert.areSame('/users/1', model.getURL());
+
+        model.root = '/users/';
+        Assert.areSame('/users/1/', model.getURL());
+    },
+
+    'getURL() of a model should return its `url` if defined': function () {
+        Y.TestModel.prototype.url = '/users/1';
+
+        var model = new Y.TestModel({id: 'foo'});
+
+        Assert.isFalse(model.isNew());
+        Assert.areSame('/users/1', model.getURL());
+
+        model.url = '/users/bar';
+
+        Assert.areSame('/users/bar', model.getURL());
+    },
+
+    'getURL() should substitute tokenized `url`s with attribute values': function () {
+        var modelList = new Y.TestModelList({url: '/{type}/'}),
+            model;
+
+        modelList.addAttr('type', {value: 'users'});
+
+        Assert.areSame('users', modelList.get('type'));
+        Assert.areSame('/users/', modelList.getURL());
+
+        model = modelList.add({
+            id  : 1,
+            type: modelList.get('type'),
+            url : '/{type}/items/{id}/'
         });
 
-        Assert.areSame('/model/123/', model.getURL());
-
-        model.addAttr('foo', { value: 'bar' });
-        model.url = '/{foo}/{id}';
-        Assert.areSame('/bar/123', model.getURL());
+        Assert.areSame(1, modelList.size());
+        Assert.areSame('users', model.get('type'));
+        Assert.areSame('/users/items/1/', model.getURL());
     },
 
-    'getURL() should not substitute placeholder values of ModelLists’ `url`' : function () {
-        var modelList = new this.TestModelList({ url: '/{foo}/' });
+    'getURL() should substitute tokenized `url`s with `options` values': function () {
+        var model     = new Y.TestModel({url: '/{type}/foo/'}),
+            modelList = new Y.TestModelList({url: '/{type}/'});
 
-        modelList.addAttr('foo', { value: 'bar' });
-        Assert.areSame('bar', modelList.get('foo'));
-        Assert.areSame('/{foo}/', modelList.getURL());
+        Assert.areSame('/users/foo/', model.getURL(null, {type: 'users'}));
+        Assert.areSame('/users/', modelList.getURL(null, {type: 'users'}));
     },
 
-    'getURL() should URL-encode the substitutions of placeholder values of Models’ `url`' : function () {
-        var model = new this.TestModel({
+    'getURL() should substitute tokenized `url`s with attribute and `options` values': function () {
+        var modelList = new Y.TestModelList({url: '/{type}/?num={num}'}),
+            model;
+
+        modelList.addAttr('type', {value: 'users'});
+
+        Assert.areSame('users', modelList.get('type'));
+        Assert.areSame('/users/?num=10', modelList.getURL(null, {num: 10}));
+
+        Assert.areSame('/losers/?num=10', modelList.getURL(null, {
+            num : 10,
+            type: 'losers'
+        }));
+
+        model = modelList.add({
+            id : 1,
+            url: '/{type}/items/{id}/'
+        });
+
+        Assert.areSame(1, modelList.size());
+        Assert.areSame(1, model.get('id'));
+        Assert.areSame('/users/items/1/', model.getURL(null, {type: 'users'}));
+
+        Assert.areSame('/losers/items/foo/', model.getURL(null, {
+            id  : 'foo',
+            type: 'losers'
+        }));
+    },
+
+    'getURL() should URL-encode the `url` substitution values': function () {
+        var model = new Y.TestModel({
             id : '123 456',
             url: '/model/{id}'
         });
@@ -139,8 +269,8 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame('/model/123%20456', model.getURL());
     },
 
-    'getURL() should not substitute Arrays, Objects, or Boolean values of Models’ `url`' : function () {
-        var model = new this.TestModel({
+    'getURL() should not substitute Arrays, Objects, or Boolean values into the `url`' : function () {
+        var model = new Y.TestModel({
             id : 'asdf',
             url: '/model/{foo}/{bar}/{baz}/{id}'
         });
@@ -154,51 +284,12 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame('/model/{foo}/{bar}/{baz}/asdf', model.getURL());
     },
 
-    'getURL() should return `root` if `url` is falsy' : function () {
-        var model = new this.TestModel();
+    'serialize() should return a JSON string by default': function () {
+        var model = new Y.TestModel({id: 123});
 
-        model.root = '/model/';
-        model.url  = '';
-
-        Assert.areSame('/model/', model.getURL());
-    },
-
-    'getURL() should return `root` if the Model is new' : function () {
-        var model = new this.TestModel();
-        model.root = '/model';
-        model.url  = '/foo';
-        Assert.areSame(model.root, model.getURL());
-    },
-
-    'getURL() should return a URL that ends with a / only if Model’s `root` ends with a /' : function () {
-        var model = new this.TestModel({id: 123});
-
-        model.root = '/model';
-        Assert.areSame('/model/123', model.getURL());
-
-        model.root = '/model/';
-        Assert.areSame('/model/123/', model.getURL());
-    },
-
-    'getURL() should return a URL determined from the sync action' : function () {
-        var model = new this.TestModel({id: 123});
-
-        model.getURL = function (action) {
-            return '/model/' + action;
-        };
-
-        Assert.areSame('/model/read', model.getURL('read'));
-    },
-
-    'serialize() can modify the data' : function () {
-        var model = new this.TestModel({id: 123});
-
-        model.serialize = function() {
-          var data = this.toJSON();
-          return Y.JSON.stringify({body: data});
-        };
-
-        Assert.areSame(Y.JSON.stringify({body: {id: 123}}), model.serialize());
+        Assert.isString(model.serialize());
+        Assert.areSame(Y.JSON.stringify(model), model.serialize());
+        Assert.areSame(Y.JSON.stringify(model.toJSON()), model.serialize());
     }
 
 }));

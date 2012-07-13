@@ -14,6 +14,9 @@
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
+    YUI.Env.CSRF_TOKEN = 'asdf1234';
+</script>
+<script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
