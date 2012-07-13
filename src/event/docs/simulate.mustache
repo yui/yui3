@@ -217,6 +217,379 @@ YUI().use('node-event-simulate', function(Y) {
 });
 ```
 
+<h2>Simulating Touch Gestures</h2>
+<p>
+There are several high level gesture simulations primarily targeting for the 
+mobile devices. Single touch gestures such as <code>tap</code>, 
+<code>flick</code> are simulated using Mouse Events on desktops or mobile 
+devices where creating Touch Events are not supported. All gesture simulations 
+are done by calling <code>simulateGesture()</code> method against a YUI Node 
+element. The method is asynchronous by default so optionally a callback function 
+can be passed. 
+</p>
+
+<ul>
+   <li>tap - Single touch gesture to simulate a tap. Default is to simulate 
+        single tap but it can be configured to tap any number of taps. </li>
+   <li>doubletap - Single touch gesture to simulate double taps.</li>
+   <li>press - Single touch gesture to simulate long press.</li>
+   <li>move - Single touch gesture to simulate the move. It simulates moving 
+        one finger straight in any direction. </li>
+   <li>flick - Single touch gesture to simulate  the flick gesture. It simulates 
+        moving one finger with a certain velocity along either X or Y axis.</li>
+   <li>pinch - Two fingers gesture to simulate pinch and spread gestures.</li>
+   <li>rotate - Two fingers gesture to simulate rotate gesture.</li>
+</ul>
+
+<p>
+A set of low level touch events are fired by calling 
+<code>simulateGesture()</code> and passing arguments: the name of gestures to 
+simulate, an option object specifying additional information to refine gesture 
+behavior and optional callback function. The kinds of options varies per 
+gesture. If the location of the finger is not given, the framework defaults to 
+the center of the node element. User can override this default behavior by 
+passing a coordination into the option object. The coordinate values are 
+relative to the top/left corner of the node element. 
+</p>
+
+<h3>Single Touch Gestures: Tap, Double Tab and Press<h3>
+
+<p>
+To simulate various gestures at one point, for example, the following code can 
+be used:
+</p>
+ 
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myElement");
+
+    //simulate tap gesture.
+    node.simulateGesture("tap");
+
+    //simulate double-tap gesture.
+    node.simulateGesture("doubletap");
+
+    //simulate press gesture.
+    node.simulateGesture("press", {
+        hold: 3000    // press and hold for 3000ms (3sec)
+    });
+
+    // simulate tap with options and callback.
+    node.simulateGesture("tap", {
+        point: [30, 30], // tap (30, 30) relative to the top/left of the node.
+        hold: 3000,      // hold for 3sec in a tap.
+        times: 2,        // tap 2 times.
+        delay: 500       // delay time before next tap starts.
+    }, function() {
+        console.log("I was called.");
+    });
+});
+```
+<h4>Valid Options</h4>
+
+<p>
+The option properties for <code>tap</code>:
+</p>
+
+<dl>
+    <dt>`point`</dt>
+        <dd>
+            Indicates the point(array with X and Y value) where tap should be 
+            simulated. Default is the center of the node element.
+        </dd>
+    <dt>`hold`</dt>
+        <dd>
+            The hold time in milli-second. This is the time between 
+            <code>touchstart</code> and <code>touchend</code> event generation. 
+        </dd>
+    <dt>`times`</dt>
+        <dd>
+            Indicates the number of taps. Default is 1.
+        </dd>
+    <dt>`delay`</dt>
+        <dd>
+            The delay time in  milli-second before the next tap simulation 
+            happens. This is valid only when <code>times</code> is more than 1.
+        </dd>
+</dl>
+
+<p>
+The option properties for <code>doubletap</code>:
+</p>
+
+<dl>
+    <dt>`point`</dt>
+        <dd>
+            Indicates the point(array with X and Y value) where tap should be 
+            simulated. Default is the center of the node element.
+        </dd>
+</dl>
+
+<p>
+The <code>press</code> gesture is essentially a single tap with 
+<code>hold</code> property. The option properties for <code>press</code>:
+</p>
+
+<dl>
+    <dt>`point`</dt>
+        <dd>
+            Indicates the point(array with X and Y value) where tap should be 
+            simulated. Default is the center of the node element.
+        </dd>
+    <dt>`hold`</dt>
+        <dd>
+            The hold time in milli-second. This is the time between 
+            <code>touchstart</code> and <code>touchend</code> event generation. 
+        </dd>
+</dl>
+
+<h3>Single Touch Gestures: Move and Flick<h3>
+
+<p>
+To simulate various gestures of moving one finger, for example, the following 
+code can be used:
+</p>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myElement");
+
+    //simulate move gesture. Move the finger 200 pixels to the positive 
+    //X axis(right) direction for approximately 1 second by default.  
+    node.simulateGesture("move");
+
+    //simulate move gesture with options. Moves the finger from the center of  
+    //the node to the point located 70 pixels more right and 50 pixels lower 
+    //than the start point for 2000ms.
+    node.simulateGesture("move", {
+        path: {
+            xdist: 70,
+            ydist: -50
+        } ,
+        duration: 2000
+    });
+
+    //simulate flick gesture. Default is flick to right.
+    node.simulateGesture("flick");
+
+    //simulate flick gesture with options. Flick to downward by 100 pixels for
+    // 50ms.
+    node.simulateGesture("flick", {
+        axis: y
+        distance: -100 
+        duration: 50
+    });
+
+});
+```
+
+<h4>Valid Options</h4>
+
+<p>
+The option properties for <code>move</code>:
+</p>
+
+<dl>
+    <dt>`path`</dt>
+        <dd>
+            Indicates the path of the finger movement. It's an object with three 
+            optional properties: <code>point</code>, <code>xdist</code> and 
+            <code>ydist</code>. The <code>point</code> is the start point and 
+            default is the center of the node element. It simulates moving the 
+            finger from the start point by the given X and Y axis distance in 
+            pixels. A negative distance value indicates moving to left for 
+            <code>xdist</code> and down for <code>ydist</code>. 
+        </dd>
+    <dt>`duration`</dt>
+        <dd>
+            The duration of the gesture in milli-second.
+        </dd>
+</dl>
+
+<p>
+The option properties for <code>flick</code>:
+</p>
+
+<dl>
+    <dt>`point`</dt>
+        <dd>
+            Indicates the point(array with X and Y value) where flick should be 
+            simulated. Default is the center of the node element.
+        </dd>
+    <dt>`axis`</dt>
+        <dd>
+            Valid values are either "x" or "y". Indicates moving axis. The flick 
+            moves to only 4 directions(left, right, up and down).
+        </dd>
+    <dt>`distance`</dt>
+        <dd>
+            Moving distance in pixels.  
+        </dd>
+    <dt>`duration`</dt>
+        <dd>
+            The duration of the gesture in milli-second. The duration could be 
+            automatically adjusted by the framework if the velocity is 
+            calculated below the minimum velocity to be a flick gesture.  
+        </dd>
+</dl>
+
+<h3>Tow Finger Gestures: Pinch and Rotate<h3>
+
+<p>
+The <code>pinch</code> gesture is used for pinch and spread of 2 fingers. 
+While pinching, rotation simulation is also possible. Essentially 
+<code>pinch</code> and <code>rotation</code> gesture simulations share the same 
+base implementation to allow both pinching and rotation at the same time. Only
+difference is <code>pinch</code> requires start and end radius while 
+<code>rotation</code> requires a degree to rotate in the option object. 
+The <code>pinch</code> and <code>rotation</code> gesture movement is 
+characterized using circles where 2 fingers are on the circle across. The pinch 
+and spread gestures requires start and end circles while rotation gesture is 
+simulated on a circle. If the radius of start circle is greater than one of end 
+circle, it would be pinch gesture otherwise spread gesture.
+</p>
+
+<p>
+To simulate two finger gestures, for example, the following 
+code can be used:
+</p>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myElement");
+
+    //simulate pinch gesture. Both "r1" and "r2" are required.
+    node.simulateGesture("pinch", {
+        r1: 100, // start circle radius at the center of the node.
+        r2: 50   // end circle radius at the center of the node. 
+    });
+
+    //simulate spread gesture. 
+    //note that the same gesture name, "pinch" is used but r2(end circle radius)
+    //is greater than r1.
+    node.simulateGesture("pinch", {
+        r1: 50,
+        r2: 100
+    });
+
+    //simulate rotate gesture. The "rotation" option is required.
+    //rotate the node 75 degree counter-clock direction. 
+    node.simulateGesture("rotate", {
+        rotation: -75
+    });
+
+    //simulate pinch and rotations at the same time. In the beginning, the first 
+    //finger is on the circle of 100 radius and 45 degree. Other finger is
+    //always located across the center of the circle. When the gesture ends, the
+    //first finger will be on the circle of 50 radius and heading to the exact 
+    //south(90 degree). 
+    node.simulateGesture("pinch", {
+        r1: 100,
+        r2: 50,
+        start: 45
+        rotation: 45
+    });
+});
+```
+<h4>Valid Options</h4>
+
+<p>
+The option properties are same for <code>pinch</code> and <code>rotation</code> 
+gesture simulations.
+</p>
+
+<dl>
+    <dt>`center`</dt>
+        <dd>
+            The center of the circles where 2 fingers are on its circumference
+            across. Default is the center of the node element.
+        </dd>
+    <dt>`r1`</dt>
+        <dd>
+            Required for <code>pinch</code> gesture type but optional for <code>
+            rotation</code> type. A radius of the start circle. If omitted in 
+            <code>rotation</code> gesture type, default is the half of the node
+            element width or height whichever is smaller.
+        </dd>
+    <dt>`r2`</dt>
+        <dd>
+            Required for <code>pinch</code> gesture type but optional for <code>
+            rotation</code> type. A radius of the end circle. If omitted in 
+            <code>rotation</code> gesture type, default is the half of the node
+            element width or height whichever is smaller.
+        </dd>
+    <dt>`duration`</dt>
+        <dd>
+            The duration of the gesture in milli-second.
+        </dd>
+    <dt>`start`</dt>
+        <dd>
+            A start degree of the first finger for the rotation gesture. Default  
+            is 0. The angle value are relative to the 12 O'clock direction.
+        </dd>
+    <dt>`rotation`</dt>
+        <dd>
+            A degree to rotate from the start degree. Negative value means 
+            rotation of counter-clock direction.
+        </dd>
+</dl>
+
+<h3>Gesture Simulation on iOS</h3>
+<p>
+If the gesture simulation is called in iOS, it generates not just touch events 
+but also <a href="http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/GestureEventClassReference/GestureEvent/GestureEvent.html">
+iOS specific gesture events</a> under the hood: <code>gesturestart</code>, 
+<code>gesturechange</code> and <code>gestureend</code>.
+</p>
+
+<h3>Customizing Default Gesture Properties</h3>
+
+<p>
+If you want to rely on the default behavior instead of passing various options 
+whenever gesture APIs are called but framework's default value doesn't work for 
+you, your own default behavior properties can be set to 
+<code>Y.GestureSimulation.defaults</code> object. Here are the properties of 
+defaults object:  
+</p>
+
+<ul>
+    <li>HOLD_TAP</li>
+    <li>DELAY_TAP</li>
+    <li>HOLD_PRESS</li>
+    <li>MIN_HOLD_PRESS</li>
+    <li>MAX_HOLD_PRESS</li>
+    <li>DISTANCE_MOVE</li>
+    <li>DURATION_MOVE</li>
+    <li>MAX_DURATION_MOVE</li>
+    <li>MIN_VELOCITY_FLICK</li>
+    <li>DISTANCE_FLICK</li>
+    <li>DURATION_FLICK</li>
+    <li>MAX_DURATION_FLICK</li>
+    <li>DURATION_PINCH</li>
+</ul>
+
+<p>
+And an example:
+</p>
+
+```
+YUI().use('node-event-simulate', function(Y) {
+
+    var node = Y.one("#myElement");
+    
+    Y.GestureSimulation.defaults = Y.merge(Y.GestureSimulation.defaults, {
+        HOLD_TAP: 3000
+    });
+    
+    //now touchend event will be generated after 3 sec from the touchstart 
+    //event generation.
+    node.simulateGesture("tap");
+});
+```
+
 <h2>Caveats and Coming Soons</h2>
 
 <h3 id="faking">Don't use simulation in user facing code</h3>
@@ -268,11 +641,6 @@ YUI().use('node-event-simulate', function(Y) {
 </p>
 
 <h3>No touch events yet</h3>
-
-<p>
-    Currently, there's no support for simulating touch events or other events
-    not noted explicitly above.
-</p>
 
 <h3>No synthetic event simulation yet</h3>
 
