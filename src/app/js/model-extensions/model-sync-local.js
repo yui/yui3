@@ -84,14 +84,15 @@ LocalSync.prototype = {
 
         config || (config = {});
 
-        ('root' in config) && (this.root = config.root || this.constructor.NAME);
+        this.root = config.root || this.constructor.NAME;
+
         try {
             this.storage = Y.config.win.localStorage;
             store = this.storage.getItem(this.root);
         } catch (e) {
             Y.log("Could not access localStorage.", "warn");
         }
-        
+
         // Pull in existing data from localStorage, if possible
         LocalSync._data[this.root] = (store && Y.JSON.parse(store)) || {};
     },
@@ -174,7 +175,7 @@ LocalSync.prototype = {
     @since 3.6.0
     **/ 
     _show: function (options) {
-        return Y.JSON.parse(LocalSync._data[this.root][this.get('id')]);
+        return LocalSync._data[this.root][this.get('id')];
     },
     
     /**
