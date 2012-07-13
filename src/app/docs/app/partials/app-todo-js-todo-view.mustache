@@ -1,0 +1,98 @@
+TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
+    // This customizes the HTML used for this view's container node.
+    containerTemplate: '<li class="todo-item"/>',
+
+    // Delegated DOM events to handle this view's interactions.
+    events: {
+        // Toggle the "done" state of this todo item when the checkbox is
+        // clicked.
+        '.todo-checkbox': {click: 'toggleDone'},
+
+        // When the text of this todo item is clicked or focused, switch to edit
+        // mode to allow editing.
+        '.todo-content': {
+            click: 'edit',
+            focus: 'edit'
+        },
+
+        // On the edit field, when enter is pressed or the field loses focus,
+        // save the current value and switch out of edit mode.
+        '.todo-input'   : {
+            blur    : 'save',
+            keypress: 'enter'
+        },
+
+        // When the remove icon is clicked, delete this todo item.
+        '.todo-remove': {click: 'remove'}
+    },
+
+    // The template property holds the contents of the #todo-item-template
+    // element, which will be used as the HTML template for each todo item.
+    template: Y.one('#todo-item-template').getHTML(),
+
+    initializer: function () {
+        // The model property is set to a TodoModel instance by TodoAppView when
+        // it instantiates this TodoView.
+        var model = this.get('model');
+
+        // Re-render this view when the model changes, and destroy this view
+        // when the model is destroyed.
+        model.after('change', this.render, this);
+
+        model.after('destroy', function () {
+            this.destroy({remove: true});
+        }, this);
+    },
+
+    render: function () {
+        var container = this.get('container'),
+            model     = this.get('model'),
+            done      = model.get('done');
+
+        container.setHTML(Y.Lang.sub(this.template, {
+            checked: done ? 'checked' : '',
+            text   : model.getAsHTML('text')
+        }));
+
+        container[done ? 'addClass' : 'removeClass']('todo-done');
+        this.set('inputNode', container.one('.todo-input'));
+
+        return this;
+    },
+
+    // -- Event Handlers -------------------------------------------------------
+
+    // Toggles this item into edit mode.
+    edit: function () {
+        this.get('container').addClass('editing');
+        this.get('inputNode').focus();
+    },
+
+    // When the enter key is pressed, focus the new todo input field. This
+    // causes a blur event on the current edit field, which calls the save()
+    // handler below.
+    enter: function (e) {
+        if (e.keyCode === 13) { // enter key
+            Y.one('#new-todo').focus();
+        }
+    },
+
+    // Removes this item from the list.
+    remove: function (e) {
+        e.preventDefault();
+
+        this.constructor.superclass.remove.call(this);
+        this.get('model').destroy({'delete': true});
+    },
+
+    // Toggles this item out of edit mode and saves it.
+    save: function () {
+        this.get('container').removeClass('editing');
+        this.get('model').set('text', this.get('inputNode').get('value')).save();
+    },
+
+    // Toggles the `done` state on this item's model.
+    toggleDone: function () {
+        this.get('model').toggleDone();
+    }
+});

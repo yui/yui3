@@ -4,6 +4,7 @@
         filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || null,
         showConsole = (window.location.search.match(/[?&]console=([^&]+)/) || [])[1] || null,
         name = YUI.Env.Tests.name,
+        title = YUI.Env.Tests.title,
         projectAssets = YUI.Env.Tests.project,
         assets = YUI.Env.Tests.assets,
         auto = YUI.Env.Tests.auto || YUI().UA.phantomjs,
@@ -99,24 +100,7 @@
             this._poll(condition, period, timeout, success, failure);
             this.wait(timeout + 1000);
         };
-
-        if (filter || showConsole) {
-            Y.all('a').each(function(item) {
-                var url = item.getAttribute('href');
-                if (url.indexOf('#') === -1) {
-                    var f = [];
-                    if (filter) {
-                        f.push('filter=' + filter);
-                    }
-                    if (showConsole) {
-                        f.push('console=' + showConsole);
-                    }
-                    item.set('href', url + '?' + f.join('&'));
-                }
-            });
-        }
-
-
+        
         var counter = 0,
         count = function() {
             counter++;
@@ -148,7 +132,7 @@
         Y.Test.Runner.add(testCase);
         
         Y.Test.Runner._ignoreEmpty = false; //Throw on no assertions
-        Y.Test.Runner.setName('Automated ' + name + ' tests');
+        Y.Test.Runner.setName(title);
         Y.Test.Runner.on('complete', function(e) {
             
             if (e.results.failed) {
@@ -156,7 +140,7 @@
             }
 
             if (log) {
-            var header = log.one('.yui3-console-hd h4');
+                var header = log.one('.yui3-console-hd h4');
 
                 if (e.results.failed) {
                     log.addClass('failed');
@@ -172,5 +156,3 @@
     });
 
 }());
-
-

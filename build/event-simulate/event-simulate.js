@@ -39,6 +39,7 @@ var L   = Y.Lang,
 
     //HTML events supported
     uiEvents  = {
+        submit:     1,
         blur:       1,
         change:     1,
         focus:      1,
