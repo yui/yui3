@@ -159,10 +159,13 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("app-transitions")) > -1, "Module (app-transitions) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("lazy-model-list")) > -1, "Module (lazy-model-list) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("model-sync-rest")) > -1, "Module (model-sync-rest) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("router")) > -1, "Module (router) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("view-node-map")) > -1, "Module (view-node-map) not found in sorted array");
         },
      "Testing app-base": function(data) {
             var loader = new Y.Loader({

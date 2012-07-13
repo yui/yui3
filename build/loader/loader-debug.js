@@ -2921,10 +2921,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "use": [
             "app-base",
             "app-transitions",
+            "lazy-model-list",
             "model",
             "model-list",
+            "model-sync-rest",
             "router",
-            "view"
+            "view",
+            "view-node-map"
         ]
     },
     "app-base": {
