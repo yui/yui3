@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>gesture-simulate tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<style type="text/css">
+#touchable {
+    height: 250px;
+    margin: 5px;
+    min-width: 100%;
+    background-color: yellowgreen;
+}
+</style>
+</head>
+<body class="yui3-skin-sam">
+    <h1>Gesture-Simulate Tests</h1>
+    <div id="touchable"></div>
+    <div id="c"></div>
+<script type="text/javascript">
+
+YUI({
+    filter: "debug",
+    logInclude: { TestRunner: 1}
+}).use('test' ,'node', 'gesture-simulate', 'console', function (Y) {
+    
+    Y.namespace("Tests");
+    
+    Y.Tests.GestureSimulate = (function(){
+    
+        var Assert = Y.Assert,
+            touchable = Y.one("#touchable"),
+            events = [
+                "touchstart", "touchmove", "touchend", "touchcancel",
+                "mousedown", "mousemove", "mouseup", "mouseout", "mouseover", "click", "dblclick",
+                "gesturestart", "gesturechange", "gestureend"
+            ];
+        
+        //-------------------------------------------------------------------------
+        // Generic Event Test Case
+        //-------------------------------------------------------------------------
+        function GenericGestureTestCase(name /*:String*/){
+            GenericGestureTestCase.superclass.constructor.call(this);
+            this.gestureName = name;
+            this.name = "Gesture '" + name + "' Tests";
+            this.result = [];
+        }
+    
+        Y.extend(GenericGestureTestCase, Y.Test.Case, {
+        
+            //---------------------------------------------------------------------
+            // Setup and teardown of test harnesses
+            //---------------------------------------------------------------------
+            setUp : function() /*:Void*/{
+                
+                //reset the result
+                this.result = [];
+                
+                events.forEach(Y.bind(function(one) {
+                    // Y.one("#touchable").on(one, function(e) {});
+                    document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
+                        e.preventDefault();
+                        e = e || window.event;
+                        e.timestamp = new Date().getTime();
+                        this.result.push(e);
+                        //console.log("Event Type: "+e.type);
+                    }, this); 
+                }, this));
+            },
+            
+            /*
+             * Removes event handlers that were used during the test.
+             */
+            tearDown : function() /*:Void*/{
+                 events.forEach(function(one) {
+                    document.getElementById("touchable")['on'+one]= null; 
+                });
+            }
+        });
+        
+        
+        //-------------------------------------------------------------------------
+        // Flick Test Case
+        // This will cover flick gestures.
+        //-------------------------------------------------------------------------
+        function FlickTestCase() {
+            FlickTestCase.superclass.constructor.call(this, "flick");
+        }
+        
+        Y.extend(FlickTestCase, GenericGestureTestCase, {
+            testDefault: function() {
+                var that = this,
+                    distance = Y.GestureSimulation.defaults.DISTANCE_FLICK,
+                    duration = Math.abs(distance)/Y.GestureSimulation.defaults.MIN_VELOCITY_FLICK;
+                
+                // The default behavior is to flick 200 pixels(DEFAULTS.DISTANCE) 
+                // from the center of the element to the positive X-axis direction
+                // for around 153.8ms (DEFAULTS.DISTANCE/DEFAULTS.MIN_VELOCITY). 
+                // See gesture-simulate for DEFAULTS.
+                Y.Event.simulateGesture(touchable, this.gestureName);
+                this.wait(function() {
+                    var last = that.result.length-1;
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchmove(xN), touchend 
+                        Assert.isTrue(that.result.length > 3);
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchmove");
+                        Assert.areSame(that.result[last-1].type, "touchmove");
+                        Assert.areSame(that.result[last].type, "touchend");
+                        
+                        for(var i=0; i<that.result.length-1; i++) {
+                            Assert.areSame(that.result[0].touches.item(0).clientY,
+                                that.result[i].touches.item(0).clientY);
+                        }
+                        
+                        Assert.areSame(that.result[0].touches.item(0).clientX+distance, 
+                            that.result[last-1].touches.item(0).clientX);
+                    } else {
+                        // devices falling back to mouse events
+                        // mousedown, mousemove(xN), mouseup, click 
+                        Assert.isTrue(that.result.length > 4);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mousemove");
+                        Assert.areSame(that.result[last-2].type, "mousemove");
+                        Assert.areSame(that.result[last-1].type, "mouseup");
+                        Assert.areSame(that.result[last].type, "click");
+                        
+                        that.result.forEach(function(one) {
+                            Assert.areSame(that.result[0].clientY, one.clientY);
+                        });
+                        Assert.areSame(that.result[0].clientX+distance, that.result[last].clientX);
+                    }
+                }, 5000);
+            },
+            
+            testDefault2: function() {
+                var wasCalled = false;
+                
+                // test callback function
+                Y.Event.simulateGesture(touchable, this.gestureName, function() {
+                    wasCalled = true;
+                });
+                
+                this.wait(function() {
+                    Assert.isTrue(wasCalled, "callback wasn't called");
+                }, 5000);
+            },
+            
+            testOptions: function() {
+                var that = this,
+                    options = {
+                        point: [300, 100],
+                        axis: "x",
+                        distance: -150,
+                        duration: 100
+                    },
+                    xdistance = options.distance,
+                    ydistance = 0,
+                    duration = options.duration;
+        
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    var last = that.result.length-1;
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchmove(xN), touchend 
+                        Assert.isTrue(that.result.length > 3);
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchmove");
+                        Assert.areSame(that.result[last-1].type, "touchmove");
+                        Assert.areSame(that.result[last].type, "touchend");
+                        
+                        Assert.areSame(that.result[0].touches.item(0).clientX+xdistance, 
+                            that.result[last-1].touches.item(0).clientX);
+                        Assert.areSame(that.result[0].touches.item(0).clientY+ydistance, 
+                            that.result[last-1].touches.item(0).clientY);    
+                    } else {
+                        // mousedown, mousemove(xN), mouseup, click 
+                        Assert.isTrue(that.result.length > 4);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mousemove");
+                        Assert.areSame(that.result[last-2].type, "mousemove");
+                        Assert.areSame(that.result[last-1].type, "mouseup");
+                        Assert.areSame(that.result[last].type, "click");
+                        
+                        Assert.areSame(that.result[0].clientX+xdistance, that.result[last].clientX);
+                        Assert.areSame(that.result[0].clientY+ydistance, that.result[last].clientY);
+                    }
+                }, 5000);
+            },
+            
+            testOptions2: function() {
+                var that = this,
+                    options = {
+                        point: [300, 100],
+                        axis: "x",
+                        distance: -150,
+                        duration: 200
+                    },
+                    xdistance = options.distance,
+                    ydistance = 0,
+                    
+                    // The user given velocity, 150/200=0.75 is less than minmum velocity(1.3)
+                    // Since it's too slow movement for a flick, the framework will
+                    // automatically adjust the duration.
+                    duration = Math.abs(xdistance)/Y.GestureSimulation.defaults.MIN_VELOCITY_FLICK;
+        
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    var last = that.result.length-1;
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchmove(xN), touchend 
+                        Assert.isTrue(that.result.length > 3);
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchmove");
+                        Assert.areSame(that.result[last-1].type, "touchmove");
+                        Assert.areSame(that.result[last].type, "touchend");
+                        
+                        Assert.areSame(that.result[0].touches.item(0).clientX+xdistance, 
+                            that.result[last-1].touches.item(0).clientX);
+                        Assert.areSame(that.result[0].touches.item(0).clientY+ydistance, 
+                            that.result[last-1].touches.item(0).clientY);    
+                    } else {
+                        // mousedown, mousemove(xN), mouseup, click 
+                        Assert.isTrue(that.result.length > 4);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mousemove");
+                        Assert.areSame(that.result[last-2].type, "mousemove");
+                        Assert.areSame(that.result[last-1].type, "mouseup");
+                        Assert.areSame(that.result[last].type, "click");
+                        
+                        Assert.areSame(that.result[0].clientX+xdistance, that.result[last].clientX);
+                        Assert.areSame(that.result[0].clientY+ydistance, that.result[last].clientY);
+                    }
+                }, 5000);
+            }
+        });
+        
+        
+        //-------------------------------------------------------------------------
+        // Move Test Case
+        // This will cover move gestures
+        //-------------------------------------------------------------------------
+        function MoveTestCase() {
+            MoveTestCase.superclass.constructor.call(this, "move");
+        }
+        
+        Y.extend(MoveTestCase, GenericGestureTestCase, {
+            
+            testDefault: function() {
+                var that = this,
+                    duration = Y.GestureSimulation.defaults.DURATION_MOVE,
+                    distance = Y.GestureSimulation.defaults.DISTANCE_MOVE;
+                
+                // The default behavior is to drag 200 pixels(DEFAULTS.DISTANCE) 
+                // from the center of the element to the positive X-axis direction
+                // for 1s(DEFAULTS.DURATION). See gesture-simulate for DEFAULTS.
+                Y.Event.simulateGesture(touchable, this.gestureName);
+                this.wait(function() {
+                    var last = that.result.length-1;
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchmove(xN), touchend 
+                        Assert.isTrue(that.result.length > 3);
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchmove");
+                        Assert.areSame(that.result[last-1].type, "touchmove");
+                        Assert.areSame(that.result[last].type, "touchend");
+                        
+                        for(var i=0; i<that.result.length-1; i++) {
+                            Assert.areSame(that.result[0].touches.item(0).clientY,
+                                that.result[i].touches.item(0).clientY);
+                        }
+                        
+                        Assert.areSame(that.result[0].touches.item(0).clientX+distance, 
+                            that.result[last-1].touches.item(0).clientX);
+                    } else {
+                        // mousedown, mousemove(xN), mouseup, click 
+                        Assert.isTrue(that.result.length > 4);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mousemove");
+                        Assert.areSame(that.result[last-2].type, "mousemove");
+                        Assert.areSame(that.result[last-1].type, "mouseup");
+                        Assert.areSame(that.result[last].type, "click");
+                        
+                        that.result.forEach(function(one) {
+                            Assert.areSame(that.result[0].clientY, one.clientY);
+                        });
+                        Assert.areSame(that.result[0].clientX+distance, that.result[last].clientX);
+                    }
+                }, 5000);
+            },
+            
+            testDefault2: function() {
+                var wasCalled = false;
+                
+                // test callback function
+                Y.Event.simulateGesture(touchable, this.gestureName, function() {
+                    wasCalled = true;
+                });
+                
+                this.wait(function() {
+                    Assert.isTrue(wasCalled, "callback wasn't called");
+                }, 5000);
+            },
+            
+            testOptions: function() {
+                var that = this,
+                    options = {
+                        path: {
+                            point: [95, 200],
+                            xdist: 50,
+                            ydist: -50
+                        },
+                        duration: 2000
+                    },
+                    xdistance = options.path.xdist,
+                    ydistance = options.path.ydist,
+                    duration = options.duration;
+                
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    var last = that.result.length-1;
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchmove(xN), touchend 
+                        Assert.isTrue(that.result.length > 3);
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchmove");
+                        Assert.areSame(that.result[last-1].type, "touchmove");
+                        Assert.areSame(that.result[last].type, "touchend");
+                        
+                        Assert.areSame(that.result[0].touches.item(0).clientX+xdistance, 
+                            that.result[last-1].touches.item(0).clientX);
+                        Assert.areSame(that.result[0].touches.item(0).clientY+ydistance, 
+                            that.result[last-1].touches.item(0).clientY);    
+                    } else {
+                        // mousedown, mousemove(xN), mouseup, click 
+                        Assert.isTrue(that.result.length > 4);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mousemove");
+                        Assert.areSame(that.result[last-2].type, "mousemove");
+                        Assert.areSame(that.result[last-1].type, "mouseup");
+                        Assert.areSame(that.result[last].type, "click");
+                        
+                        Assert.areSame(that.result[0].clientX+xdistance, that.result[last].clientX);
+                        Assert.areSame(that.result[0].clientY+ydistance, that.result[last].clientY);
+                    }
+                }, 5000);
+            }
+        });
+        
+        //-------------------------------------------------------------------------
+        // Tap Test Case
+        // This will cover tap/doubletap and press gestures.
+        //-------------------------------------------------------------------------
+    
+        function TapTestCase(){
+            TapTestCase.superclass.constructor.call(this, "tap");
+        }
+    
+        Y.extend(TapTestCase, GenericGestureTestCase, {
+            /*
+            testXXX: function() {
+                var that = this,
+                    options = {
+                    };
+        
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                    } else {
+                        // devices falling back to mouse events
+                    }
+                }, 3000);
+            }
+            */
+            testDefault: function() {
+                var that = this;
+                Y.Event.simulateGesture(touchable, this.gestureName);
+                
+                this.wait(function() {
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchend
+                        Assert.areSame(2, that.result.length, "should be two");
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchend");
+                    } else {
+                        // devices falling back to mouse events
+                        // mousedown, mouseup and click events.
+                        Assert.areSame(3, that.result.length, "should be three");
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mouseup");
+                        Assert.areSame(that.result[2].type, "click");
+                    }
+                }, 5000);
+            },
+            
+            testDefault2: function() {
+                var wasCalled = false;
+                
+                // test callback function
+                Y.Event.simulateGesture(touchable, this.gestureName, function() {
+                    wasCalled = true;
+                });
+                
+                this.wait(function() {
+                    Assert.isTrue(wasCalled, "callback wasn't called");
+                }, 5000);
+            },
+            
+            testOptions: function() {
+                var that = this,
+                
+                    // touchstart/1000ms/touchend/500ms/touchstart/1000ms/touchend/
+                    // should take at least 2.5sec in total at element coordination at (95,100).
+                    options = {
+                        point: [95, 100],
+                        times: 2,
+                        hold: 1000,
+                        delay: 500
+                    },
+                    expectedX = Math.floor(touchable.getX())+95, 
+                    expectedY = Math.floor(touchable.getY())+100;
+                    
+                Y.Event.simulateGesture(touchable, this.gestureName, options);
+                this.wait(function() {
+                    if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                        // touch enabled devices
+                        // touchstart, touchend(x2)
+                        Assert.areSame(4, that.result.length, "should be 4 events");
+                        Assert.areSame(that.result[0].type, "touchstart");
+                        Assert.areSame(that.result[1].type, "touchend");
+                        Assert.areSame(that.result[2].type, "touchstart");
+                        Assert.areSame(that.result[3].type, "touchend");
+                        
+                        Assert.isTrue(that.result[1].timestamp - that.result[0].timestamp > 1000, 
+                            "hold time was set to 1s");
+                            
+                        Assert.isTrue(that.result[2].timestamp - that.result[1].timestamp > 500, 
+                            "delay was set to 500ms");
+                        
+                        Assert.areSame(1, that.results[0].touches.length);
+                        Assert.areSame(expectedX, that.results[0].touches.item(0).clientX);
+                        Assert.areSame(expectedY, that.results[0].touches.item(0).clientY);
+                    } else {
+                        // devices falling back to mouse events
+                        // mousedown, mouseup, click(x2), dblclick
+                        Assert.areSame(7, that.result.length);
+                        Assert.areSame(that.result[0].type, "mousedown");
+                        Assert.areSame(that.result[1].type, "mouseup");
+                        Assert.areSame(that.result[2].type, "click");
+                        Assert.areSame(that.result[3].type, "mousedown");
+                        Assert.areSame(that.result[4].type, "mouseup");
+                        Assert.areSame(that.result[5].type, "click");
+                        Assert.areSame(that.result[6].type, "dblclick");
+                        
+                        Assert.isTrue(that.result[1].timestamp - that.result[0].timestamp > 1000, 
+                            "hold time was set to 1s");
+                            
+                        Assert.isTrue(that.result[3].timestamp - that.result[2].timestamp > 500, 
+                            "delay was set to 500ms"); 
+                            
+                        Assert.areSame(expectedX, that.result[0].clientX);
+                        Assert.areSame(expectedY, that.result[0].clientY);    
+                    }
+                    Assert.isTrue(that.result[6].timestamp - that.result[0].timestamp > 2500);
+                }, 5000);
+            }
+        });
+        
+        //-------------------------------------------------------------------------
+        // UserAction Tests
+        //-------------------------------------------------------------------------
+    
+        //the user action suite
+        var suite = new Y.Test.Suite("Gesture Simulate Tests");
+        var gestureSuite = new Y.Test.Suite("Gesture Tests");
+        suite.add(gestureSuite);
+    
+        gestureSuite.add(new TapTestCase());
+        gestureSuite.add(new MoveTestCase());
+        gestureSuite.add(new FlickTestCase());
+        
+        //return it
+        return suite;
+    
+    })();
+
+    var r = new Y.Console({
+        verbose : true,
+        //consoleLimit : 10,
+        newestOnTop : false
+    });
+    
+    r.render('#c');
+    
+    //add to the testrunner and run
+    Y.Test.Runner.add(Y.Tests.GestureSimulate);
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>
