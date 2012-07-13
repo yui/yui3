@@ -27,17 +27,7 @@ YUI.add('scrollview-paging-tests', function(Y) {
             }, 3000);
         }
     }));
-
-    suite.add(new Y.Test.Case({
-
-        name : 'Manual tests',
-
-        'More complex swipe gestures should behave correctly' : function () {
-        	Y.Assert.fail();
-        }
-
-    }));
-
+    
     Y.Test.Runner.add(suite);
 
 }, '', {requires:['node-event-simulate']});
