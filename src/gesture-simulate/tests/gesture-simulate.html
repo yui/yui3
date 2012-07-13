@@ -163,7 +163,7 @@ YUI({
                 Y.Event.simulateGesture(touchable, this.gestureName, options);
                 this.wait(function() {
                     var last = that.result.length-1;
-                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp >= duration);
                     
                     if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
                         // touch enabled devices
@@ -212,7 +212,7 @@ YUI({
                 Y.Event.simulateGesture(touchable, this.gestureName, options);
                 this.wait(function() {
                     var last = that.result.length-1;
-                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp >= duration);
                     
                     if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
                         // touch enabled devices
@@ -265,7 +265,7 @@ YUI({
                 Y.Event.simulateGesture(touchable, this.gestureName);
                 this.wait(function() {
                     var last = that.result.length-1;
-                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp >= duration);
                     
                     if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
                         // touch enabled devices
@@ -330,7 +330,7 @@ YUI({
                 Y.Event.simulateGesture(touchable, this.gestureName, options);
                 this.wait(function() {
                     var last = that.result.length-1;
-                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp > duration);
+                    Assert.isTrue(that.result[last].timestamp - that.result[0].timestamp >= duration);
                     
                     if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
                         // touch enabled devices
@@ -438,6 +438,7 @@ YUI({
                     
                 Y.Event.simulateGesture(touchable, this.gestureName, options);
                 this.wait(function() {
+
                     if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
                         // touch enabled devices
                         // touchstart, touchend(x2)
@@ -447,15 +448,18 @@ YUI({
                         Assert.areSame(that.result[2].type, "touchstart");
                         Assert.areSame(that.result[3].type, "touchend");
                         
-                        Assert.isTrue(that.result[1].timestamp - that.result[0].timestamp > 1000, 
+                        Assert.isTrue(that.result[1].timestamp - that.result[0].timestamp >= 1000, 
                             "hold time was set to 1s");
                             
-                        Assert.isTrue(that.result[2].timestamp - that.result[1].timestamp > 500, 
+                        Assert.isTrue(that.result[2].timestamp - that.result[1].timestamp >= 500, 
                             "delay was set to 500ms");
                         
-                        Assert.areSame(1, that.results[0].touches.length);
-                        Assert.areSame(expectedX, that.results[0].touches.item(0).clientX);
-                        Assert.areSame(expectedY, that.results[0].touches.item(0).clientY);
+                        Assert.areSame(1, that.result[0].touches.length);
+
+                        Assert.areSame(expectedX, that.result[0].touches.item(0).clientX);
+                        Assert.areSame(expectedY, that.result[0].touches.item(0).clientY);
+
+                        Assert.isTrue(that.result[3].timestamp - that.result[0].timestamp >= 2500);
                     } else {
                         // devices falling back to mouse events
                         // mousedown, mouseup, click(x2), dblclick
@@ -468,16 +472,18 @@ YUI({
                         Assert.areSame(that.result[5].type, "click");
                         Assert.areSame(that.result[6].type, "dblclick");
                         
-                        Assert.isTrue(that.result[1].timestamp - that.result[0].timestamp > 1000, 
+                        Assert.isTrue(that.result[1].timestamp - that.result[0].timestamp >= 1000, 
                             "hold time was set to 1s");
-                            
-                        Assert.isTrue(that.result[3].timestamp - that.result[2].timestamp > 500, 
+
+                        Assert.isTrue(that.result[3].timestamp - that.result[2].timestamp >= 500, 
                             "delay was set to 500ms"); 
                             
                         Assert.areSame(expectedX, that.result[0].clientX);
                         Assert.areSame(expectedY, that.result[0].clientY);    
+
+                        Assert.isTrue(that.result[6].timestamp - that.result[0].timestamp >= 2500);
                     }
-                    Assert.isTrue(that.result[6].timestamp - that.result[0].timestamp > 2500);
+
                 }, 5000);
             }
         });
