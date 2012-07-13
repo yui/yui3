@@ -1,26 +1,27 @@
-YUI.add('weather-tests', function(Y) {
+YUI.add('datasource-get-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('weather example test suite'),
+    var suite = new Y.Test.Suite('datasource-get example test suite'),
         Assert = Y.Assert;
 
     suite.add(new Y.Test.Case({
         name: 'Example tests',
-        'test Get Weather RSS': function() {
-            Y.one('#getWeather').simulate('click');
+
+        'test json': function() {
+            Y.one('.example #demo_json').simulate('click');
             var interval = 10,
                 timeout = 10000,
-                output = Y.one('.example #weatherModule'),
+                output = Y.one('.example #demo_output_json'),
                 condition = function() {
                     // Return a truthy/falsey result.
-                    return (output.getHTML().indexOf('(provided by') > -1);
+                    return (output.getHTML().indexOf('results') > -1);
                     // For example:
                     // return Y.one("#waitForMe") !== null
                 },
             success = function() {
                 var outputStr = output.getHTML();
-                Assert.isTrue((outputStr.indexOf('Yahoo! Weather for Sunnyvale, CA') > -1), ' - Failed to find "Yahoo! Weather for Sunnyvale, CA"');
-                Assert.areEqual(1, Y.one('.example #weatherModule').all('img').size(), ' - Failed to find weather icon image')
-                Assert.isTrue((outputStr.indexOf('Full Forecast at Yahoo! Weather') > -1), ' - Failed to find "Full Forecast at Yahoo! Weather"');
+                Assert.isTrue((outputStr.indexOf('  "results": [') > -1), ' - Failed to find expected output... "results": [');
+                Assert.isTrue((outputStr.indexOf('"name":') > -1), ' - Failed to find expected output... "name":');
+                Assert.isTrue((outputStr.indexOf('"meta": {') > -1), ' - Failed to find expected output... "meta": {');
             },
             failure = function() {
                 Y.Assert.fail("Never succeeded in " + timeout + "ms");
@@ -29,8 +30,15 @@ YUI.add('weather-tests', function(Y) {
             // failure is optional. Will default to "wait() without resume()" error
             this.poll(condition, interval, timeout, success, failure);
 
-        }
-    }));
+        },
+
+
+
+
+
+
+
+}));
 
     Y.Test.Runner.add(suite);
 
