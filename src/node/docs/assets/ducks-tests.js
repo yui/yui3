@@ -3,6 +3,19 @@ YUI.add('ducks-tests', function(Y) {
     var suite = new Y.Test.Suite('ducks example test suite'),
         Assert = Y.Assert;
 
+    var clickCheckbox = function(checkbox, expectedState) {
+
+        if (Y.UA.ie && Y.UA.ie < 9) {
+            checkbox.set("checked", expectedState);
+        } else {
+            // Just in case it's already at that state, and the test wants to flip it with the click
+            if (checkbox.get("checked") === expectedState) {
+                checkbox.set("checked", !expectedState);
+            }
+        }
+        checkbox.simulate("click");
+    }
+
     suite.add(new Y.Test.Case({
         name: 'Example tests',
         'how many ducks are standing': function() {
@@ -20,8 +33,7 @@ YUI.add('ducks-tests', function(Y) {
             var node = Y.one('.duck-row .set-up'),
                 test = this;
 
-    //        Y.one('#show-attitude').simulate('click');   // doesn't seem to work in IE9
-            Y.one('#show-attitude').set('checked', 'checked');
+            clickCheckbox(Y.one('#show-attitude'), true);
 
             node.on('click', function(e) {
                 setTimeout(function() {
@@ -41,8 +53,7 @@ YUI.add('ducks-tests', function(Y) {
             var node = Y.one('.duck-row .set-up'),
                 test = this;
 
-//            Y.one('#show-attitude').simulate('click');    // doesn't seem to work in IE9
-            Y.one('#show-attitude').set('checked', '');
+            clickCheckbox(Y.one('#show-attitude'), true);
 
             node.on('click', function(e) {
                 setTimeout(function() {

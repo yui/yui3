@@ -4,9 +4,7 @@ YUI.add('dataschema-table-tests', function(Y) {
         Assert = Y.Assert;
 
     var cleanStr = function(str) {
-        var strTemp;
-        strTemp = str.replace(/<BR>/g, '<br>');
-        return strTemp.replace(/\s\s/g, ' ');
+        return str.replace(/\s\s/g, ' ');
     }
 
 

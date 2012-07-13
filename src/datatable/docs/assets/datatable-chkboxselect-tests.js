@@ -11,7 +11,7 @@ YUI.add('datatable-chkboxselect-tests', function(Y) {
          */
         var clickCheckbox = function(checkbox, expectedState) {
 
-            if (Y.UA.ie && Y.UA.ie < 10) {
+            if (Y.UA.ie && Y.UA.ie < 9) {
                 checkbox.set("checked", expectedState);
             } else {
                 // Just in case it's already at that state, and the test wants to flip it with the click
