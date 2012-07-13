@@ -2,7 +2,7 @@
 YUI().use("jsonp", "node",function (Y) {
 
     var user      = Y.one("#github_user"),
-        githubAPI = "http://github.com/api/v2/json/user/show/",
+        githubAPI = "https://api.github.com/users/",
         template  = // assignment continued below
         
     '<table>' +
@@ -17,20 +17,20 @@ YUI().use("jsonp", "node",function (Y) {
         '</thead>' +
         '<tbody>' +
             '<tr>' +
-                '<td>{public_repo_count}</td>' +
-                '<td>{public_gist_count}</td>' +
-                '<td>{followers_count}</td>' +
-                '<td>{following_count}</td>' +
+                '<td>{public_repos}</td>' +
+                '<td>{public_gists}</td>' +
+                '<td>{followers}</td>' +
+                '<td>{following}</td>' +
             '</tr>' +
         '</tbody>' +
     '</table>';
 
     function handleJSONP(response) {
-        Y.one("#out").setHTML(Y.Lang.sub(template, response.user));
+        Y.one("#out").setHTML(Y.Lang.sub(template, response.data));
     }
 
     Y.one("#demo_btn").on("click", function (e) {
-        // e.g. http://github.com/api/v2/json/user/show/yui?callback={callback}
+        // e.g. https://api.github.com/users/yui?callback={callback}
         var url = githubAPI + user.get("value") + "?callback={callback}";
 
         Y.jsonp(url, handleJSONP);

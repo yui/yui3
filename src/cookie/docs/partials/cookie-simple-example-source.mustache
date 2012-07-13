@@ -1,14 +1,18 @@
-<script>
-YUI().use('cookie', 'console', function (Y) {
+<pre id="results"></pre>
 
-    //used just to show logging output
-    (new Y.Console({style: 'block'})).render('.example');
-    
+<script>
+YUI().use('node', 'cookie', function (Y) {
+
+    var pre = Y.one('#results'),
+        log = function(str) {
+            pre.append(str + '<br>\n');
+        };
+
     var currentValue = Y.Cookie.get("example");
-    Y.log("Cookie's current value is '" + currentValue + "'");
+    log("Cookie's current value is '" + currentValue + "'");
 
     var newValue = "yui" + Math.round(Math.random() * Math.PI * 1000);
-    Y.log("Setting cookie's value to '" + newValue + "'");
+    log("Setting cookie's value to '" + newValue + "'");
     Y.Cookie.set("example", newValue);
 
 });
