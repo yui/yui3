@@ -55,7 +55,7 @@ YUI({
                 //reset the result
                 this.result = [];
                 
-                events.forEach(Y.bind(function(one) {
+                Y.each(events, Y.bind(function(one) {
                     // Y.one("#touchable").on(one, function(e) {});
                     document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
                         e.preventDefault();
@@ -71,7 +71,7 @@ YUI({
              * Removes event handlers that were used during the test.
              */
             tearDown : function() /*:Void*/{
-                 events.forEach(function(one) {
+                Y.each(events, function(one) {
                     document.getElementById("touchable")['on'+one]= null; 
                 });
             }
@@ -127,9 +127,10 @@ YUI({
                         Assert.areSame(that.result[last-1].type, "mouseup");
                         Assert.areSame(that.result[last].type, "click");
                         
-                        that.result.forEach(function(one) {
+                        Y.each(that.result, function(one) {
                             Assert.areSame(that.result[0].clientY, one.clientY);
                         });
+
                         Assert.areSame(that.result[0].clientX+distance, that.result[last].clientX);
                     }
                 }, 5000);
@@ -292,9 +293,10 @@ YUI({
                         Assert.areSame(that.result[last-1].type, "mouseup");
                         Assert.areSame(that.result[last].type, "click");
                         
-                        that.result.forEach(function(one) {
+                        Y.each(that.result, function(one) {
                             Assert.areSame(that.result[0].clientY, one.clientY);
                         });
+
                         Assert.areSame(that.result[0].clientX+distance, that.result[last].clientX);
                     }
                 }, 5000);
