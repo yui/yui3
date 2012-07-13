@@ -2206,6 +2206,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
         },
+     "Testing model-sync-rest": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-sync-rest"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-sync-rest")) > -1, "Module (model-sync-rest) not found in sorted array");
+        },
      "Testing node": function(data) {
             var loader = new Y.Loader({
                 require: ["node"],

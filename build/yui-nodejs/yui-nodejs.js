@@ -9204,6 +9204,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "model"
         ]
     },
+    "model-sync-rest": {
+        "requires": [
+            "model",
+            "io-base",
+            "json-stringify"
+        ]
+    },
     "node": {
         "use": [
             "node-base",
@@ -9942,7 +9949,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
