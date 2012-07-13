@@ -23,6 +23,7 @@ var Y = YUI({
                 'lazy-model-list-test',
                 'model-test',
                 'model-list-test',
+                'model-sync-local-test',
                 'router-test',
                 'view-test',
                 'view-node-map-test',
@@ -43,6 +44,11 @@ var Y = YUI({
         'model-list-test': {
             fullpath: 'model-list-test.js',
             requires: ['model-list', 'test']
+        },
+
+        'model-rest-test': {
+            fullpath: 'model-sync-local-test.js',
+            requires: ['model', 'model-list', 'model-sync-local', 'test']
         },
 
         'router-test': {
