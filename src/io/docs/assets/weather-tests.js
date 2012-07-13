@@ -5,26 +5,6 @@ YUI.add('weather-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: 'Example tests',
-//         'test Get Weather RSS': function() {
-//             var test = this;
-//
-//             Y.one('#getWeather').simulate('click');
-//
-//             var foo = function(e) {
-//                 setTimeout(function() {
-//                     test.resume(function() {
-//                         var output = Y.one('.example #weatherModule').getHTML();
-//                          Assert.isTrue((output.indexOf('Yahoo! Weather for Sunnyvale, CA') > -1), ' - Failed to find "Yahoo! Weather for Sunnyvale, CA"');
-//                          Assert.areEqual(1, Y.one('.example #weatherModule').all('img').size(), ' - Failed to find weather icon image')
-//                          Assert.isTrue((output.indexOf('Full Forecast at Yahoo! Weather') > -1), ' - Failed to find "Full Forecast at Yahoo! Weather"');
-//                     });
-//                 }, 500);
-//             }
-//             foo();
-//             test.wait(1000);
-//         }
-
-
         'test Get Weather RSS': function() {
             Y.one('#getWeather').simulate('click');
             var interval = 10,
@@ -50,11 +30,6 @@ YUI.add('weather-tests', function(Y) {
             this.poll(condition, interval, timeout, success, failure);
 
         }
-
-
-
-
-
     }));
 
     Y.Test.Runner.add(suite);

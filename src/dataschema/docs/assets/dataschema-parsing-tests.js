@@ -6,7 +6,6 @@ YUI.add('dataschema-parsing-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Example tests',
         'test apply schema for parsing': function() {
-            var test = this;
             Y.one('.example #demo_apply_parsing').simulate('click');
             var output = Y.one('.example #demo_output_parsing').getHTML();
 //          alert(output);
