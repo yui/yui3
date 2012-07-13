@@ -25,6 +25,23 @@ YUI.add('widget-build-tests', function(Y) {
 
         run : Y.one("#run"),
 
+        widgetOneForm : Y.one("#widget1-example"),
+
+        widgetTwoForm : Y.one("#widget2-example"),
+
+        widgetThreeForm : Y.one("#widget3-example"),
+
+        clickFormSubmit : function(form) {
+
+            // In non-IE browsers, clicking the submit will peform the default action,
+            // of submitting the form. In IE, we need to do both
+            form.one("button[type=submit]").simulate("click");
+
+            if (Y.UA.ie && Y.UA.ie < 9) {
+                form.simulate("submit");
+            }
+        },
+
         isCentered : function(nodeOneRegion, nodeTwo, message) {
             var nodeTwoRegion = nodeTwo.get("region");
 
@@ -124,19 +141,22 @@ YUI.add('widget-build-tests', function(Y) {
 
             this.content.set("value", "Foo");
             this.section.set("selectedIndex", 0);
-            this.setHTML.simulate("click");
+
+            this.clickFormSubmit(this.widgetOneForm);
 
             Y.Assert.areEqual("Foo", widget1.one(".yui3-standardmodule-content .yui3-widget-hd").get("text"));
 
             this.content.set("value", "Bar");
             this.section.set("selectedIndex", 1);
-            this.setHTML.simulate("click");
+
+            this.clickFormSubmit(this.widgetOneForm);
 
             Y.Assert.areEqual("Bar", widget1.one(".yui3-standardmodule-content .yui3-widget-bd").get("text"));
 
             this.content.set("value", "FooBar");
             this.section.set("selectedIndex", 2);
-            this.setHTML.simulate("click");
+
+            this.clickFormSubmit(this.widgetOneForm);
 
             Y.Assert.areEqual("FooBar", widget1.one(".yui3-standardmodule-content .yui3-widget-ft").get("text"));
         },
@@ -149,7 +169,7 @@ YUI.add('widget-build-tests', function(Y) {
             this.x.set("value", Math.round(currentXY[0]) + 10);
             this.y.set("value", Math.round(currentXY[1]) + 20);
 
-            this.move.simulate("click");
+            this.clickFormSubmit(this.widgetTwoForm);
 
             newXY = widget2.getXY();
 
@@ -159,7 +179,7 @@ YUI.add('widget-build-tests', function(Y) {
             this.x.set("value", 0);
             this.y.set("value", 0);
 
-            this.move.simulate("click");
+            this.clickFormSubmit(this.widgetTwoForm);
 
             newXY = widget2.getXY();
 

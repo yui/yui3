@@ -718,7 +718,9 @@
         * @param {Event} e The Event
         */
         _fixDragStart: function(e) {
-            e.preventDefault();
+            if (this.validClick(e)) {
+                e.preventDefault();
+            }
         },
         /** 
         * @private

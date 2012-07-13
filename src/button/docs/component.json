@@ -27,7 +27,7 @@
             "hideTableOfContents": false
         },
         {
-            "name"       : "button",
+            "name"       : "button-basic",
             "displayName": "Basic button widgets",
             "description": "This example demonstrates how to create button widgets",
             "modules"    : ["button"],

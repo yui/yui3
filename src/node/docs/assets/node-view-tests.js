@@ -7,11 +7,11 @@ YUI.add('node-view-tests', function(Y) {
         name: 'Example tests',
         'test click hide button': function() {
             Y.one('.example #hide').simulate('click');
-            Assert.areEqual('none', Y.one('.example #demo').getComputedStyle('display'),'failed to add peanut butter');
+            Assert.areEqual('none', Y.one('.example #demo').getComputedStyle('display'),'failed to hide node');
         },
         'test click show button': function() {
             Y.one('.example #show').simulate('click');
-            Assert.areEqual('block', Y.one('.example #demo').getComputedStyle('display'),'failed to add peanut butter');
+            Assert.areEqual('block', Y.one('.example #demo').getComputedStyle('display'),'failed to show node');
         }
     }));
 

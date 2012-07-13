@@ -14,6 +14,9 @@
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
+    YUI.Env.CSRF_TOKEN = 'asdf1234';
+</script>
+<script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
@@ -23,7 +26,11 @@ var Y = YUI({
                 'lazy-model-list-test',
                 'model-test',
                 'model-list-test',
+<<<<<<< HEAD
                 'model-sync-local-test',
+=======
+                'model-sync-rest-test',
+>>>>>>> 7e7ee6614e70060ba64e6f062a3acf10be925457
                 'router-test',
                 'view-test',
                 'view-node-map-test',
@@ -46,9 +53,14 @@ var Y = YUI({
             requires: ['model-list', 'test']
         },
 
-        'model-rest-test': {
+        'model-sync-local-test': {
             fullpath: 'model-sync-local-test.js',
             requires: ['model', 'model-list', 'model-sync-local', 'test']
+        },
+
+        'model-sync-rest-test': {
+            fullpath: 'model-sync-rest-test.js',
+            requires: ['model', 'model-list', 'model-sync-rest', 'test']
         },
 
         'router-test': {
