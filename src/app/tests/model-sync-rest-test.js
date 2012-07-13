@@ -294,6 +294,269 @@ modelSyncRESTSuite.add(new Y.Test.Case({
 
 }));
 
+// -- ModelSync.REST: Sync -----------------------------------------------------
+modelSyncRESTSuite.add(new Y.Test.Case({
+    name: 'Sync',
+
+    setUp: function () {
+        this._emulateHTTP = Y.ModelSync.REST.EMULATE_HTTP;
+
+        Y.TestModel = Y.Base.create('customModel', Y.Model, [Y.ModelSync.REST]);
+
+        Y.TestModelList = Y.Base.create('testModelList', Y.ModelList, [Y.ModelSync.REST], {
+            model: Y.TestModel
+        });
+    },
+
+    tearDown: function () {
+        delete Y.TestModel;
+        delete Y.TestModelList;
+
+        Y.ModelSync.REST.EMULATE_HTTP = this._emulateHTTP;
+    },
+
+    'load() should perform a GET XHR the `url` of the model': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({id: 1});
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            Assert.areSame('read', config.action);
+            Assert.areSame('application/json', config.headers['Accept']);
+            Assert.areSame('GET', config.method);
+            Assert.areSame(30000, config.timeout);
+            Assert.areSame('/root/1/', config.url);
+
+            Assert.isUndefined(config.entity);
+            Assert.isUndefined(config.headers['Content-Type']);
+            Assert.isUndefined(config.headers['X-CSRF-Token']);
+
+            this._onSyncIOSuccess(0, {
+                responseText: '{"id":1, "name":"Eric"}'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        model.load();
+
+        Assert.areSame('Eric', model.get('name'));
+    },
+
+    'load() should perform a GET XHR the `root` of the model list': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var modelList = new Y.TestModelList();
+
+        // Overrides because `Y.io()` is too hard to test!
+        modelList._sendSyncIORequest = function (config) {
+            Assert.areSame('read', config.action);
+            Assert.areSame('application/json', config.headers['Accept']);
+            Assert.areSame('GET', config.method);
+            Assert.areSame(30000, config.timeout);
+            Assert.areSame('/root/', config.url);
+
+            Assert.isUndefined(config.entity);
+            Assert.isUndefined(config.headers['Content-Type']);
+            Assert.isUndefined(config.headers['X-CSRF-Token']);
+
+            this._onSyncIOSuccess(0, {
+                responseText: '[{"id":1, "name":"Eric"}]'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        modelList.load();
+
+        Assert.areSame(1, modelList.size());
+        Assert.areSame(1, modelList.item(0).get('id'));
+        Assert.areSame('Eric', modelList.item(0).get('name'));
+    },
+
+    'save() should perform a POST XHR to the `root` of a new model': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({name: 'Eric'});
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            Assert.areSame('create', config.action);
+            Assert.areSame('{"name":"Eric"}', config.entity);
+            Assert.areSame('application/json', config.headers['Accept']);
+            Assert.areSame('application/json', config.headers['Content-Type']);
+            Assert.areSame('asdf1234', config.headers['X-CSRF-Token']);
+            Assert.areSame('POST', config.method);
+            Assert.areSame(30000, config.timeout);
+            Assert.areSame('/root/', config.url);
+
+            this._onSyncIOSuccess(0, {
+                responseText: '{"id":1, "name":"Eric"}'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        Assert.isTrue(model.isNew());
+
+        model.save();
+
+        Assert.isFalse(model.isNew());
+        Assert.areSame(1, model.get('id'));
+    },
+
+    'save() should perform a PUT XHR to the `url` an exiting model': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({id: 1});
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            Assert.areSame('update', config.action);
+            Assert.areSame('{"id":1,"name":"Eric"}', config.entity);
+            Assert.areSame('application/json', config.headers['Accept']);
+            Assert.areSame('application/json', config.headers['Content-Type']);
+            Assert.areSame('asdf1234', config.headers['X-CSRF-Token']);
+            Assert.areSame('PUT', config.method);
+            Assert.areSame(30000, config.timeout);
+            Assert.areSame('/root/1/', config.url);
+
+            this._onSyncIOSuccess(0, {
+                responseText: ''
+            }, {
+                callback: config.callback
+            });
+        };
+
+        Assert.isFalse(model.isNew());
+
+        model.set('name', 'Eric');
+        model.save();
+    },
+
+    'destroy({remove: true}) should perform a DELETE XHR to the `url` an exiting model': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({id: 1});
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            Assert.areSame('delete', config.action);
+            Assert.areSame('application/json', config.headers['Accept']);
+            Assert.areSame('asdf1234', config.headers['X-CSRF-Token']);
+            Assert.areSame('DELETE', config.method);
+            Assert.areSame(30000, config.timeout);
+            Assert.areSame('/root/1/', config.url);
+
+            Assert.isUndefined(config.entity);
+            Assert.isUndefined(config.headers['Content-Type']);
+
+            this._onSyncIOSuccess(0, {
+                responseText: ''
+            }, {
+                callback: config.callback
+            });
+        };
+
+        Assert.isFalse(model.isNew());
+
+        model.destroy({remove: true});
+    },
+
+    'EMULATE_HTTP should use POST instead of PUT or DELETE XHRs': function () {
+        Y.ModelSync.REST.EMULATE_HTTP = true;
+        Y.TestModel.prototype.root    = '/root/';
+
+        var model = new Y.TestModel({id: 1}),
+            calls = 0;
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            var action = config.action;
+
+            calls += 1;
+
+            Assert.areSame('POST', config.method);
+            Assert.isTrue(action === 'update' || action === 'delete');
+
+            if (action === 'update') {
+                Assert.areSame('PUT', config.headers['X-HTTP-Method-Override']);
+            }
+
+            if (action === 'delete') {
+                Assert.areSame('DELETE', config.headers['X-HTTP-Method-Override']);
+            }
+
+            this._onSyncIOSuccess(0, {
+                responseText: ''
+            }, {
+                callback: config.callback
+            });
+        };
+
+        Assert.isFalse(model.isNew());
+
+        model.set('name', 'Eric').save();
+        model.destroy({remove: true});
+
+        Assert.areSame(2, calls);
+    },
+
+    'sync() should accept `csrfToken`, `headers`, and `timeout` options': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({name: 'Eric'});
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            Assert.areSame('application/xml', config.headers['Content-Type']);
+            Assert.areSame('blabla', config.headers['X-CSRF-Token']);
+            Assert.areSame(10000, config.timeout);
+
+            this._onSyncIOSuccess(0, {
+                responseText: '{"id":1, "name":"Eric"}'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        Assert.isTrue(model.isNew());
+
+        model.save({
+            csrfToken: 'blabla',
+            headers  : {'Content-Type': 'application/xml'},
+            timeout  : 10000
+        });
+
+        Assert.isFalse(model.isNew());
+        Assert.areSame(1, model.get('id'));
+    },
+
+    'Failed sync() calls should pass the HTTP status code and message to the callback': function () {
+        Y.TestModel.prototype.root = '/root/';
+
+        var model = new Y.TestModel({id: 1});
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            this._onSyncIOFailure(0, {
+                status    : 404,
+                statusText: 'Not Found'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        model.load(function (err) {
+            Assert.areSame(404, err.code);
+            Assert.areSame('Not Found', err.msg);
+        });
+
+        Assert.isUndefined(model.get('name'));
+    }
+}));
+
 suite.add(modelSyncRESTSuite);
 
 }, '@VERSION@', {
