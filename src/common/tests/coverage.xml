@@ -76,7 +76,10 @@
         <url>charts/tests/combospline-globalstyles.html</url>
         <url>charts/tests/combospline-gridlines.html</url>
         <url>charts/tests/combospline-legend.html</url>
-        <url>charts/tests/combospline-legendwrapitems.html</url>
+        <!--
+             Times out in IE8 coverage. Removed until it can be resolved.
+             <url>charts/tests/combospline-legendwrapitems.html</url>
+        -->
         <url>charts/tests/combosplineshowareafill-globalstyles.html</url>
         <url>charts/tests/combo-tooltip.html</url>
         <url>charts/tests/dataprovider.html</url>
@@ -184,7 +187,6 @@
         <url>graphics/tests/shape-anim.html</url>
         <url>graphics/tests/shape-fillandstroke.html</url>
         <url>graphics/tests/shape-setfillandstroke.html</url>
-        <url>handlebars/tests/handlebars.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
         <!-- history-hash doesn't work properly with Selenium. Bug #2530385.

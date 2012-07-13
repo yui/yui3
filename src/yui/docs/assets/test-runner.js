@@ -2,6 +2,7 @@
 
     var tests = (window.location.search.match(/[?&]tests=([^&]+)/) || [])[1] || null,
         filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || null,
+        manual = (window.location.search.match(/[?&]manual=([^&]+)/) || [])[1] || null,
         showConsole = (window.location.search.match(/[?&]console=([^&]+)/) || [])[1] || null,
         name = YUI.Env.Tests.name,
         title = YUI.Env.Tests.title,
@@ -56,9 +57,16 @@
         requires: [ 'test', 'runner-css' ]
     };
 
+    mods[name + '-manual-tests'] = {
+        fullpath: assets + '/' + name + '-manual-tests.js',
+        requires: [ name + '-tests' ]
+    };
+
+    var defaultMod = name + (manual ? '-manual' : '') + '-tests';
+
     YUI({
         modules: mods
-    }).use(name + '-tests', 'test-console', function(Y, status) {
+    }).use(defaultMod, 'test-console', function(Y, status) {
         var log, testConsole,
             renderLogger = function() {
                 if (!log) {
@@ -100,24 +108,7 @@
             this._poll(condition, period, timeout, success, failure);
             this.wait(timeout + 1000);
         };
-
-        if (filter || showConsole) {
-            Y.all('a').each(function(item) {
-                var url = item.getAttribute('href');
-                if (url.indexOf('#') === -1) {
-                    var f = [];
-                    if (filter) {
-                        f.push('filter=' + filter);
-                    }
-                    if (showConsole) {
-                        f.push('console=' + showConsole);
-                    }
-                    item.set('href', url + '?' + f.join('&'));
-                }
-            });
-        }
-
-
+        
         var counter = 0,
         count = function() {
             counter++;
@@ -125,6 +116,14 @@
         testCase = new Y.Test.Case({
             name: 'Checking for load failure',
             'automated test script loaded': function() {
+                if (!status.success) {
+                    if (status.msg) {
+                        if (status.msg.indexOf(name + '-manual-tests.js') > -1) {
+                            Y.Assert.isTrue(true);
+                            return; // return here and don't throw on this test.
+                        }
+                    }
+                }
                 Y.Assert.isTrue(status.success, 'Automated script 404ed');
             },
             'window.onerror called': function() {

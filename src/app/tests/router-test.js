@@ -186,8 +186,7 @@ routerSuite.add(new Y.Test.Case({
         ignore: {
             'getPath() should return the current location `pathname` when no hash is set in all browsers': Y.UA.phantomjs,
             'getPath() should return the `pathname` in HTML5 browsers and otherwise return the hash path': Y.UA.phantomjs,
-            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs,
-            'save() should dispath in non HTML5 browsers even when the `hash` does not change': Y.UA.phantomjs
+            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs
         }
     },
 
@@ -292,11 +291,11 @@ routerSuite.add(new Y.Test.Case({
         Assert.isTrue(router.hasRoute('/foo'));
         Assert.isTrue(router.hasRoute('/bar'));
         Assert.isTrue(router.hasRoute('/bar?a=b'));
-        Assert.isTrue(router.hasRoute('/baz?a=b')); //this matches /:foo
+        Assert.isTrue(router.hasRoute('/baz?a=b')); // This matches /:foo
         Assert.isFalse(router.hasRoute('/baz/quux'));
         Assert.isFalse(router.hasRoute('/baz/quux?a=b'));
 
-        //need to test a router that doesn't have a /:foo catch-all
+        // Need to test a router that doesn't have a /:foo catch-all
         router2.route('/foo', noop);
         router2.route('/bar', noop);
 
@@ -304,6 +303,9 @@ routerSuite.add(new Y.Test.Case({
         Assert.isTrue( router2.hasRoute('/bar'));
         Assert.isTrue( router2.hasRoute('/bar?a=b'));
         Assert.isFalse(router2.hasRoute('/baz?a=b'));
+
+        // Cleanup router2.
+        router2.destroy();
     },
 
     'hasRoute() should support full URLs': function () {
@@ -459,8 +461,8 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'consecutive save() calls should dispatch to the correct routes': function () {
-        var paths      = [],
-            test       = this,
+        var paths  = [],
+            test   = this,
             router = this.router = new Y.Router();
 
         router.route('/one', function (req) {
@@ -534,22 +536,24 @@ routerSuite.add(new Y.Test.Case({
     },
 
     'save() should dispath in non HTML5 browsers even when the `hash` does not change': function () {
-        var test   = this,
-            router = this.router = new Y.Router({html5: false});
+        var test = this,
+            router;
 
         Y.HistoryHash.setHash('/save');
 
-        router.route('/save', function (req) {
-            test.resume(function () {
-                Assert.areSame('/save', req.path);
-            });
-        });
+        router = this.router = new Y.Router({html5: false});
 
         // Wrapped in a setTimeout to make the async test work on iOS<5, which
         // performs this action synchronously.
         setTimeout(function () {
+            router.route('/save', function (req) {
+                test.resume(function () {
+                    Assert.areSame('/save', req.path);
+                });
+            });
+
             router.save('/save');
-        }, 1);
+        }, 10);
 
         this.wait(1000);
     },
@@ -928,6 +932,56 @@ routerSuite.add(new Y.Test.Case({
         this.wait(function () {
             Assert.areSame(2, calls);
         }, 200);
+    },
+
+    'multiple nested routers should be able to coexist and duplicate route handlers': function () {
+        var test      = this,
+            calls     = 0,
+            routerOne = test.router = new Y.Router(),
+            routerTwo;
+
+        function handleFoo() {
+            calls += 1;
+        }
+
+        routerOne.route('/foo/*', handleFoo);
+        routerOne.save('/foo/');
+
+        setTimeout(function () {
+            routerTwo = test.router2 = new Y.Router();
+
+            routerTwo.route('/foo/*', handleFoo);
+            routerTwo.save('/foo/bar/');
+        }, 100);
+
+        test.wait(function () {
+            Assert.areSame(3, calls);
+        }, 250);
+    },
+
+    'multiple nested non-HTML5 routers should be able to coexist and duplicate route handlers': function () {
+        var test      = this,
+            calls     = 0,
+            routerOne = test.router = new Y.Router({html5: false}),
+            routerTwo;
+
+        function handleFoo() {
+            calls += 1;
+        }
+
+        routerOne.route('/foo', handleFoo);
+        routerOne.save('/foo');
+
+        setTimeout(function () {
+            routerTwo = test.router2 = new Y.Router({html5: false});
+
+            routerTwo.route('/foo', handleFoo);
+            routerTwo.save('/foo');
+        }, 100);
+
+        test.wait(function () {
+            Assert.areSame(3, calls);
+        }, 250);
     },
 
     'multiple routers should respond to history events after one router is destroyed': function () {

@@ -4,7 +4,8 @@ History Change History
 3.6.0
 -----
 
-* No changes.
+* HistoryHTML5 now treats empty `window.history.state` objects as `null` when
+  seeding its initial state value on construction. [Ticket #2532340]
 
 3.5.1
 -----

@@ -9,15 +9,18 @@ App Framework Change History
 * Added static property: `Y.App.serverRouting`, which serves as the default
   value for the `serverRouting` attribute of all apps. [Ticket #2532319]
 
-* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
-
-### App Transitions
-
 * Fixed issue with non-collapsing white space between views while transitioning.
   White space is now fully collapsed and prevents views from jumping after a
   cross-fade transition. [Ticket #2532298]
 
+* Organized all CSS classes `Y.App` uses under a static `CLASS_NAMES` property.
+
 * Moved `transitioning` CSS classname under `Y.App.CLASS_NAMES`.
+
+### Model
+
+* Added ModelSync.REST, an extension which provides a RESTful XHR `sync()`
+  implementation that can be mixed into a Model or ModelList subclass.
 
 ### ModelList
 
@@ -50,12 +53,20 @@ App Framework Change History
   path-like hash fragments are now treated as a continuation of the URL's path
   when the router has been configured with a `root`. [Ticket #2532318]
 
-* Fixed issue when multiple routers on were on the page and one router was
-  destroyed the remaining routers would stop dispatching. [Ticket #2532317]
+* Fixed issue when multiple routers are on the page and one router is destroyed
+  the remaining routers would stop dispatching. [Ticket #2532317]
+
+* Fixed a multi-router issue where creating a router instance after a previous
+  router's `save()`/`replace()` method was called would cause in infinite
+  History replace loop. [Ticket #2532340]
 
 * The `req` object passed to routes now has a `pendingRoutes` property that
   indicates the number of matching routes after the current route in the
   dispatch chain. [Steven Olmsted]
+
+* Added a static `Y.Router.dispatch()` method which provides a mechanism to
+  cause all active router instances to dispatch to their route handlers without
+  needing to change the URL or fire the `history:change` or `hashchange` event.
 
 
 3.5.1
