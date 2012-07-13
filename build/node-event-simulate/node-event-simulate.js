@@ -40,4 +40,4 @@ Y.Node.prototype.simulateGesture = function (type, options, cb) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-simulate']});
+}, '@VERSION@' ,{requires:['node-base', 'event-simulate', 'gesture-simulate']});
