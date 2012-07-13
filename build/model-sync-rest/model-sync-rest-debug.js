@@ -242,10 +242,10 @@ RESTSync.prototype = {
             url : '/users/{username}'
         });
 
-    **Note:** String substitution of the `url` property will only happen for
-    Model subclasses, and only string and number attribute values will be
-    substituted. Do not expect something fancy to happen with Object, Array, or
-    Boolean values, they will simply be ignored.
+    **Note:** String subsitituion of the `url` only use string an number values
+    provided by this object's attribute and/or the `options` passed to the
+    `getURL()` method. Do not expect something fancy to happen with Object,
+    Array, or Boolean values, they will simply be ignored.
 
     If your URLs have plural roots or collection URLs, while the specific item
     resources are under a singular name, e.g. "/users" (plural) and "/user/123"
