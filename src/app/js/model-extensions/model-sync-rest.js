@@ -456,26 +456,14 @@ RESTSync.prototype = {
             headers['X-CSRF-Token'] = csrfToken;
         }
 
-        // Setup and send the XHR.
-        Y.io(url, {
-            'arguments': {
-                action  : action,
-                callback: callback,
-                url     : url
-            },
-
-            context: this,
-            method : method,
-            headers: headers,
-            data   : entity,
-            timeout: timeout,
-
-            on: {
-                start  : this._onSyncIOStart,
-                failure: this._onSyncIOFailure,
-                success: this._onSyncIOSuccess,
-                end    : this._onSyncIOEnd
-            }
+        this._sendSyncIORequest({
+            action  : action,
+            callback: callback,
+            entity  : entity,
+            headers : headers,
+            method  : method,
+            timeout : timeout,
+            url     : url
         });
     },
 
@@ -517,6 +505,86 @@ RESTSync.prototype = {
                 root + url + '/' :
                 root + '/' + url;
     },
+
+    /**
+    Performs the XHR and returns the resulting `Y.io()` request object.
+
+    This method is called by `sync()`.
+
+    @method _sendSyncIORequest
+    @param {Object} config An object with the following properties:
+      @param {String} action The `sync()` action being performed.
+      @param {Function} [callback] Called when the sync operation finishes.
+      @param {String} [entity] The HTTP request entity body.
+      @param {Object} headers The HTTP request headers.
+      @param {String} method The HTTP request method.
+      @param {Number} [timeout] Time until the HTTP request is aborted.
+      @param {String} url The URL of the HTTP resource.
+    @return {Object} The resulting `Y.io()` request object.
+    @protected
+    @since 3.6.0
+    **/
+    _sendSyncIORequest: function (config) {
+        return Y.io(config.url, {
+            'arguments': {
+                action  : config.action,
+                callback: config.callback,
+                url     : config.url
+            },
+
+            context: this,
+            data   : config.entity,
+            headers: config.headers,
+            method : config.method,
+            timeout: config.timeout,
+
+            on: {
+                start  : this._onSyncIOStart,
+                failure: this._onSyncIOFailure,
+                success: this._onSyncIOSuccess,
+                end    : this._onSyncIOEnd
+            }
+        });
+    },
+
+    /**
+    Utility which takes a tokenized `url` string and substitutes its
+    placeholders using a specified `data` object.
+
+    This method will property URL-encode any values before substituting them.
+    Also, only expect it to work with String and Number values.
+
+    @example
+        var url = this._substituteURL('/users/{name}', {id: 'Eric F'});
+        // => "/users/Eric%20F"
+
+    @method _substituteURL
+    @param {String} url Tokenized URL string to substitute placeholder values.
+    @param {Object} data Set of data to fill in the `url`'s placeholders.
+    @return {String} Substituted URL.
+    @protected
+    @since 3.6.0
+    **/
+    _substituteURL: function (url, data) {
+        if (!url) {
+            return '';
+        }
+
+        var values = {};
+
+        // Creates a hash of the string and number values only to be used to
+        // replace any placeholders in a tokenized `url`.
+        Y.Object.each(data, function (v, k) {
+            if (Lang.isString(v) || Lang.isNumber(v)) {
+                // URL-encode any string or number values.
+                values[k] = encodeURIComponent(v);
+            }
+        });
+
+        return Lang.sub(url, values);
+    },
+
+    // -- Event Handlers -------------------------------------------------------
 
     /**
     Called when the `Y.io` request has finished, after "success" or "failure"
@@ -600,44 +668,7 @@ RESTSync.prototype = {
     @protected
     @since 3.6.0
     **/
-    _onSyncIOStart: function (txId, details) {},
-
-    /**
-    Utility which takes a tokenized `url` string and substitutes its
-    placeholders using a specified `data` object.
-
-    This method will property URL-encode any values before substituting them.
-    Also, only expect it to work with String and Number values.
-
-    @example
-        var url = this._substituteURL('/users/{name}', {id: 'Eric F'});
-        // => "/users/Eric%20F"
-
-    @method _substituteURL
-    @param {String} url Tokenized URL string to substitute placeholder values.
-    @param {Object} data Set of data to fill in the `url`'s placeholders.
-    @return {String} Substituted URL.
-    @protected
-    @since 3.6.0
-    **/
-    _substituteURL: function (url, data) {
-        if (!url) {
-            return '';
-        }
-
-        var values = {};
-
-        // Creates a hash of the string and number values only to be used to
-        // replace any placeholders in a tokenized `url`.
-        Y.Object.each(data, function (v, k) {
-            if (Lang.isString(v) || Lang.isNumber(v)) {
-                // URL-encode any string or number values.
-                values[k] = encodeURIComponent(v);
-            }
-        });
-
-        return Lang.sub(url, values);
-    }
+    _onSyncIOStart: function (txId, details) {}
 };
 
 // -- Namespace ----------------------------------------------------------------
