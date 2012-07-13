@@ -6,12 +6,38 @@ YUI.add('scrollview-base-tests', function(Y) {
 
         name : 'Example Tests',
 
-        'test should pass' : function () {
-        	Y.Assert.pass();
+        'Flick should offset scrollview to the bottom' : function () {
+            var Test = this;
+
+            Y.one('#scrollview-content').simulateGesture('flick', {
+                distance: -1500,
+                axis: 'y'
+            });
+
+            Test.wait(function () {
+                var transform = Y.one('#scrollview-content').getStyle('transform'),
+                    offset = transform.split(',')[5].replace(')', '').trim();
+                    
+                if (offset == -1538 /*Chrome, Safari*/ || offset == -1569 /*FF*/) {
+                    Y.Assert.pass();
+                }
+                else {
+                    Y.Assert.fail();
+                }
+            }, 3000);
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+
+        name : 'Manual tests',
+
+        'More complex swipe gestures should behave correctly' : function () {
+        	Y.Assert.fail();
         }
 
     }));
 
     Y.Test.Runner.add(suite);
 
-}, '', {requires:[]});
+}, '', {requires:['node-event-simulate']});
