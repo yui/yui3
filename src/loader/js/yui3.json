@@ -1609,6 +1609,13 @@
             "model"
         ]
     },
+    "model-sync-rest": {
+        "requires": [
+            "model",
+            "io-base",
+            "json-stringify"
+        ]
+    },
     "node": {
         "use": [
             "node-base",

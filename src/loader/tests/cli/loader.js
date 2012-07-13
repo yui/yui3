@@ -1827,6 +1827,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
         },
+     "Testing gesture-simulate": function(data) {
+            var loader = new Y.Loader({
+                require: ["gesture-simulate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("gesture-simulate")) > -1, "Module (gesture-simulate) not found in sorted array");
+        },
      "Testing graphics": function(data) {
             var loader = new Y.Loader({
                 require: ["graphics"],
@@ -2195,6 +2205,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+        },
+     "Testing model-sync-rest": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-sync-rest"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-sync-rest")) > -1, "Module (model-sync-rest) not found in sorted array");
         },
      "Testing node": function(data) {
             var loader = new Y.Loader({
