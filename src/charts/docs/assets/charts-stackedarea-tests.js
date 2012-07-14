@@ -10,8 +10,9 @@ YUI.add('charts-stackedarea-tests', function(Y) {
         WINDOW = CONFIG.win,
         DOCUMENT = CONFIG.doc,
         isTouch = ((WINDOW && ("ontouchstart" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6)),
-        SHOWTOOLTIPEVENT = isTouch ? "touchend" : "mousemove",
-        HIDETOOLTIPEVENT = isTouch ? "touchend" : "mouseout",
+        isMouse = !isTouch,
+        SHOWTOOLTIPEVENT = isTouch ? "tap" : "mousemove",
+        HIDETOOLTIPEVENT = isTouch ? "tap" : "mouseout",
         TOTAL_MARKERS = 15,
         ONE = 1,
         IE = Y.UA.ie,
@@ -54,10 +55,11 @@ YUI.add('charts-stackedarea-tests', function(Y) {
             "Nov 01, 10",
             "Dec 01, 10"
         ],
-
+        
         _should: {
             ignore: {
-                testTooltip: IGNORETOOLTIPTEST 
+                testMouseEvents:  isTouch || IGNORETOOLTIPTEST,
+                testTouchEvents: isMouse || IGNORETOOLTIPTEST
             }
         },
         
@@ -69,7 +71,7 @@ YUI.add('charts-stackedarea-tests', function(Y) {
             Y.Assert.areEqual(ONE, contentBox.size(), "There should be one chart contentBox.");
         },
 
-        testTooltip: function()
+        testMouseEvents: function()
         {
             var overlays = Y.all(OVERLAY),
                 overlay,
@@ -114,9 +116,66 @@ YUI.add('charts-stackedarea-tests', function(Y) {
                 clientX:x + 10,
                 clientY:y
             });
+        },
+
+        testTouchEvents: function()
+        {
+            var overlays = Y.all(OVERLAY),
+                overlay = overlays.shift(),
+                result = null,
+                test = this,
+                timeout = 1000,
+                interval = 10,
+                x = 2,
+                y = 10,
+                eventNode = CHART_SERIESMARKER,
+                index = 0,
+                id,
+                lastDash,
+                contents,
+                node,
+                dataProvider = this.dataProvider,
+                len = dataProvider.length,
+                currentDate,
+                startDate = new Date(dataProvider[0].date).valueOf(),
+                range = new Date(dataProvider[len - 1].date).valueOf() - startDate;
+                wid = parseFloat(overlay.getComputedStyle("width"));
+                ht = parseFloat(overlay.getComputedStyle("height"));
+                multiple = Math.ceil(wid/len) + 1;
+                tooltip = Y.all(CHART_TOOLTIP).shift(),
+                condition = function() {
+                    return tooltip.getStyle("visibility") == "visible";
+                },
+                checkAndFireEvent = function()
+                {
+                    if(index < len)
+                    {
+                        item = dataProvider[index];
+                        currentDate = new Date(item.date).valueOf();
+                        index = index + 1;
+                        overlay.simulateGesture("tap", {
+                            point: [index > 0 ? x + ((currentDate - startDate) /range * wid) : x, y]
+                        }, function() {
+                           test.resume(function() {
+                                test.poll(condition, interval, timeout, success, failure);
+                            });
+                        }); 
+                        test.wait();        
+                    }
+
+                },
+                success = function() {
+                    contents = Y.Node.create("<div><div>" + this.getFormattedDate(index - 1) + "<br>miscellaneous: " + item.miscellaneous + 
+                        "<br>expenses: " + item.expenses + "<br>revenue: " + item.revenue + "</div></div>").get("innerHTML");
+                    Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
+                    checkAndFireEvent();
+                },
+                failure = function() {
+                    Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
+                };
+            checkAndFireEvent();
         }
     }));
-    
-    Y.Test.Runner.add(suite);
-}, '' ,{requires:['classnamemanager', 'node', 'node-event-simulate']});
 
+    Y.Test.Runner.add(suite);
+}, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});

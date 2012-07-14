@@ -9,8 +9,9 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
         WINDOW = CONFIG.win,
         DOCUMENT = CONFIG.doc,
         isTouch = ((WINDOW && ("ontouchstart" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6)),
-        SHOWTOOLTIPEVENT = isTouch ? "touchend" : "mouseover",
-        HIDETOOLTIPEVENT = isTouch ? "touchend" : "mouseout",
+        isMouse = !isTouch,
+        SHOWTOOLTIPEVENT = isTouch ? "tap" : "mouseover",
+        HIDETOOLTIPEVENT = isTouch ? "tap" : "mouseout",
         TOTAL_MARKERS = 8,
         ONE = 1;
 
@@ -28,6 +29,13 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
             "expenses",
             "revenue"
         ],
+        
+        _should: {
+            ignore: {
+                testMouseEvents:  isTouch,
+                testTouchEvents: isMouse
+            }
+        },
 
         testChartLoaded : function()
         {
@@ -43,7 +51,7 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
             Y.Assert.areEqual(TOTAL_MARKERS, seriesMarkers.size(), "There should be " + TOTAL_MARKERS + " markers.");
         },
 
-        testTooltip: function()
+        testMouseEvents: function()
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
@@ -80,9 +88,61 @@ YUI.add('charts-seriesupdate-tests', function(Y) {
                 Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
+        },
+
+        testTouchEvents: function()
+        {
+            var result = null,
+                test = this,
+                timeout = 1000,
+                interval = 10,
+                eventNode = CHART_SERIESMARKER,
+                index,
+                id,
+                item,
+                lastDash,
+                contents,
+                node,
+                seriesMarkers = Y.all(CHART_SERIESMARKER),
+                tooltip = Y.all(CHART_TOOLTIP).shift(),
+                condition = function() {
+                    return tooltip.getStyle("visibility") == "visible";
+                },
+                checkAndFireEvent = function(seriesMarkers)
+                {
+                    node = seriesMarkers.shift();
+                    if(node)
+                    {
+                        node.simulateGesture("tap", {
+                            point: [3, 3],
+                            duration: 0
+                        }, function() {
+                           test.resume(function() {
+                                test.poll(condition, interval, timeout, success, failure);
+                            });
+                        }); 
+                        test.wait();        
+                    }
+
+                },
+                success = function() {
+                    id = node.get("id");
+                    lastDash = id.lastIndexOf("_");
+                    index = id.substr(id.lastIndexOf("_") + 1);
+                    seriesIndex = id.charAt(lastDash - 1);
+                    seriesKey = this.seriesKeys[seriesIndex];
+                    item = this.dataProvider[index];
+                    contents = Y.Node.create("<div><div>category: " + item.category + "<br>" + seriesKey + ": " + item[seriesKey] + "</div></div>").get("innerHTML");
+                    Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
+                    checkAndFireEvent(seriesMarkers);
+                },
+                failure = function() {
+                    Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
+                };
+            checkAndFireEvent(seriesMarkers);
         }
     }));
 
     Y.Test.Runner.add(suite);
-}, '' ,{requires:['classnamemanager', 'node', 'event-simulate']});
+}, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});
 

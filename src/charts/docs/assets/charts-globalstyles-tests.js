@@ -10,8 +10,9 @@ YUI.add('charts-globalstyles-tests', function(Y) {
         WINDOW = CONFIG.win,
         DOCUMENT = CONFIG.doc,
         isTouch = ((WINDOW && ("ontouchstart" in WINDOW)) && !(Y.UA.chrome && Y.UA.chrome < 6)),
-        SHOWTOOLTIPEVENT = isTouch ? "touchend" : "mousemove",
-        HIDETOOLTIPEVENT = isTouch ? "touchend" : "mouseout",
+        isMouse = !isTouch,
+        SHOWTOOLTIPEVENT = isTouch ? "tap" : "mousemove",
+        HIDETOOLTIPEVENT = isTouch ? "tap" : "mouseout",
         TOTAL_MARKERS = 15,
         ONE = 1,
         IE = Y.UA.ie,
@@ -44,10 +45,11 @@ YUI.add('charts-globalstyles-tests', function(Y) {
         {
             return this.seriesDisplayNames[seriesKey];
         },
-
+        
         _should: {
             ignore: {
-                testTooltip: IGNORETOOLTIPTEST 
+                testMouseEvents:  isTouch || IGNORETOOLTIPTEST,
+                testTouchEvents: isMouse || IGNORETOOLTIPTEST
             }
         },
         
@@ -69,7 +71,7 @@ YUI.add('charts-globalstyles-tests', function(Y) {
             this._result = e;
         },
 
-        testTooltip: function()
+        testMouseEvents: function()
         {
             var result = null,
                 eventNode = CHART_SERIESMARKER,
@@ -118,6 +120,77 @@ YUI.add('charts-globalstyles-tests', function(Y) {
                 }
             }, this);
         },
+
+        testTouchEvents: function()
+        {
+            var result = null,
+                test = this,
+                timeout = 1000,
+                interval = 10,
+                eventNode = CHART_SERIESMARKER,
+                index,
+                id,
+                lastDash,
+                contents,
+                node,
+                xy,
+                nodeXY,
+                x,
+                y,
+                overlays = Y.all(OVERLAY),
+                overlay = overlays.shift(),
+                seriesMarkers = Y.all(CHART_SERIESMARKER),
+                tooltip = Y.all(CHART_TOOLTIP).shift(),
+                condition = function() {
+                    return tooltip.getStyle("visibility") == "visible";
+                },
+                checkAndFireEvent = function(seriesMarkers)
+                {
+                    node = seriesMarkers.shift();
+                    if(node)
+                    {
+                        id = node.get("id");
+                        lastDash = id.lastIndexOf("_");
+                        index = id.substr(lastDash + 1);
+                        seriesIndex = id.charAt(lastDash - 1);
+                        if(seriesIndex > 0)
+                        {
+                            checkAndFireEvent(seriesMarkers);
+                        }
+                        else
+                        {
+                            xy = overlay.getXY();
+                            nodeXY = node.getXY();
+                            x = nodeXY[0] - xy[0] + 3;
+                            y = nodeXY[1] - xy[1] + 3;
+                            overlay.simulateGesture("tap", {
+                                point: [x, y],
+                                duration: 0
+                            }, function() {
+                               test.resume(function() {
+                                    test.poll(condition, interval, timeout, success, failure);
+                                });
+                            }); 
+                            test.wait();        
+                        }
+                    }
+                },
+                success = function() {
+                    id = node.get("id");
+                    lastDash = id.lastIndexOf("_");
+                    index = id.substr(id.lastIndexOf("_") + 1);
+                    seriesIndex = id.charAt(lastDash - 1);
+                    seriesKey = this.seriesKeys[seriesIndex];
+                    item = this.dataProvider[index];
+                    contents = this.markerLabelFunction(seriesIndex, index);
+                    Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
+                    checkAndFireEvent(seriesMarkers);
+                },
+                failure = function() {
+                    Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
+                };
+            checkAndFireEvent(seriesMarkers);
+        },
         
         markerLabelFunction: function(seriesIndex, index)
         {
@@ -126,7 +199,6 @@ YUI.add('charts-globalstyles-tests', function(Y) {
                     "<br>expenses: " + item.expenses + "<br>domestic: " + item.domestic + "</div></div>").get("innerHTML");
         }
     }));
-    
-    Y.Test.Runner.add(suite);
-}, '' ,{requires:['classnamemanager', 'node', 'node-event-simulate']});
 
+    Y.Test.Runner.add(suite);
+}, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});
