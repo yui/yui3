@@ -892,7 +892,7 @@ Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
 ```
 
 <p>
-<strong>Note:</strong> String substitution of the `url` property will only happen for Model subclasses, and only string and number attribute values will be substituted. Do not expect something fancy to happen with Object, Array, or Boolean values, they will simply be ignored.
+<strong>Note:</strong> String subsitituion of the `url` only use string an number values provided by this object's attribute and/or the `options` passed to the `getURL()` method. Do not expect something fancy to happen with Object, Array, or Boolean values, they will simply be ignored.
 </p>
 
 <p>

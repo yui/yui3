@@ -1,6 +1,5 @@
 YUI.add('gesture-simulate', function(Y) {
 
-(function() {
 /**
  * Simulate high-level user gestures by generating a set of native DOM events.
  *
@@ -8,7 +7,9 @@ YUI.add('gesture-simulate', function(Y) {
  * @requires event-simulate, async-queue, node-screen
  */
 
-var gestureNames = {
+var NAME = "gesture-simulate",
+
+    gestureNames = {
         tap: 1,
         doubletap: 1,
         press: 1,
@@ -1055,19 +1056,17 @@ Y.GestureSimulation.GESTURES = gestureNames;
  * @static
  */
 Y.Event.simulateGesture = function(node, name, options, cb) {
-    
-    if(node instanceof HTMLElement) {
-        node = Y.Node.one(node);
-    }
+
+    node = Y.one(node);    
 
     var sim = new Y.GestureSimulation(node);
     name = name.toLowerCase();
-    
+
     if(!cb && Y.Lang.isFunction(options)) {
         cb = options;
         options = {};
     }
-    
+
     options = options || {};
 
     if (gestureNames[name]) {
@@ -1113,8 +1112,6 @@ Y.Event.simulateGesture = function(node, name, options, cb) {
         Y.error(NAME+': Not a supported gesture simulation: '+name);
     }
 };
-
-})();
 
 
 }, '@VERSION@' ,{requires:['event-simulate', 'async-queue', 'node-screen']});
