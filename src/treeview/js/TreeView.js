@@ -272,7 +272,7 @@ Example usage:
         * Collapses a tree.
         * @param target {Y.Node} An optional parameter specifying the target that triggered the event.
         * @method collapse
-        * @protected
+        * @chainable
         */ 
         collapse : function (target) {
             var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
@@ -283,14 +283,14 @@ Example usage:
                 treeNode.addClass(classNames.collapsed);
                 treeNode.setAttrs({'aria-collapsed': true });
             }
-            
+            return this;
         },
         
        /**
         * Expands a tree. If the tree hasn't been rendered yet, it will be rendered, then expanded. 
         * @param target{Y.Node} An optional parameter specifying the target that triggered the event.
         * @method expand
-        * @protected
+        * @chainable
         */ 
         expand : function (target) {
             var treeNode = target ? target.ancestor('.'+ classNames.treeviewcontent) : this.get("contentBox"),
@@ -307,7 +307,8 @@ Example usage:
                 treeWidget.set("collapsed", false); 
                 treeNode.removeClass(classNames.collapsed);
                 treeNode.setAttrs({'aria-collapsed': false });
-            }        
+            }
+            return this;
         },
         
        /**
