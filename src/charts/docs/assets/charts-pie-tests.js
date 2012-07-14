@@ -56,8 +56,10 @@ YUI.add('charts-pie-tests', function(Y) {
 
         testSeriesMarkerLoaded : function()
         {
-            var seriesMarkers = Y.all(CHART_SERIESMARKER);
-            Y.Assert.areEqual(TOTAL_MARKERS, seriesMarkers.size(), "There should be " + TOTAL_MARKERS + " markers.");
+            var seriesMarkers = Y.all(CHART_SERIESMARKER),
+                imageMaps = seriesMarkers.filter('area'),
+                markers = seriesMarkers.size() - imageMaps.size();
+            Y.Assert.areEqual(TOTAL_MARKERS, markers, "There should be " + TOTAL_MARKERS + " markers.");
         },
 
         testMouseEvents: function()

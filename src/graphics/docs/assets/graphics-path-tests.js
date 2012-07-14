@@ -1,7 +1,8 @@
-YUI.add('graphics-simple-tests', function(Y) {
-    var suite = new Y.Test.Suite('graphics-simple-tests example test suite'),
+YUI.add('graphics-path-tests', function(Y) {
+    var suite = new Y.Test.Suite('graphics-path-tests example test suite'),
         _getClassName = Y.ClassNameManager.getClassName,
         SHAPE,
+        PATH,
         ENGINE = "vml",
         DOCUMENT = Y.config.doc,
         canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
@@ -9,7 +10,7 @@ YUI.add('graphics-simple-tests', function(Y) {
         svgTests,
         canvasTests,
         vmlTests,
-        ELLIPSENODE = "oval",
+        PATHNODE = "shape",
         TORGB = Y.Color.toRGB,
         TOHEX = Y.Color.toHex,
         toRGBA = function(val, alpha) {
@@ -32,15 +33,15 @@ YUI.add('graphics-simple-tests', function(Y) {
     if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
     {
         ENGINE = "svg";
-        ELLIPSENODE = ENGINE + ":" + "ellipse";
+        PATHNODE = ENGINE + ":" + "path";
     }
     else if(canvas && canvas.getContext && canvas.getContext("2d"))
     {
         ENGINE = "canvas";
-        ELLIPSENODE = ENGINE;
+        PATHNODE = ENGINE;
     }
     SHAPE = "." + _getClassName(ENGINE + "Shape");
-    ELLIPSE = "." + _getClassName(ENGINE + "Ellipse");
+    PATH = "." + _getClassName(ENGINE + "Path");
    
     IMPLEMENTATION = {
         svg: {
@@ -233,34 +234,36 @@ YUI.add('graphics-simple-tests', function(Y) {
     Y.ShapeNode = ShapeNode;
 
     suite.add(new Y.Test.Case({
-        name: "Graphics Simple Tests",
+        name: "Graphics Path Tests",
 
         testGraphicsLoaded : function()
         {
             var shapes = Y.all(SHAPE),
-                ellipses = Y.all(ELLIPSE),
-                shape = shapes.shift(),
-                ellipse = ellipses.shift(),
-                fillColor = "#9aa",
-                strokeColor = "#000",
-                strokeWeight = 2,
-                fillOpacity = 1,
-                strokeOpacity = 1,
-                width = 150,
-                height = 100,
-                node = Y.ShapeNode.one(shape),
-                fill = node.getFill(),
-                stroke = node.getStroke(),
-                dimensions = node.getDimensions("ellipse");
+                paths = Y.all(PATH);
+            Y.Assert.areEqual(3, shapes.size(), "There should be 3 shapes.");
+            Y.Assert.areEqual(3, paths.size(), "There should be 3 path instances.");
+        },
 
-            fillColor = toRGBA(TOHEX(fillColor), fillOpacity);
-            strokeColor = toRGBA(TOHEX(strokeColor), strokeOpacity);
-            Y.Assert.areEqual(shape, ellipse, "Both instances should be the same shape.");
-            Y.Assert.areEqual(fillColor, fill.color, "The fill color should be " + fillColor + ".");
-            Y.Assert.areEqual(strokeColor, stroke.color, "The stroke color should be " + strokeColor + ".");
-            Y.Assert.areEqual(strokeWeight, stroke.weight, "The stroke weight should be " + strokeWeight + ".");
-            Y.Assert.areEqual(width, dimensions.width, "The width of the shape should be " + width + ".");
-            Y.Assert.areEqual(height, dimensions.height, "The height of the shape should be " + height + ".");
+        testShapes: function()
+        {
+            var diamond1 = Y.one("#diamond1"),
+                diamond2 = Y.one("#diamond2"),
+                connector = Y.one("#connector");
+                diamondFillColor = toRGBA(TOHEX("#f00")),
+                strokeColor = toRGBA(TOHEX("#000")),
+                strokeWeight = 1,
+                diamond1Fill = Y.ShapeNode.one(diamond1).getFill(),
+                diamond1Stroke = Y.ShapeNode.one(diamond1).getStroke(),
+                diamond2Fill = Y.ShapeNode.one(diamond2).getFill(),
+                diamond2Stroke = Y.ShapeNode.one(diamond2).getStroke();
+                connectorStroke = Y.ShapeNode.one(connector).getStroke();
+            Y.Assert.areEqual(diamondFillColor, diamond1Fill.color, "The fill color should be " + diamondFillColor + ".");
+            Y.Assert.areEqual(diamondFillColor, diamond2Fill.color, "The fill color should be " + diamondFillColor + ".");
+            Y.Assert.areEqual(strokeColor, diamond1Stroke.color, "The stroke color should be " + strokeColor + ".");
+            Y.Assert.areEqual(strokeColor, diamond2Stroke.color, "The stroke color should be " + strokeColor + ".");
+            Y.Assert.areEqual(strokeColor, connectorStroke.color, "The stroke color should be " + strokeColor + ".");
+            Y.Assert.areEqual(strokeWeight, diamond1Stroke.weight, "The stroke weight should be " + strokeWeight + ".");
+            Y.Assert.areEqual(strokeWeight, diamond2Stroke.weight, "The stroke weight should be " + strokeWeight + ".");
         }
     }));
 
