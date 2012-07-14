@@ -51,28 +51,31 @@ YUI({
             // Setup and teardown of test harnesses
             //---------------------------------------------------------------------
             setUp : function() /*:Void*/{
+
+                var touchable = Y.one("#touchable");
                 
                 //reset the result
                 this.result = [];
-                
+
                 Y.each(events, Y.bind(function(one) {
-                    // Y.one("#touchable").on(one, function(e) {});
-                    document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
+                    touchable.on(one, Y.bind(function(e) {
                         e.preventDefault();
                         e = e || window.event;
                         e.timestamp = new Date().getTime();
                         this.result.push(e);
                         //console.log("Event Type: "+e.type);
-                    }, this); 
+                    }, this)); 
                 }, this));
             },
-            
+
             /*
              * Removes event handlers that were used during the test.
              */
             tearDown : function() /*:Void*/{
+                var touchable = Y.one("#touchable");
+
                 Y.each(events, function(one) {
-                    document.getElementById("touchable")['on'+one]= null; 
+                    touchable.detach(one);
                 });
             }
         });
