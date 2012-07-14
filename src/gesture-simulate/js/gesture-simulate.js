@@ -84,8 +84,11 @@ function Simulations(node) {
     this.node = node;
     this.target = Y.Node.getDOMNode(node);
 
-    START_PAGEX = this.node.getX() + this.target.getBoundingClientRect().width/2;
-    START_PAGEY = this.node.getY() + this.target.getBoundingClientRect().height/2;
+    var startXY = this.node.getXY(),
+        dims = this._getDims();
+
+    START_PAGEX = startXY[0] + (dims[0])/2;
+    START_PAGEY = startXY[1] + (dims[1])/2;
 }
 
 Simulations.prototype = {
@@ -103,6 +106,46 @@ Simulations.prototype = {
     },
 
     /**
+     * Helper method to get height/width while accounting for 
+     * rotation/scale transforms where possible by using the 
+     * bounding client rectangle height/width instead of the 
+     * offsetWidth/Height which region uses.
+     * @method _getDims
+     * @private
+     * @return {Array} Array with [height, width]
+     */
+    _getDims : function() {
+        var region,
+            width,
+            height;
+
+        // Ideally, this should be in DOM somewhere.
+        if (this.target.getBoundingClientRect) {
+            region = this.target.getBoundingClientRect();
+
+            if ("height" in region) {
+                height = region.height;
+            } else {
+                // IE7,8 has getBCR, but no height.
+                height = Math.abs(region.bottom - region.top);
+            }
+
+            if ("width" in region) {
+                width = region.width;
+            } else {
+                // IE7,8 has getBCR, but no width.
+                width = Math.abs(region.right - region.left);
+            }
+        } else {
+            region = this.node.get("region");
+            width = region.width;
+            height = region.height;
+        }
+
+        return [width, height];
+    },
+
+    /**
      * Helper method to convert a point relative to the node element into 
      * the point in the page coordination.
      * 
@@ -113,11 +156,14 @@ Simulations.prototype = {
      */
     _calculateDefaultPoint: function(point) {
 
+        var height;
+
         if(!Y.Lang.isArray(point) || point.length === 0) {
             point = [START_PAGEX, START_PAGEY];
         } else {
             if(point.length == 1) {
-                point[1] = this.target.getBoundingClientRect().height/2;
+                height = this._getDims[1];
+                point[1] = height/2;
             }
             // convert to page(viewport) coordination
             point[0] = this.node.getX() + point[0];
