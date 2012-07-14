@@ -100,7 +100,10 @@ Example usage:
                 
                 this.BOUNDING_TEMPLATE = isBranch ? '<li id="{{{id}}}" role="presentation" class="{{{boundingClasses}}}">{{{contentBox}}}</li>' : '<ul id="{{{id}}}" role="tree" class="{{{boundingClasses}}}">{{{contentBox}}}</ul>';
                 this.CONTENT_TEMPLATE = isBranch ? '<ul id="{{id}}" role="group" class="{{{contentClasses}}}">{{{content}}}</ul>' : null;
-                labelContent = Y.Handlebars.render(this.TREEVIEWLABEL_TEMPLATE, {label:label, treelabelClassName : treelabelClassName, labelcontentClassName : labelcontentClassName});
+                labelContent = Y.Handlebars.render(
+                    this.TREEVIEWLABEL_TEMPLATE,
+                    Y.merge(this.get("data"), {label:label, treelabelClassName : treelabelClassName, labelcontentClassName : labelcontentClassName})
+                );
                 contentBuffer.push(labelContent);
         },
         
@@ -447,6 +450,14 @@ Example usage:
             label : {
                 value:""
             },
+
+            /**
+             * List of extra handlebar data
+             *
+             * @attribute data
+             * @type Object
+             */
+            data : {},
             
             /**
              * Flag to indicate if a tree has been rendered to the DOM or not.
