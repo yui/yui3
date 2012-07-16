@@ -36,7 +36,7 @@ YUI().use("node", "datatype-number", "cache-base" ,function (Y) {
     
     Y.on("click", function(e){
         cache.set("max", Y.DataType.Number.parse(Y.one("#demo_max").get("value")));
-        ("Cache max set to " + cache.get("max") + ".");
+        out.setHTML("Cache max set to " + cache.get("max") + ".");
     }, "#demo_setMax");
     
     Y.on("click", function(e){
