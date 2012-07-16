@@ -49,7 +49,7 @@ YUI.add('ac-geocode-tests', function(Y) {
                     // For example:
                     // return Y.one("#waitForMe") !== null
                 },
-            success = function() {       //yui3-aclist-item-active
+            success = function() {
                 var listItems = list.all('li');
 
                 listItems.item(2).simulate('click');
