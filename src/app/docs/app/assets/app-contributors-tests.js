@@ -24,7 +24,7 @@ suite.add(new Y.Test.Case({
                 Assert.areSame('/', HistoryHash.getHash(), 'URL hash was not updated to "/".');
                 Assert.isTrue(activeView.hasClass('home-page'), 'HomePageView is not currently active.');
             }, 500);
-        }, 3000);
+        }, 5000);
     },
 
     'Setting the username should nativate the app to their repos list': function () {
@@ -40,7 +40,7 @@ suite.add(new Y.Test.Case({
 
             Assert.areSame('/github/yui/', HistoryHash.getHash(), 'URL hash was not updated.');
             Assert.isTrue(activeView.hasClass('user-page'), 'UserPageView is not currently active.');
-        }, 3000);
+        }, 5000);
     },
 
     'Browser back/forward buttons should work normally': function () {
@@ -84,7 +84,7 @@ suite.add(new Y.Test.Case({
 
             Assert.areSame(Y.getLocation().toString(), repoPageURL, 'URL was not updated.');
             Assert.isTrue(activeView.hasClass('repo-page'), 'RepoPageView is not currently active.');
-        }, 3000);
+        }, 5000);
     },
 
     'Clicking a listed contributor should navigate to the app to their repos list': function () {
@@ -103,7 +103,7 @@ suite.add(new Y.Test.Case({
 
             Assert.areSame(Y.getLocation().toString(), userPageURL, 'URL was not updated.');
             Assert.isTrue(activeView.hasClass('user-page'), 'UserPageView is not currently active.');
-        }, 3000);
+        }, 7500);
     },
 
     'Clicking the "Choose Someone Different" link should take you back to input a username': function () {
