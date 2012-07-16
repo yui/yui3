@@ -35,6 +35,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
             this._overlay = Y.one(overlay); 
+            this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);

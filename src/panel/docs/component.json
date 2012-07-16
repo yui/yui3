@@ -15,6 +15,7 @@
             "modules"    : ["panel", "datatable"],
             "tags"       : ["panel", "datatable"],
 
+            "newWindow"          : true,
             "hideTableOfContents": true
         },
         {
@@ -24,6 +25,7 @@
             "modules"    : ["panel", "transition"],
             "tags"       : ["panel", "transition"],
 
+            "newWindow"          : true,
             "hideTableOfContents": true
         },
         {
@@ -39,11 +41,13 @@
 
     "pages": {
         "panel-form-example": {
+            "name"       : "panel-form",
             "displayName": "Using a panel to show a modal form",
             "layout"     : "panel-example"
         },
 
         "panel-animate-example": {
+            "name"       : "panel-animate",
             "displayName": "Creating an animated panel using transitions",
             "layout"     : "panel-example"
         }
