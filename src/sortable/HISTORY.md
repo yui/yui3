@@ -1,6 +1,13 @@
 Sortable Utility Change History
 ===============================
 
+3.6.0
+-----
+
+* 2531908 Sortable utility - can't drop on empty container space
+* 2531909 Sortable - JS error when drug between two full join lists after manual nodes manipulation
+
+
 3.5.1
 -----
 
