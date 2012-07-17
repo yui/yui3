@@ -1,6 +1,23 @@
 YUI Loader Change History
 =========================
 
+3.6.0
+-----
+
+* 2531640 Configuring the loader for modules that ship with only the root bundle.
+* 2532070 Loader may calculate incorrect css file paths for different skins
+* 2532076 Combo Loader broken in 3.5.0pr4
+* 2532089 Allow for cascading module requirements
+* 2532168 YUI config does not properly override skins
+* 2532173 loader docs specify incorrect maxlengthurl
+* 2532236 Performance problems on YUI().use  on FF3.6 and IE8
+* 2532370 Loader loads language files for custom modules from YUI CDN
+* 2532385 loader.calculate({ignoreRegistered:true}) still pulls in dependencies from a previous run of loader....
+* 2532423 Skin override loads 2 stylesheets: sam and the custom one
+* 2532498 Loader does not always use of configFn
+* 2532268 Intl.get doesn't load language modules for non-yui modules defined in a group with configFn
+
+
 3.5.1
 -----
 
