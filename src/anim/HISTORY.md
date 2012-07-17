@@ -1,10 +1,14 @@
 Anim Change History
 ===================
 
+3.6.0
+-----
+  * Allow for pass through to object properties for arbitrary animation.
+
 3.5.1
 -----
 
-* No changes.
+  * No changes.
 
 3.5.0
 -----

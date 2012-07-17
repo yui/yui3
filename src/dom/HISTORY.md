@@ -1,6 +1,11 @@
 DOM Change History
 ==================
 
+3.6.0
+-----
+
+  * No changes.
+
 3.5.1
 -----
   * Bug fix: Fix multiple grouped queries for IE. [Ticket 2532155]
