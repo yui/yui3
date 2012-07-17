@@ -10,9 +10,21 @@ var dirs = fs.readdirSync(base);
 
 var examples = [];
 
+var ignore = function(json) {
+    
+    if (json.name === 'test' || json.name.indexOf('-deprecated') > 0) {
+        return true;
+    }
+
+    return false;
+};
+
 var parseJSON = function(file) {
     var json = JSON.parse(fs.readFileSync(file, 'utf8'));
     var windows = {};
+    if (ignore(json)) {
+        return;
+    }
     if (json && json.examples) {
         var name = json.name;
         json.examples.forEach(function(c) {
