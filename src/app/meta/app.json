@@ -67,7 +67,6 @@
             "model-sync-local": {
                 "requires": [
                     "model",
-                    "model-list",
                     "json-stringify"
                 ]
             },

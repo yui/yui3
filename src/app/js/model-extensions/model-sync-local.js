@@ -16,11 +16,11 @@ onto an in-memory cache, that can be mixed into a Model or ModelList subclass.
 A group of Models/ModelLists is serialized in localStorage by either its 
 class name, or a specified 'root' that is provided. 
 
-    var User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
+    var User = Y.Base.create('user', Y.Model, [Y.ModelSync.Local], {
         root: 'user'
     });
 
-    var Users = Y.Base.create('users', Y.ModelList, [Y.ModelSync.REST], {
+    var Users = Y.Base.create('users', Y.ModelList, [Y.ModelSync.Local], {
         model: User,
         root  : 'user'
     });
