@@ -1,6 +1,13 @@
 YQL Change History
 ==================
 
+3.6.0
+-----
+
+* 2529620 Would like to see a context property in the YQL module
+* 2530225 Allow use of failure callback for YQL module
+
+
 3.5.1
 -----
 
