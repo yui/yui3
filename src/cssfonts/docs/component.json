@@ -44,16 +44,19 @@
 
     "pages": {
         "cssfonts-basic-example": {
+            "name"       : "cssfonts-basic",
             "displayName": "CSS Fonts Page Example",
             "layout"     : "cssfonts-basic-example"
         },
 
         "cssfonts-context-example": {
+            "name"       : "cssfonts-context",
             "displayName": "CSS Fonts Contextual Example",
             "layout"     : "cssfonts-context-example"
         },
 
         "cssfonts-size-example": {
+            "name"       : "cssfonts-size",
             "displayName": "CSS Fonts Sizing Example",
             "layout"     : "cssfonts-size-example"
         }

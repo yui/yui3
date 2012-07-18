@@ -182,7 +182,7 @@ Y.ShapeGroup = ShapeGroup;
  * Abstract class for creating groups of circles with the same styles and dimensions.
  *
  * @module graphics
- * @class GroupCircle
+ * @class CircleGroup
  * @constructor
  */
  CircleGroup = function(cfg)
