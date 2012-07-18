@@ -4,11 +4,8 @@
         <title>scrollview-base unit tests</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
 
-        <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
-        -->
-        <script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
-        
         <style>
         	.horizontal {
                 width:300px;
@@ -54,62 +51,26 @@
 			
 	        var testBasic = new Y.Test.Case({
 	            name: "API Tests",
-				
-				hConfig01: {
-					scrollview: {
-		                srcNode : '#myHScrollview',
-		                width: "300px"
-		                //height: "100px"
-					}
-				},
-
-				vConfig01: {
-					scrollview: {
-		                srcNode : '#myVScrollview',
-		                //width: "300px",
-		                height: "100px"
-					}
-				},
 
 			    //---------------------------------------------
 			    // Setup and tear down
 			    //---------------------------------------------
 
 	            setUp : function () {
-	            	console.log('setUp');
-
-	                var hID = Y.guid(),
-	                	vID = Y.guid(),
-	                	horizontalHTML = "<div id='"+ hID +"' class='horizontal'><div id='myHScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
-	                	verticalHTML = "<div id='"+ vID +"' class='vertical'><div id='myVScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>";
-
-	                Y.one('#container').append(horizontalHTML);
-	                Y.one('#container').append(verticalHTML);
-
-					this.hScrollview = new Y.ScrollView({
-		                srcNode : '#' + hID + " div",
-		                width: "300px"
-					}).render();
-
-					this.vScrollview = new Y.ScrollView({
-		                srcNode : '#' + vID + " div",
-		                height: "100px"
-					}).render();
-
+	            	// console.log('setUp');
 	            },
 
 	            tearDown : function () {
-	            	this.hScrollview.destroy();
-	            	this.vScrollview.destroy();
-	            },
+	            	// console.log('tearDown');
+	            	Y.one('#container').empty(true);
+                },
 			
 				// ---------------------------------------------
 				// Instantiation
 				// ---------------------------------------------
 
-				// Ensure rendering & initial state are correct
-				test1: function() {
-					var scrollview = this.hScrollview,
+				"Ensure rendering & initial state are correct": function() {
+					var scrollview = renderNewScrollview(false),
 						bb = scrollview.get('boundingBox'),
 						cb = scrollview.get('contentBox'),
 						id = cb.get('id'),
@@ -132,9 +93,8 @@
 					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 				},
 
-				// Ensure set('scrollX') works properly
-				test2: function() {
-					var scrollview = this.hScrollview,
+				"Ensure set('scrollX') works properly": function() {
+					var scrollview = renderNewScrollview(false),
 						distance = 20,
 						maxX = scrollview._maxScrollX;
 
@@ -147,9 +107,8 @@
 					//Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix
 				},
 
-				// Ensure scrolling outside the range isn't allowed
-				test3: function() {
-					var scrollview = this.hScrollview,
+				"Ensure scrolling outside the range isn't allowed": function() {
+					var scrollview = renderNewScrollview(false),
 						maxX = scrollview._maxScrollX;
 
 					// Assume it starts @ 0
@@ -162,26 +121,83 @@
 					// Y.Assert.areEqual(maxX, scrollview.get('scrollX')); // @TODO: fix
 				},
 
-				// ensure the 'scrollEnd' event fires
-				test4: function() {
+				"Ensure the 'scrollEnd' event fires": function() {
 					var Test = this,
-						scrollview = Test.hScrollview,
-						maxX = scrollview._maxScrollX,
-						distance = 20,
+						scrollview = renderNewScrollview(false),
+						distance = scrollview._maxScrollX,
 						eventsFired = 0;
 
 					// Ensure scrollEnd fires
 					scrollview.on('scrollEnd', function(){
 						eventsFired++;
 						Test.resume(function(){
-							Y.Assert.areEqual(maxX, scrollview.get('scrollX'));
+							Y.Assert.areEqual(distance, scrollview.get('scrollX'));
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
 							Y.Assert.areEqual(1, eventsFired);
 						})
 					});
-					scrollview.scrollTo(maxX, 0, 1); // args = x, y, duration, easing
+
+					scrollview.scrollTo(distance, 0, 1); // args = x, y, duration, easing
 					Test.wait();
 				}
+
+     //            "Flick x provides the correct reaction": function() {
+     //                var Test = this,
+					// 	scrollview = renderNewScrollview(false);
+
+     //                scrollview.on('scrollEnd', function(){
+					// 	Test.resume(function(){
+					// 		Y.Assert.areEqual(scrollview._maxScrollX, scrollview.get('scrollX'));
+					// 		Y.Assert.areEqual(0, scrollview.get('scrollY'));
+					// 	})
+					// });
+
+     //                scrollview.get('contentBox').simulateGesture('flick', {
+     //                    distance: -3000,
+     //                    axis: 'x'
+     //                });
+
+     //                Test.wait();
+     //            },
+
+     //            "Flick y provides the correct reaction": function() {
+     //                var Test = this,
+					// 	scrollview = renderNewScrollview(true);
+
+     //                scrollview.on('scrollEnd', function(){
+					// 	Test.resume(function(){
+					// 		Y.Assert.areEqual(scrollview._maxScrollY, scrollview.get('scrollY'));
+					// 		Y.Assert.areEqual(0, scrollview.get('scrollX'));
+					// 	})
+					// });
+
+     //                scrollview.get('contentBox').simulateGesture('flick', {
+     //                    distance: -3000,
+     //                    axis: 'y'
+     //                });
+
+     //                Test.wait();
+     //            },
+
+      //           "Drag event provides the correct reaction": function() {
+      //               var Test = this,
+						// scrollview = renderNewScrollview(false);
+
+
+      //               scrollview.get('contentBox').simulateGesture('move', {
+      //                   axis: 'x',
+      //                   distance: -30,
+      //               });
+      //               Y.Assert.isTrue(true, "is true");
+      //           },
+
+      //           "Mousewheel event provides the correct reaction": function() {
+      //               var Test = this,
+      //                   scrollview = renderNewScrollview(true);
+
+      //               scrollview.get('contentBox').simulate('mousewheel');
+      //               Y.Assert.isTrue(true, "is true");
+      //           }
 
 				// Additional tests
 				// Don't scroll Y if a X axis
@@ -189,12 +205,40 @@
 
 	        });
 
-	        var suite = new Y.Test.Suite({name:"scrollview-base test suite"});
+	        var suite = new Y.Test.Suite({name:"Scrollview Base Test Suite"});
 	        suite.add(testBasic);
 
 	        Y.Test.Runner.setName("Scrollview Test Runner");
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
+
+			function renderNewScrollview (vertical) {
+
+				var config = {},
+					guid = Y.guid(),
+					html,
+					scrollview,
+					widgetClass;
+					            
+	            config.srcNode = '#' + guid;
+
+	            if (vertical) {
+	            	config.height = "100px";
+	            	widgetClass = 'vertical';
+	            }
+	            else {
+	            	config.width = "300px";
+	            	widgetClass = 'horizontal';
+	            }
+
+				html = "<div class='" + widgetClass + "'><div id='" + guid + "'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
+	            Y.one('#container').append(html);
+
+				scrollview = new Y.ScrollView(config);
+				scrollview.render();
+
+				return scrollview;
+			}
 
         });
         </script>

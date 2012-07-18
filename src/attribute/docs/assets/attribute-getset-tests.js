@@ -14,12 +14,6 @@ YUI.add('attribute-getset-tests', function(Y) {
 
         color : Y.one("#color"),
 
-        setX : Y.one("#setX button[type=submit]"),
-
-        setY : Y.one("#setY button[type=submit]"),
-
-        setColor : Y.one("#setColor button[type=submit]"),
-
         setXY : Y.one("#setXY"),
 
         setAll : Y.one("#setAll"),
@@ -30,13 +24,33 @@ YUI.add('attribute-getset-tests', function(Y) {
 
         box : Y.one("#boxParent .yui3-box"),
 
+        xForm : Y.one("#setX"),
+
+        yForm : Y.one("#setY"),
+
+        colorForm : Y.one("#setColor"),
+
+        clickFormSubmit : function(form) {
+
+            // In non-IE browsers, clicking the submit will peform the default action,
+            // of submitting the form. In IE, we need to do both
+            form.one("button[type=submit]").simulate("click");
+
+            if (Y.UA.ie && Y.UA.ie < 9) {
+                form.simulate("submit");
+            }
+        },
+
         getBounds : function() {
 
-            var parentRegion = this.container.get("region");
+            var parentRegion = this.container.get("region"),
+                boxRegion = this.box.get("region"),
+                boxWidth = boxRegion.right - boxRegion.left,
+                boxHeight = boxRegion.bottom - boxRegion.top;
 
             return [
-                [Math.round(parentRegion.left + this.BUFFER), Math.round(parentRegion.right - this.box.get("offsetWidth") - this.BUFFER)],
-                [Math.round(parentRegion.top + this.BUFFER), Math.round(parentRegion.bottom - this.box.get("offsetHeight") - this.BUFFER)]
+                [Math.ceil(parentRegion.left + this.BUFFER), Math.floor(parentRegion.right - boxWidth - this.BUFFER)],
+                [Math.ceil(parentRegion.top + this.BUFFER), Math.floor(parentRegion.bottom - boxHeight - this.BUFFER)]
             ];
 
         },
@@ -46,116 +60,131 @@ YUI.add('attribute-getset-tests', function(Y) {
             return Math.floor(min + (Math.random() * range));
         },
 
+        assertPixelsAreEqual : function(posExpected, posActual, msg) {
+            Y.Assert.areEqual(posExpected, posActual, msg);
+        },
+
         'Initial State' : function() {
-            var boxRegion = this.box.get("region");
-            var containerRegion = this.container.get("region");
+            var boxRegion = this.box.get("region"),
+                containerRegion = this.container.get("region"),
 
-            Y.Assert.areEqual(this.BUFFER, boxRegion.top - containerRegion.top, "Box top not aligned");
-            Y.Assert.areEqual(this.BUFFER, boxRegion.left - containerRegion.left, "Box left not aligned");
+                originalTop = boxRegion.top - containerRegion.top,
+                originalLeft = boxRegion.left - containerRegion.left;
 
-            Y.Assert.areEqual(boxRegion.left, parseInt(this.x.get("value"), 10));
-            Y.Assert.areEqual(boxRegion.top, parseInt(this.y.get("value"), 10));
+            this.assertPixelsAreEqual(this.BUFFER, originalTop, "Box top not aligned");
+            this.assertPixelsAreEqual(this.BUFFER, originalLeft, "Box left not aligned");
+
+            Y.Assert.areEqual(Math.ceil(boxRegion.left), parseInt(this.x.get("value"), 10)); // ceil, to account for sub-pixel logic in constraints
+            Y.Assert.areEqual(Math.ceil(boxRegion.top), parseInt(this.y.get("value"), 10)); // ceil, to account for sub-pixel logic in constraints
+
             Y.Assert.areEqual("#808000", this.color.get("value"));
         },
 
         'set X in bounds' : function() {
-            var xy = this.getBounds();
-            var xValue = this.random(xy[0][0], xy[0][1]);
+            var xy = this.getBounds(),
+                region,
+                xValue = this.random(xy[0][0], xy[0][1]);
 
             this.x.set("value", xValue);
-            this.setX.simulate("click");
 
-            var region = this.box.get("region");
+            this.clickFormSubmit(this.xForm);
 
-            Y.Assert.areEqual(xValue, region.left);
+            region = this.box.get("region");
+
+            this.assertPixelsAreEqual(xValue, region.left);
         },
 
         'set X out of bounds' : function() {
-            var xy = this.getBounds();
-            var xValue = xy[0][1] + this.random(10, 2000); // some random range above the max
+            var xy = this.getBounds(),
+                region,
+                xValue = xy[0][1] + this.random(10, 2000); // some random range above the max
 
             this.x.set("value", xValue);
-            this.setX.simulate("click");
 
-            var region = this.box.get("region");
+            this.clickFormSubmit(this.xForm);
 
-            Y.Assert.areEqual(region.left, xy[0][1]);
+            region = this.box.get("region");
+
+            this.assertPixelsAreEqual(region.left, xy[0][1]);
 
             xValue = xy[0][0] - this.random(10, 2000); // some random range below the min
 
             this.x.set("value", xValue);
-            this.setX.simulate("click");
+            this.clickFormSubmit(this.xForm);
 
             region = this.box.get("region");
 
-            Y.Assert.areEqual(region.left, xy[0][0]);
+            this.assertPixelsAreEqual(region.left, xy[0][0]);
         },
 
         'set Y in bounds' : function() {
-            var xy = this.getBounds();
-            var yValue = this.random(xy[1][0], xy[1][1]);
+            var xy = this.getBounds(),
+                region,
+                yValue = this.random(xy[1][0], xy[1][1]);
 
             this.y.set("value", yValue);
-            this.setY.simulate("click");
+            this.clickFormSubmit(this.yForm);
 
-            var region = this.box.get("region");
+            region = this.box.get("region");
 
-            Y.Assert.areEqual(yValue, region.top);
+            this.assertPixelsAreEqual(yValue, region.top);
         },
 
         'set Y out of bounds' : function() {
-            var xy = this.getBounds();
-            var yValue = xy[1][1] + this.random(10, 2000);
+
+            var xy = this.getBounds(),
+                region,
+                yValue = xy[1][1] + this.random(10, 2000);
 
             this.y.set("value", yValue);
-            this.setY.simulate("click");
+            this.clickFormSubmit(this.yForm);
 
-            var region = this.box.get("region");
+            region = this.box.get("region");
 
-            Y.Assert.areEqual(region.top, xy[1][1]);
+            this.assertPixelsAreEqual(region.top, xy[1][1]);
 
             yValue = xy[1][0] - this.random(10, 2000);
 
             this.y.set("value", yValue);
-            this.setY.simulate("click");
+            this.clickFormSubmit(this.yForm);
 
             region = this.box.get("region");
 
-            Y.Assert.areEqual(region.top, xy[1][0]);
+            this.assertPixelsAreEqual(region.top, xy[1][0]);
         },
 
         'set XY in bounds' : function() {
-            var xy = this.getBounds();
-
-            var xValue = this.random(xy[0][0], xy[0][1]);
-            var yValue = this.random(xy[1][0], xy[1][1]);
+            var xy = this.getBounds(),
+                region,
+                xValue = this.random(xy[0][0], xy[0][1]),
+                yValue = this.random(xy[1][0], xy[1][1]);
 
             this.x.set("value", xValue);
             this.y.set("value", yValue);
 
             this.setXY.simulate("click");
 
-            var region = this.box.get("region");
+            region = this.box.get("region");
 
-            Y.Assert.areEqual(xValue, region.left);
-            Y.Assert.areEqual(yValue, region.top);
+            this.assertPixelsAreEqual(xValue, region.left);
+            this.assertPixelsAreEqual(yValue, region.top);
         },
 
         'set XY out of bounds' : function() {
-            var xy = this.getBounds();
-
-            var xValue = xy[0][1] + this.random(10, 2000);
-            var yValue = xy[1][1] + this.random(10, 2000);
+            var xy = this.getBounds(),
+                region,
+                xValue = xy[0][1] + this.random(10, 2000),
+                yValue = xy[1][1] + this.random(10, 2000);
 
             this.x.set("value", xValue);
             this.y.set("value", yValue);
 
             this.setXY.simulate("click");
 
-            var region = this.box.get("region");
+            region = this.box.get("region");
 
-            Y.Assert.areEqual(region.left, xy[0][1]);
-            Y.Assert.areEqual(region.top, xy[1][1]);
+            this.assertPixelsAreEqual(region.left, xy[0][1]);
+            this.assertPixelsAreEqual(region.top, xy[1][1]);
 
             xValue = xy[0][0] - this.random(10, 2000);
             yValue = xy[1][0] - this.random(10, 2000);
@@ -167,13 +196,13 @@ YUI.add('attribute-getset-tests', function(Y) {
 
             region = this.box.get("region");
 
-            Y.Assert.areEqual(region.left, xy[0][0]);
-            Y.Assert.areEqual(region.top, xy[1][0]);
+            this.assertPixelsAreEqual(region.left, xy[0][0]);
+            this.assertPixelsAreEqual(region.top, xy[1][0]);
         },
 
         'set valid colors' : function() {
             this.color.set("value", "red");
-            this.setColor.simulate("click");
+            this.clickFormSubmit(this.colorForm);
 
             // To normalize the fact that IE removes spaces in between rgb values.
             var red = /rgb\(255,\s?0,\s?0\)/;
@@ -182,7 +211,7 @@ YUI.add('attribute-getset-tests', function(Y) {
             Y.Assert.isTrue(red.test(this.box.getComputedStyle("backgroundColor")));
 
             this.color.set("value", "#00ff00");
-            this.setColor.simulate("click");
+            this.clickFormSubmit(this.colorForm);
 
             Y.Assert.isTrue(green.test(this.box.getComputedStyle("backgroundColor")));
         },
@@ -191,17 +220,17 @@ YUI.add('attribute-getset-tests', function(Y) {
             var prevVal = this.box.getComputedStyle("backgroundColor");
 
             this.color.set("value", "#00ff00ff");
-            this.setColor.simulate("click");
+            this.clickFormSubmit(this.colorForm);
 
             Y.Assert.areEqual(prevVal, this.box.getComputedStyle("backgroundColor"));
         },
 
         'set all' : function() {
-            var xy = this.getBounds();
-
-            var xValue = this.random(xy[0][0], xy[0][1]);
-            var yValue = this.random(xy[1][0], xy[1][1]);
-            var red = /rgb\(255,\s?0,\s?0\)/;            
+            var xy = this.getBounds(),
+                region,
+                xValue = this.random(xy[0][0], xy[0][1]),
+                yValue = this.random(xy[1][0], xy[1][1]),
+                red = /rgb\(255,\s?0,\s?0\)/;            
 
             this.x.set("value", xValue);
             this.y.set("value", yValue);
@@ -212,18 +241,17 @@ YUI.add('attribute-getset-tests', function(Y) {
             region = this.box.get("region");
 
             Y.Assert.isTrue(red.test(this.box.getComputedStyle("backgroundColor")));
-            Y.Assert.areEqual(xValue, region.left);
-            Y.Assert.areEqual(yValue, region.top);
+
+            this.assertPixelsAreEqual(xValue, region.left);
+            this.assertPixelsAreEqual(yValue, region.top);
         },
 
         'get all' : function() {
 
-            var xy = this.getBounds();
-
-            var xValue = xy[0][1] + this.random(10, 2000);
-            var yValue = xy[1][1] + this.random(10, 2000);
-
-            var red = "#FF0000";
+            var xy = this.getBounds(),
+                xValue = xy[0][1] + this.random(10, 2000),
+                yValue = xy[1][1] + this.random(10, 2000),
+                red = "#FF0000";
 
             this.x.set("value", xValue);
             this.y.set("value", yValue);
@@ -234,10 +262,12 @@ YUI.add('attribute-getset-tests', function(Y) {
 
             // Normalized through getters/setters
             Y.Assert.areEqual(red, this.color.get("value"));
-            Y.Assert.areEqual(xy[0][1], parseInt(this.x.get("value"), 10));
-            Y.Assert.areEqual(xy[1][1], parseInt(this.y.get("value"), 10));
+
+            this.assertPixelsAreEqual(xy[0][1], parseInt(this.x.get("value"), 10));
+            this.assertPixelsAreEqual(xy[1][1], parseInt(this.y.get("value"), 10));
 
         }
+
     }));
 
     Y.Test.Runner.add(suite);

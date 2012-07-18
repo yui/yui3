@@ -1,5 +1,5 @@
 YUI.add('charts-groupmarker-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.GroupMarker"),
+    var suite = new Y.Test.Suite("Y.Charts.GroupMarker"),
     
     GroupMarkerTestTemplate = function(cfg, globalCfg)
     {

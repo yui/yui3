@@ -34,7 +34,7 @@ YUI.add('history-html5', function(Y) {
  *     visible in the browser's address bar and will be the bookmarked URL if
  *     the user bookmarks the page. It may be a relative path ("foo/bar"), an
  *     absolute path ("/foo/bar"), or a full URL ("http://example.com/foo/bar").
- *     If you specify a full URL, the origin <i>must</i> be the same as the 
+ *     If you specify a full URL, the origin <i>must</i> be the same as the
  *     origin of the current page, or an error will occur. If no URL is
  *     specified, the current URL will not be changed.
  *   </dd>
@@ -62,6 +62,11 @@ Y.extend(HistoryHTML5, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
         var bookmarkedState = win.history.state;
+
+        // Treat empty state objects as `null` so they're not processed further.
+        if (Y.Object.isEmpty(bookmarkedState)) {
+            bookmarkedState = null;
+        }
 
         config || (config = {});
 

@@ -1,134 +1,4 @@
-<style scoped>
-#todo-app {
-    margin: 1em;
-    text-align: center;
-}
-
-#todo-list,
-#todo-stats {
-    margin: 1em auto;
-    text-align: left;
-    width: 450px;
-}
-
-#todo-list {
-    list-style: none;
-    padding: 0;
-}
-
-#todo-stats,
-.todo-clear { color: #777; }
-
-.todo-clear { float: right; }
-
-.todo-done .todo-content {
-    color: #666;
-    text-decoration: line-through;
-}
-
-.todo-edit,
-.editing .todo-view { display: none; }
-
-.editing .todo-edit { display: block; }
-
-.todo-input {
-    display: block;
-    font-family: Helvetica, sans-serif;
-    font-size: 20px;
-    line-height: normal;
-    margin: 5px auto 0;
-    padding: 6px;
-    width: 420px;
-}
-
-.todo-item {
-    border-bottom: 1px dotted #cfcfcf;
-    font-size: 20px;
-    padding: 6px;
-    position: relative;
-}
-
-.todo-label {
-    color: #444;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-}
-
-.todo-remaining {
-    color: #333;
-    font-weight: bold;
-}
-
-.todo-remove {
-    position: absolute;
-    right: 0;
-    top: 12px;
-}
-
-.todo-remove-icon {
-    /*
-    Delete icon courtesy of The Noun Project:
-    http://thenounproject.com/noun/delete/
-    */
-    background: url({{componentAssets}}/remove.png) no-repeat;
-    display: block;
-    height: 16px;
-    opacity: 0.6;
-    visibility: hidden;
-    width: 23px;
-}
-
-.todo-remove:hover .todo-remove-icon { opacity: 1.0; }
-
-.todo-hover .todo-remove-icon,
-.todo-remove:focus .todo-remove-icon { visibility: visible; }
-
-.editing .todo-remove-icon { visibility: hidden; }
-</style>
-
-<!-- This is the main container and "shell" for the todo app. -->
-<div id="todo-app">
-    <label class="todo-label" for="new-todo">What do you want to do today?</label>
-    <input type="text" id="new-todo" class="todo-input"
-        placeholder="buy milk">
-
-    <ul id="todo-list"></ul>
-    <div id="todo-stats"></div>
-</div>
-
-<!-- This template HTML will be used to render each todo item. -->
-<script type="text/x-template" id="todo-item-template">
-    <div class="todo-view">
-        <input type="checkbox" class="todo-checkbox" {checked}>
-        <span class="todo-content" tabindex="0">{text}</span>
-    </div>
-
-    <div class="todo-edit">
-        <input type="text" class="todo-input" value="{text}">
-    </div>
-
-    <a href="#" class="todo-remove" title="Remove this task">
-        <span class="todo-remove-icon"></span>
-    </a>
-</script>
-
-<!-- This template HTML will be used to render the statistics at the bottom
-     of the todo list. -->
-<script type="text/x-template" id="todo-stats-template">
-    <span class="todo-count">
-        <span class="todo-remaining">{numRemaining}</span>
-        <span class="todo-remaining-label">{remainingLabel}</span> left.
-    </span>
-
-    <a href="#" class="todo-clear">
-        Clear <span class="todo-done">{numDone}</span>
-        completed <span class="todo-done-label">{doneLabel}</span>
-    </a>
-</script>
-
-<script>
-YUI({filter: 'raw'}).use('event-focus', 'json', 'model', 'model-list', 'view', function (Y) {
+YUI.add('todo-app', function (Y) {
 
 var TodoAppView, TodoList, TodoModel, TodoView;
 
@@ -138,10 +8,9 @@ var TodoAppView, TodoList, TodoModel, TodoView;
 // sync provider (the source for that is further below) and to provide
 // attributes and methods useful for todo items.
 
-TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
-    // This tells the Model to use a localStorage sync provider (which we'll
-    // create below) to save and load information about a todo item.
-    sync: LocalStorageSync('todo'),
+TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [Y.ModelSync.REST], {
+    // This is the URL to the root Todos resource on the server.
+    root: '/data/todos',
 
     // This method will toggle the `done` attribute from `true` to `false`, or
     // vice versa.
@@ -158,19 +27,16 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     }
 });
 
+
 // -- ModelList ----------------------------------------------------------------
 
 // The TodoList class extends Y.ModelList and customizes it to hold a list of
 // TodoModel instances, and to provide some convenience methods for getting
 // information about the todo items in the list.
 
-TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
+TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [Y.ModelSync.REST], {
     // This tells the list that it will hold instances of the TodoModel class.
     model: TodoModel,
-
-    // This tells the list to use a localStorage sync provider (which we'll
-    // create below) to load the list of todo items.
-    sync: LocalStorageSync('todo'),
 
     // Returns an array of all models in this list with the `done` attribute
     // set to `true`.
@@ -188,6 +54,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
         });
     }
 });
+
 
 // -- Todo App View ------------------------------------------------------------
 
@@ -376,6 +243,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     }
 });
 
+
 // -- Todo item view -----------------------------------------------------------
 
 // The TodoView class extends Y.View and customizes it to represent the content
@@ -481,113 +349,6 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     }
 });
 
-// -- localStorage Sync Implementation -----------------------------------------
-
-// This is a simple factory function that returns a `sync()` function that can
-// be used as a sync layer for either a Model or a ModelList instance. The
-// TodoModel and TodoList instances above use it to save and load items.
-
-function LocalStorageSync(key) {
-    var localStorage;
-
-    if (!key) {
-        Y.error('No storage key specified.');
-    }
-
-    if (Y.config.win.localStorage) {
-        localStorage = Y.config.win.localStorage;
-    }
-
-    // Try to retrieve existing data from localStorage, if there is any.
-    // Otherwise, initialize `data` to an empty object.
-    var data = Y.JSON.parse((localStorage && localStorage.getItem(key)) || '{}');
-
-    // Delete a model with the specified id.
-    function destroy(id) {
-        var modelHash;
-
-        if ((modelHash = data[id])) {
-            delete data[id];
-            save();
-        }
-
-        return modelHash;
-    }
-
-    // Generate a unique id to assign to a newly-created model.
-    function generateId() {
-        var id = '',
-            i  = 4;
-
-        while (i--) {
-            id += (((1 + Math.random()) * 0x10000) | 0)
-                    .toString(16).substring(1);
-        }
-
-        return id;
-    }
-
-    // Loads a model with the specified id. This method is a little tricky,
-    // since it handles loading for both individual models and for an entire
-    // model list.
-    //
-    // If an id is specified, then it loads a single model. If no id is
-    // specified then it loads an array of all models. This allows the same sync
-    // layer to be used for both the TodoModel and TodoList classes.
-    function get(id) {
-        return id ? data[id] : Y.Object.values(data);
-    }
-
-    // Saves the entire `data` object to localStorage.
-    function save() {
-        localStorage && localStorage.setItem(key, Y.JSON.stringify(data));
-    }
-
-    // Sets the id attribute of the specified model (generating a new id if
-    // necessary), then saves it to localStorage.
-    function set(model) {
-        var hash        = model.toJSON(),
-            idAttribute = model.idAttribute;
-
-        if (!Y.Lang.isValue(hash[idAttribute])) {
-            hash[idAttribute] = generateId();
-        }
-
-        data[hash[idAttribute]] = hash;
-        save();
-
-        return hash;
-    }
-
-    // Returns a `sync()` function that can be used with either a Model or a
-    // ModelList instance.
-    return function (action, options, callback) {
-        // `this` refers to the Model or ModelList instance to which this sync
-        // method is attached.
-        var isModel = Y.Model && this instanceof Y.Model;
-
-        switch (action) {
-        case 'create': // intentional fallthru
-        case 'update':
-            callback(null, set(this));
-            return;
-
-        case 'read':
-            callback(null, get(isModel && this.get('id')));
-            return;
-
-        case 'delete':
-            callback(null, destroy(isModel && this.get('id')));
-            return;
-        }
-    };
-}
-
-// -- Start your engines! ------------------------------------------------------
-
-// Finally, all we have to do is instantiate a new TodoAppView to set everything
-// in motion and bring our todo list into existence.
-new TodoAppView();
-
+}, '@VERSION@', {
+    requires: ['event-focus', 'model', 'model-list', 'model-sync-rest', 'view']
 });
-</script>

@@ -1,5 +1,5 @@
 YUI.add('combo-globalstyles-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.GlobalStyles"),
+    var suite = new Y.Test.Suite("Y.Charts.ComboGlobalStyles"),
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {

@@ -10,12 +10,37 @@ var dirs = fs.readdirSync(base);
 
 var examples = [];
 
+var ignore = function(json) {
+    
+    if (json.name === 'test' || json.name.indexOf('-deprecated') > 0) {
+        return true;
+    }
+
+    return false;
+};
+
 var parseJSON = function(file) {
     var json = JSON.parse(fs.readFileSync(file, 'utf8'));
+    var windows = {};
+    if (ignore(json)) {
+        return;
+    }
     if (json && json.examples) {
         var name = json.name;
         json.examples.forEach(function(c) {
-            examples.push(name + '/' + c.name + '.html');
+            if ('newWindow' in c) {
+                windows[c.name] = c.name;
+            } else {
+                examples.push(name + '/' + c.name + '.html');
+            }
+        });
+    }
+    if (json && json.pages) {
+        Object.keys(json.pages).forEach(function(page) {
+            var p = json.pages[page];
+            if (p && p.name && windows[p.name]) {
+                examples.push(name + '/' + page + '.html');
+            }
         });
     }
 };
