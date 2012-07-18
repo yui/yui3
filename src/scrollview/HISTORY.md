@@ -1,10 +1,15 @@
 ScrollView Change History
 =========================
 
+3.6.0
+-----
+  
+  * Fixed issue with mousewheel not working when multiple scrollviews are present (#2532377)
+
 3.5.1
 -----
 
-  * Fixed mousewheel bug (#2532214)
+  * Fixed issue with scrollview capturing all mousewheel events on a page (#2532214)
   
 3.5.0
 -----

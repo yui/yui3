@@ -34,11 +34,13 @@
 
     "pages": {
         "cssbase-basic-example": {
+            "name"       : "cssbase-basic",
             "displayName": "CSS Base Page Example",
             "layout"     : "cssbase-basic-example"
         },
 
         "cssbase-context-example": {
+            "name"       : "cssbase-context",
             "displayName": "CSS Base Contextual Example",
             "layout"     : "cssbase-context-example"
         }
