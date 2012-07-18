@@ -408,6 +408,15 @@ YUI.add('graphics-muddyglass-tests', function(Y) {
         }
     }));
 
+    suite.add(new Y.Test.Case({
+        name: "Manual Test",
+
+        "Test glass" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure there is a transparent glass with chocolate milk on the page. Note: IE 6 - 8 does not support transparency."); 
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'node']});
 

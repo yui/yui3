@@ -451,6 +451,15 @@ YUI.add('graphics-customshape-tests', function(Y) {
         }
     }));
 
+    suite.add(new Y.Test.Case({
+        name: "Manual Test",
+
+        "Test custom shape loaded" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure there is an rounded rectangle with a gradient on the page."); 
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'node']});
 

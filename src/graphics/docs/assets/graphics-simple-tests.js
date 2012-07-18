@@ -426,6 +426,15 @@ YUI.add('graphics-simple-tests', function(Y) {
         }
     }));
 
+    suite.add(new Y.Test.Case({
+        name: "Manual Test",
+
+        "Test ellipse loaded" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure there is an ellipse on the page."); 
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'node']});
 

@@ -414,6 +414,15 @@ YUI.add('graphics-violin-tests', function(Y) {
         }
     }));
 
+    suite.add(new Y.Test.Case({
+        name: "Manual Test",
+
+        "Test violin" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure there is a picture of a violin on the page."); 
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'node']});
 
