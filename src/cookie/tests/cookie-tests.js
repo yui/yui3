@@ -421,6 +421,20 @@ YUI.add('cookie-tests', function(Y) {
             Assert.areEqual("Cookie Utility", value3, "Retrieved cookie value is incorrect.");
             Assert.isNull(value4, "Retrieved cookie value should be null.");
         },
+
+        testGetInDefaultOrder: function(){
+            this.stubDoc.cookie = "pathOfCookie=/test/supage; pathOfCookie=/test";
+            
+            var data = Y.Cookie.get("pathOfCookie");
+            Assert.areEqual("/test", data, "Cookie of path /test should be loaded");
+        },
+
+        testGetInReverseOrder: function() {
+            this.stubDoc.cookie = "pathOfCookie=/test/subpage; pathOfCookie=/test";
+
+            var data = Y.Cookie.get("pathOfCookie", {reverseCookieLoading: true});
+            Assert.areEqual("/test/subpage", data, "Cookie of path /test/subpage should be loaded");
+        },
         
         testGetInvalidName1 : function(){        
             Y.Cookie.get(12);        
@@ -628,12 +642,12 @@ YUI.add('cookie-tests', function(Y) {
         setUp: function(){
             this.stubDoc = {cookie:""};
             Y.Cookie._setDoc(this.stubDoc);
-        },            
+        },
         
         tearDown: function(){
             Y.Cookie._setDoc(Y.config.doc);
             delete this.stubDoc;
-        }, 
+        },
 
         //---------------------------------------------------------------------
         // Tests
@@ -653,7 +667,7 @@ YUI.add('cookie-tests', function(Y) {
             Assert.areEqual("b", hash.a, "Hash 'a' should have value 'b'.");
             Assert.areEqual("d", hash.c, "Hash 'c' should have value 'd'.");
             Assert.areEqual("f", hash.e, "Hash 'e' should have value 'f'.");
-            Assert.areEqual("h", hash.g, "Hash 'g' should have value 'h'."); 
+            Assert.areEqual("h", hash.g, "Hash 'g' should have value 'h'.");
 
         },
         
@@ -677,7 +691,21 @@ YUI.add('cookie-tests', function(Y) {
 
             Assert.areEqual("29", hash.age, "Hash 'a' should have value 'b'.");
             Assert.areEqual("f2e", hash.title, "Hash 'c' should have value 'd'.");
-            Assert.areEqual("no way", hash.stuff, "Hash 'e' should have value 'f'.");                
+            Assert.areEqual("no way", hash.stuff, "Hash 'e' should have value 'f'.");
+        },
+
+        testGetSubsInDefaultOrder: function(){
+            this.stubDoc.cookie = "pathOfCookie=path=/test/supage; pathOfCookie=path=/test";
+            
+            var data = Y.Cookie.getSubs("pathOfCookie");
+            Assert.areEqual("/test", data.path, "Cookie of path /test should be loaded");
+        },
+
+        testGetSubsInReverseOrder: function() {
+            this.stubDoc.cookie = "pathOfCookie=path=/test/subpage; pathOfCookie=path=/test";
+
+            var data = Y.Cookie.getSubs("pathOfCookie", {reverseCookieLoading: true});
+            Assert.areEqual("/test/subpage", data.path, "Cookie of path /test/subpage should be loaded");
         }
     }));
 
@@ -687,7 +715,7 @@ YUI.add('cookie-tests', function(Y) {
     
     suite.add(new Y.Test.Case({
     
-        name : "Get Cookie Sub Tests",       
+        name : "Get Cookie Sub Tests",
         
         _should : {
         
@@ -713,25 +741,25 @@ YUI.add('cookie-tests', function(Y) {
         setUp: function(){
             this.stubDoc = {cookie:"data=" + "a=b&c=d&e=f&g=h&found=true&count=11&age=29&title=f2e&stuff=no%20way&special=" + encodeURIComponent("Something with & and =") +"; name=Nicholas%20Zakas; component=Cookie%20Utility" };
             Y.Cookie._setDoc(this.stubDoc);
-        },            
+        },
         
         tearDown: function(){
             Y.Cookie._setDoc(Y.config.doc);
             delete this.stubDoc;
-        },             
+        },
 
         //---------------------------------------------------------------------
         // Tests
         //---------------------------------------------------------------------
     
         testGetSubSimple : function(){
-            var value = Y.Cookie.getSub("data", "c");          
+            var value = Y.Cookie.getSub("data", "c");
             Assert.areEqual("d", value, "Subcookie value is incorrect.");
         },
         
         testGetSubUnknown : function(){
             var hash = Y.Cookie.getSub("data", "i");
-            Assert.isNull(hash, "Retrieved cookie value is should be null.");
+            Assert.isNull(hash, "Retrieved cookie value should be null.");
         },
         
         testGetSubComplex : function(){
@@ -739,23 +767,23 @@ YUI.add('cookie-tests', function(Y) {
             Assert.areEqual("no way", value, "Subcookie value is wrong.");
         },
         
-        testGetSubInvalidName1 : function(){        
-            Y.Cookie.getSub(12);        
+        testGetSubInvalidName1 : function(){
+            Y.Cookie.getSub(12);
         },
         
-        testGetSubInvalidName2 : function(){        
+        testGetSubInvalidName2 : function(){
             Y.Cookie.getSub(true);        
         },
         
-        testGetSubInvalidName3 : function(){        
+        testGetSubInvalidName3 : function(){
             Y.Cookie.getSub("");        
         },
         
-        testGetSubInvalidName4 : function(){        
+        testGetSubInvalidName4 : function(){
             Y.Cookie.getSub();        
         },
 
-        testGetSubInvalidName5 : function(){        
+        testGetSubInvalidName5 : function(){
             Y.Cookie.getSub(null);        
         },
         
@@ -821,7 +849,21 @@ YUI.add('cookie-tests', function(Y) {
         
         testSubGetSpecial : function(){
             var value = Y.Cookie.getSub("data", "special");
-            Assert.areEqual("Something with & and =", value, "Sub cookie string is incorrect.");        
+            Assert.areEqual("Something with & and =", value, "Sub cookie string is incorrect.");
+        },
+
+        testGetSubInDefaultOrder: function(){
+            this.stubDoc.cookie = "data=path=/test/subpage&value=invalid; data=path=/test&value=valid";
+            
+            var data = Y.Cookie.getSub("data", "value");
+            Assert.areEqual("valid", data, "Cookie of path /test should be loaded");
+        },
+
+        testGetSubInReverseOrder: function() {
+            this.stubDoc.cookie = "data=path=/test/subpage&value=valid; data=path=/test&value=invalid";
+
+            var data = Y.Cookie.getSub("data", "value", null, {reverseCookieLoading: true});
+            Assert.areEqual("valid", data, "Cookie of path /test/subpage should be loaded");
         }
     }));
 
