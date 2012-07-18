@@ -3766,7 +3766,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","model","model-list","router","view"],
+    "app": ["app-base","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -11824,6 +11824,7 @@ var DOT = '.',
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
+         * @type DOMNode
          * @private
          */
         this._node = node;
@@ -11872,6 +11873,7 @@ Y_Node._fromString = function(node) {
 /**
  * The name of the component
  * @static
+ * @type String
  * @property NAME
  */
 Y_Node.NAME = 'node';
@@ -11887,6 +11889,7 @@ Y_Node.HIDE_TRANSITION = 'fadeOut';
 /**
  * A list of Node instances that have been created
  * @private
+ * @type Object
  * @property _instances
  * @static
  *
@@ -12602,6 +12605,7 @@ Y.one = Y_Node.one;
  *
  * @class NodeList
  * @constructor
+ * @param nodes {String|element|Node|Array} A selector, DOM element, Node, list of DOM elements, or list of Nodes with which to populate this NodeList.
  */
 
 var NodeList = function(nodes) {
@@ -14419,7 +14423,7 @@ Y.mix(Y.Node.prototype, {
     * @for Node
     * @description Stores arbitrary data on a Node instance.
     * This is not stored with the DOM node.
-    * @param {string} name The name of the field to set. If no name
+    * @param {string} name The name of the field to set. If no val
     * is given, name is treated as the data and overrides any existing data.
     * @param {any} val The value to be assigned to the field.
     * @chainable
@@ -17052,8 +17056,9 @@ YUI.add('io-base', function(Y) {
 
 /**
 Base IO functionality. Provides basic XHR transport support.
-@module io-base
-@main io-base
+
+@module io
+@submodule io-base
 @for IO
 **/
 
