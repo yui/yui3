@@ -58,17 +58,93 @@ YUI.add('graphics-drag-tests', function(Y) {
                 }
 
             },
+
             getFill: function()
             {
                 var node = this._node,
+                    fillNode,
+                    stopNodes,
+                    len,
+                    i = 0,
+                    stops,
+                    stop,
+                    stopNode,
+                    offset,
+                    gradientIndex,
+                    tagName,
+                    type,
                     color = node.getAttribute("fill"),
-                    opacity = node.getAttribute("fill-opacity");
-                color = toRGBA(TOHEX(color), opacity);
-                return {
-                    color: color
+                    opacity = node.getAttribute("fill-opacity"),
+                    fill = {};
+                if(color.indexOf("url") > -1)
+                {
+                    color = color.slice(color.indexOf("#"), color.lastIndexOf(")"));
+                    fillNode = Y.one(color);
+                    if(fillNode)
+                    {
+                        tagName = fillNode.get("tagName");
+                        if(tagName)
+                        {
+                            gradientIndex = tagName.indexOf("Gradient");
+                            if(gradientIndex > -1)
+                            {
+                                type = tagName.slice(tagName.indexOf(":") + 1, gradientIndex);
+                                if(type == "linear")
+                                {
+                                    //add rotation logic
+                                }
+                                else if(type == "radial")
+                                {
+                                    //add cx,cy,fx,fy,r logic
+                                }
+                            }
+                            fill.type = type;
+                        }
+                        stopNodes = fillNode.get("children");
+                        stopNodes = stopNodes ? stopNodes.filter("stop") : null;
+                        if(stopNodes)
+                        {   
+                            len = stopNodes.size();
+                            stops = [];
+                            for(; i < len; i = i + 1)
+                            {
+                                stopNode = stopNodes.item(i);
+                                stop = {};
+                                if(stopNode.hasAttribute("stop-color"))
+                                {
+                                    stop.color = TOHEX(stopNode.getAttribute("stop-color")).toLowerCase();
+                                }
+                                if(stopNode.hasAttribute("offset"))
+                                {
+                                    offset = stopNode.getAttribute("offset");
+                                    if(offset.indexOf("%") > -1)
+                                    {
+                                        offset = parseFloat(offset)/100;
+                                    }
+                                    else
+                                    {
+                                        offset = 1;
+                                    }
+                                    stop.offset = offset;
+                                }
+                                if(stopNode.hasAttribute("stop-opacity"))
+                                {
+                                    stop.opacity = stopNode.getAttribute("stop-opacity");
+                                }
+                                stops.push(stop);
+                            }
+                            fill.stops = stops;
+                        }
+                    }
                 }
+                else
+                {
+                    color = toRGBA(TOHEX(color), opacity);
+                    fill.color = color;
+                    fill.type = "solid";
+                }
+                return fill;
             },
-
             getDimensions: function(shape)
             {
                 var w,
@@ -99,7 +175,7 @@ YUI.add('graphics-drag-tests', function(Y) {
             getStroke: function()
             {
                 var node = Y.one(this._node),
-                    nodelist = node.children,
+                    nodelist = node.get("children"),
                     strokeNode,
                     color,
                     weight,
@@ -107,10 +183,14 @@ YUI.add('graphics-drag-tests', function(Y) {
                 if(nodelist)
                 {
                     strokeNode = nodelist.filter('stroke');
+                    if(strokeNode.size() > 0)
+                    {
+                        strokeNode = strokeNode.shift().getDOMNode();
+                    }
                 }
                 color = node.get("strokecolor");
                 weight = node.get("strokeweight");
-                opacity = strokeNode ? strokeNode.get("opacity") : 1;
+                opacity = strokeNode ? strokeNode.opacity : 1;
                 if(!Y.Lang.isNumber(opacity))
                 {
                     opacity = 1;
@@ -119,36 +199,118 @@ YUI.add('graphics-drag-tests', function(Y) {
                 {
                     color = color.value;
                 }
-                color = toRGBA(TOHEX(color), opacity);
+                color = toRGBA(TOHEX(color), parseFloat(opacity));
                 weight = Math.round(weight * (96/72));
                 return {
                     color: color,
                     weight: weight
                 }
             },
+            
             getFill: function()
             {
                 var node = this._node,
-                    nodelist = Y.one(node).children,
+                    nodelist = Y.one(node).get("children"),
+                    type,
                     fillNode,
                     color,
-                    opacity;
+                    offset,
+                    stops,
+                    stopAttrs,
+                    stopStrings,
+                    opacity,
+                    i = 0,
+                    len,
+                    fill = {};
                 if(nodelist)
                 {
                     fillNode = nodelist.filter("fill");
+                    if(fillNode.size() > 0)
+                    {
+                        fillNode = fillNode.shift().getDOMNode();
+                    }
+                    type = fillNode.type || "solid";
+                    if(type == "gradient")
+                    {
+                        type = "linear";
+                    }
+                    else if(type == "gradientRadial")
+                    {
+                        type = "radial";
+                    }
+            
                 }
-                color = node.get("fillcolor");
-                opacity = fillNode ? fillNode.get("opacity") : 1;
-                if(color.value)
+                else
                 {
-                    color = color.value;
+                    type = "solid";
                 }
-                color = toRGBA(TOHEX(color), opacity);
-                return {
-                    color: color
+                switch(type)
+                {
+                    case "solid" :
+                        color = node.get("fillcolor");
+                        opacity = fillNode ? fillNode.opacity : 1;
+                        if(color.value)
+                        {
+                            color = color.value;
+                        }
+                        color = toRGBA(TOHEX(color), parseFloat(opacity)); 
+                        fill.color = color;
+                    break;
+                    case "linear" :
+                        stopStrings = fillNode.colors;
+                        if(stopStrings)
+                        {
+                            stops = [];
+                            if(stopStrings.value)
+                            {
+                                stopStrings = stopStrings.value;
+                            }
+                            stopStrings = stopStrings.split(";");
+                            len = stops.length;
+                            for(; i < len; i = i + 1)
+                            {
+                                stopAttrs = stopStrings[i].split(" ");
+                                offset = stopAttrs[0];
+                                if(offset.indexOf("f") > -1)
+                                {
+                                    offset = 100 * parseFloat(offset)/65535
+                                    offset = Math.round(offset)/100;
+                                }
+                                stops.push( {color: TOHEX(stopAttrs[1]).toLowerCase(), offset: offset} );
+                            }
+                            fill.stops = stops;
+                        }
+                    break;
+                    case "radial" :
+                        stopStrings = fillNode.colors;
+                        if(stopStrings)
+                        {
+                            stops = [];
+                            if(stopStrings.value)
+                            {
+                                stopStrings = stopStrings.value;
+                            }
+                            stopStrings = stopStrings.split(";");
+                            len = stops.length;
+                            for(; i < len; i = i + 1)
+                            {
+                                stopAttrs = stopStrings[i].split(" ");
+                                offset = stopAttrs[0];
+                                if(offset.indexOf("f") > -1)
+                                {
+                                    offset = 100 * parseFloat(offset)/65535
+                                    offset = Math.round(offset)/100;
+                                }
+                                stops.push( {color: TOHEX(stopAttrs[1]).toLowerCase(), offset: offset} );
+                            }
+                            fill.stops = stops;
+                        }
+                    break;
                 }
+                fill.type = type;
+                return fill;
             },
-
+            
             getDimensions: function(shape)
             {
                 var node = this._node,
