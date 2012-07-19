@@ -111,7 +111,7 @@ YUI.add('anim-core-test', function(Y) {
                 on: {
                     end: function() {
                         test.resume(function() {
-                            Y.Assert.areEqual('0px', node.getComputedStyle('height'));
+                            Y.Assert.areEqual('0px', parseInt(node.getComputedStyle('height').replace('px', ''), 10) + 'px');
                             node.setStyle('height', '');
                         });
                     }

@@ -3,6 +3,9 @@
     as the object to be profiled.</p>
 </div>
 
+<div id="results" class="example">
+</div>
+
 <div class="example">
 {{>profiler-object-example-source}}
 </div>
@@ -50,7 +53,7 @@ YUI().use('node', 'profiler', function (Y) {
             msg += (func + "(): Called " + report[func].calls + " times. Avg: " +
                 report[func].avg + ", Min: " + report[func].min + ", Max: " + report[func].max) + "\\n";
         }
-        alert(msg);
+        Y.one('#results').setHTML('<pre>' + msg + '</pre>');
     });
 });
 </script>

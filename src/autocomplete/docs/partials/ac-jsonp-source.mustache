@@ -7,9 +7,9 @@
 YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
   Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
     resultHighlighter: 'phraseMatch',
-    resultListLocator: 'users',
+    resultListLocator: 'data.users',
     resultTextLocator: 'username',
-    source: 'http://github.com/api/v2/json/user/search/{query}?callback={callback}'
+    source: 'https://api.github.com/legacy/user/search/{query}?callback={callback}'
   });
 });
 </script>

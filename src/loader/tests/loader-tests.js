@@ -35,6 +35,26 @@ YUI.add('loader-tests', function(Y) {
                 test_condpattern: Y.UA.nodejs
             }
         },
+        'test: skin overrides double loading': function() {
+            var loader = new Y.Loader({
+                base: './',
+                modules:{
+                        'gallery-fb-statusfield':{
+                            fullpath: 'build_tmp/gallery-fb-statusfield-debug.js',
+                            skinnable: true
+                        }
+                    },
+                skin:{
+                    overrides:{
+                        'gallery-fb-statusfield': ['green']
+                    }
+                },
+                require: ['gallery-fb-statusfield']
+            });
+            var out = loader.resolve(true);
+            Assert.areSame('./gallery-fb-statusfield/assets/skins/green/gallery-fb-statusfield.css', out.css[0], 'Failed to load skin override');
+            Assert.areEqual(1, out.css.length, 'Loaded too many css files');
+        },
         'test: empty skin overrides': function() {
             var loader = new Y.Loader({
                 ignoreRegistered: true,
@@ -1665,6 +1685,380 @@ YUI.add('loader-tests', function(Y) {
             sorted = sort(modules, 'LazyLoad', required);
             ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate second set of modules');
 
+        },
+        'testing configFn for bug #2532498': function() {
+            var loader = new Y.Loader({
+                    filter: "debug",
+                    base: "build/yui/3.5.1/build/",
+                    root: "",
+                    combine: false,
+                    maxURLLength: 2000,
+                    fetchCSS: true,
+                    lang: "en",
+                    groups: {
+                        sui: {
+                            combine:  false,
+                            base:   "build/",
+                            modules: {
+                                "part1-accordion": {
+                                    "requires": [
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-base": {
+                                    "requires": [
+                                        "yui-base"
+                                    ]
+                                },
+                                "part1-busyloader": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "event",
+                                        "part1-base",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-button": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-base",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-chart-deprecated": {
+                                    "requires": [
+                                        "part1-base",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-chart": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-busyloader",
+                                        "json-stringify",
+                                        "part1-page",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-init-configevent-provider",
+                                        "part1-settings-ds-provider"
+                                    ]
+                                },
+                                "part1-checkbox": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-select",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-contentbox-element": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-element",
+                                        "part1-init-configevent-provider",
+                                        "part1-xhr-datasource"
+                                    ]
+                                },
+                                "part1-contentbox": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-util",
+                                        "part1-init-configevent-provider",
+                                        "part1-settings-ds-provider",
+                                        "part1-xhr-datasource"
+                                    ]
+                                },
+                                "part1-datatable-expandable-provider": {
+                                    "requires": [
+                                        "part1-datatable",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-datatable": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-init-configevent-provider",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-busyloader"
+                                    ]
+                                },
+                                "part1-datatable-multilevel-provider": {
+                                    "requires": [
+                                        "part1-base",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-datatable-paged": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "part1-datatable",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-datatable-resize-provider": {
+                                    "requires": [
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-datatable-sort-serverside-provider": {
+                                    "requires": [
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-xhr-datasource"
+                                    ]
+                                },
+                                "part1-datatable-tree-expand-provider": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-datatable"
+                                    ]
+                                },
+                                "part1-datatable-tree-provider": {
+                                    "requires": [
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-dialog-form-builder": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-layer",
+                                        "part1-util",
+                                        "part1-init-configevent-provider",
+                                        "part1-validate",
+                                        "part1-validate-control",
+                                        "part1-busyloader",
+                                        "part1-xhr-datasource"
+                                    ]
+                                },
+                                "part1-dropdown-button": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "part1-base",
+                                        "part1-dropdown",
+                                        "part1-util",
+                                        "part1-busyloader",
+                                        "part1-treeview"
+                                    ]
+                                },
+                                "part1-dropdown": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-util",
+                                        "part1-busyloader",
+                                        "part1-xhr-datasource",
+                                        "part1-init-configevent-provider",
+                                        "part1-settings-ds-provider"
+                                    ]
+                                },
+                                "part1-dropdown-navi": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-dropdown",
+                                        "part1-init-configevent-provider"
+                                    ]
+                                },
+                                "part1-element": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-util",
+                                        "part1-init-configevent-provider",
+                                        "part1-settings-ds-provider"
+                                    ]
+                                },
+                                "part1-elements-group": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-base",
+                                        "part1-element",
+                                        "part1-xhr-datasource",
+                                        "part1-busyloader"
+                                    ]
+                                },
+                                "part1-init-configevent-provider": {
+                                    "requires": [
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-label": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-element",
+                                        "part1-util",
+                                        "part1-init-configevent-provider",
+                                        "part1-xhr-datasource",
+                                        "part1-busyloader"
+                                    ]
+                                },
+                                "part1-lang-controller": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-init-configevent-provider",
+                                        "part1-xhr-datasource",
+                                        "part1-busyloader"
+                                    ]
+                                },
+                                "part1-layer": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "event",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-init-configevent-provider",
+                                        "part1-settings-ds-provider"
+                                    ]
+                                },
+                                "part1-page": {
+                                    "requires": [
+                                        "oop",
+                                        "event",
+                                        "cookie",
+                                        "node",
+                                        "cookie",
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-init-configevent-provider"
+                                    ]
+                                },
+                                "part1-radio": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-select"
+                                    ]
+                                },
+                                "part1-select": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-element",
+                                        "part1-init-configevent-provider",
+                                        "part1-busyloader"
+                                    ]
+                                },
+                                "part1-selector-simple": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-dropdown"
+                                    ]
+                                },
+                                "part1-settings-ds-provider": {
+                                    "requires": [
+                                        "part1-base",
+                                        "part1-util"
+                                    ]
+                                },
+                                "part1-textarea": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "part1-element",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-init-configevent-provider"
+                                    ]
+                                },
+                                "part1-textnode": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-treeview-json": {
+                                    "requires": [
+                                        "oop",
+                                        "part1-util",
+                                        "part1-treeview",
+                                        "part1-busyloader",
+                                        "part1-textnode"
+                                    ]
+                                },
+                                "part1-treeview": {
+                                    "requires": [
+                                        "oop",
+                                        "node",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part1-init-configevent-provider",
+                                        "part1-settings-ds-provider",
+                                        "part1-busyloader",
+                                        "part1-textnode"
+                                    ]
+                                },
+                                "part1-util": {
+                                    "requires": [
+                                        "json-parse",
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-xhr-datasource",
+                                        "part2-stacktrace"
+                                    ]
+                                },
+                                "part1-validate-control": {
+                                    "requires": [
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-validate"
+                                    ]
+                                },
+                                "part1-validate": {
+                                    "requires": [
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-xhr-datasource": {
+                                    "requires": [
+                                        "event",
+                                        "cookie",
+                                        "part1-base"
+                                    ]
+                                },
+                                "part1-test": {
+                                    "requires": [
+                                        "event",
+                                        "cookie",
+                                        "part1-base",
+                                        "part1-util",
+                                        "part1-treeview",
+                                        "part1-treeview-json",
+                                        "part1-xhr-datasource",
+
+                                    ]
+                                }
+                            },
+                            patterns: {
+                                "part1-": {
+                                    configFn: function (me) {
+                                        //change from default format of part1-mod1/part1-mod1.js to just part1-mod1.js
+                                        me.path = me.path.replace(/part1-[^\/]+\//, "");
+                                    }
+                                }
+                            }
+                        }
+                    },
+                require: ['part1-test']
+            });
+
+            var out = loader.resolve(true);
+            var mods = [];
+            Y.Array.each(out.js, function(i) {
+                if (i.indexOf('build/yui') !== 0) {
+                    mods.push(i);
+                }
+            });
+            Y.Array.each(mods, function(item) {
+                var len = item.split('/').length;
+                Assert.areEqual(2, len, 'Failed to call configFn on ' + item);
+            });
         }
     });
 

@@ -60,7 +60,7 @@ YUI().use("node", "attribute", function(Y) {
             "x" : {
                 setter: function(val, name) {
                     // Pass through x value to xy
-                    this.set("xy", [parseInt(val), this.get("y")]);
+                    this.set("xy", [val, this.get("y")]);
                 },
     
                 getter: function(val, name) {
@@ -68,11 +68,11 @@ YUI().use("node", "attribute", function(Y) {
                     return this.get("xy")[0];
                 }
             },
-    
+
             "y" : {
                 setter: function(val, name) {
                     // Pass through y value to xy
-                    this.set("xy", [this.get("x"), parseInt(val)]);
+                    this.set("xy", [this.get("x"), val]);
                 },
     
                 getter: function() {
@@ -80,7 +80,7 @@ YUI().use("node", "attribute", function(Y) {
                     return this.get("xy")[1];
                 }
             },
-    
+
             "xy" : {
                 // Actual stored xy co-ordinates
                 value: [0, 0],
@@ -98,7 +98,7 @@ YUI().use("node", "attribute", function(Y) {
                     return (Y.Lang.isArray(val) && val.length == 2 && Y.Lang.isNumber(val[0]) && Y.Lang.isNumber(val[1]));
                 }
             },
-    
+
             "color" : {
                 value: "olive",
     
@@ -169,16 +169,28 @@ YUI().use("node", "attribute", function(Y) {
 
     };
 
-    // Get min, max unconstrained values for X. Using Math.round to handle FF3's sub-pixel region values
+    // Get min, max unconstrained values for X.
     Box.prototype.getXConstraints = function() {
-        var parentRegion = this.get("parent").get("region");
-        return [Math.round(parentRegion.left + Box.BUFFER), Math.round(parentRegion.right - this._node.get("offsetWidth") - Box.BUFFER)];
+
+        var parentRegion = this.get("parent").get("region"),
+            nodeRegion = this._node.get("region"),
+            nodeWidth = nodeRegion.right-nodeRegion.left;
+
+        // Ceil/Floor to account for browsers which have sub-pixel values.
+
+        return [Math.ceil(parentRegion.left + Box.BUFFER), Math.floor(parentRegion.right - nodeWidth - Box.BUFFER)];
     };
 
-    // Get min, max unconstrained values for Y.  Using Math.round to handle FF3's sub-pixel region values
+    // Get min, max unconstrained values for Y.
     Box.prototype.getYConstraints = function() {
-        var parentRegion = this.get("parent").get("region");
-        return [Math.round(parentRegion.top + Box.BUFFER), Math.round(parentRegion.bottom - this._node.get("offsetHeight") - Box.BUFFER)];
+
+        var parentRegion = this.get("parent").get("region"),
+            nodeRegion = this._node.get("region"),
+            nodeHeight = nodeRegion.bottom-nodeRegion.top;
+
+        // Ceil/Floor to account for browsers which have sub-pixel values.
+
+        return [Math.ceil(parentRegion.top + Box.BUFFER), Math.floor(parentRegion.bottom - nodeHeight - Box.BUFFER)];
     };
 
     // Constrain the x,y value provided
@@ -209,7 +221,6 @@ YUI().use("node", "attribute", function(Y) {
                 val[1] = yConstraints[1];
             }
         }
-
         return val;
     };
 
@@ -249,10 +260,10 @@ YUI().use("node", "attribute", function(Y) {
 
         switch (id) {
             case "setXY":
-                box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
+                box.set("xy", [parseInt(xTxt.get("value"), 10), parseInt(yTxt.get("value"), 10)]);
                 break;
             case "setAll":
-                box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
+                box.set("xy", [parseInt(xTxt.get("value"), 10), parseInt(yTxt.get("value"), 10)]);
                 box.set("color", Y.Lang.trim(colorTxt.get("value")));
                 break;
             case "getAll":
@@ -277,10 +288,10 @@ YUI().use("node", "attribute", function(Y) {
 
         switch (id) {
             case "setX":
-                box.set("x", parseInt(xTxt.get("value")));
+                box.set("x", parseInt(xTxt.get("value"), 10));
                 break;
             case "setY":
-                box.set("y", parseInt(yTxt.get("value")));
+                box.set("y", parseInt(yTxt.get("value"), 10));
                 break;
             case "setColor":
                 box.set("color", Y.Lang.trim(colorTxt.get("value")));

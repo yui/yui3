@@ -2,8 +2,10 @@
 
     var tests = (window.location.search.match(/[?&]tests=([^&]+)/) || [])[1] || null,
         filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || null,
+        manual = (window.location.search.match(/[?&]manual=([^&]+)/) || [])[1] || null,
         showConsole = (window.location.search.match(/[?&]console=([^&]+)/) || [])[1] || null,
         name = YUI.Env.Tests.name,
+        title = YUI.Env.Tests.title,
         projectAssets = YUI.Env.Tests.project,
         assets = YUI.Env.Tests.assets,
         auto = YUI.Env.Tests.auto || YUI().UA.phantomjs,
@@ -55,9 +57,16 @@
         requires: [ 'test', 'runner-css' ]
     };
 
+    mods[name + '-manual-tests'] = {
+        fullpath: assets + '/' + name + '-manual-tests.js',
+        requires: [ name + '-tests' ]
+    };
+
+    var defaultMod = name + (manual ? '-manual' : '') + '-tests';
+
     YUI({
         modules: mods
-    }).use(name + '-tests', 'test-console', function(Y, status) {
+    }).use(defaultMod, 'test-console', function(Y, status) {
         var log, testConsole,
             renderLogger = function() {
                 if (!log) {
@@ -73,23 +82,33 @@
 
         renderLogger();
         
-        if (filter || showConsole) {
-            Y.all('a').each(function(item) {
-                var url = item.getAttribute('href');
-                if (url.indexOf('#') === -1) {
-                    var f = [];
-                    if (filter) {
-                        f.push('filter=' + filter);
-                    }
-                    if (showConsole) {
-                        f.push('console=' + showConsole);
-                    }
-                    item.set('href', url + '?' + f.join('&'));
-                }
-            });
-        }
+        Y.Test.Case.prototype._poll = function(condition, period, timeout, success, failure, startTime) {
 
+            var currentTime = (new Date()).getTime(),
+                test = this;
 
+            if (startTime === undefined) {
+                startTime = currentTime;
+            }
+
+            if ((currentTime + period) - startTime < timeout) {
+                Y.later(period, null, function() {
+                    if (condition()) {
+                        test.resume(success);
+                    } else {
+                        test._poll(condition, period, timeout, success, failure, startTime);
+                    }
+                });
+            } else if (failure) {
+                test.resume(failure);
+            }
+        };
+
+        Y.Test.Case.prototype.poll = function(condition, period, timeout, success, failure) {
+            this._poll(condition, period, timeout, success, failure);
+            this.wait(timeout + 1000);
+        };
+        
         var counter = 0,
         count = function() {
             counter++;
@@ -97,6 +116,14 @@
         testCase = new Y.Test.Case({
             name: 'Checking for load failure',
             'automated test script loaded': function() {
+                if (!status.success) {
+                    if (status.msg) {
+                        if (status.msg.indexOf(name + '-manual-tests.js') > -1) {
+                            Y.Assert.isTrue(true);
+                            return; // return here and don't throw on this test.
+                        }
+                    }
+                }
                 Y.Assert.isTrue(status.success, 'Automated script 404ed');
             },
             'window.onerror called': function() {
@@ -121,7 +148,7 @@
         Y.Test.Runner.add(testCase);
         
         Y.Test.Runner._ignoreEmpty = false; //Throw on no assertions
-        Y.Test.Runner.setName('Automated ' + name + ' tests');
+        Y.Test.Runner.setName(title);
         Y.Test.Runner.on('complete', function(e) {
             
             if (e.results.failed) {
@@ -129,7 +156,7 @@
             }
 
             if (log) {
-            var header = log.one('.yui3-console-hd h4');
+                var header = log.one('.yui3-console-hd h4');
 
                 if (e.results.failed) {
                     log.addClass('failed');
@@ -145,5 +172,3 @@
     });
 
 }());
-
-

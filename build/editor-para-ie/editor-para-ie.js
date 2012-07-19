@@ -122,4 +122,4 @@ YUI.add('editor-para-ie', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-para-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-para-base']});

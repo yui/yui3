@@ -1,10 +1,10 @@
-<button id="hide">hide</button>
-<button id="show">show</button>
+<button id="hide" class="yui3-button">hide</button>
+<button id="show" class="yui3-button">show</button>
 
 <div class="demo"><p>lorem ipsum dolor sit</p></div>
 
 <script type="text/javascript">
-YUI().use('transition', 'node-event-delegate', function(Y) {
+YUI().use('transition', 'node-event-delegate', 'cssbutton', function(Y) {
     Y.delegate('click', function(e) {
         var buttonID = e.currentTarget.get('id'),
             node = Y.one('.demo');

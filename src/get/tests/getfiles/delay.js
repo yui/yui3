@@ -2,6 +2,7 @@ var http = require('http');
 var url = require('url');
 var fs = require('fs');
 var path = require('path');
+var nExists = fs.exists || path.exists;
 
 var EXT_TO_TYPE = {
     "js" : "text/javascript",
@@ -30,7 +31,7 @@ function sendResponse(res, filepath, delay) {
         // Convert to "server" root
         var filepath = __dirname + filepath;
 
-        path.exists(filepath, function(exists) {
+        nExists(filepath, function(exists) {
             if (exists) {
                 fs.readFile(filepath, function(e, content) {
                     if (!e) {
