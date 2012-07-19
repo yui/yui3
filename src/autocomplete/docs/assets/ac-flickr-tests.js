@@ -11,10 +11,10 @@ YUI.add('ac-flickr-tests', function(Y) {
             Assert.isNotNull(Y.one('.example #demo .yui3-aclist-list'));
         },
 
-        'test type "beagle" into ac list' : function() {
+        'test type "a" into ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
-                inputStr = "beagle";
+                inputStr = "a";
             input.focus();
             input.set('value', inputStr);
 
@@ -41,8 +41,9 @@ YUI.add('ac-flickr-tests', function(Y) {
         'test select item from ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
-                inputStr = "beagle";
+                inputStr = "a";
             input.focus();
+            input.set('value', '');
             input.set('value', inputStr);
 
             var interval = 10,
@@ -55,10 +56,10 @@ YUI.add('ac-flickr-tests', function(Y) {
                 },
             success = function() {
                 var photos = Y.one('.example #photos');
-                list.one('li').simulate('click');
+                list.all('li').item(0).simulate('click');
                 Assert.areEqual(1, photos.all('li img').size(), ' - Failed to find exactly 1 selected photo');
 
-                list.one('li').simulate('click');
+                list.all('li').item(1).simulate('click');
                 Assert.areEqual(2, photos.all('li img').size(), ' - Failed to find exactly 2 selected photo');
             },
             failure = function() {

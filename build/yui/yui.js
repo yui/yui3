@@ -200,7 +200,11 @@ properties.
             }
         },
         getLoader = function(Y, o) {
-            var loader = Y.Env._loader;
+            var loader = Y.Env._loader,
+                lCore = [ 'loader-base' ],
+                G_ENV = YUI.Env,
+                mods = G_ENV.mods;
+
             if (loader) {
                 //loader._config(Y.config);
                 loader.ignoreRegistered = false;
@@ -212,7 +216,10 @@ properties.
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
             }
-            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, [ 'loader-base', 'loader-rollup', 'loader-yui3' ]));
+            if (mods && mods.loader) {
+                lCore = [].concat(lCore, YUI.Env.loaderExtras);
+            }
+            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, lCore));
 
             return loader;
         },
@@ -321,6 +328,7 @@ proto = {
         if (!Env) {
             Y.Env = {
                 core: ['get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3'],
+                loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
@@ -487,7 +495,6 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            //extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3'];
             extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
         for (i = 0; i < extras.length; i++) {
@@ -1078,8 +1085,8 @@ with any configuration info required for the module.
             return Y;
         }
 
-        if (mods['loader'] && !Y.Loader) {
-            Y._attach(['loader']);
+        if ((mods.loader || mods['loader-base']) && !Y.Loader) {
+            Y._attach(['loader' + ((!mods.loader) ? '-base' : '')]);
         }
 
 
@@ -5680,7 +5687,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.07.11-21-38',
+            GALLERY_VERSION = 'gallery-2012.07.18-13-22',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -10929,7 +10936,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
