@@ -412,6 +412,17 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
     },
 
+    // Ref Ticket #2532523
+    "changes to the modelList after replacing it should update the UI": function () {
+        this.view.set('modelList', new Y.ModelList().reset([{ a: 5 }]));
+
+        Y.Assert.areSame('5', this.view.tbodyNode.one('td').get('text'));
+
+        this.view.get('modelList').item(0).set('a', 10);
+
+        Y.Assert.areSame('10', this.view.tbodyNode.one('td').get('text'));
+    },
+
     "reset()ing the modelList should update UI": function () {
         this.view.get('modelList').reset([{ a: 5 }]);
 
