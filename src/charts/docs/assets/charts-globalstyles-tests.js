@@ -199,6 +199,30 @@ YUI.add('charts-globalstyles-tests', function(Y) {
                     "<br>expenses: " + item.expenses + "<br>domestic: " + item.domestic + "</div></div>").get("innerHTML");
         }
     }));
+    
+    suite.add(new Y.Test.Case({
+        name: "Manual Test",
+
+        "Test chart loaded" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure there is a combo (lines and markers) chart with multiple series on the page. The lines should be styles red, grey and black."); 
+        },
+
+        "Test axes styled" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure all labels are red and rotated -45 degrees.");
+        },
+
+        "Test gridlines" : function()
+        {
+            Y.Assert.isTrue((false), "Ensure there are horizontal and vertical gridlines on the background of the chart."); 
+        },
+        
+        "Test marker interactivity" : function()
+        {
+            Y.Assert.isTrue((false), "Drag the cursor horizontally accross the chart. When the cursor intersects with the vertical plane of the markers, a tooltip should display containing data for all series."); 
+        }
+    }));
 
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});

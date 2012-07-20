@@ -4,6 +4,10 @@ Charts Change History
 3.6.0
 -----
 
+  * #2532336 Addressed issue in which tooltip was referenced before it was set. 
+  * #2532078 Addressed issue in which setting a dataProvider with a different structure failed to update a chart.
+  * #2532103 Addressed issues with null values in stacked area charts.
+  * #2532115 Addressed issue in which stacked area charts did not close correctly when a series had null values at the beginning or end.
   * #2531796 Addressed issue in which a combo series with discontinuous data and discontinuousType set to dashed broke the chart.
   * #2532102 Addressed issue in which Area Charts with null values at the start or beginning do not close accurately.
   * #2532186 Addressed issue in which categoryDisplayName and valueDisplayName in seriesCollection were not accepted on init.

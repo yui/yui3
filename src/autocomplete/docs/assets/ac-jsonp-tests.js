@@ -11,14 +11,14 @@ YUI.add('ac-jsonp-tests', function(Y) {
             Assert.isNotNull(Y.one('.example #demo .yui3-aclist-list'));
         },
 
-        'test type "davglass" into ac list' : function() {
+        'test type "lsmith" into ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
-                inputStr = "davglass";
+                inputStr = "lsmith";
             input.focus();
             input.set('value', inputStr);
 
-            var interval = 200,
+            var interval = 10,
                 timeout = 10000,
                 condition = function() {
                     // Return a truthy/falsey result.
@@ -27,9 +27,7 @@ YUI.add('ac-jsonp-tests', function(Y) {
                     // return Y.one("#waitForMe") !== null
                 },
             success = function() {
-                Assert.isTrue((false), 'Eric says this example is broken due to a GitHub API change')
-//                Assert.isTrue(3, list.all('li').size(), 'failed to filter on ' + inputStr + ' with 3 results');
-//                Assert.areEqual(inputStr.toLowerCase(), list.one('.yui3-highlight').getHTML().toLowerCase(), 'failed to hightlight ' + inputStr + ' on first result');
+                Assert.isTrue((list.all('li').size() > 0), ' - Failed to find more than 0 results for ' + inputStr);
             },
             failure = function() {
                 Y.Assert.fail("#waitForMe never showed up in " + timeout + "ms");

@@ -34,11 +34,13 @@
 
     "pages": {
         "cssreset-basic-example": {
+            "name"       : "cssreset-basic",
             "displayName": "CSS Reset Page Example",
             "layout"     : "cssbase-basic-example"
         },
 
         "cssreset-context-example": {
+            "name"       : "cssreset-context",
             "displayName": "CSS Reset Contextual Example",
             "layout"     : "cssreset-context-example"
         }
