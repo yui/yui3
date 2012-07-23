@@ -1,6 +1,6 @@
 <div class="intro">
 <p>
-This example demonstrates how to provide autocomplete suggestions from a remote JSONP API. In this case, we're using <a href="http://develop.github.com/p/users.html">GitHub's user search API</a> to suggest GitHub usernames.
+This example demonstrates how to provide autocomplete suggestions from a remote JSONP API. In this case, we're using <a href="http://developer.github.com/v3/search/#search-users">GitHub's user search API</a> to suggest GitHub usernames.
 </p>
 
 <p>
@@ -33,19 +33,24 @@ The GitHub Users API returns a JavaScript object that looks like this:
 {
   "users": [
     {
-      "name": "rgrove",
-      "location": "Portland, OR",
-      "followers": 55,
-      "language": "JavaScript",
-      "fullname": "Ryan Grove",
-      "username": "rgrove",
-      "id": "user-1465",
-      "repos": 28,
-      "type": "user",
-      "pushed": "2010-11-06T00:15:08.327Z",
-      "score": 4.8103123,
+      "created_at": "2008-02-28T07:08:51Z",
       "record": null,
-      "created": "2008-02-28T07:08:51Z"
+      "login": "rgrove",
+      "gravatar_id": "683e9380d7cc0724a35dadfb4eeb142b",
+      "id": "user-1465",
+      "language": "JavaScript",
+      "pushed": "2012-07-05T23:15:29.148Z",
+      "location": "Portland, OR",
+      "followers": 194,
+      "score": 33.00596,
+      "public_repo_count": 41,
+      "name": "Ryan Grove",
+      "fullname": "Ryan Grove",
+      "created": "2008-02-28T07:08:51Z",
+      "username": "rgrove",
+      "type": "user",
+      "followers_count": 194,
+      "repos": 41
     },
 
     ...
@@ -67,9 +72,9 @@ This means we'll need to specify a <a href="{{apiDocs}}/classes/AutoCompleteBase
 YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
   Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
     resultHighlighter: 'phraseMatch',
-    resultListLocator: 'users',
+    resultListLocator: 'data.users',
     resultTextLocator: 'username',
-    source: 'http://github.com/api/v2/json/user/search/{query}?callback={callback}'
+    source: 'https://api.github.com/legacy/user/search/{query}?callback={callback}'
   });
 });
 ```

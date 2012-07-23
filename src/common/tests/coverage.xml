@@ -218,6 +218,8 @@
         <url>querystring/tests/querystring.html</url>
         <url>queue-promote/tests/queue-promote.html</url>
         <url>resize/tests/index.html</url>
+        <url>scrollview/tests/scrollview-base-unit-test.html</url>
+        <url>scrollview/tests/scrollview-paginator-unit-test.html</url>
         <url>scrollview/tests/scrollview-list-unit-test.html</url>
         <url>slider/tests/slider.html</url>
         <url>sortable/tests/index.html</url>

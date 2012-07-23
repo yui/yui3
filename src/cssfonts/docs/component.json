@@ -11,6 +11,7 @@
 
     "examples": [
         {
+            "newWindow"  : "true",
             "name"       : "cssfonts-basic",
             "displayName": "Global (Page-Level) Example",
             "description": "When CSS Fonts is included in a page, it applies a baseline font treatment to all HTML elements. This baseline is Arial at the equivalent of 13px size and 16px line-height.",
@@ -21,6 +22,7 @@
         },
 
         {
+            "newWindow"  : "true",
             "name"       : "cssfonts-context",
             "displayName": "Contextual Example",
             "description": "Use the alternate contextual version of YUI Fonts to have precise control over which regions of the page are targeted.",
@@ -31,6 +33,7 @@
         },
 
         {
+            "newWindow"  : "true",
             "name"       : "cssfonts-size",
             "displayName": "Setting Font Size",
             "description": "Define all non-baseline sizes in percentages when using YUI Fonts.",
