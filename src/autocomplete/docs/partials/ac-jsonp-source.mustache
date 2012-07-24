@@ -1,15 +1,23 @@
 <div id="demo" class="yui3-skin-sam">
-  <label for="ac-input">Enter a GitHub username:</label><br>
-  <input id="ac-input" type="text">
+  <label for="ac-input">Enter a YUI module name:</label><br>
+  <input id="ac-input" type="text" size="45">
 </div>
 
 <script>
-YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
+YUI().use('array-extras', 'autocomplete', 'autocomplete-highlighters', function (Y) {
+  function locateModules(response) {
+    var results = (response && response.data && response.data.results) || [];
+
+    return Y.Array.filter(results, function (result) {
+      return result._type === 'module';
+    });
+  }
+
   Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
     resultHighlighter: 'phraseMatch',
-    resultListLocator: 'data.users',
-    resultTextLocator: 'username',
-    source: 'https://api.github.com/legacy/user/search/{query}?callback={callback}'
+    resultListLocator: locateModules,
+    resultTextLocator: 'name',
+    source: 'http://yuilibrary.com/api/v1/search/suggest?q={query}&callback={callback}&count=50'
   });
 });
 </script>
