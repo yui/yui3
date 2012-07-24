@@ -32,34 +32,32 @@ YUI.add('node-focusmanager-button-tests', function (Y) {
         'menu should be navigatable with arrow keys and enter': function () {
             var choices  = ['Inbox', 'Archive', 'Trash'],
                 button   = Y.one('#button-1'),
-                menu     = Y.one('#menu-1');
-                out      = Y.one('#out'),
-                options  = Y.all('#menu-1 input'),
+                menu     = Y.one('#menu-1'),
+                menuItems = menu.all('li'),
+                MENU_ITEM_ACTIVE = 'yui3-menuitem-active',
                 keyEvent = !(Y.UA.opera) ? 'keydown' : 'keypress';
 
             button.simulate('click');
-            options.item(0).simulate(keyEvent, {
-                charCode: DOWN_ARROW_KEY,
-                keyCode: DOWN_ARROW_KEY
-            });
 
-            /* for (var i = 0; i < 3; i++) {
-                button.simulate('click');
-                // Scroll down using the arrow keys
-                for (var j = 0; j < i; j++) {
-                    console.log('hi');
-                    menu.simulate(keyEvent, {
+            //Wait for a little bit for the DOM to update. Otherwise, the menu doesnt change state in time.
+            this.wait(function(){
+
+                //The menu should be open and visible.
+                Assert.isTrue(Y.one('.yui3-buttonmenu').hasClass('yui3-overlay-focused'));
+
+                //Loop through the menu items with the down arrow.
+                for (var i = 0; i < menuItems.size(); i++) {
+                    Assert.isTrue(menuItems.item(i).hasClass(MENU_ITEM_ACTIVE), 'Item is properly focused');
+                    Assert.areEqual(choices[i], menuItems.item(i).one('input').get('value'), 'Unexpected output from choice ' + choices[i]);
+                    
+                    menu.one('input').simulate(keyEvent, {
                         charCode: DOWN_ARROW_KEY,
-                        keyCode: DOWN_ARROW_KEY,
-
+                        keyCode: DOWN_ARROW_KEY
                     });
+
                 }
 
-                Assert.isTrue(options.item(j).hasClass('yui3-menuitem-active'),
-                    'Item is properly focused');
-                // Assert.areEqual('You clicked ' + choices[i], out.getHTML(),
-                //    'Unexpected output from choice ' + choices[i]);
-            }*/
+            }, 1000);
         }
     }));
 
