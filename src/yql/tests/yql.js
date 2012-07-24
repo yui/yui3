@@ -204,7 +204,7 @@ YUI.add('yql-tests', function(Y) {
             });
 
             this.wait();
-        },
+        }/*,
         'test: success handler': function() {
             var test = this;
 
@@ -258,7 +258,7 @@ YUI.add('yql-tests', function(Y) {
             });
 
             this.wait();
-        }
+        }*/
     };
     var suite = new Y.Test.Suite("YQL");
     
