@@ -874,6 +874,117 @@ YUI.add('mock-tests', function(Y) {
     }));
 
 
+    //-------------------------------------------------------------------------
+    // Test Case for returns expectations
+    //-------------------------------------------------------------------------
+    
+    suite.add(new Y.Test.Case({
+    
+        name : "Returns Tests",
+        groups: ["mock", "common"],
+
+        /*
+         * Test that when no 'returns' expectation is given it is undefined.
+         */
+        "Value for 'returns' should default to undefined": function(){
+            var mock = Y.Test.Mock(),
+                result;
+
+            Y.Test.Mock.expect(mock, {
+                method: "method"
+            });
+
+            result = mock.method();
+            Assert.isUndefined(result);
+        },
+
+        /*
+         * Test that when a 'returns' expectation is given it is used.
+         */
+        "Value for 'returns' should be used as return value": function(){
+            var mock = Y.Test.Mock(),
+                result;
+
+            Y.Test.Mock.expect(mock, {
+                method: "method",
+                returns: true
+            });
+
+            result = mock.method();
+            Assert.isTrue(result);
+        },
+
+        /*
+         * Test that when a 'returns' expectation is given it is used regardless
+         * of the return value of any run function provided.
+         */
+        "Value for 'returns' should be used rather than run value": function(){
+            var mock = Y.Test.Mock(),
+                result;
+
+            Y.Test.Mock.expect(mock, {
+                method: "method",
+                returns: true,
+                run: function() {
+                    return false;
+                }
+            });
+
+            result = mock.method();
+            Assert.isTrue(result);
+        }
+
+    }));
+
+    //-------------------------------------------------------------------------
+    // Test Case for run expectations
+    //-------------------------------------------------------------------------
+    
+    suite.add(new Y.Test.Case({
+    
+        name : "Run Tests",
+        groups: ["mock", "common"],
+
+        /*
+         * Test that when run is given it is executed.
+         */
+        "A supplied run function should be invoked": function(){
+            var mock = Y.Test.Mock(),
+                invoked = false;
+
+            Y.Test.Mock.expect(mock, {
+                method: "method",
+                run: function() {
+                    invoked = true;
+                }
+            });
+
+            mock.method();
+            Assert.isTrue(invoked);
+        },
+
+        /*
+         * Test that run function return value is used when no 'returns' key is
+         * present.
+         */
+        "A supplied run function's return value should be used.": function(){
+            var mock = Y.Test.Mock(),
+                result;
+
+            Y.Test.Mock.expect(mock, {
+                method: "method",
+                run: function() {
+                    return 'invoked';
+                }
+            });
+
+            result = mock.method();
+            Assert.areEqual(result, 'invoked');
+        }
+
+    }));
+
+
     Y.Test.Runner.add(suite);
 
 });
