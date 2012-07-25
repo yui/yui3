@@ -6,6 +6,7 @@
     <span id="open-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-open" value="Open"></span></span></span>
     <span id="save-btn" class="yui3-toolbar-button"><span><span><input type="button" name="btn-save" value="Save"></span></span></span>
 </div>
+<div id="out">(Accessible Toolbar results here)</div>
 
 <script>
 
@@ -15,7 +16,8 @@
         //  (<div id="toolbar">) and call the "plug" method
         //  passing in a reference to the Focus Manager Node Plugin.
 
-        var toolbar = Y.one("#toolbar-1");
+        var toolbar = Y.one("#toolbar-1"),
+            out     = Y.one("#out");
 
         toolbar.plug(Y.Plugin.NodeFocusManager, {
 
@@ -40,7 +42,7 @@
 
         toolbar.delegate("click", function (event) {
 
-            alert("You clicked " + this.one("input").get("value"));
+            out.setHTML("You clicked " + this.one("input").get("value"));
 
         }, ".yui3-toolbar-button");
 

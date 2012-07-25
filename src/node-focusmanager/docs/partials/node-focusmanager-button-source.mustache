@@ -10,11 +10,13 @@
         </ul>
     </div>
 </div>
+<div id="out">(Accessible Menu Button results here)</div>
 
 <script>
 YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
     
 	var menuButton = Y.one("#button-1"),
+        out        = Y.one("#out"),
 		menu;
 		
 	var initMenu = function () {
@@ -157,7 +159,7 @@ YUI().use("node-focusmanager", "node-event-simulate", "overlay", function(Y){
 
 		boundingBox.delegate("click", function (event) {
 
-			alert("You clicked " + this.one("input").get("value"));
+			out.setHTML("You clicked " + this.one("input").get("value"));
 
 			contentBox.focusManager.blur();
 			menu.hide();
