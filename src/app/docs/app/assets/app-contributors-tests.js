@@ -68,7 +68,7 @@ Wait.prototype = {
 
         self.timer = setInterval(function () {
             self.check();
-        }, 25);
+        }, 100);
 
         self.test.wait(ms || 0);
         self.check();
@@ -86,12 +86,14 @@ suite.add(new Y.Test.Case({
             HistoryHash.setHash('/');
 
             // Wait for hash to change and view to transition.
-            this.wait(function () {
-                var activeView = appViews.get('firstChild');
+            Wait.forNode('.home-page').toAppear().thenResume(this, function () {
+                Wait.forNode('.yui3-app-transitioning').toDisappear().thenResume(this, function () {
+                    var activeView = appViews.get('firstChild');
 
-                Assert.areSame('/', HistoryHash.getHash(), 'URL hash was not updated to "/".');
-                Assert.isTrue(activeView.hasClass('home-page'), 'HomePageView is not currently active.');
-            }, 500);
+                    Assert.areSame('/', HistoryHash.getHash(), 'URL hash was not updated to "/".');
+                    Assert.isTrue(activeView.hasClass('home-page'), 'HomePageView is not currently active.');
+                }).until(1000);
+            }).until(1000);
         }).until(10000);
     },
 
