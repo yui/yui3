@@ -1096,31 +1096,25 @@ Y.GestureSimulation.GESTURES = gestureNames;
  * Simulates the higher user level gesture of the given name on a target. 
  * This method generates a set of low level touch events(Apple specific gesture 
  * events as well for the iOS platforms) asynchronously. Note that gesture  
- * simulation is relying on <code>Y.Event.simulate()</code> method to generate 
- * the touch events under the hood. The <code>Y.Event.simulate()</code> method
+ * simulation is relying on `Y.Event.simulate()` method to generate 
+ * the touch events under the hood. The `Y.Event.simulate()` method
  * itself is a synchronous method.
  * 
- * <p>
- * Users are suggested to use <code>Node.simulateGesture()</code> method which 
- * basically calls this method internally. Supported gestures are tap, doubletap, 
- * press, move, flick, pinch and rotate.
- * </p>
+ * Users are suggested to use `Node.simulateGesture()` method which 
+ * basically calls this method internally. Supported gestures are `tap`, 
+ * `doubletap`, `press`, `move`, `flick`, `pinch` and `rotate`.
  * 
- * <p>
  * The `pinch` gesture is used to simulate the pinching and spreading of two
  * fingers. During a pinch simulation, rotation is also possible. Essentially
  * `pinch` and `rotate` simulations share the same base implementation to allow
  * both pinching and rotation at the same time. The only difference is `pinch`
  * requires `start` and `end` option properties while `rotate` requires `rotation` 
  * option property.
- * </p>
- *
- * <p>
+ * 
  * The `pinch` and `rotate` gestures can be described as placing 2 fingers along a
  * circle. Pinching and spreading can be described by start and end circles while 
  * rotation occurs on a single circle. If the radius of the start circle is greater 
  * than the end circle, the gesture becomes a pinch, otherwise it is a spread spread.
- * </p>
  * 
  * @example
  *
@@ -1154,168 +1148,115 @@ Y.GestureSimulation.GESTURES = gestureNames;
  *         start: 0
  *         rotation: 90
  *     });
- *  
+ *     
+ * @method simulateGesture
  * @param {HTMLElement|Node} node The YUI node or HTML element that's the target 
  *      of the event.
  * @param {String} name The name of the supported gesture to simulate. The 
  *      supported gesture name is one of "tap", "doubletap", "press", "move", 
  *      "flick", "pinch" and "rotate". 
- * @param {Object} options (Optional) Extra options that are used to refine the 
- *      gesture behavior.
- *      
- *      Valid properties of options for tap:
- *      
- *      <ul>
- *        <li>
- *        'point': (Optional) Indicates the [x,y] coordinates where the tap  
- *        should be simulated. Default is the center of the node element.
- *        </li>
- *        <li>
- *        'hold': (Optional) The hold time in milliseconds. This is the time  
- *        between `touchstart` and `touchend` event generation. Default is 10 
- *        ms.
- *        </li>
- *        <li>
- *        'times': (Optional) Indicates the number of taps. Default is 1.
- *        </li>
- *        <li>
- *        'delay': (Optional) The number of milliseconds before the next tap  
-           simulation happens. This is valid only when `times` is more than 1.
- *        </li>
- *      </ul>
+ * @param {Object} [options] Extra options used to define the gesture behavior:
  * 
- *      Valid properties of options for doubletap:
+ *      Valid options properties for the `tap` gesture:
  *      
- *      <ul>
- *        <li>
- *        'point': (Optional) Indicates the [x,y] coordinates where the doubletap  
- *        should be simulated. Default is the center of the node element.
- *        </li>
- *      </ul>
- * 
- *      Valid properties of options for press:
+ *      @param {Array} [options.point] (Optional) Indicates the [x,y] coordinates 
+ *        where the tap should be simulated. Default is the center of the node 
+ *        element.
+ *      @param {Number} [options.hold=10] (Optional) The hold time in milliseconds. 
+ *        This is the time between `touchstart` and `touchend` event generation.
+ *      @param {Number} [options.times=1] (Optional) Indicates the number of taps.
+ *      @param {Number} [options.delay=10] (Optional) The number of milliseconds 
+ *        before the next tap simulation happens. This is valid only when `times` 
+ *        is more than 1. 
+ *        
+ *      Valid options properties for the `doubletap` gesture:
  *      
- *      <ul>
- *        <li>
- *        'point': (Optional) Indicates the [x,y] coordinates where the press   
- *        should be simulated. Default is the center of the node element.
- *        </li>
- *        <li>
- *        'hold': (Optional) The hold time in milliseconds. This is the time  
- *        between `touchstart` and `touchend` event generation. Default is 3000 
- *        ms (3 seconds).
- *        </li>
- *      </ul>
+ *      @param {Array} [options.point] (Optional) Indicates the [x,y] coordinates 
+ *        where the doubletap should be simulated. Default is the center of the 
+ *        node element.
  * 
- *      Valid properties of options for move:
+ *      Valid options properties for the `press` gesture:
  *      
- *      <ul>
- *        <li>
- *        'path': (Optional) Indicates the path of the finger movement. It's an   
- *        object with three optional properties: `point`, `xdist` and  `ydist`. 
- *        The `point` is the start point and defaults to the center of the node
- *        element. The `xdist` and  `ydist` indicate the distance moved in 
- *        pixels along the X and Y axis. A negative distance value indicates 
- *        moving to left for `xdist` and down for `ydist`. Default is to move 
- *        200 pixels from the center of the element to the positive X-axis 
- *        direction.
- *        </li>
- *        <li>
- *        'duration': (Optional) The duration of the gesture in milliseconds.
- *        Default is 1000 ms.
- *        </li>
- *      </ul>
+ *      @param {Array} [options.point] (Optional) Indicates the [x,y] coordinates 
+ *        where the press should be simulated. Default is the center of the node 
+ *        element.
+ *      @param {Number} [options.hold=3000] (Optional) The hold time in milliseconds. 
+ *        This is the time between `touchstart` and `touchend` event generation. 
+ *        Default is 3000ms (3 seconds).
  * 
- *      Valid properties of options for flick:
+ *      Valid options properties for the `move` gesture:
  *      
- *      <ul>
- *        <li>
- *        'point': Indicates the [x, y] coordinates where the flick should be 
-          simulated. Default is the center of the node element.
- *        </li>
- *        <li>
- *        'axis': Valid values are either "x" or "y". Indicates axis to move along. 
- *        The flick can move to one of 4 directions(left, right, up and down).
- *        Default is "x".
- *        </li>
- *        <li>
- *        'distance': (Optional) Distance to move in pixels. Default is 200.
- *        </li>
- *        <li>
- *        'duration': (Optional) The duration of the gesture in milliseconds. 
- *        User given value could be automatically adjusted by the framework if 
- *        it is below the minimum velocity to be a flick gesture. Default is 
- *        1000 ms.
- *        </li>
- *      </ul>
+ *      @param {Object} [options.path] (Optional) Indicates the path of the finger 
+ *        movement. It's an object with three optional properties: `point`, 
+ *        `xdist` and  `ydist`.
+ *        @param {Array} [options.path.point] A starting point of the gesture.
+ *          Default is the center of the node element.
+ *        @param {Number} [options.path.xdist=200] A distance to move in pixels  
+ *          along the X axis. A negative distance value indicates moving left.
+ *        @param {Number} [options.path.ydist=0] A distance to move in pixels  
+ *          along the Y axis. A negative distance value indicates moving up.
+ *      @param {Number} [options.duration=1000] (Optional) The duration of the 
+ *        gesture in milliseconds.
  * 
- *      Valid properties of options for pinch:
+ *      Valid options properties for the `flick` gesture:
  *      
- *      <ul>
- *        <li>
- *        'center': (Optional) The center of the circle where the two fingers 
- *        are placed. Default is the center of the node element.
- *        </li>
- *        <li>
- *        'r1': (Required) Pixel radius of the start circle where 2 fingers will 
- *        be on when the gesture starts. The circles are centered at the center
- *        of the element.
- *        </li>
- *        <li>
- *        'r2': (Required) Pixel radius of the end circle.
- *        </li>
- *        <li>
- *        'duration': (Optional) The duration of the gesture in milliseconds. 
- *        Default is 1000 ms.
- *        </li>
- *        <li>
- *        'start': (Optional) Start degree of the first finger. The value is 
- *        relative to the path of center to the north. Default is 0 (i.e., 12:00 
- *        on a clock).
- *        </li>
- *        <li>
- *        'rotation': (Optional) Degrees to rotate from the start degree. 
- *        Negative value means rotation of counter-clockwise direction. Default 
- *        is 0.
- *        </li>
- *      </ul>
+ *      @param {Array} [options.point] (Optional) Indicates the [x, y] coordinates 
+ *        where the flick should be simulated. Default is the center of the 
+ *        node element.
+ *      @param {String} [options.axis='x'] (Optional) Valid values are either 
+ *        "x" or "y". Indicates axis to move along. The flick can move to one of 
+ *        4 directions(left, right, up and down).
+ *      @param {Number} [options.distance=200] (Optional) Distance to move in pixels
+ *      @param {Number} [options.duration=1000] (Optional) The duration of the 
+ *        gesture in milliseconds. User given value could be automatically 
+ *        adjusted by the framework if it is below the minimum velocity to be 
+ *        a flick gesture.
  * 
- *      Valid properties of options for rotate:
+ *      Valid options properties for the `pinch` gesture:
  *      
- *      <ul>
- *        <li>
- *        'center': (Optional) The center of the circle where the two fingers 
- *        are placed. Default is the center of the node element.
- *        </li>
- *        <li>
- *        'r1': (Optional) Pixel radius of the start circle. Default is half of 
- *        the node element width or height, whichever is smaller.
- *        </li>
- *        <li>
- *        'r2': (Optional) Pixel radius of the end circle. Default is half of 
- *        the node element width or height, whichever is smaller.
- *        </li>
- *        <li>
- *        'duration': (Optional) The duration of the gesture in milliseconds. 
- *        Default is 1000 ms.
- *        </li>
- *        <li>
- *        'start': (Optional) Start degree of the first finger. The value is 
- *        relative to the path of center to the north. Default is 0 (i.e., 12:00 
- *        on a clock).
- *        </li>
- *        <li>
- *        'rotation': (Required) Degrees to rotate from the start degree. 
- *        Negative value means rotation of counter-clockwise direction.
- *        </li>
- *      </ul>
+ *      @param {Array} [options.center] (Optional) The center of the circle where 
+ *        two fingers are placed. Default is the center of the node element.
+ *      @param {Number} [options.r1] (Required) Pixel radius of the start circle 
+ *        where 2 fingers will be on when the gesture starts. The circles are 
+ *        centered at the center of the element.
+ *      @param {Number} [options.r2] (Required) Pixel radius of the end circle 
+ *        when this gesture ends.
+ *      @param {Number} [options.duration=1000] (Optional) The duration of the 
+ *        gesture in milliseconds.
+ *      @param {Number} [options.start=0] (Optional) Starting degree of the first 
+ *        finger. The value is relative to the path of the north. Default is 0 
+ *        (i.e., 12:00 on a clock).
+ *      @param {Number} [options.rotation=0] (Optional) Degrees to rotate from 
+ *        the starting degree. A negative value means rotation to the 
+ *        counter-clockwise direction.
  * 
- * @param {Function} cb The callback to execute when the asynchronouse gesture  
- *      simulation is completed.   
+ *      Valid options properties for the `rotate` gesture:
+ *      
+ *      @param {Array} [options.center] (Optional) The center of the circle where 
+ *        two fingers are placed. Default is the center of the node element.
+ *      @param {Number} [options.r1] (Optional) Pixel radius of the start circle 
+ *        where 2 fingers will be on when the gesture starts. The circles are 
+ *        centered at the center of the element. Default is the half of the node 
+ *        element width or height, whichever is smaller.
+ *      @param {Number} [options.r2] (Optional) Pixel radius of the end circle 
+ *        when this gesture ends. Default is half of the node element width or 
+ *        height, whichever is smaller.
+ *      @param {Number} [options.duration=1000] (Optional) The duration of the 
+ *        gesture in milliseconds.
+ *      @param {Number} [options.start=0] (Optional) Starting degree of the first 
+ *        finger. The value is relative to the path of the north. Default is 0 
+ *        (i.e., 12:00 on a clock).
+ *      @param {Number} [options.rotation] (Required) Degrees to rotate from 
+ *        the starting degree. A negative value means rotation to the 
+ *        counter-clockwise direction.
+ * 
+ * @param {Function} [cb] The callback to execute when the asynchronouse gesture  
+ *      simulation is completed. 
+ *      @param {Error} cb.err An error object if the simulation is failed.  
  * @return {void}
  * @for Event
- * @method simulateGesture
  * @static
+ * @since 3.6.0
  */
 Y.Event.simulateGesture = function(node, name, options, cb) {
 
