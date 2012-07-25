@@ -104,6 +104,7 @@ YUI.add('yql', function(Y) {
             var o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
 
             o.on = o.on || {};
+            this._callback = o.on.success;
 
             o.on.success = Y.bind(this._internal, this);
 
