@@ -1,6 +1,6 @@
 YUI.add('console-filters-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Tests");
+var suite = new Y.Test.Suite("ConsoleFilters Test Suite");
 
 function setUp() {
     var testbed = Y.one('#testbed') ||
