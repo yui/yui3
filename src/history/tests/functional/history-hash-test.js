@@ -274,6 +274,28 @@ Y.Test.Runner.add(new Y.Test.Case({
                 }, 105);
             }, 105);
         }, 51);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2532596
+    'Subscribers of hashchange should not be called once for every YUI instance': function () {
+        var test  = this,
+            calls = 0;
+
+        this.wait(function () {
+            Y.on('hashchange', function () {
+                calls += 1;
+            }, Y.config.win);
+
+            YUI().use('*', function (Y2) {
+                Y.Assert.isFunction(Y2.HistoryHash);
+
+                Y.HistoryHash.setHash('/foo/bar');
+
+                test.wait(function () {
+                    Y.Assert.areSame(1, calls);
+                }, 51);
+            });
+        }, 51);
     }
 }));
 
