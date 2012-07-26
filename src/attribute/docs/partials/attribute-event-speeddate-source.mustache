@@ -7,10 +7,10 @@
 
         <span class="interests disabled">
             I enjoy: 
-            <label><input type="checkbox" class="interest" value="Sunsets" disabled="disabled"> Sunsets</label>
-            <label><input type="checkbox" class="interest" value="Reading Specifications" disabled="disabled"> Reading Specifications</label> 
-            <label><input type="checkbox" class="interest" value="Saving Whales" disabled="disabled"> Saving Whales</label>
-            <label><input type="checkbox" class="interest" value="Knitting" disabled="disabled"> Knitting</label>
+            <label><input type="checkbox" id="sunsets" class="interest" value="Sunsets" disabled="disabled"> Sunsets</label>
+            <label><input type="checkbox" id="specs" class="interest" value="Reading Specifications" disabled="disabled"> Reading Specifications</label> 
+            <label><input type="checkbox" id="whales" class="interest" value="Saving Whales" disabled="disabled"> Saving Whales</label>
+            <label><input type="checkbox" id="knitting" class="interest" value="Knitting" disabled="disabled"> Knitting</label>
         </span>
         <div class="shirt"></div>
     </div>
@@ -197,7 +197,7 @@ YUI().use("collection", "event", "node", "attribute", "substitute", function(Y) 
     }, "#jane .movingOn");
 
     // A delegate DOM event listener which will update John's interests, based on the checkbox state, whenever
-    // a checkbox is clicked.
+    // a checkbox is clicked. (Using click for IE, due to it's weirdness with requiring a blur before firing change)
     Y.delegate("click", function() {
         var interests = [];
 

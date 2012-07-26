@@ -22,6 +22,7 @@ if (Y.Uploader.TYPE != "none") {
                                           height: "100%",
                                           swfURL: "assets/flashuploader.swf?t=" + Math.random(),
                                           tabElements: {from: "#pageTitle", to: "#uploadButton"},
+                                          selectFilesButton: Y.Node.create("<button class='yui3-button' tabindex='-1'>Choose Files</button>"),
                                           errorAction: Y.UploaderHTML5.Queue.RESTART_ASAP,
                                           withCredentials: false
                                         });

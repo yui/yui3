@@ -61,10 +61,10 @@ Lines.prototype = {
             return;
         }
         var isNumber = Y_Lang.isNumber,
-            xcoords = this.get("xcoords").concat(),
-            ycoords = this.get("ycoords").concat(),
+            xcoords,
+            ycoords,
             direction = this.get("direction"),
-            len = direction === "vertical" ? ycoords.length : xcoords.length,
+            len,
             lastPointValid,
             pointValid,
             noPointsRendered = true,
@@ -84,6 +84,17 @@ Lines.prototype = {
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
             path = this._getGraphic();
+        if(this._stacked)
+        {
+            xcoords = this.get("stackedXCoords");
+            ycoords = this.get("stackedYCoords");
+        }
+        else
+        {
+            xcoords = this.get("xcoords");
+            ycoords = this.get("ycoords");
+        }
+        len = direction === "vertical" ? ycoords.length : xcoords.length;
         path.set("stroke", {
             weight: styles.weight, 
             color: lc, 

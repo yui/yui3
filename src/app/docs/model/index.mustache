@@ -797,17 +797,220 @@ Finally, a model's `destroy()` method can be used to destroy the model instance.
 It's not necessary for a model to support all possible sync actions. A model that's used to represent read-only data might use a sync layer that only implements the `read` action, for instance. In this case, the other actions should simply be no-ops that either call the sync callback immediately, or pass an error to the sync callback indicating that the action isn't supported (depending on your personal preference).
 </p>
 
-<h2>Implementing a Model Sync Layer</h2>
+<h2>Model Sync Layers</h2>
 
 <p>
-A model's `save()`, `load()`, and `destroy()` methods all internally call the model's `sync()` method to carry out an action. The default `sync()` method doesn't actually do anything, but by overriding the `sync()` method, you can provide a custom sync layer.
+A model's `save()`, `load()`, and `destroy()` methods all internally call the model's `sync()` method to carry out an action. The default `sync()` method doesn't actually do anything, but you can mix one of the following sync layers into your `Y.Model`/`Y.ModelList` subclass or implement a custom sync layer.
+</p>
+
+<h3>RESTful XHR</h3>
+
+<p>
+`Y.ModelSync.REST` is an extension which provides a RESTful XHR `sync()` implementation that can be mixed into a Model or ModelList subclass.
 </p>
 
 <p>
-A sync layer might make Ajax requests to a remote server, or it might act as a wrapper around local storage, or any number of other things.
+This makes it trivial for your Model or ModelList subclasses communicate and transmit their data via RESTful XHR. In most cases you'll only need to provide a value for `root` when sub-classing `Y.Model`.
 </p>
 
-<h3>The `sync()` Method</h3>
+```javascript
+// Create `Y.User`, a `Y.Model` subclass and mix-in the RESTful XHR sync layer.
+Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
+    // The root or collection path segment for the server's Users resource.
+    root: '/users'
+});
+
+var currentUser, newUser;
+
+// GET the user data from: "/users/123"
+currentUser = new Y.User({id: '123'}).load();
+
+// PUT the updated user data at: "/users/123"
+currentUser.set('name', 'Ron Swanson').save();
+
+// DELETE the user data at: "/users/123"
+currentUser.destroy({remove: true});
+
+// POST the new user data to: "/users"
+newUser = new Y.User({name: 'Eric Ferraiuolo'}).save();
+```
+
+<p>
+The following sections provide details on how to use and configure the `Y.ModelSync.REST` extension. You can also refer to the <a href="{{apiDocs}}/classes/ModelSync.REST.html">API docs</a> for more information.
+</p>
+
+<h4 class="no-toc">Configuring URLs</h4>
+
+<p>
+In order for this sync layer to make requests to a server it needs a URL. Some useful conventions have been put in place to generate these URLs, thus reducing the amount of configuration required to use this sync layer.
+</p>
+
+<p>
+The `url` property works in conjunction with the `root` property to generate the URLs needed to make the XHRs. By simply configuring a `root` on the prototype of your Model subclass to the URL of collection resource on the server, your model's and model lists' URLs can be automatically generated. The following example sets up a Model and ModelList subclass and configures them to work with this sync layer:
+</p>
+
+```
+Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
+    root: '/users'
+});
+
+Y.Users = Y.Base.create('users', Y.ModelList, [Y.ModelSync.REST], {
+    // By convention `Y.User`'s `root` will be used for the lists' URL.
+    model: Y.User
+});
+
+var users = new Y.Users();
+
+// GET users list from: "/users"
+users.load(function () {
+    var firstUser = users.item(0);
+
+    firstUser.get('id'); // => "1"
+
+    // PUT updated user data at: "/users/1"
+    firstUser.set('name', 'Eric').save();
+});
+```
+
+<p>
+By convention, the URL generated for a model when preforming a read, update, or delete action will combine with the configured `root` with the model's `id`. When creating the model resource on the server, just the `root` will be used as the URL.
+</p>
+
+<p>
+<strong>Note:</strong> If the `root` string ends in trailing-slash, the generated URLs will also end with a "/", and if the `root` does not end with a slash, neither will the generated URLs.
+</p>
+
+<p>
+If a `url` is specified, it will be processed by `Y.Lang.sub()`, which is useful when the URLs for a Model/ModelList subclass match a specific pattern and can use simple replacement tokens; e.g.:
+</p>
+
+```
+Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
+    root: '/users',
+    url : '/users/{username}'
+});
+```
+
+<p>
+<strong>Note:</strong> String subsitituion of the `url` only use string an number values provided by this object's attribute and/or the `options` passed to the `getURL()` method. Do not expect something fancy to happen with Object, Array, or Boolean values, they will simply be ignored.
+</p>
+
+<p>
+For more details, refer to the API docs for the <a href="{{apiDocs}}/classes/ModelSync.REST.html#property_root">`root`</a> and <a href="{{apiDocs}}/classes/ModelSync.REST.html#property_url">`url`</a> properties, and the <a href="{{apiDocs}}/classes/ModelSync.REST.html#method_getURL">`getURL()`</a> method.
+</p>
+
+<h4 class="no-toc">Authentic Requests</h4>
+
+<p>
+Anytime a server accepts requests from clients which result in state being changed, the server is susceptible to <a href="https://en.wikipedia.org/wiki/Cross-site_request_forgery">Cross-Site Request Forgery (CSRF)</a> attacks. This extension has build in support for authenticity tokens to help prevent these CSRF attacks.
+</p>
+
+<p>
+A CSRF token provided by the server can be embedded in the HTML document and assigned to `YUI.Env.CSRF_TOKEN` like this:
+</p>
+
+```html
+<script>
+    YUI.Env.CSRF_TOKEN = \{{session.authenticityToken}};
+</script>
+```
+
+<p>
+The above should come after YUI seed file so that `YUI.Env` will be defined.
+</p>
+
+<p>
+<strong>Note:</strong> This can be overridden on a per-request basis. See `sync()` method.
+</p>
+
+<p>
+When a value for the CSRF token is provided, either statically or via `options` passed to the `save()` and `destroy()` methods, the applicable HTTP requests will have a `X-CSRF-Token` header added with the token value.
+</p>
+
+<h4 class="no-toc">Overriding HTTP Defaults</h4>
+
+<p>
+If the server-side HTTP framework isn't RESTful, setting the static `Y.ModelSync.REST.EMULATE_HTTP` flag to `true`
+will cause all PUT and DELETE requests to instead use the POST HTTP method, and add a `X-HTTP-Method-Override` HTTP header with the value of the method type which was overridden.
+</p>
+
+<p>
+Additionally, the mapping of CRUD actions to HTTP methods can be changed. By default, the static mapping provided by `Y.ModelSync.REST.HTTP_METHODS` is:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>CRUD Action</th>
+      <th>HTTP Method</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>`create`</td>
+      <td>POST</td>
+      <td>
+        <p>
+        Creates a new resource on the server for the model.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`read`</td>
+      <td>GET</td>
+      <td>
+        <p>
+        Loads the data for a model from its resource on the server.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`update`</td>
+      <td>PUT</td>
+      <td>
+        <p>
+        Updates the resource on the server with the new model data.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>`delete`</td>
+      <td>DELETE</td>
+      <td>
+        <p>
+        Removes the resource for the model from the server.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 class="no-toc">Content-Types Other Than JSON</h4>
+
+<p>
+By default, this extension will communicate with the server using JSON, by setting the `Accept` and `Content-Type` HTTP headers for all XHRs to "application/json", it signals the server to process the request bodies as JSON and send JSON responses.
+</p>
+
+<p>
+If you're sending and receiving content other than JSON, you can override these default headers on the static `Y.ModelSync.REST.HTTP_HEADERS` object. Additionally, you'll want to provide custom implementations of your Model subclass' `parse()` and `serialize()` methods. The <a href="{{apiDocs}}/classes/ModelSync.REST.html#method_serialize">`serialize()`</a> method is added by this extension, by default it JSON-stringifies to result of calling the model's `toJSON()` method.
+</p>
+
+<p>
+For more information on the `Y.ModelSync.REST` extension, refer to its <a href="{{apiDocs}}/classes/ModelSync.REST.html">API docs</a>.
+</p>
+
+<h3>Implementing a Model Sync Layer</h3>
+
+<p>
+A sync layer might make Ajax requests to a remote server, or it might act as a wrapper around local storage, or any number of other things. By overriding the `sync()` method, you can provide a custom sync layer.
+</p>
+
+<h4>The `sync()` Method</h4>
 
 <p>
 When the `sync()` method is called, it receives three arguments:
@@ -942,7 +1145,7 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
 });
 ```
 
-<h3>The `parse()` Method</h3>
+<h4>The `parse()` Method</h4>
 
 <p>
 Depending on the kind of response your sync layer returns, you may need to override the `parse()` method as well. The default `parse()` implementation knows how to parse JavaScript objects and JSON strings that can be parsed into JavaScript objects representing a hash of attributes. If your response data is in another format, such as a nested JSON response or XML, override the `parse()` method to provide a custom parser implementation.

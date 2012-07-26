@@ -8,7 +8,7 @@
             <label for="demo_lang">Language:
                 <select id="demo_lang"></select>
             </label>
-            <input type="button" id="demo_btn" value="Format Current Date/Time">
+            <input type="button" id="demo_btn" value="Format Current Date (set to Noon)">
             <div id="event_output">&nbsp;</div>
         </fieldset>
     </form>
@@ -162,11 +162,14 @@ YUI().use("node", "datatype-date", function (Y) {
             // It is not required for the single language use case instances shown previously.
             Y.Intl.setLang("datatype-date-format", lang);
 
-            var formattedDate = Y.DataType.Date.format(new Date(), {format:"%c"}),
+            var currentDateAtNoon = new Date();
+                currentDateAtNoon.setHours(12,0,0,0);
+
+            var formattedDate = Y.DataType.Date.format(currentDateAtNoon, {format:"%c"}),
                 rtl = isRTL(lang);
 
-            output.setHTML(formattedDate)
-            output.setAttribute("dir", rtl ? "rtl" : "ltr")
+            output.set("text", formattedDate);
+            output.setAttribute("dir", rtl ? "rtl" : "ltr");
             output.toggleClass("rtl", rtl);
         });
 

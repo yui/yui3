@@ -297,10 +297,8 @@ suite.add(new Y.Test.Case({
                 Y1.Node.create('<button>bar</button>')
             ];
 
-            test.resume(resumeTest);
+            resumeTest();
         });
-
-        test.wait();
     },
 
     '`buttons` should be able to be specified as a mixture of all possibile configurations': function () {
@@ -1344,5 +1342,7 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
-    requires: ['widget-buttons', 'test', 'node-event-simulate']
+     // We require node here, because we use() it again inside a test, and need that use to be synchronous which it will be if node is already on the page
+     // Requiring it explicitly here, means that regardless of what the other modules require, the test will still be stable.
+    requires: ['node', 'widget-buttons', 'test', 'node-event-simulate']
 });

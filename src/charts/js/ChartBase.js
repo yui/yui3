@@ -832,11 +832,14 @@ ChartBase.prototype = {
     _dataProviderChangeHandler: function(e)
     {
         var dataProvider = e.newVal,
-            axes = this.get("axes"),
+            axes,
             i,
             axis;
         this._seriesIndex = -1;
         this._itemIndex = -1;
+        this.set("axes", this.get("axes"));
+        axes = this.get("axes");
+        this.set("seriesCollection", this.get("seriesCollection"));
         if(axes)
         {
             for(i in axes)
@@ -1018,6 +1021,7 @@ ChartBase.prototype = {
     _getTooltip: function()
     {
         var node = DOCUMENT.createElement("div"),
+            tooltipClass = _getClassName("chart-tooltip"),
             tt = {
                 setTextFunction: this._setText,
                 markerLabelFunction: this._tooltipLabelFunction,
@@ -1055,6 +1059,7 @@ ChartBase.prototype = {
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
         node.setStyle("visibility", "hidden");
+        node.addClass(tooltipClass);
         tt.node = Y.one(node);
         return tt;
     },
@@ -1259,7 +1264,7 @@ ChartBase.prototype = {
             catKey = this.get("categoryKey"),
             keys = [],
             i;
-        if(this._seriesKeys)
+        if(this._seriesKeysExplicitlySet)
         {
             return this._seriesKeys;
         }

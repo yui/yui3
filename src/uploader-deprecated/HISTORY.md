@@ -1,5 +1,16 @@
 Uploader Utility (DEPRECATED) Change History
 ============================================
+
+3.6.0
+-----
+
+  * DEPRECATED
+
+3.5.1
+-----
+
+  * DEPRECATED
+
 3.5.0
 -----
   * DEPRECATED
