@@ -84,7 +84,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 	 * @for DataType.Date
 	 * @method addDays
 	 * @param oDate {Date} The date to add days to.
-	 * @param numMonths {Number} The number of days to add (can be negative)
+	 * @param numDays {Number} The number of days to add (can be negative)
 	 * @return {Date} A new Date with the specified number of days
 	 * added to the original date.
 	 */	
