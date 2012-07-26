@@ -26,6 +26,7 @@
         _deactivateTargets: function() {},
         _startDrag: function() {
             if (this.activeDrag && this.activeDrag.get('useShim')) {
+                this._shimming = true;
                 this._pg_activate();
                 this._activateTargets();
             }
