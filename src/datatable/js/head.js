@@ -56,6 +56,7 @@ Supported properties of the column objects include:
   * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells in this
     column only.
   * `abbr`      - The content of the 'abbr' attribute of the `<th>`
+  * `title`     - The content of the 'title' attribute of the `<th>`
   * `className` - Adds this string of CSS classes to the column header
 
 Through the life of instantiation and rendering, the column objects will have
@@ -85,11 +86,11 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
     @property CELL_TEMPLATE
     @type {HTML}
-    @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>'
+    @default '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}{title}>{content}</th>'
     @since 3.5.0
     **/
     CELL_TEMPLATE:
-        '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}>{content}</th>',
+        '<th id="{id}" colspan="{_colspan}" rowspan="{_rowspan}" class="{className}" scope="col" {_id}{abbr}{title}>{content}</th>',
 
     /**
     The data representation of the header rows to render.  This is assigned by
@@ -189,7 +190,8 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
             defaults = {
                 _colspan: 1,
                 _rowspan: 1,
-                abbr: ''
+                abbr: '',
+                title: ''
             },
             i, len, j, jlen, col, html, content, values;
 
@@ -213,9 +215,13 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 
                         values._id = col._id ?
                             ' data-yui3-col-id="' + col._id + '"' : '';
-                        
+
                         if (col.abbr) {
                             values.abbr = ' abbr="' + col.abbr + '"';
+                        }
+
+                        if (col.title) {
+                            values.title = ' title="' + col.title + '"';
                         }
 
                         if (col.className) {
@@ -377,6 +383,7 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
       * `children` - Array of columns to appear below this column in the next
                      row.
       * `abbr`     - The content of the 'abbr' attribute of the `<th>`
+      * `title`    - The content of the 'title' attribute of the `<th>`
       * `headerTemplate` - Overrides the instance's `CELL_TEMPLATE` for cells
         in this column only.
 
