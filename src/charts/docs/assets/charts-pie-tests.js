@@ -141,20 +141,6 @@ YUI.add('charts-pie-tests', function(Y) {
             checkAndFireEvent(seriesMarkers);
         }
     }));
-    
-    suite.add(new Y.Test.Case({
-        name: "Manual Test",
-
-        "Test chart loaded" : function()
-        {
-            Y.Assert.isTrue((false), "Ensure there is a pie chart on the page."); 
-        },
-
-        "Test marker interactivity" : function()
-        {
-            Y.Assert.isTrue((false), "Mouse over pie slices and ensure a tooltip appears."); 
-        }
-    }));
 
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'event-touch', 'node', 'node-event-simulate']});

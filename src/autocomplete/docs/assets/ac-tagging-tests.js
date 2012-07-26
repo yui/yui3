@@ -42,12 +42,24 @@ YUI.add('ac-tagging-tests', function(Y) {
                 list = Y.one('.example #demo .yui3-aclist-list'),
                 interval = 10,
                 timeout = 10000;
-
+                condition = function() {
+                    // Return a truthy/falsey result.
+                    return (list.one('li') !== null);
+                    // For example:
+                    // return Y.one("#waitForMe") !== null
+                },
+            success = function() {
                 var listItems = list.all('li');
 
                 listItems.item(1).simulate('click');
                 Assert.areEqual('javascript, ', input.get('value'), ' - Failed to find selected item text in input')
+            },
+            failure = function() {
+                Y.Assert.fail("#waitForMe never showed up in " + timeout + "ms");
+            };
 
+            // failure is optional. Will default to "wait() without resume()" error
+            this.poll(condition, interval, timeout, success, failure);
         },
 
         'test type appending "ht" onto "javascript, " into ac list' : function() {

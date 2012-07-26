@@ -1,5 +1,5 @@
 YUI.add('charts-groupmarkers-tests', function(Y) {
-    var suite = new Y.Test.Suite('charts-groupmarkers-tests example test suite');
+    var suite = new Y.Test.Suite('charts-groupmarkers-tests example test suite'),
         _getClassName = Y.ClassNameManager.getClassName,
         CHART_BOUNDINGBOX = "." + _getClassName("cartesianchart"),
         CHART_CONTENTBOX = "." + _getClassName("cartesianchart-content"),
@@ -22,20 +22,6 @@ YUI.add('charts-groupmarkers-tests', function(Y) {
         {
             var seriesMarkers = Y.all(CHART_SERIESMARKER);
             Y.Assert.areEqual(TOTAL_MARKERS, seriesMarkers.size(), "There should be " + TOTAL_MARKERS + " markers.");
-        }
-    }));
-    
-    suite.add(new Y.Test.Case({
-        name: "Manual Test",
-
-        "Test chart loaded" : function()
-        {
-            Y.Assert.isTrue((false), "Ensure there is a combo (lines and markers) chart with two series on the page."); 
-        },
-
-        "Test marker interactivity" : function()
-        {
-            Y.Assert.isTrue((false), "Mouse over the chart to ensure a tooltip appears. The tooltip should contain the corresponding data for both series."); 
         }
     }));
 
