@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
+        <meta charset='utf-8'>
         <title>scrollview-base unit tests</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -138,58 +139,58 @@
 					});
 
 					scrollview.scrollTo(distance, 0, 1); // args = x, y, duration, easing
-					Test.wait();
-				}
+					Test.wait(5000);
+				},
 
-     //            "Flick x provides the correct reaction": function() {
-     //                var Test = this,
-					// 	scrollview = renderNewScrollview(false);
+                "Flick x should provide the correct reaction": function() {
+                    var Test = this,
+						scrollview = renderNewScrollview(false);
 
-     //                scrollview.on('scrollEnd', function(){
-					// 	Test.resume(function(){
-					// 		Y.Assert.areEqual(scrollview._maxScrollX, scrollview.get('scrollX'));
-					// 		Y.Assert.areEqual(0, scrollview.get('scrollY'));
-					// 	})
-					// });
+                    scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(scrollview._maxScrollX, scrollview.get('scrollX'));
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						})
+					});
 
-     //                scrollview.get('contentBox').simulateGesture('flick', {
-     //                    distance: -3000,
-     //                    axis: 'x'
-     //                });
+                    scrollview.get('contentBox').simulateGesture('flick', {
+                        distance: -3000,
+                        axis: 'x'
+                    });
 
-     //                Test.wait();
-     //            },
+                    Test.wait();
+                },
 
-     //            "Flick y provides the correct reaction": function() {
-     //                var Test = this,
-					// 	scrollview = renderNewScrollview(true);
+                "Flick y should provide the correct reaction": function() {
+                    var Test = this,
+						scrollview = renderNewScrollview(true);
 
-     //                scrollview.on('scrollEnd', function(){
-					// 	Test.resume(function(){
-					// 		Y.Assert.areEqual(scrollview._maxScrollY, scrollview.get('scrollY'));
-					// 		Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					// 	})
-					// });
+                    scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(scrollview._maxScrollY, scrollview.get('scrollY'));
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
 
-     //                scrollview.get('contentBox').simulateGesture('flick', {
-     //                    distance: -3000,
-     //                    axis: 'y'
-     //                });
+                    scrollview.get('contentBox').simulateGesture('flick', {
+                        distance: -3000,
+                        axis: 'y'
+                    });
 
-     //                Test.wait();
-     //            },
+                    Test.wait();
+                }
 
-      //           "Drag event provides the correct reaction": function() {
+      //           "Drag event should provide the correct reaction": function() {
       //               var Test = this,
 						// scrollview = renderNewScrollview(false);
 
-
-      //               scrollview.get('contentBox').simulateGesture('move', {
-      //                   axis: 'x',
-      //                   distance: -30,
+      //               scrollview.get('contentBox').simulateGesture('touchstart', {
+      //                   axis: 'y',
+      //                   distance: 200,
       //               });
-      //               Y.Assert.isTrue(true, "is true");
-      //           },
+
+      //               // Y.Assert.isTrue(true, "is true");
+      //           }
 
       //           "Mousewheel event provides the correct reaction": function() {
       //               var Test = this,
