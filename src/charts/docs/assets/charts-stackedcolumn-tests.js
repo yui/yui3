@@ -1,5 +1,5 @@
 YUI.add('charts-stackedcolumn-tests', function(Y) {
-    var suite = new Y.Test.Suite('charts-stackedcolumn-tests example test suite');
+    var suite = new Y.Test.Suite('charts-stackedcolumn-tests example test suite'),
         _getClassName = Y.ClassNameManager.getClassName,
         CHART_BOUNDINGBOX = "." + _getClassName("cartesianchart"),
         CHART_CONTENTBOX = "." + _getClassName("cartesianchart-content"),
@@ -141,20 +141,6 @@ YUI.add('charts-stackedcolumn-tests', function(Y) {
                     Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
                 };
             checkAndFireEvent(seriesMarkers);
-        }
-    }));
-    
-    suite.add(new Y.Test.Case({
-        name: "Manual Test",
-
-        "Test chart loaded" : function()
-        {
-            Y.Assert.isTrue((false), "Ensure there is a stacked column chart on the page."); 
-        },
-
-        "Test marker interactivity" : function()
-        {
-            Y.Assert.isTrue((false), "Mouse over markers and ensure a tooltip appears."); 
         }
     }));
 
