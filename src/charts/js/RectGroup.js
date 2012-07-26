@@ -1,7 +1,8 @@
 /**
  * Abstract class for creating groups of rects with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class GroupRect
  * @constructor
  */
