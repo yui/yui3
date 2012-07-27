@@ -36,6 +36,7 @@ YUI.add('parallel-tests', function(Y) {
 
             for (var i = 1; i <= 15; i++) {
                 setTimeout(stack.add((function(index) {
+                    counter++;
                     return index;
                 }(i))), Math.floor(Math.random() * 100));
             }
