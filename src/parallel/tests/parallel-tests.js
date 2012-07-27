@@ -36,15 +36,17 @@ YUI.add('parallel-tests', function(Y) {
 
             for (var i = 1; i <= 15; i++) {
                 setTimeout(stack.add(function() {
-                    counter++;
-                    return false;
-                }), 100);
+                    return counter++;
+                }), Math.floor(Math.random() * 100));
             }
 
             stack.done(function(results) {
                 Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
                 Assert.areEqual(15, counter, 'Stack did not complete properly');
                 Assert.areEqual(15, results.length, 'Results array is not right');
+                for (i = 0; i < 15; i++) {
+                    Assert.areEqual(i, results[i], 'Elements of results array should retain order');
+                }
             });
         },
         test_returns_data: function() {
