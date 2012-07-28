@@ -2,6 +2,7 @@
  * AxisType is an abstract class that manages the data for an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class AxisType
  * @constructor
  * @extends Axis

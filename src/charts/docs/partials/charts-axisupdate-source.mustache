@@ -1,5 +1,6 @@
 <div id="mychart"></div>
-<div class="fields">
+<form id="changeValue" class="fields" action="#">
+    <div class="body">
     <p>
         <label for="axisSelector">axis:</label>
         <select name="axisSelector" id="axisSelector">
@@ -15,10 +16,13 @@
         <label for="rotation">rotation:</label>
         <input type="text" name="rotation" id="rotation" />
     </p>
+    </div>
+    <div class="footer">
     <p>
         <button type="button" class="action" id="updateAxis">Update Axis</button>
     </p>
-</div>
+    </div>
+</form>
 <script type="text/javascript">
 (function() {
     YUI().use('escape', 'charts', function (Y) 

@@ -2,6 +2,7 @@
  * Algorithmic strategy for rendering a left axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class LeftAxisLayout
  * @constructor
  */

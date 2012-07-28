@@ -2,6 +2,7 @@
  * TimeAxis manages time data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class TimeAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.

@@ -3,6 +3,7 @@
  * their contribution to the cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil

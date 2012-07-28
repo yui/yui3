@@ -1,7 +1,8 @@
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class EllipseGroup
  * @constructor
  */
