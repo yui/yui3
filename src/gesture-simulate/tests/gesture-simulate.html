@@ -56,15 +56,23 @@ YUI({
                 
                 //reset the result
                 this.result = [];
-
+                
                 Y.each(events, Y.bind(function(one) {
-                    touchable.on(one, Y.bind(function(e) {
-                        e.preventDefault();
-                        e = e || window.event;
-                        e.timestamp = new Date().getTime();
-                        this.result.push(e);
-                        //console.log("Event Type: "+e.type);
-                    }, this)); 
+                    if(Y.UA.ios || Y.UA.android) {
+                        document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
+                            e.preventDefault();
+                            e = e || window.event;
+                            e.timestamp = new Date().getTime();
+                            this.result.push(e);
+                        }, this); 
+                    } else {
+                        touchable.on(one, Y.bind(function(e) {
+                            e.preventDefault();
+                            e = e || window.event;
+                            e.timestamp = new Date().getTime();
+                            this.result.push(e);
+                        }, this)); 
+                    }
                 }, this));
             },
 
@@ -72,11 +80,13 @@ YUI({
              * Removes event handlers that were used during the test.
              */
             tearDown : function() /*:Void*/{
-                var touchable = Y.one("#touchable");
-
-                Y.each(events, function(one) {
-                    touchable.detach(one);
-                });
+                Y.each(events, Y.bind(function(one) {
+                    if(Y.UA.ios || Y.UA.android) {
+                        document.getElementById("touchable")['on'+one]= null;
+                    } else {
+                        touchable.detach(one);
+                    }
+                }, this));
             }
         });
         
