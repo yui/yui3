@@ -174,13 +174,18 @@ YUI.add('dd-tests', function(Y) {
         },
         'test: _shimming test for mousemove events': function() {
             var e = new Y.DOMEventFacade({type:'mousemove', preventDefault: function () {}, fromDom: false }),
-                curShimming = Y.DD.DDM._shimming;
+                curShimming = Y.DD.DDM._shimming,
+                _docMove = Y.DD.DDM._docMove,
+                _move = Y.DD.DDM._move;
+
+
 
             Y.DD.DDM._docMove = function(ev) {
                 ev.fromDom = true;
                 if (!this._shimming) {
                     this._move(ev);
                 }
+                _docMove.apply(Y.DD.DDM, [ev]);
                 ev.fromDom = false;
             };
 
@@ -195,6 +200,8 @@ YUI.add('dd-tests', function(Y) {
                     Y.Assert.isTrue(ev.fromDom, 'MouseMove Event is not from DOM but should be.')
                 }
 
+                _move.apply(Y.DD.DDM, [ev])
+
             };
 
             Y.DD.DDM._shimming = false;
@@ -205,20 +212,8 @@ YUI.add('dd-tests', function(Y) {
 
             // tear down
             Y.DD.DDM._shimming = curShimming;
-
-            Y.DD.DDM._docMove = function(ev) {
-                if (!this._shimming) {
-                    this._move(ev);
-                }
-            };
-
-
-            Y.DD.DDM._move = function(ev) {
-                if (this.activeDrag) {
-                    this.activeDrag._move.call(this.activeDrag, ev);
-                    this._dropMove();
-                }
-            };
+            Y.DD.DDM._docMove = _docMove;
+            Y.DD.DDM._move = _move;
         },
         test_drop_overs: function() {
             dd.target._createShim();
