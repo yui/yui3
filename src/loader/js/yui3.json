@@ -1316,13 +1316,6 @@
             "yui-throttle"
         ]
     },
-    "gesture-simulate": {
-        "requires": [
-            "async-queue",
-            "event-simulate",
-            "node-screen"
-        ]
-    },
     "get": {
         "requires": [
             "yui-base"
