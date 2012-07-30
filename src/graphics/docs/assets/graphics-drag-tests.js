@@ -422,20 +422,6 @@ YUI.add('graphics-drag-tests', function(Y) {
             Y.Assert.areEqual(strokeColor, rectStroke.color, "The color of the rectangle stroke should be " + strokeColor + ".");
         }
     }));
-    
-    suite.add(new Y.Test.Case({
-        name: "Manual Test",
-
-        "Test rectangle loaded" : function()
-        {
-            Y.Assert.isTrue((false), "Ensure there is yellow rectangle with black border on the page."); 
-        },
-
-        "Test Drag": function()
-        {
-            Y.Assert.isTrue((false), "Drag the rectangle and make sure it drags.");
-        }
-    }));
 
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'node']});

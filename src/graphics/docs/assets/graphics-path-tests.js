@@ -428,15 +428,6 @@ YUI.add('graphics-path-tests', function(Y) {
         }
     }));
 
-    suite.add(new Y.Test.Case({
-        name: "Manual Test",
-
-        "Test paths loaded" : function()
-        {
-            Y.Assert.isTrue((false), "Ensure there are two black bordered red diamonds connected by a dashed line segment on the page."); 
-        }
-    }));
-
     Y.Test.Runner.add(suite);
 }, '' ,{requires:['classnamemanager', 'node']});
 
