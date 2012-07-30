@@ -44,8 +44,8 @@ YUI.add('charts-dualaxes-tests', function(Y) {
         
         _should: {
             ignore: {
-                testMouseEvents:  isTouch,
-                testTouchEvents: isMouse
+                testMouseEvents:  isTouch//,
+                //testTouchEvents: isMouse
             }
         },
         
@@ -99,7 +99,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
         },
-
+/*
         testTouchEvents: function()
         {
             var result = null,
@@ -149,7 +149,7 @@ YUI.add('charts-dualaxes-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-        
+       */ 
         markerLabelFunction: function(seriesIndex, index)
         {
             var seriesKey = this.seriesKeys[seriesIndex],

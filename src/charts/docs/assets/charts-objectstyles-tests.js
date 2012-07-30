@@ -46,8 +46,8 @@ YUI.add('charts-objectstyles-tests', function(Y) {
         
         _should: {
             ignore: {
-                testMouseEvents:  isTouch,
-                testTouchEvents: isMouse
+                testMouseEvents:  isTouch//,
+                //testTouchEvents: isMouse
             }
         },
 
@@ -99,7 +99,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
         },
-
+/*
         testTouchEvents: function()
         {
             var result = null,
@@ -149,7 +149,7 @@ YUI.add('charts-objectstyles-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-        
+       */ 
         markerLabelFunction: function(seriesIndex, index)
         {
             var seriesKey = this.seriesKeys[seriesIndex],
