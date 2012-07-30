@@ -10318,8 +10318,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "node-event-simulate": {
         "requires": [
             "node-base",
-            "event-simulate",
-            "gesture-simulate"
+            "event-simulate"
         ]
     },
     "node-flick": {
@@ -11015,7 +11014,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = '7a164b9d7f2be1786e40a94c327435b9';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
