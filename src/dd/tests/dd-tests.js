@@ -172,6 +172,54 @@ YUI.add('dd-tests', function(Y) {
             dd.target.removeFromGroup('foo');
             Y.Assert.areSame(1, dd.target.get('groups').length, 'Failed to remove DD from a group');
         },
+        'test: _shimming test for mousemove events': function() {
+            var e = new Y.DOMEventFacade({type:'mousemove', preventDefault: function () {}, fromDom: false }),
+                curShimming = Y.DD.DDM._shimming;
+
+            Y.DD.DDM._docMove = function(ev) {
+                ev.fromDom = true;
+                if (!this._shimming) {
+                    this._move(ev);
+                }
+                ev.fromDom = false;
+            };
+
+            Y.DD.DDM._move = function(ev) {
+                Y.Assert.areSame('mousemove', ev.type, 'Event type is not `mousemove`.');
+
+                if (this._shimming) {
+                    // shouldn't have come from _domMove
+                    Y.Assert.isFalse(ev.fromDom, 'MouseMove Event is from DOM but but should not be');
+                } else {
+                    // should be from _domMove
+                    Y.Assert.isTrue(ev.fromDom, 'MouseMove Event is not from DOM but should be.')
+                }
+
+            };
+
+            Y.DD.DDM._shimming = false;
+            Y.DD.DDM._docMove(e);
+            Y.DD.DDM._shimming = true;
+            Y.DD.DDM._docMove(e);
+
+
+            // tear down
+            Y.DD.DDM._shimming = curShimming;
+
+            Y.DD.DDM._docMove = function(ev) {
+                if (!this._shimming) {
+                    this._move(ev);
+                }
+            };
+
+
+            Y.DD.DDM._move = function(ev) {
+                if (this.activeDrag) {
+                    this.activeDrag._move.call(this.activeDrag, ev);
+                    this._dropMove();
+                }
+            };
+        },
         test_drop_overs: function() {
             dd.target._createShim();
             dd.target._handleOverEvent();
