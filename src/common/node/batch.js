@@ -11,6 +11,7 @@ var travis = process.env.TRAVIS;
 //Skip this long running tests in travis
 var skipping = [
     'io',
+    'editor',
     'anim',
     'dd',
     'charts',
@@ -19,7 +20,8 @@ var skipping = [
 
 var skip = function(p) {
     var ret = false;
-    if (p.indexOf(path.join('io/tests/')) === 0) {
+    if ((p.indexOf(path.join('io/tests/')) === 0)
+        || (p.indexOf(path.join('editor/tests/')) === 0)) {
         return true;
     }
     if (!travis) { //Not in travis, run all tests
