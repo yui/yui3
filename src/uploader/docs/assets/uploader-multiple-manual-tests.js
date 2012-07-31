@@ -1,6 +1,6 @@
-YUI.add('uploader-multiple-tests', function(Y) {
+YUI.add('uploader-multiple-manual-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('Uploader Multiple Example Test Suite'),
+    var suite = new Y.Test.Suite('Uploader Multiple Example Manual Test Suite'),
         Assert = Y.Assert;
             var demo_btn = Y.one("#demo_btn"),
                 demo_input = Y.one("#demo_input"),
@@ -10,9 +10,9 @@ YUI.add('uploader-multiple-tests', function(Y) {
 
         name: 'Manual Tests',
 
-        'Dummy passing test, manual tests required.': function() {
+        'Click Select Files button, select some files, and then upload them.': function() {
 
-                Assert.isTrue(true, " - Use manual tests.");
+                Assert.isTrue(false, " - This test requires manual input.");
          }
     }));
 

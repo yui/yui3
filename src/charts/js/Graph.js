@@ -3,6 +3,7 @@
  * instance.
  *
  * @module charts
+ * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget

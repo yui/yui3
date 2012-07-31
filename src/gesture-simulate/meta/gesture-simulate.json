@@ -1,7 +1,0 @@
-{
-    "gesture-simulate": {
-        "requires": [
-            "async-queue", "event-simulate", "node-screen"
-        ]
-    }
-}

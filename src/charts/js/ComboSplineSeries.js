@@ -4,6 +4,7 @@
  * are rendered and areaspline is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSplineSeries
  * @extends ComboSeries
  * @extends CurveUtil
