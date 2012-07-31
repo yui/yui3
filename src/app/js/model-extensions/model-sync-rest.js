@@ -608,7 +608,8 @@ RESTSync.prototype = {
     Called when the `Y.io` request has finished unsuccessfully.
 
     By default this calls the `details.callback` function passing it the HTTP
-    status code and message as an error object along with the response body.
+    status code and message as an error object along with the response body
+    and the response itself.
 
     @method _onSyncIOFailure
     @param {String} txId The `Y.io` transaction id.
@@ -627,7 +628,7 @@ RESTSync.prototype = {
             callback({
                 code: res.status,
                 msg : res.statusText
-            }, res.responseText);
+            }, res.responseText, res);
         }
     },
 
@@ -635,7 +636,7 @@ RESTSync.prototype = {
     Called when the `Y.io` request has finished successfully.
 
     By default this calls the `details.callback` function passing it the
-    response body.
+    response body and the response itself.
 
     @method _onSyncIOSuccess
     @param {String} txId The `Y.io` transaction id.
@@ -651,7 +652,7 @@ RESTSync.prototype = {
         var callback = details.callback;
 
         if (Lang.isFunction(callback)) {
-            callback(null, res.responseText);
+            callback(null, res.responseText, res);
         }
     },
 
