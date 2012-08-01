@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>cookie tests</title>
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -14,7 +14,7 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'cookie-tests': {
-            fullpath: './cookie-tests.js',
+            fullpath: './assets/cookie-tests.js',
             requires: [ 'cookie', 'test' ]
         }
     }

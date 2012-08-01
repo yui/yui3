@@ -16,7 +16,7 @@ YUI.add('cookie-tests', function(Y) {
     // Base Test Suite
     //-------------------------------------------------------------------------
     
-    var suite = new Y.Test.Suite("Cookie Tests");
+    var suite = new Y.Test.Suite("Cookie");
     
     //-------------------------------------------------------------------------
     // Test Case for parsing capabilities
