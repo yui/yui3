@@ -1,44 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-<title>Calendar Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<style>
-.testclass {
-    color: #ff0000;
-}
-</style>
-</head>
-
-<body class="yui3-skin-sam">
-<h1>Calendar Tests</h1>
-<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
-<div id="container"></div>
-<script type="text/javascript">
-
-(function() {
-
-    YUI({
-        base: "../../../build/",
-        logInclude:{"TestRunner":true},
-        useConsole: true,
-        allowRollup: false,
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-    }).use("console", "test", "dump", "calendar", "node-event-simulate", function(Y) {
-        
-
+YUI.add('calendar-tests', function(Y) {
 
         // Set up the page
         var ASSERT = Y.Assert,
-            ARRAYASSERT = Y.ArrayAssert,
-            btnRun = Y.one("#btnRun"),
-            myConsole = new Y.Console().render();
-            
-        btnRun.set("disabled", false);
-        Y.on("click", function(){
-            Y.Test.Runner.run();
-        }, btnRun);
-
+            ARRAYASSERT = Y.ArrayAssert;
 
         var BasicCalendar = new Y.Test.Case({
             name: "Basic Calendar Tests",
@@ -849,15 +813,9 @@
             }
         });
 
-        var suite = new Y.Test.Suite({name:"Basic Calendar Test Suite"});
+        var suite = new Y.Test.Suite("Calendar");
         suite.add(BasicCalendar);
 
-        Y.Test.Runner.setName("Calendar Test Runner");
         Y.Test.Runner.add(suite);
-        Y.Test.Runner.run();
-    });
 
-})();
-</script>
-</body>
-</html>
+});
