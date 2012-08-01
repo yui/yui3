@@ -20,7 +20,7 @@ YUI.add('cnm-tests', function(Y) {
             }
         });
 
-        var suite = new Y.Test.Suite("ClassNameManager Tests");
+        var suite = new Y.Test.Suite("ClassNameManager");
         suite.add(new Y.Test.Case(testClassNameManager));
 
         Y.Test.Runner.setName("ClassNameManager Tests");
