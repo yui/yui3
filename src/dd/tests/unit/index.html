@@ -2,8 +2,8 @@
 <html>
 <head>
     <title>DragDrop Tests</title>
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-    <link href="dd.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <link href="./assets/dd.css" rel="stylesheet" type="text/css">
 </head>
 <body class="yui3-skin-sam">
     <div id="log"></div>
@@ -25,21 +25,15 @@
     </div>
 <script>
 
-var YUI_config = {
-    gconfig: true,
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-};
-
 YUI({
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
-    filter: YUI_config.gfilter,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'dd-tests': {
-            fullpath: './dd-tests.js',
+            fullpath: './assets/dd-tests.js',
             requires: [ 'event-synthetic', 'event-gestures', 'dd', 'dd-plugin', 'panel', 'console', 'test', 'substitute', 'selector-css3' ]
         },
         'dd-base': {
-            fullpath: './dd-base.js',
+            fullpath: './assets/dd-base.js',
             requires: [ 'dd-drag', 'dd-ddm-base', 'test' ]
         }
         
@@ -47,8 +41,6 @@ YUI({
 }).use('dd-base', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
-    //Called from dd-base test file..
-    //Y.Test.Runner.run();
 });
 
 </script>

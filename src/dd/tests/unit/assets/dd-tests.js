@@ -743,7 +743,7 @@ YUI.add('dd-tests', function(Y) {
         }
     };
     
-    var suite = new Y.Test.Suite("DD");
+    var suite = new Y.Test.Suite('DragDrop');
     
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
