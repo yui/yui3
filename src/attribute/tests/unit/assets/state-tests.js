@@ -194,7 +194,7 @@ YUI.add('state-tests', function(Y) {
         }
     };
 
-    var suite = new Y.Test.Suite({name:"State Unit Tests"});
+    var suite = new Y.Test.Suite("State");
     suite.add(new Y.Test.Case(basicTemplate));
 
     Y.Test.Runner.add(suite);

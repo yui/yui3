@@ -2012,7 +2012,7 @@ YUI.add('attribute-tests', function(Y) {
 
     extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
 
-    var suite = new Y.Test.Suite({name:"Attribute Unit Tests"});
+    var suite = new Y.Test.Suite("Attribute");
 
     suite.add(new Y.Test.Case(basicTemplate));
     suite.add(new Y.Test.Case(extendedTemplate));

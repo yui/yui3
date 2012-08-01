@@ -388,7 +388,7 @@ YUI.add('attribute-core-tests', function(Y) {
         }
     };
 
-    var suite = new Y.Test.Suite({name:"Attribute Core Unit Tests"});
+    var suite = new Y.Test.Suite("Attribute Core");
 
     suite.add(new Y.Test.Case(basicTemplate));
     suite.add(new Y.Test.Case(augmentTemplate));
