@@ -168,10 +168,9 @@ YUI.add('number-tests', function(Y) {
         });
             
         
-        var suite = new Y.Test.Suite({name:"DataType.Number Test Suite"});
+        var suite = new Y.Test.Suite("DataType: Number");
         suite.add(testParse);
         suite.add(testFormat);
 
-        Y.Test.Runner.setName("DataType.Number Test Runner");
         Y.Test.Runner.add(suite);
 });

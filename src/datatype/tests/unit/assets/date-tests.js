@@ -324,7 +324,7 @@ YUI.add('date-tests', function(Y) {
     
     
 
-    var suite = new Y.Test.Suite({name:"DataType.Date Test Suite"});
+    var suite = new Y.Test.Suite("DataType: Date");
     suite.add(testParse);
     suite.add(testFormatDeprecatedLocales);
     suite.add(testFormatUS);
@@ -334,7 +334,6 @@ YUI.add('date-tests', function(Y) {
     suite.add(testFormatAvailable);
     suite.add(testFormat);
 
-    Y.Test.Runner.setName("DataType.Date Test Runner");
     Y.Test.Runner.add(suite);
 
 });

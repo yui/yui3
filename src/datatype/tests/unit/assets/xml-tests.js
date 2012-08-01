@@ -46,10 +46,9 @@ YUI.add('xml-tests', function(Y) {
             }
         });
 
-        var suite = new Y.Test.Suite({name:"DataType.XML Test Suite"});
+        var suite = new Y.Test.Suite("DataType: XML");
         suite.add(testParse);
         suite.add(testFormat);
 
-        Y.Test.Runner.setName("DataType.XML Test Runner");
         Y.Test.Runner.add(suite);
 });

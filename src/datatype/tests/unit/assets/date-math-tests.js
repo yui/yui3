@@ -2,7 +2,7 @@ YUI.add('date-math-tests', function(Y) {
 
         // Set up the page
         var Assert = Y.Assert,
-            suite = new Y.Test.Suite("DataType.Date.Math Test Suite");
+            suite = new Y.Test.Suite("DataType: Date.Math");
     
 
         suite.add(new Y.Test.Case({
