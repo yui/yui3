@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Cache Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -14,7 +14,7 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         modules: {
             'cache-tests': {
-                fullpath: './cache-tests.js',
+                fullpath: './assets/cache-tests.js',
                 requires: ["test", "dump", "cache"]
             }
         }

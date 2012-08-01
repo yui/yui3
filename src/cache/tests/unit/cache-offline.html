@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>CacheOffline Tests</title>
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -14,7 +14,7 @@
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         modules: {
             'cache-offline-tests': {
-                fullpath: './cache-offline.js',
+                fullpath: './assets/cache-offline.js',
                 requires: [ 'test', 'dump', 'cache-offline' ]
             }
         }

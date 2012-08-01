@@ -139,10 +139,9 @@ YUI.add('cache-plugin-tests', function(Y) {
             }
         });
 
-        var suite = new Y.Test.Suite({name:"Plugin.Cache Test Suite"});
+        var suite = new Y.Test.Suite("Cache Plugin");
         suite.add(testClass);
         suite.add(testEvents);
 
-        Y.Test.Runner.setName("Plutin.Cache Test Runner");
         Y.Test.Runner.add(suite);
 });

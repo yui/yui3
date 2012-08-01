@@ -348,7 +348,7 @@ YUI.add('cache-offline-tests', function(Y) {
             }
         });
 
-        var suite = new Y.Test.Suite({name:"CacheOffline Test Suite"});
+        var suite = new Y.Test.Suite("Cache Offline");
         suite.add(testClass);
         suite.add(testBasic);
         suite.add(testEvents);

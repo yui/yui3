@@ -339,13 +339,12 @@ YUI.add('cache-tests', function(Y) {
             }
         });
 
-        var suite = new Y.Test.Suite({name:"Cache Test Suite"});
+        var suite = new Y.Test.Suite("Cache");
         suite.add(testClass);
         suite.add(testBasic);
         suite.add(testEvents);
         suite.add(testEntryManagement);
         suite.add(testBoundaryValues);
 
-        Y.Test.Runner.setName("Cache Test Runner");
         Y.Test.Runner.add(suite);
 });
