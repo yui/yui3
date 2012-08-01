@@ -8,14 +8,14 @@
 
 <div id="log"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'array-extras-test': {
-            fullpath: 'array-extras-test.js',
+            fullpath: './assets/array-extras-test.js',
             requires: [
                 'array-extras', 'test'
             ]

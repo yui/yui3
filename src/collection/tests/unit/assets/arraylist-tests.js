@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("Y.ArrayList");
+YUI.add('arraylist-tests', function(Y) {
+
+var suite = new Y.Test.Suite("Collection: ArrayList");
 
 suite.add( new Y.Test.Case({
     name: "Lifecycle",
@@ -224,3 +226,6 @@ suite.add( new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['arraylist', 'test']});

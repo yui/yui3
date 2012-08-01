@@ -1,6 +1,6 @@
 YUI.add('array-invoke-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.ArrayList");
+var suite = new Y.Test.Suite("Collection: ArrayInvoke");
 
 suite.add(new Y.Test.Case({
     name: "array-invoke",
