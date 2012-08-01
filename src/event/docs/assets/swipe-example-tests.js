@@ -8,6 +8,17 @@ YUI.add('swipe-example-tests', function(Y) {
 
         name : 'Example Tests',
 
+        _should : {
+            // Ignore until we get gesture-simulate again. Tests were all passing with gesture-simulate
+            ignore: {
+                'swipe right' : true,
+                'swipe left' : true,
+                'swipe left and delete' : true,
+                'swipe left and tap outside the delete button' : true,
+                'swipe left while delete is displayed on another item' : true
+            }
+        },
+
         'Initial State' : function() {
 
             var TIMEOUT = 10000;
