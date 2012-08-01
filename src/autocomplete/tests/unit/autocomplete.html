@@ -15,7 +15,7 @@ var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'autocomplete-test': {
-            fullpath: 'autocomplete-test.js',
+            fullpath: './assets/autocomplete-test.js',
             requires: [
                 'autocomplete', 'autocomplete-filters',
                 'autocomplete-filters-accentfold', 'autocomplete-highlighters',
@@ -25,7 +25,7 @@ var Y = YUI({
         },
 
         'autocomplete-test-data': {
-            fullpath: 'autocomplete-test-data.js'
+            fullpath: './assets/autocomplete-test-data.js'
         }
     }
 }).use('autocomplete-test', 'test-console', function (Y) {

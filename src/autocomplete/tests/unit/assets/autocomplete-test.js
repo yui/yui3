@@ -109,7 +109,7 @@ function tearDownACListInstance() {
 }
 
 // -- Global Suite -------------------------------------------------------------
-suite = new Y.Test.Suite('Y.AutoComplete');
+suite = new Y.Test.Suite('AutoComplete');
 
 // -- Base Suite ---------------------------------------------------------------
 baseSuite = new Y.Test.Suite('Base');
