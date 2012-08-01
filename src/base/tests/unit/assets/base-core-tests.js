@@ -1217,7 +1217,7 @@ YUI.add('base-core-tests', function(Y) {
         }
     }
 
-    var suite = new Y.Test.Suite({name:"Base Core Unit Tests"});
+    var suite = new Y.Test.Suite("Base Core");
 
     suite.add(new Y.Test.Case(coreTemplate));
 

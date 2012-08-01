@@ -3,7 +3,7 @@
 <head>
     <title>Base Tests</title>
 
-    <script src="../../../build/yui/yui.js"></script>
+    <script src="../../../../build/yui/yui.js"></script>
 </head>
 <body class="yui3-skin-sam">
 <div id=log"></div>
@@ -13,7 +13,7 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'base-tests': {
-            fullpath: './base-tests.js',
+            fullpath: './assets/base-tests.js',
             requires: ['base', 'test']
         }
     }

@@ -16,7 +16,7 @@ YUI.add('base-tests', function(Y) {
 
     Y.extend(EventTests, Y.Base);
 
-    var suite = new Y.Test.Suite("Base Tests");
+    var suite = new Y.Test.Suite("Base");
 
     suite.add(new Y.Test.Case({
         name : "Base Event Tests",

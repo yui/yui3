@@ -3,7 +3,7 @@
 <head>
     <title>Base Core Tests</title>
 
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
     <script type="text/javascript">
         YUI({
@@ -11,7 +11,7 @@
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             modules: {
                 'base-core-tests': {
-                    fullpath: './base-core-tests.js',
+                    fullpath: './assets/base-core-tests.js',
                     requires: [ 'base-core', 'dump', 'test' ]
                 }
             }
