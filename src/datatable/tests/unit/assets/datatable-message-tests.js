@@ -1,6 +1,6 @@
 YUI.add('datatable-message-tests', function(Y) {
 
-var suite = new Y.Test.Suite("datatable-message");
+var suite = new Y.Test.Suite("DataTable: Message");
 
 suite.add(new Y.Test.Case({
     name: "lifecycle and instantiation",

@@ -1,6 +1,6 @@
 YUI.add('datatable-head-tests', function(Y) {
 
-var suite = new Y.Test.Suite("datatable-head");
+var suite = new Y.Test.Suite("DataTable: Head");
 
 suite.add(new Y.Test.Case({
     name: "datatable-head",

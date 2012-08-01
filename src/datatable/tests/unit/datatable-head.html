@@ -8,12 +8,11 @@
 
     <div id="testbed"></div>
 
-	<script src="../../../build/yui/yui.js"></script>
-    <script src="datatable-head-tests.js"></script>
+	<script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/datatable-head-tests.js"></script>
 	<script>
 		YUI({
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-            allowRollup: false
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-head-tests', function (Y) {
 			
 			new Y.Test.Console().render();

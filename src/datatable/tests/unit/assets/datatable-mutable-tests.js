@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("datatable-mutable");
+YUI.add('datatable-mutable-tests', function(Y) {
+
+var suite = new Y.Test.Suite("DataTable: Mutable");
 
 suite.add(new Y.Test.Case({
     name: "lifecycle and instantiation",
@@ -1481,3 +1483,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datatable-mutable', 'test']});

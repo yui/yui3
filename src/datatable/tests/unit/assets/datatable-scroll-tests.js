@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("datatable-scroll"),
+YUI.add('datatable-scroll-tests', function(Y) {
+
+var suite = new Y.Test.Suite("DataTable: Scroll"),
     keys = Y.Object.keys;
 
 suite.add(new Y.Test.Case({
@@ -728,3 +730,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datatable-scroll', 'test']});

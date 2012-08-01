@@ -1,6 +1,6 @@
 YUI.add('datatable-sort-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.DataTable.Sortable");
+var suite = new Y.Test.Suite("DataTable: Sortable");
 
 suite.add(new Y.Test.Case({
     name: "lifecycle and instantiation",

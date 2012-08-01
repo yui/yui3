@@ -8,17 +8,16 @@
 
     <div id="testbed"></div>
 
-	<script src="../../../build/yui/yui.js"></script>
-    <script src="datatable-scroll-tests.js"></script>
+	<script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/datatable-scroll-tests.js"></script>
 	<script>
 		YUI({
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-            allowRollup: false
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-scroll-tests', function (Y) {
 			
 			new Y.Test.Console().render();
             
-            Y.Test.Runner.setName('Datatable Scroll');
+            Y.Test.Runner.setName('Datatable: Scroll');
 			Y.Test.Runner.run();
 		});
 	</script>

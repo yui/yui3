@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("datatable-body");
+YUI.add('datatable-body-tests', function(Y) {
+
+var suite = new Y.Test.Suite("DataTable: Body");
 
 suite.add(new Y.Test.Case({
     name: "datatable-body",
@@ -481,3 +483,6 @@ suite.add(new Y.Test.Case({
 */
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datatable-base', 'test']});

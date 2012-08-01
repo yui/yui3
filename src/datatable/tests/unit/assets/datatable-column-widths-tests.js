@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("datatable-column-widths");
+YUI.add('datatable-column-widths-tests', function(Y) {
+
+var suite = new Y.Test.Suite("DataTable: Column Widths");
 
 suite.add(new Y.Test.Case({
     name: "lifecycle and instantiation",
@@ -144,3 +146,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datatable-column-widths', 'test']});

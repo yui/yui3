@@ -8,13 +8,11 @@
 
 <div id="log"></div>
 
-<script src="../../../build/yui/yui.js"></script>
-<script src="datatable-sort-tests.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/datatable-sort-tests.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-    allowRollup: false,
-    useBrowserConsole: false
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'datatable-sort-tests', function (Y) {
 
     new Y.Test.Console().render('#log');

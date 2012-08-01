@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("datatable-core");
+YUI.add('datatable-core-tests', function(Y) {
+
+var suite = new Y.Test.Suite("DataTable: Core");
 
 suite.add(new Y.Test.Case({
     name: "Class extension",
@@ -675,3 +677,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['widget', 'base-build', 'datatable-core', 'view', 'recordset']});
