@@ -2,15 +2,15 @@
 <html>
 <head>
 <title>YUI: GetXY</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="dom-xy-test.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./assets/dom-xy-test.js"></script>
 <script type="text/javascript">
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'dom-xy-test', function (Y) {
         Y.DOM._testXY();
         new Y.Test.Console().render();
-        Y.Test.Runner.setName('DOM XY Tests');
+        Y.Test.Runner.setName('Dom: XY');
         Y.Test.Runner.run();
 });
 </script>

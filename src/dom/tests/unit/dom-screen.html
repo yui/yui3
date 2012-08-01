@@ -3,30 +3,16 @@
 <head>
 <title>DOM Test Suite</title>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="dom-region-test.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./assets/dom-region-test.js"></script>
 <script type="text/javascript">
-YUI({
-    base: "../../../build/",
-    filter: 'raw',
-    combine: false,
-    useConsole: true
-}).use('console', 'test', 'dom-region-test', function (Y) {
+YUI().use('console', 'test', 'dom-region-test', function (Y) {
     //create the logger
 
     var logger = new Y.Console({
         height: '800px'
     }).render();
     
-    //add the tests
-    /*
-    Y.Test.Runner.on("complete", function(){
-        var coverage = Y.Test.Runner.getCoverage(),
-            data = Y.Test.Runner.getCoverage(Y.Coverage.Format.JSON);
-
-        Y.DOM.byId("coverage-data").value = data;
-    });
-    */
     Y.Test.Runner.run();
 });
 </script>

@@ -14,7 +14,7 @@
     color: #fff;
 }
 </style>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
 <script>
 document.createElement('foo'); // enable custom element for IE native querySelector
@@ -29,7 +29,7 @@ onload = function() {
 
         };
 
-        Y.Test.Runner.setName('Selector Tests');
+        Y.Test.Runner.setName('Dom: Selector');
 
         Y.Dom = {
             get: function (id) {
@@ -119,7 +119,7 @@ onload = function() {
 
         new Y.Test.Console({height:'50em'}).render();
 
-        var suite = new Y.Test.Suite("Selector Suite");
+        var suite = new Y.Test.Suite("Dom: Selector");
         var Selector = Y.Selector;
         var Assert = Y.Assert;
         var ArrayAssert = Y.ArrayAssert;
@@ -706,7 +706,7 @@ onload = function() {
     <div class="Bar" id="class-bar"></div>
     <div id="contains-special">contains "' & ]</div>
     <div id="test-rel-div" rel="foo2"></div>
-    <iframe src="test-frame.html" id="test-frame"></iframe>
+    <iframe src="./assets/test-frame.html" id="test-frame"></iframe>
 
     <dl id="test-dl">
         <dt>Window size</dt>

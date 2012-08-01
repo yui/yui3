@@ -1,7 +1,7 @@
 YUI.add('dom-region-test', function(Y) {
     var Assert = Y.Assert;
         ArrayAssert = Y.ArrayAssert;
-
+    Y.Test.Runner.setName('Dom: Region');
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.DOM.region',
 

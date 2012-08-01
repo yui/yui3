@@ -3,17 +3,17 @@
 <head>
 <title>DOM Test Suite</title>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="dom-core-test.js"></script>
-<script type="text/javascript" src="dom-class-test.js"></script>
-<script type="text/javascript" src="dom-size-test.js"></script>
-<script type="text/javascript" src="dom-deprecated-test.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./assets/dom-core-test.js"></script>
+<script type="text/javascript" src="./assets/dom-class-test.js"></script>
+<script type="text/javascript" src="./assets/dom-size-test.js"></script>
+<script type="text/javascript" src="./assets/dom-deprecated-test.js"></script>
 <script type="text/javascript">
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
     new Y.Test.Console().render();
-    Y.Test.Runner.masterSuite.name = 'Dom Test Suite';
+    Y.Test.Runner.masterSuite.name = 'Dom: Base';
     Y.Test.Runner.run();
 });
 </script>
@@ -133,7 +133,7 @@ form {
 
 <form id="test-clone-form"></form>
 
-<iframe id="test-frame" src="test-frame.html"></iframe>
+<iframe id="test-frame" src="./assets/test-frame.html"></iframe>
 
 <div id="test-children">
     foo

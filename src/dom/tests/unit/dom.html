@@ -3,16 +3,17 @@
 <head>
 <title>DOM Test Suite</title>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
 <script type="text/javascript">
-    YUI({ base: '../../../build/', filter: 'raw'}).use('dom', 'dom-deprecated', 'console', 'test', function(Y) {
+    YUI().use('dom', 'dom-deprecated', 'console', 'test', function(Y) {
         var Assert = Y.Assert,
             ArrayAssert = Y.ArrayAssert,
-            suite = new Y.Test.Suite("DOM Test Suite");
+            suite = new Y.Test.Suite("Dom");
 
         window.Y = Y; // export Y global for Selenium
         new Y.Console({ height: '50em' }).render();
+
         Y.Test.Runner.setName('DOM Tests');
 
         var doc = document.getElementById('doc'),
