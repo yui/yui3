@@ -25,10 +25,9 @@ YUI.add('arraysort-tests', function(Y) {
         }
     });
 
-    var suite = new Y.Test.Suite({name:"ArraySort Test Suite"});
+    var suite = new Y.Test.Suite("ArraySort");
     suite.add(testBasic);
 
-    Y.Test.Runner.setName("ArraySort Test Runner");
     Y.Test.Runner.add(suite);
 
 });
