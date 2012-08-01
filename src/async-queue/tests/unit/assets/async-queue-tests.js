@@ -1,6 +1,6 @@
 YUI.add('async-queue-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.AsyncQueue");
+var suite = new Y.Test.Suite("AsyncQueue");
 
 // FIXME: remove this and update the tests to handle the asynchronicity
 Y.AsyncQueue.defaults.timeout = -1;
