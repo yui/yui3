@@ -1,5 +1,5 @@
 YUI.add('graph-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.Graph"),
+    var suite = new Y.Test.Suite("Charts: Graph"),
 
     GraphTests = new Y.Test.Case({
         name: "Graph Tests",

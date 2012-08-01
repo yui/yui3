@@ -1,5 +1,5 @@
 YUI.add('series-planar-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.SeriesPlanarTests"),
+    var suite = new Y.Test.Suite("Charts: SeriesPlanar"),
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert;
             
@@ -284,7 +284,7 @@ YUI.add('series-planar-tests', function(Y) {
         {category: 10, miscellaneous: 3100}
     ],
     DataProvider,
-    suite  = new Y.Test.Suite("Chart Series Tests"),
+    suite  = new Y.Test.Suite("Charts: Series Planar"),
     zeroValueColumnMouseOverTests = new Y.ChartPlanarEventTestCase({
         interactionType: "planar",
         type: "column",

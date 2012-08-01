@@ -1,5 +1,5 @@
 YUI.add('combospline-globalstyles-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.ComboSplineGlobalStyles"),
+    var suite = new Y.Test.Suite("Charts: ComboSplineGlobalStyles"),
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {

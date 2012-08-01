@@ -1,5 +1,5 @@
 YUI.add('area-legendwrapitems-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.AreaLegendWrapItems"),
+    var suite = new Y.Test.Suite("Charts: AreaLegendWrapItems"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

@@ -1,5 +1,5 @@
 YUI.add('pie-legend-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.PieLegend"),
+    var suite = new Y.Test.Suite("Charts: PieLegend"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

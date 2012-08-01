@@ -1,5 +1,5 @@
 YUI.add('stackedarea-gridlines-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.StackedAreaGridlines"),
+    var suite = new Y.Test.Suite("Charts: StackedAreaGridlines"),
 
     GridlinesTestTemplate = function(cfg, globalCfg)
     {

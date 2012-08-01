@@ -1,5 +1,5 @@
 YUI.add('combo-tooltip-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.ComboTooltipTests"),
+    var suite = new Y.Test.Suite("Charts: ComboTooltip"),
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert;
             

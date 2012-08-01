@@ -1,5 +1,5 @@
 YUI.add('axes-display-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.AxesDisplayTests"),
+    var suite = new Y.Test.Suite("Charts: AxesDisplay"),
     ENGINE = "VML",
     DOCUMENT = Y.config.doc,
     canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
@@ -405,7 +405,7 @@ YUI.add('axes-display-tests', function(Y) {
     
     Y.AxisGraphicStylesTemplate = AxisGraphicStylesTemplate;
 
-    var suite = new Y.Test.Suite("Y.AxesTests"),
+    var suite = new Y.Test.Suite("Charts: AxesDisplay"),
     
     AxesTests = new Y.Test.Case({
         name: "Axes Tests",

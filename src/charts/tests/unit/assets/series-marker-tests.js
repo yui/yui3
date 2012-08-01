@@ -1,5 +1,5 @@
 YUI.add('series-marker-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.SeriesMarkerTests"),
+    var suite = new Y.Test.Suite("Charts: SeriesMarker"),
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert;
             
@@ -416,7 +416,7 @@ YUI.add('series-marker-tests', function(Y) {
         {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
     ],
     DataProvider,
-    suite  = new Y.Test.Suite("Chart Series Tests"),
+    suite  = new Y.Test.Suite("Charts: Series Marker"),
     zeroValueColumnMouseOverTests = new Y.ChartMarkerEventTestCase({
         type: "column",
         render: "#mychart",

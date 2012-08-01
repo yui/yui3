@@ -50,7 +50,7 @@ YUI.add('area-dataprovider-tests', function(Y) {
 
     Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
     
-    var suite = new Y.Test.Suite("Y.Charts.AreaDataProvider"),
+    var suite = new Y.Test.Suite("Charts: AreaDataProvider"),
 
     allPositiveDataProvider =  [ 
         {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 

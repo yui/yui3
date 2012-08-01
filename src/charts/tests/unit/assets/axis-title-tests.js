@@ -1,5 +1,5 @@
 YUI.add('axis-title-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.AxisTitleTests"),
+    var suite = new Y.Test.Suite("Charts: AxisTitle"),
    
     AxisTestTemplate = function(cfg, globalCfg)
     {

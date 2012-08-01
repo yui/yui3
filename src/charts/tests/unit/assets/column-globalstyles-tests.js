@@ -1,5 +1,5 @@
 YUI.add('column-globalstyles-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.ColumnGlobalStyles"),
+    var suite = new Y.Test.Suite("Charts: ColumnGlobalStyles"),
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {

@@ -1,5 +1,5 @@
 YUI.add('numericaxis-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.NumericAxis"),
+    var suite = new Y.Test.Suite("Charts: NumericAxis"),
    
     AxisTestTemplate = function(cfg, globalCfg)
     {

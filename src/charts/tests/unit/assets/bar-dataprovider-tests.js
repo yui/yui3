@@ -48,7 +48,7 @@ YUI.add('bar-dataprovider-tests', function(Y) {
 
     Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
     
-    var suite = new Y.Test.Suite("Y.Charts.BarDataProvider"),
+    var suite = new Y.Test.Suite("Charts: BarDataProvider"),
 
     allPositiveDataProvider =  [ 
         {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 

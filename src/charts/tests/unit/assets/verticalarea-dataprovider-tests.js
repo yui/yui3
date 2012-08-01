@@ -51,7 +51,7 @@ YUI.add('verticalarea-dataprovider-tests', function(Y) {
 
     Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
     
-    var suite = new Y.Test.Suite("Y.Charts.VerticalAreaDataProvider"),
+    var suite = new Y.Test.Suite("Charts: VerticalAreaDataProvider"),
 
     allPositiveDataProvider =  [ 
         {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 

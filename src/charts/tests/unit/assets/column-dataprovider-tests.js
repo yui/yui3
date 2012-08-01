@@ -48,7 +48,7 @@ YUI.add('column-dataprovider-tests', function(Y) {
 
     Y.ChartDataProviderTestCase = ChartDataProviderTestCase;             
     
-    var suite = new Y.Test.Suite("Y.Charts.ColumnDataProvider"),
+    var suite = new Y.Test.Suite("Charts: ColumnDataProvider"),
 
     allPositiveDataProvider =  [ 
         {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 

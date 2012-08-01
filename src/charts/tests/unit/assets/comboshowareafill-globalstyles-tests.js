@@ -1,5 +1,5 @@
 YUI.add('comboshowareafill-globalstyles-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.ComboShowAreaFillGlobalStyles"),
+    var suite = new Y.Test.Suite("Charts: ComboShowAreaFillGlobalStyles"),
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {

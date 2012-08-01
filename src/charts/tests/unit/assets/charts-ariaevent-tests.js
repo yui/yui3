@@ -1,5 +1,5 @@
 YUI.add('charts-ariaevent-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Tests.ChartAriaEvents"),
+    var suite = new Y.Test.Suite("Charts: AriaEvents"),
         ASSERT = Y.Assert,
         ObjectAssert = Y.ObjectAssert,
         UP = 38,
@@ -284,7 +284,7 @@ YUI.add('charts-ariaevent-tests', function(Y) {
         {category:"5/4/2010", revenue:2800}, 
         {category:"5/5/2010", revenue:2650}
     ],
-    suite  = new Y.Test.Suite("Chart Aria Event Tests"),
+    suite  = new Y.Test.Suite("Charts: Aria Events"),
     columnTests = new Y.CartesianChartAriaEventTestCase({
         type: "column",
         render: "#mychart",

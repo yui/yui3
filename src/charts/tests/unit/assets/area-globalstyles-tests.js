@@ -1,5 +1,5 @@
 YUI.add('area-globalstyles-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.AreaGlobalStyles"),
+    var suite = new Y.Test.Suite("Charts: AreaGlobalStyles"),
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {

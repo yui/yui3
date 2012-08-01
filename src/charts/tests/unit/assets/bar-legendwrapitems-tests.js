@@ -1,5 +1,5 @@
 YUI.add('bar-legendwrapitems-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.BarLegendWrapItems"),
+    var suite = new Y.Test.Suite("Charts: BarLegendWrapItems"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

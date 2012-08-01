@@ -1,5 +1,5 @@
 YUI.add('axis-label-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.AxisLabelTests"),
+    var suite = new Y.Test.Suite("Charts: AxisLabel"),
    
     AxisTestTemplate = function(cfg, globalCfg)
     {

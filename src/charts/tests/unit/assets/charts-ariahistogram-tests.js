@@ -1,5 +1,5 @@
 YUI.add('charts-ariahistogram-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.AriaHistogram"),
+    var suite = new Y.Test.Suite("Charts: AriaHistogram"),
         myDataValues = [ 
             {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
             {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 

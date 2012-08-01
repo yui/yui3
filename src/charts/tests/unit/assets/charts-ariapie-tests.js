@@ -1,5 +1,5 @@
 YUI.add('charts-ariapie-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.AriaPie"),
+    var suite = new Y.Test.Suite("Charts: AriaPie"),
         pieDataValues = [
             {category:"5/1/2010", revenue:2200}, 
             {category:"5/2/2010", revenue:100}, 

@@ -1,5 +1,5 @@
 YUI.add('column-legendwrapitems-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.ColumnLegendWrapItems"),
+    var suite = new Y.Test.Suite("Charts: ColumnLegendWrapItems"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

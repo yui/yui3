@@ -33,7 +33,7 @@ YUI.add('axes-attribute-tests', function(Y) {
         }
     });
 
-    var suite = new Y.Test.Suite("Y.Charts.AxesAttrs"),
+    var suite = new Y.Test.Suite("Charts: AxesAttrs"),
 
     preferredMethod = function(val, format)
     {

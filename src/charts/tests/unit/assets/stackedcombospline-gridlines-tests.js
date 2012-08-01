@@ -1,5 +1,5 @@
 YUI.add('stackedcombospline-gridlines-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.StackedComboSplineGridlines"),
+    var suite = new Y.Test.Suite("Charts: StackedComboSplineGridlines"),
 
     GridlinesTestTemplate = function(cfg, globalCfg)
     {

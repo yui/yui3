@@ -1,5 +1,5 @@
 YUI.add('charts-arialine-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.AriaLine"),
+    var suite = new Y.Test.Suite("Charts: AriaLine"),
         myDataValues = [ 
             {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
             {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
@@ -165,6 +165,6 @@ YUI.add('charts-arialine-tests', function(Y) {
     suite.add(stackedMarkerTests);
 
     //run the tests
-    Y.Test.Runner.setName("Y.Charts.AriaLine");
+    Y.Test.Runner.setName("Charts: AriaLine");
     Y.Test.Runner.add(suite);
 }, '@VERSION@' ,{requires:['charts', 'test']});

@@ -1,5 +1,5 @@
 YUI.add('area-gridlines-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.Gridlines"),
+    var suite = new Y.Test.Suite("Charts: Gridlines"),
 
     GridlinesTestTemplate = function(cfg, globalCfg)
     {

@@ -1,5 +1,5 @@
 YUI.add('combospline-legendwrapitems-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.ComboSplineLegendWrapItems"),
+    var suite = new Y.Test.Suite("Charts: ComboSplineLegendWrapItems"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

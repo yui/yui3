@@ -1,5 +1,5 @@
 YUI.add('charts-legend-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.Legend"),
+    var suite = new Y.Test.Suite("Charts: Legend"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

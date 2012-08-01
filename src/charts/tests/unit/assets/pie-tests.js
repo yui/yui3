@@ -1,5 +1,5 @@
 YUI.add('pie-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.Pie"),
+    var suite = new Y.Test.Suite("Charts: Pie"),
     
     newDataValues = [
             {day:"Monday", taxes:200}, 

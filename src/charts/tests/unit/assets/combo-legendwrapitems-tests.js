@@ -1,5 +1,5 @@
 YUI.add('combo-legendwrapitems-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.ComboLegendWrapItems"),
+    var suite = new Y.Test.Suite("Charts: ComboLegendWrapItems"),
 
     LegendTestTemplate = function(cfg, globalCfg)
     {

@@ -1,5 +1,5 @@
 YUI.add('verticalcombosplineshowareafill-globalstyles-tests', function(Y) {
-    var suite = new Y.Test.Suite("Y.Charts.VerticalComboSplineShowAreaFillGlobalStyles"),
+    var suite = new Y.Test.Suite("Charts: VerticalComboSplineShowAreaFillGlobalStyles"),
 
     GlobalStylesTestTemplate = function(cfg, globalCfg)
     {
