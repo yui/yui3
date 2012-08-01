@@ -1,6 +1,6 @@
 YUI.add('console-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Console");
+var suite = new Y.Test.Suite("Console");
 
 suite.add( new Y.Test.Case({
     name: "Lifecycle",
