@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>DataSchema Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -882,14 +882,13 @@
             }
         });
 
-        var suite = new Y.Test.Suite({name:"DataSchema Test Suite"});
+        var suite = new Y.Test.Suite("DataSchema");
         suite.add(testJSON);
         suite.add(testXML);
         suite.add(testHTML);
         suite.add(testArray);
         suite.add(testText);
 
-        Y.Test.Runner.setName("DataSchema Test Runner");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
