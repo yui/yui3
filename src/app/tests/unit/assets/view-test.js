@@ -8,7 +8,7 @@ var ArrayAssert  = Y.ArrayAssert,
     viewSuite;
 
 // -- Global Suite -------------------------------------------------------------
-suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
+suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App'));
 
 // -- View Suite ---------------------------------------------------------------
 viewSuite = new Y.Test.Suite('View');

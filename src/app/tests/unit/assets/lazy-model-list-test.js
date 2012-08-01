@@ -8,7 +8,7 @@ var ArrayAssert  = Y.ArrayAssert,
     lazyModelListSuite;
 
 // -- Global Suite -------------------------------------------------------------
-suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
+suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App'));
 
 // -- LazyModelList Suite ------------------------------------------------------
 lazyModelListSuite = new Y.Test.Suite('LazyModelList');

@@ -20,7 +20,7 @@ function resetURL() {
 }
 
 // -- Global Suite -------------------------------------------------------------
-suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
+suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App'));
 
 // -- App Base Suite -----------------------------------------------------------
 appBaseSuite = new Y.Test.Suite({

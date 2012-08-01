@@ -8,7 +8,7 @@ var ArrayAssert  = Y.ArrayAssert,
     nodeMapSuite,
     MappedView;
 
-suite        = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
+suite        = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App'));
 nodeMapSuite = new Y.Test.Suite('View.NodeMap');
 
 MappedView = Y.Base.create('mappedView', Y.View, [Y.View.NodeMap]);

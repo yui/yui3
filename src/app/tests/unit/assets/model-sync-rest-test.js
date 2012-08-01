@@ -8,7 +8,7 @@ var ArrayAssert  = Y.ArrayAssert,
     modelSyncRESTSuite;
 
 // -- Global Suite -------------------------------------------------------------
-suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App Framework'));
+suite = Y.AppTestSuite || (Y.AppTestSuite = new Y.Test.Suite('App'));
 
 // -- ModelSync.REST Suite -----------------------------------------------------
 modelSyncRESTSuite = new Y.Test.Suite('ModelSync.REST');

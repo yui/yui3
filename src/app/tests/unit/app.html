@@ -10,9 +10,9 @@
 <div id="test" style="visibility: hidden;">
     <a href="/foo/" id="link-foo" class="yui3-pjax">foo</a>
 </div>
-<iframe src="app-iframe.html" id="test-iframe" style="visibility:hidden"></iframe>
+<iframe src="assets/app-iframe.html" id="test-iframe" style="visibility:hidden"></iframe>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
     YUI.Env.CSRF_TOKEN = 'asdf1234';
 </script>
@@ -35,42 +35,42 @@ var Y = YUI({
         },
 
         'lazy-model-list-test': {
-            fullpath: 'lazy-model-list-test.js',
+            fullpath: 'assets/lazy-model-list-test.js',
             requires: ['model-list', 'test']
         },
 
         'model-test': {
-            fullpath: 'model-test.js',
+            fullpath: 'assets/model-test.js',
             requires: ['model', 'model-list', 'test']
         },
 
         'model-list-test': {
-            fullpath: 'model-list-test.js',
+            fullpath: 'assets/model-list-test.js',
             requires: ['model-list', 'test']
         },
 
         'model-sync-rest-test': {
-            fullpath: 'model-sync-rest-test.js',
+            fullpath: 'assets/model-sync-rest-test.js',
             requires: ['model', 'model-list', 'model-sync-rest', 'test']
         },
 
         'router-test': {
-            fullpath: 'router-test.js',
+            fullpath: 'assets/router-test.js',
             requires: ['router', 'test']
         },
 
         'view-test': {
-            fullpath: 'view-test.js',
+            fullpath: 'assets/view-test.js',
             requires: ['model', 'model-list', 'view', 'test']
         },
 
         'view-node-map-test': {
-            fullpath: 'view-node-map-test.js',
+            fullpath: 'assets/view-node-map-test.js',
             requires: ['view-node-map', 'test']
         },
 
         'app-base-test': {
-            fullpath: 'app-base-test.js',
+            fullpath: 'assets/app-base-test.js',
             requires: ['app-base', 'test']
         }
     },
