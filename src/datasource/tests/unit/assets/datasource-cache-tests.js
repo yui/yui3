@@ -1,6 +1,8 @@
+YUI.add('datasource-cache-tests', function(Y) {
+
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("Plugin.DataSourceCache Test Suite");
+    suite = new Y.Test.Suite("Datasource: Cache");
 
 
 suite.add(new Y.Test.Case({
@@ -115,3 +117,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datasource-cache', 'test']});

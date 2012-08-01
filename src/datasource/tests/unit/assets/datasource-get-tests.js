@@ -2,7 +2,7 @@ YUI.add('datasource-get-tests', function(Y) {
 
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("DataSource.Get Test Suite"),
+    suite = new Y.Test.Suite("DataSource: Get"),
 
     jsonData = {
         ResultSet: {

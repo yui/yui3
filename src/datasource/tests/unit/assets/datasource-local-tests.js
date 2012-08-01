@@ -1,7 +1,9 @@
+YUI.add('datasource-local-tests', function(Y) {
+
 var Assert = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
 
-    suite = new Y.Test.Suite("DataSource.Local Test Suite");
+    suite = new Y.Test.Suite("DataSource: Local");
 
 suite.add(new Y.Test.Case({
     name: "DataSource.Local Tests",
@@ -188,3 +190,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datasource-local', 'test']});

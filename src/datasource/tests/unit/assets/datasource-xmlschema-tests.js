@@ -1,6 +1,8 @@
+YUI.add('datasource-xmlschema-tests', function(Y) {
+
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("Plugin.DataSourceXMLSchema Test Suite"),
+    suite = new Y.Test.Suite("DataSource: XMLSchema"),
 
     xmlData; // at end of file because it's huge
 
@@ -65,3 +67,6 @@ xmlData = Y.DataType.XML.parse('<query xmlns:yahoo="http://www.yahooapis.com/v1/
 
 // There's a bunch of data above.  Maybe you should scroll down from the
 // top instead.
+
+
+}, '@VERSION@' ,{requires:['datasource-xmlschema', 'test', 'datatype-xml-parse']});

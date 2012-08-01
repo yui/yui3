@@ -1,6 +1,8 @@
+YUI.add('datasource-function-tests', function(Y) {
+
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("DataSource.Function Test Suite");
+    suite = new Y.Test.Suite("DataSource: Function");
 
 function testFn() {
     return [
@@ -175,3 +177,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datasource-function', 'test']});

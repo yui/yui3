@@ -1,6 +1,8 @@
+YUI.add('datasource-textschema-tests', function(Y) {
+
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("Plugin.DataSourceTextSchema Test Suite"),
+    suite = new Y.Test.Suite("DataSource: TextSchema"),
 
     textData = "foo\t0\tabc\nbar\t1\tdef\nbat\t-1\tghi";
 
@@ -47,3 +49,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datasource-textschema', 'test', 'datatype-number-parse']});

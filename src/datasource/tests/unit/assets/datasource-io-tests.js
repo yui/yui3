@@ -1,7 +1,9 @@
+YUI.add('datasource-io-tests', function(Y) {
+
 var Assert = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    suite = new Y.Test.Suite("DataSource.IO Test Suite"),
+    suite = new Y.Test.Suite("DataSource: IO"),
 
     jsonData = '{"ResultSet":{"Result":[{"Title":"Madonna"}]}}';
 
@@ -243,3 +245,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datasource-io', 'test']});

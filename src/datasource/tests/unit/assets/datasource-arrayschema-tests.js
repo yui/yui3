@@ -2,7 +2,7 @@ YUI.add('datasource-arrayschema-tests', function(Y) {
 
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("Plugin.DataSourceArraySchema Test Suite"),
+    suite = new Y.Test.Suite("DataSource: ArraySchema"),
 
     arrayData = [
         { type: "a", age: 0, name: "c" },

@@ -2,7 +2,7 @@ YUI.add('datasource-jsonschema-tests', function(Y) {
 
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("Plugin.DataSourceJSONSchema Test Suite"),
+    suite = new Y.Test.Suite("DataSource: JSONSchema"),
 
     jsonData = '{"ResultSet":{"Result":[{"Title":"1"},{"Title":"2"},{"Title":"3"},{"Title":"4"},{"Title":"5"},{"Title":"6"},{"Title":"7"},{"Title":"8"},{"Title":"9"},{"Title":"10"}]}}';
 

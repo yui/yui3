@@ -1,6 +1,8 @@
+YUI.add('datasource-polling-tests', function(Y) {
+
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("Polling DataSource Test Suite");
+    suite = new Y.Test.Suite("DataSource: Polling");
 
 
 suite.add(new Y.Test.Case({
@@ -116,3 +118,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['datasource-polling', 'test']});
