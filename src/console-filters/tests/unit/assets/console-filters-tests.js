@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("Tests");
+YUI.add('console-filters-tests', function(Y) {
+
+var suite = new Y.Test.Suite("Console: Filters");
 
 function setUp() {
     var testbed = Y.one('#testbed') ||
@@ -78,3 +80,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['console-filters', 'test']});
