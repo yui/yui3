@@ -25,20 +25,13 @@
 </div>
 
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript">
-
-var YUI_config = {
-    gconfig: true,
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-};
-
-
 YUI({
-    filter: YUI_config.gfilter,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'sortable-tests': {
-            fullpath: './sortable-tests.js',
+            fullpath: './assets/sortable-tests.js',
             requires: ['sortable', 'test']
         }
     }
