@@ -2,7 +2,7 @@ YUI.add('array-test', function (Y) {
 
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite('Y.Array (core)');
+    suite = new Y.Test.Suite('YUI: Array');
 
 Y.Test.Runner._ignoreEmpty = true;
 

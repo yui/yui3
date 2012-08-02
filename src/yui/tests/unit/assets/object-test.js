@@ -3,7 +3,7 @@ YUI.add('object-test', function (Y) {
 var Assert = Y.Assert,
     doc    = Y.config.doc,
 
-    suite  = new Y.Test.Suite('Y.Object');
+    suite  = new Y.Test.Suite('YUI: Object');
 
 suite.add(new Y.Test.Case({
     name: 'Core',

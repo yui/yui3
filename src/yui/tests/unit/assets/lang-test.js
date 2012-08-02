@@ -5,7 +5,7 @@ var Assert = Y.Assert,
 
     doc = Y.config.doc,
 
-    suite = new Y.Test.Suite('Y.Lang');
+    suite = new Y.Test.Suite('YUI: Lang');
 
 suite.add(new Y.Test.Case({
     name: 'Lang tests',

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html class="foo">
 <head>
 <title>YUI Seed Tests</title>
 </head>
@@ -7,8 +7,13 @@
 
 <div id="log"></div>
 
-<!-- This is the full test file, notice it's using the `yui` seed file, so loader is NOT fetched. -->
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+<script>
+var YUI = {};
+</script>
+<!-- This is the main test file, notice it's using the `yui-base` seed file 
+without Loader on the page, so Loader is fetched before tests are executed. -->
+<script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
 
 YUI.GlobalConfig = {
@@ -16,6 +21,16 @@ YUI.GlobalConfig = {
     modules: {
         'global-mod': {
             fullpath: './assets/globalmod.js'
+        }
+    },
+    groups: {
+        //Just for code coverage..
+        noop: {
+            modules: {
+                noop: {
+                    fullpath: './assets/noop.js'
+                }
+            }
         }
     }
 };
@@ -26,6 +41,7 @@ var YUI_config = {
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
+var TestName = 'YUI: Fetch';
 
 YUI({
     allowRollup: false,
@@ -33,35 +49,33 @@ YUI({
     filter: YUI_config.gfilter,
     modules: {
         'seed-tests': {
-            fullpath: './seed-tests.js',
+            fullpath: './assets/seed-tests.js',
             requires: [ 'test']
         },
-        'browser-tests': {
-            fullpath: 'browser-tests.js'
-        },
         'core-tests': {
-            fullpath: './core-tests.js',
+            fullpath: './assets/core-tests.js',
             requires: [ 'classnamemanager']
         },
 
         'config-test': {
-            fullpath: 'config-test.js'
+            fullpath: './assets/config-test.js'
         },
 
         'later-test': {
-            fullpath: 'later-test.js'
+            fullpath: './assets/later-test.js'
         },
 
+        'browser-tests': {
+            fullpath: './assets/browser-tests.js'
+        },
         'namespace-test': {
-            fullpath: 'namespace-test.js'
+            fullpath: './assets/namespace-test.js'
         }
         
     }
 }).use('seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
-    //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.setName('YUI Seed Full Test Suite');
     Y.Test.Runner.run();
 });
 

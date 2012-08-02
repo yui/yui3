@@ -1,6 +1,6 @@
 YUI.add('browser-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('Core Browser Tests');
+    var suite = new Y.Test.Suite('YUI: Core Browser');
 
     suite.add(new Y.Test.Case({
         test_attach_after: function() {

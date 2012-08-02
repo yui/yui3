@@ -19,7 +19,7 @@
 </script>
 <!-- This is the main test file, notice it's using the `yui-base` seed file 
 without Loader on the page, so Loader is fetched before tests are executed. -->
-<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
 var YUI_config = {
     loaderPath: 'loader/loader.js',
@@ -32,14 +32,14 @@ YUI({
     filter: YUI_config.gfilter,
     modules: {
         'ua-data': {
-            fullpath: './ua-data.js'
+            fullpath: './assets/ua-data.js'
         },
         'ua-yui-data': {
-            fullpath: './ua-yui-data.js',
+            fullpath: './assets/ua-yui-data.js',
             requires: [ 'ua-data' ]
         },
         'ua-tests': {
-            fullpath: './ua-tests.js',
+            fullpath: './assets/ua-tests.js',
             requires: [ 'ua-data', 'ua-yui-data', 'test' ]
         }
     }

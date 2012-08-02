@@ -1,6 +1,6 @@
 YUI.add('ua-tests', function(Y) {
     var Assert = Y.Assert,
-        suite  = new Y.Test.Suite('User Agent String Tests');
+        suite  = new Y.Test.Suite('YUI: User Agent');
 
     suite.add(new Y.Test.Case({
         name: 'Node.js',
