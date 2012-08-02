@@ -6,7 +6,7 @@ var Assert      = Y.Assert,
     suite, TestWidget;
 
 // -- Suite --------------------------------------------------------------------
-suite      = new Y.Test.Suite('WidgetAutohide');
+suite      = new Y.Test.Suite('Widget: Autohide');
 TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetAutohide]);
 
 // -- Lifecycle ----------------------------------------------------------------

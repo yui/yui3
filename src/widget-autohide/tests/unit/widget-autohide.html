@@ -9,14 +9,14 @@
 <div id="log"></div>
 <div id="test"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'widget-autohide-test': {
-            fullpath: 'widget-autohide-test.js',
+            fullpath: './assets/widget-autohide-test.js',
             requires: ['widget-autohide', 'test', 'node-event-simulate']
         }
     },
