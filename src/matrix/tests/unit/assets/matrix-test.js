@@ -7,7 +7,7 @@ var Assert = Y.Assert,
         return Math.round(val * 1000)/1000;
     }
 
-    suite = new Y.Test.Suite('Y.Matrix');
+    suite = new Y.Test.Suite('Matrix');
 
 suite.add(new Y.Test.Case({
     name: 'MatrixUtil tests',
