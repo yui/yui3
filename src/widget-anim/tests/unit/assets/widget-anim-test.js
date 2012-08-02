@@ -6,7 +6,7 @@ var Assert      = Y.Assert,
     suite;
 
 // -- Suite --------------------------------------------------------------------
-suite = new Y.Test.Suite('Plugin.WidgetAnim');
+suite = new Y.Test.Suite('Widget: Anim');
 
 // -- Lifecycle ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
