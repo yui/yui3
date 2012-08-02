@@ -566,7 +566,10 @@ Y.CustomEvent.prototype = {
             // this.host._monitor('fire', this.type, args);
 
             this.fired = true;
-            this.firedWith = args;
+
+            if (this.fireOnce) {
+                this.firedWith = args;
+            }
 
             if (this.emitFacade) {
                 return this.fireComplex(args);

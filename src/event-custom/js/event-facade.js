@@ -281,6 +281,10 @@ CEProto.fireComplex = function(args) {
         self.prevented = 0;
     }
 
+    // Kill the cached facade to free up memory.
+    // Otherwise we have the facade from the last fire, sitting around forever.
+    self._facade = null;
+
     return ret;
 };
 
