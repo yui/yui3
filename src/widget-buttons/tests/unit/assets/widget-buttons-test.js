@@ -10,7 +10,7 @@ var Assert       = Y.Assert,
 
 // -- Suite --------------------------------------------------------------------
 TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStdMod, Y.WidgetButtons]);
-suite      = new Y.Test.Suite('WidgetButtons');
+suite      = new Y.Test.Suite('Widget: Buttons');
 
 // -- Lifecycle ----------------------------------------------------------------
 suite.add(new Y.Test.Case({
