@@ -6,7 +6,7 @@ var Assert      = Y.Assert,
     suite, TestWidget;
 
 // -- Suite --------------------------------------------------------------------
-suite      = new Y.Test.Suite('WidgetModality');
+suite      = new Y.Test.Suite('Widget: Modality');
 TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetModality]);
 
 // -- Lifecycle ----------------------------------------------------------------
