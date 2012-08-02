@@ -4,8 +4,8 @@
         <meta charset='utf-8'>
         <title>scrollview-base unit tests</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-        <script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
 
         <style>
         	.horizontal {
@@ -206,10 +206,9 @@
 
 	        });
 
-	        var suite = new Y.Test.Suite({name:"Scrollview Base Test Suite"});
+	        var suite = new Y.Test.Suite("Scrollview: Base");
 	        suite.add(testBasic);
 
-	        Y.Test.Runner.setName("Scrollview Test Runner");
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 

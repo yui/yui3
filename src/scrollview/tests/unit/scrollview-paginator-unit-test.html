@@ -3,11 +3,11 @@
     <head>
         <title>scrollview-paginator unit tests</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <link rel="stylesheet" href="../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
         <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
         -->
-        <script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
         
         <style>
         	.horizontal {
@@ -44,8 +44,6 @@
         
         var s;
         YUI({
-            debug: true,
-            filter:"raw"
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
 	        var myConsole = new Y.Console({height:'100%'}).render();
@@ -103,15 +101,13 @@
 
 			});
 
-	        var suite = new Y.Test.Suite({name:"Scrollview Paginator Test Suite"});
+	        var suite = new Y.Test.Suite("Scrollview: Paginator");
 	        suite.add(testBasic);
 
-	        Y.Test.Runner.setName("scrollview-paginator test runner");
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
         });
-
 
         </script>
     </head>

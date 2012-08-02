@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Scrollview List Plugin Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -313,10 +313,9 @@
 			
         });
 
-        var suite = new Y.Test.Suite({name:"Scrollview List Test Suite"});
+        var suite = new Y.Test.Suite("Scrollview: List");
         suite.add(testBasic);
 
-        Y.Test.Runner.setName("Scrollview Test Runner");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
