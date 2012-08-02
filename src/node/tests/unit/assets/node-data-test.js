@@ -1,5 +1,6 @@
 YUI.add('node-data-test', function(Y) {
-    Y.Test.Runner.add(new Y.Test.Case({
+    var suite = new Y.Test.Suite('Node: Data');
+    suite.add(new Y.Test.Case({
         name: 'Node data',
 
         'should return empty object when no data set': function() {
@@ -225,5 +226,7 @@ YUI.add('node-data-test', function(Y) {
             Y.Assert.areEqual('foo', node.getData('foo'));
         }
     }));
+
+    Y.Test.Runner.add(suite);
 
 }, '@VERSION@' ,{requires:['node-base', 'test-console']});

@@ -3,11 +3,11 @@
 <head>
 <title>Node Test Suite</title>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="node-data-test.js"></script>
-<script type="text/javascript" src="node-attrs-test.js"></script>
-<script type="text/javascript" src="node-traversal-test.js"></script>
-<script type="text/javascript" src="nodelist-test.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="./assets/node-data-test.js"></script>
+<script type="text/javascript" src="./assets/node-attrs-test.js"></script>
+<script type="text/javascript" src="./assets/node-traversal-test.js"></script>
+<script type="text/javascript" src="./assets/nodelist-test.js"></script>
 
 <style type="text/css">
 body {
@@ -163,7 +163,7 @@ button {
         <li>item 3</li>
         <li>item 4</li>
     </ol>
-<iframe src="test-frame.html"></iframe>
+<iframe src="./assets/test-frame.html"></iframe>
 <div id="test-insert-html">foo</div>
 <div id="test:colon">
     <h2>test</h2>
@@ -188,13 +188,13 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+YUI().use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         ObjectAssert = Y.ObjectAssert,
-        suite = new Y.Test.Suite("Node Tests");
+        suite = new Y.Test.Suite("Node");
 
-    Y.Test.Runner.setName('Node Tests');
+    Y.Test.Runner.setName('Node');
     new Y.Test.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
@@ -1571,7 +1571,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
                 test = this;
             node.set('id', 'test-loading');
             node.appendTo('body');
-            node.load('test-frame.html', function(code, response) {
+            node.load('./assets/test-frame.html', function(code, response) {
                 test.resume(function() {
                     Assert.areEqual(1, node.all('div').size());
                     node.remove();
@@ -1585,7 +1585,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
                 test = this;
             node.set('id', 'test-loading');
             node.appendTo('body');
-            node.load('test-frame.html', 'ul', function(code, response) {
+            node.load('./assets/test-frame.html', 'ul', function(code, response) {
                 test.resume(function() {
                     Assert.areEqual(1, node.all('ul').size());
                     node.remove();
