@@ -9,14 +9,14 @@
 <div id="log"></div>
 <div id="test"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'overlay-test': {
-            fullpath: 'overlay-test.js',
+            fullpath: './assets/overlay-test.js',
             requires: ['overlay', 'test']
         }
     },
