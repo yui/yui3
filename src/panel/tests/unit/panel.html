@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Panel Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -348,10 +348,9 @@
 
         });
 
-        var suite = new Y.Test.Suite({name:"Panel Test Suite"});
+        var suite = new Y.Test.Suite("Panel");
         suite.add(testBasic);
 
-        Y.Test.Runner.setName("Panel Test Runner");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
