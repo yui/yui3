@@ -1,6 +1,6 @@
 YUI.add('shape-setfillandstroke-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Graphic.SetShapeFillAndStrokeTests"),
+var suite = new Y.Test.Suite("Graphics: Set Shape Fill And Stroke"),
 ShapeTestTemplate = function(cfg, globalCfg) {
     var i;
     ShapeTestTemplate.superclass.constructor.apply(this);

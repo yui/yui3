@@ -1,6 +1,6 @@
 YUI.add('graphics-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Graphic"),
+var suite = new Y.Test.Suite("Graphics: Base"),
     ENGINE = "vml",
     DOCUMENT = Y.config.doc,
 	canvas = DOCUMENT && DOCUMENT.createElement("canvas"),

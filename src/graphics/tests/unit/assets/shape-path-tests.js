@@ -1,6 +1,6 @@
 YUI.add('shape-path-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Path.Tests"),
+var suite = new Y.Test.Suite("Graphics: Path"),
 strokeAndFill = {
     stroke: {
         weight: 1,

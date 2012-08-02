@@ -1,6 +1,6 @@
 YUI.add('graphic-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.Graphic.Tests");
+var suite = new Y.Test.Suite("Graphics: RoundedRect");
 
 function RoundedRect()
 {
