@@ -2065,7 +2065,7 @@ YUI.add('loader-tests', function(Y) {
     
     var name = 'Loader';
     if (typeof TestName != 'undefined') {
-        name = TestNamee
+        name = TestName;
     }
 
     var suite = new Y.Test.Suite(name);
