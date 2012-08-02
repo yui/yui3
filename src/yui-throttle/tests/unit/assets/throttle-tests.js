@@ -2,7 +2,7 @@ YUI.add('throttle-tests', function(Y) {
 
     var Assert = Y.Assert;
 
-    var suite = new Y.Test.Suite("Y.Throttle test Suite");
+    var suite = new Y.Test.Suite("Throttle");
 
     var testCase = new Y.Test.Case({
         name: "Throttle Tests",

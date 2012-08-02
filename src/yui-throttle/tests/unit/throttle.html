@@ -7,20 +7,13 @@
 
 <div id="log"></div>
 
-<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
-
-var YUI_config = {
-    loaderPath: 'loader/loader.js',
-    gconfig: true,
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-};
-
 YUI({
-    filter: YUI_config.gfilter,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'throttle-tests': {
-            fullpath: './throttle-tests.js',
+            fullpath: './assets/throttle-tests.js',
             requires: [ 'yui-throttle', 'test']
         }
     }
