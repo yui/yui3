@@ -307,7 +307,7 @@ YUI.add('imageloader-tests', function(Y) {
     });
 
 
-    var imageLoaderTestSuite = new Y.Test.Suite('YUI ImageLoader Utility');
+    var imageLoaderTestSuite = new Y.Test.Suite('ImageLoader');
     imageLoaderTestSuite.add(bgImgUrlTestCase);
     imageLoaderTestSuite.add(srcImgUrlTestCase);
     imageLoaderTestSuite.add(classNameTestCase);
