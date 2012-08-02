@@ -3,7 +3,7 @@ YUI.add('highlight-test', function (Y) {
 var Assert = Y.Assert,
     Hi     = Y.Highlight,
 
-    suite = new Y.Test.Suite('Y.Highlight');
+    suite = new Y.Test.Suite('Highlight');
 
 suite.add(new Y.Test.Case({
     name: 'API',
