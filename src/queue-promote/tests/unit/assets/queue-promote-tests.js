@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("queue-promote");
+YUI.add('queue-promote-tests', function(Y) {
+
+var suite = new Y.Test.Suite("QueuePromote");
 
 suite.add(new Y.Test.Case({
     name : "queue-promote API",
@@ -70,3 +72,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['queue-promote', 'test']});
