@@ -9,14 +9,14 @@
 <div id="log"></div>
 <div id="test"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'widget-stdmod-test': {
-            fullpath: 'widget-stdmod-test.js',
+            fullpath: './assets/widget-stdmod-test.js',
             requires: ['widget-stdmod', 'test']
         }
     },
