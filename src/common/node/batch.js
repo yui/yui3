@@ -20,10 +20,6 @@ var skipping = [
 
 var skip = function(p) {
     var ret = false;
-    if ((p.indexOf(path.join('io/tests/')) === 0)
-        || (p.indexOf(path.join('editor/tests/')) === 0)) {
-        return true;
-    }
     if (!travis) { //Not in travis, run all tests
         return false;
     }
