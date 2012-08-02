@@ -4,7 +4,7 @@ var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
 
     ignoreFocus = Y.UA.ie && Y.UA.ie < 10,
-    suite       = new Y.Test.Suite('Y.ValueChange');
+    suite       = new Y.Test.Suite('Event: ValueChange');
 
 // -- Basic Subscriptions ------------------------------------------------------
 suite.add(new Y.Test.Case({

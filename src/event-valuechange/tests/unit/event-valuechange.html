@@ -19,11 +19,10 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'event-valuechange-test': {
-            fullpath: 'event-valuechange-test.js',
+            fullpath: './assets/event-valuechange-test.js',
             requires: ['event-valuechange', 'node-base', 'node-event-simulate', 'test']
         }
     },
