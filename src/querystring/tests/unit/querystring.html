@@ -9,13 +9,13 @@
 
 <div id="log"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'querystring-tests': {
-            fullpath: './querystring-tests.js',
+            fullpath: './assets/querystring-tests.js',
             requires: [ 'test', 'querystring' ]
         }
     }

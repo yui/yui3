@@ -54,7 +54,7 @@ YUI.add('querystring-tests', function(Y) {
     ]; //}
 
     // Tests Below...
-    var suite = new Y.Test.Suite("Query String Tests");
+    var suite = new Y.Test.Suite("QueryString");
     suite.add(new Y.Test.Case({
         name : "Parse Query Strings",
 
