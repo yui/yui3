@@ -50,7 +50,7 @@ YUI.add('profiler-tests', function(Y) {
     // Base Test Suite
     //-------------------------------------------------------------------------
     
-    var suite = new Y.Test.Suite("Profiler Tests");
+    var suite = new Y.Test.Suite("Profiler");
     
     //-------------------------------------------------------------------------
     // Test Case for basic function profiling

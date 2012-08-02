@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>profiler tests</title>
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 <body class="yui3-skin-sam">
     <h1>Profiler Tests</h1>
@@ -28,7 +28,7 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'profiler-tests': {
-            fullpath: './profiler-tests.js',
+            fullpath: './assets/profiler-tests.js',
             requires: [ 'test', 'profiler' ]
         }
     }
