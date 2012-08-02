@@ -15,13 +15,13 @@ var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'text-accentfold-test': {
-            fullpath: 'text-accentfold-test.js',
+            fullpath: './assets/text-accentfold-test.js',
             requires: ['text-accentfold', 'test']
         }
     }
 }).use('text-accentfold-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
-    Y.Test.Runner.setName('text-accentfold');
+    Y.Test.Runner.setName('Text: Accentfold');
     Y.Test.Runner.run();
 });
 </script>
