@@ -1,3 +1,5 @@
+YUI.add('slider-tests', function(Y) {
+
 // copied this from event-key-test.js to add tests for changing value by keyboard
 Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     var simulate = Y.Event.simulate,
@@ -21,8 +23,16 @@ Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     }
 };
 // END   copied this from event-key-test.js to add tests for changing value by keyboard
+Y.Node.prototype.simulate = function (type, config) {
+    var simulate = Y.Event.simulate,
+        args     = [this._node, type].concat(Y.Array(arguments, 1, true));
 
-var suite = new Y.Test.Suite("Y.Slider");
+    if(type) {
+        simulate.apply(Y.Event, args);
+    } 
+};
+
+var suite = new Y.Test.Suite("Slider");
 
 suite.add( new Y.Test.Case({
     name: "Lifecycle",
@@ -349,6 +359,9 @@ suite.add( new Y.Test.Case({
     name: "Attributes",
 
     _should: {
+        ignore: {
+            "test clickableRail": Y.UA.phantomjs
+        },
         fail: {
             // TODO This is a bug. invalid construction value should fallback
             // to specified attribute default
@@ -505,19 +518,196 @@ suite.add( new Y.Test.Case({
     },
 
     "test clickableRail": function () {
-        
+        var slider = new Y.Slider({
+                width    : '300px',
+                clickableRail: true
+            }),
+            railRegion, where, fired;
+
+        slider.on('railMouseDown', function () {
+            fired = true;
+        });
+
+        slider.render('#testbed');
+
+        railRegion = slider.rail.get('region');
+        where = {
+            clientX: railRegion.left + Math.floor(railRegion.width / 2),
+            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+        };
+
+        slider.on('railMouseDown', function (e) {
+            fired = true;
+        });
+
+        slider.rail.simulate('mousedown', where);
+        slider.rail.simulate('mouseup', where);
+        slider.rail.simulate('click', where);
+
+        Y.Assert.isTrue(fired, "railMouseDown didn't fire for clickableRail: true");
+
+        fired = false;
+
+        slider.destroy();
+
+        Y.one('#testbed').empty();
+
+        slider = new Y.Slider({
+            width    : '300px',
+            clickableRail: false
+        });
+
+        slider.on('railMouseDown', function () {
+            fired = true;
+        });
+
+        slider.render('#testbed');
+
+        slider.rail.simulate('mousedown', where);
+        slider.rail.simulate('mouseup', where);
+        slider.rail.simulate('click', where);
+
+        Y.Assert.isFalse(fired, "railMouseDown fired for clickableRail: false");
+
+        slider.destroy();
     },
 
     "test min": function () {
+        var slider = new Y.Slider({ min: -100 });
+
+        Y.Assert.areSame(-100, slider.get('min'));
+
+        slider.set('min', 0);
+
+        Y.Assert.areSame(0, slider.get('min'));
+
+        slider.destroy();
     },
 
     "test max": function () {
+        var slider = new Y.Slider({ max: 33 });
+
+        Y.Assert.areSame(33, slider.get('max'));
+
+        slider.set('max', 80);
+
+        Y.Assert.areSame(80, slider.get('max'));
+
+        slider.destroy();
     },
 
     "test value": function () {
+        var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.set('value', 0);
+
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting the value outside the min or max should constrain it": function () {
+        var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.set('value', -10);
+
+        Y.Assert.areSame(0, slider.get('value'));
+
+        slider.set('value', 110);
+
+        Y.Assert.areSame(100, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "setting the min or max should update the value if necessary": function () {
+        var slider = new Y.Slider({ min: 0, max: 100, value: 50 });
+
+        slider.render('#testbed');
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.set('min', 60);
+
+        Y.Assert.areSame(60, slider.get('value'));
+
+        slider.set('min', 0);
+        Y.Assert.areSame(60, slider.get('value'));
+
+        slider.set('max', 50);
+
+        Y.Assert.areSame(50, slider.get('value'));
+
+        slider.destroy();
+    },
+
+    "instantiating with disabled: true should lock the thumb": function () {
+        var slider = new Y.Slider({ disabled: true }).render('#testbed');
+
+        Y.Assert.isTrue(slider._dd.get('lock'));
+
+        slider.destroy();
     }
 }));
 
+suite.add( new Y.Test.Case({
+    name: "Mouse",
+    _should: {
+        ignore: {
+            "clicking on the rail should move the thumb": Y.UA.phantomjs
+        }
+    },
+    setUp: function () {
+        Y.one("body").append('<div id="testbed"></div>');
+    },
+
+    tearDown: function () {
+        Y.one("#testbed").remove(true);
+    },
+
+    "clicking on the rail should move the thumb": function () {
+        var slider = new Y.Slider({
+                length: '350px',
+                min   : 0,
+                max   : 100,
+                value : 50
+            }),
+            position, fired, railRegion, where;
+
+        function thumbPosition() {
+            return parseInt(slider.thumb.getStyle('left'), 10);
+        }
+
+        slider.render( "#testbed" );
+
+        railRegion = slider.rail.get('region');
+        where = {
+            clientX: railRegion.left + Math.floor(railRegion.width / 2),
+            clientY: railRegion.top + Math.floor(railRegion.height / 2)
+        };
+
+        Y.Assert.areNotSame(0, thumbPosition());
+
+        slider.set('value', 0);
+
+        Y.Assert.areSame(0, thumbPosition());
+
+        slider.on('railMouseDown', function (e) {
+            fired = true;
+        });
+
+        slider.rail.simulate('mousedown', where);
+        slider.rail.simulate('mouseup', where);
+        slider.rail.simulate('click', where);
+
+        Y.Assert.isTrue(fired);
+        Y.Assert.isTrue( (thumbPosition() > 0) );
+    }
+}));
 
 suite.add( new Y.Test.Case({
     name: "Keyboard",
@@ -580,6 +770,29 @@ suite.add( new Y.Test.Case({
         slider.destroy();
 
     },
+
+    "test focus on thumb by click": function () {
+        var slider = new Y.Slider({
+            length: '350px',
+            min   : 0,
+            max   : 100,
+            value : 50,
+            majorStep : 34
+        });
+
+        slider.render( "#testbed" );
+        Y.Assert.areEqual( 50, slider.get('value') );
+        var thumb = slider.thumb;
+        thumb.on('focus', function(){
+            // 33 is pageUp. Increase value = init value + majorStep
+            // .key() method is at top of this file
+            thumb.key(33);  
+        });
+        thumb.simulate('click'); // Should set focus on thumb  
+        Y.Assert.areEqual(84, slider.get('value'));
+
+        slider.destroy();
+    },
     
     /*
      * This tests changing the value by one unit
@@ -630,33 +843,7 @@ suite.add( new Y.Test.Case({
     }
 }));
 
-
-suite.add( new Y.Test.Case({
-    name: "Runtime expectations",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
-
-/*
-suite.add( new Y.Test.Case({
-    name: "Bugs",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
-*/
-
 Y.Test.Runner.add( suite );
+
+
+}, '@VERSION@' ,{requires:['slider', 'test']});
