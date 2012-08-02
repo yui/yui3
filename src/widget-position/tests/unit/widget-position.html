@@ -9,14 +9,13 @@
 <div id="log"></div>
 <div id="test"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'widget-position-test': {
-            fullpath: 'widget-position-test.js',
+            fullpath: './assets/widget-position-test.js',
             requires: ['widget-position', 'test']
         }
     },
