@@ -9,20 +9,20 @@
 
 <div id="tester"></div>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'touch-tests': {
-            fullpath: './touch-tests.js',
+            fullpath: './assets/touch-tests.js',
             requires: [ 'event-touch', 'test-console', 'test' ]
         }
     }
 }).use('touch-tests', function(Y) {
     
     (new Y.Test.Console()).render('#log');
-    Y.Test.Runner.setName('Event Touch Test Suite');
+    Y.Test.Runner.setName('Event: Touch');
     Y.Test.Runner.run();
     
 });

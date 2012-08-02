@@ -1,6 +1,6 @@
 YUI.add('mouseenter-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('mouseenter Event'),
+    var suite = new Y.Test.Suite('Event: mouseenter'),
     Assert = Y.Assert,
     noop = function() {},
     node = Y.one('#tester'),

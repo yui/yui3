@@ -61,7 +61,7 @@ function mouse(target, out) {
     }
 }
 
-var suite = new Y.Test.Suite("event-hover"),
+var suite = new Y.Test.Suite("Event: hover"),
     areSame = Y.Assert.areSame;
 
 suite.add(new Y.Test.Case({

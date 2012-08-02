@@ -7,7 +7,7 @@ Y.NodeList.importMethod(Y.Node.prototype, 'click');
 
 
 
-var suite = new Y.Test.Suite("Y.SyntheticEvent"),
+var suite = new Y.Test.Suite("Event: Synthetic"),
     areSame = Y.Assert.areSame;
 
 function initTestbed() {

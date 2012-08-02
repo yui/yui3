@@ -59,17 +59,14 @@
         </div>
 
     </div>
-	<script src="../../../build/yui/yui.js"></script>
-	<script src="window-focus.js"></script>
+	<script src="../../../../build/yui/yui.js"></script>
+	<script src="./assets/window-focus.js"></script>
 	<script>
 		YUI({
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-            allowRollup: false,
-            lazyEventFacade: true,
-	        logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
 			
-            var suite = new Y.Test.Suite("Delegate");
+            var suite = new Y.Test.Suite("Event: Delegate");
 
 		    // creating the console...
 			(new Y.Console()).render();
@@ -851,7 +848,7 @@
             }));
 
 			//run all tests 
-            Y.Test.Runner.setName("Delegate");
+            Y.Test.Runner.setName("Event: Delegate");
             Y.Test.Runner.add(suite);
 			Y.Test.Runner.run();
 		});

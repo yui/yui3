@@ -1,6 +1,6 @@
 YUI.add('touch-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('Touch Event'),
+    var suite = new Y.Test.Suite('Event: Touch'),
     Assert = Y.Assert,
     noop = function() {},
     node = Y.one('#tester');

@@ -1,6 +1,6 @@
 YUI.add('mousewheel-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('mousewheel Event'),
+    var suite = new Y.Test.Suite('Event: mousewheel'),
     Assert = Y.Assert,
     noop = function() {},
     node = Y.one(document);

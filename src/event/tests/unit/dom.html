@@ -13,13 +13,11 @@
 
     </div>
     <!-- YUI3 Core //-->
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            //lazyEventFacade: true,
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-            allowRollup: false
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use('test-console', 'test', 'node', 'event-simulate', function (Y) {
 
             // creating the console...
@@ -651,7 +649,7 @@
             }));
 
             //run all tests
-            Y.Test.Runner.setName("DOMEvents");
+            Y.Test.Runner.setName("Event: DOM");
             Y.Test.Runner.run();
 
             /* finishing the testing process */

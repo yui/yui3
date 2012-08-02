@@ -3,8 +3,8 @@
 <head>
     <title>YUI focus/blur synth Tests</title>
 
-    <script src="../../../build/yui/yui.js"></script>
-    <script src="window-focus.js"></script>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/window-focus.js"></script>
 </head>
 <body class="yui3-skin-sam">
 
@@ -15,17 +15,17 @@
             <input type="text" id="text-1">
         </div>
     </div>
+    <div id="log"></div>
 
     <script>
         YUI({
             //lazyEventFacade: true,
-            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-            allowRollup: false
-        }).use('console', 'test', 'event', 'event-simulate', 'node-event-delegate', 'window-focus', function (Y) {
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'test', 'event', 'event-simulate', 'node-event-delegate', 'window-focus', function (Y) {
 
             var Assert = Y.Assert;
 
-            new Y.Console({ /*useBrowserConsole: true*/ }).render();
+            (new Y.Test.Console()).render();
 
             Y.Test.Runner.add(new Y.Test.Case({
                 name: "Event Focus And Blur Test",
@@ -398,7 +398,7 @@
 
             }));
 
-	    Y.Test.Runner.setName("EventFocusBlur");
+	        Y.Test.Runner.setName("Event: FocusBlur");
             Y.Test.Runner.run();
 
         });

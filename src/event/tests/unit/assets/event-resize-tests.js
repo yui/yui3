@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("event-resize"),
+YUI.add('event-resize-tests', function(Y) {
+
+var suite = new Y.Test.Suite("Event: resize"),
     win = Y.one( Y.config.win ),
     eventKey = 'event:' + Y.stamp(Y.config.win) + 'resize',
     isOldGecko = (Y.UA.gecko && Y.UA.gecko < 1.91);
@@ -141,3 +143,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['event-resize', 'test']});

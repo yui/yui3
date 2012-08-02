@@ -9,20 +9,20 @@
 
 <div id="tester"></div>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'mousewheel-tests': {
-            fullpath: './mousewheel-tests.js',
+            fullpath: './assets/mousewheel-tests.js',
             requires: [ 'event-mousewheel', 'test-console', 'test' ]
         }
     }
 }).use('mousewheel-tests', function(Y) {
     
     (new Y.Test.Console()).render('#log');
-    Y.Test.Runner.setName('Event Mousewheel Test Suite');
+    Y.Test.Runner.setName('Event: Mousewheel');
     Y.Test.Runner.run();
     
 });

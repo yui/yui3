@@ -1,3 +1,5 @@
+YUI.add('event-key-tests', function(Y) {
+
 Y.Node.prototype.key = function (keyCode, charCode, mods, type) {
     var simulate = Y.Event.simulate,
         el       = this._node,
@@ -52,7 +54,7 @@ function tearDown() {
     }
 }
 
-var suite = new Y.Test.Suite("event-key");
+var suite = new Y.Test.Suite("Event: key");
 
 suite.add(new Y.Test.Case({
     name: "node.on('key',...)",
@@ -1113,3 +1115,6 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['event-key', 'test']});

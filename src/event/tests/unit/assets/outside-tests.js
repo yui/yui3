@@ -1,6 +1,6 @@
 YUI.add('outside-tests', function(Y) {
 
-    var suite = new Y.Test.Suite('outside Event'),
+    var suite = new Y.Test.Suite('Event: outside'),
     Assert = Y.Assert,
     noop = function() {},
     body = Y.one('body'),
