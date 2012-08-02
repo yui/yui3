@@ -32,7 +32,8 @@ YUI.add('loader-tests', function(Y) {
                 test_css_stamp: Y.UA.nodejs,
                 test_group_filters: Y.UA.nodejs,
                 test_cond_no_test_or_ua: Y.UA.nodejs,
-                test_condpattern: Y.UA.nodejs
+                test_condpattern: Y.UA.nodejs,
+                test_cond_with_test_function: Y.UA.nodejs
             }
         },
         'test: skin overrides double loading': function() {
@@ -2061,8 +2062,13 @@ YUI.add('loader-tests', function(Y) {
             });
         }
     });
+    
+    var name = 'Loader';
+    if (typeof TestName != 'undefined') {
+        name = TestNamee
+    }
 
-    var suite = new Y.Test.Suite(TestName);
+    var suite = new Y.Test.Suite(name);
     suite.add(testLoader);
     Y.Test.Runner.add(suite);
 

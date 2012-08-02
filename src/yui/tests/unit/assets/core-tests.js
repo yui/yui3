@@ -63,7 +63,10 @@ YUI.add('core-tests', function(Y) {
                 'test: available delay': !Y.config.win,
                 'test: pattern requires order': !Y.config.win,
                 'test: fetch with external dependencies redefined in external file': !Y.config.win,
-                'test: double skin loading from seed': !Y.config.win
+                'test: double skin loading from seed': !Y.config.win,
+                test_global_config: !Y.config.win,
+                test_missed: !Y.config.win,
+                'test: requirements defined in external module': !Y.config.win
             }
         },
         'test: double skin loading from seed': function() {
