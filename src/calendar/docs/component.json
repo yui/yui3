@@ -2,7 +2,7 @@
     "name"       : "calendar",
     "displayName": "Calendar",
     "description": "Provides an interactive visual representation of a range of dates in one or more month grids",
-    "author"     : "allenr",
+    "author"     : "allenrabinovich",
 
     "tags": ["beta", "widget", "calendar"],
     "use" : ["calendar"],

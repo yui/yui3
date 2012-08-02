@@ -2,7 +2,7 @@
     "name"       : "console",
     "displayName": "Console",
     "description": "Message logging UI. Typically used as a development tool.",
-    "author"     : ["dgathright"],
+    "author"     : ["drgath"],
 
     "tags": ["devtool", "console", "development"],
     "use" : ["console"],
