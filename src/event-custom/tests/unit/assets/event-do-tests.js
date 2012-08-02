@@ -1,6 +1,6 @@
 YUI.add("event-do-tests", function(Y) {
 
-var suite = new Y.Test.Suite("AOP");
+var suite = new Y.Test.Suite("Custom Event: AOP");
 
 suite.add(new Y.Test.Case({
     name: "Y.Do",

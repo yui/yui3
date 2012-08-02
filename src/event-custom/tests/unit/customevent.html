@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>YUI3 Custom Event Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -32,11 +32,9 @@
     //YUI.add("selector-native", function(){});
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        allowRollup: false,
         onCSS: function(Y) {
             Y.log('CSS is done loading', 'info', 'testcase');
         },
-        logExclude: { get: true, Dom: true, Selector: true, Node: true, attribute: true, event: true, base: true, widget: true },
 
         filters: {
             base: 'raw',
@@ -1142,7 +1140,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
             }
         });
 
-        Y.Test.Runner.setName("CustomEvent");
+        Y.Test.Runner.setName("Custom Event");
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });
