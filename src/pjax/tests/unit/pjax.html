@@ -18,14 +18,14 @@
     <a href="mailto:foo@example.com" id="link-mailto" class="yui3-pjax">mailto</a>
 </div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'pjax-test': {
-            fullpath: 'pjax-test.js',
+            fullpath: './assets/pjax-test.js',
             requires: ['pjax-plugin', 'test']
         }
     }
