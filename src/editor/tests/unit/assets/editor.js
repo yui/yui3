@@ -542,6 +542,9 @@ YUI.add('editor-tests', function(Y) {
                 test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie === 9) || Y.UA.chrome) ? true : false)
 
             },
+            ignore: {
+                test_br_plugin: Y.UA.phantomjs
+            },
             error: { //These tests should error
                 'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12)) ? true : false),
