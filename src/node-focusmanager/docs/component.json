@@ -2,7 +2,7 @@
     "name"       : "node-focusmanager",
     "displayName": "FocusManager Node Plugin",
     "description": "Makes it easy to define a Node's focusable descendants, define which descendant should be in the default tab flow, and define the keys that move focus among each descendant.",
-    "author"     : ["kloots", "rgrove"],
+    "author"     : "drgath",
 
     "tags": [
         "utility", "node", "plugin", "focus", "keyboard", "navigation", "beta"
