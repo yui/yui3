@@ -2,9 +2,9 @@
 <html>
 <head>
     <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
-    <link type="text/css" rel="stylesheet" href="../../../build/cssgrids/cssgrids.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/widget-base/assets/skins/sam/widget-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/dial/assets/skins/sam/dial.css">    
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/sam/widget-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">    
     <title>Loader Automated Tests</title>
 </head>
 <body class="yui3-skin-sam">
@@ -12,18 +12,16 @@
 <div id="log"></div>
 
 <!-- This is the full test file, notice it's using the `yui` seed file, so loader is NOT fetched. -->
-<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
-<script type="text/javascript" src="../../../build/loader-base/loader-base.js"></script>
-<script type="text/javascript" src="../../../build/loader-yui3/loader-yui3.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript">
 
 var YUI_config = {
     loaderPath: 'loader/loader.js',
     gconfig: true,
-    core: ['get', 'features','intl-base','yui-log','yui-later','loader-base','loader-yui3' ],
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
+var TestName = 'Loader: Full';
 
 YUI({
     allowRollup: false,
@@ -31,7 +29,7 @@ YUI({
     filter: YUI_config.gfilter,
     modules: {
         'loader-tests': {
-            fullpath: './loader-tests.js',
+            fullpath: './assets/loader-tests.js',
             requires: [ 'test']
         }
         
@@ -39,8 +37,6 @@ YUI({
 }).use('loader-tests', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
-    //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.setName('Loader Main Seed Test Suite (static)');
     Y.Test.Runner.run();
 });
 

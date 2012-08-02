@@ -371,7 +371,7 @@ YUI.add('loader-tests', function(Y) {
                     local: {
                         filter: 'raw',
                         combine: false,
-                        base: resolvePath('./assets/'),
+                        base: resolvePath('../assets/'),
                         modules: {
                             foo: {
                                 requires: [ 'oop' ]
@@ -394,13 +394,13 @@ YUI.add('loader-tests', function(Y) {
             YUI({
                 modules: {
                     'attrs-js': {
-                        fullpath: './assets/attrs.js',
+                        fullpath: '../assets/attrs.js',
                         attributes: {
                             id: 'attrs-js-test'
                         }
                     },
                     'attrs-css': {
-                        fullpath: './assets/attrs.css',
+                        fullpath: '../assets/attrs.css',
                         type: 'css',
                         attributes: {
                             id: 'attrs-css-test'
@@ -429,10 +429,10 @@ YUI.add('loader-tests', function(Y) {
                 },
                 modules: {
                     'attrs2-js': {
-                        fullpath: './assets/attrs.js'
+                        fullpath: '../assets/attrs.js'
                     },
                     'attrs2-css': {
-                        fullpath: './assets/attrs.css'
+                        fullpath: '../assets/attrs.css'
                     }
                 }
             }).use('attrs2-js', 'attrs2-css', 'node', function(Y) {
@@ -568,7 +568,7 @@ YUI.add('loader-tests', function(Y) {
                                     return (mname === 'mod');
                                 },
                                 configFn: function(me) {
-                                    me.fullpath = resolvePath('./assets/mod.js');
+                                    me.fullpath = resolvePath('../assets/mod.js');
                                 }
                             }
                         }
@@ -589,7 +589,7 @@ YUI.add('loader-tests', function(Y) {
                 useSync: false,
                 modules: {
                     cond2: {
-                        fullpath: resolvePath('./assets/cond2.js'),
+                        fullpath: resolvePath('../assets/cond2.js'),
                         condition: {
                             trigger: 'jsonp',
                             test: function() {
@@ -613,7 +613,7 @@ YUI.add('loader-tests', function(Y) {
                 useSync: false,
                 modules: {
                     cond: {
-                        fullpath: resolvePath('./assets/cond.js'),
+                        fullpath: resolvePath('../assets/cond.js'),
                         condition: {
                             trigger: 'yql'
                         }
@@ -1068,7 +1068,7 @@ YUI.add('loader-tests', function(Y) {
                         attributes: {
                             id: 'loadmod-test'
                         },
-                        fullpath: './assets/mod.js'
+                        fullpath: '../assets/mod.js'
                     }
                 },
                 require: ['loadmod']
@@ -1092,21 +1092,21 @@ YUI.add('loader-tests', function(Y) {
                         attributes: {
                             id: 'loadmod-test2'
                         },
-                        fullpath: './assets/mod.js'
+                        fullpath: '../assets/mod.js'
                     },
                     loadmod3: {
                         async: false,
                         attributes: {
                             id: 'loadmod-test3'
                         },
-                        fullpath: './assets/mod.js'
+                        fullpath: '../assets/mod.js'
                     },
                     loadmod4: {
                         async: true,
                         attributes: {
                             id: 'loadmod-test4'
                         },
-                        fullpath: './assets/mod.js'
+                        fullpath: '../assets/mod.js'
                     }
                 },
                 require: ['loadmod3', 'loadmod2', 'loadmod4']
@@ -2062,7 +2062,7 @@ YUI.add('loader-tests', function(Y) {
         }
     });
 
-    var suite = new Y.Test.Suite("Loader Automated Tests");
+    var suite = new Y.Test.Suite(TestName);
     suite.add(testLoader);
     Y.Test.Runner.add(suite);
 

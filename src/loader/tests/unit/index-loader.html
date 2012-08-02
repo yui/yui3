@@ -2,9 +2,9 @@
 <html>
 <head>
     <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
-    <link type="text/css" rel="stylesheet" href="../../../build/cssgrids/cssgrids.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/widget-base/assets/skins/sam/widget-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/dial/assets/skins/sam/dial.css">    
+    <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/sam/widget-base.css">
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">    
     <title>Loader Automated Tests</title>
 </head>
 <body class="yui3-skin-sam">
@@ -12,8 +12,8 @@
 <div id="log"></div>
 
 <!-- This is the loader test file, notice it's using the `yui-base` seed file & including loader so it is NOT fetched. -->
-<script type="text/javascript" src="../../../build/yui-base/yui-base.js"></script>
-<script type="text/javascript" src="../../../build/loader/loader.js"></script>
+<script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
+<script type="text/javascript" src="../../../../build/loader/loader.js"></script>
 <script type="text/javascript">
 
 var YUI_config = {
@@ -22,6 +22,7 @@ var YUI_config = {
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 };
 
+var TestName = 'Loader: On Page';
 
 YUI({
     allowRollup: false,
@@ -29,7 +30,7 @@ YUI({
     filter: YUI_config.gfilter,
     modules: {
         'loader-tests': {
-            fullpath: './loader-tests.js',
+            fullpath: './assets/loader-tests.js',
             requires: [ 'test']
         }
         
@@ -37,8 +38,6 @@ YUI({
 }).use('loader-tests', 'test-console', 'test', function(Y) {
     new Y.Test.Console().render('#log');
 
-    //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.setName('Loader Main Seed Test Suite (on page)');
     Y.Test.Runner.run();
 });
 
