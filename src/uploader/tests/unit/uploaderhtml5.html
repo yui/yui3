@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Uploader Flash Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<title>Uploader HTML5 Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <style>
 .testclass {
     color: #ff0000;
@@ -11,22 +11,18 @@
 </head>
 
 <body class="yui3-skin-sam">
-<h1>Flash Uploader Tests</h1>
+<h1>HTML5 Uploader Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
-<div id="tabbefore"></div>
 <div id="container"></div>
-<div id="tabafter"></div>
+<div id="droparea"></div>
+<div id="secondroparea"></div>
 <script type="text/javascript">
 
 (function() {
 
     YUI({
-        base: "../../../build/",
-        logInclude:{"TestRunner":true},
-        useConsole: true,
-        allowRollup: false,
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
-    }).use("console", "test", "dump", "uploader-flash", "node-event-simulate", "event-custom-base", function(Y) {
+    }).use("console", "test", "dump", "uploader-html5", function(Y) {
         
 
 
@@ -43,7 +39,7 @@
 
 
         var BasicUploader = new Y.Test.Case({
-            name: "Basic Uploader Flash Tests",
+            name: "Basic Uploader HTML5 Tests",
 
             setUp : function () {
                 
@@ -66,10 +62,54 @@
                   height: "100%"
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
 
                 Y.Assert.areEqual(this.basicuploader.get('visible'), true);
+            },
+
+            testDropArea : function() {
+                var cfg = {
+                  tabIndex: "0",
+                  width: "100%",
+                  height: "100%",
+                  dragAndDropArea: "#droparea"
+                };
+
+                this.basicuploader = new Y.UploaderHTML5(cfg);
+                this.basicuploader.render("#basicuploader");
+
+                Y.Assert.areEqual(this.basicuploader.get('dragAndDropArea'), Y.one("#droparea"));
+
+                this.basicuploader.set("dragAndDropArea", "#seconddroparea");
+                Y.Assert.areEqual(this.basicuploader.get('dragAndDropArea'), Y.one("#seconddroparea"));
+
+                var e = new Y.DOMEventFacade({type:'dragenter', preventDefault: function () {}, stopPropagation: function () {}});
+
+                this.basicuploader._ddEventHandler(e);
+
+                e.type = 'dragleave';
+
+                this.basicuploader._ddEventHandler(e);
+
+                e.type = 'dragover';
+
+                this.basicuploader._ddEventHandler(e);
+
+                e.type = 'drop';
+
+                Y.FileHTML5.prototype.isValidFile = function () { return true; };
+                Y.FileHTML5.prototype.canUpload = function () { return true; };
+
+                var filearray = [];
+
+                for (var i = 0; i <= 10; i++) {
+                    filearray.push({name: i + ".jpg", size: i*1000, type: "jpg"});
+                }
+
+                e._event.dataTransfer = {files: filearray};
+
+                this.basicuploader._ddEventHandler(e);
             },
 
             testEnabled : function () {
@@ -77,17 +117,12 @@
                   tabIndex: "0",
                   width: "100%",
                   height: "100%",
+                  dragAndDropArea: "#droparea",
                   enabled: true
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
-
-                this.basicuploader._swfReference._swf = {};
-                this.basicuploader._swfReference._swf._node = {};
-                this.basicuploader._swfReference._swf.setAttribute = function () {};
-
-                this.basicuploader._swfReference.fire("swfReady");
 
                 Y.Assert.areEqual(this.basicuploader.get('enabled'), true);
 
@@ -100,40 +135,16 @@
                 Y.Assert.areEqual(this.basicuploader.get('enabled'), true);
             },
 
-            testMockSWF : function () {
-                var cfg = {
-                  tabIndex: "0",
-                  width: "100%",
-                  height: "100%",
-                  enabled: true
-                };
-
-                this.basicuploader = new Y.UploaderFlash(cfg);
-                this.basicuploader.render("#basicuploader");
-
-                this.basicuploader._swfReference._swf = {};
-                this.basicuploader._swfReference._swf._node = {};
-                this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};               
-
-
-                this.basicuploader._swfReference.fire("swfReady");
-                this.basicuploader._swfReference.fire("mousedown");
-                this.basicuploader._swfReference.fire("mouseenter");
-                this.basicuploader._swfReference.fire("mouseleave");
-                this.basicuploader._swfReference.fire("mouseup");
-                this.basicuploader._swfReference.fire("click");
-            },
-
             testMultiple : function () {
                 var cfg = {
                   tabIndex: "0",
                   width: "100%",
                   height: "100%",
+                  dragAndDropArea: "#droparea",
                   enabled: true
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
 
                 this.basicuploader.set("multipleFiles", true);
@@ -147,29 +158,29 @@
                 var cfg = {
                   tabIndex: "0",
                   width: "100%",
-                  height: "100%"
+                  height: "100%",
+                  dragAndDropArea: "#droparea"
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
 
-                this.basicuploader._swfReference._swf = {};
-                this.basicuploader._swfReference._swf._node = {};
-                this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};
-
-                this.basicuploader._swfReference.fire("swfReady");
-
-                Y.FileFlash.prototype.isValidFile = function () { return true; };
-                Y.FileFlash.prototype.canUpload = function () { return true; };
+                Y.FileHTML5.prototype.isValidFile = function () { return true; };
+                Y.FileHTML5.prototype.canUpload = function () { return true; };
 
                 var filearray = [];
 
                 for (var i = 0; i <= 10; i++) {
-                    filearray.push({fileId: "file" + i, fileReference: {name: i + ".jpg", size: i*1000, type: "jpg", creationDate: new Date(), modificationDate: new Date()}});
+                    filearray.push({name: i + ".jpg", size: i*1000, type: "jpg"});
                 }
 
-                var e = {type:'filelist', fileList: filearray, preventDefault: function () {}, stopPropagation: function () {}};
+                var e = new Y.DOMEventFacade({type:'filelist', preventDefault: function () {}, stopPropagation: function () {}});
+
+                e.target = {};
+
+                e.target.getDOMNode = function () {
+                    return {files: filearray};
+                }
 
                 this.basicuploader._updateFileList(e);
 
@@ -182,10 +193,11 @@
                 var cfg = {
                   tabIndex: "0",
                   width: "100%",
-                  height: "100%"
+                  height: "100%",
+                  dragAndDropArea: "#droparea"
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
 
                 var e = new Y.DOMEventFacade({type:'file:uploadstart', preventDefault: function () {}, stopPropagation: function () {}});
@@ -208,51 +220,47 @@
                 this.basicuploader._uploadEventHandler(e);
             },
 
-            testTabElements : function () {
-               
-                var cfg = {
+            // Causes a dialog popup in Firefox, disabling for now
+            /*
+            testOpenFileSelect : function () {
+               var cfg = {
                   tabIndex: "0",
                   width: "100%",
-                  height: "100%"
+                  height: "100%",
+                  dragAndDropArea: "#droparea"
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
 
-                this.basicuploader._swfReference._swf = {};
-                this.basicuploader._swfReference._swf._node = {};
-                this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};
-                this.basicuploader._swfReference._swf.on = function () { return {detach: function () {}}};
+                var domNode = this.basicuploader._fileInputField.getDOMNode();
 
-                this.basicuploader._swfReference.fire("swfReady");
+                domNode.onclick = function (ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    return false;
+                }
 
-                this.basicuploader.set("tabElements", {from: Y.one("#tabbefore"), to: Y.one("#tabafter")});
-                Y.one("#tabbefore").simulate("keydown", { charCode: 9, keyCode: 9, shiftKey: false});
-                Y.one("#tabafter").simulate("keydown", { charCode: 9, keyCode: 9, shiftKey: true});
-                this.basicuploader.set("tabElements", null);
+                this.basicuploader._fileInputField.on("click", function (ev) {ev.preventDefault(); ev.stopPropagation(); return false;});
+
+                this.basicuploader.openFileSelectDialog();
             },
+            */
 
             testUploadCalls: function () {
                var cfg = {
                   tabIndex: "0",
                   width: "100%",
                   height: "100%",
+                  dragAndDropArea: "#droparea"
                 };
 
-                this.basicuploader = new Y.UploaderFlash(cfg);
+                this.basicuploader = new Y.UploaderHTML5(cfg);
                 this.basicuploader.render("#basicuploader");
 
-                this.basicuploader._swfReference._swf = {};
-                this.basicuploader._swfReference._swf._node = {};
-                this.basicuploader._swfReference._swf.setAttribute = function () {};
-                this.basicuploader._swfReference._swf.focus = function () {};               
 
-                this.basicuploader._swfReference.fire("swfReady");
-
-
-                Y.FileFlash.prototype.isValidFile = function () { return true; };
-                Y.FileFlash.prototype.canUpload = function () { return true; };
+                Y.FileHTML5.prototype.isValidFile = function () { return true; };
+                Y.FileHTML5.prototype.canUpload = function () { return true; };
 
                 var filearray = [];
 
@@ -270,16 +278,16 @@
 
                 this.basicuploader._updateFileList(e);
 
-                this.basicuploader.uploadAll("testurl.html");
-
-                this.basicuploader.upload(new Y.FileFlash(filearray[0]), "testurl.html", {foo: "bar"});
+                if (!Y.UA.ie || Y.UA.ie >= 10) {
+                    this.basicuploader.uploadAll("testurl.html");
+                    this.basicuploader.upload(new Y.FileHTML5(filearray[0]), "testurl.html", {foo: "bar"});
+                }
             }
         });
 
-        var suite = new Y.Test.Suite({name:"Basic Flash Uploader Test Suite"});
+        var suite = new Y.Test.Suite("Uploader: HTML5");
         suite.add(BasicUploader);
 
-        Y.Test.Runner.setName("Flash Uploader Test Runner");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });

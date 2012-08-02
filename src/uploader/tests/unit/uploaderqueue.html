@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Uploader Queue Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <style>
 .testclass {
     color: #ff0000;
@@ -19,10 +19,6 @@
 (function() {
 
     YUI({
-        base: "../../../build/",
-        logInclude:{"TestRunner":true},
-        useConsole: true,
-        allowRollup: false,
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "file-flash", "uploader-queue", function(Y) {
         
@@ -194,10 +190,9 @@
             }
         });
 
-        var suite = new Y.Test.Suite({name:"Basic Uploader Queue Test Suite"});
+        var suite = new Y.Test.Suite("Uploader: Queue");
         suite.add(BasicQueue);
 
-        Y.Test.Runner.setName("Uploader Queue Test Runner");
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
