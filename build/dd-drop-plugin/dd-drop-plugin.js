@@ -41,4 +41,4 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});

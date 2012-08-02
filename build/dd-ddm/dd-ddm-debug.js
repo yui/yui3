@@ -28,6 +28,7 @@ YUI.add('dd-ddm', function(Y) {
         _deactivateTargets: function() {},
         _startDrag: function() {
             if (this.activeDrag && this.activeDrag.get('useShim')) {
+                this._shimming = true;
                 this._pg_activate();
                 this._activateTargets();
             }
@@ -121,4 +122,4 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base', 'event-resize']});
+}, '@VERSION@' ,{requires:['dd-ddm-base', 'event-resize'], skinnable:false});
