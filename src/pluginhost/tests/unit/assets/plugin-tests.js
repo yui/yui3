@@ -489,10 +489,9 @@ YUI.add('plugin-tests', function(Y) {
 
             };
 
-            var suite = new Y.Test.Suite("Plugin Tests");
+            var suite = new Y.Test.Suite("Plugin Host");
             suite.add(new Y.Test.Case(basicTemplate));
 
-            Y.Test.Runner.setName("Plugin Tests");
             Y.Test.Runner.add(suite);
 
 });
