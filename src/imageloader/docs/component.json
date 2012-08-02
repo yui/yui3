@@ -2,7 +2,7 @@
     "name"       : "imageloader",
     "displayName": "ImageLoader",
     "description": "The ImageLoader Utility provides a mechanism to delay the loading of specfic images on a page. This allows you to, for example, defer the loading of images which are out of the browser viewport until the user begins to scroll, or to defer the loading of images in a carousel until the user mouses over the carousel's navigation controls.",
-    "author"     : "",
+    "author"     : "mlinac",
 
     "tags": ["utility", "image", "loader", "performance"],
     "use" : ["imageloader"],
