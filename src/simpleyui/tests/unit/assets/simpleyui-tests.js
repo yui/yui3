@@ -1,4 +1,6 @@
-var suite = new Y.Test.Suite("simpleYUI");
+YUI.add('simpleyui-tests', function(Y) {
+
+var suite = new Y.Test.Suite("SimpleYUI");
 
 suite.add( new Y.Test.Case({
     name: "simpleyui",
@@ -43,3 +45,6 @@ suite.add( new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['simpleyui', 'test']});
