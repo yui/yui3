@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Internationalization Tests</title>
-    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 <body class="yui3-skin-sam">
 
@@ -16,7 +16,7 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'intl-tests': {
-            fullpath: './intl-tests.js',
+            fullpath: './assets/intl-tests.js',
             requires: [ 'test', 'intl' ]
         }
     }

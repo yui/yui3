@@ -3,7 +3,7 @@ YUI.add('intl-tests', function(Y) {
     // Set up the page
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
-        suite = new Y.Test.Suite("Intl Unit Tests"),
+        suite = new Y.Test.Suite("Intl"),
         areObjectsReallyEqual = function (o1, o2) {
             Y.ObjectAssert.areEqual(o1, o2);
             Y.ObjectAssert.areEqual(o2, o1);
