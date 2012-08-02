@@ -1,5 +1,5 @@
 YUI.add('get-test', function (Y) {
-    Y.GetTests = new Y.Test.Suite("Y.Get");
+    Y.GetTests = new Y.Test.Suite("Get");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
 
     var ArrayAssert  = Y.ArrayAssert,
