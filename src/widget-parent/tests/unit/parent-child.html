@@ -3,7 +3,7 @@
 <head>
     <title>Widget Parent Child Test Suite</title>
 
-    <script src="../../../build/yui/yui.js"></script>
+    <script src="../../../../build/yui/yui.js"></script>
 
     <style type="text/css">
         #console .yui3-console-entry {
@@ -38,7 +38,6 @@
     <script type="text/javascript">
 
         YUI({
-            useBrowserConsole:false,
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use("node-event-simulate", "async-queue", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
@@ -71,7 +70,7 @@
                 }
             });
 
-            var suite = new Y.Test.Suite("Widget ParentChild Tests");
+            var suite = new Y.Test.Suite("Widget: ParentChild");
             suite.add(
                 new Y.Test.Case({
 
