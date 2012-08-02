@@ -7,7 +7,7 @@ var ArrayAssert  = Y.ArrayAssert,
     suite;
 
 // -- Suite --------------------------------------------------------------------
-suite = new Y.Test.Suite('WidgetPositionAlign');
+suite = new Y.Test.Suite('Widget: Position Align');
 
 // -- Methods ------------------------------------------------------------------
 suite.add(new Y.Test.Case({
