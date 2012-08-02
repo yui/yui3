@@ -9,24 +9,24 @@
 
 <div id="tester"></div>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'gesture-tests': {
-            fullpath: './gesture-tests.js',
+            fullpath: './assets/gesture-tests.js',
             requires: [ 'event-gestures', 'event-simulate', 'test-console', 'test' ]
         },
         'flick-tests': {
-            fullpath: './flick-tests.js',
+            fullpath: './assets/flick-tests.js',
             requires: [ 'event-gestures', 'event-simulate', 'test-console', 'test' ]
         }
     }
 }).use('gesture-tests', 'flick-tests', function(Y) {
     
     (new Y.Test.Console()).render('#log');
-    Y.Test.Runner.setName('Event Gestures Test Suite');
+    Y.Test.Runner.setName('Event Gestures');
     Y.Test.Runner.run();
     
 });
