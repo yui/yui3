@@ -4,7 +4,7 @@ var Assert       = Y.Assert,
     ArrayAssert  = Y.ArrayAssert,
     ObjectAssert = Y.ObjectAssert,
 
-    suite  = new Y.Test.Suite('oop');
+    suite  = new Y.Test.Suite('OOP');
 
 suite.add(new Y.Test.Case({
     name: 'Core',
