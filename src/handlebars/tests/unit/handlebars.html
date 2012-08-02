@@ -8,14 +8,14 @@
 
 <div id="log"></div>
 
-<script src="../../../build/yui/yui.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
     allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'handlebars-test': {
-            fullpath: 'handlebars-test.js',
+            fullpath: './assets/handlebars-test.js',
             requires: ['handlebars', 'test']
         }
     }
