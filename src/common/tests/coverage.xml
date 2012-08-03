@@ -171,7 +171,6 @@
         <url>event-custom/tests/unit/event-custom-base.html</url>
         <url>event-gestures/tests/unit/index.html</url>
         <url>event-valuechange/tests/unit/event-valuechange.html</url>
-        <url>get/tests/unit/get-coverage.html</url>
         <url>graphics/tests/unit/graphic.html</url>
         <url>graphics/tests/unit/graphics.html</url>
         <url>graphics/tests/unit/shape-path.html</url>
@@ -183,13 +182,12 @@
         <url>history/tests/unit/history-html5.html</url>
         <url>imageloader/tests/unit/imageloader.html</url>
         <url>intl/tests/unit/intl.html</url>
-        <url>io/tests/unit/index.html</url>
         <url>json/tests/unit/json.html</url>
         <url>matrix/tests/unit/matrix.html</url>
         <url>node/tests/unit/node.html</url>
         <url>oop/tests/unit/oop.html</url>
         <url>overlay/tests/unit/overlay.html</url>
-        <url>panel/tests/unit/unit-tests.html</url>
+        <url>panel/tests/unit/panel.html</url>
         <url>parallel/tests/unit/index.html</url>
         <url>pjax/tests/unit/pjax.html</url>
         <url>pluginhost/tests/unit/plugins.html</url>
@@ -201,7 +199,7 @@
         <url>scrollview/tests/unit/scrollview-paginator-unit-test.html</url>
         <url>scrollview/tests/unit/scrollview-list-unit-test.html</url>
         <url>slider/tests/unit/slider.html</url>
-        <url>sortable/tests/unit/index.html</url>
+        <url>sortable/tests/unit/sortable.html</url>
         <url>substitute/tests/unit/substitute.html</url>
         <url>test/tests/unit/index.html</url>
         <url>text/tests/unit/text-accentfold.html</url>
@@ -220,6 +218,6 @@
         <url>widget-stack/tests/unit/widget-stack.html</url>
         <url>widget-stdmod/tests/unit/widget-stdmod.html</url>
         <url>yql/tests/unit/yql.html</url>
-        <url>yui-throttle/tests/unit/index.html</url>
+        <url>yui-throttle/tests/unit/throttle.html</url>
     </tests>
 </yuitest>
