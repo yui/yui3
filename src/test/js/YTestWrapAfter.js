@@ -7,6 +7,8 @@ Y.Object.each(YUITest, function(item, name) {
     Y.Test[name] = item;
 });
 
+} //End of else in top wrapper
+
 Y.Assert = YUITest.Assert;
 Y.Assert.Error = Y.Test.AssertionError;
 Y.Assert.ComparisonFailure = Y.Test.ComparisonFailure;
@@ -49,88 +51,6 @@ Y.assert = function(condition, message){
  */
 Y.fail = Y.Assert.fail; 
 
-var logEvent = function(event) {
-    
-    //data variables
-    var message = "";
-    var messageType = "";
-    
-    switch(event.type){
-        case this.BEGIN_EVENT:
-            message = "Testing began at " + (new Date()).toString() + ".";
-            messageType = "info";
-            break;
-            
-        case this.COMPLETE_EVENT:
-            message = Y.substitute("Testing completed at " +
-                (new Date()).toString() + ".\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-            
-        case this.TEST_FAIL_EVENT:
-            message = event.testName + ": failed.\n" + event.error.getMessage();
-            messageType = "fail";
-            break;
-            
-        case this.TEST_IGNORE_EVENT:
-            message = event.testName + ": ignored.";
-            messageType = "ignore";
-            break;
-            
-        case this.TEST_PASS_EVENT:
-            message = event.testName + ": passed.";
-            messageType = "pass";
-            break;
-            
-        case this.TEST_SUITE_BEGIN_EVENT:
-            message = "Test suite \"" + event.testSuite.name + "\" started.";
-            messageType = "info";
-            break;
-            
-        case this.TEST_SUITE_COMPLETE_EVENT:
-            message = Y.substitute("Test suite \"" +
-                event.testSuite.name + "\" completed" + ".\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-            
-        case this.TEST_CASE_BEGIN_EVENT:
-            message = "Test case \"" + event.testCase.name + "\" started.";
-            messageType = "info";
-            break;
-            
-        case this.TEST_CASE_COMPLETE_EVENT:
-            message = Y.substitute("Test case \"" +
-                event.testCase.name + "\" completed.\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-        default:
-            message = "Unexpected event " + event.type;
-            message = "info";
-    }
-    
-    if (Y.Test.Runner._log) {
-        Y.log(message, messageType, "TestRunner");
-    }
-}
-
-var i, name;
-
-for (i in Y.Test.Runner) {
-    name = Y.Test.Runner[i];
-    if (i.indexOf('_EVENT') > -1) {
-        Y.Test.Runner.subscribe(name, logEvent);
-    }
-};
-
 Y.Test.Runner.once = Y.Test.Runner.subscribe;
 
 Y.Test.Runner.disableLogging = function() {
@@ -146,7 +66,97 @@ Y.Test.Runner._log = true;
 
 Y.Test.Runner.on = Y.Test.Runner.attach;
 
-if (Y.config.win) {
-    Y.config.win.YUITest = YUITest;
-}
+//Only allow one instance of YUITest
+if (!YUI.YUITest) {
 
+    if (Y.config.win) {
+        Y.config.win.YUITest = YUITest;
+    }
+
+    YUI.YUITest = Y.Test;
+
+    
+    //Only setup the listeners once.
+    var logEvent = function(event) {
+        
+        //data variables
+        var message = "";
+        var messageType = "";
+        
+        switch(event.type){
+            case this.BEGIN_EVENT:
+                message = "Testing began at " + (new Date()).toString() + ".";
+                messageType = "info";
+                break;
+                
+            case this.COMPLETE_EVENT:
+                message = Y.substitute("Testing completed at " +
+                    (new Date()).toString() + ".\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+                
+            case this.TEST_FAIL_EVENT:
+                message = event.testName + ": failed.\n" + event.error.getMessage();
+                messageType = "fail";
+                break;
+                
+            case this.TEST_IGNORE_EVENT:
+                message = event.testName + ": ignored.";
+                messageType = "ignore";
+                break;
+                
+            case this.TEST_PASS_EVENT:
+                message = event.testName + ": passed.";
+                messageType = "pass";
+                break;
+                
+            case this.TEST_SUITE_BEGIN_EVENT:
+                message = "Test suite \"" + event.testSuite.name + "\" started.";
+                messageType = "info";
+                break;
+                
+            case this.TEST_SUITE_COMPLETE_EVENT:
+                message = Y.substitute("Test suite \"" +
+                    event.testSuite.name + "\" completed" + ".\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+                
+            case this.TEST_CASE_BEGIN_EVENT:
+                message = "Test case \"" + event.testCase.name + "\" started.";
+                messageType = "info";
+                break;
+                
+            case this.TEST_CASE_COMPLETE_EVENT:
+                message = Y.substitute("Test case \"" +
+                    event.testCase.name + "\" completed.\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+            default:
+                message = "Unexpected event " + event.type;
+                message = "info";
+        }
+        
+        if (Y.Test.Runner._log) {
+            Y.log(message, messageType, "TestRunner");
+        }
+    }
+
+    var i, name;
+
+    for (i in Y.Test.Runner) {
+        name = Y.Test.Runner[i];
+        if (i.indexOf('_EVENT') > -1) {
+            Y.Test.Runner.subscribe(name, logEvent);
+        }
+    };
+
+} //End if for YUI.YUITest

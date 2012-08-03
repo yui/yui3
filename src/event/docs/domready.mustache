@@ -56,20 +56,20 @@ loading state.</p>
     <script src="...yui-min.js"></script>
     <script>
     YUI().use('event-base', function (Y) {
-        var notHereYet = Y.one('#list'); // null
+        var notHereYet = Y.one('#todoList'); // null
 
         function addItem() {
-            // children of #todo are in the DOM tree
+            // children of #todoList are in the DOM tree
             this.one('ul').append('<li>This will be four</li>');
         }
 
-        Y.on('contentready', addItem, '#todo');
+        Y.on('contentready', addItem, '#todoList');
     });
     </script>
 </head>
 <body>
     ... lots of markup including images and stuff
-    <div id="todos">
+    <div id="todoList">
         <ul>
             <li>one</li>
             <li>two</li>

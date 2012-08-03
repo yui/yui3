@@ -200,7 +200,11 @@ properties.
             }
         },
         getLoader = function(Y, o) {
-            var loader = Y.Env._loader;
+            var loader = Y.Env._loader,
+                lCore = [ 'loader-base' ],
+                G_ENV = YUI.Env,
+                mods = G_ENV.mods;
+
             if (loader) {
                 //loader._config(Y.config);
                 loader.ignoreRegistered = false;
@@ -212,7 +216,10 @@ properties.
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
             }
-            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, [ 'loader-base', 'loader-rollup', 'loader-yui3' ]));
+            if (mods && mods.loader) {
+                lCore = [].concat(lCore, YUI.Env.loaderExtras);
+            }
+            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, lCore));
 
             return loader;
         },
@@ -321,6 +328,7 @@ proto = {
         if (!Env) {
             Y.Env = {
                 core: @YUI_CORE@,
+                loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
@@ -417,7 +425,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_');
+                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -487,7 +495,6 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            //extras = Y.config.core || @YUI_CORE@;
             extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
         for (i = 0; i < extras.length; i++) {
@@ -582,7 +589,9 @@ with any configuration info required for the module.
                 version: version,
                 details: details
             },
-            loader,
+            //Instance hash so we don't apply it to the same instance twice
+            applied = {},
+            loader, inst,
             i, versions = env.versions;
 
         env.mods[name] = mod;
@@ -591,10 +600,14 @@ with any configuration info required for the module.
 
         for (i in instances) {
             if (instances.hasOwnProperty(i)) {
-                loader = instances[i].Env._loader;
-                if (loader) {
-                    if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
-                        loader.addModule(details, name);
+                inst = instances[i];
+                if (!applied[inst.id]) {
+                    applied[inst.id] = true;
+                    loader = inst.Env._loader;
+                    if (loader) {
+                        if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
+                            loader.addModule(details, name);
+                        }
                     }
                 }
             }
@@ -1082,9 +1095,9 @@ with any configuration info required for the module.
             return Y;
         }
 
-        if (mods['loader'] && !Y.Loader) {
+        if ((mods.loader || mods['loader-base']) && !Y.Loader) {
             Y.log('Loader was found in meta, but it is not attached. Attaching..', 'info', 'yui');
-            Y._attach(['loader']);
+            Y._attach(['loader' + ((!mods.loader) ? '-base' : '')]);
         }
 
         // Y.log('before loader requirements: ' + args, 'info', 'yui');

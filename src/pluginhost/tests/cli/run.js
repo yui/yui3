@@ -21,7 +21,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'plugin-tests': {
-                fullpath: path.join(__dirname, '../plugin-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/plugin-tests.js'),
                 requires: ['base-base', 'base-pluginhost', 'base-build', 'plugin', 'test']
             }
         }

@@ -25,6 +25,7 @@
     color: #CEFFA2;
     padding: 0.3em;
     font-weight: bold;
+    font-family: Courier,monospace;
 }
 
 #container a{
@@ -71,7 +72,7 @@ YUI().use('node', function(Y) {
             '<dt>Target Tag Name: </dt>' + 
                 '<dd>' + target.get('tagName') + '</dd>' +
             '<dt>Color of Target\'s Font: </dt>' + 
-                '<dd class="dd-color" style="background-color:' + target.getStyle('color') + ';">' + '</dd>' +
+                '<div class="dd-color" style="background-color:' + target.getComputedStyle('color') + ';">' + '</div>' +
             '<dt>CurrentTarget Tag Name & Id: </dt>' + 
                 '<dd>' + currentTarget.get('tagName') + '#' + currentTarget.get('id') + '</dd>' +
             '</dl>');

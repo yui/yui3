@@ -2,6 +2,7 @@
  * The Axis class. Generates axes for a chart.
  *
  * @module charts
+ * @submodule charts-base
  * @class Axis
  * @extends Widget
  * @uses Renderer

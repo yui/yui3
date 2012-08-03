@@ -48,9 +48,16 @@ YUITest.Mock = function(template){
  * calls and changes, respectively.
  * @param {Object} mock The object to add the expectation to.
  * @param {Object} expectation An object defining the expectation. For
- *      a method, the keys "method" and "args" are required with
- *      an optional "returns" key available. For properties, the keys
- *      "property" and "value" are required.
+ *      properties, the keys "property" and "value" are required. For a
+ *      method the "method" key defines the method's name, the optional "args"
+ *      key provides an array of argument types. The "returns" key provides
+ *      an optional return value. An optional "run" key provides a function
+ *      to be used as the method body. The return value of a mocked method is
+ *      determined first by the "returns" key, then the "run" function's return
+ *      value. If neither "returns" nor "run" is provided undefined is returned.
+ *      An optional 'error' key defines an error type to be thrown in all cases.
+ *      The "callCount" key provides an optional number of times the method is
+ *      expected to be called (the default is 1).
  * @return {void}
  * @method expect
  * @static
@@ -70,8 +77,9 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             callCount = (typeof expectation.callCount == "number") ? expectation.callCount : 1,
             error = expectation.error,
             run = expectation.run || function(){},
+            runResult,
             i;
-            
+
         //save expectations
         mock.__expectations[name] = expectation;
         expectation.callCount = callCount;
@@ -94,7 +102,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                         args[i].verify(arguments[i]);
                     }                
 
-                    run.apply(this, arguments);
+                    runResult = run.apply(this, arguments);
                     
                     if (error){
                         throw error;
@@ -103,8 +111,10 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                     //route through TestRunner for proper handling
                     YUITest.TestRunner._handleError(ex);
                 }
-                
-                return result;
+
+                // Any value provided for 'returns' overrides any value returned
+                // by our 'run' function. 
+                return expectation.hasOwnProperty('returns') ? result : runResult;
             };
         } else {
         

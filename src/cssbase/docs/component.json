@@ -11,6 +11,7 @@
 
     "examples": [
         {
+            "newWindow"  : "true",
             "name"       : "cssbase-basic",
             "displayName": "Global (Page-Level) Example",
             "description": "When CSS Base is included in a page it provides consistent and basic cross-browser styling for HTML elements.",
@@ -21,6 +22,7 @@
         },
 
         {
+            "newWindow"  : "true",
             "name"       : "cssbase-context",
             "displayName": "Contextual Example",
             "description": "CSS Base applied to a portion of a page based on the location of a class value.",
@@ -34,11 +36,13 @@
 
     "pages": {
         "cssbase-basic-example": {
+            "name"       : "cssbase-basic",
             "displayName": "CSS Base Page Example",
             "layout"     : "cssbase-basic-example"
         },
 
         "cssbase-context-example": {
+            "name"       : "cssbase-context",
             "displayName": "CSS Base Contextual Example",
             "layout"     : "cssbase-context-example"
         }

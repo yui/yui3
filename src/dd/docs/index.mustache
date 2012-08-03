@@ -64,6 +64,35 @@ var dd = new Y.DD.Drag({
 }).addHandle('h2');
 ```
 
+<p>
+You can also use the `removeHandle` method to remove a previously added handle.
+</p>
+
+<h3 id="invalids">Invalid Handles</h3>
+
+<p>
+The opposite of handles are Invalid Handles. This is a selector string that will never
+fire a drag event. By default the following HTML elements will not be draggable since adding
+the mouse events to them prohibit their actual use: `textarea, input, a, button, select`
+</p>
+
+<p>If you need to drag one of these items, you will have to call `removeInvalid` on your
+`Drag` instance to remove it from the default list.</p>
+
+```
+<ul>
+    <li><a href="#"><img src="foo.png"></a></li>
+</ul>
+```
+
+<p>Now you create your `Drag` instance as usual, but call `removeInvalid` to allow the `img` to 
+be dragged from inside the `li`.</p>
+
+```
+var dd = new Y.DD.Drag({
+    node: 'ul li'
+}).removeInvalid('a');
+```
 
 
 <h2 id="events">Events</h2>
@@ -423,3 +452,9 @@ YUI().use('dd-delegate', function(Y) {
         </tr>
     </tbody>
 </table>
+
+<h2 id="issues">Known Issues</h2>
+
+<p>
+As of 3.6.0, window scrolling does not work properly on Safari 6 (build 8536.25) due to a regression in it's viewport reporting.
+</p>

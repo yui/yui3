@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>DataType.Date Tests</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+
+<h1>DataType.Date Tests</h1>
+
+<div id="log"></div>
+
+
+<script type="text/javascript">
+
+var dateUS, dateFR, dateKR;
+(function() {
+
+    var start = function() {
+        if (!dateUS || !dateFR || !dateKR) {
+            return;
+        }
+        YUI({
+            lang: "en-US",
+            modules: {
+                'date-tests': {
+                    fullpath: './assets/date-tests.js',
+                    requires: [ "test", "dump", "datatype-date" ]
+                }
+            }
+        }).use('date-tests', "test-console", function(Y) {
+
+            (new Y.Test.Console()).render('#log');
+
+            Y.Test.Runner.run();
+        });
+    };
+
+    YUI({
+        lang: "en-US"
+    }).use("datatype-date", function(Y) {
+        dateUS = Y.DataType.Date;
+        start();
+    });
+
+
+    YUI({
+        lang: "fr-FR"
+    }).use("datatype-date", function(Y) {
+        dateFR = Y.DataType.Date;
+        start();
+    });
+    
+    YUI({
+        lang: "ko-KR"
+    }).use("datatype-date", function(Y) {
+        dateKR = Y.DataType.Date;
+        start();
+    });
+
+
+    
+})();
+</script>
+</body>
+</html>

@@ -330,7 +330,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         // Attach inputNode events.
-        this._listEvents.concat([
+        this._listEvents = this._listEvents.concat([
             inputNode.after('blur',  this._afterListInputBlur, this),
             inputNode.after('focus', this._afterListInputFocus, this)
         ]);
@@ -343,7 +343,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     @protected
     **/
     _bindList: function () {
-        this._listEvents.concat([
+        this._listEvents = this._listEvents.concat([
             Y.one('doc').after('click', this._afterDocClick, this),
             Y.one('win').after('windowresize', this._syncPosition, this),
 
@@ -502,7 +502,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     @protected
     **/
     _syncShim: useShim ? function () {
-        this._boundingBox.shim.sync();
+        var shim = this._boundingBox.shim;
+
+        if (shim) {
+            shim.sync();
+        }
     } : function () {},
 
     /**
@@ -887,4 +891,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], after:['autocomplete-sources'], skinnable:true});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});

@@ -46,7 +46,7 @@ var xPad=function (x, pad, r)
 	{
 		r=10;
 	}
-	pad = pad.toString();
+	pad = pad + ""; 
 	for( ; parseInt(x, 10)<r && r>1; r/=10) {
 		x = pad + x;
 	}
