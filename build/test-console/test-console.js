@@ -95,4 +95,4 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
 });
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['console-filters', 'test']});
+}, '@VERSION@' ,{requires:['console-filters', 'test'], skinnable:true});
