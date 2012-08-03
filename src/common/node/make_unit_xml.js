@@ -24,3 +24,5 @@ var examples = require('./parse'),
     str.push('</yuitest>');
     
     fs.writeFileSync(xml, str.join('\n'), 'utf8');
+
+    console.log('Wrote', examples.length, 'test urls to unit.xml');

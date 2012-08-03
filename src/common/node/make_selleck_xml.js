@@ -24,3 +24,5 @@ var examples = require('./selleck'),
     str.push('</yuitest>');
     
     fs.writeFileSync(xml, str.join('\n'), 'utf8');
+
+    console.log('Wrote', examples.length, 'example urls to selleck.xml');
