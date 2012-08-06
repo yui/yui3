@@ -1,6 +1,17 @@
 App Framework Change History
 ============================
 
+3.7.0
+-----
+
+### Router
+
+* Added support for route-based middleware to Router. The `route()` method now
+  accepts an arbitrary number of callbacks enabling more reuse of routing code.
+  For people familiar with Express.js' route middleware, this behaves the same.
+  [Ticket #2532620]
+
+
 3.6.0
 -----
 
