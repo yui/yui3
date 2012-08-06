@@ -21,19 +21,19 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'array-extras-test': {
-                fullpath: path.join(__dirname, '../array-extras-test.js'),
+                fullpath: path.join(__dirname, '../unit/assets/array-extras-test.js'),
                 requires: [
                     'array-extras', 'test'
                 ]
             },
             'array-invoke-tests': {
-                fullpath: path.join(__dirname, '../array-invoke-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/array-invoke-tests.js'),
                 requires: [
                     'array-invoke', 'test'
                 ]
             },
             'arraylist-tests': {
-                fullpath: path.join(__dirname, '../arraylist-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/arraylist-tests.js'),
                 requires: [
                     'arraylist', 'test'
                 ]

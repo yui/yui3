@@ -2,7 +2,7 @@
     "name"       : "io",
     "displayName": "IO Utility",
     "description": "HTTP utility for making same-origin and cross-domain requests",
-    "author"     : "tsha",
+    "author"     : "ericf",
 
     "tags": ["utility"],
     "use" : ["io"],

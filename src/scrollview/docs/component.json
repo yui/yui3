@@ -2,7 +2,7 @@
     "name"       : "scrollview",
     "displayName": "ScrollView",
     "description": "ScrollView provides a scrollable content widget with flick velocity based inertia for both touch and mouse.",
-    "author"     : "sdesai",
+    "author"     : ["drgath", "sdesai"],
 
     "tags": ["scrollview", "widget", "beta"],
     "use" : ["scrollview"],
@@ -15,6 +15,7 @@
             "modules"    : ["scrollview-base"],
             "tags"       : ["scrollview", "widget"],
 
+            "newWindow"          : true,
             "hideTableOfContents": true
         },
         {
@@ -24,6 +25,7 @@
             "modules"    : ["scrollview"],
             "tags"       : ["scrollview", "widget"],
 
+            "newWindow"          : true,
             "hideTableOfContents": true
         },
         {
@@ -33,6 +35,7 @@
             "modules"    : ["scrollview"],
             "tags"       : ["scrollview", "widget"],
 
+            "newWindow"          : true,
             "hideTableOfContents": true
         },
         {
@@ -42,6 +45,7 @@
             "modules"    : ["scrollview", "scrollview-paginator"],
             "tags"       : ["scrollview", "widget"],
 
+            "newWindow"          : true,
             "hideTableOfContents": true
         }
     ],

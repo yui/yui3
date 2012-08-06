@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'intl-tests': {
-                fullpath: path.join(__dirname, '../intl-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/intl-tests.js'),
                 requires: [ 'test', 'intl' ]
             }
         }

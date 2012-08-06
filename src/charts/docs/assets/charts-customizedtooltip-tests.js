@@ -45,8 +45,8 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
 
         _should: {
             ignore: {
-                testMouseEvents:  isTouch,
-                testTouchEvents: isMouse
+                testMouseEvents:  isTouch//,
+                //testTouchEvents: isMouse
             }
         },
         
@@ -100,7 +100,7 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
         },
-
+/*
         testTouchEvents: function()
         {
             var result = null,
@@ -151,7 +151,7 @@ YUI.add('charts-customizedtooltip-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-        
+       */ 
         markerLabelFunction: function(seriesIndex, index)
         {
             var parent = Y.Node.create('<div></div>'),

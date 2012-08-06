@@ -11,6 +11,7 @@ var travis = process.env.TRAVIS;
 //Skip this long running tests in travis
 var skipping = [
     'io',
+    'editor',
     'anim',
     'dd',
     'charts',

@@ -18,7 +18,7 @@ YUI.GlobalConfig = {
     globalConfig: true,
     modules: {
         'global-mod': {
-            fullpath: path.join(__dirname, '../assets/globalmod.js')
+            fullpath: path.join(__dirname, '../unit/assets/globalmod.js')
         }
     },
     groups: {
@@ -26,7 +26,7 @@ YUI.GlobalConfig = {
         noop: {
             modules: {
                 noop: {
-                    fullpath: path.join(__dirname, '../noop.js')
+                    fullpath: path.join(__dirname, '../unit/assets/noop.js')
                 }
             }
         }
@@ -45,11 +45,11 @@ YUI({
 
     var modules = {
         'seed-tests': {
-            fullpath: './seed-tests.js',
+            fullpath: 'seed-tests.js',
             requires: [ 'test']
         },
         'core-tests': {
-            fullpath: './core-tests.js',
+            fullpath: 'core-tests.js',
             requires: [ 'classnamemanager']
         },
         'config-test': {
@@ -63,14 +63,14 @@ YUI({
             fullpath: 'namespace-test.js'
         },
         'ua-data': {
-            fullpath: './ua-data.js'
+            fullpath: 'ua-data.js'
         },
         'ua-yui-data': {
-            fullpath: './ua-yui-data.js',
+            fullpath: 'ua-yui-data.js',
             requires: [ 'ua-data' ]
         },
         'ua-tests': {
-            fullpath: './ua-tests.js',
+            fullpath: 'ua-tests.js',
             requires: [ 'ua-data', 'ua-yui-data', 'test' ]
         },
         'array-test': {
@@ -91,7 +91,7 @@ YUI({
 
     Object.keys(modules).forEach(function(name) {
         var mod = modules[name];
-        mod.fullpath = path.join(__dirname, '../', mod.fullpath);
+        mod.fullpath = path.join(__dirname, '../unit/assets', mod.fullpath);
     });
 
     Y.applyConfig({

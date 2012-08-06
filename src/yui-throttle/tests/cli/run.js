@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'throttle-tests': {
-                fullpath: path.join(__dirname, '../throttle-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/throttle-tests.js'),
                 requires: [ 'yui-throttle', 'test']
             }
         }

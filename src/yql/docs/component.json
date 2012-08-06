@@ -2,7 +2,7 @@
     "name"       : "yql",
     "displayName": "YQL Query",
     "description": "YQL provides developers the ablity to access and shape data across the Internet using one language rather than learn multiple APIs.",
-    "author"     : "davglass",
+    "author"     : ["davglass", "drgath"],
 
     "tags": ["utility", "data", "api", "json", "webservice"],
     "use" : ["yql"],

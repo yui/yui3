@@ -12,6 +12,8 @@ var examples = require('./selleck'),
         tab + '<tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">'
     ];
 
+    str.push('<!-- This needs to be first to prep the ');
+    str.push('            browser window for the other tests -->');
     str.push(tab + tab + '<url>common/tests/prep.html</url>');
 
     examples.forEach(function(url) {
@@ -22,3 +24,5 @@ var examples = require('./selleck'),
     str.push('</yuitest>');
     
     fs.writeFileSync(xml, str.join('\n'), 'utf8');
+
+    console.log('Wrote', examples.length, 'example urls to selleck.xml');

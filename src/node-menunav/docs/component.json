@@ -2,7 +2,7 @@
     "name"       : "node-menunav",
     "displayName": "MenuNav Node Plugin",
     "description": "Easily transform a list into an accessible and customizable drop-down menu.",
-    "author"     : ["kloots", "rgrove"],
+    "author"     : "drgath",
 
     "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown"],
     "use" : ["node-menunav"],

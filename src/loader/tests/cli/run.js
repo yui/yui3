@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'loader-tests': {
-                fullpath: path.join(__dirname, '../loader-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/loader-tests.js'),
                 requires: ['test']
             }
         }
