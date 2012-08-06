@@ -29,7 +29,7 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         // app instance.
         this.on('*:selectRepo', this.navigateToRepo);
 
-        // Once our app is ready, we'll either dispatch to our route-handlers if
+        // Once our app is ready, we'll either dispatch to our route handlers if
         // the current URL matches one of our routes, or we'll simply show the
         // `HomePageView`.
         this.once('ready', function (e) {
@@ -45,7 +45,7 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
 
     // When called, this will navigate the application to the user-page for the
     // GitHub username specified on the event facade. This will cause our app to
-    // dispatch to its route-handlers along with updating the URL.
+    // dispatch to its route handlers along with updating the URL.
     navigateToUser: function (e) {
         var activeView = this.get('activeView');
 
@@ -64,7 +64,7 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
 
     // When called, this will navigate the application to the repo-page for the
     // GitHub repository specified on the event facade. This will cause our app
-    // to dispatch to its route-handlers along with updating the URL.
+    // to dispatch to its route handlers along with updating the URL.
     navigateToRepo: function (e) {
         var repo = e.repo;
         this.navigate('/github/' + repo.get('owner.login') + '/' + repo.get('name') + '/');
@@ -72,9 +72,9 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
 
     // -- Route Handlers -------------------------------------------------------
 
-    // This will be called for all URLs which start with: "/github/:user/"; its
-    // job is to make sure a `User` model for the specified GitHub username is
-    // fully-loaded and placed on the request object for other route-handlers.
+    // Route middleware whose job is to make sure a `User` model for the
+    // specified GitHub username is fully-loaded and placed on the request
+    // object for other route handlers.
     handleUser: function (req, res, next) {
         var username = req.params.user,
             user     = this.get('user'),
@@ -86,7 +86,7 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         // request object.
         if (username === user.get('login') && !user.isNew()) {
             // Places a reference to the user model on the request object before
-            // delegating to the next route-handler.
+            // continuing.
             req.user = user;
             next();
         } else {
@@ -95,8 +95,7 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
             user = new User({login: username});
 
             // Load the user's data from the GitHub API, then sent the user
-            // model on both this app and the request object before delegating
-            // to the next route-handler.
+            // model on both this app and the request object before continuing.
             user.load(function () {
                 self.set('user', user);
                 req.user = user;
@@ -105,10 +104,10 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         }
     },
 
-    // This will be called for all URLs which start with: "/github/:user/"; its
-    // job is to make sure a fully-loaded `RepoList` instance is placed on the
-    // request object. It is assumed that `handleUser()` route-handler has
-    // already placed the `User` model on the request object.
+    // Route middleware whose job is to make sure a fully-loaded `RepoList`
+    // instance is placed on the request object. It is assumed that
+    // `handleUser()` middleware has already placed the `User` model on the
+    // request object.
     handleRepos: function (req, res, next) {
         var user  = req.user,
             repos = this.get('repos');
@@ -132,11 +131,10 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         }
     },
 
-    // This will be called for URLs which match: "/github/:user/:repo/"; its job
-    // is to make sure a fully-loaded `ContributorList` instance is placed on
-    // the request object. It is assumed that the `handleUser()` and
-    // `handleRepos()` route-handlers have already placed the `User` model and
-    // `RepoList` model-list on the request object.
+    // Route middleware whose job is to make sure a fully-loaded
+    // `ContributorList` instance is placed on the request object. It is assumed
+    // that the `handleUser()` and `handleRepos()` middleware have already
+    // placed the `User` model and `RepoList` model-list on the request object.
     handleRepo: function (req, res, next) {
         // This uses data from the request object to look for a `Repo` model
         // instance in the `RepoList`.
@@ -175,8 +173,8 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         });
     },
 
-    // This is the final route for "/github/:user/" URLs and will show our app's
-    // user page which lists the user's repos.
+    // This is the route for "/github/:user/" URLs and will show our app's user
+    // page which lists the user's repos.
     showUserPage: function (req, res) {
         this.showView('userPage', {
             model    : req.user,
@@ -187,8 +185,8 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
         });
     },
 
-    // This is the final route for "/github/:user/:repo/" URLs and will show our
-    // app's repo page which lists the contributors to the repo/project.
+    // This is the route for "/github/:user/:repo/" URLs and will show our app's
+    // repo page which lists the contributors to the repo/project.
     showRepoPage: function (req, res) {
         this.showView('repoPage', {
             model    : req.repo,
@@ -201,25 +199,31 @@ ContributorsApp = Y.Base.create('contributorsApp', Y.App, [], {
 }, {
     ATTRS: {
         // These attributes will be used by the app to hold its current state,
-        // and they will be accessed and modified by our route-handlers.
+        // and they will be accessed and modified by our route handlers.
         user        : {value: new User()},
         repos       : {value: new RepoList()},
         contributors: {value: new ContributorList()},
 
-        // Our app will use more advanced routing features where multiple
-        // route-handlers will be used to fulfill a "request", allowing us to
-        // encapsulate and reuse our data processing logic. Note: the order the
-        // route-handlers are defined in is significant.
+        // Our app will use more advanced routes where multiple callbacks
+        // (or middleware) will be used to fulfill a "request", allowing us to
+        // encapsulate and reuse our data processing logic. Note: the order in
+        // which the routes and their middleware are defined is significant.
         routes: {
             value: [
-                {path: '/',                    callback: 'showHomePage'},
+                {path: '/', callbacks: 'showHomePage'},
 
-                {path: '/github/:user/*',      callback: 'handleUser'},
-                {path: '/github/:user/*',      callback: 'handleRepos'},
-                {path: '/github/:user/',       callback: 'showUserPage'},
+                {path: '/github/:user/', callbacks: [
+                    'handleUser',
+                    'handleRepos',
+                    'showUserPage'
+                ]},
 
-                {path: '/github/:user/:repo/', callback: 'handleRepo'},
-                {path: '/github/:user/:repo/', callback: 'showRepoPage'}
+                {path: '/github/:user/:repo/', callbacks: [
+                    'handleUser',
+                    'handleRepos',
+                    'handleRepo',
+                    'showRepoPage'
+                ]}
             ]
         }
     }
