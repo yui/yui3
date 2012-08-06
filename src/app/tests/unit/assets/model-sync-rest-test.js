@@ -290,6 +290,26 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.isString(model.serialize());
         Assert.areSame(Y.JSON.stringify(model), model.serialize());
         Assert.areSame(Y.JSON.stringify(model.toJSON()), model.serialize());
+    },
+
+    'serialize() should be passed the `sync()` `action`': function () {
+        var noop   = function () {},
+            model  = new Y.TestModel(),
+            called = 0;
+
+        // Overrides to a noop because we don't care about sending a request.
+        model._sendSyncIORequest = noop;
+
+        model.serialize = function (action) {
+            called += 1;
+
+            Assert.isTrue(this.isNew());
+            Assert.areSame('create', action);
+        };
+
+        model.save();
+
+        Assert.areSame(1, called);
     }
 
 }));
