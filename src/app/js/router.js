@@ -402,23 +402,22 @@ Y.Router = Y.extend(Router, Y.Base, {
         * URL: `/file/foo/bar/baz.txt`, params: `{path: 'foo/bar/baz.txt'}`
         * URL: `/file/foo`, params: `{path: 'foo'}`
 
-    **Middleware**: Route handlers also support an abitrary number of callback
-    functions. This allows you to easily reuse parts of your routing code among
-    different route handlers. This method is liberal in its processing of the
-    `callbacks`, you can specify them as separate arguments, or as arrays, or
-    both.
+    **Middleware**: Routes also support an arbitrary number of callback
+    functions. This allows you to easily reuse parts of your route-handling code
+    with different route. This method is liberal in how it processes the
+    specified `callbacks`, you can specify them as separate arguments, or as
+    arrays, or both.
 
-    If multiple route handlers match a given URL, they will be executed in the
-    order they were added. The first route that was added will be the first to
-    be executed.
+    If multiple route match a given URL, they will be executed in the order they
+    were added. The first route that was added will be the first to be executed.
 
-    **Passing Control**: Invoking the `next()` function within a route handler
-    callback will pass control to the next callback function (if any) or route
-    handler (if any). If a value is passed to `next()`, it's assumed to be an
-    error, therefore stopping the dispatch chain, unless that value is:
-    `"route"`, which is special case and dispatching will skip to the next
-    route handler. This allows middleware to skip any remaining middleware for a
-    particular route handler.
+    **Passing Control**: Invoking the `next()` function within a route callback
+    will pass control to the next callback function (if any) or route handler
+    (if any). If a value is passed to `next()`, it's assumed to be an error,
+    therefore stopping the dispatch chain, unless that value is: `"route"`,
+    which is special case and dispatching will skip to the next route handler.
+    This allows middleware to skip any remaining middleware for a particular
+    route.
 
     @example
         router.route('/photos/:tag/:page', function (req, res, next) {
@@ -480,12 +479,12 @@ Y.Router = Y.extend(Router, Y.Base, {
           there are more that match. If you do call this function, then the next
           callback (if any) or matching route handler (if any) will be called.
           All of these functions will receive the same `req` and `res` objects
-          that were passed to this route (so you can use the, object to pass
+          that were passed to this route (so you can use these objects to pass
           data along to subsequent callbacks and routes).
         @param {String} [callbacks.next.err] Optional error which will stop the
           dispatch chaining for this `req`, unless the value is `"route"`, which
           is special cased to jump skip past any callbacks for the current route
-          handler and move to the next route handler.
+          and pass control the next route handler.
     @chainable
     **/
     route: function (path, callbacks) {
