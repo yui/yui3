@@ -36,18 +36,6 @@ var HistoryHash = Y.HistoryHash,
     **/
     EVT_READY = 'ready';
 
-// Utility function to flatten nested arrays into a single array.
-function flatten(array) {
-    return YArray.reduce(array, [], function (ret, val) {
-        if (YLang.isArray(val)) {
-            return ret.concat(flatten(val));
-        }
-
-        ret[ret.length] = val;
-        return ret;
-    });
-}
-
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
 
@@ -202,7 +190,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     destructor: function () {
-        var instanceIndex = Y.Array.indexOf(instances, this);
+        var instanceIndex = YArray.indexOf(instances, this);
 
         // Remove this router from the collection of active router instances.
         if (instanceIndex > -1) {
@@ -488,7 +476,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     @chainable
     **/
     route: function (path, callbacks) {
-        callbacks = flatten(Y.Array(arguments, 1, true));
+        callbacks = YArray.flatten(YArray(arguments, 1, true));
 
         var keys = [];
 
