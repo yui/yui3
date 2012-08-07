@@ -674,7 +674,7 @@ RESTSync.prototype = {
     _onSyncIOFailure: function (txId, res, details) {
         var callback = details.callback;
 
-        if (typeof callback === 'function') {
+        if (callback) {
             callback({
                 code: res.status,
                 msg : res.statusText
@@ -701,7 +701,7 @@ RESTSync.prototype = {
     _onSyncIOSuccess: function (txId, res, details) {
         var callback = details.callback;
 
-        if (typeof callback === 'function') {
+        if (callback) {
             callback(null, res);
         }
     },
