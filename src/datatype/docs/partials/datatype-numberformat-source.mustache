@@ -12,7 +12,7 @@
         <label for="demo_suffix">Suffix: <input type="text" id="demo_suffix"></label>
     </fieldset>
     <fieldset>
-        <input type="submit" id="demo_btn" value="Show formatted string">: <span id="demo_output">&nbsp;</span>
+        <input type="button" id="demo_btn" value="Show formatted string">: <span id="demo_output">&nbsp;</span>
     </fieldset>
 </form>
 
@@ -37,6 +37,6 @@ YUI().use("node", "datatype-number", "escape", function (Y) {
         Y.one("#demo_output").setHTML(Y.Escape.html(output));
     }
 
-    Y.one("#demo").on("submit", updateNumber);
+    Y.one("#demo_btn").on("click", updateNumber);
 });
 </script>

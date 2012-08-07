@@ -2,7 +2,7 @@
     "name"       : "pjax",
     "displayName": "Pjax",
     "description": "Provides seamless, gracefully degrading pjax (pushState + Ajax) functionality.",
-    "author"     : ["rgrove", "ericf"],
+    "author"     : ["ericf", "rgrove"],
 
     "tags": [
         "utility", "beta", "pjax", "pushstate", "ajax", "history", "plugin",

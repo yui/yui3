@@ -11,6 +11,7 @@
 
     "examples": [
         {
+            "newWindow"  : "true",
             "name"       : "cssgrids-units",
             "displayName": "Using Grid Units",
             "description": "Each unit has a className that provides its percentage width.",
@@ -20,6 +21,7 @@
             "hideTableOfContents": true
         },
         {
+            "newWindow"  : "true",
             "name"       : "cssgrids-fixed",
             "displayName": "Fixed Page Template",
             "description": 	"This is a template for creating fixed-width layouts.",
@@ -30,6 +32,7 @@
         },
 
         {
+            "newWindow"  : "true",
             "name"       : "cssgrids-fluid",
             "displayName": "Fluid Page Template",
             "description": 	"This is a template for creating fluid layouts.",
@@ -40,6 +43,7 @@
         },
 
         {
+            "newWindow"  : "true",
             "name"       : "cssgrids-align",
             "displayName": "Aligning Grid Units",
             "description": "Basic CSS properties are leveraged to horizontally and vertically align units.",
@@ -53,21 +57,25 @@
 
     "pages": {
         "cssgrids-units-example": {
+            "name"       : "cssgrids-units",
             "displayName": "CSS Grids Units Example",
             "layout"     : "cssgrids-units-example"
         },
 
         "cssgrids-fixed-example": {
+            "name"       : "cssgrids-fixed",
             "displayName": "Fixed Width Page Layout",
             "layout"     : "cssgrids-fixed-example"
         },
 
         "cssgrids-fluid-example": {
+            "name"       : "cssgrids-fluid",
             "displayName": "Fluid Width Page Layout",
             "layout"     : "cssgrids-fluid-example"
         },
 
         "cssgrids-align-example": {
+            "name"       : "cssgrids-align",
             "displayName": "CSS Grids Alignment Example",
             "layout"     : "cssgrids-align-example"
         }

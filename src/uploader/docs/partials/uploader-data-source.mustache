@@ -58,7 +58,8 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
                                       multipleFiles: true,
                                       swfURL: "{{yuiBuildUrl}}/uploader/assets/flashuploader.swf?t=" + Math.random(),
                                       uploadURL: "http://www.yswfblog.com/upload/simpleupload.php",
-                                      simLimit: 2
+                                      simLimit: 2,
+                                      withCredentials: false
                                      });    
        var uploadDone = false;
 
@@ -155,8 +156,7 @@ Y.one("#overallProgress").set("text", "Uploader type: " + Y.Uploader.TYPE);
        });       
    } 
    else {
-       Y.one("#uploaderContainer").set("text", "We are sorry, but the uploader technology is not supported" + 
-                                               " on this platform.");
+       Y.one("#uploaderContainer").set("text", "We are sorry, but to use the uploader, you either need a browser that support HTML5 or have the Flash player installed on your computer.");
    }
 
 

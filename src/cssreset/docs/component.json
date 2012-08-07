@@ -11,6 +11,7 @@
 
     "examples": [
         {
+            "newWindow"  : "true",
             "name"       : "cssreset-basic",
             "displayName": "Global (Page-Level) Example",
             "description": "When CSS Reset is included in a page, it removes the browser-provided styling for HTML elements.",
@@ -21,6 +22,7 @@
         },
 
         {
+            "newWindow"  : "true",
             "name"       : "cssreset-context",
             "displayName": "Contextual Example",
             "description": "CSS Reset applied to a portion of a page based on the location of a class value.",
@@ -34,11 +36,13 @@
 
     "pages": {
         "cssreset-basic-example": {
+            "name"       : "cssreset-basic",
             "displayName": "CSS Reset Page Example",
             "layout"     : "cssbase-basic-example"
         },
 
         "cssreset-context-example": {
+            "name"       : "cssreset-context",
             "displayName": "CSS Reset Contextual Example",
             "layout"     : "cssreset-context-example"
         }

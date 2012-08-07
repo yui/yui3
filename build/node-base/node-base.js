@@ -1069,7 +1069,7 @@ Y.mix(Y.Node.prototype, {
     * @for Node
     * @description Stores arbitrary data on a Node instance.
     * This is not stored with the DOM node.
-    * @param {string} name The name of the field to set. If no name
+    * @param {string} name The name of the field to set. If no val
     * is given, name is treated as the data and overrides any existing data.
     * @param {any} val The value to be assigned to the field.
     * @chainable

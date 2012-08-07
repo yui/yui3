@@ -3,10 +3,13 @@
         "use": [
             "app-base",
             "app-transitions",
+            "lazy-model-list",
             "model",
             "model-list",
+            "model-sync-rest",
             "router",
-            "view"
+            "view",
+            "view-node-map"
         ],
 
         "submodules": {
@@ -40,6 +43,10 @@
                 "use": ["router"]
             },
 
+            "lazy-model-list": {
+                "requires": ["model-list"]
+            },
+
             "model": {
                 "requires": ["base-build", "escape", "json-parse"]
             },
@@ -53,6 +60,14 @@
                     "escape",
                     "json-parse",
                     "model"
+                ]
+            },
+
+            "model-sync-rest": {
+                "requires": [
+                    "model",
+                    "io-base",
+                    "json-stringify"
                 ]
             },
 

@@ -2,7 +2,7 @@
     "name"       : "node-menunav",
     "displayName": "MenuNav Node Plugin",
     "description": "Easily transform a list into an accessible and customizable drop-down menu.",
-    "author"     : ["kloots", "rgrove"],
+    "author"     : "drgath",
 
     "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown"],
     "use" : ["node-menunav"],
@@ -74,36 +74,43 @@
 
     "pages": {
         "menunav-leftnav-example": {
+            "name"       : "menunav-leftnav",
             "displayName": "MenuNav: Basic Left Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-2-example": {
+            "name"       : "node-menunav-2",
             "displayName": "MenuNav: Basic Top Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-3-example": {
+            "name"       : "node-menunav-3",
             "displayName": "MenuNav: Menu Button Top Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-4-example": {
+            "name"       : "node-menunav-4",
             "displayName": "MenuNav: Split Button Top Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-5-example": {
+            "name"       : "node-menunav-5",
             "displayName": "MenuNav: Left Nav with Submenus with Shadows Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-6-example": {
+            "name"       : "node-menunav-6",
             "displayName": "MenuNav: Left Nav With Submenus With Rounded Corners Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-7-example": {
+            "name"       : "node-menunav-7",
             "displayName": "MenuNav: Skinning Menus Created Using the MenuNav Node Plugin Example",
             "layout"     : "menunav-example"
         }

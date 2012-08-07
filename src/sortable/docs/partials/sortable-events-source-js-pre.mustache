@@ -1,0 +1,13 @@
+YUI().use('sortable', function (Y) {
+
+    var log, sortable;
+
+    // The node where we'll output the drag-and-drop events.
+    log = Y.one('#log');
+
+    // Our sortable list instance.
+    sortable = new Y.Sortable({
+        container: '#demo ul',
+        nodes    : 'li',
+        opacity  : '0.1'
+    });

@@ -192,7 +192,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     destructor: function () {
-        YArray.each(this._items, this._detachList, this);
+        this._clear();
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -420,7 +420,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         if (options.asList) {
-            list = new Y.ModelList({model: this.model});
+            list = new this.constructor({model: this.model});
 
             if (filtered.length) {
                 list.add(filtered, {silent: true});

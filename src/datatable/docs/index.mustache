@@ -967,7 +967,7 @@ table.datasource.load({
     <tr>
         <td><a href="{{apiDocs}}/modules/datatable-sort.html">`datatable-sort`</a></td>
         <td>
-            Creates the `Y.DataTable.Sort` class extension and adds methods
+            Creates the `Y.DataTable.Sortable` class extension and adds methods
             `sort` and `toggleSort` as well as attributes `sortable` and
             `sortBy` to `Y.DataTable`.  Enables sorting the table rows by
             clicking on column headers.
@@ -1016,7 +1016,7 @@ table.datasource.load({
 // Create a custom DataTable that includes only the core set of APIs, plus
 // sorting and message support.
 Y.MyDataTable = Y.Base.create('myTable', Y.DataTable.Base,
-    [ Y.DataTable.Sort, Y.DataTable.Message ]);
+    [ Y.DataTable.Sortable, Y.DataTable.Message ]);
 
 Y.use('datatable-scroll', function (Y) {
     // Y.DataTable now has support for scrolling

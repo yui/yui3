@@ -2,6 +2,7 @@
  * StackedAxis manages stacked numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.

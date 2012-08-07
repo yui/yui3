@@ -57,7 +57,7 @@ YUI().use("node", "attribute", "substitute", function(Y) {
 
         var tokens = {
             name: this.get("name"),
-            available: (this.get("available")) ? "I'm still looking " : "Sorry, I'm taken",
+            available: (this.get("available")) ? "I'm still looking" : "Sorry, I'm taken",
             personality: this.get("personality")
         };
 
@@ -68,7 +68,7 @@ YUI().use("node", "attribute", "substitute", function(Y) {
 
     SpeedDater.prototype.updateNameTag = function() {
 
-        var taken = (this.get("available")) ? "I'm still looking " : "Sorry, I'm taken";
+        var taken = (this.get("available")) ? "I'm still looking" : "Sorry, I'm taken";
         var name = this.get("name");
         var personality = this.get("personality");
 

@@ -1231,12 +1231,18 @@ Y.Loader.prototype = {
             };
         }
 
+<<<<<<< HEAD
         if (o.skinnable && o.ext) {
             this._removeSkins(o);
             skinnames = this._setSkins(o);
             YArray.each(skinnames, function(skinname) {
                 o.requires.unshift(skinname);
             });
+=======
+        if (o.skinnable && o.ext && o.temp) {
+            skinname = this._addSkin(this.skin.defaultSkin, name);
+            o.requires.unshift(skinname);
+>>>>>>> d1b10faf71cb5235b2320837d8ec40cbf0cd188f
         }
         
         if (o.requires.length) {
@@ -1734,7 +1740,7 @@ Y.Loader.prototype = {
 
         
         if (mod !== undefined) {
-            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            //Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
             return mod;
         }
 
@@ -2015,7 +2021,7 @@ Y.Loader.prototype = {
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
-        if (!m) {
+        if (!m || (m && m.ext)) {
            // Y.log('testing patterns ' + YObject.keys(patterns));
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
@@ -2036,7 +2042,9 @@ Y.Loader.prototype = {
                     }
                 }
             }
+        }
 
+        if (!m) {
             if (found) {
                 if (p.action) {
                     // Y.log('executing pattern action: ' + pname);
@@ -2046,8 +2054,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
+                    if (found.configFn) {
+                        m.configFn = found.configFn;
+                    }
                     m.temp = true;
                 }
+            }
+        } else {
+            if (found && m && found.configFn && !m.configFn) {
+                m.configFn = found.configFn;
+                m.configFn(m);
             }
         }
 

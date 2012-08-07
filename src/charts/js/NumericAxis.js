@@ -2,6 +2,7 @@
  * NumericAxis manages numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class NumericAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.

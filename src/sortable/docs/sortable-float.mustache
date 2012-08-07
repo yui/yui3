@@ -7,9 +7,9 @@
     {{> sortable-float-source-css}}
     {{> sortable-float-color-step-css}}
     </style>
-    
+
     {{> sortable-float-source-color-step-html}}
-    
+
     <script>
     {{> sortable-float-source-js}}
     </script>
@@ -32,7 +32,9 @@
 <p>Now we need to create our YUI instance and tell it to load the `sortable` module.</p>
 
 ```
-YUI().use('sortable'
+YUI().use('sortable', function (Y) {
+    // Code here.
+});
 ```
 
 <h3>Making the List Draggable</h3>

@@ -31,6 +31,7 @@ transition between `activeView` changes using the following effects:
 
 @class App.Transitions
 @uses App.TransitionsNative
+@extensionfor App
 @since 3.5.0
 **/
 function AppTransitions() {}

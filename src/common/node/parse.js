@@ -1,32 +1,26 @@
 #!/usr/bin/env node
 
 var fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    exists = fs.existsSync || path.existsSync,
+    base = path.join(__dirname, '../../'),
+    dirs = fs.readdirSync(base),
+    paths = [];
 
-var base = path.join(__dirname, '../../');
-
-var unitXML = fs.readFileSync(path.join(__dirname, '../tests/unit.xml'), 'utf8');
-
-var lines = unitXML.split('\n');
-
-var paths = [];
-
-var inComment = false;
-lines.forEach(function(line) {
-    if (line.indexOf('<!--') > -1) {
-        inComment = true;
-    }
-    if (line.indexOf('-->') > -1) {
-        inComment = false;
-    }
-    if (!inComment) {
-        if (line.indexOf('<url>') > -1) {
-            var p = line.replace('<url>', '').replace('</url>', '').replace(/ /g, '').replace('\t', '');
-            paths.push(path.join(p));
-        }
+dirs.forEach(function(dir) {
+    var testBase = path.join(dir, 'tests/unit');
+    var unit = path.join(base, testBase);
+    if (exists(unit)){
+        var files = fs.readdirSync(unit);
+        files.forEach(function(file) {
+            var ext = path.extname(file);
+            if (ext === '.html' || ext == '.htm') {
+                paths.push(path.join(testBase, file));
+            }
+        });
     }
 });
 
-paths.shift();
+paths.sort();
 
 module.exports = paths;

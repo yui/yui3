@@ -493,6 +493,7 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 
         if (handles.dataChange) {
             handles.dataChange.detach();
+            delete handles.dataChange;
             this.bindUI();
         }
 

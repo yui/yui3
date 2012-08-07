@@ -7,6 +7,13 @@ YUI.add('charts-base', function(Y) {
  * @module charts
  * @main charts
  */
+
+/**
+ * The charts-base submodule contains the core functionality for the charts module.
+ *
+ * @module charts
+ * @submodule charts-base
+ */
 var CONFIG = Y.config,
     WINDOW = CONFIG.win,
     DOCUMENT = CONFIG.doc,
@@ -27,7 +34,6 @@ var CONFIG = Y.config,
 /**
  * Abstract class for creating groups of shapes with the same styles and dimensions.
  *
- * @module graphics
  * @class ShapeGroup
  * @constructor
  */
@@ -181,8 +187,9 @@ Y.ShapeGroup = ShapeGroup;
 /**
  * Abstract class for creating groups of circles with the same styles and dimensions.
  *
- * @module graphics
- * @class GroupCircle
+ * @module charts
+ * @submodule charts-base
+ * @class CircleGroup
  * @constructor
  */
  CircleGroup = function(cfg)
@@ -240,7 +247,8 @@ Y.CircleGroup = CircleGroup;
 /**
  * Abstract class for creating groups of rects with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class GroupRect
  * @constructor
  */
@@ -269,7 +277,8 @@ Y.RectGroup = RectGroup;
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class GroupDiamond
  * @constructor
  */
@@ -298,7 +307,8 @@ Y.DiamondGroup = DiamondGroup;
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class EllipseGroup
  * @constructor
  */
@@ -329,6 +339,7 @@ Y.EllipseGroup = EllipseGroup;
  * attribute.
  *
  * @module charts
+ * @submodule charts-base
  * @class Renderer
  * @constructor
  */
@@ -445,6 +456,7 @@ Y.Renderer = Renderer;
  * Algorithmic strategy for rendering a left axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class LeftAxisLayout
  * @constructor
  */
@@ -806,6 +818,7 @@ Y.LeftAxisLayout = LeftAxisLayout;
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class RightAxisLayout
  * @constructor
  */
@@ -1172,6 +1185,7 @@ Y.RightAxisLayout = RightAxisLayout;
  * Contains algorithms for rendering a bottom axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class BottomAxisLayout
  * @Constructor
  */
@@ -1521,6 +1535,7 @@ Y.BottomAxisLayout = BottomAxisLayout;
  * Contains algorithms for rendering a top axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class TopAxisLayout
  * @constructor
  */
@@ -1900,6 +1915,7 @@ Y.TopAxisLayout = TopAxisLayout;
  * The Axis class. Generates axes for a chart.
  *
  * @module charts
+ * @submodule charts-base
  * @class Axis
  * @extends Widget
  * @uses Renderer
@@ -3416,6 +3432,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
  * AxisType is an abstract class that manages the data for an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class AxisType
  * @constructor
  * @extends Axis
@@ -4126,6 +4143,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
  * NumericAxis manages numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class NumericAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -4809,6 +4827,7 @@ Y.NumericAxis = NumericAxis;
  * StackedAxis manages stacked numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -4911,6 +4930,7 @@ Y.StackedAxis = StackedAxis;
  * TimeAxis manages time data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class TimeAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -5249,6 +5269,7 @@ Y.TimeAxis = TimeAxis;
  * CategoryAxis manages category data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class CategoryAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -5526,6 +5547,7 @@ Y.CategoryAxis = CategoryAxis;
  * Utility class used for calculating curve points.
  *
  * @module charts
+ * @submodule charts-base
  * @class CurveUtil
  * @constructor
  */
@@ -5645,12 +5667,21 @@ Y.CurveUtil = CurveUtil;
  * Utility class used for creating stacked series.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackingUtil
  * @constructor
  */
 function StackingUtil(){}
 
 StackingUtil.prototype = {
+    /**
+     * Indicates whether the series is stacked.
+     *
+     * @property _stacked
+     * @private
+     */
+    _stacked: true,
+
     /**
      * @protected
      *
@@ -5660,44 +5691,317 @@ StackingUtil.prototype = {
      */
     _stackCoordinates: function() 
     {
-        var direction = this.get("direction"),
-            order = this.get("order"),
+        if(this.get("direction") == "vertical")
+        {
+            this._stackXCoords();
+        }
+        else
+        {
+            this._stackYCoords();
+        }
+    },
+
+    /**
+     * Stacks coordinates for a stacked vertical series.
+     *
+     * @method _stackXCoords
+     * @protected
+     */
+    _stackXCoords: function()
+    {
+        var order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            i = 0,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            len,
+            coord,
+            prevCoord,
+            prevOrder,
+            stackedXCoords = xcoords.concat(),
+            prevXCoords,
+            prevYCoords,
+            nullIndices = [],
+            nullIndex;
+        if(order > 0)
+        {
+            prevXCoords = seriesCollection[order - 1].get("stackedXCoords");
+            prevYCoords = seriesCollection[order - 1].get("stackedYCoords");
+            len = prevXCoords.length;
+        }
+        else
+        {
+            len = xcoords.length;
+        }
+        for(; i < len; i = i + 1)
+        {
+            if(Y_Lang.isNumber(xcoords[i]))
+            {
+                if(order > 0)
+                {
+                    prevCoord = prevXCoords[i];
+                    if(!Y_Lang.isNumber(prevCoord))
+                    {
+                        prevOrder = order;
+                        while(prevOrder >  - 1 && !Y_Lang.isNumber(prevCoord))
+                        {
+                            prevOrder = prevOrder - 1;
+                            if(prevOrder > -1)
+                            {
+                                prevCoord = seriesCollection[prevOrder].get("stackedXCoords")[i];
+                            }
+                            else
+                            {
+                                prevCoord = this._leftOrigin;
+                            }
+                        }
+                    }
+                    xcoords[i] = xcoords[i] + prevCoord;
+                }
+                stackedXCoords[i] = xcoords[i];
+            }
+            else
+            {
+                nullIndices.push(i);
+            }
+        }
+        this._cleanXNaN(stackedXCoords, ycoords);
+        len = nullIndices.length;
+        if(len > 0)
+        {
+            for(i = 0; i < len; i = i + 1)
+            {
+                nullIndex = nullIndices[i];
+                coord = order > 0 ? prevXCoords[nullIndex] : this._leftOrigin;
+                stackedXCoords[nullIndex] =  Math.max(stackedXCoords[nullIndex], coord);
+            }
+        }
+        this.set("stackedXCoords", stackedXCoords);
+        this.set("stackedYCoords", ycoords);
+    },
+
+    /**
+     * Stacks coordinates for a stacked horizontal series.
+     *
+     * @method _stackYCoords
+     * @protected
+     */
+    _stackYCoords: function()
+    {
+        var order = this.get("order"),
             type = this.get("type"),
             graph = this.get("graph"),
             h = graph.get("height"), 
             seriesCollection = graph.seriesTypes[type],
             i = 0,
-            len,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
+            len,
+            coord,
+            prevCoord,
+            prevOrder,
+            stackedYCoords = ycoords.concat(),
             prevXCoords,
-            prevYCoords;
-        if(order === 0)
+            prevYCoords,
+            nullIndices = [],
+            nullIndex;
+        if(order > 0)
         {
-            return;
-        }
-        prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-        prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-        if(direction === "vertical")
-        {
-            len = prevXCoords.length;
-            for(; i < len; ++i)
-            {
-                if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
-                {
-                    xcoords[i] += prevXCoords[i];
-                }
-            }
+            prevXCoords = seriesCollection[order - 1].get("stackedXCoords");
+            prevYCoords = seriesCollection[order - 1].get("stackedYCoords");
+            len = prevYCoords.length;
         }
         else
         {
-            len = prevYCoords.length;
-            for(; i < len; ++i)
+            len = ycoords.length;
+        }
+        for(; i < len; i = i + 1)
+        {
+            if(Y_Lang.isNumber(ycoords[i]))
             {
-                if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
+                if(order > 0)
                 {
-                    ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
+                    prevCoord = prevYCoords[i];
+                    if(!Y_Lang.isNumber(prevCoord))
+                    {
+                        prevOrder = order;
+                        while(prevOrder >  - 1 && !Y_Lang.isNumber(prevCoord))
+                        {
+                            prevOrder = prevOrder - 1;
+                            if(prevOrder > -1)
+                            {
+                                prevCoord = seriesCollection[prevOrder].get("stackedYCoords")[i];
+                            }
+                            else
+                            {
+                                prevCoord = this._bottomOrigin;
+                            }
+                        }
+                    }
+                    ycoords[i] = prevCoord - (h - ycoords[i]);
                 }
+                stackedYCoords[i] = ycoords[i];
+            }
+            else
+            {
+                nullIndices.push(i);
+            }
+        }
+        this._cleanYNaN(xcoords, stackedYCoords);
+        len = nullIndices.length;
+        if(len > 0)
+        {
+            for(i = 0; i < len; i = i + 1)
+            {
+                nullIndex = nullIndices[i];
+                coord = order > 0 ? prevYCoords[nullIndex] : h;
+                stackedYCoords[nullIndex] =  Math.min(stackedYCoords[nullIndex], coord);
+            }
+        }
+        this.set("stackedXCoords", xcoords);
+        this.set("stackedYCoords", stackedYCoords);
+    },
+
+    /**
+     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the previous valid x-coordinate with its 
+     * corresponding y-coordinate and the next valid x-coordinate with its corresponding y-coordinate. If there is no previous or next valid x-coordinate,
+     * the value will not be altered.
+     *
+     * @method _cleanXNaN
+     * @param {Array} xcoords An array of x-coordinate values
+     * @param {Array} ycoords An arry of y-coordinate values
+     * @private
+     */
+    _cleanXNaN: function(xcoords, ycoords)
+    {
+        var previousValidIndex,
+            nextValidIndex,
+            previousValidX,
+            previousValidY,
+            x,
+            y,
+            nextValidX,
+            nextValidY,
+            isNumber = Y_Lang.isNumber,
+            m,
+            i = 0,
+            len = ycoords.length;
+        for(; i < len; ++i)
+        {
+            x = xcoords[i];
+            y = ycoords[i];
+            //if x is invalid, calculate where it should be
+            if(!isNumber(x) && i > 0 && i < len - 1)
+            {
+                previousValidY = ycoords[i - 1];
+                //check to see if the previous value is valid
+                previousValidX = this._getPreviousValidCoordValue(xcoords, i);
+                nextValidY = ycoords[i + 1];
+                nextValidX = this._getNextValidCoordValue(xcoords, i);
+                //check to see if the next value is valid
+                if(isNumber(previousValidX) && isNumber(nextValidX))
+                {
+                    //calculate slope and solve for x
+                    m = (nextValidY - previousValidY) / (nextValidX - previousValidX);
+                    xcoords[i] = (y + (m * previousValidX) - previousValidY)/m;
+                }
+                previousValidIndex = NaN;
+                nextValidIndex = NaN;
+            }
+        }
+    },
+
+    /**
+     * Returns the previous valid (numeric) value in an array if available.
+     *
+     * @method _getPreviousValidCoordValue
+     * @param {Array} coords Array of values
+     * @param {Number} index The index in the array in which to begin searching.
+     * @return Number
+     * @private
+     */
+    _getPreviousValidCoordValue: function(coords, index)
+    {
+        var coord,
+            isNumber = Y_Lang.isNumber,
+            limit = -1;
+        while(!isNumber(coord) && index > limit)
+        {
+            index = index - 1;
+            coord = coords[index];
+        }
+        return coord;
+    },
+
+    /**
+     * Returns the next valid (numeric) value in an array if available.
+     *
+     * @method _getNextValidCoordValue
+     * @param {Array} coords Array of values
+     * @param {Number} index The index in the array in which to begin searching.
+     * @return Number
+     * @private
+     */
+    _getNextValidCoordValue: function(coords, index)
+    {
+        var coord,
+            isNumber = Y_Lang.isNumber,
+            limit = coords.length;
+        while(!isNumber(coord) && index < limit)
+        {
+            index = index + 1;
+            coord = coords[index];
+        }
+        return coord;
+    },
+
+    /**
+     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the previous valid y-coordinate with its 
+     * corresponding x-coordinate and the next valid y-coordinate with its corresponding x-coordinate. If there is no previous or next valid y-coordinate,
+     * the value will not be altered.
+     *
+     * @method _cleanYNaN
+     * @param {Array} xcoords An array of x-coordinate values
+     * @param {Array} ycoords An arry of y-coordinate values
+     * @private
+     */
+    _cleanYNaN: function(xcoords, ycoords)
+    {
+        var previousValidIndex,
+            nextValidIndex,
+            previousValidX,
+            previousValidY,
+            x,
+            y,
+            nextValidX,
+            nextValidY,
+            isNumber = Y_Lang.isNumber,
+            m,
+            i = 0,
+            len = xcoords.length;
+        for(; i < len; ++i)
+        {
+            x = xcoords[i];
+            y = ycoords[i];
+            //if y is invalid, calculate where it should be
+            if(!isNumber(y) && i > 0 && i < len - 1)
+            {
+                //check to see if the previous value is valid
+                previousValidX = xcoords[i - 1];
+                previousValidY = this._getPreviousValidCoordValue(ycoords, i);
+                //check to see if the next value is valid
+                nextValidX = xcoords[i + 1];
+                nextValidY = this._getNextValidCoordValue(ycoords, i);
+                if(isNumber(previousValidY) && isNumber(nextValidY))
+                {
+                    //calculate slope and solve for y
+                    m = (nextValidY - previousValidY) / (nextValidX - previousValidX);
+                    ycoords[i] = previousValidY + ((m * x) - (m * previousValidX));
+                }
+                previousValidIndex = NaN;
+                nextValidIndex = NaN;
             }
         }
     }
@@ -5707,6 +6011,7 @@ Y.StackingUtil = StackingUtil;
  * Utility class used for drawing lines.
  *
  * @module charts
+ * @submodule charts-base
  * @class Lines
  * @constructor
  */
@@ -5766,10 +6071,10 @@ Lines.prototype = {
             return;
         }
         var isNumber = Y_Lang.isNumber,
-            xcoords = this.get("xcoords").concat(),
-            ycoords = this.get("ycoords").concat(),
+            xcoords,
+            ycoords,
             direction = this.get("direction"),
-            len = direction === "vertical" ? ycoords.length : xcoords.length,
+            len,
             lastPointValid,
             pointValid,
             noPointsRendered = true,
@@ -5789,6 +6094,17 @@ Lines.prototype = {
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
             path = this._getGraphic();
+        if(this._stacked)
+        {
+            xcoords = this.get("stackedXCoords");
+            ycoords = this.get("stackedYCoords");
+        }
+        else
+        {
+            xcoords = this.get("xcoords");
+            ycoords = this.get("ycoords");
+        }
+        len = direction === "vertical" ? ycoords.length : xcoords.length;
         path.set("stroke", {
             weight: styles.weight, 
             color: lc, 
@@ -6283,6 +6599,60 @@ Fills.prototype = {
         ycoords.push(ycoords[0]);
         return [xcoords, ycoords];
     },
+
+    /**
+     * Returns the order of the series closest to the current series that has a valid value for the current index.
+     *
+     * @method _getHighestValidOrder
+     * @param {Array} seriesCollection Array of series of a given type.
+     * @param {Number} index Index of the series item.
+     * @param {Number} order Index of the the series in the seriesCollection
+     * @param {String} direction Indicates the direction of the series
+     * @return Number
+     * @private
+     */
+    _getHighestValidOrder: function(seriesCollection, index, order, direction)
+    {
+        var coords = direction == "vertical" ? "stackedXCoords" : "stackedYCoords",
+            coord;
+        while(isNaN(coord) && order > -1)
+        {
+          order = order - 1;
+          if(order > -1)
+          {
+            coord = seriesCollection[order].get(coords)[index];
+          }
+        }
+        return order;
+    },
+    
+    /**
+     * Returns an array containing the x and y coordinates for a given series and index.
+     *
+     * @method _getCoordsByOrderAndIndex
+     * @param {Array} seriesCollection Array of series of a given type.
+     * @param {Number} index Index of the series item.
+     * @param {Number} order Index of the the series in the seriesCollection
+     * @param {String} direction Indicates the direction of the series
+     * @return Array
+     * @private
+     */
+    _getCoordsByOrderAndIndex: function(seriesCollection, index, order, direction)
+    {
+        var xcoord,
+            ycoord;
+        if(direction == "vertical")
+        {
+            xcoord = order < 0 ? this._leftOrigin : seriesCollection[order].get("stackedXCoords")[index];
+            ycoord = this.get("stackedYCoords")[index];
+        }
+        else
+        {
+            xcoord = this.get("stackedXCoords")[index];
+            ycoord = order < 0 ? this._bottomOrigin : seriesCollection[order].get("stackedYCoords")[index];
+        }
+        return [xcoord, ycoord];
+    },
     
     /**
      * Concatenates coordinate array with the correct coordinates for closing an area stack.
@@ -6298,40 +6668,112 @@ Fills.prototype = {
             graph = this.get("graph"),
             direction = this.get("direction"),
             seriesCollection = graph.seriesTypes[type],
-            prevXCoords,
-            prevYCoords,
-            allXCoords = this.get("xcoords").concat(),
-            allYCoords = this.get("ycoords").concat(),
-            firstX = allXCoords[0],
-            firstY = allYCoords[0];
+            firstValidIndex,
+            lastValidIndex,
+            xcoords = this.get("stackedXCoords"),
+            ycoords = this.get("stackedYCoords"),
+            limit,
+            previousSeries,
+            previousSeriesFirstValidIndex,
+            previousSeriesLastValidIndex,
+            previousXCoords,
+            previousYCoords,
+            coords,
+            closingXCoords,
+            closingYCoords,
+            currentIndex,
+            highestValidOrder,
+            oldOrder;
+        if(order < 1)
+        {    
+          return this._getClosingPoints();
+        }
         
-        if(order > 0)
+        previousSeries = seriesCollection[order - 1];
+        previousXCoords = previousSeries.get("stackedXCoords").concat();
+        previousYCoords = previousSeries.get("stackedYCoords").concat();
+        if(direction == "vertical")
         {
-            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
-            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
-            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
-            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
-            allXCoords.push(allXCoords[0]);
-            allYCoords.push(allYCoords[0]);
+            firstValidIndex = this._getFirstValidIndex(xcoords);
+            lastValidIndex = this._getLastValidIndex(xcoords);
+            previousSeriesFirstValidIndex = previousSeries._getFirstValidIndex(previousXCoords);
+            previousSeriesLastValidIndex = previousSeries._getLastValidIndex(previousXCoords);
         }
         else
         {
-            if(direction === "vertical")
-            {
-                allXCoords.push(this._leftOrigin);
-                allXCoords.push(this._leftOrigin);
-                allYCoords.push(allYCoords[allYCoords.length-1]);
-                allYCoords.push(firstY);
-            }
-            else
-            {
-                allXCoords.push(allXCoords[allXCoords.length-1]);
-                allXCoords.push(firstX);
-                allYCoords.push(this._bottomOrigin);
-                allYCoords.push(this._bottomOrigin);
-            }
+            firstValidIndex = this._getFirstValidIndex(ycoords);
+            lastValidIndex = this._getLastValidIndex(ycoords);
+            previousSeriesFirstValidIndex = previousSeries._getFirstValidIndex(previousYCoords);
+            previousSeriesLastValidIndex = previousSeries._getLastValidIndex(previousYCoords);
         }
-        return [allXCoords, allYCoords];
+        if(previousSeriesLastValidIndex >= firstValidIndex && previousSeriesFirstValidIndex <= lastValidIndex)
+        {
+            previousSeriesFirstValidIndex = Math.max(firstValidIndex, previousSeriesFirstValidIndex);
+            previousSeriesLastValidIndex = Math.min(lastValidIndex, previousSeriesLastValidIndex);
+            previousXCoords = previousXCoords.slice(previousSeriesFirstValidIndex, previousSeriesLastValidIndex + 1);
+            previousYCoords = previousYCoords.slice(previousSeriesFirstValidIndex, previousSeriesLastValidIndex + 1);
+            limit = previousSeriesFirstValidIndex;
+        }
+        else
+        {
+            limit = lastValidIndex;
+        }
+
+        closingXCoords = [xcoords[firstValidIndex]];
+        closingYCoords = [ycoords[firstValidIndex]];
+        currentIndex = firstValidIndex;
+        while((isNaN(highestValidOrder) || highestValidOrder < order - 1) && currentIndex <= limit)
+        {
+            oldOrder = highestValidOrder;
+            highestValidOrder = this._getHighestValidOrder(seriesCollection, currentIndex, order, direction);
+            if(!isNaN(oldOrder) && highestValidOrder > oldOrder)
+            {
+                coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, oldOrder, direction);
+                closingXCoords.push(coords[0]);
+                closingYCoords.push(coords[1]);
+            }
+            coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, highestValidOrder, direction);
+            closingXCoords.push(coords[0]);
+            closingYCoords.push(coords[1]);
+            currentIndex = currentIndex + 1;
+        }
+        if(previousXCoords && previousXCoords.length > 0 && previousSeriesLastValidIndex > firstValidIndex && previousSeriesFirstValidIndex < lastValidIndex)
+        {
+            closingXCoords = closingXCoords.concat(previousXCoords);
+            closingYCoords = closingYCoords.concat(previousYCoords);
+            highestValidOrder = order -1; 
+        }
+        currentIndex = Math.max(firstValidIndex, previousSeriesLastValidIndex);
+        order = order - 1;
+        highestValidOrder = NaN;
+        while(currentIndex <= lastValidIndex)
+        {
+            oldOrder = highestValidOrder;
+            highestValidOrder = this._getHighestValidOrder(seriesCollection, currentIndex, order, direction);
+            if(!isNaN(oldOrder))
+            {
+                if(highestValidOrder > oldOrder)
+                {
+                    coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, oldOrder, direction);
+                    closingXCoords.push(coords[0]);
+                    closingYCoords.push(coords[1]);
+                }
+                else if(highestValidOrder < oldOrder)
+                {
+                    coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex - 1, highestValidOrder, direction);
+                    closingXCoords.push(coords[0]);
+                    closingYCoords.push(coords[1]);
+                }
+            }
+            coords = this._getCoordsByOrderAndIndex(seriesCollection, currentIndex, highestValidOrder, direction);
+            closingXCoords.push(coords[0]);
+            closingYCoords.push(coords[1]);
+            currentIndex = currentIndex + 1;
+        }
+
+        closingXCoords.reverse();
+        closingYCoords.reverse();
+        return [xcoords.concat(closingXCoords), ycoords.concat(closingYCoords)];
     },
 
     /**
@@ -6353,6 +6795,7 @@ Y.Fills = Fills;
  * Utility class used for drawing markers.
  *
  * @module charts
+ * @submodule charts-base
  * @class Plots
  * @constructor
  */
@@ -6866,6 +7309,7 @@ Y.Plots = Plots;
  * Histogram is the base class for Column and Bar series.
  *
  * @module charts
+ * @submodule charts-base
  * @class Histogram
  * @constructor
  */
@@ -7085,6 +7529,7 @@ Y.Histogram = Histogram;
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
@@ -7151,38 +7596,38 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yAxis = this.get("yAxis");
         if(xAxis)
         {
-            xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
-            xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
+            this._xDataReadyHandle = xAxis.after("dataReady", Y.bind(this._xDataChangeHandler, this));
+            this._xDataUpdateHandle = xAxis.after("dataUpdate", Y.bind(this._xDataChangeHandler, this));
         }
         if(yAxis)
         {
-            yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
-            yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
+            this._yDataReadyHandle = yAxis.after("dataReady", Y.bind(this._yDataChangeHandler, this));
+            this._yDataUpdateHandle = yAxis.after("dataUpdate", Y.bind(this._yDataChangeHandler, this));
         }
-        this.after("xAxisChange", this._xAxisChangeHandler);
-        this.after("yAxisChange", this._yAxisChangeHandler);
-        this.after("stylesChange", function(e) {
+        this._xAxisChangeHandle = this.after("xAxisChange", this._xAxisChangeHandler);
+        this._yAxisChangeHandle = this.after("yAxisChange", this._yAxisChangeHandler);
+        this._stylesChangeHandle = this.after("stylesChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("widthChange", function(e) {
+        this._widthChangeHandle = this.after("widthChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("heightChange", function(e) {
+        this._heightChangeHandle = this.after("heightChange", function(e) {
             var axesReady = this._updateAxisData();
             if(axesReady)
             {
                 this.draw();
             }
         });
-        this.after("visibleChange", this._handleVisibleChange);
+        this._visibleChangeHandle = this.after("visibleChange", this._handleVisibleChange);
     },
   
     /**
@@ -7611,6 +8056,41 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     destructor: function()
     {
+        var marker,
+            markers = this.get("markers");
+        if(this.get("rendered"))
+        {
+            if(this._xDataReadyHandle)
+            {
+                this._xDataReadyHandle.detach();
+            }
+            if(this._xDataUpdateHandle)
+            {
+                this._xDataUpdateHandle.detach();
+            }
+            if(this._yDataReadyHandle)
+            {
+                this._yDataReadyHandle.detach();
+            }
+            if(this._yDataUpdateHandle)
+            {
+                this._yDataUpdateHandle.detach();
+            }
+            this._xAxisChangeHandle.detach();
+            this._yAxisChangeHandle.detach();
+            this._stylesChangeHandle.detach();
+            this._widthChangeHandle.detach();
+            this._heightChangeHandle.detach();
+            this._visibleChangeHandle.detach();
+        }
+        while(markers && markers.length > 0)
+        {
+            marker = markers.shift();
+            if(marker && marker instanceof Y.Shape)
+            {
+                marker.destroy();
+            }
+        }
         if(this._path)
         {
             this._path.destroy();
@@ -7627,6 +8107,78 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             this._groupMarker = null;
         }
     }
+        /**
+         * Event handle for the x-axis' dataReady event.
+         * 
+         * @property _xDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+        
+        /**
+         * Event handle for the x-axis dataUpdate event.
+         *
+         * @property _xDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+        
+        /**
+         * Event handle for the y-axis dataReady event.
+         *
+         * @property _yDataReadyHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the y-axis dataUpdate event.
+         * @property _yDataUpdateHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the xAxisChange event.
+         * @property _xAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the yAxisChange event.
+         * @property _yAxisChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the stylesChange event.
+         * @property _stylesChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the widthChange event.
+         * @property _widthChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the heightChange event.
+         * @property _heightChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
+
+        /**
+         * Event handle for the visibleChange event.
+         * @property _visibleChangeHandle
+         * @type {EventHandle}
+         * @private
+         */
 }, {
     ATTRS: {
         /**
@@ -7999,6 +8551,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
  * on a graph.
  *
  * @module charts
+ * @submodule charts-base
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots
@@ -8101,6 +8654,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
  * The LineSeries class renders quantitative data on a graph by connecting relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class LineSeries
  * @extends CartesianSeries
  * @uses Lines
@@ -8195,6 +8749,7 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
  * SplineSeries renders a graph with data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class SplineSeries
  * @constructor
  * @extends CartesianSeries
@@ -8259,6 +8814,7 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
  * to indicate their contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedSplineSeries
  * @constructor
  * @extends SplineSeries
@@ -8297,6 +8853,7 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
  * series' contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedMarkerSeries
  * @constructor
  * @extends MarkerSeries
@@ -8336,6 +8893,7 @@ Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram
@@ -8485,6 +9043,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram
@@ -8642,6 +9201,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills
@@ -8732,6 +9292,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSplineSeries
  * @constructor
  * @extends CartesianSeries
@@ -8784,6 +9345,7 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUti
  * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAreaSplineSeries
  * @constructor
  * @extends AreaSeries
@@ -8824,6 +9386,7 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
  * are rendered and area is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSeries
  * @extends CartesianSeries 
  * @uses Fills
@@ -9092,6 +9655,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
  * rendered.  
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil
@@ -9165,6 +9729,7 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
  * are rendered and areaspline is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSplineSeries
  * @extends ComboSeries
  * @extends CurveUtil
@@ -9214,6 +9779,7 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
  * rendered.  
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedComboSplineSeries
  * @extends StackedComboSeries
  * @uses CurveUtil
@@ -9272,6 +9838,7 @@ Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.Stacked
  * to indicate their contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedLineSeries
  * @constructor
  * @extends  LineSeries
@@ -9308,6 +9875,7 @@ Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.Stacki
  * StackedAreaSeries area fills to display data showing its contribution to a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAreaSeries
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -9358,6 +9926,7 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
  * their contribution to the cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
@@ -9697,6 +10266,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
  * their contribution to the cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil
@@ -10049,6 +10619,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
  * percentage of a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
@@ -10776,6 +11347,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
  * Gridlines draws gridlines on a Graph.
  *
  * @module charts
+ * @submodule charts-base
  * @class Gridlines
  * @constructor
  * @extends Base
@@ -10966,6 +11538,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
  * instance.
  *
  * @module charts
+ * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget
@@ -10998,7 +11571,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             sc = this.get("seriesCollection"),
             series,
             i = 0,
-            len = sc.length,
+            len = sc ? sc.length : 0,
             hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines");
         if(this.get("showBackground"))
@@ -11129,18 +11702,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             i = 0,
             series,
             seriesKey;
-        if(!this.get("seriesCollection"))
-        {
-            this._seriesCollection = [];
-        }
-        if(!this._seriesDictionary)
-        {
-            this._seriesDictionary = {};
-        }
-        if(!this.seriesTypes)
-        {
-            this.seriesTypes = [];
-        }
+        this._seriesCollection = [];
+        this._seriesDictionary = {};
+        this.seriesTypes = [];
         for(; i < len; ++i)
         {	
             series = val[i];
@@ -11151,7 +11715,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
             this._addSeries(series);
         }
-        len = this.get("seriesCollection").length;
+        len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
             series = this.get("seriesCollection")[i];
@@ -11223,6 +11787,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         series.after("drawingComplete", Y.bind(this._drawingCompleteHandler, this));
         typeSeriesCollection.push(series);
         seriesCollection.push(series);
+        if(this.get("rendered"))
+        {
+            series.render();
+        }
     },
     
     /**
@@ -11413,7 +11981,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this._drawing = true;
         sc = this.get("seriesCollection");
         i = 0;
-        len = sc.length;
+        len = sc ? sc.length : 0;
         for(; i < len; ++i)
         {
             sc[i].draw();
@@ -11761,6 +12329,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
  * The ChartBase class is an abstract class used to create charts.
  *
  * @module charts
+ * @submodule charts-base
  * @class ChartBase
  * @constructor
  */
@@ -12591,11 +13160,17 @@ ChartBase.prototype = {
     _dataProviderChangeHandler: function(e)
     {
         var dataProvider = e.newVal,
-            axes = this.get("axes"),
+            axes,
             i,
             axis;
         this._seriesIndex = -1;
         this._itemIndex = -1;
+        if(this instanceof Y.CartesianChart)
+        {
+            this.set("axes", this.get("axes"));
+            this.set("seriesCollection", this.get("seriesCollection"));
+        }
+        axes = this.get("axes");
         if(axes)
         {
             for(i in axes)
@@ -12777,6 +13352,7 @@ ChartBase.prototype = {
     _getTooltip: function()
     {
         var node = DOCUMENT.createElement("div"),
+            tooltipClass = _getClassName("chart-tooltip"),
             tt = {
                 setTextFunction: this._setText,
                 markerLabelFunction: this._tooltipLabelFunction,
@@ -12814,6 +13390,7 @@ ChartBase.prototype = {
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
         node.setStyle("visibility", "hidden");
+        node.addClass(tooltipClass);
         tt.node = Y.one(node);
         return tt;
     },
@@ -13018,7 +13595,7 @@ ChartBase.prototype = {
             catKey = this.get("categoryKey"),
             keys = [],
             i;
-        if(this._seriesKeys)
+        if(this._seriesKeysExplicitlySet)
         {
             return this._seriesKeys;
         }
@@ -13038,6 +13615,7 @@ Y.ChartBase = ChartBase;
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -13071,6 +13649,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
             this._overlay = Y.one(overlay); 
+            this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
@@ -13294,7 +13873,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _getDefaultSeriesCollection: function()
     {
-        return this._parseSeriesCollection();
+        var seriesCollection,
+            dataProvider = this.get("dataProvider");
+        if(dataProvider)
+        {
+            seriesCollection = this._parseSeriesCollection();
+        }
+        return seriesCollection;
     },
 
     /**
@@ -13308,7 +13893,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     _parseSeriesCollection: function(val)
     {
         var dir = this.get("direction"), 
-            sc = val || [], 
+            sc = [], 
             catAxis,
             valAxis,
             tempKeys = [],
@@ -13322,10 +13907,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             catKey,
             seriesKey,
             graph,
+            orphans = [],
             categoryKey = this.get("categoryKey"),
             showMarkers = this.get("showMarkers"),
             showAreaFill = this.get("showAreaFill"),
             showLines = this.get("showLines");
+        val = val || []; 
         if(dir == "vertical")
         {
             catAxis = "yAxis";
@@ -13340,18 +13927,43 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             valAxis = "yAxis";
             seriesKey = "yKey";
         }
-        l = sc.length;
-        for(i = 0; i < l; ++i)
+        l = val.length;
+        while(val && val.length > 0)
         {
-            key = this._getBaseAttribute(sc[i], seriesKey);
+            series = val.shift();
+            key = this._getBaseAttribute(series, seriesKey);
             if(key)
             {
                 index = Y.Array.indexOf(seriesKeys, key);
                 if(index > -1)
                 {
                     seriesKeys.splice(index, 1);
+                    tempKeys.push(key);
+                    sc.push(series);
                 }
-               tempKeys.push(key);
+                else
+                {
+                    orphans.push(series);
+                }
+            }
+            else
+            {
+                orphans.push(series);
+            }
+        }
+        while(orphans.length > 0)
+        {
+            series = orphans.shift();
+            if(seriesKeys.length > 0)
+            {
+                key = seriesKeys.shift();
+                this._setBaseAttribute(series, seriesKey, key);
+                tempKeys.push(key);
+                sc.push(series);
+            }
+            else if(series instanceof Y.CartesianSeries)
+            {
+                series.destroy(true);
             }
         }
         if(seriesKeys.length > 0)
@@ -13367,12 +13979,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 this._parseSeriesAxes(series);
                 continue;
             }
-            
+
             series[catKey] = series[catKey] || categoryKey;
             series[seriesKey] = series[seriesKey] || seriesKeys.shift();
             series[catAxis] = this._getCategoryAxis();
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
-            
+                
             series.type = series.type || type;
             series.direction = series.direction || dir;
             
@@ -13393,7 +14005,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
             sc[i] = series;
         }
-        if(val)
+        if(sc)
         {
             graph = this.get("graph");
             graph.set("seriesCollection", sc);
@@ -13808,7 +14420,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _getDefaultAxes: function()
     {
-        return this._parseAxes();
+        var axes;
+        if(this.get("dataProvider"))
+        {
+            axes = this._parseAxes();
+        }
+        return axes;
     },
 
     /**
@@ -13952,14 +14569,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 this._setBaseAttribute(newAxes[valueAxisName], "position", this._getDefaultAxisPosition(newAxes[valueAxisName], valueAxes, seriesPosition));
             }
-            if(!(this._getBaseAttribute(newAxes[valueAxisName], "type")))
-            {
-                this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
-            }
-            if(!(this._getBaseAttribute(newAxes[valueAxisName], "keys")))
-            {
-                this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
-            }
+            this._setBaseAttribute(newAxes[valueAxisName], "type", seriesAxis);
+            this._setBaseAttribute(newAxes[valueAxisName], "keys", seriesKeys);
         } 
         if(!this._seriesKeysExplicitlySet)
         {
@@ -14876,7 +15487,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
             setter: function(val)
             {
-                return this._setAxes(val);
+                if(this.get("dataProvider"))
+                {
+                    val = this._setAxes(val);
+                }
+                return val;
             }
         },
 
@@ -14892,7 +15507,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             
             setter: function(val)
             {
-                return this._parseSeriesCollection(val);
+                if(this.get("dataProvider"))
+                {
+                    val = this._parseSeriesCollection(val);
+                }
+                return val;
             }
         },
 
@@ -15134,6 +15753,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
  * The PieChart class creates a pie chart
  *
  * @module charts
+ * @submodule charts-base
  * @class PieChart
  * @extends ChartBase
  * @constructor
