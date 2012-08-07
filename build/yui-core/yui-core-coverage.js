@@ -453,7 +453,7 @@ Y.version = VERSION;
 if (!Env) {
             _yuitest_coverline("/home/yui/src/yui3/src/yui/build_tmp/yui-core.js", 329);
 Y.Env = {
-                core: YUI_CORE,
+                core: ['get','intl-base'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
