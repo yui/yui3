@@ -362,21 +362,20 @@ A.zip = function(a, a2) {
 };
 
 /**
-Flattens nested arrays at any abitrary depth into a single, flat array.
-Specifying a truthy value for `shallow` will not recurse to all depths.
+Flattens an array of nested arrays at any abitrary depth into a single, flat
+array.
 
 @method flatten
 @param {Array} a Array with nested arrays to flatten.
-@param {Boolean} [shallow] Whether flattening should _only_ happen at the first
-  depth.
 @return {Array} An array whose nested arrays have been flattened.
 @static
 @since 3.6.1
 **/
-A.flatten = function(a, shallow) {
+A.flatten = function(a) {
     var result = [],
         i, len, val;
 
+    // Always return an array.
     if (!a) {
         return result;
     }
@@ -385,7 +384,8 @@ A.flatten = function(a, shallow) {
         val = a[i];
 
         if (L.isArray(val)) {
-            ArrayProto.push.apply(result, shallow ? val : A.flatten(val));
+            // Recusively flattens any nested arrays.
+            result.push.apply(result, A.flatten(val));
         } else {
             result.push(val);
         }
