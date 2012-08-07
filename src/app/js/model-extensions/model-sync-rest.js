@@ -379,10 +379,12 @@ RESTSync.prototype = {
     place to start.
 
     @method serialize
+    @param {String} [action] Optional `sync()` action for which to generate the
+        the serialized representation of this model.
     @return {String} serialized HTTP request entity body.
     @since 3.6.0
     **/
-    serialize: function () {
+    serialize: function (action) {
         return Y.JSON.stringify(this);
     },
 
@@ -431,7 +433,7 @@ RESTSync.prototype = {
 
         // Prepare the content if we are sending data to the server.
         if (method === 'POST' || method === 'PUT') {
-            entity = this.serialize();
+            entity = this.serialize(action);
         } else {
             // Remove header, no content is being sent.
             delete headers['Content-Type'];

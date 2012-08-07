@@ -1,6 +1,15 @@
 App Framework Change History
 ============================
 
+3.6.1
+-----
+
+### Model
+
+* ModelSync.REST's `serialize()` method now receives the `action` which the
+  `sync()` method was invoked with. [Ticket #2532625]
+
+
 3.6.0
 -----
 
