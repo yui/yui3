@@ -5634,6 +5634,26 @@ Y.Loader.prototype = {
                 self.require('yui-log', 'dump');
             }
         }
+
+        if (self.filterName && self.coverage) {
+            if (self.filterName == 'COVERAGE' && L.isArray(self.coverage) && self.coverage.length) {
+                var mods = [];
+                for (i = 0; i < self.coverage.length; i++) {
+                    var mod = self.coverage[i];
+                    if (self.moduleInfo[mod].use) {
+                        console.log(self.moduleInfo[mod]);
+                        mods = [].concat(mods, self.moduleInfo[mod].use);
+                    } else {
+                        mods.push(mod);
+                    }
+                }
+                self.filters = self.filters || {};
+                Y.Array.each(mods, function(mod) {
+                    self.filters[mod] = self.FILTER_DEFS.COVERAGE;
+                });
+                self.filter = 'RAW';
+            }
+        }
         
 
         if (self.lang) {
