@@ -391,6 +391,51 @@ suite.add(new Y.Test.Case({
         Assert.areSame(2, results.length);
         Assert.areSame('a', results[0].value);
         Assert.areSame('b', results[1].value);
+    },
+
+    'flatten() should flatten nested arrays into a single-level array': function () {
+        Assert.isArray(A.flatten());
+        Assert.isArray(A.flatten(null));
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten(['foo', 'bar', null])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten(['foo', ['bar', null]])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten([[['foo', ['bar', null]]]])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten([[[[['foo']], [['bar'], [null]]]]])
+        );
+    },
+
+    'flatten() should only flatten nested arrays at the first depth when shallow is specified': function () {
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten(['foo', 'bar', null], true)
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten(['foo', ['bar', null]], true)
+        );
+
+        // Used for === check.
+        var nullArray = [null];
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', nullArray],
+            A.flatten(['foo', ['bar', nullArray]], true)
+        );
     }
 }));
 

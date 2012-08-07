@@ -78,7 +78,7 @@ A.unique = function (array, testFn) {
     var i       = 0,
         len     = array.length,
         results = [],
-        j, match, result, resultLen, value;
+        j, result, resultLen, value;
 
     // Note the label here. It's used to jump out of the inner loop when a value
     // is not unique.
@@ -359,4 +359,37 @@ A.zip = function(a, a2) {
         results.push([item, a2[index]]);
     });
     return results;
+};
+
+/**
+Flattens nested arrays at any abitrary depth into a single, flat array.
+Specifying a truthy value for `shallow` will not recurse to all depths.
+
+@method flatten
+@param {Array} a Array with nested arrays to flatten.
+@param {Boolean} [shallow] Whether flattening should _only_ happen at the first
+  depth.
+@return {Array} An array whose nested arrays have been flattened.
+@static
+@since 3.6.1
+**/
+A.flatten = function(a, shallow) {
+    var result = [],
+        i, len, val;
+
+    if (!a) {
+        return result;
+    }
+
+    for (i = 0, len = a.length; i < len; ++i) {
+        val = a[i];
+
+        if (L.isArray(val)) {
+            ArrayProto.push.apply(result, shallow ? val : A.flatten(val));
+        } else {
+            result.push(val);
+        }
+    }
+
+    return result;
 };
