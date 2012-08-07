@@ -26,9 +26,9 @@ _yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"] = {
     path: "/home/yui/src/yui3/src/loader/build_tmp/loader-base.js",
     code: []
 };
-_yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].code=["YUI.add('loader-base', function(Y) {","","/**"," * The YUI loader core"," * @module loader"," * @submodule loader-base"," */","","if (!YUI.Env[Y.version]) {","","    (function() {","        var VERSION = Y.version,","            BUILD = '/build/',","            ROOT = VERSION + BUILD,","            CDN_BASE = Y.Env.base,","            GALLERY_VERSION = 'gallery-2012.08.01-13-16',","            TNT = '2in3',","            TNT_VERSION = '4',","            YUI2_VERSION = '2.9.0',","            COMBO_BASE = CDN_BASE + 'combo?',","            META = { version: VERSION,","                              root: ROOT,","                              base: Y.Env.base,","                              comboBase: COMBO_BASE,","                              skin: { defaultSkin: 'sam',","                                           base: 'assets/skins/',","                                           path: 'skin.css',","                                           after: ['cssreset',","                                                          'cssfonts',","                                                          'cssgrids',","                                                          'cssbase',","                                                          'cssreset-context',","                                                          'cssfonts-context']},","                              groups: {},","                              patterns: {} },","            groups = META.groups,","            yui2Update = function(tnt, yui2, config) {","                    ","                var root = TNT + '.' +","                        (tnt || TNT_VERSION) + '/' +","                        (yui2 || YUI2_VERSION) + BUILD,","                    base = (config && config.base) ? config.base : CDN_BASE,","                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;","","                groups.yui2.base = base + root;","                groups.yui2.root = root;","                groups.yui2.comboBase = combo;","            },","            galleryUpdate = function(tag, config) {","                var root = (tag || GALLERY_VERSION) + BUILD,","                    base = (config && config.base) ? config.base : CDN_BASE,","                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;","","                groups.gallery.base = base + root;","                groups.gallery.root = root;","                groups.gallery.comboBase = combo;","            };","","","        groups[VERSION] = {};","","        groups.gallery = {","            ext: false,","            combine: true,","            comboBase: COMBO_BASE,","            update: galleryUpdate,","            patterns: { 'gallery-': { },","                        'lang/gallery-': {},","                        'gallerycss-': { type: 'css' } }","        };","","        groups.yui2 = {","            combine: true,","            ext: false,","            comboBase: COMBO_BASE,","            update: yui2Update,","            patterns: {","                'yui2-': {","                    configFn: function(me) {","                        if (/-skin|reset|fonts|grids|base/.test(me.name)) {","                            me.type = 'css';","                            me.path = me.path.replace(/\\.js/, '.css');","                            // this makes skins in builds earlier than","                            // 2.6.0 work as long as combine is false","                            me.path = me.path.replace(/\\/yui2-skin/,","                                             '/assets/skins/sam/yui2-skin');","                        }","                    }","                }","            }","        };","","        galleryUpdate();","        yui2Update();","","        YUI.Env[VERSION] = META;","    }());","}","","","/*jslint forin: true */","","/**"," * Loader dynamically loads script and css files.  It includes the dependency"," * information for the version of the library in use, and will automatically pull in"," * dependencies for the modules requested. It can also load the"," * files from the Yahoo! CDN, and it can utilize the combo service provided on"," * this network to reduce the number of http connections required to download"," * YUI files."," *"," * @module loader"," * @main loader"," * @submodule loader-base"," */","","var NOT_FOUND = {},","    NO_REQUIREMENTS = [],","    MAX_URL_LENGTH = 1024,","    GLOBAL_ENV = YUI.Env,","    GLOBAL_LOADED = GLOBAL_ENV._loaded,","    CSS = 'css',","    JS = 'js',","    INTL = 'intl',","    DEFAULT_SKIN = 'sam',","    VERSION = Y.version,","    ROOT_LANG = '',","    YObject = Y.Object,","    oeach = YObject.each,","    YArray = Y.Array,","    _queue = GLOBAL_ENV._loaderQueue,","    META = GLOBAL_ENV[VERSION],","    SKIN_PREFIX = 'skin-',","    L = Y.Lang,","    ON_PAGE = GLOBAL_ENV.mods,","    modulekey,","    cache,","    _path = function(dir, file, type, nomin) {","        var path = dir + '/' + file;","        if (!nomin) {","            path += '-min';","        }","        path += '.' + (type || CSS);","","        return path;","    };","","","    if (!YUI.Env._cssLoaded) {","        YUI.Env._cssLoaded = {};","    }","","","/**"," * The component metadata is stored in Y.Env.meta."," * Part of the loader module."," * @property meta"," * @for YUI"," */","Y.Env.meta = META;","","/**"," * Loader dynamically loads script and css files.  It includes the dependency"," * info for the version of the library in use, and will automatically pull in"," * dependencies for the modules requested. It can load the"," * files from the Yahoo! CDN, and it can utilize the combo service provided on"," * this network to reduce the number of http connections required to download"," * YUI files. You can also specify an external, custom combo service to host"," * your modules as well.","","        var Y = YUI();","        var loader = new Y.Loader({","            filter: 'debug',","            base: '../../',","            root: 'build/',","            combine: true,","            require: ['node', 'dd', 'console']","        });","        var out = loader.resolve(true);"," "," * @constructor"," * @class Loader"," * @param {Object} config an optional set of configuration options."," * @param {String} config.base The base dir which to fetch this module from"," * @param {String} config.comboBase The Combo service base path. Ex: `http://yui.yahooapis.com/combo?`"," * @param {String} config.root The root path to prepend to module names for the combo service. Ex: `2.5.2/build/`"," * @param {String|Object} config.filter A filter to apply to result urls. <a href=\"#property_filter\">See filter property</a>"," * @param {Object} config.filters Per-component filter specification.  If specified for a given component, this overrides the filter config."," * @param {Boolean} config.combine Use a combo service to reduce the number of http connections required to load your dependencies"," * @param {Boolean} [config.async=true] Fetch files in async"," * @param {Array} config.ignore: A list of modules that should never be dynamically loaded"," * @param {Array} config.force A list of modules that should always be loaded when required, even if already present on the page"," * @param {HTMLElement|String} config.insertBefore Node or id for a node that should be used as the insertion point for new nodes"," * @param {Object} config.jsAttributes Object literal containing attributes to add to script nodes"," * @param {Object} config.cssAttributes Object literal containing attributes to add to link nodes"," * @param {Number} config.timeout The number of milliseconds before a timeout occurs when dynamically loading nodes.  If not set, there is no timeout"," * @param {Object} config.context Execution context for all callbacks"," * @param {Function} config.onSuccess Callback for the 'success' event"," * @param {Function} config.onFailure Callback for the 'failure' event"," * @param {Function} config.onCSS Callback for the 'CSSComplete' event.  When loading YUI components with CSS the CSS is loaded first, then the script.  This provides a moment you can tie into to improve the presentation of the page while the script is loading."," * @param {Function} config.onTimeout Callback for the 'timeout' event"," * @param {Function} config.onProgress Callback executed each time a script or css file is loaded"," * @param {Object} config.modules A list of module definitions.  See <a href=\"#method_addModule\">Loader.addModule</a> for the supported module metadata"," * @param {Object} config.groups A list of group definitions.  Each group can contain specific definitions for `base`, `comboBase`, `combine`, and accepts a list of `modules`."," * @param {String} config.2in3 The version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox."," * @param {String} config.yui2 When using the 2in3 project, you can select the version of YUI 2 to use.  Valid values are `2.2.2`, `2.3.1`, `2.4.1`, `2.5.2`, `2.6.0`, `2.7.0`, `2.8.0`, `2.8.1` and `2.9.0` [default] -- plus all versions of YUI 2 going forward."," */","Y.Loader = function(o) {","","    var self = this;","    ","    //Catch no config passed.","    o = o || {};","","    modulekey = META.md5;","","    /**","     * Internal callback to handle multiple internal insert() calls","     * so that css is inserted prior to js","     * @property _internalCallback","     * @private","     */","    // self._internalCallback = null;","","    /**","     * Callback that will be executed when the loader is finished","     * with an insert","     * @method onSuccess","     * @type function","     */","    // self.onSuccess = null;","","    /**","     * Callback that will be executed if there is a failure","     * @method onFailure","     * @type function","     */","    // self.onFailure = null;","","    /**","     * Callback for the 'CSSComplete' event.  When loading YUI components","     * with CSS the CSS is loaded first, then the script.  This provides","     * a moment you can tie into to improve the presentation of the page","     * while the script is loading.","     * @method onCSS","     * @type function","     */","    // self.onCSS = null;","","    /**","     * Callback executed each time a script or css file is loaded","     * @method onProgress","     * @type function","     */","    // self.onProgress = null;","","    /**","     * Callback that will be executed if a timeout occurs","     * @method onTimeout","     * @type function","     */","    // self.onTimeout = null;","","    /**","     * The execution context for all callbacks","     * @property context","     * @default {YUI} the YUI instance","     */","    self.context = Y;","","    /**","     * Data that is passed to all callbacks","     * @property data","     */","    // self.data = null;","","    /**","     * Node reference or id where new nodes should be inserted before","     * @property insertBefore","     * @type string|HTMLElement","     */","    // self.insertBefore = null;","","    /**","     * The charset attribute for inserted nodes","     * @property charset","     * @type string","     * @deprecated , use cssAttributes or jsAttributes.","     */","    // self.charset = null;","","    /**","     * An object literal containing attributes to add to link nodes","     * @property cssAttributes","     * @type object","     */","    // self.cssAttributes = null;","","    /**","     * An object literal containing attributes to add to script nodes","     * @property jsAttributes","     * @type object","     */","    // self.jsAttributes = null;","","    /**","     * The base directory.","     * @property base","     * @type string","     * @default http://yui.yahooapis.com/[YUI VERSION]/build/","     */","    self.base = Y.Env.meta.base + Y.Env.meta.root;","","    /**","     * Base path for the combo service","     * @property comboBase","     * @type string","     * @default http://yui.yahooapis.com/combo?","     */","    self.comboBase = Y.Env.meta.comboBase;","","    /*","     * Base path for language packs.","     */","    // self.langBase = Y.Env.meta.langBase;","    // self.lang = \"\";","","    /**","     * If configured, the loader will attempt to use the combo","     * service for YUI resources and configured external resources.","     * @property combine","     * @type boolean","     * @default true if a base dir isn't in the config","     */","    self.combine = o.base &&","        (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);","    ","    /**","    * The default seperator to use between files in a combo URL","    * @property comboSep","    * @type {String}","    * @default Ampersand","    */","    self.comboSep = '&';","    /**","     * Max url length for combo urls.  The default is 1024. This is the URL","     * limit for the Yahoo! hosted combo servers.  If consuming","     * a different combo service that has a different URL limit","     * it is possible to override this default by supplying","     * the maxURLLength config option.  The config option will","     * only take effect if lower than the default.","     *","     * @property maxURLLength","     * @type int","     */","    self.maxURLLength = MAX_URL_LENGTH;","","    /**","     * Ignore modules registered on the YUI global","     * @property ignoreRegistered","     * @default false","     */","    self.ignoreRegistered = o.ignoreRegistered;","","    /**","     * Root path to prepend to module path for the combo","     * service","     * @property root","     * @type string","     * @default [YUI VERSION]/build/","     */","    self.root = Y.Env.meta.root;","","    /**","     * Timeout value in milliseconds.  If set, self value will be used by","     * the get utility.  the timeout event will fire if","     * a timeout occurs.","     * @property timeout","     * @type int","     */","    self.timeout = 0;","","    /**","     * A list of modules that should not be loaded, even if","     * they turn up in the dependency tree","     * @property ignore","     * @type string[]","     */","    // self.ignore = null;","","    /**","     * A list of modules that should always be loaded, even","     * if they have already been inserted into the page.","     * @property force","     * @type string[]","     */","    // self.force = null;","","    self.forceMap = {};","","    /**","     * Should we allow rollups","     * @property allowRollup","     * @type boolean","     * @default false","     */","    self.allowRollup = false;","","    /**","     * A filter to apply to result urls.  This filter will modify the default","     * path for all modules.  The default path for the YUI library is the","     * minified version of the files (e.g., event-min.js).  The filter property","     * can be a predefined filter or a custom filter.  The valid predefined","     * filters are:","     * <dl>","     *  <dt>DEBUG</dt>","     *  <dd>Selects the debug versions of the library (e.g., event-debug.js).","     *      This option will automatically include the Logger widget</dd>","     *  <dt>RAW</dt>","     *  <dd>Selects the non-minified version of the library (e.g., event.js).","     *  </dd>","     * </dl>","     * You can also define a custom filter, which must be an object literal","     * containing a search expression and a replace string:","     *","     *      myFilter: {","     *          'searchExp': \"-min\\\\.js\",","     *          'replaceStr': \"-debug.js\"","     *      }","     *","     * @property filter","     * @type string| {searchExp: string, replaceStr: string}","     */","    // self.filter = null;","","    /**","     * per-component filter specification.  If specified for a given","     * component, this overrides the filter config.","     * @property filters","     * @type object","     */","    self.filters = {};","","    /**","     * The list of requested modules","     * @property required","     * @type {string: boolean}","     */","    self.required = {};","","    /**","     * If a module name is predefined when requested, it is checked againsts","     * the patterns provided in this property.  If there is a match, the","     * module is added with the default configuration.","     *","     * At the moment only supporting module prefixes, but anticipate","     * supporting at least regular expressions.","     * @property patterns","     * @type Object","     */","    // self.patterns = Y.merge(Y.Env.meta.patterns);","    self.patterns = {};","","    /**","     * The library metadata","     * @property moduleInfo","     */","    // self.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);","    self.moduleInfo = {};","","    self.groups = Y.merge(Y.Env.meta.groups);","","    /**","     * Provides the information used to skin the skinnable components.","     * The following skin definition would result in 'skin1' and 'skin2'","     * being loaded for calendar (if calendar was requested), and","     * 'sam' for all other skinnable components:","     *","     *      skin: {","     *          // The default skin, which is automatically applied if not","     *          // overriden by a component-specific skin definition.","     *          // Change this in to apply a different skin globally","     *          defaultSkin: 'sam',","     *","     *          // This is combined with the loader base property to get","     *          // the default root directory for a skin. ex:","     *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/","     *          base: 'assets/skins/',","     *          ","     *          // Any component-specific overrides can be specified here,","     *          // making it possible to load different skins for different","     *          // components.  It is possible to load more than one skin","     *          // for a given component as well.","     *          overrides: {","     *              calendar: ['skin1', 'skin2']","     *          }","     *      }","     * @property skin","     * @type {Object}","     */","    self.skin = Y.merge(Y.Env.meta.skin);","","    /*","     * Map of conditional modules","     * @since 3.2.0","     */","    self.conditions = {};","","    // map of modules with a hash of modules that meet the requirement","    // self.provides = {};","","    self.config = o;","    self._internal = true;","","    self._populateCache();","","    /**","     * Set when beginning to compute the dependency tree.","     * Composed of what YUI reports to be loaded combined","     * with what has been loaded by any instance on the page","     * with the version number specified in the metadata.","     * @property loaded","     * @type {string: boolean}","     */","    self.loaded = GLOBAL_LOADED[VERSION];","","    ","    /**","    * Should Loader fetch scripts in `async`, defaults to `true`","    * @property async","    */","","    self.async = true;","","    self._inspectPage();","","    self._internal = false;","","    self._config(o);","","    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	","","    self.testresults = null;","","    if (Y.config.tests) {","        self.testresults = Y.config.tests;","    }","    ","    /**","     * List of rollup files found in the library metadata","     * @property rollups","     */","    // self.rollups = null;","","    /**","     * Whether or not to load optional dependencies for","     * the requested modules","     * @property loadOptional","     * @type boolean","     * @default false","     */","    // self.loadOptional = false;","","    /**","     * All of the derived dependencies in sorted order, which","     * will be populated when either calculate() or insert()","     * is called","     * @property sorted","     * @type string[]","     */","    self.sorted = [];","","    /*","     * A list of modules to attach to the YUI instance when complete.","     * If not supplied, the sorted list of dependencies are applied.","     * @property attaching","     */","    // self.attaching = null;","","    /**","     * Flag to indicate the dependency tree needs to be recomputed","     * if insert is called again.","     * @property dirty","     * @type boolean","     * @default true","     */","    self.dirty = true;","","    /**","     * List of modules inserted by the utility","     * @property inserted","     * @type {string: boolean}","     */","    self.inserted = {};","","    /**","     * List of skipped modules during insert() because the module","     * was not defined","     * @property skipped","     */","    self.skipped = {};","","    // Y.on('yui:load', self.loadNext, self);","","    self.tested = {};","","    /*","     * Cached sorted calculate results","     * @property results","     * @since 3.2.0","     */","    //self.results = {};","","    if (self.ignoreRegistered) {","        //Clear inpage already processed modules.","        self._resetModules();","    }","","};","","Y.Loader.prototype = {","    /**","    * Checks the cache for modules and conditions, if they do not exist","    * process the default metadata and populate the local moduleInfo hash.","    * @method _populateCache","    * @private","    */","    _populateCache: function() {","        var self = this,","            defaults = META.modules,","            cache = GLOBAL_ENV._renderedMods,","            i;","","        if (cache && !self.ignoreRegistered) {","            for (i in cache) {","                if (cache.hasOwnProperty(i)) {","                    self.moduleInfo[i] = Y.merge(cache[i]);","                }","            }","","            cache = GLOBAL_ENV._conditions;","            for (i in cache) {","                if (cache.hasOwnProperty(i)) {","                    self.conditions[i] = Y.merge(cache[i]);","                }","            }","","        } else {","            for (i in defaults) {","                if (defaults.hasOwnProperty(i)) {","                    self.addModule(defaults[i], i);","                }","            }","        }","","    },","    /**","    * Reset modules in the module cache to a pre-processed state so additional","    * computations with a different skin or language will work as expected.","    * @private _resetModules","    */","    _resetModules: function() {","        var self = this, i, o;","        for (i in self.moduleInfo) {","            if (self.moduleInfo.hasOwnProperty(i)) {","                var mod = self.moduleInfo[i],","                    name = mod.name,","                    details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);","","                if (details) {","                    self.moduleInfo[name]._reset = true;","                    self.moduleInfo[name].requires = details.requires || [];","                    self.moduleInfo[name].optional = details.optional || [];","                    self.moduleInfo[name].supersedes = details.supercedes || [];","                }","","                if (mod.defaults) {","                    for (o in mod.defaults) {","                        if (mod.defaults.hasOwnProperty(o)) {","                            if (mod[o]) {","                                mod[o] = mod.defaults[o];","                            }","                        }","                    }","                }","                delete mod.langCache;","                delete mod.skinCache;","                if (mod.skinnable) {","                    self._addSkin(self.skin.defaultSkin, mod.name);","                }","            }","        }","    },","    /**","    Regex that matches a CSS URL. Used to guess the file type when it's not","    specified.","","    @property REGEX_CSS","    @type RegExp","    @final","    @protected","    @since 3.5.0","    **/","    REGEX_CSS: /\\.css(?:[?;].*)?$/i,","    ","    /**","    * Default filters for raw and debug","    * @property FILTER_DEFS","    * @type Object","    * @final","    * @protected","    */","    FILTER_DEFS: {","        RAW: {","            'searchExp': '-min\\\\.js',","            'replaceStr': '.js'","        },","        DEBUG: {","            'searchExp': '-min\\\\.js',","            'replaceStr': '-debug.js'","        }","    },","    /*","    * Check the pages meta-data and cache the result.","    * @method _inspectPage","    * @private","    */","    _inspectPage: function() {","        var self = this, v, m, req, mr, i;","","        //Inspect the page for CSS only modules and mark them as loaded.","        for (i in self.moduleInfo) {","            if (self.moduleInfo.hasOwnProperty(i)) {","                v = self.moduleInfo[i];","                if (v.type && v.type === CSS) {","                    if (self.isCSSLoaded(v.name)) {","                        self.loaded[i] = true;","                    }","                }","            }","        }","        for (i in ON_PAGE) {","            if (ON_PAGE.hasOwnProperty(i)) {","                v = ON_PAGE[i];","                if (v.details) {","                    m = self.moduleInfo[v.name];","                    req = v.details.requires;","                    mr = m && m.requires;","","                   if (m) {","                       if (!m._inspected && req && mr.length != req.length) {","                           // console.log('deleting ' + m.name);","                           delete m.expanded;","                       }","                   } else {","                       m = self.addModule(v.details, i);","                   }","                   m._inspected = true;","               }","            }","        }","    },","    /*","    * returns true if b is not loaded, and is required directly or by means of modules it supersedes.","    * @private","    * @method _requires","    * @param {String} mod1 The first module to compare","    * @param {String} mod2 The second module to compare","    */","   _requires: function(mod1, mod2) {","","        var i, rm, after_map, s,","            info = this.moduleInfo,","            m = info[mod1],","            other = info[mod2];","","        if (!m || !other) {","            return false;","        }","","        rm = m.expanded_map;","        after_map = m.after_map;","","        // check if this module should be sorted after the other","        // do this first to short circut circular deps","        if (after_map && (mod2 in after_map)) {","            return true;","        }","","        after_map = other.after_map;","","        // and vis-versa","        if (after_map && (mod1 in after_map)) {","            return false;","        }","","        // check if this module requires one the other supersedes","        s = info[mod2] && info[mod2].supersedes;","        if (s) {","            for (i = 0; i < s.length; i++) {","                if (this._requires(mod1, s[i])) {","                    return true;","                }","            }","        }","","        s = info[mod1] && info[mod1].supersedes;","        if (s) {","            for (i = 0; i < s.length; i++) {","                if (this._requires(mod2, s[i])) {","                    return false;","                }","            }","        }","","        // check if this module requires the other directly","        // if (r && YArray.indexOf(r, mod2) > -1) {","        if (rm && (mod2 in rm)) {","            return true;","        }","","        // external css files should be sorted below yui css","        if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {","            return true;","        }","","        return false;","    },","    /**","    * Apply a new config to the Loader instance","    * @method _config","    * @private","    * @param {Object} o The new configuration","    */","    _config: function(o) {","        var i, j, val, a, f, group, groupName, self = this;","        // apply config values","        if (o) {","            for (i in o) {","                if (o.hasOwnProperty(i)) {","                    val = o[i];","                    if (i == 'require') {","                        self.require(val);","                    } else if (i == 'skin') {","                        //If the config.skin is a string, format to the expected object","                        if (typeof val === 'string') {","                            self.skin.defaultSkin = o.skin;","                            val = {","                                defaultSkin: val","                            };","                        }","","                        Y.mix(self.skin, val, true);","                    } else if (i == 'groups') {","                        for (j in val) {","                            if (val.hasOwnProperty(j)) {","                                groupName = j;","                                group = val[j];","                                self.addGroup(group, groupName);","                                if (group.aliases) {","                                    for (a in group.aliases) {","                                        if (group.aliases.hasOwnProperty(a)) {","                                            self.addAlias(group.aliases[a], a);","                                        }","                                    }","                                }","                            }","                        }","","                    } else if (i == 'modules') {","                        // add a hash of module definitions","                        for (j in val) {","                            if (val.hasOwnProperty(j)) {","                                self.addModule(val[j], j);","                            }","                        }","                    } else if (i === 'aliases') {","                        for (j in val) {","                            if (val.hasOwnProperty(j)) {","                                self.addAlias(val[j], j);","                            }","                        }","                    } else if (i == 'gallery') {","                        this.groups.gallery.update(val, o);","                    } else if (i == 'yui2' || i == '2in3') {","                        this.groups.yui2.update(o['2in3'], o.yui2, o);","                    } else {","                        self[i] = val;","                    }","                }","            }","        }","","        // fix filter","        f = self.filter;","","        if (L.isString(f)) {","            f = f.toUpperCase();","            self.filterName = f;","            self.filter = self.FILTER_DEFS[f];","            if (f == 'DEBUG') {","                self.require('yui-log', 'dump');","            }","        }","        ","","        if (self.lang) {","            //Removed this so that when Loader is invoked","            //it doesn't request what it doesn't need.","            //self.require('intl-base', 'intl');","        }","","    },","","    /**","     * Returns the skin module name for the specified skin name.  If a","     * module name is supplied, the returned skin module name is","     * specific to the module passed in.","     * @method formatSkin","     * @param {string} skin the name of the skin.","     * @param {string} mod optional: the name of a module to skin.","     * @return {string} the full skin module name.","     */","    formatSkin: function(skin, mod) {","        var s = SKIN_PREFIX + skin;","        if (mod) {","            s = s + '-' + mod;","        }","","        return s;","    },","","    /**","     * Adds the skin def to the module info","     * @method _addSkin","     * @param {string} skin the name of the skin.","     * @param {string} mod the name of the module.","     * @param {string} parent parent module if this is a skin of a","     * submodule or plugin.","     * @return {string} the module name for the skin.","     * @private","     */","    _addSkin: function(skin, mod, parent) {","        var mdef, pkg, name, nmod,","            info = this.moduleInfo,","            sinf = this.skin,","            ext = info[mod] && info[mod].ext;","","        // Add a module definition for the module-specific skin css","        if (mod) {","            name = this.formatSkin(skin, mod);","            if (!info[name]) {","                mdef = info[mod];","                pkg = mdef.pkg || mod;","                nmod = {","                    skin: true,","                    name: name,","                    group: mdef.group,","                    type: 'css',","                    after: sinf.after,","                    path: (parent || pkg) + '/' + sinf.base + skin +","                          '/' + mod + '.css',","                    ext: ext","                };","                if (mdef.base) {","                    nmod.base = mdef.base;","                }","                if (mdef.configFn) {","                    nmod.configFn = mdef.configFn;","                }","                this.addModule(nmod, name);","","            }","        }","","        return name;","    },","    /**","    * Adds an alias module to the system","    * @method addAlias","    * @param {Array} use An array of modules that makes up this alias","    * @param {String} name The name of the alias","    * @example","    *       var loader = new Y.Loader({});","    *       loader.addAlias([ 'node', 'yql' ], 'davglass');","    *       loader.require(['davglass']);","    *       var out = loader.resolve(true);","    *","    *       //out.js will contain Node and YQL modules","    */","    addAlias: function(use, name) {","        YUI.Env.aliases[name] = use;","        this.addModule({","            name: name,","            use: use","        });","    },","    /**","     * Add a new module group","     * @method addGroup","     * @param {Object} config An object containing the group configuration data","     * @param {String} config.name required, the group name","     * @param {String} config.base The base directory for this module group","     * @param {String} config.root The root path to add to each combo resource path","     * @param {Boolean} config.combine Should the request be combined","     * @param {String} config.comboBase Combo service base path","     * @param {Object} config.modules The group of modules","     * @param {String} name the group name.","     * @example","     *      var loader = new Y.Loader({});","     *      loader.addGroup({","     *          name: 'davglass',","     *          combine: true,","     *          comboBase: '/combo?',","     *          root: '',","     *          modules: {","     *              //Module List here","     *          }","     *      }, 'davglass');","     */","    addGroup: function(o, name) {","        var mods = o.modules,","            self = this, i, v;","","        name = name || o.name;","        o.name = name;","        self.groups[name] = o;","","        if (o.patterns) {","            for (i in o.patterns) {","                if (o.patterns.hasOwnProperty(i)) {","                    o.patterns[i].group = name;","                    self.patterns[i] = o.patterns[i];","                }","            }","        }","","        if (mods) {","            for (i in mods) {","                if (mods.hasOwnProperty(i)) {","                    v = mods[i];","                    if (typeof v === 'string') {","                        v = { name: i, fullpath: v };","                    }","                    v.group = name;","                    self.addModule(v, i);","                }","            }","        }","    },","","    /**","     * Add a new module to the component metadata.","     * @method addModule","     * @param {Object} config An object containing the module data.","     * @param {String} config.name Required, the component name","     * @param {String} config.type Required, the component type (js or css)","     * @param {String} config.path Required, the path to the script from `base`","     * @param {Array} config.requires Array of modules required by this component","     * @param {Array} [config.optional] Array of optional modules for this component","     * @param {Array} [config.supersedes] Array of the modules this component replaces","     * @param {Array} [config.after] Array of modules the components which, if present, should be sorted above this one","     * @param {Object} [config.after_map] Faster alternative to 'after' -- supply a hash instead of an array","     * @param {Number} [config.rollup] The number of superseded modules required for automatic rollup","     * @param {String} [config.fullpath] If `fullpath` is specified, this is used instead of the configured `base + path`","     * @param {Boolean} [config.skinnable] Flag to determine if skin assets should automatically be pulled in","     * @param {Object} [config.submodules] Hash of submodules","     * @param {String} [config.group] The group the module belongs to -- this is set automatically when it is added as part of a group configuration.","     * @param {Array} [config.lang] Array of BCP 47 language tags of languages for which this module has localized resource bundles, e.g., `[\"en-GB\", \"zh-Hans-CN\"]`","     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met.  This is an object with up to three fields:","     * @param {String} [config.condition.trigger] The name of a module that can trigger the auto-load","     * @param {Function} [config.condition.test] A function that returns true when the module is to be loaded.","     * @param {String} [config.condition.when] Specifies the load order of the conditional module","     *  with regard to the position of the trigger module.","     *  This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.","     * @param {Object} [config.testresults] A hash of test results from `Y.Features.all()`","     * @param {Function} [config.configFn] A function to exectute when configuring this module","     * @param {Object} config.configFn.mod The module config, modifying this object will modify it's config. Returning false will delete the module's config.","     * @param {String} [name] The module name, required if not in the module data.","     * @return {Object} the module definition or null if the object passed in did not provide all required attributes.","     */","    addModule: function(o, name) {","        name = name || o.name;","","        if (typeof o === 'string') {","            o = { name: name, fullpath: o };","        }","        ","        //Only merge this data if the temp flag is set","        //from an earlier pass from a pattern or else","        //an override module (YUI_config) can not be used to","        //replace a default module.","        if (this.moduleInfo[name] && this.moduleInfo[name].temp) {","            //This catches temp modules loaded via a pattern","            // The module will be added twice, once from the pattern and","            // Once from the actual add call, this ensures that properties","            // that were added to the module the first time around (group: gallery)","            // are also added the second time around too.","            o = Y.merge(this.moduleInfo[name], o);","        }","","        o.name = name;","","        if (!o || !o.name) {","            return null;","        }","","        if (!o.type) {","            //Always assume it's javascript unless the CSS pattern is matched.","            o.type = JS;","            var p = o.path || o.fullpath;","            if (p && this.REGEX_CSS.test(p)) {","                o.type = CSS;","            }","        }","","        if (!o.path && !o.fullpath) {","            o.path = _path(name, name, o.type);","        }","        o.supersedes = o.supersedes || o.use;","","        o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;","","        // Handle submodule logic","        var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,","            j, langs, packName, supName, flatSup, flatLang, lang, ret,","            overrides, skinname, when, g,","            conditions = this.conditions, trigger;","            // , existing = this.moduleInfo[name], newr;","        ","        this.moduleInfo[name] = o;","","        o.requires = o.requires || [];","        ","        /*","        Only allowing the cascade of requires information, since","        optional and supersedes are far more fine grained than","        a blanket requires is.","        */","        if (this.requires) {","            for (i = 0; i < this.requires.length; i++) {","                o.requires.push(this.requires[i]);","            }","        }","        if (o.group && this.groups && this.groups[o.group]) {","            g = this.groups[o.group];","            if (g.requires) {","                for (i = 0; i < g.requires.length; i++) {","                    o.requires.push(g.requires[i]);","                }","            }","        }","","","        if (!o.defaults) {","            o.defaults = {","                requires: o.requires ? [].concat(o.requires) : null,","                supersedes: o.supersedes ? [].concat(o.supersedes) : null,","                optional: o.optional ? [].concat(o.optional) : null","            };","        }","","        if (o.skinnable && o.ext && o.temp) {","            skinname = this._addSkin(this.skin.defaultSkin, name);","            o.requires.unshift(skinname);","        }","        ","        if (o.requires.length) {","            o.requires = this.filterRequires(o.requires) || [];","        }","","        if (!o.langPack && o.lang) {","            langs = YArray(o.lang);","            for (j = 0; j < langs.length; j++) {","                lang = langs[j];","                packName = this.getLangPackName(lang, name);","                smod = this.moduleInfo[packName];","                if (!smod) {","                    smod = this._addLangPack(lang, o, packName);","                }","            }","        }","","","        if (subs) {","            sup = o.supersedes || [];","            l = 0;","","            for (i in subs) {","                if (subs.hasOwnProperty(i)) {","                    s = subs[i];","","                    s.path = s.path || _path(name, i, o.type);","                    s.pkg = name;","                    s.group = o.group;","","                    if (s.supersedes) {","                        sup = sup.concat(s.supersedes);","                    }","","                    smod = this.addModule(s, i);","                    sup.push(i);","","                    if (smod.skinnable) {","                        o.skinnable = true;","                        overrides = this.skin.overrides;","                        if (overrides && overrides[i]) {","                            for (j = 0; j < overrides[i].length; j++) {","                                skinname = this._addSkin(overrides[i][j],","                                         i, name);","                                sup.push(skinname);","                            }","                        }","                        skinname = this._addSkin(this.skin.defaultSkin,","                                        i, name);","                        sup.push(skinname);","                    }","","                    // looks like we are expected to work out the metadata","                    // for the parent module language packs from what is","                    // specified in the child modules.","                    if (s.lang && s.lang.length) {","","                        langs = YArray(s.lang);","                        for (j = 0; j < langs.length; j++) {","                            lang = langs[j];","                            packName = this.getLangPackName(lang, name);","                            supName = this.getLangPackName(lang, i);","                            smod = this.moduleInfo[packName];","","                            if (!smod) {","                                smod = this._addLangPack(lang, o, packName);","                            }","","                            flatSup = flatSup || YArray.hash(smod.supersedes);","","                            if (!(supName in flatSup)) {","                                smod.supersedes.push(supName);","                            }","","                            o.lang = o.lang || [];","","                            flatLang = flatLang || YArray.hash(o.lang);","","                            if (!(lang in flatLang)) {","                                o.lang.push(lang);","                            }","","// Add rollup file, need to add to supersedes list too","","                            // default packages","                            packName = this.getLangPackName(ROOT_LANG, name);","                            supName = this.getLangPackName(ROOT_LANG, i);","","                            smod = this.moduleInfo[packName];","","                            if (!smod) {","                                smod = this._addLangPack(lang, o, packName);","                            }","","                            if (!(supName in flatSup)) {","                                smod.supersedes.push(supName);","                            }","","// Add rollup file, need to add to supersedes list too","","                        }","                    }","","                    l++;","                }","            }","            //o.supersedes = YObject.keys(YArray.hash(sup));","            o.supersedes = YArray.dedupe(sup);","            if (this.allowRollup) {","                o.rollup = (l < 4) ? l : Math.min(l - 1, 4);","            }","        }","","        plugins = o.plugins;","        if (plugins) {","            for (i in plugins) {","                if (plugins.hasOwnProperty(i)) {","                    plug = plugins[i];","                    plug.pkg = name;","                    plug.path = plug.path || _path(name, i, o.type);","                    plug.requires = plug.requires || [];","                    plug.group = o.group;","                    this.addModule(plug, i);","                    if (o.skinnable) {","                        this._addSkin(this.skin.defaultSkin, i, name);","                    }","","                }","            }","        }","","        if (o.condition) {","            t = o.condition.trigger;","            if (YUI.Env.aliases[t]) {","                t = YUI.Env.aliases[t];","            }","            if (!Y.Lang.isArray(t)) {","                t = [t];","            }","","            for (i = 0; i < t.length; i++) {","                trigger = t[i];","                when = o.condition.when;","                conditions[trigger] = conditions[trigger] || {};","                conditions[trigger][name] = o.condition;","                // the 'when' attribute can be 'before', 'after', or 'instead'","                // the default is after.","                if (when && when != 'after') {","                    if (when == 'instead') { // replace the trigger","                        o.supersedes = o.supersedes || [];","                        o.supersedes.push(trigger);","                    } else { // before the trigger","                        // the trigger requires the conditional mod,","                        // so it should appear before the conditional","                        // mod if we do not intersede.","                    }","                } else { // after the trigger","                    o.after = o.after || [];","                    o.after.push(trigger);","                }","            }","        }","","        if (o.supersedes) {","            o.supersedes = this.filterRequires(o.supersedes);","        }","","        if (o.after) {","            o.after = this.filterRequires(o.after);","            o.after_map = YArray.hash(o.after);","        }","","        // this.dirty = true;","","        if (o.configFn) {","            ret = o.configFn(o);","            if (ret === false) {","                delete this.moduleInfo[name];","                delete GLOBAL_ENV._renderedMods[name];","                o = null;","            }","        }","        //Add to global cache","        if (o) {","            if (!GLOBAL_ENV._renderedMods) {","                GLOBAL_ENV._renderedMods = {};","            }","            GLOBAL_ENV._renderedMods[name] = Y.mix(GLOBAL_ENV._renderedMods[name] || {}, o);","            GLOBAL_ENV._conditions = conditions;","        }","","        return o;","    },","","    /**","     * Add a requirement for one or more module","     * @method require","     * @param {string[] | string*} what the modules to load.","     */","    require: function(what) {","        var a = (typeof what === 'string') ? YArray(arguments) : what;","        this.dirty = true;","        this.required = Y.merge(this.required, YArray.hash(this.filterRequires(a)));","","        this._explodeRollups();","    },","    /**","    * Grab all the items that were asked for, check to see if the Loader","    * meta-data contains a \"use\" array. If it doesm remove the asked item and replace it with ","    * the content of the \"use\".","    * This will make asking for: \"dd\"","    * Actually ask for: \"dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin\"","    * @private","    * @method _explodeRollups","    */","    _explodeRollups: function() {","        var self = this, m, i, a, v, len, len2,","        r = self.required;","","        if (!self.allowRollup) {","            for (i in r) {","                if (r.hasOwnProperty(i)) {","                    m = self.getModule(i);","                    if (m && m.use) {","                        len = m.use.length;","                        for (a = 0; a < len; a++) {","                            m = self.getModule(m.use[a]);","                            if (m && m.use) {","                                len2 = m.use.length;","                                for (v = 0; v < len2; v++) {","                                    r[m.use[v]] = true;","                                }","                            } else {","                                r[m.use[a]] = true;","                            }","                        }","                    }","                }","            }","            self.required = r;","        }","","    },","    /**","    * Explodes the required array to remove aliases and replace them with real modules","    * @method filterRequires","    * @param {Array} r The original requires array","    * @return {Array} The new array of exploded requirements","    */","    filterRequires: function(r) {","        if (r) {","            if (!Y.Lang.isArray(r)) {","                r = [r];","            }","            r = Y.Array(r);","            var c = [], i, mod, o, m;","","            for (i = 0; i < r.length; i++) {","                mod = this.getModule(r[i]);","                if (mod && mod.use) {","                    for (o = 0; o < mod.use.length; o++) {","                        //Must walk the other modules in case a module is a rollup of rollups (datatype)","                        m = this.getModule(mod.use[o]);","                        if (m && m.use) {","                            c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));","                        } else {","                            c.push(mod.use[o]);","                        }","                    }","                } else {","                    c.push(r[i]);","                }","            }","            r = c;","        }","        return r;","    },","    /**","     * Returns an object containing properties for all modules required","     * in order to load the requested module","     * @method getRequires","     * @param {object}  mod The module definition from moduleInfo.","     * @return {array} the expanded requirement list.","     */","    getRequires: function(mod) {","","        if (!mod) {","            //console.log('returning no reqs for ' + mod.name);","            return NO_REQUIREMENTS;","        }","","        if (mod._parsed) {","            //console.log('returning requires for ' + mod.name, mod.requires);","            return mod.expanded || NO_REQUIREMENTS;","        }","","        //TODO add modue cache here out of scope..","","        var i, m, j, add, packName, lang, testresults = this.testresults,","            name = mod.name, cond,","            adddef = ON_PAGE[name] && ON_PAGE[name].details,","            d, k, m1, go, def,","            r, old_mod,","            o, skinmod, skindef, skinpar, skinname,","            intl = mod.lang || mod.intl,","            info = this.moduleInfo,","            ftests = Y.Features && Y.Features.tests.load,","            hash, reparse;","","        // console.log(name);","","        // pattern match leaves module stub that needs to be filled out","        if (mod.temp && adddef) {","            old_mod = mod;","            mod = this.addModule(adddef, name);","            mod.group = old_mod.group;","            mod.pkg = old_mod.pkg;","            delete mod.expanded;","        }","","        // console.log('cache: ' + mod.langCache + ' == ' + this.lang);","        ","        //If a skin or a lang is different, reparse..","        reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));","","        if (mod.expanded && !reparse) {","            return mod.expanded;","        }","        ","","        d = [];","        hash = {};","        r = this.filterRequires(mod.requires);","        if (mod.lang) {","            //If a module has a lang attribute, auto add the intl requirement.","            d.unshift('intl');","            r.unshift('intl');","            intl = true;","        }","        o = this.filterRequires(mod.optional);","","","        mod._parsed = true;","        mod.langCache = this.lang;","        mod.skinCache = this.skin.defaultSkin;","","        for (i = 0; i < r.length; i++) {","            if (!hash[r[i]]) {","                d.push(r[i]);","                hash[r[i]] = true;","                m = this.getModule(r[i]);","                if (m) {","                    add = this.getRequires(m);","                    intl = intl || (m.expanded_map &&","                        (INTL in m.expanded_map));","                    for (j = 0; j < add.length; j++) {","                        d.push(add[j]);","                    }","                }","            }","        }","","        // get the requirements from superseded modules, if any","        r = this.filterRequires(mod.supersedes);","        if (r) {","            for (i = 0; i < r.length; i++) {","                if (!hash[r[i]]) {","                    // if this module has submodules, the requirements list is","                    // expanded to include the submodules.  This is so we can","                    // prevent dups when a submodule is already loaded and the","                    // parent is requested.","                    if (mod.submodules) {","                        d.push(r[i]);","                    }","","                    hash[r[i]] = true;","                    m = this.getModule(r[i]);","","                    if (m) {","                        add = this.getRequires(m);","                        intl = intl || (m.expanded_map &&","                            (INTL in m.expanded_map));","                        for (j = 0; j < add.length; j++) {","                            d.push(add[j]);","                        }","                    }","                }","            }","        }","","        if (o && this.loadOptional) {","            for (i = 0; i < o.length; i++) {","                if (!hash[o[i]]) {","                    d.push(o[i]);","                    hash[o[i]] = true;","                    m = info[o[i]];","                    if (m) {","                        add = this.getRequires(m);","                        intl = intl || (m.expanded_map &&","                            (INTL in m.expanded_map));","                        for (j = 0; j < add.length; j++) {","                            d.push(add[j]);","                        }","                    }","                }","            }","        }","","        cond = this.conditions[name];","","        if (cond) {","            //Set the module to not parsed since we have conditionals and this could change the dependency tree.","            mod._parsed = false;","            if (testresults && ftests) {","                oeach(testresults, function(result, id) {","                    var condmod = ftests[id].name;","                    if (!hash[condmod] && ftests[id].trigger == name) {","                        if (result && ftests[id]) {","                            hash[condmod] = true;","                            d.push(condmod);","                        }","                    }","                });","            } else {","                for (i in cond) {","                    if (cond.hasOwnProperty(i)) {","                        if (!hash[i]) {","                            def = cond[i];","                            //first see if they've specfied a ua check","                            //then see if they've got a test fn & if it returns true","                            //otherwise just having a condition block is enough","                            go = def && ((!def.ua && !def.test) || (def.ua && Y.UA[def.ua]) ||","                                        (def.test && def.test(Y, r)));","","                            if (go) {","                                hash[i] = true;","                                d.push(i);","                                m = this.getModule(i);","                                if (m) {","                                    add = this.getRequires(m);","                                    for (j = 0; j < add.length; j++) {","                                        d.push(add[j]);","                                    }","","                                }","                            }","                        }","                    }","                }","            }","        }","","        // Create skin modules","        if (mod.skinnable) {","            skindef = this.skin.overrides;","            for (i in YUI.Env.aliases) {","                if (YUI.Env.aliases.hasOwnProperty(i)) {","                    if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {","                        skinpar = i;","                    }","                }","            }","            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {","                skinname = name;","                if (skindef[skinpar]) {","                    skinname = skinpar;","                }","                for (i = 0; i < skindef[skinname].length; i++) {","                    skinmod = this._addSkin(skindef[skinname][i], name);","                    if (!this.isCSSLoaded(skinmod, this._boot)) {","                        d.push(skinmod);","                    }","                }","            } else {","                skinmod = this._addSkin(this.skin.defaultSkin, name);","                if (!this.isCSSLoaded(skinmod, this._boot)) {","                    d.push(skinmod);","                }","            }","        }","","        mod._parsed = false;","","        if (intl) {","","            if (mod.lang && !mod.langPack && Y.Intl) {","                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);","                packName = this.getLangPackName(lang, name);","                if (packName) {","                    d.unshift(packName);","                }","            }","            d.unshift(INTL);","        }","","        mod.expanded_map = YArray.hash(d);","","        mod.expanded = YObject.keys(mod.expanded_map);","","        return mod.expanded;","    },","    /**","    * Check to see if named css module is already loaded on the page","    * @method isCSSLoaded","    * @param {String} name The name of the css file","    * @return Boolean","    */","    isCSSLoaded: function(name, skip) {","        //TODO - Make this call a batching call with name being an array","        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {","            return false;","        }","        var el = YUI.Env.cssStampEl,","            ret = false,","            mod = YUI.Env._cssLoaded[name],","            style = el.currentStyle; //IE","","        ","        if (mod !== undefined) {","            return mod;","        }","","        //Add the classname to the element","        el.className = name;","","        if (!style) {","            style = Y.config.doc.defaultView.getComputedStyle(el, null);","        }","","        if (style && style.display === 'none') {","            ret = true;","        }","","","        el.className = ''; //Reset the classname to ''","","        YUI.Env._cssLoaded[name] = ret;","","        return ret;","    },","","    /**","     * Returns a hash of module names the supplied module satisfies.","     * @method getProvides","     * @param {string} name The name of the module.","     * @return {object} what this module provides.","     */","    getProvides: function(name) {","        var m = this.getModule(name), o, s;","            // supmap = this.provides;","","        if (!m) {","            return NOT_FOUND;","        }","","        if (m && !m.provides) {","            o = {};","            s = m.supersedes;","","            if (s) {","                YArray.each(s, function(v) {","                    Y.mix(o, this.getProvides(v));","                }, this);","            }","","            o[name] = true;","            m.provides = o;","","        }","","        return m.provides;","    },","","    /**","     * Calculates the dependency tree, the result is stored in the sorted","     * property.","     * @method calculate","     * @param {object} o optional options object.","     * @param {string} type optional argument to prune modules.","     */","    calculate: function(o, type) {","        if (o || type || this.dirty) {","","            if (o) {","                this._config(o);","            }","","            if (!this._init) {","                this._setup();","            }","","            this._explode();","","            if (this.allowRollup) {","                this._rollup();","            } else {","                this._explodeRollups();","            }","            this._reduce();","            this._sort();","        }","    },","    /**","    * Creates a \"psuedo\" package for languages provided in the lang array","    * @method _addLangPack","    * @private","    * @param {String} lang The language to create","    * @param {Object} m The module definition to create the language pack around","    * @param {String} packName The name of the package (e.g: lang/datatype-date-en-US)","    * @return {Object} The module definition","    */","    _addLangPack: function(lang, m, packName) {","        var name = m.name,","            packPath, conf,","            existing = this.moduleInfo[packName];","","        if (!existing) {","","            packPath = _path((m.pkg || name), packName, JS, true);","","            conf = {","                path: packPath,","                intl: true,","                langPack: true,","                ext: m.ext,","                group: m.group,","                supersedes: []","            };","            if (m.root) {","                conf.root = m.root;","            }","            if (m.base) {","                conf.base = m.base;","            }","","            if (m.configFn) {","                conf.configFn = m.configFn;","            }","","            this.addModule(conf, packName);","","            if (lang) {","                Y.Env.lang = Y.Env.lang || {};","                Y.Env.lang[lang] = Y.Env.lang[lang] || {};","                Y.Env.lang[lang][name] = true;","            }","        }","","        return this.moduleInfo[packName];","    },","","    /**","     * Investigates the current YUI configuration on the page.  By default,","     * modules already detected will not be loaded again unless a force","     * option is encountered.  Called by calculate()","     * @method _setup","     * @private","     */","    _setup: function() {","        var info = this.moduleInfo, name, i, j, m, l,","            packName;","","        for (name in info) {","            if (info.hasOwnProperty(name)) {","                m = info[name];","                if (m) {","","                    // remove dups","                    //m.requires = YObject.keys(YArray.hash(m.requires));","                    m.requires = YArray.dedupe(m.requires);","","                    // Create lang pack modules","                    //if (m.lang && m.lang.length) {","                    if (m.lang) {","                        // Setup root package if the module has lang defined,","                        // it needs to provide a root language pack","                        packName = this.getLangPackName(ROOT_LANG, name);","                        this._addLangPack(null, m, packName);","                    }","","                }","            }","        }","","","        //l = Y.merge(this.inserted);","        l = {};","","        // available modules","        if (!this.ignoreRegistered) {","            Y.mix(l, GLOBAL_ENV.mods);","        }","","        // add the ignore list to the list of loaded packages","        if (this.ignore) {","            Y.mix(l, YArray.hash(this.ignore));","        }","","        // expand the list to include superseded modules","        for (j in l) {","            if (l.hasOwnProperty(j)) {","                Y.mix(l, this.getProvides(j));","            }","        }","","        // remove modules on the force list from the loaded list","        if (this.force) {","            for (i = 0; i < this.force.length; i++) {","                if (this.force[i] in l) {","                    delete l[this.force[i]];","                }","            }","        }","","        Y.mix(this.loaded, l);","","        this._init = true;","    },","","    /**","     * Builds a module name for a language pack","     * @method getLangPackName","     * @param {string} lang the language code.","     * @param {string} mname the module to build it for.","     * @return {string} the language pack module name.","     */","    getLangPackName: function(lang, mname) {","        return ('lang/' + mname + ((lang) ? '_' + lang : ''));","    },","    /**","     * Inspects the required modules list looking for additional","     * dependencies.  Expands the required list to include all","     * required modules.  Called by calculate()","     * @method _explode","     * @private","     */","    _explode: function() {","        //TODO Move done out of scope","        var r = this.required, m, reqs, done = {},","            self = this, name;","","        // the setup phase is over, all modules have been created","        self.dirty = false;","","        self._explodeRollups();","        r = self.required;","       ","        for (name in r) {","            if (r.hasOwnProperty(name)) {","                if (!done[name]) {","                    done[name] = true;","                    m = self.getModule(name);","                    if (m) {","                        var expound = m.expound;","","                        if (expound) {","                            r[expound] = self.getModule(expound);","                            reqs = self.getRequires(r[expound]);","                            Y.mix(r, YArray.hash(reqs));","                        }","","                        reqs = self.getRequires(m);","                        Y.mix(r, YArray.hash(reqs));","                    }","                }","            }","        }","","    },","    /**","    * The default method used to test a module against a pattern","    * @method _patternTest","    * @private","    * @param {String} mname The module being tested","    * @param {String} pname The pattern to match","    */","    _patternTest: function(mname, pname) {","        return (mname.indexOf(pname) > -1);","    },","    /**","    * Get's the loader meta data for the requested module","    * @method getModule","    * @param {String} mname The module name to get","    * @return {Object} The module metadata","    */","    getModule: function(mname) {","        //TODO: Remove name check - it's a quick hack to fix pattern WIP","        if (!mname) {","            return null;","        }","","        var p, found, pname,","            m = this.moduleInfo[mname],","            patterns = this.patterns;","","        // check the patterns library to see if we should automatically add","        // the module with defaults","        if (!m || (m && m.ext)) {","            for (pname in patterns) {","                if (patterns.hasOwnProperty(pname)) {","                    p = patterns[pname];","                    ","                    //There is no test method, create a default one that tests","                    // the pattern against the mod name","                    if (!p.test) {","                        p.test = this._patternTest;","                    }","","                    if (p.test(mname, pname)) {","                        // use the metadata supplied for the pattern","                        // as the module definition.","                        found = p;","                        break;","                    }","                }","            }","        }","","        if (!m) {","            if (found) {","                if (p.action) {","                    p.action.call(this, mname, pname);","                } else {","                    // ext true or false?","                    m = this.addModule(Y.merge(found), mname);","                    if (found.configFn) {","                        m.configFn = found.configFn;","                    }","                    m.temp = true;","                }","            }","        } else {","            if (found && m && found.configFn && !m.configFn) {","                m.configFn = found.configFn;","                m.configFn(m);","            }","        }","","        return m;","    },","","    // impl in rollup submodule","    _rollup: function() { },","","    /**","     * Remove superceded modules and loaded modules.  Called by","     * calculate() after we have the mega list of all dependencies","     * @method _reduce","     * @return {object} the reduced dependency hash.","     * @private","     */","    _reduce: function(r) {","","        r = r || this.required;","","        var i, j, s, m, type = this.loadType,","        ignore = this.ignore ? YArray.hash(this.ignore) : false;","","        for (i in r) {","            if (r.hasOwnProperty(i)) {","                m = this.getModule(i);","                // remove if already loaded","                if (((this.loaded[i] || ON_PAGE[i]) &&","                        !this.forceMap[i] && !this.ignoreRegistered) ||","                        (type && m && m.type != type)) {","                    delete r[i];","                }","                if (ignore && ignore[i]) {","                    delete r[i];","                }","                // remove anything this module supersedes","                s = m && m.supersedes;","                if (s) {","                    for (j = 0; j < s.length; j++) {","                        if (s[j] in r) {","                            delete r[s[j]];","                        }","                    }","                }","            }","        }","","        return r;","    },","    /**","    * Handles the queue when a module has been loaded for all cases","    * @method _finish","    * @private","    * @param {String} msg The message from Loader","    * @param {Boolean} success A boolean denoting success or failure","    */","    _finish: function(msg, success) {","","        _queue.running = false;","","        var onEnd = this.onEnd;","        if (onEnd) {","            onEnd.call(this.context, {","                msg: msg,","                data: this.data,","                success: success","            });","        }","        this._continue();","    },","    /**","    * The default Loader onSuccess handler, calls this.onSuccess with a payload","    * @method _onSuccess","    * @private","    */","    _onSuccess: function() {","        var self = this, skipped = Y.merge(self.skipped), fn,","            failed = [], rreg = self.requireRegistration,","            success, msg, i, mod;","        ","        for (i in skipped) {","            if (skipped.hasOwnProperty(i)) {","                delete self.inserted[i];","            }","        }","","        self.skipped = {};","        ","        for (i in self.inserted) {","            if (self.inserted.hasOwnProperty(i)) {","                mod = self.getModule(i);","                if (mod && rreg && mod.type == JS && !(i in YUI.Env.mods)) {","                    failed.push(i);","                } else {","                    Y.mix(self.loaded, self.getProvides(i));","                }","            }","        }","","        fn = self.onSuccess;","        msg = (failed.length) ? 'notregistered' : 'success';","        success = !(failed.length);","        if (fn) {","            fn.call(self.context, {","                msg: msg,","                data: self.data,","                success: success,","                failed: failed,","                skipped: skipped","            });","        }","        self._finish(msg, success);","    },","    /**","    * The default Loader onProgress handler, calls this.onProgress with a payload","    * @method _onProgress","    * @private","    */","    _onProgress: function(e) {","        var self = this;","        if (self.onProgress) {","            self.onProgress.call(self.context, {","                name: e.url,","                data: e.data","            });","        }","    },","    /**","    * The default Loader onFailure handler, calls this.onFailure with a payload","    * @method _onFailure","    * @private","    */","    _onFailure: function(o) {","        var f = this.onFailure, msg = [], i = 0, len = o.errors.length;","        ","        for (i; i < len; i++) {","            msg.push(o.errors[i].error);","        }","","        msg = msg.join(',');","","        ","        if (f) {","            f.call(this.context, {","                msg: msg,","                data: this.data,","                success: false","            });","        }","        ","        this._finish(msg, false);","","    },","","    /**","    * The default Loader onTimeout handler, calls this.onTimeout with a payload","    * @method _onTimeout","    * @private","    */","    _onTimeout: function() {","        var f = this.onTimeout;","        if (f) {","            f.call(this.context, {","                msg: 'timeout',","                data: this.data,","                success: false","            });","        }","    },","","    /**","     * Sorts the dependency tree.  The last step of calculate()","     * @method _sort","     * @private","     */","    _sort: function() {","","        // create an indexed list","        var s = YObject.keys(this.required),","            // loaded = this.loaded,","            //TODO Move this out of scope","            done = {},","            p = 0, l, a, b, j, k, moved, doneKey;","","        // keep going until we make a pass without moving anything","        for (;;) {","","            l = s.length;","            moved = false;","","            // start the loop after items that are already sorted","            for (j = p; j < l; j++) {","","                // check the next module on the list to see if its","                // dependencies have been met","                a = s[j];","","                // check everything below current item and move if we","                // find a requirement for the current item","                for (k = j + 1; k < l; k++) {","                    doneKey = a + s[k];","","                    if (!done[doneKey] && this._requires(a, s[k])) {","","                        // extract the dependency so we can move it up","                        b = s.splice(k, 1);","","                        // insert the dependency above the item that","                        // requires it","                        s.splice(j, 0, b[0]);","","                        // only swap two dependencies once to short circut","                        // circular dependencies","                        done[doneKey] = true;","","                        // keep working","                        moved = true;","","                        break;","                    }","                }","","                // jump out of loop if we moved something","                if (moved) {","                    break;","                // this item is sorted, move our pointer and keep going","                } else {","                    p++;","                }","            }","","            // when we make it here and moved is false, we are","            // finished sorting","            if (!moved) {","                break;","            }","","        }","","        this.sorted = s;","    },","","    /**","    * Handles the actual insertion of script/link tags","    * @method _insert","    * @private","    * @param {Object} source The YUI instance the request came from","    * @param {Object} o The metadata to include","    * @param {String} type JS or CSS","    * @param {Boolean} [skipcalc=false] Do a Loader.calculate on the meta","    */","    _insert: function(source, o, type, skipcalc) {","","","        // restore the state at the time of the request","        if (source) {","            this._config(source);","        }","","        // build the dependency list","        // don't include type so we can process CSS and script in","        // one pass when the type is not specified.","        if (!skipcalc) {","            //this.calculate(o);","        }","","        var modules = this.resolve(!skipcalc),","            self = this, comp = 0, actions = 0;","","        if (type) {","            //Filter out the opposite type and reset the array so the checks later work","            modules[((type === JS) ? CSS : JS)] = [];","        }","        if (modules.js.length) {","            comp++;","        }","        if (modules.css.length) {","            comp++;","        }","","        //console.log('Resolved Modules: ', modules);","","        var complete = function(d) {","            actions++;","            var errs = {}, i = 0, u = '', fn;","","            if (d && d.errors) {","                for (i = 0; i < d.errors.length; i++) {","                    if (d.errors[i].request) {","                        u = d.errors[i].request.url;","                    } else {","                        u = d.errors[i];","                    }","                    errs[u] = u;","                }","            }","            ","            if (d && d.data && d.data.length && (d.type === 'success')) {","                for (i = 0; i < d.data.length; i++) {","                    self.inserted[d.data[i].name] = true;","                }","            }","","            if (actions === comp) {","                self._loading = null;","                if (d && d.fn) {","                    fn = d.fn;","                    delete d.fn;","                    fn.call(self, d);","                }","            }","        };","","        this._loading = true;","","        if (!modules.js.length && !modules.css.length) {","            actions = -1;","            complete({","                fn: self._onSuccess","            });","            return;","        }","        ","","        if (modules.css.length) { //Load CSS first","            Y.Get.css(modules.css, {","                data: modules.cssMods,","                attributes: self.cssAttributes,","                insertBefore: self.insertBefore,","                charset: self.charset,","                timeout: self.timeout,","                context: self,","                onProgress: function(e) {","                    self._onProgress.call(self, e);","                },","                onTimeout: function(d) {","                    self._onTimeout.call(self, d);","                },","                onSuccess: function(d) {","                    d.type = 'success';","                    d.fn = self._onSuccess;","                    complete.call(self, d);","                },","                onFailure: function(d) {","                    d.type = 'failure';","                    d.fn = self._onFailure;","                    complete.call(self, d);","                }","            });","        }","","        if (modules.js.length) {","            Y.Get.js(modules.js, {","                data: modules.jsMods,","                insertBefore: self.insertBefore,","                attributes: self.jsAttributes,","                charset: self.charset,","                timeout: self.timeout,","                autopurge: false,","                context: self,","                async: self.async,","                onProgress: function(e) {","                    self._onProgress.call(self, e);","                },","                onTimeout: function(d) {","                    self._onTimeout.call(self, d);","                },","                onSuccess: function(d) {","                    d.type = 'success';","                    d.fn = self._onSuccess;","                    complete.call(self, d);","                },","                onFailure: function(d) {","                    d.type = 'failure';","                    d.fn = self._onFailure;","                    complete.call(self, d);","                }","            });","        }","    },","    /**","    * Once a loader operation is completely finished, process any additional queued items.","    * @method _continue","    * @private","    */","    _continue: function() {","        if (!(_queue.running) && _queue.size() > 0) {","            _queue.running = true;","            _queue.next()();","        }","    },","","    /**","     * inserts the requested modules and their dependencies.","     * <code>type</code> can be \"js\" or \"css\".  Both script and","     * css are inserted if type is not provided.","     * @method insert","     * @param {object} o optional options object.","     * @param {string} type the type of dependency to insert.","     */","    insert: function(o, type, skipsort) {","        var self = this, copy = Y.merge(this);","        delete copy.require;","        delete copy.dirty;","        _queue.add(function() {","            self._insert(copy, o, type, skipsort);","        });","        this._continue();","    },","","    /**","     * Executed every time a module is loaded, and if we are in a load","     * cycle, we attempt to load the next script.  Public so that it","     * is possible to call this if using a method other than","     * Y.register to determine when scripts are fully loaded","     * @method loadNext","     * @deprecated","     * @param {string} mname optional the name of the module that has","     * been loaded (which is usually why it is time to load the next","     * one).","     */","    loadNext: function(mname) {","        return;","    },","","    /**","     * Apply filter defined for this instance to a url/path","     * @method _filter","     * @param {string} u the string to filter.","     * @param {string} name the name of the module, if we are processing","     * a single module as opposed to a combined url.","     * @return {string} the filtered string.","     * @private","     */","    _filter: function(u, name, group) {","        var f = this.filter,","            hasFilter = name && (name in this.filters),","            modFilter = hasFilter && this.filters[name],","            groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);","","        if (groupName && this.groups[groupName] && this.groups[groupName].filter) {","            modFilter = this.groups[groupName].filter;","            hasFilter = true;","        }","","        if (u) {","            if (hasFilter) {","                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;","            }","            if (f) {","                u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);","            }","        }","        return u;","    },","","    /**","     * Generates the full url for a module","     * @method _url","     * @param {string} path the path fragment.","     * @param {String} name The name of the module","     * @param {String} [base=self.base] The base url to use","     * @return {string} the full url.","     * @private","     */","    _url: function(path, name, base) {","        return this._filter((base || this.base || '') + path, name);","    },","    /**","    * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.","    * @method resolve","    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else","    * @param {Array} [s=loader.sorted] An override for the loader.sorted array","    * @return {Object} Object hash (js and css) of two arrays of file lists","    * @example This method can be used as an off-line dep calculator","    *","    *        var Y = YUI();","    *        var loader = new Y.Loader({","    *            filter: 'debug',","    *            base: '../../',","    *            root: 'build/',","    *            combine: true,","    *            require: ['node', 'dd', 'console']","    *        });","    *        var out = loader.resolve(true);","    *","    */","    resolve: function(calc, s) {","","        var len, i, m, url, fn, msg, attr, group, groupName, j, frag,","            comboSource, comboSources, mods, comboBase,","            base, urls, u = [], tmpBase, baseLen, resCombos = {},","            self = this, comboSep, maxURLLength, singles = [],","            inserted = (self.ignoreRegistered) ? {} : self.inserted,","            resolved = { js: [], jsMods: [], css: [], cssMods: [] },","            type = self.loadType || 'js';","","        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { ","            self._resetModules();","        }","","        if (calc) {","            self.calculate();","        }","        s = s || self.sorted;","","        var addSingle = function(m) {","            ","            if (m) {","                group = (m.group && self.groups[m.group]) || NOT_FOUND;","                ","                //Always assume it's async","                if (group.async === false) {","                    m.async = group.async;","                }","","                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :","                      self._url(m.path, s[i], group.base || m.base);","                ","                if (m.attributes || m.async === false) {","                    url = {","                        url: url,","                        async: m.async","                    };","                    if (m.attributes) {","                        url.attributes = m.attributes;","                    }","                }","                resolved[m.type].push(url);","                resolved[m.type + 'Mods'].push(m);","            } else {","            }","            ","        };","","        len = s.length;","","        // the default combo base","        comboBase = self.comboBase;","","        url = comboBase;","","        comboSources = {};","","        for (i = 0; i < len; i++) {","            comboSource = comboBase;","            m = self.getModule(s[i]);","            groupName = m && m.group;","            group = self.groups[groupName];","            if (groupName && group) {","","                if (!group.combine || m.fullpath) {","                    //This is not a combo module, skip it and load it singly later.","                    //singles.push(s[i]);","                    addSingle(m);","                    continue;","                }","                m.combine = true;","                if (group.comboBase) {","                    comboSource = group.comboBase;","                }","","                if (\"root\" in group && L.isValue(group.root)) {","                    m.root = group.root;","                }","                m.comboSep = group.comboSep || self.comboSep;","                m.maxURLLength = group.maxURLLength || self.maxURLLength;","            } else {","                if (!self.combine) {","                    //This is not a combo module, skip it and load it singly later.","                    //singles.push(s[i]);","                    addSingle(m);","                    continue;","                }","            }","","            comboSources[comboSource] = comboSources[comboSource] || [];","            comboSources[comboSource].push(m);","        }","","        for (j in comboSources) {","            if (comboSources.hasOwnProperty(j)) {","                resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };","                url = j;","                mods = comboSources[j];","                len = mods.length;","                ","                if (len) {","                    for (i = 0; i < len; i++) {","                        if (inserted[mods[i]]) {","                            continue;","                        }","                        m = mods[i];","                        // Do not try to combine non-yui JS unless combo def","                        // is found","                        if (m && (m.combine || !m.ext)) {","                            resCombos[j].comboSep = m.comboSep;","                            resCombos[j].group = m.group;","                            resCombos[j].maxURLLength = m.maxURLLength;","                            frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);","                            frag = self._filter(frag, m.name);","                            resCombos[j][m.type].push(frag);","                            resCombos[j][m.type + 'Mods'].push(m);","                        } else {","                            //Add them to the next process..","                            if (mods[i]) {","                                //singles.push(mods[i].name);","                                addSingle(mods[i]);","                            }","                        }","","                    }","                }","            }","        }","","","        for (j in resCombos) {","            base = j;","            comboSep = resCombos[base].comboSep || self.comboSep;","            maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;","            for (type in resCombos[base]) {","                if (type === JS || type === CSS) {","                    urls = resCombos[base][type];","                    mods = resCombos[base][type + 'Mods'];","                    len = urls.length;","                    tmpBase = base + urls.join(comboSep);","                    baseLen = tmpBase.length;","                    if (maxURLLength <= base.length) {","                        maxURLLength = MAX_URL_LENGTH;","                    }","                    ","                    if (len) {","                        if (baseLen > maxURLLength) {","                            u = [];","                            for (s = 0; s < len; s++) {","                                u.push(urls[s]);","                                tmpBase = base + u.join(comboSep);","","                                if (tmpBase.length > maxURLLength) {","                                    m = u.pop();","                                    tmpBase = base + u.join(comboSep);","                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));","                                    u = [];","                                    if (m) {","                                        u.push(m);","                                    }","                                }","                            }","                            if (u.length) {","                                tmpBase = base + u.join(comboSep);","                                resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));","                            }","                        } else {","                            resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));","                        }","                    }","                    resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);","                }","            }","        }","","        resCombos = null;","","        return resolved;","    },","    /**","    Shortcut to calculate, resolve and load all modules.","","        var loader = new Y.Loader({","            ignoreRegistered: true,","            modules: {","                mod: {","                    path: 'mod.js'","                }","            },","            requires: [ 'mod' ]","        });","        loader.load(function() {","            console.log('All modules have loaded..');","        });","","","    @method load","    @param {Callback} cb Executed after all load operations are complete","    */","    load: function(cb) {","        if (!cb) {","            return;","        }","        var self = this,","            out = self.resolve(true);","        ","        self.data = out;","","        self.onEnd = function() {","            cb.apply(self.context || self, arguments);","        };","","        self.insert();","    }","};","","","","}, '@VERSION@' ,{requires:['get', 'features']});"];
-_yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].lines = {"1":0,"9":0,"11":0,"12":0,"39":0,"45":0,"46":0,"47":0,"50":0,"54":0,"55":0,"56":0,"60":0,"62":0,"72":0,"80":0,"81":0,"82":0,"85":0,"93":0,"94":0,"96":0,"116":0,"138":0,"139":0,"140":0,"142":0,"144":0,"148":0,"149":0,"159":0,"207":0,"209":0,"212":0,"214":0,"268":0,"311":0,"319":0,"334":0,"343":0,"355":0,"362":0,"371":0,"380":0,"398":0,"406":0,"441":0,"448":0,"461":0,"468":0,"470":0,"500":0,"506":0,"511":0,"512":0,"514":0,"524":0,"532":0,"534":0,"536":0,"538":0,"540":0,"542":0,"544":0,"545":0,"570":0,"586":0,"593":0,"600":0,"604":0,"613":0,"615":0,"620":0,"628":0,"633":0,"634":0,"635":0,"636":0,"640":0,"641":0,"642":0,"643":0,"648":0,"649":0,"650":0,"662":0,"663":0,"664":0,"665":0,"669":0,"670":0,"671":0,"672":0,"673":0,"676":0,"677":0,"678":0,"679":0,"680":0,"685":0,"686":0,"687":0,"688":0,"728":0,"731":0,"732":0,"733":0,"734":0,"735":0,"736":0,"741":0,"742":0,"743":0,"744":0,"745":0,"746":0,"747":0,"749":0,"750":0,"752":0,"755":0,"757":0,"771":0,"776":0,"777":0,"780":0,"781":0,"785":0,"786":0,"789":0,"792":0,"793":0,"797":0,"798":0,"799":0,"800":0,"801":0,"806":0,"807":0,"808":0,"809":0,"810":0,"817":0,"818":0,"822":0,"823":0,"826":0,"835":0,"837":0,"838":0,"839":0,"840":0,"841":0,"842":0,"843":0,"845":0,"846":0,"847":0,"852":0,"853":0,"854":0,"855":0,"856":0,"857":0,"858":0,"859":0,"860":0,"861":0,"862":0,"869":0,"871":0,"872":0,"873":0,"876":0,"877":0,"878":0,"879":0,"882":0,"883":0,"884":0,"885":0,"887":0,"894":0,"896":0,"897":0,"898":0,"899":0,"900":0,"901":0,"906":0,"924":0,"925":0,"926":0,"929":0,"943":0,"949":0,"950":0,"951":0,"952":0,"953":0,"954":0,"964":0,"965":0,"967":0,"968":0,"970":0,"975":0,"991":0,"992":0,"1021":0,"1024":0,"1025":0,"1026":0,"1028":0,"1029":0,"1030":0,"1031":0,"1032":0,"1037":0,"1038":0,"1039":0,"1040":0,"1041":0,"1042":0,"1044":0,"1045":0,"1082":0,"1084":0,"1085":0,"1092":0,"1098":0,"1101":0,"1103":0,"1104":0,"1107":0,"1109":0,"1110":0,"1111":0,"1112":0,"1116":0,"1117":0,"1119":0,"1121":0,"1124":0,"1130":0,"1132":0,"1139":0,"1140":0,"1141":0,"1144":0,"1145":0,"1146":0,"1147":0,"1148":0,"1154":0,"1155":0,"1162":0,"1163":0,"1164":0,"1167":0,"1168":0,"1171":0,"1172":0,"1173":0,"1174":0,"1175":0,"1176":0,"1177":0,"1178":0,"1184":0,"1185":0,"1186":0,"1188":0,"1189":0,"1190":0,"1192":0,"1193":0,"1194":0,"1196":0,"1197":0,"1200":0,"1201":0,"1203":0,"1204":0,"1205":0,"1206":0,"1207":0,"1208":0,"1210":0,"1213":0,"1215":0,"1221":0,"1223":0,"1224":0,"1225":0,"1226":0,"1227":0,"1228":0,"1230":0,"1231":0,"1234":0,"1236":0,"1237":0,"1240":0,"1242":0,"1244":0,"1245":0,"1251":0,"1252":0,"1254":0,"1256":0,"1257":0,"1260":0,"1261":0,"1269":0,"1273":0,"1274":0,"1275":0,"1279":0,"1280":0,"1281":0,"1282":0,"1283":0,"1284":0,"1285":0,"1286":0,"1287":0,"1288":0,"1289":0,"1290":0,"1297":0,"1298":0,"1299":0,"1300":0,"1302":0,"1303":0,"1306":0,"1307":0,"1308":0,"1309":0,"1310":0,"1313":0,"1314":0,"1315":0,"1316":0,"1323":0,"1324":0,"1329":0,"1330":0,"1333":0,"1334":0,"1335":0,"1340":0,"1341":0,"1342":0,"1343":0,"1344":0,"1345":0,"1349":0,"1350":0,"1351":0,"1353":0,"1354":0,"1357":0,"1366":0,"1367":0,"1368":0,"1370":0,"1382":0,"1385":0,"1386":0,"1387":0,"1388":0,"1389":0,"1390":0,"1391":0,"1392":0,"1393":0,"1394":0,"1395":0,"1396":0,"1399":0,"1405":0,"1416":0,"1417":0,"1418":0,"1420":0,"1421":0,"1423":0,"1424":0,"1425":0,"1426":0,"1428":0,"1429":0,"1430":0,"1432":0,"1436":0,"1439":0,"1441":0,"1452":0,"1454":0,"1457":0,"1459":0,"1464":0,"1478":0,"1479":0,"1480":0,"1481":0,"1482":0,"1483":0,"1489":0,"1491":0,"1492":0,"1496":0,"1497":0,"1498":0,"1499":0,"1501":0,"1502":0,"1503":0,"1505":0,"1508":0,"1509":0,"1510":0,"1512":0,"1513":0,"1514":0,"1515":0,"1516":0,"1517":0,"1518":0,"1519":0,"1521":0,"1522":0,"1529":0,"1530":0,"1531":0,"1532":0,"1537":0,"1538":0,"1541":0,"1542":0,"1544":0,"1545":0,"1546":0,"1548":0,"1549":0,"1556":0,"1557":0,"1558":0,"1559":0,"1560":0,"1561":0,"1562":0,"1563":0,"1564":0,"1566":0,"1567":0,"1574":0,"1576":0,"1578":0,"1579":0,"1580":0,"1581":0,"1582":0,"1583":0,"1584":0,"1585":0,"1590":0,"1591":0,"1592":0,"1593":0,"1597":0,"1600":0,"1601":0,"1602":0,"1603":0,"1604":0,"1605":0,"1606":0,"1607":0,"1619":0,"1620":0,"1621":0,"1622":0,"1623":0,"1624":0,"1628":0,"1629":0,"1630":0,"1631":0,"1633":0,"1634":0,"1635":0,"1636":0,"1640":0,"1641":0,"1642":0,"1647":0,"1649":0,"1651":0,"1652":0,"1653":0,"1654":0,"1655":0,"1658":0,"1661":0,"1663":0,"1665":0,"1675":0,"1676":0,"1678":0,"1684":0,"1685":0,"1689":0,"1691":0,"1692":0,"1695":0,"1696":0,"1700":0,"1702":0,"1704":0,"1714":0,"1717":0,"1718":0,"1721":0,"1722":0,"1723":0,"1725":0,"1726":0,"1727":0,"1731":0,"1732":0,"1736":0,"1747":0,"1749":0,"1750":0,"1753":0,"1754":0,"1757":0,"1759":0,"1760":0,"1762":0,"1764":0,"1765":0,"1778":0,"1782":0,"1784":0,"1786":0,"1794":0,"1795":0,"1797":0,"1798":0,"1801":0,"1802":0,"1805":0,"1807":0,"1808":0,"1809":0,"1810":0,"1814":0,"1825":0,"1828":0,"1829":0,"1830":0,"1831":0,"1835":0,"1839":0,"1842":0,"1843":0,"1852":0,"1855":0,"1856":0,"1860":0,"1861":0,"1865":0,"1866":0,"1867":0,"1872":0,"1873":0,"1874":0,"1875":0,"1880":0,"1882":0,"1893":0,"1904":0,"1908":0,"1910":0,"1911":0,"1913":0,"1914":0,"1915":0,"1916":0,"1917":0,"1918":0,"1919":0,"1921":0,"1922":0,"1923":0,"1924":0,"1927":0,"1928":0,"1943":0,"1953":0,"1954":0,"1957":0,"1963":0,"1964":0,"1965":0,"1966":0,"1970":0,"1971":0,"1974":0,"1977":0,"1978":0,"1984":0,"1985":0,"1986":0,"1987":0,"1990":0,"1991":0,"1992":0,"1994":0,"1998":0,"1999":0,"2000":0,"2004":0,"2019":0,"2021":0,"2024":0,"2025":0,"2026":0,"2028":0,"2031":0,"2033":0,"2034":0,"2037":0,"2038":0,"2039":0,"2040":0,"2041":0,"2048":0,"2059":0,"2061":0,"2062":0,"2063":0,"2069":0,"2077":0,"2081":0,"2082":0,"2083":0,"2087":0,"2089":0,"2090":0,"2091":0,"2092":0,"2093":0,"2095":0,"2100":0,"2101":0,"2102":0,"2103":0,"2104":0,"2112":0,"2120":0,"2121":0,"2122":0,"2134":0,"2136":0,"2137":0,"2140":0,"2143":0,"2144":0,"2151":0,"2161":0,"2162":0,"2163":0,"2179":0,"2186":0,"2188":0,"2189":0,"2192":0,"2196":0,"2200":0,"2201":0,"2203":0,"2206":0,"2210":0,"2214":0,"2217":0,"2219":0,"2224":0,"2225":0,"2228":0,"2234":0,"2235":0,"2240":0,"2256":0,"2257":0,"2263":0,"2267":0,"2270":0,"2272":0,"2274":0,"2275":0,"2277":0,"2278":0,"2283":0,"2284":0,"2285":0,"2287":0,"2288":0,"2289":0,"2290":0,"2292":0,"2294":0,"2298":0,"2299":0,"2300":0,"2304":0,"2305":0,"2306":0,"2307":0,"2308":0,"2309":0,"2314":0,"2316":0,"2317":0,"2318":0,"2321":0,"2325":0,"2326":0,"2334":0,"2337":0,"2340":0,"2341":0,"2342":0,"2345":0,"2346":0,"2347":0,"2352":0,"2353":0,"2363":0,"2366":0,"2369":0,"2370":0,"2371":0,"2374":0,"2375":0,"2376":0,"2387":0,"2388":0,"2389":0,"2402":0,"2403":0,"2404":0,"2405":0,"2406":0,"2408":0,"2423":0,"2436":0,"2441":0,"2442":0,"2443":0,"2446":0,"2447":0,"2448":0,"2450":0,"2451":0,"2454":0,"2467":0,"2490":0,"2498":0,"2499":0,"2502":0,"2503":0,"2505":0,"2507":0,"2509":0,"2510":0,"2513":0,"2514":0,"2517":0,"2520":0,"2521":0,"2525":0,"2526":0,"2529":0,"2530":0,"2536":0,"2539":0,"2541":0,"2543":0,"2545":0,"2546":0,"2547":0,"2548":0,"2549":0,"2550":0,"2552":0,"2555":0,"2556":0,"2558":0,"2559":0,"2560":0,"2563":0,"2564":0,"2566":0,"2567":0,"2569":0,"2572":0,"2573":0,"2577":0,"2578":0,"2581":0,"2582":0,"2583":0,"2584":0,"2585":0,"2586":0,"2588":0,"2589":0,"2590":0,"2591":0,"2593":0,"2596":0,"2597":0,"2598":0,"2599":0,"2600":0,"2601":0,"2602":0,"2603":0,"2606":0,"2608":0,"2618":0,"2619":0,"2620":0,"2621":0,"2622":0,"2623":0,"2624":0,"2625":0,"2626":0,"2627":0,"2628":0,"2629":0,"2630":0,"2633":0,"2634":0,"2635":0,"2636":0,"2637":0,"2638":0,"2640":0,"2641":0,"2642":0,"2643":0,"2644":0,"2645":0,"2646":0,"2650":0,"2651":0,"2652":0,"2655":0,"2658":0,"2663":0,"2665":0,"2688":0,"2689":0,"2691":0,"2694":0,"2696":0,"2697":0,"2700":0};
-_yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].functions = {"yui2Update:37":0,"galleryUpdate:49":0,"configFn:79":0,"(anonymous 2):11":0,"_path:137":0,"Loader:207":0,"_populateCache:627":0,"_resetModules:661":0,"_inspectPage:727":0,"_requires:769":0,"_config:834":0,"formatSkin:923":0,"_addSkin:942":0,"addAlias:990":0,"addGroup:1020":0,"addModule:1081":0,"require:1365":0,"_explodeRollups:1381":0,"filterRequires:1415":0,"(anonymous 3):1580":0,"getRequires:1450":0,"isCSSLoaded:1673":0,"(anonymous 4):1726":0,"getProvides:1713":0,"calculate:1746":0,"_addLangPack:1777":0,"_setup:1824":0,"getLangPackName:1892":0,"_explode:1902":0,"_patternTest:1942":0,"getModule:1951":0,"_reduce:2017":0,"_finish:2057":0,"_onSuccess:2076":0,"_onProgress:2119":0,"_onFailure:2133":0,"_onTimeout:2160":0,"_sort:2176":0,"complete:2283":0,"onProgress:2333":0,"onTimeout:2336":0,"onSuccess:2339":0,"onFailure:2344":0,"onProgress:2362":0,"onTimeout:2365":0,"onSuccess:2368":0,"onFailure:2373":0,"_insert:2252":0,"_continue:2386":0,"(anonymous 5):2405":0,"insert:2401":0,"loadNext:2422":0,"_filter:2435":0,"_url:2466":0,"addSingle:2507":0,"resolve:2488":0,"onEnd:2696":0,"load:2687":0,"(anonymous 1):1":0};
+_yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].code=["YUI.add('loader-base', function(Y) {","","/**"," * The YUI loader core"," * @module loader"," * @submodule loader-base"," */","","if (!YUI.Env[Y.version]) {","","    (function() {","        var VERSION = Y.version,","            BUILD = '/build/',","            ROOT = VERSION + BUILD,","            CDN_BASE = Y.Env.base,","            GALLERY_VERSION = 'gallery-2012.08.01-13-16',","            TNT = '2in3',","            TNT_VERSION = '4',","            YUI2_VERSION = '2.9.0',","            COMBO_BASE = CDN_BASE + 'combo?',","            META = { version: VERSION,","                              root: ROOT,","                              base: Y.Env.base,","                              comboBase: COMBO_BASE,","                              skin: { defaultSkin: 'sam',","                                           base: 'assets/skins/',","                                           path: 'skin.css',","                                           after: ['cssreset',","                                                          'cssfonts',","                                                          'cssgrids',","                                                          'cssbase',","                                                          'cssreset-context',","                                                          'cssfonts-context']},","                              groups: {},","                              patterns: {} },","            groups = META.groups,","            yui2Update = function(tnt, yui2, config) {","                    ","                var root = TNT + '.' +","                        (tnt || TNT_VERSION) + '/' +","                        (yui2 || YUI2_VERSION) + BUILD,","                    base = (config && config.base) ? config.base : CDN_BASE,","                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;","","                groups.yui2.base = base + root;","                groups.yui2.root = root;","                groups.yui2.comboBase = combo;","            },","            galleryUpdate = function(tag, config) {","                var root = (tag || GALLERY_VERSION) + BUILD,","                    base = (config && config.base) ? config.base : CDN_BASE,","                    combo = (config && config.comboBase) ? config.comboBase : COMBO_BASE;","","                groups.gallery.base = base + root;","                groups.gallery.root = root;","                groups.gallery.comboBase = combo;","            };","","","        groups[VERSION] = {};","","        groups.gallery = {","            ext: false,","            combine: true,","            comboBase: COMBO_BASE,","            update: galleryUpdate,","            patterns: { 'gallery-': { },","                        'lang/gallery-': {},","                        'gallerycss-': { type: 'css' } }","        };","","        groups.yui2 = {","            combine: true,","            ext: false,","            comboBase: COMBO_BASE,","            update: yui2Update,","            patterns: {","                'yui2-': {","                    configFn: function(me) {","                        if (/-skin|reset|fonts|grids|base/.test(me.name)) {","                            me.type = 'css';","                            me.path = me.path.replace(/\\.js/, '.css');","                            // this makes skins in builds earlier than","                            // 2.6.0 work as long as combine is false","                            me.path = me.path.replace(/\\/yui2-skin/,","                                             '/assets/skins/sam/yui2-skin');","                        }","                    }","                }","            }","        };","","        galleryUpdate();","        yui2Update();","","        YUI.Env[VERSION] = META;","    }());","}","","","/*jslint forin: true */","","/**"," * Loader dynamically loads script and css files.  It includes the dependency"," * information for the version of the library in use, and will automatically pull in"," * dependencies for the modules requested. It can also load the"," * files from the Yahoo! CDN, and it can utilize the combo service provided on"," * this network to reduce the number of http connections required to download"," * YUI files."," *"," * @module loader"," * @main loader"," * @submodule loader-base"," */","","var NOT_FOUND = {},","    NO_REQUIREMENTS = [],","    MAX_URL_LENGTH = 1024,","    GLOBAL_ENV = YUI.Env,","    GLOBAL_LOADED = GLOBAL_ENV._loaded,","    CSS = 'css',","    JS = 'js',","    INTL = 'intl',","    DEFAULT_SKIN = 'sam',","    VERSION = Y.version,","    ROOT_LANG = '',","    YObject = Y.Object,","    oeach = YObject.each,","    YArray = Y.Array,","    _queue = GLOBAL_ENV._loaderQueue,","    META = GLOBAL_ENV[VERSION],","    SKIN_PREFIX = 'skin-',","    L = Y.Lang,","    ON_PAGE = GLOBAL_ENV.mods,","    modulekey,","    cache,","    _path = function(dir, file, type, nomin) {","        var path = dir + '/' + file;","        if (!nomin) {","            path += '-min';","        }","        path += '.' + (type || CSS);","","        return path;","    };","","","    if (!YUI.Env._cssLoaded) {","        YUI.Env._cssLoaded = {};","    }","","","/**"," * The component metadata is stored in Y.Env.meta."," * Part of the loader module."," * @property meta"," * @for YUI"," */","Y.Env.meta = META;","","/**"," * Loader dynamically loads script and css files.  It includes the dependency"," * info for the version of the library in use, and will automatically pull in"," * dependencies for the modules requested. It can load the"," * files from the Yahoo! CDN, and it can utilize the combo service provided on"," * this network to reduce the number of http connections required to download"," * YUI files. You can also specify an external, custom combo service to host"," * your modules as well.","","        var Y = YUI();","        var loader = new Y.Loader({","            filter: 'debug',","            base: '../../',","            root: 'build/',","            combine: true,","            require: ['node', 'dd', 'console']","        });","        var out = loader.resolve(true);"," "," * @constructor"," * @class Loader"," * @param {Object} config an optional set of configuration options."," * @param {String} config.base The base dir which to fetch this module from"," * @param {String} config.comboBase The Combo service base path. Ex: `http://yui.yahooapis.com/combo?`"," * @param {String} config.root The root path to prepend to module names for the combo service. Ex: `2.5.2/build/`"," * @param {String|Object} config.filter A filter to apply to result urls. <a href=\"#property_filter\">See filter property</a>"," * @param {Object} config.filters Per-component filter specification.  If specified for a given component, this overrides the filter config."," * @param {Boolean} config.combine Use a combo service to reduce the number of http connections required to load your dependencies"," * @param {Boolean} [config.async=true] Fetch files in async"," * @param {Array} config.ignore: A list of modules that should never be dynamically loaded"," * @param {Array} config.force A list of modules that should always be loaded when required, even if already present on the page"," * @param {HTMLElement|String} config.insertBefore Node or id for a node that should be used as the insertion point for new nodes"," * @param {Object} config.jsAttributes Object literal containing attributes to add to script nodes"," * @param {Object} config.cssAttributes Object literal containing attributes to add to link nodes"," * @param {Number} config.timeout The number of milliseconds before a timeout occurs when dynamically loading nodes.  If not set, there is no timeout"," * @param {Object} config.context Execution context for all callbacks"," * @param {Function} config.onSuccess Callback for the 'success' event"," * @param {Function} config.onFailure Callback for the 'failure' event"," * @param {Function} config.onCSS Callback for the 'CSSComplete' event.  When loading YUI components with CSS the CSS is loaded first, then the script.  This provides a moment you can tie into to improve the presentation of the page while the script is loading."," * @param {Function} config.onTimeout Callback for the 'timeout' event"," * @param {Function} config.onProgress Callback executed each time a script or css file is loaded"," * @param {Object} config.modules A list of module definitions.  See <a href=\"#method_addModule\">Loader.addModule</a> for the supported module metadata"," * @param {Object} config.groups A list of group definitions.  Each group can contain specific definitions for `base`, `comboBase`, `combine`, and accepts a list of `modules`."," * @param {String} config.2in3 The version of the YUI 2 in 3 wrapper to use.  The intrinsic support for YUI 2 modules in YUI 3 relies on versions of the YUI 2 components inside YUI 3 module wrappers.  These wrappers change over time to accomodate the issues that arise from running YUI 2 in a YUI 3 sandbox."," * @param {String} config.yui2 When using the 2in3 project, you can select the version of YUI 2 to use.  Valid values are `2.2.2`, `2.3.1`, `2.4.1`, `2.5.2`, `2.6.0`, `2.7.0`, `2.8.0`, `2.8.1` and `2.9.0` [default] -- plus all versions of YUI 2 going forward."," */","Y.Loader = function(o) {","","    var self = this;","    ","    //Catch no config passed.","    o = o || {};","","    modulekey = META.md5;","","    /**","     * Internal callback to handle multiple internal insert() calls","     * so that css is inserted prior to js","     * @property _internalCallback","     * @private","     */","    // self._internalCallback = null;","","    /**","     * Callback that will be executed when the loader is finished","     * with an insert","     * @method onSuccess","     * @type function","     */","    // self.onSuccess = null;","","    /**","     * Callback that will be executed if there is a failure","     * @method onFailure","     * @type function","     */","    // self.onFailure = null;","","    /**","     * Callback for the 'CSSComplete' event.  When loading YUI components","     * with CSS the CSS is loaded first, then the script.  This provides","     * a moment you can tie into to improve the presentation of the page","     * while the script is loading.","     * @method onCSS","     * @type function","     */","    // self.onCSS = null;","","    /**","     * Callback executed each time a script or css file is loaded","     * @method onProgress","     * @type function","     */","    // self.onProgress = null;","","    /**","     * Callback that will be executed if a timeout occurs","     * @method onTimeout","     * @type function","     */","    // self.onTimeout = null;","","    /**","     * The execution context for all callbacks","     * @property context","     * @default {YUI} the YUI instance","     */","    self.context = Y;","","    /**","     * Data that is passed to all callbacks","     * @property data","     */","    // self.data = null;","","    /**","     * Node reference or id where new nodes should be inserted before","     * @property insertBefore","     * @type string|HTMLElement","     */","    // self.insertBefore = null;","","    /**","     * The charset attribute for inserted nodes","     * @property charset","     * @type string","     * @deprecated , use cssAttributes or jsAttributes.","     */","    // self.charset = null;","","    /**","     * An object literal containing attributes to add to link nodes","     * @property cssAttributes","     * @type object","     */","    // self.cssAttributes = null;","","    /**","     * An object literal containing attributes to add to script nodes","     * @property jsAttributes","     * @type object","     */","    // self.jsAttributes = null;","","    /**","     * The base directory.","     * @property base","     * @type string","     * @default http://yui.yahooapis.com/[YUI VERSION]/build/","     */","    self.base = Y.Env.meta.base + Y.Env.meta.root;","","    /**","     * Base path for the combo service","     * @property comboBase","     * @type string","     * @default http://yui.yahooapis.com/combo?","     */","    self.comboBase = Y.Env.meta.comboBase;","","    /*","     * Base path for language packs.","     */","    // self.langBase = Y.Env.meta.langBase;","    // self.lang = \"\";","","    /**","     * If configured, the loader will attempt to use the combo","     * service for YUI resources and configured external resources.","     * @property combine","     * @type boolean","     * @default true if a base dir isn't in the config","     */","    self.combine = o.base &&","        (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);","    ","    /**","    * The default seperator to use between files in a combo URL","    * @property comboSep","    * @type {String}","    * @default Ampersand","    */","    self.comboSep = '&';","    /**","     * Max url length for combo urls.  The default is 1024. This is the URL","     * limit for the Yahoo! hosted combo servers.  If consuming","     * a different combo service that has a different URL limit","     * it is possible to override this default by supplying","     * the maxURLLength config option.  The config option will","     * only take effect if lower than the default.","     *","     * @property maxURLLength","     * @type int","     */","    self.maxURLLength = MAX_URL_LENGTH;","","    /**","     * Ignore modules registered on the YUI global","     * @property ignoreRegistered","     * @default false","     */","    self.ignoreRegistered = o.ignoreRegistered;","","    /**","     * Root path to prepend to module path for the combo","     * service","     * @property root","     * @type string","     * @default [YUI VERSION]/build/","     */","    self.root = Y.Env.meta.root;","","    /**","     * Timeout value in milliseconds.  If set, self value will be used by","     * the get utility.  the timeout event will fire if","     * a timeout occurs.","     * @property timeout","     * @type int","     */","    self.timeout = 0;","","    /**","     * A list of modules that should not be loaded, even if","     * they turn up in the dependency tree","     * @property ignore","     * @type string[]","     */","    // self.ignore = null;","","    /**","     * A list of modules that should always be loaded, even","     * if they have already been inserted into the page.","     * @property force","     * @type string[]","     */","    // self.force = null;","","    self.forceMap = {};","","    /**","     * Should we allow rollups","     * @property allowRollup","     * @type boolean","     * @default false","     */","    self.allowRollup = false;","","    /**","     * A filter to apply to result urls.  This filter will modify the default","     * path for all modules.  The default path for the YUI library is the","     * minified version of the files (e.g., event-min.js).  The filter property","     * can be a predefined filter or a custom filter.  The valid predefined","     * filters are:","     * <dl>","     *  <dt>DEBUG</dt>","     *  <dd>Selects the debug versions of the library (e.g., event-debug.js).","     *      This option will automatically include the Logger widget</dd>","     *  <dt>RAW</dt>","     *  <dd>Selects the non-minified version of the library (e.g., event.js).","     *  </dd>","     * </dl>","     * You can also define a custom filter, which must be an object literal","     * containing a search expression and a replace string:","     *","     *      myFilter: {","     *          'searchExp': \"-min\\\\.js\",","     *          'replaceStr': \"-debug.js\"","     *      }","     *","     * @property filter","     * @type string| {searchExp: string, replaceStr: string}","     */","    // self.filter = null;","","    /**","     * per-component filter specification.  If specified for a given","     * component, this overrides the filter config.","     * @property filters","     * @type object","     */","    self.filters = {};","","    /**","     * The list of requested modules","     * @property required","     * @type {string: boolean}","     */","    self.required = {};","","    /**","     * If a module name is predefined when requested, it is checked againsts","     * the patterns provided in this property.  If there is a match, the","     * module is added with the default configuration.","     *","     * At the moment only supporting module prefixes, but anticipate","     * supporting at least regular expressions.","     * @property patterns","     * @type Object","     */","    // self.patterns = Y.merge(Y.Env.meta.patterns);","    self.patterns = {};","","    /**","     * The library metadata","     * @property moduleInfo","     */","    // self.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);","    self.moduleInfo = {};","","    self.groups = Y.merge(Y.Env.meta.groups);","","    /**","     * Provides the information used to skin the skinnable components.","     * The following skin definition would result in 'skin1' and 'skin2'","     * being loaded for calendar (if calendar was requested), and","     * 'sam' for all other skinnable components:","     *","     *      skin: {","     *          // The default skin, which is automatically applied if not","     *          // overriden by a component-specific skin definition.","     *          // Change this in to apply a different skin globally","     *          defaultSkin: 'sam',","     *","     *          // This is combined with the loader base property to get","     *          // the default root directory for a skin. ex:","     *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/","     *          base: 'assets/skins/',","     *          ","     *          // Any component-specific overrides can be specified here,","     *          // making it possible to load different skins for different","     *          // components.  It is possible to load more than one skin","     *          // for a given component as well.","     *          overrides: {","     *              calendar: ['skin1', 'skin2']","     *          }","     *      }","     * @property skin","     * @type {Object}","     */","    self.skin = Y.merge(Y.Env.meta.skin);","","    /*","     * Map of conditional modules","     * @since 3.2.0","     */","    self.conditions = {};","","    // map of modules with a hash of modules that meet the requirement","    // self.provides = {};","","    self.config = o;","    self._internal = true;","","    self._populateCache();","","    /**","     * Set when beginning to compute the dependency tree.","     * Composed of what YUI reports to be loaded combined","     * with what has been loaded by any instance on the page","     * with the version number specified in the metadata.","     * @property loaded","     * @type {string: boolean}","     */","    self.loaded = GLOBAL_LOADED[VERSION];","","    ","    /**","    * Should Loader fetch scripts in `async`, defaults to `true`","    * @property async","    */","","    self.async = true;","","    self._inspectPage();","","    self._internal = false;","","    self._config(o);","","    self.forceMap = (self.force) ? Y.Array.hash(self.force) : {};	","","    self.testresults = null;","","    if (Y.config.tests) {","        self.testresults = Y.config.tests;","    }","    ","    /**","     * List of rollup files found in the library metadata","     * @property rollups","     */","    // self.rollups = null;","","    /**","     * Whether or not to load optional dependencies for","     * the requested modules","     * @property loadOptional","     * @type boolean","     * @default false","     */","    // self.loadOptional = false;","","    /**","     * All of the derived dependencies in sorted order, which","     * will be populated when either calculate() or insert()","     * is called","     * @property sorted","     * @type string[]","     */","    self.sorted = [];","","    /*","     * A list of modules to attach to the YUI instance when complete.","     * If not supplied, the sorted list of dependencies are applied.","     * @property attaching","     */","    // self.attaching = null;","","    /**","     * Flag to indicate the dependency tree needs to be recomputed","     * if insert is called again.","     * @property dirty","     * @type boolean","     * @default true","     */","    self.dirty = true;","","    /**","     * List of modules inserted by the utility","     * @property inserted","     * @type {string: boolean}","     */","    self.inserted = {};","","    /**","     * List of skipped modules during insert() because the module","     * was not defined","     * @property skipped","     */","    self.skipped = {};","","    // Y.on('yui:load', self.loadNext, self);","","    self.tested = {};","","    /*","     * Cached sorted calculate results","     * @property results","     * @since 3.2.0","     */","    //self.results = {};","","    if (self.ignoreRegistered) {","        //Clear inpage already processed modules.","        self._resetModules();","    }","","};","","Y.Loader.prototype = {","    /**","    * Checks the cache for modules and conditions, if they do not exist","    * process the default metadata and populate the local moduleInfo hash.","    * @method _populateCache","    * @private","    */","    _populateCache: function() {","        var self = this,","            defaults = META.modules,","            cache = GLOBAL_ENV._renderedMods,","            i;","","        if (cache && !self.ignoreRegistered) {","            for (i in cache) {","                if (cache.hasOwnProperty(i)) {","                    self.moduleInfo[i] = Y.merge(cache[i]);","                }","            }","","            cache = GLOBAL_ENV._conditions;","            for (i in cache) {","                if (cache.hasOwnProperty(i)) {","                    self.conditions[i] = Y.merge(cache[i]);","                }","            }","","        } else {","            for (i in defaults) {","                if (defaults.hasOwnProperty(i)) {","                    self.addModule(defaults[i], i);","                }","            }","        }","","    },","    /**","    * Reset modules in the module cache to a pre-processed state so additional","    * computations with a different skin or language will work as expected.","    * @private _resetModules","    */","    _resetModules: function() {","        var self = this, i, o;","        for (i in self.moduleInfo) {","            if (self.moduleInfo.hasOwnProperty(i)) {","                var mod = self.moduleInfo[i],","                    name = mod.name,","                    details  = (YUI.Env.mods[name] ? YUI.Env.mods[name].details : null);","","                if (details) {","                    self.moduleInfo[name]._reset = true;","                    self.moduleInfo[name].requires = details.requires || [];","                    self.moduleInfo[name].optional = details.optional || [];","                    self.moduleInfo[name].supersedes = details.supercedes || [];","                }","","                if (mod.defaults) {","                    for (o in mod.defaults) {","                        if (mod.defaults.hasOwnProperty(o)) {","                            if (mod[o]) {","                                mod[o] = mod.defaults[o];","                            }","                        }","                    }","                }","                delete mod.langCache;","                delete mod.skinCache;","                if (mod.skinnable) {","                    self._addSkin(self.skin.defaultSkin, mod.name);","                }","            }","        }","    },","    /**","    Regex that matches a CSS URL. Used to guess the file type when it's not","    specified.","","    @property REGEX_CSS","    @type RegExp","    @final","    @protected","    @since 3.5.0","    **/","    REGEX_CSS: /\\.css(?:[?;].*)?$/i,","    ","    /**","    * Default filters for raw and debug","    * @property FILTER_DEFS","    * @type Object","    * @final","    * @protected","    */","    FILTER_DEFS: {","        RAW: {","            'searchExp': '-min\\\\.js',","            'replaceStr': '.js'","        },","        DEBUG: {","            'searchExp': '-min\\\\.js',","            'replaceStr': '-debug.js'","        },","        COVERAGE: {","            'searchExp': '-min\\\\.js',","            'replaceStr': '-coverage.js'","        }","    },","    /*","    * Check the pages meta-data and cache the result.","    * @method _inspectPage","    * @private","    */","    _inspectPage: function() {","        var self = this, v, m, req, mr, i;","","        //Inspect the page for CSS only modules and mark them as loaded.","        for (i in self.moduleInfo) {","            if (self.moduleInfo.hasOwnProperty(i)) {","                v = self.moduleInfo[i];","                if (v.type && v.type === CSS) {","                    if (self.isCSSLoaded(v.name)) {","                        self.loaded[i] = true;","                    }","                }","            }","        }","        for (i in ON_PAGE) {","            if (ON_PAGE.hasOwnProperty(i)) {","                v = ON_PAGE[i];","                if (v.details) {","                    m = self.moduleInfo[v.name];","                    req = v.details.requires;","                    mr = m && m.requires;","","                   if (m) {","                       if (!m._inspected && req && mr.length != req.length) {","                           // console.log('deleting ' + m.name);","                           delete m.expanded;","                       }","                   } else {","                       m = self.addModule(v.details, i);","                   }","                   m._inspected = true;","               }","            }","        }","    },","    /*","    * returns true if b is not loaded, and is required directly or by means of modules it supersedes.","    * @private","    * @method _requires","    * @param {String} mod1 The first module to compare","    * @param {String} mod2 The second module to compare","    */","   _requires: function(mod1, mod2) {","","        var i, rm, after_map, s,","            info = this.moduleInfo,","            m = info[mod1],","            other = info[mod2];","","        if (!m || !other) {","            return false;","        }","","        rm = m.expanded_map;","        after_map = m.after_map;","","        // check if this module should be sorted after the other","        // do this first to short circut circular deps","        if (after_map && (mod2 in after_map)) {","            return true;","        }","","        after_map = other.after_map;","","        // and vis-versa","        if (after_map && (mod1 in after_map)) {","            return false;","        }","","        // check if this module requires one the other supersedes","        s = info[mod2] && info[mod2].supersedes;","        if (s) {","            for (i = 0; i < s.length; i++) {","                if (this._requires(mod1, s[i])) {","                    return true;","                }","            }","        }","","        s = info[mod1] && info[mod1].supersedes;","        if (s) {","            for (i = 0; i < s.length; i++) {","                if (this._requires(mod2, s[i])) {","                    return false;","                }","            }","        }","","        // check if this module requires the other directly","        // if (r && YArray.indexOf(r, mod2) > -1) {","        if (rm && (mod2 in rm)) {","            return true;","        }","","        // external css files should be sorted below yui css","        if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {","            return true;","        }","","        return false;","    },","    /**","    * Apply a new config to the Loader instance","    * @method _config","    * @private","    * @param {Object} o The new configuration","    */","    _config: function(o) {","        var i, j, val, a, f, group, groupName, self = this;","        // apply config values","        if (o) {","            for (i in o) {","                if (o.hasOwnProperty(i)) {","                    val = o[i];","                    if (i == 'require') {","                        self.require(val);","                    } else if (i == 'skin') {","                        //If the config.skin is a string, format to the expected object","                        if (typeof val === 'string') {","                            self.skin.defaultSkin = o.skin;","                            val = {","                                defaultSkin: val","                            };","                        }","","                        Y.mix(self.skin, val, true);","                    } else if (i == 'groups') {","                        for (j in val) {","                            if (val.hasOwnProperty(j)) {","                                groupName = j;","                                group = val[j];","                                self.addGroup(group, groupName);","                                if (group.aliases) {","                                    for (a in group.aliases) {","                                        if (group.aliases.hasOwnProperty(a)) {","                                            self.addAlias(group.aliases[a], a);","                                        }","                                    }","                                }","                            }","                        }","","                    } else if (i == 'modules') {","                        // add a hash of module definitions","                        for (j in val) {","                            if (val.hasOwnProperty(j)) {","                                self.addModule(val[j], j);","                            }","                        }","                    } else if (i === 'aliases') {","                        for (j in val) {","                            if (val.hasOwnProperty(j)) {","                                self.addAlias(val[j], j);","                            }","                        }","                    } else if (i == 'gallery') {","                        this.groups.gallery.update(val, o);","                    } else if (i == 'yui2' || i == '2in3') {","                        this.groups.yui2.update(o['2in3'], o.yui2, o);","                    } else {","                        self[i] = val;","                    }","                }","            }","        }","","        // fix filter","        f = self.filter;","","        if (L.isString(f)) {","            f = f.toUpperCase();","            self.filterName = f;","            self.filter = self.FILTER_DEFS[f];","            if (f == 'DEBUG') {","                self.require('yui-log', 'dump');","            }","        }","        ","","        if (self.lang) {","            //Removed this so that when Loader is invoked","            //it doesn't request what it doesn't need.","            //self.require('intl-base', 'intl');","        }","","    },","","    /**","     * Returns the skin module name for the specified skin name.  If a","     * module name is supplied, the returned skin module name is","     * specific to the module passed in.","     * @method formatSkin","     * @param {string} skin the name of the skin.","     * @param {string} mod optional: the name of a module to skin.","     * @return {string} the full skin module name.","     */","    formatSkin: function(skin, mod) {","        var s = SKIN_PREFIX + skin;","        if (mod) {","            s = s + '-' + mod;","        }","","        return s;","    },","","    /**","     * Adds the skin def to the module info","     * @method _addSkin","     * @param {string} skin the name of the skin.","     * @param {string} mod the name of the module.","     * @param {string} parent parent module if this is a skin of a","     * submodule or plugin.","     * @return {string} the module name for the skin.","     * @private","     */","    _addSkin: function(skin, mod, parent) {","        var mdef, pkg, name, nmod,","            info = this.moduleInfo,","            sinf = this.skin,","            ext = info[mod] && info[mod].ext;","","        // Add a module definition for the module-specific skin css","        if (mod) {","            name = this.formatSkin(skin, mod);","            if (!info[name]) {","                mdef = info[mod];","                pkg = mdef.pkg || mod;","                nmod = {","                    skin: true,","                    name: name,","                    group: mdef.group,","                    type: 'css',","                    after: sinf.after,","                    path: (parent || pkg) + '/' + sinf.base + skin +","                          '/' + mod + '.css',","                    ext: ext","                };","                if (mdef.base) {","                    nmod.base = mdef.base;","                }","                if (mdef.configFn) {","                    nmod.configFn = mdef.configFn;","                }","                this.addModule(nmod, name);","","            }","        }","","        return name;","    },","    /**","    * Adds an alias module to the system","    * @method addAlias","    * @param {Array} use An array of modules that makes up this alias","    * @param {String} name The name of the alias","    * @example","    *       var loader = new Y.Loader({});","    *       loader.addAlias([ 'node', 'yql' ], 'davglass');","    *       loader.require(['davglass']);","    *       var out = loader.resolve(true);","    *","    *       //out.js will contain Node and YQL modules","    */","    addAlias: function(use, name) {","        YUI.Env.aliases[name] = use;","        this.addModule({","            name: name,","            use: use","        });","    },","    /**","     * Add a new module group","     * @method addGroup","     * @param {Object} config An object containing the group configuration data","     * @param {String} config.name required, the group name","     * @param {String} config.base The base directory for this module group","     * @param {String} config.root The root path to add to each combo resource path","     * @param {Boolean} config.combine Should the request be combined","     * @param {String} config.comboBase Combo service base path","     * @param {Object} config.modules The group of modules","     * @param {String} name the group name.","     * @example","     *      var loader = new Y.Loader({});","     *      loader.addGroup({","     *          name: 'davglass',","     *          combine: true,","     *          comboBase: '/combo?',","     *          root: '',","     *          modules: {","     *              //Module List here","     *          }","     *      }, 'davglass');","     */","    addGroup: function(o, name) {","        var mods = o.modules,","            self = this, i, v;","","        name = name || o.name;","        o.name = name;","        self.groups[name] = o;","","        if (o.patterns) {","            for (i in o.patterns) {","                if (o.patterns.hasOwnProperty(i)) {","                    o.patterns[i].group = name;","                    self.patterns[i] = o.patterns[i];","                }","            }","        }","","        if (mods) {","            for (i in mods) {","                if (mods.hasOwnProperty(i)) {","                    v = mods[i];","                    if (typeof v === 'string') {","                        v = { name: i, fullpath: v };","                    }","                    v.group = name;","                    self.addModule(v, i);","                }","            }","        }","    },","","    /**","     * Add a new module to the component metadata.","     * @method addModule","     * @param {Object} config An object containing the module data.","     * @param {String} config.name Required, the component name","     * @param {String} config.type Required, the component type (js or css)","     * @param {String} config.path Required, the path to the script from `base`","     * @param {Array} config.requires Array of modules required by this component","     * @param {Array} [config.optional] Array of optional modules for this component","     * @param {Array} [config.supersedes] Array of the modules this component replaces","     * @param {Array} [config.after] Array of modules the components which, if present, should be sorted above this one","     * @param {Object} [config.after_map] Faster alternative to 'after' -- supply a hash instead of an array","     * @param {Number} [config.rollup] The number of superseded modules required for automatic rollup","     * @param {String} [config.fullpath] If `fullpath` is specified, this is used instead of the configured `base + path`","     * @param {Boolean} [config.skinnable] Flag to determine if skin assets should automatically be pulled in","     * @param {Object} [config.submodules] Hash of submodules","     * @param {String} [config.group] The group the module belongs to -- this is set automatically when it is added as part of a group configuration.","     * @param {Array} [config.lang] Array of BCP 47 language tags of languages for which this module has localized resource bundles, e.g., `[\"en-GB\", \"zh-Hans-CN\"]`","     * @param {Object} [config.condition] Specifies that the module should be loaded automatically if a condition is met.  This is an object with up to three fields:","     * @param {String} [config.condition.trigger] The name of a module that can trigger the auto-load","     * @param {Function} [config.condition.test] A function that returns true when the module is to be loaded.","     * @param {String} [config.condition.when] Specifies the load order of the conditional module","     *  with regard to the position of the trigger module.","     *  This should be one of three values: `before`, `after`, or `instead`.  The default is `after`.","     * @param {Object} [config.testresults] A hash of test results from `Y.Features.all()`","     * @param {Function} [config.configFn] A function to exectute when configuring this module","     * @param {Object} config.configFn.mod The module config, modifying this object will modify it's config. Returning false will delete the module's config.","     * @param {String} [name] The module name, required if not in the module data.","     * @return {Object} the module definition or null if the object passed in did not provide all required attributes.","     */","    addModule: function(o, name) {","        name = name || o.name;","","        if (typeof o === 'string') {","            o = { name: name, fullpath: o };","        }","        ","        //Only merge this data if the temp flag is set","        //from an earlier pass from a pattern or else","        //an override module (YUI_config) can not be used to","        //replace a default module.","        if (this.moduleInfo[name] && this.moduleInfo[name].temp) {","            //This catches temp modules loaded via a pattern","            // The module will be added twice, once from the pattern and","            // Once from the actual add call, this ensures that properties","            // that were added to the module the first time around (group: gallery)","            // are also added the second time around too.","            o = Y.merge(this.moduleInfo[name], o);","        }","","        o.name = name;","","        if (!o || !o.name) {","            return null;","        }","","        if (!o.type) {","            //Always assume it's javascript unless the CSS pattern is matched.","            o.type = JS;","            var p = o.path || o.fullpath;","            if (p && this.REGEX_CSS.test(p)) {","                o.type = CSS;","            }","        }","","        if (!o.path && !o.fullpath) {","            o.path = _path(name, name, o.type);","        }","        o.supersedes = o.supersedes || o.use;","","        o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;","","        // Handle submodule logic","        var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,","            j, langs, packName, supName, flatSup, flatLang, lang, ret,","            overrides, skinname, when, g,","            conditions = this.conditions, trigger;","            // , existing = this.moduleInfo[name], newr;","        ","        this.moduleInfo[name] = o;","","        o.requires = o.requires || [];","        ","        /*","        Only allowing the cascade of requires information, since","        optional and supersedes are far more fine grained than","        a blanket requires is.","        */","        if (this.requires) {","            for (i = 0; i < this.requires.length; i++) {","                o.requires.push(this.requires[i]);","            }","        }","        if (o.group && this.groups && this.groups[o.group]) {","            g = this.groups[o.group];","            if (g.requires) {","                for (i = 0; i < g.requires.length; i++) {","                    o.requires.push(g.requires[i]);","                }","            }","        }","","","        if (!o.defaults) {","            o.defaults = {","                requires: o.requires ? [].concat(o.requires) : null,","                supersedes: o.supersedes ? [].concat(o.supersedes) : null,","                optional: o.optional ? [].concat(o.optional) : null","            };","        }","","        if (o.skinnable && o.ext && o.temp) {","            skinname = this._addSkin(this.skin.defaultSkin, name);","            o.requires.unshift(skinname);","        }","        ","        if (o.requires.length) {","            o.requires = this.filterRequires(o.requires) || [];","        }","","        if (!o.langPack && o.lang) {","            langs = YArray(o.lang);","            for (j = 0; j < langs.length; j++) {","                lang = langs[j];","                packName = this.getLangPackName(lang, name);","                smod = this.moduleInfo[packName];","                if (!smod) {","                    smod = this._addLangPack(lang, o, packName);","                }","            }","        }","","","        if (subs) {","            sup = o.supersedes || [];","            l = 0;","","            for (i in subs) {","                if (subs.hasOwnProperty(i)) {","                    s = subs[i];","","                    s.path = s.path || _path(name, i, o.type);","                    s.pkg = name;","                    s.group = o.group;","","                    if (s.supersedes) {","                        sup = sup.concat(s.supersedes);","                    }","","                    smod = this.addModule(s, i);","                    sup.push(i);","","                    if (smod.skinnable) {","                        o.skinnable = true;","                        overrides = this.skin.overrides;","                        if (overrides && overrides[i]) {","                            for (j = 0; j < overrides[i].length; j++) {","                                skinname = this._addSkin(overrides[i][j],","                                         i, name);","                                sup.push(skinname);","                            }","                        }","                        skinname = this._addSkin(this.skin.defaultSkin,","                                        i, name);","                        sup.push(skinname);","                    }","","                    // looks like we are expected to work out the metadata","                    // for the parent module language packs from what is","                    // specified in the child modules.","                    if (s.lang && s.lang.length) {","","                        langs = YArray(s.lang);","                        for (j = 0; j < langs.length; j++) {","                            lang = langs[j];","                            packName = this.getLangPackName(lang, name);","                            supName = this.getLangPackName(lang, i);","                            smod = this.moduleInfo[packName];","","                            if (!smod) {","                                smod = this._addLangPack(lang, o, packName);","                            }","","                            flatSup = flatSup || YArray.hash(smod.supersedes);","","                            if (!(supName in flatSup)) {","                                smod.supersedes.push(supName);","                            }","","                            o.lang = o.lang || [];","","                            flatLang = flatLang || YArray.hash(o.lang);","","                            if (!(lang in flatLang)) {","                                o.lang.push(lang);","                            }","","// Add rollup file, need to add to supersedes list too","","                            // default packages","                            packName = this.getLangPackName(ROOT_LANG, name);","                            supName = this.getLangPackName(ROOT_LANG, i);","","                            smod = this.moduleInfo[packName];","","                            if (!smod) {","                                smod = this._addLangPack(lang, o, packName);","                            }","","                            if (!(supName in flatSup)) {","                                smod.supersedes.push(supName);","                            }","","// Add rollup file, need to add to supersedes list too","","                        }","                    }","","                    l++;","                }","            }","            //o.supersedes = YObject.keys(YArray.hash(sup));","            o.supersedes = YArray.dedupe(sup);","            if (this.allowRollup) {","                o.rollup = (l < 4) ? l : Math.min(l - 1, 4);","            }","        }","","        plugins = o.plugins;","        if (plugins) {","            for (i in plugins) {","                if (plugins.hasOwnProperty(i)) {","                    plug = plugins[i];","                    plug.pkg = name;","                    plug.path = plug.path || _path(name, i, o.type);","                    plug.requires = plug.requires || [];","                    plug.group = o.group;","                    this.addModule(plug, i);","                    if (o.skinnable) {","                        this._addSkin(this.skin.defaultSkin, i, name);","                    }","","                }","            }","        }","","        if (o.condition) {","            t = o.condition.trigger;","            if (YUI.Env.aliases[t]) {","                t = YUI.Env.aliases[t];","            }","            if (!Y.Lang.isArray(t)) {","                t = [t];","            }","","            for (i = 0; i < t.length; i++) {","                trigger = t[i];","                when = o.condition.when;","                conditions[trigger] = conditions[trigger] || {};","                conditions[trigger][name] = o.condition;","                // the 'when' attribute can be 'before', 'after', or 'instead'","                // the default is after.","                if (when && when != 'after') {","                    if (when == 'instead') { // replace the trigger","                        o.supersedes = o.supersedes || [];","                        o.supersedes.push(trigger);","                    } else { // before the trigger","                        // the trigger requires the conditional mod,","                        // so it should appear before the conditional","                        // mod if we do not intersede.","                    }","                } else { // after the trigger","                    o.after = o.after || [];","                    o.after.push(trigger);","                }","            }","        }","","        if (o.supersedes) {","            o.supersedes = this.filterRequires(o.supersedes);","        }","","        if (o.after) {","            o.after = this.filterRequires(o.after);","            o.after_map = YArray.hash(o.after);","        }","","        // this.dirty = true;","","        if (o.configFn) {","            ret = o.configFn(o);","            if (ret === false) {","                delete this.moduleInfo[name];","                delete GLOBAL_ENV._renderedMods[name];","                o = null;","            }","        }","        //Add to global cache","        if (o) {","            if (!GLOBAL_ENV._renderedMods) {","                GLOBAL_ENV._renderedMods = {};","            }","            GLOBAL_ENV._renderedMods[name] = Y.mix(GLOBAL_ENV._renderedMods[name] || {}, o);","            GLOBAL_ENV._conditions = conditions;","        }","","        return o;","    },","","    /**","     * Add a requirement for one or more module","     * @method require","     * @param {string[] | string*} what the modules to load.","     */","    require: function(what) {","        var a = (typeof what === 'string') ? YArray(arguments) : what;","        this.dirty = true;","        this.required = Y.merge(this.required, YArray.hash(this.filterRequires(a)));","","        this._explodeRollups();","    },","    /**","    * Grab all the items that were asked for, check to see if the Loader","    * meta-data contains a \"use\" array. If it doesm remove the asked item and replace it with ","    * the content of the \"use\".","    * This will make asking for: \"dd\"","    * Actually ask for: \"dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin\"","    * @private","    * @method _explodeRollups","    */","    _explodeRollups: function() {","        var self = this, m, i, a, v, len, len2,","        r = self.required;","","        if (!self.allowRollup) {","            for (i in r) {","                if (r.hasOwnProperty(i)) {","                    m = self.getModule(i);","                    if (m && m.use) {","                        len = m.use.length;","                        for (a = 0; a < len; a++) {","                            m = self.getModule(m.use[a]);","                            if (m && m.use) {","                                len2 = m.use.length;","                                for (v = 0; v < len2; v++) {","                                    r[m.use[v]] = true;","                                }","                            } else {","                                r[m.use[a]] = true;","                            }","                        }","                    }","                }","            }","            self.required = r;","        }","","    },","    /**","    * Explodes the required array to remove aliases and replace them with real modules","    * @method filterRequires","    * @param {Array} r The original requires array","    * @return {Array} The new array of exploded requirements","    */","    filterRequires: function(r) {","        if (r) {","            if (!Y.Lang.isArray(r)) {","                r = [r];","            }","            r = Y.Array(r);","            var c = [], i, mod, o, m;","","            for (i = 0; i < r.length; i++) {","                mod = this.getModule(r[i]);","                if (mod && mod.use) {","                    for (o = 0; o < mod.use.length; o++) {","                        //Must walk the other modules in case a module is a rollup of rollups (datatype)","                        m = this.getModule(mod.use[o]);","                        if (m && m.use) {","                            c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));","                        } else {","                            c.push(mod.use[o]);","                        }","                    }","                } else {","                    c.push(r[i]);","                }","            }","            r = c;","        }","        return r;","    },","    /**","     * Returns an object containing properties for all modules required","     * in order to load the requested module","     * @method getRequires","     * @param {object}  mod The module definition from moduleInfo.","     * @return {array} the expanded requirement list.","     */","    getRequires: function(mod) {","","        if (!mod) {","            //console.log('returning no reqs for ' + mod.name);","            return NO_REQUIREMENTS;","        }","","        if (mod._parsed) {","            //console.log('returning requires for ' + mod.name, mod.requires);","            return mod.expanded || NO_REQUIREMENTS;","        }","","        //TODO add modue cache here out of scope..","","        var i, m, j, add, packName, lang, testresults = this.testresults,","            name = mod.name, cond,","            adddef = ON_PAGE[name] && ON_PAGE[name].details,","            d, k, m1, go, def,","            r, old_mod,","            o, skinmod, skindef, skinpar, skinname,","            intl = mod.lang || mod.intl,","            info = this.moduleInfo,","            ftests = Y.Features && Y.Features.tests.load,","            hash, reparse;","","        // console.log(name);","","        // pattern match leaves module stub that needs to be filled out","        if (mod.temp && adddef) {","            old_mod = mod;","            mod = this.addModule(adddef, name);","            mod.group = old_mod.group;","            mod.pkg = old_mod.pkg;","            delete mod.expanded;","        }","","        // console.log('cache: ' + mod.langCache + ' == ' + this.lang);","        ","        //If a skin or a lang is different, reparse..","        reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));","","        if (mod.expanded && !reparse) {","            return mod.expanded;","        }","        ","","        d = [];","        hash = {};","        r = this.filterRequires(mod.requires);","        if (mod.lang) {","            //If a module has a lang attribute, auto add the intl requirement.","            d.unshift('intl');","            r.unshift('intl');","            intl = true;","        }","        o = this.filterRequires(mod.optional);","","","        mod._parsed = true;","        mod.langCache = this.lang;","        mod.skinCache = this.skin.defaultSkin;","","        for (i = 0; i < r.length; i++) {","            if (!hash[r[i]]) {","                d.push(r[i]);","                hash[r[i]] = true;","                m = this.getModule(r[i]);","                if (m) {","                    add = this.getRequires(m);","                    intl = intl || (m.expanded_map &&","                        (INTL in m.expanded_map));","                    for (j = 0; j < add.length; j++) {","                        d.push(add[j]);","                    }","                }","            }","        }","","        // get the requirements from superseded modules, if any","        r = this.filterRequires(mod.supersedes);","        if (r) {","            for (i = 0; i < r.length; i++) {","                if (!hash[r[i]]) {","                    // if this module has submodules, the requirements list is","                    // expanded to include the submodules.  This is so we can","                    // prevent dups when a submodule is already loaded and the","                    // parent is requested.","                    if (mod.submodules) {","                        d.push(r[i]);","                    }","","                    hash[r[i]] = true;","                    m = this.getModule(r[i]);","","                    if (m) {","                        add = this.getRequires(m);","                        intl = intl || (m.expanded_map &&","                            (INTL in m.expanded_map));","                        for (j = 0; j < add.length; j++) {","                            d.push(add[j]);","                        }","                    }","                }","            }","        }","","        if (o && this.loadOptional) {","            for (i = 0; i < o.length; i++) {","                if (!hash[o[i]]) {","                    d.push(o[i]);","                    hash[o[i]] = true;","                    m = info[o[i]];","                    if (m) {","                        add = this.getRequires(m);","                        intl = intl || (m.expanded_map &&","                            (INTL in m.expanded_map));","                        for (j = 0; j < add.length; j++) {","                            d.push(add[j]);","                        }","                    }","                }","            }","        }","","        cond = this.conditions[name];","","        if (cond) {","            //Set the module to not parsed since we have conditionals and this could change the dependency tree.","            mod._parsed = false;","            if (testresults && ftests) {","                oeach(testresults, function(result, id) {","                    var condmod = ftests[id].name;","                    if (!hash[condmod] && ftests[id].trigger == name) {","                        if (result && ftests[id]) {","                            hash[condmod] = true;","                            d.push(condmod);","                        }","                    }","                });","            } else {","                for (i in cond) {","                    if (cond.hasOwnProperty(i)) {","                        if (!hash[i]) {","                            def = cond[i];","                            //first see if they've specfied a ua check","                            //then see if they've got a test fn & if it returns true","                            //otherwise just having a condition block is enough","                            go = def && ((!def.ua && !def.test) || (def.ua && Y.UA[def.ua]) ||","                                        (def.test && def.test(Y, r)));","","                            if (go) {","                                hash[i] = true;","                                d.push(i);","                                m = this.getModule(i);","                                if (m) {","                                    add = this.getRequires(m);","                                    for (j = 0; j < add.length; j++) {","                                        d.push(add[j]);","                                    }","","                                }","                            }","                        }","                    }","                }","            }","        }","","        // Create skin modules","        if (mod.skinnable) {","            skindef = this.skin.overrides;","            for (i in YUI.Env.aliases) {","                if (YUI.Env.aliases.hasOwnProperty(i)) {","                    if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {","                        skinpar = i;","                    }","                }","            }","            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {","                skinname = name;","                if (skindef[skinpar]) {","                    skinname = skinpar;","                }","                for (i = 0; i < skindef[skinname].length; i++) {","                    skinmod = this._addSkin(skindef[skinname][i], name);","                    if (!this.isCSSLoaded(skinmod, this._boot)) {","                        d.push(skinmod);","                    }","                }","            } else {","                skinmod = this._addSkin(this.skin.defaultSkin, name);","                if (!this.isCSSLoaded(skinmod, this._boot)) {","                    d.push(skinmod);","                }","            }","        }","","        mod._parsed = false;","","        if (intl) {","","            if (mod.lang && !mod.langPack && Y.Intl) {","                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);","                packName = this.getLangPackName(lang, name);","                if (packName) {","                    d.unshift(packName);","                }","            }","            d.unshift(INTL);","        }","","        mod.expanded_map = YArray.hash(d);","","        mod.expanded = YObject.keys(mod.expanded_map);","","        return mod.expanded;","    },","    /**","    * Check to see if named css module is already loaded on the page","    * @method isCSSLoaded","    * @param {String} name The name of the css file","    * @return Boolean","    */","    isCSSLoaded: function(name, skip) {","        //TODO - Make this call a batching call with name being an array","        if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {","            return false;","        }","        var el = YUI.Env.cssStampEl,","            ret = false,","            mod = YUI.Env._cssLoaded[name],","            style = el.currentStyle; //IE","","        ","        if (mod !== undefined) {","            return mod;","        }","","        //Add the classname to the element","        el.className = name;","","        if (!style) {","            style = Y.config.doc.defaultView.getComputedStyle(el, null);","        }","","        if (style && style.display === 'none') {","            ret = true;","        }","","","        el.className = ''; //Reset the classname to ''","","        YUI.Env._cssLoaded[name] = ret;","","        return ret;","    },","","    /**","     * Returns a hash of module names the supplied module satisfies.","     * @method getProvides","     * @param {string} name The name of the module.","     * @return {object} what this module provides.","     */","    getProvides: function(name) {","        var m = this.getModule(name), o, s;","            // supmap = this.provides;","","        if (!m) {","            return NOT_FOUND;","        }","","        if (m && !m.provides) {","            o = {};","            s = m.supersedes;","","            if (s) {","                YArray.each(s, function(v) {","                    Y.mix(o, this.getProvides(v));","                }, this);","            }","","            o[name] = true;","            m.provides = o;","","        }","","        return m.provides;","    },","","    /**","     * Calculates the dependency tree, the result is stored in the sorted","     * property.","     * @method calculate","     * @param {object} o optional options object.","     * @param {string} type optional argument to prune modules.","     */","    calculate: function(o, type) {","        if (o || type || this.dirty) {","","            if (o) {","                this._config(o);","            }","","            if (!this._init) {","                this._setup();","            }","","            this._explode();","","            if (this.allowRollup) {","                this._rollup();","            } else {","                this._explodeRollups();","            }","            this._reduce();","            this._sort();","        }","    },","    /**","    * Creates a \"psuedo\" package for languages provided in the lang array","    * @method _addLangPack","    * @private","    * @param {String} lang The language to create","    * @param {Object} m The module definition to create the language pack around","    * @param {String} packName The name of the package (e.g: lang/datatype-date-en-US)","    * @return {Object} The module definition","    */","    _addLangPack: function(lang, m, packName) {","        var name = m.name,","            packPath, conf,","            existing = this.moduleInfo[packName];","","        if (!existing) {","","            packPath = _path((m.pkg || name), packName, JS, true);","","            conf = {","                path: packPath,","                intl: true,","                langPack: true,","                ext: m.ext,","                group: m.group,","                supersedes: []","            };","            if (m.root) {","                conf.root = m.root;","            }","            if (m.base) {","                conf.base = m.base;","            }","","            if (m.configFn) {","                conf.configFn = m.configFn;","            }","","            this.addModule(conf, packName);","","            if (lang) {","                Y.Env.lang = Y.Env.lang || {};","                Y.Env.lang[lang] = Y.Env.lang[lang] || {};","                Y.Env.lang[lang][name] = true;","            }","        }","","        return this.moduleInfo[packName];","    },","","    /**","     * Investigates the current YUI configuration on the page.  By default,","     * modules already detected will not be loaded again unless a force","     * option is encountered.  Called by calculate()","     * @method _setup","     * @private","     */","    _setup: function() {","        var info = this.moduleInfo, name, i, j, m, l,","            packName;","","        for (name in info) {","            if (info.hasOwnProperty(name)) {","                m = info[name];","                if (m) {","","                    // remove dups","                    //m.requires = YObject.keys(YArray.hash(m.requires));","                    m.requires = YArray.dedupe(m.requires);","","                    // Create lang pack modules","                    //if (m.lang && m.lang.length) {","                    if (m.lang) {","                        // Setup root package if the module has lang defined,","                        // it needs to provide a root language pack","                        packName = this.getLangPackName(ROOT_LANG, name);","                        this._addLangPack(null, m, packName);","                    }","","                }","            }","        }","","","        //l = Y.merge(this.inserted);","        l = {};","","        // available modules","        if (!this.ignoreRegistered) {","            Y.mix(l, GLOBAL_ENV.mods);","        }","","        // add the ignore list to the list of loaded packages","        if (this.ignore) {","            Y.mix(l, YArray.hash(this.ignore));","        }","","        // expand the list to include superseded modules","        for (j in l) {","            if (l.hasOwnProperty(j)) {","                Y.mix(l, this.getProvides(j));","            }","        }","","        // remove modules on the force list from the loaded list","        if (this.force) {","            for (i = 0; i < this.force.length; i++) {","                if (this.force[i] in l) {","                    delete l[this.force[i]];","                }","            }","        }","","        Y.mix(this.loaded, l);","","        this._init = true;","    },","","    /**","     * Builds a module name for a language pack","     * @method getLangPackName","     * @param {string} lang the language code.","     * @param {string} mname the module to build it for.","     * @return {string} the language pack module name.","     */","    getLangPackName: function(lang, mname) {","        return ('lang/' + mname + ((lang) ? '_' + lang : ''));","    },","    /**","     * Inspects the required modules list looking for additional","     * dependencies.  Expands the required list to include all","     * required modules.  Called by calculate()","     * @method _explode","     * @private","     */","    _explode: function() {","        //TODO Move done out of scope","        var r = this.required, m, reqs, done = {},","            self = this, name;","","        // the setup phase is over, all modules have been created","        self.dirty = false;","","        self._explodeRollups();","        r = self.required;","       ","        for (name in r) {","            if (r.hasOwnProperty(name)) {","                if (!done[name]) {","                    done[name] = true;","                    m = self.getModule(name);","                    if (m) {","                        var expound = m.expound;","","                        if (expound) {","                            r[expound] = self.getModule(expound);","                            reqs = self.getRequires(r[expound]);","                            Y.mix(r, YArray.hash(reqs));","                        }","","                        reqs = self.getRequires(m);","                        Y.mix(r, YArray.hash(reqs));","                    }","                }","            }","        }","","    },","    /**","    * The default method used to test a module against a pattern","    * @method _patternTest","    * @private","    * @param {String} mname The module being tested","    * @param {String} pname The pattern to match","    */","    _patternTest: function(mname, pname) {","        return (mname.indexOf(pname) > -1);","    },","    /**","    * Get's the loader meta data for the requested module","    * @method getModule","    * @param {String} mname The module name to get","    * @return {Object} The module metadata","    */","    getModule: function(mname) {","        //TODO: Remove name check - it's a quick hack to fix pattern WIP","        if (!mname) {","            return null;","        }","","        var p, found, pname,","            m = this.moduleInfo[mname],","            patterns = this.patterns;","","        // check the patterns library to see if we should automatically add","        // the module with defaults","        if (!m || (m && m.ext)) {","            for (pname in patterns) {","                if (patterns.hasOwnProperty(pname)) {","                    p = patterns[pname];","                    ","                    //There is no test method, create a default one that tests","                    // the pattern against the mod name","                    if (!p.test) {","                        p.test = this._patternTest;","                    }","","                    if (p.test(mname, pname)) {","                        // use the metadata supplied for the pattern","                        // as the module definition.","                        found = p;","                        break;","                    }","                }","            }","        }","","        if (!m) {","            if (found) {","                if (p.action) {","                    p.action.call(this, mname, pname);","                } else {","                    // ext true or false?","                    m = this.addModule(Y.merge(found), mname);","                    if (found.configFn) {","                        m.configFn = found.configFn;","                    }","                    m.temp = true;","                }","            }","        } else {","            if (found && m && found.configFn && !m.configFn) {","                m.configFn = found.configFn;","                m.configFn(m);","            }","        }","","        return m;","    },","","    // impl in rollup submodule","    _rollup: function() { },","","    /**","     * Remove superceded modules and loaded modules.  Called by","     * calculate() after we have the mega list of all dependencies","     * @method _reduce","     * @return {object} the reduced dependency hash.","     * @private","     */","    _reduce: function(r) {","","        r = r || this.required;","","        var i, j, s, m, type = this.loadType,","        ignore = this.ignore ? YArray.hash(this.ignore) : false;","","        for (i in r) {","            if (r.hasOwnProperty(i)) {","                m = this.getModule(i);","                // remove if already loaded","                if (((this.loaded[i] || ON_PAGE[i]) &&","                        !this.forceMap[i] && !this.ignoreRegistered) ||","                        (type && m && m.type != type)) {","                    delete r[i];","                }","                if (ignore && ignore[i]) {","                    delete r[i];","                }","                // remove anything this module supersedes","                s = m && m.supersedes;","                if (s) {","                    for (j = 0; j < s.length; j++) {","                        if (s[j] in r) {","                            delete r[s[j]];","                        }","                    }","                }","            }","        }","","        return r;","    },","    /**","    * Handles the queue when a module has been loaded for all cases","    * @method _finish","    * @private","    * @param {String} msg The message from Loader","    * @param {Boolean} success A boolean denoting success or failure","    */","    _finish: function(msg, success) {","","        _queue.running = false;","","        var onEnd = this.onEnd;","        if (onEnd) {","            onEnd.call(this.context, {","                msg: msg,","                data: this.data,","                success: success","            });","        }","        this._continue();","    },","    /**","    * The default Loader onSuccess handler, calls this.onSuccess with a payload","    * @method _onSuccess","    * @private","    */","    _onSuccess: function() {","        var self = this, skipped = Y.merge(self.skipped), fn,","            failed = [], rreg = self.requireRegistration,","            success, msg, i, mod;","        ","        for (i in skipped) {","            if (skipped.hasOwnProperty(i)) {","                delete self.inserted[i];","            }","        }","","        self.skipped = {};","        ","        for (i in self.inserted) {","            if (self.inserted.hasOwnProperty(i)) {","                mod = self.getModule(i);","                if (mod && rreg && mod.type == JS && !(i in YUI.Env.mods)) {","                    failed.push(i);","                } else {","                    Y.mix(self.loaded, self.getProvides(i));","                }","            }","        }","","        fn = self.onSuccess;","        msg = (failed.length) ? 'notregistered' : 'success';","        success = !(failed.length);","        if (fn) {","            fn.call(self.context, {","                msg: msg,","                data: self.data,","                success: success,","                failed: failed,","                skipped: skipped","            });","        }","        self._finish(msg, success);","    },","    /**","    * The default Loader onProgress handler, calls this.onProgress with a payload","    * @method _onProgress","    * @private","    */","    _onProgress: function(e) {","        var self = this;","        if (self.onProgress) {","            self.onProgress.call(self.context, {","                name: e.url,","                data: e.data","            });","        }","    },","    /**","    * The default Loader onFailure handler, calls this.onFailure with a payload","    * @method _onFailure","    * @private","    */","    _onFailure: function(o) {","        var f = this.onFailure, msg = [], i = 0, len = o.errors.length;","        ","        for (i; i < len; i++) {","            msg.push(o.errors[i].error);","        }","","        msg = msg.join(',');","","        ","        if (f) {","            f.call(this.context, {","                msg: msg,","                data: this.data,","                success: false","            });","        }","        ","        this._finish(msg, false);","","    },","","    /**","    * The default Loader onTimeout handler, calls this.onTimeout with a payload","    * @method _onTimeout","    * @private","    */","    _onTimeout: function() {","        var f = this.onTimeout;","        if (f) {","            f.call(this.context, {","                msg: 'timeout',","                data: this.data,","                success: false","            });","        }","    },","","    /**","     * Sorts the dependency tree.  The last step of calculate()","     * @method _sort","     * @private","     */","    _sort: function() {","","        // create an indexed list","        var s = YObject.keys(this.required),","            // loaded = this.loaded,","            //TODO Move this out of scope","            done = {},","            p = 0, l, a, b, j, k, moved, doneKey;","","        // keep going until we make a pass without moving anything","        for (;;) {","","            l = s.length;","            moved = false;","","            // start the loop after items that are already sorted","            for (j = p; j < l; j++) {","","                // check the next module on the list to see if its","                // dependencies have been met","                a = s[j];","","                // check everything below current item and move if we","                // find a requirement for the current item","                for (k = j + 1; k < l; k++) {","                    doneKey = a + s[k];","","                    if (!done[doneKey] && this._requires(a, s[k])) {","","                        // extract the dependency so we can move it up","                        b = s.splice(k, 1);","","                        // insert the dependency above the item that","                        // requires it","                        s.splice(j, 0, b[0]);","","                        // only swap two dependencies once to short circut","                        // circular dependencies","                        done[doneKey] = true;","","                        // keep working","                        moved = true;","","                        break;","                    }","                }","","                // jump out of loop if we moved something","                if (moved) {","                    break;","                // this item is sorted, move our pointer and keep going","                } else {","                    p++;","                }","            }","","            // when we make it here and moved is false, we are","            // finished sorting","            if (!moved) {","                break;","            }","","        }","","        this.sorted = s;","    },","","    /**","    * Handles the actual insertion of script/link tags","    * @method _insert","    * @private","    * @param {Object} source The YUI instance the request came from","    * @param {Object} o The metadata to include","    * @param {String} type JS or CSS","    * @param {Boolean} [skipcalc=false] Do a Loader.calculate on the meta","    */","    _insert: function(source, o, type, skipcalc) {","","","        // restore the state at the time of the request","        if (source) {","            this._config(source);","        }","","        // build the dependency list","        // don't include type so we can process CSS and script in","        // one pass when the type is not specified.","        if (!skipcalc) {","            //this.calculate(o);","        }","","        var modules = this.resolve(!skipcalc),","            self = this, comp = 0, actions = 0;","","        if (type) {","            //Filter out the opposite type and reset the array so the checks later work","            modules[((type === JS) ? CSS : JS)] = [];","        }","        if (modules.js.length) {","            comp++;","        }","        if (modules.css.length) {","            comp++;","        }","","        //console.log('Resolved Modules: ', modules);","","        var complete = function(d) {","            actions++;","            var errs = {}, i = 0, u = '', fn;","","            if (d && d.errors) {","                for (i = 0; i < d.errors.length; i++) {","                    if (d.errors[i].request) {","                        u = d.errors[i].request.url;","                    } else {","                        u = d.errors[i];","                    }","                    errs[u] = u;","                }","            }","            ","            if (d && d.data && d.data.length && (d.type === 'success')) {","                for (i = 0; i < d.data.length; i++) {","                    self.inserted[d.data[i].name] = true;","                }","            }","","            if (actions === comp) {","                self._loading = null;","                if (d && d.fn) {","                    fn = d.fn;","                    delete d.fn;","                    fn.call(self, d);","                }","            }","        };","","        this._loading = true;","","        if (!modules.js.length && !modules.css.length) {","            actions = -1;","            complete({","                fn: self._onSuccess","            });","            return;","        }","        ","","        if (modules.css.length) { //Load CSS first","            Y.Get.css(modules.css, {","                data: modules.cssMods,","                attributes: self.cssAttributes,","                insertBefore: self.insertBefore,","                charset: self.charset,","                timeout: self.timeout,","                context: self,","                onProgress: function(e) {","                    self._onProgress.call(self, e);","                },","                onTimeout: function(d) {","                    self._onTimeout.call(self, d);","                },","                onSuccess: function(d) {","                    d.type = 'success';","                    d.fn = self._onSuccess;","                    complete.call(self, d);","                },","                onFailure: function(d) {","                    d.type = 'failure';","                    d.fn = self._onFailure;","                    complete.call(self, d);","                }","            });","        }","","        if (modules.js.length) {","            Y.Get.js(modules.js, {","                data: modules.jsMods,","                insertBefore: self.insertBefore,","                attributes: self.jsAttributes,","                charset: self.charset,","                timeout: self.timeout,","                autopurge: false,","                context: self,","                async: self.async,","                onProgress: function(e) {","                    self._onProgress.call(self, e);","                },","                onTimeout: function(d) {","                    self._onTimeout.call(self, d);","                },","                onSuccess: function(d) {","                    d.type = 'success';","                    d.fn = self._onSuccess;","                    complete.call(self, d);","                },","                onFailure: function(d) {","                    d.type = 'failure';","                    d.fn = self._onFailure;","                    complete.call(self, d);","                }","            });","        }","    },","    /**","    * Once a loader operation is completely finished, process any additional queued items.","    * @method _continue","    * @private","    */","    _continue: function() {","        if (!(_queue.running) && _queue.size() > 0) {","            _queue.running = true;","            _queue.next()();","        }","    },","","    /**","     * inserts the requested modules and their dependencies.","     * <code>type</code> can be \"js\" or \"css\".  Both script and","     * css are inserted if type is not provided.","     * @method insert","     * @param {object} o optional options object.","     * @param {string} type the type of dependency to insert.","     */","    insert: function(o, type, skipsort) {","        var self = this, copy = Y.merge(this);","        delete copy.require;","        delete copy.dirty;","        _queue.add(function() {","            self._insert(copy, o, type, skipsort);","        });","        this._continue();","    },","","    /**","     * Executed every time a module is loaded, and if we are in a load","     * cycle, we attempt to load the next script.  Public so that it","     * is possible to call this if using a method other than","     * Y.register to determine when scripts are fully loaded","     * @method loadNext","     * @deprecated","     * @param {string} mname optional the name of the module that has","     * been loaded (which is usually why it is time to load the next","     * one).","     */","    loadNext: function(mname) {","        return;","    },","","    /**","     * Apply filter defined for this instance to a url/path","     * @method _filter","     * @param {string} u the string to filter.","     * @param {string} name the name of the module, if we are processing","     * a single module as opposed to a combined url.","     * @return {string} the filtered string.","     * @private","     */","    _filter: function(u, name, group) {","        var f = this.filter,","            hasFilter = name && (name in this.filters),","            modFilter = hasFilter && this.filters[name],","            groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);","","        if (groupName && this.groups[groupName] && this.groups[groupName].filter) {","            modFilter = this.groups[groupName].filter;","            hasFilter = true;","        }","","        if (u) {","            if (hasFilter) {","                f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;","            }","            if (f) {","                u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);","            }","        }","        return u;","    },","","    /**","     * Generates the full url for a module","     * @method _url","     * @param {string} path the path fragment.","     * @param {String} name The name of the module","     * @param {String} [base=self.base] The base url to use","     * @return {string} the full url.","     * @private","     */","    _url: function(path, name, base) {","        return this._filter((base || this.base || '') + path, name);","    },","    /**","    * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.","    * @method resolve","    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else","    * @param {Array} [s=loader.sorted] An override for the loader.sorted array","    * @return {Object} Object hash (js and css) of two arrays of file lists","    * @example This method can be used as an off-line dep calculator","    *","    *        var Y = YUI();","    *        var loader = new Y.Loader({","    *            filter: 'debug',","    *            base: '../../',","    *            root: 'build/',","    *            combine: true,","    *            require: ['node', 'dd', 'console']","    *        });","    *        var out = loader.resolve(true);","    *","    */","    resolve: function(calc, s) {","","        var len, i, m, url, fn, msg, attr, group, groupName, j, frag,","            comboSource, comboSources, mods, comboBase,","            base, urls, u = [], tmpBase, baseLen, resCombos = {},","            self = this, comboSep, maxURLLength, singles = [],","            inserted = (self.ignoreRegistered) ? {} : self.inserted,","            resolved = { js: [], jsMods: [], css: [], cssMods: [] },","            type = self.loadType || 'js';","","        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { ","            self._resetModules();","        }","","        if (calc) {","            self.calculate();","        }","        s = s || self.sorted;","","        var addSingle = function(m) {","            ","            if (m) {","                group = (m.group && self.groups[m.group]) || NOT_FOUND;","                ","                //Always assume it's async","                if (group.async === false) {","                    m.async = group.async;","                }","","                url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :","                      self._url(m.path, s[i], group.base || m.base);","                ","                if (m.attributes || m.async === false) {","                    url = {","                        url: url,","                        async: m.async","                    };","                    if (m.attributes) {","                        url.attributes = m.attributes;","                    }","                }","                resolved[m.type].push(url);","                resolved[m.type + 'Mods'].push(m);","            } else {","            }","            ","        };","","        len = s.length;","","        // the default combo base","        comboBase = self.comboBase;","","        url = comboBase;","","        comboSources = {};","","        for (i = 0; i < len; i++) {","            comboSource = comboBase;","            m = self.getModule(s[i]);","            groupName = m && m.group;","            group = self.groups[groupName];","            if (groupName && group) {","","                if (!group.combine || m.fullpath) {","                    //This is not a combo module, skip it and load it singly later.","                    //singles.push(s[i]);","                    addSingle(m);","                    continue;","                }","                m.combine = true;","                if (group.comboBase) {","                    comboSource = group.comboBase;","                }","","                if (\"root\" in group && L.isValue(group.root)) {","                    m.root = group.root;","                }","                m.comboSep = group.comboSep || self.comboSep;","                m.maxURLLength = group.maxURLLength || self.maxURLLength;","            } else {","                if (!self.combine) {","                    //This is not a combo module, skip it and load it singly later.","                    //singles.push(s[i]);","                    addSingle(m);","                    continue;","                }","            }","","            comboSources[comboSource] = comboSources[comboSource] || [];","            comboSources[comboSource].push(m);","        }","","        for (j in comboSources) {","            if (comboSources.hasOwnProperty(j)) {","                resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };","                url = j;","                mods = comboSources[j];","                len = mods.length;","                ","                if (len) {","                    for (i = 0; i < len; i++) {","                        if (inserted[mods[i]]) {","                            continue;","                        }","                        m = mods[i];","                        // Do not try to combine non-yui JS unless combo def","                        // is found","                        if (m && (m.combine || !m.ext)) {","                            resCombos[j].comboSep = m.comboSep;","                            resCombos[j].group = m.group;","                            resCombos[j].maxURLLength = m.maxURLLength;","                            frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);","                            frag = self._filter(frag, m.name);","                            resCombos[j][m.type].push(frag);","                            resCombos[j][m.type + 'Mods'].push(m);","                        } else {","                            //Add them to the next process..","                            if (mods[i]) {","                                //singles.push(mods[i].name);","                                addSingle(mods[i]);","                            }","                        }","","                    }","                }","            }","        }","","","        for (j in resCombos) {","            base = j;","            comboSep = resCombos[base].comboSep || self.comboSep;","            maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;","            for (type in resCombos[base]) {","                if (type === JS || type === CSS) {","                    urls = resCombos[base][type];","                    mods = resCombos[base][type + 'Mods'];","                    len = urls.length;","                    tmpBase = base + urls.join(comboSep);","                    baseLen = tmpBase.length;","                    if (maxURLLength <= base.length) {","                        maxURLLength = MAX_URL_LENGTH;","                    }","                    ","                    if (len) {","                        if (baseLen > maxURLLength) {","                            u = [];","                            for (s = 0; s < len; s++) {","                                u.push(urls[s]);","                                tmpBase = base + u.join(comboSep);","","                                if (tmpBase.length > maxURLLength) {","                                    m = u.pop();","                                    tmpBase = base + u.join(comboSep);","                                    resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));","                                    u = [];","                                    if (m) {","                                        u.push(m);","                                    }","                                }","                            }","                            if (u.length) {","                                tmpBase = base + u.join(comboSep);","                                resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));","                            }","                        } else {","                            resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));","                        }","                    }","                    resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);","                }","            }","        }","","        resCombos = null;","","        return resolved;","    },","    /**","    Shortcut to calculate, resolve and load all modules.","","        var loader = new Y.Loader({","            ignoreRegistered: true,","            modules: {","                mod: {","                    path: 'mod.js'","                }","            },","            requires: [ 'mod' ]","        });","        loader.load(function() {","            console.log('All modules have loaded..');","        });","","","    @method load","    @param {Callback} cb Executed after all load operations are complete","    */","    load: function(cb) {","        if (!cb) {","            return;","        }","        var self = this,","            out = self.resolve(true);","        ","        self.data = out;","","        self.onEnd = function() {","            cb.apply(self.context || self, arguments);","        };","","        self.insert();","    }","};","","","","}, '@VERSION@' ,{requires:['get', 'features']});"];
+_yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].lines = {"1":0,"9":0,"11":0,"12":0,"39":0,"45":0,"46":0,"47":0,"50":0,"54":0,"55":0,"56":0,"60":0,"62":0,"72":0,"80":0,"81":0,"82":0,"85":0,"93":0,"94":0,"96":0,"116":0,"138":0,"139":0,"140":0,"142":0,"144":0,"148":0,"149":0,"159":0,"207":0,"209":0,"212":0,"214":0,"268":0,"311":0,"319":0,"334":0,"343":0,"355":0,"362":0,"371":0,"380":0,"398":0,"406":0,"441":0,"448":0,"461":0,"468":0,"470":0,"500":0,"506":0,"511":0,"512":0,"514":0,"524":0,"532":0,"534":0,"536":0,"538":0,"540":0,"542":0,"544":0,"545":0,"570":0,"586":0,"593":0,"600":0,"604":0,"613":0,"615":0,"620":0,"628":0,"633":0,"634":0,"635":0,"636":0,"640":0,"641":0,"642":0,"643":0,"648":0,"649":0,"650":0,"662":0,"663":0,"664":0,"665":0,"669":0,"670":0,"671":0,"672":0,"673":0,"676":0,"677":0,"678":0,"679":0,"680":0,"685":0,"686":0,"687":0,"688":0,"732":0,"735":0,"736":0,"737":0,"738":0,"739":0,"740":0,"745":0,"746":0,"747":0,"748":0,"749":0,"750":0,"751":0,"753":0,"754":0,"756":0,"759":0,"761":0,"775":0,"780":0,"781":0,"784":0,"785":0,"789":0,"790":0,"793":0,"796":0,"797":0,"801":0,"802":0,"803":0,"804":0,"805":0,"810":0,"811":0,"812":0,"813":0,"814":0,"821":0,"822":0,"826":0,"827":0,"830":0,"839":0,"841":0,"842":0,"843":0,"844":0,"845":0,"846":0,"847":0,"849":0,"850":0,"851":0,"856":0,"857":0,"858":0,"859":0,"860":0,"861":0,"862":0,"863":0,"864":0,"865":0,"866":0,"873":0,"875":0,"876":0,"877":0,"880":0,"881":0,"882":0,"883":0,"886":0,"887":0,"888":0,"889":0,"891":0,"898":0,"900":0,"901":0,"902":0,"903":0,"904":0,"905":0,"910":0,"928":0,"929":0,"930":0,"933":0,"947":0,"953":0,"954":0,"955":0,"956":0,"957":0,"958":0,"968":0,"969":0,"971":0,"972":0,"974":0,"979":0,"995":0,"996":0,"1025":0,"1028":0,"1029":0,"1030":0,"1032":0,"1033":0,"1034":0,"1035":0,"1036":0,"1041":0,"1042":0,"1043":0,"1044":0,"1045":0,"1046":0,"1048":0,"1049":0,"1086":0,"1088":0,"1089":0,"1096":0,"1102":0,"1105":0,"1107":0,"1108":0,"1111":0,"1113":0,"1114":0,"1115":0,"1116":0,"1120":0,"1121":0,"1123":0,"1125":0,"1128":0,"1134":0,"1136":0,"1143":0,"1144":0,"1145":0,"1148":0,"1149":0,"1150":0,"1151":0,"1152":0,"1158":0,"1159":0,"1166":0,"1167":0,"1168":0,"1171":0,"1172":0,"1175":0,"1176":0,"1177":0,"1178":0,"1179":0,"1180":0,"1181":0,"1182":0,"1188":0,"1189":0,"1190":0,"1192":0,"1193":0,"1194":0,"1196":0,"1197":0,"1198":0,"1200":0,"1201":0,"1204":0,"1205":0,"1207":0,"1208":0,"1209":0,"1210":0,"1211":0,"1212":0,"1214":0,"1217":0,"1219":0,"1225":0,"1227":0,"1228":0,"1229":0,"1230":0,"1231":0,"1232":0,"1234":0,"1235":0,"1238":0,"1240":0,"1241":0,"1244":0,"1246":0,"1248":0,"1249":0,"1255":0,"1256":0,"1258":0,"1260":0,"1261":0,"1264":0,"1265":0,"1273":0,"1277":0,"1278":0,"1279":0,"1283":0,"1284":0,"1285":0,"1286":0,"1287":0,"1288":0,"1289":0,"1290":0,"1291":0,"1292":0,"1293":0,"1294":0,"1301":0,"1302":0,"1303":0,"1304":0,"1306":0,"1307":0,"1310":0,"1311":0,"1312":0,"1313":0,"1314":0,"1317":0,"1318":0,"1319":0,"1320":0,"1327":0,"1328":0,"1333":0,"1334":0,"1337":0,"1338":0,"1339":0,"1344":0,"1345":0,"1346":0,"1347":0,"1348":0,"1349":0,"1353":0,"1354":0,"1355":0,"1357":0,"1358":0,"1361":0,"1370":0,"1371":0,"1372":0,"1374":0,"1386":0,"1389":0,"1390":0,"1391":0,"1392":0,"1393":0,"1394":0,"1395":0,"1396":0,"1397":0,"1398":0,"1399":0,"1400":0,"1403":0,"1409":0,"1420":0,"1421":0,"1422":0,"1424":0,"1425":0,"1427":0,"1428":0,"1429":0,"1430":0,"1432":0,"1433":0,"1434":0,"1436":0,"1440":0,"1443":0,"1445":0,"1456":0,"1458":0,"1461":0,"1463":0,"1468":0,"1482":0,"1483":0,"1484":0,"1485":0,"1486":0,"1487":0,"1493":0,"1495":0,"1496":0,"1500":0,"1501":0,"1502":0,"1503":0,"1505":0,"1506":0,"1507":0,"1509":0,"1512":0,"1513":0,"1514":0,"1516":0,"1517":0,"1518":0,"1519":0,"1520":0,"1521":0,"1522":0,"1523":0,"1525":0,"1526":0,"1533":0,"1534":0,"1535":0,"1536":0,"1541":0,"1542":0,"1545":0,"1546":0,"1548":0,"1549":0,"1550":0,"1552":0,"1553":0,"1560":0,"1561":0,"1562":0,"1563":0,"1564":0,"1565":0,"1566":0,"1567":0,"1568":0,"1570":0,"1571":0,"1578":0,"1580":0,"1582":0,"1583":0,"1584":0,"1585":0,"1586":0,"1587":0,"1588":0,"1589":0,"1594":0,"1595":0,"1596":0,"1597":0,"1601":0,"1604":0,"1605":0,"1606":0,"1607":0,"1608":0,"1609":0,"1610":0,"1611":0,"1623":0,"1624":0,"1625":0,"1626":0,"1627":0,"1628":0,"1632":0,"1633":0,"1634":0,"1635":0,"1637":0,"1638":0,"1639":0,"1640":0,"1644":0,"1645":0,"1646":0,"1651":0,"1653":0,"1655":0,"1656":0,"1657":0,"1658":0,"1659":0,"1662":0,"1665":0,"1667":0,"1669":0,"1679":0,"1680":0,"1682":0,"1688":0,"1689":0,"1693":0,"1695":0,"1696":0,"1699":0,"1700":0,"1704":0,"1706":0,"1708":0,"1718":0,"1721":0,"1722":0,"1725":0,"1726":0,"1727":0,"1729":0,"1730":0,"1731":0,"1735":0,"1736":0,"1740":0,"1751":0,"1753":0,"1754":0,"1757":0,"1758":0,"1761":0,"1763":0,"1764":0,"1766":0,"1768":0,"1769":0,"1782":0,"1786":0,"1788":0,"1790":0,"1798":0,"1799":0,"1801":0,"1802":0,"1805":0,"1806":0,"1809":0,"1811":0,"1812":0,"1813":0,"1814":0,"1818":0,"1829":0,"1832":0,"1833":0,"1834":0,"1835":0,"1839":0,"1843":0,"1846":0,"1847":0,"1856":0,"1859":0,"1860":0,"1864":0,"1865":0,"1869":0,"1870":0,"1871":0,"1876":0,"1877":0,"1878":0,"1879":0,"1884":0,"1886":0,"1897":0,"1908":0,"1912":0,"1914":0,"1915":0,"1917":0,"1918":0,"1919":0,"1920":0,"1921":0,"1922":0,"1923":0,"1925":0,"1926":0,"1927":0,"1928":0,"1931":0,"1932":0,"1947":0,"1957":0,"1958":0,"1961":0,"1967":0,"1968":0,"1969":0,"1970":0,"1974":0,"1975":0,"1978":0,"1981":0,"1982":0,"1988":0,"1989":0,"1990":0,"1991":0,"1994":0,"1995":0,"1996":0,"1998":0,"2002":0,"2003":0,"2004":0,"2008":0,"2023":0,"2025":0,"2028":0,"2029":0,"2030":0,"2032":0,"2035":0,"2037":0,"2038":0,"2041":0,"2042":0,"2043":0,"2044":0,"2045":0,"2052":0,"2063":0,"2065":0,"2066":0,"2067":0,"2073":0,"2081":0,"2085":0,"2086":0,"2087":0,"2091":0,"2093":0,"2094":0,"2095":0,"2096":0,"2097":0,"2099":0,"2104":0,"2105":0,"2106":0,"2107":0,"2108":0,"2116":0,"2124":0,"2125":0,"2126":0,"2138":0,"2140":0,"2141":0,"2144":0,"2147":0,"2148":0,"2155":0,"2165":0,"2166":0,"2167":0,"2183":0,"2190":0,"2192":0,"2193":0,"2196":0,"2200":0,"2204":0,"2205":0,"2207":0,"2210":0,"2214":0,"2218":0,"2221":0,"2223":0,"2228":0,"2229":0,"2232":0,"2238":0,"2239":0,"2244":0,"2260":0,"2261":0,"2267":0,"2271":0,"2274":0,"2276":0,"2278":0,"2279":0,"2281":0,"2282":0,"2287":0,"2288":0,"2289":0,"2291":0,"2292":0,"2293":0,"2294":0,"2296":0,"2298":0,"2302":0,"2303":0,"2304":0,"2308":0,"2309":0,"2310":0,"2311":0,"2312":0,"2313":0,"2318":0,"2320":0,"2321":0,"2322":0,"2325":0,"2329":0,"2330":0,"2338":0,"2341":0,"2344":0,"2345":0,"2346":0,"2349":0,"2350":0,"2351":0,"2356":0,"2357":0,"2367":0,"2370":0,"2373":0,"2374":0,"2375":0,"2378":0,"2379":0,"2380":0,"2391":0,"2392":0,"2393":0,"2406":0,"2407":0,"2408":0,"2409":0,"2410":0,"2412":0,"2427":0,"2440":0,"2445":0,"2446":0,"2447":0,"2450":0,"2451":0,"2452":0,"2454":0,"2455":0,"2458":0,"2471":0,"2494":0,"2502":0,"2503":0,"2506":0,"2507":0,"2509":0,"2511":0,"2513":0,"2514":0,"2517":0,"2518":0,"2521":0,"2524":0,"2525":0,"2529":0,"2530":0,"2533":0,"2534":0,"2540":0,"2543":0,"2545":0,"2547":0,"2549":0,"2550":0,"2551":0,"2552":0,"2553":0,"2554":0,"2556":0,"2559":0,"2560":0,"2562":0,"2563":0,"2564":0,"2567":0,"2568":0,"2570":0,"2571":0,"2573":0,"2576":0,"2577":0,"2581":0,"2582":0,"2585":0,"2586":0,"2587":0,"2588":0,"2589":0,"2590":0,"2592":0,"2593":0,"2594":0,"2595":0,"2597":0,"2600":0,"2601":0,"2602":0,"2603":0,"2604":0,"2605":0,"2606":0,"2607":0,"2610":0,"2612":0,"2622":0,"2623":0,"2624":0,"2625":0,"2626":0,"2627":0,"2628":0,"2629":0,"2630":0,"2631":0,"2632":0,"2633":0,"2634":0,"2637":0,"2638":0,"2639":0,"2640":0,"2641":0,"2642":0,"2644":0,"2645":0,"2646":0,"2647":0,"2648":0,"2649":0,"2650":0,"2654":0,"2655":0,"2656":0,"2659":0,"2662":0,"2667":0,"2669":0,"2692":0,"2693":0,"2695":0,"2698":0,"2700":0,"2701":0,"2704":0};
+_yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].functions = {"yui2Update:37":0,"galleryUpdate:49":0,"configFn:79":0,"(anonymous 2):11":0,"_path:137":0,"Loader:207":0,"_populateCache:627":0,"_resetModules:661":0,"_inspectPage:731":0,"_requires:773":0,"_config:838":0,"formatSkin:927":0,"_addSkin:946":0,"addAlias:994":0,"addGroup:1024":0,"addModule:1085":0,"require:1369":0,"_explodeRollups:1385":0,"filterRequires:1419":0,"(anonymous 3):1584":0,"getRequires:1454":0,"isCSSLoaded:1677":0,"(anonymous 4):1730":0,"getProvides:1717":0,"calculate:1750":0,"_addLangPack:1781":0,"_setup:1828":0,"getLangPackName:1896":0,"_explode:1906":0,"_patternTest:1946":0,"getModule:1955":0,"_reduce:2021":0,"_finish:2061":0,"_onSuccess:2080":0,"_onProgress:2123":0,"_onFailure:2137":0,"_onTimeout:2164":0,"_sort:2180":0,"complete:2287":0,"onProgress:2337":0,"onTimeout:2340":0,"onSuccess:2343":0,"onFailure:2348":0,"onProgress:2366":0,"onTimeout:2369":0,"onSuccess:2372":0,"onFailure:2377":0,"_insert:2256":0,"_continue:2390":0,"(anonymous 5):2409":0,"insert:2405":0,"loadNext:2426":0,"_filter:2439":0,"_url:2470":0,"addSingle:2511":0,"resolve:2492":0,"onEnd:2700":0,"load:2691":0,"(anonymous 1):1":0};
 _yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].coveredLines = 875;
 _yuitest_coverage["/home/yui/src/yui3/src/loader/build_tmp/loader-base.js"].coveredFunctions = 59;
 _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1);
@@ -862,6 +862,10 @@ self._addSkin(self.skin.defaultSkin, mod.name);
         DEBUG: {
             'searchExp': '-min\\.js',
             'replaceStr': '-debug.js'
+        },
+        COVERAGE: {
+            'searchExp': '-min\\.js',
+            'replaceStr': '-coverage.js'
         }
     },
     /*
@@ -870,55 +874,55 @@ self._addSkin(self.skin.defaultSkin, mod.name);
     * @private
     */
     _inspectPage: function() {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_inspectPage", 727);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 728);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_inspectPage", 731);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 732);
 var self = this, v, m, req, mr, i;
 
         //Inspect the page for CSS only modules and mark them as loaded.
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 731);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 735);
 for (i in self.moduleInfo) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 732);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 736);
 if (self.moduleInfo.hasOwnProperty(i)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 733);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 737);
 v = self.moduleInfo[i];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 734);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 738);
 if (v.type && v.type === CSS) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 735);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 739);
 if (self.isCSSLoaded(v.name)) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 736);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 740);
 self.loaded[i] = true;
                     }
                 }
             }
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 741);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 745);
 for (i in ON_PAGE) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 742);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 746);
 if (ON_PAGE.hasOwnProperty(i)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 743);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 747);
 v = ON_PAGE[i];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 744);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 748);
 if (v.details) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 745);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 749);
 m = self.moduleInfo[v.name];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 746);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 750);
 req = v.details.requires;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 747);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 751);
 mr = m && m.requires;
 
-                   _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 749);
+                   _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 753);
 if (m) {
-                       _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 750);
+                       _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 754);
 if (!m._inspected && req && mr.length != req.length) {
                            // console.log('deleting ' + m.name);
-                           _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 752);
+                           _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 756);
 delete m.expanded;
                        }
                    } else {
-                       _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 755);
+                       _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 759);
 m = self.addModule(v.details, i);
                    }
-                   _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 757);
+                   _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 761);
 m._inspected = true;
                }
             }
@@ -933,66 +937,66 @@ m._inspected = true;
     */
    _requires: function(mod1, mod2) {
 
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_requires", 769);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 771);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_requires", 773);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 775);
 var i, rm, after_map, s,
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 776);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 780);
 if (!m || !other) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 777);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 781);
 return false;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 780);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 784);
 rm = m.expanded_map;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 781);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 785);
 after_map = m.after_map;
 
         // check if this module should be sorted after the other
         // do this first to short circut circular deps
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 785);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 789);
 if (after_map && (mod2 in after_map)) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 786);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 790);
 return true;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 789);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 793);
 after_map = other.after_map;
 
         // and vis-versa
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 792);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 796);
 if (after_map && (mod1 in after_map)) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 793);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 797);
 return false;
         }
 
         // check if this module requires one the other supersedes
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 797);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 801);
 s = info[mod2] && info[mod2].supersedes;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 798);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 802);
 if (s) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 799);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 803);
 for (i = 0; i < s.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 800);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 804);
 if (this._requires(mod1, s[i])) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 801);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 805);
 return true;
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 806);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 810);
 s = info[mod1] && info[mod1].supersedes;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 807);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 811);
 if (s) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 808);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 812);
 for (i = 0; i < s.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 809);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 813);
 if (this._requires(mod2, s[i])) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 810);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 814);
 return false;
                 }
             }
@@ -1000,20 +1004,20 @@ return false;
 
         // check if this module requires the other directly
         // if (r && YArray.indexOf(r, mod2) > -1) {
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 817);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 821);
 if (rm && (mod2 in rm)) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 818);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 822);
 return true;
         }
 
         // external css files should be sorted below yui css
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 822);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 826);
 if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 823);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 827);
 return true;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 826);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 830);
 return false;
     },
     /**
@@ -1023,56 +1027,56 @@ return false;
     * @param {Object} o The new configuration
     */
     _config: function(o) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_config", 834);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 835);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_config", 838);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 839);
 var i, j, val, a, f, group, groupName, self = this;
         // apply config values
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 837);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 841);
 if (o) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 838);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 842);
 for (i in o) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 839);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 843);
 if (o.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 840);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 844);
 val = o[i];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 841);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 845);
 if (i == 'require') {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 842);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 846);
 self.require(val);
-                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 843);
+                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 847);
 if (i == 'skin') {
                         //If the config.skin is a string, format to the expected object
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 845);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 849);
 if (typeof val === 'string') {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 846);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 850);
 self.skin.defaultSkin = o.skin;
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 847);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 851);
 val = {
                                 defaultSkin: val
                             };
                         }
 
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 852);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 856);
 Y.mix(self.skin, val, true);
-                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 853);
+                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 857);
 if (i == 'groups') {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 854);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 858);
 for (j in val) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 855);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 859);
 if (val.hasOwnProperty(j)) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 856);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 860);
 groupName = j;
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 857);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 861);
 group = val[j];
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 858);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 862);
 self.addGroup(group, groupName);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 859);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 863);
 if (group.aliases) {
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 860);
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 864);
 for (a in group.aliases) {
-                                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 861);
+                                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 865);
 if (group.aliases.hasOwnProperty(a)) {
-                                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 862);
+                                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 866);
 self.addAlias(group.aliases[a], a);
                                         }
                                     }
@@ -1080,37 +1084,37 @@ self.addAlias(group.aliases[a], a);
                             }
                         }
 
-                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 869);
+                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 873);
 if (i == 'modules') {
                         // add a hash of module definitions
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 871);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 875);
 for (j in val) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 872);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 876);
 if (val.hasOwnProperty(j)) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 873);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 877);
 self.addModule(val[j], j);
                             }
                         }
-                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 876);
+                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 880);
 if (i === 'aliases') {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 877);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 881);
 for (j in val) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 878);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 882);
 if (val.hasOwnProperty(j)) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 879);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 883);
 self.addAlias(val[j], j);
                             }
                         }
-                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 882);
+                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 886);
 if (i == 'gallery') {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 883);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 887);
 this.groups.gallery.update(val, o);
-                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 884);
+                    } else {_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 888);
 if (i == 'yui2' || i == '2in3') {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 885);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 889);
 this.groups.yui2.update(o['2in3'], o.yui2, o);
                     } else {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 887);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 891);
 self[i] = val;
                     }}}}}}}
                 }
@@ -1118,26 +1122,26 @@ self[i] = val;
         }
 
         // fix filter
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 894);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 898);
 f = self.filter;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 896);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 900);
 if (L.isString(f)) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 897);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 901);
 f = f.toUpperCase();
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 898);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 902);
 self.filterName = f;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 899);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 903);
 self.filter = self.FILTER_DEFS[f];
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 900);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 904);
 if (f == 'DEBUG') {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 901);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 905);
 self.require('yui-log', 'dump');
             }
         }
         
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 906);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 910);
 if (self.lang) {
             //Removed this so that when Loader is invoked
             //it doesn't request what it doesn't need.
@@ -1156,16 +1160,16 @@ if (self.lang) {
      * @return {string} the full skin module name.
      */
     formatSkin: function(skin, mod) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "formatSkin", 923);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 924);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "formatSkin", 927);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 928);
 var s = SKIN_PREFIX + skin;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 925);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 929);
 if (mod) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 926);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 930);
 s = s + '-' + mod;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 929);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 933);
 return s;
     },
 
@@ -1180,25 +1184,25 @@ return s;
      * @private
      */
     _addSkin: function(skin, mod, parent) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_addSkin", 942);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 943);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_addSkin", 946);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 947);
 var mdef, pkg, name, nmod,
             info = this.moduleInfo,
             sinf = this.skin,
             ext = info[mod] && info[mod].ext;
 
         // Add a module definition for the module-specific skin css
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 949);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 953);
 if (mod) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 950);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 954);
 name = this.formatSkin(skin, mod);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 951);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 955);
 if (!info[name]) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 952);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 956);
 mdef = info[mod];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 953);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 957);
 pkg = mdef.pkg || mod;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 954);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 958);
 nmod = {
                     skin: true,
                     name: name,
@@ -1209,23 +1213,23 @@ nmod = {
                           '/' + mod + '.css',
                     ext: ext
                 };
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 964);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 968);
 if (mdef.base) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 965);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 969);
 nmod.base = mdef.base;
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 967);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 971);
 if (mdef.configFn) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 968);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 972);
 nmod.configFn = mdef.configFn;
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 970);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 974);
 this.addModule(nmod, name);
 
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 975);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 979);
 return name;
     },
     /**
@@ -1242,10 +1246,10 @@ return name;
     *       //out.js will contain Node and YQL modules
     */
     addAlias: function(use, name) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addAlias", 990);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 991);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addAlias", 994);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 995);
 YUI.Env.aliases[name] = use;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 992);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 996);
 this.addModule({
             name: name,
             use: use
@@ -1275,48 +1279,48 @@ this.addModule({
      *      }, 'davglass');
      */
     addGroup: function(o, name) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addGroup", 1020);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1021);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addGroup", 1024);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1025);
 var mods = o.modules,
             self = this, i, v;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1024);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1028);
 name = name || o.name;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1025);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1029);
 o.name = name;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1026);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1030);
 self.groups[name] = o;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1028);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1032);
 if (o.patterns) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1029);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1033);
 for (i in o.patterns) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1030);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1034);
 if (o.patterns.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1031);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1035);
 o.patterns[i].group = name;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1032);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1036);
 self.patterns[i] = o.patterns[i];
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1037);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1041);
 if (mods) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1038);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1042);
 for (i in mods) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1039);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1043);
 if (mods.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1040);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1044);
 v = mods[i];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1041);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1045);
 if (typeof v === 'string') {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1042);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1046);
 v = { name: i, fullpath: v };
                     }
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1044);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1048);
 v.group = name;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1045);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1049);
 self.addModule(v, i);
                 }
             }
@@ -1354,13 +1358,13 @@ self.addModule(v, i);
      * @return {Object} the module definition or null if the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addModule", 1081);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1082);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addModule", 1085);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1086);
 name = name || o.name;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1084);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1088);
 if (typeof o === 'string') {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1085);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1089);
 o = { name: name, fullpath: o };
         }
         
@@ -1368,63 +1372,63 @@ o = { name: name, fullpath: o };
         //from an earlier pass from a pattern or else
         //an override module (YUI_config) can not be used to
         //replace a default module.
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1092);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1096);
 if (this.moduleInfo[name] && this.moduleInfo[name].temp) {
             //This catches temp modules loaded via a pattern
             // The module will be added twice, once from the pattern and
             // Once from the actual add call, this ensures that properties
             // that were added to the module the first time around (group: gallery)
             // are also added the second time around too.
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1098);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1102);
 o = Y.merge(this.moduleInfo[name], o);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1101);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1105);
 o.name = name;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1103);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1107);
 if (!o || !o.name) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1104);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1108);
 return null;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1107);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1111);
 if (!o.type) {
             //Always assume it's javascript unless the CSS pattern is matched.
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1109);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1113);
 o.type = JS;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1110);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1114);
 var p = o.path || o.fullpath;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1111);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1115);
 if (p && this.REGEX_CSS.test(p)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1112);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1116);
 o.type = CSS;
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1116);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1120);
 if (!o.path && !o.fullpath) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1117);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1121);
 o.path = _path(name, name, o.type);
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1119);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1123);
 o.supersedes = o.supersedes || o.use;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1121);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1125);
 o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
 
         // Handle submodule logic
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1124);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1128);
 var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
             overrides, skinname, when, g,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1130);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1134);
 this.moduleInfo[name] = o;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1132);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1136);
 o.requires = o.requires || [];
         
         /*
@@ -1432,32 +1436,32 @@ o.requires = o.requires || [];
         optional and supersedes are far more fine grained than
         a blanket requires is.
         */
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1139);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1143);
 if (this.requires) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1140);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1144);
 for (i = 0; i < this.requires.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1141);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1145);
 o.requires.push(this.requires[i]);
             }
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1144);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1148);
 if (o.group && this.groups && this.groups[o.group]) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1145);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1149);
 g = this.groups[o.group];
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1146);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1150);
 if (g.requires) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1147);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1151);
 for (i = 0; i < g.requires.length; i++) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1148);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1152);
 o.requires.push(g.requires[i]);
                 }
             }
         }
 
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1154);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1158);
 if (!o.defaults) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1155);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1159);
 o.defaults = {
                 requires: o.requires ? [].concat(o.requires) : null,
                 supersedes: o.supersedes ? [].concat(o.supersedes) : null,
@@ -1465,163 +1469,163 @@ o.defaults = {
             };
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1162);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1166);
 if (o.skinnable && o.ext && o.temp) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1163);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1167);
 skinname = this._addSkin(this.skin.defaultSkin, name);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1164);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1168);
 o.requires.unshift(skinname);
         }
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1167);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1171);
 if (o.requires.length) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1168);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1172);
 o.requires = this.filterRequires(o.requires) || [];
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1171);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1175);
 if (!o.langPack && o.lang) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1172);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1176);
 langs = YArray(o.lang);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1173);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1177);
 for (j = 0; j < langs.length; j++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1174);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1178);
 lang = langs[j];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1175);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1179);
 packName = this.getLangPackName(lang, name);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1176);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1180);
 smod = this.moduleInfo[packName];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1177);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1181);
 if (!smod) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1178);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1182);
 smod = this._addLangPack(lang, o, packName);
                 }
             }
         }
 
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1184);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1188);
 if (subs) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1185);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1189);
 sup = o.supersedes || [];
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1186);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1190);
 l = 0;
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1188);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1192);
 for (i in subs) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1189);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1193);
 if (subs.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1190);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1194);
 s = subs[i];
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1192);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1196);
 s.path = s.path || _path(name, i, o.type);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1193);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1197);
 s.pkg = name;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1194);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1198);
 s.group = o.group;
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1196);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1200);
 if (s.supersedes) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1197);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1201);
 sup = sup.concat(s.supersedes);
                     }
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1200);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1204);
 smod = this.addModule(s, i);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1201);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1205);
 sup.push(i);
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1203);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1207);
 if (smod.skinnable) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1204);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1208);
 o.skinnable = true;
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1205);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1209);
 overrides = this.skin.overrides;
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1206);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1210);
 if (overrides && overrides[i]) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1207);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1211);
 for (j = 0; j < overrides[i].length; j++) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1208);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1212);
 skinname = this._addSkin(overrides[i][j],
                                          i, name);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1210);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1214);
 sup.push(skinname);
                             }
                         }
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1213);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1217);
 skinname = this._addSkin(this.skin.defaultSkin,
                                         i, name);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1215);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1219);
 sup.push(skinname);
                     }
 
                     // looks like we are expected to work out the metadata
                     // for the parent module language packs from what is
                     // specified in the child modules.
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1221);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1225);
 if (s.lang && s.lang.length) {
 
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1223);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1227);
 langs = YArray(s.lang);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1224);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1228);
 for (j = 0; j < langs.length; j++) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1225);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1229);
 lang = langs[j];
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1226);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1230);
 packName = this.getLangPackName(lang, name);
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1227);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1231);
 supName = this.getLangPackName(lang, i);
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1228);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1232);
 smod = this.moduleInfo[packName];
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1230);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1234);
 if (!smod) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1231);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1235);
 smod = this._addLangPack(lang, o, packName);
                             }
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1234);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1238);
 flatSup = flatSup || YArray.hash(smod.supersedes);
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1236);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1240);
 if (!(supName in flatSup)) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1237);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1241);
 smod.supersedes.push(supName);
                             }
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1240);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1244);
 o.lang = o.lang || [];
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1242);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1246);
 flatLang = flatLang || YArray.hash(o.lang);
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1244);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1248);
 if (!(lang in flatLang)) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1245);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1249);
 o.lang.push(lang);
                             }
 
 // Add rollup file, need to add to supersedes list too
 
                             // default packages
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1251);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1255);
 packName = this.getLangPackName(ROOT_LANG, name);
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1252);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1256);
 supName = this.getLangPackName(ROOT_LANG, i);
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1254);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1258);
 smod = this.moduleInfo[packName];
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1256);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1260);
 if (!smod) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1257);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1261);
 smod = this._addLangPack(lang, o, packName);
                             }
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1260);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1264);
 if (!(supName in flatSup)) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1261);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1265);
 smod.supersedes.push(supName);
                             }
 
@@ -1630,43 +1634,43 @@ smod.supersedes.push(supName);
                         }
                     }
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1269);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1273);
 l++;
                 }
             }
             //o.supersedes = YObject.keys(YArray.hash(sup));
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1273);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1277);
 o.supersedes = YArray.dedupe(sup);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1274);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1278);
 if (this.allowRollup) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1275);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1279);
 o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1279);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1283);
 plugins = o.plugins;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1280);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1284);
 if (plugins) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1281);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1285);
 for (i in plugins) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1282);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1286);
 if (plugins.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1283);
-plug = plugins[i];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1284);
-plug.pkg = name;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1285);
-plug.path = plug.path || _path(name, i, o.type);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1286);
-plug.requires = plug.requires || [];
                     _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1287);
-plug.group = o.group;
+plug = plugins[i];
                     _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1288);
-this.addModule(plug, i);
+plug.pkg = name;
                     _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1289);
+plug.path = plug.path || _path(name, i, o.type);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1290);
+plug.requires = plug.requires || [];
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1291);
+plug.group = o.group;
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1292);
+this.addModule(plug, i);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1293);
 if (o.skinnable) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1290);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1294);
 this._addSkin(this.skin.defaultSkin, i, name);
                     }
 
@@ -1674,40 +1678,40 @@ this._addSkin(this.skin.defaultSkin, i, name);
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1297);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1301);
 if (o.condition) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1298);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1302);
 t = o.condition.trigger;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1299);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1303);
 if (YUI.Env.aliases[t]) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1300);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1304);
 t = YUI.Env.aliases[t];
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1302);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1306);
 if (!Y.Lang.isArray(t)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1303);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1307);
 t = [t];
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1306);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1310);
 for (i = 0; i < t.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1307);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1311);
 trigger = t[i];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1308);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1312);
 when = o.condition.when;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1309);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1313);
 conditions[trigger] = conditions[trigger] || {};
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1310);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1314);
 conditions[trigger][name] = o.condition;
                 // the 'when' attribute can be 'before', 'after', or 'instead'
                 // the default is after.
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1313);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1317);
 if (when && when != 'after') {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1314);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1318);
 if (when == 'instead') { // replace the trigger
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1315);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1319);
 o.supersedes = o.supersedes || [];
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1316);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1320);
 o.supersedes.push(trigger);
                     } else { // before the trigger
                         // the trigger requires the conditional mod,
@@ -1715,59 +1719,59 @@ o.supersedes.push(trigger);
                         // mod if we do not intersede.
                     }
                 } else { // after the trigger
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1323);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1327);
 o.after = o.after || [];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1324);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1328);
 o.after.push(trigger);
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1329);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1333);
 if (o.supersedes) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1330);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1334);
 o.supersedes = this.filterRequires(o.supersedes);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1333);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1337);
 if (o.after) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1334);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1338);
 o.after = this.filterRequires(o.after);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1335);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1339);
 o.after_map = YArray.hash(o.after);
         }
 
         // this.dirty = true;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1340);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1344);
 if (o.configFn) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1341);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1345);
 ret = o.configFn(o);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1342);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1346);
 if (ret === false) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1343);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1347);
 delete this.moduleInfo[name];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1344);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1348);
 delete GLOBAL_ENV._renderedMods[name];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1345);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1349);
 o = null;
             }
         }
         //Add to global cache
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1349);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1353);
 if (o) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1350);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1354);
 if (!GLOBAL_ENV._renderedMods) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1351);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1355);
 GLOBAL_ENV._renderedMods = {};
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1353);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1357);
 GLOBAL_ENV._renderedMods[name] = Y.mix(GLOBAL_ENV._renderedMods[name] || {}, o);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1354);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1358);
 GLOBAL_ENV._conditions = conditions;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1357);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1361);
 return o;
     },
 
@@ -1777,15 +1781,15 @@ return o;
      * @param {string[] | string*} what the modules to load.
      */
     require: function(what) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "require", 1365);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1366);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "require", 1369);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1370);
 var a = (typeof what === 'string') ? YArray(arguments) : what;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1367);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1371);
 this.dirty = true;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1368);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1372);
 this.required = Y.merge(this.required, YArray.hash(this.filterRequires(a)));
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1370);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1374);
 this._explodeRollups();
     },
     /**
@@ -1798,45 +1802,45 @@ this._explodeRollups();
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_explodeRollups", 1381);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1382);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_explodeRollups", 1385);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1386);
 var self = this, m, i, a, v, len, len2,
         r = self.required;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1385);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1389);
 if (!self.allowRollup) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1386);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1390);
 for (i in r) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1387);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1391);
 if (r.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1388);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1392);
 m = self.getModule(i);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1389);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1393);
 if (m && m.use) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1390);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1394);
 len = m.use.length;
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1391);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1395);
 for (a = 0; a < len; a++) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1392);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1396);
 m = self.getModule(m.use[a]);
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1393);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1397);
 if (m && m.use) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1394);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1398);
 len2 = m.use.length;
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1395);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1399);
 for (v = 0; v < len2; v++) {
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1396);
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1400);
 r[m.use[v]] = true;
                                 }
                             } else {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1399);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1403);
 r[m.use[a]] = true;
                             }
                         }
                     }
                 }
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1405);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1409);
 self.required = r;
         }
 
@@ -1848,48 +1852,48 @@ self.required = r;
     * @return {Array} The new array of exploded requirements
     */
     filterRequires: function(r) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "filterRequires", 1415);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1416);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "filterRequires", 1419);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1420);
 if (r) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1417);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1421);
 if (!Y.Lang.isArray(r)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1418);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1422);
 r = [r];
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1420);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1424);
 r = Y.Array(r);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1421);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1425);
 var c = [], i, mod, o, m;
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1423);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1427);
 for (i = 0; i < r.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1424);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1428);
 mod = this.getModule(r[i]);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1425);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1429);
 if (mod && mod.use) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1426);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1430);
 for (o = 0; o < mod.use.length; o++) {
                         //Must walk the other modules in case a module is a rollup of rollups (datatype)
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1428);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1432);
 m = this.getModule(mod.use[o]);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1429);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1433);
 if (m && m.use) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1430);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1434);
 c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
                         } else {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1432);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1436);
 c.push(mod.use[o]);
                         }
                     }
                 } else {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1436);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1440);
 c.push(r[i]);
                 }
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1439);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1443);
 r = c;
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1441);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1445);
 return r;
     },
     /**
@@ -1901,24 +1905,24 @@ return r;
      */
     getRequires: function(mod) {
 
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getRequires", 1450);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1452);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getRequires", 1454);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1456);
 if (!mod) {
             //console.log('returning no reqs for ' + mod.name);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1454);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1458);
 return NO_REQUIREMENTS;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1457);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1461);
 if (mod._parsed) {
             //console.log('returning requires for ' + mod.name, mod.requires);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1459);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1463);
 return mod.expanded || NO_REQUIREMENTS;
         }
 
         //TODO add modue cache here out of scope..
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1464);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1468);
 var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
@@ -1933,80 +1937,80 @@ var i, m, j, add, packName, lang, testresults = this.testresults,
         // console.log(name);
 
         // pattern match leaves module stub that needs to be filled out
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1478);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1482);
 if (mod.temp && adddef) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1479);
-old_mod = mod;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1480);
-mod = this.addModule(adddef, name);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1481);
-mod.group = old_mod.group;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1482);
-mod.pkg = old_mod.pkg;
             _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1483);
+old_mod = mod;
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1484);
+mod = this.addModule(adddef, name);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1485);
+mod.group = old_mod.group;
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1486);
+mod.pkg = old_mod.pkg;
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1487);
 delete mod.expanded;
         }
 
         // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
         
         //If a skin or a lang is different, reparse..
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1489);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1493);
 reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1491);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1495);
 if (mod.expanded && !reparse) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1492);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1496);
 return mod.expanded;
         }
         
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1496);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1500);
 d = [];
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1497);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1501);
 hash = {};
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1498);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1502);
 r = this.filterRequires(mod.requires);
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1499);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1503);
 if (mod.lang) {
             //If a module has a lang attribute, auto add the intl requirement.
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1501);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1505);
 d.unshift('intl');
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1502);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1506);
 r.unshift('intl');
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1503);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1507);
 intl = true;
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1505);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1509);
 o = this.filterRequires(mod.optional);
 
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1508);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1512);
 mod._parsed = true;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1509);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1513);
 mod.langCache = this.lang;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1510);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1514);
 mod.skinCache = this.skin.defaultSkin;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1512);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1516);
 for (i = 0; i < r.length; i++) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1513);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1517);
 if (!hash[r[i]]) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1514);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1518);
 d.push(r[i]);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1515);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1519);
 hash[r[i]] = true;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1516);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1520);
 m = this.getModule(r[i]);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1517);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1521);
 if (m) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1518);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1522);
 add = this.getRequires(m);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1519);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1523);
 intl = intl || (m.expanded_map &&
                         (INTL in m.expanded_map));
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1521);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1525);
 for (j = 0; j < add.length; j++) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1522);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1526);
 d.push(add[j]);
                     }
                 }
@@ -2014,39 +2018,39 @@ d.push(add[j]);
         }
 
         // get the requirements from superseded modules, if any
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1529);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1533);
 r = this.filterRequires(mod.supersedes);
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1530);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1534);
 if (r) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1531);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1535);
 for (i = 0; i < r.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1532);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1536);
 if (!hash[r[i]]) {
                     // if this module has submodules, the requirements list is
                     // expanded to include the submodules.  This is so we can
                     // prevent dups when a submodule is already loaded and the
                     // parent is requested.
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1537);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1541);
 if (mod.submodules) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1538);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1542);
 d.push(r[i]);
                     }
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1541);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1545);
 hash[r[i]] = true;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1542);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1546);
 m = this.getModule(r[i]);
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1544);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1548);
 if (m) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1545);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1549);
 add = this.getRequires(m);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1546);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1550);
 intl = intl || (m.expanded_map &&
                             (INTL in m.expanded_map));
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1548);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1552);
 for (j = 0; j < add.length; j++) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1549);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1553);
 d.push(add[j]);
                         }
                     }
@@ -2054,28 +2058,28 @@ d.push(add[j]);
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1556);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1560);
 if (o && this.loadOptional) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1557);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1561);
 for (i = 0; i < o.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1558);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1562);
 if (!hash[o[i]]) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1559);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1563);
 d.push(o[i]);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1560);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1564);
 hash[o[i]] = true;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1561);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1565);
 m = info[o[i]];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1562);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1566);
 if (m) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1563);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1567);
 add = this.getRequires(m);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1564);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1568);
 intl = intl || (m.expanded_map &&
                             (INTL in m.expanded_map));
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1566);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1570);
 for (j = 0; j < add.length; j++) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1567);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1571);
 d.push(add[j]);
                         }
                     }
@@ -2083,63 +2087,63 @@ d.push(add[j]);
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1574);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1578);
 cond = this.conditions[name];
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1576);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1580);
 if (cond) {
             //Set the module to not parsed since we have conditionals and this could change the dependency tree.
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1578);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1582);
 mod._parsed = false;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1579);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1583);
 if (testresults && ftests) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1580);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1584);
 oeach(testresults, function(result, id) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "(anonymous 3)", 1580);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1581);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "(anonymous 3)", 1584);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1585);
 var condmod = ftests[id].name;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1582);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1586);
 if (!hash[condmod] && ftests[id].trigger == name) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1583);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1587);
 if (result && ftests[id]) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1584);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1588);
 hash[condmod] = true;
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1585);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1589);
 d.push(condmod);
                         }
                     }
                 });
             } else {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1590);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1594);
 for (i in cond) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1591);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1595);
 if (cond.hasOwnProperty(i)) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1592);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1596);
 if (!hash[i]) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1593);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1597);
 def = cond[i];
                             //first see if they've specfied a ua check
                             //then see if they've got a test fn & if it returns true
                             //otherwise just having a condition block is enough
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1597);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1601);
 go = def && ((!def.ua && !def.test) || (def.ua && Y.UA[def.ua]) ||
                                         (def.test && def.test(Y, r)));
 
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1600);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1604);
 if (go) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1601);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1605);
 hash[i] = true;
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1602);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1606);
 d.push(i);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1603);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1607);
 m = this.getModule(i);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1604);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1608);
 if (m) {
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1605);
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1609);
 add = this.getRequires(m);
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1606);
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1610);
 for (j = 0; j < add.length; j++) {
-                                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1607);
+                                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1611);
 d.push(add[j]);
                                     }
 
@@ -2152,80 +2156,80 @@ d.push(add[j]);
         }
 
         // Create skin modules
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1619);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1623);
 if (mod.skinnable) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1620);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1624);
 skindef = this.skin.overrides;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1621);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1625);
 for (i in YUI.Env.aliases) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1622);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1626);
 if (YUI.Env.aliases.hasOwnProperty(i)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1623);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1627);
 if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1624);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1628);
 skinpar = i;
                     }
                 }
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1628);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1632);
 if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1629);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1633);
 skinname = name;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1630);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1634);
 if (skindef[skinpar]) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1631);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1635);
 skinname = skinpar;
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1633);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1637);
 for (i = 0; i < skindef[skinname].length; i++) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1634);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1638);
 skinmod = this._addSkin(skindef[skinname][i], name);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1635);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1639);
 if (!this.isCSSLoaded(skinmod, this._boot)) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1636);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1640);
 d.push(skinmod);
                     }
                 }
             } else {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1640);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1644);
 skinmod = this._addSkin(this.skin.defaultSkin, name);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1641);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1645);
 if (!this.isCSSLoaded(skinmod, this._boot)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1642);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1646);
 d.push(skinmod);
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1647);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1651);
 mod._parsed = false;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1649);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1653);
 if (intl) {
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1651);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1655);
 if (mod.lang && !mod.langPack && Y.Intl) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1652);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1656);
 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1653);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1657);
 packName = this.getLangPackName(lang, name);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1654);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1658);
 if (packName) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1655);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1659);
 d.unshift(packName);
                 }
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1658);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1662);
 d.unshift(INTL);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1661);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1665);
 mod.expanded_map = YArray.hash(d);
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1663);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1667);
 mod.expanded = YObject.keys(mod.expanded_map);
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1665);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1669);
 return mod.expanded;
     },
     /**
@@ -2236,49 +2240,49 @@ return mod.expanded;
     */
     isCSSLoaded: function(name, skip) {
         //TODO - Make this call a batching call with name being an array
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "isCSSLoaded", 1673);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1675);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "isCSSLoaded", 1677);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1679);
 if (!name || !YUI.Env.cssStampEl || (!skip && this.ignoreRegistered)) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1676);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1680);
 return false;
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1678);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1682);
 var el = YUI.Env.cssStampEl,
             ret = false,
             mod = YUI.Env._cssLoaded[name],
             style = el.currentStyle; //IE
 
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1684);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1688);
 if (mod !== undefined) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1685);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1689);
 return mod;
         }
 
         //Add the classname to the element
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1689);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1693);
 el.className = name;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1691);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1695);
 if (!style) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1692);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1696);
 style = Y.config.doc.defaultView.getComputedStyle(el, null);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1695);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1699);
 if (style && style.display === 'none') {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1696);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1700);
 ret = true;
         }
 
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1700);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1704);
 el.className = ''; //Reset the classname to ''
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1702);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1706);
 YUI.Env._cssLoaded[name] = ret;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1704);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1708);
 return ret;
     },
 
@@ -2289,42 +2293,42 @@ return ret;
      * @return {object} what this module provides.
      */
     getProvides: function(name) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getProvides", 1713);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1714);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getProvides", 1717);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1718);
 var m = this.getModule(name), o, s;
             // supmap = this.provides;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1717);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1721);
 if (!m) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1718);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1722);
 return NOT_FOUND;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1721);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1725);
 if (m && !m.provides) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1722);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1726);
 o = {};
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1723);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1727);
 s = m.supersedes;
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1725);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1729);
 if (s) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1726);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1730);
 YArray.each(s, function(v) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "(anonymous 4)", 1726);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1727);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "(anonymous 4)", 1730);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1731);
 Y.mix(o, this.getProvides(v));
                 }, this);
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1731);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1735);
 o[name] = true;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1732);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1736);
 m.provides = o;
 
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1736);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1740);
 return m.provides;
     },
 
@@ -2336,36 +2340,36 @@ return m.provides;
      * @param {string} type optional argument to prune modules.
      */
     calculate: function(o, type) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "calculate", 1746);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1747);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "calculate", 1750);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1751);
 if (o || type || this.dirty) {
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1749);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1753);
 if (o) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1750);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1754);
 this._config(o);
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1753);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1757);
 if (!this._init) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1754);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1758);
 this._setup();
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1757);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1761);
 this._explode();
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1759);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1763);
 if (this.allowRollup) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1760);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1764);
 this._rollup();
             } else {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1762);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1766);
 this._explodeRollups();
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1764);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1768);
 this._reduce();
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1765);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1769);
 this._sort();
         }
     },
@@ -2379,19 +2383,19 @@ this._sort();
     * @return {Object} The module definition
     */
     _addLangPack: function(lang, m, packName) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_addLangPack", 1777);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1778);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_addLangPack", 1781);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1782);
 var name = m.name,
             packPath, conf,
             existing = this.moduleInfo[packName];
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1782);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1786);
 if (!existing) {
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1784);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1788);
 packPath = _path((m.pkg || name), packName, JS, true);
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1786);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1790);
 conf = {
                 path: packPath,
                 intl: true,
@@ -2400,38 +2404,38 @@ conf = {
                 group: m.group,
                 supersedes: []
             };
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1794);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1798);
 if (m.root) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1795);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1799);
 conf.root = m.root;
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1797);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1801);
 if (m.base) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1798);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1802);
 conf.base = m.base;
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1801);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1805);
 if (m.configFn) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1802);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1806);
 conf.configFn = m.configFn;
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1805);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1809);
 this.addModule(conf, packName);
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1807);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1811);
 if (lang) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1808);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1812);
 Y.Env.lang = Y.Env.lang || {};
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1809);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1813);
 Y.Env.lang[lang] = Y.Env.lang[lang] || {};
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1810);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1814);
 Y.Env.lang[lang][name] = true;
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1814);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1818);
 return this.moduleInfo[packName];
     },
 
@@ -2443,34 +2447,34 @@ return this.moduleInfo[packName];
      * @private
      */
     _setup: function() {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_setup", 1824);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1825);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_setup", 1828);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1829);
 var info = this.moduleInfo, name, i, j, m, l,
             packName;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1828);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1832);
 for (name in info) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1829);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1833);
 if (info.hasOwnProperty(name)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1830);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1834);
 m = info[name];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1831);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1835);
 if (m) {
 
                     // remove dups
                     //m.requires = YObject.keys(YArray.hash(m.requires));
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1835);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1839);
 m.requires = YArray.dedupe(m.requires);
 
                     // Create lang pack modules
                     //if (m.lang && m.lang.length) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1839);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1843);
 if (m.lang) {
                         // Setup root package if the module has lang defined,
                         // it needs to provide a root language pack
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1842);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1846);
 packName = this.getLangPackName(ROOT_LANG, name);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1843);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1847);
 this._addLangPack(null, m, packName);
                     }
 
@@ -2480,50 +2484,50 @@ this._addLangPack(null, m, packName);
 
 
         //l = Y.merge(this.inserted);
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1852);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1856);
 l = {};
 
         // available modules
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1855);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1859);
 if (!this.ignoreRegistered) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1856);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1860);
 Y.mix(l, GLOBAL_ENV.mods);
         }
 
         // add the ignore list to the list of loaded packages
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1860);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1864);
 if (this.ignore) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1861);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1865);
 Y.mix(l, YArray.hash(this.ignore));
         }
 
         // expand the list to include superseded modules
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1865);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1869);
 for (j in l) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1866);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1870);
 if (l.hasOwnProperty(j)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1867);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1871);
 Y.mix(l, this.getProvides(j));
             }
         }
 
         // remove modules on the force list from the loaded list
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1872);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1876);
 if (this.force) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1873);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1877);
 for (i = 0; i < this.force.length; i++) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1874);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1878);
 if (this.force[i] in l) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1875);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1879);
 delete l[this.force[i]];
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1880);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1884);
 Y.mix(this.loaded, l);
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1882);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1886);
 this._init = true;
     },
 
@@ -2535,8 +2539,8 @@ this._init = true;
      * @return {string} the language pack module name.
      */
     getLangPackName: function(lang, mname) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getLangPackName", 1892);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1893);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getLangPackName", 1896);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1897);
 return ('lang/' + mname + ((lang) ? '_' + lang : ''));
     },
     /**
@@ -2548,48 +2552,48 @@ return ('lang/' + mname + ((lang) ? '_' + lang : ''));
      */
     _explode: function() {
         //TODO Move done out of scope
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_explode", 1902);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1904);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_explode", 1906);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1908);
 var r = this.required, m, reqs, done = {},
             self = this, name;
 
         // the setup phase is over, all modules have been created
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1908);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1912);
 self.dirty = false;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1910);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1914);
 self._explodeRollups();
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1911);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1915);
 r = self.required;
        
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1913);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1917);
 for (name in r) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1914);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1918);
 if (r.hasOwnProperty(name)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1915);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1919);
 if (!done[name]) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1916);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1920);
 done[name] = true;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1917);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1921);
 m = self.getModule(name);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1918);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1922);
 if (m) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1919);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1923);
 var expound = m.expound;
 
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1921);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1925);
 if (expound) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1922);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1926);
 r[expound] = self.getModule(expound);
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1923);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1927);
 reqs = self.getRequires(r[expound]);
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1924);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1928);
 Y.mix(r, YArray.hash(reqs));
                         }
 
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1927);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1931);
 reqs = self.getRequires(m);
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1928);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1932);
 Y.mix(r, YArray.hash(reqs));
                     }
                 }
@@ -2605,8 +2609,8 @@ Y.mix(r, YArray.hash(reqs));
     * @param {String} pname The pattern to match
     */
     _patternTest: function(mname, pname) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_patternTest", 1942);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1943);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_patternTest", 1946);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1947);
 return (mname.indexOf(pname) > -1);
     },
     /**
@@ -2617,82 +2621,82 @@ return (mname.indexOf(pname) > -1);
     */
     getModule: function(mname) {
         //TODO: Remove name check - it's a quick hack to fix pattern WIP
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getModule", 1951);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1953);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "getModule", 1955);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1957);
 if (!mname) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1954);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1958);
 return null;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1957);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1961);
 var p, found, pname,
             m = this.moduleInfo[mname],
             patterns = this.patterns;
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1963);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1967);
 if (!m || (m && m.ext)) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1964);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1968);
 for (pname in patterns) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1965);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1969);
 if (patterns.hasOwnProperty(pname)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1966);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1970);
 p = patterns[pname];
                     
                     //There is no test method, create a default one that tests
                     // the pattern against the mod name
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1970);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1974);
 if (!p.test) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1971);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1975);
 p.test = this._patternTest;
                     }
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1974);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1978);
 if (p.test(mname, pname)) {
                         // use the metadata supplied for the pattern
                         // as the module definition.
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1977);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1981);
 found = p;
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1978);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1982);
 break;
                     }
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1984);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1988);
 if (!m) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1985);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1989);
 if (found) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1986);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1990);
 if (p.action) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1987);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1991);
 p.action.call(this, mname, pname);
                 } else {
                     // ext true or false?
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1990);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1994);
 m = this.addModule(Y.merge(found), mname);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1991);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1995);
 if (found.configFn) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1992);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1996);
 m.configFn = found.configFn;
                     }
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1994);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1998);
 m.temp = true;
                 }
             }
         } else {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1998);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2002);
 if (found && m && found.configFn && !m.configFn) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 1999);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2003);
 m.configFn = found.configFn;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2000);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2004);
 m.configFn(m);
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2004);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2008);
 return m;
     },
 
@@ -2708,43 +2712,43 @@ return m;
      */
     _reduce: function(r) {
 
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_reduce", 2017);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2019);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_reduce", 2021);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2023);
 r = r || this.required;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2021);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2025);
 var i, j, s, m, type = this.loadType,
         ignore = this.ignore ? YArray.hash(this.ignore) : false;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2024);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2028);
 for (i in r) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2025);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2029);
 if (r.hasOwnProperty(i)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2026);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2030);
 m = this.getModule(i);
                 // remove if already loaded
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2028);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2032);
 if (((this.loaded[i] || ON_PAGE[i]) &&
                         !this.forceMap[i] && !this.ignoreRegistered) ||
                         (type && m && m.type != type)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2031);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2035);
 delete r[i];
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2033);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2037);
 if (ignore && ignore[i]) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2034);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2038);
 delete r[i];
                 }
                 // remove anything this module supersedes
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2037);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2041);
 s = m && m.supersedes;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2038);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2042);
 if (s) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2039);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2043);
 for (j = 0; j < s.length; j++) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2040);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2044);
 if (s[j] in r) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2041);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2045);
 delete r[s[j]];
                         }
                     }
@@ -2752,7 +2756,7 @@ delete r[s[j]];
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2048);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2052);
 return r;
     },
     /**
@@ -2764,22 +2768,22 @@ return r;
     */
     _finish: function(msg, success) {
 
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_finish", 2057);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2059);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_finish", 2061);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2063);
 _queue.running = false;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2061);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2065);
 var onEnd = this.onEnd;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2062);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2066);
 if (onEnd) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2063);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2067);
 onEnd.call(this.context, {
                 msg: msg,
                 data: this.data,
                 success: success
             });
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2069);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2073);
 this._continue();
     },
     /**
@@ -2788,50 +2792,50 @@ this._continue();
     * @private
     */
     _onSuccess: function() {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onSuccess", 2076);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2077);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onSuccess", 2080);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2081);
 var self = this, skipped = Y.merge(self.skipped), fn,
             failed = [], rreg = self.requireRegistration,
             success, msg, i, mod;
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2081);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2085);
 for (i in skipped) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2082);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2086);
 if (skipped.hasOwnProperty(i)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2083);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2087);
 delete self.inserted[i];
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2087);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2091);
 self.skipped = {};
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2089);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2093);
 for (i in self.inserted) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2090);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2094);
 if (self.inserted.hasOwnProperty(i)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2091);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2095);
 mod = self.getModule(i);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2092);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2096);
 if (mod && rreg && mod.type == JS && !(i in YUI.Env.mods)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2093);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2097);
 failed.push(i);
                 } else {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2095);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2099);
 Y.mix(self.loaded, self.getProvides(i));
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2100);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2104);
 fn = self.onSuccess;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2101);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2105);
 msg = (failed.length) ? 'notregistered' : 'success';
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2102);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2106);
 success = !(failed.length);
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2103);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2107);
 if (fn) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2104);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2108);
 fn.call(self.context, {
                 msg: msg,
                 data: self.data,
@@ -2840,7 +2844,7 @@ fn.call(self.context, {
                 skipped: skipped
             });
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2112);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2116);
 self._finish(msg, success);
     },
     /**
@@ -2849,12 +2853,12 @@ self._finish(msg, success);
     * @private
     */
     _onProgress: function(e) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onProgress", 2119);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2120);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onProgress", 2123);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2124);
 var self = this;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2121);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2125);
 if (self.onProgress) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2122);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2126);
 self.onProgress.call(self.context, {
                 name: e.url,
                 data: e.data
@@ -2867,23 +2871,23 @@ self.onProgress.call(self.context, {
     * @private
     */
     _onFailure: function(o) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onFailure", 2133);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2134);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onFailure", 2137);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2138);
 var f = this.onFailure, msg = [], i = 0, len = o.errors.length;
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2136);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2140);
 for (i; i < len; i++) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2137);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2141);
 msg.push(o.errors[i].error);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2140);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2144);
 msg = msg.join(',');
 
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2143);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2147);
 if (f) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2144);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2148);
 f.call(this.context, {
                 msg: msg,
                 data: this.data,
@@ -2891,7 +2895,7 @@ f.call(this.context, {
             });
         }
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2151);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2155);
 this._finish(msg, false);
 
     },
@@ -2902,12 +2906,12 @@ this._finish(msg, false);
     * @private
     */
     _onTimeout: function() {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onTimeout", 2160);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2161);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_onTimeout", 2164);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2165);
 var f = this.onTimeout;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2162);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2166);
 if (f) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2163);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2167);
 f.call(this.context, {
                 msg: 'timeout',
                 data: this.data,
@@ -2924,8 +2928,8 @@ f.call(this.context, {
     _sort: function() {
 
         // create an indexed list
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_sort", 2176);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2179);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_sort", 2180);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2183);
 var s = YObject.keys(this.required),
             // loaded = this.loaded,
             //TODO Move this out of scope
@@ -2933,79 +2937,79 @@ var s = YObject.keys(this.required),
             p = 0, l, a, b, j, k, moved, doneKey;
 
         // keep going until we make a pass without moving anything
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2186);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2190);
 for (;;) {
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2188);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2192);
 l = s.length;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2189);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2193);
 moved = false;
 
             // start the loop after items that are already sorted
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2192);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2196);
 for (j = p; j < l; j++) {
 
                 // check the next module on the list to see if its
                 // dependencies have been met
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2196);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2200);
 a = s[j];
 
                 // check everything below current item and move if we
                 // find a requirement for the current item
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2200);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2204);
 for (k = j + 1; k < l; k++) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2201);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2205);
 doneKey = a + s[k];
 
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2203);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2207);
 if (!done[doneKey] && this._requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2206);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2210);
 b = s.splice(k, 1);
 
                         // insert the dependency above the item that
                         // requires it
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2210);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2214);
 s.splice(j, 0, b[0]);
 
                         // only swap two dependencies once to short circut
                         // circular dependencies
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2214);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2218);
 done[doneKey] = true;
 
                         // keep working
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2217);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2221);
 moved = true;
 
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2219);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2223);
 break;
                     }
                 }
 
                 // jump out of loop if we moved something
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2224);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2228);
 if (moved) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2225);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2229);
 break;
                 // this item is sorted, move our pointer and keep going
                 } else {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2228);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2232);
 p++;
                 }
             }
 
             // when we make it here and moved is false, we are
             // finished sorting
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2234);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2238);
 if (!moved) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2235);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2239);
 break;
             }
 
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2240);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2244);
 this.sorted = s;
     },
 
@@ -3022,113 +3026,113 @@ this.sorted = s;
 
 
         // restore the state at the time of the request
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_insert", 2252);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2256);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_insert", 2256);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2260);
 if (source) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2257);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2261);
 this._config(source);
         }
 
         // build the dependency list
         // don't include type so we can process CSS and script in
         // one pass when the type is not specified.
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2263);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2267);
 if (!skipcalc) {
             //this.calculate(o);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2267);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2271);
 var modules = this.resolve(!skipcalc),
             self = this, comp = 0, actions = 0;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2270);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2274);
 if (type) {
             //Filter out the opposite type and reset the array so the checks later work
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2272);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2276);
 modules[((type === JS) ? CSS : JS)] = [];
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2274);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2278);
 if (modules.js.length) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2275);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2279);
 comp++;
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2277);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2281);
 if (modules.css.length) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2278);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2282);
 comp++;
         }
 
         //console.log('Resolved Modules: ', modules);
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2283);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2287);
 var complete = function(d) {
-            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "complete", 2283);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2284);
+            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "complete", 2287);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2288);
 actions++;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2285);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2289);
 var errs = {}, i = 0, u = '', fn;
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2287);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2291);
 if (d && d.errors) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2288);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2292);
 for (i = 0; i < d.errors.length; i++) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2289);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2293);
 if (d.errors[i].request) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2290);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2294);
 u = d.errors[i].request.url;
                     } else {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2292);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2296);
 u = d.errors[i];
                     }
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2294);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2298);
 errs[u] = u;
                 }
             }
             
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2298);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2302);
 if (d && d.data && d.data.length && (d.type === 'success')) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2299);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2303);
 for (i = 0; i < d.data.length; i++) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2300);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2304);
 self.inserted[d.data[i].name] = true;
                 }
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2304);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2308);
 if (actions === comp) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2305);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2309);
 self._loading = null;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2306);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2310);
 if (d && d.fn) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2307);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2311);
 fn = d.fn;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2308);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2312);
 delete d.fn;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2309);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2313);
 fn.call(self, d);
                 }
             }
         };
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2314);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2318);
 this._loading = true;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2316);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2320);
 if (!modules.js.length && !modules.css.length) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2317);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2321);
 actions = -1;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2318);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2322);
 complete({
                 fn: self._onSuccess
             });
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2321);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2325);
 return;
         }
         
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2325);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2329);
 if (modules.css.length) { //Load CSS first
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2326);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2330);
 Y.Get.css(modules.css, {
                 data: modules.cssMods,
                 attributes: self.cssAttributes,
@@ -3137,39 +3141,39 @@ Y.Get.css(modules.css, {
                 timeout: self.timeout,
                 context: self,
                 onProgress: function(e) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onProgress", 2333);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2334);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onProgress", 2337);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2338);
 self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onTimeout", 2336);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2337);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onTimeout", 2340);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2341);
 self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onSuccess", 2339);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2340);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onSuccess", 2343);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2344);
 d.type = 'success';
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2341);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2345);
 d.fn = self._onSuccess;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2342);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2346);
 complete.call(self, d);
                 },
                 onFailure: function(d) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onFailure", 2344);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2345);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onFailure", 2348);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2349);
 d.type = 'failure';
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2346);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2350);
 d.fn = self._onFailure;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2347);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2351);
 complete.call(self, d);
                 }
             });
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2352);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2356);
 if (modules.js.length) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2353);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2357);
 Y.Get.js(modules.js, {
                 data: modules.jsMods,
                 insertBefore: self.insertBefore,
@@ -3180,31 +3184,31 @@ Y.Get.js(modules.js, {
                 context: self,
                 async: self.async,
                 onProgress: function(e) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onProgress", 2362);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2363);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onProgress", 2366);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2367);
 self._onProgress.call(self, e);
                 },
                 onTimeout: function(d) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onTimeout", 2365);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2366);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onTimeout", 2369);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2370);
 self._onTimeout.call(self, d);
                 },
                 onSuccess: function(d) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onSuccess", 2368);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2369);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onSuccess", 2372);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2373);
 d.type = 'success';
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2370);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2374);
 d.fn = self._onSuccess;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2371);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2375);
 complete.call(self, d);
                 },
                 onFailure: function(d) {
-                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onFailure", 2373);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2374);
+                    _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onFailure", 2377);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2378);
 d.type = 'failure';
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2375);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2379);
 d.fn = self._onFailure;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2376);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2380);
 complete.call(self, d);
                 }
             });
@@ -3216,12 +3220,12 @@ complete.call(self, d);
     * @private
     */
     _continue: function() {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_continue", 2386);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2387);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_continue", 2390);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2391);
 if (!(_queue.running) && _queue.size() > 0) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2388);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2392);
 _queue.running = true;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2389);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2393);
 _queue.next()();
         }
     },
@@ -3235,20 +3239,20 @@ _queue.next()();
      * @param {string} type the type of dependency to insert.
      */
     insert: function(o, type, skipsort) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "insert", 2401);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2402);
-var self = this, copy = Y.merge(this);
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2403);
-delete copy.require;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2404);
-delete copy.dirty;
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2405);
-_queue.add(function() {
-            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "(anonymous 5)", 2405);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "insert", 2405);
 _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2406);
+var self = this, copy = Y.merge(this);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2407);
+delete copy.require;
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2408);
+delete copy.dirty;
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2409);
+_queue.add(function() {
+            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "(anonymous 5)", 2409);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2410);
 self._insert(copy, o, type, skipsort);
         });
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2408);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2412);
 this._continue();
     },
 
@@ -3264,8 +3268,8 @@ this._continue();
      * one).
      */
     loadNext: function(mname) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "loadNext", 2422);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2423);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "loadNext", 2426);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2427);
 return;
     },
 
@@ -3279,35 +3283,35 @@ return;
      * @private
      */
     _filter: function(u, name, group) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_filter", 2435);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2436);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_filter", 2439);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2440);
 var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
             groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2441);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2445);
 if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2442);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2446);
 modFilter = this.groups[groupName].filter;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2443);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2447);
 hasFilter = true;
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2446);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2450);
 if (u) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2447);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2451);
 if (hasFilter) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2448);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2452);
 f = (L.isString(modFilter)) ? this.FILTER_DEFS[modFilter.toUpperCase()] || null : modFilter;
             }
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2450);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2454);
 if (f) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2451);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2455);
 u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
             }
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2454);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2458);
 return u;
     },
 
@@ -3321,8 +3325,8 @@ return u;
      * @private
      */
     _url: function(path, name, base) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_url", 2466);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2467);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "_url", 2470);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2471);
 return this._filter((base || this.base || '') + path, name);
     },
     /**
@@ -3346,8 +3350,8 @@ return this._filter((base || this.base || '') + path, name);
     */
     resolve: function(calc, s) {
 
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "resolve", 2488);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2490);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "resolve", 2492);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2494);
 var len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             comboSource, comboSources, mods, comboBase,
             base, urls, u = [], tmpBase, baseLen, resCombos = {},
@@ -3356,180 +3360,180 @@ var len, i, m, url, fn, msg, attr, group, groupName, j, frag,
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2498);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2502);
 if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2499);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2503);
 self._resetModules();
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2502);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2506);
 if (calc) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2503);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2507);
 self.calculate();
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2505);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2509);
 s = s || self.sorted;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2507);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2511);
 var addSingle = function(m) {
             
-            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addSingle", 2507);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2509);
+            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "addSingle", 2511);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2513);
 if (m) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2510);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2514);
 group = (m.group && self.groups[m.group]) || NOT_FOUND;
                 
                 //Always assume it's async
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2513);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2517);
 if (group.async === false) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2514);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2518);
 m.async = group.async;
                 }
 
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2517);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2521);
 url = (m.fullpath) ? self._filter(m.fullpath, s[i]) :
                       self._url(m.path, s[i], group.base || m.base);
                 
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2520);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2524);
 if (m.attributes || m.async === false) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2521);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2525);
 url = {
                         url: url,
                         async: m.async
                     };
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2525);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2529);
 if (m.attributes) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2526);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2530);
 url.attributes = m.attributes;
                     }
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2529);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2533);
 resolved[m.type].push(url);
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2530);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2534);
 resolved[m.type + 'Mods'].push(m);
             } else {
             }
             
         };
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2536);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2540);
 len = s.length;
 
         // the default combo base
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2539);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2543);
 comboBase = self.comboBase;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2541);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2545);
 url = comboBase;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2543);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2547);
 comboSources = {};
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2545);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2549);
 for (i = 0; i < len; i++) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2546);
-comboSource = comboBase;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2547);
-m = self.getModule(s[i]);
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2548);
-groupName = m && m.group;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2549);
-group = self.groups[groupName];
             _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2550);
+comboSource = comboBase;
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2551);
+m = self.getModule(s[i]);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2552);
+groupName = m && m.group;
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2553);
+group = self.groups[groupName];
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2554);
 if (groupName && group) {
 
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2552);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2556);
 if (!group.combine || m.fullpath) {
                     //This is not a combo module, skip it and load it singly later.
                     //singles.push(s[i]);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2555);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2559);
 addSingle(m);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2556);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2560);
 continue;
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2558);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2562);
 m.combine = true;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2559);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2563);
 if (group.comboBase) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2560);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2564);
 comboSource = group.comboBase;
                 }
 
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2563);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2567);
 if ("root" in group && L.isValue(group.root)) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2564);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2568);
 m.root = group.root;
                 }
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2566);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2570);
 m.comboSep = group.comboSep || self.comboSep;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2567);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2571);
 m.maxURLLength = group.maxURLLength || self.maxURLLength;
             } else {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2569);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2573);
 if (!self.combine) {
                     //This is not a combo module, skip it and load it singly later.
                     //singles.push(s[i]);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2572);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2576);
 addSingle(m);
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2573);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2577);
 continue;
                 }
             }
 
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2577);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2581);
 comboSources[comboSource] = comboSources[comboSource] || [];
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2578);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2582);
 comboSources[comboSource].push(m);
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2581);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2585);
 for (j in comboSources) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2582);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2586);
 if (comboSources.hasOwnProperty(j)) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2583);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2587);
 resCombos[j] = resCombos[j] || { js: [], jsMods: [], css: [], cssMods: [] };
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2584);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2588);
 url = j;
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2585);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2589);
 mods = comboSources[j];
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2586);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2590);
 len = mods.length;
                 
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2588);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2592);
 if (len) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2589);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2593);
 for (i = 0; i < len; i++) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2590);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2594);
 if (inserted[mods[i]]) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2591);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2595);
 continue;
                         }
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2593);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2597);
 m = mods[i];
                         // Do not try to combine non-yui JS unless combo def
                         // is found
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2596);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2600);
 if (m && (m.combine || !m.ext)) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2597);
-resCombos[j].comboSep = m.comboSep;
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2598);
-resCombos[j].group = m.group;
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2599);
-resCombos[j].maxURLLength = m.maxURLLength;
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2600);
-frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
                             _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2601);
-frag = self._filter(frag, m.name);
+resCombos[j].comboSep = m.comboSep;
                             _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2602);
-resCombos[j][m.type].push(frag);
+resCombos[j].group = m.group;
                             _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2603);
+resCombos[j].maxURLLength = m.maxURLLength;
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2604);
+frag = ((L.isValue(m.root)) ? m.root : self.root) + (m.path || m.fullpath);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2605);
+frag = self._filter(frag, m.name);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2606);
+resCombos[j][m.type].push(frag);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2607);
 resCombos[j][m.type + 'Mods'].push(m);
                         } else {
                             //Add them to the next process..
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2606);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2610);
 if (mods[i]) {
                                 //singles.push(mods[i].name);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2608);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2612);
 addSingle(mods[i]);
                             }
                         }
@@ -3540,86 +3544,86 @@ addSingle(mods[i]);
         }
 
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2618);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2622);
 for (j in resCombos) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2619);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2623);
 base = j;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2620);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2624);
 comboSep = resCombos[base].comboSep || self.comboSep;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2621);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2625);
 maxURLLength = resCombos[base].maxURLLength || self.maxURLLength;
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2622);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2626);
 for (type in resCombos[base]) {
-                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2623);
+                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2627);
 if (type === JS || type === CSS) {
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2624);
-urls = resCombos[base][type];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2625);
-mods = resCombos[base][type + 'Mods'];
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2626);
-len = urls.length;
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2627);
-tmpBase = base + urls.join(comboSep);
                     _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2628);
-baseLen = tmpBase.length;
+urls = resCombos[base][type];
                     _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2629);
+mods = resCombos[base][type + 'Mods'];
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2630);
+len = urls.length;
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2631);
+tmpBase = base + urls.join(comboSep);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2632);
+baseLen = tmpBase.length;
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2633);
 if (maxURLLength <= base.length) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2630);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2634);
 maxURLLength = MAX_URL_LENGTH;
                     }
                     
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2633);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2637);
 if (len) {
-                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2634);
+                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2638);
 if (baseLen > maxURLLength) {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2635);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2639);
 u = [];
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2636);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2640);
 for (s = 0; s < len; s++) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2637);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2641);
 u.push(urls[s]);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2638);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2642);
 tmpBase = base + u.join(comboSep);
 
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2640);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2644);
 if (tmpBase.length > maxURLLength) {
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2641);
-m = u.pop();
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2642);
-tmpBase = base + u.join(comboSep);
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2643);
-resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
-                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2644);
-u = [];
                                     _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2645);
+m = u.pop();
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2646);
+tmpBase = base + u.join(comboSep);
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2647);
+resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2648);
+u = [];
+                                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2649);
 if (m) {
-                                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2646);
+                                        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2650);
 u.push(m);
                                     }
                                 }
                             }
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2650);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2654);
 if (u.length) {
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2651);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2655);
 tmpBase = base + u.join(comboSep);
-                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2652);
+                                _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2656);
 resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                             }
                         } else {
-                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2655);
+                            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2659);
 resolved[type].push(self._filter(tmpBase, null, resCombos[base].group));
                         }
                     }
-                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2658);
+                    _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2662);
 resolved[type + 'Mods'] = resolved[type + 'Mods'].concat(mods);
                 }
             }
         }
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2663);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2667);
 resCombos = null;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2665);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2669);
 return resolved;
     },
     /**
@@ -3643,27 +3647,27 @@ return resolved;
     @param {Callback} cb Executed after all load operations are complete
     */
     load: function(cb) {
-        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "load", 2687);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2688);
+        _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "load", 2691);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2692);
 if (!cb) {
-            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2689);
+            _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2693);
 return;
         }
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2691);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2695);
 var self = this,
             out = self.resolve(true);
         
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2694);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2698);
 self.data = out;
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2696);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2700);
 self.onEnd = function() {
-            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onEnd", 2696);
-_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2697);
+            _yuitest_coverfunc("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", "onEnd", 2700);
+_yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2701);
 cb.apply(self.context || self, arguments);
         };
 
-        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2700);
+        _yuitest_coverline("/home/yui/src/yui3/src/loader/build_tmp/loader-base.js", 2704);
 self.insert();
     }
 };
