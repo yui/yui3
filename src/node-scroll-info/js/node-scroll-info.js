@@ -3,6 +3,7 @@ Provides the ScrollInfo Node plugin, which exposes convenient events and methods
 related to scrolling.
 
 @module node-scroll-info
+@since 3.7.0
 **/
 
 /**
@@ -22,6 +23,7 @@ the current scroll position.
 
 @class Plugin.ScrollInfo
 @extends Plugin.Base
+@since 3.7.0
 **/
 
 /**
