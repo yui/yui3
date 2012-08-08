@@ -25,6 +25,7 @@ var myObject = {
     
     
 YUI({
+    coverage: ['profiler'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'profiler-tests': {
