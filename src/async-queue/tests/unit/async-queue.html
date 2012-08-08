@@ -11,6 +11,7 @@
 <script src="assets/async-queue-tests.js"></script>
 <script>
 YUI({
+    coverage: [ 'async-queue' ],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
 }).use('test-console', 'async-queue-tests', function (Y) {
 
