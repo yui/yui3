@@ -16,22 +16,22 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/home/yui/src/yui3/src/overlay/build_tmp/overlay.js"] = {
+_yuitest_coverage["/build/overlay/overlay.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/home/yui/src/yui3/src/overlay/build_tmp/overlay.js",
+    path: "/build/overlay/overlay.js",
     code: []
 };
-_yuitest_coverage["/home/yui/src/yui3/src/overlay/build_tmp/overlay.js"].code=["YUI.add('overlay', function(Y) {","","/**"," * Provides a basic Overlay widget, with Standard Module content support. The Overlay widget"," * provides Page XY positioning support, alignment and centering support along with basic "," * stackable support (z-index and shimming)."," *"," * @module overlay"," */","","/**"," * A basic Overlay Widget, which can be positioned based on Page XY co-ordinates and is stackable (z-index support)."," * It also provides alignment and centering support and uses a standard module format for it's content, with header,"," * body and footer section support."," *"," * @class Overlay"," * @constructor"," * @extends Widget"," * @uses WidgetStdMod"," * @uses WidgetPosition"," * @uses WidgetStack"," * @uses WidgetPositionAlign"," * @uses WidgetPositionConstrain"," * @param {Object} object The user configuration for the instance."," */","Y.Overlay = Y.Base.create(\"overlay\", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain]);","","","}, '@VERSION@' ,{requires:['widget', 'widget-stdmod', 'widget-position', 'widget-stack', 'widget-position-align', 'widget-position-constrain']});"];
-_yuitest_coverage["/home/yui/src/yui3/src/overlay/build_tmp/overlay.js"].lines = {"1":0,"26":0};
-_yuitest_coverage["/home/yui/src/yui3/src/overlay/build_tmp/overlay.js"].functions = {"(anonymous 1):1":0};
-_yuitest_coverage["/home/yui/src/yui3/src/overlay/build_tmp/overlay.js"].coveredLines = 2;
-_yuitest_coverage["/home/yui/src/yui3/src/overlay/build_tmp/overlay.js"].coveredFunctions = 1;
-_yuitest_coverline("/home/yui/src/yui3/src/overlay/build_tmp/overlay.js", 1);
+_yuitest_coverage["/build/overlay/overlay.js"].code=["YUI.add('overlay', function(Y) {","","/**"," * Provides a basic Overlay widget, with Standard Module content support. The Overlay widget"," * provides Page XY positioning support, alignment and centering support along with basic "," * stackable support (z-index and shimming)."," *"," * @module overlay"," */","","/**"," * A basic Overlay Widget, which can be positioned based on Page XY co-ordinates and is stackable (z-index support)."," * It also provides alignment and centering support and uses a standard module format for it's content, with header,"," * body and footer section support."," *"," * @class Overlay"," * @constructor"," * @extends Widget"," * @uses WidgetStdMod"," * @uses WidgetPosition"," * @uses WidgetStack"," * @uses WidgetPositionAlign"," * @uses WidgetPositionConstrain"," * @param {Object} object The user configuration for the instance."," */","Y.Overlay = Y.Base.create(\"overlay\", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain]);","","","}, '@VERSION@' ,{requires:['widget', 'widget-stdmod', 'widget-position', 'widget-stack', 'widget-position-align', 'widget-position-constrain']});"];
+_yuitest_coverage["/build/overlay/overlay.js"].lines = {"1":0,"26":0};
+_yuitest_coverage["/build/overlay/overlay.js"].functions = {"(anonymous 1):1":0};
+_yuitest_coverage["/build/overlay/overlay.js"].coveredLines = 2;
+_yuitest_coverage["/build/overlay/overlay.js"].coveredFunctions = 1;
+_yuitest_coverline("/build/overlay/overlay.js", 1);
 YUI.add('overlay', function(Y) {
 
 /**
@@ -57,8 +57,8 @@ YUI.add('overlay', function(Y) {
  * @uses WidgetPositionConstrain
  * @param {Object} object The user configuration for the instance.
  */
-_yuitest_coverfunc("/home/yui/src/yui3/src/overlay/build_tmp/overlay.js", "(anonymous 1)", 1);
-_yuitest_coverline("/home/yui/src/yui3/src/overlay/build_tmp/overlay.js", 26);
+_yuitest_coverfunc("/build/overlay/overlay.js", "(anonymous 1)", 1);
+_yuitest_coverline("/build/overlay/overlay.js", 26);
 Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain]);
 
 

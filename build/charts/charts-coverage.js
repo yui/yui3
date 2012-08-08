@@ -16,22 +16,22 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/home/yui/src/yui3/src/charts/build_tmp/charts.js"] = {
+_yuitest_coverage["/build/charts/charts.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/home/yui/src/yui3/src/charts/build_tmp/charts.js",
+    path: "/build/charts/charts.js",
     code: []
 };
-_yuitest_coverage["/home/yui/src/yui3/src/charts/build_tmp/charts.js"].code=["YUI.add('charts', function(Y) {","","/**"," * The Chart class is the basic application used to create a chart."," *"," * @module charts"," * @class Chart"," * @constructor"," */","function Chart(cfg)","{","    if(cfg.type != \"pie\")","    {","        return new Y.CartesianChart(cfg);","    }","    else","    {","        return new Y.PieChart(cfg);","    }","}","Y.Chart = Chart;","","","}, '@VERSION@' ,{requires:['charts-base']});"];
-_yuitest_coverage["/home/yui/src/yui3/src/charts/build_tmp/charts.js"].lines = {"1":0,"10":0,"12":0,"14":0,"18":0,"21":0};
-_yuitest_coverage["/home/yui/src/yui3/src/charts/build_tmp/charts.js"].functions = {"Chart:10":0,"(anonymous 1):1":0};
-_yuitest_coverage["/home/yui/src/yui3/src/charts/build_tmp/charts.js"].coveredLines = 6;
-_yuitest_coverage["/home/yui/src/yui3/src/charts/build_tmp/charts.js"].coveredFunctions = 2;
-_yuitest_coverline("/home/yui/src/yui3/src/charts/build_tmp/charts.js", 1);
+_yuitest_coverage["/build/charts/charts.js"].code=["YUI.add('charts', function(Y) {","","/**"," * The Chart class is the basic application used to create a chart."," *"," * @module charts"," * @class Chart"," * @constructor"," */","function Chart(cfg)","{","    if(cfg.type != \"pie\")","    {","        return new Y.CartesianChart(cfg);","    }","    else","    {","        return new Y.PieChart(cfg);","    }","}","Y.Chart = Chart;","","","}, '@VERSION@' ,{requires:['charts-base']});"];
+_yuitest_coverage["/build/charts/charts.js"].lines = {"1":0,"10":0,"12":0,"14":0,"18":0,"21":0};
+_yuitest_coverage["/build/charts/charts.js"].functions = {"Chart:10":0,"(anonymous 1):1":0};
+_yuitest_coverage["/build/charts/charts.js"].coveredLines = 6;
+_yuitest_coverage["/build/charts/charts.js"].coveredFunctions = 2;
+_yuitest_coverline("/build/charts/charts.js", 1);
 YUI.add('charts', function(Y) {
 
 /**
@@ -41,24 +41,24 @@ YUI.add('charts', function(Y) {
  * @class Chart
  * @constructor
  */
-_yuitest_coverfunc("/home/yui/src/yui3/src/charts/build_tmp/charts.js", "(anonymous 1)", 1);
-_yuitest_coverline("/home/yui/src/yui3/src/charts/build_tmp/charts.js", 10);
+_yuitest_coverfunc("/build/charts/charts.js", "(anonymous 1)", 1);
+_yuitest_coverline("/build/charts/charts.js", 10);
 function Chart(cfg)
 {
-    _yuitest_coverfunc("/home/yui/src/yui3/src/charts/build_tmp/charts.js", "Chart", 10);
-_yuitest_coverline("/home/yui/src/yui3/src/charts/build_tmp/charts.js", 12);
+    _yuitest_coverfunc("/build/charts/charts.js", "Chart", 10);
+_yuitest_coverline("/build/charts/charts.js", 12);
 if(cfg.type != "pie")
     {
-        _yuitest_coverline("/home/yui/src/yui3/src/charts/build_tmp/charts.js", 14);
+        _yuitest_coverline("/build/charts/charts.js", 14);
 return new Y.CartesianChart(cfg);
     }
     else
     {
-        _yuitest_coverline("/home/yui/src/yui3/src/charts/build_tmp/charts.js", 18);
+        _yuitest_coverline("/build/charts/charts.js", 18);
 return new Y.PieChart(cfg);
     }
 }
-_yuitest_coverline("/home/yui/src/yui3/src/charts/build_tmp/charts.js", 21);
+_yuitest_coverline("/build/charts/charts.js", 21);
 Y.Chart = Chart;
 
 

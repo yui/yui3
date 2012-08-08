@@ -16,38 +16,38 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js"] = {
+_yuitest_coverage["/build/graphics-svg-default/graphics-svg-default.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js",
+    path: "/build/graphics-svg-default/graphics-svg-default.js",
     code: []
 };
-_yuitest_coverage["/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js"].code=["YUI.add('graphics-svg-default', function(Y) {","","Y.Graphic = Y.SVGGraphic;","Y.Shape = Y.SVGShape;","Y.Circle = Y.SVGCircle;","Y.Rect = Y.SVGRect;","Y.Ellipse = Y.SVGEllipse;","Y.Path = Y.SVGPath;","Y.Drawing = Y.SVGDrawing;","","","}, '@VERSION@' ,{skinnable:false});"];
-_yuitest_coverage["/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js"].lines = {"1":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
-_yuitest_coverage["/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js"].functions = {"(anonymous 1):1":0};
-_yuitest_coverage["/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js"].coveredLines = 8;
-_yuitest_coverage["/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js"].coveredFunctions = 1;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 1);
+_yuitest_coverage["/build/graphics-svg-default/graphics-svg-default.js"].code=["YUI.add('graphics-svg-default', function(Y) {","","Y.Graphic = Y.SVGGraphic;","Y.Shape = Y.SVGShape;","Y.Circle = Y.SVGCircle;","Y.Rect = Y.SVGRect;","Y.Ellipse = Y.SVGEllipse;","Y.Path = Y.SVGPath;","Y.Drawing = Y.SVGDrawing;","","","}, '@VERSION@' ,{skinnable:false});"];
+_yuitest_coverage["/build/graphics-svg-default/graphics-svg-default.js"].lines = {"1":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
+_yuitest_coverage["/build/graphics-svg-default/graphics-svg-default.js"].functions = {"(anonymous 1):1":0};
+_yuitest_coverage["/build/graphics-svg-default/graphics-svg-default.js"].coveredLines = 8;
+_yuitest_coverage["/build/graphics-svg-default/graphics-svg-default.js"].coveredFunctions = 1;
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 1);
 YUI.add('graphics-svg-default', function(Y) {
 
-_yuitest_coverfunc("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", "(anonymous 1)", 1);
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 3);
+_yuitest_coverfunc("/build/graphics-svg-default/graphics-svg-default.js", "(anonymous 1)", 1);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 3);
 Y.Graphic = Y.SVGGraphic;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 4);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 4);
 Y.Shape = Y.SVGShape;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 5);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 5);
 Y.Circle = Y.SVGCircle;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 6);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 6);
 Y.Rect = Y.SVGRect;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 7);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 7);
 Y.Ellipse = Y.SVGEllipse;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 8);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 8);
 Y.Path = Y.SVGPath;
-_yuitest_coverline("/home/yui/src/yui3/src/graphics/build_tmp/graphics-svg-default.js", 9);
+_yuitest_coverline("/build/graphics-svg-default/graphics-svg-default.js", 9);
 Y.Drawing = Y.SVGDrawing;
 
 

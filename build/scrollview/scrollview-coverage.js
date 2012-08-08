@@ -16,22 +16,22 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js"] = {
+_yuitest_coverage["/build/scrollview/scrollview.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js",
+    path: "/build/scrollview/scrollview.js",
     code: []
 };
-_yuitest_coverage["/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js"].code=["YUI.add('scrollview', function(Y) {","","/**"," * <p>"," * The scrollview module does not add any new classes. It simply plugs the ScrollViewScrollbars plugin into the "," * base ScrollView class implementation provided by the scrollview-base module, so that all scrollview instances "," * have scrollbars enabled."," * </p>"," *"," * <ul>"," *     <li><a href=\"../classes/ScrollView.html\">ScrollView API documentation</a></li>"," *     <li><a href=\"scrollview-base.html\">scrollview-base Module documentation</a></li>"," * </ul>"," *"," * @module scrollview"," */","","Y.Base.plug(Y.ScrollView, Y.Plugin.ScrollViewScrollbars);","","","}, '@VERSION@' ,{requires:['scrollview-base', 'scrollview-scrollbars']});"];
-_yuitest_coverage["/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js"].lines = {"1":0,"18":0};
-_yuitest_coverage["/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js"].functions = {"(anonymous 1):1":0};
-_yuitest_coverage["/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js"].coveredLines = 2;
-_yuitest_coverage["/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js"].coveredFunctions = 1;
-_yuitest_coverline("/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js", 1);
+_yuitest_coverage["/build/scrollview/scrollview.js"].code=["YUI.add('scrollview', function(Y) {","","/**"," * <p>"," * The scrollview module does not add any new classes. It simply plugs the ScrollViewScrollbars plugin into the "," * base ScrollView class implementation provided by the scrollview-base module, so that all scrollview instances "," * have scrollbars enabled."," * </p>"," *"," * <ul>"," *     <li><a href=\"../classes/ScrollView.html\">ScrollView API documentation</a></li>"," *     <li><a href=\"scrollview-base.html\">scrollview-base Module documentation</a></li>"," * </ul>"," *"," * @module scrollview"," */","","Y.Base.plug(Y.ScrollView, Y.Plugin.ScrollViewScrollbars);","","","}, '@VERSION@' ,{requires:['scrollview-base', 'scrollview-scrollbars']});"];
+_yuitest_coverage["/build/scrollview/scrollview.js"].lines = {"1":0,"18":0};
+_yuitest_coverage["/build/scrollview/scrollview.js"].functions = {"(anonymous 1):1":0};
+_yuitest_coverage["/build/scrollview/scrollview.js"].coveredLines = 2;
+_yuitest_coverage["/build/scrollview/scrollview.js"].coveredFunctions = 1;
+_yuitest_coverline("/build/scrollview/scrollview.js", 1);
 YUI.add('scrollview', function(Y) {
 
 /**
@@ -49,8 +49,8 @@ YUI.add('scrollview', function(Y) {
  * @module scrollview
  */
 
-_yuitest_coverfunc("/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js", "(anonymous 1)", 1);
-_yuitest_coverline("/home/yui/src/yui3/src/scrollview/build_tmp/scrollview.js", 18);
+_yuitest_coverfunc("/build/scrollview/scrollview.js", "(anonymous 1)", 1);
+_yuitest_coverline("/build/scrollview/scrollview.js", 18);
 Y.Base.plug(Y.ScrollView, Y.Plugin.ScrollViewScrollbars);
 
 

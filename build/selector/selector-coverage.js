@@ -16,22 +16,22 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/home/yui/src/yui3/src/dom/build_tmp/selector.js"] = {
+_yuitest_coverage["/build/selector/selector.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/home/yui/src/yui3/src/dom/build_tmp/selector.js",
+    path: "/build/selector/selector.js",
     code: []
 };
-_yuitest_coverage["/home/yui/src/yui3/src/dom/build_tmp/selector.js"].code=["YUI.add('selector', function(Y) {","","","","","}, '@VERSION@' ,{requires:['selector-native']});"];
-_yuitest_coverage["/home/yui/src/yui3/src/dom/build_tmp/selector.js"].lines = {"1":0};
-_yuitest_coverage["/home/yui/src/yui3/src/dom/build_tmp/selector.js"].functions = {};
-_yuitest_coverage["/home/yui/src/yui3/src/dom/build_tmp/selector.js"].coveredLines = 1;
-_yuitest_coverage["/home/yui/src/yui3/src/dom/build_tmp/selector.js"].coveredFunctions = 0;
-_yuitest_coverline("/home/yui/src/yui3/src/dom/build_tmp/selector.js", 1);
+_yuitest_coverage["/build/selector/selector.js"].code=["YUI.add('selector', function(Y) {","","","","","}, '@VERSION@' ,{requires:['selector-native']});"];
+_yuitest_coverage["/build/selector/selector.js"].lines = {"1":0};
+_yuitest_coverage["/build/selector/selector.js"].functions = {};
+_yuitest_coverage["/build/selector/selector.js"].coveredLines = 1;
+_yuitest_coverage["/build/selector/selector.js"].coveredFunctions = 0;
+_yuitest_coverline("/build/selector/selector.js", 1);
 YUI.add('selector', function(Y) {
 
 
