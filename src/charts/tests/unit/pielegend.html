@@ -10,7 +10,8 @@
 <script src="./assets/pie-legend-tests.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['charts-base', 'charts', 'charts-legend']
 }).use('test-console', 'pie-legend-tests', function (Y) {
 
     (new Y.Test.Console()).render('#log');
