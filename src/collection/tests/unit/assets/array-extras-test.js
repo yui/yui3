@@ -391,6 +391,31 @@ suite.add(new Y.Test.Case({
         Assert.areSame(2, results.length);
         Assert.areSame('a', results[0].value);
         Assert.areSame('b', results[1].value);
+    },
+
+    'flatten() should flatten nested arrays into a single-level array': function () {
+        Assert.isArray(A.flatten());
+        Assert.isArray(A.flatten(null));
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten(['foo', 'bar', null])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten(['foo', ['bar', null]])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten([[['foo', ['bar', null]]]])
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo', 'bar', null],
+            A.flatten([[[[['foo']], [['bar'], [null]]]]])
+        );
     }
 }));
 
