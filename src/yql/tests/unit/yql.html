@@ -12,6 +12,7 @@
 
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: ['yql'],
     modules: {
         'yql-tests': {
             fullpath: './assets/yql-tests.js',
