@@ -6,7 +6,10 @@
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="./assets/dom-region-test.js"></script>
 <script type="text/javascript">
-YUI().use('console', 'test', 'dom-region-test', function (Y) {
+YUI({
+    coverage: ['dom-screen'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('console', 'test', 'dom-region-test', function (Y) {
     //create the logger
 
     var logger = new Y.Console({
