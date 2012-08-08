@@ -12,6 +12,7 @@
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script type="text/javascript">
 YUI({
+    coverage: ['dump'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'dump-tests': {
