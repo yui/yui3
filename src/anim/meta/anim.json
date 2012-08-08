@@ -55,6 +55,12 @@
                     "anim-easing",
                     "matrix"
                 ]
+            },
+            "anim-shape": {
+                "requires": [
+                    "anim-color",
+                    "anim-shape-transform"
+                ]
             }
         }
     }
