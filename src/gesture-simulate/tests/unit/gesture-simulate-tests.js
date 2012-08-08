@@ -1030,9 +1030,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
         //-------------------------------------------------------------------------
     
         //the user action suite
-        var suite = new Y.Test.Suite("Gesture Simulate Tests");
-        var gestureSuite = new Y.Test.Suite("Gesture Tests");
-        suite.add(gestureSuite);
+        var gestureSuite = new Y.Test.Suite("Gesture Simulate");
     
         // common
         gestureSuite.add(new TapTestCase());
@@ -1048,8 +1046,8 @@ YUI.add('gesture-simulate-tests', function(Y) {
         }
         
         //return it
-        return suite;
-    
+        return gestureSuite;
+
     })();
 
     Y.Test.Runner.add(Y.Tests.GestureSimulate);
