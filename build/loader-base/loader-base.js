@@ -911,8 +911,7 @@ Y.Loader.prototype = {
                 var mods = [];
                 for (i = 0; i < self.coverage.length; i++) {
                     var mod = self.coverage[i];
-                    if (self.moduleInfo[mod].use) {
-                        console.log(self.moduleInfo[mod]);
+                    if (self.moduleInfo[mod] && self.moduleInfo[mod].use) {
                         mods = [].concat(mods, self.moduleInfo[mod].use);
                     } else {
                         mods.push(mod);
