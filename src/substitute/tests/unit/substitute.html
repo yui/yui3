@@ -14,8 +14,7 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        allowRollup: false,
-        useBrowserConsole: false
+        coverage: ['substitute']
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.one('#btnRun'),
