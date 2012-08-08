@@ -63,6 +63,7 @@
 	<script src="./assets/window-focus.js"></script>
 	<script>
 		YUI({
+            coverage: ['event'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
 			

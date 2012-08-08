@@ -20,6 +20,7 @@
     <script>
         YUI({
             //lazyEventFacade: true,
+            coverage: ['event-focus'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use('test-console', 'test', 'event', 'event-simulate', 'node-event-delegate', 'window-focus', function (Y) {
 

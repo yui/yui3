@@ -13,6 +13,7 @@
     <script src="./assets/window-focus.js"></script>
     <script type="text/javascript">
         YUI({
+            coverage: ['event-contextmenu'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use('console', 'test', 'event-contextmenu', 'node-event-simulate', 'window-focus', 'node-screen', function (Y) {
             

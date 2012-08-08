@@ -12,6 +12,7 @@
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 <script>
 YUI({
+    coverage: ['event-mousewheel'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'mousewheel-tests': {
