@@ -416,26 +416,6 @@ suite.add(new Y.Test.Case({
             ['foo', 'bar', null],
             A.flatten([[[[['foo']], [['bar'], [null]]]]])
         );
-    },
-
-    'flatten() should only flatten nested arrays at the first depth when shallow is specified': function () {
-        ArrayAssert.itemsAreSame(
-            ['foo', 'bar', null],
-            A.flatten(['foo', 'bar', null], true)
-        );
-
-        ArrayAssert.itemsAreSame(
-            ['foo', 'bar', null],
-            A.flatten(['foo', ['bar', null]], true)
-        );
-
-        // Used for === check.
-        var nullArray = [null];
-
-        ArrayAssert.itemsAreSame(
-            ['foo', 'bar', nullArray],
-            A.flatten(['foo', ['bar', nullArray]], true)
-        );
     }
 }));
 
