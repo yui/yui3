@@ -1687,7 +1687,6 @@ YUI.add('loader-tests', function(Y) {
             ArrayAssert.itemsAreEqual(expected, sorted, 'Failed to calculate second set of modules');
 
         },
-<<<<<<< HEAD:src/loader/tests/loader-tests.js
         'test: skin.order should fall back to the defaultSkin when a module does not support any of the skins in skin.order': function() {
             var loader = new Y.Loader({
                     base: '',
@@ -1722,8 +1721,10 @@ YUI.add('loader-tests', function(Y) {
                         order: 'night'
                     }
                 }),
-                out = loader.resolve(true);
+                out = loader.resolve(true),
+                css = out.css.join(' ');
 
+            Assert.isTrue(css.indexOf('assets/skins/sam/bar.css') > -1);
 
         },
         'test: skin.order should not fetch any skin if a module supplies mod.skins and none of them are available in skin.order or skin.defaultSkin': function() {
@@ -1989,35 +1990,35 @@ YUI.add('loader-tests', function(Y) {
                     };
                 },
 
-                // loader 1
-                loader1 = new Y.Loader(getConfig({
-                    defaultSkin: 'baz'
-                })),
-                loader1resolved = loader1.resolve(true),
-                css1 = loader1resolved.css.join(' '),
-                // loader 2
-                loader2 = new Y.Loader(getConfig({
-                    order: 'round-dark'
-                })),
-                loader2resolved = loader2.resolve(true),
-                css2 = loader2resolved.css.join(' '),
-                // loader 3
-                loader3 = new Y.Loader(getConfig({
-                    defaultSkin: 'buz'
-                })),
-                loader3resolved = loader3.resolve(true);
+            // loader 1
+            loader1 = new Y.Loader(getConfig({
+                defaultSkin: 'baz'
+            })),
+            loader1resolved = loader1.resolve(true),
+            css1 = loader1resolved.css.join(' '),
+            // loader 2
+            loader2 = new Y.Loader(getConfig({
+                order: 'round-dark'
+            })),
+            loader2resolved = loader2.resolve(true),
+            css2 = loader2resolved.css.join(' '),
+            // loader 3
+            loader3 = new Y.Loader(getConfig({
+                defaultSkin: 'buz'
+            })),
+            loader3resolved = loader3.resolve(true);
 
-                // loader 1 assertions
-                Assert.isTrue(css1.indexOf('foo/assets/skins/baz/foo.css') > -1, 'loader1 should fetch baz skin for foo');
-                Assert.areSame(1, loader1resolved.css.length, 'loader1 should request only 1 skin');
-                // loader 2 assertions
-                Assert.isTrue(css2.indexOf('foo/assets/skins/round-dark/foo.css') > -1, 'loader2 should fetch round-dark skin for foo');
-                Assert.isTrue(css2.indexOf('slider-base/assets/skins/round-dark/slider-base.css') > -1, 'loader2 should fetch round-dark skin for slider-base');
-                Assert.isTrue(css2.indexOf('widget-stack/assets/skins/sam/widget-stack.css') > -1, 'loader2 should fetch sam skin for widget-stack');
-                Assert.areSame(-1, css2.indexOf('baz'), 'loader2 should not load baz skin for any module');
-                // loader 3 assertions
-                ArrayAssert.isEmpty(loader3resolved.css, 'loader3 should not fetch any skins');
-=======
+            // loader 1 assertions
+            Assert.isTrue(css1.indexOf('foo/assets/skins/baz/foo.css') > -1, 'loader1 should fetch baz skin for foo');
+            Assert.areSame(1, loader1resolved.css.length, 'loader1 should request only 1 skin');
+            // loader 2 assertions
+            Assert.isTrue(css2.indexOf('foo/assets/skins/round-dark/foo.css') > -1, 'loader2 should fetch round-dark skin for foo');
+            Assert.isTrue(css2.indexOf('slider-base/assets/skins/round-dark/slider-base.css') > -1, 'loader2 should fetch round-dark skin for slider-base');
+            Assert.isTrue(css2.indexOf('widget-stack/assets/skins/sam/widget-stack.css') > -1, 'loader2 should fetch sam skin for widget-stack');
+            Assert.areSame(-1, css2.indexOf('baz'), 'loader2 should not load baz skin for any module');
+            // loader 3 assertions
+            ArrayAssert.isEmpty(loader3resolved.css, 'loader3 should not fetch any skins');
+        },
         'testing configFn for bug #2532498': function() {
             var loader = new Y.Loader({
                     filter: "debug",
@@ -2391,10 +2392,9 @@ YUI.add('loader-tests', function(Y) {
                 var len = item.split('/').length;
                 Assert.areEqual(2, len, 'Failed to call configFn on ' + item);
             });
->>>>>>> d1b10faf71cb5235b2320837d8ec40cbf0cd188f:src/loader/tests/unit/assets/loader-tests.js
         }
     });
-    
+
     var name = 'Loader';
     if (typeof TestName != 'undefined') {
         name = TestName;

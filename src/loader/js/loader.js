@@ -42,36 +42,6 @@ var NOT_FOUND = {},
         path += '.' + (type || CSS);
 
         return path;
-    },
-    MOD_SKINS = {
-        'autocomplete-list': 'night,sam',
-        calendarnavigator: 'sam,night',
-        'calendar-base': 'night,sam',
-        calendar: 'night,sam',
-        'console-filters': 'sam',
-        'datatable-base': 'night,sam',
-        console: 'sam',
-        'datatable-base-deprecated': 'night,sam',
-        'datatable-sort': 'night,sam',
-        'datatable-message': 'night,sam',
-        'datatable-scroll': 'night,sam',
-        dial: 'sam,night',
-        'node-flick': 'sam',
-        'node-menunav': 'sam,night',
-        overlay: 'sam,night',
-        panel: 'night,sam',
-        'resize-base': 'night,sam',
-        'scrollview-base': 'night,sam',
-        'scrollview-list': 'night,sam',
-        test: 'sam',
-        'scrollview-scrollbars': 'night,sam',
-        'slider-base': 'audio,capsule,audio-light,capsule-dark,night,round,sam,sam-dark,round-dark',
-        tabview: 'night,sam',
-        'test-console': 'sam',
-        'widget-base': 'sam,night',
-        'widget-modality': 'night,sam',
-        'widget-stack': 'sam,night',
-        'widget-buttons': 'night,sam'
     };
 
 
@@ -963,14 +933,19 @@ Y.Loader.prototype = {
      * @private
      */
     _removeSkins: function(mod) {
+        var i,
+            l,
+            reqMod;
+
         if (mod) {
-            YArray.each(mod.expanded || [], function (reqModName, index) {
-                var reqMod = this.getModule(reqModName);
+            l = mod.expanded && mod.expanded.length : 0;
+            for (i = 0; i < l; i++) {
+                reqMod = this.getModule(mod.expanded[i]);
                 if (reqMod && reqMod.skin) {
                     // required module is a skin module; remove it
-                    mod.expanded.splice(index, 1);
+                    mod.expanded.splice(i, 1);
                 }
-            }, this);
+            }
         }
     },
 
@@ -984,14 +959,20 @@ Y.Loader.prototype = {
      * already been loaded.
      */
     _setSkins: function(mod) {
-        var skinmods = [];
+        var skinmods = [],
+            skins = this._getSkins(mod),
+            l = skins ? skins.length : 0;
+            i,
+            skinmod;
 
-        YArray.each(this._getSkins(mod), function(skinname) {
-            var skinmod = this._addSkin(skinname, mod.name);
-            if (!this.isCSSLoaded(skinmod, this._boot)) {
-                skinmods.push(skinmod);
+        if (skins && l) {
+            for (i = 0; i < l; i++) {
+                skinmod = this._addSkin(skins[i], mod.name);
+                if (!this.isCSSLoaded(skinmod, this._boot)) {
+                    skinmods[skinmods.length] = skinmod;
+                }
             }
-        }, this);
+        }
 
         return skinmods;
     },
@@ -1231,18 +1212,13 @@ Y.Loader.prototype = {
             };
         }
 
-<<<<<<< HEAD
-        if (o.skinnable && o.ext) {
+        if (o.skinnable && o.ext && o.temp) {
             this._removeSkins(o);
             skinnames = this._setSkins(o);
-            YArray.each(skinnames, function(skinname) {
-                o.requires.unshift(skinname);
-            });
-=======
-        if (o.skinnable && o.ext && o.temp) {
-            skinname = this._addSkin(this.skin.defaultSkin, name);
-            o.requires.unshift(skinname);
->>>>>>> d1b10faf71cb5235b2320837d8ec40cbf0cd188f
+            l = skinnames ? skinnames.length : 0;
+            for (i = 0; i < len; i++) {
+                o.requires.unshift(skinnames[i]);
+            }
         }
         
         if (o.requires.length) {
