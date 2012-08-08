@@ -18,7 +18,8 @@
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({
+YUI({
+    coverage: ['event-valuechange'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'event-valuechange-test': {
