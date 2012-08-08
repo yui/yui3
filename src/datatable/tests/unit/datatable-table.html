@@ -12,6 +12,7 @@
     <script src="./assets/datatable-table-tests.js"></script>
 	<script>
 		YUI({
+            coverage: ['datatable-table'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 		}).use('test-console', 'datatable-table-tests', function (Y) {
 			
