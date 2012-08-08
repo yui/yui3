@@ -11,8 +11,8 @@
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({
-    allowRollup: false,
+YUI({
+    coverage: ['widget-stdmod'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'widget-stdmod-test': {
