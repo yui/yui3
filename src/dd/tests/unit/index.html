@@ -26,6 +26,7 @@
 <script>
 
 YUI({
+    coverage: ['dd', 'dd-plugin', 'dd-drop-plugin'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'dd-tests': {
