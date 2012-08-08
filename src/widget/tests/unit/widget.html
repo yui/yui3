@@ -84,7 +84,7 @@
 
     <script>
     YUI({
-        useBrowserConsole:false,
+        coverage: ['widget'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use('test', 'widget', 'node-event-simulate', 'console', function (Y) {
 
