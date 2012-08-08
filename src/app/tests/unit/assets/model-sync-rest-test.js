@@ -284,6 +284,59 @@ modelSyncRESTSuite.add(new Y.Test.Case({
         Assert.areSame('/model/{foo}/{bar}/{baz}/asdf', model.getURL());
     },
 
+    'parse() should receive the full Y.io response object when `parseIOResponse is falsy': function () {
+        var calls = 0,
+            model = new Y.TestModel({name: 'Eric'});
+
+        model.parseIOResponse = false;
+
+        model.parse = function (res) {
+            calls += 1;
+            ObjectAssert.ownsKey('responseText', res);
+        };
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            this._onSyncIOSuccess(0, {
+                responseText: '{"id":1, "name":"Eric"}'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        model.save();
+
+        Assert.areSame(1, calls);
+    },
+
+    'parseIOResponse() should alter the response passed to `parse()`': function () {
+        var calls = 0,
+            model = new Y.TestModel({name: 'Eric'});
+
+        model.parseIOResponse = function () {
+            return {foo: 'bar'};
+        };
+
+        model.parse = function (res) {
+            calls += 1;
+            ObjectAssert.ownsKey('foo', res);
+            Assert.areSame('bar', res.foo);
+        };
+
+        // Overrides because `Y.io()` is too hard to test!
+        model._sendSyncIORequest = function (config) {
+            this._onSyncIOSuccess(0, {
+                responseText: '{"id":1, "name":"Eric"}'
+            }, {
+                callback: config.callback
+            });
+        };
+
+        model.save();
+
+        Assert.areSame(1, calls);
+    },
+
     'serialize() should return a JSON string by default': function () {
         var model = new Y.TestModel({id: 123});
 
