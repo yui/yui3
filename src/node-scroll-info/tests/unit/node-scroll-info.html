@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+
+    <style>
+        .buffer {
+            height: 10000px;
+            width: 10000px;
+        }
+
+        .buffer.body {
+            border-top: 1px solid blue;
+        }
+
+        .container {
+            height: 100px;
+            margin: 1em 0;
+            overflow: scroll;
+            /*visibility: hidden;*/
+            width: 100px;
+        }
+
+        .marker {
+            background: #666;
+            border: 1px solid #000;
+            height: 16px;
+            font-size: 0;
+            width: 16px;
+            /*visibility: hidden;*/
+        }
+
+        .marker.right { margin-left: 9950px; }
+
+        .positioned {
+            height: 142px;
+            left: 42px;
+            margin: 0;
+            position: absolute;
+            width: 142px;
+            top: 42px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<p>
+Note: Please ensure that the blue line below is within the visible area of the
+browser's viewport before tests run, or false positives may occur.
+</p>
+
+<div id="scroll-test" class="container">
+    <div id="scroll-test-top" class="marker test top"></div>
+    <div id="scroll-test-left" class="marker test left"></div>
+    <div id="scroll-test-right" class="marker test right">right</div>
+    <div class="buffer test"></div>
+    <div id="scroll-test-bottom" class="marker test bottom"></div>
+</div>
+
+<div id="body-test-top" class="marker body top"></div>
+<div id="body-test-left" class="marker body left"></div>
+<div id="body-test-right" class="marker body right"></div>
+<div class="buffer body"></div>
+<div id="body-test-bottom" class="marker body bottom"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'node-scroll-info-test': {
+            fullpath: './assets/node-scroll-info-test.js',
+            requires: ['node-scroll-info', 'test']
+        }
+    },
+    useBrowserConsole: false
+}).use('node-scroll-info-test', 'test-console', function (Y) {
+    new Y.Test.Console({height: '200px'}).render('#log');
+    Y.Test.Runner.setName('ScrollInfo');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>
