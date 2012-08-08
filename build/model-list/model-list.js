@@ -601,7 +601,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                     });
                 }
 
-                parsed = facade.parsed = self.parse(response);
+                parsed = facade.parsed = self._parse(response);
 
                 self.reset(parsed, options);
                 self.fire(EVT_LOAD, facade);
@@ -1042,6 +1042,24 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         }
 
         return min;
+    },
+
+    /**
+    Calls the public, overrideable `parse()` method and returns the result.
+
+    Override this method to provide a custom pre-parsing implementation. This
+    provides a hook for custom persistence implementations to "prep" a response
+    before calling the `parse()` method.
+
+    @method _parse
+    @param {Any} response Server response.
+    @return {Object[]} Array of model attribute hashes.
+    @protected
+    @see ModelList.parse()
+    @since 3.6.1
+    **/
+    _parse: function (response) {
+        return this.parse(response);
     },
 
     /**
