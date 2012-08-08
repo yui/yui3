@@ -11,6 +11,8 @@
 
 <script type="text/javascript">
 YUI({
+    coverage: ["datatype-date-math"],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'date-math-tests': {
             fullpath: './assets/date-math-tests.js',
