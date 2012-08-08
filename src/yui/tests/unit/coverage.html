@@ -62,6 +62,7 @@ var YUI_config = {
 };
 
 YUI({
+    coverage: [ 'yui' ],
     allowRollup: false,
     logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
     filter: YUI_config.gfilter,
@@ -118,7 +119,7 @@ YUI({
     new Y.Test.Console().render('#log');
 
     //This is a YUITest hack to rename this test for reporting
-    Y.Test.Runner.setName('YUI Seed Fetch Loader Test Suite');
+    Y.Test.Runner.setName('YUI: Coverage');
     Y.Test.Runner.run();
 });
 
