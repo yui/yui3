@@ -10,6 +10,7 @@
 <script src="./assets/event-custom-base-tests.js"></script>
 <script>
 YUI({
+    coverage: ['event-custom-base'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     lazyEventFacade: true
 })
