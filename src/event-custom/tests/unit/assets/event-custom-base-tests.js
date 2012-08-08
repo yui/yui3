@@ -2,11 +2,11 @@ YUI.add('event-custom-base-tests', function(Y) {
 
 // Continue on line 3645
 
-var baseSuite = new Y.Test.Suite("Event Target"),
-    keys = Y.Object.keys,
-    global_notified;
+var baseSuite = new Y.Test.Suite("Custom Event: Base"),
+    keys = Y.Object.keys;
 
 baseSuite.add(new Y.Test.Case({
+
     name: "Event Target constructor",
 
     "test new Y.EventTarget()": function () {
@@ -4838,7 +4838,8 @@ baseSuite.add(new Y.Test.Case({
 
     test_fire_once: function() {
 
-        var notified = 0;
+        var notified = 0,
+            test = this;
 
         Y.publish('fireonce', {
             fireOnce: true
@@ -4855,12 +4856,12 @@ baseSuite.add(new Y.Test.Case({
         Y.fire('fireonce', 'foo2', 'bar2');
         Y.fire('fireonce', 'foo3', 'bar3');
 
-        global_notified = false;
+        test.global_notified = false;
 
         Y.on('fireonce', function(arg1, arg2) {
             //Y.log('the notification is asynchronous, so I need to wait for this test');
             Y.Assert.areEqual(1, notified, 'listener notified more than once.');
-            global_notified = true;
+            test.global_notified = true;
         });
 
         // it is no longer asynchronous
@@ -4869,7 +4870,7 @@ baseSuite.add(new Y.Test.Case({
     },
 
     test_async_fireonce: function() {
-        Y.Assert.isTrue(global_notified, 'asynchronous notification did not seem to work.');
+        Y.Assert.isTrue(this.global_notified, 'asynchronous notification did not seem to work.');
     }
 
     // node.fire("click") does not fire click subscribers
@@ -4945,180 +4946,5 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
     */
 
 Y.Test.Runner.add(baseSuite);
-var suite = new Y.Test.Suite("AOP");
-
-suite.add(new Y.Test.Case({
-    name: "Y.Do",
-
-    _should: {
-        fail: {
-            //"test before/after with falsy context binds args": "ticket pending"
-        },
-        ignore: {
-            "test before/after with falsy context binds args": "ticket pending", //No Asserts
-            // Trac ticket noted as value
-            "test originalRetVal not overwritten by nested call": 2530030
-        }
-    },
-
-    "test before/after with falsy context binds args": function () {
-        //Y.Do.before(fn, obj, "method", null, "a", obj, null);
-    },
-
-    "test Y.AlterReturn": function() {
-        var et = new Y.EventTarget(), count = 0;
-
-        et.after(function() {
-            count++;
-            Y.Assert.isTrue(Y.Do.originalRetVal);
-            Y.Assert.isTrue(Y.Do.currentRetVal);
-            return new Y.Do.AlterReturn("altered return", "altered");
-        }, et, 'fire');
-
-        et.after(function() {
-            count++;
-            Y.Assert.isTrue(Y.Do.originalRetVal);
-            Y.Assert.areEqual("altered", Y.Do.currentRetVal);
-        }, et, 'fire');
-
-
-        et.fire('yay');
-        Y.Assert.areEqual(2, count);
-
-    },
-
-    "test originalRetVal not overwritten by nested call": function () {
-        var obj = {
-            a: function () {
-                this.b();
-                return 'A';
-            },
-
-            b: function () {
-                return 'B';
-            }
-        };
-
-        Y.Do.after(function () {
-            return Y.Do.originalRetVal.toLowerCase();
-        }, obj, 'a');
-
-        Y.Do.after(function () {
-            // It doesn't matter what happens here, but for example, we
-            // don't interfere with the return value
-        }, obj, 'b');
-
-        Y.Assert.areSame('a', obj.a());
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "EventTarget on/before/after",
-
-    "test target.on(fn, host, methodName)": function () {
-        var target = new Y.EventTarget(),
-            called = [],
-            handle, before;
-
-        before = Y.Do.before;
-        Y.Do.before = function () {
-            called.push("before");
-            return before.apply(this, arguments);
-        };
-
-        function callback() {
-            called.push("callback");
-        }
-
-        function method() {
-            called.push("method");
-        }
-
-        target.method = method;
-            
-        // awkward that you have to pass the target, and even more so
-        // because this means every EventTarget is effectively an alias
-        // for Y.Do
-        handle = target.on(callback, target, "method");
-
-        Y.Assert.areNotSame(method, target.method);
-        Y.Assert.isObject(handle);
-        Y.Assert.isInstanceOf(Y.Do.Method, handle.evt);
-
-        target.method();
-
-        Y.ArrayAssert.itemsAreSame(["before", "callback", "method"], called);
-
-        // restore the method for other tests
-        Y.Do.before = before;
-    },
-
-    "test target.on(fn, host, methodName, context)": function () {
-        var target = new Y.EventTarget(),
-            called = [],
-            handle, before;
-
-        before = Y.Do.before;
-        Y.Do.before = function () {
-            called.push("before");
-            return before.apply(this, arguments);
-        };
-
-        function callback() {
-            called.push("callback");
-        }
-
-        function method() {
-            called.push("method");
-        }
-
-        target.method = method;
-            
-        // awkward that you have to pass the target, and even more so
-        // because this means every EventTarget is effectively an alias
-        // for Y.Do
-        handle = target.on(callback, target, "method");
-
-        Y.Assert.areNotSame(method, target.method);
-        Y.Assert.isObject(handle);
-        Y.Assert.isInstanceOf(Y.Do.Method, handle.evt);
-
-        target.method();
-
-        Y.ArrayAssert.itemsAreSame(["before", "callback", "method"], called);
-
-        // restore the method for other tests
-        Y.Do.before = before;
-    },
-
-    "test target.on(fn, host, noSuchMethod)": function () {
-    },
-
-    "test target.on([fnA, fnB, fnC], host, noSuchMethod)": function () {
-    },
-
-    "test target.before() is an alias for target.on()": function () {
-    },
-    _should: {
-        ignore: {
-            "test target.on(fn, host, noSuchMethod)": true,
-            "test target.on([fnA, fnB, fnC], host, noSuchMethod)": true,
-            "test target.before() is an alias for target.on()": true
-        }
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name: "return Y.Do.Classes to affect fn flow"
-
-    // Test each in before and after phases
-    // AlterArgs
-    // AlterReturn
-    // Halt
-    // Prevent
-}));
-
-Y.Test.Runner.add(suite);
-
 
 }, '@VERSION@' ,{requires:['event-custom-base', 'test']});
