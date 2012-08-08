@@ -8,6 +8,7 @@
 <div id=log"></div>
 <script>
 YUI({
+    coverage: ['attribute'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'attribute-tests': {
