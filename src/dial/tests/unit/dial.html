@@ -9,6 +9,7 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 YUI({
+    coverage: ['dial'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'dial-test': {
