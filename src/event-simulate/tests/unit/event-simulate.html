@@ -10,7 +10,8 @@
 <script type="text/javascript">  
     
 YUI({
-    filter: "debug",
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: [ 'event-simulate' ],
     logInclude: { TestRunner: 1}
 }).use('test', 'event-simulate', 'console', function (Y) {
 
