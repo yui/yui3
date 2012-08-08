@@ -1,35 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>gesture-simulate tests</title>
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<style type="text/css">
-#touchable {
-    position: absolute;
-    width: 600px;
-    height: 250px;
-    top: 0px;
-    left: 0px;
-    background-color: yellowgreen;
-}
-#inst {
-    position: absolute;
-    top: 300px;
-    left: 5px;
-}
-</style>
-</head>
-<body class="yui3-skin-sam">
-    <h1>Gesture-Simulate Tests</h1>
-    <div id="touchable"></div>
-    <div id="c"></div>
-<script type="text/javascript">
+YUI.add('gesture-simulate-tests', function(Y) {    
 
-YUI({
-    filter: "debug",
-    logInclude: { TestRunner: 1}
-}).use('test', 'node', 'gesture-simulate', 'console', function (Y) {
-    
     Y.namespace("Tests");
     
     Y.Tests.GestureSimulate = (function(){
@@ -72,21 +42,21 @@ YUI({
                      * w/o success. DOM way of subscription is used here to get
                      * around for now. 
                      */
-                    if(Y.UA.ios || Y.UA.android) {
-                        document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
-                            e.preventDefault();
-                            e = e || window.event;
-                            e.timestamp = new Date().getTime();
-                            this.result.push(e);
-                        }, this); 
-                    } else {
+                     // if(Y.UA.ios || Y.UA.android) {
+                     //   document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
+                     //       e.preventDefault();
+                     //       e = e || window.event;
+                     //       e.timestamp = new Date().getTime();
+                     //       this.result.push(e);
+                     //   }, this); 
+                    //} else {
                         touchable.on(one, Y.bind(function(e) {
                             e.preventDefault();
-                            e = e || window.event;
+                            // e = e || window.event;
                             e.timestamp = new Date().getTime();
                             this.result.push(e);
                         }, this)); 
-                    }
+                    //}
                 }, this));
             },
 
@@ -95,11 +65,11 @@ YUI({
              */
             tearDown : function() /*:Void*/{
                 Y.each(events, Y.bind(function(one) {
-                    if(Y.UA.ios || Y.UA.android) {
-                        document.getElementById("touchable")['on'+one]= null;
-                    } else {
+                    // if(Y.UA.ios || Y.UA.android) {
+                    //    document.getElementById("touchable")['on'+one]= null;
+                    //} else {
                         touchable.detach(one);
-                    }
+                    //}
                 }, this));
             }
         });
@@ -143,12 +113,12 @@ YUI({
                                 Assert.areSame(that.result[last].type, "touchend");
 
                                 for(var i=0; i<that.result.length-1; i++) {
-                                    Assert.areSame(that.result[0].touches.item(0).clientY,
-                                        that.result[i].touches.item(0).clientY);
+                                    Assert.areSame(that.result[0].touches[0].clientY,
+                                        that.result[i].touches[0].clientY);
                                 }
 
-                                Assert.areSame(that.result[0].touches.item(0).clientX+distance, 
-                                    that.result[last-1].touches.item(0).clientX);
+                                Assert.areSame(that.result[0].touches[0].clientX+distance, 
+                                    that.result[last-1].touches[0].clientX);
                             } else {
                                 // devices falling back to mouse events
                                 // mousedown, mousemove(xN), mouseup, click 
@@ -203,10 +173,10 @@ YUI({
                                 Assert.areSame(that.result[last-1].type, "touchmove");
                                 Assert.areSame(that.result[last].type, "touchend");
 
-                                Assert.areSame(that.result[0].touches.item(0).clientX+xdistance, 
-                                    that.result[last-1].touches.item(0).clientX);
-                                Assert.areSame(that.result[0].touches.item(0).clientY+ydistance, 
-                                    that.result[last-1].touches.item(0).clientY);    
+                                Assert.areSame(that.result[0].touches[0].clientX+xdistance, 
+                                    that.result[last-1].touches[0].clientX);
+                                Assert.areSame(that.result[0].touches[0].clientY+ydistance, 
+                                    that.result[last-1].touches[0].clientY);    
                             } else {
                                 // mousedown, mousemove(xN), mouseup, click 
                                 Assert.isTrue(that.result.length >= 4);
@@ -261,10 +231,10 @@ YUI({
                                 Assert.areSame(that.result[last-1].type, "touchmove");
                                 Assert.areSame(that.result[last].type, "touchend");
 
-                                Assert.areSame(that.result[0].touches.item(0).clientX+xdistance, 
-                                    that.result[last-1].touches.item(0).clientX);
-                                Assert.areSame(that.result[0].touches.item(0).clientY+ydistance, 
-                                    that.result[last-1].touches.item(0).clientY);    
+                                Assert.areSame(that.result[0].touches[0].clientX+xdistance, 
+                                    that.result[last-1].touches[0].clientX);
+                                Assert.areSame(that.result[0].touches[0].clientY+ydistance, 
+                                    that.result[last-1].touches[0].clientY);    
                             } else {
                                 // mousedown, mousemove(xN), mouseup, click 
                                 Assert.isTrue(that.result.length >= 4);
@@ -324,12 +294,12 @@ YUI({
                                 Assert.areSame(that.result[last].type, "touchend");
 
                                 for(var i=0; i<that.result.length-1; i++) {
-                                    Assert.areSame(that.result[0].touches.item(0).clientY,
-                                        that.result[i].touches.item(0).clientY);
+                                    Assert.areSame(that.result[0].touches[0].clientY,
+                                        that.result[i].touches[0].clientY);
                                 }
 
-                                Assert.areSame(that.result[0].touches.item(0).clientX+distance, 
-                                    that.result[last-1].touches.item(0).clientX);
+                                Assert.areSame(that.result[0].touches[0].clientX+distance, 
+                                    that.result[last-1].touches[0].clientX);
                             } else {
                                 // mousedown, mousemove(xN), mouseup, click 
                                 Assert.isTrue(that.result.length >= 4);
@@ -385,10 +355,10 @@ YUI({
                                 Assert.areSame(that.result[last-1].type, "touchmove");
                                 Assert.areSame(that.result[last].type, "touchend");
 
-                                Assert.areSame(that.result[0].touches.item(0).clientX+xdistance, 
-                                    that.result[last-1].touches.item(0).clientX);
-                                Assert.areSame(that.result[0].touches.item(0).clientY+ydistance, 
-                                    that.result[last-1].touches.item(0).clientY);    
+                                Assert.areSame(that.result[0].touches[0].clientX+xdistance, 
+                                    that.result[last-1].touches[0].clientX);
+                                Assert.areSame(that.result[0].touches[0].clientY+ydistance, 
+                                    that.result[last-1].touches[0].clientY);    
                             } else {
                                 // mousedown, mousemove(xN), mouseup, click 
                                 Assert.isTrue(that.result.length >= 4);
@@ -625,8 +595,8 @@ YUI({
 
                                 Assert.areSame(1, that.result[0].touches.length);
 
-                                Assert.areSame(expectedX, that.result[0].touches.item(0).clientX);
-                                Assert.areSame(expectedY, that.result[0].touches.item(0).clientY);
+                                Assert.areSame(expectedX, that.result[0].touches[0].clientX);
+                                Assert.areSame(expectedY, that.result[0].touches[0].clientY);
 
                                 Assert.isTrue((that.result[3].timestamp - that.result[0].timestamp) 
                                     >= (2500 - durationThreshold*2 - delayThreshold));
@@ -716,10 +686,10 @@ YUI({
                                 // when starts.
                                 var threshold = 50, cur, prev,
                                     lastIndex = that.result.length-1,
-                                    cx1 = that.result[0].touches.item(0).clientX, // should be around 300 (600/2)
-                                    cy1 = that.result[0].touches.item(0).clientY, // should be around 62.5 (250/2 - r)
-                                    cx2 = that.result[0].touches.item(1).clientX, // should be around 300 (600/2)
-                                    cy2 = that.result[0].touches.item(1).clientY; // should be around 187.5 (250/2 + r)
+                                    cx1 = that.result[0].touches[0].clientX, // should be around 300 (600/2)
+                                    cy1 = that.result[0].touches[0].clientY, // should be around 62.5 (250/2 - r)
+                                    cx2 = that.result[0].touches[1].clientX, // should be around 300 (600/2)
+                                    cy2 = that.result[0].touches[1].clientY; // should be around 187.5 (250/2 + r)
                                
                                 Assert.areSame(cx1, cx2, "Both fingers should be on the Y axis.");
                                 Assert.isTrue(cx1 > (300-threshold) && cx1 < (300+threshold));
@@ -731,31 +701,31 @@ YUI({
                                 for(var i=0; i<lastIndex; i++) {
                                     if(i > 1) {
                                         // 1st finger
-                                        cur = that.result[i].touches.item(0).clientX;
-                                        prev = that.result[i-1].touches.item(0).clientX;
+                                        cur = that.result[i].touches[0].clientX;
+                                        prev = that.result[i-1].touches[0].clientX;
                                         Assert.isTrue(cur >= prev);
                                         
-                                        cur = that.result[i].touches.item(0).clientY;
-                                        prev = that.result[i-1].touches.item(0).clientY;
+                                        cur = that.result[i].touches[0].clientY;
+                                        prev = that.result[i-1].touches[0].clientY;
                                         Assert.isTrue(cur >= prev);
                                         
                                         // 2nd finger
-                                        cur = that.result[i].touches.item(1).clientX;
-                                        prev = that.result[i-1].touches.item(1).clientX;
+                                        cur = that.result[i].touches[1].clientX;
+                                        prev = that.result[i-1].touches[1].clientX;
                                         Assert.isTrue(cur <= prev);
                                         
-                                        cur = that.result[i].touches.item(1).clientY;
-                                        prev = that.result[i-1].touches.item(1).clientY;
+                                        cur = that.result[i].touches[1].clientY;
+                                        prev = that.result[i-1].touches[1].clientY;
                                         Assert.isTrue(cur <= prev);
                                     }
                                 }
                                 
                                 // when ends (note that the last element doesn't 
                                 // have 'touches' so use the 2nd last element
-                                cx1 = that.result[lastIndex-1].touches.item(0).clientX, // should be around 362.5 (600/2 + r)
-                                cy1 = that.result[lastIndex-1].touches.item(0).clientY, // should be around 125 (250/2)
-                                cx2 = that.result[lastIndex-1].touches.item(1).clientX, // should be around 237.5 (600/2 - r)
-                                cy2 = that.result[lastIndex-1].touches.item(1).clientY; // should be around 125 (250/2)
+                                cx1 = that.result[lastIndex-1].touches[0].clientX, // should be around 362.5 (600/2 + r)
+                                cy1 = that.result[lastIndex-1].touches[0].clientY, // should be around 125 (250/2)
+                                cx2 = that.result[lastIndex-1].touches[1].clientX, // should be around 237.5 (600/2 - r)
+                                cy2 = that.result[lastIndex-1].touches[1].clientY; // should be around 125 (250/2)
                                 Assert.isTrue(cx1 > (362.5-threshold) && cx1 < (362.5+threshold));
                                 Assert.isTrue(cy1 > (125-threshold) && cy1 < (125+threshold));
                                 Assert.isTrue(cx2 > (237.5-threshold) && cx2 < (237.5+threshold));
@@ -810,10 +780,10 @@ YUI({
                                 // when starts.
                                 var threshold = 50, cur, prev,
                                     lastIndex = that.result.length-1,
-                                    cx1 = that.result[0].touches.item(0).clientX, // should be around 300 (600/2)
-                                    cy1 = that.result[0].touches.item(0).clientY, // should be around 62.5 (250/2 - r)
-                                    cx2 = that.result[0].touches.item(1).clientX, // should be around 300 (600/2)
-                                    cy2 = that.result[0].touches.item(1).clientY; // should be around 187.5 (250/2 + r)
+                                    cx1 = that.result[0].touches[0].clientX, // should be around 300 (600/2)
+                                    cy1 = that.result[0].touches[0].clientY, // should be around 62.5 (250/2 - r)
+                                    cx2 = that.result[0].touches[1].clientX, // should be around 300 (600/2)
+                                    cy2 = that.result[0].touches[1].clientY; // should be around 187.5 (250/2 + r)
                                
                                 Assert.areSame(cx1, cx2, "Both fingers should be on the Y axis.");
                                 Assert.isTrue(cx1 > (300-threshold) && cx1 < (300+threshold));
@@ -825,31 +795,31 @@ YUI({
                                 for(var i=0; i<lastIndex; i++) {
                                     if(i > 1) {
                                         // 1st finger
-                                        cur = that.result[i].touches.item(0).clientX;
-                                        prev = that.result[i-1].touches.item(0).clientX;
+                                        cur = that.result[i].touches[0].clientX;
+                                        prev = that.result[i-1].touches[0].clientX;
                                         Assert.isTrue(cur <= prev);
                                         
-                                        cur = that.result[i].touches.item(0).clientY;
-                                        prev = that.result[i-1].touches.item(0).clientY;
+                                        cur = that.result[i].touches[0].clientY;
+                                        prev = that.result[i-1].touches[0].clientY;
                                         Assert.isTrue(cur >= prev);
                                         
                                         // 2nd finger
-                                        cur = that.result[i].touches.item(1).clientX;
-                                        prev = that.result[i-1].touches.item(1).clientX;
+                                        cur = that.result[i].touches[1].clientX;
+                                        prev = that.result[i-1].touches[1].clientX;
                                         Assert.isTrue(cur >= prev);
                                         
-                                        cur = that.result[i].touches.item(1).clientY;
-                                        prev = that.result[i-1].touches.item(1).clientY;
+                                        cur = that.result[i].touches[1].clientY;
+                                        prev = that.result[i-1].touches[1].clientY;
                                         Assert.isTrue(cur <= prev);
                                     }
                                 }
                                 
                                 // when ends (note that the last element doesn't 
                                 // have 'touches' so use the 2nd last element
-                                cx1 = that.result[lastIndex-1].touches.item(0).clientX, // should be around 237.5 (600/2 - r)
-                                cy1 = that.result[lastIndex-1].touches.item(0).clientY, // should be around 125 (250/2)
-                                cx2 = that.result[lastIndex-1].touches.item(1).clientX, // should be around 362.5 (600/2 + r)
-                                cy2 = that.result[lastIndex-1].touches.item(1).clientY; // should be around 125 (250/2)
+                                cx1 = that.result[lastIndex-1].touches[0].clientX, // should be around 237.5 (600/2 - r)
+                                cy1 = that.result[lastIndex-1].touches[0].clientY, // should be around 125 (250/2)
+                                cx2 = that.result[lastIndex-1].touches[1].clientX, // should be around 362.5 (600/2 + r)
+                                cy2 = that.result[lastIndex-1].touches[1].clientY; // should be around 125 (250/2)
                                 Assert.isTrue(cx1 > (237.5-threshold) && cx1 < (237.5+threshold));
                                 Assert.isTrue(cy1 > (125-threshold) && cy1 < (125+threshold));
                                 Assert.isTrue(cx2 > (362.5-threshold) && cx2 < (362.5+threshold));
@@ -893,8 +863,7 @@ YUI({
                         } else {
                             // validate pinch gesture
                             var last = that.result.length-1;
-                            Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp)
-                                >= (duration - durationThreshold));
+                            Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp) >= (duration - durationThreshold), "Duration didn't match:" + duration + "," + durationThreshold + "," + that.result[last].timestamp - that.result[0].timestamp);
                             
                             if(Y.UA.ios >= 2.0) {
                                 // touchstart/gesturestart, touchmove/gesturechange(xN), gestureend/touchend
@@ -909,7 +878,7 @@ YUI({
                                 Assert.areSame(that.result[last].type, "touchend");
                             } else {
                                 // touchstart, touchmove(xN), touchend
-                                Assert.isTrue(that.result.length >= 3);
+                                Assert.isTrue(that.result.length >= 3, "result.length = " + that.result.length);
                                 Assert.areSame(that.result[0].type, "touchstart");
                                 Assert.areSame(that.result[1].type, "touchmove");
                                 Assert.areSame(that.result[last-1].type, "touchmove");
@@ -919,42 +888,42 @@ YUI({
                                 // when starts.
                                 var threshold = 50, cur, prev,
                                     lastIndex = that.result.length-1,
-                                    cx1 = that.result[0].touches.item(0).clientX, // should be around 300 (600/2)
-                                    cy1 = that.result[0].touches.item(0).clientY, // should be around 115 (250/2 - r1)
-                                    cx2 = that.result[0].touches.item(1).clientX, // should be around 300 (600/2)
-                                    cy2 = that.result[0].touches.item(1).clientY; // should be around 135 (250/2 + r1)
+                                    cx1 = that.result[0].touches[0].clientX, // should be around 300 (600/2)
+                                    cy1 = that.result[0].touches[0].clientY, // should be around 115 (250/2 - r1)
+                                    cx2 = that.result[0].touches[1].clientX, // should be around 300 (600/2)
+                                    cy2 = that.result[0].touches[1].clientY; // should be around 135 (250/2 + r1)
 
                                 Assert.areSame(cx1, cx2, "Both fingers should be on the Y axis.");
-                                Assert.isTrue(cx1 > (300-threshold) && cx1 < (300+threshold));
-                                Assert.isTrue(cx2 > (300-threshold) && cx2 < (300+threshold));
-                                Assert.isTrue(cy1 > (115-threshold) && cy1 < (115+threshold));
-                                Assert.isTrue(cy2 > (135-threshold) && cy2 < (135+threshold));
+                                Assert.isTrue(cx1 > (300-threshold) && cx1 < (300+threshold), "cx1 is out of whack:" + cx1);
+                                Assert.isTrue(cx2 > (300-threshold) && cx2 < (300+threshold), "cx2 is out of whack:" + cx2);
+                                Assert.isTrue(cy1 > (115-threshold) && cy1 < (115+threshold), "cy1 is out of whack:" + cy1);
+                                Assert.isTrue(cy2 > (135-threshold) && cy2 < (135+threshold), "cy2 is out of whack:" + cy2);
                                 
                                 // when moves
                                 for(var i=0; i<lastIndex; i++) {
                                     // 1st finger
-                                    Assert.areSame(cx1, that.result[i].touches.item(0).clientX);
+                                    Assert.areSame(cx1, that.result[i].touches[0].clientX);
                                     // 2nd finger    
-                                    Assert.areSame(cx2, that.result[i].touches.item(1).clientX);
+                                    Assert.areSame(cx2, that.result[i].touches[1].clientX);
                                     
                                     // during the move
                                     if(i > 1) {
                                         // 1st finger
-                                        cur = that.result[i].touches.item(0).clientY;
-                                        prev = that.result[i-1].touches.item(0).clientY;
+                                        cur = that.result[i].touches[0].clientY;
+                                        prev = that.result[i-1].touches[0].clientY;
                                         Assert.isTrue(cur <= prev);
                                         
                                         // 2nd finger
-                                        cur = that.result[i].touches.item(1).clientY;
-                                        prev = that.result[i-1].touches.item(1).clientY;
+                                        cur = that.result[i].touches[1].clientY;
+                                        prev = that.result[i-1].touches[1].clientY;
                                         Assert.isTrue(cur >= prev);
                                     }
                                 }
                                 
                                 // when ends (note that the last element doesn't 
                                 // have 'touches' so use the 2nd last element
-                                cy1 = that.result[lastIndex-1].touches.item(0).clientY, // should be around 105 (250/2 - r2)
-                                cy2 = that.result[lastIndex-1].touches.item(1).clientY; // should be around 145 (250/2 + r2)
+                                cy1 = that.result[lastIndex-1].touches[0].clientY, // should be around 105 (250/2 - r2)
+                                cy2 = that.result[lastIndex-1].touches[1].clientY; // should be around 145 (250/2 + r2)
                                 Assert.isTrue(cy1 > (105-threshold) && cy1 < (105+threshold));
                                 Assert.isTrue(cy2 > (145-threshold) && cy2 < (145+threshold));
                             }
@@ -1010,10 +979,10 @@ YUI({
                                 // when starts.
                                 var threshold = 50, cur, prev,
                                     lastIndex = that.result.length-1,
-                                    cx1 = that.result[0].touches.item(0).clientX, // should be around 310 (600/2 + r1)
-                                    cy1 = that.result[0].touches.item(0).clientY, // should be around 125 (250/2)
-                                    cx2 = that.result[0].touches.item(1).clientX, // should be around 290 (600/2 - r1)
-                                    cy2 = that.result[0].touches.item(1).clientY; // should be around 125 (250/2)
+                                    cx1 = that.result[0].touches[0].clientX, // should be around 310 (600/2 + r1)
+                                    cy1 = that.result[0].touches[0].clientY, // should be around 125 (250/2)
+                                    cx2 = that.result[0].touches[1].clientX, // should be around 290 (600/2 - r1)
+                                    cy2 = that.result[0].touches[1].clientY; // should be around 125 (250/2)
                                     
                                 Assert.areSame(cy1, cy2, "Both fingers should be on the X axis.");
                                 Assert.isTrue(cy1 > (125-threshold) && cy1 < (125+threshold));
@@ -1022,29 +991,29 @@ YUI({
                                 
                                 for(var i=0; i<lastIndex; i++) {
                                     // 1st finger
-                                    Assert.areSame(cy1, that.result[i].touches.item(0).clientY);
+                                    Assert.areSame(cy1, that.result[i].touches[0].clientY);
                                     
                                     // 2nd finger    
-                                    Assert.areSame(cy2, that.result[i].touches.item(1).clientY);
+                                    Assert.areSame(cy2, that.result[i].touches[1].clientY);
                                     
                                     // during the move
                                     if(i > 1) {
                                         // 1st finger
-                                        cur = that.result[i].touches.item(0).clientX;
-                                        prev = that.result[i-1].touches.item(0).clientX;
+                                        cur = that.result[i].touches[0].clientX;
+                                        prev = that.result[i-1].touches[0].clientX;
                                         Assert.isTrue(cur >= prev);
                                         
                                         // 2nd finger
-                                        cur = that.result[i].touches.item(1).clientX;
-                                        prev = that.result[i-1].touches.item(1).clientX;
+                                        cur = that.result[i].touches[1].clientX;
+                                        prev = that.result[i-1].touches[1].clientX;
                                         Assert.isTrue(cur <= prev);
                                     }
                                 }
                                 
                                 // when ends (note that the last element doesn't 
                                 // have 'touches' so use the 2nd last element
-                                cx1 = that.result[lastIndex-1].touches.item(0).clientX, // should be around 320 (600/2 + r2)
-                                cx2 = that.result[lastIndex-1].touches.item(1).clientX; // should be around 280 (600/2 - r2)
+                                cx1 = that.result[lastIndex-1].touches[0].clientX, // should be around 320 (600/2 + r2)
+                                cx2 = that.result[lastIndex-1].touches[1].clientX; // should be around 280 (600/2 - r2)
                                 Assert.isTrue(cx1 > (320-threshold) && cx1 < (320+threshold));
                                 Assert.isTrue(cx2 > (280-threshold) && cx2 < (280+threshold));
                             }
@@ -1071,7 +1040,7 @@ YUI({
         gestureSuite.add(new PressTestCase());
         gestureSuite.add(new MoveTestCase());
         gestureSuite.add(new FlickTestCase());
-        
+
         // only for devices
         if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
             gestureSuite.add(new PinchTestCase());
@@ -1083,24 +1052,6 @@ YUI({
     
     })();
 
-    var r = new Y.Console({
-        verbose : true,
-        newestOnTop : false
-    });
-    
-    r.render('#c');
-    
-    //add to the testrunner and run
     Y.Test.Runner.add(Y.Tests.GestureSimulate);
-    Y.Test.Runner.run();
-});
-</script>
-<br>
 
-<div id="inst">
-    <h3>WARNING:</h3>    
-If this test manually started, make sure the mouse doesn't enter the above test area by accident. On a device, do not touch the test area. 
-It will interrupt the tests, which makes the test run invalid. 
-</div>
-</body>
-</html>
+}, "@VERSION@", {requires:['test', 'node', 'event-touch', 'gesture-simulate']});
