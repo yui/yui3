@@ -188,7 +188,11 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI().use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
+YUI({
+    coverage: ['node', 'node-load', 'node-deprecated'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+
+}).use('selector-css3', 'node-deprecated', 'anim', 'test-console', 'test', 'node-event-simulate', 'node-load', 'node-data-test', 'nodelist-test', 'node-attrs-test', 'node-traversal-test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         ObjectAssert = Y.ObjectAssert,
