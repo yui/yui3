@@ -49,11 +49,17 @@
                     "node-screen"
                 ]
             },
-            "anim-shape-transform": {
+            "anim-shape": {
                 "requires": [
                     "anim-base",
                     "anim-easing",
+                    "anim-color",
                     "matrix"
+                ]
+            },
+            "anim-shape-transform": {
+                "use": [ 
+                    "anim-shape"
                 ]
             }
         }
