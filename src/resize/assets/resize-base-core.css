@@ -61,6 +61,120 @@
 	zoom: 1;
 }
 
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+/* Styles */
+    .yui3-resize-handle-inner:after {
+    	content: "<div></div>";
+        width: 40px;
+        height: 40px;
+        position: absolute;
+    }
+
+    .yui3-resize-handle-inner-r,
+    .yui3-resize-handle-inner-l,
+    .yui3-resize-handle-inner-t,
+    .yui3-resize-handle-inner-b,
+    .yui3-resize-handle-inner-tr,
+    .yui3-resize-handle-inner-br,
+    .yui3-resize-handle-inner-tl,
+    .yui3-resize-handle-inner-bl {
+    	overflow: visible !important;
+    }
+
+    .yui3-resize-handle-inner-r:after {
+        top: -12px;
+        right: 0;
+    }
+    .yui3-resize-handle-inner-l:after {
+        top: -12px;
+        left: 0;
+    }
+    .yui3-resize-handle-inner-t:after {
+        top: 0;
+        left: -12px;
+    }
+    .yui3-resize-handle-inner-b:after {
+        bottom: 0;
+        left: -12px;
+    }
+    .yui3-resize-handle-inner-tr:after {
+        top: 0;
+        right: 0;
+    }
+    .yui3-resize-handle-inner-br:after {
+        bottom: 0;
+        right: 0;
+    }
+    .yui3-resize-handle-inner-tl:after {
+        top: 0;
+        left: 0;
+    }
+    .yui3-resize-handle-inner-bl:after {
+        bottom: 0;
+        left: 0;
+    }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px) {
+/* Styles */
+    .yui3-resize-handle-inner:after {
+    	content: "<div></div>";
+        width: 30px;
+        height: 30px;
+        position: absolute;
+    }
+
+    .yui3-resize-handle-inner-r,
+    .yui3-resize-handle-inner-l,
+    .yui3-resize-handle-inner-t,
+    .yui3-resize-handle-inner-b,
+    .yui3-resize-handle-inner-tr,
+    .yui3-resize-handle-inner-br,
+    .yui3-resize-handle-inner-tl,
+    .yui3-resize-handle-inner-bl {
+    	overflow: visible !important;
+    }
+
+    .yui3-resize-handle-inner-r:after {
+        top: -6px;
+        right: 0;
+    }
+    .yui3-resize-handle-inner-l:after {
+        top: -6px;
+        left: 0;
+    }
+    .yui3-resize-handle-inner-t:after {
+        top: 0;
+        left: -6px;
+    }
+    .yui3-resize-handle-inner-b:after {
+        bottom: 0;
+        left: -6px;
+    }
+    .yui3-resize-handle-inner-tr:after {
+        top: 0;
+        right: 0;
+    }
+    .yui3-resize-handle-inner-br:after {
+        bottom: 0;
+        right: 0;
+    }
+    .yui3-resize-handle-inner-tl:after {
+        top: 0;
+        left: 0;
+    }
+    .yui3-resize-handle-inner-bl:after {
+        bottom: 0;
+        left: 0;
+    }
+}
+
 .yui3-resize-handle-inner-t,
 .yui3-resize-handle-inner-b {
 	margin-left: -8px;

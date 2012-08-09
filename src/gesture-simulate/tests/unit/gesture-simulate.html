@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Gesture Simulate Tests</title>
+    <script src="../../../../build/yui/yui.js"></script>
+    <style type="text/css">
+        #touchable {
+            margin-bottom:20px;
+            width: 600px;
+            height: 250px;
+            background-color: yellowgreen;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+    <div id="touchable">Test Area. Do not mouseover/touch, or tests will fail due to incorrect event counts (TODO: Cover with another element to prevent user events).</div>
+    <div id="log"></div>
+    <div id="c"></div>
+    <div id="inst">
+        <h3>WARNING:</h3>    
+        If this test manually started, make sure the mouse doesn't enter the above test area by accident. On a device, do not touch the test area. 
+        It will interrupt the tests, which makes the test run invalid. 
+    </div>
+    <script>
+    YUI({
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        modules: {
+            'gesture-simulate-tests': {
+                fullpath: './gesture-simulate-tests.js',
+                requires: ['test', 'node', 'event-touch', 'gesture-simulate']
+            }
+        }
+    }).use('gesture-simulate-tests', 'test-console', function (Y) {
+        new Y.Test.Console({render: '#log'});
+        Y.Test.Runner.setName('Gesture Simulate');
+        Y.Test.Runner.run();
+    });
+    </script>
+</body>
+</html>

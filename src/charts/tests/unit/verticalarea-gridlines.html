@@ -11,7 +11,7 @@
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-    coverage: ['charts-base', 'charts', 'charts-legend']
+    coverage: ['charts-base', 'charts']
 }).use('test-console', 'verticalarea-gridlines-tests', function (Y) {
 
     (new Y.Test.Console()).render('#log');
