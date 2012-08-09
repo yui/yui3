@@ -4,7 +4,7 @@ var path = require('path');
 
 var base = path.join(__dirname, '../../');
 
-var paths = require('./parse');
+var paths = require('./parse').paths();
 
 var travis = process.env.TRAVIS;
 

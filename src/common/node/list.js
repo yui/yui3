@@ -12,7 +12,7 @@ from this script so that it can dynamically run the tests.
 
 */
 
-var out = require('./parse');
+var out = require('./parse').paths();
 
 out.forEach(function(line, k) {
     //Here we could do some filtering if we want to limit the tests
