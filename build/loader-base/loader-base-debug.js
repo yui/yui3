@@ -923,7 +923,8 @@ Y.Loader.prototype = {
                 Y.Array.each(mods, function(mod) {
                     self.filters[mod] = self.FILTER_DEFS.COVERAGE;
                 });
-                self.filter = 'RAW';
+                self.filterName = 'RAW';
+                self.filter = self.FILTER_DEFS[self.filterName];
             }
         }
         
