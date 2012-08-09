@@ -1,4 +1,6 @@
-YUI.add('gesture-simulate-tests', function(Y) {    
+YUI.add('gesture-simulate-tests', function(Y) {
+
+  if(!Y.UA.phantomjs) {
 
     Y.namespace("Tests");
     
@@ -1051,5 +1053,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
     })();
 
     Y.Test.Runner.add(Y.Tests.GestureSimulate);
+
+    }
 
 }, "@VERSION@", {requires:['test', 'node', 'event-touch', 'gesture-simulate']});
