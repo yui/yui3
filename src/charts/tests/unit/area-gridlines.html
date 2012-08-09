@@ -10,7 +10,7 @@
 <script src="./assets/area-gridlines-tests.js"></script>
 <script>
 YUI({
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
 }).use('test-console', 'area-gridlines-tests', function (Y) {
 
     (new Y.Test.Console()).render('#log');
