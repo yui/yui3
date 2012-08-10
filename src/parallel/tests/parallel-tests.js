@@ -35,21 +35,16 @@ YUI.add('parallel-tests', function(Y) {
             counter = 0;
 
             for (var i = 1; i <= 15; i++) {
-                setTimeout(stack.add((function(index) {
-                    return function () {
-                        counter++;
-                        return index;
-                    };
-                }(i))), Math.floor(Math.random() * 100));
+                setTimeout(stack.add(function() {
+                    counter++;
+                    return false;
+                }), 100);
             }
 
             stack.done(function(results) {
                 Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
                 Assert.areEqual(15, counter, 'Stack did not complete properly');
                 Assert.areEqual(15, results.length, 'Results array is not right');
-                for (i = 0; i < 15; i++) {
-                    Assert.areEqual(i, results[i], 'Elements of results array should retain order');
-                }
             });
         },
         test_returns_data: function() {
@@ -155,6 +150,23 @@ YUI.add('parallel-tests', function(Y) {
                 Assert.areEqual(2, results[0].length, 'Results[0] array is not right');
                 Assert.areEqual('foo', results[0][0], 'Results[0][0] is not right');
                 Assert.areEqual('bar', results[0][1], 'Results[0][1] is not right');
+            });
+        },
+        test_results_order: function () {
+            var stack = new Y.Parallel();
+
+            setTimeout(stack.add(function () {
+                return 1;
+            }), 100);
+            setTimeout(stack.add(function () {
+                return 2;
+            }), 10);
+            setTimeout(stack.add(function () {
+                return 3;
+            }), 50);
+
+            stack.done(function (results) {
+                Y.ArrayAssert.itemsAreEqual(results, [1, 2, 3], 'Results array did not retain order of callbacks');
             });
         }
     });
