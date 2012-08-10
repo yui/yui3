@@ -391,17 +391,17 @@ With our app grouped into three "pages", we need to make these pages accessible 
 </ul>
 
 <p>
-Notice how our `/github/:user/` and `/github/:user/:repo/` routes have very similar data requirements, specifically steps 1–4, we can use the routing infrastructure provided by `Y.App` to chain our route-handlers so they can build on each other.
+Notice how our `/github/:user/` and `/github/:user/:repo/` routes have very similar data requirements, specifically steps 1–4, we can use the routing infrastructure provided by `Y.App` to create reusable "middleware" which both of these routes can use. Each piece of middleware can be responsible for fetching a single data object we'll need, essentially building up the request object with everything needed to fulfill the request.
 </p>
 
 <p>
-Let's see how our page-level views and route-handlers work together by looking at `ContributorsApp`:
+Let's see how our page-level views and route handlers work together by looking at `ContributorsApp`:
 </p>
 
 <h4>ContributorsApp</h4>
 
 <p>
-Here is our subclass of `Y.App` where we have defined our three page-level views, our app's URL-space, and our route-handlers. The infrastructure provided by `Y.App` will take care of managing our page-views and dispatching to our route-handlers as our users navigate through our app.
+Here is our subclass of `Y.App` where we have defined our three page-level views, our app's URL-space, and our route handlers. The infrastructure provided by `Y.App` will take care of managing our page-views and dispatching to our route handlers as our users navigate through our app.
 </p>
 
 ```

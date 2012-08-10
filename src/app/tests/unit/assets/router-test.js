@@ -121,14 +121,44 @@ routerSuite.add(new Y.Test.Case({
         var router = this.router = new Y.Router();
 
         router.set('routes', [
-            {path: '/', callback: function () {}},
+            {path: '/',    callback: function () {}},
             {path: '/foo', callback: function () {}}
         ]);
 
         ArrayAssert.itemsAreSame(router._routes, router.get('routes'));
         Assert.areSame(2, router._routes.length);
-        Assert.areSame(router.get('routes')[0].callback, router._routes[0].callback);
-        Assert.areSame(router.get('routes')[1].callback, router._routes[1].callback);
+        Assert.areSame(router.get('routes')[0].callbacks, router._routes[0].callbacks);
+        Assert.areSame(router.get('routes')[1].callbacks, router._routes[1].callbacks);
+    },
+
+    '`routes` should support both `callback` and `callbacks` properties': function () {
+        var router = this.router = new Y.Router();
+
+        router.set('routes', [
+            {path: '/',    callback: function () {}},
+            {path: '/foo', callbacks: function () {}}
+        ]);
+
+        Assert.areSame(2, router._routes.length);
+        Assert.areSame(1, router.get('routes')[0].callbacks.length);
+        Assert.areSame(1, router.get('routes')[1].callbacks.length);
+    },
+
+    '`callbacks` should supercede `callback` property for `routes`': function () {
+        var router = this.router = new Y.Router();
+
+        function callback1() {}
+        function callback2() {}
+
+        router.set('routes', [
+            {
+                path     : '/',
+                callback : callback1,
+                callbacks: callback2
+            }
+        ]);
+
+        Assert.areSame(callback2, router.get('routes')[0].callbacks[0]);
     }
 }));
 
@@ -142,37 +172,37 @@ routerSuite.add(new Y.Test.Case({
     },
 
     '`ready` event should fire when the router is ready to dispatch': function () {
-        var test = this,
+        var test = this;
 
-            router = this.router = new Y.Router({
-                on: {
-                    ready: function (e) {
-                        test.resume(function () {
-                            Assert.isFalse(e.dispatched);
-                        });
-                    }
+        this.router = new Y.Router({
+            on: {
+                ready: function (e) {
+                    test.resume(function () {
+                        Assert.isFalse(e.dispatched);
+                    });
                 }
-            });
+            }
+        });
 
         this.wait(1000);
     },
 
     '`ready` event should set e.dispatched to true if called after dispatch': function () {
-        var test = this,
+        var test = this;
 
-            router = this.router = new Y.Router({
-                on: {
-                    initializedChange: function () {
-                        this._dispatch('/fake', {});
-                    },
+        this.router = new Y.Router({
+            on: {
+                initializedChange: function () {
+                    this._dispatch('/fake', {});
+                },
 
-                    ready: function (e) {
-                        test.resume(function () {
-                            Assert.isTrue(e.dispatched);
-                        });
-                    }
+                ready: function (e) {
+                    test.resume(function () {
+                        Assert.isTrue(e.dispatched);
+                    });
                 }
-            });
+            }
+        });
 
         this.wait(1000);
     }
@@ -255,8 +285,8 @@ routerSuite.add(new Y.Test.Case({
         router.route(/bar/, two);
         Assert.areSame(2, router._routes.length);
 
-        Assert.areSame('one', router._routes[0].callback);
-        Assert.areSame(two, router._routes[1].callback);
+        Assert.areSame('one', router._routes[0].callbacks[0]);
+        Assert.areSame(two, router._routes[1].callbacks[0]);
     },
 
     'match() should return an array of routes that match the given path': function () {
@@ -274,8 +304,8 @@ routerSuite.add(new Y.Test.Case({
         routes = router.match('/foo');
 
         Assert.areSame(2, routes.length);
-        Assert.areSame(one, routes[0].callback);
-        Assert.areSame(two, routes[1].callback);
+        Assert.areSame(one, routes[0].callbacks[0]);
+        Assert.areSame(two, routes[1].callbacks[0]);
     },
 
     'hasRoute() should return `true` if one or more routes match the given path': function () {
@@ -759,6 +789,121 @@ routerSuite.add(new Y.Test.Case({
         };
 
         router._dispatch('/foo', {foo: 'foo'});
+
+        Assert.areSame(1, calls);
+    },
+
+    'routes should support multiple callback functions': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        function callback1(req, res, next) {
+            calls += 1;
+            next();
+        }
+
+        function callback2(req, res, next) {
+            calls += 1;
+            next();
+        }
+
+        router.route('/foo', callback1, callback2);
+        router._dispatch('/foo', {});
+
+        Assert.areSame(2, calls);
+    },
+
+    'routes should support an array of callback functions': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        function callback1(req, res, next) {
+            calls += 1;
+            next();
+        }
+
+        function callback2(req, res, next) {
+            calls += 1;
+            next();
+        }
+
+        router.route('/foo', [callback1, callback2]);
+        router._dispatch('/foo', {});
+
+        Assert.areSame(2, calls);
+    },
+
+    'routes should support an array of callback function string names': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        router.callback1 = function (req, res, next) {
+            calls += 1;
+            next();
+        };
+
+        router.callback2 = function (req, res, next) {
+            calls += 1;
+            next();
+        };
+
+        router.route('/foo', ['callback1', 'callback2']);
+        router._dispatch('/foo', {});
+
+        Assert.areSame(2, calls);
+    },
+
+    'routes should support nested arrays of mixed function and string callbacks': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router(),
+            middleware, fnMiddleware, stringMiddleware;
+
+        function callback1(req, res, next) {
+            calls += 1;
+            next();
+        }
+
+        function callback2(req, res, next) {
+            calls += 1;
+            next();
+        }
+
+        router.callback1 = callback1;
+        router.callback2 = callback2;
+
+        fnMiddleware     = [callback1, callback2];
+        stringMiddleware = ['callback1', 'callback2'];
+        middleware       = [fnMiddleware, stringMiddleware];
+
+        router.route('/foo', middleware, function (req, res, next) {
+            calls += 1;
+        });
+
+        router._dispatch('/foo', {});
+
+        Assert.areSame(5, calls);
+    },
+
+    'route middleware should be able to skip to the next route': function () {
+        var calls  = 0,
+            router = this.router = new Y.Router();
+
+        router.checkEric = function (req, res, next) {
+            if (req.params.user !== 'eric') {
+                next('route');
+            }
+        };
+
+        router.showEric = function (req, res, next) {
+            Assert.fail('This should not be called.');
+        };
+
+        router.route('/:user', 'checkEric', 'showEric');
+        router.route('*', function () {
+            calls += 1;
+        });
+
+        router._dispatch('/ryan', {});
 
         Assert.areSame(1, calls);
     },
