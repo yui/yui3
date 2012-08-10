@@ -11,6 +11,7 @@ Provides URL-based routing using HTML5 `pushState()` or the location hash.
 var HistoryHash = Y.HistoryHash,
     QS          = Y.QueryString,
     YArray      = Y.Array,
+    YLang       = Y.Lang,
 
     win = Y.config.win,
 
@@ -191,7 +192,7 @@ Y.Router = Y.extend(Router, Y.Base, {
     },
 
     destructor: function () {
-        var instanceIndex = Y.Array.indexOf(instances, this);
+        var instanceIndex = YArray.indexOf(instances, this);
 
         // Remove this router from the collection of active router instances.
         if (instanceIndex > -1) {
@@ -391,9 +392,22 @@ Y.Router = Y.extend(Router, Y.Base, {
         * URL: `/file/foo/bar/baz.txt`, params: `{path: 'foo/bar/baz.txt'}`
         * URL: `/file/foo`, params: `{path: 'foo'}`
 
-    If multiple route handlers match a given URL, they will be executed in the
-    order they were added. The first route that was added will be the first to
-    be executed.
+    **Middleware**: Routes also support an arbitrary number of callback
+    functions. This allows you to easily reuse parts of your route-handling code
+    with different route. This method is liberal in how it processes the
+    specified `callbacks`, you can specify them as separate arguments, or as
+    arrays, or both.
+
+    If multiple route match a given URL, they will be executed in the order they
+    were added. The first route that was added will be the first to be executed.
+
+    **Passing Control**: Invoking the `next()` function within a route callback
+    will pass control to the next callback function (if any) or route handler
+    (if any). If a value is passed to `next()`, it's assumed to be an error,
+    therefore stopping the dispatch chain, unless that value is: `"route"`,
+    which is special case and dispatching will skip to the next route handler.
+    This allows middleware to skip any remaining middleware for a particular
+    route.
 
     @example
         router.route('/photos/:tag/:page', function (req, res, next) {
@@ -401,55 +415,81 @@ Y.Router = Y.extend(Router, Y.Base, {
           Y.log('Current page number: ' + req.params.page);
         });
 
+        // Using middleware.
+
+        router.findUser = function (req, res, next) {
+            req.user = this.get('users').findById(req.params.user);
+            next();
+        };
+
+        router.route('/users/:user', 'findUser', function (req, res, next) {
+            // The `findUser` middleware puts the `user` object on the `req`.
+            Y.log('Current user:' req.user.get('name'));
+        });
+
     @method route
     @param {String|RegExp} path Path to match. May be a string or a regular
       expression.
-    @param {Function|String} callback Callback function to call whenever this
-        route is triggered. If specified as a string, the named function will be
-        called on this router instance.
+    @param {Array|Function|String} callbacks* Callback functions to call
+        whenever this route is triggered. These can be specified as separate
+        arguments, or in arrays, or both. If a callback is specified as a
+        string, the named function will be called on this router instance.
 
-      @param {Object} callback.req Request object containing information about
+      @param {Object} callbacks.req Request object containing information about
           the request. It contains the following properties.
 
-        @param {Array|Object} callback.req.params Captured parameters matched by
+        @param {Array|Object} callbacks.req.params Captured parameters matched by
           the route path specification. If a string path was used and contained
           named parameters, then this will be a key/value hash mapping parameter
           names to their matched values. If a regex path was used, this will be
           an array of subpattern matches starting at index 0 for the full match,
           then 1 for the first subpattern match, and so on.
-        @param {String} callback.req.path The current URL path.
-        @param {Number} callback.req.pendingRoutes Number of matching routes
+        @param {String} callbacks.req.path The current URL path.
+        @param {Number} callbacks.req.pendingCallbacks Number of remaining
+          callbacks the route handler has after this one in the dispatch chain.
+        @param {Number} callbacks.req.pendingRoutes Number of matching routes
           after this one in the dispatch chain.
-        @param {Object} callback.req.query Query hash representing the URL query
-          string, if any. Parameter names are keys, and are mapped to parameter
-          values.
-        @param {String} callback.req.url The full URL.
-        @param {String} callback.req.src What initiated the dispatch. In an
+        @param {Object} callbacks.req.query Query hash representing the URL
+          query string, if any. Parameter names are keys, and are mapped to
+          parameter values.
+        @param {String} callbacks.req.url The full URL.
+        @param {String} callbacks.req.src What initiated the dispatch. In an
           HTML5 browser, when the back/forward buttons are used, this property
           will have a value of "popstate".
 
-      @param {Object} callback.res Response object containing methods and
+      @param {Object} callbacks.res Response object containing methods and
           information that relate to responding to a request. It contains the
           following properties.
-        @param {Object} callback.res.req Reference to the request object.
+        @param {Object} callbacks.res.req Reference to the request object.
 
-      @param {Function} callback.next Callback to pass control to the next
-        matching route. If you don't call this function, then no further route
-        handlers will be executed, even if there are more that match. If you do
-        call this function, then the next matching route handler (if any) will
-        be called, and will receive the same `req` object that was passed to
-        this route (so you can use the request object to pass data along to
-        subsequent routes).
+      @param {Function} callbacks.next Function to pass control to the next
+          callback or the next matching route if no more callbacks (middleware)
+          exist for the current route handler. If you don't call this function,
+          then no further callbacks or route handlers will be executed, even if
+          there are more that match. If you do call this function, then the next
+          callback (if any) or matching route handler (if any) will be called.
+          All of these functions will receive the same `req` and `res` objects
+          that were passed to this route (so you can use these objects to pass
+          data along to subsequent callbacks and routes).
+        @param {String} [callbacks.next.err] Optional error which will stop the
+          dispatch chaining for this `req`, unless the value is `"route"`, which
+          is special cased to jump skip past any callbacks for the current route
+          and pass control the next route handler.
     @chainable
     **/
-    route: function (path, callback) {
+    route: function (path, callbacks) {
+        callbacks = YArray.flatten(YArray(arguments, 1, true));
+
         var keys = [];
 
         this._routes.push({
-            callback: callback,
-            keys    : keys,
-            path    : path,
-            regex   : this._getRegex(path, keys)
+            callbacks: callbacks,
+            keys     : keys,
+            path     : path,
+            regex    : this._getRegex(path, keys),
+
+            // For back-compat.
+            callback: callbacks[0]
         });
 
         return this;
@@ -577,9 +617,10 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _dispatch: function (path, url, src) {
-        var self   = this,
-            routes = self.match(path),
-            req, res;
+        var self      = this,
+            routes    = self.match(path),
+            callbacks = [],
+            matches, req, res;
 
         self._dispatching = self._dispatched = true;
 
@@ -592,14 +633,32 @@ Y.Router = Y.extend(Router, Y.Base, {
         res = self._getResponse(req);
 
         req.next = function (err) {
-            var callback, matches, route;
+            var callback, route;
 
             if (err) {
-                Y.error(err);
+                // Special case "route" to skip to the next route handler
+                // avoiding any additional callbacks for the current route.
+                if (err === 'route') {
+                    callbacks = [];
+                    req.next();
+                } else {
+                    Y.error(err);
+                }
+
+            } else if ((callback = callbacks.shift())) {
+                if (typeof callback === 'string') {
+                    callback = self[callback];
+                }
+
+                // Allow access to the num or remaining callbacks for the route.
+                req.pendingCallbacks = callbacks.length;
+
+                callback.call(self, req, res, req.next);
+
             } else if ((route = routes.shift())) {
-                matches  = route.regex.exec(path);
-                callback = typeof route.callback === 'string' ?
-                        self[route.callback] : route.callback;
+                // Make a copy of this route's `callbacks` and find its matches.
+                callbacks = route.callbacks.concat();
+                matches   = route.regex.exec(path);
 
                 // Use named keys for parameter names if the route path contains
                 // named keys. Otherwise, use numerical match indices.
@@ -609,9 +668,11 @@ Y.Router = Y.extend(Router, Y.Base, {
                     req.params = matches.concat();
                 }
 
+                // Allow access tot he num of remaining routes for this request.
                 req.pendingRoutes = routes.length;
 
-                callback.call(self, req, res, req.next);
+                // Execute this route's `callbacks`.
+                req.next();
             }
         };
 
@@ -1126,7 +1187,10 @@ Y.Router = Y.extend(Router, Y.Base, {
         this._routes = [];
 
         YArray.each(routes, function (route) {
-            this.route(route.path, route.callback);
+            // Makes sure to check `callback` for back-compat.
+            var callbacks = route.callbacks || route.callback;
+
+            this.route(route.path, callbacks);
         }, this);
 
         return this._routes.concat();
@@ -1268,9 +1332,10 @@ Y.Router = Y.extend(Router, Y.Base, {
           * `path`: String or regex representing the path to match. See the docs
             for the `route()` method for more details.
 
-          * `callback`: Function or a string representing the name of a function
-            on this router instance that should be called when the route is
-            triggered. See the docs for the `route()` method for more details.
+          * `callbacks`: Function or a string representing the name of a
+            function on this router instance that should be called when the
+            route is triggered. An array of functions and/or strings may also be
+            provided. See the docs for the `route()` method for more details.
 
         This attribute is intended to be used to set routes at init time, or to
         completely reset all routes after init. To add routes after init without
