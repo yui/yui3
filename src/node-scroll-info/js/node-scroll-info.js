@@ -350,6 +350,8 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
 
     /**
     Refreshes cached position, height, and width dimensions for the host node.
+    If the host node is the body, then the viewport height and width will be
+    used.
 
     This info is cached to improve performance during scroll events, since it's
     expensive to touch the DOM for these values. Dimensions are automatically
@@ -364,18 +366,26 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         // returns reliable height/width info on the documentElement, so we
         // have to special-case it (see the other special case in
         // _getScrollNode()).
-        var el;
+        //
+        // On iOS devices, documentElement.clientHeight/Width aren't reliable,
+        // but window.innerHeight/Width are. And no, dom-screen's viewport size
+        // methods don't account for this, which is why we do it here.
 
-        if (this._hostIsBody && Y.UA.webkit) {
+        var hostIsBody = this._hostIsBody,
+            iosHack    = hostIsBody && Y.UA.ios,
+            win        = Y.config.win,
+            el;
+
+        if (hostIsBody && Y.UA.webkit) {
             el = Y.config.doc.documentElement;
         } else {
             el = this._scrollNode;
         }
 
-        this._height = el.clientHeight;
+        this._height = iosHack ? win.innerHeight : el.clientHeight;
         this._left   = el.offsetLeft;
         this._top    = el.offsetTop;
-        this._width  = el.clientWidth;
+        this._width  = iosHack ? win.innerWidth : el.clientWidth;
     },
 
     // -- Protected Methods ----------------------------------------------------
