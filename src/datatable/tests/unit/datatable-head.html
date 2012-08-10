@@ -12,6 +12,7 @@
     <script src="./assets/datatable-head-tests.js"></script>
 	<script>
 		YUI({
+            coverage: ['datatable-head'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-head-tests', function (Y) {
 			

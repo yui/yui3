@@ -17,6 +17,7 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
+            coverage: ['event'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use('test-console', 'test', 'node', 'event-simulate', function (Y) {
 

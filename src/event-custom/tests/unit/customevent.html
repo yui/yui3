@@ -31,6 +31,7 @@
 
     //YUI.add("selector-native", function(){});
     YUI({
+        coverage: ['event-custom'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         onCSS: function(Y) {
             Y.log('CSS is done loading', 'info', 'testcase');

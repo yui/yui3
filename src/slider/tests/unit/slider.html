@@ -10,6 +10,7 @@
 <script src="./assets/slider-tests.js"></script>
 <script>
 YUI({
+    coverage: [ 'slider' ],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'slider-tests', function (Y) {
 

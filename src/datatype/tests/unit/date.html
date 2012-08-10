@@ -15,6 +15,10 @@
 
 <script type="text/javascript">
 
+YUI.applyConfig({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+});
+
 var dateUS, dateFR, dateKR;
 (function() {
 
@@ -24,6 +28,7 @@ var dateUS, dateFR, dateKR;
         }
         YUI({
             lang: "en-US",
+            coverage: ['datatype-date'],
             modules: {
                 'date-tests': {
                     fullpath: './assets/date-tests.js',
@@ -39,6 +44,7 @@ var dateUS, dateFR, dateKR;
     };
 
     YUI({
+        coverage: ['datatype-date'],
         lang: "en-US"
     }).use("datatype-date", function(Y) {
         dateUS = Y.DataType.Date;
@@ -47,6 +53,7 @@ var dateUS, dateFR, dateKR;
 
 
     YUI({
+        coverage: ['datatype-date'],
         lang: "fr-FR"
     }).use("datatype-date", function(Y) {
         dateFR = Y.DataType.Date;
@@ -54,6 +61,7 @@ var dateUS, dateFR, dateKR;
     });
     
     YUI({
+        coverage: ['datatype-date'],
         lang: "ko-KR"
     }).use("datatype-date", function(Y) {
         dateKR = Y.DataType.Date;

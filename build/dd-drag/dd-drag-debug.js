@@ -1264,4 +1264,4 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});

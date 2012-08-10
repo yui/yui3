@@ -11,7 +11,9 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    allowRollup: false,
+    coverage: ['autocomplete', 'autocomplete-filters',
+                'autocomplete-filters-accentfold', 'autocomplete-highlighters',
+                'autocomplete-highlighters-accentfold', 'autocomplete-test-data'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'autocomplete-test': {

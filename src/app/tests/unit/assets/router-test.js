@@ -212,14 +212,6 @@ routerSuite.add(new Y.Test.Case({
 routerSuite.add(new Y.Test.Case({
     name: 'Methods',
 
-    _should: {
-        ignore: {
-            'getPath() should return the current location `pathname` when no hash is set in all browsers': Y.UA.phantomjs,
-            'getPath() should return the `pathname` in HTML5 browsers and otherwise return the hash path': Y.UA.phantomjs,
-            'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': Y.UA.phantomjs
-        }
-    },
-
     setUp: function () {
         this.errorFn   = Y.config.errorFn;
         this.throwFail = Y.config.throwFail;

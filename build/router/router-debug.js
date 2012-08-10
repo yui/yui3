@@ -1398,4 +1398,4 @@ version of YUI.
 Y.Controller = Y.Router;
 
 
-}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});

@@ -12,6 +12,7 @@
     <script src="./assets/datatable-message-tests.js"></script>
 	<script>
 		YUI({
+            coverage: ['datatable-message'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-message-tests', function (Y) {
 			

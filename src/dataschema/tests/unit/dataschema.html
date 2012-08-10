@@ -49,8 +49,7 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        allowRollup: false,
-        useBrowserConsole: false
+        coverage: ['dataschema']
     }).use("console", "test", "dump", "dataschema", "datatype", function(Y) {
         
         // Set up the page

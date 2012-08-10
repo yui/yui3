@@ -38,6 +38,7 @@
     <script type="text/javascript">
 
         YUI({
+            coverage: ['widget-parent', 'widget-child'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
         }).use("node-event-simulate", "async-queue", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 

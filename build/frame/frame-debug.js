@@ -1028,4 +1028,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});

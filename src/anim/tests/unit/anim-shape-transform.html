@@ -10,6 +10,7 @@
 <script src="../../../graphics/tests/unit/assets/shape-anim-tests.js"></script>
 <script>
 YUI({
+    coverage: ['anim-shape-transform'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'shape-anim-tests', function (Y) {
 

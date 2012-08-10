@@ -12,6 +12,7 @@
 <script src="./assets/datatable-sort-tests.js"></script>
 <script>
 YUI({
+    coverage: ['datatable-sort'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'datatable-sort-tests', function (Y) {
 

@@ -6,7 +6,10 @@
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
 <script type="text/javascript">
-    YUI().use('dom', 'dom-deprecated', 'console', 'test', function(Y) {
+    YUI({
+        coverage: ['dom', 'dom-deprecated'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('dom', 'dom-deprecated', 'console', 'test', function(Y) {
         var Assert = Y.Assert,
             ArrayAssert = Y.ArrayAssert,
             suite = new Y.Test.Suite("Dom");

@@ -891,4 +891,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true});

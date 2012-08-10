@@ -6428,6 +6428,10 @@ Y.Loader.prototype = {
         DEBUG: {
             'searchExp': '-min\\.js',
             'replaceStr': '-debug.js'
+        },
+        COVERAGE: {
+            'searchExp': '-min\\.js',
+            'replaceStr': '-coverage.js'
         }
     },
     /*
@@ -6612,6 +6616,26 @@ Y.Loader.prototype = {
             self.filter = self.FILTER_DEFS[f];
             if (f == 'DEBUG') {
                 self.require('yui-log', 'dump');
+            }
+        }
+
+        if (self.filterName && self.coverage) {
+            if (self.filterName == 'COVERAGE' && L.isArray(self.coverage) && self.coverage.length) {
+                var mods = [];
+                for (i = 0; i < self.coverage.length; i++) {
+                    var mod = self.coverage[i];
+                    if (self.moduleInfo[mod] && self.moduleInfo[mod].use) {
+                        mods = [].concat(mods, self.moduleInfo[mod].use);
+                    } else {
+                        mods.push(mod);
+                    }
+                }
+                self.filters = self.filters || {};
+                Y.Array.each(mods, function(mod) {
+                    self.filters[mod] = self.FILTER_DEFS.COVERAGE;
+                });
+                self.filterName = 'RAW';
+                self.filter = self.FILTER_DEFS[self.filterName];
             }
         }
         
@@ -11015,7 +11039,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '99a31e69f1689498b84ac871a6a0487c';
+YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

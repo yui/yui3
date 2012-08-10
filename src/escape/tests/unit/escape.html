@@ -11,6 +11,7 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
+    coverage: ['escape'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'escape-test': {

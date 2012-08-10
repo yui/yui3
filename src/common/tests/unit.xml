@@ -161,6 +161,7 @@
         <url>event/tests/unit/event-synthetic.html</url>
         <url>event/tests/unit/event-touch.html</url>
         <url>event/tests/unit/focusblur.html</url>
+        <url>gesture-simulate/tests/unit/gesture-simulate.html</url>
         <url>get/tests/unit/get.html</url>
         <url>graphics/tests/unit/graphic.html</url>
         <url>graphics/tests/unit/graphics.html</url>
