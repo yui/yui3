@@ -8879,6 +8879,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-throttle"
         ]
     },
+    "gesture-simulate": {
+        "requires": [
+            "async-queue",
+            "event-simulate",
+            "node-screen"
+        ]
+    },
     "get": {
         "requires": [
             "yui-base"
@@ -9255,7 +9262,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "node-event-simulate": {
         "requires": [
             "node-base",
-            "event-simulate"
+            "event-simulate",
+            "gesture-simulate"
         ]
     },
     "node-flick": {
@@ -9951,7 +9959,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
+YUI.Env[Y.version].md5 = '99a31e69f1689498b84ac871a6a0487c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

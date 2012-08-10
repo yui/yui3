@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Y.Array tests (core)</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div id="tester" style="visibility: hidden;">
+    <span>test</span>
+    <span>test</span>
+    <span>test</span>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var YUI_config = {
+    useNativeES5: (/[?&]useNativeES5=(?:0|false|no)(?:&|$)/i.test(window.location.search) ? false : true)
+};
+
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'array-test': {
+            fullpath: './assets/array-test.js',
+            requires: ['test']
+        }
+    }
+}).use('array-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

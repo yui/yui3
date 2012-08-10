@@ -21,11 +21,11 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'event-do-tests': {
-                fullpath: path.join(__dirname, '../event-do-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/event-do-tests.js'),
                 requires: ['event-custom-base', 'test']
             },
             'event-custom-base-tests': {
-                fullpath: path.join(__dirname, '../event-custom-base-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/event-custom-base-tests.js'),
                 requires: ['event-custom-base', 'test']
             }
         }

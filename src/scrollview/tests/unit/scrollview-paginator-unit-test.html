@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>scrollview-paginator unit tests</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="../../../../build/cssreset/reset-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+        <!--<script src="http://yui.yahooapis.com/3.5.0pr1/build/yui/yui-min.js" type="text/javascript" charset="utf-8"></script> 
+        -->
+        <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script> 
+        
+        <style>
+        	.horizontal {
+                width:300px;
+                height:200px;
+                overflow:hidden;
+                white-space: nowrap;
+            }
+            
+            .horizontal li { 
+                width:300px;
+                height:200px;
+                display: inline-block;
+                background-image: -webkit-linear-gradient(left, red, white, blue);
+                color:black;
+                font-size:5em;
+                opacity: 0.4;
+                text-align:center;
+            }
+
+            .vertical li {
+            	height: 100px;
+                width:300px;
+                color:black;
+                font-size:5em;
+                opacity: 0.4;
+                text-align:center;
+                background-image: -webkit-linear-gradient(top, green, white, blue);
+            }
+        </style>
+        
+        <script type="text/javascript" charset="utf-8">
+
+        
+        var s;
+        YUI({
+        }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
+
+	        var myConsole = new Y.Console({height:'100%'}).render();
+			
+	        var testBasic = new Y.Test.Case({
+	            name: "API Tests",
+
+			    //---------------------------------------------
+			    // Setup and tear down
+			    //---------------------------------------------
+
+	            setUp : function () {
+	                var hID = Y.guid(),
+	                	vID = Y.guid(),
+	                	horizontalHTML = "<div id='"+ hID +"' class='horizontal'><div id='myHScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>",
+	                	verticalHTML = "<div id='"+ vID +"' class='vertical'><div id='myVScrollview'><ul><li>a</li><li>b</li><li>c</li><li>e</li><li>f</li><li>g</li><li>h</li><li>i</li><li>j</li><li>k</li></ul></div></div>";
+
+	                Y.one('#container').append(horizontalHTML);
+	                Y.one('#container').append(verticalHTML);
+
+					this.hScrollview = new Y.ScrollView({
+		                srcNode : '#' + hID + " div",
+		                width: "300px",
+	                    plugins: [{
+	                        fn:Y.Plugin.ScrollViewPaginator, 
+	                        cfg:{
+	                            selector:">ul>li"
+	                        }
+	                    }],    
+	                    render:true
+					});
+
+					this.vScrollview = new Y.ScrollView({
+		                srcNode : '#' + vID + " div",
+		                height: "100px",
+	                    plugins: [{
+	                        fn:Y.Plugin.ScrollViewPaginator, 
+	                        cfg:{
+	                            selector:">ul>li"
+	                        }
+	                    }],    
+	                    render:true
+					});
+
+	            },
+
+	            tearDown : function () {
+	            	this.hScrollview.destroy();
+	            	this.vScrollview.destroy();
+	            },
+
+			    // Tests go here.
+			    
+			    // Some unfinished work can be found @ https://github.com/derek/yui/blob/25865590e0b2051a6a98b517e927d396a562b253/src/scrollview/tests/scrollview-paginator-unit-test.html
+
+			});
+
+	        var suite = new Y.Test.Suite("Scrollview: Paginator");
+	        suite.add(testBasic);
+
+	        Y.Test.Runner.add(suite);
+	        Y.Test.Runner.run();
+
+        });
+
+        </script>
+    </head>
+
+    <body class="yui3-skin-sam">
+        
+        <div id="container"></div>
+
+    </body>
+</html>
