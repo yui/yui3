@@ -7,6 +7,9 @@
 
 var NAME = "gesture-simulate",
 
+    // phantomjs check may be temporary, until we determine if it really support touch all the way through, like it claims to (http://code.google.com/p/phantomjs/issues/detail?id=375)
+    SUPPORTS_TOUCH = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.phantomjs) && !(Y.UA.chrome && Y.UA.chrome < 6)),
+
     gestureNames = {
         tap: 1,
         doubletap: 1,
@@ -245,6 +248,7 @@ Simulations.prototype = {
      */
     pinch: function(cb, center, startRadius, endRadius, duration, start, rotation) {
         var eventQueue,
+            i,
             interval = EVENT_INTERVAL,
             touches,
             id = 0,
@@ -376,12 +380,12 @@ Simulations.prototype = {
         scalePerStep = (endScale - startScale)/steps;
         rotPerStep = (endRot - startRot)/steps;
         
-        touchMove = function(i) {
-            var radius = r1 + (radiusPerStep)*i,
-                px1 = centerX + radius*Math.sin(this._toRadian(startRot + rotPerStep*i)),
-                py1 = centerY - radius*Math.cos(this._toRadian(startRot + rotPerStep*i)),
-                px2 = centerX - radius*Math.sin(this._toRadian(startRot + rotPerStep*i)),
-                py2 = centerY + radius*Math.cos(this._toRadian(startRot + rotPerStep*i)),
+        touchMove = function(step) {
+            var radius = r1 + (radiusPerStep)*step,
+                px1 = centerX + radius*Math.sin(this._toRadian(startRot + rotPerStep*step)),
+                py1 = centerY - radius*Math.cos(this._toRadian(startRot + rotPerStep*step)),
+                px2 = centerX - radius*Math.sin(this._toRadian(startRot + rotPerStep*step)),
+                py2 = centerY + radius*Math.cos(this._toRadian(startRot + rotPerStep*step)),
                 px = (px1+px2)/2,
                 py = (py1+py2)/2,
                 coord1, coord2, coord, touches;
@@ -417,19 +421,19 @@ Simulations.prototype = {
                 touches: touches,
                 targetTouches: touches,
                 changedTouches: touches,
-                scale: startScale + scalePerStep*i,
-                rotation: startRot + rotPerStep*i
+                scale: startScale + scalePerStep*step,
+                rotation: startRot + rotPerStep*step
             }, coord));
 
             if(Y.UA.ios >= 2.0) {
                 this._simulateEvent(this.target, GESTURE_CHANGE, Y.merge({
-                    scale: startScale + scalePerStep*i,
-                    rotation: startRot + rotPerStep*i
+                    scale: startScale + scalePerStep*step,
+                    rotation: startRot + rotPerStep*step
                 }, coord));
             }
         };
 
-        for(var i=0; i<steps; i++) {
+        for (i=0; i < steps; i++) {
             eventQueue.add({
                 fn: touchMove,
                 args: [i],
@@ -569,7 +573,7 @@ Simulations.prototype = {
             }, coord));
         };
         
-        for(i=0; i<times; i++) {
+        for (i=0; i < times; i++) {
             eventQueue.add({
                 fn: touchStart,
                 context: this,
@@ -583,7 +587,7 @@ Simulations.prototype = {
             });
         }
 
-        if(times > 1 && !((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6))) {
+        if(times > 1 && !SUPPORTS_TOUCH) {
             eventQueue.add({
                 fn: function() {
                     this._simulateEvent(this.target, MOUSE_DBLCLICK, coord);
@@ -748,6 +752,7 @@ Simulations.prototype = {
      */
     _move: function(cb, path, duration) {
         var eventQueue,
+            i,
             interval = EVENT_INTERVAL,
             steps, stepX, stepY,
             id = 0,
@@ -818,9 +823,9 @@ Simulations.prototype = {
         stepX = (path.end[0] - path.start[0])/steps;
         stepY = (path.end[1] - path.start[1])/steps;
 
-        touchMove = function(i) {
-            var px = path.start[0]+(stepX * i),
-                py = path.start[1]+(stepY * i), 
+        touchMove = function(step) {
+            var px = path.start[0]+(stepX * step),
+                py = path.start[1]+(stepY * step), 
                 coord = {
                     pageX: px, 
                     pageY: py,
@@ -837,8 +842,8 @@ Simulations.prototype = {
                 changedTouches: touches
             }, coord));
         };
-                
-        for(var i=0; i<steps; i++) {
+
+        for (i=0; i < steps; i++) {
             eventQueue.add({
                 fn: touchMove,
                 args: [i],
@@ -1019,7 +1024,7 @@ Simulations.prototype = {
         var touches;
 
         if (touchEvents[type]) {
-            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+            if(SUPPORTS_TOUCH) {
                 Y.Event.simulate(target, type, options);
             } else {
                 // simulate using mouse events if touch is not applicable on this platform.
