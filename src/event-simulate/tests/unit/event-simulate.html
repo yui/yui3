@@ -1,7 +1,6 @@
 <html>
 <head>
 <title>event-simulate tests</title>
-<link type="text/css" rel="stylesheet" href="../../../../build/logreader/assets/skins/sam/logreader.css" />
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 <body class="yui3-skin-sam">
@@ -10,8 +9,7 @@
 <script type="text/javascript">  
     
 YUI({
-    filter: "debug",
-    logInclude: { TestRunner: 1}
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test', 'event-simulate', 'console', function (Y) {
 
     Y.namespace("Tests");

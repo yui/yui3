@@ -124,6 +124,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
     }));
 
+    /*
     suite.add(new Y.Test.Case({
         name : "Broadcast",
             
@@ -479,7 +480,6 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
 
     }));
-
     suite.add(new Y.Test.Case({
         name : "Bubble",
 
@@ -746,6 +746,8 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
 
     }));
+            */
+
 
     Y.Test.Runner.add(suite);
 
