@@ -1,9 +1,9 @@
 YUI.add("event-custom-complex-sequence-tests", function(Y) {
 
-    var suite = new Y.Test.Suite("Firing Sequence test");
+    var suite = new Y.Test.Suite("Firing Sequence");
 
     suite.add(new Y.Test.Case({
-        name : "single event sequence",
+        name : "Single Event Sequence",
 
         setUp : function () {
             this.source = new Y.EventTarget({
@@ -124,9 +124,8 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
     }));
 
-    /*
     suite.add(new Y.Test.Case({
-        name : "broadcast",
+        name : "Broadcast",
             
         setUp : function () {
             this.source = new Y.EventTarget;
@@ -480,11 +479,9 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
 
     }));
-    */
 
-    /*
     suite.add(new Y.Test.Case({
-        name : "bubble",
+        name : "Bubble",
 
         setUp : function () {
             this.source = new Y.EventTarget({
@@ -749,26 +746,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
 
     }));
-    */
-
-    // Work around for Y.substitute handling "{key:value}" as tokens
-    Y.Console.prototype.printLogEntry = function (m) {
-        m = Y.merge(
-            this._htmlEscapeMessage(m),
-            Y.Console.ENTRY_CLASSES,
-            {
-                cat_class : this.getClassName('entry',m.category),
-                src_class : this.getClassName('entry',m.source)
-            });
-        
-        var n = Y.Node.create(this.one('entryTemplate').replace(/\{([\w-]+)\}/g,
-                function (_,k) { return k in m ? m[k] : ''; }));
-        
-        this._addToConsole(n);
-        
-        return this;
-    };
 
     Y.Test.Runner.add(suite);
-    
+
 }, '@VERSION@' ,{requires:['event-custom', 'test']}); 

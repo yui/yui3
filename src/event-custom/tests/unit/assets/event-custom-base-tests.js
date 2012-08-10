@@ -7,7 +7,7 @@ var baseSuite = new Y.Test.Suite("Custom Event: Base"),
 
 baseSuite.add(new Y.Test.Case({
 
-    name: "Event Target constructor",
+    name: "Event Target Constructor",
 
     "test new Y.EventTarget()": function () {
         var target = new Y.EventTarget();
