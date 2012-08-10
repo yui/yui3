@@ -1,4 +1,7 @@
-YUI.add('gesture-simulate-tests', function(Y) {    
+YUI.add('gesture-simulate-tests', function(Y) {
+
+    // phantomjs check may be temporary, until we determine if it really support touch all the way through, like it claims to (http://code.google.com/p/phantomjs/issues/detail?id=375)
+    var SUPPORTS_TOUCH = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.phantomjs) && !(Y.UA.chrome && Y.UA.chrome < 6));
 
     Y.namespace("Tests");
     
@@ -35,28 +38,12 @@ YUI.add('gesture-simulate-tests', function(Y) {
                 this.result = [];
                 
                 Y.each(events, Y.bind(function(one) {
-                    
-                    /**
-                     * Note: Y.Node.on() didn't work with touch events on devices.
-                     * I tried adding "event-touch" module in the above Y.use()
-                     * w/o success. DOM way of subscription is used here to get
-                     * around for now. 
-                     */
-                     // if(Y.UA.ios || Y.UA.android) {
-                     //   document.getElementById("touchable")['on'+one]= Y.bind(function(e) {
-                     //       e.preventDefault();
-                     //       e = e || window.event;
-                     //       e.timestamp = new Date().getTime();
-                     //       this.result.push(e);
-                     //   }, this); 
-                    //} else {
-                        touchable.on(one, Y.bind(function(e) {
-                            e.preventDefault();
-                            // e = e || window.event;
-                            e.timestamp = new Date().getTime();
-                            this.result.push(e);
-                        }, this)); 
-                    //}
+                    touchable.on(one, Y.bind(function(e) {
+                        e.preventDefault();
+                        // e = e || window.event;
+                        e.timestamp = new Date().getTime();
+                        this.result.push(e);
+                    }, this)); 
                 }, this));
             },
 
@@ -65,11 +52,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
              */
             tearDown : function() /*:Void*/{
                 Y.each(events, Y.bind(function(one) {
-                    // if(Y.UA.ios || Y.UA.android) {
-                    //    document.getElementById("touchable")['on'+one]= null;
-                    //} else {
-                        touchable.detach(one);
-                    //}
+                    touchable.detach(one);
                 }, this));
             }
         });
@@ -103,7 +86,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                             Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp)
                                 >= (duration - durationThreshold));
 
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchmove(xN), touchend 
                                 Assert.isTrue(that.result.length >= 3);
@@ -164,7 +147,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                             Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp) 
                                 >= (duration - durationThreshold));
 
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchmove(xN), touchend 
                                 Assert.isTrue(that.result.length >= 3);
@@ -222,7 +205,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                             Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp) 
                                 >= (duration - durationThreshold));
 
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchmove(xN), touchend 
                                 Assert.isTrue(that.result.length >= 3);
@@ -284,7 +267,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                             Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp) 
                                 >= (duration - durationThreshold));
 
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchmove(xN), touchend 
                                 Assert.isTrue(that.result.length >= 3);
@@ -346,7 +329,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                             Assert.isTrue((that.result[last].timestamp - that.result[0].timestamp) 
                                 >= (duration - durationThreshold));
 
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchmove(xN), touchend 
                                 Assert.isTrue(that.result.length >= 3);
@@ -397,7 +380,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                         if(err) {
                             Assert.fail("Error from the simulation framework: "+that.gestureName);
                         } else {
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // (touchstart, touchend)x2
                                 Assert.areSame(4, that.result.length, "should be two");
@@ -443,7 +426,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                         if(err) {
                             Assert.fail("Error from the simulation framework: "+that.gestureName);
                         } else {
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchend
                                 Assert.areSame(2, that.result.length, "should be two");
@@ -476,7 +459,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                         if(err) {
                             Assert.fail("Error from the simulation framework: "+that.gestureName);
                         } else {
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchend
                                 Assert.areSame(2, that.result.length, "should be two");
@@ -536,7 +519,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                         if(err) {
                             Assert.fail("Error from the simulation framework: "+that.gestureName);
                         } else {
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchend
                                 Assert.areSame(2, that.result.length, "should be two");
@@ -578,7 +561,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
                         if(err) {
                             Assert.fail("Error from the simulation framework: "+that.gestureName);
                         } else {
-                            if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+                            if(SUPPORTS_TOUCH) {
                                 // touch enabled devices
                                 // touchstart, touchend(x2)
                                 Assert.areSame(4, that.result.length, "should be 4 events");
@@ -1030,9 +1013,7 @@ YUI.add('gesture-simulate-tests', function(Y) {
         //-------------------------------------------------------------------------
     
         //the user action suite
-        var suite = new Y.Test.Suite("Gesture Simulate Tests");
-        var gestureSuite = new Y.Test.Suite("Gesture Tests");
-        suite.add(gestureSuite);
+        var gestureSuite = new Y.Test.Suite("Gesture Simulate");
     
         // common
         gestureSuite.add(new TapTestCase());
@@ -1042,14 +1023,14 @@ YUI.add('gesture-simulate-tests', function(Y) {
         gestureSuite.add(new FlickTestCase());
 
         // only for devices
-        if((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+        if(SUPPORTS_TOUCH) {
             gestureSuite.add(new PinchTestCase());
             gestureSuite.add(new RotateTestCase());
         }
         
         //return it
-        return suite;
-    
+        return gestureSuite;
+
     })();
 
     Y.Test.Runner.add(Y.Tests.GestureSimulate);

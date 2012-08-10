@@ -932,7 +932,11 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
 }
 
-add(win, "unload", onUnload);
+try {
+    add(win, "unload", onUnload);
+} catch(e) {
+    Y.log("Registering unload listener failed. This is known to happen in Chrome Packaged Apps and Extensions, which don't support unload, and don't provide a way to test for support", "warn", "event-base");
+}
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
