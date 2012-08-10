@@ -61,13 +61,15 @@
 	zoom: 1;
 }
 
-/* Smartphones (portrait and landscape) ----------- */
+/* Smartphones (portrait and landscape) -----------
+Adding larger hit-area ':after' objects to handles
+*/
 @media only screen
 and (min-device-width : 320px)
 and (max-device-width : 480px) {
 /* Styles */
     .yui3-resize-handle-inner:after {
-    	content: "<div></div>";
+    	content: "";
         width: 40px;
         height: 40px;
         position: absolute;
@@ -118,13 +120,15 @@ and (max-device-width : 480px) {
     }
 }
 
-/* iPads (portrait and landscape) ----------- */
+/* iPads (portrait and landscape) -----------
+Adding larger hit-area ':after' objects to handles
+*/
 @media only screen
 and (min-device-width : 768px)
 and (max-device-width : 1024px) {
 /* Styles */
     .yui3-resize-handle-inner:after {
-    	content: "<div></div>";
+    	content: "";
         width: 30px;
         height: 30px;
         position: absolute;
