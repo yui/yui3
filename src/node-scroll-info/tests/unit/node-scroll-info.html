@@ -3,22 +3,33 @@
 <head>
     <meta charset="utf-8">
     <title>Test Page</title>
+    <meta name="viewport" content="width=device-width">
 
     <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #log {
+            background: #fff;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            width: 99%;
+            _position: absolute;
+        }
+
         .buffer {
             height: 10000px;
             width: 10000px;
         }
 
-        .buffer.body {
-            border-top: 1px solid blue;
-        }
-
         .container {
             height: 100px;
-            margin: 1em 0;
             overflow: scroll;
-            /*visibility: hidden;*/
+            position: absolute;
+            visibility: hidden;
             width: 100px;
         }
 
@@ -27,11 +38,13 @@
             border: 1px solid #000;
             height: 16px;
             font-size: 0;
+            position: absolute;
             width: 16px;
-            /*visibility: hidden;*/
+            visibility: hidden;
         }
 
-        .marker.right { margin-left: 9950px; }
+        .bottom { bottom: 10000px; }
+        .right { left: 9950px; }
 
         .positioned {
             height: 142px;
@@ -46,11 +59,6 @@
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
-
-<p>
-Note: Please ensure that the blue line below is within the visible area of the
-browser's viewport before tests run, or false positives may occur.
-</p>
 
 <div id="scroll-test" class="container">
     <div id="scroll-test-top" class="marker test top"></div>
@@ -78,7 +86,7 @@ var Y = YUI({
     },
     useBrowserConsole: false
 }).use('node-scroll-info-test', 'test-console', function (Y) {
-    new Y.Test.Console({height: '200px'}).render('#log');
+    new Y.Test.Console().render('#log');
     Y.Test.Runner.setName('ScrollInfo');
     Y.Test.Runner.run();
 });

@@ -105,7 +105,7 @@ Y.Test.Runner.add(new Y.Test.Case({
         });
 
         Y.config.win.scrollTo(100, 0);
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: getOffscreenNodes() should respect the margin parameter': function () {
@@ -127,7 +127,7 @@ Y.Test.Runner.add(new Y.Test.Case({
         });
 
         this.divEl.scrollLeft = 100;
-        this.wait(200);
+        this.wait(500);
     },
 
     'getOnscreenNodes() should return onscreen nodes matching the given selector': function () {
@@ -165,7 +165,7 @@ Y.Test.Runner.add(new Y.Test.Case({
         });
 
         Y.config.win.scrollTo(100, 0);
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: getOnscreenNodes() should respect the margin parameter': function () {
@@ -187,7 +187,7 @@ Y.Test.Runner.add(new Y.Test.Case({
         });
 
         this.divEl.scrollLeft = 100;
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: getScrollInfo() should return current scroll information': function () {
@@ -214,13 +214,13 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.isNumber(info.scrollWidth, 'scrollWidth should be a number');
 
         Assert.isTrue(info.scrollBottom > 0, 'scrollBottom should be >0');
-        Assert.isTrue(info.scrollHeight >= 10000, 'scrollHeight should be >=10000');
+        Assert.areSame(10000, info.scrollHeight, 'scrollHeight should be 10000');
         Assert.areSame(0, info.scrollLeft, 'scrollLeft should be 0');
         Assert.isTrue(info.scrollRight > 0, 'scrollRight should be >0');
         Assert.areSame(0, info.scrollTop, 'scrollTop should be 0');
-        Assert.isTrue(info.scrollWidth >= 10000, 'scrollWidth should be >=10000');
+        Assert.areSame(10000, info.scrollWidth, 'scrollWidth should be 10000');
 
-        this.bodyNode.scrollInfo.once('scroll', function () {
+        this.bodyNode.scrollInfo.once('scroll', function (e) {
             test.resume(function () {
                 var info = test.bodyNode.scrollInfo.getScrollInfo();
 
@@ -236,7 +236,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.config.win.scrollTo(10000, 10000);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: getScrollInfo() should return current scroll information': function () {
@@ -263,11 +263,11 @@ Y.Test.Runner.add(new Y.Test.Case({
         Assert.isNumber(info.scrollWidth, 'scrollWidth should be a number');
 
         Assert.isTrue(info.scrollBottom > 0, 'scrollBottom should be >0');
-        Assert.isTrue(info.scrollHeight >= 10000, 'scrollHeight should be >=10000');
+        Assert.areSame(10000, info.scrollHeight, 'scrollHeight should be 10000');
         Assert.areSame(0, info.scrollLeft, 'scrollLeft should be 0');
         Assert.isTrue(info.scrollRight > 0, 'scrollRight should be >0');
         Assert.areSame(0, info.scrollTop, 'scrollTop should be 0');
-        Assert.isTrue(info.scrollWidth >= 10000, 'scrollWidth should be >=10000');
+        Assert.areSame(10000, info.scrollWidth, 'scrollWidth should be 10000');
 
         this.divNode.scrollInfo.once('scroll', function () {
             test.resume(function () {
@@ -283,10 +283,10 @@ Y.Test.Runner.add(new Y.Test.Case({
             });
         });
 
-        this.divEl.scrollTop = 10000;
+        this.divEl.scrollTop  = 10000;
         this.divEl.scrollLeft = 10000;
 
-        this.wait(200);
+        this.wait(500);
     },
 
     "refreshDimensions() should refresh cached info on a node's dimensions": function () {
@@ -339,7 +339,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.config.win.scrollTo(0, 1000);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scroll event should fire on scroll': function () {
@@ -358,7 +358,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         this.divEl.scrollTop = 1000;
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'scroll event should be throttled within the scrollDelay': function () {
@@ -400,7 +400,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.config.win.scrollTo(0, 100);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollDown event should fire after scrolling down': function () {
@@ -414,7 +414,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         this.divEl.scrollTop = 100;
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollLeft event should fire after scrolling left': function () {
@@ -434,7 +434,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             Y.config.win.scrollTo(0, 0);
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollLeft event should fire after scrolling left': function () {
@@ -454,7 +454,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             test.divEl.scrollLeft = 0;
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollRight event should fire after scrolling right': function () {
@@ -468,7 +468,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.config.win.scrollTo(100, 0);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollRight event should fire after scrolling right': function () {
@@ -482,7 +482,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         this.divEl.scrollLeft = 100;
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollUp event should fire after scrolling up': function () {
@@ -502,7 +502,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             Y.config.win.scrollTo(0, 0);
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollUp event should fire after scrolling up': function () {
@@ -522,7 +522,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             test.divEl.scrollTop = 0;
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollToBottom event should fire after scrolling to the bottom': function () {
@@ -536,7 +536,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.config.win.scrollTo(0, 10000);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollToBottom event should fire after scrolling to the bottom': function () {
@@ -550,7 +550,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         this.divEl.scrollTop = 10000;
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollToLeft event should fire after scrolling to the extreme left': function () {
@@ -570,7 +570,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             Y.config.win.scrollTo(0, 0);
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollToLeft event should fire after scrolling to the extreme left': function () {
@@ -590,7 +590,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             test.divEl.scrollLeft = 0;
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollToRight event should fire after scrolling to the extreme right': function () {
@@ -604,7 +604,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.config.win.scrollTo(10000, 0);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollToRight event should fire after scrolling to the extreme right': function () {
@@ -618,7 +618,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         this.divEl.scrollLeft = 10000;
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'body: scrollToTop event should fire after scrolling to the top': function () {
@@ -638,7 +638,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             Y.config.win.scrollTo(0, 0);
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     },
 
     'div: scrollToTop event should fire after scrolling to the top': function () {
@@ -658,7 +658,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             test.divEl.scrollTop = 0;
         }, 50);
 
-        this.wait(200);
+        this.wait(500);
     }
 }));
 
