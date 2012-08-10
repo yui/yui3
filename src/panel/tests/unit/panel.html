@@ -13,6 +13,7 @@
 <script type="text/javascript">
 (function() {
     YUI({
+        coverage: ['panel'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         allowRollup: false
     }).use("console", "test", "dump", "panel", function(Y) {

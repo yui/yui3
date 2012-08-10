@@ -8,6 +8,7 @@
 <script type="text/javascript" src="./assets/tabview-test.js"></script>
 <script type="text/javascript">
     YUI({
+        coverage: ['tabview'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     }).use('test-console', 'tabview-base-test', 'tabview-test', function (Y) {
         new Y.Test.Console().render();

@@ -11,7 +11,8 @@
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({
+YUI({
+    coverage: ['widget-position-align'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'widget-position-align-test': {

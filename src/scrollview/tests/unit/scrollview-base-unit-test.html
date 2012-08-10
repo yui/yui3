@@ -40,8 +40,8 @@
         <script type="text/javascript" charset="utf-8">
         var s;
         YUI({
-            debug: true,
-            filter:"raw"
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            coverage: ['scrollview-base']
         }).use('console', 'test'/*, 'node-event-simulate'*/, 'scrollview-base', function(Y) {
 
 	        // Set up the page

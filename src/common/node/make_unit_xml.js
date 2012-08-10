@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
-var examples = require('./parse'),
+var paths = require('./parse'),
+    json = paths.parse(function(line) {
+        return (line.indexOf('coverage') === -1);
+    }),
+    examples = paths.paths(json),
     fs = require('fs'),
     path = require('path'),
     tab = '    ',
@@ -22,6 +26,7 @@ var examples = require('./parse'),
 
     str.push(tab + '</tests>');
     str.push('</yuitest>');
+    str.push('');
     
     fs.writeFileSync(xml, str.join('\n'), 'utf8');
 

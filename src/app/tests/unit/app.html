@@ -18,8 +18,8 @@
 </script>
 <script>
 var Y = YUI({
-    allowRollup: false,
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    coverage: [ 'app' ],
     modules: {
         'app-test': {
             use: [

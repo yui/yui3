@@ -12,6 +12,7 @@
     <script src="./assets/datatable-body-tests.js"></script>
 	<script>
 		YUI({
+            coverage: ['datatable-body'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 		}).use('test-console', 'datatable-body-tests', function (Y) {
 			

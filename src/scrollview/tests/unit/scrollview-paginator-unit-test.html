@@ -44,6 +44,8 @@
         
         var s;
         YUI({
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+            coverage: ['scrollview-paginator' ]
         }).use('console', 'test', 'node-event-simulate', 'scrollview-base', 'scrollview-paginator', function(Y) {
 
 	        var myConsole = new Y.Console({height:'100%'}).render();

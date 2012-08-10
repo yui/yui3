@@ -10,6 +10,7 @@
 <script src="./assets/event-key-tests.js"></script>
 <script>
 YUI({
+    coverage: ['event-key'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     lazyEventFacade: true
 }).use('test-console', 'event-key-tests', function (Y) {

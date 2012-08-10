@@ -205,7 +205,7 @@
 (function() {
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-        allowRollup: false
+        coverage: ['scrollview-base', 'scrollview-list']
     }).use("console", "test", "dump", "scrollview-base", 'scrollview-list', function(Y) {
 	
 

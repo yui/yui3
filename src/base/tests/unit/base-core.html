@@ -7,7 +7,7 @@
 
     <script type="text/javascript">
         YUI({
-            useBrowserConsole:false,
+            coverage: ['base-core'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             modules: {
                 'base-core-tests': {

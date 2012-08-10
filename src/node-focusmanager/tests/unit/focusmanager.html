@@ -76,7 +76,10 @@
 <script src="../../../../build/yui/yui.js" type="text/javascript"></script>
 <script type="text/javascript">
 
-	YUI({timeout: 10000, filter:'raw'}).use("node-event-simulate", "node-focusmanager", "test", "console", function(Y) {
+	YUI({
+        coverage: ['node-focusmanager'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use("node-event-simulate", "node-focusmanager", "test", "console", function(Y) {
 
 		Y.on("contentready", function () {
 

@@ -22,7 +22,10 @@ document.createElement('foo'); // enable custom element for IE native querySelec
 onload = function() {
 
     var SELECTOR_MODULE = 'selector-css3';
-    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
+    YUI({
+        coverage: ['dom-deprecated'], //Selector fails in YUITestCoverage
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('node', SELECTOR_MODULE, 'test-console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;

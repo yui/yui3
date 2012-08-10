@@ -24,6 +24,7 @@
     <script>
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        coverage: ['gesture-simulate'],
         modules: {
             'gesture-simulate-tests': {
                 fullpath: './gesture-simulate-tests.js',

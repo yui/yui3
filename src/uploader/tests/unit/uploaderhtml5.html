@@ -21,6 +21,7 @@
 (function() {
 
     YUI({
+        coverage: ['uploader-html5'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "uploader-html5", function(Y) {
         

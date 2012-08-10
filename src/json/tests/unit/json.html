@@ -10,6 +10,7 @@
 <script src="./assets/json-tests.js"></script>
 <script>
 YUI({
+    coverage: ['json'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'json-tests', function (Y) {
 

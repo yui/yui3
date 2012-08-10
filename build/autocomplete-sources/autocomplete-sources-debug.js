@@ -472,4 +472,4 @@ Y.mix(ACBase.SOURCE_TYPES, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
+}, '@VERSION@' ,{optional:['io-base', 'json-parse', 'jsonp', 'yql'], requires:['autocomplete-base']});

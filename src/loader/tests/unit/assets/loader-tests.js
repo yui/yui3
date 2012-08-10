@@ -2060,6 +2060,29 @@ YUI.add('loader-tests', function(Y) {
                 var len = item.split('/').length;
                 Assert.areEqual(2, len, 'Failed to call configFn on ' + item);
             });
+        },
+        'test coverage filter': function() {
+            var loader = new Y.Loader({
+                root: '/',
+                base: '/',
+                coverage: ['yql'],
+                ignoreRegistered: true,
+                filter: 'coverage',
+                require: ['node', 'yql']
+            });
+            Assert.isObject(loader.filters, 'filters object not created');
+            Assert.isObject(loader.filters.yql, 'filters.yql object not created');
+            Assert.areEqual(loader.filters.yql.replaceStr, '-coverage.js', 'Failed to create -coverage search string');
+            Assert.areEqual(loader.filters.yql.searchExp, '-min\\.js', 'Failed to create -min replaceExp');
+            var out = loader.resolve(true);
+            var hasYQLCoverage = Y.Array.some(out.js, function(mod) {
+                return (mod === '/yql/yql-coverage.js');
+            });
+            var hasOOPNoCoverage = Y.Array.some(out.js, function(mod) {
+                return (mod === '/oop/oop.js');
+            });
+            Assert.isTrue(hasYQLCoverage, 'Failed to filter yql-coverage.js');
+            Assert.isTrue(hasOOPNoCoverage, 'Failed to filter oop.js');
         }
     });
     

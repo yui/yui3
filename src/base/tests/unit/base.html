@@ -10,6 +10,7 @@
 
 <script>
 YUI({
+    coverage: ['base'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'base-tests': {

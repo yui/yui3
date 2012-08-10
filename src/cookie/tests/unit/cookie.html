@@ -11,6 +11,7 @@
 
 <script type="text/javascript">  
 YUI({
+    coverage: [ 'cookie' ],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'cookie-tests': {

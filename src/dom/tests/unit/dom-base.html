@@ -10,6 +10,7 @@
 <script type="text/javascript" src="./assets/dom-deprecated-test.js"></script>
 <script type="text/javascript">
 YUI({
+    coverage: ['dom-core', 'dom-class', 'dom-size', 'dom-deprecated'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test-console', 'test', 'dom-core-test', 'dom-class-test', 'dom-size-test', 'dom-deprecated-test', function (Y) {
     new Y.Test.Console().render();

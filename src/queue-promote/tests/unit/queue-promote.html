@@ -12,8 +12,7 @@
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-    useBrowserConsole: false,
-    allowRollup: false
+    coverage: ['queue-promote']
 }).use('test-console','queue-promote-tests', function (Y) {
 
 new Y.Test.Console().render('#log');
