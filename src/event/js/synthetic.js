@@ -4,7 +4,8 @@
  * @module event
  * @submodule event-synthetic
  */
-var DOMMap   = Y.Env.evt.dom_map,
+var MAINTAIN_DEPRECATED_SUBS = Y.CustomEvent.MAINTAIN_DEPRECATED_SUBS,
+    DOMMap   = Y.Env.evt.dom_map,
     toArray  = Y.Array,
     YLang    = Y.Lang,
     isObject = YLang.isObject,
@@ -260,6 +261,10 @@ Y.mix(SyntheticEvent, {
                 method = (sub.filter) ? 'detachDelegate' : 'detach';
 
             this._subscribers = [];
+
+            if (MAINTAIN_DEPRECATED_SUBS) {
+                this.subscribers = {};
+            }
 
             synth[method](sub.node, sub, this.notifier, sub.filter);
             this.registry.unregister(sub);

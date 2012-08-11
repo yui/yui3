@@ -2674,7 +2674,7 @@ baseSuite.add(new Y.Test.Case({
         Y.Assert.isTrue(fired);
         Y.Assert.areSame(target, thisObj);
         Y.Assert.areSame(0, argCount);
-        Y.Assert.areSame(0, keys(testEvent.afters).length);
+        Y.Assert.areSame(0, afters.length);
 
         fired = false;
 
@@ -2687,8 +2687,6 @@ baseSuite.add(new Y.Test.Case({
         var target = new Y.EventTarget(),
             events = target._yuievt.events,
             count = 0,
-            subscribers,
-            afters,
             handle, thisObj, testEvent1, testEvent2;
 
         function callback() {
@@ -2699,24 +2697,20 @@ baseSuite.add(new Y.Test.Case({
         handle = target.onceAfter(["test1", "test2"], callback);
 
         testEvent1 = events.test1;
-        subscribers = testEvent1._subscribers;
-        afters = testEvent1._afters;
 
         Y.Assert.isInstanceOf(Y.CustomEvent, testEvent1);
-        Y.Assert.isArray(afters);
-        Y.Assert.areSame(0, subscribers.length);
-        Y.Assert.areSame(1, afters.length);
+        Y.Assert.isArray(testEvent1._afters);
+        Y.Assert.areSame(0, testEvent1._subscribers.length);
+        Y.Assert.areSame(1, testEvent1._afters.length);
         Y.Assert.areSame(1, testEvent1.hasSubs());
 
         testEvent2 = events.test2;
-        subscribers = testEvent2._subscribers;
-        afters = testEvent2._afters;
 
         Y.Assert.isInstanceOf(Y.CustomEvent, testEvent2);
-        Y.Assert.isArray(afters);
-        Y.Assert.areSame(0, subscribers.length);
-        Y.Assert.areSame(1, afters.length);
-        Y.Assert.areSame(1, testEvent1.hasSubs());
+        Y.Assert.isArray(testEvent2._afters);
+        Y.Assert.areSame(0, testEvent2._subscribers.length);
+        Y.Assert.areSame(1, testEvent2._afters.length);
+        Y.Assert.areSame(1, testEvent2.hasSubs());
 
         Y.Assert.isInstanceOf(Y.EventHandle, handle);
         Y.Assert.isArray(handle.evt);
@@ -2730,13 +2724,13 @@ baseSuite.add(new Y.Test.Case({
 
         Y.Assert.areSame(1, count);
         Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame(0, keys(testEvent1.afters).length);
+        Y.Assert.areSame(0, testEvent1._afters.length);
 
         target.fire("test2");
 
         Y.Assert.areSame(2, count);
         Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame(0, keys(testEvent2.afters).length);
+        Y.Assert.areSame(0, testEvent2._afters.length);
     },
 
     "test target.onceAfter([typeA, typeA], fn)": function () {
@@ -2775,7 +2769,7 @@ baseSuite.add(new Y.Test.Case({
 
         Y.Assert.areSame(2, count);
         Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame(0, keys(testEvent.afters).length);
+        Y.Assert.areSame(0, afters.length);
     },
 
     "test target.onceAfter([], fn) does nothing": function () {
@@ -2873,7 +2867,7 @@ baseSuite.add(new Y.Test.Case({
         Y.Assert.isTrue(fired);
         Y.Assert.areSame(target, thisObj);
         Y.Assert.areSame(0, argCount);
-        Y.Assert.areSame(0, keys(testEvent.afters).length);
+        Y.Assert.areSame(0, afters.length);
 
         handle = target.onceAfter({
             "test2": callback,
@@ -2938,7 +2932,7 @@ baseSuite.add(new Y.Test.Case({
         Y.Assert.isTrue(fired);
         Y.Assert.areSame(target, thisObj);
         Y.Assert.areSame(0, argCount);
-        Y.Assert.areSame(0, keys(testEvent.afters).length);
+        Y.Assert.areSame(0, afters.length);
 
         handle = target.onceAfter({ "test2": 1, "test3": false }, callback);
 
@@ -2987,7 +2981,7 @@ baseSuite.add(new Y.Test.Case({
         afters = testEvent._afters;
 
         Y.Assert.isInstanceOf(Y.CustomEvent, testEvent);
-        Y.Assert.isObject(testEvent.afters);
+        Y.Assert.isArray(testEvent._afters);
         Y.Assert.areSame(0, testEvent._subscribers.length);
         Y.Assert.areSame(1, testEvent._afters.length);
         Y.Assert.areSame(1, testEvent.hasSubs());
@@ -3008,7 +3002,7 @@ baseSuite.add(new Y.Test.Case({
         // Fire should immediate detach the subscription
         testEvent = events.test;
         Y.Assert.isInstanceOf(Y.CustomEvent, testEvent);
-        Y.Assert.isObject(testEvent.afters);
+        Y.Assert.isArray(testEvent._afters);
         Y.Assert.areSame(0, testEvent._subscribers.length);
         Y.Assert.areSame(0, testEvent._afters.length);
         Y.Assert.areSame(0, testEvent.hasSubs());
