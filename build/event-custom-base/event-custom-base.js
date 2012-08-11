@@ -404,6 +404,8 @@ DO.Error = DO.Halt;
 // var onsubscribeType = "_event:onsub",
 var YArray = Y.Array,
 
+    MAINTAIN_DEPRECATED_SUBS,
+
     AFTER = 'after',
     CONFIGS = [
         'broadcast',
@@ -526,7 +528,9 @@ Y.CustomEvent = function(type, o) {
      * @type Subscriber {}
      * @deprecated
      */
-    this.subscribers = {};
+    if (MAINTAIN_DEPRECATED_SUBS) {
+        this.subscribers = {};
+    }
 
     /**
      * The subscribers to this event
@@ -541,7 +545,9 @@ Y.CustomEvent = function(type, o) {
      * @property afters
      * @type Subscriber {}
      */
-    this.afters = {};
+    if (MAINTAIN_DEPRECATED_SUBS) {
+        this.afters = {};
+    }
 
     /**
      * 'After' subscribers
@@ -690,6 +696,31 @@ Y.CustomEvent = function(type, o) {
 
 };
 
+/**
+ * Static flag to enable population of the <a href="#property_subscribers">`subscribers`</a>
+ * and  <a href="#property_subscribers">`afters`</a> properties held on a `CustomEvent` instance.
+ * 
+ * These properties were changed to private properties (`_subscribers` and `_afters`), and 
+ * converted from objects to arrays for performance reasons. 
+ *
+ * Setting this property to true will populate the deprecated `subscribers` and `afters` 
+ * properties for people who may be using them (which is expected to be rare). There will
+ * be a performance hit, compared to the new array based implementation.
+ *
+ * If you are using these deprecated properties for a use case which the public API
+ * does not support, please file an enhancement request, and we can provide an alternate 
+ * public implementation which doesn't have the performance cost required to maintiain the
+ * properties as objects.
+ *
+ * @property MAINTAIN_DEPRECATED_SUBS
+ * @static
+ * @for CustomEvent
+ * @type boolean
+ * @default false
+ * @deprecated
+ */
+Y.CustomEvent.MAINTAIN_DEPRECATED_SUBS = false;
+
 Y.CustomEvent.mixConfigs = mixConfigs;
 
 Y.CustomEvent.prototype = {
@@ -792,6 +823,14 @@ Y.CustomEvent.prototype = {
             this._afters.push(s);
         } else {
             this._subscribers.push(s);
+        }
+
+        if (MAINTAIN_DEPRECATED_SUBS) {
+            if (when == AFTER) {
+                this.afters[s.id] = s;
+            } else {
+                this.subscribers[s.id] = s;
+            }
         }
 
         return new Y.EventHandle(this, s);
@@ -1090,6 +1129,14 @@ Y.CustomEvent.prototype = {
 
         if (s && subs[i] === s) {
             subs.splice(i, 1);
+        }
+
+        if (MAINTAIN_DEPRECATED_SUBS) {
+            if (when === AFTER) {
+                delete this.afters[s.id];
+            } else {
+                delete this.subscribers[s.id];
+            }
         }
 
         if (this.host) {
