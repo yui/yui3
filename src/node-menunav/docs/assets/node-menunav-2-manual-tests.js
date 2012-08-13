@@ -1,5 +1,5 @@
-var moduleName = 'node-menunav-4';
-YUI.add(moduleName+'-tests', function(Y) {
+var moduleName = 'node-menunav-2';
+YUI.add(moduleName+'-manual-tests', function(Y) {
     
     var suite = new Y.Test.Suite(moduleName+' test suite');
 
@@ -8,7 +8,7 @@ YUI.add(moduleName+'-tests', function(Y) {
         name : 'Example Tests',
 
         'this test should eventually do something' : function () {
-            Y.Assert.pass();
+            Y.Assert.fail();
         }
     }));
 
