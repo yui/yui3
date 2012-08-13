@@ -7,7 +7,7 @@
  * @class Subscriber
  * @constructor
  */
-Y.Subscriber = function(fn, context, args) {
+Y.Subscriber = function(fn, context, args, when) {
 
     /**
      * The callback that will be execute when the event fires
@@ -37,6 +37,8 @@ Y.Subscriber = function(fn, context, args) {
      * @type Array
      */
     this.args = args;
+
+    this._when = when;
 
     /**
      * Custom events for a given fire transaction.
@@ -135,6 +137,10 @@ Y.Subscriber.prototype = {
         } else {
             return (this.fn == fn);
         }
+    },
+    
+    valueOf : function() {
+        return this.id;
     }
 
 };

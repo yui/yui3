@@ -404,7 +404,9 @@ DO.Error = DO.Halt;
 
 
 // var onsubscribeType = "_event:onsub",
-var AFTER = 'after',
+var YArray = Y.Array,
+
+    AFTER = 'after',
     CONFIGS = [
         'broadcast',
         'monitored',
@@ -428,8 +430,24 @@ var AFTER = 'after',
         'type'
     ],
 
+    CONFIGS_HASH = YArray.hash(CONFIGS),
+
+    nativeSlice = Array.prototype.slice, 
+
     YUI3_SIGNATURE = 9,
-    YUI_LOG = 'yui:log';
+    YUI_LOG = 'yui:log',
+
+    mixConfigs = function(r, s, ov) {
+        var p;
+
+        for (p in s) {
+            if (CONFIGS_HASH[p] && (ov || !(p in r))) { 
+                r[p] = s[p];
+            }
+        }
+
+        return r;
+    };
 
 /**
  * The CustomEvent class lets you define events for your application
@@ -443,9 +461,7 @@ var AFTER = 'after',
  */
 Y.CustomEvent = function(type, o) {
 
-    // if (arguments.length > 2) {
-// this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
-    // }
+    this._kds = Y.CustomEvent.keepDeprecatedSubs;
 
     o = o || {};
 
@@ -508,15 +524,36 @@ Y.CustomEvent = function(type, o) {
      * The subscribers to this event
      * @property subscribers
      * @type Subscriber {}
+     * @deprecated
      */
-    this.subscribers = {};
+    if (this._kds) {
+        this.subscribers = {};
+    }
+
+    /**
+     * The subscribers to this event
+     * @property _subscribers
+     * @type Subscriber []
+     * @private
+     */
+    this._subscribers = [];
 
     /**
      * 'After' subscribers
      * @property afters
      * @type Subscriber {}
      */
-    this.afters = {};
+    if (this._kds) {
+        this.afters = {};
+    }
+
+    /**
+     * 'After' subscribers
+     * @property _afters
+     * @type Subscriber []
+     * @private
+     */
+    this._afters = [];
 
     /**
      * This event has fired if true
@@ -636,11 +673,10 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
-    this.subCount = 0;
-    this.afterCount = 0;
+    // this.subCount = 0;
+    // this.afterCount = 0;
 
     // this.hasSubscribers = false;
-
     // this.hasAfters = false;
 
     /**
@@ -658,7 +694,35 @@ Y.CustomEvent = function(type, o) {
 
 };
 
+/**
+ * Static flag to enable population of the <a href="#property_subscribers">`subscribers`</a>
+ * and  <a href="#property_subscribers">`afters`</a> properties held on a `CustomEvent` instance.
+ * 
+ * These properties were changed to private properties (`_subscribers` and `_afters`), and 
+ * converted from objects to arrays for performance reasons. 
+ *
+ * Setting this property to true will populate the deprecated `subscribers` and `afters` 
+ * properties for people who may be using them (which is expected to be rare). There will
+ * be a performance hit, compared to the new array based implementation.
+ *
+ * If you are using these deprecated properties for a use case which the public API
+ * does not support, please file an enhancement request, and we can provide an alternate 
+ * public implementation which doesn't have the performance cost required to maintiain the
+ * properties as objects.
+ *
+ * @property keepDeprecatedSubs
+ * @static
+ * @for CustomEvent
+ * @type boolean
+ * @default false
+ * @deprecated
+ */
+Y.CustomEvent.keepDeprecatedSubs = false;
+
+Y.CustomEvent.mixConfigs = mixConfigs;
+
 Y.CustomEvent.prototype = {
+
     constructor: Y.CustomEvent,
 
     /**
@@ -669,11 +733,11 @@ Y.CustomEvent.prototype = {
      * @return Number
      */
     hasSubs: function(when) {
-        var s = this.subCount, a = this.afterCount, sib = this.sibling;
+        var s = this._subscribers.length, a = this._afters.length, sib = this.sibling;
 
         if (sib) {
-            s += sib.subCount;
-            a += sib.afterCount;
+            s += sib._subscribers.length;
+            a += sib._afters.length;
         }
 
         if (when) {
@@ -694,7 +758,7 @@ Y.CustomEvent.prototype = {
     monitor: function(what) {
         this.monitored = true;
         var type = this.id + '|' + this.type + '_' + what,
-            args = Y.Array(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
         args[0] = type;
         return this.host.on.apply(this.host, args);
     },
@@ -705,12 +769,10 @@ Y.CustomEvent.prototype = {
      * @return {Array} first item is the on subscribers, second the after.
      */
     getSubs: function() {
-        var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
+        var s = this._subscribers, a = this._afters, sib = this.sibling;
 
-        if (sib) {
-            Y.mix(s, sib.subscribers);
-            Y.mix(a, sib.afters);
-        }
+        s = (sib) ? s.concat(sib._subscribers) : s.concat();
+        a = (sib) ? a.concat(sib._afters) : a.concat();
 
         return [s, a];
     },
@@ -723,9 +785,7 @@ Y.CustomEvent.prototype = {
      * will be overwritten.
      */
     applyConfig: function(o, force) {
-        if (o) {
-            Y.mix(this, o, force, CONFIGS);
-        }
+        mixConfigs(this, o, force);
     },
 
     /**
@@ -758,15 +818,20 @@ Y.CustomEvent.prototype = {
         }
 
         if (when == AFTER) {
-            this.afters[s.id] = s;
-            this.afterCount++;
+            this._afters.push(s);
         } else {
-            this.subscribers[s.id] = s;
-            this.subCount++;
+            this._subscribers.push(s);
+        }
+
+        if (this._kds) {
+            if (when == AFTER) {
+                this.afters[s.id] = s;
+            } else {
+                this.subscribers[s.id] = s;
+            }
         }
 
         return new Y.EventHandle(this, s);
-
     },
 
     /**
@@ -778,7 +843,7 @@ Y.CustomEvent.prototype = {
      */
     subscribe: function(fn, context) {
         Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
 
@@ -792,7 +857,7 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} An object with a detach method to detch the handler(s).
      */
     on: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         if (this.host) {
             this.host._monitor('attach', this.type, {
                 args: arguments
@@ -813,7 +878,7 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} handle Unsubscribe handle.
      */
     after: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, AFTER);
     },
 
@@ -830,18 +895,25 @@ Y.CustomEvent.prototype = {
         if (fn && fn.detach) {
             return fn.detach();
         }
-
+        
         var i, s,
             found = 0,
-            subs = Y.merge(this.subscribers, this.afters);
+            subs = this._subscribers,
+            afters = this._afters;
 
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                s = subs[i];
-                if (s && (!fn || fn === s.fn)) {
-                    this._delete(s);
-                    found++;
-                }
+        for (i = subs.length; i >= 0; i--) {
+            s = subs[i];
+            if (s && (!fn || fn === s.fn)) {
+                this._delete(s, subs, i);
+                found++;
+            }
+        }
+
+        for (i = afters.length; i >= 0; i--) {
+            s = afters[i];
+            if (s && (!fn || fn === s.fn)) {
+                this._delete(s, afters, i);
+                found++;
             }
         }
 
@@ -919,13 +991,16 @@ Y.CustomEvent.prototype = {
             return true;
         } else {
 
-            var args = Y.Array(arguments, 0, true);
+            var args = nativeSlice.call(arguments, 0);
 
             // this doesn't happen if the event isn't published
             // this.host._monitor('fire', this.type, args);
 
             this.fired = true;
-            this.firedWith = args;
+
+            if (this.fireOnce) {
+                this.firedWith = args;
+            }
 
             if (this.emitFacade) {
                 return this.fireComplex(args);
@@ -947,7 +1022,6 @@ Y.CustomEvent.prototype = {
         this.stopped = 0;
         this.prevented = 0;
         if (this.hasSubs()) {
-            // this._procSubs(Y.merge(this.subscribers, this.afters), args);
             var subs = this.getSubs();
             this._procSubs(subs[0], args);
             this._procSubs(subs[1], args);
@@ -976,17 +1050,16 @@ Y.CustomEvent.prototype = {
      * @private
      */
     _procSubs: function(subs, args, ef) {
-        var s, i;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                s = subs[i];
-                if (s && s.fn) {
-                    if (false === this._notify(s, args, ef)) {
-                        this.stopped = 2;
-                    }
-                    if (this.stopped == 2) {
-                        return false;
-                    }
+        var s, i, l;
+
+        for (i = 0, l = subs.length; i < l; i++) {
+            s = subs[i];
+            if (s && s.fn) {
+                if (false === this._notify(s, args, ef)) {
+                    this.stopped = 2;
+                }
+                if (this.stopped == 2) {
+                    return false;
                 }
             }
         }
@@ -1005,7 +1078,7 @@ Y.CustomEvent.prototype = {
     _broadcast: function(args) {
         if (!this.stopped && this.broadcast) {
 
-            var a = Y.Array(args);
+            var a = args.concat();
             a.unshift(this.type);
 
             if (this.host !== Y) {
@@ -1042,18 +1115,28 @@ Y.CustomEvent.prototype = {
      * subscribers.
      *
      * @method _delete
-     * @param subscriber object.
+     * @param s subscriber object.
+     * @param subs (optional) on or after subscriber array
+     * @param index (optional) The index found.
      * @private
      */
-    _delete: function(s) {
-        if (s) {
-            if (this.subscribers[s.id]) {
-                delete this.subscribers[s.id];
-                this.subCount--;
-            }
-            if (this.afters[s.id]) {
+    _delete: function(s, subs, i) {
+        var when = s._when;
+
+        if (!subs) {
+            subs = (when === AFTER) ? this._afters : this._subscribers; 
+            i = YArray.indexOf(subs, s, 0);
+        }
+
+        if (s && subs[i] === s) {
+            subs.splice(i, 1);
+        }
+
+        if (this._kds) {
+            if (when === AFTER) {
                 delete this.afters[s.id];
-                this.afterCount--;
+            } else {
+                delete this.subscribers[s.id];
             }
         }
 
@@ -1065,8 +1148,6 @@ Y.CustomEvent.prototype = {
         }
 
         if (s) {
-            // delete s.fn;
-            // delete s.context;
             s.deleted = true;
         }
     }
@@ -1080,7 +1161,7 @@ Y.CustomEvent.prototype = {
  * @class Subscriber
  * @constructor
  */
-Y.Subscriber = function(fn, context, args) {
+Y.Subscriber = function(fn, context, args, when) {
 
     /**
      * The callback that will be execute when the event fires
@@ -1110,6 +1191,8 @@ Y.Subscriber = function(fn, context, args) {
      * @type Array
      */
     this.args = args;
+
+    this._when = when;
 
     /**
      * Custom events for a given fire transaction.
@@ -1208,6 +1291,10 @@ Y.Subscriber.prototype = {
         } else {
             return (this.fn == fn);
         }
+    },
+    
+    valueOf : function() {
+        return this.id;
     }
 
 };
@@ -1311,10 +1398,10 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
-    YArray = Y.Array,
+    WILD_TYPE_RE = /(.*?)(:)(.*?)/,
 
     _wildType = Y.cached(function(type) {
-        return type.replace(/(.*)(:)(.*)/, "*$2$3");
+        return type.replace(WILD_TYPE_RE, "*$2$3");
     }),
 
     /**
@@ -1523,7 +1610,7 @@ ET.prototype = {
 
             f = fn;
             c = context;
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             ret = [];
 
             if (L.isArray(type)) {
@@ -1560,7 +1647,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && Y.instanceOf(this, Node) && (shorttype in Node.DOM_EVENTS)) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             args.splice(2, 0, Node.getDOMNode(this));
             // Y.log("Node detected, redirecting with these args: " + args);
             return Y.on.apply(Y, args);
@@ -1571,7 +1658,7 @@ ET.prototype = {
         if (Y.instanceOf(this, YUI)) {
 
             adapt = Y.Env.evt.plugins[type];
-            args  = YArray(arguments, 0, true);
+            args  = nativeSlice.call(arguments, 0);
             args[0] = shorttype;
 
             if (Node) {
@@ -1603,7 +1690,7 @@ ET.prototype = {
 
         if (!handle) {
             ce = this._yuievt.events[type] || this.publish(type);
-            handle = ce._on(fn, context, (arguments.length > 3) ? YArray(arguments, 3, true) : null, (after) ? 'after' : true);
+            handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -1704,7 +1791,7 @@ ET.prototype = {
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             args[2] = Node.getDOMNode(this);
             Y.detach.apply(Y, args);
             return this;
@@ -1714,7 +1801,7 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (Y.instanceOf(this, YUI)) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
                 adapt.detach.apply(Y, args);
@@ -1860,17 +1947,20 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         ce = events[type];
 
         if (ce) {
-// ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
+            // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
             if (opts) {
                 ce.applyConfig(opts, true);
             }
         } else {
-
+            // TODO: Lazy publish goes here.
             defaults = edata.defaults;
 
             // apply defaults
-            ce = new Y.CustomEvent(type,
-                                  (opts) ? Y.merge(defaults, opts) : defaults);
+            ce = new Y.CustomEvent(type, defaults);
+            if (opts) {
+                ce.applyConfig(opts, true);
+            }
+
             events[type] = ce;
         }
 
@@ -1943,7 +2033,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
             ce, ret, pre = this._yuievt.config.prefix, ce2,
-            args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
+            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
 
@@ -2027,7 +2117,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     after: function(type, fn) {
 
-        var a = YArray(arguments, 0, true);
+        var a = nativeSlice.call(arguments, 0);
 
         switch (L.type(type)) {
             case 'function':

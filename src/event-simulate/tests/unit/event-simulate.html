@@ -1,18 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>event-simulate tests</title>
-<link type="text/css" rel="stylesheet" href="../../../../build/logreader/assets/skins/sam/logreader.css" />
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 </head>
 <body class="yui3-skin-sam">
     <h1>Event-Simulate Tests</h1>
     <div id="c"></div>
-<script type="text/javascript">  
-    
+    <script type="text/javascript">  
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     coverage: [ 'event-simulate' ],
-    logInclude: { TestRunner: 1}
 }).use('test', 'event-simulate', 'console', function (Y) {
 
     Y.namespace("Tests");
