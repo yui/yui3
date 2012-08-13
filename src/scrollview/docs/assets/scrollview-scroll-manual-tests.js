@@ -1,4 +1,4 @@
-YUI.add('scrollview-manual-tests', function(Y) {
+YUI.add('scrollview-scroll-manual-tests', function(Y) {
     
     var suite = new Y.Test.Suite('scrollview manual test suite');
 
