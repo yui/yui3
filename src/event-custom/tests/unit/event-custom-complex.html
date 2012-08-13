@@ -26,6 +26,9 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     lazyEventFacade: true
 }).use('anim','test-console', 'event-custom-complex-tests', 'event-custom-complex-sequence-tests', function (Y) {
+
+    // Y.CustomEvent.keepDeprecatedSubs = true;
+
     new Y.Test.Console().render('#log')
     Y.Test.Runner.masterSuite.name = 'Custom Event: Complex';
     Y.Test.Runner.run();

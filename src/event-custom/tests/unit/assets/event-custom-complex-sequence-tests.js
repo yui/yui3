@@ -480,6 +480,9 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
 
     }));
+
+    */
+
     suite.add(new Y.Test.Case({
         name : "Bubble",
 
@@ -522,6 +525,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             Y.Assert.areSame('ABCDGEF', results);
         },
 
+        /*
         test_bubblePrevented: function () {
             var results = '';
 
@@ -607,8 +611,12 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             this.source.fire('foo');
 
             Y.Assert.areSame('ABCDEFGHI', results);
-        },
+        }
+        */
 
+    }));
+
+    /*
         test_bubbleAndBroadcast1Prevented: function () {
             var results = '';
 

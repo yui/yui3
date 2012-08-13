@@ -12,6 +12,9 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     lazyEventFacade: true
 }).use('test-console', 'event-custom-base-tests', function (Y) {
+
+    // Y.CustomEvent.keepDeprecatedSubs = true;
+
     new Y.Test.Console().render('#log')
     Y.Test.Runner.masterSuite.name = 'Custom Event: Base';
     Y.Test.Runner.run();
