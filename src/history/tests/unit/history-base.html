@@ -9,8 +9,8 @@
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-var Y = YUI({
-    allowRollup: false,
+YUI({
+    coverage: ['history-base'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'history-base-test': {

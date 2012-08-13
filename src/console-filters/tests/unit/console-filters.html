@@ -10,6 +10,7 @@
 <script src="./assets/console-filters-tests.js"></script>
 <script>
 YUI({
+    converage: ['console-filters'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
 }).use('test','console-filters-tests', function (Y) {
 

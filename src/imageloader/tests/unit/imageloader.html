@@ -76,6 +76,7 @@
 <script type="text/javascript">
 window.resizeTo(500, 500);
 YUI({
+    coverage: ['imageloader'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'imageloader-tests': {

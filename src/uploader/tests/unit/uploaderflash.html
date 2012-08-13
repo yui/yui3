@@ -21,6 +21,7 @@
 (function() {
 
     YUI({
+        coverage: ['uploader-flash'],
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
     }).use("console", "test", "dump", "uploader-flash", "node-event-simulate", "event-custom-base", function(Y) {
         

@@ -10,6 +10,7 @@
 <script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
 YUI({
+    coverage: ['yui-throttle'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'throttle-tests': {

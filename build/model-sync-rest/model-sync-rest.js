@@ -366,6 +366,28 @@ RESTSync.prototype = {
     },
 
     /**
+    Called to parse the response object returned from `Y.io()`. This method
+    receives the full response object and is expected to "prep" a response which
+    is suitable to pass to the `parse()` method.
+
+    By default the response body is returned (`responseText`), because it
+    usually represents the entire entity of this model on the server.
+
+    If you need to parse data out of the response's headers you should do so by
+    overriding this method. If you'd like the entire response object from the
+    XHR to be passed to your `parse()` method, you can simply assign this
+    property to `false`.
+
+    @method parseIOResponse
+    @param {Object} response Response object from `Y.io()`.
+    @return {Any} The modified response to pass along to the `parse()` method.
+    @since 3.6.1
+    **/
+    parseIOResponse: function (response) {
+        return response.responseText;
+    },
+
+    /**
     Serializes `this` model to be used as the HTTP request entity body.
 
     By default this model will be serialized to a JSON string via its `toJSON()`
@@ -381,10 +403,12 @@ RESTSync.prototype = {
     place to start.
 
     @method serialize
+    @param {String} [action] Optional `sync()` action for which to generate the
+        the serialized representation of this model.
     @return {String} serialized HTTP request entity body.
     @since 3.6.0
     **/
-    serialize: function () {
+    serialize: function (action) {
         return Y.JSON.stringify(this);
     },
 
@@ -433,7 +457,7 @@ RESTSync.prototype = {
 
         // Prepare the content if we are sending data to the server.
         if (method === 'POST' || method === 'PUT') {
-            entity = this.serialize();
+            entity = this.serialize(action);
         } else {
             // Remove header, no content is being sent.
             delete headers['Content-Type'];
@@ -506,6 +530,33 @@ RESTSync.prototype = {
         return root && root.charAt(root.length - 1) === '/' ?
                 root + url + '/' :
                 root + '/' + url;
+    },
+
+
+    /**
+    Calls both public, overrideable methods: `parseIOResponse()`, then `parse()`
+    and returns the result.
+
+    This will call into `parseIOResponse()`, if it's defined as a method,
+    passing it the full response object from the XHR and using its return value
+    to pass along to the `parse()`. This enables developers to easily parse data
+    out of the response headers which should be used by the `parse()` method.
+
+    @method _parse
+    @param {Object} response Response object from `Y.io()`.
+    @return {Object|Object[]} Attribute hash or Array of model attribute hashes.
+    @protected
+    @since 3.6.1
+    **/
+    _parse: function (response) {
+        // When `parseIOResponse` is defined as a method, it will be invoked and
+        // the result will become the new response object that the `parse()`
+        // will be invoked with.
+        if (typeof this.parseIOResponse === 'function') {
+            response = this.parseIOResponse(response);
+        }
+
+        return this.parse(response);
     },
 
     /**
@@ -625,11 +676,11 @@ RESTSync.prototype = {
     _onSyncIOFailure: function (txId, res, details) {
         var callback = details.callback;
 
-        if (Lang.isFunction(callback)) {
+        if (callback) {
             callback({
                 code: res.status,
                 msg : res.statusText
-            }, res.responseText);
+            }, res);
         }
     },
 
@@ -652,8 +703,8 @@ RESTSync.prototype = {
     _onSyncIOSuccess: function (txId, res, details) {
         var callback = details.callback;
 
-        if (Lang.isFunction(callback)) {
-            callback(null, res.responseText);
+        if (callback) {
+            callback(null, res);
         }
     },
 
