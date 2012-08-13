@@ -4,7 +4,7 @@
  * @module event
  * @submodule event-synthetic
  */
-var MAINTAIN_DEPRECATED_SUBS = Y.CustomEvent.MAINTAIN_DEPRECATED_SUBS,
+var CustomEvent = Y.CustomEvent,
     DOMMap   = Y.Env.evt.dom_map,
     toArray  = Y.Array,
     YLang    = Y.Lang,
@@ -262,7 +262,7 @@ Y.mix(SyntheticEvent, {
 
             this._subscribers = [];
 
-            if (MAINTAIN_DEPRECATED_SUBS) {
+            if (CustomEvent.keepDeprecatedSubs) {
                 this.subscribers = {};
             }
 

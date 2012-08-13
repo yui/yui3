@@ -10,8 +10,6 @@
 // var onsubscribeType = "_event:onsub",
 var YArray = Y.Array,
 
-    MAINTAIN_DEPRECATED_SUBS,
-
     AFTER = 'after',
     CONFIGS = [
         'broadcast',
@@ -67,9 +65,7 @@ var YArray = Y.Array,
  */
 Y.CustomEvent = function(type, o) {
 
-    // if (arguments.length > 2) {
-// this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
-    // }
+    this._kds = Y.CustomEvent.keepDeprecatedSubs;
 
     o = o || {};
 
@@ -134,7 +130,7 @@ Y.CustomEvent = function(type, o) {
      * @type Subscriber {}
      * @deprecated
      */
-    if (MAINTAIN_DEPRECATED_SUBS) {
+    if (this._kds) {
         this.subscribers = {};
     }
 
@@ -151,7 +147,7 @@ Y.CustomEvent = function(type, o) {
      * @property afters
      * @type Subscriber {}
      */
-    if (MAINTAIN_DEPRECATED_SUBS) {
+    if (this._kds) {
         this.afters = {};
     }
 
@@ -318,14 +314,14 @@ Y.CustomEvent = function(type, o) {
  * public implementation which doesn't have the performance cost required to maintiain the
  * properties as objects.
  *
- * @property MAINTAIN_DEPRECATED_SUBS
+ * @property keepDeprecatedSubs
  * @static
  * @for CustomEvent
  * @type boolean
  * @default false
  * @deprecated
  */
-Y.CustomEvent.MAINTAIN_DEPRECATED_SUBS = false;
+Y.CustomEvent.keepDeprecatedSubs = false;
 
 Y.CustomEvent.mixConfigs = mixConfigs;
 
@@ -431,7 +427,7 @@ Y.CustomEvent.prototype = {
             this._subscribers.push(s);
         }
 
-        if (MAINTAIN_DEPRECATED_SUBS) {
+        if (this._kds) {
             if (when == AFTER) {
                 this.afters[s.id] = s;
             } else {
@@ -740,7 +736,7 @@ Y.CustomEvent.prototype = {
             subs.splice(i, 1);
         }
 
-        if (MAINTAIN_DEPRECATED_SUBS) {
+        if (this._kds) {
             if (when === AFTER) {
                 delete this.afters[s.id];
             } else {
