@@ -1,0 +1,102 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
+	<title>ImageCropper - Gallery</title> 
+	<link rel="stylesheet" href="http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/assets/gallery-imagecropper-core.css">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.yui3-imagecropper {
+			background: #666;
+		}
+	</style> 
+</head> 
+<body class="yui3-skin-sam">
+	<h1>ImageCropper - Gallery</h1>
+	<div id="imagecropper"></div>
+	<div style="position: absolute; left: 550px; top: 79px;">
+		<div id="result"></div>
+		<p id="coords"></p>
+	</div>
+	<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script> 
+	<script> 
+YUI({
+	filter: 'raw',
+	modules: {
+		'gallery-imagecropper': {
+			fullpath: '../../build_tmp/gallery-imagecropper.js',
+			requires: ['widget', 'dd-plugin', 'resize-plugin', 'gallery-event-arrow', 'dd-constrain']
+		}
+	}
+}).use('gallery-imagecropper', function (Y) {
+	
+	var images = [{
+		src: 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
+		width: 333,
+		height: 500
+	}, {
+		src: 'http://farm8.staticflickr.com/7150/6748698581_55aa86028f.jpg',
+		width: 500,
+		height: 333
+	}, {
+		src: 'http://farm8.staticflickr.com/7172/6748677447_a444f2cbce.jpg',
+		width: 335,
+		height: 500
+	}];
+	
+	Y.randomInt = function (n) {
+		return Math.floor(Math.random() * n);
+	};
+	
+	Y.Node.addMethod('setBackgroundXY', function (node, xy) {
+		xy = xy || [0, 0];
+		Y.Array.each(xy, function (val, i) {
+			if (Y.Lang.isNumber(val)) {
+				xy[i] += 'px';
+			}
+		});
+		this.setStyles({
+			backgroundPosition: xy.join(' '),
+			backgroundPositionX: xy[0],
+			backgroundPositionY: xy[1]
+		});
+	});
+	
+	var photo = images[Y.randomInt(3)],
+		coordview = Y.one('#coords'),
+		result = Y.one('#result'),
+		
+		imagecropper = new Y.ImageCropper({
+			source: photo.src,
+			width: photo.width,
+			height: photo.height
+		}),
+		coords = imagecropper.getCropCoords();
+		
+	imagecropper.on('crop:crop', function (e) {
+		
+		coordview.setContent(e.left + 'x' + e.top + ' ' + e.width + 'x' + e.height);
+		
+		result.setBackgroundXY([-e.left, -e.top]).setStyles({
+			width: e.width,
+			height: e.height
+		});
+		
+	});
+	
+	imagecropper.render('#imagecropper');
+	
+	result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
+		backgroundImage: 'url(' + coords.image + ')',
+		width: coords.width,
+		height: coords.height
+	});
+	coordview.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
+	
+});
+	</script>
+</body> 
+</html>

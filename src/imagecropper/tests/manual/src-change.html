@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ImageCropper - Gallery</title> 
+	<link rel="stylesheet" href="http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/assets/gallery-imagecropper-core.css">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.yui3-imagecropper {
+			background: #666;
+		}
+		.thumbs img {
+			max-width: 150px;
+			border: 4px solid transparent;
+			cursor: pointer;
+		}
+		.thumbs img:hover {
+			border-color: blue;
+		}
+	</style> 
+</head> 
+<body class="yui3-skin-sam">
+	<h1>ImageCropper - Gallery</h1>
+	<div class="thumbs">
+    <img src="http://farm8.staticflickr.com/7277/7688294254_501e8fcfcb.jpg" data-height="327" data-width="500">
+    <img src="http://farm9.staticflickr.com/8155/7669226050_a06b0c63ab.jpg" data-height="500" data-width="500">
+    <img src="http://farm9.staticflickr.com/8009/7697217764_d3a8fe09fe.jpg" data-height="333" data-width="500">
+    <img src="http://farm9.staticflickr.com/8293/7663355854_cd01985e1e.jpg" data-height="332" data-width="500">
+    <img src="http://farm8.staticflickr.com/7280/7692271222_9bf2febff9.jpg" data-height="500" data-width="500">
+	</div>
+	<div id="imagecropper"></div>
+	<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script> 
+	<script> 
+YUI({
+	filter: 'raw',
+	modules: {
+		'gallery-imagecropper': {
+			fullpath: '../../build_tmp/gallery-imagecropper.js',
+			requires: ['widget', 'dd-plugin', 'resize-plugin', 'gallery-event-arrow', 'dd-constrain']
+		}
+	}
+}).use('gallery-imagecropper', function (Y) {
+
+  var defInitWidth = 50,
+      defInitHeight = 50,
+      image = Y.one('img'),
+      originalWidth = parseInt(image.getData('width'), 10),
+      originalHeight = parseInt(image.getData('height'), 10);
+  
+  var imagecropper = new Y.ImageCropper({
+    source: image.get('src'),
+    initialXY: [0, 0],
+    initWidth: Math.min(defInitWidth, originalWidth),
+    initHeight: Math.min(defInitHeight, originalHeight),
+    width: originalWidth,
+    height: originalHeight
+  });
+  imagecropper.render('#imagecropper');
+  imagecropper.plug(Y.Plugin.ImageCropperKeys);
+  
+  Y.one('.thumbs').delegate('click', function (e) {
+    var oWidth = parseInt(e.target.getData('width'), 10),
+        oHeight = parseInt(e.target.getData('height'), 10);
+    
+    imagecropper.setAttrs({
+      initWidth: Math.min(defInitWidth, oWidth),
+      initHeight: Math.min(defInitHeight, oHeight),
+      width: oWidth,
+      height: oHeight,
+      source: e.target.get('src')
+    }).reset();
+  }, 'img');
+
+});
+	</script>
+</body> 
+</html>

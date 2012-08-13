@@ -1,0 +1,52 @@
+<div id="demo" class="yui3-skin-sam">
+  <div class="thumbs">
+    <img src="http://farm8.staticflickr.com/7277/7688294254_501e8fcfcb.jpg" data-height="327" data-width="500">
+    <img src="http://farm9.staticflickr.com/8155/7669226050_a06b0c63ab.jpg" data-height="500" data-width="500">
+    <img src="http://farm9.staticflickr.com/8009/7697217764_d3a8fe09fe.jpg" data-height="333" data-width="500">
+    <img src="http://farm9.staticflickr.com/8293/7663355854_cd01985e1e.jpg" data-height="332" data-width="500">
+    <img src="http://farm8.staticflickr.com/7280/7692271222_9bf2febff9.jpg" data-height="500" data-width="500">
+  </div>
+</div>
+
+<script type="text/javascript">
+YUI({
+  filter: 'raw',
+  modules: {
+    imagecropper: {
+      fullpath: 'http://localhost/yui3/build/imagecropper/imagecropper.js',
+      requires: ['widget', 'base-build', 'resize-plugin', 'dd-plugin', 'dd-constrain']
+    }
+  }
+}).use('imagecropper', function(Y) {
+    
+  var defInitWidth = 50,
+      defInitHeight = 50,
+      image = Y.one('.thumbs img'),
+      originalWidth = parseInt(image.getAttribute('data-width'), 10),
+      originalHeight = parseInt(image.getAttribute('data-height'), 10);
+  
+  var imagecropper = new Y.ImageCropper({
+    source: image.get('src'),
+    initialXY: [0, 0],
+    initWidth: Math.min(defInitWidth, originalWidth),
+    initHeight: Math.min(defInitHeight, originalHeight),
+    width: originalWidth,
+    height: originalHeight
+  });
+  imagecropper.render('#demo');
+  
+  Y.one('.thumbs').delegate('click', function (e) {
+    var oWidth = parseInt(e.target.getAttribute('data-width'), 10),
+        oHeight = parseInt(e.target.getAttribute('data-height'), 10);
+    
+    imagecropper.setAttrs({
+      initWidth: Math.min(defInitWidth, oWidth),
+      initHeight: Math.min(defInitHeight, oHeight),
+      width: oWidth,
+      height: oHeight,
+      source: e.target.get('src')
+    }).reset();
+  }, 'img');
+    
+});
+</script>

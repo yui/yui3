@@ -1,0 +1,154 @@
+<div class="intro yui3-g">
+  <div class="yui3-u-2-3">
+  <p>The ImageCropper widget gives you an interactive interface for getting the dimensions to crop an image. While it doesn't provide a utility for creating a new resize image on the client out of the box, its API returns enough data for you to implement your own client or server resizing solution.</p>
+  <p>Optional keyboard support for accesibility is included as a Plugin.</p>
+  </div>
+  <div class="yui3-u-1-3" style="text-align: right">
+  <img src="{{componentAssets}}/img/imagecropper.jpg" alt="Screenshot of the ImageCropper widget" style="border: 1px solid #bfbfbf; margin: 8px 0;">
+  </div>
+</div>
+
+{{>getting-started}}
+
+<h2>Using ImageCropper</h2>
+<h3>Quick Start</h3>
+
+<p>
+If you're in a hurry, here's how to create an ImageCropper widget in a few lines of code.
+</p>
+
+```
+YUI().use('imagecropper', function (Y) {
+
+  // Create a new instance of ImageCropper, setting its width 
+  // and height, and the URL for the image you want to crop.
+  var imagecropper = new Y.ImageCropper({
+    source: 'path/to/my/image.jpg',
+    height: '200px',
+    width: '600px'
+  }).render();
+
+  Y.one('#submit-button').on('click', function () {
+    // Get the coordinates of the area selected by the user
+    // This is an object with the following shape:
+    // {
+    //   "top"    : 000,
+    //   "left"   : 000,
+    //   "width"  : 000,
+    //   "height" : 000,
+    //   "image"  : "full/path/to/my/image.jpg"
+    // }
+    var coords = imagecropper.getCropCoords();
+  });
+
+});
+```
+
+<p>
+This bare bones example should be enough to get you started. For more details on configuration options and how to communicate an ImageCropper with other components, read on.
+</p>
+
+<h3>Configuring ImageCropper</h3>
+
+<p>
+In order to create an ImageCropper instace you must provide either a `source` attribute or an `srcNode` attribute pointing to an existing image element. It is usually a good idea to provide the `width` and `height` attributes so that the size of the inner elements of the ImageCropper matches the size of the image being cropped. All other configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="{{apiDocs}}/ImageCropper.html">API docs</a>.
+</p>
+
+<p>
+The following attributes are provided to fine tune the behavior of each ImageCropper widget.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>`source`</td>
+      <td>`''`</td>
+      <td>
+        The source for the image being cropped. <strong>Required</strong> if an `srcNode` attribute wasn't provided.
+      </td>
+    </tr>
+    <tr>
+      <td>`minHeight`</td>
+      <td>`50`</td>
+      <td>
+        The minimum height the crop rectangle can be resized to in pixels.
+      </td>
+    </tr>
+    <tr>
+      <td>`preserveRatio`</td>
+      <td>`false`</td>
+      <td>
+        Whether or not the crop rectangle will forcefully preserve its ratio.
+      </td>
+    </tr>
+    <tr>
+      <td>`minWidth`</td>
+      <td>`50`</td>
+      <td>
+        The minimum width the crop rectangle can be resized to in pixels.
+      </td>
+    </tr>
+    <tr>
+      <td>`initHeight`</td>
+      <td>`50`</td>
+      <td>
+        The initial height of the crop rectangle. Defaults to the value of `minHeight`.
+      </td>
+    </tr>
+    <tr>
+      <td>`initWidth`</td>
+      <td>`50`</td>
+      <td>
+        The initial width of the crop rectangle. Defaults to the value of `minWidth`.
+      </td>
+    </tr>
+    <tr>
+      <td>`initialXY`</td>
+      <td>`[10, 10]`</td>
+      <td>
+        An array of two numbers specifying the initial position of the crop rectangle.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Adding keyboard support</h3>
+
+<p>
+The Keys plugin adds keyboard support to the ImageCropper. Pressing the arrows while the crop area is focused will move it as if it was moved with the mouse. Holding down the shift key will move the rectangle more rapidly. You can configure how much the crop rectangle is moved by setting the `keyTick` and `shiftKeyTick` configuration options on the Plugin. By default, the crop area is moved 1px and 10px while holding down the shift key.
+</p>
+```
+YUI({...}).use('imagecropper', 'imagecropper-keys', function (Y) {
+  
+  var imagecropper = new Y.ImageCropper({
+    srcNode: '#my-image',
+    width: 300,
+    height: 300
+  }).render();
+
+  // All plugin configuration options are optional
+  imagecropper.plug(Y.Plugin.ImageCropperKeys, {
+    keyTick: 5,
+    shiftKeyTick: 20
+  });
+
+});
+```
+
+<h3>Notes regarding widget and image sizes</h3>
+<p>The ImageCropper widget contains a `<div>` element inside its `boundingBox` (see the <a href="http://yuilibrary.com/yui/docs/widget/#markup">Widget User Guide</a>) that masks the undelying image so it's clear that the crop rectangle is the area being selected. Since this element is a block element, it will try by default to fill all the available area of the widget. This makes it easy for the mask to overflow the image and can be an issue when reusing an ImageCropper instance and changing its `source` attribute to an image of a different size. For this reason it is recommended that you reconfigure the `width` and `height` of the widget to the new size of the image at the same time you change the `source` attribute.</p>
+<p>Another possibility is to use the HTML5 Image API to obtain the natural size of the image and resize the widget accordingly. You can see more details about this approach in the <a href="#">Writing an AutoSize plugin</a> example</p>
+<p>Also note that the ImageCropper widget doesn't support scaled images. All images must be used at full scale.</p>
+
+<h2>Touch devices support</h2>
+<p>Since ImageCropper leverages the <a href="/yui/docs/dd/">Drag and Drop</a> and <a href="/yui/docs/resize/">Resize</a> modules it works on all touch devices supported by YUI.</p>
+
+<hr>
+<p><em>Cat picture by Samotny kotek released under the Creative Commons license.</em></p>

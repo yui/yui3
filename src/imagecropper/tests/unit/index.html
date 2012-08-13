@@ -1,0 +1,51 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ImageCropper - Gallery</title> 
+	<link rel="stylesheet" href="../../build_tmp/assets/skins/sam/gallery-imagecropper.css">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.yui3-imagecropper {
+			background: #666;
+		}
+	</style> 
+</head> 
+<body class="yui3-skin-sam">
+	<div id="log"></div>
+	<div>
+		<img id="imagecropper" src="assets/test-picture.jpg" alt="">
+	</div>
+	<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script> 
+<script>
+
+var YUI_config = {
+    gconfig: true,
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+};
+
+
+YUI({
+    filter: YUI_config.gfilter,
+    modules: {
+		'gallery-imagecropper': {
+			fullpath: '../../build_tmp/gallery-imagecropper.js',
+			requires: ['widget', 'dd-plugin', 'resize-plugin', 'gallery-event-arrow', 'dd-constrain']
+		},
+        'cropper-tests': {
+            fullpath: './assets/cropper-tests.js',
+            requires: ['gallery-imagecropper', 'test']
+        }
+    }
+}).use('cropper-tests', 'test-console', function(Y) {
+    new Y.Test.Console().render('#log');
+
+    Y.Test.Runner.run();
+});
+
+</script>
+</body> 
+</html>

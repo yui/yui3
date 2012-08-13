@@ -1,0 +1,34 @@
+<div id="demo" class="yui3-skin-sam">
+  <button id="save" class="yui3-button" type="button">Save crop area</button>
+  <img id="crop" src="http://farm8.staticflickr.com/7172/6748677447_a444f2cbce.jpg" alt="Bass player">
+</div>
+
+<script type="text/javascript">
+YUI({
+  filter: 'raw',
+  modules: {
+    imagecropper: {
+      fullpath: 'http://localhost/yui3/build/imagecropper/imagecropper.js',
+      requires: ['widget', 'base-build', 'resize-plugin', 'dd-plugin', 'dd-constrain']
+    }
+  }
+}).use('imagecropper', function(Y) {
+    
+    // Create a new instance of ImageCropper from markup          
+    var imagecropper = new Y.ImageCropper({
+      srcNode: "#crop",
+      width: 335,
+      height: 500
+    }).render();
+
+    Y.one('#save').on('click', function () {
+      var coords = imagecropper.getCropCoords()
+      var msg = 'left: '   + coords.left  + '\n';
+         msg += 'top: '    + coords.top   + '\n';
+         msg += 'width: '  + coords.width + '\n';
+         msg += 'height: ' + coords.height;
+      alert(msg);
+    });
+    
+});
+</script>

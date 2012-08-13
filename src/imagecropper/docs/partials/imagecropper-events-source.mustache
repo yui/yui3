@@ -1,0 +1,81 @@
+<div id="demo" class="yui3-skin-sam">
+  <div id="imagecropper"></div>
+  <div id="preview">
+    <div id="result"></div>
+    <p id="coords"></p>
+  </div>
+</div>
+
+<script type="text/javascript">
+YUI({
+  filter: 'raw',
+  modules: {
+    imagecropper: {
+      fullpath: 'http://localhost/yui3/build/imagecropper/imagecropper.js',
+      requires: ['widget', 'base-build', 'resize-plugin', 'dd-plugin', 'dd-constrain']
+    }
+  }
+}).use('imagecropper', function(Y) {
+    
+  // Declare a utility method on Node to set the background
+  // position style
+  Y.Node.addMethod('setBackgroundXY', function (node, xy) {
+    xy = xy || [0, 0];
+    Y.Array.each(xy, function (val, i) {
+      if (Y.Lang.isNumber(val)) {
+        xy[i] += 'px';
+      }
+    });
+    this.setStyles({
+      backgroundPosition: xy.join(' '),
+      backgroundPositionX: xy[0],
+      backgroundPositionY: xy[1]
+    });
+  });
+  
+  var photo = {
+      src: 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
+      width: 333,
+      height: 500
+    },
+    coordview = Y.one('#coords'),
+    result = Y.one('#result'),
+    
+    // Create an imacropper
+    imagecropper = new Y.ImageCropper({
+      source: photo.src,
+      width: photo.width,
+      height: photo.height
+    }),
+
+    // Get the initial coordinates
+    coords = imagecropper.getCropCoords();
+    
+  // Listen to the crop event to update the result preview
+  imagecropper.on('crop:crop', function (e) {
+    // The event facade contains the same properties as the object that
+    // getCropCoords() returns: left, top, width, height
+    // We use them to update the preview
+    coordview.setContent(e.left + 'x' + e.top + ' ' + e.width + 'x' + e.height);
+    
+    // When we move the crop rectangle to the right, we must move the 
+    // background to the left to reflect the shown area
+    result.setBackgroundXY([-e.left, -e.top]).setStyles({
+      width: e.width,
+      height: e.height
+    });
+    
+  });
+  
+  imagecropper.render('#imagecropper');
+  
+  // Set the start data for the preview
+  result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
+    backgroundImage: 'url(' + coords.image + ')',
+    width: coords.width,
+    height: coords.height
+  });
+  coordview.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
+    
+});
+</script>
