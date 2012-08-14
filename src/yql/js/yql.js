@@ -89,7 +89,7 @@
         * @return {YQLRequest}
         */
         send: function() {
-            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
+            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO), o;
 
             Y.each(this._params, function(v, k) {
                 qs.push(k + '=' + encodeURIComponent(v));
@@ -99,7 +99,7 @@
             
             url += ((this._opts && this._opts.base) ? this._opts.base : Y.YQLRequest.BASE_URL) + qs;
             
-            var o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
+            o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
 
             o.on = o.on || {};
             this._callback = o.on.success;
