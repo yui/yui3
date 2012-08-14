@@ -6,6 +6,10 @@ YUI.add("event-custom-complex-tests", function(Y) {
         name: "Custom Event Complex",
 
         _should: {
+            ignore: {
+                test_detach_by_signature: Y.UA.nodejs,
+                test_node_publish: Y.UA.nodejs
+            },
             fail: {
                 testStopFnOnceFromBubbleTarget: "ticket pending",
                 testStopFnFromBubbleTarget: "ticket pending"
