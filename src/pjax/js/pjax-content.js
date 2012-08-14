@@ -8,40 +8,6 @@ implement the standard pjax (HTMP5 pushState + Ajax) functionality.
 **/
 
 /**
-Fired when an error occurs while attempting to load a URL via Ajax.
-
-@event error
-@param {Object} content Content extracted from the response, if any.
-    @param {Node} content.node A `Y.Node` instance for a document fragment
-        containing the extracted HTML content.
-    @param {String} [content.title] The title of the HTML page, if any,
-        extracted using the `titleSelector` attribute. If `titleSelector` is not
-        set or if a title could not be found, this property will be `undefined`.
-@param {String} responseText Raw Ajax response text.
-@param {Number} status HTTP status code for the Ajax response.
-@param {String} url The absolute URL that failed to load.
-@since 3.5.0
-**/
-var EVT_ERROR = 'error',
-
-/**
-Fired when a URL is successfully loaded via Ajax.
-
-@event load
-@param {Object} content Content extracted from the response, if any.
-    @param {Node} content.node A `Y.Node` instance for a document fragment
-        containing the extracted HTML content.
-    @param {String} [content.title] The title of the HTML page, if any,
-        extracted using the `titleSelector` attribute. If `titleSelector` is not
-        set or if a title could not be found, this property will be `undefined`.
-@param {String} responseText Raw Ajax response text.
-@param {Number} status HTTP status code for the Ajax response.
-@param {String} url The absolute URL that was loaded.
-@since 3.5.0
-**/
-EVT_LOAD = 'load';
-
-/**
 `Y.Router` extension that provides the content fetching and handling needed to
 implement the standard pjax (HTMP5 pushState + Ajax) functionality.
 
@@ -67,12 +33,6 @@ to that Router. For a pre-made standalone Pjax router, see the `Pjax` class.
 function PjaxContent() {}
 
 PjaxContent.prototype = {
-    // -- Lifecycle Methods ----------------------------------------------------
-    initializer: function () {
-        this.publish(EVT_ERROR, {defaultFn: this._defCompleteFn});
-        this.publish(EVT_LOAD,  {defaultFn: this._defCompleteFn});
-    },
-
     // -- Public Methods -------------------------------------------------------
 
     /**
@@ -104,7 +64,7 @@ PjaxContent.prototype = {
             titleNode;
 
         if (contentSelector) {
-            content.node = Y.one(frag.all(contentSelector).toFrag());
+            content.node = frag.all(contentSelector).toFrag();
         } else {
             content.node = frag;
         }
@@ -120,17 +80,17 @@ PjaxContent.prototype = {
         return content;
     },
 
-    // -- Protected Methods ----------------------------------------------------
-
     /**
+    TODO: Document.
     Default Pjax route handler. Makes an Ajax request for the requested URL.
 
-    @method _defaultRoute
+    @method contentRoute
+    @param {Object} req Request object.
     @param {Object} req Request object.
     @protected
     @since 3.5.0
     **/
-    _defaultRoute: function (req) {
+    loadContent: function (req, res, next) {
         var url = req.url;
 
         // If there's an outstanding request, abort it.
@@ -150,6 +110,12 @@ PjaxContent.prototype = {
         // Send a request.
         this._request = Y.io(url, {
             'arguments': {
+                route: {
+                    req : req,
+                    res : res,
+                    next: next
+                },
+
                 url: url
             },
 
@@ -158,9 +124,8 @@ PjaxContent.prototype = {
             timeout: this.get('timeout'),
 
             on: {
-                end    : this._onPjaxIOEnd,
-                failure: this._onPjaxIOFailure,
-                success: this._onPjaxIOSuccess
+                complete: this._onPjaxIOComplete,
+                end     : this._onPjaxIOEnd
             }
         });
     },
@@ -168,26 +133,23 @@ PjaxContent.prototype = {
     // -- Event Handlers -------------------------------------------------------
 
     /**
-    Default event handler for both the `error` and `load` events. Attempts to
-    insert the loaded content into the `container` node and update the page's
-    title.
+    Handles IO complete events.
 
-    @method _defCompleteFn
-    @param {EventFacade} e
+    @method _onPjaxIOComplete
     @protected
-    @since 3.5.0
+    @since 3.7.0
     **/
-    _defCompleteFn: function (e) {
-        var container = this.get('container'),
-            content   = e.content;
+    _onPjaxIOComplete: function (id, res, details) {
+        var route   = details.route,
+            content = this.getContent(res.responseText);
 
-        if (container && content.node) {
-            container.setContent(content.node);
-        }
+        Y.mix(route.res, {
+            content   : content,
+            ioURL     : details.url,
+            ioResponse: res
+        });
 
-        if (content.title && Y.config.doc) {
-            Y.config.doc.title = content.title;
-        }
+        route.next();
     },
 
     /**
@@ -199,42 +161,6 @@ PjaxContent.prototype = {
     **/
     _onPjaxIOEnd: function () {
         this._request = null;
-    },
-
-    /**
-    Handles IO failure events and fires our own `error` event.
-
-    @method _onPjaxIOFailure
-    @protected
-    @since 3.5.0
-    **/
-    _onPjaxIOFailure: function (id, res, details) {
-        var content = this.getContent(res.responseText);
-
-        this.fire(EVT_ERROR, {
-            content     : content,
-            responseText: res.responseText,
-            status      : res.status,
-            url         : details.url
-        });
-    },
-
-    /**
-    Handles IO success events and fires our own 'load' event.
-
-    @method _onPjaxIOSuccess
-    @protected
-    @since 3.5.0
-    **/
-    _onPjaxIOSuccess: function (id, res, details) {
-        var content = this.getContent(res.responseText);
-
-        this.fire(EVT_LOAD, {
-            content     : content,
-            responseText: res.responseText,
-            status      : res.status,
-            url         : details.url
-        });
     }
 };
 
@@ -259,24 +185,6 @@ PjaxContent.ATTRS = {
     **/
     addPjaxParam: {
         value: true
-    },
-
-    /**
-    Node into which content should be inserted when a page is loaded via
-    Pjax. This node's existing contents will be removed to make way for the
-    new content.
-
-    If not set, loaded content will not be automatically inserted into the
-    page.
-
-    @attribute container
-    @type Node
-    @default null
-    @since 3.5.0
-    **/
-    container: {
-        value : null,
-        setter: Y.one
     },
 
     /**
