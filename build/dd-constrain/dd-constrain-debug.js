@@ -522,30 +522,31 @@ YUI.add('dd-constrain', function(Y) {
 
             if (!ticks || (ticks.length === 0)) {
                 return pos;
-            } else if (ticks[0] >= pos) {
+            }
+            if (ticks[0] >= pos) {
                 return ticks[0];
-            } else {
-                for (i = 0; i < len; i++) {
-                    next = (i + 1);
-                    if (ticks[next] && ticks[next] >= pos) {
-                        diff1 = pos - ticks[i];
-                        diff2 = ticks[next] - pos;
-                        ret = (diff2 > diff1) ? ticks[i] : ticks[next];
-                        if (off1 && off2) {
-                            if (ret > off2) {
-                                if (ticks[i]) {
-                                    ret = ticks[i];
-                                } else {
-                                    ret = ticks[len - 1];
-                                }
+            }
+
+            for (i = 0; i < len; i++) {
+                next = (i + 1);
+                if (ticks[next] && ticks[next] >= pos) {
+                    diff1 = pos - ticks[i];
+                    diff2 = ticks[next] - pos;
+                    ret = (diff2 > diff1) ? ticks[i] : ticks[next];
+                    if (off1 && off2) {
+                        if (ret > off2) {
+                            if (ticks[i]) {
+                                ret = ticks[i];
+                            } else {
+                                ret = ticks[len - 1];
                             }
                         }
-                        return ret;
                     }
-
+                    return ret;
                 }
-                return ticks[ticks.length - 1];
+
             }
+            return ticks[ticks.length - 1];
         }
     });
 

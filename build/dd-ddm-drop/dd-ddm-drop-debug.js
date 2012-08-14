@@ -179,32 +179,26 @@ YUI.add('dd-ddm-drop', function(Y) {
                     aRegion = this.activeDrag.region;
                     if (dMode == this.STRICT) {
                         return this.activeDrag.get('dragNode').inRegion(drop.region, true, aRegion);
-                    } else {
-                        if (drop && drop.shim) {
-                            if ((dMode == this.INTERSECT) && this._noShim) {
-                                r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
-                                return drop.get('node').intersect(r, drop.region).inRegion;
-                            } else {
-                                if (this._noShim) {
-                                    node = drop.get('node');
-                                }
-                                return node.intersect({
-                                    top: xy[1],
-                                    bottom: xy[1],
-                                    left: xy[0], 
-                                    right: xy[0]
-                                }, drop.region).inRegion;
-                            }
-                        } else {
-                            return false;
-                        }
                     }
-                } else {
-                    return false;
+                    if (drop && drop.shim) {
+                        if ((dMode == this.INTERSECT) && this._noShim) {
+                            r = aRegion || this.activeDrag.get('node');
+                            return drop.get('node').intersect(r, drop.region).inRegion;
+                        }
+
+                        if (this._noShim) {
+                            node = drop.get('node');
+                        }
+                        return node.intersect({
+                            top: xy[1],
+                            bottom: xy[1],
+                            left: xy[0], 
+                            right: xy[0]
+                        }, drop.region).inRegion;
+                    }
                 }
-            } else {
-                return false;
             }
+            return false;
         },
         /**
         * @method clearCache
@@ -262,9 +256,8 @@ YUI.add('dd-ddm-drop', function(Y) {
                     }
                 }, this);
                 return [biggest, out];
-            } else {
-                return biggest;
             }
+            return biggest;
         },
         /**
         * @private
@@ -295,7 +288,6 @@ YUI.add('dd-ddm-drop', function(Y) {
             } else if (activeDrag && activeDrag.get('dragging')) {
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
-            } else {
             }
             
             this.activeDrop = null;
