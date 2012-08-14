@@ -26,12 +26,20 @@
 YUI({
 	filter: 'raw',
 	modules: {
-		'gallery-imagecropper': {
-			fullpath: '../../build_tmp/gallery-imagecropper.js',
-			requires: ['widget', 'dd-plugin', 'resize-plugin', 'gallery-event-arrow', 'dd-constrain']
+		'imagecropper': {
+			fullpath: '../../build_tmp/imagecropper.js',
+			requires: [
+				'base-build',
+				'widget',
+				'dd-drag',
+				'dd-constrain',
+				'resize-base',
+				'resize-constrain',
+				'gallery-event-arrow'
+			]
 		}
 	}
-}).use('gallery-imagecropper', function (Y) {
+}).use('imagecropper', function (Y) {
 	
 	var images = [{
 		src: 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
