@@ -6,6 +6,13 @@
 
 <h2>Using Button - Quick Start</h2>
 <h3>Button Widgets</h3>
+<h4>HTML</h4>
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+    <button id="myButton">One</button>
+```
+<h4>JavaScript</h4>
 ```
 // Create some button widgets
 YUI().use('button', function(Y){
@@ -36,6 +43,17 @@ YUI().use('button-plugin', function(Y){
 });
 ```
 <h3>Button Groups</h3>
+<h4>HTML</h4>
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+    <div id="container">
+        <button class='yui3-button'>One</button>
+        <button class='yui3-button'>Two</button>
+        <button class='yui3-button'>Three</button>
+```
+<h4>JavaScript</h4>
+
 ```
 // And if you want to manage a group of buttons
 YUI().use('button-group', function(Y){

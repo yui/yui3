@@ -21,12 +21,14 @@ Calendar is highly modular and easy to extend so that it can be modified or used
 Here's an easy way to create an instance of a Calendar with just a few lines of code.
 </p>
 
+<h4>HTML</h4>
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+<h4>JavaScript</h4>
 ```
 YUI().use('calendar', function (Y) {
-
-  // Add the yui3-skin-sam class to the body so the default
-  // Calendar widget skin will be applied.
-  Y.one('body').addClass('yui3-skin-sam');
 
   // Create a new instance of Calendar, setting its width 
   // and height, allowing the dates from the previous
