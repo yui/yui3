@@ -1,6 +1,5 @@
 YUI.add('reverse-tests', function(Y) {
 
-    var fromHeight = Y.one('#demo .yui3-bd').get('offsetHeight');
     Y.Test.Runner.add(new Y.Test.Case({
         name: 'Reverse Tests',
 
@@ -25,6 +24,7 @@ YUI.add('reverse-tests', function(Y) {
 
         'should end at "from" values': function() {
             var node = Y.one('#demo .yui3-toggle'),
+                fromHeight = Y.one('#demo .yui3-bd').get('scrollHeight'),
                 test = this;
 
             node.once('click', function(e) {

@@ -15,11 +15,12 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.Test.Case = YUITest.TestCase;
     Y.Test.Suite = YUITest.TestSuite;
     Y.Assert = YUITest.Assert;
+    Y.ArrayAssert = YUITest.ArrayAssert;
 
     Y.applyConfig({
         modules: {
             'loader-tests': {
-                fullpath: path.join(__dirname, '../loader-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/loader-tests.js'),
                 requires: ['test']
             }
         }

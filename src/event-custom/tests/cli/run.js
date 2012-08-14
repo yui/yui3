@@ -21,17 +21,25 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'event-do-tests': {
-                fullpath: path.join(__dirname, '../event-do-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/event-do-tests.js'),
                 requires: ['event-custom-base', 'test']
             },
             'event-custom-base-tests': {
-                fullpath: path.join(__dirname, '../event-custom-base-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/event-custom-base-tests.js'),
                 requires: ['event-custom-base', 'test']
+            },
+            'event-custom-complex-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/event-custom-complex-tests.js'),
+                requires: ['event-custom', 'test']
+            },
+            'event-custom-complex-sequence-tests': {
+                fullpath: path.join(__dirname, '../unit/assets/event-custom-complex-sequence-tests.js'),
+                requires: ['event-custom', 'test']
             }
         }
     });
 
-    Y.use('event-do-tests', 'event-custom-base-tests');
+    Y.use('event-do-tests', 'event-custom-base-tests', 'event-custom-complex-tests', 'event-custom-complex-sequence-tests');
     
     Y.Test.Runner.setName('event-custom cli tests');
     

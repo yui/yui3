@@ -12,7 +12,20 @@ var FACADE,
     FACADE_KEYS,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype;
+    ETProto = Y.EventTarget.prototype, 
+
+    mixFacadeProps = function(facade, payload) {
+        var p;
+
+        for (p in payload) {
+            // I really think the payload.hasOwnProperty check can go also
+            // Leaving it in for now, since i wanted one commit, with the same
+            // hasOwnProperty criteria as the original
+            if (payload.hasOwnProperty(p) && !FACADE.hasOwnProperty(p)) {
+                facade[p] = payload[p];
+            }
+        }
+    };
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -75,7 +88,7 @@ Y.EventFacade = function(e, currentTarget) {
 
 };
 
-Y.extend(Y.EventFacade, Object, {
+Y.mix(Y.EventFacade.prototype, {
 
     /**
      * Stops the propagation to the next bubble target
@@ -157,14 +170,14 @@ CEProto.fireComplex = function(args) {
 
     self.target = self.target || host;
 
-    events = new Y.EventTarget({
-        fireOnce: true,
-        context: host
-    });
-
-    self.events = events;
-
     if (self.stoppedFn) {
+        events = new Y.EventTarget({
+            fireOnce: true,
+            context: host
+        });
+        
+        self.events = events;
+
         events.on('stopped', self.stoppedFn);
     }
 
@@ -185,9 +198,7 @@ CEProto.fireComplex = function(args) {
         args.unshift(ef);
     }
 
-    // if (subCount) {
     if (subs[0]) {
-        // self._procSubs(Y.merge(self.subscribers), args, ef);
         self._procSubs(subs[0], args, ef);
     }
 
@@ -196,10 +207,8 @@ CEProto.fireComplex = function(args) {
 
         oldbubble = es.bubbling;
 
-        // self.bubbling = true;
         es.bubbling = self.type;
 
-        // if (host !== ef.target || es.type != self.type) {
         if (es.type != self.type) {
             es.stopped = 0;
             es.prevented = 0;
@@ -210,9 +219,7 @@ CEProto.fireComplex = function(args) {
         self.stopped = Math.max(self.stopped, es.stopped);
         self.prevented = Math.max(self.prevented, es.prevented);
 
-        // self.bubbling = false;
         es.bubbling = oldbubble;
-
     }
 
     if (self.prevented) {
@@ -276,12 +283,16 @@ CEProto.fireComplex = function(args) {
         self.prevented = 0;
     }
 
+    // Kill the cached facade to free up memory.
+    // Otherwise we have the facade from the last fire, sitting around forever.
+    self._facade = null;
+
     return ret;
 };
 
 CEProto._getFacade = function() {
 
-    var ef = this._facade, o, o2,
+    var ef = this._facade, o,
     args = this.details;
 
     if (!ef) {
@@ -294,16 +305,8 @@ CEProto._getFacade = function() {
 
     if (Y.Lang.isObject(o, true)) {
 
-        o2 = {};
-
         // protect the event facade properties
-        Y.mix(o2, ef, true, FACADE_KEYS);
-
-        // mix the data
-        Y.mix(ef, o, true);
-
-        // restore ef
-        Y.mix(ef, o2, true, FACADE_KEYS);
+        mixFacadeProps(ef, o);
 
         // Allow the event type to be faked
         // http://yuilibrary.com/projects/yui3/ticket/2528376
@@ -336,7 +339,9 @@ CEProto.stopPropagation = function() {
     if (this.stack) {
         this.stack.stopped = 1;
     }
-    this.events.fire('stopped', this);
+    if (this.events) {
+        this.events.fire('stopped', this);
+    }
 };
 
 /**
@@ -349,7 +354,9 @@ CEProto.stopImmediatePropagation = function() {
     if (this.stack) {
         this.stack.stopped = 2;
     }
-    this.events.fire('stopped', this);
+    if (this.events) {
+        this.events.fire('stopped', this);
+    }
 };
 
 /**
@@ -476,7 +483,6 @@ ETProto.bubble = function(evt, args, target, es) {
                     ce.broadcast = bc;
                     ce.originalTarget = null;
 
-
                     // stopPropagation() was called
                     if (ce.stopped) {
                         break;
@@ -493,7 +499,6 @@ ETProto.bubble = function(evt, args, target, es) {
 
 FACADE = new Y.EventFacade();
 FACADE_KEYS = Y.Object.keys(FACADE);
-
 
 
 }, '@VERSION@' ,{requires:['event-custom-base']});

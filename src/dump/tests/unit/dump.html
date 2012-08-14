@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI dump Tests</title>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>dump Tests</h1>
+
+<div id="log"></div>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+YUI({
+    coverage: ['dump'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'dump-tests': {
+            fullpath: './assets/dump-tests.js',
+            requires: [ 'dump', 'test' ]
+        }
+    }
+}).use('dump-tests', "test-console", function(Y) {
+    (new Y.Test.Console()).render('#log');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

@@ -165,7 +165,7 @@
                 groups = this.dd.get('groups');
                 config = this.get('dragConfig');
                 
-                if (config && 'groups' in config) {
+                if (config && config.groups) {
                     groups = config.groups;
                 }
 

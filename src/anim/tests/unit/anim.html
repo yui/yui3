@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Anim Test Suite</title>
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="assets/anim-core-test.js"></script>
+<script type="text/javascript" src="assets/anim-easing-test.js"></script>
+<script type="text/javascript">
+YUI({
+    coverage: ['anim'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test-console', 'test', 'anim-core-test', 'anim-easing-test', function (Y) {
+    new Y.Test.Console().render();
+    Y.Test.Runner.setName('Anim');
+    Y.Test.Runner.run();
+});
+</script>
+<style>
+.demo {
+    background: #ccc;
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+}
+
+.demo p {
+    height: 1000px;
+    width: 1000px;
+}
+
+</style>
+
+</head>
+<body class="yui3-skin-sam">
+<div class="demo">
+    <p>demo</p>
+</div>
+</body>
+</html>

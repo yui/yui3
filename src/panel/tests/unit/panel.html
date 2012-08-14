@@ -1,0 +1,361 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Panel Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Panel Tests</h1>
+<div id="container"></div>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="disabled"/></p>
+
+<script type="text/javascript">
+(function() {
+    YUI({
+        coverage: ['panel'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+        allowRollup: false
+    }).use("console", "test", "dump", "panel", function(Y) {
+
+
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            BTNRUN = Y.one("#btnRun");
+        BTNRUN.set("disabled", false);
+        Y.on("click", function(e){
+            Y.Test.Runner.run();
+        }, BTNRUN);
+        var myConsole = new Y.Console().render();
+
+
+        var testBasic = new Y.Test.Case({
+            name: "API Tests",
+
+		    //---------------------------------------------
+		    // Setup and tear down
+		    //---------------------------------------------
+
+		    setUp : function () {
+
+				//create recordset
+				var template = "<div id='panelContent'></div>";
+				Y.one('#container').appendChild(Y.Node.create(template));
+				this.panel = null;
+
+				//Some Ways to access recordset properties
+				//Y.log(rs.getRecordByIndex(0).getValue('a'));
+		        //Y.log(rs.get('records').length);
+		    },
+
+		    tearDown : function () {
+		        delete this.panel;
+		        Y.one('#panelContent').remove();
+		        var mask = Y.one(".yui3-widget-mask");
+		        if (mask) {
+		        	mask.remove();
+		        }
+		    },
+
+
+		    testBasicPanel : function() {
+		    	var cfg = {
+		    		srcNode: "#panelContent",
+		    		headerContent: "Test Header Content",
+		    		bodyContent: "TestBodyContent",
+		    		centered:true
+		    	};
+
+		    	this.panel = new Y.Panel(cfg);
+		    	this.panel.render();
+
+		    	var bb = this.panel.get('boundingBox');
+		    	var buttons = this.panel.get('buttons');
+		    	var hd = Y.one('#panelContent .yui3-widget-hd');
+
+		    	//panel is visible
+		    	Y.Assert.areEqual(this.panel.get('visible'), true);
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
+
+		    	//the button that is viewable is the close button
+		    	Y.Assert.areEqual(this.panel.getButton('close').getData('name'), "close");
+		    	Y.Assert.areEqual(buttons.header.length, 1);
+		    	Y.Assert.isTrue(hd.hasChildNodes());
+
+		    	//there is no mask
+		    	var mask = Y.one('.yui3-widget-mask');
+		    	Y.Assert.isNull(mask);
+		    },
+
+		    testModalPanel : function() {
+		    	var cfg = {
+		    		srcNode: "#panelContent",
+		    		headerContent: "Test Header Content",
+		    		bodyContent: "TestBodyContent",
+		    		centered:true,
+		    		modal:true
+		    	};
+
+		    	this.panel = new Y.Panel(cfg);
+		    	this.panel.render();
+
+		    	var bb = this.panel.get('boundingBox');
+		    	var buttons = this.panel.get('buttons');
+		    	var hd = Y.one('#panelContent .yui3-widget-hd');
+
+		    	//panel is visible
+		    	Y.Assert.areEqual(this.panel.get('visible'), true);
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
+
+		    	//the button that is viewable is the close button
+		    	Y.Assert.areEqual(this.panel.getButton('close').getData('name'), "close");
+		    	Y.Assert.areEqual(buttons.header.length, 1);
+		    	Y.Assert.isTrue(hd.hasChildNodes());
+
+
+		    	//mask is visible
+		    	var mask = Y.one('.yui3-widget-mask');
+		    	Y.Assert.areEqual(mask.getStyle('display'), "block");
+		    },
+
+		    testPanelWithHeaderButtons : function() {
+		    	var cfg = {
+		    		srcNode: "#panelContent",
+		    		bodyContent: "TestBodyContent",
+		    		centered:true,
+		    		buttons: [
+		    			{
+		    				value: "hd button 1",
+		    				action: function(e) {
+		    					Y.log('hd button1 clicked');
+		    				},
+		    				section: Y.WidgetStdMod.HEADER
+		    			},
+
+		    			{
+		    				value: "hd button 2",
+		    				action: function(e) {
+		    					Y.log('hd button2 clicked');
+		    				},
+		    				section: "header"
+		    			}
+		    		]
+		    	};
+
+		    	this.panel = new Y.Panel(cfg);
+		    	this.panel.render();
+
+		    	var bb = this.panel.get('boundingBox');
+		    	var buttons = this.panel.get('buttons');
+		    	var hd = Y.one('#panelContent .yui3-widget-hd');
+		    	var wrap = Y.one('#panelContent .yui3-widget-hd .yui3-widget-buttons');
+		    	var btns = Y.all('.yui3-button');
+
+		    	//panel is visible
+		    	Y.Assert.areEqual(this.panel.get('visible'), true);
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
+
+		    	//the correct buttons are viewable
+		    	Y.Assert.isUndefined(buttons.footer);
+		    	Y.Assert.areEqual(buttons.header.length, 2);
+		    	Y.Assert.isTrue(hd.hasChildNodes());
+		    	Y.Assert.isTrue(wrap.hasChildNodes());
+		    	Y.Assert.areEqual(btns.size(), 2);
+
+
+		    	//mask is not visible
+		    	var mask = Y.one('.yui3-widget-mask');
+		    	Y.Assert.isNull(mask);
+		    },
+
+		    testPanelWithFooterButtons : function() {
+		    	var cfg = {
+		    		srcNode: "#panelContent",
+		    		bodyContent: "TestBodyContent",
+		    		centered:true,
+		    		buttons: [
+		    			{
+		    				value: "ft button 1",
+		    				action: function(e) {
+		    					Y.log('ft button1 clicked');
+		    				},
+		    				section: Y.WidgetStdMod.FOOTER
+		    			},
+
+		    			{
+		    				value: "ft button 2",
+		    				action: function(e) {
+		    					Y.log('ft button2 clicked');
+		    				},
+		    				section: "footer"
+		    			}
+		    		]
+		    	};
+
+		    	this.panel = new Y.Panel(cfg);
+		    	this.panel.render();
+
+		    	var bb = this.panel.get('boundingBox');
+		    	var buttons = this.panel.get('buttons');
+		    	var hd = Y.one('#panelContent .yui3-widget-hd');
+		    	var ft = Y.one('#panelContent .yui3-widget-ft');
+		    	var wrap = Y.one('#panelContent .yui3-widget-ft .yui3-widget-buttons');
+		    	var btns = Y.all('.yui3-button');
+
+		    	//panel is visible
+		    	Y.Assert.areEqual(this.panel.get('visible'), true);
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
+
+		    	//the correct buttons are viewable
+		    	Y.Assert.isUndefined(buttons.header);
+		    	Y.Assert.areEqual(buttons.footer.length, 2);
+		    	Y.Assert.isNull(hd);
+		    	Y.Assert.isTrue(ft.hasChildNodes());
+		    	Y.Assert.isTrue(wrap.hasChildNodes());
+		    	Y.Assert.areEqual(btns.size(), 2);
+
+		    	Y.Assert.areEqual(btns.item(0).get('text'), "ft button 1");
+		    	Y.Assert.areEqual(btns.item(1).get('text'), "ft button 2");
+
+		    	//mask is not visible
+		    	var mask = Y.one('.yui3-widget-mask');
+		    	Y.Assert.isNull(mask);
+		    },
+
+		    testPanelWithChangingButtons: function() {
+		    	var cfg = {
+		    		srcNode: "#panelContent",
+		    		bodyContent: "TestBodyContent",
+		    		centered:true,
+		    		modal:true
+		    	};
+
+		    	this.panel = new Y.Panel(cfg);
+		    	this.panel.render();
+
+		    	var bb = this.panel.get('boundingBox');
+		    	var buttons = this.panel.get('buttons');
+		    	var hd = Y.one('#panelContent .yui3-widget-hd');
+		    	var ft = Y.one('#panelContent .yui3-widget-ft');
+		    	var btns = Y.all('.yui3-button');
+
+		    	//panel is visible
+		    	Y.Assert.areEqual(this.panel.get('visible'), true);
+		    	Y.Assert.areNotEqual(bb.getStyle('display'), "none");
+
+		    	//the correct buttons are viewable - only the close button in this case
+		    	Y.Assert.areEqual(buttons.header[0].getData('name'), "close");
+		    	Y.Assert.areEqual(buttons.header.length, 1);
+		    	Y.Assert.isNull(ft);
+		    	Y.Assert.areEqual(btns.size(), 1);
+
+		    	//add a button in to the footer
+		    	this.panel.addButton({
+		    		value: "ft button 1",
+		    		action: function(e) {
+		    			Y.log('ft button1 clicked');
+		    		},
+		    		section: Y.WidgetStdMod.FOOTER
+		    	});
+
+		    	ft = Y.one('#panelContent .yui3-widget-ft');
+		    	btns = Y.all('.yui3-button');
+
+		    	//test to make sure new button is visible
+		    	//there should be 2 buttons, the original [x] and the new footer button
+		    	Y.Assert.isTrue(ft.hasChildNodes());
+		    	Y.Assert.areEqual(btns.size(), 2);
+
+		    	//add the close button in to the header
+		    	this.panel.addButton({
+		    		type:"close"
+		    	});
+
+		    	hd = Y.one('#panelContent .yui3-widget-hd');
+		    	ft = Y.one('#panelContent .yui3-widget-ft');
+		    	btns = Y.all('.yui3-button');
+
+		    	Y.Assert.isTrue(hd.hasChildNodes());
+		    	Y.Assert.isTrue(ft.hasChildNodes());
+		    	Y.Assert.areEqual(btns.size(), 3);
+
+		    	//mask is visible
+		    	var mask = Y.one('.yui3-widget-mask');
+		    	Y.Assert.areEqual(mask.getStyle('display'), "block");
+		    }
+
+
+			//---------------------------------------------
+		    // Instantiation
+		    //---------------------------------------------
+
+			// testCreateEmptyRecordset: function() {
+			// 	var rs = new Y.Recordset(),
+			// 		rem;
+
+			// 	rs.on('remove', function(e) {
+			// 		rem = e.removed;
+			// 	});
+
+			// 	//instantiate empty recordset
+			// 	Y.Assert.isTrue(rs instanceof Y.Recordset);
+
+
+			// 	//perform operations on it
+			// 	rs.add({a:1, b:2, c:3});
+			// 	Y.ObjectAssert.areEqual(rs.getRecord(0).getValue(), {a:1, b:2, c:3});
+
+			// 	rs.add([{a:'hey', b:'yo', c:'hi!'}, {a:2, b:5, c:6}]);
+			// 	Y.ObjectAssert.areEqual(rs.getRecord(2).getValue(), {a:2, b:5, c:6});
+			// 	Y.Assert.areEqual(3, rs.getLength());
+
+			// 	rs.remove(2);
+			// 	Y.Assert.areEqual(2, rs.getLength());
+			// 	Y.ObjectAssert.areEqual(rem[0].getValue(), {a:2, b:5, c:6});
+
+			// },
+
+			// //---------------------------------------------
+		 //    // Get Records
+		 //    //---------------------------------------------
+
+			// testGetRecords: function() {
+			// 	var newRecord,newRecord1, newRecord2, id;
+			// 	//this.rs.get('records');
+			// 	// var newrs = new Y.Recordset({records: [{a:10,b:10,c:10}]});
+			// 	// newrs.get('records');
+
+			// 	//Single Record
+			// 	newRecord1 = this.rs.getRecordByIndex(1);
+			// 	newRecord2 = this.rs.getRecord(1);
+
+			// 	Y.ObjectAssert.areEqual(newRecord1.getValue(), this.initialData[1]);
+			// 	Y.ObjectAssert.areEqual(newRecord1, newRecord2);
+
+
+			// 	//Multiple Records
+			// 	newRecord = this.rs.getRecordsByIndex(1,2);
+			// 	Y.ObjectAssert.areEqual(newRecord[0].getValue(), this.initialData[1]);
+			// 	Y.ObjectAssert.areEqual(newRecord[1].getValue(), this.initialData[2]);
+
+			// 	//By ID
+			// 	id = this.rs.getRecordByIndex(0).get('id');
+			// 	newRecord = this.rs.getRecord(id);
+			// 	Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
+
+			// },
+
+
+        });
+
+        var suite = new Y.Test.Suite("Panel");
+        suite.add(testBasic);
+
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

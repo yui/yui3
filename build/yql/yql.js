@@ -66,18 +66,6 @@ YUI.add('yql', function(Y) {
         _callback: null,
         /**
         * @private
-        * @property _success
-        * @description Holder for the success callback argument
-        */
-        _success: null,
-        /**
-        * @private
-        * @property _failure
-        * @description Holder for the failure callback argument
-        */
-        _failure: null,
-        /**
-        * @private
         * @property _params
         * @description Holder for the params argument
         */
@@ -93,16 +81,8 @@ YUI.add('yql', function(Y) {
         * @method _internal
         * @description Internal Callback Handler
         */
-        _internal: function(r) {
-            if (this._failure) {
-                if (r.error) {
-                    this._failure.call(this._context, r.error);
-                } else {
-                    this._success.apply(this._context, arguments);
-                }
-            } else {
-                this._success.apply(this._context, arguments);
-            }
+        _internal: function() {
+            this._callback.apply(this._context, arguments);
         },
         /**
         * @method send
@@ -111,7 +91,7 @@ YUI.add('yql', function(Y) {
         * @return {YQLRequest}
         */
         send: function() {
-            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
+            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO), o;
 
             Y.each(this._params, function(v, k) {
                 qs.push(k + '=' + encodeURIComponent(v));
@@ -121,17 +101,10 @@ YUI.add('yql', function(Y) {
             
             url += ((this._opts && this._opts.base) ? this._opts.base : Y.YQLRequest.BASE_URL) + qs;
             
-            var o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
+            o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
 
             o.on = o.on || {};
-
-            if (o.on.failure && !this._failure) {
-                this._failure = o.on.failure;
-            }
-
-            if (o.on.success && !this._success) {
-                this._success = o.on.success;
-            }
+            this._callback = o.on.success;
 
             o.on.success = Y.bind(this._internal, this);
 

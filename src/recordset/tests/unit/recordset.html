@@ -1,0 +1,934 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Recordset Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Recordset Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript">
+(function() {
+    YUI({
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+        coverage: ['recordset']
+    }).use("console", "test", "dump", "recordset", function(Y) {
+	
+
+        // Set up the page
+        var ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            BTNRUN = Y.one("#btnRun");
+        BTNRUN.set("disabled", false);
+        Y.on("click", function(e){
+            Y.Test.Runner.run();
+        }, BTNRUN);
+        var myConsole = new Y.Console().render();
+		
+
+        var testBasic = new Y.Test.Case({
+            name: "API Tests",
+			initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+
+		    //---------------------------------------------
+		    // Setup and tear down
+		    //---------------------------------------------
+
+		    setUp : function () {
+		        
+				//create recordset
+				this.rs = new Y.Recordset({records:this.initialData});
+
+				//Some Ways to access recordset properties
+				//Y.log(rs.getRecordByIndex(0).getValue('a'));
+		        //Y.log(rs.get('records').length);
+		    },
+
+		    tearDown : function () {
+		        delete this.rs;
+		    },
+		
+		    //---------------------------------------------
+		    // Event Helpers
+		    //---------------------------------------------
+        	
+			changeTest: function(i) {
+				this.rs.on('change', function() {
+					//Y.Assert.areEqual(e.index, i);
+				});
+			},
+			
+			emptyTest: function() {
+				var flag = false;
+				this.rs.on('empty', function() {
+					flag = true;
+					Y.Assert.isTrue(flag);
+				});
+				
+			},
+			
+			//---------------------------------------------
+		    // Instantiation
+		    //---------------------------------------------
+
+			testCreateEmptyRecordset: function() {
+				var rs = new Y.Recordset(),
+					rem;
+					
+				rs.on('remove', function(e) {
+					rem = e.removed;
+				});
+				
+				//instantiate empty recordset
+				Y.Assert.isTrue(rs instanceof Y.Recordset);
+				
+				
+				//perform operations on it
+				rs.add({a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(rs.getRecord(0).getValue(), {a:1, b:2, c:3});
+				
+				rs.add([{a:'hey', b:'yo', c:'hi!'}, {a:2, b:5, c:6}]);
+				Y.ObjectAssert.areEqual(rs.getRecord(2).getValue(), {a:2, b:5, c:6});
+				Y.Assert.areEqual(3, rs.getLength());
+				
+				rs.remove(2);
+				Y.Assert.areEqual(2, rs.getLength());
+				Y.ObjectAssert.areEqual(rem[0].getValue(), {a:2, b:5, c:6});
+				
+			},
+			
+			//---------------------------------------------
+		    // Get Records
+		    //---------------------------------------------
+			
+			testGetRecords: function() {
+				var newRecord,newRecord1, newRecord2, id;
+				//this.rs.get('records');
+				// var newrs = new Y.Recordset({records: [{a:10,b:10,c:10}]});
+				// newrs.get('records');		
+						
+				//Single Record
+				newRecord1 = this.rs.getRecordByIndex(1);
+				newRecord2 = this.rs.getRecord(1);
+				
+				Y.ObjectAssert.areEqual(newRecord1.getValue(), this.initialData[1]);
+				Y.ObjectAssert.areEqual(newRecord1, newRecord2);
+				
+				
+				//Multiple Records
+				newRecord = this.rs.getRecordsByIndex(1,2);
+				Y.ObjectAssert.areEqual(newRecord[0].getValue(), this.initialData[1]);
+				Y.ObjectAssert.areEqual(newRecord[1].getValue(), this.initialData[2]);
+				
+				//By ID
+				id = this.rs.getRecordByIndex(0).get('id');
+				newRecord = this.rs.getRecord(id);
+				Y.ObjectAssert.areEqual(newRecord, this.rs.getRecordByIndex(0));
+			},
+		
+			//---------------------------------------------
+		    // Add Records
+		    //---------------------------------------------
+
+            testAddSingleRecordToEnd: function() {
+				var recToAdd = {a:'8', b:'9', c:'10'}, retval;
+				retval = this.rs.add(recToAdd);
+				//Test Recordset Length
+				Y.Assert.areEqual(4, this.rs.get('records').length, "Array lengths not equal.");
+				//Assert on last object
+				
+				//This is indirectly checking to make sure that the record that got added has the identical data as the object literal that was passed in.
+				Y.ObjectAssert.areEqual(recToAdd, this.rs.getRecordByIndex(3).getValue());
+                //TODO
+				//Y.ObjectAssert.areEqual(retval.getRecordByIndex(3).getValue(3), recToAdd);
+				this.changeTest(3);
+				
+            },
+
+			testAddSingleRecordToIndex: function() {
+				var recToAdd, i=2;
+				recToAdd = {a:'8', b:'9', c:'10'};
+				
+				retval = this.rs.add(recToAdd,i);
+				Y.Assert.areEqual(recToAdd, this.rs.getRecordByIndex(i).getValue());
+				
+				//assertion with output
+				Y.ObjectAssert.areEqual(retval.getRecordByIndex(i).getValue(), recToAdd);
+
+				this.changeTest(i);
+				
+
+				
+			},
+			
+			testAddMultipleRecordsToEnd: function() {
+				var recsToAdd = [{a:'11', b:'22', c:'33'}, {a:'44', b:'55', c:'66'}];
+				retval = this.rs.add(recsToAdd);
+				
+				//Assertions with recordset
+				Y.ObjectAssert.areEqual(recsToAdd[0], this.rs.getRecordByIndex(3).getValue());
+				Y.ObjectAssert.areEqual(recsToAdd[1], this.rs.getRecordByIndex(4).getValue());
+				
+				//assertions with output
+				Y.ObjectAssert.areEqual(retval.getRecordByIndex(3).getValue(), recsToAdd[0]);
+				Y.ObjectAssert.areEqual(retval.getRecordByIndex(4).getValue(), recsToAdd[1]);
+				
+				this.changeTest(3);
+				
+			},
+			
+			testAddMultipleRecordsToIndex: function() {
+				var recsToAdd, i;
+				recsToAdd = [{a:'11', b:'22', c:'33'}, {a:'44', b:'55', c:'66'}];
+				i = 1;
+				
+				retval = this.rs.add(recsToAdd, i);
+				
+				//Assertions with recordset
+				Y.ObjectAssert.areEqual(recsToAdd[0], this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual(recsToAdd[1], this.rs.getRecordByIndex(2).getValue());
+				
+				this.changeTest(i);
+			},
+			
+			//---------------------------------------------
+		    // Delete Records
+		    //---------------------------------------------
+		
+			testDeleteSingleRecordFromEnd: function() {
+				var rem;
+				this.rs.on('remove', function(e) {
+					rem = e;
+				})
+				
+				this.changeTest(2);
+				this.rs.remove();
+				Y.ObjectAssert.areEqual(this.initialData[2], rem.removed[0].getValue());
+				Y.Assert.areEqual(2, rem.index);
+			}, 
+			
+			testDeleteSingleRecordFromIndex: function() {
+				this.changeTest(1);
+				var rem;
+				this.rs.on('remove', function(e) {
+					rem = e;
+				});
+				this.rs.remove(1);
+				Y.ObjectAssert.areEqual(this.initialData[1], rem.removed[0].getValue());
+				Y.Assert.areEqual(1, rem.index);
+			},
+			
+			testDeleteRangeOfRecords: function() {
+				//Delete 2 records from index 1
+				var rem;
+				this.rs.on('remove', function(e) {
+					rem = e;
+				});
+				
+				this.changeTest(1);
+				this.rs.remove(1,2);
+				
+				Y.ObjectAssert.areEqual(this.initialData[1], rem.removed[0].getValue());
+				Y.ObjectAssert.areEqual(this.initialData[2], rem.removed[1].getValue());
+				Y.Assert.areEqual(1, rem.index);
+			},
+			
+			//---------------------------------------------
+		    // Empty Recordset
+		    //---------------------------------------------
+			
+			testEmptyRecordSet: function() {
+				
+				this.emptyTest(0);
+				this.rs.empty();
+				Y.Assert.areEqual(0, this.rs.get('records').length);
+				
+			},
+			
+			//---------------------------------------------
+		    // GetValuesByKey
+		    //---------------------------------------------
+		
+			testGetValuesByKey: function() {
+				var key, retval, i;
+				key = 'a';
+				retval = this.rs.getValuesByKey(key);
+				
+				for (i=0; i < this.initialData.length; i++) {
+					Y.Assert.areEqual(this.initialData[i][key], retval[i]);
+				}
+			},
+			
+			testGetValuesByKeyWithInvalidKey: function() {
+				var key = 'd';
+				retval = this.rs.getValuesByKey(key);
+				
+				for (i=0; i < this.initialData.length; i++) {
+					Y.Assert.isUndefined(retval[i]);
+				}
+			},
+
+			testUpdateRecordAtIndex: function() {
+				var newRecord, oldRecord, index=1;
+				var o = {a:'newG', b:'newH', c:'newI'};
+				newRecord = new Y.Record({data:o});
+				oldRecord = this.rs.getRecordByIndex(index);
+				
+				this.rs.on('update', function(e) {
+					Y.ObjectAssert.areEqual(newRecord, e.updated[0], 'Updated record is != to new record');
+					Y.ObjectAssert.areEqual(oldRecord, e.overwritten[0], 'Overwritten record is != to old record');
+					Y.Assert.areEqual(1, e.overwritten.length, 'overwritten array is not of expected length');
+					Y.Assert.areEqual(1, e.updated.length);
+					Y.Assert.areEqual(index, e.index, "correct index was modified");
+				});
+				
+				
+				this.rs.update(newRecord, index);
+				Y.ObjectAssert.areEqual(newRecord.getValue(), this.rs.getRecordByIndex(index).getValue());
+			},
+			
+			testUpdateRecordAtIndices:function(){
+				var newRecords = [], index=0, oldRecord = [], a, b;
+				oldRecord = this.rs.getRecordsByIndex(index,2);
+				a = new Y.Record({data:{a:'newA', b:'newB', c:'newC'}});
+				b = new Y.Record({data:{a:'newD', b:'newE', c:'newF'}});
+				
+				newRecords.push(a);
+				newRecords.push(b);
+				
+				this.rs.on('update', function(e) {
+					Y.ObjectAssert.areEqual(newRecords, e.updated, 'Updated record is != to new record');
+					Y.ObjectAssert.areEqual(oldRecord, e.overwritten, 'Overwritten record is != to old record');
+					Y.Assert.areEqual(2, e.overwritten.length, 'overwritten array is not of expected length');
+					Y.Assert.areEqual(index, e.index, "correct index was modified");
+				});
+				
+				this.rs.update(newRecords, index);
+				
+				//check that the two elements in the recordset are the same as the ones pushed in
+				Y.ObjectAssert.areEqual(a.getValue(), this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual(b.getValue(), this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual(this.initialData[2], this.rs.getRecordByIndex(2).getValue());
+				
+				//3 initial records + 1 more added  (the other was just over-written)= 4 total records in recordset
+				Y.Assert.areEqual(3, this.rs.get('records').length);
+			},
+			
+			
+			
+			//---------------------------------------------
+		    // Hashing in Base
+		    //---------------------------------------------
+
+			testDefaultHash: function() {
+				
+				var hashTable = this.rs.get('table');
+
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
+				Y.Assert.areEqual(3, Y.Object.size(hashTable));
+				
+				//check hashtable sync when adding
+				this.rs.add({a:'hello', b:'hey', c:'yo!'});
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(3).get('id')], this.rs.getRecordByIndex(3));
+				Y.Assert.areEqual(4, Y.Object.size(hashTable));
+				
+				
+				//check hashtable sync when removing 1 object
+				this.rs.remove(1);
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
+				Y.Assert.areEqual(3, Y.Object.size(hashTable));
+				
+				//check hashtable sync when removing multiple records
+				this.rs.remove(0,2);
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.Assert.areEqual(1, Y.Object.size(hashTable));
+				
+				
+				//update single record
+				this.rs.update({a:'new', b:'record', c:'added'}, 0);
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				//Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				
+				//Y.Assert.areEqual(2, Y.Object.size(hashTable));
+				Y.Assert.areEqual(1, Y.Object.size(hashTable));
+				
+				this.rs.update([
+                    {a:'new', b:'record', c:'added'},
+                    {a:'another', b:'new', c:'record'}
+                ], 1);
+
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(0).get('id')], this.rs.getRecordByIndex(0));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(1).get('id')], this.rs.getRecordByIndex(1));
+				Y.ObjectAssert.areEqual(hashTable[this.rs.getRecordByIndex(2).get('id')], this.rs.getRecordByIndex(2));
+				Y.Assert.areEqual(3, Y.Object.size(hashTable));
+			},
+			
+			
+			
+			
+			//---------------------------------------------
+		    // Sort Plugin
+		    //---------------------------------------------
+		
+		
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testDefaultSort: function() {
+				this.rs.plug(Y.Plugin.RecordsetSort);
+
+				//Test ascending order
+				Y.Assert.isFalse(this.rs.sort.get('isSorted'));
+				
+				
+				this.rs.sort.sort('a',false);
+				
+				Y.Assert.isTrue(this.rs.sort.get('isSorted'));
+				
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(2).getValue());
+				Y.Assert.areEqual(3, this.rs.getLength());
+				
+				
+				//Test Descending Order
+				this.rs.sort.sort('c',true);
+				Y.Assert.isTrue(this.rs.sort.get('isSorted'));
+				
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(2).getValue());
+				Y.Assert.areEqual(3, this.rs.getLength());
+				
+				
+				//Test sort when values are equal (sorts by ID)
+				this.rs.sort.sort('b',true);
+				Y.Assert.isTrue(this.rs.sort.get('isSorted'));
+				
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(2).getValue());
+				Y.Assert.areEqual(3, this.rs.getLength());
+				
+			},
+			
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}]
+			testResort: function() {
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				Y.Assert.isFalse(this.rs.sort.get('isSorted'));
+				
+				//Test ascending order
+				this.rs.sort.sort('a',false);
+				Y.Assert.isTrue(this.rs.sort.get('isSorted'));
+				
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(2).getValue());
+				Y.Assert.areEqual(3, this.rs.getLength());
+				
+				//Add another record to the end of the recordset
+				this.rs.add({a:6,b:5,c:8});
+				Y.Assert.isFalse(this.rs.sort.get('isSorted'));
+				
+				Y.ObjectAssert.areEqual({a:6,b:5,c:8}, this.rs.getRecordByIndex(3).getValue());
+				
+				//Refresh Sorter
+				this.rs.sort.resort();
+				Y.Assert.isTrue(this.rs.sort.get('isSorted'));
+				
+				//make sure the added record was sorted into the recordset using the existing sort properties
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:6,b:5,c:8}, this.rs.getRecordByIndex(2).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(3).getValue());
+				Y.Assert.areEqual(4, this.rs.getLength());
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}
+			testReverseBeforeSort: function() {
+				 	a = {a:'a', b:'b', c:'c'},
+					b = {a:'d', b:'e', c:'f'},
+					c = {a:'g', b:'h', c:'i'},
+					d = {a:'j', b:'k', c:'l'};
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				//adding in some records backwards to understand if reversing is working properly
+				this.rs.add([d,c,b,a]);
+				this.rs.sort.reverse();
+				
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(6).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(5).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(4).getValue());
+				
+				Y.ObjectAssert.areEqual(d, this.rs.getRecordByIndex(3).getValue());
+				Y.ObjectAssert.areEqual(c, this.rs.getRecordByIndex(2).getValue());
+				Y.ObjectAssert.areEqual(b, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual(a, this.rs.getRecordByIndex(0).getValue());
+				
+				Y.Assert.areEqual(7, this.rs.getLength());
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}
+			testFlipAfterSort: function() {
+				 	a = {a:1, b:'b', c:'c'},
+					b = {a:2, b:'e', c:'f'},
+					c = {a:3, b:'h', c:'i'},
+					d = {a:4, b:'k', c:'l'};
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				
+				//adding in some records backwards to understand if reversing is working properly
+				this.rs.add([d,c,b,a]);
+				
+				this.rs.sort.sort('a',true);
+				this.rs.sort.flip();
+				
+				//1s
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual(a, this.rs.getRecordByIndex(1).getValue());
+				//2s				
+				Y.ObjectAssert.areEqual(b, this.rs.getRecordByIndex(2).getValue());
+				//3s
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(3).getValue());
+				Y.ObjectAssert.areEqual(c, this.rs.getRecordByIndex(4).getValue());
+				Y.ObjectAssert.areEqual(d, this.rs.getRecordByIndex(5).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(6).getValue());
+				
+				Y.Assert.areEqual(7, this.rs.getLength());
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testCustomSort: function() {
+				
+			
+				var a = {a:1, b:1, c:4},
+					b = {a:2, b:2, c:5},
+					c = {a:3, b:2, c:4},
+					d = {a:4, b:4, c:7},
+				//This is just a copy of Y.ArraySort.compare
+				 	compare = function(a, b, desc) {
+			        if(!Y.Lang.isValue(a)) {
+			            if(!Y.Lang.isValue(b)) {
+			                return 0;
+			            }
+			            else {
+			                return 1;
+			            }
+			        }
+			        else if(!Y.Lang.isValue(b)) {
+			            return -1;
+			        }
+
+			        if(Y.Lang.isString(a)) {
+			            a.toLowerCase();
+			        }
+			        if(Y.Lang.isString(b)) {
+			            b.toLowerCase();
+			        }
+			        if(a < b) {
+			            return (desc) ? 1 : -1;
+			        }
+			        else if (a > b) {
+			            return (desc) ? -1 : 1;
+			        }
+			        else {
+			            return 0;
+			        }
+			    },
+			
+			
+				//custom sort where if the values in the given fieldA are equal, the values in fieldB are checked
+				 customsort = function(recA, recB, field, desc) {
+	                var first_sorted = compare(recA.getValue(field), recB.getValue(field), desc);
+	                if(first_sorted === 0) {
+	                    var second_sorted = compare(recA.getValue('b'), recB.getValue('b'), desc);
+						if (second_sorted === 0) {
+							return compare(recA.get("id"), recB.get("id"), desc);
+						}
+						else {
+							return second_sorted;
+						}
+	                }
+	                else {
+	                    return first_sorted;
+	                }
+	            };
+				
+				this.rs.plug(Y.Plugin.RecordsetSort);
+				this.rs.add([a,b,c,d]);
+				this.rs.sort.sort('a',false,customsort);
+
+				
+				
+				//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+				//when the numbers are equal - the object that was added later should be first
+				Y.ObjectAssert.areEqual({a:1, b:1, c:4}, this.rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, this.rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual({a:2, b:2, c:5}, this.rs.getRecordByIndex(2).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, this.rs.getRecordByIndex(3).getValue());
+				Y.ObjectAssert.areEqual({a:3, b:2, c:4}, this.rs.getRecordByIndex(4).getValue());
+				Y.ObjectAssert.areEqual({a:4, b:4, c:7}, this.rs.getRecordByIndex(5).getValue());
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, this.rs.getRecordByIndex(6).getValue());
+
+				Y.Assert.areEqual(7, this.rs.getLength());
+			},
+			
+			//---------------------------------------------
+		    // ArrayList Methods
+		    //---------------------------------------------
+			
+
+			
+			testSize: function() {
+				Y.Assert.areEqual(3, this.rs.getLength());
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testEach: function() {
+				var i = 0, recs = [];
+				this.rs.each(function() {
+					recs[i] = this.getValue();
+					i++;
+				});
+				
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, recs[0]);
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, recs[1]);
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, recs[2]);
+				Y.Assert.areEqual(3, recs.length);
+			},
+			
+			testSome: function() {
+				var recs=[], i=0, v={};
+				
+				
+				this.rs.some(function() {
+					v = this.getValue();
+					
+					if (v.a !== 1) {
+						recs[i] = v;
+						i++;
+						return false;
+					}
+					else {
+						return true;
+					}
+					
+				});
+				
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, recs[0]);
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, recs[1]);
+				Y.Assert.areEqual(2, recs.length);
+			},
+			
+			//---------------------------------------------
+		    // Filter Plugin
+		    //---------------------------------------------
+		
+			testFilter: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);
+				var validator = function(item) {
+					if (item.getValue('b') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				},
+					rs = this.rs.filter.filter(validator);
+				
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, rs.getRecordByIndex(1).getValue());
+				Y.Assert.areEqual(2, rs.getLength());
+				
+				//test a filter that doesn't return anything from recordset
+				validator = function(item) {
+					if (item.getValue('c') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				};
+				
+				rs = this.rs.filter.filter(validator);
+				Y.Assert.areEqual(0, rs.getLength());
+				
+				
+				//Test Filter with Key Value pair
+				rs = this.rs.filter.filter('b',2);
+				Y.ObjectAssert.areEqual({a:3, b:2, c:1}, rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual({a:1, b:2, c:3}, rs.getRecordByIndex(1).getValue());
+				Y.Assert.areEqual(2, rs.getLength());
+				
+			},
+			
+			testReject: function() {
+				this.rs.plug(Y.Plugin.RecordsetFilter);
+				
+				var validator = function(item) {
+					if (item.getValue('b') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				},
+				
+					rs = this.rs.filter.reject(validator);
+					
+				//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+				Y.ObjectAssert.areEqual({a:9, b:8, c:7}, rs.getRecordByIndex(0).getValue());
+				Y.Assert.areEqual(1, rs.getLength());
+				
+				
+				//try it with a validator that always returns false
+				validator = function(item) {
+					if (item.getValue('c') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				};
+				
+				rs = this.rs.filter.reject(validator);
+				Y.ObjectAssert.areEqual(this.rs.getRecordByIndex(0).getValue(), rs.getRecordByIndex(0).getValue());
+				Y.ObjectAssert.areEqual(this.rs.getRecordByIndex(1).getValue(), rs.getRecordByIndex(1).getValue());
+				Y.ObjectAssert.areEqual(this.rs.getRecordByIndex(2).getValue(), rs.getRecordByIndex(2).getValue());
+				
+				Y.Assert.areEqual(this.rs.getLength(), rs.getLength());
+									
+			},
+			
+			
+			//Map is tested on the actual array because it returns an array of booleans typically (atleast that's the use case I can think of)
+			testMap: function() {
+				var f = function(item) {
+					if (item.getValue('b') === 2) {
+						return true;
+					}
+					else {
+						return false;
+					} 
+				},
+					rs = Y.Array.map(this.rs.get('records'),f);
+				Y.Assert.areEqual(true, rs[0]);
+				Y.Assert.areEqual(false, rs[1]);
+				Y.Assert.areEqual(true, rs[2]);
+				Y.Assert.areEqual(3, rs.length);
+			},
+			
+			//---------------------------------------------
+		    // Indexer Plugin
+		    //---------------------------------------------
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			
+			testCustomHashTableInitialization: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+				
+				var hashA = this.rs.indexer.createTable('a');
+				var hashTables = this.rs.indexer.get('hashTables');
+				
+				//check hashA
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				
+				//check main table (contains all the subtables)
+				Y.ObjectAssert.areEqual(hashTables.a[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashTables.a[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashTables.a[1].getValue(), {a:1, b:2, c:3});
+				
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+
+				
+				
+				var hashB = this.rs.indexer.createTable('b');
+				
+				Y.ObjectAssert.areEqual(hashTables.b[2].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashTables.b[8].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashB[2].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashB[8].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashB, hashTables.b);
+				
+			},
+			
+			//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+			testCustomHashTableAddingRecord: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+				
+				var hashA = this.rs.indexer.createTable('a'),
+				 	hashC = this.rs.indexer.createTable('c'),
+				 	hashTables = this.rs.indexer.get('hashTables');
+				
+				//add to the end
+				this.rs.add({a:'adding', b:'this', c:'record'});
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});						
+				Y.Assert.areEqual(4, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'adding', b:'this', c:'record'});
+				Y.Assert.areEqual(4, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				
+				//adding record to a specific index
+				this.rs.add({a:'another', b:'new', c:'record'}, 0);
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});		
+				Y.ObjectAssert.areEqual(hashA['another'].getValue(), {a:'another', b:'new', c:'record'});						
+				Y.Assert.areEqual(5, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'another', b:'new', c:'record'});
+				Y.Assert.areEqual(4, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				//adding multiple records
+				this.rs.add([{a:'blah', b:'bloo', c:'bleh'},{a:'heres', b:'another', c:'one'}]);
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});		
+				Y.ObjectAssert.areEqual(hashA['another'].getValue(), {a:'another', b:'new', c:'record'});
+				Y.ObjectAssert.areEqual(hashA['blah'].getValue(), {a:'blah', b:'bloo', c:'bleh'});
+				Y.ObjectAssert.areEqual(hashA['heres'].getValue(), {a:'heres', b:'another', c:'one'});						
+										
+				Y.Assert.areEqual(7, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'another', b:'new', c:'record'});
+				Y.ObjectAssert.areEqual(hashC['bleh'].getValue(), {a:'blah', b:'bloo', c:'bleh'});
+				Y.ObjectAssert.areEqual(hashC['one'].getValue(), {a:'heres', b:'another', c:'one'});
+				Y.Assert.areEqual(6, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				
+			},			
+			
+			testCustomHashTableRemovingRecord: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+				
+				var hashA = this.rs.indexer.createTable('a'),
+				 	hashC = this.rs.indexer.createTable('c'),
+				 	hashTables = this.rs.indexer.get('hashTables');
+				
+				this.rs.remove(2);
+				
+				
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[9].getValue(), {a:9, b:8, c:7});						
+				Y.Assert.areEqual(2, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[7].getValue(), {a:9, b:8, c:7});
+				Y.Assert.areEqual(2, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+				
+				
+				//try removing more than 1 record at a time
+				this.rs.add({a:1, b:2, c:3});
+				this.rs.remove(0,2);
+				
+				
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.Assert.areEqual(1, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+				
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.Assert.areEqual(1, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+			},
+			
+			
+						//initialData: [{a:3, b:2, c:1}, {a:9, b:8, c:7}, {a:1, b:2, c:3}],
+						
+			testCustomHashTableUpdatingRecord: function() {
+				this.rs.plug(Y.Plugin.RecordsetIndexer);
+							
+				var hashA = this.rs.indexer.createTable('a'),
+				 	hashC = this.rs.indexer.createTable('c'),
+				 	hashTables = this.rs.indexer.get('hashTables');
+							
+				this.rs.update({a:'one', b:'record', c:'added'}, 1);
+							
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA[1].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashA['one'].getValue(), {a:'one', b:'record', c:'added'});		
+				Y.Assert.areEqual(3, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+						
+						
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC[3].getValue(), {a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(hashC['added'].getValue(), {a:'one', b:'record', c:'added'});
+				Y.Assert.areEqual(3, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+					
+				//update multiple records
+				this.rs.update([{a:'adding', b:'this', c:'record'}, {a:'heres', b:'another', c:'one'}], 2);
+							
+				Y.ObjectAssert.areEqual(hashA[3].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashA['adding'].getValue(), {a:'adding', b:'this', c:'record'});
+				Y.ObjectAssert.areEqual(hashA['heres'].getValue(), {a:'heres', b:'another', c:'one'});
+				Y.Assert.areEqual(4, Y.Object.size(hashA));
+				Y.ObjectAssert.areEqual(hashA, hashTables.a);
+							
+							
+				//'record' will overwrite the previous added record.
+				Y.ObjectAssert.areEqual(hashC[1].getValue(), {a:3, b:2, c:1});
+				Y.ObjectAssert.areEqual(hashC['record'].getValue(), {a:'adding', b:'this', c:'record'});
+				Y.ObjectAssert.areEqual(hashC['one'].getValue(), {a:'heres', b:'another', c:'one'});
+				Y.Assert.areEqual(4, Y.Object.size(hashC));
+				Y.ObjectAssert.areEqual(hashC, hashTables.c);
+							
+							
+			}
+			
+			
+        });
+
+        var suite = new Y.Test.Suite("Recordset");
+        suite.add(testBasic);
+
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

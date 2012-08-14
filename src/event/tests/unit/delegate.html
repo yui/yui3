@@ -1,0 +1,858 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>YUI Event Delegate Tests</title>
+</head>
+<body lang="en" class="yui3-skin-sam">
+    <div id="doc">
+
+		<div id="mod1">
+			<div id="mod-header" class="hd"><h3 class="title">H3 - Title</h3></div>
+			<div id="mod-body" class="bd">
+				<p>simple paragraph with a link <a href="#"id="firstlink">simple link</a></p>
+				<p>another paragraph with a complex link <a href="#" id="secondlink"><strong>strong within link</strong><img alt="fake image" id="fakeimage" /> - complex <span id="spanwithinlink">link</span></a></p>
+			</div>
+		</div>
+
+		<div id="container">
+			<ul id="list-1">
+				<li id="item-1"><em>Item Type One</em></li>
+				<li id="item-2"><em>Item Type Two</em></li>
+				<li id="item-3"><em>Item Type Three</em></li>
+			</ul>
+		</div>
+
+        <ul id="list-2">
+            <li id="list-2-li-1"><em><em>Item One</em></em></li>
+            <li id="list-2-li-2"><em>Item Two</em></li>
+            <li id="list-2-li-3"><em>Item Three</em>
+                <ul id="list-3">
+                    <li id="list-3-li-1"><em>Item Three - One</em></li>
+                    <li id="list-3-li-2"><em>Item Three - Two</em></li>
+                    <li id="list-3-li-3"><em>Item Three - Three</em></li>
+                </ul>            
+            </li>        
+        </ul>
+        
+        <div id="div-1" class="div-a">
+            <div id="div-1-1" class="div-b">
+              <div id="div-1-1-1" class="div-c"><em>Item One</em></div>
+            </div>
+            <div id="div-1-2" class="div-x">
+                <em>Item Two</em>
+                <div id="div-1-2-1" class="div-b">
+                    <em id="em-1-2-1-1">Item Two - One</em>
+                    <div id="div-1-2-1-1" class="div-c"><em>Item Two - Two</em></div>
+                </div>
+            </div>
+        </div>        
+
+        <div id="a">
+            <p>Div A</p>
+            <div id="b" class="remove">
+                <p>Div B <em id="b2" class="remove">I'm a span!</em></p>
+                <div id="c" class="remove">
+                    <p>Div C</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+	<script src="../../../../build/yui/yui.js"></script>
+	<script src="./assets/window-focus.js"></script>
+	<script>
+		YUI({
+            coverage: ['event'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+		}).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
+			
+            var suite = new Y.Test.Suite("Event: Delegate");
+
+		    // creating the console...
+			(new Y.Console()).render();
+			
+            function click(id) {
+                Y.Event.simulate(document.getElementById(id), 'click');
+            }
+
+			// starting the testing process
+			
+			// add the test cases and suites 
+			suite.add(new Y.Test.Case({
+				
+				name: "Event Delegate Tests",
+				
+				test_simple_delegate_for_anchors: function() {
+					
+					var foo = false, t, ct, boundEl;
+					
+                    // the detach prefix broke when delegate from converted
+                    // from a custom event to a function (the function should
+                    // simply delegated to the custom event)
+					// Y.delegate('foo|click', function(e) {
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
+					}, '#mod1', 'a');
+					
+                    click('firstlink');
+
+					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
+					// Y.Assert.areEqual(t, Y.one('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+
+					Y.Assert.areEqual(ct, Y.one('#firstlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching node");
+					Y.Assert.areEqual(t, Y.one('#firstlink'), "event delegate works but the target is an incorrect node, should be the actual click target");
+					Y.Assert.areEqual(boundEl, Y.one('#mod1'), "event delegate works but the container property should be the bound element");
+					
+				},
+				
+				test_multiple_selectors: function () {
+
+					var foo = false, t, ct, boundEl;
+
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
+					}, '#mod1', '.hd,.bd');					
+					
+
+                    click('mod-header');
+
+					Y.Assert.areEqual(ct, Y.one('#mod-header'), "event delegate works but the matched element is an incorrect node, should be the matching node");
+
+                    click('mod-body');
+
+					Y.Assert.areEqual(ct, Y.one('#mod-body'), "event delegate works but the matched element is an incorrect node, should be the matching node");
+					
+				},
+
+                test_filter_function: function () {
+                    var count = 0,
+                        handle;
+
+                    handle = Y.delegate('click', function (e) {
+                        e.preventDefault();
+                        count++;
+                    }, '#mod1', function (target, e) {
+                        return target.get('tagName').toLowerCase() === 'a';
+                    });
+
+                    click('spanwithinlink');
+
+					Y.Assert.areSame(1, count);
+
+                    handle.detach();
+                },
+
+                test_filter_function_for_focus: function () {
+                    var count = 0,
+                        handle;
+
+                    if (Y.isWindowInFocus()) {
+                        handle = Y.delegate('focus', function (e) {
+                            count++;
+                        }, '#mod1', function (target, e) {
+                            return target.get('tagName').toLowerCase() === 'a';
+                        });
+
+                        Y.one('#spanwithinlink').focus();
+                        Y.one('#fakeimage').focus();
+                        Y.one('#secondlink').focus();
+
+                        Y.Assert.areSame(1, count);
+
+                        handle.detach();
+                    } else {
+                        Y.log("Window is not focused.  Can't properly test.",
+                            "warn", "TestRunner");
+                    }
+                },
+
+				test_document_as_container: function () {
+
+					var foo = false, t, ct, boundEl;
+					
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
+					}, Y.one('#mod1').get('ownerDocument'), 'a');
+					
+                    click('firstlink');
+
+					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
+
+					Y.Assert.areEqual(ct, Y.one('#firstlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching node");
+					Y.Assert.areEqual(t, Y.one('#firstlink'), "event delegate works but the target is an incorrect node, should be the actual click target");
+					Y.Assert.areEqual(boundEl, Y.one('#mod1').get('ownerDocument'), "event delegate works but the container property should be the bound element");
+					
+				},			
+				
+				test_checking_delegation_target: function(){
+					
+					var foo = false, t, ct, boundEl;
+					
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
+					}, '#mod1', 'a');
+					
+                    click('fakeimage');
+
+					Y.Assert.isTrue(foo, "delegation fails for an image within an anchor, mod1 should pickup the event and test target [secondlink]");
+					// in this case, the target should be the anchor, and not the image
+					// Y.Assert.areEqual(t, Y.one('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+
+                    // this has been changed.  the target is unchanged, the anchor is
+
+					Y.Assert.areEqual(ct, Y.one('#secondlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching node");
+					Y.Assert.areEqual(t, Y.one('#fakeimage'), "event delegate works but the target is an incorrect node, should be the actual click target");
+					Y.Assert.areEqual(boundEl, Y.one('#mod1'), "event delegate works but the container property should be the bound element");
+					
+				},
+				
+				test_including_container_in_selector: function(){
+					
+					var foo = false, t;
+					
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', '#mod1 a');
+					
+                    click('firstlink');
+
+					Y.Assert.isFalse(foo, "delegation fails, the container (specified in the on) can not be part of the selectors");
+					
+				},
+				
+				test_targeting_container_without_selectors: function(){
+					
+					var foo = false, t;
+					
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1');
+					
+                    click('firstlink');
+
+					Y.Assert.isFalse(foo, "delegation fails, delegation without at least one selector should never trigger an event");
+				},
+
+				test_multiple_selectors_one_match: function(){
+					
+					var foo = false, t;
+					
+					Y.delegate('click', function(e) {
+						foo = true;
+						t = e.target;
+					}, '#mod1', 'a,a span');
+					
+                    click('firstlink');
+
+					Y.Assert.isTrue(foo, "multiple selectors fails, delegate should be able to match different selectors");
+					Y.Assert.areEqual(t, Y.one('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					
+				},
+				
+				test_multiple_delegate_matches: function(){
+					
+					var foo1 = false, foo2 = false, t1, t2, ct1, ct2;
+					
+					Y.delegate('click', function(e) {
+						foo1 = true;
+						t1 = e.target;
+						ct1 = e.currentTarget;
+					}, '#mod1', 'a');
+					
+					Y.delegate('click', function(e) {
+						foo2 = true;
+						t2 = e.target;
+						ct2 = e.currentTarget;
+					}, '#mod1', 'a span');
+					
+                    click('spanwithinlink');
+
+					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
+					Y.Assert.isTrue(foo2, "second match fail, delegate should be able to match [a span]");
+					Y.Assert.areEqual(ct1, Y.one('#secondlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t1, Y.one('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the clicked node");
+					Y.Assert.areEqual(ct2, Y.one('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t2, Y.one('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the clicked");
+					
+				},
+				
+				test_bubble_up_after_delegate: function(){
+					
+					var foo1 = false,
+                        foo2 = false,
+                        t1, t2, ct1, ct2, container1, container2, this1, this2;
+					
+					Y.delegate('click', function(e) {
+						foo1 = true;
+						t1   = e.target;
+						ct1  = e.currentTarget;
+                        container1 = e.container;
+                        this1 = this;
+					}, '#mod1', 'a');
+					
+					Y.on('click', function(e) {
+						foo2 = true;
+						t2   = e.target;
+                        ct2  = e.currentTarget;
+                        container2 = e.container;
+                        this2 = this;
+					}, '#doc');
+					
+                    click('spanwithinlink');
+
+					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
+					Y.Assert.isTrue(foo2, "second match fail, the event doesn't bubble up after the delegate routine");
+                    // changed
+					// Y.Assert.areEqual(t1, Y.one('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(ct1, Y.one('#secondlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t1, Y.one('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the actual target");
+
+                    // obsolete
+					Y.Assert.areEqual(t2, Y.one('#spanwithinlink'), "event delegate works but it doesn't restore e.target to the original value.");
+
+                    Y.Assert.areSame(ct2, Y.one('#doc'));
+                    Y.Assert.areSame(container1, Y.one('#mod1'));
+                    Y.Assert.isUndefined(container2);
+                    Y.Assert.areSame(this1, Y.one('#secondlink'));
+                    Y.Assert.areSame(this2, Y.one('#doc'));
+				},
+				
+				test_bubble_up_after_delegate_halt: function(){
+					
+					var foo1 = false, foo2 = false;
+					
+					Y.delegate('click', function(e) {
+						foo1 = true;
+						e.halt();
+					}, '#mod1', 'a');
+					
+					Y.on('click', function(e) {
+						foo2 = true;
+					}, '#doc');
+					
+                    click('spanwithinlink');
+
+					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
+					Y.Assert.isFalse(foo2, "the listener for 'doc' got executed, which means that e.halt fails during the delegate routine");
+				},
+				
+				test_direct_descendant_combinator: function () {
+
+                    var matchID = null;
+				    
+                    Y.one("#list-2").delegate("click", function (e) {
+                        matchID = this.get("id");
+                    }, ">li");				    
+
+                    click('list-3-li-1');
+
+                    Y.Assert.areEqual('list-2-li-3', matchID, "The currentTarget is an incorrect node, should be the matching node.");
+				    
+				    
+				    matchID = null;
+
+                    Y.one("#div-1").delegate("click", function (e) {
+                        matchID = this.get("id");
+                    }, ">.div-b");				    
+
+                    click('div-1-1-1');
+
+                    Y.Assert.areEqual('div-1-1', matchID, "The currentTarget is an incorrect node, should be the matching node.");
+
+
+				    matchID = null;
+				    
+                    click('div-1-2-1');
+
+                    Y.Assert.isNull(matchID, "The currentTarget is an incorrect node, should be the matching node.");
+				    
+				},
+                
+                test_multiple_matches_in_subtree: function () {
+                    var ids = [];
+
+                    Y.delegate('click', function (e) {
+                        ids.push(this.get('id'));
+                    }, '#div-1', 'div');
+
+					Y.Event.simulate(Y.one('#div-1-2-1-1 em')._node, 'click');
+
+                    Y.Assert.areSame(4, ids.length, "Delegate handler should have fired three times, once for each div in #div-1");
+                    Y.Assert.areSame('div-1-2-1-1', ids[0], "First delegate callback should be from the deepest div in the subtree");
+                    Y.Assert.areSame('div-1-2-1', ids[1]);
+                    Y.Assert.areSame('div-1-2', ids[2]);
+                    Y.Assert.areSame('div-1', ids[3]);
+                },
+
+                test_removing_parent_in_subscriber: function () {
+                    var count = 0;
+
+                    Y.one('#a').delegate('click', function (e) {
+                        this.get('parentNode').remove();
+                        count++;
+                    }, '.remove');
+
+                    click('b2');
+
+                    Y.Assert.areSame(2, count);
+                },
+
+				test_successful_purge: function () {
+				
+					var bHandler1Called = false,
+						bHandler2Called = false;
+				
+					Y.delegate('click', function(e) {
+						bHandler1Called = true;
+					}, '#mod1', 'a');
+
+					Y.Event.purgeElement('#mod1');
+
+					//	Test #1: Make sure first handler is not called after 
+					//	calling Y.Event.purgeElement
+
+                    click('firstlink');
+
+					Y.Assert.isFalse(bHandler1Called, "No delegated listeners should be called after a call to Y.Event.purgeElement");
+
+
+					//	Test #2: Make sure second handler is called after 
+					//	calling Y.Event.purgeElement
+
+					Y.delegate('click', function(e) {
+						bHandler2Called = true;
+					}, '#mod1', 'a');
+
+                    click('firstlink');
+
+					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
+					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
+
+					bHandler1Called = false;
+					bHandler2Called = false;					
+					
+					//	Test #3: Make sure first handler is not called after 
+					//	calling Y.Event.purgeElement and passing in a type
+					Y.Event.purgeElement('#mod1', false, 'click');
+
+                    click('firstlink');
+
+					Y.Assert.isFalse(bHandler2Called, "The second listener should not be be called.");
+
+					//	Test #4: Make sure that it is possible to delegate 
+					//	a listener to a new element with the same id of 
+					//	an element that used to exist in the DOM.
+
+					bHandler1Called = false;
+					bHandler2Called = false;					
+
+					Y.delegate("click", function () {
+						bHandler1Called = true;
+					}, "#list-1", ">li");
+
+					Y.Event.purgeElement('#list-1');
+
+					Y.one("#container").setContent('<ul id="list-1"><li id="item-1"><em>Item Type One</em></li><li id="item-2"><em>Item Type Two</em></li><li id="item-3"><em>Item Type Three</em></li></ul>');
+
+					Y.delegate("click", function () {
+						bHandler2Called = true;
+					}, "#list-1", ">li");
+
+                    click('item-1');
+
+					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
+					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
+					
+				},
+				
+				test_successful_detach: function () {				
+				
+					var bHandler1Called = false,
+						bHandler2Called = false;
+
+					var handle = Y.delegate('click', function(e) {
+						bHandler1Called = true;
+					}, '#mod1', 'a');
+
+					handle.detach();
+
+					//	Test #1: Make sure first handler is not called after 
+					//	being detached
+
+                    click('firstlink');
+
+					Y.Assert.isFalse(bHandler1Called, "Listener should not be called after being detached.");
+
+
+					//	Test #2: Make sure second handler is called after 
+					//	detaching the first.
+
+					Y.delegate('click', function(e) {
+						bHandler2Called = true;
+					}, '#mod1', 'a');
+
+                    click('firstlink');
+
+					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
+					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
+
+
+					//	Test #3: Make sure that it is possible to delegate 
+					//	a listener to a new element with the same id of 
+					//	an element that used to exist in the DOM.
+
+					bHandler1Called = false;
+					bHandler2Called = false;					
+
+					handle = Y.delegate("click", function () {
+						bHandler1Called = true;
+					}, "#list-1", ">li");
+
+					handle.detach();
+
+					Y.one("#container").setContent('<ul id="list-1"><li id="item-1"><em>Item Type One</em></li><li id="item-2"><em>Item Type Two</em></li><li id="item-3"><em>Item Type Three</em></li></ul>');
+
+					Y.delegate("click", function () {
+						bHandler2Called = true;
+					}, "#list-1", ">li");
+
+                    click('item-1');
+
+					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
+					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
+					
+				},
+
+                "Y.delegate('cat|type') should subscribe event": function () {
+                    var count = 0,
+                        cat = Y.guid(),
+                        handle;
+
+                    handle = Y.delegate(cat + "|click", function () {
+                        count++;
+                    }, '#container', 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    handle.detach();
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count, "category sub did not detach with handle");
+                },
+
+                "node.delegate('cat|type') should subscribe event": function () {
+                    var count = 0,
+                        cat = Y.guid(),
+                        handle;
+
+                    handle = Y.one('#container').delegate(cat + "|click", function () {
+                        count++;
+                    }, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    handle.detach();
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count, "category sub did not detach with handle");
+                },
+
+                "node.detach('cat|type', fn) should detach delegate": function () {
+                    var count = 0,
+                        target = Y.one("#container"),
+                        cat = Y.guid(),
+                        handle;
+
+                    function increment() {
+                        count++;
+                    }
+
+                    handle = target.delegate(cat + "|click", increment, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    target.detach(cat + '|click', increment);
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                "node.detach('cat|type') should detach delegate": function () {
+                    var count = 0,
+                        target = Y.one("#container"),
+                        cat = Y.guid(),
+                        handle;
+
+                    function increment() {
+                        count++;
+                    }
+
+                    handle = target.delegate(cat + "|click", increment, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    target.detach(cat + '|click');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                "node.detach('cat|*') should detach delegate": function () {
+                    var count = 0,
+                        target = Y.one("#container"),
+                        cat = Y.guid(),
+                        handle;
+
+                    function increment() {
+                        count++;
+                    }
+
+                    handle = target.delegate(cat + "|click", increment, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    target.detach(cat + '|*');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                testPassingObjectForMultipleSubscriptions: function () {
+                    var clickOk = false,
+                        mousedownOk = false;
+
+                    function clicked() {
+                        clickOk = true;
+                    }
+                    function mousedowned() {
+                        mousedownOk = true;
+                    }
+
+                    Y.one('#div-1').delegate({
+                        click: clicked,
+                        mousedown: mousedowned
+                    }, 'em');
+
+                    Y.Event.simulate(document.getElementById('em-1-2-1-1'), 'mousedown');
+                    click('em-1-2-1-1');
+
+                    Y.Assert.isTrue(clickOk);
+                    Y.Assert.isTrue(mousedownOk);
+                },
+
+                testThisObjOverrideWithObjectSubscription: function () {
+                    var thisObj;
+
+                    Y.one('#div-1').delegate({
+                        click: function () {
+                            thisObj = this;
+                        }
+                    }, 'em', { foo: true });
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.isObject(thisObj);
+                    Y.Assert.isTrue(thisObj.foo);
+                },
+
+                testPassingExtraArgsWithObjectSubscription: function () {
+                    var arg;
+
+                    Y.one('#div-1').delegate({
+                        click: function (e, extraArg) {
+                            arg = extraArg;
+                        }
+                    }, 'em', null, "extra arg");
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame("extra arg", arg);
+                },
+
+                testDetachingObjectSubscriptionViaHandle: function () {
+                    var count = 0,
+                        handle;
+
+                    handle = Y.one('#div-1').delegate({
+                        click: function (e, extraArg) {
+                            count++;
+                        }
+                    }, 'em');
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    handle.detach();
+
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                testPassingArrayForMultipleSubscriptions: function () {
+                    var count = 0;
+
+                    Y.one('#div-1').delegate(['click', 'mousedown'], function () {
+                        count++;
+                    }, 'em');
+
+                    Y.Event.simulate(document.getElementById('em-1-2-1-1'), 'mousedown');
+                    click('em-1-2-1-1');
+
+                    Y.Assert.areSame(2, count);
+                }
+				
+				
+				/* 
+				 * Other things that I consider should be tested in the future:
+				 * - stopping the event, verifying the event ourside of the container
+				 * - stopping the event and verify what happen with multiple matches
+				 */
+				
+			})); 
+			
+            suite.add(new Y.Test.Case({
+                name: "Y.delegate.compileFilter",
+
+                "Y.delegate.compileFilter should return a function": function () {
+                    Y.Assert.isFunction(Y.delegate.compileFilter('.test'));
+                },
+
+                "filter should return true for matching descendant": function () {
+                    var filter = Y.delegate.compileFilter('em'),
+                        container = Y.one('#container'),
+                        em = Y.one('#container em');
+
+                    Y.Assert.isTrue(filter(em, {
+                        target: em,
+                        currentTarget: container
+                    }));
+                },
+
+                "filter should return false if no descendant matches": function () {
+                    var filter = Y.delegate.compileFilter('em'),
+                        container = Y.one('#list-2'),
+                        em = Y.one('#container em');
+
+                    Y.Assert.isFalse(filter(em, {
+                        target: em,
+                        currentTarget: container
+                    }));
+                },
+
+                "filter should return true if the currentTarget is the target and it matches": function () {
+                    // Bug #2531734
+                    var filter = Y.delegate.compileFilter('div'),
+                        container = Y.one('#container');
+
+                    Y.Assert.isTrue(filter(container, {
+                        target: container,
+                        currentTarget: container
+                    }));
+                }
+            }));
+
+            suite.add(new Y.Test.Case({
+                name: "Bugs",
+
+                // Existing unfixed bugs
+                _should: {
+                    fail: {
+                        //test_filter_function_for_focus_from_body: 2529142,
+                        //"stopPropagation should stop multiple matches": 2529388
+                    }
+                },
+
+                test_filter_function_for_focus_from_body: function () {
+                    var count = 0,
+                        handle;
+
+                    if (Y.isWindowInFocus()) {
+                        handle = Y.one('body').delegate('focus', function (e) {
+                            e.preventDefault();
+                            count++;
+                        }, '#firstlink');
+
+                        Y.one('#firstlink').focus();
+
+                        Y.Assert.areSame(1, count);
+                    } else {
+                        Y.log("Window is not focused.  Can't properly test.",
+                            "warn", "TestRunner");
+                    }
+                },
+
+                "stopPropagation should stop multiple matches": function () {
+                    var count = 0,
+                        stop = false,
+                        halt = false,
+                        handle;
+
+                    handle = Y.delegate('click', function (e) {
+                        count++;
+                        if (halt) {
+                            e.halt();
+                        } else if (stop) {
+                            e.stopPropagation();
+                        }
+                    }, '#doc', 'ul');
+
+                    click('list-3-li-2');
+
+                    Y.Assert.isTrue((count > 1));
+
+                    count = 0;
+                    stop = true;
+
+                    click('list-3-li-2');
+
+                    Y.Assert.areSame(1, count);
+
+                    count = 0;
+                    halt = true;
+
+                    click('list-3-li-2');
+
+                    Y.Assert.areSame(1, count);
+                }
+            }));
+
+			//run all tests 
+            Y.Test.Runner.setName("Event: Delegate");
+            Y.Test.Runner.add(suite);
+			Y.Test.Runner.run();
+		});
+	</script>
+</body>
+</html>

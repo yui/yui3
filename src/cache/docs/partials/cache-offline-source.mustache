@@ -2,6 +2,7 @@
 /* custom styles for this example */
 .demo fieldset {display:block; border:0;}
 .demo .short {width:2em;}
+#out {border:1px solid #CCC; padding:1em}
 </style>
 
 <form id="demo1" class="demo">
@@ -43,56 +44,57 @@
         <input type="button" id="demo2_flush" value="Flush cache"></label>
     </fieldset>
 </form>
-
+<div id="out">(cache results here)</div>
 
 <script>
 YUI().use("node", "datatype-number", "cache-offline" ,function (Y) {
-    var cache1 = new Y.CacheOffline({sandbox:"instance1"});
+    var cache1 = new Y.CacheOffline({sandbox:"instance1"}),
+        out    = Y.one("#out");
 
     Y.on("click", function(e){
         cache1.set("expires", Y.DataType.Number.parse(Y.one("#demo1_expires").get("value")));
-        alert("Cache 1 \"expires\" set to " + cache1.get("expires") + ".");
+        out.set('text', "Cache 1 \"expires\" set to " + cache1.get("expires") + ".");
     }, "#demo1_setExpires");
 
     Y.on("click", function(e){
         cache1.add(Y.one("#demo1_addKey").get("value"), Y.one("#demo1_addValue").get("value"));
         var msg = "Value cached. Cache 1 \"size\" is now " + cache1.get("size") + ".";
-        alert(msg);
+        out.set('text', msg);
     }, "#demo1_add");
 
     Y.on("click", function(e){
         var entry = cache1.retrieve(Y.one("#demo1_retrieveKey").get("value")),
             output = entry ? entry.response : "Value not cached.";
-        alert(output);
+        out.set('text', output);
     }, "#demo1_retrieve");
 
     Y.on("click", function(e){
         cache1.flush();
-        alert("Cache 1 flushed.");
+        out.set('text', "Cache 1 flushed.");
     }, "#demo1_flush");
 
     var cache2 = new Y.CacheOffline({sandbox:"instance2"});
 
     Y.on("click", function(e){
         cache2.set("expires", Y.DataType.Number.parse(Y.one("#demo2_expires").get("value")));
-        alert("Cache 2 \"expires\" set to " + cache2.get("expires") + ".");
+        out.set('text', "Cache 2 \"expires\" set to " + cache2.get("expires") + ".");
     }, "#demo2_setExpires");
 
     Y.on("click", function(e){
         cache2.add(Y.one("#demo2_addKey").get("value"), Y.one("#demo2_addValue").get("value"));
         var msg = "Value cached. Cache 2 \"size\" is now " + cache2.get("size") + ".";
-        alert(msg);
+        out.set('text', msg);
     }, "#demo2_add");
 
     Y.on("click", function(e){
         var entry = cache2.retrieve(Y.one("#demo2_retrieveKey").get("value")),
             output = entry ? entry.response : "Value not cached.";
-        alert(output);
+        out.set('text', output);
     }, "#demo2_retrieve");
 
     Y.on("click", function(e){
         cache2.flush();
-        alert("Cache 2 flushed.");
+        out.set('text', "Cache 2 flushed.");
     }, "#demo2_flush");
 });
 </script>

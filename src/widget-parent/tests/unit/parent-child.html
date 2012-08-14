@@ -1,0 +1,940 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Widget Parent Child Test Suite</title>
+
+    <script src="../../../../build/yui/yui.js"></script>
+
+    <style type="text/css">
+        #console .yui3-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+
+        #console .yui3-console-entry-fail .yui3-console-entry-cat {
+            background-color:red;
+        }
+
+        #console .yui3-console-entry-pass .yui3-console-entry-cat {
+            background-color:green;
+        }
+
+        #console .yui3-console-entry-perf .yui3-console-entry-cat {
+            background-color:blue;
+        }
+
+        #console {
+            position:static;
+        }
+
+        html, body {
+            height:100%;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+    <script type="text/javascript">
+
+        YUI({
+            coverage: ['widget-parent', 'widget-child'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use("node-event-simulate", "async-queue", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
+
+            var RootWidget = Y.RootWidget = Y.Base.create("rootwidget", Y.Widget, [Y.WidgetParent]);
+
+            var ParentWidget = Y.ParentWidget = Y.Base.create("parentwidget", Y.Widget, [Y.WidgetParent, Y.WidgetChild], {
+                renderUI: function () {
+                    ParentWidget.superclass.renderUI.apply(this, arguments);
+                    if (this.get("depth") > -1) {
+                        this.get("contentBox").insert("<em>" + this.get("label") + "</em>");
+                    }
+                }
+            }, {
+                ATTRS: {
+                    label: {
+                        validator: Y.Lang.isString
+                    }
+                }
+            });
+
+            var ChildWidget = Y.ChildWidget = Y.Base.create("childwidget", Y.Widget, [Y.WidgetChild], {
+                renderUI: function () {
+                    this.get("contentBox").setContent(this.get("label"));
+                }
+            }, {
+                ATTRS: {
+                    label: {
+                        validator: Y.Lang.isString
+                    }
+                }
+            });
+
+            var suite = new Y.Test.Suite("Widget: ParentChild");
+            suite.add(
+                new Y.Test.Case({
+
+                name: "Widget Parent API, Widget Child API Tests",
+
+                testAdd: function() {
+
+                    var root = new Y.ParentWidget(),
+                        child,
+                        MyChild;
+
+
+                     child = root.add({ type: "ChildWidget", label: "Child One" });
+
+                     Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     Y.assert((root.size() == 1), "The root Widget should have one child");
+
+                     child = root.add({ childType: ChildWidget, label: "Child Two" });
+
+                     Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     Y.assert((root.size() == 2), "The root Widget should have two children");
+
+                     try {
+                         child = root.add({ label: "Invalid Child" });
+
+                         Y.Assert.isUndefined(child, "Add should return undefined since the type of the child is undefined.");
+                         Y.assert((root.size() == 2), "The root Widget should have two children");
+                     } catch (e) {
+                         Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child was not specified and the defaultChildType attribute is not defined.");
+                     }
+
+                     try {
+                         child = root.add({ childType: "MyChild", label: "Invalid Child" });
+
+                         Y.Assert.isUndefined(child, "The \"add\" method should return undefined since the type of the child is invalid.");
+                         Y.assert((root.size() == 2), "The root Widget should have two children");
+
+                     } catch (e) {
+                         Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child is invalid.");
+                     }
+
+                     try {
+
+                         child = root.add({ type: MyChild, label: "Invalid Child" });
+
+                         Y.Assert.isUndefined(child, "Add should return undefined since the type of the child is invalid.");
+                         Y.assert((root.size() == 2), "The root Widget should have two children");
+
+                     } catch (e) {
+                         Y.Assert.isNotUndefined(e, "The \"add\" method should throw an error since the type of the child is invalid.");
+                     }
+
+                     root.set("defaultChildType", "ChildWidget");
+
+                     child = root.add({ label: "Child Three" });
+
+                     Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     Y.assert((root.size() == 3), "The root Widget should have three children");
+
+                     root.set("defaultChildType", ChildWidget);
+
+                     child = root.add({ label: "Child Four" });
+
+                     Y.Assert.isNotUndefined(child, "Add should return a reference to the child that was created and added.");
+                     Y.assert((root.size() == 4), "The root Widget should have four children");
+
+
+                     root.set("defaultChildType", "MyChild");
+
+                     Y.Assert.areEqual(root.get("defaultChildType"), Y.ChildWidget, "Setter for \"defaultChildType\" should disallow setting the attribute to an invalid value.");
+
+
+                     root.set("defaultChildType", MyChild);
+
+                     Y.Assert.areEqual(root.get("defaultChildType"), Y.ChildWidget, "Setter for \"defaultChildType\" should disallow setting the attribute to an invalid value.");
+
+                     root.render();
+
+                     root.destroy();
+
+                },
+
+                testInsert: function () {
+
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                     });
+
+                    widget.render();
+
+                    widget.add({ type: Y.ChildWidget, label: "Child One", id: "inserted-child-1" }, 0);
+
+                    Y.Assert.areEqual(widget.item(0).get("id"), "inserted-child-1", "The newly inserted child should be the parent's first child.");
+                    Y.Assert.areEqual(widget.size(), 5, "The widget should have five children.");
+
+                    widget.add([
+                            { type: Y.ChildWidget, label: "Child One", id: "inserted-child-2" },
+                            { type: Y.ChildWidget, label: "Child One", id: "inserted-child-3" }
+                        ], 2);
+
+                    Y.Assert.areEqual(widget.item(2).get("id"), "inserted-child-2", "The child with the id of \"inserted-child-2\" should be the parent's third child.");
+                    Y.Assert.areEqual(widget.item(3).get("id"), "inserted-child-3", "The child with the id of \"inserted-child-3\" should be the parent's fourth child.");
+                    Y.Assert.areEqual(widget.item(4).get("id"), "child-2", "The child with the id of \"child-2\" should now be the parent's fith child.");
+                    Y.Assert.areEqual(widget.size(), 7, "The widget should have seven children.");
+
+                    widget.destroy();
+
+                },
+
+                testPreRenderedChildWithEmptyParent : function() {
+
+                    // Based on pull request from andreas-karlsson
+                    // https://github.com/yui/yui3/pull/25#issuecomment-2103536
+
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+                    widget.render();
+
+                    var child = new Y.ChildWidget({
+                        id:"child-1"
+                    });
+                    child.render();
+
+                    widget.add(child);
+
+                    Y.Assert.areEqual(1, widget.size(1), "expected one child");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+                    Y.Assert.areEqual(1, renderedChildren.size(), "expected one child node");
+
+                    widget.destroy();
+                },
+
+                testAddOutOfOrderPreRender : function() {
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+
+                    widget.add({type: Y.ChildWidget, label: "Child Two", id: "child-2" }, 1);
+                    widget.add({type: Y.ChildWidget, label: "Child One", id: "child-1" }, 0);
+                    widget.add({type: Y.ChildWidget, label: "Child Three", id: "child-3" }, 2);
+                    
+                    widget.render();
+
+                    var children = widget.get("children");
+
+                    Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+
+                    Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    widget.destroy();
+                },
+                
+                testAddOutOfOrderPostRender : function() {
+                    var widget = new Y.ParentWidget({
+                        id:"widget-1"
+                    });
+                    
+                    widget.render();
+
+                    widget.add({type: Y.ChildWidget, label: "Child Two", id: "child-2" }, 1);
+                    widget.add({type: Y.ChildWidget, label: "Child One", id: "child-1" }, 0);
+                    widget.add({type: Y.ChildWidget, label: "Child Three", id: "child-3" }, 2);
+                    
+                    Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    var renderedChildren = widget.get("contentBox").get("children");
+
+                    Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
+                    Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
+
+                    widget.destroy();
+                },
+
+                testRemove: function () {
+
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                    });
+                    widget.render();
+
+                    var childSelector = "." + widget.item(0).getClassName(),
+                        parentBB = widget.get("boundingBox");
+
+                    Y.Assert.areEqual(widget.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(widget.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.areEqual(widget.item(0).remove().get("id"), "child-1", "If a child calls the \"remove\" method on itself, the \"remove\" method should return a reference to the child.");
+                    Y.Assert.areEqual(parentBB.one("#child-1"), null, "child-1's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 2, "The widget should now have two children bounding boxes.");
+                    Y.Assert.areEqual(widget.size(), 2, "The widget should now have two children.");
+
+                    var removed = widget.removeAll();
+
+                    Y.Assert.areEqual(removed.size(), 2, "The \"removeAll\" method should return a Y.ArrayList instance with a size of 2.");
+                    Y.Assert.areEqual(widget.size(), 0, "The widget should now have no children.");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 0, "The widget should now have no children bounding boxes.");
+
+                    widget.destroy();
+                },
+
+                testRemoveSelectedChild : function() {
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                    });
+                    widget.render();
+
+                    var childSelector = "." + widget.item(0).getClassName(),
+                        parentBB = widget.get("boundingBox");
+
+                    widget.selectChild(1);
+
+                    Y.Assert.areSame(widget.item(1), widget.get("selection"));
+                    
+                    Y.Assert.areEqual(widget.remove(1).get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(widget.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.areEqual(0, widget.get("selected"));
+                    Y.Assert.isNull(widget.get("selection"));
+
+                    widget.destroy();
+                },
+
+                testRemoveFocusedChild : function() {
+
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                    });
+                    widget.render();
+
+                    var childSelector = "." + widget.item(0).getClassName(),
+                        parentBB = widget.get("boundingBox");
+
+                    widget.item(1).focus();
+
+                    Y.Assert.areSame(widget.item(1), widget.get("activeDescendant"));
+
+                    var removedChild = widget.remove(1); 
+
+                    Y.Assert.isFalse(removedChild.get("focused"));
+                    Y.Assert.areEqual(removedChild.get("id"), "child-2", "The parent's \"remove\" method should return a reference to the child removed.");
+                    Y.Assert.areEqual(parentBB.one("#child-2"), null, "child-2's bounding box should have been removed");
+                    Y.Assert.areEqual(parentBB.all(childSelector).size(), 3, "The widget should now have three children bounding boxes.");
+                    Y.Assert.areEqual(widget.size(), 3, "The widget should now have three children.");
+
+                    Y.Assert.isNull(widget.get("activeDescendant"));
+
+                    widget.destroy();
+                },
+
+                testSingleSelection: function () {
+
+                    var root = new Y.ParentWidget({
+
+                        id: "new-widget",
+                        children: [
+                            { type: Y.ChildWidget, label: "Child One" },
+                            { type: Y.ChildWidget, label: "Child Two" },
+                            { type: Y.ChildWidget, label: "Child Three" },
+                            { type: Y.ChildWidget, label: "Child Four" }
+                        ]
+
+                    });
+
+                    root.render();
+
+                    root.item(0).set("selected", 1);
+                    root.item(1).set("selected", 1);
+
+                    //  Confirm the selection
+
+                    Y.Assert.areEqual(root.item(1).get("selected"), 1, "The second child of the parent widget should be selected");
+                    Y.Assert.areEqual(root.get("selected"), 2, "The root's \"selected\" attribute should return  2");
+                    Y.Assert.areEqual(root.get("selection"), root.item(1), "The parent's \"selection\" attribute should return a reference to its second child.");
+
+
+                    //  Select another child and confirm the previously selected
+                    //  child is deselected and and the parent's selection is
+                    //  correctly updated.
+
+                    root.item(2).set("selected", 1);
+
+                    Y.Assert.areEqual(root.item(1).get("selected"), 0, "The parent's second child should not be selected");
+                    Y.Assert.areEqual(root.item(2).get("selected"), 1, "The parent's third child should be selected");
+                    Y.Assert.areEqual(root.get("selection"), root.item(2), "The parent's \"selection\" attribute should return a reference to its third child.");
+
+
+                    //  Confirm deselection
+
+                    root.item(2).set("selected", 0);
+
+                    Y.Assert.areEqual(root.item(2).get("selected"), 0, "The parent's third child should not be selected");
+                    Y.Assert.areEqual(root.get("selected"), 0, "The parent's \"selected\" attribute should return  0");
+                    Y.Assert.isNull(root.get("selection"), "The parent's \"selection\" attribute should return null.");
+
+                    root.destroy();
+
+
+
+                    var tree = new Y.ParentWidget({
+
+                       id: "tree",
+                       children: [
+
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                           ]}
+                       ]
+
+                    });
+
+                    tree.render();
+
+                    //  Select a child in the subtree to test if the selection is represented at the root level
+
+                    tree.item(2).selectChild(0);
+
+                    Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
+                    Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-1", "The subtree's \"selection\" attribute should return the first child.");
+
+
+                    //  Select a child in the root to confirm that the subtree's selection is cleared
+
+                    tree.item(0).set("selected", 1);
+
+                    Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.get("selection").get("id"), "leaf-1", "The root's \"selection\" attribute should return a reference to its first child.");
+                    Y.Assert.areEqual(tree.item(2).get("selected"), 0, "The subtree should no longer be selected.");
+                    Y.Assert.areEqual(tree.item(2).get("selection"), null, "The subtree's \"selection\" attribute should return null.");
+
+
+                    //  Select a new child in the subtree to test if the selection is represented at the root level
+
+                    tree.item(2).item(2).set("selected", 1);
+
+                    Y.Assert.areEqual(tree.get("selected"), 2, "The root's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.item(2).get("selected"), 2, "The subtree's \"selected\" attribute should be 2 (indicating partially selected).");
+                    Y.Assert.areEqual(tree.get("selection").get("id"), "subtree", "The root's \"selection\" attribute should return the subtree.");
+                    Y.Assert.areEqual(tree.item(2).get("selection").get("id"), "subtree-leaf-3", "The subtree's \"selection\" attribute should return its third child.");
+
+                    // Confirm that we can't do a multiple selection 
+                    var evts = [];
+
+                    tree.on("selectedChange", function() {
+                        evts.push("root:onSelectedChange");
+                    });
+
+                    tree.after("selectedChange", function() {
+                        evts.push("root:afterSelectedChange");
+                    });
+
+                    tree.set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
+                    
+                    evts = [];
+
+                    tree.item(2).on("selectedChange", function() {
+                        evts.push("subTree:onSelectedChange");
+                    });
+                    
+                    tree.item(2).after("selectedChange", function() {
+                        evts.push("subTree:afterSelectedChange");
+                    });
+
+                    tree.item(2).set("selected", 1);
+
+                    Y.ArrayAssert.itemsAreEqual(["subTree:onSelectedChange", "root:onSelectedChange"], evts);
+                    Y.Assert.areEqual(2, tree.get("selected"));
+
+                    tree.destroy();
+                },
+
+                testMultipleSelection: function () {
+
+                    var root = new Y.ParentWidget({
+
+                        id: "m-s-widget",
+                        multiple: true,
+                        children: [
+                            { type: Y.ChildWidget, label: "Child One" },
+                            { type: Y.ChildWidget, label: "Child Two" },
+                            { type: Y.ChildWidget, label: "Child Three" },
+                            { type: Y.ChildWidget, label: "Child Four" }
+                        ]
+
+                    });
+
+                    root.render();
+
+
+                    root.item(0).set("selected", 1);
+                    root.item(1).set("selected", 1);
+
+                    //  Confirm that both children are selected and
+                    //  represented in the parent's selection.
+
+                    Y.Assert.areEqual(root.item(0).get("selected"), 1, "The first child of the parent widget should be selected.");
+                    Y.Assert.areEqual(root.item(1).get("selected"), 1, "The second child of the parent widget should be selected.");
+                    Y.Assert.areEqual(root.get("selection").size(), 2, "The \"selection\" attribute should return an ArrayList with a size of 2.");
+                    Y.Assert.areEqual(root.get("selected"), 2, "The root's \"selection\" attribute should be 2 (indicating partially selected).");
+
+
+                    //  Select remaining children to confirm all children
+                    //  are represented in the parent's selection and that
+                    //  the parent's "selected" attribute returns 1.
+
+                    root.item(2).set("selected", 1);
+                    root.item(3).set("selected", 1);
+
+                    Y.Assert.areEqual(root.get("selection").size(), 4, "The \"selection\" attribute should return an ArrayList with a size of 4.");
+                    Y.Assert.areEqual(root.get("selected"), 1, "The root's \"selected\" attribute should return 1 (indicating fully selected).");
+
+
+                    //  Deselect all children and confirm the results
+
+                    root.get("selection").each(function (child) {
+                       child.set("selected", 0);
+                    });
+
+                    Y.Assert.isNull(root.get("selection"), "The root's \"selection\" attribute should return null.");
+                    Y.Assert.areEqual(root.get("selected"), 0, "The root's \"selected\" attribute should return  0");
+
+
+                    //  Select all children via selectAll() to confirm all
+                    //  children are represented in the parent's selection and
+                    //  that the parent's "selected" attribute returns 1.
+
+                    root.selectAll();
+                    Y.Assert.areEqual(root.get("selected"), 1, "The root's \"selected\" attribute should return  1");
+                    Y.Assert.areEqual(root.get("selection").size(), 4, "The root's \"selection\" attribute should return an ArrayList with a size of 4.");
+
+
+                    //  Deselect all children via deselectAll() to confirm all
+                    //  children are no longer selected and that the parent's
+                    //  selection is empty.
+
+                    root.deselectAll();
+
+                    Y.Assert.areEqual(root.get("selected"), 0, "The root's \"selected\" attribute should return  0");
+                    Y.Assert.areEqual(root.get("selection"), null, "The root's \"selection\" attribute should return an ArrayList with a size of 4.");
+
+
+                    root.add({ type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+
+                          { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                          { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                          { type: Y.ChildWidget, id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                          { type: Y.ChildWidget, id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                       ]});
+
+                    root.render();
+
+                    Y.Assert.isTrue(root.item(4).get("multiple"), "The \"multiple\" attribute of the nested parent widget should be true.");
+
+                    root.destroy();
+
+                },
+
+                testAncestorNavigation: function () {
+
+                    var widget = new Y.ParentWidget({
+
+                        id: "widget-1",
+                        label: "Parent",
+                        children: [
+                            { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                            { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                            { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                            { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                        ]
+
+                    });
+
+                    var root = new Y.RootWidget({ id: "rootwidget-1" });
+
+                    root.add(widget);
+                    root.render();
+
+
+                    //  Confirm that the "root" attribute is
+                    //  is not presently constrained by type since the ROOT_TYPE
+                    //  property is not yet set.
+
+                    Y.Assert.areEqual(widget.item(0).get("root").get("id"), "rootwidget-1", "The \"root\" attribute of \"child-1\" should return a reference to rootwidget-1");
+                    Y.Assert.areEqual(widget.get("root").get("id"), "rootwidget-1", "The \"root\" attribute of \"widget-1\" should return a reference to rootwidget-1");
+                    Y.Assert.isFalse(widget.isRoot(), "\"widget-1\" should not be considered root.");
+                    Y.Assert.areEqual(widget.item(0).get("depth"), 1, "The \"depth\" attribute of \"child-1\" should return 1.");
+
+                    Y.Assert.areEqual(widget.item(0).ancestor(0).get("id"), "widget-1", "The ancestor of \"child-1\" at depth 0 should be \"widget-1\"");
+                    Y.Assert.areEqual(widget.item(0).ancestor(-1).get("id"), "rootwidget-1", "The ancestor of \"child-1\" at depth -1 should be \"rootwidget-1\"");
+
+
+                    //  Confirm that the root attribute will be constrained to
+                    //  a particular type when the ROOT_TYPE is defined.
+
+                    Y.ParentWidget.prototype.ROOT_TYPE = Y.ParentWidget;
+                    Y.ChildWidget.prototype.ROOT_TYPE = Y.ParentWidget;
+
+                    Y.Assert.areEqual(widget.item(0).get("root").get("id"), "widget-1", "The \"root\" attribute of \"child-1\" should return a reference to widget-1");
+                    Y.Assert.areEqual(widget.get("root").get("id"), "widget-1", "The \"root\" attribute of \"widget-1\" should return a reference to widget-1");
+                    Y.Assert.isTrue(widget.isRoot(), "Calling the \"isRoot\" method on \"widget-1\" should return \"widget-1\"");
+                    Y.Assert.areEqual(widget.item(0).get("depth"), 0, "The \"depth\" attribute of \"child-1\" should return 0");
+                    Y.Assert.areEqual(widget.item(0).ancestor(-1).get("id"), "widget-1", "The ancestor of \"child-1\" at depth -1 should be \"widget-1\"");    // parent depth
+
+                    root.destroy();
+                    
+                    // So tests can be rerun
+                    Y.ParentWidget.prototype.ROOT_TYPE = null;
+                    Y.ChildWidget.prototype.ROOT_TYPE = null;
+                },
+
+                testSiblingNavigation: function () {
+
+                    var widget = new Y.ParentWidget({
+
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: "Child One", id: "child-1" },
+                             { type: Y.ChildWidget, label: "Child Two", id: "child-2" },
+                             { type: Y.ChildWidget, label: "Child Three", id: "child-3" },
+                             { type: Y.ChildWidget, label: "Child Four", id: "child-4" }
+                         ]
+
+                     });
+
+                    widget.render();
+
+                    Y.Assert.areEqual(widget.item(3).get("index"), 3, "The \"index\" attribute of \"child-4\" should return 3.");
+                    Y.Assert.isUndefined(widget.item(3).next(), "\"child-4\" should have no next sibling");
+                    Y.Assert.areEqual(widget.item(3).next(true).get("id"), "child-1", "Calling the \"next\" method with the circular flag should return  a reference to \"child-1\"");
+
+                    Y.Assert.isUndefined(widget.item(0).previous(), "\"child-1\" should have no previous sibling");
+                    Y.Assert.areEqual(widget.item(0).previous(true).get("id"), "child-4", "Calling the \"previous\" method with the circular flag should return  a reference to \"child-4\"");
+
+                    widget.destroy();
+
+                },
+
+                testActiveDescendant: function () {
+
+                    var tree = new Y.ParentWidget({
+
+                       id: "tree",
+                       children: [
+
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-3", label: "Subtree - Leaf Three" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-4", label: "Subtree - Leaf Four" }
+
+                           ]}
+                       ]
+
+                    });
+
+                    tree.render();
+
+                    tree.item(2).item(0).focus();
+
+                    Y.Assert.areEqual(tree.item(2).get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of \"subtree\" should return a reference to \"subtree-leaf-1\"");
+                    Y.Assert.areEqual(tree.get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of the root widget should return a reference to the \"subtree\"");
+
+                    tree.destroy();
+                },
+
+                testFullDestroy: function () {
+
+                    var expected = ["leaf-1", "leaf-2", "subtree-leaf-1", "subtree-leaf-2", "subtree", "tree"];
+                    var destroyed = [];
+
+                    var tree = new Y.ParentWidget({
+                       id: "tree",
+                       children: [
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render();
+
+                    // We're only doing this the long way, because the event bubbling doesn't
+                    // seem to be working (subtree is missing). Otherwise we would use tree.on("*:destroy");
+
+                    tree.each(function(child) {
+                        
+                        var id = child.get("id");
+                        
+                        child.after("destroy", function(e) {
+                            destroyed.push(id);
+                            Y.Assert.isNull(Y.Node.one("#" + id), "Child bounding box still in DOM");
+                        });
+
+                        if (child.hasImpl(Y.WidgetParent)) {
+                            child.each(function(subtreechild) {
+                        
+                                var id = subtreechild.get("id");        
+
+                                subtreechild.after("destroy", function(e) {
+                                    destroyed.push(id);
+                                    Y.Assert.isNull(Y.Node.one("#" + id), "Subtree child Bounding box still in DOM");
+                                });
+                            });
+                        }
+                    });
+                    
+                    var rootId = tree.get("id");
+                    
+                    tree.after("destroy", function(e) {
+                        destroyed.push(rootId);
+                        Y.Assert.isNull(Y.Node.one("#" + rootId), "Root Bounding box still in DOM");
+                    });
+
+                    tree.destroy();
+                    
+                    Y.ArrayAssert.itemsAreEqual(expected, destroyed, "Unexpected destroy events");
+                },
+
+                testRemoveChildOnDestroy: function () {
+
+                    var tree = new Y.ParentWidget({
+                       id: "tree",
+                       children: [
+                           { type: Y.ChildWidget, id: "leaf-1", label: "Leaf One" },
+                           { type: Y.ChildWidget, id: "leaf-2", label: "Leaf Two" },
+                           { type: Y.ParentWidget, id: "subtree", label: "Subtree", children: [
+                              { type: Y.ChildWidget, id: "subtree-leaf-1", label: "Subtree - Leaf One" },
+                              { type: Y.ChildWidget, id: "subtree-leaf-2", label: "Subtree - Leaf Two" }
+                           ]}
+                       ]
+                    });
+
+                    tree.render();
+
+                    var subtree = tree.item(2);
+
+                    Y.Assert.areEqual(3, tree.size(), "Initial tree size is incorrect");
+                    Y.Assert.areEqual(2, subtree.size(), "Initial tree size is incorrect");
+
+                    tree.item(1).destroy();
+
+                    Y.Assert.areEqual(2, tree.size(), "Item 1 doesn't seem to have been removed. Tree size is the same");
+                    Y.Assert.areEqual("subtree", tree.item(1).get("id"), "Item 1 doesn't seem to have been removed");  
+
+                    subree = tree.item(1); 
+
+                    subtree.item(0).destroy();
+
+                    Y.Assert.areEqual(1, subtree.size(), "Subtree item 0 doesn't seem to have been removed. subtree size is the same");
+                    Y.Assert.areEqual("subtree-leaf-2", subtree.item(0).get("id"), "Subtree item 0 doesn't seem to have been removed");
+                    Y.Assert.areEqual(subtree.item(1), null, "Subtree item 1 should have moved up to item 0");  
+
+                    tree.destroy();
+                },
+
+                testUIEvents : function() {
+
+                    var expectedEvents = [
+                            "parentwidget:click",
+                            "parentwidget:click"
+                        ],
+                        actualEvents = [],
+
+                        expectedChildEvents = [
+                            "childwidget:click", 
+                            "childwidget:click"
+                        ],
+                        actualChildEvents = [];
+
+                    var widget = new Y.ParentWidget({
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: '<span class="uitarget">Child One - Click Target</span>', id: "child-1" },
+                             { type: Y.ChildWidget, label: '<span class="uitarget">Child Two - Click Target</span>', id: "child-2" }
+                         ]
+                    });
+
+                    widget.render();
+
+                    widget.on("click", function(e) {
+                        actualEvents.push(e.type);
+                    });
+
+                    widget.item(0).on("click", function(e) {
+                        actualChildEvents.push(e.type);
+                    });
+
+                    widget.item(1).on("click", function(e) {
+                        actualChildEvents.push(e.type);
+                    });
+
+                    Y.Node.one("#child-1 .uitarget").simulate("click");
+                    Y.Node.one("#child-2 .uitarget").simulate("click");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents, "Unexpected UI events");
+                    Y.ArrayAssert.itemsAreEqual(expectedChildEvents, actualChildEvents, "Unexpected Child UI events");
+
+                    widget.destroy();
+                },
+                
+                testCustomAsyncRender : function() {
+
+                    // NOTE: This is not a unit test for "out-of-the-box" code per-se.
+
+                    // It's testing an additional check for "rendered", added to _uiAddChild, specifically 
+                    // for a customization which modified child.render() to be async.
+
+                    // See http://yuilibrary.com/projects/yui3/ticket/2529863 for more details.
+
+                    var test = this;
+
+                    var AsyncRenderParent = Y.Base.create("asyncParent", Y.Widget, [Y.WidgetParent], {
+
+                        add: function() {
+                            var parent = this;
+                            parent.renderQ = new Y.AsyncQueue();
+                            Y.WidgetParent.prototype.add.apply(parent, arguments);
+                            parent.renderQ.after("complete", function() {
+                                parent.fire("asyncAddComplete");
+                            });
+                            parent.renderQ.run();
+                        }
+
+                    });
+
+                    var AsyncRenderChild = Y.Base.create("asyncChild", Y.Widget, [Y.WidgetChild], {
+                        render: function() {
+                            var w = this,
+                                args = arguments;
+        
+                            this.get("parent").renderQ.add(function() {
+                                AsyncRenderChild.superclass.render.apply(w, args);
+                            });
+                        }
+                    });
+
+                    var widget = new AsyncRenderParent({
+                        id:"widget-1"
+                    });
+
+                    widget.render();
+
+                    widget.after("asyncAddComplete", function(e) {
+                        test.resume(function() {
+    
+                            Y.Assert.areEqual(widget.item(0).get("id"), "child-1", "child-1 is out of order");
+                            Y.Assert.areEqual(widget.item(1).get("id"), "child-2", "child-2 is out of order");
+                            Y.Assert.areEqual(widget.item(2).get("id"), "child-3", "child-3 is out of order");
+        
+                            var renderedChildren = widget.get("contentBox").get("children");
+        
+                            Y.Assert.areEqual(renderedChildren.item(0).get("id"), "child-1", "child-1 is out of order");
+                            Y.Assert.areEqual(renderedChildren.item(1).get("id"), "child-2", "child-2 is out of order");
+                            Y.Assert.areEqual(renderedChildren.item(2).get("id"), "child-3", "child-3 is out of order");
+    
+                            widget.destroy();
+                        });
+                    });
+
+                    widget.add([
+                        {type: AsyncRenderChild, label: "Child One", id: "child-1"},
+                        {type: AsyncRenderChild, label: "Child Two", id: "child-2"},
+                        {type: AsyncRenderChild, label: "Child Three", id: "child-3"}
+                    ]);
+
+                    test.wait();                    
+                }
+
+            }));
+
+        Y.Test.Runner.setName("Widget ParentChild Tests");
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.disableLogging();
+        Y.Test.Runner.run();
+
+        var console;
+
+        Y.one("#btnRun").set("disabled", false).on("click", function() {
+            if (!console) {
+                console = new Y.Console({
+                    id:"console",
+                    width:"100%",
+                    height:"90%",
+                    verbose : false,
+                    printTimeout: 0,
+                    newestOnTop : false,
+                    entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
+                            '<span class="{entry_cat_class}">{label}</span>'+
+                            '<span class="{entry_content_class}">{message}</span>'+
+                    '</pre>'
+                }).render();
+            }
+    
+            Y.Test.Runner.enableLogging();
+            Y.Test.Runner.run();
+        });
+    });
+    </script>
+    <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+</body>
+</html>

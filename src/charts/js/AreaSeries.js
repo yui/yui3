@@ -3,6 +3,7 @@
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills

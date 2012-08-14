@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<div id="test"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    coverage: ['widget-position-align'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'widget-position-align-test': {
+            fullpath: './assets/widget-position-align-test.js',
+            requires: ['widget-position-align', 'test']
+        }
+    },
+    useBrowserConsole: false
+}).use('widget-position-align-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

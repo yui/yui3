@@ -4,25 +4,21 @@ YUI.add('dataschema-xml-tests', function(Y) {
         Assert = Y.Assert;
 
     var cleanStr = function(str) {
-        var strTemp;
-        strTemp = str.replace(/<BR>/g, '<br>');
-        return strTemp.replace(/\s\s/g, ' ');
+        return str.replace(/\s\s/g, ' ');
     }
 
 
     suite.add(new Y.Test.Case({
         name: 'Example tests',
         'test basic example': function() {
-            var test = this,
-                outputExpected = cleanStr('{results =&gt; [{rank =&gt; 1, artist =&gt; Katy Perry, title =&gt; I Kissed A Girl}, {rank =&gt; 2, artist =&gt; Metro Station, title =&gt; Shake It}, {rank =&gt; 3, artist =&gt; Leona Lewis, title =&gt; Bleeding Love}], meta =&gt; {}}');
+            var outputExpected = cleanStr('{results =&gt; [{rank =&gt; 1, artist =&gt; Katy Perry, title =&gt; I Kissed A Girl}, {rank =&gt; 2, artist =&gt; Metro Station, title =&gt; Shake It}, {rank =&gt; 3, artist =&gt; Leona Lewis, title =&gt; Bleeding Love}], meta =&gt; {}}');
             Y.one('.example #demo_apply_basic').simulate('click');
             var output = Y.one('.example #demo_output_basic').getHTML();
 //          alert(output);
             Assert.areEqual(outputExpected, cleanStr(output), ' - Failed to find expected output');
         },
         'test complex example': function() {
-            var test = this,
-                outputExpected = cleanStr('{results =&gt; [{rank =&gt; 1, artist =&gt; Katy Perry, song =&gt; I Kissed A Girl}, {rank =&gt; 2, artist =&gt; Metro Station, song =&gt; Shake It}, {rank =&gt; 3, artist =&gt; Leona Lewis, song =&gt; Bleeding Love}], meta =&gt; {session =&gt; 542235629, total =&gt; 98}}');
+            var outputExpected = cleanStr('{results =&gt; [{rank =&gt; 1, artist =&gt; Katy Perry, song =&gt; I Kissed A Girl}, {rank =&gt; 2, artist =&gt; Metro Station, song =&gt; Shake It}, {rank =&gt; 3, artist =&gt; Leona Lewis, song =&gt; Bleeding Love}], meta =&gt; {session =&gt; 542235629, total =&gt; 98}}');
             Y.one('.example #demo_apply_complex').simulate('click');
             var output = Y.one('.example #demo_output_complex').getHTML();
 //          alert(output);

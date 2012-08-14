@@ -191,12 +191,11 @@ var ResizePlugin = function(config) {
                       * @private
                       */
                    _isDifferent: function(oldVal, newVal) {
+                       var retValue = false;
                        if (oldVal !== newVal) {
-                           return newVal;
+                           retValue = newVal;
                        }
-                       else {
-                           return false;
-                       }
+                       return retValue;
                    }
 
 
@@ -205,4 +204,4 @@ var ResizePlugin = function(config) {
         Y.Plugin.Resize = ResizePlugin;
 
 
-}, '@VERSION@' ,{requires:['resize-base', 'plugin'], optional:['resize-constrain'], skinnable:false});
+}, '@VERSION@' ,{optional:['resize-constrain'], skinnable:false, requires:['resize-base', 'plugin']});

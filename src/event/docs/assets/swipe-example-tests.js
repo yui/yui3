@@ -40,24 +40,44 @@ YUI.add('swipe-example-tests', function(Y) {
             Y.Assert.areEqual("hidden", btn.getComputedStyle("visibility"));
         },
 
-        simulateSwipeRight : function(node, distance, duration) {
-            // TODO: Waiting on gesture simulation to be rolled in
+        simulateSwipeRight : function(node, distance, duration, cb) {
+            var test = this;
+
             node.simulateGesture("move", {
                 path : {
                     xdist: distance
                 },
                 duration: duration
+            }, function() {
+                test.resume(cb);
             });
+
+            test.wait();
         },
 
-        simulateSwipeLeft : function(node, distance, duration) {
-            // TODO: Waiting on gesture simulation to be rolled in            
+        simulateSwipeLeft : function(node, distance, duration, cb) {
+            var test = this;
+            
             node.simulateGesture("move", {
                 path : {
                     xdist: -distance
                 },
                 duration: duration
+            }, function() {
+                test.resume(cb);
             });
+
+            test.wait();
+        },
+
+        simulateTap : function(node, cb) {
+            var test = this;
+            
+            node.simulateGesture("tap", function() {
+                test.resume(cb);
+            });
+
+            test.wait();
         },
 
         'swipe right' : function() {
@@ -66,9 +86,7 @@ YUI.add('swipe-example-tests', function(Y) {
                 deleteButtons,
                 item = allItems.item(1);
 
-            test.simulateSwipeRight(item, 40, SWIPE_DURATION);
-
-            test.wait(function() {
+            test.simulateSwipeRight(item, 40, SWIPE_DURATION, function() {
                 deleteButtons = Y.all("#swipe .myapp-delete");
 
                 Y.Assert.isTrue(deleteButtons.size() === 5);
@@ -76,7 +94,7 @@ YUI.add('swipe-example-tests', function(Y) {
                 deleteButtons.each(function(btn) {
                     test.assertDeleteButtonHidden(btn);
                 });
-            }, SWIPE_WAIT_DURATION);
+            });
         },
 
         'swipe left' : function() {
@@ -86,9 +104,7 @@ YUI.add('swipe-example-tests', function(Y) {
                 item = allItems.item(1),
                 deleteButton = item.one(".myapp-delete");
 
-            test.simulateSwipeLeft(item, 30, SWIPE_DURATION);
-
-            test.wait(function() {
+            test.simulateSwipeLeft(item, 30, SWIPE_DURATION, function() {
                 deleteButtons = Y.all("#swipe .myapp-delete");
                 Y.Assert.isTrue(deleteButtons.size() === 5);
 
@@ -99,7 +115,7 @@ YUI.add('swipe-example-tests', function(Y) {
                         test.assertDeleteButtonHidden(btn);
                     }
                 });
-            }, SWIPE_WAIT_DURATION);
+            });
         },
 
         'swipe left and delete' : function() {
@@ -108,21 +124,20 @@ YUI.add('swipe-example-tests', function(Y) {
                 item = allItems.item(2),
                 deleteButton = item.one(".myapp-delete");
 
-            test.simulateSwipeLeft(item, 30, SWIPE_DURATION);
+            test.simulateSwipeLeft(item, 30, SWIPE_DURATION, function() {
 
-            test.wait(function() {
                 test.assertDeleteButtonVisible(deleteButton);
 
-                deleteButton.simulate("tap");
+                test.simulateTap(deleteButton, function() {
 
-                test.wait(function() {
+                    test.wait(function() {
+                        allItems.refresh();
+                        Y.Assert.areEqual(4, allItems.size());
+                        Y.Assert.isFalse(item.inDoc());
+                    }, 1000); // Transition is 0.3s
 
-                    allItems.refresh();
-                    Y.Assert.areEqual(4, allItems.size());
-                    Y.Assert.isFalse(item.inDoc());
-
-                }, 1000); // Transition is 0.3s
-            }, SWIPE_WAIT_DURATION);
+                });
+            });
         },
 
         'swipe left and tap outside the delete button' : function() {
@@ -131,20 +146,15 @@ YUI.add('swipe-example-tests', function(Y) {
                 item = allItems.item(0),
                 deleteButton = item.one(".myapp-delete");
 
-            test.simulateSwipeLeft(item, 30, SWIPE_DURATION);
-
-            test.wait(function() {
+            test.simulateSwipeLeft(item, 30, SWIPE_DURATION, function() {
                 test.assertDeleteButtonVisible(deleteButton);
 
-                item.simulate("tap", {
-                    duration:0
+                test.simulateTap(item, function() {
+                    test.assertDeleteButtonHidden(deleteButton);
                 });
 
-                test.wait(function() {
-                    test.assertDeleteButtonHidden(deleteButton);
-                }, 100);
-
-            }, SWIPE_WAIT_DURATION);
+                test.wait();
+            });
         },
 
         'swipe left while delete is displayed on another item' : function() {
@@ -158,23 +168,20 @@ YUI.add('swipe-example-tests', function(Y) {
                 otherItem = allItems.item(1),
                 otherDeleteButton = otherItem.one(".myapp-delete");
 
-            test.simulateSwipeLeft(item, 30, SWIPE_DURATION);
+            test.simulateSwipeLeft(item, 30, SWIPE_DURATION, function() {
 
-            test.wait(function() {
                 test.assertDeleteButtonVisible(deleteButton);
 
-                test.simulateSwipeLeft(otherItem, 30, SWIPE_DURATION);
-
-                test.wait(function() {
+                test.simulateSwipeLeft(otherItem, 30, SWIPE_DURATION, function() {
                     test.assertDeleteButtonHidden(deleteButton);
                     test.assertDeleteButtonVisible(otherDeleteButton);
-                }, SWIPE_WAIT_DURATION);
+                });
 
-            }, SWIPE_WAIT_DURATION);
+            });
         }
 
     }));
 
     Y.Test.Runner.add(suite);
 
-}, '', {requires:['node', 'node-event-simulate', 'gesture-simulate']});
+}, '', {requires:['node', 'node-event-simulate']});

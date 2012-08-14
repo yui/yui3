@@ -1,6 +1,25 @@
 Event Infrastructure Change History
 ===================================
 
+3.7.0
+-----
+
+* Changed event-synthetic, to support CustomEvent performance optimizations.
+
+  Mainly the deprecation of CustomEvent subscribers and afters instance properties,
+  which event-synthetic was referring to directly. The direct reference was replaced
+  by a public API method call.
+
+  See src/event-custom/HISTORY.md for more details about the deprecated properties.
+
+3.6.1
+-----
+
+* Added try/catch around the internal window unload listener event-base adds,
+  so that YUI works in Chrome Packaged Apps. They don't support unload,
+  but still have a window.onunload, so no real way to feature test without
+  a try/catch anyway.
+
 3.6.0
 -----
 

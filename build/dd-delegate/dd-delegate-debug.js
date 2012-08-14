@@ -167,7 +167,7 @@ YUI.add('dd-delegate', function(Y) {
                 groups = this.dd.get('groups');
                 config = this.get('dragConfig');
                 
-                if (config && 'groups' in config) {
+                if (config && config.groups) {
                     groups = config.groups;
                 }
 
@@ -335,4 +335,4 @@ YUI.add('dd-delegate', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'event-mouseenter', 'dd-drop-plugin']});
+}, '@VERSION@' ,{requires:['dd-drag', 'event-mouseenter', 'dd-drop-plugin'], skinnable:false});

@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'arraysort-tests': {
-                fullpath: path.join(__dirname, '../arraysort-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/arraysort-tests.js'),
                 requires: [ 'test', 'dump', 'arraysort' ]
             }
         }

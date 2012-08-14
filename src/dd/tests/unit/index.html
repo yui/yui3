@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>DragDrop Tests</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <link href="./assets/dd.css" rel="stylesheet" type="text/css">
+</head>
+<body class="yui3-skin-sam">
+    <div id="log"></div>
+
+    <div id="wrap">
+        <div id="drag"></div>
+        <div id="drop"></div>
+    </div>
+    <div id="del">
+        <ul>
+            <li>item</li>
+            <li>item</li>
+            <li>item</li>
+            <li>item</li>
+            <li>item</li>
+            <li class="disabled">item</li>
+            <li>item</li>
+        </ul>
+    </div>
+<script>
+
+YUI({
+    coverage: ['dd', 'dd-plugin', 'dd-drop-plugin'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'dd-tests': {
+            fullpath: './assets/dd-tests.js',
+            requires: [ 'event-synthetic', 'event-gestures', 'dd', 'dd-plugin', 'panel', 'console', 'test', 'substitute', 'selector-css3' ]
+        },
+        'dd-base': {
+            fullpath: './assets/dd-base.js',
+            requires: [ 'dd-drag', 'dd-ddm-base', 'test' ]
+        }
+        
+    }
+}).use('dd-base', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+
+});
+
+</script>
+</body>
+</html>

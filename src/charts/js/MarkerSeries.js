@@ -3,6 +3,7 @@
  * on a graph.
  *
  * @module charts
+ * @submodule charts-base
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots

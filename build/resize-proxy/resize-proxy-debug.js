@@ -163,4 +163,4 @@ Y.namespace('Plugin');
 Y.Plugin.ResizeProxy = ResizeProxy;
 
 
-}, '@VERSION@' ,{requires:['resize-base', 'plugin'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['resize-base', 'plugin']});

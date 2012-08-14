@@ -2,6 +2,7 @@
  * The ChartBase class is an abstract class used to create charts.
  *
  * @module charts
+ * @submodule charts-base
  * @class ChartBase
  * @constructor
  */
@@ -837,9 +838,12 @@ ChartBase.prototype = {
             axis;
         this._seriesIndex = -1;
         this._itemIndex = -1;
-        this.set("axes", this.get("axes"));
+        if(this instanceof Y.CartesianChart)
+        {
+            this.set("axes", this.get("axes"));
+            this.set("seriesCollection", this.get("seriesCollection"));
+        }
         axes = this.get("axes");
-        this.set("seriesCollection", this.get("seriesCollection"));
         if(axes)
         {
             for(i in axes)
@@ -1021,6 +1025,7 @@ ChartBase.prototype = {
     _getTooltip: function()
     {
         var node = DOCUMENT.createElement("div"),
+            tooltipClass = _getClassName("chart-tooltip"),
             tt = {
                 setTextFunction: this._setText,
                 markerLabelFunction: this._tooltipLabelFunction,
@@ -1058,6 +1063,7 @@ ChartBase.prototype = {
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
         node.setStyle("visibility", "hidden");
+        node.addClass(tooltipClass);
         tt.node = Y.one(node);
         return tt;
     },

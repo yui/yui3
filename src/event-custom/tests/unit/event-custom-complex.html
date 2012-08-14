@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+<div id="log"></div>
+<div id="adiv">a div</div>
+<div id="demo" class="yui-module">
+    <div class="yui-hd">
+        <h4>Animation Demo</h4>
+        <a title="remove module" class="yui-remove"><em>x</em></a>
+
+    </div>
+    <div class="yui-bd">
+        <p>This an example of what you can do with the YUI Animation Utility.</p>
+        <p><em>Follow the instructions above to see the animation in action.</em></p>
+    </div>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/event-custom-complex-tests.js"></script>
+<script src="./assets/event-custom-complex-sequence-tests.js"></script>
+<script>
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    lazyEventFacade: true
+}).use('anim','test-console', 'event-custom-complex-tests', 'event-custom-complex-sequence-tests', function (Y) {
+
+    // Y.CustomEvent.keepDeprecatedSubs = true;
+
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.masterSuite.name = 'Custom Event: Complex';
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

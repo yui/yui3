@@ -5,7 +5,7 @@
 
     "yuiBuildUrl"     : "build",
     "yuiLocalBuildUrl": "build",
-    "yuiVersion"      : "3.5.1",
+    "yuiVersion"      : "3.6.0",
     "yuiSeedUrl"      : "build/yui/yui-min.js",
 
     "componentDefaults": {

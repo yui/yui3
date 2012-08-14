@@ -2,6 +2,7 @@
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -35,6 +36,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             overlay = DOCUMENT.createElement("div");
             this.get("contentBox").appendChild(overlay);
             this._overlay = Y.one(overlay); 
+            this._overlay.set("id", this.get("id") + "_overlay");
             this._overlay.setStyle("position", "absolute");
             this._overlay.setStyle("background", "#fff");
             this._overlay.setStyle("opacity", 0);
@@ -292,6 +294,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             catKey,
             seriesKey,
             graph,
+            orphans = [],
             categoryKey = this.get("categoryKey"),
             showMarkers = this.get("showMarkers"),
             showAreaFill = this.get("showAreaFill"),
@@ -327,11 +330,27 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 }
                 else
                 {
-                    if(series instanceof Y.CartesianSeries)
-                    {
-                        series.destroy(true);
-                    }
+                    orphans.push(series);
                 }
+            }
+            else
+            {
+                orphans.push(series);
+            }
+        }
+        while(orphans.length > 0)
+        {
+            series = orphans.shift();
+            if(seriesKeys.length > 0)
+            {
+                key = seriesKeys.shift();
+                this._setBaseAttribute(series, seriesKey, key);
+                tempKeys.push(key);
+                sc.push(series);
+            }
+            else if(series instanceof Y.CartesianSeries)
+            {
+                series.destroy(true);
             }
         }
         if(seriesKeys.length > 0)
@@ -347,12 +366,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 this._parseSeriesAxes(series);
                 continue;
             }
-            
+
             series[catKey] = series[catKey] || categoryKey;
             series[seriesKey] = series[seriesKey] || seriesKeys.shift();
             series[catAxis] = this._getCategoryAxis();
             series[valAxis] = this._getSeriesAxis(series[seriesKey]);
-            
+                
             series.type = series.type || type;
             series.direction = series.direction || dir;
             

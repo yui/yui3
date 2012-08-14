@@ -5,6 +5,13 @@
  * @module charts
  * @main charts
  */
+
+/**
+ * The charts-base submodule contains the core functionality for the charts module.
+ *
+ * @module charts
+ * @submodule charts-base
+ */
 var CONFIG = Y.config,
     WINDOW = CONFIG.win,
     DOCUMENT = CONFIG.doc,
@@ -25,7 +32,6 @@ var CONFIG = Y.config,
 /**
  * Abstract class for creating groups of shapes with the same styles and dimensions.
  *
- * @module graphics
  * @class ShapeGroup
  * @constructor
  */

@@ -2,6 +2,7 @@
  * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAreaSplineSeries
  * @constructor
  * @extends AreaSeries

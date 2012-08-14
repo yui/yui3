@@ -364,6 +364,28 @@ RESTSync.prototype = {
     },
 
     /**
+    Called to parse the response object returned from `Y.io()`. This method
+    receives the full response object and is expected to "prep" a response which
+    is suitable to pass to the `parse()` method.
+
+    By default the response body is returned (`responseText`), because it
+    usually represents the entire entity of this model on the server.
+
+    If you need to parse data out of the response's headers you should do so by
+    overriding this method. If you'd like the entire response object from the
+    XHR to be passed to your `parse()` method, you can simply assign this
+    property to `false`.
+
+    @method parseIOResponse
+    @param {Object} response Response object from `Y.io()`.
+    @return {Any} The modified response to pass along to the `parse()` method.
+    @since 3.6.1
+    **/
+    parseIOResponse: function (response) {
+        return response.responseText;
+    },
+
+    /**
     Serializes `this` model to be used as the HTTP request entity body.
 
     By default this model will be serialized to a JSON string via its `toJSON()`
@@ -379,10 +401,12 @@ RESTSync.prototype = {
     place to start.
 
     @method serialize
+    @param {String} [action] Optional `sync()` action for which to generate the
+        the serialized representation of this model.
     @return {String} serialized HTTP request entity body.
     @since 3.6.0
     **/
-    serialize: function () {
+    serialize: function (action) {
         return Y.JSON.stringify(this);
     },
 
@@ -431,7 +455,7 @@ RESTSync.prototype = {
 
         // Prepare the content if we are sending data to the server.
         if (method === 'POST' || method === 'PUT') {
-            entity = this.serialize();
+            entity = this.serialize(action);
         } else {
             // Remove header, no content is being sent.
             delete headers['Content-Type'];
@@ -506,6 +530,33 @@ RESTSync.prototype = {
                 root + '/' + url;
     },
 
+
+    /**
+    Calls both public, overrideable methods: `parseIOResponse()`, then `parse()`
+    and returns the result.
+
+    This will call into `parseIOResponse()`, if it's defined as a method,
+    passing it the full response object from the XHR and using its return value
+    to pass along to the `parse()`. This enables developers to easily parse data
+    out of the response headers which should be used by the `parse()` method.
+
+    @method _parse
+    @param {Object} response Response object from `Y.io()`.
+    @return {Object|Object[]} Attribute hash or Array of model attribute hashes.
+    @protected
+    @since 3.6.1
+    **/
+    _parse: function (response) {
+        // When `parseIOResponse` is defined as a method, it will be invoked and
+        // the result will become the new response object that the `parse()`
+        // will be invoked with.
+        if (typeof this.parseIOResponse === 'function') {
+            response = this.parseIOResponse(response);
+        }
+
+        return this.parse(response);
+    },
+
     /**
     Performs the XHR and returns the resulting `Y.io()` request object.
 
@@ -513,13 +564,14 @@ RESTSync.prototype = {
 
     @method _sendSyncIORequest
     @param {Object} config An object with the following properties:
-      @param {String} action The `sync()` action being performed.
-      @param {Function} [callback] Called when the sync operation finishes.
-      @param {String} [entity] The HTTP request entity body.
-      @param {Object} headers The HTTP request headers.
-      @param {String} method The HTTP request method.
-      @param {Number} [timeout] Time until the HTTP request is aborted.
-      @param {String} url The URL of the HTTP resource.
+      @param {String} config.action The `sync()` action being performed.
+      @param {Function} [config.callback] Called when the sync operation
+        finishes.
+      @param {String} [config.entity] The HTTP request entity body.
+      @param {Object} config.headers The HTTP request headers.
+      @param {String} config.method The HTTP request method.
+      @param {Number} [config.timeout] Time until the HTTP request is aborted.
+      @param {String} config.url The URL of the HTTP resource.
     @return {Object} The resulting `Y.io()` request object.
     @protected
     @since 3.6.0
@@ -595,9 +647,9 @@ RESTSync.prototype = {
     @method _onSyncIOEnd
     @param {String} txId The `Y.io` transaction id.
     @param {Object} details Extra details carried through from `sync()`:
-      @param {String} action The sync action performed.
-      @param {Function} [callback] The function to call after syncing.
-      @param {String} url The URL of the resource the request was made to.
+      @param {String} details.action The sync action performed.
+      @param {Function} [details.callback] The function to call after syncing.
+      @param {String} details.url The URL of the requested resource.
     @protected
     @since 3.6.0
     **/
@@ -613,20 +665,20 @@ RESTSync.prototype = {
     @param {String} txId The `Y.io` transaction id.
     @param {Object} res The `Y.io` response object.
     @param {Object} details Extra details carried through from `sync()`:
-      @param {String} action The sync action performed.
-      @param {Function} [callback] The function to call after syncing.
-      @param {String} url The URL of the resource the request was made to.
+      @param {String} details.action The sync action performed.
+      @param {Function} [details.callback] The function to call after syncing.
+      @param {String} details.url The URL of the requested resource.
     @protected
     @since 3.6.0
     **/
     _onSyncIOFailure: function (txId, res, details) {
         var callback = details.callback;
 
-        if (Lang.isFunction(callback)) {
+        if (callback) {
             callback({
                 code: res.status,
                 msg : res.statusText
-            }, res.responseText);
+            }, res);
         }
     },
 
@@ -640,17 +692,17 @@ RESTSync.prototype = {
     @param {String} txId The `Y.io` transaction id.
     @param {Object} res The `Y.io` response object.
     @param {Object} details Extra details carried through from `sync()`:
-      @param {String} action The sync action performed.
-      @param {Function} [callback] The function to call after syncing.
-      @param {String} url The URL of the resource the request was made to.
+      @param {String} details.action The sync action performed.
+      @param {Function} [details.callback] The function to call after syncing.
+      @param {String} details.url The URL of the requested resource.
     @protected
     @since 3.6.0
     **/
     _onSyncIOSuccess: function (txId, res, details) {
         var callback = details.callback;
 
-        if (Lang.isFunction(callback)) {
-            callback(null, res.responseText);
+        if (callback) {
+            callback(null, res);
         }
     },
 
@@ -662,9 +714,9 @@ RESTSync.prototype = {
     @method _onSyncIOStart
     @param {String} txId The `Y.io` transaction id.
     @param {Object} details Extra details carried through from `sync()`:
-      @param {String} action The sync action performed.
-      @param {Function} [callback] The function to call after syncing.
-      @param {String} url The URL of the resource the request was made to.
+      @param {String} detials.action The sync action performed.
+      @param {Function} [details.callback] The function to call after syncing.
+      @param {String} details.url The URL of the requested resource.
     @protected
     @since 3.6.0
     **/

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="./assets/event-resize-tests.js"></script>
+<script>
+YUI({
+    coverage: ['event-resize'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    // Can't use lazyEventFacade with resize tests because IE doesn't support
+    // simulating window.onresize, so the custom event proxy for the DOM
+    // subscriptions needs to be fire()d manualy, passing an object, rather than
+    // a browser event
+    // lazyEventFacade: true,
+})
+.use('test-console', 'event-resize-tests', function (Y) {
+
+    (new Y.Test.Console()).render( "#log" );
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>
