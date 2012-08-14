@@ -5,16 +5,12 @@
 </head>
 <body class="yui3-skin-sam">
     <div id="doc">
-
         <div id="clickcontainer">
             <p id="clicker1" class="clickers"><a id='clicka'>click1</a></p>
             <p id="clicker2" class="clickers">click2</p>
         </div>
-
     </div>
-    <!-- YUI3 Core //-->
     <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-    <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
             coverage: ['event'],
@@ -29,7 +25,7 @@
             // add the test cases and suites
             Y.Test.Runner.add(new Y.Test.Case({
 
-                name: "DOM Event Tests",
+                name: "DOM Events",
 
                 _should: {
                     error: {
@@ -647,14 +643,11 @@
 
                     test.wait();
                 }
+
             }));
 
-            //run all tests
             Y.Test.Runner.setName("Event: DOM");
             Y.Test.Runner.run();
-
-            /* finishing the testing process */
-
         });
     </script>
 </body>

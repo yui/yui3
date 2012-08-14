@@ -6,8 +6,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
         name: "Custom Event Complex",
 
         _should: {
-            ignore: {
-                test_detach_by_signature: Y.UA.nodejs,
+            ignore : {
                 test_node_publish: Y.UA.nodejs
             },
             fail: {
@@ -63,47 +62,6 @@ YUI.add("event-custom-complex-tests", function(Y) {
             });
 
             o.fire('testAugment', 1, 2);
-
-        },
-
-        test_detach_by_signature: function() {
-
-            var anim = new Y.Anim({
-                    node: '#demo',
-                    to: { opacity: 0 }
-                }),
-                count = 0;
-                tester = function() {
-                    count++;
-                    Y.detach('foo', tester);
-                };
-
-            Y.on('foo', tester);
-
-            Y.fire('foo');
-            Y.fire('foo');
-            Y.Assert.areEqual(1, count);
-
-            var onEnd = function() {
-                count++;
-                // this.detach('anim:end', onEnd);
-                this.detach('end', onEnd);
-                this.setAttrs({
-                    to: { height: 1 },
-                    easing: Y.Easing.bounceOut
-                });
-                this.run();
-
-                if (count > 2) {
-                    throw new Error('onEnd should only have happened once');
-                }
-            };
-
-            // anim.on('end', onEnd);
-
-            anim.run();
-            anim.run();
-
 
         },
 
@@ -724,39 +682,6 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.isTrue(this.global_notified, 'asynchronous notification did not seem to work.');
         },
 
-        test_node_publish: function() {
-            var node = Y.one('#adiv');
-
-            var preventCount = 0, heard = 0;
-            node.publish('foo1', {
-                emitFacade: true,
-                // should only be called once
-                preventedFn: function() {
-                    preventCount++;
-                    Y.Assert.isTrue(this instanceof Y.Node);
-                }
-            });
-
-            node.on('foo1', function(e) {
-                Y.Assert.areEqual('faking foo', e.type);
-                Y.Assert.areEqual('foo1', e._type);
-                heard++;
-                e.preventDefault();
-            });
-
-            node.on('foo1', function(e) {
-                heard++;
-                e.preventDefault();
-            });
-
-            node.fire('foo1', {
-                type: 'faking foo'
-            });
-
-            Y.Assert.areEqual(1, preventCount);
-            Y.Assert.areEqual(2, heard);
-        },
-
         // SRC, ON
         // BUBBLE, ON
         // BUBBLE, DEFAULT BEHAVIOR
@@ -1086,7 +1011,45 @@ YUI.add("event-custom-complex-tests", function(Y) {
             target.fire('bar');
 
             Y.Assert.isTrue(pass);
+        },
+
+        test_node_publish: function() {
+
+            var node = Y.Node.create("<div>a div</div>");
+            Y.one("body").append(node);
+
+            var preventCount = 0, heard = 0;
+            node.publish('foo1', {
+                emitFacade: true,
+                // should only be called once
+                preventedFn: function() {
+                    preventCount++;
+                    Y.Assert.isTrue(this instanceof Y.Node);
+                }
+            });
+
+            node.on('foo1', function(e) {
+                Y.Assert.areEqual('faking foo', e.type);
+                Y.Assert.areEqual('foo1', e._type);
+                heard++;
+                e.preventDefault();
+            });
+
+            node.on('foo1', function(e) {
+                heard++;
+                e.preventDefault();
+            });
+
+            node.fire('foo1', {
+                type: 'faking foo'
+            });
+
+            Y.Assert.areEqual(1, preventCount);
+            Y.Assert.areEqual(2, heard);
+
+            node.remove(true);
         }
+
     }));
 
     Y.Test.Runner.add(suite);

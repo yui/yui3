@@ -4648,7 +4648,23 @@ baseSuite.add(new Y.Test.Case({
         target.fire('test');
 
         Y.Assert.areSame(1, count);
+    },
+
+    "test Y.detach(type, fn)": function() {
+        var count = 0;
+            tester = function() {
+                count++;
+                Y.detach('foo', tester);
+            };
+
+        Y.on('foo', tester);
+
+        Y.fire('foo');
+        Y.fire('foo');
+
+        Y.Assert.areEqual(1, count);
     }
+
 }));
 
 baseSuite.add(new Y.Test.Case({

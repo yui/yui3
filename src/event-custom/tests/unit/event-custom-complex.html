@@ -5,19 +5,6 @@
 </head>
 <body class="yui3-skin-sam">
 <div id="log"></div>
-<div id="adiv">a div</div>
-<div id="demo" class="yui-module">
-    <div class="yui-hd">
-        <h4>Animation Demo</h4>
-        <a title="remove module" class="yui-remove"><em>x</em></a>
-
-    </div>
-    <div class="yui-bd">
-        <p>This an example of what you can do with the YUI Animation Utility.</p>
-        <p><em>Follow the instructions above to see the animation in action.</em></p>
-    </div>
-</div>
-
 <script src="../../../../build/yui/yui.js"></script>
 <script src="./assets/event-custom-complex-tests.js"></script>
 <script src="./assets/event-custom-complex-sequence-tests.js"></script>
@@ -25,7 +12,7 @@
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     lazyEventFacade: true
-}).use('anim','test-console', 'event-custom-complex-tests', 'event-custom-complex-sequence-tests', function (Y) {
+}).use('test-console', 'event-custom-complex-tests', 'event-custom-complex-sequence-tests', function (Y) {
 
     // Y.CustomEvent.keepDeprecatedSubs = true;
 
