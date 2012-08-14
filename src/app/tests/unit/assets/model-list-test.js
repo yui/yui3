@@ -25,6 +25,35 @@ modelListSuite.add(new Y.Test.Case({
         delete this.list;
     },
 
+    'constructor: should add a model instance, array of model instances, or ModelList instance to the list when passed in the `items` config property': function () {
+        var a = new Y.Model({name: 'a'}),
+            b = new Y.Model({name: 'b'}),
+            list;
+
+        list = new Y.ModelList({items: {name: 'a'}});
+        Assert.areSame(1, list.size(), 'list should contain one model');
+        Assert.areSame('a', list.item(0).get('name'), 'single model as object should be added correctly on init');
+
+        list = new Y.ModelList({items: [{name: 'a'}, {name: 'b'}]});
+        Assert.areSame(2, list.size(), 'list should contain two models');
+        Assert.areSame('a', list.item(0).get('name'), 'first model of multiple models as objects should be added correctly on init');
+        Assert.areSame('b', list.item(1).get('name'), 'second model of multiple models as objects should be added correctly on init');
+
+        list = new Y.ModelList({items: a});
+        Assert.areSame(1, list.size(), 'list should contain one model');
+        Assert.areSame('a', list.item(0).get('name'), 'single model should be added correctly on init');
+
+        list = new Y.ModelList({items: [a, b]});
+        Assert.areSame(2, list.size(), 'list should contain two models');
+        Assert.areSame('a', list.item(0).get('name'), 'first model of multiple models should be added correctly on init');
+        Assert.areSame('b', list.item(1).get('name'), 'second model of multiple models should be added correctly on init');
+
+        list = new Y.ModelList({items: new Y.ModelList({items: [a, b]})});
+        Assert.areSame(2, list.size(), 'list should contain two models');
+        Assert.areSame('a', list.item(0).get('name'), 'first model of ModelList should be added correctly on init');
+        Assert.areSame('b', list.item(1).get('name'), 'second model of ModelList should be added correctly on init');
+    },
+
     'destructor should detach all models from the list': function () {
         var model = new Y.Model();
 
