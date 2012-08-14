@@ -100,7 +100,6 @@ YUI.add('sortable', function(Y) {
         */
         _onDropOver: function(e) {
             if (!e.drop.get(NODE).test(this.get(NODES))) {
-                var nodes = e.drop.get(NODE).all(this.get(NODES));
                 e.drop.get(NODE).append(e.drag.get(NODE));
             }
         },
@@ -410,11 +409,13 @@ YUI.add('sortable', function(Y) {
         * @description Test a Node or a selector for the container
         */
         _test: function(node, test) {
+            var ret;
             if (test instanceof Y.Node) {
-                return (test === node);
+                ret = (test === node);
             } else {
-                return node.test(test);
+                ret = node.test(test);
             }
+            return ret;
         },
         /**
         * @static
