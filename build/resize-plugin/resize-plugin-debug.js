@@ -191,12 +191,11 @@ var ResizePlugin = function(config) {
                       * @private
                       */
                    _isDifferent: function(oldVal, newVal) {
+                       var retValue = false;
                        if (oldVal !== newVal) {
-                           return newVal;
+                           retValue = newVal;
                        }
-                       else {
-                           return false;
-                       }
+                       return retValue;
                    }
 
 
