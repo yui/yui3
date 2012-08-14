@@ -30,7 +30,7 @@
 
     	{
     		"name"			: "imagecropper-gallery",
-    		"displayName"	: "Cropping images from a thumbnails",
+    		"displayName"	: "Cropping images from thumbnails",
     		"description"	: "This example shows how to select the image to crop from a list of thumbnails",
     		"modules"		: ["imagecropper"],
     		"tags"			: ["imagecropper"],
