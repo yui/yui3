@@ -523,7 +523,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             this.source.fire('foo');
 
             Y.Assert.areSame('ABCDGEF', results);
-        },
+        }
 
         /*
         test_bubblePrevented: function () {

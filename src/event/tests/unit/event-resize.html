@@ -11,7 +11,7 @@
 <script>
 YUI({
     coverage: ['event-resize'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
     // Can't use lazyEventFacade with resize tests because IE doesn't support
     // simulating window.onresize, so the custom event proxy for the DOM
     // subscriptions needs to be fire()d manualy, passing an object, rather than
