@@ -1,12 +1,12 @@
 <link rel="stylesheet" href="http://localhost/yui3-gallery/src/gallery-imagecropper/build_tmp/assets/skins/sam/gallery-imagecropper.css">
 <style>
 .example {
-	position: relative;
+  position: relative;
 }
 #preview {
-	position: absolute;
-	left: 400px;
-	top: 15px;
+  position: absolute;
+  left: 400px;
+  top: 15px;
 }
 </style>
 
@@ -19,6 +19,95 @@ This example demonstrates how to use the `crop:crop` event from ImageCropper to 
 <div class="example yui3-skin-sam">
     {{>imagecropper-events-source}}
 </div>
+
+<h2>Using the crop event</h2>
+<h3>The markup</h3>
+<p>The `yui3-skin-sam` class will provide the default look and feel for the resize controls that ImageCropper uses.
+```
+<div class="yui3-skin-sam">
+  <!-- Here we'll render the ImageCropper -->
+  <div id="imagecropper"></div>
+  <div id="preview">
+    <!-- We'll use this div to show set its background image with the resulting preview -->
+    <div id="result"></div>
+    <!-- We'll insert here the coordinates returned by ImageCropper -->
+    <p id="coords"></p>
+  </div>
+</div>
+```
+<h3>Setting up the YUI instance</h3>
+<p>The only module you need is the `imagecropper` module.</p>
+```
+<script>
+YUI().use('imagecropper', function (Y) {
+    // We'll write example code here
+});
+</script>
+```
+<h3>A Node method for setting the background position</h3>
+<p>We'll need to set the background position of the `result` element according to the coordinates given by the widget, so we'll setup a Node helper method to do it.</p>
+```
+// Declare a utility method on Node to set the background
+// position style
+Y.Node.addMethod('setBackgroundXY', function (node, xy) {
+  xy = xy || [0, 0];
+  // Default Number coordinates to pixels
+  Y.Array.each(xy, function (val, i) {
+    if (Y.Lang.isNumber(val)) {
+      xy[i] += 'px';
+    }
+  });
+  // Some browsers support the backgroundPosition shorthand
+  // others require you to set both X and Y separately
+  this.setStyles({
+    backgroundPosition: xy.join(' '),
+    backgroundPositionX: xy[0],
+    backgroundPositionY: xy[1]
+  });
+});
+```
+
+<h3>Settig up the photo</h3>
+<p>You can fetch the photo's information using the `IO` module or using any other method you prefer.</p>
+```
+var coordview = Y.one('#coords'),
+    result = Y.one('#result');
+
+function updatePreview(coords) {
+  coordview.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
+
+  // When we move the crop rectangle to the right, we must move the 
+  // background to the left to reflect the shown area
+  result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
+    width: coords.width,
+    height: coords.height
+  });
+}
+```
+<h3>Instantiating the ImageCropper</h3>
+```
+// Create an imagecropper
+var imagecropper = new Y.ImageCropper({
+  src: 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
+  width: 333,
+  height: 500
+});  
+imagecropper.render('#imagecropper');
+```
+<h3>Listening to the `crop` event and showing the initial state</h3>
+<p></p>
+```
+// Listen to the crop event to update the result preview
+imagecropper.on('crop:crop', function (e) {
+  // The event facade contains the same properties as the object that
+  // getCropCoords() returns: left, top, width, height
+  // We use them to update the preview
+  updatePreview(e);
+});
+
+// Show the initial coordinates
+updatePreview(imagecropper.getCropCoords());
+```
 
 <h2>Complete Example Source</h2>
 

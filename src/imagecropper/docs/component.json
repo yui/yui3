@@ -20,7 +20,7 @@
 
         {
             "name"          : "imagecropper-events",
-            "displayName"   : "Using events to show a preview of the cropped image",
+            "displayName"   : "Using the crop event",
             "description"   : "This example shows how to use ImageCropper events to show a preview of the image being cropped",
             "modules"       : ["imagecropper"],
             "tags"          : ["imagecropper"],
