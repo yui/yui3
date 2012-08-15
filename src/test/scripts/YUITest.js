@@ -17,5 +17,8 @@ if (YUI.YUITest) {
 
     //Make this global for back compat
     YUITest = {
-        version: "@VERSION@"
+        version: "@VERSION@",
+        guid: function(pre) {
+            return Y.guid(pre);
+        }
     };
