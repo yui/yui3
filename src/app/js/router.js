@@ -869,7 +869,13 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getURL: function () {
-        return Y.getLocation().toString();
+        var url = Y.getLocation().toString();
+
+        if (!this._html5) {
+            url = this._upgradeURL(url);
+        }
+
+        return url;
     },
 
     /**
@@ -1085,7 +1091,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             origin, path, query, hash, resolved;
 
         if (!parts) {
-            return this._getURL();
+            return Y.getLocation().toString();
         }
 
         origin = parts[1];
