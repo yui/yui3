@@ -137,7 +137,7 @@
              * @static
              * @private
              */
-            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
     
             /**
              * Pointer to the current node in the test tree.
@@ -867,7 +867,7 @@
              * @static
              */
             clear : function () {
-                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
             },
             
             /**
