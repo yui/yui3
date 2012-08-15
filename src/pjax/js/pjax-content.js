@@ -4,7 +4,7 @@ implement the standard pjax (HTMP5 pushState + Ajax) functionality.
 
 @module pjax
 @submodule pjax-content
-@since 3.6.0
+@since 3.7.0
 **/
 
 /**
@@ -28,7 +28,7 @@ to that Router. For a pre-made standalone Pjax router, see the `Pjax` class.
 
 @class PjaxContent
 @extensionfor Router
-@since 3.6.0
+@since 3.7.0
 **/
 function PjaxContent() {}
 
@@ -43,10 +43,10 @@ PjaxContent.prototype = {
 
     The return value is an object containing two properties:
 
-      - **node**: A `Y.Node` instance for a document fragment containing the
+      * `node`: A `Y.Node` instance for a document fragment containing the
         extracted HTML content.
 
-      - **title**: The title of the HTML page, if any, extracted using the
+      * `title`: The title of the HTML page, if any, extracted using the
         `titleSelector` attribute (which defaults to looking for a `<title>`
         element). If `titleSelector` is not set or if a title could not be
         found, this property will be `undefined`.
@@ -81,20 +81,44 @@ PjaxContent.prototype = {
     },
 
     /**
-    TODO: Document.
-    Default Pjax route handler. Makes an Ajax request for the requested URL.
+    Pjax route middleware to load content from a server. This makes an Ajax
+    request for the requested URL, parses the returned content and puts it on
+    the route's response object.
 
-    @method contentRoute
+    This is route middleware and not intended to be the final callback for a
+    route. This will add the following information to the route's request and
+    response objects:
+
+      - `req.ioURL`: The full URL that was used to make the `Y.io()` XHR. This
+        may contain `"pjax=1"` if the `addPjaxParam` option is set.
+
+      - `res.content`: An object containing `node` and `title` properties for
+        the content extracted from the server's response. See `getContent()` for
+        more details.
+
+      - `res.ioResponse`: The full `Y.io()` response object. This is useful if
+        you need access to the XHR's response `status` or HTTP headers.
+
+    @example
+        router.route('/foo/', 'loadContent', function (req, res, next) {
+            Y.one('container').setHTML(res.content.node);
+            Y.config.doc.title = res.content.title;
+        });
+
+    @method loadContent
     @param {Object} req Request object.
-    @param {Object} req Request object.
-    @protected
-    @since 3.5.0
+    @param {Object} res Response Object.
+    @param {Function} next Function to pass control to the next route callback.
+    @since 3.7.0
+    @see Router.route()
     **/
     loadContent: function (req, res, next) {
         var url = req.url;
 
         // If there's an outstanding request, abort it.
-        this._request && this._request.abort();
+        if (this._request) {
+            this._request.abort();
+        }
 
         // Add a 'pjax=1' query parameter if enabled.
         if (this.get('addPjaxParam')) {
@@ -135,19 +159,29 @@ PjaxContent.prototype = {
     /**
     Handles IO complete events.
 
+    This parses the content from the `Y.io()` response and puts it on the
+    route's response object.
+
     @method _onPjaxIOComplete
+    @param {String} id The `Y.io` transaction id.
+    @param {Object} ioResponse The `Y.io` response object.
+    @param {Object} details Extra details carried through from `loadContent()`.
     @protected
     @since 3.7.0
     **/
-    _onPjaxIOComplete: function (id, res, details) {
-        var route   = details.route,
-            content = this.getContent(res.responseText);
+    _onPjaxIOComplete: function (id, ioResponse, details) {
+        var content = this.getContent(ioResponse.responseText),
+            route   = details.route,
+            req     = route.req,
+            res     = route.res;
 
-        Y.mix(route.res, {
-            content   : content,
-            ioURL     : details.url,
-            ioResponse: res
-        });
+        // Put the URL requested through `Y.io` on the route's `req` object.
+        req.ioURL = details.url;
+
+        // Put the parsed content and `Y.io` response object on the route's
+        // `res` object.
+        res.content    = content;
+        res.ioResponse = ioResponse;
 
         route.next();
     },
@@ -156,6 +190,8 @@ PjaxContent.prototype = {
     Handles IO end events.
 
     @method _onPjaxIOEnd
+    @param {String} id The `Y.io` transaction id.
+    @param {Object} details Extra details carried through from `loadContent()`.
     @protected
     @since 3.5.0
     **/

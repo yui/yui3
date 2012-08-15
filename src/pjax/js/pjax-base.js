@@ -30,7 +30,7 @@ var win = Y.config.win,
       even in browsers without HTML5 history.
     @param {String} [hash] The hash-fragment (including "#") of the `url`. This
       will be present when the `url` differs from the current URL only by its
-      hash and `navigateOnHash` has ben set to `true`.
+      hash and `navigateOnHash` has been set to `true`.
     @param {Event} [originEvent] The event that caused the navigation. Usually
       this would be a click event from a "pjax" anchor element.
     @param {Boolean} [replace] Whether or not the current history entry will be
@@ -161,7 +161,7 @@ PjaxBase.prototype = {
     the same origin as the page's current location.
 
     This normalize browser inconsistencies with how the `port` is reported for
-    anchor elements (IE reports a value for the defualt port, e.g. "80").
+    anchor elements (IE reports a value for the default port, e.g. "80").
 
     @method _isLinkSameOrigin
     @param {Node} link The anchor element to test whether its `href` is of the

@@ -10,46 +10,50 @@ support) in newer browsers.
 **/
 
 /**
-TODO: Document `defaultRoute`.
+A stack of middleware which forms the default Pjax route.
 
+@property defaultRoute
+@type Array
+@static
+@since 3.7.0
 **/
 var defaultRoute = ['loadContent', '_defaultRoute'],
 
-    /**
-    Fired when an error occurs while attempting to load a URL via Ajax.
+/**
+Fired when an error occurs while attempting to load a URL via Ajax.
 
-    @event error
-    @param {Object} content Content extracted from the response, if any.
-        @param {Node} content.node A `Y.Node` instance for a document fragment
-            containing the extracted HTML content.
-        @param {String} [content.title] The title of the HTML page, if any,
-            extracted using the `titleSelector` attribute. If `titleSelector` is
-            not set or if a title could not be found, this property will be
-            `undefined`.
-    @param {String} responseText Raw Ajax response text.
-    @param {Number} status HTTP status code for the Ajax response.
-    @param {String} url The absolute URL that failed to load.
-    @since 3.5.0
-    **/
-    EVT_ERROR = 'error',
+@event error
+@param {Object} content Content extracted from the response, if any.
+    @param {Node} content.node A `Y.Node` instance for a document fragment
+        containing the extracted HTML content.
+    @param {String} [content.title] The title of the HTML page, if any,
+        extracted using the `titleSelector` attribute. If `titleSelector` is
+        not set or if a title could not be found, this property will be
+        `undefined`.
+@param {String} responseText Raw Ajax response text.
+@param {Number} status HTTP status code for the Ajax response.
+@param {String} url The absolute URL that failed to load.
+@since 3.5.0
+**/
+EVT_ERROR = 'error',
 
-    /**
-    Fired when a URL is successfully loaded via Ajax.
+/**
+Fired when a URL is successfully loaded via Ajax.
 
-    @event load
-    @param {Object} content Content extracted from the response, if any.
-        @param {Node} content.node A `Y.Node` instance for a document fragment
-            containing the extracted HTML content.
-        @param {String} [content.title] The title of the HTML page, if any,
-            extracted using the `titleSelector` attribute. If `titleSelector` is
-            not set or if a title could not be found, this property will be
-            `undefined`.
-    @param {String} responseText Raw Ajax response text.
-    @param {Number} status HTTP status code for the Ajax response.
-    @param {String} url The absolute URL that was loaded.
-    @since 3.5.0
-    **/
-    EVT_LOAD = 'load';
+@event load
+@param {Object} content Content extracted from the response, if any.
+    @param {Node} content.node A `Y.Node` instance for a document fragment
+        containing the extracted HTML content.
+    @param {String} [content.title] The title of the HTML page, if any,
+        extracted using the `titleSelector` attribute. If `titleSelector` is
+        not set or if a title could not be found, this property will be
+        `undefined`.
+@param {String} responseText Raw Ajax response text.
+@param {Number} status HTTP status code for the Ajax response.
+@param {String} url The absolute URL that was loaded.
+@since 3.5.0
+**/
+EVT_LOAD = 'load';
 
 /**
 Provides seamless, gracefully degrading Pjax (pushState + Ajax) functionality,
@@ -74,6 +78,21 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase, Y.PjaxContent], {
 
     // -- Protected Methods ----------------------------------------------------
 
+    /**
+    Default Pjax route callback. Fires either the `load` or `error` event based
+    on the status of the `Y.io` request made by the `loadContent()` middleware.
+
+    **Note:** This route callback assumes that it's called after the
+    `loadContent()` middleware.
+
+    @method _defaultRoute
+    @param {Object} req Request object.
+    @param {Object} res Response Object.
+    @param {Function} next Function to pass control to the next route callback.
+    @protected
+    @since 3.5.0
+    @see Router.route()
+    **/
     _defaultRoute: function (req, res, next) {
         var ioResponse = res.ioResponse,
             status     = ioResponse.status,
@@ -83,7 +102,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase, Y.PjaxContent], {
             content     : res.content,
             responseText: ioResponse.responseText,
             status      : status,
-            url         : res.ioURL
+            url         : req.ioURL
         });
 
         next();
@@ -106,7 +125,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase, Y.PjaxContent], {
             content   = e.content;
 
         if (container && content.node) {
-            container.setContent(content.node);
+            container.setHTML(content.node);
         }
 
         if (content.title && Y.config.doc) {
@@ -141,5 +160,6 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase, Y.PjaxContent], {
         }
     },
 
+    // Documented towards the top of this file.
     defaultRoute: defaultRoute
 });
