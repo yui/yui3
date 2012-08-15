@@ -1,9 +1,9 @@
     /**
-     * The State class maintains state for a collection of named items, with 
+     * The State class maintains state for a collection of named items, with
      * a varying number of properties defined.
      *
-     * It avoids the need to create a separate class for the item, and separate instances 
-     * of these classes for each item, by storing the state in a 2 level hash table, 
+     * It avoids the need to create a separate class for the item, and separate instances
+     * of these classes for each item, by storing the state in a 2 level hash table,
      * improving performance when the number of items is likely to be large.
      *
      * @constructor
@@ -27,10 +27,14 @@
          * @param key {String} The name of the property.
          * @param val {Any} The value of the property.
          */
-        add : function(name, key, val) {
-            var d = this.data;
-            d[name] = d[name] || {};
-            d[name][key] = val;
+        add: function(name, key, val) {
+            var item = this.data[name];
+
+            if (!item) {
+                item = this.data[name] = {};
+            }
+
+            item[key] = val;
         },
 
         /**
@@ -38,14 +42,19 @@
          *
          * @method addAll
          * @param name {String} The name of the item.
-         * @param o {Object} A hash of property/value pairs.
+         * @param obj {Object} A hash of property/value pairs.
          */
-        addAll: function(name, o) {
-            var key;
+        addAll: function(name, obj) {
+            var item = this.data[name],
+                key;
 
-            for (key in o) {
-                if (o.hasOwnProperty(key)) {
-                    this.add(name, key, o[key]);
+            if (!item) {
+                item = this.data[name] = {};
+            }
+
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    item[key] = obj[key]
                 }
             }
         },
@@ -58,33 +67,32 @@
          * @param key {String} The property to remove.
          */
         remove: function(name, key) {
-            var d = this.data;
-            if (d[name]) {
-                delete d[name][key];
+            var item = this.data[name];
+
+            if (item) {
+                delete item[key];
             }
         },
 
         /**
-         * Removes multiple properties from an item, or remove the item completely.
+         * Removes multiple properties from an item, or removes the item completely.
          *
          * @method removeAll
          * @param name {String} The name of the item.
-         * @param o {Object|Array} Collection of properties to delete. If not provided, the entire item is removed.
+         * @param obj {Object|Array} Collection of properties to delete. If not provided, the entire item is removed.
          */
-        removeAll: function(name, o) {
-            var d = this.data;
+        removeAll: function(name, obj) {
+            var data;
 
-            if (!o) {
-                if (d[name]) {
-                    delete d[name];
+            if (!obj) {
+                data = this.data;
+
+                if (name in data) {
+                    delete data[name];
                 }
             } else {
-                Y.each(o, function(v, k) {
-                    if(Y.Lang.isString(k)) {
-                        this.remove(name, k);
-                    } else {
-                        this.remove(name, v);
-                    }
+                Y.each(obj, function(value, key) {
+                    this.remove(name, typeof key === 'string' ? key : value);
                 }, this);
             }
         },
@@ -98,8 +106,11 @@
          * @return {Any} The value of the supplied property.
          */
         get: function(name, key) {
-            var d = this.data;
-            return (d[name]) ? d[name][key] : undefined;
+            var item = this.data[name];
+
+            if (item) {
+                return item[key];
+            }
         },
 
         /**
@@ -112,21 +123,25 @@
          * @method getAll
          * @param name {String} The name of the item
          * @param reference {boolean} true, if you want a reference to the stored
-         * object 
+         * object
          * @return {Object} An object with property/value pairs for the item.
          */
         getAll : function(name, reference) {
-            var d = this.data, o;
+            var item = this.data[name],
+                key, obj;
 
-            if (!reference) {
-                Y.each(d[name], function(v, k) {
-                        o = o || {};
-                        o[k] = v;
-                });
-            } else {
-                o = d[name];
+            if (reference) {
+                obj = item;
+            } else if (item) {
+                obj = {};
+
+                for (key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        obj[key] = item[key];
+                    }
+                }
             }
 
-            return o;
+            return obj;
         }
     };
