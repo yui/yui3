@@ -174,7 +174,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "attribute-core": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "attribute-events": {
@@ -184,7 +184,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "attribute-extras": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "autocomplete": {
@@ -2455,4 +2455,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
