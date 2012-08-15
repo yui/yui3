@@ -203,7 +203,7 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         }
 
         var lastScroll = this._lastScroll,
-            nodes      = this._host.all(selector),
+            nodes      = this._host.all(selector || '*'),
 
             scrollBottom = lastScroll.scrollBottom + margin,
             scrollLeft   = lastScroll.scrollLeft - margin,
@@ -264,7 +264,7 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
         }
 
         var lastScroll = this._lastScroll,
-            nodes      = this._host.all(selector),
+            nodes      = this._host.all(selector || '*'),
 
             scrollBottom = lastScroll.scrollBottom + margin,
             scrollLeft   = lastScroll.scrollLeft - margin,
