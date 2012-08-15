@@ -276,10 +276,13 @@ Y.Router = Y.extend(Router, Y.Base, {
 
       * `callback`: A function or a string representing the name of a function
         this router that should be executed when the route is triggered.
+
       * `keys`: An array of strings representing the named parameters defined in
         the route's path specification, if any.
+
       * `path`: The route's path specification, which may be either a string or
         a regex.
+
       * `regex`: A regular expression version of the route's path specification.
         This regex is used to determine whether the route matches a given path.
 
