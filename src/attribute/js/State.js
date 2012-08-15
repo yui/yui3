@@ -54,7 +54,7 @@
 
             for (key in obj) {
                 if (obj.hasOwnProperty(key)) {
-                    item[key] = obj[key]
+                    item[key] = obj[key];
                 }
             }
         },
