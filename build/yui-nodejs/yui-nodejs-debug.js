@@ -3792,7 +3792,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -7671,6 +7671,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base",
+            "app-content",
             "app-transitions",
             "lazy-model-list",
             "model",
@@ -7687,6 +7688,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "pjax-base",
             "router",
             "view"
+        ]
+    },
+    "app-content": {
+        "requires": [
+            "app-base",
+            "pjax-content"
         ]
     },
     "app-transitions": {

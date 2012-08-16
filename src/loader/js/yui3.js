@@ -71,6 +71,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base",
+            "app-content",
             "app-transitions",
             "lazy-model-list",
             "model",
@@ -87,6 +88,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "pjax-base",
             "router",
             "view"
+        ]
+    },
+    "app-content": {
+        "requires": [
+            "app-base",
+            "pjax-content"
         ]
     },
     "app-transitions": {
