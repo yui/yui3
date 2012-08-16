@@ -93,7 +93,7 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase, Y.PjaxContent], {
     @param {Function} next Function to pass control to the next route callback.
     @protected
     @since 3.5.0
-    @see Router.route()
+    @see Y.Pjax.defaultRoute
     **/
     _defaultRoute: function (req, res, next) {
         var ioResponse = res.ioResponse,

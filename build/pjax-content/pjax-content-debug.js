@@ -13,9 +13,9 @@ implement the standard pjax (HTMP5 pushState + Ajax) functionality.
 `Y.Router` extension that provides the content fetching and handling needed to
 implement the standard pjax (HTMP5 pushState + Ajax) functionality.
 
-This makes it easy to fetch the content of URLs for an application using Ajax.
-By helping the router to fulfill the "request" for the content you can avoid
-full page loads.
+This makes it easy to fetch server rendered content for URLs using Ajax. By
+helping the router to fulfill the "request" for the content you can avoid full
+page loads.
 
 The `PjaxContent` class isn't useful on its own, but can be mixed into a
 `Router`-based class along with the `PjaxBase` class to add Pjax functionality
