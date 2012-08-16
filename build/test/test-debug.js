@@ -19,7 +19,10 @@ if (YUI.YUITest) {
 
     //Make this global for back compat
     YUITest = {
-        version: "@VERSION@"
+        version: "@VERSION@",
+        guid: function(pre) {
+            return Y.guid(pre);
+        }
     };
 
 Y.namespace('Test');
@@ -188,8 +191,8 @@ YUITest.TestSuite = function (data) {
     }
 
     //double-check name
-    if (this.name === ""){
-        this.name = "testSuite" + (+new Date());
+    if (this.name === "" || !this.name) {
+        this.name = YUITest.guid("testSuite_");
     }
 
 };
@@ -242,6 +245,9 @@ YUITest.TestSuite.prototype = {
  * @namespace Test
  * @constructor
  */
+
+
+
 YUITest.TestCase = function (template) {
     
     /*
@@ -257,11 +263,12 @@ YUITest.TestCase = function (template) {
     }    
     
     //check for a valid name
-    if (typeof this.name != "string"){
-        this.name = "testCase" + (+new Date());
+    if (typeof this.name != "string") {
+        this.name = YUITest.guid("testCase_");
     }
 
 };
+
         
 YUITest.TestCase.prototype = {  
 
@@ -930,7 +937,7 @@ YUITest.TestFormat = function(){
              * @static
              * @private
              */
-            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
     
             /**
              * Pointer to the current node in the test tree.
@@ -1660,7 +1667,7 @@ YUITest.TestFormat = function(){
              * @static
              */
             clear : function () {
-                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
             },
             
             /**

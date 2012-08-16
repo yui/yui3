@@ -158,7 +158,7 @@
     },
     "attribute-core": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "attribute-events": {
@@ -168,7 +168,7 @@
     },
     "attribute-extras": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "autocomplete": {
