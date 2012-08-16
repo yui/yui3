@@ -234,7 +234,7 @@ PjaxBase.prototype = {
         // Make a copy of `options` before modifying it.
         options = Y.merge(options, {url: url});
 
-        var currentURL = this._upgradeURL(this._getURL()),
+        var currentURL = this._getURL(),
             hash, hashlessURL;
 
         // Captures the `url`'s hash and returns a URL without that hash.
