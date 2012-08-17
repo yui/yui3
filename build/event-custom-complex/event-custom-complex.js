@@ -140,7 +140,6 @@ CEProto.fireComplex = function(args) {
     if (self.stack) {
         // queue this event if the current item in the queue bubbles
         if (self.queuable && self.type != self.stack.next.type) {
-            self.log('queue ' + self.type);
             self.stack.queue.push([self, args]);
             return true;
         }
@@ -183,8 +182,6 @@ CEProto.fireComplex = function(args) {
 
     self.details = args.slice(); // original arguments in the details
 
-    // self.log("Firing " + self  + ", " + "args: " + args);
-    self.log("Firing " + self.type);
 
     self._facade = null; // kill facade to eliminate stale properties
 

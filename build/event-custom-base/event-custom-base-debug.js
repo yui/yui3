@@ -803,9 +803,7 @@ Y.CustomEvent.prototype = {
      */
     _on: function(fn, context, args, when) {
 
-        if (!fn) {
-            this.log('Invalid callback for CE: ' + this.type);
-        }
+        if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
         var s = new Y.Subscriber(fn, context, args, when);
 
@@ -963,9 +961,7 @@ Y.CustomEvent.prototype = {
      * @param {string} cat log category.
      */
     log: function(msg, cat) {
-        if (!this.silent) {
-            Y.log(this.id + ': ' + msg, cat || 'info', 'event');
-        }
+        if (!this.silent) { Y.log(this.id + ': ' + msg, cat || 'info', 'event'); }
     },
 
     /**
@@ -1032,7 +1028,7 @@ Y.CustomEvent.prototype = {
 
     // Requires the event-custom-complex module for full funcitonality.
     fireComplex: function(args) {
-        Y.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
+        this.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
         args[0] = args[0] || {};
         return this.fireSimple(args);
     },

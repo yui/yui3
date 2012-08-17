@@ -688,7 +688,6 @@ Y.CustomEvent = function(type, o) {
 
     this.applyConfig(o, true);
 
-    // this.log("Creating " + this.type);
 
 };
 
@@ -801,9 +800,6 @@ Y.CustomEvent.prototype = {
      */
     _on: function(fn, context, args, when) {
 
-        if (!fn) {
-            this.log('Invalid callback for CE: ' + this.type);
-        }
 
         var s = new Y.Subscriber(fn, context, args, when);
 
@@ -939,14 +935,12 @@ Y.CustomEvent.prototype = {
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + '->' + 'sub: ' + s.id);
 
         var ret;
 
         ret = s.notify(args, this);
 
         if (false === ret || this.stopped > 1) {
-            this.log(this.type + ' cancelled by subscriber');
             return false;
         }
 
@@ -960,8 +954,6 @@ Y.CustomEvent.prototype = {
      * @param {string} cat log category.
      */
     log: function(msg, cat) {
-        if (!this.silent) {
-        }
     },
 
     /**
@@ -983,7 +975,6 @@ Y.CustomEvent.prototype = {
      */
     fire: function() {
         if (this.fireOnce && this.fired) {
-            this.log('fireOnce event: ' + this.type + ' already fired');
             return true;
         } else {
 
