@@ -33,8 +33,20 @@ list.add([
 ```
 
 <p>
-If you already have existing `Y.Model` instances, you can add those instead of
-passing in new objects.
+Alternatively, you can specify the models you want to add in an `items` config parameter that you pass to ModelList's constructor. Adding items this way won't cause an [[#List Events|`add` event]] to be fired.
+</p>
+
+```
+var list = new Y.ModelList({
+  items: [
+    {name: 'Model One', arbitraryData: 'foo'},
+    {name: 'Model Two', arbitraryData: 'bar'}
+  ]
+});
+```
+
+<p>
+If you already have existing `Y.Model` instances, you can add those instead of passing in new objects.
 </p>
 
 ```
@@ -156,6 +168,26 @@ You can even pass another ModelList instance to `add()` to add all the models fr
 // Assuming `cheesecakes` is another ModelList instance, we can add all its
 // models to the `pies` list like this.
 pies.add(cheesecakes);
+```
+
+<p>
+To add one or more models to a list at instantiation time, specify them in the `items` property of the config object passed to ModelList's constructor. When models are added this way, the `add` event is not fired.
+</p>
+
+```
+// Create a new list containing a single model.
+var pies = new Y.ModelList({items: {type: 'pecan'}});
+
+// Create a new list containing multiple models.
+var pies = new Y.ModelList({
+  items: [
+    {type: 'apple'},
+    {type: 'maple custard'}
+  ]
+});
+
+// Create a new list containing the contents of another list.
+var pies = new Y.ModelList({items: otherList});
 ```
 
 <p>
