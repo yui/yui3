@@ -8,6 +8,7 @@
 
 var FACADE,
     FACADE_KEYS,
+    key,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
     ETProto = Y.EventTarget.prototype, 
@@ -16,10 +17,7 @@ var FACADE,
         var p;
 
         for (p in payload) {
-            // I really think the payload.hasOwnProperty check can go also
-            // Leaving it in for now, since i wanted one commit, with the same
-            // hasOwnProperty criteria as the original
-            if (payload.hasOwnProperty(p) && !FACADE.hasOwnProperty(p)) {
+            if (!(FACADE_KEYS.hasOwnProperty(p))) {
                 facade[p] = payload[p];
             }
         }
@@ -496,4 +494,9 @@ ETProto.bubble = function(evt, args, target, es) {
 };
 
 FACADE = new Y.EventFacade();
-FACADE_KEYS = Y.Object.keys(FACADE);
+FACADE_KEYS = {};
+
+// Flatten whitelist
+for (key in FACADE) {
+    FACADE_KEYS[key] = true;
+}
