@@ -1,8 +1,7 @@
-'use strict';
 /**
 @description <p>Creates an Image Cropper control.</p>
-@requires widget, resize, gallery-event-arrow
-@module gallery-imagecropper
+@requires widget,dd-drag,dd-constrain,resize-base,resize-constrain
+@module imagecropper
 */
 
 var Lang = Y.Lang,
@@ -11,13 +10,11 @@ var Lang = Y.Lang,
     getClassName = Y.ClassNameManager.getClassName,
     IMAGE_CROPPER = 'imagecropper',
     RESIZE = 'resize',
-    MASK = 'mask',
-    KNOB = 'knob',
     
     _classNames = {
-        cropMask: getClassName(IMAGE_CROPPER, MASK),
-        resizeKnob: getClassName(IMAGE_CROPPER, RESIZE, KNOB),
-        resizeMask: getClassName(IMAGE_CROPPER, RESIZE, MASK)
+        cropMask: getClassName(IMAGE_CROPPER, 'mask'),
+        resizeKnob: getClassName(IMAGE_CROPPER, RESIZE, 'knob'),
+        resizeMask: getClassName(IMAGE_CROPPER, RESIZE, 'mask')
     };
 
 /**
@@ -69,80 +66,7 @@ Y.extend(ImageCropper, Y.Widget, {
     */
     CLASS_NAMES: _classNames,
     
-    _toggleKeys: function (e) {
-        if (e.newVal) {
-            this._bindArrows();
-        } else {
-            this._unbindArrows();
-        }
-    },
-    
-    /**
-    Moves the `resizeKnob` based on the keys pressed.
-    Uses the `gallery-event-arrow` module to get the direction
-    of the movement based on the arrow pressed, then calculates
-    the new position of the node applying constrains.
-    It then fires `crop:*` events as if the image was cropped
-    with the mouse.
 
-    @method _moveResizeKnob
-    @param {EventFacade} e
-    @private
-    */
-    _moveResizeKnob: function (e) {
-        e.preventDefault(); // prevent scroll in Firefox
-        
-        var resizeKnob = this.get('resizeKnob'),
-            contentBox = this.get('contentBox'),
-            
-            knobWidth = resizeKnob.get('offsetWidth'),
-            knobHeight = resizeKnob.get('offsetHeight'),
-        
-            tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick'),
-            direction = e.direction,
-            
-            tickH = direction.indexOf('w') > -1 ? -tick : direction.indexOf('e') > -1 ? tick : 0,
-            tickV = direction.indexOf('n') > -1 ? -tick : direction.indexOf('s') > -1 ? tick : 0,
-            
-            x = resizeKnob.getX() + tickH,
-            y = resizeKnob.getY() + tickV,
-            
-            minX = contentBox.getX(),
-            minY = contentBox.getY(),
-            
-            maxX = minX + contentBox.get('offsetWidth') - knobWidth,
-            maxY = minY + contentBox.get('offsetHeight') - knobHeight,
-            
-            o;
-            
-        if (x < minX) {
-            x = minX;
-        } else if (x > maxX) {
-            x = maxX;
-        }
-        if (y < minY) {
-            y = minY;
-        } else if (y > maxY) {
-            y = maxY;
-        }
-        resizeKnob.setXY([x, y]);
-        
-        o = {
-            width: knobWidth,
-            height: knobHeight,
-            left: resizeKnob.get('offsetLeft'),
-            top: resizeKnob.get('offsetTop'),
-            sourceEvent: e.type
-        };
-        
-        o[e.type + 'Event'] = e;
-        this.fire('crop:start', o);
-        this.fire('crop:crop', o);
-        this.fire('crop:end', o);
-        
-        this._syncResizeMask();
-    },
-    
     /**
     @method _defCropMaskValueFn
     @protected
@@ -167,19 +91,31 @@ Y.extend(ImageCropper, Y.Widget, {
         return Y.Node.create(this.RESIZE_MASK_TEMPLATE);
     },
 
+    /**
+    @method _defResizeMaskValueFn
+    @protected
+    */
     _defInitWidthSetter: function (value) {
         var minHeight = this.get('minHeight');
         return value < minHeight ? minHeight : value;
     },
 
+    /**
+    @method _defInitHeightSetter
+    @protected
+    */
     _defInitHeightSetter: function (value) {
         var minWidth = this.get('minWidth');
         return value < minWidth ? minWidth : value;
     },
 
+    /**
+    @method _defStatusGetter
+    @protected
+    */
     _defStatusGetter: function () {
-        var resizing = this.hasPlugin('resize') ? this.resize.get('resizing') : false,
-            dragging = this.hasPlugin('dd') ? this.dd.get('dragging') : false;
+        var resizing = this.resize ? this.resize.get('resizing') : false,
+            dragging = this.drag ? this.drag.get('dragging') : false;
         return resizing || dragging;
     },
     
@@ -383,18 +319,8 @@ Y.extend(ImageCropper, Y.Widget, {
         }, this);
     },
     
-    _bindArrows: function () {
-        this._arrowHandler = this.get('resizeKnob').on('arrow', this._moveResizeKnob, this);
-    },
-    
-    _unbindArrows: function () {
-        if (this._arrowHandler) {
-            this._arrowHandler.detach();
-        }
-    },
-    
     _bindResize: function (resizeKnob, contentBox) {
-        var resize = this._resize = new Y.Resize({
+        var resize = this.resize = new Y.Resize({
             node: resizeKnob
         });
         resize.on('resize:resize', this._syncResizeMask, this);
@@ -408,11 +334,11 @@ Y.extend(ImageCropper, Y.Widget, {
     },
     
     _bindDrag: function (resizeKnob, contentBox) {
-        var drag = this._drag = new Y.DD.Drag({
+        var drag = this.drag = new Y.DD.Drag({
             node: resizeKnob,
             handles: [this.get('resizeMask')]
         });
-        drag.on('drag:drag', this._syncResizeMask, this);
+        drag.after('drag:drag', this._syncResizeMask, this);
         drag.plug(Y.Plugin.DDConstrained, {
             constrain2node: contentBox
         });
@@ -425,9 +351,6 @@ Y.extend(ImageCropper, Y.Widget, {
         this.set('initHeight', this.get('initHeight'));
 
         this.after('sourceChange', this._handleSrcChange);
-        this.after('useKeysChange', this._toggleKeys);
-        
-        this._icHandlers = [];
         
         YArray.each(Y.ImageCropper.RESIZE_ATTRS, function (attr) {
             this.after(attr + 'Change', this._syncResizeAttr);
@@ -446,12 +369,6 @@ Y.extend(ImageCropper, Y.Widget, {
         var contentBox = this.get('contentBox'),
             resizeKnob = this.get('resizeKnob');
             
-        this._icHandlers.push(
-            resizeKnob.on('mousedown', resizeKnob.focus, resizeKnob)
-        );
-        
-        this._bindArrows();
-        
         this._bindResize(resizeKnob, contentBox);
         this._bindDrag(resizeKnob, contentBox);
     },
@@ -513,19 +430,15 @@ Y.extend(ImageCropper, Y.Widget, {
     },
     
     destructor: function () {
-        if (this._resize) {
-            this._resize.destroy();
+        if (this.resize) {
+            this.resize.destroy();
         }
-        if (this._drag) {
-            this._drag.destroy();
+        if (this.drag) {
+            this.drag.destroy();
         }
         
-        YArray.each(this._icHandlers, function (handler) {
-            handler.detach();
-        });
-        this._unbindArrows();
-        
-        this._drag = this._resize = null;
+        this.drag = null;
+        this.resize = null;
     }
     
 }, {
@@ -540,7 +453,7 @@ Y.extend(ImageCropper, Y.Widget, {
     @protected
     @static
     */
-    NAME: 'imagecropper',
+    NAME: IMAGE_CROPPER,
     
     /**
     Array of events to relay from the Resize utility to the ImageCropper 
@@ -646,42 +559,6 @@ Y.extend(ImageCropper, Y.Widget, {
         },
         
         /**
-        The pixel tick for the arrow keys
-
-        @attribute keyTick
-        @type {Number}
-        @default 1
-        */
-        keyTick: {
-            value: 1,
-            validator: isNumber
-        },
-        
-        /**
-        The pixel tick for shift + the arrow keys
-
-        @attribute shiftKeyTick
-        @type {Number}
-        @default 10
-        */
-        shiftKeyTick: {
-            value: 10,
-            validator: isNumber
-        },
-        
-        /**
-        Should we use the Arrow keys to position the crop element
-
-        @attribute useKeys
-        @type {Boolean}
-        @default true
-        */
-        useKeys: {
-            value: true,
-            validator: Lang.isBoolean
-        },
-        
-        /**
         Show the Resize and Drag utilities status
 
         @attribute status
@@ -756,3 +633,5 @@ Y.extend(ImageCropper, Y.Widget, {
     }
     
 });
+
+Y.ImageCropper = ImageCropper;

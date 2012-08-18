@@ -122,19 +122,21 @@ The following attributes are provided to fine tune the behavior of each ImageCro
 <h3>Adding keyboard support</h3>
 
 <p>
-The Keys plugin adds keyboard support to the ImageCropper. Pressing the arrows while the crop area is focused will move it as if it was moved with the mouse. Holding down the shift key will move the rectangle more rapidly. You can configure how much the crop rectangle is moved by setting the `keyTick` and `shiftKeyTick` configuration options on the Plugin. By default, the crop area is moved 1px and 10px while holding down the shift key.
+The Keys plugin adds keyboard support to any Drag instance. Plugging it into the Drag instance used by the ImageCropper will allow the user the move the crop area with the keyboard arrows. Holding down the shift key will move the crop rectangle more rapidly. You can configure how much the rectangle is moved by setting the `keyTick` and `shiftKeyTick` configuration options on the Plugin. By default, the crop area is moved 1px and 10px while holding down the shift key.
 </p>
 ```
-YUI({...}).use('imagecropper', 'imagecropper-keys', function (Y) {
+YUI({...}).use('imagecropper', 'dd-keys', function (Y) {
   
   var imagecropper = new Y.ImageCropper({
     srcNode: '#my-image',
     width: 300,
     height: 300
-  }).render();
+  });
+  imagecropper.render();
 
-  // All plugin configuration options are optional
-  imagecropper.plug(Y.Plugin.ImageCropperKeys, {
+  // After the widget is rendered the `drag` property is
+  // added to the instance. Add the plugin to it
+  imagecropper.drag.plug(Y.Plugin.DDKeys, {
     keyTick: 5,
     shiftKeyTick: 20
   });
