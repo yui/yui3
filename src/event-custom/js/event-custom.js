@@ -448,7 +448,7 @@ Y.CustomEvent.prototype = {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
-
+ 
     /**
      * Listen for this event
      * @method on
@@ -460,8 +460,9 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
-        if (this.host) {
-            this.host._monitor('attach', this.type, {
+
+        if (this.monitored && this.host) {
+            this.host._monitor('attach', this, {
                 args: arguments
             });
         }
@@ -740,8 +741,8 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        if (this.host) {
-            this.host._monitor('detach', this.type, {
+        if (this.monitored && this.host) {
+            this.host._monitor('detach', this, {
                 ce: this,
                 sub: s
             });
