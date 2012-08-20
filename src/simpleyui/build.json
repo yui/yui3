@@ -1,0 +1,34 @@
+{
+    "name": "simpleyui",
+    "builds": {
+        "simpleyui": {
+            "config": {
+                "use": [
+                    "yui",
+                    "oop",
+                    "dom",
+                    "event-custom-base",
+                    "event-base",
+                    "pluginhost",
+                    "node",
+                    "event-delegate",
+                    "io-base",
+                    "json-parse",
+                    "transition",
+                    "selector-css3",
+                    "dom-style-ie",
+                    "querystring-stringify-simple"
+                ]
+            },
+            "prependfiles": [
+                "js/concat.js"
+            ],
+            "jsfiles": [
+                "empty.js"
+            ],
+            "appendfiles": [
+                "js/simple.js"
+            ]
+        }
+    }
+}
