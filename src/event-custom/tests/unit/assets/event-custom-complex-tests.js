@@ -265,7 +265,7 @@ YUI.add("event-custom-complex-tests", function(Y) {
             };
 
             // configure chaining via global default or on the event target
-            YUI({ /* chain: true */
+            YUI({ 
                 base:'../../../build/',
                 logInclude: {
                     test: true
@@ -345,7 +345,6 @@ YUI.add("event-custom-complex-tests", function(Y) {
             Y.Assert.areEqual(1, count);
             Y.Assert.isFalse(ret);
         },
-
 
         testPreventFnOnce: function() {
             var count = 0;
@@ -1011,6 +1010,127 @@ YUI.add("event-custom-complex-tests", function(Y) {
             target.fire('bar');
 
             Y.Assert.isTrue(pass);
+        },
+
+        testIndividualCustomEventMonitoring: function () {
+            var target = new Y.EventTarget({ 
+                    emitFacade: true, 
+                    prefix: 'a' 
+                }),
+                actual = [],
+                expected = ["a:foo_publish", "et-a:foo_publish", "a:foo_attach", "et-a:foo_attach", "a:foo_attach", "et-a:foo_attach", "a:foo_fire", "et-a:foo_fire", "a:foo_detach", "et-a:foo_detach", "a:foo_detach", "et-a:foo_detach"],
+                handleOn,
+                handleAfter;
+
+            var ce = target.publish("foo", {
+                defaultFn: function origDefFn() {}
+            });
+
+            // --
+
+            ce.monitor("attach", function(e) {
+                actual.push(e.type);
+                Y.Assert.areEqual(e.monitored, "attach");
+            });
+
+            ce.monitor("fire", function(e) {
+                actual.push(e.type);
+
+                Y.ObjectAssert.areEqual(e.args[0], {
+                    a:1,
+                    b:2,
+                    c:3
+                });
+
+                Y.Assert.areEqual(e.monitored, "fire");
+            });
+
+            ce.monitor("publish", function(e) {
+                actual.push(e.type);
+                Y.Assert.areEqual(e.monitored, "publish");
+            });
+
+            ce.monitor("detach", function(e) {
+                actual.push(e.type);
+                Y.Assert.areEqual(e.monitored, "detach");
+            });
+
+            // --
+
+            target.on("a:foo_attach", function(e) {
+                actual.push("et-" + e.type);
+                Y.Assert.areEqual(e.monitored, "attach");
+            });
+
+            target.on("a:foo_fire", function(e) {
+                actual.push("et-" + e.type);
+                Y.Assert.areEqual(e.monitored, "fire");
+            });
+
+            target.on("a:foo_publish", function(e) {
+                actual.push("et-" + e.type);
+                Y.Assert.areEqual(e.monitored, "publish");
+            });
+
+            target.on("a:foo_detach", function(e) {
+                actual.push("et-" + e.type);
+                Y.Assert.areEqual(e.monitored, "detach");
+            });
+
+            // --
+
+            target.publish("foo", {
+                defaultFn : function newDefFn() {}
+            });
+
+            handleOn = target.on("foo", function() {});
+            handleAfter = target.after("foo", function() {});
+
+            target.fire("foo", {a:1, b:2, c:3});
+
+            handleOn.detach();
+            handleAfter.detach();
+        },
+
+        'ignore: Does not work currently due to infinite recursion - testEventTargetMonitoring': function () {
+
+            var target = new Y.EventTarget({ 
+                    monitored:true, // Doesn't work currently. Causes infinite recursion
+                    emitFacade: true, 
+                    prefix: 'a' 
+                }),
+                actual = [],
+                expected = ["a:foo_publish", "a:foo_attach", "a:foo_attach", "a:foo_fire", "a:foo_detach", "a:foo_detach"],
+                handleOn,
+                handleAfter;
+
+            target.on("a:foo_attach", function(e) {
+                actual.push(e.type);
+            });
+
+            target.on("a:foo_fire", function(e) {
+                actual.push(e.type);
+            });
+
+            target.on("a:foo_publish", function(e) {
+                actual.push(e.type);
+            });
+
+            target.on("a:foo_detach", function(e) {
+                actual.push(e.type);
+            });
+
+            target.publish("foo", {
+                defaultFn: function origDefFn() {}
+            });
+
+            handleOn = target.on("foo", function() {});
+            handleAfter = target.after("foo", function() {});
+
+            target.fire("foo", {a:1, b:2, c:3});
+
+            handleOn.detach();
+            handleAfter.detach();
         },
 
         test_node_publish: function() {
