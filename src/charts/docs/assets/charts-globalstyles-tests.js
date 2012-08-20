@@ -48,8 +48,8 @@ YUI.add('charts-globalstyles-tests', function(Y) {
         
         _should: {
             ignore: {
-                testMouseEvents:  isTouch || IGNORETOOLTIPTEST,
-                testTouchEvents: isMouse || IGNORETOOLTIPTEST
+                testMouseEvents:  isTouch || IGNORETOOLTIPTEST//,
+               // testTouchEvents: isMouse || IGNORETOOLTIPTEST
             }
         },
         
@@ -120,7 +120,7 @@ YUI.add('charts-globalstyles-tests', function(Y) {
                 }
             }, this);
         },
-
+/*
         testTouchEvents: function()
         {
             var result = null,
@@ -191,7 +191,7 @@ YUI.add('charts-globalstyles-tests', function(Y) {
                 };
             checkAndFireEvent(seriesMarkers);
         },
-        
+       */ 
         markerLabelFunction: function(seriesIndex, index)
         {
             var item = this.dataProvider[index];

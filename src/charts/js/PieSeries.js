@@ -3,6 +3,7 @@
  * percentage of a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries

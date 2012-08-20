@@ -141,4 +141,4 @@ YUI.add('attribute-extras', function(Y) {
     Y.AttributeExtras = AttributeExtras;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['oop']});

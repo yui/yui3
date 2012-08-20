@@ -97,7 +97,7 @@ YUI.add('pluginhost-base', function(Y) {
 
         /**
          * Removes a plugin from the host object. This will destroy the 
-         * plugin instance and delete the namepsace from the host object. 
+         * plugin instance and delete the namespace from the host object. 
          *
          * @method unplug
          * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,

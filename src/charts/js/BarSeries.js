@@ -4,6 +4,7 @@
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram

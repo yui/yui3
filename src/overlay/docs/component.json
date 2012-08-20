@@ -2,11 +2,11 @@
     "name"       : "overlay",
     "displayName": "Overlay",
     "description": "Overlay is a positionable and stackable widget, which also provides support for the standard module format layout, with a header, body and footer section.",
-    "author"     : "sdesai",
+    "author"     : ["ericf", "sdesai"],
 
     "tags": ["overlay", "widget", "beta"],
     "use" : ["overlay"],
-    
+
     "examples" : [
         {
             "name"       : "overlay-xy",

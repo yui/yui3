@@ -4,13 +4,17 @@ var path = require('path');
 
 var base = path.join(__dirname, '../../');
 
-var paths = require('./parse');
+var json = require('./parse').parse(function(line) {
+    return (line.indexOf('coverage') === -1);
+});
+var paths = require('./parse').paths(json);
 
 var travis = process.env.TRAVIS;
 
 //Skip this long running tests in travis
 var skipping = [
     'io',
+    'editor',
     'anim',
     'dd',
     'charts',

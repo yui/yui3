@@ -4,6 +4,7 @@
  * are rendered and area is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSeries
  * @extends CartesianSeries 
  * @uses Fills

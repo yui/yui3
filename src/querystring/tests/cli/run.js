@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'querystring-tests': {
-                fullpath: path.join(__dirname, '../querystring-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/querystring-tests.js'),
                 requires: [ 'test', 'querystring' ]
             }
         }

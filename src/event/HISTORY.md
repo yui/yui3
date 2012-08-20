@@ -1,6 +1,14 @@
 Event Infrastructure Change History
 ===================================
 
+3.6.1
+-----
+
+* Added try/catch around the internal window unload listener event-base adds,
+  so that YUI works in Chrome Packaged Apps. They don't support unload,
+  but still have a window.onunload, so no real way to feature test without
+  a try/catch anyway.
+
 3.6.0
 -----
 

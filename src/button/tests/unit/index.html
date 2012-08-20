@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>Button Test Page</title>
+    </head>
+    
+    <body class='yui3-skin-sam'>
+
+        <div id="log"></div>
+        <div id="container"></div>
+
+        <script src="../../../../build/yui/yui.js"></script>
+        <script>
+            YUI({
+                coverage: ['button'],
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+                modules: {
+                    'button-core-test': {
+                        fullpath: './assets/button-core-test.js',
+                        requires: ['button-core', 'test']
+                    },
+                    'button-plugin-test': {
+                        fullpath: './assets/button-plugin-test.js',
+                        requires: ['button-plugin', 'test']
+                    },
+                    'button-test': {
+                        fullpath: './assets/button-test.js',
+                        requires: ['button', 'test', 'node-event-simulate']
+                    },
+                    'button-group-test': {
+                        fullpath: './assets/button-group-test.js',
+                        requires: ['button-group', 'node-event-simulate']
+                    }
+                }
+            }).use('button-core-test', 'button-plugin-test', 'button-test', 'button-group-test', 'test-console', function (Y) {
+                new Y.Test.Console().render('#log');
+
+                Y.Test.Runner.setName('Button');
+                Y.Test.Runner.run();
+            });
+        </script>
+        
+    </body>
+    
+</html>

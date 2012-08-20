@@ -15815,7 +15815,10 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
 }
 
-add(win, "unload", onUnload);
+try {
+    add(win, "unload", onUnload);
+} catch(e) {
+}
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
@@ -15978,7 +15981,7 @@ YUI.add('pluginhost-base', function(Y) {
 
         /**
          * Removes a plugin from the host object. This will destroy the 
-         * plugin instance and delete the namepsace from the host object. 
+         * plugin instance and delete the namespace from the host object. 
          *
          * @method unplug
          * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,
@@ -17190,7 +17193,7 @@ IO.prototype = {
         }
 
         if (!use) {
-            if (win && win.FormData && config.data instanceof FormData) {
+            if (win && win.FormData && config.data instanceof win.FormData) {
                 transaction.c.upload.onprogress = function (e) {
                     io.progress(transaction, e, config);
                 };

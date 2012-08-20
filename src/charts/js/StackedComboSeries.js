@@ -5,6 +5,7 @@
  * rendered.  
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil

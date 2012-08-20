@@ -2,6 +2,7 @@
  * Utility class used for drawing lines.
  *
  * @module charts
+ * @submodule charts-base
  * @class Lines
  * @constructor
  */

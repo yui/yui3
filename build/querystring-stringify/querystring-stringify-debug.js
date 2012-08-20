@@ -109,4 +109,4 @@ QueryString.stringify = function (obj, c, name) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base'], supersedes:['querystring-stringify-simple']});
+}, '@VERSION@' ,{supersedes:['querystring-stringify-simple'], requires:['yui-base']});

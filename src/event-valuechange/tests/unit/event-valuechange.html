@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+    #test, #test-delegate {
+        margin-top: 1em;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div id="test">
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    coverage: ['event-valuechange'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'event-valuechange-test': {
+            fullpath: './assets/event-valuechange-test.js',
+            requires: ['event-valuechange', 'node-base', 'node-event-simulate', 'test']
+        }
+    },
+    useBrowserConsole: false
+}).use('event-valuechange-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

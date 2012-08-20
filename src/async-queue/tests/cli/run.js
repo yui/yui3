@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'async-queue-tests': {
-                fullpath: path.join(__dirname, '../async-queue-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/async-queue-tests.js'),
                 requires: ['async-queue', 'test']
             }
         }

@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'cnm-tests': {
-                fullpath: path.join(__dirname, '../cnm-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/cnm-tests.js'),
                 requires: ['classnamemanager', 'test']
             }
         }

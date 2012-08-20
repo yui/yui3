@@ -2,6 +2,7 @@
  * Utility class used for creating stacked series.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackingUtil
  * @constructor
  */
