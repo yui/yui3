@@ -267,7 +267,8 @@ appContentSuite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`Y.App.Content.route` should set the document `title`': !doc
+            '`Y.App.Content.route` should set the document `title`': !doc,
+            '`Y.App.Content.route` should default the document `title` to `<title>`': Y.UA.ie && Y.UA.ie < 9
         }
     },
 
@@ -292,7 +293,7 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
+        app.navigate('assets/page-full.html');
         test.wait(1000);
     },
 
@@ -312,7 +313,9 @@ appContentSuite.add(new Y.Test.Case({
         test.wait(1000);
     },
 
-    '`Y.App.Content.route` should set the document `title`': function () {
+    '`Y.App.Content.route` should default the document `title` to `<title>`': function () {
+        // There's a known issue that this won't work in IE < 9!
+
         var test = this,
             app  = this.app = new Y.App();
 
@@ -324,7 +327,7 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
+        app.navigate('assets/page-full.html');
         test.wait(1000);
     },
 
@@ -341,13 +344,13 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
+        app.navigate('assets/page-full.html');
         test.wait(1000);
     },
 
     '`loadContent()` middleware should put `content` and `ioResponse` on the `res` object': function () {
         var test = this,
-            app  = this.app = new Y.App();
+            app  = this.app = new Y.App({titleSelector: 'h1'});
 
         app.route('*', 'loadContent', function (req, res, next) {
             test.resume(function () {
@@ -362,7 +365,8 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
+        // The snippet is used to the `titleSelector` will work in IE < 9.
+        app.navigate('assets/page-snippet.html');
         test.wait(1000);
     }
 }));
