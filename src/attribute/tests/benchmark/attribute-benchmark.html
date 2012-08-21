@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Y.Attribute Benchmarks</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<applet code="nano" archive="https://github.com/bestiejs/benchmark.js/raw/v1.0.0/nano.jar" style="display: none;"></applet>
+<script src="https://raw.github.com/bestiejs/benchmark.js/v1.0.0/benchmark.js"></script>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+
+    modules: {
+        'attribute-benchmark': {
+            fullpath: 'assets/attribute-benchmark.js',
+            requires: ['multi']
+        },
+
+        'multi': {
+            fullpath: '../../../common/tests/assets/multi-yui.js',
+            requires: ['event-custom']
+        }
+    }
+}).use('attribute-benchmark', 'node-base', 'test-console', function (Y) {
+    var multi = Y.AttributeBenchmark.multi;
+
+    new Y.Test.Console().render('#log');
+
+    multi.on('ready', function () {
+        Y.AttributeBenchmark.suite.run({async: true});
+    });
+});
+</script>
+
+</body>
+</html>
