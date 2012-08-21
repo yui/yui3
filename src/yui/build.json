@@ -4,6 +4,9 @@
         "get",
         "loader"
     ],
+    "postbuilds": [
+        "simpleyui"
+    ],
     "exec": [
         "./scripts/build.js"
     ],
