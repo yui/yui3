@@ -1,0 +1,16 @@
+{
+    "name": "get",
+    "builds": {
+        "get": {
+            "jsfiles": [
+                "get.js"
+            ]
+        },
+        "get-nodejs": {
+            "name": "get",
+            "jsfiles": [
+                "get-nodejs.js"
+            ]
+        }
+    }
+}
