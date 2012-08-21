@@ -533,15 +533,188 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
     }));
 
     suite.add(new Y.Test.Case({
-        name : "Bubble",
+        name : "Bubble Single Target",
 
         setUp : function () {
+
             this.source = new Y.EventTarget({
                 emitFacade: true
             });
+
             this.middleMan1 = new Y.EventTarget({
                 emitFacade: true
             });
+
+            this.source.addTarget(this.middleMan1);
+        },
+
+        test_bubbleComplete: function () {
+
+            var results = '';
+
+            this.source.publish('foo', {
+                defaultFn : function () { results += 'C'; },
+                preventedFn : function () { results += '1'; },
+                stoppedFn : function () { results += '2'; }
+            });
+
+            this.source.on('foo', function () { results += 'A'; });
+            this.source.after('foo', function () { results += 'D'; });
+
+            this.middleMan1.on('foo', function () { results += 'B'; });
+            this.middleMan1.after('foo', function () { results += 'E'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABCDE', results);
+        },
+
+        test_bubblePrevented: function () {
+            var results = '';
+
+            this.source.publish('foo', {
+                broadcast: 0,
+                defaultFn : function () { results += '1'; },
+                preventedFn : function () { results += 'C'; },
+                stoppedFn : function () { results += '2'; }
+            });
+
+            this.source.on('foo', function (e) { results += 'A'; e.preventDefault(); });
+            this.source.after('foo', function () { results += '3'; });
+
+            this.middleMan1.on('foo', function () { results += 'B'; });
+            this.middleMan1.after('foo', function () { results += '4'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABC', results);
+        },
+
+        test_bubblePreventedOnTarget: function () {
+            var results = '';
+
+            this.source.publish('foo', {
+                broadcast: 0,
+                defaultFn : function () { results += '1'; },
+                preventedFn : function () { results += 'C'; },
+                stoppedFn : function () { results += '2'; }
+            });
+
+            this.source.on('foo', function (e) { results += 'A'; });
+            this.source.after('foo', function () { results += '3'; });
+
+            this.middleMan1.on('foo', function (e) { results += 'B'; e.preventDefault(); });
+            this.middleMan1.after('foo', function () { results += '4'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABC', results);
+        },
+
+        test_bubbleStopped: function () {
+
+            var results = '';
+
+            this.source.publish('foo', {
+                broadcast: 0,
+                defaultFn : function () { results += 'C'; },
+                preventedFn : function () { results += '1'; },
+                stoppedFn : function () { results += 'B'; }
+            });
+
+            this.source.on('foo', function (e) { results += 'A'; e.stopPropagation(); });
+            this.source.after('foo', function () { results += 'D'; });
+
+            this.middleMan1.on('foo', function (e) {results += '2';});
+            this.middleMan1.after('foo', function () { results += '3'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABCD', results);
+        },
+
+        test_bubbleStoppedOnTarget: function () {
+
+            var results = '';
+
+            this.source.publish('foo', {
+                broadcast: 0,
+                defaultFn : function () { results += 'C'; },
+                preventedFn : function () { results += '1'; },
+                stoppedFn : function () { results += '2'; }
+            });
+
+            this.source.on('foo', function (e) { results += 'A';});
+            this.source.after('foo', function () { results += 'D';  });
+
+            this.middleMan1.on('foo', function (e) {results += 'B'; e.stopPropagation(); }); // No effect. Doesn't bubble anywhere
+            this.middleMan1.after('foo', function () { results += 'E'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABCDE', results);
+        },
+
+        test_bubbleHalted: function () {
+
+            var results = '';
+
+            this.source.publish('foo', {
+                broadcast: 0,
+                defaultFn : function () { results += '1'; },
+                preventedFn : function () { results += 'C'; },
+                stoppedFn : function () { results += 'B'; }
+            });
+
+            this.source.on('foo', function (e) { results += 'A'; e.halt(); });
+            this.source.after('foo', function () { results += '2'; });
+
+            this.middleMan1.on('foo', function (e) {results += '3';});
+            this.middleMan1.after('foo', function () { results += '4'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABC', results);
+        },
+
+        test_bubbleHaltedOnTarget: function () {
+
+            var results = '';
+
+            this.source.publish('foo', {
+                broadcast: 0,
+                defaultFn : function () { results += '1'; },
+                preventedFn : function () { results += 'C'; },
+                stoppedFn : function () { results += '2'; } // No effect. Doesn't bubble anywhere.
+            });
+
+            this.source.on('foo', function (e) { results += 'A'; });
+            this.source.after('foo', function () { results += '3'; });
+
+            this.middleMan1.on('foo', function (e) {results += 'B';  e.halt();});
+            this.middleMan1.after('foo', function () { results += '4'; });
+
+            this.source.fire('foo');
+
+            Y.Assert.areSame('ABC', results);
+        }
+
+    }));
+
+    /*
+    suite.add(new Y.Test.Case({
+        name : "Bubble Two Targets",
+
+        setUp : function () {
+
+            this.source = new Y.EventTarget({
+                emitFacade: true
+            });
+
+            this.middleMan1 = new Y.EventTarget({
+                emitFacade: true
+            });
+
             this.middleMan2 = new Y.EventTarget({
                 emitFacade: true
             });
@@ -554,35 +727,32 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             var results = '';
 
             this.source.publish('foo', {
-                broadcast: 0,
                 defaultFn : function () { results += 'D'; },
                 preventedFn : function () { results += '1'; },
                 stoppedFn : function () { results += '2'; }
             });
 
             this.source.on('foo', function () { results += 'A'; });
-            this.source.after('foo', function () { results += 'G'; });
+            this.source.after('foo', function () { results += 'E'; });
 
             this.middleMan1.on('foo', function () { results += 'B'; });
-            this.middleMan1.after('foo', function () { results += 'F'; });
+            this.middleMan1.after('foo', function () { results += 'G'; });
 
             this.middleMan2.on('foo', function () { results += 'C'; });
-            this.middleMan2.after('foo', function () { results += 'E'; });
+            this.middleMan2.after('foo', function () { results += 'F'; });
 
             this.source.fire('foo');
 
-            Y.Assert.areSame('ABCDGEF', results);
-        }
+            Y.Assert.areSame('ABCDEFG', results);
+        },
 
-        /*
         test_bubblePrevented: function () {
             var results = '';
 
             this.source.publish('foo', {
                 broadcast: 0,
-                emitFacade: true,
                 defaultFn : function () { results += '1'; },
-                preventedFn : function () { results += 'C'; },
+                preventedFn : function () { results += 'D'; },
                 stoppedFn : function () { results += '2'; }
             });
 
@@ -595,7 +765,8 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             });
             this.middleMan1.after('foo', function () { results += '4'; });
 
-            this.middleMan2.on('foo', function () { results += 'D'; });
+            // This is called before the preventedFn. The preventedFn is called at the point in the flow, where the defaultFn would have been executed.
+            this.middleMan2.on('foo', function () { results += 'C'; });
             this.middleMan2.after('foo', function () { results += '5'; });
 
             this.source.fire('foo');
@@ -604,31 +775,28 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         },
 
         test_bubbleStopped: function () {
+
             var results = '';
 
             this.source.publish('foo', {
                 broadcast: 0,
-                emitFacade: true,
                 defaultFn : function () { results += 'D'; },
                 preventedFn : function () { results += '1'; },
                 stoppedFn : function () { results += 'C'; }
             });
 
             this.source.on('foo', function () { results += 'A'; });
-            this.source.after('foo', function () { results += 'F'; });
+            this.source.after('foo', function () { results += 'E'; });
 
-            this.middleMan1.on('foo', function (e) {
-                results += 'B';
-                e.stopPropagation();
-            });
-            this.middleMan1.after('foo', function () { results += 'E'; });
+            this.middleMan1.on('foo', function (e) {results += 'B'; e.stopPropagation()});
+            this.middleMan1.after('foo', function () { results += 'F'; });
 
             this.middleMan2.on('foo', function () { results += '2'; });
             this.middleMan2.after('foo', function () { results += '3'; });
 
             this.source.fire('foo');
 
-            Y.Assert.areSame('ABCDEF', results);
+            Y.Assert.areSame('ABCDE', results);
         },
 
         test_bubbleAndBroadcast1Complete: function () {
@@ -660,12 +828,8 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
             this.source.fire('foo');
 
             Y.Assert.areSame('ABCDEFGHI', results);
-        }
-        */
+        },
 
-    }));
-
-    /*
         test_bubbleAndBroadcast1Prevented: function () {
             var results = '';
 
@@ -803,8 +967,7 @@ YUI.add("event-custom-complex-sequence-tests", function(Y) {
         }
 
     }));
-            */
-
+    */
 
     Y.Test.Runner.add(suite);
 
