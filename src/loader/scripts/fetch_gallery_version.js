@@ -34,7 +34,7 @@ var patchJSON = function(tag) {
         console.log('patching build.json');
         var json = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
         json.builds['loader-base'].replace['@GALLERY@'] = tag;
-        fs.writeFileSync(jsonFile, JSON.stringify(json, null, 4),'utf8');
+        fs.writeFileSync(jsonFile, JSON.stringify(json, null, 4) + '\n','utf8');
     }
 };
 
