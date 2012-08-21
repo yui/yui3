@@ -13,7 +13,7 @@
     Y.Attribute.Complex.prototype = {
 
         /**
-         * Utility method to split out simple attribute name/value pairs ("x") 
+         * Utility method to split out simple attribute name/value pairs ("x")
          * from complex attribute name/value pairs ("x.y.z"), so that complex
          * attributes can be keyed by the top level attribute name.
          *
@@ -21,7 +21,7 @@
          * @param {Object} valueHash An object with attribute name/value pairs
          *
          * @return {Object} An object literal with 2 properties - "simple" and "complex",
-         * containing simple and complex attribute values respectively keyed 
+         * containing simple and complex attribute values respectively keyed
          * by the top level attribute name, or null, if valueHash is falsey.
          *
          * @private
@@ -57,8 +57,8 @@
 
         /**
          * Returns the initial value of the given attribute from
-         * either the default configuration provided, or the 
-         * over-ridden value if it exists in the set of initValues 
+         * either the default configuration provided, or the
+         * over-ridden value if it exists in the set of initValues
          * provided and the attribute is not read-only.
          *
          * @param {String} attr The name of the attribute
@@ -124,5 +124,5 @@
 
     Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
 
-    // Consistency with the rest of the Attribute addons for now. 
+    // Consistency with the rest of the Attribute addons for now.
     Y.AttributeComplex = Y.Attribute.Complex;
