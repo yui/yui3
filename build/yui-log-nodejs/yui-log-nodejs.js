@@ -1,4 +1,4 @@
-YUI.add('yui-log-nodejs', function(Y) {
+YUI.add('yui-log-nodejs', function (Y, NAME) {
 
 var sys = require(process.binding('natives').util ? 'util' : 'sys'),
     hasColor = false;
@@ -77,4 +77,4 @@ if (!Y.config.logFn) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-log']});
+}, '@VERSION@');
