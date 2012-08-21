@@ -636,6 +636,12 @@ YUI.add('dom-core-test', function(Y) {
             Assert.isFalse(Y.DOM.contains(document.body, node));
         },
 
+        'should be true for contained comment node': function() {
+            var node = document.createElement('div');
+            node.innerHTML = 'foo<!-- comment -->';
+            Assert.isTrue(Y.DOM.contains(node, node.firstChild.nextSibling));
+        },
+
         'should return false for null input': function() {
             var node = document.createElement('div');
             document.body.appendChild(node);
@@ -650,6 +656,13 @@ YUI.add('dom-core-test', function(Y) {
         'should return false for undefined input': function() {
             Assert.isFalse(Y.DOM.contains(document.body));
             Assert.isFalse(Y.DOM.contains());
+        },
+
+        'fragment should contain child': function() {
+            var frag = document.createDocumentFragment(),
+                node = frag.appendChild(document.createElement('div'));
+
+            Assert.isTrue(Y.DOM.contains(frag, node));
         }
     }));
 

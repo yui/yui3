@@ -688,7 +688,6 @@ Y.CustomEvent = function(type, o) {
 
     this.applyConfig(o, true);
 
-    // this.log("Creating " + this.type);
 
 };
 
@@ -801,9 +800,6 @@ Y.CustomEvent.prototype = {
      */
     _on: function(fn, context, args, when) {
 
-        if (!fn) {
-            this.log('Invalid callback for CE: ' + this.type);
-        }
 
         var s = new Y.Subscriber(fn, context, args, when);
 
@@ -843,7 +839,7 @@ Y.CustomEvent.prototype = {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
-
+ 
     /**
      * Listen for this event
      * @method on
@@ -855,8 +851,9 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
-        if (this.host) {
-            this.host._monitor('attach', this.type, {
+
+        if (this.monitored && this.host) {
+            this.host._monitor('attach', this, {
                 args: arguments
             });
         }
@@ -939,14 +936,12 @@ Y.CustomEvent.prototype = {
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + '->' + 'sub: ' + s.id);
 
         var ret;
 
         ret = s.notify(args, this);
 
         if (false === ret || this.stopped > 1) {
-            this.log(this.type + ' cancelled by subscriber');
             return false;
         }
 
@@ -960,8 +955,6 @@ Y.CustomEvent.prototype = {
      * @param {string} cat log category.
      */
     log: function(msg, cat) {
-        if (!this.silent) {
-        }
     },
 
     /**
@@ -983,7 +976,6 @@ Y.CustomEvent.prototype = {
      */
     fire: function() {
         if (this.fireOnce && this.fired) {
-            this.log('fireOnce event: ' + this.type + ' already fired');
             return true;
         } else {
 
@@ -1135,8 +1127,8 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        if (this.host) {
-            this.host._monitor('detach', this.type, {
+        if (this.monitored && this.host) {
+            this.host._monitor('detach', this, {
                 ce: this,
                 sub: s
             });
@@ -1407,7 +1399,7 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
@@ -1481,7 +1473,6 @@ var L = Y.Lang,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
-
     };
 
 
@@ -1583,7 +1574,8 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
+        var yuievt = this._yuievt,
+            parts = _parseType(type, yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
 
@@ -1629,8 +1621,7 @@ ET.prototype = {
 
             }, this);
 
-            return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
-
+            return (yuievt.chain) ? this : new Y.EventHandle(ret);
         }
 
         detachcategory = parts[0];
@@ -1679,7 +1670,7 @@ ET.prototype = {
         }
 
         if (!handle) {
-            ce = this._yuievt.events[type] || this.publish(type);
+            ce = yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
         }
 
@@ -1689,7 +1680,7 @@ ET.prototype = {
             store[detachcategory][type].push(handle);
         }
 
-        return (this._yuievt.chain) ? this : handle;
+        return (yuievt.chain) ? this : handle;
 
     },
 
@@ -1912,8 +1903,8 @@ ET.prototype = {
      */
     publish: function(type, opts) {
         var events, ce, ret, defaults,
-            edata    = this._yuievt,
-            pre      = edata.config.prefix;
+            edata = this._yuievt,
+            pre = edata.config.prefix;
 
         if (L.isObject(type)) {
             ret = {};
@@ -1926,12 +1917,12 @@ ET.prototype = {
 
         type = (pre) ? _getType(type, pre) : type;
 
+        events = edata.events;
+        ce = events[type];
+
         this._monitor('publish', type, {
             args: arguments
         });
-
-        events = edata.events;
-        ce = events[type];
 
         if (ce) {
             // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
@@ -1972,17 +1963,28 @@ ET.prototype = {
      *
      * @method _monitor
      * @param what {String} 'attach', 'detach', 'fire', or 'publish'
-     * @param type {String} Name of the event being monitored
+     * @param eventType {String|CustomEvent} The prefixed name of the event being monitored, or the CustomEvent object.
      * @param o {Object} Information about the event interaction, such as
      *                  fire() args, subscription category, publish config
      * @private
      */
-    _monitor: function(what, type, o) {
-        var monitorevt, ce = this.getEvent(type);
-        if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
-            monitorevt = type + '_' + what;
-            o.monitored = what;
-            this.fire.call(this, monitorevt, o);
+    _monitor: function(what, eventType, o) {
+        var monitorevt, ce, type;
+
+        if (eventType) {
+            if (typeof eventType === "string") {
+                type = eventType;
+                ce = this.getEvent(eventType, true);
+            } else {
+                ce = eventType;
+                type = eventType.type;
+            }
+
+            if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+                monitorevt = type + '_' + what;
+                o.monitored = what;
+                this.fire.call(this, monitorevt, o);
+            }
         }
     },
 
@@ -2012,20 +2014,18 @@ ET.prototype = {
      * parameter after the properties the object literal contains are copied to
      * the event facade.
      * @return {EventTarget} the event host
-     *
      */
     fire: function(type) {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre = this._yuievt.config.prefix, ce2,
+            yuievt = this._yuievt,
+            pre = yuievt.config.prefix, 
+            ce, ret, 
+            ce2,
             args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
-
-        this._monitor('fire', t, {
-            args: args
-        });
 
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
@@ -2034,9 +2034,13 @@ ET.prototype = {
             ce = this.publish(t);
         }
 
+        this._monitor('fire', (ce || t), {
+            args: args
+        });
+
         // this event has not been published or subscribed to
         if (!ce) {
-            if (this._yuievt.hasTargets) {
+            if (yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
@@ -2047,7 +2051,7 @@ ET.prototype = {
             ret = ce.fire.apply(ce, args);
         }
 
-        return (this._yuievt.chain) ? this : ret;
+        return (yuievt.chain) ? this : ret;
     },
 
     getSibling: function(type, ce) {

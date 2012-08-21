@@ -407,9 +407,7 @@ Y.CustomEvent.prototype = {
      */
     _on: function(fn, context, args, when) {
 
-        if (!fn) {
-            this.log('Invalid callback for CE: ' + this.type);
-        }
+        if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
         var s = new Y.Subscriber(fn, context, args, when);
 
@@ -450,7 +448,7 @@ Y.CustomEvent.prototype = {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
-
+ 
     /**
      * Listen for this event
      * @method on
@@ -462,8 +460,9 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
-        if (this.host) {
-            this.host._monitor('attach', this.type, {
+
+        if (this.monitored && this.host) {
+            this.host._monitor('attach', this, {
                 args: arguments
             });
         }
@@ -567,9 +566,7 @@ Y.CustomEvent.prototype = {
      * @param {string} cat log category.
      */
     log: function(msg, cat) {
-        if (!this.silent) {
-            Y.log(this.id + ': ' + msg, cat || 'info', 'event');
-        }
+        if (!this.silent) { Y.log(this.id + ': ' + msg, cat || 'info', 'event'); }
     },
 
     /**
@@ -636,7 +633,7 @@ Y.CustomEvent.prototype = {
 
     // Requires the event-custom-complex module for full funcitonality.
     fireComplex: function(args) {
-        Y.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
+        this.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
         args[0] = args[0] || {};
         return this.fireSimple(args);
     },
@@ -744,8 +741,8 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        if (this.host) {
-            this.host._monitor('detach', this.type, {
+        if (this.monitored && this.host) {
+            this.host._monitor('detach', this, {
                 ce: this,
                 sub: s
             });

@@ -10,6 +10,7 @@ YUI.add('event-custom-complex', function(Y) {
 
 var FACADE,
     FACADE_KEYS,
+    key,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
     ETProto = Y.EventTarget.prototype, 
@@ -18,10 +19,7 @@ var FACADE,
         var p;
 
         for (p in payload) {
-            // I really think the payload.hasOwnProperty check can go also
-            // Leaving it in for now, since i wanted one commit, with the same
-            // hasOwnProperty criteria as the original
-            if (payload.hasOwnProperty(p) && !FACADE.hasOwnProperty(p)) {
+            if (!(FACADE_KEYS.hasOwnProperty(p))) {
                 facade[p] = payload[p];
             }
         }
@@ -142,7 +140,6 @@ CEProto.fireComplex = function(args) {
     if (self.stack) {
         // queue this event if the current item in the queue bubbles
         if (self.queuable && self.type != self.stack.next.type) {
-            self.log('queue ' + self.type);
             self.stack.queue.push([self, args]);
             return true;
         }
@@ -185,8 +182,6 @@ CEProto.fireComplex = function(args) {
 
     self.details = args.slice(); // original arguments in the details
 
-    // self.log("Firing " + self  + ", " + "args: " + args);
-    self.log("Firing " + self.type);
 
     self._facade = null; // kill facade to eliminate stale properties
 
@@ -497,7 +492,12 @@ ETProto.bubble = function(evt, args, target, es) {
 };
 
 FACADE = new Y.EventFacade();
-FACADE_KEYS = Y.Object.keys(FACADE);
+FACADE_KEYS = {};
+
+// Flatten whitelist
+for (key in FACADE) {
+    FACADE_KEYS[key] = true;
+}
 
 
 }, '@VERSION@' ,{requires:['event-custom-base']});

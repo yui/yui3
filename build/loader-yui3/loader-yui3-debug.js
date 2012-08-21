@@ -183,7 +183,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "attribute-core": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "attribute-events": {
@@ -193,7 +193,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "attribute-extras": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "autocomplete": {
