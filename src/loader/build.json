@@ -25,5 +25,14 @@
                 "rollup.js"
             ]
         }
+    },
+    "rollups": {
+        "loader": {
+            "files": [
+                "loader-base",
+                "loader-rollup",
+                "loader-yui3"
+            ]
+        }
     }
 }
