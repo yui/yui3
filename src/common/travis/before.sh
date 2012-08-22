@@ -10,7 +10,8 @@ cd ../../yui;
 wait
 
 if [ -n "$TRAVIS" ]; then
-    sudo npm -g install shifter
+    echo "Installing Shifter.."
+    sudo npm -g install -loglevel silent shifter
 fi
 
 make npm
