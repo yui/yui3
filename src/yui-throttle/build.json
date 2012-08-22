@@ -1,0 +1,10 @@
+{
+    "name": "yui-throttle",
+    "builds": {
+        "yui-throttle": {
+            "jsfiles": [
+                "throttle.js"
+            ]
+        }
+    }
+}
