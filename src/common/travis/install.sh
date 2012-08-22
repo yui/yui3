@@ -7,10 +7,12 @@ cd ./build-npm;
 echo "NPM Build Dir: `pwd`"
 wait
 echo "Installing NPM Modules"
-npm install -loglevel silent
+#npm install -loglevel silent
+npm install
 wait
 echo "Installing testing tools"
-npm install -loglevel silent yuitest grover yuidocjs
+#npm install -loglevel silent yuitest grover yuidocjs
+npm install yuitest grover yuidocjs
 wait
 cd  ../
 
