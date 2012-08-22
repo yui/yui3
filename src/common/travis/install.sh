@@ -10,7 +10,7 @@ echo "Installing NPM Modules"
 npm install -loglevel silent
 wait
 echo "Installing testing tools"
-npm install -loglevel silent yuitest grover yuidocjs
+npm install -loglevel silent yuitest grover yuidocjs shifter
 wait
 cd  ../
 
