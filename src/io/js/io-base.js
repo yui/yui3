@@ -642,6 +642,7 @@ IO.prototype = {
         // querystring-stringify-simple.
         if ((Y.Lang.isObject(data) && !data.nodeType) && !transaction.upload) {
             data = Y.QueryString.stringify(data);
+            config.data = data;
         }
 
         if (config.form) {
