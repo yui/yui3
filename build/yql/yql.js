@@ -1,4 +1,4 @@
-YUI.add('yql', function(Y) {
+YUI.add('yql', function (Y, NAME) {
 
     /**
      * This class adds a sugar class to allow access to YQL (http://developer.yahoo.com/yql/).
@@ -167,4 +167,4 @@ YUI.add('yql', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['jsonp', 'jsonp-url']});
+}, '@VERSION@', {"requires": ["jsonp", "jsonp-url"]});
