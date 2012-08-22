@@ -325,14 +325,14 @@
          * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr, attrs = clazz.ATTRS;
+            var cfgs = null, attr, attrs = clazz.ATTRS, seen = {};
 
             if (attrs) {
                 for (attr in attrs) {
-                    if (allCfgs[attr]) {
-                        cfgs = cfgs || {};
+                    if (allCfgs[attr] && !seen[attr]) {
+                        cfgs || (cfgs = {});
                         cfgs[attr] = allCfgs[attr];
-                        allCfgs[attr] = null;
+                        seen[attr] = true;
                     }
                 }
             }
@@ -393,7 +393,7 @@
 
                 // Add to attributes
                 if (c.ATTRS) {
-                    attrs[attrs.length] = c.ATTRS;
+                    attrs.push(c.ATTRS);
                 }
 
                 if (this._allowAdHocAttrs) {
@@ -410,7 +410,7 @@
 
             this._classes = classes;
             this._nonAttrs = nonAttrs;
-            this._attrs = this._aggregateAttrs(attrs);
+            this._attrs = this.constructor._aggregatedAttrs || this._aggregateAttrs(attrs);
         },
 
         /**
@@ -499,7 +499,7 @@
                 }
             }
 
-            return aggAttrs;
+            return this.constructor._aggregatedAttrs = aggAttrs;
         },
 
         /**

@@ -106,7 +106,7 @@
             var attr;
             for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
-                    this.set(attr, attrs[attr], opts);
+                    this._setAttr(attr, attrs[attr], opts);
                 }
             }
             return this;
@@ -125,9 +125,8 @@
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
         _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
-            var host = this,
-                eventName = attrName + CHANGE,
-                state = host._state,
+            var eventName = attrName + CHANGE,
+                state = this._state,
                 facade,
                 broadcast,
                 evtCfg;
@@ -146,12 +145,12 @@
                     evtCfg.broadcast = broadcast;
                 }
 
-                host.publish(eventName, evtCfg);
-                
+                this.publish(eventName, evtCfg);
+
                 state.add(attrName, PUBLISHED, true);
             }
 
-            facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
+            facade = opts ? Y.merge(opts) : this._ATTR_E_FACADE;
 
             // Not using the single object signature for fire({type:..., newVal:...}), since
             // we don't want to override type. Changed to the fire(type, {newVal:...}) signature.
@@ -162,8 +161,8 @@
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            // host.fire(facade);
-            host.fire(eventName, facade);
+            // this.fire(facade);
+            this.fire(eventName, facade);
         },
 
         /**
@@ -179,7 +178,7 @@
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
-                e.newVal = this.get(e.attrName);
+                e.newVal = this._getAttr(e.attrName);
             }
         }
     };

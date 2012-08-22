@@ -49,16 +49,15 @@
          * @param {Object} config An object with configuration property/value pairs, specifying the configuration properties to modify.
          */
         modifyAttr: function(name, config) {
-            var host = this, // help compression
-                prop, state;
+            var prop, state;
 
-            if (host.attrAdded(name)) {
+            if (this.attrAdded(name)) {
 
-                if (host._isLazyAttr(name)) {
-                    host._addLazyAttr(name);
+                if (this._isLazyAttr(name)) {
+                    this._addLazyAttr(name);
                 }
 
-                state = host._state;
+                state = this._state;
                 for (prop in config) {
                     if (MODIFIABLE[prop] && config.hasOwnProperty(prop)) {
                         state.add(name, prop, config[prop]);
@@ -71,7 +70,7 @@
                 }
             }
 
-            if (!host.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
+            if (!this.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
         },
 
         /**
@@ -94,19 +93,24 @@
          * @chainable
          */
         reset : function(name) {
-            var host = this;  // help compression
+            var data, key;
 
             if (name) {
-                if (host._isLazyAttr(name)) {
-                    host._addLazyAttr(name);
+                if (this._isLazyAttr(name)) {
+                    this._addLazyAttr(name);
                 }
-                host.set(name, host._state.get(name, INIT_VALUE));
+                this._setAttr(name, this._state.get(name, INIT_VALUE));
             } else {
-                Y.each(host._state.data, function(v, n) {
-                    host.reset(n);
-                });
+                data = this._state.data;
+
+                for (key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        this.reset(key);
+                    }
+                }
             }
-            return host;
+
+            return this;
         },
 
         /**
@@ -120,19 +124,22 @@
          * @return {Object} The configuration properties for the given attribute, or all attributes.
          */
         _getAttrCfg : function(name) {
-            var o,
-                state = this._state;
+            var state = this._state,
+                key, obj;
 
             if (name) {
-                o = state.getAll(name) || {};
+                obj = state.getAll(name) || {};
             } else {
-                o = {};
-                Y.each(state.data, function(v, n) {
-                    o[n] = state.getAll(n);
-                }); 
+                obj = {};
+
+                for (key in state.data) {
+                    if (state.data.hasOwnProperty(key)) {
+                        obj[key] = state.getAll(key);
+                    }
+                }
             }
 
-            return o;
+            return obj;
         }
     };
 

@@ -222,29 +222,31 @@
 
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
-            var host = this, // help compression
-                state = host._state,
+            var attrAdded = this.attrAdded(name),
+                state = this._state,
                 value,
                 hasValue;
 
-            config = config || {};
+            config || (config = {});
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
-            if (lazy && !host.attrAdded(name)) {
+            if (lazy && !attrAdded) {
                 state.addAll(name, {
                     lazy : config,
                     added : true
                 });
             } else {
 
-                if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (attrAdded && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
+                if (!attrAdded || state.get(name, IS_LAZY_ADD)) {
 
                     hasValue = (VALUE in config);
 
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
+
+                    config = state.addAll(name, config);
 
                     if (hasValue) {
                         // We'll go through set, don't want to set value in config directly
@@ -255,18 +257,17 @@
                     config.added = true;
                     config.initializing = true;
 
-                    state.addAll(name, config);
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
-                        host.set(name, value);
+                        this._setAttr(name, value);
                     }
 
                     state.remove(name, INITIALIZING);
                 }
             }
 
-            return host;
+            return this;
         },
 
         /**
@@ -392,9 +393,7 @@
                 initialSet,
                 strPath,
                 path,
-                currVal,
-                writeOnce,
-                initializing;
+                currVal;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -406,40 +405,33 @@
                 this._addLazyAttr(name);
             }
 
-            cfg = state.getAll(name, true) || {}; 
-
-            initialSet = (!(VALUE in cfg));
+            cfg = state.getAll(name, true) || {};
 
             if (stateProxy && name in stateProxy && !cfg._bypassProxy) {
-                // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set? 
+                // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set?
                 initialSet = false;
+            } else {
+                initialSet = !(VALUE in cfg);
             }
 
-            writeOnce = cfg.writeOnce;
-            initializing = cfg.initializing;
+            if (!force) {
+                if (!initialSet) {
+                    allowSet = !(cfg.writeOnce || cfg.readOnly);
 
-            if (!initialSet && !force) {
-
-                if (writeOnce) {
-                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
-                    allowSet = false;
+                    if (cfg.writeOnce) { Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute'); }
+                    if (cfg.readOnly) { Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute'); }
                 }
 
-                if (cfg.readOnly) {
-                    Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
+                if (!cfg.initializing && cfg.writeOnce === INIT_ONLY) {
+                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce: "initOnly"', 'warn', 'attribute');
                     allowSet = false;
                 }
-            }
-
-            if (!initializing && !force && writeOnce === INIT_ONLY) {
-                Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce: "initOnly"', 'warn', 'attribute');
-                allowSet = false;
             }
 
             if (allowSet) {
                 // Don't need currVal if initialSet (might fail in custom getter if it always expects a non-undefined/non-null value)
                 if (!initialSet) {
-                    currVal =  this.get(name);
+                    currVal = this._getAttr(name);
                 }
 
                 if (path) {
@@ -452,7 +444,7 @@
                 }
 
                 if (allowSet) {
-                    if (!this._fireAttrChange || initializing) {
+                    if (!this._fireAttrChange || cfg.initializing) {
                         this._setAttrVal(name, strPath, currVal, val);
                     } else {
                         // HACK - no real reason core needs to know about _fireAttrChange, but
@@ -479,9 +471,8 @@
          * @return {Any} The value of the attribute.
          */
         _getAttr : function(name) {
-            var host = this, // help compression
-                fullName = name,
-                state = host._state,
+            var fullName = name,
+                state = this._state,
                 path,
                 getter,
                 val,
@@ -493,28 +484,33 @@
             }
 
             // On Demand - Should be rare - handles out of order valueFn references
-            if (host._tCfgs && host._tCfgs[name]) {
+            if (this._tCfgs && name in this._tCfgs) {
                 cfg = {};
-                cfg[name] = host._tCfgs[name];
-                delete host._tCfgs[name];
-                host._addAttrs(cfg, host._tVals);
-            }
-            
-            // Lazy Init
-            if (host._isLazyAttr(name)) {
-                host._addLazyAttr(name);
+                cfg[name] = this._tCfgs[name];
+                delete this._tCfgs[name];
+                this._addAttrs(cfg, this._tVals);
             }
 
-            val = host._getStateVal(name);
-                        
+            // Lazy Init
+            if (this._isLazyAttr(name)) {
+                this._addLazyAttr(name);
+            }
+
+            val = this._getStateVal(name);
+
             getter = state.get(name, GETTER);
 
             if (getter && !getter.call) {
                 getter = this[getter];
             }
 
-            val = (getter) ? getter.call(host, val, fullName) : val;
-            val = (path) ? O.getValue(val, path) : val;
+            if (getter) {
+                val = getter.call(this, val, fullName);
+            }
+
+            if (path) {
+                val = O.getValue(val, path);
+            }
 
             return val;
         },
@@ -530,7 +526,12 @@
          */
         _getStateVal : function(name) {
             var stateProxy = this._stateProxy;
-            return stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY) ? stateProxy[name] : this._state.get(name, VALUE);
+
+            if (stateProxy && name in stateProxy && !this._state.get(name, BYPASS_PROXY)) {
+                return stateProxy[name];
+            } else {
+                return this._state.get(name, VALUE);
+            }
         },
 
         /**
@@ -544,7 +545,8 @@
          */
         _setStateVal : function(name, value) {
             var stateProxy = this._stateProxy;
-            if (stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY)) {
+
+            if (stateProxy && name in stateProxy && !this._state.get(name, BYPASS_PROXY)) {
                 stateProxy[name] = value;
             } else {
                 this._state.add(name, VALUE, value);
@@ -565,41 +567,41 @@
          * @return {booolean} true if the new attribute value was stored, false if not.
          */
         _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
-
-            var host = this,
-                allowSet = true,
-                cfg = this._state.getAll(attrName, true) || {},
-                validator = cfg.validator,
-                setter = cfg.setter,
+            var allowSet     = true,
+                cfg          = this._state.getAll(attrName, true) || {},
                 initializing = cfg.initializing,
-                prevRawVal = this._getStateVal(attrName),
-                name = subAttrName || attrName,
+                name         = subAttrName || attrName,
+                prevRawVal   = this._getStateVal(attrName),
+                setter       = cfg.setter,
+                validator    = cfg.validator,
                 retVal,
-                valid;
+                valid        = true;
 
             if (validator) {
-                if (!validator.call) { 
+                if (!validator.call) {
                     // Assume string - trying to keep critical path tight, so avoiding Lang check
                     validator = this[validator];
                 }
+
                 if (validator) {
-                    valid = validator.call(host, newVal, name);
+                    valid = validator.call(this, newVal, name);
 
                     if (!valid && initializing) {
                         newVal = cfg.defaultValue;
-                        valid = true; // Assume it's valid, for perf.
+                        valid  = true; // Assume the default value is valid, for perf.
                     }
                 }
             }
 
-            if (!validator || valid) {
+            if (valid) {
                 if (setter) {
                     if (!setter.call) {
                         // Assume string - trying to keep critical path tight, so avoiding Lang check
                         setter = this[setter];
                     }
+
                     if (setter) {
-                        retVal = setter.call(host, newVal, name);
+                        retVal = setter.call(this, newVal, name);
 
                         if (retVal === INVALID_VALUE) {
                             Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
@@ -612,7 +614,7 @@
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && (newVal === prevRawVal) && !Lang.isObject(newVal)) {
+                    if (!subAttrName && (newVal === prevRawVal) && !Lang.isObject(newVal)) {
                         Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {
@@ -620,7 +622,7 @@
                         if (!(INIT_VALUE in cfg)) {
                             cfg.initValue = newVal;
                         }
-                        host._setStateVal(attrName, newVal);
+                        this._setStateVal(attrName, newVal);
                     }
                 }
 
@@ -657,7 +659,7 @@
             var attr;
             for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
-                    this.set(attr, attrs[attr]);
+                    this._setAttr(attr, attrs[attr]);
                 }
             }
             return this;
@@ -727,15 +729,14 @@
          * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
-            var host = this; // help compression
             if (cfgs) {
-                host._tCfgs = cfgs;
-                host._tVals = host._normAttrVals(values);
-                host._addAttrs(cfgs, host._tVals, lazy);
-                host._tCfgs = host._tVals = null;
+                this._tCfgs = cfgs;
+                this._tVals = this._normAttrVals(values);
+                this._addAttrs(cfgs, this._tVals, lazy);
+                this._tCfgs = this._tVals = null;
             }
 
-            return host;
+            return this;
         },
 
         /**
@@ -756,8 +757,7 @@
          * See <a href="#method_addAttr">addAttr</a>.
          */
         _addAttrs : function(cfgs, values, lazy) {
-            var host = this, // help compression
-                attr,
+            var attr,
                 attrCfg,
                 value;
 
@@ -769,17 +769,17 @@
                     attrCfg.defaultValue = attrCfg.value;
 
                     // Handle simple, complex and user values, accounting for read-only
-                    value = host._getAttrInitVal(attr, attrCfg, host._tVals);
+                    value = this._getAttrInitVal(attr, attrCfg, this._tVals);
 
                     if (value !== undefined) {
                         attrCfg.value = value;
                     }
 
-                    if (host._tCfgs[attr]) {
-                        delete host._tCfgs[attr];
+                    if (this._tCfgs[attr]) {
+                        delete this._tCfgs[attr];
                     }
 
-                    host.addAttr(attr, attrCfg, lazy);
+                    this.addAttr(attr, attrCfg, lazy);
                 }
             }
         },
@@ -871,12 +871,14 @@
          */
         _initAttrs : function(attrs, values, lazy) {
             // ATTRS support for Node, which is not Base based
-            attrs = attrs || this.constructor.ATTRS;
-    
-            var Base = Y.Base,
-                BaseCore = Y.BaseCore,
-                baseInst = (Base && Y.instanceOf(this, Base)),
-                baseCoreInst = (!baseInst && BaseCore && Y.instanceOf(this, BaseCore));
+            attrs || (attrs = this.constructor.ATTRS);
+
+            if (!attrs) {
+                return;
+            }
+
+            var baseInst     = Y.Base && Y.instanceOf(this, Y.Base),
+                baseCoreInst = !baseInst && Y.BaseCore && Y.instanceOf(this, Y.BaseCore);
 
             if ( attrs && !baseInst && !baseCoreInst) {
                 this.addAttrs(this._protectAttrs(attrs), values, lazy);

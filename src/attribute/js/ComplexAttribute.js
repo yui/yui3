@@ -80,8 +80,6 @@
                 complex,
                 i,
                 l,
-                path,
-                subval,
                 subvals;
 
             if (!cfg.readOnly && initValues) {
@@ -111,9 +109,7 @@
                 if (complex && complex.hasOwnProperty(attr) && (val !== undefined) && (val !== null)) {
                     subvals = complex[attr];
                     for (i = 0, l = subvals.length; i < l; ++i) {
-                        path = subvals[i].path;
-                        subval = subvals[i].value;
-                        O.setValue(val, path, subval);
+                        O.setValue(val, subvals[i].path, subvals[i].value);
                     }
                 }
             }

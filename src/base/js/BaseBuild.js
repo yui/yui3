@@ -405,7 +405,7 @@
 
                     for (a in sAttrs) {
                         if (sAttrs.hasOwnProperty(a)) {
-                            rAttrs[a] = rAttrs[a] || {};
+                            rAttrs[a] || (rAttrs[a] = {});
                             Y.mix(rAttrs[a], sAttrs[a], true);
                         }
                     }

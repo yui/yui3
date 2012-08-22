@@ -43,6 +43,7 @@
          * @method addAll
          * @param name {String} The name of the item.
          * @param obj {Object} A hash of property/value pairs.
+         * @return {Object} The complete item to which properties were added.
          */
         addAll: function(name, obj) {
             var item = this.data[name],
@@ -57,6 +58,8 @@
                     item[key] = obj[key];
                 }
             }
+
+            return item;
         },
 
         /**
