@@ -30,8 +30,14 @@ YUI.add('event-outside', function(Y) {
  * a different name for the created Event, pass it as a second argument like so:
  * <code>Y.Event.defineOutside(eventType, "yonderclick")</code>.
  *
+ * This module was contributed by Brett Stimmerman, promoted from his
+ * gallery-outside-events module at
+ * http://yuilibrary.com/gallery/show/outside-events
+ *
  * @module event
  * @submodule event-outside
+ * @author brettstimmerman
+ * @since 3.4.0
  */
 
 // Outside events are pre-defined for each of these native DOM events
@@ -49,10 +55,11 @@ var nativeEvents = [
  * a different name for the created Event, pass it as a second argument like so:
  * <code>Y.Event.defineOutside(eventType, "yonderclick")</code>.
  *
- * @method Y.Event.defineOutside
+ * @method defineOutside
  * @param {String} event DOM event
  * @param {String} name (optional) custom outside event name
  * @static
+ * @for Event
  */
 Y.Event.defineOutside = function (event, name) {
     name = name || (event + 'outside');

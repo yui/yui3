@@ -2,6 +2,7 @@
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianChart
  * @extends ChartBase
  * @constructor

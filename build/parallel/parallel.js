@@ -1,4 +1,4 @@
-YUI.add('parallel', function(Y) {
+YUI.add('parallel', function (Y, NAME) {
 
 
 /**
@@ -67,11 +67,11 @@ Y.Parallel.prototype = {
     add: function (fn) {
         var self = this;
         self.total += 1;
-        return function () {
+        return function (a) {
             self.finished++;
             self.results.push(
                 (fn && fn.apply(self.context, arguments)) ||
-                (arguments.length === 1 ? arguments[0] : Y.Array(arguments)));
+                (arguments.length === 1 ? a : Y.Array(arguments)));
             self.test();
         };
     },
@@ -101,4 +101,4 @@ Y.Parallel.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

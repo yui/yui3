@@ -1,4 +1,4 @@
-YUI.add('get', function(Y) {
+YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
 
@@ -1265,4 +1265,4 @@ Transaction.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

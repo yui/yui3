@@ -7,6 +7,13 @@ YUI.add('charts-base', function(Y) {
  * @module charts
  * @main charts
  */
+
+/**
+ * The charts-base submodule contains the core functionality for the charts module.
+ *
+ * @module charts
+ * @submodule charts-base
+ */
 var CONFIG = Y.config,
     WINDOW = CONFIG.win,
     DOCUMENT = CONFIG.doc,
@@ -27,7 +34,6 @@ var CONFIG = Y.config,
 /**
  * Abstract class for creating groups of shapes with the same styles and dimensions.
  *
- * @module graphics
  * @class ShapeGroup
  * @constructor
  */
@@ -181,7 +187,8 @@ Y.ShapeGroup = ShapeGroup;
 /**
  * Abstract class for creating groups of circles with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class CircleGroup
  * @constructor
  */
@@ -240,7 +247,8 @@ Y.CircleGroup = CircleGroup;
 /**
  * Abstract class for creating groups of rects with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class GroupRect
  * @constructor
  */
@@ -269,7 +277,8 @@ Y.RectGroup = RectGroup;
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class GroupDiamond
  * @constructor
  */
@@ -298,7 +307,8 @@ Y.DiamondGroup = DiamondGroup;
 /**
  * Abstract class for creating groups of diamonds with the same styles and dimensions.
  *
- * @module graphics
+ * @module charts
+ * @submodule charts-base
  * @class EllipseGroup
  * @constructor
  */
@@ -329,6 +339,7 @@ Y.EllipseGroup = EllipseGroup;
  * attribute.
  *
  * @module charts
+ * @submodule charts-base
  * @class Renderer
  * @constructor
  */
@@ -445,6 +456,7 @@ Y.Renderer = Renderer;
  * Algorithmic strategy for rendering a left axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class LeftAxisLayout
  * @constructor
  */
@@ -806,6 +818,7 @@ Y.LeftAxisLayout = LeftAxisLayout;
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class RightAxisLayout
  * @constructor
  */
@@ -1172,6 +1185,7 @@ Y.RightAxisLayout = RightAxisLayout;
  * Contains algorithms for rendering a bottom axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class BottomAxisLayout
  * @Constructor
  */
@@ -1521,6 +1535,7 @@ Y.BottomAxisLayout = BottomAxisLayout;
  * Contains algorithms for rendering a top axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class TopAxisLayout
  * @constructor
  */
@@ -1900,6 +1915,7 @@ Y.TopAxisLayout = TopAxisLayout;
  * The Axis class. Generates axes for a chart.
  *
  * @module charts
+ * @submodule charts-base
  * @class Axis
  * @extends Widget
  * @uses Renderer
@@ -3416,6 +3432,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
  * AxisType is an abstract class that manages the data for an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class AxisType
  * @constructor
  * @extends Axis
@@ -4126,6 +4143,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
  * NumericAxis manages numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class NumericAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -4809,6 +4827,7 @@ Y.NumericAxis = NumericAxis;
  * StackedAxis manages stacked numeric data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -4911,6 +4930,7 @@ Y.StackedAxis = StackedAxis;
  * TimeAxis manages time data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class TimeAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -5249,6 +5269,7 @@ Y.TimeAxis = TimeAxis;
  * CategoryAxis manages category data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class CategoryAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -5526,6 +5547,7 @@ Y.CategoryAxis = CategoryAxis;
  * Utility class used for calculating curve points.
  *
  * @module charts
+ * @submodule charts-base
  * @class CurveUtil
  * @constructor
  */
@@ -5645,6 +5667,7 @@ Y.CurveUtil = CurveUtil;
  * Utility class used for creating stacked series.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackingUtil
  * @constructor
  */
@@ -5988,6 +6011,7 @@ Y.StackingUtil = StackingUtil;
  * Utility class used for drawing lines.
  *
  * @module charts
+ * @submodule charts-base
  * @class Lines
  * @constructor
  */
@@ -6771,6 +6795,7 @@ Y.Fills = Fills;
  * Utility class used for drawing markers.
  *
  * @module charts
+ * @submodule charts-base
  * @class Plots
  * @constructor
  */
@@ -7284,6 +7309,7 @@ Y.Plots = Plots;
  * Histogram is the base class for Column and Bar series.
  *
  * @module charts
+ * @submodule charts-base
  * @class Histogram
  * @constructor
  */
@@ -7503,6 +7529,7 @@ Y.Histogram = Histogram;
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianSeries
  * @extends Base
  * @uses Renderer
@@ -8524,6 +8551,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
  * on a graph.
  *
  * @module charts
+ * @submodule charts-base
  * @class MarkerSeries
  * @extends CartesianSeries
  * @uses Plots
@@ -8626,6 +8654,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
  * The LineSeries class renders quantitative data on a graph by connecting relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class LineSeries
  * @extends CartesianSeries
  * @uses Lines
@@ -8720,6 +8749,7 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
  * SplineSeries renders a graph with data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class SplineSeries
  * @constructor
  * @extends CartesianSeries
@@ -8784,6 +8814,7 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
  * to indicate their contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedSplineSeries
  * @constructor
  * @extends SplineSeries
@@ -8822,6 +8853,7 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
  * series' contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedMarkerSeries
  * @constructor
  * @extends MarkerSeries
@@ -8861,6 +8893,7 @@ Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class ColumnSeries
  * @extends MarkerSeries
  * @uses Histogram
@@ -9010,6 +9043,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class BarSeries
  * @extends MarkerSeries
  * @uses Histogram
@@ -9167,6 +9201,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
  * and the relevant data points.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSeries
  * @extends CartesianSeries
  * @uses Fills
@@ -9257,6 +9292,7 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
  * AreaSplineSeries renders an area graph with data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class AreaSplineSeries
  * @constructor
  * @extends CartesianSeries
@@ -9309,6 +9345,7 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.AreaSeries, [Y.CurveUti
  * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAreaSplineSeries
  * @constructor
  * @extends AreaSeries
@@ -9349,6 +9386,7 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
  * are rendered and area is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSeries
  * @extends CartesianSeries 
  * @uses Fills
@@ -9617,6 +9655,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
  * rendered.  
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedComboSeries
  * @extends ComboSeries
  * @uses StackingUtil
@@ -9690,6 +9729,7 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
  * are rendered and areaspline is not. 
  *
  * @module charts
+ * @submodule charts-base
  * @class ComboSplineSeries
  * @extends ComboSeries
  * @extends CurveUtil
@@ -9739,6 +9779,7 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
  * rendered.  
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedComboSplineSeries
  * @extends StackedComboSeries
  * @uses CurveUtil
@@ -9797,6 +9838,7 @@ Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.Stacked
  * to indicate their contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedLineSeries
  * @constructor
  * @extends  LineSeries
@@ -9833,6 +9875,7 @@ Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.Stacki
  * StackedAreaSeries area fills to display data showing its contribution to a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAreaSeries
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.
@@ -9883,6 +9926,7 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
  * their contribution to the cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedColumnSeries
  * @extends ColumnSeries
  * @uses StackingUtil
@@ -10222,6 +10266,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
  * their contribution to the cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedBarSeries
  * @extends BarSeries
  * @uses StackingUtil
@@ -10574,6 +10619,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
  * percentage of a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class PieSeries
  * @constructor
  * @extends MarkerSeries
@@ -11301,6 +11347,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
  * Gridlines draws gridlines on a Graph.
  *
  * @module charts
+ * @submodule charts-base
  * @class Gridlines
  * @constructor
  * @extends Base
@@ -11491,6 +11538,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
  * instance.
  *
  * @module charts
+ * @submodule charts-base
  * @class Graph
  * @constructor
  * @extends Widget
@@ -12281,6 +12329,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
  * The ChartBase class is an abstract class used to create charts.
  *
  * @module charts
+ * @submodule charts-base
  * @class ChartBase
  * @constructor
  */
@@ -13116,9 +13165,12 @@ ChartBase.prototype = {
             axis;
         this._seriesIndex = -1;
         this._itemIndex = -1;
-        this.set("axes", this.get("axes"));
+        if(this instanceof Y.CartesianChart)
+        {
+            this.set("axes", this.get("axes"));
+            this.set("seriesCollection", this.get("seriesCollection"));
+        }
         axes = this.get("axes");
-        this.set("seriesCollection", this.get("seriesCollection"));
         if(axes)
         {
             for(i in axes)
@@ -13563,6 +13615,7 @@ Y.ChartBase = ChartBase;
  * The CartesianChart class creates a chart with horizontal and vertical axes.
  *
  * @module charts
+ * @submodule charts-base
  * @class CartesianChart
  * @extends ChartBase
  * @constructor
@@ -15700,6 +15753,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
  * The PieChart class creates a pie chart
  *
  * @module charts
+ * @submodule charts-base
  * @class PieChart
  * @extends ChartBase
  * @constructor

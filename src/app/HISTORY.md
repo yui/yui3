@@ -1,6 +1,39 @@
 App Framework Change History
 ============================
 
+3.7.0
+-----
+
+### Router
+
+* Added support for route-based middleware to Router. The `route()` method now
+  accepts an arbitrary number of callbacks enabling more reuse of routing code.
+  For people familiar with Express.js' route middleware, this behaves the same.
+  [Ticket #2532620]
+
+
+3.6.1
+-----
+
+### Model
+
+* Added custom response parsing to ModelSync.REST to make it easy for developers
+  to gain access to the full `Y.io()` response object. Developers using
+  ModelSync.REST can either assign the `parseIOResponse` property to `false` to
+  gain access to the full `Y.io()` response object in their `parse()` method,
+  or provide a custom implementation of the `parseIOResponse()` method.
+
+* ModelSync.REST's `serialize()` method now receives the `action` which the
+  `sync()` method was invoked with. [Ticket #2532625]
+
+### ModelList
+
+* You may now add models to a ModelList at instantiation time by providing an
+  Object, array of Objects, Model instance, array of Model instances, or another
+  ModelList instance in the `items` property of the config object passed to
+  ModelList's constructor. This change also applies to LazyModelList.
+
+
 3.6.0
 -----
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    coverage: ['text-accentfold' ],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'text-accentfold-test': {
+            fullpath: './assets/text-accentfold-test.js',
+            requires: ['text-accentfold', 'test']
+        }
+    }
+}).use('text-accentfold-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.setName('Text: Accentfold');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

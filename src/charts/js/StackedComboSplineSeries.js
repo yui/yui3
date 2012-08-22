@@ -5,6 +5,7 @@
  * rendered.  
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedComboSplineSeries
  * @extends StackedComboSeries
  * @uses CurveUtil

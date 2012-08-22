@@ -1,4 +1,4 @@
-YUI.add('yql', function(Y) {
+YUI.add('yql', function (Y, NAME) {
 
     /**
      * This class adds a sugar class to allow access to YQL (http://developer.yahoo.com/yql/).
@@ -91,7 +91,7 @@ YUI.add('yql', function(Y) {
         * @return {YQLRequest}
         */
         send: function() {
-            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
+            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO), o;
 
             Y.each(this._params, function(v, k) {
                 qs.push(k + '=' + encodeURIComponent(v));
@@ -101,7 +101,7 @@ YUI.add('yql', function(Y) {
             
             url += ((this._opts && this._opts.base) ? this._opts.base : Y.YQLRequest.BASE_URL) + qs;
             
-            var o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
+            o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
 
             o.on = o.on || {};
             this._callback = o.on.success;
@@ -168,4 +168,4 @@ YUI.add('yql', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['jsonp', 'jsonp-url']});
+}, '@VERSION@', {"requires": ["jsonp", "jsonp-url"]});

@@ -2,7 +2,7 @@
     "name"       : "get",
     "displayName": "Get",
     "description": "Asynchronous JavaScript and CSS file loader.",
-    "author"     : ["rgrove"],
+    "author"     : ["rgrove", "sdesai"],
 
     "tags": [
         "utility", "get", "script", "loader"

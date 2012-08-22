@@ -1,4 +1,4 @@
-YUI.add('dd-scroll', function(Y) {
+YUI.add('dd-scroll', function (Y, NAME) {
 
 
     /**
@@ -424,4 +424,4 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, optional:['dd-proxy'], requires:['dd-drag']});
+}, '@VERSION@', {"requires": ["dd-drag"]});

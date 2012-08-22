@@ -1,4 +1,4 @@
-YUI.add('dd-proxy', function(Y) {
+YUI.add('dd-proxy', function (Y, NAME) {
 
 
     /**
@@ -246,4 +246,4 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});
+}, '@VERSION@', {"requires": ["dd-drag"]});

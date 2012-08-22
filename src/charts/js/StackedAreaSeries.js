@@ -2,6 +2,7 @@
  * StackedAreaSeries area fills to display data showing its contribution to a whole.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedAreaSeries
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.

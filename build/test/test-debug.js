@@ -1,4 +1,4 @@
-YUI.add('test', function(Y) {
+YUI.add('test', function (Y, NAME) {
 
 
 
@@ -19,7 +19,10 @@ if (YUI.YUITest) {
 
     //Make this global for back compat
     YUITest = {
-        version: "@VERSION@"
+        version: "@VERSION@",
+        guid: function(pre) {
+            return Y.guid(pre);
+        }
     };
 
 Y.namespace('Test');
@@ -188,8 +191,8 @@ YUITest.TestSuite = function (data) {
     }
 
     //double-check name
-    if (this.name === ""){
-        this.name = "testSuite" + (+new Date());
+    if (this.name === "" || !this.name) {
+        this.name = YUITest.guid("testSuite_");
     }
 
 };
@@ -242,6 +245,9 @@ YUITest.TestSuite.prototype = {
  * @namespace Test
  * @constructor
  */
+
+
+
 YUITest.TestCase = function (template) {
     
     /*
@@ -257,11 +263,12 @@ YUITest.TestCase = function (template) {
     }    
     
     //check for a valid name
-    if (typeof this.name != "string"){
-        this.name = "testCase" + (+new Date());
+    if (typeof this.name != "string") {
+        this.name = YUITest.guid("testCase_");
     }
 
 };
+
         
 YUITest.TestCase.prototype = {  
 
@@ -930,7 +937,7 @@ YUITest.TestFormat = function(){
              * @static
              * @private
              */
-            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
     
             /**
              * Pointer to the current node in the test tree.
@@ -1660,7 +1667,7 @@ YUITest.TestFormat = function(){
              * @static
              */
             clear : function () {
-                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
             },
             
             /**
@@ -2719,8 +2726,7 @@ YUITest.AssertionError.prototype = {
         return this.name + ": " + this.getMessage();
     }
 
-};
-/**
+};/**
  * ComparisonFailure is subclass of Error that is thrown whenever
  * a comparison between two values fails. It provides mechanisms to retrieve
  * both the expected and actual value.
@@ -2823,7 +2829,6 @@ YUITest.CoverageFormat = {
 
 };
 
-
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
@@ -2907,8 +2912,7 @@ YUITest.DateAssert = {
         }
     }
     
-};
-/**
+};/**
  * Creates a new mock object.
  * @namespace Test
  * @module test
@@ -3403,8 +3407,7 @@ YUITest.Results.prototype.include = function(results){
     this.ignored += results.ignored;
     this.total += results.total;
     this.errors += results.errors;
-};
-/**
+};/**
  * ShouldError is subclass of Error that is thrown whenever
  * a test is expected to throw an error but doesn't.
  *
@@ -3752,4 +3755,4 @@ if (!YUI.YUITest) {
 } //End if for YUI.YUITest
 
 
-}, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
+}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "substitute", "json-stringify"], "skinnable": true});

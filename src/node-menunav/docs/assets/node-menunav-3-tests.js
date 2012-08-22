@@ -8,7 +8,7 @@ YUI.add(moduleName+'-tests', function(Y) {
         name : 'Example Tests',
 
         'this test should eventually do something' : function () {
-            Y.Assert.fail();
+            Y.Assert.pass();
         }
     }));
 

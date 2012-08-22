@@ -2,7 +2,7 @@
 
 var fs = require('fs'),
     path = require('path'),
-    YUI = require(path.join(__dirname, '../../../build/yui-nodejs/yui-nodejs')).YUI,
+    YUI = require(path.join(__dirname, '../../../build/yui/yui')).YUI,
     Y,
     exec = require('child_process').exec;
 

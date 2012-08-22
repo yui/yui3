@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>CacheOffline Tests</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<div id="log"></div>
+
+<script type="text/javascript">
+(function() {
+    YUI({
+        coverage: ['cache-offline'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+        modules: {
+            'cache-offline-tests': {
+                fullpath: './assets/cache-offline.js',
+                requires: [ 'test', 'dump', 'cache-offline' ]
+            }
+        }
+    }).use('test-console', 'cache-offline-tests', function(Y) {
+        
+        (new Y.Test.Console()).render('log');
+
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

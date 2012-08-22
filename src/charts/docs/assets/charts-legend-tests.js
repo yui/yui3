@@ -34,8 +34,8 @@ YUI.add('charts-legend-tests', function(Y) {
         
         _should: {
             ignore: {
-                testMouseEvents:  isTouch,
-                testTouchEvents: isMouse
+                testMouseEvents:  isTouch//,
+              //  testTouchEvents: isMouse
             }
         },
 
@@ -90,6 +90,7 @@ YUI.add('charts-legend-tests', function(Y) {
                 Y.Assert.areEqual(contents, tooltip.get("innerHTML"), "The contents of the tooltip should be " + contents);
                 Y.Event.simulate(domNode, HIDETOOLTIPEVENT);
             }, this);
+            /*
         },
 
         testTouchEvents: function()
@@ -142,6 +143,7 @@ YUI.add('charts-legend-tests', function(Y) {
                     Y.Assert.fail("Example does not seem to have executed within " + timeout + " seconds.");
                 };
             checkAndFireEvent(seriesMarkers);
+            */
         }
     }));
 

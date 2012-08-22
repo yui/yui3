@@ -3,6 +3,7 @@
  * attribute.
  *
  * @module charts
+ * @submodule charts-base
  * @class Renderer
  * @constructor
  */
