@@ -1,4 +1,4 @@
-YUI.add('test', function(Y) {
+YUI.add('test', function (Y, NAME) {
 
 
 
@@ -2726,8 +2726,7 @@ YUITest.AssertionError.prototype = {
         return this.name + ": " + this.getMessage();
     }
 
-};
-/**
+};/**
  * ComparisonFailure is subclass of Error that is thrown whenever
  * a comparison between two values fails. It provides mechanisms to retrieve
  * both the expected and actual value.
@@ -2830,7 +2829,6 @@ YUITest.CoverageFormat = {
 
 };
 
-
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
@@ -2914,8 +2912,7 @@ YUITest.DateAssert = {
         }
     }
     
-};
-/**
+};/**
  * Creates a new mock object.
  * @namespace Test
  * @module test
@@ -3410,8 +3407,7 @@ YUITest.Results.prototype.include = function(results){
     this.ignored += results.ignored;
     this.total += results.total;
     this.errors += results.errors;
-};
-/**
+};/**
  * ShouldError is subclass of Error that is thrown whenever
  * a test is expected to throw an error but doesn't.
  *
@@ -3759,4 +3755,4 @@ if (!YUI.YUITest) {
 } //End if for YUI.YUITest
 
 
-}, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
+}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "substitute", "json-stringify"], "skinnable": true});

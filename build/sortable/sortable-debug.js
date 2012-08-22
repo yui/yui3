@@ -1,4 +1,4 @@
-YUI.add('sortable', function(Y) {
+YUI.add('sortable', function (Y, NAME) {
 
 
     /**
@@ -508,4 +508,4 @@ YUI.add('sortable', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-delegate', 'dd-drop-plugin', 'dd-proxy']});
+}, '@VERSION@', {"requires": ["dd-delegate", "dd-drop-plugin", "dd-proxy"]});

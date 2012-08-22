@@ -1,4 +1,4 @@
-YUI.add('dd-gestures', function(Y) {
+YUI.add('dd-gestures', function (Y, NAME) {
 
 
     /**
@@ -43,4 +43,4 @@ YUI.add('dd-gestures', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag', 'event-synthetic', 'event-gestures'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-drag", "event-synthetic", "event-gestures"]});

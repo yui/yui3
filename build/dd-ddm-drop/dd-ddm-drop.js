@@ -1,4 +1,4 @@
-YUI.add('dd-ddm-drop', function(Y) {
+YUI.add('dd-ddm-drop', function (Y, NAME) {
 
 
     /**
@@ -397,4 +397,4 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-ddm"]});

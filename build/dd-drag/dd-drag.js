@@ -1,4 +1,4 @@
-YUI.add('dd-drag', function(Y) {
+YUI.add('dd-drag', function (Y, NAME) {
 
 
     /**
@@ -1258,4 +1258,4 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-ddm-base"]});

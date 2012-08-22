@@ -1,4 +1,4 @@
-YUI.add('dd-constrain', function(Y) {
+YUI.add('dd-constrain', function (Y, NAME) {
 
 
     /**
@@ -552,4 +552,4 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-drag"]});
