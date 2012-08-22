@@ -11,7 +11,7 @@ wait
 
 if [ -n "$TRAVIS" ]; then
     echo "Installing Shifter.."
-    sudo npm install -loglevel silent shifter
+    sudo npm -g install -loglevel silent shifter
 fi
 
 make npm
