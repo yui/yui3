@@ -1,4 +1,4 @@
-YUI.add('dd-delegate', function(Y) {
+YUI.add('dd-delegate', function (Y, NAME) {
 
 
     /**
@@ -335,4 +335,4 @@ YUI.add('dd-delegate', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag', 'event-mouseenter', 'dd-drop-plugin'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-drag", "dd-drop-plugin", "event-mouseenter"]});
