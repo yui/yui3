@@ -17,6 +17,7 @@ YUI.add('parallel-tests', function(Y) {
         },
         test_stack: function() {
             var stack = new Y.Parallel(),
+            test = this,
             counter = 0;
 
             for (var i = 1; i <= 15; i++) {
@@ -26,12 +27,16 @@ YUI.add('parallel-tests', function(Y) {
             }
 
             stack.done(function() {
-                Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
-                Assert.areEqual(15, counter, 'Stack did not complete properly');
+                test.resume(function() {
+                    Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
+                    Assert.areEqual(15, counter, 'Stack did not complete properly');
+                });
             });
+            test.wait();
         },
         test_results: function() {
             var stack = new Y.Parallel(),
+            test = this,
             counter = 0;
 
             for (var i = 1; i <= 15; i++) {
@@ -42,13 +47,17 @@ YUI.add('parallel-tests', function(Y) {
             }
 
             stack.done(function(results) {
-                Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
-                Assert.areEqual(15, counter, 'Stack did not complete properly');
-                Assert.areEqual(15, results.length, 'Results array is not right');
+                test.resume(function() {
+                    Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
+                    Assert.areEqual(15, counter, 'Stack did not complete properly');
+                    Assert.areEqual(15, results.length, 'Results array is not right');
+                });
             });
+            test.wait();
         },
         test_returns_data: function() {
             var stack = new Y.Parallel(),
+            test = this,
             counter = 0;
 
             for (var i = 1; i <= 15; i++) {
@@ -59,14 +68,19 @@ YUI.add('parallel-tests', function(Y) {
             }
 
             stack.done(function(results, data) {
-                Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
-                Assert.areEqual(15, counter, 'Stack did not complete properly');
-                Assert.areEqual(15, results.length, 'Results array is not right');
-                Assert.areEqual(0, data.length, 'Data array is not right');
+                test.resume(function() {
+                    Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
+                    Assert.areEqual(15, counter, 'Stack did not complete properly');
+                    Assert.areEqual(15, results.length, 'Results array is not right');
+                    Assert.areEqual(0, data.length, 'Data array is not right');
+                });
             }, []);
+
+            test.wait();
         },
         test_nocontext: function() {
             var stack = new Y.Parallel(),
+            test = this,
             counter = 0;
 
             for (var i = 1; i <= 15; i++) {
@@ -78,17 +92,23 @@ YUI.add('parallel-tests', function(Y) {
             }
 
             stack.done(function(results, data) {
-                Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
-                Assert.areEqual(15, counter, 'Stack did not complete properly');
-                Assert.areEqual(15, results.length, 'Results array is not right');
-                Assert.areEqual(0, data.length, 'Data array is not right');
-                Assert.isFunction(this.use, 'Execution context is wrong in done handler');
+                var self = this;
+                test.resume(function() {
+                    Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
+                    Assert.areEqual(15, counter, 'Stack did not complete properly');
+                    Assert.areEqual(15, results.length, 'Results array is not right');
+                    Assert.areEqual(0, data.length, 'Data array is not right');
+                    Assert.isFunction(self.use, 'Execution context is wrong in done handler');
+                });
             }, []);
+
+            test.wait();
         },
         test_context: function() {
             var stack = new Y.Parallel({
                 context: { foo: true }
             }),
+            test = this,
             counter = 0;
 
             for (var i = 1; i <= 15; i++) {
@@ -100,12 +120,17 @@ YUI.add('parallel-tests', function(Y) {
             }
 
             stack.done(function(results, data) {
-                Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
-                Assert.areEqual(15, counter, 'Stack did not complete properly');
-                Assert.areEqual(15, results.length, 'Results array is not right');
-                Assert.areEqual(0, data.length, 'Data array is not right');
-                Assert.isTrue(this.foo, 'Execution context is wrong in done handler');
+                var self = this;
+                test.resume(function() {
+                    Assert.areEqual(15, stack.finished, 'Stack did not complete properly');
+                    Assert.areEqual(15, counter, 'Stack did not complete properly');
+                    Assert.areEqual(15, results.length, 'Results array is not right');
+                    Assert.areEqual(0, data.length, 'Data array is not right');
+                    Assert.isTrue(self.foo, 'Execution context is wrong in done handler');
+                });
             }, []);
+
+            test.wait();
         },
         test_add_nofn: function() {
             var stack = new Y.Parallel(),
