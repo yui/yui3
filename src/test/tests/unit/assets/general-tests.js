@@ -289,7 +289,7 @@ YUI.add('general-tests', function(Y) {
 
             Y.Test.Runner.clear();
 
-            Assert.isTrue((Y.Test.Runner.masterSuite.name.indexOf('yuitests') === 0));
+            Assert.isTrue((Y.Test.Runner.masterSuite.name.indexOf('testSuite_') === 0));
 
             Y.Test.Runner.masterSuite = suite;
         },

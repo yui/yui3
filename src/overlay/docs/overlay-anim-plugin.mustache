@@ -39,6 +39,11 @@ YUI({...}).use("overlay", "anim", "plugin", function(Y) {
 
 <p>Using the `overlay` module will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
 
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+
 <h3>AnimPlugin Class Structure</h3>
 
 <p>The `AnimPlugin` class will extend the `Plugin` base class. Since `Plugin` derives from `Base`, we follow the same pattern we use for widgets and other utilities which extend Base to setup our new class.</p>

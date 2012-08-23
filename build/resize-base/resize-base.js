@@ -1,4 +1,4 @@
-YUI.add('resize-base', function(Y) {
+YUI.add('resize-base', function (Y, NAME) {
 
 /**
  * The Resize Utility allows you to make an HTML element resizable.
@@ -1644,4 +1644,4 @@ Y.each(Y.Resize.prototype.ALL_HANDLES, function(handle, i) {
 });
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['base', 'widget', 'substitute', 'event', 'oop', 'dd-drag', 'dd-delegate', 'dd-drop']});
+}, '@VERSION@', {"requires": ["base", "widget", "substitute", "event", "oop", "dd-drag", "dd-delegate", "dd-drop"], "skinnable": true});

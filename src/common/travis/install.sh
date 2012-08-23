@@ -7,10 +7,18 @@ cd ./build-npm;
 echo "NPM Build Dir: `pwd`"
 wait
 echo "Installing NPM Modules"
-npm install -loglevel silent
+if [ -n "$TRAVIS" ]; then
+    sudo npm install -loglevel silent
+else
+    npm install -loglevel silent
+fi
 wait
 echo "Installing testing tools"
-npm install -loglevel silent yuitest grover yuidocjs
+if [ -n "$TRAVIS" ]; then
+    sudo npm install -loglevel silent yuitest grover yuidocjs
+else
+    npm install -loglevel silent yuitest grover yuidocjs
+fi
 wait
 cd  ../
 

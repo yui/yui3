@@ -1,4 +1,4 @@
-YUI.add('parallel', function(Y) {
+YUI.add('parallel', function (Y, NAME) {
 
 
 /**
@@ -103,4 +103,4 @@ Y.Parallel.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});
