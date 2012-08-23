@@ -38,6 +38,9 @@ RETVAL=$?
 
 con=20
 
+cd ${root}
+echo "cd ${root}"
+
 if [ -n "$TRAVIS" ]; then
     con=5
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
