@@ -35,7 +35,7 @@ if [ -n "$TRAVIS" ]; then
     con=5
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
         echo "Starting Grover Tests"
-        ${grover} --server -t 180 -c ${con} -i ./src/common/node/batch.js
+        ${grover} --server -t 200 -c ${con} -i ./src/common/node/batch.js
     else
         echo "Skipping Grover tests for this Node version (not needed)"
     fi
