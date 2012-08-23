@@ -19,7 +19,7 @@
         "yuidocjs": "*",
         "grover": "*",
         "shifter": "*",
-        "yogi" "*"
+        "yogi": "*"
     },
     "licenses":[
         {
