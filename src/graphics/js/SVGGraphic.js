@@ -129,17 +129,51 @@ SVGGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
     },
-
+    
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
+    },
+    
     /**
      * The contentBounds will resize to greater values but not to smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
@@ -596,21 +630,61 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      */
     _redraw: function()
     {
-        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio = this.get("preserveAspectRatio"),
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
+            left = box.left,
+            right = box.right,
+            top = box.top,
+            bottom = box.bottom,
+            width = box.width,
+            height = box.height,
+            computedWidth,
+            computedHeight,
+            computedLeft,
+            computedTop,
+            node;
+        if(autoSize)
+        {
+            if(autoSize == "sizeContentToGraphic")
+            {
+                node = Y.one(this._node);
+                computedWidth = parseFloat(node.getComputedStyle("width"));
+                computedHeight = parseFloat(node.getComputedStyle("height"));
+                computedLeft = computedTop = 0;
+                this._contentNode.setAttribute("preserveAspectRatio", preserveAspectRatio);
+            }
+            else 
+            {
+                computedWidth = width;
+                computedHeight = height;
+                computedLeft = left;
+                computedTop = top;
+                this._state.width = width;
+                this._state.height = height;
+                if(this._node)
+                {
+                    this._node.style.width = width + "px";
+                    this._node.style.height = height + "px";
+                }
+            }
+        }
+        else
+        {
+                computedWidth = width;
+                computedHeight = height;
+                computedLeft = left;
+                computedTop = top;
+        }
         if(this._contentNode)
         {
-            this._contentNode.style.left = box.left + "px";
-            this._contentNode.style.top = box.top + "px";
-            this._contentNode.setAttribute("width", box.width);
-            this._contentNode.setAttribute("height", box.height);
-            this._contentNode.style.width = box.width + "px";
-            this._contentNode.style.height = box.height + "px";
-            this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
-        }
-        if(this.get("autoSize"))
-        {
-            this.set("width", box.right);
-            this.set("height", box.bottom);
+            this._contentNode.style.left = computedLeft + "px";
+            this._contentNode.style.top = computedTop + "px";
+            this._contentNode.setAttribute("width", computedWidth);
+            this._contentNode.setAttribute("height", computedHeight);
+            this._contentNode.style.width = computedWidth + "px";
+            this._contentNode.style.height = computedHeight + "px";
+            this._contentNode.setAttribute("viewBox", "" + left + " " + top + " " + width + " " + height + "");
         }
         if(this._frag)
         {
@@ -619,9 +693,9 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
                 this._contentNode.appendChild(this._frag);
             }
             this._frag = null;
-        }
+        } 
     },
-
+ 
     /**
      * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
      * by `Shape` instances.
@@ -652,7 +726,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             this._redraw();
         }
     },
-    
+
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *

@@ -82,9 +82,28 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             });
             graphic._appendShape(this);
             this._graphic = graphic;
+            this._appendStrokeAndFill();
         }
     },
-
+    
+    /**
+     * Appends fill and stroke nodes to the shape.
+     *
+     * @method _appendStrokeAndFill
+     * @private
+     */
+    _appendStrokeAndFill: function()
+    {
+        if(this._strokeNode)
+        {
+            this.node.appendChild(this._strokeNode);
+        }
+        if(this._fillNode)
+        {
+            this.node.appendChild(this._fillNode);
+        }
+    },
+    
 	/**
 	 * Creates the dom node for the shape.
 	 *
@@ -175,14 +194,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			nodestring += '</' + type + '>';
 			
 			node = DOCUMENT.createElement(nodestring);
-			if(this._strokeNode)
-			{
-				node.appendChild(this._strokeNode);
-			}
-			if(this._fillNode)
-			{
-				node.appendChild(this._fillNode);
-			}
 
             this.node = node;
             this._strokeFlag = false;
@@ -758,16 +769,16 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             }
             this._skew.matrix = transform;
             this._skew.on = true;
-            //use offset for translate
-            this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
+            //this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
             this._skew.origin = tx + ", " + ty;
         }
         if(this._type != "path")
         {
             this._transforms = [];
         }
-        node.style.left = x + "px";
-        node.style.top =  y + "px";
+        //add the translate to the x and y coordinates
+        node.style.left = (x + this._getSkewOffsetValue(normalizedMatrix.dx)) + "px";
+        node.style.top =  (y + this._getSkewOffsetValue(normalizedMatrix.dy)) + "px";
     },
     
     /**
@@ -817,7 +828,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * Specifies a 2d translation.
 	 *
 	 * @method translate
-	 * @param {Number} x The value to transate on the x-axis.
+	 * @param {Number} x The value to translate on the x-axis.
 	 * @param {Number} y The value to translate on the y-axis.
 	 */
 	translate: function(x, y)
@@ -1030,27 +1041,72 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * The calculated bounding box is used by the graphic instance to calculate its viewBox. 
      *
 	 * @method getBounds
-     * @param {Matrix} [optional] cfg Reference to matrix instance
 	 * @return Object
 	 */
-	getBounds: function(cfg)
+	getBounds: function()
 	{
-		var stroke = this.get("stroke"),
+		var isPathShape = this instanceof Y.VMLPath,
 			w = this.get("width"),
 			h = this.get("height"),
-			x = this.get("x"),
-			y = this.get("y"),
-            wt = 0;
-		if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-		}
-        w = (x + w + wt) - (x - wt); 
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
-		return this._normalizedMatrix.getContentRect(w, h, x, y);
+            x = this.get("x"),
+            y = this.get("y");
+        if(isPathShape)
+        {
+            x = x + this._left;
+            y = y + this._top;
+            w = this._right - this._left;
+            h = this._bottom - this._top;
+        }
+        return this._getContentRect(w, h, x, y);
 	},
+
+    /**
+     * Calculates the bounding box for the shape.
+     *
+     * @method _getContentRect
+     * @param {Number} w width of the shape
+     * @param {Number} h height of the shape
+     * @param {Number} x x-coordinate of the shape
+     * @param {Number} y y-coordinate of the shape
+     * @private
+     */
+    _getContentRect: function(w, h, x, y)
+    {
+        var transformOrigin = this.get("transformOrigin"),
+            transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h,
+		    transforms = this.matrix.getTransformArray(this.get("transform")),
+            matrix = new Y.Matrix(),
+            i = 0,
+            len = transforms.length,
+            transform,
+            key,
+            contentRect,
+            isPathShape = this instanceof Y.VMLPath;
+        if(isPathShape)
+        {
+            matrix.translate(this._left, this._top);
+        }
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        for(; i < len; i = i + 1)
+        {
+            transform = transforms[i];
+            key = transform.shift();
+            if(key)
+            {
+                matrix[key].apply(matrix, transform); 
+            }
+        }
+        matrix.translate(-transformX, -transformY);
+        if(isPathShape)
+        {
+            matrix.translate(-this._left, -this._top);
+        }
+        contentRect = matrix.getContentRect(w, h, x, y);
+        return contentRect;
+    },
 	
     /**
      *  Destroys shape

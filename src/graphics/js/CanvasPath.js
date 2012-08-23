@@ -33,6 +33,7 @@ Y.extend(CanvasPath, Y.CanvasShape, {
     _draw: function()
     {
         this._closePath();
+        this._updateTransform();
     },
 
 	/**

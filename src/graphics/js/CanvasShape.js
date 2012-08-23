@@ -823,12 +823,20 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	getBounds: function()
 	{
-		var stroke = this.get("stroke"),
+		var type = this._type,
+		    stroke = this.get("stroke"),
 			w = this.get("width"),
 			h = this.get("height"),
 			x = this.get("x"),
 			y = this.get("y"),
             wt = 0;
+        if(type == "path")
+        {
+            x = x + this._left;
+            y = y + this._top;
+            w = this._right - this._left;
+            h = this._bottom - this._top;
+        }
 		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
@@ -837,9 +845,53 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         h = (y + h + wt) - (y - wt);
         x -= wt;
         y -= wt;
-		return this.matrix.getContentRect(w, h, x, y);
+        return this._getContentRect(w, h, x, y);
 	},
 
+    /**
+     * Calculates the bounding box for the shape.
+     *
+     * @method _getContentRect
+     * @param {Number} w width of the shape
+     * @param {Number} h height of the shape
+     * @param {Number} x x-coordinate of the shape
+     * @param {Number} y y-coordinate of the shape
+     * @private
+     */
+    _getContentRect: function(w, h, x, y)
+    {
+        var transformOrigin = this.get("transformOrigin"),
+            transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h,
+		    transforms = this.matrix.getTransformArray(this.get("transform")),
+            matrix = new Y.Matrix(),
+            i = 0,
+            len = transforms.length,
+            transform,
+            key,
+            contentRect;
+        if(this._type == "path")
+        {
+            transformX = transformX + x;
+            transformY = transformY + y;
+        }
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        for(; i < len; i = i + 1)
+        {
+            transform = transforms[i];
+            key = transform.shift();
+            if(key)
+            {
+                matrix[key].apply(matrix, transform); 
+            }
+        }
+        matrix.translate(-transformX, -transformY);
+        contentRect = matrix.getContentRect(w, h, x, y);
+        return contentRect;
+    },
+    
     /**
      * Destroys the shape instance.
      *

@@ -131,15 +131,49 @@ CanvasGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
+    },
+
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
     },
 
     /**
@@ -586,11 +620,61 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      */
     _redraw: function()
     {
-        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
-        if(this.get("autoSize"))
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio = this.get("preserveAspectRatio"),
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
+            contentWidth,
+            contentHeight,
+            w,
+            h,
+            xScale,
+            yScale,
+            translateX = 0,
+            translateY = 0,
+            matrix,
+            node = this.get("node");
+        if(autoSize)
         {
-            this.set("width", box.right);
-            this.set("height", box.bottom);
+            if(autoSize == "sizeContentToGraphic")
+            {
+                contentWidth = box.width;
+                contentHeight = box.height;
+                w = parseFloat(Y_DOM.getComputedStyle(node, "width"));
+                h = parseFloat(Y_DOM.getComputedStyle(node, "height"));
+                matrix = new Y.Matrix();
+                if(preserveAspectRatio == "none")
+                {
+                    xScale = w/contentWidth;
+                    yScale = h/contentHeight;
+                }
+                else
+                {
+                    if(contentWidth/contentHeight !== w/h) 
+                    {
+                        if(contentWidth * h/contentHeight > w)
+                        {
+                            xScale = yScale = w/contentWidth;
+                            translateY = this._calculateTranslate(preserveAspectRatio.slice(5).toLowerCase(), contentHeight * w/contentWidth, h);
+                        }
+                        else
+                        {
+                            xScale = yScale = h/contentHeight;
+                            translateX = this._calculateTranslate(preserveAspectRatio.slice(1, 4).toLowerCase(), contentWidth * h/contentHeight, w);
+                        }
+                    }
+                }
+                Y_DOM.setStyle(node, "transformOrigin", "0% 0%");
+                translateX = translateX - (box.left * xScale);
+                translateY = translateY - (box.top * yScale);
+                matrix.translate(translateX, translateY);
+                matrix.scale(xScale, yScale);
+                Y_DOM.setStyle(node, "transform", matrix.toCSSText());
+            }
+            else
+            {
+                this.set("width", box.right);
+                this.set("height", box.bottom);
+            }
         }
         if(this._frag)
         {
@@ -598,7 +682,36 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             this._frag = null;
         }
     },
-
+    
+    /**
+     * Determines the value for either an x or y value to be used for the <code>translate</code> of the Graphic.
+     *
+     * @method _calculateTranslate
+     * @param {String} position The position for placement. Possible values are min, mid and max.
+     * @param {Number} contentSize The total size of the content.
+     * @param {Number} boundsSize The total size of the Graphic.
+     * @return Number
+     * @private
+     */
+    _calculateTranslate: function(position, contentSize, boundsSize)
+    {
+        var ratio = boundsSize - contentSize,
+            coord;
+        switch(position)
+        {
+            case "mid" :
+                coord = ratio * 0.5;
+            break;
+            case "max" :
+                coord = ratio;
+            break;
+            default :
+                coord = 0;
+            break;
+        }
+        return coord;
+    },
+    
     /**
      * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
      * by `Shape` instances.
