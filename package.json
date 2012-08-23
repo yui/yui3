@@ -18,7 +18,8 @@
         "yuitest": "*",
         "yuidocjs": "*",
         "grover": "*",
-        "shifter": "*"
+        "shifter": "*",
+        "yogi" "*"
     },
     "licenses":[
         {
