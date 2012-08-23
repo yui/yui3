@@ -204,7 +204,7 @@ suite.add(new Y.Test.Case({
 
             Assert.areSame(data[index], v, 'the current item should be passed to the callback');
             Assert.areSame(data, array, 'the array should be passed to the callback');
-            if (!Y.UA.nodejs) {
+            if (Y.config.win) {
                 Assert.areSame(Y.config.win, this, 'the `this` object should default to the global object');
             }
 

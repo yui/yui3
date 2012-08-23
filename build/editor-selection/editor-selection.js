@@ -1,4 +1,4 @@
-YUI.add('editor-selection', function(Y) {
+YUI.add('editor-selection', function (Y, NAME) {
 
     /**
      * Wraps some common Selection/Range functionality into a simple object
@@ -1002,4 +1002,4 @@ YUI.add('editor-selection', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@', {"requires": ["node"]});
