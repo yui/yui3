@@ -17,7 +17,9 @@
     "devDependencies": {
         "yuitest": "*",
         "yuidocjs": "*",
-        "grover": "*"
+        "grover": "*",
+        "shifter": "*",
+        "yogi": "*"
     },
     "licenses":[
         {
