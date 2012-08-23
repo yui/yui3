@@ -5,33 +5,21 @@ root=`pwd`
 cd ./build-npm/
 
 npm_base=`pwd`
-yuitest="${npm_base}/node_modules/.bin/yuitest"
 yogi="${npm_base}/node_modules/.bin/yogi"
 grover="${npm_base}/node_modules/.bin/grover"
 
 echo "Build Root: ${root}"
 echo "NPM Base: ${npm_base}"
 echo "yogi: ${yogi}"
-echo "YUITest: ${yuitest}"
 echo "Grover: ${grover}"
 echo "PhantomJS: `phantomjs -v`"
 
 echo "Running Tests.."
 
-#tests=`${root}/src/common/travis/gettests.js ${root}`
-
-#RETVAL=$?
-#[ $RETVAL -ne 0 ] && exit 1
-#
-#echo "Tests: ${tests}"
-#
-#cd ${root}
-#${yuitest} ${tests}
-
 cd ${root}/src
 echo "cd ${root}/src"
-echo "yogi test --cli --debug"
-${yogi} test --cli --debug
+echo "yogi test --cli"
+${yogi} test --cli
 
 RETVAL=$?
 [ $RETVAL -ne 0 ] && exit 1
