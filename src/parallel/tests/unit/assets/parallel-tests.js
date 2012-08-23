@@ -6,14 +6,7 @@ YUI.add('parallel-tests', function(Y) {
         name: "Parallel Tests",
 
         test_load: function() {
-            var test = this;
-            Y.applyConfig({ useSync: false });
-            Y.use('parallel', function() {
-                test.resume(function() {
-                    Assert.isFunction(Y.Parallel, 'Y.Parallel did not load');
-                });
-            });
-            test.wait();
+            Assert.isFunction(Y.Parallel, 'Y.Parallel did not load');
         },
         test_stack: function() {
             var stack = new Y.Parallel(),
