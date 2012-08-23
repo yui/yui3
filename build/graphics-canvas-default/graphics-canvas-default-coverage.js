@@ -16,39 +16,39 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/build/graphics-canvas-default/graphics-canvas-default.js"] = {
+_yuitest_coverage["graphics-canvas-default"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/build/graphics-canvas-default/graphics-canvas-default.js",
+    path: "graphics-canvas-default",
     code: []
 };
-_yuitest_coverage["/build/graphics-canvas-default/graphics-canvas-default.js"].code=["YUI.add('graphics-canvas-default', function(Y) {","","Y.Graphic = Y.CanvasGraphic;","Y.Shape = Y.CanvasShape;","Y.Circle = Y.CanvasCircle;","Y.Rect = Y.CanvasRect;","Y.Ellipse = Y.CanvasEllipse;","Y.Path = Y.CanvasPath;","Y.Drawing = Y.CanvasDrawing;","","","}, '@VERSION@' ,{skinnable:false});"];
-_yuitest_coverage["/build/graphics-canvas-default/graphics-canvas-default.js"].lines = {"1":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
-_yuitest_coverage["/build/graphics-canvas-default/graphics-canvas-default.js"].functions = {"(anonymous 1):1":0};
-_yuitest_coverage["/build/graphics-canvas-default/graphics-canvas-default.js"].coveredLines = 8;
-_yuitest_coverage["/build/graphics-canvas-default/graphics-canvas-default.js"].coveredFunctions = 1;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 1);
-YUI.add('graphics-canvas-default', function(Y) {
+_yuitest_coverage["graphics-canvas-default"].code=["YUI.add('graphics-canvas-default', function (Y, NAME) {","","Y.Graphic = Y.CanvasGraphic;","Y.Shape = Y.CanvasShape;","Y.Circle = Y.CanvasCircle;","Y.Rect = Y.CanvasRect;","Y.Ellipse = Y.CanvasEllipse;","Y.Path = Y.CanvasPath;","Y.Drawing = Y.CanvasDrawing;","","","}, '@VERSION@', {});"];
+_yuitest_coverage["graphics-canvas-default"].lines = {"1":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
+_yuitest_coverage["graphics-canvas-default"].functions = {"(anonymous 1):1":0};
+_yuitest_coverage["graphics-canvas-default"].coveredLines = 8;
+_yuitest_coverage["graphics-canvas-default"].coveredFunctions = 1;
+_yuitest_coverline("graphics-canvas-default", 1);
+YUI.add('graphics-canvas-default', function (Y, NAME) {
 
-_yuitest_coverfunc("/build/graphics-canvas-default/graphics-canvas-default.js", "(anonymous 1)", 1);
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 3);
+_yuitest_coverfunc("graphics-canvas-default", "(anonymous 1)", 1);
+_yuitest_coverline("graphics-canvas-default", 3);
 Y.Graphic = Y.CanvasGraphic;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 4);
+_yuitest_coverline("graphics-canvas-default", 4);
 Y.Shape = Y.CanvasShape;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 5);
+_yuitest_coverline("graphics-canvas-default", 5);
 Y.Circle = Y.CanvasCircle;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 6);
+_yuitest_coverline("graphics-canvas-default", 6);
 Y.Rect = Y.CanvasRect;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 7);
+_yuitest_coverline("graphics-canvas-default", 7);
 Y.Ellipse = Y.CanvasEllipse;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 8);
+_yuitest_coverline("graphics-canvas-default", 8);
 Y.Path = Y.CanvasPath;
-_yuitest_coverline("/build/graphics-canvas-default/graphics-canvas-default.js", 9);
+_yuitest_coverline("graphics-canvas-default", 9);
 Y.Drawing = Y.CanvasDrawing;
 
 
-}, '@VERSION@' ,{skinnable:false});
+}, '@VERSION@', {});

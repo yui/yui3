@@ -1,4 +1,4 @@
-YUI.add('graphics-vml', function(Y) {
+YUI.add('graphics-vml', function (Y, NAME) {
 
 var SHAPE = "vmlShape",
     Y_LANG = Y.Lang,
@@ -593,9 +593,28 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             });
             graphic._appendShape(this);
             this._graphic = graphic;
+            this._appendStrokeAndFill();
         }
     },
-
+    
+    /**
+     * Appends fill and stroke nodes to the shape.
+     *
+     * @method _appendStrokeAndFill
+     * @private
+     */
+    _appendStrokeAndFill: function()
+    {
+        if(this._strokeNode)
+        {
+            this.node.appendChild(this._strokeNode);
+        }
+        if(this._fillNode)
+        {
+            this.node.appendChild(this._fillNode);
+        }
+    },
+    
 	/**
 	 * Creates the dom node for the shape.
 	 *
@@ -686,14 +705,6 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			nodestring += '</' + type + '>';
 			
 			node = DOCUMENT.createElement(nodestring);
-			if(this._strokeNode)
-			{
-				node.appendChild(this._strokeNode);
-			}
-			if(this._fillNode)
-			{
-				node.appendChild(this._fillNode);
-			}
 
             this.node = node;
             this._strokeFlag = false;
@@ -1269,16 +1280,16 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             }
             this._skew.matrix = transform;
             this._skew.on = true;
-            //use offset for translate
-            this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
+            //this._skew.offset = this._getSkewOffsetValue(normalizedMatrix.dx) + "px, " + this._getSkewOffsetValue(normalizedMatrix.dy) + "px";
             this._skew.origin = tx + ", " + ty;
         }
         if(this._type != "path")
         {
             this._transforms = [];
         }
-        node.style.left = x + "px";
-        node.style.top =  y + "px";
+        //add the translate to the x and y coordinates
+        node.style.left = (x + this._getSkewOffsetValue(normalizedMatrix.dx)) + "px";
+        node.style.top =  (y + this._getSkewOffsetValue(normalizedMatrix.dy)) + "px";
     },
     
     /**
@@ -1328,7 +1339,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * Specifies a 2d translation.
 	 *
 	 * @method translate
-	 * @param {Number} x The value to transate on the x-axis.
+	 * @param {Number} x The value to translate on the x-axis.
 	 * @param {Number} y The value to translate on the y-axis.
 	 */
 	translate: function(x, y)
@@ -1541,27 +1552,72 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * The calculated bounding box is used by the graphic instance to calculate its viewBox. 
      *
 	 * @method getBounds
-     * @param {Matrix} [optional] cfg Reference to matrix instance
 	 * @return Object
 	 */
-	getBounds: function(cfg)
+	getBounds: function()
 	{
-		var stroke = this.get("stroke"),
+		var isPathShape = this instanceof Y.VMLPath,
 			w = this.get("width"),
 			h = this.get("height"),
-			x = this.get("x"),
-			y = this.get("y"),
-            wt = 0;
-		if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-		}
-        w = (x + w + wt) - (x - wt); 
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
-		return this._normalizedMatrix.getContentRect(w, h, x, y);
+            x = this.get("x"),
+            y = this.get("y");
+        if(isPathShape)
+        {
+            x = x + this._left;
+            y = y + this._top;
+            w = this._right - this._left;
+            h = this._bottom - this._top;
+        }
+        return this._getContentRect(w, h, x, y);
 	},
+
+    /**
+     * Calculates the bounding box for the shape.
+     *
+     * @method _getContentRect
+     * @param {Number} w width of the shape
+     * @param {Number} h height of the shape
+     * @param {Number} x x-coordinate of the shape
+     * @param {Number} y y-coordinate of the shape
+     * @private
+     */
+    _getContentRect: function(w, h, x, y)
+    {
+        var transformOrigin = this.get("transformOrigin"),
+            transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h,
+		    transforms = this.matrix.getTransformArray(this.get("transform")),
+            matrix = new Y.Matrix(),
+            i = 0,
+            len = transforms.length,
+            transform,
+            key,
+            contentRect,
+            isPathShape = this instanceof Y.VMLPath;
+        if(isPathShape)
+        {
+            matrix.translate(this._left, this._top);
+        }
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        for(; i < len; i = i + 1)
+        {
+            transform = transforms[i];
+            key = transform.shift();
+            if(key)
+            {
+                matrix[key].apply(matrix, transform); 
+            }
+        }
+        matrix.translate(-transformX, -transformY);
+        if(isPathShape)
+        {
+            matrix.translate(-this._left, -this._top);
+        }
+        contentRect = matrix.getContentRect(w, h, x, y);
+        return contentRect;
+    },
 	
     /**
      *  Destroys shape
@@ -1957,7 +2013,18 @@ VMLPath = function()
 };
 
 VMLPath.NAME = "vmlPath";
-Y.extend(VMLPath, Y.VMLShape);
+Y.extend(VMLPath, Y.VMLShape, {
+    /*
+     * Completes a drawing operation. 
+     *
+     * @method end
+     */
+    end: function()
+    {
+        this._closePath();
+        this._updateTransform();
+    }
+});
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
@@ -2400,15 +2467,49 @@ VMLGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
+    },
+
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
     },
 
     /**
@@ -2572,9 +2673,18 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             right: 0,
             bottom: 0
         };
-        this._node = this._createGraphic();
+        this._node = DOCUMENT.createElement('div');
+        this._node.style.position = "absolute";
+        this._node.style.left = this.get("x") + "px";
+        this._node.style.top = this.get("y") + "px";
         this._node.style.visibility = visibility;
         this._node.setAttribute("id", this.get("id"));
+        this._contentNode = this._createGraphic();
+        this._contentNode.style.position = "absolute";
+        this._contentNode.style.left = "0px";
+        this._contentNode.style.top = "0px";
+        this._contentNode.style.visibility = visibility;
+        this._node.appendChild(this._contentNode);
         if(render)
         {
             this.render(render);
@@ -2593,7 +2703,6 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
         parentNode = parentNode || DOCUMENT.body;
         parentNode.appendChild(this._node);
-        this.setSize(w, h);
         this.parentNode = parentNode;
         this.set("width", w);
         this.set("height", h);
@@ -2628,6 +2737,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var shapeClass = this._getShapeClass(cfg.type),
             shape = new shapeClass(cfg);
         this._appendShape(shape);
+        shape._appendStrokeAndFill();
         return shape;
     },
 
@@ -2641,7 +2751,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     _appendShape: function(shape)
     {
         var node = shape.node,
-            parentNode = this._frag || this._node;
+            parentNode = this._frag || this._contentNode;
         if(this.get("autoDraw")) 
         {
             parentNode.appendChild(node);
@@ -2726,7 +2836,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     clear: function() {
         this.removeAllShapes();
-        this._removeChildren(this._node);
+        this._removeChildren(this._contentNode);
     },
 
     /**
@@ -2751,6 +2861,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
                 }
             }
         }
+        if(this._contentNode)
+        {
+            this._contentNode.style.visibility = visibility;
+        }
         if(this._node)
         {
             this._node.style.visibility = visibility;
@@ -2769,7 +2883,6 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         h = Math.round(h);
         this._node.style.width = w + 'px';
         this._node.style.height = h + 'px';
-        this._node.coordSize = w + ' ' + h;
     },
 
     /**
@@ -2927,18 +3040,125 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     _redraw: function()
     {
-        var box = this._resizeDown ? this._getUpdatedContentBounds() : this._contentBounds;
-        if(this.get("autoSize"))
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio,
+            nodeWidth,
+            nodeHeight,
+            xCoordOrigin = 0,
+            yCoordOrigin = 0,
+            box = this._resizeDown ? this._getUpdatedContentBounds() : this._contentBounds,
+            left = box.left,
+            right = box.right,
+            top = box.top,
+            bottom = box.bottom,
+            contentWidth = box.width,
+            contentHeight = box.height,
+            aspectRatio,
+            xCoordSize,
+            yCoordSize,
+            scaledWidth,
+            scaledHeight;
+        if(autoSize)
         {
-            this.setSize(box.right, box.bottom);
+            if(autoSize == "sizeContentToGraphic")
+            {
+                preserveAspectRatio = this.get("preserveAspectRatio");
+                contentWidth = box.width;
+                contentHeight = box.height;
+                nodeWidth = this.get("width");
+                nodeHeight = this.get("height");
+                if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
+                {
+                    xCoordOrigin = left;
+                    yCoordOrigin = top;
+                    xCoordSize = contentWidth;
+                    yCoordSize = contentHeight;
+                }
+                else 
+                {
+                    if(contentWidth * nodeHeight/contentHeight > nodeWidth)
+                    {
+                        aspectRatio = nodeHeight/nodeWidth;
+                        xCoordSize = contentWidth;
+                        yCoordSize = contentWidth * aspectRatio;
+                        scaledHeight = (nodeWidth * (contentHeight/contentWidth)) * (yCoordSize/nodeHeight);
+                        yCoordOrigin = this._calculateCoordOrigin(preserveAspectRatio.slice(5).toLowerCase(), scaledHeight, yCoordSize);
+                        yCoordOrigin = top + yCoordOrigin;
+                        xCoordOrigin = left;
+                    }
+                    else
+                    {
+                        aspectRatio = nodeWidth/nodeHeight;
+                        xCoordSize = contentHeight * aspectRatio;
+                        yCoordSize = contentHeight;
+                        scaledWidth = (nodeHeight * (contentWidth/contentHeight)) * (xCoordSize/nodeWidth);
+                        xCoordOrigin = this._calculateCoordOrigin(preserveAspectRatio.slice(1, 4).toLowerCase(), scaledWidth, xCoordSize);
+                        xCoordOrigin = xCoordOrigin + left;
+                        yCoordOrigin = top;
+                    }
+                }
+                this._contentNode.style.width = nodeWidth + "px";
+                this._contentNode.style.height = nodeHeight + "px";
+                this._contentNode.coordOrigin = xCoordOrigin + ", " + yCoordOrigin;
+            }
+            else 
+            {
+                xCoordSize = contentWidth;
+                yCoordSize = contentHeight;
+                this._contentNode.style.width = contentWidth + "px";
+                this._contentNode.style.height = contentHeight + "px";
+                this._state.width = contentWidth;
+                this._state.height =  contentHeight;
+                if(this._node)
+                {
+                    this._node.style.width = contentWidth + "px";
+                    this._node.style.height = contentHeight + "px";
+                }
+
+            }
+            this._contentNode.coordSize = xCoordSize + ", " + yCoordSize;
+        }
+        else
+        {
+            this._contentNode.style.width = right + "px";
+            this._contentNode.style.height = bottom + "px";
+            this._contentNode.coordSize = right + ", " + bottom;
         }
         if(this._frag)
         {
-            this._node.appendChild(this._frag);
+            this._contentNode.appendChild(this._frag);
             this._frag = null;
         }
     },
     
+    /**
+     * Determines the value for either an x or y coordinate to be used for the <code>coordOrigin</code> of the Graphic.
+     *
+     * @method _calculateCoordOrigin
+     * @param {String} position The position for placement. Possible values are min, mid and max.
+     * @param {Number} size The total scaled size of the content.
+     * @param {Number} coordsSize The coordsSize for the Graphic.
+     * @return Number
+     * @private
+     */
+    _calculateCoordOrigin: function(position, size, coordsSize)
+    {
+        var coord;
+        switch(position)
+        {
+            case "min" :
+                coord = 0;
+            break;
+            case "mid" :
+                coord = (size - coordsSize)/2;
+            break;
+            case "max" :
+                coord = (size - coordsSize);
+            break;
+        }
+        return coord;
+    },
+
     /**
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
@@ -2980,4 +3200,4 @@ Y.VMLGraphic = VMLGraphic;
 
 
 
-}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
+}, '@VERSION@', {"requires": ["graphics"]});

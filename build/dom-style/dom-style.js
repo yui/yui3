@@ -26,10 +26,12 @@ var DOCUMENT_ELEMENT = 'documentElement',
     Y_DOM = Y.DOM,
 
     TRANSFORM = 'transform',
+    TRANSFORMORIGIN = 'transformOrigin',
     VENDOR_TRANSFORM = [
         'WebkitTransform',
         'MozTransform',
-        'OTransform'
+        'OTransform',
+        'msTransform'
     ],
 
     re_color = /color$/i,
@@ -38,6 +40,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
     if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
         TRANSFORM = val;
+        TRANSFORMORIGIN = val + "Origin";
     }
 });
 
@@ -243,6 +246,16 @@ Y_DOM.CUSTOM_STYLES.transform = {
 
     get: function(node, style) {
         return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORM);
+    }
+};
+
+Y_DOM.CUSTOM_STYLES.transformOrigin = {
+    set: function(node, val, style) {
+        style[TRANSFORMORIGIN] = val;
+    },
+
+    get: function(node, style) {
+        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
     }
 };
 
