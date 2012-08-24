@@ -16,22 +16,22 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["simpleyui"] = {
+_yuitest_coverage["build/simpleyui/simpleyui.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "simpleyui",
+    path: "build/simpleyui/simpleyui.js",
     code: []
 };
-_yuitest_coverage["simpleyui"].code=["YUI.add('simpleyui', function (Y, NAME) {","","// empty","","","","}, '@VERSION@', {\"use\": [\"yui\", \"oop\", \"dom\", \"event-custom-base\", \"event-base\", \"pluginhost\", \"node\", \"event-delegate\", \"io-base\", \"json-parse\", \"transition\", \"selector-css3\", \"dom-style-ie\", \"querystring-stringify-simple\"]});"];
-_yuitest_coverage["simpleyui"].lines = {"1":0};
-_yuitest_coverage["simpleyui"].functions = {};
-_yuitest_coverage["simpleyui"].coveredLines = 1;
-_yuitest_coverage["simpleyui"].coveredFunctions = 0;
-_yuitest_coverline("simpleyui", 1);
+_yuitest_coverage["build/simpleyui/simpleyui.js"].code=["YUI.add('simpleyui', function (Y, NAME) {","","// empty","","","","}, '@VERSION@', {\"use\": [\"yui\", \"oop\", \"dom\", \"event-custom-base\", \"event-base\", \"pluginhost\", \"node\", \"event-delegate\", \"io-base\", \"json-parse\", \"transition\", \"selector-css3\", \"dom-style-ie\", \"querystring-stringify-simple\"]});"];
+_yuitest_coverage["build/simpleyui/simpleyui.js"].lines = {"1":0};
+_yuitest_coverage["build/simpleyui/simpleyui.js"].functions = {};
+_yuitest_coverage["build/simpleyui/simpleyui.js"].coveredLines = 1;
+_yuitest_coverage["build/simpleyui/simpleyui.js"].coveredFunctions = 0;
+_yuitest_coverline("build/simpleyui/simpleyui.js", 1);
 YUI.add('simpleyui', function (Y, NAME) {
 
 // empty
