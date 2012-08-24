@@ -1,4 +1,4 @@
-YUI.add('handlebars-compiler', function(Y) {
+YUI.add('handlebars-compiler', function (Y, NAME) {
 
 /*!
 Handlebars.js - Copyright (C) 2011 Yehuda Katz
@@ -1724,7 +1724,7 @@ handlebars module is loaded in "debug" mode.
 @for Handlebars
 */
 Handlebars.logger.log = function (level, message) {
-
+    Y.log(message, levels[level] || 'error', 'Handlebars');
 };
 
 /**
@@ -1792,4 +1792,4 @@ function.
 */
 
 
-}, '@VERSION@' ,{requires:['handlebars-base']});
+}, '@VERSION@', {"requires": ["handlebars-base"]});
