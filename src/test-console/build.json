@@ -1,0 +1,10 @@
+{
+    "name": "test-console",
+    "builds": {
+        "test-console": {
+            "jsfiles": [
+                "test-console.js"
+            ]
+        }
+    }
+}
