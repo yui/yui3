@@ -10,7 +10,7 @@ Y.TemplateTestSuite.add(new Y.Test.Case({
 
         Assert.isFunction(compiled, 'return value should be a function');
         Assert.areSame('test', compiled(), 'executing the function should render the template');
-        Assert.areSame("function (data) {\nvar $t='';\nwith(this){\n$t+='test';}\nreturn $t;\n}", compiled.source, '`source` property of the function should contain the compiled template source');
+        Assert.areSame("function (data) {\nvar $t='';\nwith(data){\n$t+='test';}\nreturn $t;\n}", compiled.source, '`source` property of the function should contain the compiled template source');
     },
 
     '<% ... %> should be rendered as a block of JavaScript code': function () {

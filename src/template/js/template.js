@@ -97,14 +97,14 @@ Y.template = function (text, options) {
     options = Y.merge(Y.templateOptions, options);
 
     var blocks = [],
-        source = "var $t='';\nwith(this){\n",
+        source = "var $t='';\nwith(data){\n",
         render,
         template;
 
-    // U+FFFF is guaranteed to represent a non-character, so no valid UTF-8
-    // string should ever contain it. That means we can freely strip it out of
-    // the input text (just to be safe) and then use it for our own nefarious
-    // purposes as a token placeholder!
+    // U+FFFE and U+FFFF are guaranteed to represent non-characters, so no valid
+    // UTF-8 string should ever contain them. That means we can freely strip
+    // them out of the input text (just to be safe) and then use them for our
+    // own nefarious purposes as token placeholders!
     //
     // See http://en.wikipedia.org/wiki/Mapping_of_Unicode_characters#Noncharacters
     text = text.replace(/\ufffe|\uffff/g, '');
@@ -130,16 +130,17 @@ Y.template = function (text, options) {
 
         "';}\nreturn $t;";
 
-    // Replace the token placeholders with code from the stack.
+    // Replace the token placeholders with code.
     source = source.replace(/\ufffe(\d+)\uffff/g, function (match, index) {
         return blocks[parseInt(index, 10)];
     });
 
     // Compile the template source into an executable function.
-    render = new Function('Y', source);
+    render = new Function('Y', 'data', source);
 
     template = function (data) {
-        return render.call(data || {}, Y);
+        data || (data = {});
+        return render.call(data, Y, data);
     };
 
     // Include the generated template source code on the function to make
