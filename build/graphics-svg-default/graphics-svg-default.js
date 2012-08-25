@@ -9,4 +9,4 @@ Y.Path = Y.SVGPath;
 Y.Drawing = Y.SVGDrawing;
 
 
-}, '@VERSION@', {});
+}, '@VERSION@');

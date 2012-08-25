@@ -1407,20 +1407,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	getBounds: function()
 	{
 		var type = this._type,
-            stroke = this.get("stroke"),
 			w = this.get("width"),
 			h = this.get("height"),
 			x = type == "path" ? 0 : this._x,
-			y = type == "path" ? 0 : this._y,
-            wt = 0;
-        if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-		}
-        w = (x + w + wt) - (x - wt); 
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
+			y = type == "path" ? 0 : this._y;
 		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 
@@ -2412,20 +2402,7 @@ SVGGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._contentNode)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        value: false
     },
 
 	/**
@@ -2510,6 +2487,51 @@ SVGGraphic.ATTRS = {
 
 Y.extend(SVGGraphic, Y.GraphicBase, {
     /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
+    /**
      * Storage for `x` attribute.
      *
      * @property _x
@@ -2543,13 +2565,6 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         }
         return xy;
     },
-
-    /**
-     * @private
-     * @property _resizeDown 
-     * @type Boolean
-     */
-    _resizeDown: false,
 
     /**
      * Initializes the class.

@@ -9,4 +9,4 @@ Y.Path = Y.CanvasPath;
 Y.Drawing = Y.CanvasDrawing;
 
 
-}, '@VERSION@', {});
+}, '@VERSION@');

@@ -2520,20 +2520,7 @@ VMLGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._node)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        resizeDown: false
     },
 
 	/**
@@ -2608,6 +2595,51 @@ VMLGraphic.ATTRS = {
 
 Y.extend(VMLGraphic, Y.GraphicBase, {
     /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
+    /**
      * Storage for `x` attribute.
      *
      * @property _x
@@ -2649,13 +2681,6 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         }
         return xy;
     },
-
-    /**
-     * @private
-     * @property _resizeDown 
-     * @type Boolean
-     */
-    _resizeDown: false,
 
     /**
      * Initializes the class.
@@ -3014,7 +3039,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var shapeBox,
             box;
         this._shapes[shape.get("id")] = shape;
-        if(!this._resizeDown)
+        if(!this.get("resizeDown"))
         {
             shapeBox = shape.getBounds();
             box = this._contentBounds;
@@ -3046,7 +3071,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             nodeHeight,
             xCoordOrigin = 0,
             yCoordOrigin = 0,
-            box = this._resizeDown ? this._getUpdatedContentBounds() : this._contentBounds,
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
             left = box.left,
             right = box.right,
             top = box.top,
@@ -3057,7 +3082,9 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             xCoordSize,
             yCoordSize,
             scaledWidth,
-            scaledHeight;
+            scaledHeight,
+            visible = this.get("visible");
+        this._contentNode.style.visibility = "hidden";
         if(autoSize)
         {
             if(autoSize == "sizeContentToGraphic")
@@ -3128,6 +3155,10 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         {
             this._contentNode.appendChild(this._frag);
             this._frag = null;
+        }
+        if(visible)
+        {
+            this._contentNode.style.visibility = "visible";
         }
     },
     

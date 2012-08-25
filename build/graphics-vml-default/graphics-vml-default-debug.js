@@ -9,4 +9,4 @@ Y.Path = Y.VMLPath;
 Y.Drawing = Y.VMLDrawing;
 
 
-}, '@VERSION@', {});
+}, '@VERSION@');

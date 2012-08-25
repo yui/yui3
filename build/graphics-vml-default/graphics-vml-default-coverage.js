@@ -16,39 +16,39 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["graphics-vml-default"] = {
+_yuitest_coverage["build/graphics-vml-default/graphics-vml-default.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "graphics-vml-default",
+    path: "build/graphics-vml-default/graphics-vml-default.js",
     code: []
 };
-_yuitest_coverage["graphics-vml-default"].code=["YUI.add('graphics-vml-default', function (Y, NAME) {","","Y.Graphic = Y.VMLGraphic;","Y.Shape = Y.VMLShape;","Y.Circle = Y.VMLCircle;","Y.Rect = Y.VMLRect;","Y.Ellipse = Y.VMLEllipse;","Y.Path = Y.VMLPath;","Y.Drawing = Y.VMLDrawing;","","","}, '@VERSION@', {});"];
-_yuitest_coverage["graphics-vml-default"].lines = {"1":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
-_yuitest_coverage["graphics-vml-default"].functions = {"(anonymous 1):1":0};
-_yuitest_coverage["graphics-vml-default"].coveredLines = 8;
-_yuitest_coverage["graphics-vml-default"].coveredFunctions = 1;
-_yuitest_coverline("graphics-vml-default", 1);
+_yuitest_coverage["build/graphics-vml-default/graphics-vml-default.js"].code=["YUI.add('graphics-vml-default', function (Y, NAME) {","","Y.Graphic = Y.VMLGraphic;","Y.Shape = Y.VMLShape;","Y.Circle = Y.VMLCircle;","Y.Rect = Y.VMLRect;","Y.Ellipse = Y.VMLEllipse;","Y.Path = Y.VMLPath;","Y.Drawing = Y.VMLDrawing;","","","}, '@VERSION@');"];
+_yuitest_coverage["build/graphics-vml-default/graphics-vml-default.js"].lines = {"1":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0};
+_yuitest_coverage["build/graphics-vml-default/graphics-vml-default.js"].functions = {"(anonymous 1):1":0};
+_yuitest_coverage["build/graphics-vml-default/graphics-vml-default.js"].coveredLines = 8;
+_yuitest_coverage["build/graphics-vml-default/graphics-vml-default.js"].coveredFunctions = 1;
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 1);
 YUI.add('graphics-vml-default', function (Y, NAME) {
 
-_yuitest_coverfunc("graphics-vml-default", "(anonymous 1)", 1);
-_yuitest_coverline("graphics-vml-default", 3);
+_yuitest_coverfunc("build/graphics-vml-default/graphics-vml-default.js", "(anonymous 1)", 1);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 3);
 Y.Graphic = Y.VMLGraphic;
-_yuitest_coverline("graphics-vml-default", 4);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 4);
 Y.Shape = Y.VMLShape;
-_yuitest_coverline("graphics-vml-default", 5);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 5);
 Y.Circle = Y.VMLCircle;
-_yuitest_coverline("graphics-vml-default", 6);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 6);
 Y.Rect = Y.VMLRect;
-_yuitest_coverline("graphics-vml-default", 7);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 7);
 Y.Ellipse = Y.VMLEllipse;
-_yuitest_coverline("graphics-vml-default", 8);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 8);
 Y.Path = Y.VMLPath;
-_yuitest_coverline("graphics-vml-default", 9);
+_yuitest_coverline("build/graphics-vml-default/graphics-vml-default.js", 9);
 Y.Drawing = Y.VMLDrawing;
 
 
-}, '@VERSION@', {});
+}, '@VERSION@');
