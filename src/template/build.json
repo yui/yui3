@@ -1,0 +1,11 @@
+{
+    "name": "template",
+
+    "builds": {
+        "template": {
+            "jsfiles": [
+                "template.js"
+            ]
+        }
+    }
+}
