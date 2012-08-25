@@ -182,20 +182,7 @@ SVGGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._contentNode)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        value: false
     },
 
 	/**
@@ -280,6 +267,51 @@ SVGGraphic.ATTRS = {
 
 Y.extend(SVGGraphic, Y.GraphicBase, {
     /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
+    /**
      * Storage for `x` attribute.
      *
      * @property _x
@@ -313,13 +345,6 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         }
         return xy;
     },
-
-    /**
-     * @private
-     * @property _resizeDown 
-     * @type Boolean
-     */
-    _resizeDown: false,
 
     /**
      * Initializes the class.

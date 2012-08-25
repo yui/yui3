@@ -824,12 +824,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	getBounds: function()
 	{
 		var type = this._type,
-		    stroke = this.get("stroke"),
 			w = this.get("width"),
 			h = this.get("height"),
 			x = this.get("x"),
-			y = this.get("y"),
-            wt = 0;
+			y = this.get("y");
         if(type == "path")
         {
             x = x + this._left;
@@ -837,14 +835,6 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             w = this._right - this._left;
             h = this._bottom - this._top;
         }
-		if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-		}
-        w = (x + w + wt) - (x - wt); 
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
         return this._getContentRect(w, h, x, y);
 	},
 
