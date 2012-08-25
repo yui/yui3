@@ -3,19 +3,21 @@ YUI.add('graphics-tests', function(Y) {
 var suite = new Y.Test.Suite("Graphics: Base"),
     ENGINE = "vml",
     DOCUMENT = Y.config.doc,
+	svg = DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
 	canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
     graphicTests,
     svgTests,
     canvasTests,
-    vmlTests;
+    vmlTests,
+    DEFAULTENGINE = Y.config.defaultGraphicEngine;
 
-if(DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
-{
-    ENGINE = "svg";
-}
-else if(canvas && canvas.getContext && canvas.getContext("2d"))
+if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
 {
     ENGINE = "canvas";
+}
+else if(svg)
+{
+    ENGINE = "svg";
 }
 
 graphicTests = new Y.Test.Case({
