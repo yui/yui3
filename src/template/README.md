@@ -1,5 +1,5 @@
 Template
 ========
 
-Adds the `Y.template()` method, which provides fast, simple string-based
-micro-templating similar to ERB or Underscore templates.
+Provides a generic API for using template engines such as Handlebars and
+`Y.Template.Micro`.

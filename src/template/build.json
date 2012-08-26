@@ -2,9 +2,15 @@
     "name": "template",
 
     "builds": {
-        "template": {
+        "template-base": {
             "jsfiles": [
-                "template.js"
+                "template-base.js"
+            ]
+        },
+
+        "template-micro": {
+            "jsfiles": [
+                "template-micro.js"
             ]
         }
     }
