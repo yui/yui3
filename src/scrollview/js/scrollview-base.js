@@ -1,4 +1,3 @@
-/*jslint nomen:true sloppy:true*/
 /*global YUI,Y*/
 
 /**
@@ -27,8 +26,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     BOTTOM = 'bottom',
     LEFT = 'left',
     PX = 'px',
-    AXIS_X = 'axisX',
-    AXIS_Y = 'axisY',
+    AXIS = 'axis',
     SCROLL_Y = 'scrollY',
     SCROLL_X = 'scrollX',
     BOUNCE = 'bounce',
@@ -72,9 +70,33 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param {config} Configuration object for the plugin
      */
     initializer: function (config) {
-        var sv = this;
+        var sv = this,
+            axis;
+
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
+
+        if (config.axis) {
+            switch (config.axis.toLowerCase()) {
+                case "x":
+                    axis = {
+                        x: true,
+                        y: false
+                    }
+                    break;
+                case "y":
+                    axis = {
+                        x: false,
+                        y: true
+                    }
+                    break;
+            }
+        }
+        else {
+            axis = 'auto';
+        }
+
+        sv.axis = axis;
     },
 
     /**
@@ -131,11 +153,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var sv = this,
             bb = sv._bb;
 
+        // Unbind any previous 'drag' listeners
+        bb.detach(DRAG + '|*');
+
         if (drag) {
             bb.on(DRAG + '|' + GESTURE_MOVE + START, Y.bind(sv._onGestureMoveStart, sv));
-        }
-        else {
-            bb.detach(DRAG + '|*');
         }
     },
 
@@ -150,11 +172,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var sv = this,
             bb = sv._bb;
 
+        // Unbind any previous 'flick' listeners
+        bb.detach(FLICK + '|*');
+
         if (flick) {
             bb.on(FLICK + '|' + FLICK, Y.bind(sv._flick, sv), flick);
-        }
-        else {
-            bb.detach(FLICK + '|*');
         }
     },
 
@@ -168,15 +190,15 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _bindMousewheel: function (mousewheel) {
         var sv = this,
             bb = sv._bb,
-            axisY = sv.get(AXIS_Y);
+            axis = sv.axis;
+
+        // Unbind any previous 'mousewheel' listeners
+        bb.detach(MOUSEWHEEL + '|*');
 
         // Only enable for vertical scrollviews
-        if (mousewheel && axisY) {
+        if (mousewheel && axis.y) {
             // Bound to document, because that's where mousewheel events fire off of.
             Y.one(DOCUMENT).on(MOUSEWHEEL, Y.bind(sv._mousewheel, sv));
-        }
-        else {
-            bb.detach(MOUSEWHEEL + '|*');
         }
     },
 
@@ -244,10 +266,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             height = scrollDims.offsetHeight,
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight,
-            axisX = sv.get(AXIS_X),
-            axisY = sv.get(AXIS_Y),
-            rtl = sv.rtl;
+            rtl = sv.rtl,
+            axis = sv.axis;
 
+        if (axis === "auto") {
+            axis = {
+                x: (scrollWidth > width),
+                y: (scrollHeight > height)
+            };
+            sv.axis = axis;
+        }
+        
         sv._minScrollX = (rtl) ? -(scrollWidth - width) : 0;
         sv._maxScrollX = (rtl) ? 0 : (scrollWidth - width);
         sv._minScrollY = 0;
@@ -255,11 +284,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._scrollWidth = scrollWidth;
         sv._scrollHeight = scrollHeight;
 
-        if (axisX) {
+        if (axis.x) {
             bb.addClass(CLASS_NAMES.horizontal);
         }
 
-        if (axisY) {
+        if (axis.y) {
             bb.addClass(CLASS_NAMES.vertical);
         }
 
@@ -484,14 +513,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (!this._cDisabled) {
             var sv = this,
                 bb = sv._bb,
-                axisX = sv.get(AXIS_X),
-                axisY = sv.get(AXIS_Y),
                 currentX = sv.get(SCROLL_X),
                 currentY = sv.get(SCROLL_Y);
-
-            // Cache the axis values
-            sv._cAxisX = axisX;
-            sv._cAxisY = axisY;
 
             // TODO: Review if neccesary (#2530129)
             e.stopPropagation();
@@ -547,8 +570,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _onGestureMove: function (e) {
         var sv = this,
             gesture = sv._gesture,
-            axisX = sv._cAxisX,
-            axisY = sv._cAxisY,
+            svAxis = sv.axis,
+            svAxisX = svAxis.x,
+            svAxisY = svAxis.y,
             startX = gesture.startX,
             startY = gesture.startY,
             startClientX = gesture.startClientX,
@@ -567,11 +591,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             gesture.axis = (Math.abs(gesture.deltaX) > Math.abs(gesture.deltaY)) ? DIM_X : DIM_Y;
         }
 
-        if (gesture.axis === DIM_X && sv._cAxisX) {
+        if (gesture.axis === DIM_X && svAxisX) {
             sv.set(SCROLL_X, startX + gesture.deltaX);
         }
 
-        if (gesture.axis === DIM_Y && sv._cAxisY) {
+        if (gesture.axis === DIM_Y && svAxisY) {
             sv.set(SCROLL_Y, startY + gesture.deltaY);
         }
     },
@@ -621,23 +645,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _flick: function (e) {
+
         var sv = this,
             gesture = sv._gesture,
-            axisX = sv._cAxisX,
-            axisY = sv._cAxisY,
-            flick = e.flick,
-            axis;
+            svAxis = sv.axis,
+            svAxisX = svAxis.x,
+            svAxisY = svAxis.y,
+            flick = e.flick;
 
         if (!sv._cDisabled) {
-            axis = flick.axis;
+            flickAxis = flick.axis;
 
             // We can't scroll on this axis, so prevent unneccesary firing of _flickFrame
-            if ((axis === 'x' && axisX) || (axis === 'y' && axisY)) {
+            if ((flickAxis === DIM_X && svAxisX) || (flickAxis === DIM_Y && svAxisY)) {
                 gesture.flick = flick;
                 sv._cDecel = sv.get(DECELERATION);
                 sv._cBounce = sv.get(BOUNCE);
-                sv._cAxisX = sv.get(AXIS_X);
-                sv._cAxisY = sv.get(AXIS_Y);
                 sv._flickFrame(flick.velocity);
             }
         }
@@ -651,9 +674,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _flickFrame: function (velocity) {
+        
         var sv = this,
             gesture = sv._gesture,
-            axis = gesture.flick.axis,
+            flickAxis = gesture.flick.axis,
             currentX = sv.get(SCROLL_X),
             currentY = sv.get(SCROLL_Y),
             minX = sv._minScrollX,
@@ -662,8 +686,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = sv._maxScrollY,
             deceleration = sv._cDecel,
             bounce = sv._cBounce,
-            axisX = sv._cAxisX,
-            axisY = sv._cAxisY,
+            svAxis = sv.axis,
+            svAxisX = svAxis.x,
+            svAxisY = svAxis.y,
             step = ScrollView.FRAME_STEP,
             newX = currentX - (velocity * step),
             newY = currentY - (velocity * step);
@@ -683,13 +708,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Otherwise, animate to the next frame
         else {
-            if (axis === DIM_X && axisX) {
+            if (flickAxis === DIM_X && svAxisX) {
                 if (newX < minX || newX > maxX) {
                     velocity *= bounce;
                 }
                 sv.set(SCROLL_X, newX);
             }
-            else if (axis === DIM_Y && axisY) {
+            else if (flickAxis === DIM_Y && svAxisY) {
                 if (newY < minY || newY > maxY) {
                     velocity *= bounce;
                 }
@@ -749,16 +774,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _isOOB: function () {
         var sv = this,
+            svAxis = sv.axis,
+            svAxisX = svAxis.x,
+            svAxisY = svAxis.y,
             currentX = sv.get(SCROLL_X),
             currentY = sv.get(SCROLL_Y),
-            axisX = sv.get(AXIS_X),
-            axisY = sv.get(AXIS_Y),
             minX = sv._minScrollX,
             minY = sv._minScrollY,
             maxX = sv._maxScrollX,
             maxY = sv._maxScrollY;
 
-        return (axisX && (currentX < minX || currentX > maxX)) || (axisY && (currentY < minY || currentY > maxY));
+        return (svAxisX && (currentX < minX || currentX > maxX)) || (svAxisY && (currentY < minY || currentY > maxY));
     },
 
     /**
@@ -928,28 +954,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @static
      */
     ATTRS: {
-
-        /**
-         *
-         *
-         * @attribute axisX
-         * @type String
-         * @default true
-         */
-        axisX: {
-            value: true
-        },
-
-        /**
-         *
-         *
-         * @attribute axisY
-         * @type String
-         * @default true
-         */
-        axisY: {
-            value: true
-        },
 
         /**
          * The scroll position in the y-axis

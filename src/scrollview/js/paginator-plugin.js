@@ -1,4 +1,3 @@
-/*jslint nomen:true sloppy:true*/
 /*global YUI,Y*/
 
 /**
@@ -22,8 +21,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     FLICK = 'flick',
     DRAG = 'drag',
     DIM_X = 'x',
-    DIM_Y = 'y',
-    AXIS = 'axis';
+    DIM_Y = 'y';
 
 /**
  * Scrollview plugin that adds support for paging
@@ -48,25 +46,33 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     initializer: function (config) {
         var paginator = this,
             host = paginator.get(HOST),
-            bb = host.get(BOUNDING_BOX),
-            cb = host.get(CONTENT_BOX),
-            hostFlick = host.get(FLICK);
+            bb = host._bb,
+            cb = host._cb;
 
         // Default it to an empty object
         config = config || {};
 
-        // Set any config attrs
-        paginator.set(AXIS, config.axis);
+        if (config.axis) {
+            switch (config.axis.toLowerCase()) {
+                case "x":
+                    axis = {
+                        x: true,
+                        y: false
+                    }
+                    break;
+                case "y":
+                    axis = {
+                        x: false,
+                        y: true
+                    }
+                    break;
+            }
+        }
+        else {
+            axis = 'auto';
+        }
 
-        // Don't allow flicks on the paginated axis
-        if (config.axis === DIM_X) {
-            hostFlick.axis = DIM_Y;
-            host.set(FLICK, hostFlick);
-        }
-        else if (config.axis === DIM_Y) {
-            hostFlick.axis = DIM_X;
-            host.set(FLICK, hostFlick);
-        }
+        paginator.axis = axis;
 
         // Initialize & default
         paginator.optimizeMemory = config.optimizeMemory || false;
@@ -103,17 +109,18 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             bb = paginator._bb,
             host = paginator._host,
+            hostFlick = host.get(FLICK)
             index = paginator._cIndex,
-            paginatorAxis = paginator.get(AXIS),
+            paginatorAxis = paginator.axis,
             pageNodes = paginator._getPageNodes(),
             size = pageNodes.size(),
             maxScrollX = paginator.cards[index].maxScrollX,
             maxScrollY = paginator.cards[index].maxScrollY;
 
-        if (paginatorAxis === DIM_Y) {
+        if (paginatorAxis[DIM_Y]) {
             host._maxScrollX = maxScrollX;
         }
-        else if (paginatorAxis === DIM_X) {
+        else if (paginatorAxis[DIM_X]) {
             host._maxScrollY = maxScrollY;
         }
 
@@ -127,6 +134,20 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         // Add the paginator class
         bb.addClass(CLASS_PAGED);
+
+        if (paginator.axis === 'auto') {
+            paginator.axis = host.axis;
+        }
+
+        // Don't allow flicks on the paginated axis
+        if (paginator.axis[DIM_X]) {
+            hostFlick.axis = DIM_Y;
+            host.set(FLICK, hostFlick);
+        }
+        else if (paginator.axis[DIM_Y]) {
+            hostFlick.axis = DIM_X;
+            host.set(FLICK, hostFlick);
+        }
 
         // paginator._optimize();
     },
@@ -187,7 +208,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             gesture = host._gesture,
             index = paginator._cIndex,
-            paginatorAxis = paginator.get(AXIS),
+            paginatorAxis = paginator.axis,
             gestureAxis;
 
         if (gesture) {
@@ -201,7 +222,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             }
 
             // If they are scrolling against the specified axis, pull out the card as the node to have its own offset
-            if (paginatorAxis !== gestureAxis) {
+            if (paginatorAxis[gestureAxis] === false) {
                 node = paginator.cards[index].node;
             }
         }
@@ -222,10 +243,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             gesture = host._gesture,
-            paginatorAxis = paginator.get(AXIS),
+            paginatorAxis = paginator.axis,
             gestureAxis = gesture && gesture.axis;
 
-        if (gestureAxis === paginatorAxis) {
+        if (paginatorAxis[gestureAxis]) {
             if (gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')] > 0) {
                 paginator[host.rtl ? 'prev' : 'next']();
             } else {
@@ -247,7 +268,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             bb = host._bb,
             isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.
-            paginatorAxis = paginator.get(AXIS);
+            paginatorAxis = paginator.axis;
 
         // Set the axis for this event.
         // @TODO: This is hacky, it's not a gesture. Find a better way
@@ -256,7 +277,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         };
 
         // Only if the mousewheel event occurred on a DOM node inside the BB
-        if (bb.contains(e.target) && paginatorAxis === DIM_Y) {
+        if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
 
             if (isForward) {
                 paginator.next();
@@ -286,9 +307,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             index = paginator._cIndex,
             scrollX = host.get(SCROLL_X),
             scrollY = host.get(SCROLL_Y),
-            paginatorAxis = paginator.get(AXIS);
+            paginatorAxis = paginator.axis;
 
-        if (paginatorAxis === DIM_Y) {
+        if (paginatorAxis[DIM_Y]) {
             paginator.cards[index].scrollX = scrollX;
         } else {
             paginator.cards[index].scrollY = scrollY;
@@ -410,7 +431,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _getPageNodes: function () {
         var paginator = this,
             host = paginator._host,
-            cb = host.get(CONTENT_BOX),
+            cb = host._cb,
             pageSelector = paginator.get(SELECTOR),
             pageNodes = pageSelector ? cb.all(pageSelector) : cb.get('children');
 
@@ -474,7 +495,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             pageNode = paginator._getPageNodes().item(index),
-            scrollAxis = (paginator.get(AXIS) === DIM_X ? SCROLL_X : SCROLL_Y),
+            scrollAxis = (paginator.axis[DIM_X] ? SCROLL_X : SCROLL_Y),
             scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');
 
         duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;

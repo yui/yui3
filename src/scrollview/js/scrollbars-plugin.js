@@ -1,4 +1,3 @@
-/*jslint nomen:true sloppy:true*/
 /*global YUI,Y*/
 
 /**
@@ -164,10 +163,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */    
     _hostDimensionsChange: function() {
-        var host = this._host;
+        var host = this._host,
+            axis = host.axis;
 
-        this._renderBar(this.get(VERTICAL_NODE), host.get('axisY'), 'vert');
-        this._renderBar(this.get(HORIZONTAL_NODE), host.get('axisX'), 'horiz');
+        this._renderBar(this.get(VERTICAL_NODE), axis.y, 'vert');
+        this._renderBar(this.get(HORIZONTAL_NODE), axis.x, 'horiz');
 
         this._update();
 
@@ -422,7 +422,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
-            host = this._host;
+            host = this._host,
+            axis = host.axis;
 
         duration = (duration || 0)/1000;
 
@@ -430,11 +431,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this.show();
         }
 
-        if (host.get('axisY') && vNode) {
+        if (axis.y && vNode) {
             this._updateBar(vNode, y, duration, false);
         }
 
-        if (host.get('axisX') && hNode) {
+        if (axis.x && hNode) {
             this._updateBar(hNode, x, duration, true);
         }
     },
