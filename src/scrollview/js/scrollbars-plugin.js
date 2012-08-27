@@ -1,3 +1,6 @@
+/*jslint nomen:true sloppy:true*/
+/*global YUI,Y*/
+
 /**
  * Provides a plugin, which adds support for a scroll indicator to ScrollView instances
  *
@@ -148,7 +151,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this._host = this.get("host");
 
         this.afterHostEvent('scrollEnd', this._hostScrollEnd);
-        this.afterHostMethod('_uiScrollTo', this._update);
+        this.afterHostMethod('scrollTo', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
     },
 
@@ -163,8 +166,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
     _hostDimensionsChange: function() {
         var host = this._host;
 
-        this._renderBar(this.get(VERTICAL_NODE), host._scrollsVertical);
-        this._renderBar(this.get(HORIZONTAL_NODE), host._scrollsHorizontal);
+        this._renderBar(this.get(VERTICAL_NODE), host.get('axisY'), 'vert');
+        this._renderBar(this.get(HORIZONTAL_NODE), host.get('axisX'), 'horiz');
 
         this._update();
 
@@ -215,7 +218,6 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @param {Node} node
      */
     _setChildCache : function(node) {
-
         var c = node.get("children"),
             fc = c.item(0),
             mc = c.item(1),
@@ -288,7 +290,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = WIDTH;
             dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
-            widgetSize = host._width;
+            widgetSize = host.get('width');
             contentSize = host._scrollWidth;
             translate = TRANSLATE_X;
             scale = SCALE_X;
@@ -297,7 +299,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = HEIGHT;
             dimOffset = TOP;
             dimCache = VERT_CACHE;
-            widgetSize = host._height;
+            widgetSize = host.get('height');
             contentSize = host._scrollHeight;
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
@@ -421,18 +423,18 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host;
-            
+
         duration = (duration || 0)/1000;
 
         if (!this._showing) {
             this.show();
         }
 
-        if (host._scrollsVertical && vNode) {
+        if (host.get('axisY') && vNode) {
             this._updateBar(vNode, y, duration, false);
         }
 
-        if (host._scrollsHorizontal && hNode) {
+        if (host.get('axisX') && hNode) {
             this._updateBar(hNode, x, duration, true);
         }
     },
@@ -519,8 +521,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */
     _setNode: function(node, name) {
         var horiz = (name == HORIZONTAL_NODE);
-
-        node = Y.one(node);
+            node = Y.one(node);
 
         if (node) {
             node.addClass(_classNames.scrollbar);
