@@ -103,7 +103,8 @@
          * @chainable
          */
         _setAttrs : function(attrs, opts) {
-            for (var attr in attrs) {
+            var attr;
+            for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
                     this.set(attr, attrs[attr], opts);
                 }

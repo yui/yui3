@@ -14,9 +14,7 @@ Scripts
 Getting your tests in the build
 -------------------------------
 
-There is a JSON file in this directory called `tests.json`, add your relative path to it and run the
-test locally. Commit and push and it will be in the next build.
-
+All `.js` files under `src/[module]/tests/cli/` will be picked up and added to each test run.
 
 Running the tests locally
 -------------------------
@@ -25,6 +23,12 @@ Clone the repo, then:
 
     cd yui3;
     ./src/common/travis/travis.sh
+
+Or you can use `yogi`
+
+    cd yui3/src;
+    yogi test //All tests with CLI and Grover
+    yogi --cli //Only CLI tests
 
 
 Ways to format your tests

@@ -20,7 +20,7 @@ YUI({useSync: true }).use('test', function(Y) {
         modules: {
             'parallel-tests': {
                 fullpath: path.join(__dirname, '../unit/assets/parallel-tests.js'),
-                requires: [ 'test']
+                requires: [ 'test', 'parallel' ]
             }
         }
     });

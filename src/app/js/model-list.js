@@ -23,6 +23,10 @@ defined, models are sorted in insertion order).
 @extends Base
 @uses ArrayList
 @constructor
+@param {Object} config Config options.
+    @param {Model|Model[]|ModelList|Object|Object[]} config.items Model
+        instance, array of model instances, or ModelList to add to this list on
+        init. The `add` event will not be fired for models added on init.
 @since 3.4.0
 **/
 
@@ -189,6 +193,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.after('*:idChange', this._afterIdChange);
 
         this._clear();
+
+        if (config.items) {
+            this.add(config.items, {silent: true});
+        }
     },
 
     destructor: function () {

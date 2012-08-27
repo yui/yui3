@@ -1,0 +1,65 @@
+{
+    "name": "dd",
+    "builds": {
+        "dd-drag": {
+            "jsfiles": [
+                "drag.js"
+            ]
+        },
+        "dd-plugin": {
+            "jsfiles": [
+                "dd-plugin.js"
+            ]
+        },
+        "dd-delegate": {
+            "jsfiles": [
+                "delegate.js"
+            ]
+        },
+        "dd-ddm-drop": {
+            "jsfiles": [
+                "ddm-drop.js"
+            ]
+        },
+        "dd-gestures": {
+            "jsfiles": [
+                "drag-gestures.js"
+            ]
+        },
+        "dd-ddm": {
+            "jsfiles": [
+                "ddm.js"
+            ]
+        },
+        "dd-drop-plugin": {
+            "jsfiles": [
+                "dd-drop-plugin.js"
+            ]
+        },
+        "dd-constrain": {
+            "jsfiles": [
+                "constrain.js"
+            ]
+        },
+        "dd-ddm-base": {
+            "jsfiles": [
+                "ddm-base.js"
+            ]
+        },
+        "dd-scroll": {
+            "jsfiles": [
+                "scroll.js"
+            ]
+        },
+        "dd-proxy": {
+            "jsfiles": [
+                "proxy.js"
+            ]
+        },
+        "dd-drop": {
+            "jsfiles": [
+                "drop.js"
+            ]
+        }
+    }
+}

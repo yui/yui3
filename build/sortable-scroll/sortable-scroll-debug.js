@@ -1,4 +1,4 @@
-YUI.add('sortable-scroll', function(Y) {
+YUI.add('sortable-scroll', function (Y, NAME) {
 
     
     /**
@@ -64,4 +64,4 @@ YUI.add('sortable-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['sortable', 'dd-scroll']});
+}, '@VERSION@', {"requires": ["dd-scroll", "sortable"]});

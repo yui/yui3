@@ -1,0 +1,38 @@
+{
+    "name": "loader",
+    "builds": {
+        "loader-base": {
+            "replace": {
+                "@GALLERY@": "gallery-2012.08.22-20-00",
+                "@TNT@": "4",
+                "@YUI2@": "2.9.0"
+            },
+            "jsfiles": [
+                "meta.js",
+                "loader.js"
+            ]
+        },
+        "loader-yui3": {
+            "exec": [
+                "./scripts/meta_join.js"
+            ],
+            "jsfiles": [
+                "yui3.js"
+            ]
+        },
+        "loader-rollup": {
+            "jsfiles": [
+                "rollup.js"
+            ]
+        }
+    },
+    "rollups": {
+        "loader": {
+            "files": [
+                "loader-base",
+                "loader-rollup",
+                "loader-yui3"
+            ]
+        }
+    }
+}

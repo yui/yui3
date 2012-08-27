@@ -5,43 +5,32 @@ root=`pwd`
 cd ./build-npm/
 
 npm_base=`pwd`
-yuitest="${npm_base}/node_modules/.bin/yuitest"
-grover="${npm_base}/node_modules/.bin/grover"
+yogi="${npm_base}/node_modules/.bin/yogi"
 
 echo "Build Root: ${root}"
 echo "NPM Base: ${npm_base}"
-echo "YUITest: ${yuitest}"
-echo "Grover: ${grover}"
+echo "yogi: ${yogi}"
 echo "PhantomJS: `phantomjs -v`"
 
 echo "Running Tests.."
 
-tests=`${root}/src/common/travis/gettests.js ${root}`
-
-RETVAL=$?
-[ $RETVAL -ne 0 ] && exit 1
-
-echo "Tests: ${tests}"
-
-cd ${root}
-${yuitest} ${tests}
-
-RETVAL=$?
-[ $RETVAL -ne 0 ] && exit 1
-
-con=20
-
+cd ${root}/src
+echo "cd ${root}/src"
+con=""
+timeout=""
+cli=""
+extra=""
 if [ -n "$TRAVIS" ]; then
-    con=5
+    con="-c 5 "
+    timeout="-t 200 "
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
-        echo "Starting Grover Tests"
-        ${grover} --server -t 180 -c ${con} -i ./src/common/node/batch.js
+        extra="-x charts -x dd -x editor -x graphics -x anim -x throttle"
     else
         echo "Skipping Grover tests for this Node version (not needed)"
+        extra="--cli "
     fi
-else
-    echo "Starting Grover Tests"
-    ${grover} --server -t 180 -c ${con} -i ./src/common/node/batch.js
 fi
 
-
+args="${timeout} ${con} ${extra}"
+echo "yogi test ${args}"
+${yogi} test ${args}

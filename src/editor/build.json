@@ -1,0 +1,65 @@
+{
+    "name": "editor",
+    "builds": {
+        "editor-tab": {
+            "jsfiles": [
+                "editor-tab.js"
+            ]
+        },
+        "editor-selection": {
+            "jsfiles": [
+                "editor-selection.js"
+            ]
+        },
+        "exec-command": {
+            "jsfiles": [
+                "exec-command.js"
+            ]
+        },
+        "createlink-base": {
+            "jsfiles": [
+                "createlink-base.js"
+            ]
+        },
+        "editor-para-ie": {
+            "jsfiles": [
+                "editor-para-ie.js"
+            ]
+        },
+        "editor-para-base": {
+            "jsfiles": [
+                "editor-para-base.js"
+            ]
+        },
+        "editor-br": {
+            "jsfiles": [
+                "editor-br.js"
+            ]
+        },
+        "frame": {
+            "jsfiles": [
+                "frame.js"
+            ]
+        },
+        "editor-lists": {
+            "jsfiles": [
+                "lists.js"
+            ]
+        },
+        "editor-para": {
+            "jsfiles": [
+                "editor-para.js"
+            ]
+        },
+        "editor-base": {
+            "jsfiles": [
+                "editor-base.js"
+            ]
+        },
+        "editor-bidi": {
+            "jsfiles": [
+                "editor-bidi.js"
+            ]
+        }
+    }
+}
