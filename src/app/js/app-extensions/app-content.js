@@ -20,7 +20,7 @@ When the `"app-content"` module is used, it will automatically mix itself into
 `Y.App`, and it provides three main features:
 
   - **`Y.App.Content.route`**: A stack of middleware which forms a pjax-style
-    conent route.
+    content route.
 
   - **`loadContent()`**: Route middleware which load content from a server. This
     makes an Ajax request for the requested URL, parses the returned content and
@@ -98,12 +98,12 @@ AppContent.prototype = {
             creating the new view instance. This config object can also be used
             to update an existing or preserved view's attributes when
             `options.update` is `true`. **Note:** If a `container` is specified,
-            it will be overriden by the `content` specified in the first
+            it will be overridden by the `content` specified in the first
             argument.
 
     @param {Function} [callback] Optional callback function to call after the
         new `activeView` is ready to use. **Note:** this will override
-        `options.callback` and it can be specified as either the second or thrid
+        `options.callback` and it can be specified as either the second or third
         argument. The function will be passed the following:
 
       @param {View} callback.view A reference to the new `activeView`.
