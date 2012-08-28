@@ -109,11 +109,31 @@ appContentSuite.add(new Y.Test.Case({
         frag.append(node);
 
         Assert.isTrue(frag.contains(node), '`node` is not in the `frag`.');
-        Assert.areSame(1, frag.get('children').size(), '`frag` does not have one child.');
+        Assert.areSame(1, frag.get('childNodes').size(), '`frag` does not have one child.');
 
         app.showContent(frag);
 
         Assert.areSame(node, app.get('activeView').get('container'), '`node` is not the view `container`.');
+    },
+
+    '`showContent()` should not use the only text node child of a document fragment as the view `container`': function () {
+        var app  = this.app = new Y.App(),
+            node = Y.Node.create('foo'),
+            frag = Y.one(Y.config.doc.createDocumentFragment()),
+            container;
+
+        frag.append(node);
+
+        Assert.areSame(3, node.get('nodeType'), '`node` is not a text node.');
+        Assert.isTrue(frag.contains(node), '`node` is not in the `frag`.');
+        Assert.areSame(1, frag.get('childNodes').size(), '`frag` does not have one child.');
+
+        app.showContent(frag);
+
+        container = app.get('activeView').get('container');
+
+        Assert.areNotSame(node, container, '`node` is the view `container`.');
+        Assert.areSame('DIV', container.get('tagName'), '`node` is not a div.');
     },
 
     '`showContent()` should wrap the children nodes of a document fragment with the view `container`': function () {
@@ -128,7 +148,7 @@ appContentSuite.add(new Y.Test.Case({
 
         Assert.isTrue(frag.contains(nodeOne), '`nodeOne` is not in the `frag`.');
         Assert.isTrue(frag.contains(nodeTwo), '`nodeTwo` is not in the `frag`.');
-        Assert.areSame(2, frag.get('children').size(), '`frag` does not have two children.');
+        Assert.areSame(2, frag.get('childNodes').size(), '`frag` does not have two children.');
 
         app.showContent(frag);
 
@@ -211,7 +231,7 @@ appContentSuite.add(new Y.Test.Case({
 
         Assert.isTrue(frag.contains(nodeOne), '`nodeOne` is not in the `frag`.');
         Assert.isTrue(frag.contains(nodeTwo), '`nodeTwo` is not in the `frag`.');
-        Assert.areSame(2, frag.get('children').size(), '`frag` does not have two children.');
+        Assert.areSame(2, frag.get('childNodes').size(), '`frag` does not have two children.');
 
         app.showContent(frag, {view: 'test'});
 
@@ -267,7 +287,8 @@ appContentSuite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            '`Y.App.Content.route` should set the document `title`': !doc
+            '`Y.App.Content.route` should set the document `title`': !doc,
+            '`Y.App.Content.route` should default the document `title` to `<title>`': Y.UA.ie && Y.UA.ie < 9
         }
     },
 
@@ -281,7 +302,7 @@ appContentSuite.add(new Y.Test.Case({
 
     '`Y.App.Content.route` should load HTML content from the server and set the `activeView`': function () {
         var test = this,
-            app  = this.app = new Y.App();
+            app  = this.app = new Y.App({contentSelector: '#content > *'});
 
         app.route('*', Y.App.Content.route, function () {
             test.resume(function () {
@@ -292,8 +313,8 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
-        test.wait(1000);
+        app.navigate('assets/page-full.html');
+        test.wait(1500);
     },
 
     '`Y.App.Content.route` should load text content from the server and set the `activeView`': function () {
@@ -304,17 +325,20 @@ appContentSuite.add(new Y.Test.Case({
             test.resume(function () {
                 var container = app.get('activeView').get('container');
 
+                Assert.areSame('DIV', container.get('tagName'), '`container` is not a div.');
                 Assert.isTrue(container.get('text').length > 0, '`container` does not contain content.');
             });
         });
 
         app.navigate('assets/page-text.html');
-        test.wait(1000);
+        test.wait(1500);
     },
 
-    '`Y.App.Content.route` should set the document `title`': function () {
+    '`Y.App.Content.route` should default the document `title` to `<title>`': function () {
+        // There's a known issue that this won't work in IE < 9!
+
         var test = this,
-            app  = this.app = new Y.App();
+            app  = this.app = new Y.App({contentSelector: '#content > *'});
 
         app.route('*', Y.App.Content.route, function () {
             test.resume(function () {
@@ -324,8 +348,8 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
-        test.wait(1000);
+        app.navigate('assets/page-full.html');
+        test.wait(1500);
     },
 
     '`loadContent()` middleware should put `ioURL` on the `req` object': function () {
@@ -341,13 +365,13 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
-        test.wait(1000);
+        app.navigate('assets/page-full.html');
+        test.wait(1500);
     },
 
     '`loadContent()` middleware should put `content` and `ioResponse` on the `res` object': function () {
         var test = this,
-            app  = this.app = new Y.App();
+            app  = this.app = new Y.App({titleSelector: 'h1'});
 
         app.route('*', 'loadContent', function (req, res, next) {
             test.resume(function () {
@@ -362,8 +386,9 @@ appContentSuite.add(new Y.Test.Case({
             });
         });
 
-        app.navigate('assets/page-html.html');
-        test.wait(1000);
+        // The snippet is used to the `titleSelector` will work in IE < 9.
+        app.navigate('assets/page-snippet.html');
+        test.wait(1500);
     }
 }));
 

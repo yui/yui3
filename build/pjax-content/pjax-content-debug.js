@@ -263,8 +263,7 @@ PjaxContent.ATTRS = {
     },
 
     /**
-    Time in milliseconds after which an Ajax request should time out. When a
-    timeout occurs, the `error` event will be fired.
+    Time in milliseconds after which an Ajax request should time out.
 
     @attribute timeout
     @type Number

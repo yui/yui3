@@ -22,7 +22,7 @@ When the `"app-content"` module is used, it will automatically mix itself into
 `Y.App`, and it provides three main features:
 
   - **`Y.App.Content.route`**: A stack of middleware which forms a pjax-style
-    conent route.
+    content route.
 
   - **`loadContent()`**: Route middleware which load content from a server. This
     makes an Ajax request for the requested URL, parses the returned content and
@@ -100,12 +100,12 @@ AppContent.prototype = {
             creating the new view instance. This config object can also be used
             to update an existing or preserved view's attributes when
             `options.update` is `true`. **Note:** If a `container` is specified,
-            it will be overriden by the `content` specified in the first
+            it will be overridden by the `content` specified in the first
             argument.
 
     @param {Function} [callback] Optional callback function to call after the
         new `activeView` is ready to use. **Note:** this will override
-        `options.callback` and it can be specified as either the second or thrid
+        `options.callback` and it can be specified as either the second or third
         argument. The function will be passed the following:
 
       @param {View} callback.view A reference to the new `activeView`.
@@ -138,30 +138,35 @@ AppContent.prototype = {
         // `showView()` method.
         delete options.view;
 
-        // Determine the `container` node for the view. This deals with document
-        // fragments and does its best to find and use the correct node for the
-        // `container`.
-        if (content.isFragment()) {
-            if (content.get('children').size() === 1) {
-                container = content.get('firstChild');
-            } else {
-                type = (viewInfo && viewInfo.type) || Y.View;
+        // When the specified `content` is a document fragment, we want to see
+        // if it only contains a single node, and use that as the content. This
+        // checks `childNodes` which will include text nodes.
+        if (content && content.isFragment() &&
+                content.get('childNodes').size() === 1) {
 
-                // Looks for a namespaced constructor function on `Y`.
-                ViewConstructor = typeof type === 'string' ?
-                        Y.Object.getValue(Y, type.split('.')) : type;
+            content = content.get('firstChild');
+        }
 
-                // Find the correct node template for the view.
-                template  = ViewConstructor.prototype.containerTemplate;
-                container = Y.Node.create(template);
-
-                // Append the document fragment to the newly created
-                // `container` node. This is the worst case where we have to
-                // create a wrapper node around the `content`.
-                container.append(content);
-            }
-        } else {
+        // When the `content` is an element node (`nodeType` 1), we can use it
+        // as-is for the `container`. Otherwise, we'll construct a new container
+        // based on the `options.view`'s `containerTemplate`.
+        if (content && content.get('nodeType') === 1) {
             container = content;
+        } else {
+            type = (viewInfo && viewInfo.type) || Y.View;
+
+            // Looks for a namespaced constructor function on `Y`.
+            ViewConstructor = typeof type === 'string' ?
+                    Y.Object.getValue(Y, type.split('.')) : type;
+
+            // Find the correct node template for the view.
+            template  = ViewConstructor.prototype.containerTemplate;
+            container = Y.Node.create(template);
+
+            // Append the document fragment to the newly created `container`
+            // node. This is the worst case where we have to create a wrapper
+            // node around the `content`.
+            container.append(content);
         }
 
         // Makes sure the view is created using _our_ `container` node.
