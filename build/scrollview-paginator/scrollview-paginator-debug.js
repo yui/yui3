@@ -1,7 +1,5 @@
 YUI.add('scrollview-paginator', function (Y, NAME) {
 
-/*global YUI,Y*/
-
 /**
  * Provides a plugin that adds pagination support to ScrollView instances
  *

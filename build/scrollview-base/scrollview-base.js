@@ -1,11 +1,10 @@
 YUI.add('scrollview-base', function (Y, NAME) {
 
-/*global YUI,Y*/
-
 /**
  * The scrollview-base module provides a basic ScrollView Widget, without scrollbar indicators
  *
- * @module scrollview-base
+ * @module scrollview
+ * @submodule scrollview-base
  */
 var getClassName = Y.ClassNameManager.getClassName,
     DOCUMENT = Y.config.doc,
@@ -664,7 +663,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             else {
                 // Don't fire scrollEnd on the gesture axis is the same as paginator's
                 // Not totally confident this is a good idea
-                if (sv.pages && sv.pages.get('axis') !== gesture.axis) {
+                if (sv.pages && !sv.pages.axis[gesture.axis]) {
                     sv._onTransEnd();
                 }
             }

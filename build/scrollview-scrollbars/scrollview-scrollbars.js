@@ -1,11 +1,10 @@
 YUI.add('scrollview-scrollbars', function (Y, NAME) {
 
-/*global YUI,Y*/
-
 /**
  * Provides a plugin, which adds support for a scroll indicator to ScrollView instances
  *
- * @module scrollview-scrollbars
+ * @module scrollview
+ * @submodule scrollview-scrollbars
  */
 
 var getClassName = Y.ClassNameManager.getClassName,
