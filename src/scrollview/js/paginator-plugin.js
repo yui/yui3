@@ -70,6 +70,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             }
         }
 
+        /**
+         * Contains an object that specifies if the widget will on a X or Y axis
+         *
+         * @property axis
+         * @type Object
+         * @public
+         * @default auto
+         */
         paginator.axis = axis;
 
         // Initialize & default
@@ -209,11 +217,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * Executed before host.scrollTo
      *
      * @method _beforeHostScrollTo
-     * @param x {Number} The x-position to scroll to
-     * @param y {Number} The y-position to scroll to
-     * @param duration {Number} Duration, in ms, of the scroll animation (default is 0)
-     * @param easing {String} An easing equation if duration is set
-     * @param node {String} The node to move
+     * @param x {Number} The x-position to scroll to. (null for no movement)
+     * @param y {Number} The y-position to scroll to. (null for no movement)
+     * @param {Number} [duration] Duration, in ms, of the scroll animation (default is 0)
+     * @param {String} [easing] An easing equation if duration is set
+     * @param {String} [node] The node to move
+     * @protected
      */
     _beforeHostScrollTo: function (x, y, duration, easing, node) {
         var paginator = this,
@@ -499,8 +508,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      *
      * @method scrollToIndex
      * @param index {Number} The index of the page to scroll to
-     * @param duration {Number} The number of ms the animation should last
-     * @param easing {String} The timing function to use in the animation
+     * @param {Number} [duration] The number of ms the animation should last
+     * @param {String} [easing] The timing function to use in the animation
      */
     scrollToIndex: function (index, duration, easing) {
 
@@ -600,17 +609,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          */
         total: {
             value: 0
-        },
-
-        /**
-         * The axis on which to paginate
-         *
-         * @attribute axis
-         * @type {String}
-         * @default 'x'
-         */
-        axis: {
-            value: DIM_X
         }
     },
         

@@ -179,6 +179,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      *
      * @method _hostScrollEnd
      * @param {Event.Facade} e The event facade.
+     * @protected
      */
     _hostScrollEnd : function(e) {
         if (!this._host._flicking) {

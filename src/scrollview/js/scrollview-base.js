@@ -76,7 +76,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
 
-        // Determine the axis settings if a value was passed in
+        // Determine the axis settings if a value was passed in. TODO: Cleanup
         if (config.axis) {
             config.axis = config.axis.toLowerCase();
             switch (config.axis) {
@@ -379,11 +379,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Scroll the element to a given xy coordinate
      *
      * @method scrollTo
-     * @param x {Number} The x-position to scroll to
-     * @param y {Number} The y-position to scroll to
-     * @param duration {Number} Duration, in ms, of the scroll animation (default is 0)
-     * @param easing {String} An easing equation if duration is set
-     * @param node {String} The node to move
+     * @param x {Number} The x-position to scroll to. (null for no movement)
+     * @param y {Number} The y-position to scroll to. (null for no movement)
+     * @param {Number} [duration] ms of the scroll animation. (default is 0)
+     * @param {String} [easing] An easing equation if duration is set. (defaults to ScrollView.EASING)
+     * @param {String} [node] The node to move.
      */
     scrollTo: function (x, y, duration, easing, node) {
         // Check to see if widget is disabled
