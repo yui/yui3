@@ -1,4 +1,4 @@
-YUI.add('scrollview-base-ie', function(Y) {
+YUI.add('scrollview-base-ie', function (Y, NAME) {
 
 /**
  * IE specific support for the scrollview-base module.
@@ -51,5 +51,4 @@ Y.mix(Y.ScrollView.prototype, {
     }
 }, true);
 
-
-}, '@VERSION@' ,{requires:['scrollview-base']});
+}, '@VERSION@', {"requires": ["scrollview-base"]});
