@@ -327,7 +327,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['intl-base'],
+                core: ['get','intl-base'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
@@ -1947,7 +1947,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function (Y, NAME) {
+YUI.add('yui-base', function(Y) {
 
 /*
  * YUI stub
@@ -3773,7 +3773,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -3811,4 +3811,4 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@');
+}, '@VERSION@' );

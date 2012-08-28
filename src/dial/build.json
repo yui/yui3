@@ -1,0 +1,10 @@
+{
+    "name": "dial",
+    "builds": {
+        "dial": {
+            "jsfiles": [
+                "Dial.js"
+            ]
+        }
+    }
+}

@@ -64,6 +64,7 @@
     "app": {
         "use": [
             "app-base",
+            "app-content",
             "app-transitions",
             "lazy-model-list",
             "model",
@@ -80,6 +81,12 @@
             "pjax-base",
             "router",
             "view"
+        ]
+    },
+    "app-content": {
+        "requires": [
+            "app-base",
+            "pjax-content"
         ]
     },
     "app-transitions": {
@@ -1754,13 +1761,20 @@
     "pjax": {
         "requires": [
             "pjax-base",
-            "io-base"
+            "pjax-content"
         ]
     },
     "pjax-base": {
         "requires": [
             "classnamemanager",
             "node-event-delegate",
+            "router"
+        ]
+    },
+    "pjax-content": {
+        "requires": [
+            "io-base",
+            "node-base",
             "router"
         ]
     },

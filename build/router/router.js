@@ -1,4 +1,4 @@
-YUI.add('router', function(Y) {
+YUI.add('router', function (Y, NAME) {
 
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
@@ -278,10 +278,13 @@ Y.Router = Y.extend(Router, Y.Base, {
 
       * `callback`: A function or a string representing the name of a function
         this router that should be executed when the route is triggered.
+
       * `keys`: An array of strings representing the named parameters defined in
         the route's path specification, if any.
+
       * `path`: The route's path specification, which may be either a string or
         a regex.
+
       * `regex`: A regular expression version of the route's path specification.
         This regex is used to determine whether the route matches a given path.
 
@@ -868,7 +871,13 @@ Y.Router = Y.extend(Router, Y.Base, {
     @protected
     **/
     _getURL: function () {
-        return Y.getLocation().toString();
+        var url = Y.getLocation().toString();
+
+        if (!this._html5) {
+            url = this._upgradeURL(url);
+        }
+
+        return url;
     },
 
     /**
@@ -1084,7 +1093,7 @@ Y.Router = Y.extend(Router, Y.Base, {
             origin, path, query, hash, resolved;
 
         if (!parts) {
-            return this._getURL();
+            return Y.getLocation().toString();
         }
 
         origin = parts[1];
@@ -1395,4 +1404,4 @@ version of YUI.
 Y.Controller = Y.Router;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@', {"optional": ["querystring-parse"], "requires": ["array-extras", "base-build", "history"]});

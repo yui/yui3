@@ -1,4 +1,4 @@
-YUI.add('app-base', function(Y) {
+YUI.add('app-base', function (Y, NAME) {
 
 /**
 The App Framework provides simple MVC-like building blocks (models, model lists,
@@ -1045,7 +1045,9 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
     provided by the `views` object on the `prototype`.
 @constructor
 @extends App.Base
+@uses App.Content
 @uses App.Transitions
+@uses PjaxContent
 @since 3.5.0
 **/
 Y.App = Y.mix(Y.Base.create('app', AppBase, []), Y.App, true);
@@ -1075,4 +1077,4 @@ Default `serverRouting` attribute value for all apps.
 **/
 
 
-}, '@VERSION@' ,{requires:['classnamemanager', 'pjax-base', 'router', 'view']});
+}, '@VERSION@', {"requires": ["classnamemanager", "pjax-base", "router", "view"]});

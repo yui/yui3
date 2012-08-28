@@ -1,4 +1,4 @@
-YUI.add('features', function (Y, NAME) {
+YUI.add('features', function(Y) {
 
 var feature_tests = {};
 
@@ -330,4 +330,5 @@ add('load', '17', {
     "ua": "ie"
 });
 
-}, '@VERSION@', {"requires": ["yui-base"]});
+
+}, '@VERSION@' ,{requires:['yui-base']});

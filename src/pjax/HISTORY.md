@@ -1,6 +1,14 @@
 Pjax Change History
 ===================
 
+3.7.0
+-----
+
+* Extracted `Y.PjaxContent` from `Y.Pjax`. Pulling out the content-handling
+  functionality allows it to be used by other components, like `Y.App`.
+  [Ticket #2532487]
+
+
 3.6.0
 -----
 
@@ -8,10 +16,12 @@ Pjax Change History
   were not anchors or the anchor's `href` was a URL from a different origin than
   the current page. [Ticket #2531943]
 
+
 3.5.1
 -----
 
 * No changes.
+
 
 3.5.0
 -----

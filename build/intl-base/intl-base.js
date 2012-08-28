@@ -1,4 +1,4 @@
-YUI.add('intl-base', function (Y, NAME) {
+YUI.add('intl-base', function(Y) {
 
 /**
  * The Intl utility provides a central location for managing sets of
@@ -85,4 +85,4 @@ Y.mix(Y.namespace('Intl'), {
 });
 
 
-}, '@VERSION@', {"requires": ["yui-base"]});
+}, '@VERSION@' ,{requires:['yui-base']});

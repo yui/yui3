@@ -1,4 +1,4 @@
-YUI.add('model-sync-rest', function(Y) {
+YUI.add('model-sync-rest', function (Y, NAME) {
 
 /**
 An extension which provides a RESTful XHR sync implementation that can be mixed
@@ -730,4 +730,4 @@ RESTSync.prototype = {
 Y.namespace('ModelSync').REST = RESTSync;
 
 
-}, '@VERSION@' ,{requires:['model', 'io-base', 'json-stringify']});
+}, '@VERSION@', {"requires": ["model", "io-base", "json-stringify"]});

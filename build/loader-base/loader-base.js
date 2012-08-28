@@ -1,4 +1,4 @@
-YUI.add('loader-base', function (Y, NAME) {
+YUI.add('loader-base', function(Y) {
 
 /**
  * The YUI loader core
@@ -2727,4 +2727,4 @@ Y.Loader.prototype = {
 
 
 
-}, '@VERSION@', {"requires": ["get", "features"]});
+}, '@VERSION@' ,{requires:['get', 'features']});
