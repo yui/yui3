@@ -1,4 +1,4 @@
-YUI.add('pjax-base', function(Y) {
+YUI.add('pjax-base', function (Y, NAME) {
 
 /**
 `Y.Router` extension that provides the core plumbing for enhanced navigation
@@ -429,4 +429,4 @@ PjaxBase.ATTRS = {
 Y.PjaxBase = PjaxBase;
 
 
-}, '@VERSION@' ,{requires:['classnamemanager', 'node-event-delegate', 'router']});
+}, '@VERSION@', {"requires": ["classnamemanager", "node-event-delegate", "router"]});
