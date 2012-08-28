@@ -1,4 +1,4 @@
-YUI.add('pjax-content', function(Y) {
+YUI.add('pjax-content', function (Y, NAME) {
 
 /**
 `Y.Router` extension that provides the content fetching and handling needed to
@@ -278,4 +278,4 @@ PjaxContent.ATTRS = {
 Y.PjaxContent = PjaxContent;
 
 
-}, '@VERSION@' ,{requires:['io-base', 'node-base', 'router']});
+}, '@VERSION@', {"requires": ["io-base", "node-base", "router"]});

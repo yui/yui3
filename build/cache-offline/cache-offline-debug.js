@@ -1,4 +1,4 @@
-YUI.add('cache-offline', function(Y) {
+YUI.add('cache-offline', function (Y, NAME) {
 
 /**
  * Provides a Cache subclass which uses HTML5 `localStorage` for persistence.
@@ -338,4 +338,4 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
 Y.CacheOffline = CacheOffline;
 
 
-}, '@VERSION@' ,{requires:['cache-base', 'json']});
+}, '@VERSION@', {"requires": ["cache-base", "json"]});
