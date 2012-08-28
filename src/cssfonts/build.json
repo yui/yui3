@@ -1,0 +1,15 @@
+{
+    "name": "cssfonts",
+    "builds": {
+        "cssfonts": {
+            "cssfiles": [
+                "cssfonts.css"
+            ]
+        },
+        "cssfonts-context": {
+            "cssfiles": [
+                "cssfonts-context.css"
+            ]
+        }
+    }
+}
