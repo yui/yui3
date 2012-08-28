@@ -138,30 +138,35 @@ AppContent.prototype = {
         // `showView()` method.
         delete options.view;
 
-        // Determine the `container` node for the view. This deals with document
-        // fragments and does its best to find and use the correct node for the
-        // `container`.
-        if (content.isFragment()) {
-            if (content.get('children').size() === 1) {
-                container = content.get('firstChild');
-            } else {
-                type = (viewInfo && viewInfo.type) || Y.View;
+        // When the specified `content` is a document fragment, we want to see
+        // if it only contains a single node, and use that as the content. This
+        // checks `childNodes` which will include text nodes.
+        if (content && content.isFragment() &&
+                content.get('childNodes').size() === 1) {
 
-                // Looks for a namespaced constructor function on `Y`.
-                ViewConstructor = typeof type === 'string' ?
-                        Y.Object.getValue(Y, type.split('.')) : type;
+            content = content.get('firstChild');
+        }
 
-                // Find the correct node template for the view.
-                template  = ViewConstructor.prototype.containerTemplate;
-                container = Y.Node.create(template);
-
-                // Append the document fragment to the newly created
-                // `container` node. This is the worst case where we have to
-                // create a wrapper node around the `content`.
-                container.append(content);
-            }
-        } else {
+        // When the `content` is an element node (`nodeType` 1), we can use it
+        // as-is for the `container`. Otherwise, we'll construct a new container
+        // based on the `options.view`'s `containerTemplate`.
+        if (content && content.get('nodeType') === 1) {
             container = content;
+        } else {
+            type = (viewInfo && viewInfo.type) || Y.View;
+
+            // Looks for a namespaced constructor function on `Y`.
+            ViewConstructor = typeof type === 'string' ?
+                    Y.Object.getValue(Y, type.split('.')) : type;
+
+            // Find the correct node template for the view.
+            template  = ViewConstructor.prototype.containerTemplate;
+            container = Y.Node.create(template);
+
+            // Append the document fragment to the newly created `container`
+            // node. This is the worst case where we have to create a wrapper
+            // node around the `content`.
+            container.append(content);
         }
 
         // Makes sure the view is created using _our_ `container` node.
