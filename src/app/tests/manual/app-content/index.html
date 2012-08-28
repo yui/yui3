@@ -3,13 +3,6 @@
 <head>
     <meta charset="utf-8" />
     <title>App Content Test</title>
-
-    <style>
-        .view {
-            border: 1px solid #ddd;
-            padding: 10px;
-        }
-    </style>
 </head>
 <body>
     <h1>App Content Test</h1>
@@ -22,23 +15,6 @@
     </div>
 
     <script src="../../../../../build/yui/yui.js"></script>
-    <script>
-    YUI().use('app-base', 'app-content', 'app-transitions', function (Y) {
-
-        var app = new Y.App({
-            transitions  : true,
-            serverRouting: true,
-
-            viewContainer  : '#container',
-            contentSelector: '#container',
-
-            root  : '/src/app/tests/manual/app-content/',
-            routes: [{path: '*', callbacks: Y.App.Content.route}]
-        });
-
-        app.render().showContent('#container > .view', {transition: false});
-
-    });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
