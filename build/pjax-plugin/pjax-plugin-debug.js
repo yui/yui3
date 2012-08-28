@@ -1,4 +1,4 @@
-YUI.add('pjax-plugin', function(Y) {
+YUI.add('pjax-plugin', function (Y, NAME) {
 
 /**
 Node plugin that provides seamless, gracefully degrading pjax functionality.
@@ -26,4 +26,4 @@ Y.Plugin.Pjax = Y.Base.create('pjaxPlugin', Y.Pjax, [Y.Plugin.Base], {
 });
 
 
-}, '@VERSION@' ,{requires:['node-pluginhost', 'pjax', 'plugin']});
+}, '@VERSION@', {"requires": ["node-pluginhost", "pjax", "plugin"]});
