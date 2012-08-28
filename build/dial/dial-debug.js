@@ -1,4 +1,4 @@
-YUI.add('dial', function(Y) {
+YUI.add('dial', function (Y, NAME) {
 
 /**
  * Create a circular dial value range input visualized as a draggable handle on a
@@ -1288,4 +1288,4 @@ YUI.add('dial', function(Y) {
     Y.Dial = Dial;
 
 
-}, '@VERSION@' ,{requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'event-key', 'transition', 'intl'], lang:['en','es' ], skinnable:true});
+}, '@VERSION@', {"requires": ["widget", "dd-drag", "substitute", "event-mouseenter", "event-move", "event-key", "transition", "intl"], "lang": ["en", "es"], "skinnable": true});
