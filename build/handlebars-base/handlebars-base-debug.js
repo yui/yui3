@@ -1,4 +1,4 @@
-YUI.add('handlebars-base', function(Y) {
+YUI.add('handlebars-base', function (Y, NAME) {
 
 /*!
 Handlebars.js - Copyright (C) 2011 Yehuda Katz
@@ -352,4 +352,4 @@ Converts a precompiled template into a renderable template function.
 */
 
 
-}, '@VERSION@' ,{requires:['escape']});
+}, '@VERSION@', {"requires": ["escape"]});
