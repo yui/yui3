@@ -1045,6 +1045,7 @@ instance will be **auto-mixed** on to the `Y.App` class. Consider this example:
 @extends App.Base
 @uses App.Content
 @uses App.Transitions
+@uses PjaxContent
 @since 3.5.0
 **/
 Y.App = Y.mix(Y.Base.create('app', AppBase, []), Y.App, true);
