@@ -12,7 +12,7 @@
             ]
         },
         "handlebars-compiler": {
-            "regex": "",
+            "regex": "^\\s*Y\\.log\\s*\\([\\s\\S]*?\\);?",
             "jsfiles": [
                 "yui-handlebars-copyright.js",
                 "yui-handlebars-compiler-before.js",
