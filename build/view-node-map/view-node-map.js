@@ -1,4 +1,4 @@
-YUI.add('view-node-map', function(Y) {
+YUI.add('view-node-map', function (Y, NAME) {
 
 /**
 View extension that adds a static `getByNode()` method that returns the nearest
@@ -81,4 +81,4 @@ NodeMap.prototype = {
 Y.View.NodeMap = NodeMap;
 
 
-}, '@VERSION@' ,{requires:['view']});
+}, '@VERSION@', {"requires": ["view"]});

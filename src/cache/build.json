@@ -1,0 +1,20 @@
+{
+    "name": "cache",
+    "builds": {
+        "cache-plugin": {
+            "jsfiles": [
+                "cache-plugin.js"
+            ]
+        },
+        "cache-offline": {
+            "jsfiles": [
+                "cache-offline.js"
+            ]
+        },
+        "cache-base": {
+            "jsfiles": [
+                "cache-base.js"
+            ]
+        }
+    }
+}
