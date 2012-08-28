@@ -193,7 +193,6 @@
 						
 					scrollview.on('scrollEnd', function(){
 						Test.resume(function(){
-							console.log(scrollview.get('scrollX'));
 							if (scrollview.get('scrollX') >= 50) {
 								Y.Assert.pass();
 							}
