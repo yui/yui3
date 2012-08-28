@@ -1,5 +1,3 @@
-/*global YUI,Y*/
-
 /**
  * Provides a plugin that adds pagination support to ScrollView instances
  *

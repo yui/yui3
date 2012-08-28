@@ -1,9 +1,8 @@
-/*global YUI,Y*/
-
 /**
  * The scrollview-base module provides a basic ScrollView Widget, without scrollbar indicators
  *
- * @module scrollview-base
+ * @module scrollview
+ * @submodule scrollview-base
  */
 var getClassName = Y.ClassNameManager.getClassName,
     DOCUMENT = Y.config.doc,
