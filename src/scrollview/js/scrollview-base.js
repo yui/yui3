@@ -19,7 +19,6 @@ var getClassName = Y.ClassNameManager.getClassName,
     FLICK = 'flick',
     DRAG = 'drag',
     MOUSEWHEEL = 'mousewheel',
-    MOUSEWHEEL_ENABLED = true,
     UI = 'ui',
     TOP = 'top',
     RIGHT = 'right',
@@ -71,31 +70,50 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     initializer: function (config) {
         var sv = this,
-            axis;
+            axis = 'auto'; // Default axis to 'auto' and let the calculation happen in syncUI
 
+        // Cache these values, since they aren't going to change.
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
 
+        // Determine the axis settings if a value was passed in
         if (config.axis) {
-            switch (config.axis.toLowerCase()) {
+            config.axis = config.axis.toLowerCase();
+            switch (config.axis) {
                 case "x":
                     axis = {
                         x: true,
                         y: false
-                    }
+                    };
                     break;
+                
                 case "y":
                     axis = {
                         x: false,
                         y: true
+                    };
+                    break;
+
+                // Unsupported ATM.  For future development purposes.
+                case "xy":
+                case "yx":
+                    if (config._multiaxis) {
+                        axis = {
+                            x: true,
+                            y: true
+                        };
                     }
                     break;
             }
         }
-        else {
-            axis = 'auto';
-        }
 
+        /**
+         * Contains an object that specifies if the widget can scroll on a X and/or Y axis
+         *
+         * @property axis
+         * @type Object
+         * @public
+         */
         sv.axis = axis;
     },
 
@@ -107,13 +125,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     bindUI: function () {
         var sv = this;
+
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        // Note: You can find _bindMousewheel() inside syncUI(), becuase it depends on UI details
+        sv._bindMousewheel(sv.get(MOUSEWHEEL));
+        
         sv._bindAttrs();
-
-        // get text direction on or inherited by scrollview node
-        sv.rtl = (sv._cb.getComputedStyle('direction') === 'rtl');
     },
 
     /**
@@ -189,14 +206,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _bindMousewheel: function (mousewheel) {
         var sv = this,
-            bb = sv._bb,
-            axis = sv.axis;
+            bb = sv._bb;
 
         // Unbind any previous 'mousewheel' listeners
         bb.detach(MOUSEWHEEL + '|*');
 
         // Only enable for vertical scrollviews
-        if (mousewheel && axis.y) {
+        if (mousewheel) {
             // Bound to document, because that's where mousewheel events fire off of.
             Y.one(DOCUMENT).on(MOUSEWHEEL, Y.bind(sv._mousewheel, sv));
         }
@@ -210,12 +226,33 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method syncUI
      */
     syncUI: function () {
-        var sv = this;
+        var sv = this,
+            axis = sv.axis,
+            scrollDims = sv._getScrollDims(),
+            width = scrollDims.offsetWidth,
+            height = scrollDims.offsetHeight,
+            scrollWidth = scrollDims.scrollWidth,
+            scrollHeight = scrollDims.scrollHeight;
 
+        // If the axis should be auto-calculated, do it.
+        if (axis === "auto") {
+            axis = {
+                x: (scrollWidth > width),
+                y: (scrollHeight > height)
+            };
+            sv.axis = axis;
+        }
+
+        // get text direction on or inherited by scrollview node
+        sv.rtl = (sv._cb.getComputedStyle('direction') === 'rtl');
+
+        // Cache the disabled value
         sv._cDisabled = sv.get(DISABLED);
-        sv._uiDimensionsChange();
-        sv._bindMousewheel(MOUSEWHEEL_ENABLED);
 
+        // Run this to set initial values
+        sv._uiDimensionsChange();
+
+        // If we're out-of-bounds, snap back.
         if (sv._isOOB()) {
             sv._snapBack();
         }
@@ -261,21 +298,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _uiDimensionsChange: function () {
         var sv = this,
             bb = sv._bb,
-            scrollDims = this._getScrollDims(),
+            scrollDims = sv._getScrollDims(),
             width = scrollDims.offsetWidth,
             height = scrollDims.offsetHeight,
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight,
             rtl = sv.rtl,
             axis = sv.axis;
-
-        if (axis === "auto") {
-            axis = {
-                x: (scrollWidth > width),
-                y: (scrollHeight > height)
-            };
-            sv.axis = axis;
-        }
         
         sv._minScrollX = (rtl) ? -(scrollWidth - width) : 0;
         sv._maxScrollX = (rtl) ? 0 : (scrollWidth - width);
@@ -509,7 +538,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveStart: function (e) {
-
         if (!this._cDisabled) {
             var sv = this,
                 bb = sv._bb,
@@ -645,13 +673,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _flick: function (e) {
-
         var sv = this,
             gesture = sv._gesture,
             svAxis = sv.axis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
-            flick = e.flick;
+            flick = e.flick,
+            flickAxis;
 
         if (!sv._cDisabled) {
             flickAxis = flick.axis;
@@ -674,7 +702,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _flickFrame: function (velocity) {
-        
+
         var sv = this,
             gesture = sv._gesture,
             flickAxis = gesture.flick.axis,
@@ -886,6 +914,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * After listener for changes to the drag attribute
+     *
+     * @method _afterDragChange
+     * @param e {Event.Facade} The event facade
+     * @protected
+     */
+    _afterMousewheelChange: function (e) {
+        this._bindMousewheel(e.newVal);
+    },
+
+    /**
      * After listener for the height or width attribute
      *
      * @method _afterDimChange
@@ -1023,6 +1062,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default true
          */
         drag: {
+            value: true
+        },
+
+        /**
+         * Enable/Disable scrolling the ScrollView content via mousewheel
+         * @attribute mousewheel
+         * @type boolean
+         * @default true
+         */
+        mousewheel: {
             value: true
         }
     },

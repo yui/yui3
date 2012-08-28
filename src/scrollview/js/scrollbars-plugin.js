@@ -521,7 +521,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @protected
      */
     _setNode: function(node, name) {
-        var horiz = (name == HORIZONTAL_NODE);
+        var horiz = (name === HORIZONTAL_NODE);
             node = Y.one(node);
 
         if (node) {

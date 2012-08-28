@@ -47,7 +47,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator.get(HOST),
             bb = host._bb,
-            cb = host._cb;
+            cb = host._cb,
+            axis = 'auto';
 
         // Default it to an empty object
         config = config || {};
@@ -58,18 +59,15 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                     axis = {
                         x: true,
                         y: false
-                    }
+                    };
                     break;
                 case "y":
                     axis = {
                         x: false,
                         y: true
-                    }
+                    };
                     break;
             }
-        }
-        else {
-            axis = 'auto';
         }
 
         paginator.axis = axis;
@@ -96,6 +94,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
         paginator.afterHostEvent('render', paginator._afterHostRender);
         paginator.afterHostEvent('scrollEnd', paginator._afterHostScrollEnded);
+        paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
     },
 
     /**
@@ -109,7 +108,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             bb = paginator._bb,
             host = paginator._host,
-            hostFlick = host.get(FLICK)
             index = paginator._cIndex,
             paginatorAxis = paginator.axis,
             pageNodes = paginator._getPageNodes(),
@@ -135,6 +133,22 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Add the paginator class
         bb.addClass(CLASS_PAGED);
 
+        // paginator._optimize();
+    },
+
+    /**
+     * After host syncUI
+     *
+     * @method _afterHostSyncUI
+     * @param {Event.Facade}
+     * @protected
+     */
+    _afterHostSyncUI: function (e) {
+        var paginator = this,
+            host = paginator._host,
+            hostFlick = host.get(FLICK);
+
+        // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator.axis === 'auto') {
             paginator.axis = host.axis;
         }
@@ -148,8 +162,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             hostFlick.axis = DIM_X;
             host.set(FLICK, hostFlick);
         }
-
-        // paginator._optimize();
     },
 
     /**
