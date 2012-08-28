@@ -131,6 +131,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._bindMousewheel(sv.get(MOUSEWHEEL));
         
         sv._bindAttrs();
+
+        // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
+        if (IE) {
+            sv._fixIESelect(sv._bb, sv._cb);
+        }
     },
 
     /**
@@ -381,7 +386,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param node {String} The node to move
      */
     scrollTo: function (x, y, duration, easing, node) {
-
         // Check to see if widget is disabled
         if (this._cDisabled) {
             return;
