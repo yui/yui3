@@ -1,4 +1,4 @@
-YUI.add('anim-color', function(Y) {
+YUI.add('anim-color', function (Y, NAME) {
 
 /**
  * Adds support for color properties in <code>to</code>
@@ -45,4 +45,4 @@ Y.each(['backgroundColor',
 );
 
 
-}, '@VERSION@' ,{requires:['anim-base']});
+}, '@VERSION@', {"requires": ["anim-base"]});
