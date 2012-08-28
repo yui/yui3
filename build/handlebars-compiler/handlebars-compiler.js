@@ -1724,7 +1724,7 @@ handlebars module is loaded in "debug" mode.
 @for Handlebars
 */
 Handlebars.logger.log = function (level, message) {
-    Y.log(message, levels[level] || 'error', 'Handlebars');
+
 };
 
 /**
