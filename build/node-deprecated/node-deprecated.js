@@ -1,4 +1,4 @@
-YUI.add('node-deprecated', function(Y) {
+YUI.add('node-deprecated', function (Y, NAME) {
 
 /**
  * @module node
@@ -116,4 +116,4 @@ Y.mix(Y_Node.prototype, {
 
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});

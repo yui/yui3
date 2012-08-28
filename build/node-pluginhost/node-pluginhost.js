@@ -1,4 +1,4 @@
-YUI.add('node-pluginhost', function(Y) {
+YUI.add('node-pluginhost', function (Y, NAME) {
 
 /**
  * @module node
@@ -83,4 +83,4 @@ Y.NodeList.prototype.unplug = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
+}, '@VERSION@', {"requires": ["node-base", "pluginhost"]});

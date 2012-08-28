@@ -1,4 +1,4 @@
-YUI.add('node-core', function(Y) {
+YUI.add('node-core', function (Y, NAME) {
 
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
@@ -1589,4 +1589,4 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['dom-core', 'selector']});
+}, '@VERSION@', {"requires": ["dom-core", "selector"]});
