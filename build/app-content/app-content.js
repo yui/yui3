@@ -1,4 +1,4 @@
-YUI.add('app-content', function(Y) {
+YUI.add('app-content', function (Y, NAME) {
 
 /**
 `Y.App` extension that provides pjax-style content fetching and handling.
@@ -230,4 +230,4 @@ Y.App.Content = AppContent;
 Y.Base.mix(Y.App, [AppContent]);
 
 
-}, '@VERSION@' ,{requires:['app-base', 'pjax-content']});
+}, '@VERSION@', {"requires": ["app-base", "pjax-content"]});

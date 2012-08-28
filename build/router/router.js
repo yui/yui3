@@ -1,4 +1,4 @@
-YUI.add('router', function(Y) {
+YUI.add('router', function (Y, NAME) {
 
 /**
 Provides URL-based routing using HTML5 `pushState()` or the location hash.
@@ -1404,4 +1404,4 @@ version of YUI.
 Y.Controller = Y.Router;
 
 
-}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
+}, '@VERSION@', {"optional": ["querystring-parse"], "requires": ["array-extras", "base-build", "history"]});

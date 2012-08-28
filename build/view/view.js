@@ -1,4 +1,4 @@
-YUI.add('view', function(Y) {
+YUI.add('view', function (Y, NAME) {
 
 /**
 Represents a logical piece of an application's user interface, and provides a
@@ -422,4 +422,4 @@ Y.View = Y.extend(View, Y.Base, {
 
 
 
-}, '@VERSION@' ,{requires:['base-build', 'node-event-delegate']});
+}, '@VERSION@', {"requires": ["base-build", "node-event-delegate"]});

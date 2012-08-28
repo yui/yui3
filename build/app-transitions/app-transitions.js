@@ -1,4 +1,4 @@
-YUI.add('app-transitions', function(Y) {
+YUI.add('app-transitions', function (Y, NAME) {
 
 /**
 `Y.App` extension that provides view transitions in browsers which support
@@ -239,4 +239,4 @@ Y.mix(Y.App.CLASS_NAMES, {
 });
 
 
-}, '@VERSION@' ,{requires:['app-base']});
+}, '@VERSION@', {"requires": ["app-base"]});
