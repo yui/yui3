@@ -1,4 +1,4 @@
-YUI.add('calendarnavigator', function(Y) {
+YUI.add('calendarnavigator', function (Y, NAME) {
 
 /**
  * Provides a plugin which adds navigation controls to Calendar.
@@ -292,5 +292,4 @@ Y.extend(CalendarNavigator, Y.Plugin.Base, {
 
 Y.namespace("Plugin").CalendarNavigator = CalendarNavigator;
 
-
-}, '@VERSION@' ,{requires:['plugin', 'classnamemanager', 'datatype-date', 'node', 'substitute']});
+}, '@VERSION@', {"requires": ["plugin", "classnamemanager", "datatype-date", "node", "substitute"], "skinnable": true});
