@@ -1,2 +1,0 @@
-all:
-	ant all
