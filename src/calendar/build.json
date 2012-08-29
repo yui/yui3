@@ -1,0 +1,20 @@
+{
+    "name": "calendar",
+    "builds": {
+        "calendar-base": {
+            "jsfiles": [
+                "calendar-base.js"
+            ]
+        },
+        "calendarnavigator": {
+            "jsfiles": [
+                "calendarnavigator.js"
+            ]
+        },
+        "calendar": {
+            "jsfiles": [
+                "calendar.js"
+            ]
+        }
+    }
+}

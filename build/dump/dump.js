@@ -1,4 +1,4 @@
-YUI.add('dump', function(Y) {
+YUI.add('dump', function (Y, NAME) {
 
 /**
  * Returns a simple string representation of the object or array.
@@ -102,4 +102,4 @@ YUI.add('dump', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});
