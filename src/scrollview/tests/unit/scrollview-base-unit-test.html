@@ -38,11 +38,15 @@
         </style>
         
         <script type="text/javascript" charset="utf-8">
+
         var s;
+        var DURATION = 1;
+        var SLOW_DURATION = 1000; // Neccesary to trigger certain lines
+
         YUI({
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
             coverage: ['scrollview-base']
-        }).use('console', 'test'/*, 'node-event-simulate'*/, 'scrollview-base', function(Y) {
+        }).use('console', 'test', 'node-event-simulate', 'scrollview-base', function(Y) {
 
 	        // Set up the page
 	        var ASSERT = Y.Assert,
@@ -105,21 +109,7 @@
 					// Set it to a valid value
 					scrollview.set('scrollX', distance);
 					Y.Assert.areEqual(distance, scrollview.get('scrollX'));
-					//Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix
-				},
-
-				"Ensure scrolling outside the range isn't allowed": function() {
-					var scrollview = renderNewScrollview(false),
-						maxX = scrollview._maxScrollX;
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					
-					// Try to set it to a values outside the range
-					scrollview.set('scrollX', -1);
-					// Y.Assert.areEqual(0, scrollview.get('scrollX')); // @TODO: fix
-					scrollview.set('scrollX', maxX+1);
-					// Y.Assert.areEqual(maxX, scrollview.get('scrollX')); // @TODO: fix
+					// Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix.  Update: Remove?
 				},
 
 				"Ensure the 'scrollEnd' event fires": function() {
@@ -131,78 +121,273 @@
 					// Ensure scrollEnd fires
 					scrollview.on('scrollEnd', function(){
 						eventsFired++;
-						Test.resume(function(){
-							Y.Assert.areEqual(distance, scrollview.get('scrollX'));
-							Y.Assert.areEqual(0, scrollview.get('scrollY'));
-							Y.Assert.areEqual(1, eventsFired);
-						})
+						Y.Assert.areEqual(distance, scrollview.get('scrollX'));
+						Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						Y.Assert.areEqual(1, eventsFired);
 					});
 
 					scrollview.scrollTo(distance, 0, 1); // args = x, y, duration, easing
-					Test.wait(5000);
 				},
 
-     //            "Flick x should provide the correct reaction": function() {
-     //                var Test = this,
-					// 	scrollview = renderNewScrollview(false);
+				"Flick x should provide the correct reaction": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false);
 
-     //                scrollview.on('scrollEnd', function(){
-					// 	Test.resume(function(){
-					// 		Y.Assert.areEqual(scrollview._maxScrollX, scrollview.get('scrollX'));
-					// 		Y.Assert.areEqual(0, scrollview.get('scrollY'));
-					// 	})
-					// });
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(scrollview._maxScrollX, scrollview.get('scrollX'));
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						})
+					});
 
-     //                scrollview.get('contentBox').simulateGesture('flick', {
-     //                    distance: -3000,
-     //                    axis: 'x'
-     //                });
+					scrollview.get('contentBox').simulateGesture('flick', {
+						distance: -15000,
+						axis: 'x'
+					});
 
-     //                Test.wait();
-     //            },
+					Test.wait();
+				},
 
-     //            "Flick y should provide the correct reaction": function() {
-     //                var Test = this,
-					// 	scrollview = renderNewScrollview(true);
+				"Flick x should provide the correct reaction": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false);
 
-     //                scrollview.on('scrollEnd', function(){
-					// 	Test.resume(function(){
-					// 		Y.Assert.areEqual(scrollview._maxScrollY, scrollview.get('scrollY'));
-					// 		Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					// 	})
-					// });
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(scrollview._maxScrollX, scrollview.get('scrollX'));
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						})
+					});
 
-     //                scrollview.get('contentBox').simulateGesture('flick', {
-     //                    distance: -3000,
-     //                    axis: 'y'
-     //                });
+					scrollview.get('contentBox').simulateGesture('flick', {
+						distance: -15000,
+						axis: 'x'
+					});
 
-     //                Test.wait();
-     //            }
+					Test.wait();
+				},
 
-      //           "Drag event should provide the correct reaction": function() {
-      //               var Test = this,
-						// scrollview = renderNewScrollview(false);
+				"Disabled flick should not scroll": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false);
 
-      //               scrollview.get('contentBox').simulateGesture('touchstart', {
-      //                   axis: 'y',
-      //                   distance: 200,
-      //               });
+					scrollview.set('flick', false);
+					scrollview.get('contentBox').simulateGesture('flick', {
+						distance: -100,
+						axis: 'x'
+					});
 
-      //               // Y.Assert.isTrue(true, "is true");
-      //           }
+					Y.later(200, this, function () {
+						Test.resume(function(){
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
 
-      //           "Mousewheel event provides the correct reaction": function() {
-      //               var Test = this,
-      //                   scrollview = renderNewScrollview(true);
+					Test.wait();
+				},
 
-      //               scrollview.get('contentBox').simulate('mousewheel');
-      //               Y.Assert.isTrue(true, "is true");
-      //           }
+				"Move right on X should move the content right": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 1000;
+						
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							if (scrollview.get('scrollX') >= 50) {
+								Y.Assert.pass();
+							}
+							else {
+								Y.Assert.fail();
+							}
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						})
+					});
 
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            xdist: -(distance)
+                        },
+                        duration: SLOW_DURATION
+					});
+
+					Test.wait();
+				},
+
+				"Move left on X should snap back": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 1000;
+						
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            xdist: distance
+                        },
+                        duration: DURATION
+					});
+
+					Test.wait();
+				},
+
+				"Move down on Y should move the content at least that distance": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true),
+						distance = 500;
+						
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							if (scrollview.get('scrollY') >= distance) {
+								Y.Assert.pass();
+							}
+							else {
+								Y.Assert.fail();
+							}
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            ydist: -(distance)
+                        },
+                        duration: DURATION
+					});
+
+					Test.wait();
+				},
+
+				"Move up on Y should bounce back": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true),
+						distance = 500;
+
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            ydist: distance
+                        },
+                        duration: DURATION
+					});
+
+					Test.wait();
+				},
+
+				"Disabled drag should not scroll": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true),
+						distance = 500;
+
+					scrollview.set('drag', false);
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            ydist: distance
+                        },
+                        duration: SLOW_DURATION
+					});
+
+					Y.later(200, this, function () {
+						Test.resume(function(){
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						})
+					});
+
+					Test.wait();
+				},
+
+				"Disabled scrollview should not scroll": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false);
+
+					scrollview.set('disabled', true);
+					scrollview.scrollTo(500, null);
+					Y.later(100, this, function () {
+						Test.resume(function () {
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+					Test.wait();
+				},
+
+				"Widget resize should trigger heightChange": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						eventsFired = 0;
+
+					// Ensure scrollEnd fires
+					scrollview.after('heightChange', function(){
+						Y.later(100, scrollview, function () {
+							Test.resume(function () {
+								eventsFired++;
+								Y.Assert.areEqual(1, eventsFired);
+							})
+						})
+					});
+
+					Y.later(10, scrollview, function () {
+						scrollview.set('height', 123);
+					})
+
+					Test.wait();
+				}
+
+
+/* These tests are not possible until constraints are added
+
+				"Ensure scrolling below the range isn't allowed": function() {
+					var scrollview = renderNewScrollview(false);
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollX'));
+					
+					// Try to set it to a values outside the range
+					scrollview.set('scrollX', -1);
+					Y.Assert.areEqual(0, scrollview.get('scrollX')); // @TODO: fix
+				},
+
+				"Ensure scrolling above the range isn't allowed": function() {
+					var scrollview = renderNewScrollview(true),
+						maxY = scrollview._maxScrollY;
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollY'));
+					
+					// Try to set it to a values outside the range
+					scrollview.set('scrollY', maxY+1);
+					Y.Assert.areEqual(maxY, scrollview.get('scrollY')); // @TODO: fix
+				},
+*/
+
+
+/* These tests are not possible until mousewheel simulation is available
+
+				"Mousewheel event provides the correct reaction": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true);
+
+					scrollview.get('contentBox').simulate('mousewheel');
+					Y.Assert.isTrue(true, "is true");
+				}
+*/
 				// Additional tests
-				// Don't scroll Y if a X axis
-				// 
+				// - Don't scroll Y if a X axis
+				// - Don't scroll X if a Y axis
+				// - sv._prevent.start
+				// - sv._prevent.end
+				// - Flick while already executing a flick
+				// - Forced axis vs auto-detection
+				// - Make sure scrollEnd only fires once
 
 	        });
 
