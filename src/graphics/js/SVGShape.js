@@ -751,10 +751,23 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	getBounds: function()
 	{
 		var type = this._type,
-			w = this.get("width"),
+			stroke = this.get("stroke"),
+            w = this.get("width"),
 			h = this.get("height"),
 			x = type == "path" ? 0 : this._x,
-			y = type == "path" ? 0 : this._y;
+			y = type == "path" ? 0 : this._y,
+            wt = 0;
+        if(type != "path")
+        {
+            if(stroke && stroke.weight)
+            {
+                wt = stroke.weight;
+            }
+            w = (x + w + wt) - (x - wt); 
+            h = (y + h + wt) - (y - wt);
+            x -= wt;
+            y -= wt;
+        }
 		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
 

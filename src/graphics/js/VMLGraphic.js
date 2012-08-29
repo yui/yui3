@@ -275,7 +275,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             key,
             forceRedraw = false;
 		AttributeLite.prototype.set.apply(host, arguments);	
-        if(host._state.autoDraw === true)
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
             {
@@ -736,8 +736,8 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             right = box.right,
             top = box.top,
             bottom = box.bottom,
-            contentWidth = box.width,
-            contentHeight = box.height,
+            contentWidth = right - left,
+            contentHeight = bottom - top,
             aspectRatio,
             xCoordSize,
             yCoordSize,
@@ -750,8 +750,6 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             if(autoSize == "sizeContentToGraphic")
             {
                 preserveAspectRatio = this.get("preserveAspectRatio");
-                contentWidth = box.width;
-                contentHeight = box.height;
                 nodeWidth = this.get("width");
                 nodeHeight = this.get("height");
                 if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
@@ -863,26 +861,23 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
     }
