@@ -35,11 +35,6 @@ Default options for `Y.Template.Micro`.
         `<%== ... %>`.
     @param {RegExp} [options.stringEscape] Regex that matches characters that
         need to be escaped inside single-quoted JavaScript string literals.
-    @param {String} [options.variable] Name of a variable to which the
-        template's data object should be assigned when the template is rendered.
-        If this is set, template data won't be converted into local variables.
-        Using a custom data variable instead of local variable conversion can
-        make rendering significantly faster.
 
 @static
 @since 3.7.0
@@ -56,16 +51,10 @@ Compiles a template string into a JavaScript function. Pass a data object to the
 function to render the template using the given data and get back a rendered
 string.
 
-By default, properties of the data object passed to a template function are
-converted into variables in the local scope and made available for interpolation
-in the template. For faster rendering, you can specify the name of a data
-variable in `options.variable` to assign the data object to that variable
-instead of converting all its properties to local variables.
-
 Within a template, use `<%= ... %>` to output the value of an expression (where
 `...` is the JavaScript expression or data variable to evaluate). The output
-will be automatically HTML-escaped. To output a raw value without escaping, use
-`<%== ... %>`.
+will be HTML-escaped by default. To output a raw value without escaping, use
+`<%== ... %>`, but be careful not to do this with untrusted user input.
 
 To execute arbitrary JavaScript code within the template without rendering its
 output, use `<% ... %>`, where `...` is the code to be executed. This allows the
@@ -73,11 +62,16 @@ use of if/else blocks, loops, function calls, etc., although it's recommended
 that you avoid embedding anything beyond basic flow control logic in your
 templates.
 
+Properties of the data object passed to a template function are made available
+on a `data` variable within the scope of the template. So, if you pass in
+the object `{message: 'hello!'}`, you can print the value of the `message`
+property using `<%= data.message %>`.
+
 @example
 
     YUI().use('template-micro', function (Y) {
-        var template = '<ul class="<%= classNames.list %>">' +
-                           '<% Y.Array.each(items, function (item) { %>' +
+        var template = '<ul class="<%= data.classNames.list %>">' +
+                           '<% Y.Array.each(data.items, function (item) { %>' +
                                '<li><%= item %></li>' +
                            '<% }); %>' +
                        '</ul>';
@@ -102,16 +96,17 @@ templates.
 @static
 **/
 Micro.compile = function (text, options) {
-    var blocks = [],
-        source,
-        template;
+    var blocks     = [],
+        tokenClose = "\uffff",
+        tokenOpen  = "\ufffe",
+        source;
 
     options = Y.merge(Micro.options, options);
 
     // Parse the input text into a string of JavaScript code, with placeholders
     // for code blocks. Text outside of code blocks will be escaped for safe
     // usage within a double-quoted string literal.
-    source = "$t+='" +
+    source = "var $t='" +
 
         // U+FFFE and U+FFFF are guaranteed to represent non-characters, so no
         // valid UTF-8 string should ever contain them. That means we can freely
@@ -122,15 +117,15 @@ Micro.compile = function (text, options) {
         text.replace(/\ufffe|\uffff/g, '')
 
         .replace(options.rawOutput, function (match, code) {
-            return "\ufffe" + (blocks.push("'+\n(" + code + ")+\n'") - 1) + "\uffff";
+            return tokenOpen + (blocks.push("'+\n(" + code + ")+\n'") - 1) + tokenClose;
         })
 
         .replace(options.escapedOutput, function (match, code) {
-            return "\ufffe" + (blocks.push("'+\nhtmlEscaper(" + code + ")+\n'") - 1) + "\uffff";
+            return tokenOpen + (blocks.push("'+\n$e(" + code + ")+\n'") - 1) + tokenClose;
         })
 
         .replace(options.code, function (match, code) {
-            return "\ufffe" + (blocks.push("';\n" + code + "\n;$t+='") - 1) + "\uffff";
+            return tokenOpen + (blocks.push("';\n" + code + "\n;$t+='") - 1) + tokenClose;
         })
 
         .replace(options.stringEscape, "\\$&")
@@ -140,24 +135,15 @@ Micro.compile = function (text, options) {
             return blocks[parseInt(index, 10)];
         }) +
 
-        "';";
+        "';\nreturn $t;";
 
-    if (!options.variable) {
-        source = "with(data){\n" + source + "}";
+    // If compile() was called from precompile(), return precompiled source.
+    if (options.precompile) {
+        return "function (Y, $e, data) {\n" + source + "\n}";
     }
 
-    source = "var $t='';\n" + source + "\nreturn $t;";
-
-    // Compile the template source into an executable function.
-    template = this.revive(new Function('Y', options.variable || 'data',
-            'htmlEscaper', source));
-
-    // Include the generated template source code on the function to make
-    // precompilation possible.
-    template.source = "function(Y," + (options.variable || 'data') +
-            ",htmlEscaper){\n" + source + "\n}";
-
-    return template;
+    // Otherwise, return an executable function.
+    return this.revive(new Function('Y', '$e', 'data', source));
 };
 
 /**
@@ -178,7 +164,10 @@ to revive and render the template, avoiding the work of the compilation step.
 @static
 **/
 Micro.precompile = function (text, options) {
-    return this.compile(text, options).source;
+    options || (options = {});
+    options.precompile = true;
+
+    return this.compile(text, options);
 };
 
 /**
@@ -215,6 +204,6 @@ have been evaluated to a function -- you can't pass raw JavaScript code to
 Micro.revive = function (precompiled) {
     return function (data) {
         data || (data = {});
-        return precompiled.call(data, Y, data, Y.Escape.html);
+        return precompiled.call(data, Y, Y.Escape.html, data);
     };
 };

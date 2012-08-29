@@ -25,7 +25,7 @@ Using with `Y.Template.Micro` (the default template engine):
 
     YUI().use('template', function (Y) {
         var template = new Y.Template(),
-            html     = template.render('<%= message %>', {message: 'hello!'});
+            html     = template.render('<%= data.message %>', {message: 'hello!'});
 
         // ...
     });
