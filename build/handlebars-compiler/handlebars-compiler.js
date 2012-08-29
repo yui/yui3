@@ -1,4 +1,4 @@
-YUI.add('handlebars-compiler', function(Y) {
+YUI.add('handlebars-compiler', function (Y, NAME) {
 
 /*!
 Handlebars.js - Copyright (C) 2011 Yehuda Katz
@@ -1792,4 +1792,4 @@ function.
 */
 
 
-}, '@VERSION@' ,{requires:['handlebars-base']});
+}, '@VERSION@', {"requires": ["handlebars-base"]});

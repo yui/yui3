@@ -1,4 +1,4 @@
-YUI.add('app-base', function(Y) {
+YUI.add('app-base', function (Y, NAME) {
 
 /**
 The App Framework provides simple MVC-like building blocks (models, model lists,
@@ -1075,4 +1075,4 @@ Default `serverRouting` attribute value for all apps.
 **/
 
 
-}, '@VERSION@' ,{requires:['classnamemanager', 'pjax-base', 'router', 'view']});
+}, '@VERSION@', {"requires": ["classnamemanager", "pjax-base", "router", "view"]});

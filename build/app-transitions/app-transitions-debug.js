@@ -1,4 +1,4 @@
-YUI.add('app-transitions', function(Y) {
+YUI.add('app-transitions', function (Y, NAME) {
 
 /**
 Provides view transitions for `Y.App` in browsers which support native CSS3
@@ -238,4 +238,4 @@ Y.mix(Y.App.CLASS_NAMES, {
 });
 
 
-}, '@VERSION@' ,{requires:['app-base']});
+}, '@VERSION@', {"requires": ["app-base"]});
