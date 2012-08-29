@@ -113,3 +113,6 @@ Converts a precompiled template into a renderable template function.
 
 // Alias for Y.Handlebars.template(), used by Y.Template.
 Handlebars.revive = Handlebars.template;
+
+// Make Y.Template.Handlebars an alias for Y.Handlebars.
+Y.namespace('Template').Handlebars = Handlebars;
