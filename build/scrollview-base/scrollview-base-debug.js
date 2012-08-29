@@ -662,7 +662,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             }
             else {
                 // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                // Not totally confident this is a good idea
+                // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
                 if (sv.pages && !sv.pages.axis[gesture.axis]) {
                     sv._onTransEnd();
                 }
