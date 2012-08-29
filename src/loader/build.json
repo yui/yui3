@@ -1,5 +1,8 @@
 {
     "name": "loader",
+    "postexec": [
+        "./scripts/build_loader_tests.js"
+    ],
     "builds": {
         "loader-base": {
             "replace": {

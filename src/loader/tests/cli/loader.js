@@ -158,6 +158,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("app-content")) > -1, "Module (app-content) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("app-transitions")) > -1, "Module (app-transitions) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("lazy-model-list")) > -1, "Module (lazy-model-list) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
@@ -176,6 +177,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
+        },
+     "Testing app-content": function(data) {
+            var loader = new Y.Loader({
+                require: ["app-content"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("app-content")) > -1, "Module (app-content) not found in sorted array");
         },
      "Testing app-transitions": function(data) {
             var loader = new Y.Loader({
@@ -2422,6 +2433,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("pjax-base")) > -1, "Module (pjax-base) not found in sorted array");
+        },
+     "Testing pjax-content": function(data) {
+            var loader = new Y.Loader({
+                require: ["pjax-content"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pjax-content")) > -1, "Module (pjax-content) not found in sorted array");
         },
      "Testing pjax-plugin": function(data) {
             var loader = new Y.Loader({
