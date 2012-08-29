@@ -56,6 +56,16 @@
 			
 	        var testBasic = new Y.Test.Case({
 	            name: "API Tests",
+                _should: {
+                    ignore: {
+                        "Flick x should provide the correct reaction": Y.UA.phantomjs,
+                        "Disabled flick should not scroll": Y.UA.phantomjs,
+                        "Move right on X should move the content right": Y.UA.phantomjs,
+                        "Move left on X should snap back": Y.UA.phantomjs,
+                        "Move down on Y should move the content at least that distance": Y.UA.phantomjs,
+                        "Move up on Y should bounce back": Y.UA.phantomjs
+                    }
+                },
 
 			    //---------------------------------------------
 			    // Setup and tear down
@@ -131,11 +141,6 @@
 
 				"Flick x should provide the correct reaction": function() {
 					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
-
 					var Test = this,
 						scrollview = renderNewScrollview(false);
 
@@ -156,11 +161,6 @@
 
 				"Disabled flick should not scroll": function() {
 					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
-
 					var Test = this,
 						scrollview = renderNewScrollview(false);
 
@@ -181,11 +181,6 @@
 
 				"Move right on X should move the content right": function() {
 					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
-
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						distance = 1000;
@@ -214,11 +209,6 @@
 
 				"Move left on X should snap back": function() {
 					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
-
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						distance = 1000;
@@ -242,11 +232,6 @@
 
 				"Move down on Y should move the content at least that distance": function() {
 					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
-
 					var Test = this,
 						scrollview = renderNewScrollview(true),
 						distance = 500;
@@ -275,11 +260,6 @@
 
 				"Move up on Y should bounce back": function() {
 					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
-
 					var Test = this,
 						scrollview = renderNewScrollview(true),
 						distance = 500;

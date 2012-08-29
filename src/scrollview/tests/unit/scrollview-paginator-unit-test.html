@@ -54,6 +54,12 @@
 			
 	        var testBasic = new Y.Test.Case({
 	            name: "API Tests",
+                _should: {
+                    ignore: {
+                        "Move x should advance 1 page right": Y.UA.phantomjs,
+                        "Move left on X should snap back": Y.UA.phantomjs
+                    }
+                },
 
 			    //---------------------------------------------
 			    // Setup and tear down
@@ -181,10 +187,6 @@
 
 				"Move x should advance 1 page right": function() {
 
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
 
 					var Test = this,
 						scrollview = renderNewScrollview(false);
@@ -211,11 +213,6 @@
 
 
 				"Move left on X should snap back": function() {
-					
-					// Gesturesim has issues in Phantom.js
-					if (Y.UA.phantom) {
-						return;
-					}
 
 					var Test = this,
 						scrollview = renderNewScrollview(false),
