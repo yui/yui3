@@ -97,7 +97,7 @@
 					})
 
 					sv.pages.next();
-					Test.wait();
+					Test.wait(2000);
 				},
 
 				"sv.next() on last index should do nothing" : function () {
@@ -118,7 +118,7 @@
 
 					sv.pages.next();
 
-					Test.wait();
+					Test.wait(2000);
 				},
 
 				"sv.prev() should advance to the previous page" : function () {
@@ -133,7 +133,7 @@
 
 					sv.pages.prev();
 
-					Test.wait();
+					Test.wait(2000);
 				},
 
 				"sv.prev() on index 0 should do nothing" : function () {
@@ -154,7 +154,7 @@
 
 					sv.pages.prev();
 
-					Test.wait();
+					Test.wait(2000);
 				},
 
 				"scrollToIndex should animate to the specified index" : function () {
@@ -170,7 +170,7 @@
 
 					sv.pages.scrollToIndex(5);
 
-					Test.wait();
+					Test.wait(2000);
 				},
 
 
@@ -180,6 +180,12 @@
 
 
 				"Move x should advance 1 page right": function() {
+
+					// Gesturesim has issues in Phantom.js
+					if (Y.UA.phantom) {
+						return;
+					}
+
 					var Test = this,
 						scrollview = renderNewScrollview(false);
 
@@ -198,13 +204,19 @@
                         duration: DURATION
 					});
 
-					Test.wait();
+					Test.wait(2000);
 				},
 
 
 
 
 				"Move left on X should snap back": function() {
+					
+					// Gesturesim has issues in Phantom.js
+					if (Y.UA.phantom) {
+						return;
+					}
+
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						distance = 100;
@@ -224,7 +236,7 @@
                         duration: DURATION
 					});
 
-					Test.wait();
+					Test.wait(2000);
 				}
 
 				/*
