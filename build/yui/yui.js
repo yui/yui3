@@ -10696,8 +10696,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom",
             "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [
@@ -10959,7 +10958,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

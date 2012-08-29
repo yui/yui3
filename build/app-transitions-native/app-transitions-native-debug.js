@@ -1,4 +1,4 @@
-YUI.add('app-transitions-native', function(Y) {
+YUI.add('app-transitions-native', function (Y, NAME) {
 
 /**
 Provides the implementation of view transitions for `Y.App.Transitions` in
@@ -350,4 +350,4 @@ Y.App.TransitionsNative = AppTransitionsNative;
 Y.Base.mix(Y.App, [AppTransitionsNative]);
 
 
-}, '@VERSION@' ,{requires:['app-transitions', 'app-transitions-css', 'parallel', 'transition']});
+}, '@VERSION@', {"requires": ["app-transitions", "app-transitions-css", "parallel", "transition"]});

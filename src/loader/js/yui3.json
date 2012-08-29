@@ -2089,8 +2089,7 @@
             "event-custom",
             "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [

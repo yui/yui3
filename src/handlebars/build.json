@@ -1,0 +1,27 @@
+{
+    "name": "handlebars",
+    "builds": {
+        "handlebars-base": {
+            "regex": "",
+            "jsfiles": [
+                "yui-handlebars-copyright.js",
+                "handlebars-base.js",
+                "yui-handlebars-utils.js",
+                "handlebars-runtime.js",
+                "yui-handlebars-base-after.js"
+            ]
+        },
+        "handlebars-compiler": {
+            "regex": "^\\s*Y\\.log\\s*\\([\\s\\S]*?\\);?",
+            "jsfiles": [
+                "yui-handlebars-copyright.js",
+                "yui-handlebars-compiler-before.js",
+                "handlebars-compiler-parser.js",
+                "handlebars-compiler-base.js",
+                "handlebars-compiler-ast.js",
+                "handlebars-compiler-compiler.js",
+                "yui-handlebars-compiler-after.js"
+            ]
+        }
+    }
+}
