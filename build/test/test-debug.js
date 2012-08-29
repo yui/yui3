@@ -3755,4 +3755,4 @@ if (!YUI.YUITest) {
 } //End if for YUI.YUITest
 
 
-}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "substitute", "json-stringify"], "skinnable": true});
+}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "substitute", "json-stringify"]});
