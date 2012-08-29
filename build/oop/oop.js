@@ -1,4 +1,4 @@
-YUI.add('oop', function(Y) {
+YUI.add('oop', function (Y, NAME) {
 
 /**
 Adds object inheritance and manipulation utilities to the YUI instance. This
@@ -398,4 +398,4 @@ Y.rbind = function(f, c) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});
