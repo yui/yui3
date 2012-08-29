@@ -1,4 +1,4 @@
-YUI.add('loader-base', function(Y) {
+YUI.add('loader-base', function (Y, NAME) {
 
 /**
  * The YUI loader core
@@ -2766,4 +2766,4 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
 
-}, '@VERSION@' ,{requires:['get', 'features']});
+}, '@VERSION@', {"requires": ["get", "features"]});

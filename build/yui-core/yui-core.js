@@ -327,7 +327,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['get','intl-base'],
+                core: ['intl-base'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
@@ -1947,7 +1947,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function(Y) {
+YUI.add('yui-base', function (Y, NAME) {
 
 /*
  * YUI stub
@@ -3811,4 +3811,4 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@');
