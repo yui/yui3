@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Y.Deferred Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+    <h1><code>Y.Deferred</code> Tests</h1>
+    <div id="tests"></div>
+
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script>
+    <script>
+    YUI({
+        filter: 'raw',
+        modules: {
+            deferred: {
+                fullpath: '../../../build/deferred/deferred-min.js'
+            },
+            'deferred-tests': {
+                fullpath: 'deferred-tests.js',
+                requires: ['deferred', 'test', 'test-console']
+            }
+        }
+    }).use('deferred', 'deferred-tests', function (Y) {
+
+        new Y.Test.Console().render('#tests');
+
+        Y.Test.Runner.run();
+        /*
+        var deferred = new Y.Deferred();
+
+        setTimeout(function () {
+            deferred.resolve("hello, Martha");
+        }, 100);
+
+        deferred
+            .then(function (message) {
+                console.log(this, arguments);
+                var step2 = new Y.Deferred();
+
+                setTimeout(function () {
+                    step2.resolve(message, "Goodbye, Mr. Bond");
+                }, 100);
+
+                return step2.promise();
+            })
+            .then(function () {
+                console.log(this, arguments);
+            });
+        */
+    });
+    </script>
+</body>
+</html>

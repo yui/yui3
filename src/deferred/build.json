@@ -1,0 +1,8 @@
+{
+    "name": "deferred",
+    "builds": {
+        "deferred": {
+            "jsfiles": [ "deferred.js" ]
+        }
+    }
+}
