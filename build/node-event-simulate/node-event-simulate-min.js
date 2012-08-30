@@ -1,1 +1,1 @@
-YUI.add("node-event-simulate",function(a){a.Node.prototype.simulate=function(c,b){a.Event.simulate(a.Node.getDOMNode(this),c,b);};a.Node.prototype.simulateGesture=function(d,c,b){a.Event.simulateGesture(this,d,c,b);};},"@VERSION@",{requires:["node-base","event-simulate"]});
+YUI.add("node-event-simulate",function(b,a){b.Node.prototype.simulate=function(d,c){b.Event.simulate(b.Node.getDOMNode(this),d,c);};b.Node.prototype.simulateGesture=function(e,d,c){b.Event.simulateGesture(this,e,d,c);};},"@VERSION@",{"requires":["node-base","event-simulate","gesture-simulate"]});

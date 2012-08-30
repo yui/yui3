@@ -1,4 +1,4 @@
-YUI.add('dom-deprecated', function(Y) {
+YUI.add('dom-deprecated', function (Y, NAME) {
 
 
 Y.mix(Y.DOM, {
@@ -58,4 +58,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@', {"requires": ["dom-base"]});

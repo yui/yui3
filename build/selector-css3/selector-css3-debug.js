@@ -1,4 +1,4 @@
-YUI.add('selector-css3', function(Y) {
+YUI.add('selector-css3', function (Y, NAME) {
 
 /**
  * The selector css3 module provides support for css3 selectors.
@@ -149,4 +149,4 @@ Y.Selector.combinators['~'] = {
 };
 
 
-}, '@VERSION@' ,{requires:['selector-native', 'selector-css2']});
+}, '@VERSION@', {"requires": ["selector-native", "selector-css2"]});

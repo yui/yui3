@@ -1,4 +1,4 @@
-YUI.add('dom-core', function(Y) {
+YUI.add('dom-core', function (Y, NAME) {
 
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
@@ -386,4 +386,4 @@ Y_DOM = {
 Y.DOM = Y_DOM;
 
 
-}, '@VERSION@' ,{requires:['oop','features']});
+}, '@VERSION@', {"requires": ["oop", "features"]});

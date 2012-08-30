@@ -1,0 +1,15 @@
+{
+    "name": "cssreset",
+    "builds": {
+        "cssreset": {
+            "cssfiles": [
+                "cssreset.css"
+            ]
+        },
+        "cssreset-context": {
+            "cssfiles": [
+                "cssreset-context.css"
+            ]
+        }
+    }
+}
