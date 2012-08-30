@@ -158,7 +158,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator.axis === 'auto') {
-            paginator.axis = host.axis;
+            paginator.axis = host._axis;
         }
 
         // Don't allow flicks on the paginated axis

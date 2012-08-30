@@ -70,52 +70,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param {config} Configuration object for the plugin
      */
     initializer: function (config) {
-        var sv = this,
-            axis = 'auto'; // Default axis to 'auto' and let the calculation happen in syncUI
+        var sv = this;
 
         // Cache these values, since they aren't going to change.
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
-
-        // Determine the axis settings if a value was passed in. TODO: Cleanup
-        if (config.axis) {
-            config.axis = config.axis.toLowerCase();
-            switch (config.axis) {
-                case "x":
-                    axis = {
-                        x: true,
-                        y: false
-                    };
-                    break;
-                
-                case "y":
-                    axis = {
-                        x: false,
-                        y: true
-                    };
-                    break;
-
-                // Unsupported ATM.  For future development purposes.
-                case "xy":
-                case "yx":
-                    if (config._multiaxis) {
-                        axis = {
-                            x: true,
-                            y: true
-                        };
-                    }
-                    break;
-            }
-        }
-
-        /**
-         * Contains an object that specifies if the widget can scroll on a X and/or Y axis
-         *
-         * @property axis
-         * @type Object
-         * @public
-         */
-        sv.axis = axis;
+        sv._axis = sv.get(AXIS);
     },
 
     /**
@@ -233,20 +193,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     syncUI: function () {
         var sv = this,
-            axis = sv.axis,
+            axis = sv._axis,
             scrollDims = sv._getScrollDims(),
             width = scrollDims.offsetWidth,
             height = scrollDims.offsetHeight,
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight;
 
-        // If the axis should be auto-calculated, do it.
-        if (axis === "auto") {
+        // If the axis is undefined, auto-calculate it
+        if (axis === undefined) {
             axis = {
                 x: (scrollWidth > width),
                 y: (scrollHeight > height)
             };
-            sv.axis = axis;
+
+            sv._set(AXIS, axis);
+            sv._axis = axis;
         }
 
         // get text direction on or inherited by scrollview node
@@ -310,7 +272,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight,
             rtl = sv.rtl,
-            axis = sv.axis;
+            axis = sv._axis;
         
         sv._minScrollX = (rtl) ? -(scrollWidth - width) : 0;
         sv._maxScrollX = (rtl) ? 0 : (scrollWidth - width);
@@ -603,7 +565,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _onGestureMove: function (e) {
         var sv = this,
             gesture = sv._gesture,
-            svAxis = sv.axis,
+            svAxis = sv._axis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
             startX = gesture.startX,
@@ -680,7 +642,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _flick: function (e) {
         var sv = this,
             gesture = sv._gesture,
-            svAxis = sv.axis,
+            svAxis = sv._axis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
             flick = e.flick,
@@ -719,7 +681,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = sv._maxScrollY,
             deceleration = sv._cDecel,
             bounce = sv._cBounce,
-            svAxis = sv.axis,
+            svAxis = sv._axis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
             step = ScrollView.FRAME_STEP,
@@ -807,7 +769,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _isOOB: function () {
         var sv = this,
-            svAxis = sv.axis,
+            svAxis = sv._axis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
             currentX = sv.get(SCROLL_X),
@@ -968,6 +930,26 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
         // because _gesture is being deleted after the previous one has been overwritten
         // delete sv._gesture; // TODO: Move to sv.prevGesture?
+    },
+
+    /**
+     * Setter for 'axis' attribute
+     *
+     * @method _axisSetter
+     * @param val {Mixed} A string ('x', 'y', 'xy') to specify which axis/axes to allow scrolling on
+     * @param name {String} The attribute name
+     * @return {Object} An object to specify scrollability on the x & y axes
+     * 
+     * @protected
+     */
+    _axisSetter: function (val, name) {
+        // Turn the string into an axis object
+        if (Y.Lang.isString(val)) {
+            return {
+                x: val.match(/x/i),
+                y: val.match(/y/i)
+            };
+        }
     }
     
     // End prototype properties
@@ -998,6 +980,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @static
      */
     ATTRS: {
+
+        /**
+         * Specifies ability to scroll on x, y, or x and y axis/axes.
+         *
+         * @attribute axis
+         * @type String
+         */
+        axis: {
+            setter: '_axisSetter',
+            writeOnce: 'initOnly'
+        },
 
         /**
          * The scroll position in the y-axis
