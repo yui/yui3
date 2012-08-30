@@ -881,6 +881,34 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         contentRect = matrix.getContentRect(w, h, x, y);
         return contentRect;
     },
+
+    /**
+     * Places the shape above all other shapes.
+     *
+     * @method toFront
+     */
+    toFront: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
+    },
+
+    /**
+     * Places the shape underneath all other shapes.
+     *
+     * @method toFront
+     */
+    toBack: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
+    },
     
     /**
      * Destroys the shape instance.
