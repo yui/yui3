@@ -169,6 +169,23 @@ YUI.add('parallel-tests', function(Y) {
                 Assert.areEqual('foo', results[0][0], 'Results[0][0] is not right');
                 Assert.areEqual('bar', results[0][1], 'Results[0][1] is not right');
             });
+        },
+        test_results_order: function () {
+            var stack = new Y.Parallel();
+
+            setTimeout(stack.add(function () {
+                return 1;
+            }), 100);
+            setTimeout(stack.add(function () {
+                return 2;
+            }), 10);
+            setTimeout(stack.add(function () {
+                return 3;
+            }), 50);
+
+            stack.done(function (results) {
+                Y.ArrayAssert.itemsAreEqual(results, [1, 2, 3], 'Results array did not retain order of callbacks');
+            });
         }
     });
 
