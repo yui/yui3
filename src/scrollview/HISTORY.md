@@ -17,9 +17,9 @@ Public API changes/fixes:
 
   * Fix: Multiple listeners could sometimes be added for drag and flick events.
 
-  * Fix: Mousewheel events now properly update the scrollY attribute.
+  * Fix: Mousewheel events now properly update the 'scrollY' attribute.
 
-  * Fix: Bug where programmatic access into scrollview.pages.scrollTo may not actually scroll to the desired page, or may cause a lock-up of the widget.
+  * Fix: Bug where scrollview.pages.scrollTo may not actually scroll to the desired page, or may cause a lock-up of the widget.
 
 Additional notes:
 
