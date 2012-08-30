@@ -1,1 +1,1 @@
-YUI.add("node-event-delegate",function(a){a.Node.prototype.delegate=function(d){var c=a.Array(arguments,0,true),b=(a.Lang.isObject(d)&&!a.Lang.isArray(d))?1:2;c.splice(b,0,this._node);return a.delegate.apply(a,c);};},"@VERSION@",{requires:["node-base","event-delegate"]});
+YUI.add("node-event-delegate",function(b,a){b.Node.prototype.delegate=function(e){var d=b.Array(arguments,0,true),c=(b.Lang.isObject(e)&&!b.Lang.isArray(e))?1:2;d.splice(c,0,this._node);return b.delegate.apply(b,d);};},"@VERSION@",{"requires":["node-base","event-delegate"]});

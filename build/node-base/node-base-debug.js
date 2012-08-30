@@ -1,4 +1,4 @@
-YUI.add('node-base', function(Y) {
+YUI.add('node-base', function (Y, NAME) {
 
 /**
  * @module node
@@ -1155,4 +1155,4 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'node-core', 'event-base']});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});

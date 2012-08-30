@@ -1,4 +1,4 @@
-YUI.add('anim-easing', function(Y) {
+YUI.add('anim-easing', function (Y, NAME) {
 
 /*
 TERMS OF USE - EASING EQUATIONS
@@ -347,4 +347,4 @@ var Easing = {
 Y.Easing = Easing;
 
 
-}, '@VERSION@' ,{requires:['anim-base']});
+}, '@VERSION@', {"requires": ["anim-base"]});
