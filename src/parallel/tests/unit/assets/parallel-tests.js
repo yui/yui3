@@ -171,7 +171,8 @@ YUI.add('parallel-tests', function(Y) {
             });
         },
         test_results_order: function () {
-            var stack = new Y.Parallel();
+            var stack = new Y.Parallel(),
+                test = this;
 
             setTimeout(stack.add(function () {
                 return 1;
@@ -184,8 +185,12 @@ YUI.add('parallel-tests', function(Y) {
             }), 50);
 
             stack.done(function (results) {
-                Y.ArrayAssert.itemsAreEqual(results, [1, 2, 3], 'Results array did not retain order of callbacks');
+                test.resume(function () {
+                    Y.ArrayAssert.itemsAreEqual(results, [1, 2, 3], 'Results array did not retain order of callbacks');
+                });
             });
+            
+            test.wait();
         }
     });
 
