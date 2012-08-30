@@ -20,6 +20,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     SELECTOR = 'selector',
     FLICK = 'flick',
     DRAG = 'drag',
+    AXIS = 'axis',
     DIM_X = 'x',
     DIM_Y = 'y';
 
@@ -45,40 +46,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     initializer: function (config) {
         var paginator = this,
-            host = paginator.get(HOST),
-            bb = host._bb,
-            cb = host._cb,
-            axis = 'auto';
+            host = paginator.get(HOST);
 
         // Default it to an empty object
         config = config || {};
-
-        if (config.axis) {
-            switch (config.axis.toLowerCase()) {
-                case "x":
-                    axis = {
-                        x: true,
-                        y: false
-                    };
-                    break;
-                case "y":
-                    axis = {
-                        x: false,
-                        y: true
-                    };
-                    break;
-            }
-        }
-
-        /**
-         * Contains an object that specifies if the widget will on a X or Y axis
-         *
-         * @property axis
-         * @type Object
-         * @public
-         * @default auto
-         */
-        paginator.axis = axis;
 
         // Initialize & default
         paginator.optimizeMemory = config.optimizeMemory || false;
@@ -86,23 +57,29 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator.cards = [];
 
         // Cache some values
-        paginator._bb = bb;
-        paginator._cb = cb;
         paginator._host = host;
+        paginator._bb = host._bb;
+        paginator._cb = host._cb;
         paginator._cIndex = config.index || 0;
+        paginator._cAxis = paginator.get(AXIS);
         paginator._prevent = new Y.Do.Prevent();
 
         // Event listeners
-        paginator.after('indexChange', paginator._afterIndexChange);
+        paginator.after({
+            'indexChange': paginator._afterIndexChange,
+            'axisChange': paginator._afterAxisChange
+        });
 
-        // Method listeners
+        // Host method listeners
         paginator.beforeHostMethod('scrollTo', paginator._beforeHostScrollTo);
         paginator.beforeHostMethod('_mousewheel', paginator._beforeHostMousewheel);
         paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
+        paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
+        
+        // Host event listeners
         paginator.afterHostEvent('render', paginator._afterHostRender);
         paginator.afterHostEvent('scrollEnd', paginator._afterHostScrollEnded);
-        paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
     },
 
     /**
@@ -117,7 +94,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             bb = paginator._bb,
             host = paginator._host,
             index = paginator._cIndex,
-            paginatorAxis = paginator.axis,
+            paginatorAxis = paginator._cAxis,
             pageNodes = paginator._getPageNodes(),
             size = pageNodes.size(),
             maxScrollX = paginator.cards[index].maxScrollX,
@@ -157,16 +134,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             hostFlick = host.get(FLICK);
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
-        if (paginator.axis === 'auto') {
-            paginator.axis = host._axis;
+        if (paginator._cAxis === undefined) {
+            paginator._set(AXIS, host.get(AXIS));
         }
-
+        
         // Don't allow flicks on the paginated axis
-        if (paginator.axis[DIM_X]) {
+        if (paginator._cAxis[DIM_X]) {
             hostFlick.axis = DIM_Y;
             host.set(FLICK, hostFlick);
         }
-        else if (paginator.axis[DIM_Y]) {
+        else if (paginator._cAxis[DIM_Y]) {
             hostFlick.axis = DIM_X;
             host.set(FLICK, hostFlick);
         }
@@ -229,7 +206,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             gesture = host._gesture,
             index = paginator._cIndex,
-            paginatorAxis = paginator.axis,
+            paginatorAxis = paginator._cAxis,
             gestureAxis;
 
         if (gesture) {
@@ -264,7 +241,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             gesture = host._gesture,
-            paginatorAxis = paginator.axis,
+            paginatorAxis = paginator._cAxis,
             gestureAxis = gesture && gesture.axis;
 
         if (paginatorAxis[gestureAxis]) {
@@ -289,7 +266,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             bb = host._bb,
             isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.
-            paginatorAxis = paginator.axis;
+            paginatorAxis = paginator._cAxis;
 
         // Set the axis for this event.
         // @TODO: This is hacky, it's not a gesture. Find a better way
@@ -324,11 +301,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterHostScrollEnded: function (e) {
         var paginator = this,
-            host = this._host,
+            host = paginator._host,
             index = paginator._cIndex,
             scrollX = host.get(SCROLL_X),
             scrollY = host.get(SCROLL_Y),
-            paginatorAxis = paginator.axis;
+            paginatorAxis = paginator._cAxis;
 
         if (paginatorAxis[DIM_Y]) {
             paginator.cards[index].scrollX = scrollX;
@@ -497,6 +474,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
     
     /** 
+     * Deprecated for 3.7.0.
      * @deprecated
      */
     scrollTo: function () {
@@ -516,7 +494,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             pageNode = paginator._getPageNodes().item(index),
-            scrollAxis = (paginator.axis[DIM_X] ? SCROLL_X : SCROLL_Y),
+            scrollAxis = (paginator._cAxis[DIM_X] ? SCROLL_X : SCROLL_Y),
             scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');
 
         duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;
@@ -533,8 +511,41 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             duration: duration,
             easing: easing
         });
+    },
+
+    /**
+     * Setter for 'axis' attribute
+     *
+     * @method _axisSetter
+     * @param val {Mixed} A string ('x', 'y', 'xy') to specify which axis/axes to allow scrolling on
+     * @param name {String} The attribute name
+     * @return {Object} An object to specify scrollability on the x & y axes
+     * 
+     * @protected
+     */
+    _axisSetter: function (val, name) {
+
+        // Turn a string into an axis object
+        if (Y.Lang.isString(val)) {
+            return {
+                x: val.match(/x/i) ? true : false,
+                y: val.match(/y/i) ? true : false
+            };
+        }
+    },
+ 
+
+    /**
+     * After listener for the axis attribute
+     *
+     * @method _afterAxisChange
+     * @param e {Event.Facade} The event facade
+     * @protected
+     */
+    _afterAxisChange: function (e) {
+        this._cAxis = e.newVal;
     }
-    
+
     // End prototype properties
 
 }, {
@@ -571,6 +582,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @static
      */
     ATTRS: {
+
+        /**
+         * Specifies ability to scroll on x, y, or x and y axis/axes.
+         *
+         * @attribute axis
+         * @type String
+         */
+        axis: {
+            setter: '_axisSetter',
+            writeOnce: 'initOnly'
+        },
 
         /**
          * CSS selector for a page inside the scrollview. The scrollview
