@@ -1,3 +1,6 @@
+//TODO: deferred.isResolved(), isRejected(), isInProgress(),
+// getStatus(), deferred/promise.wait(n)
+
 /**
 Wraps the execution of synchronous or asynchronous operations, providing a
 promise object that can be used to subscribe to the various ways the operation
