@@ -15,7 +15,7 @@
 <div class="intro">
     <p>This example shows how you can use Widget's plugin infrastructure to add additional features to an existing widget.</p>
     <p>
-        We use the `"gallery-widget-io"` plugin to add io capabilities bound to a widget instance. The plugin provides an `io` interface on Widget, which can be used to update 
+        We use the `"gallery-widget-io"` plugin to add io capabilities bound to a widget instance. The plugin provides an `io` interface on Widget, which can be used to update
         the widget's contentBox contents.
     </p>
     <p>
@@ -31,12 +31,12 @@
 
 <h3>Setting Up The YUI Instance</h3>
 
-<p>For this example, we'll pull in `widget`; the `gallery-widget-io` plugin, and the `json-parse` and `substitute` modules to help us work with the JSON RSS data returned.
+<p>For this example, we'll pull in `widget`; the `gallery-widget-io` plugin, and the `json-parse` modules to help us work with the JSON RSS data returned.
  The code to set up our sandbox instance is shown below:</p>
 
 ```
-YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", function(Y) {
-    // We'll write our code here, after pulling in the default Widget module, 
+YUI().use("widget", "gallery-widget-io", "json-parse", function(Y) {
+    // We'll write our code here, after pulling in the default Widget module,
     // the IO plugin.
 });
 ```
@@ -60,8 +60,8 @@ YUI().use("widget", "gallery-widget-io", "json-parse", "substitute", function(Y)
 
 <h3>Using the Plugin</h3>
 
-<p>All objects derived from <a href="{{apiDocs}}/Base.html">Base</a> are <a href="{{apiDocs}}/Plugin.Host.html">Plugin Hosts</a>. 
-They provide <a href="{{apiDocs}}/Plugin.Host.html#method_plug">`plug`</a> and <a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug`</a> methods to allow users to add/remove plugins to/from existing instances. 
+<p>All objects derived from <a href="{{apiDocs}}/Base.html">Base</a> are <a href="{{apiDocs}}/Plugin.Host.html">Plugin Hosts</a>.
+They provide <a href="{{apiDocs}}/Plugin.Host.html#method_plug">`plug`</a> and <a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug`</a> methods to allow users to add/remove plugins to/from existing instances.
 They also allow the user to specify the set of plugins to be applied to a new instance, along with their configurations, as part of the constructor arguments.</p>
 
 <p>In this example, we'll create a new instance of a Widget:</p>
@@ -79,7 +79,7 @@ the plugin to fetch the content.</p>
 
 ```
 /*
- * Add the Plugin, and configure it to use a news feed uri, and work cross-domain, using xdr 
+ * Add the Plugin, and configure it to use a news feed uri, and work cross-domain, using xdr
  */
 widget.plug(Y.Plugin.WidgetIO, {
     uri : 'http:/' + '/pipes.yahooapis.com/pipes/pipe.run?_id=6b7b2c6a32f5a12e7259c36967052387&_render=json&url=http:/' + '/rss.news.yahoo.com/rss/us',
@@ -88,7 +88,7 @@ widget.plug(Y.Plugin.WidgetIO, {
             use:'flash'
         }
     },
-    formatter: formatRSS,        
+    formatter: formatRSS,
     loading: '<img class="yui3-loading" width="32px" height="32px" src="{{componentAssets}}/img/ajax-loader.gif">'
 });
 
@@ -114,7 +114,7 @@ var formatRSS = function (val) {
                 if (i < 10) {
                     v.title = Y.Escape.html(v.title);
                     v.link = Y.Escape.html(v.link);
-                    html.push(Y.substitute(linkTemplate, v));
+                    html.push(Y.Lang.sub(linkTemplate, v));
                 }
             });
             html.push("</ul>");
@@ -144,7 +144,7 @@ Y.io.transport({
     src:'{{yuiLocalBuildUrl}}/io-xdr/io.swf?stamp=' + (new Date()).getTime()
 });
 ```
- 
+
 <h2>Complete Example Source</h2>
 ```
 {{>widget-plugin-source}}
