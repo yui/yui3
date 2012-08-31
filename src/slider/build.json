@@ -1,0 +1,30 @@
+{
+    "name": "slider",
+    "builds": {
+        "slider-value-range": {
+            "jsfiles": [
+                "value-range.js"
+            ]
+        },
+        "clickable-rail": {
+            "jsfiles": [
+                "clickable-rail.js"
+            ]
+        },
+        "slider-base": {
+            "meta": {
+                "tests": {
+                    "jsfiles": "slider.js"
+                }
+            },
+            "jsfiles": [
+                "slider-base.js"
+            ]
+        },
+        "range-slider": {
+            "jsfiles": [
+                "range-slider.js"
+            ]
+        }
+    }
+}

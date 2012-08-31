@@ -3312,8 +3312,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ],
         "requires": [
             "yui-log",
-            "widget",
-            "substitute"
+            "widget"
         ],
         "skinnable": true
     },
@@ -4209,7 +4208,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base",
             "node",
             "selector-css3",
-            "substitute",
             "yui-throttle"
         ]
     },
@@ -4824,7 +4822,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "base",
             "widget",
-            "substitute",
             "event",
             "oop",
             "dd-drag",
@@ -4959,7 +4956,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-constrain",
-            "substitute",
             "event-key"
         ],
         "skinnable": true
@@ -5035,7 +5031,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-simulate",
             "event-custom",
-            "substitute",
             "json-stringify"
         ]
     },

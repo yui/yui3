@@ -452,8 +452,7 @@
         ],
         "requires": [
             "yui-log",
-            "widget",
-            "substitute"
+            "widget"
         ],
         "skinnable": true
     },
@@ -1319,7 +1318,6 @@
             "base",
             "node",
             "selector-css3",
-            "substitute",
             "yui-throttle"
         ]
     },
@@ -1895,7 +1893,6 @@
         "requires": [
             "base",
             "widget",
-            "substitute",
             "event",
             "oop",
             "dd-drag",
@@ -2025,7 +2022,6 @@
         "requires": [
             "widget",
             "dd-constrain",
-            "substitute",
             "event-key"
         ],
         "skinnable": true
@@ -2101,7 +2097,6 @@
         "requires": [
             "event-simulate",
             "event-custom",
-            "substitute",
             "json-stringify"
         ]
     },
