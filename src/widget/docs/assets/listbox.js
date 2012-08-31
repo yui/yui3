@@ -11,7 +11,7 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
                 descendants: ".yui3-option",
                 keys: {
                     next: "down:40",    // Down arrow
-                    previous: "down:38" // Up arrow 
+                    previous: "down:38" // Up arrow
                 },
                 circular: true
             });
@@ -67,7 +67,7 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
         });
     },
 
-    // Helper Method, to find the correct next sibling, taking into account nested ListBoxes    
+    // Helper Method, to find the correct next sibling, taking into account nested ListBoxes
     _selectNextSibling : function(item, direction) {
 
         var parent = item.get("parent"),
@@ -103,7 +103,7 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
                     nestedOptionClassName : this.getClassName("option"),
                     label : this.get("label")
                 },
-                liHtml = Y.substitute(this.NESTED_TEMPLATE, tokens),
+                liHtml = Y.Lang.sub(this.NESTED_TEMPLATE, tokens),
                 li = Y.Node.create(liHtml),
 
                 boundingBox = this.get("boundingBox"),
@@ -114,9 +114,9 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
         }
     }
 
-}, { 
+}, {
     ATTRS : {
-        defaultChildType: {  
+        defaultChildType: {
             value: "Option"
         },
         label : {
@@ -141,9 +141,9 @@ Y.Option = Y.Base.create("option", Y.Widget, [Y.WidgetChild], {
             validator: Y.Lang.isString
         },
         tabIndex: {
-    		value: -1
-        }        
+            value: -1
+        }
     }
 });
 
-}, '3.1.0' ,{requires:['substitute', 'widget', 'widget-parent', 'widget-child', 'node-focusmanager']});
+}, '3.1.0' ,{requires:['widget', 'widget-parent', 'widget-child', 'node-focusmanager']});
