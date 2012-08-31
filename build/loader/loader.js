@@ -4208,7 +4208,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base",
             "node",
             "selector-css3",
-            "substitute",
             "yui-throttle"
         ]
     },
