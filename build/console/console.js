@@ -1,4 +1,4 @@
-YUI.add('console', function(Y) {
+YUI.add('console', function (Y, NAME) {
 
 /**
  * Console creates a visualization for messages logged through calls to a YUI
@@ -1514,4 +1514,4 @@ Y.Console = Y.extend(Console, Y.Widget,
 });
 
 
-}, '@VERSION@' ,{requires:['substitute','widget','yui-log'], lang:['en', 'es', 'ja']});
+}, '@VERSION@', {"requires": ["yui-log", "widget"], "skinnable": true, "lang": ["en", "es", "ja"]});
