@@ -1,4 +1,4 @@
-YUI.add('jsonp', function(Y) {
+YUI.add('jsonp', function (Y, NAME) {
 
 var isFunction = Y.Lang.isFunction;
 
@@ -249,4 +249,4 @@ if (!YUI.Env.JSONP) {
 }
 
 
-}, '@VERSION@' ,{requires:['get','oop']});
+}, '@VERSION@', {"requires": ["get", "oop"]});
