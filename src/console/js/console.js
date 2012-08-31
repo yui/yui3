@@ -86,7 +86,7 @@ var getCN = Y.ClassNameManager.getClassName,
     isNumber   = L.isNumber,
     isString   = L.isString,
     merge      = Y.merge,
-    substitute = Y.substitute;
+    substitute = Y.Lang.sub;
     
 
 function Console() {
