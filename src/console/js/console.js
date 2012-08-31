@@ -1191,7 +1191,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     /**
      * Default markup template used to create the DOM structure for Console
      * entries. The markup contains {placeholder}s for content and classes
-     * that are replaced via Y.substitute.  The default template contains
+     * that are replaced via Y.Lang.sub.  The default template contains
      * the {placeholder}s identified in Console.ENTRY_CLASSES as well as the
      * following placeholders that will be populated by the log entry data:
      *
