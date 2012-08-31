@@ -1,0 +1,10 @@
+{
+    "name": "stylesheet",
+    "builds": {
+        "stylesheet": {
+            "jsfiles": [
+                "stylesheet.js"
+            ]
+        }
+    }
+}
