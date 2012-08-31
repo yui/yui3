@@ -1,0 +1,60 @@
+{
+    "name": "datatable",
+    "builds": {
+        "datatable-scroll": {
+            "jsfiles": [
+                "scroll.js"
+            ]
+        },
+        "datatable-body": {
+            "jsfiles": [
+                "body.js"
+            ]
+        },
+        "datatable-datasource": {
+            "jsfiles": [
+                "datatable-datasource.js"
+            ]
+        },
+        "datatable-core": {
+            "jsfiles": [
+                "core.js"
+            ]
+        },
+        "datatable-sort": {
+            "jsfiles": [
+                "sort.js"
+            ]
+        },
+        "datatable-message": {
+            "jsfiles": [
+                "message.js"
+            ]
+        },
+        "datatable-head": {
+            "jsfiles": [
+                "head.js"
+            ]
+        },
+        "datatable-table": {
+            "jsfiles": [
+                "table.js"
+            ]
+        },
+        "datatable-base": {
+            "jsfiles": [
+                "base.js"
+            ]
+        },
+        "datatable-mutable": {
+            "jsfiles": [
+                "mutable.js"
+            ]
+        },
+        "datatable-column-widths": {
+            "jsfiles": [
+                "colwidths.js"
+            ]
+        }
+    }
+}
