@@ -15,7 +15,7 @@
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         coverage: ['substitute']
-    }).use("dump", "test", "console", "event-custom", function(Y) {
+    }).use("dump", "test", "console", "event-custom", "substitute", function(Y) {
 
         var button = Y.one('#btnRun'),
             Assert = Y.Assert,
