@@ -1,7 +1,12 @@
 {
     "name": "simpleyui",
+    "exec": [
+        "./scripts/concat.js"
+    ],
     "builds": {
         "simpleyui": {
+            "name": "yui",
+            "basefilename": "simpleyui",
             "config": {
                 "use": [
                     "yui",
