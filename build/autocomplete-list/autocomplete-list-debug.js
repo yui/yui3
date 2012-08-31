@@ -1,4 +1,4 @@
-YUI.add('autocomplete-list', function(Y) {
+YUI.add('autocomplete-list', function (Y, NAME) {
 
 /**
 Traditional autocomplete dropdown list widget, just like Mom used to make.
@@ -891,4 +891,4 @@ for API docs.
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], requires:['autocomplete-base', 'event-resize', 'node-screen', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true});
+}, '@VERSION@', {"after": ["autocomplete-sources"], "lang": ["en"], "requires": ["autocomplete-base", "event-resize", "node-screen", "selector-css3", "shim-plugin", "widget", "widget-position", "widget-position-align"], "skinnable": true});
