@@ -1,6 +1,32 @@
 ScrollView Change History
 =========================
 
+3.6.1
+--------
+Detailed overview of all changes (including protected/private) @ https://gist.github.com/3522590
+
+Public API changes/fixes:
+
+  * Added: Forced-Axis and Dual-Axis Support - ScrollView now has an optional axis property that can be declared with values: "x", "y", or "xy". (#2532631)
+
+  * Added: Initial support for RTL (Right-To-Left) layouts (#2531874).
+
+  * Moved: Paginator’s scrollTo() method has been deprecated and replaced with scrollToIndex. (##2530145)
+
+  * Fix: Improved reliability of the scrollEnd event. It now only fires once per scrolling sequence, instead of multiple times. 
+
+  * Fix: Multiple listeners could sometimes be added for drag and flick events.
+
+  * Fix: Mousewheel events now properly update the 'scrollY' attribute.
+
+  * Fix: Bug where scrollview.pages.scrollTo may not actually scroll to the desired page, or may cause a lock-up of the widget.
+
+Additional notes:
+
+  * Unit test coverage on scrollview-base and scrollview-paginator are both at 80+% (#2532288, #2532287)
+
+
+
 3.6.0
 -----
   

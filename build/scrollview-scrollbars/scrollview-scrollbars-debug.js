@@ -165,7 +165,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */    
     _hostDimensionsChange: function() {
         var host = this._host,
-            axis = host.axis;
+            axis = host._cAxis;
 
         this._renderBar(this.get(VERTICAL_NODE), axis.y, 'vert');
         this._renderBar(this.get(HORIZONTAL_NODE), axis.x, 'horiz');
@@ -425,7 +425,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host,
-            axis = host.axis;
+            axis = host._cAxis;
 
         duration = (duration || 0)/1000;
 
