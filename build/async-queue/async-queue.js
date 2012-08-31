@@ -1,4 +1,4 @@
-YUI.add('async-queue', function(Y) {
+YUI.add('async-queue', function (Y, NAME) {
 
 /**
  * <p>AsyncQueue allows you create a chain of function callbacks executed
@@ -519,4 +519,4 @@ Y.extend(Queue, Y.EventTarget, {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom']});
+}, '@VERSION@', {"requires": ["event-custom"]});
