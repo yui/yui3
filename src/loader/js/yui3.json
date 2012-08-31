@@ -452,8 +452,7 @@
         ],
         "requires": [
             "yui-log",
-            "widget",
-            "substitute"
+            "widget"
         ],
         "skinnable": true
     },
@@ -2101,7 +2100,6 @@
         "requires": [
             "event-simulate",
             "event-custom",
-            "substitute",
             "json-stringify"
         ]
     },

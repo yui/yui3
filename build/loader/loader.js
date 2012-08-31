@@ -3312,8 +3312,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ],
         "requires": [
             "yui-log",
-            "widget",
-            "substitute"
+            "widget"
         ],
         "skinnable": true
     },
@@ -5035,7 +5034,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-simulate",
             "event-custom",
-            "substitute",
             "json-stringify"
         ]
     },
