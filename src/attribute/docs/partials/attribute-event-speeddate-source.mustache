@@ -27,7 +27,7 @@
 // Get a new instance of YUI and 
 // load it with the required set of modules
 
-YUI().use("collection", "event", "node", "attribute", "substitute", function(Y) {
+YUI().use("collection", "event", "node", "attribute", function(Y) {
 
     // Setup custom class which we want to add managed attribute support to
 
@@ -74,7 +74,7 @@ YUI().use("collection", "event", "node", "attribute", "substitute", function(Y) 
             interests: (this.get("interests").length == 0) ? "absolutely nothing" : this.get("interests").join(", ")
         };
 
-        this.nameTag = Y.Node.create(Y.substitute(SpeedDater.NAMETAG, tokens));
+        this.nameTag = Y.Node.create(Y.Lang.sub(SpeedDater.NAMETAG, tokens));
         Y.one(where).appendChild(this.nameTag);
 
         this.listenForChanges();
