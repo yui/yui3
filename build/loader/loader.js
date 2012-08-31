@@ -4956,7 +4956,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-constrain",
-            "substitute",
             "event-key"
         ],
         "skinnable": true
