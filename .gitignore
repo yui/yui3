@@ -14,13 +14,6 @@ src/build.log
 src/out
 node_modules
 api-js/
-build/datatable-body/assets/
-build/datatable-core/assets/
-build/datatable-head/assets/
-build/datatable-table/assets/
-build/datatable-column-widths/assets/
-build/datatable-mutable/assets/
-build/datatable-datasource/assets/
 build/datatable-base/assets/datatable-scroll-core.css
 build/datatable-base/assets/datatable-sort-core.css
 build/datatable-base/assets/skins/night/datatable-scroll-skin.css
@@ -71,9 +64,6 @@ build/datatable-message/assets/skins/sam/datatable-sort-skin.css
 build/datatable-message/assets/skins/sam/*.png
 build/datatable-message/assets/skins/night/*.png
 build/datatable-base-deprecated/assets/datatable-base-core.css
-build/datatable-datasource-deprecated/assets/
-build/datatable-scroll-deprecated/assets/
-build/datatable-sort-deprecated/assets/
 build/scrollview-base-ie/assets/
 build/scrollview-paginator/assets/
 build/scrollview/assets/
