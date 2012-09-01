@@ -148,7 +148,7 @@ if (!YUI.YUITest) {
         if (Y.Test.Runner._log) {
             Y.log(message, messageType, "TestRunner");
         }
-    }
+    };
 
     var i, name;
 
