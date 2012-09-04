@@ -303,7 +303,7 @@
 		 *
 		 * @property CENTER_BUTTON_TEMPLATE
 		 * @type {HTML}
-		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
+		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.Lang.sub('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
 		 * @protected
 		 */
 		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div></div>';
@@ -901,7 +901,7 @@
             var contentBox = this.get("contentBox"),
                 label = contentBox.one("." + Dial.CSS_CLASSES.label);
             if (!label) {
-                label = Node.create(Y.substitute(Dial.LABEL_TEMPLATE, this.get('strings')));
+                label = Node.create(Y.Lang.sub(Dial.LABEL_TEMPLATE, this.get('strings')));
                 contentBox.append(label);
             }
             this._labelNode = label;
@@ -950,7 +950,7 @@
             var contentBox = this.get("contentBox"),
                 centerButton = contentBox.one("." + Dial.CSS_CLASSES.centerButton);
             if (!centerButton) {
-                centerButton = Node.create(Y.substitute(Dial.CENTER_BUTTON_TEMPLATE, this.get('strings')));
+                centerButton = Node.create(Y.Lang.sub(Dial.CENTER_BUTTON_TEMPLATE, this.get('strings')));
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(centerButton);
             }
             this._centerButtonNode = centerButton;
@@ -968,7 +968,7 @@
                 contentBox = this.get("contentBox"),
                 handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
             if (!handle) {
-                handle = Node.create(Y.substitute(Dial.HANDLE_TEMPLATE, this.get('strings')));
+                handle = Node.create(Y.Lang.sub(Dial.HANDLE_TEMPLATE, this.get('strings')));
                 handle.setAttribute('aria-labelledby', labelId);  // get unique id for specifying a label & handle for ARIA
                 this._labelNode.one('.' + Dial.CSS_CLASSES.labelString).setAttribute('id', labelId);  // When handle gets focus, screen reader will include label text when reading the value.
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(handle);

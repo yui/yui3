@@ -214,7 +214,7 @@ The following properties are meaningful to App classes and subclasses. In additi
           <dt>`parent`</dt>
           <dd>
             <p>
-            String to another named view in this hash that represents the parent view within the application's view hierarchy; e.g. a `"photo"` view could have `"album"` has its `parent` view. This parent/child relationship is a useful cue for things like transitions.
+            String to another named view in this hash that represents the parent view within the application's view hierarchy; e.g. a `"photo"` view could have `"album"` as its `parent` view. This parent/child relationship is a useful cue for things like transitions.
             </p>
           </dd>
 
@@ -581,7 +581,7 @@ server.listen(process.env.PORT || 3000);
 ```
 
 <p>
-In the above example, the server handles full URLs by sending a redirect back to the root ("/") with a hash-based path and serves a "shell" HTML page to delegate control to a `Y.App` instance. Once the app is loaded, it will dipatch the hash-based path to its route handlers, finishing the fulfillment of the request on the client.
+In the above example, the server handles full URLs by sending a redirect back to the root ("/") with a hash-based path and serves a "shell" HTML page to delegate control to a `Y.App` instance. Once the app is loaded, it will dispatch the hash-based path to its route handlers, finishing the fulfillment of the request on the client.
 </p>
 
 <p>
@@ -821,7 +821,7 @@ A primary feature of App is its flexible view management, which enables you to d
 <h4>Declaring Views</h4>
 
 <p>
-The `views` property of an App class allows you to specify a mapping of view-names to view-metadata that should be registered to your app. This way you can specify information about your app's views — how they should be treated by the app, and how they related to other views — up-front, in a declarative way that is self-documenting.
+The `views` property of an App class allows you to specify a mapping of view-names to view-metadata that should be registered to your app. This way you can specify information about your app's views — how they should be treated by the app, and how they relate to other views — up-front, in a declarative way that is self-documenting.
 </p>
 
 <p>
@@ -829,7 +829,7 @@ You can setup this views mapping on both App subclasses and instances. Every App
 </p>
 
 <p>
-The follow example shows the creation of an App subclass, `CustomApp`, which has a few default views defined, and an instance of `CustomApp` which defines another view and overrides some of the defaults.
+The following example shows the creation of an App subclass, `CustomApp`, which has a few default views defined, and an instance of `CustomApp` which defines another view and overrides some of the defaults.
 </p>
 
 ```
@@ -1017,7 +1017,7 @@ The following is the list of `options` which affect how the app will switch its 
     </p>
 
     <p>
-    Specifying a callback function is useful you need access to the view instance which is created as a result of calling `showView()`. Also, if an app is using transitions, the callback function will be called once the transitions have completed.
+    Specifying a callback function is useful if you need access to the view instance which is created as a result of calling `showView()`. Also, if an app is using transitions, the callback function will be called once the transitions have completed.
     </p>
   </dd>
 
@@ -1293,7 +1293,7 @@ A key feature of `Y.App` is its robust URL navigation management. You can simply
 </p>
 
 <p>
-This enables an app fulfill a "page request" by using data it already has stored in models or loading new data, then composing and showing a view which represents the app's current state for this URL — all without requiring a full page load.
+This enables an app to fulfill a "page request" by using data it already has stored in models or loading new data, then composing and showing a view which represents the app's current state for this URL — all without requiring a full page load.
 </p>
 
 <h4>Programmatic navigation</h4>
@@ -1523,7 +1523,7 @@ When writing your own class extensions to add features to `Y.App`, feel free to 
 <ol>
   <li>
     <p>
-    The addition functionality should be <strong>disabled by default</strong>. The API for the class extensions should provide some way for the user to <em>opt-in</em> to using the features it adds.
+    The additional functionality should be <strong>disabled by default</strong>. The API for the class extensions should provide some way for the user to <em>opt-in</em> to using the features it adds.
     </p>
 
     <p>
@@ -1593,9 +1593,15 @@ Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
         // Share these routes with all CustomApp instances.
         routes: {
             value: [
+<<<<<<< HEAD
                 {path: '/',             callbacks: 'handleHome'},
                 {path: '/users/',       callbacks: 'handleUsers'},
                 {path: '/users/:name/', callbacks: 'handleUser'}
+=======
+                {path: '/',             callback: 'handleHome'},
+                {path: '/users/',       callback: 'handleUsers'},
+                {path: '/users/:name/', callback: 'handleUser'}
+>>>>>>> master
             ]
         }
     }
@@ -1779,7 +1785,7 @@ Some structural CSS is required to setup an app's `container` and `viewContainer
 <h3>Progressively-enhanced vs. Client-only Apps</h3>
 
 <p>
-It's important to understand the difference between the preferred approach of developing an app using a progressive enhancement strategy vs. creating a client side-only app, and when it might be appropriate to do so. As discussed in the [[#Routing Coordination with Server]], `Y.App` provides the tools and is flexible enough implement an app using either strategy, but <strong>there are drawbacks to client-only applications</strong>.
+It's important to understand the difference between the preferred approach of developing an app using a progressive enhancement strategy vs. creating a client side-only app, and when it might be appropriate to do so. As discussed in the [[#Routing Coordination with Server]], `Y.App` provides the tools and is flexible enough to implement an app using either strategy, but <strong>there are drawbacks to client-only applications</strong>.
 </p>
 
 <p>
@@ -1797,7 +1803,7 @@ A client-only app will use hash-based URLs instead of the standard, full-path UR
 </p>
 
 <p>
-The following shows how this information loss manifest itself:
+The following shows how this information loss manifests itself:
 </p>
 
 ```nohighlight
@@ -1828,7 +1834,7 @@ To render the initial state in a client-only app, the server has to send over th
 </p>
 
 <p>
-Optimizing your app to be indexed by search engines is also relates to this. SEO requires that your app uses full-path URLs so the server can route requests and render the initial state. The basic functions of your app which you want to be indexable should work without JavaScript.
+Optimizing your app to be indexed by search engines also relates to this. SEO requires that your app uses full-path URLs so the server can route requests and render the initial state. The basic functions of your app which you want to be indexable should work without JavaScript.
 </p>
 
 <h4>When Client-only Apps are Appropriate</h4>
@@ -2005,5 +2011,5 @@ Be cautious about the number of preserved views you have in your application. Th
 </ul>
 
 <p>
-App relies heavily on Router which has some know limitations in Internet Explorer 9 and lower, and Android 2.x. See <a href="../router/index.html#known-limitations">Router's Known Limitations</a> for more details.
+App relies heavily on Router which has some known limitations in Internet Explorer 9 and lower, and Android 2.x. See <a href="../router/index.html#known-limitations">Router's Known Limitations</a> for more details.
 </p>
