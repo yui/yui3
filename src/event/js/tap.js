@@ -117,7 +117,6 @@ Y.Event.define(EVENTS.TAP, {
     },
 
     touchStart: function (event, node, subscription, notifier, delegate) {
-      console.log('in touch start');
         var curr_handles = delegate ? HANDLES.DELEGATE : HANDLES.ON,
             context = {
                 cancelled: false
@@ -127,7 +126,6 @@ Y.Event.define(EVENTS.TAP, {
         if (event.button && event.button === 3) {
             return;
         }
-        console.log('test1');
         context.node = delegate ? event.currentTarget : node;
 
         //There is a double check in here to support event simulation tests
@@ -137,7 +135,6 @@ Y.Event.define(EVENTS.TAP, {
         else {
           context.startXY = [ event.pageX, event.pageY ];
         }
-        console.log('test3');
         // for now just support a 1 finger count (later enhance via config)
         if (event.touches && event.touches.length !== 1) {
             return;
@@ -160,7 +157,6 @@ Y.Event.define(EVENTS.TAP, {
     },
 
     touchEnd: function (event, node, subscription, notifier, delegate, context) {
-        console.log('in touch end');
         var startXY = context.startXY,
             endXY,
             clientXY,
@@ -179,8 +175,6 @@ Y.Event.define(EVENTS.TAP, {
         detachHelper(subscription, [ handles.MOVE, handles.END, handles.CANCEL ], true, context);
 
         // make sure mouse didn't move
-        console.log(endXY[0] - startXY[0]);
-        console.log(endXY[1] - startXY[1]);
         if (Math.abs(endXY[0] - startXY[0]) === 0 && Math.abs(endXY[1] - startXY[1]) === 0) {
 
             event.type = EVENTS.TAP;
