@@ -61,12 +61,12 @@ The following is an example of how these features can be used:
 **/
 var KEYWORDS = Y.Color.KEYWORDS,
     // regular expressions used for validation and identification
-    REXP_HEX = Y.Color.re_hex,
-    REXP_HEX3 = Y.Color.re_hex3,
-    REXP_RGB = Y.Color.re_RGB,
-    REXP_RGBA = /rgba\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3}), ?([.0-9]{1,3})\)/,
-    REXP_HSL = /hsl\(([0-9]{1,3}), ?([0-9]*\.?[0-9]+)%, ?([0-9]*\.?[0-9]+)%\)/,
-    REXP_HSLA = /hsla\(([0-9]{1,3}), ?([0-9]*\.?[0-9]+)%, ?([0-9]*\.?[0-9]+)%, ?([.0-9]{1,3})\)/,
+    REGEX_HEX = Y.Color.re_hex,
+    REGEX_HEX3 = Y.Color.re_hex3,
+    REGEX_RGB = Y.Color.re_RGB,
+    REGEX_RGBA = /rgba\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3}), ?([.0-9]{1,3})\)/,
+    REGEX_HSL = /hsl\(([0-9]{1,3}), ?([0-9]*\.?[0-9]+)%, ?([0-9]*\.?[0-9]+)%\)/,
+    REGEX_HSLA = /hsla\(([0-9]{1,3}), ?([0-9]*\.?[0-9]+)%, ?([0-9]*\.?[0-9]+)%, ?([.0-9]{1,3})\)/,
 
     HEX = 'hex',
     RGB = 'rgb',
@@ -76,13 +76,13 @@ Color = {
     //----------------------------
     // C O N S T A N T S
     //---------------------------
-    REXP: {
-        'hex': REXP_HEX,
-        'hex3': REXP_HEX3,
-        'rgbcss': REXP_RGB,
-        'rgbacss': REXP_RGBA,
-        'hslcss': REXP_HSL,
-        'hslacss': REXP_HSLA
+    REGEX: {
+        'hex': REGEX_HEX,
+        'hex3': REGEX_HEX3,
+        'rgbcss': REGEX_RGB,
+        'rgbacss': REGEX_RGBA,
+        'hslcss': REGEX_HSL,
+        'hslacss': REGEX_HSLA
     },
 
     //----------------------------
@@ -257,15 +257,15 @@ Color = {
 
         if (KEYWORDS[val]) {
             options.type = 'keyword';
-        } else if (REXP_RGB.exec(val)) {
+        } else if (REGEX_RGB.exec(val)) {
             options.type = RGB;
-        } else if (REXP_RGBA.exec(val)) {
+        } else if (REGEX_RGBA.exec(val)) {
             options.type = RGB + 'a';
-        } else if (REXP_HSL.exec(val)) {
+        } else if (REGEX_HSL.exec(val)) {
             options.type = HSL;
-        } else if (REXP_HSLA.exec(val)) {
+        } else if (REGEX_HSLA.exec(val)) {
             options.type = HSL + 'a';
-        } else if (REXP_HEX.exec(val) || REXP_HEX3.exec(val)) {
+        } else if (REGEX_HEX.exec(val) || REGEX_HEX3.exec(val)) {
             options.type = HEX;
         }
 
@@ -304,12 +304,12 @@ Color = {
                 type = 'hex';
                 // break; overflow intentional
             case 'hex':
-                matches = REXP_HEX.exec(val);
+                matches = REGEX_HEX.exec(val);
                 if (matches) {
                     arr = [matches[2], matches[3], matches[4]];
                     break;
                 }
-                matches = REXP_HEX3.exec(val);
+                matches = REGEX_HEX3.exec(val);
                 if (matches) {
                     arr = [
                         matches[2].toString() + matches[2],
@@ -324,7 +324,7 @@ Color = {
                     arr = val.concat();
                     break;
                 }
-                matches = REXP_RGB.exec(val);
+                matches = REGEX_RGB.exec(val);
                 if (matches) {
                     arr = [ matches[1], matches[2], matches[3] ];
                 }
@@ -336,7 +336,7 @@ Color = {
                     arr = val.concat();
                     break;
                 }
-                matches = REXP_RGBA.exec(val);
+                matches = REGEX_RGBA.exec(val);
                 if (matches) {
                     options.opacity = matches[4];
                     arr = [ matches[1], matches[2], matches[3] ];
@@ -348,7 +348,7 @@ Color = {
                     arr = val.concat();
                     break;
                 }
-                matches = REXP_HSL.exec(val);
+                matches = REGEX_HSL.exec(val);
                 if (matches) {
                     arr = [ matches[1], matches[2], matches[3] ];
                 }
@@ -360,7 +360,7 @@ Color = {
                     arr = val.concat();
                     break;
                 }
-                matches = REXP_HSLA.exec(val);
+                matches = REGEX_HSLA.exec(val);
                 if (matches) {
                     options.opacity = matches[4];
                     arr = [ matches[1], matches[2], matches[3] ];

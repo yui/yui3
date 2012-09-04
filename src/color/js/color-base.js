@@ -55,9 +55,9 @@ The following is an example of how these features can be used:
 **/
 var KEYWORDS = {'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff', 'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f', 'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0', 'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'},
     // regular expressions used for validation and identification
-    REXP_HEX = /^(#?)([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/,
-    REXP_HEX3 = /^(#?)([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/,
-    REXP_RGB = /^rgb\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3})\)/,
+    REGEX_HEX = /^(#?)([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/,
+    REGEX_HEX3 = /^(#?)([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/,
+    REGEX_RGB = /^rgb\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3})\)/,
 
     HEX = 'hex',
     RGB = 'rgb',
@@ -67,11 +67,11 @@ Color = {
 
     KEYWORDS: KEYWORDS,
 
-    re_RGB: REXP_RGB,
+    re_RGB: REGEX_RGB,
 
-    re_hex: REXP_HEX,
+    re_hex: REGEX_HEX,
 
-    re_hex3: REXP_HEX3,
+    re_hex3: REGEX_HEX3,
 
     /**
     Converts provided color value to an array of hex values or hash prepended string
@@ -146,9 +146,9 @@ Color = {
 
         if (KEYWORDS[val]) {
             type = 'keyword';
-        } else if (REXP_RGB.exec(val)) {
+        } else if (REGEX_RGB.exec(val)) {
             type = RGB;
-        } else if (REXP_HEX.exec(val) || REXP_HEX3.exec(val)) {
+        } else if (REGEX_HEX.exec(val) || REGEX_HEX3.exec(val)) {
             type = HEX;
         }
 
@@ -187,12 +187,12 @@ Color = {
         }
 
         if (type === 'hex') {
-            matches = REXP_HEX.exec(val);
+            matches = REGEX_HEX.exec(val);
             if (matches) {
                 arr = [matches[2], matches[3], matches[4]];
                 break;
             }
-            matches = REXP_HEX3.exec(val);
+            matches = REGEX_HEX3.exec(val);
             if (matches) {
                 arr = [
                     matches[2].toString() + matches[2],
@@ -205,7 +205,7 @@ Color = {
                 arr = val;
                 break;
             }
-            matches = REXP_RGB.exec(val);
+            matches = REGEX_RGB.exec(val);
             if (matches) {
                 arr = [ matches[1], matches[2], matches[3] ];
             }
