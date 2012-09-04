@@ -181,41 +181,39 @@ Color = {
         type = options.type.toLowerCase();
         val = (Y.Lang.isString(val)) ? val.toLowerCase() : val;
 
-        switch(type) {
-            case 'keyword':
-                val = KEYWORDS[val];
-                type = 'hex';
-                // break; overflow intentional
-            case 'hex':
-                matches = REXP_HEX.exec(val);
-                if (matches) {
-                    arr = [matches[2], matches[3], matches[4]];
-                    break;
-                }
-                matches = REXP_HEX3.exec(val);
-                if (matches) {
-                    arr = [
-                        matches[2].toString() + matches[2],
-                        matches[3].toString() + matches[3],
-                        matches[4].toString() + matches[4]
-                    ];
-                }
-                break;
-            case 'rgb':
-            case 'rbgcss':
-                if (Y.Lang.isArray(val) && val.length === 3) {
-                    arr = val;
-                    break;
-                }
-                matches = REXP_RGB.exec(val);
-                if (matches) {
-                    arr = [ matches[1], matches[2], matches[3] ];
-                }
-                break;
-            default:
-                Y.log('Type not found.', 'error', 'Y.Color::_toArray');
-                return options;
+        if (type === 'keyword') {
+            val = KEYWORDS[val];
+            type = 'hex';
         }
+
+        if (type === 'hex') {
+            matches = REXP_HEX.exec(val);
+            if (matches) {
+                arr = [matches[2], matches[3], matches[4]];
+                break;
+            }
+            matches = REXP_HEX3.exec(val);
+            if (matches) {
+                arr = [
+                    matches[2].toString() + matches[2],
+                    matches[3].toString() + matches[3],
+                    matches[4].toString() + matches[4]
+                ];
+            }
+        } else if (type === 'rgb' || type === 'rgbcss') {
+            if (Y.Lang.isArray(val) && val.length === 3) {
+                arr = val;
+                break;
+            }
+            matches = REXP_RGB.exec(val);
+            if (matches) {
+                arr = [ matches[1], matches[2], matches[3] ];
+            }
+        } else {
+            Y.log('Type not found.', 'error', 'Y.Color::_toArray');
+            return options;
+        }
+
 
         options.type = type.replace(/a?(css)?$/,'');
         options.value = arr;
