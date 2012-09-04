@@ -50,11 +50,16 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	initializer: function(cfg)
 	{
 		var host = this,
-            graphic = cfg.graphic;
+            graphic = cfg.graphic,
+            data = this.get("data");
 		host.createNode();
         if(graphic)
         {
             this._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
         }
         this._updateHandler();
 	},
@@ -1135,6 +1140,42 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             graphic._toBack(this);
         }
     },
+
+    /**
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i = 0,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1),
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    this[method].apply(this, args);
+                }
+            }
+            this.end();
+        }
+    },
 	
     /**
      *  Destroys shape
@@ -1497,6 +1538,23 @@ VMLShape.ATTRS = {
 			return this.node;
 		}
 	},
+
+    /**
+     * Represents an SVG Path string.
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the container Graphic.

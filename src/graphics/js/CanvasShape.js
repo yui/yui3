@@ -40,7 +40,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	initializer: function(cfg)
 	{
 		var host = this,
-            graphic = cfg.graphic;
+            graphic = cfg.graphic,
+            data = this.get("data");
         host._initProps();
 		host.createNode(); 
 		host._xcoords = [0];
@@ -48,6 +49,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         if(graphic)
         {
             this._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
         }
 		host._updateHandler();
 	},
@@ -582,16 +587,22 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         
         this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
-		node.style.MozTransformOrigin = transformOrigin; 
+		/*
+        node.style.MozTransformOrigin = transformOrigin; 
 		node.style.webkitTransformOrigin = transformOrigin;
 		node.style.msTransformOrigin = transformOrigin;
 		node.style.OTransformOrigin = transformOrigin;
+        */
+        Y_DOM.setStyle(node, "transformOrigin", transformOrigin);
         if(transform)
 		{
+            Y_DOM.setStyle(node, "transform", transform);
+            /*
             node.style.MozTransform = transform;
             node.style.webkitTransform = transform;
             node.style.msTransform = transform;
             node.style.OTransform = transform;
+            */
 		}
         this._transforms = [];
 	},
@@ -907,6 +918,42 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         if(graphic)
         {
             graphic._toBack(this);
+        }
+    },
+
+    /**
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i = 0,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1),
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    this[method].apply(this, args);
+                }
+            }
+            this.end();
         }
     },
     
@@ -1229,6 +1276,23 @@ CanvasShape.ATTRS =  {
 	pointerEvents: {
 		value: "visiblePainted"
 	},
+
+    /**
+     * Represents an SVG Path string.
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the container Graphic.
