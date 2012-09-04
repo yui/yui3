@@ -103,6 +103,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * Contains the distance (postive or negative) in pixels by which 
+     * the scrollview was last scrolled. This is useful when setting up 
+     * click listeners on the scrollview content, which on mouse based 
+     * devices are always fired, even after a drag/flick. 
+     * 
+     * <p>Touch based devices don't currently fire a click event, 
+     * if the finger has been moved (beyond a threshold) so this 
+     * check isn't required, if working in a purely touch based environment</p>
+     * 
+     * @property lastScrolledAmt
+     * @type Number
+     * @public
+     */
+    lastScrolledAmt: null,
+
+    /**
      * Designated initializer
      *
      * @method initializer
@@ -513,6 +529,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // TODO: Review if neccesary (#2530129)
         e.stopPropagation();
 
+        // Reset lastScrolledAmt
+        sv.lastScrolledAmt = 0;
+
         // Stores data for this gesture cycle.  Cleaned up later
         sv._gesture = {
 
@@ -730,6 +749,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
         if (bb.contains(e.target)) {
+        
+            // Reset lastScrolledAmt
+            sv.lastScrolledAmt = 0;
+
             // Jump to the new offset
             sv.set(SCROLL_Y, scrollToY);
 
@@ -822,6 +845,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             easing = e.easing,
             val = e.newVal,
             scrollToArgs = [];
+
+        // Set the scrolled value
+        sv.lastScrolledAmt = sv.lastScrolledAmt + (e.newVal - e.prevVal);
 
         // Generate the array of args to pass to scrollTo()
         if (e.attrName === SCROLL_X) {
