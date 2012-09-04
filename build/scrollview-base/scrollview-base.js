@@ -146,7 +146,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        sv._bindMousewheel(sv.get(MOUSEWHEEL));
+        console.log(ScrollView.MOUSEWHEEL);
+        sv._bindMousewheel(ScrollView.MOUSEWHEEL);
         
         sv._bindAttrs();
 
@@ -1093,16 +1094,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          */
         drag: {
             value: true
-        },
-
-        /**
-         * Enable/Disable scrolling the ScrollView content via mousewheel
-         * @attribute mousewheel
-         * @type boolean
-         * @default true
-         */
-        mousewheel: {
-            value: true
         }
     },
 
@@ -1187,8 +1178,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _TRANSITION: {
         DURATION: Y.Transition._VENDOR_PREFIX + 'TransitionDuration',
         PROPERTY: Y.Transition._VENDOR_PREFIX + 'TransitionProperty'
-    }
+    },
 
+    /**
+     * Enable/Disable scrolling content via mousewheel
+     * @property mousewheel
+     * @type boolean
+     * @static
+     * @default true
+     */
+    MOUSEWHEEL: {
+        value: true
+    }
     // End static properties
 
 });
