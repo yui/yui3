@@ -253,7 +253,7 @@ Y.View = Y.extend(View, Y.Base, {
     **/
     detachEvents: function () {
         Y.Array.each(this._attachedViewEvents, function (handle) {
-            if ( handle ) {
+            if (handle) {
                 handle.detach();
             }
         });
