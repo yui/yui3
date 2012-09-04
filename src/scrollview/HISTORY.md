@@ -3,6 +3,8 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Exposed mousewheel support as a static property at Y.ScrollView.MOUSEWHEEL.  Default: enabled
+
   * Reimplemented lastScrolledAmt (removed between 3.6.0 and 3.6.1)
 
   * Moved scrollview.axis and paginator.axis to writeOnce attributes
