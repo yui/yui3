@@ -64,6 +64,21 @@
                         "Move left on X should snap back": Y.UA.phantomjs,
                         "Move down on Y should move the content at least that distance": Y.UA.phantomjs,
                         "Move up on Y should bounce back": Y.UA.phantomjs
+
+                        // ** Selective disable/enable for easy testing purposes (SV test suite can take a little while to run all tests)
+						// "Ensure rendering & initial state are correct": true,
+						// "Ensure set('scrollX') works properly": true,
+						// "Ensure the 'scrollEnd' event fires": true,
+						// "Flick x should provide the correct reaction": true,
+						// "lastScrolledAmt should be correct": true,
+						// "Disabled flick should not scroll": true,
+						// "Move right on X should move the content right": true,
+						// "Move left on X should snap back": true,
+						// "Move down on Y should move the content at least that distance": true,
+						// "Move up on Y should bounce back": true,
+						// "Disabled drag should not scroll": true,
+						// "Disabled scrollview should not scroll": true,
+						// "Widget resize should trigger heightChange": true,
                     }
                 },
 
@@ -119,7 +134,6 @@
 					// Set it to a valid value
 					scrollview.set('scrollX', distance);
 					Y.Assert.areEqual(distance, scrollview.get('scrollX'));
-					// Y.Assert.areEqual(distance, scrollview.lastScrolledAmt); // @TODO: fix.  Update: Remove?
 				},
 
 				"Ensure the 'scrollEnd' event fires": function() {
@@ -157,6 +171,23 @@
 					});
 
 					Test.wait(4000);
+				},
+
+				"lastScrolledAmt should be correct": function() {
+					
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 500;
+
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(distance, scrollview.lastScrolledAmt);
+						})
+					});
+
+					scrollview.set('scrollX', distance, {duration: 1});
+
+					Test.wait(2000);
 				},
 
 				"Disabled flick should not scroll": function() {
