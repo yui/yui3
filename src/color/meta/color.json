@@ -1,0 +1,17 @@
+{
+    "color": {
+        "requires": [
+            "color-base"
+        ]
+    },
+    "color-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "color-harmony": {
+        "requires": [
+            "color"
+        ]
+    }
+}

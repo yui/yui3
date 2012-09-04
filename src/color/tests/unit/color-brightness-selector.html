@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>getSimilarBrightness(color, match)</title>
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<style>
+.color { display: block; width: 150; margin: 3px 20px ; }
+.color span {
+    background: white;
+    color: black;
+    display: block;
+    margin-left: 30px;
+    padding-left: 10px;
+    height: 1em;
+}
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>getSimilarBrightness(color, match)</h1>
+
+Start: <select name="start"></select><br>
+Match: <select name="match"></select><br>
+<button>Go</button>
+<br>
+
+<div class="start color"><span></span></div>
+<div class="match color"><span></span></div>
+<div class="end color"><span></span></div>
+
+<div id="log"></div>
+
+<script type="text/javascript">
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    combine: false,
+    modules: {
+    }
+}).use('node', "color", "color-harmony", function(Y) {
+
+    var startNode = Y.one('.start'),
+        matchNode = Y.one('.match'),
+        endNode = Y.one('.end'),
+
+        startHSL, matchHSL, endHSL,
+
+        startColor, matchColor,
+
+        startSelect = Y.one('select[name=start]'),
+        matchSelect = Y.one('select[name=match]');
+
+
+    var colors = {
+            'white':  { type: 'hsl', value: [   0,   0,100], to: 'hsl', css: true },
+            'black':  { type: 'hsl', value: [   0,   0,  0], to: 'hsl', css: true },
+            'red':    { type: 'hsl', value: [   0, 100, 50], to: 'hsl', css: true },
+            'orange': { type: 'hsl', value: [  30, 100, 50], to: 'hsl', css: true },
+            'yellow': { type: 'hsl', value: [  60, 100, 50], to: 'hsl', css: true },
+            'green':  { type: 'hsl', value: [ 120, 100, 50], to: 'hsl', css: true },
+            'blue':   { type: 'hsl', value: [ 240, 100, 50], to: 'hsl', css: true },
+            'purple': { type: 'hsl', value: [ 300, 100, 50], to: 'hsl', css: true }
+        };
+
+    var options = '';
+    Y.Object.each(colors, function(v, k) {
+        options += '<option value="' + k + '">' + k + '</option>';
+    });
+    Y.all('select').setContent(options);
+
+    Y.one('button').on('click', function() {
+        startColor = startSelect.get('value');
+        matchColor = matchSelect.get('value');
+        matchIt();
+    })
+
+function matchIt() {
+    startHSL = Y.Color.convert(colors[startColor]);
+    startNode.one('span').set('text', startColor + ': ' + startHSL);
+    startNode.setStyle('backgroundColor', startHSL);
+
+    Y.log(startColor);
+    Y.log(startHSL);
+    Y.log(Y.Color.getBrightness(colors[startColor]));
+
+
+    Y.log('--');
+
+    matchHSL = Y.Color.convert(colors[matchColor]);
+    matchNode.one('span').set('text', matchColor + ': ' + matchHSL);
+    matchNode.setStyle('backgroundColor', matchHSL);
+
+    Y.log(matchColor);
+    Y.log(matchHSL);
+    Y.log(Y.Color.getBrightness(colors[matchColor]));
+
+    Y.log('--');
+
+    var start = new Date();
+    endHSL = Y.Color.getSimilarBrightness(colors[startColor], colors[matchColor]);
+    var end = new Date();
+
+
+    endNode.one('span').set('text', endHSL);
+    endNode.setStyle('backgroundColor', endHSL);
+
+
+
+    var elapsed = (end - start);
+    Y.log('elapsed: ' + elapsed + ' ms');
+
+}
+});
+</script>
+</body>
+</html>

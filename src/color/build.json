@@ -1,0 +1,21 @@
+{
+    "name": "color",
+    "builds": {
+        "color": {
+            "jsfiles": [
+                "color.js"
+            ]
+        },
+        "color-base": {
+            "jsfiles": [
+                "color-base.js"
+            ]
+        },
+
+        "color-harmony": {
+            "jsfiles": [
+                "color-harmony.js"
+            ]
+        }
+    }
+}

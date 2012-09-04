@@ -1,0 +1,279 @@
+<div class="intro">
+<p> The Color Utility will give you the ability to convert colors to and from RGB, HSL, and Hex.</p>
+</div>
+
+{{>getting-started}}
+
+<h2 id="using">Using the {{displayName}}</h2>
+<p>Color allows you to convert a color from and to hexidecimal, RGB, and HSL.</p>
+<p></p>
+
+<h3 id="options">Color Options</h3>
+<p>Color methods take an object of options. Some methods require different options. In general, `value` is the only option required for every method.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>type</td>
+            <td>String</td>
+            <td>Identifies the type of color provided</td>
+        </tr>
+        <tr>
+            <td>value</td>
+            <td>String | Array</td>
+            <td>Color value to be converted</td>
+        </tr>
+        <tr>
+            <td>to</td>
+            <td>String</td>
+            <td>Desired converted color type</td>
+        </tr>
+        <tr>
+            <td>css</td>
+            <td>Boolean</td>
+            <td>Denotes if the returned value should be a CSS string (true) or an array of color values</td>
+        </tr>
+        <tr>
+            <td>count</td>
+            <td>Number</td>
+            <td>Denotes the requested number of returned harmony colors</td>
+        </tr>
+        <tr>
+            <td>variance</td>
+            <td>Number</td>
+            <td>Denotes plus or minus max variance when calculating similar colors</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Color uses `options.type` to specify what `options.value` should be provided. If `options.value` is a string and `options.type` is not provided, Color will attempt to detect the correct type.</p>
+<table>
+    <thead>
+        <tr>
+            <th>options.type</th>
+            <th>options.value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>keyword</td>
+            <td>Must be a keyword in Y.Color.KEYWORDS</td>
+        </tr>
+        <tr>
+            <td>hex</td>
+            <td>3 or 6 character representation with or without a '#' or array of [rr, gg, bb] strings</td>
+        </tr>
+        <tr>
+            <td>rgb</td>
+            <td>rgb(r, g, b) string or array of [r, g, b] values</td>
+        </tr>
+        <tr>
+            <td>rgba</td>
+            <td>rgba(r, g, b, a) string or array of [r, g, b, a] values</td>
+        </tr>
+        <tr>
+            <td>hsl</td>
+            <td>hsl(h, s%, l%) string or array of [h, s, l] values</td>
+        </tr>
+        <tr>
+            <td>hsla</td>
+            <td>hsla(h, s%, l%, a) string or array of [h, s, l, a] values</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Color uses `options.to` and `options.css` to specify the return value. The value will be converted to an array of values specific to `options.to`.</p>
+<table>
+    <thead>
+        <tr>
+            <th>options.to</th>
+            <th>Return value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>hex</td>
+            <td>returns [rr, gg, bb] or #rrggbb if options.css is true</td>
+        </tr>
+        <tr>
+            <td>rgb</td>
+            <td>returns [r, g, b] or rgb(r, g, b) if options.css is true</td>
+        </tr>
+        <tr>
+            <td>rgba</td>
+            <td>returns [r, g, b, a] or rgba(r, g, b, a) if options.css is true</td>
+        </tr>
+        <tr>
+            <td>hsl</td>
+            <td>returns [h, s, l] or hsl(h, s%, l%) if options.css is true</td>
+        </tr>
+        <tr>
+            <td>hsla</td>
+            <td>returns [h, s, l, a] or hsla(h, s%, l%, a) if options.css is true</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="basic">Basic Conversion</h3>
+<p>`toRGB` and `toHex` have the ability to take only a string to convert to either hex or RGB strings.</p>
+```
+Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+Y.Color.toHex('rgb(255, 0, 0)') // #ff0000
+```
+
+<p>`toHex` `toRGB` and `toHSL` can take an options object allowing you to specify the return value type. Remember, by default it will return an array of color values.</p>
+```
+Y.Color.toHex({
+    type: 'rgb',
+    value: [255, 255, 0]
+}); // ["ff", "ff", "00"]
+
+
+Y.Color.toHex({
+    type: 'rgb',
+    value: [255, 255, 0],
+    css: true
+}); // #ffff00
+```
+
+<p>Color also provides a sugar method, `convert()`. It takes an options object and uses `options.to` to determine what to convert the color to.</p>
+```
+Y.Color.convert({
+    type: 'hsl',
+    value: [240, 100, 50],
+    to: 'hex',
+    css: true
+}); // #0000ff
+```
+
+<h2 id="harmony">Harmony Colors</h2>
+<p>Color also makes it easy to get complementary, triads, tetrads, or offsets of a color through `color-harmony`. Harmony methods that retrun colors, will return an array with the color provied (converted, if requested) as the first index.</p>
+```
+<script>
+// Create a new YUI instance and populate it with the required modules.
+YUI().use('color-harmony', function (Y) {
+    // Color is available and ready for use with harmony methods added on.
+    // Add implementation code here.
+});
+</script>
+```
+
+For the following examples, we will use these color options to keep the examples consice.
+```
+var white =  { value: '#fff', to: 'hex', css: true },
+    black =  { value: '#000', to: 'hex', css: true },
+    red  =   { value: '#f00', to: 'hex', css: true },
+    orange = { value: '#f70', to: 'hex', css: true },
+    yellow = { value: '#ff0', to: 'hex', css: true },
+    green =  { value: '#0f0', to: 'hex', css: true },
+    blue =   { value: '#00f', to: 'hex', css: true },
+    purple = { value: '#f0f', to: 'hex', css: true };
+```
+
+
+<h3 id="complementary">Complementary</h3>
+<p>A complementary color is the opposite color on the subtractive color wheel.</p>
+<p>`getComplementary` will return an array of color values or string.</p>
+<img src="../assets/color/complementary-red-w.png">
+```
+Y.Color.getComplementary(red); // [ "#ff0000", "#00ff00"]
+```
+
+<h3 id="split">Split Complementary</h3>
+<p>Split complmenetary is a similar to complementary, with the exception of getting one color opposite the starting color, you get two colors adjacent to the opposite color.</p>
+<img src="../assets/color/split-red-w.png">
+```
+Y.Color.getSplit(red); //["#ff0000", "#00ff55", "#1eff00"]
+```
+
+<h3 id="analogous">Analogous</h3>
+<p>Analogous colors are colors adjacent to each other. Color will return an array of colors.</p>
+<p>The first color is the color you provided. The next to colors are clockwise from the start color. The last two are counter clockwise from the start color.</p>
+<p>The offset distance can be set with `options.offset`. The offset by default is 10.</p>
+<img src="../assets/color/analogous-orange-w.png">
+```
+Y.Color.getAnalogous(orange);
+// ["#ff7700", "#ff9100", "#ffae00", "#ff5900", "#ff3c00"]
+```
+
+<h3 id="triad">Traid</h3>
+<p>A triad will return three evenly spaced colors. The first being the color provided, the next two will be 120 degrees clockwise.</p>
+<img src="../assets/color/triad-purple-w.png">
+```
+Y.Color.getTriad(purple); // ["#ff00ff", "#ffaa00", "#00ff00"]
+```
+
+<h3 id="square">Square</h3>
+<p>A square will return four evenly spaced colors. The first being the color provide, the remaining three will be 90 degree offsets clockwise.</p>
+<img src="../assets/color/square-blue-w.png">
+```
+Y.Color.getSquare(blue);
+// ["#0000ff", "#ff0080", "#ffaa00", "#55ff00"]
+```
+
+<h3 id="tretrad">Tetrad</h3>
+<p>Tetrad is similar to square although the offsets are not equal. Square is comprised of the complementary color and an offset from the original and the complementary color.</p>
+<p>The offset distance can be set with `options.offset`. The offset by default is 60.</p>
+<img src="../assets/color/tetrad-blue-w.png">
+```
+Y.Color.getTetrad(blue);
+// ["#0000ff", "#ff00ff", "#ffaa00", "#aaff00"]
+```
+
+<h3 id="monochrome">Monocromatic</h3>
+<p>A monochromatic harmony set takes the hue and lightness of the provided color and returns an array of colors with adjusted saturations from zero to one hundred percent.</p>
+<p>You can specify the number of colors returned with `options.count`. By default five items are returned.</p>
+<img src="../assets/color/monochrome-green.png">
+```
+Y.Color.getMonochrome(green);
+// ["#808080", "#609f60", "#40bf40", "#20df20", "#00ff00"]
+```
+
+<h3 id="similar">Similar Colors</h3>
+<p>You can also get a set of colors similar to provided color. A similar color is a color with a similar hue, saturation, and/or luminance.</p>
+<p>To change the maximum offset, set `options.offset`. The offset by default is ten.</p>
+<p>You can specify the number of colors returned with `options.count`. By default five items are returned.</p>
+```
+Y.Color.getSimilar(purple);
+// ["#ff00ff", "#f429ff", "#bb03d3", "#c405d6", "#e01ff9", "#e402e8"]
+```
+
+<h3 id="offset">Hue, Saturation, Luminance Offsets</h3>
+<p>You adjust hue, saturation, or luminance individually using `getOffset`. The offset is plus or minus the current value. Saturation and luminance can only go as high as 100 and as low as zero.</p>
+<p>To change the maximum offset, set `options.offset`. The offset by default is ten.</p>
+```
+Y.Color.getOffset(yellow, 'hue', 180); // #7f00ff
+
+Y.Color.getOffset(black, 'luminance', 20); // #333333
+
+Y.Color.getOffset(blue, 'saturation', -50); // #4040bf
+
+```
+
+<h3 id="brightness">Percieved Brightness</h3>
+<p>Different hues as the same saturation and luminance can be perceived brighter or darker than each other (such as blue and yellow). Brightness is represented as a value from 0 to 1 &mdash; where 0 is black and 1 is white.</p>
+
+<p>Note: `getBrightness` uses a weighted distance in 3D space algorithm. Traditionally these values are `{r: 0.241, g: 0.691, b: 0.068 }`. These values were adjusted during tests to `{ r: 0.221, g: 0.711, b: 0.068 }`. You can override these values with `Y.Color._brightnessWeights`.</p>
+```
+Y.Color.getBrightness(white); // 1
+
+Y.Color.getBrightness(black); // 0
+
+Y.Color.getBrightness(yellow); // 0.9654014708917736
+```
+
+<h3 id="similar-brightness">Match Brightness</h3>
+<p>You may wish to match one color to the preceived brightness of another color. This process will keep the hue and saturation the same, and only adjust the luminance to a color that is the same, or nearly the same, perceived brightness.</p>
+<p>`getSimiliarBrightness` takes two parameters. The first is the color you wish to adjust. The second is the color you wish to match the perceived brightness to.</p>
+<p>It will return an array of color values or the color as a string.</p>
+```
+Y.Color.getSimilarBrightness(blue, yellow); // #f5f5ff
+
+Y.Color.getSimilarBrighness(white, green); // #ffcccc
+```
