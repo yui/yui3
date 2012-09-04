@@ -3,6 +3,8 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Reimplemented lastScrolledAmt (removed between 3.6.0 and 3.6.1)
+
   * Moved scrollview.axis and paginator.axis to writeOnce attributes
   
   * Added scrollview._cAxis and scrollview.pages._cAxis as cached axis values
@@ -10,7 +12,7 @@ ScrollView Change History
   * Removed scrollview._scrollHeight and scrollview._scrollWidth
 
 3.6.1
---------
+-----
 Detailed overview of all changes (including protected/private) @ https://gist.github.com/3522590
 
 Public API changes/fixes:
