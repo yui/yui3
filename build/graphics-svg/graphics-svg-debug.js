@@ -1,7 +1,9 @@
 YUI.add('graphics-svg', function (Y, NAME) {
 
 var SHAPE = "svgShape",
-	Y_LANG = Y.Lang,
+	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
+    Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
 	SVGGraphic,
     SVGShape,
@@ -26,6 +28,23 @@ function SVGDrawing(){}
  * @constructor
  */
 SVGDrawing.prototype = {
+    /**
+     * Maps path to methods
+     *
+     * @property _pathSymbolToMethod
+     * @type Object
+     * @private
+     */
+    _pathSymbolToMethod: {
+        M: "moveTo",
+        L: "lineTo",
+        C: "curveTo",
+        c: "relativeCurveTo",
+        Q: "quadraticCurveTo",
+        z: "closePath",
+        Z: "closePath"
+    },
+
     /**
      * Current x position of the drawing.
      *
@@ -53,6 +72,29 @@ SVGDrawing.prototype = {
      * @type String
      */
     _type: "path",
+    
+    /**
+     * Value for rounding up to coordsize
+     *
+     * @property _coordSpaceMultiplier
+     * @type Number
+     * @private
+     */
+    _coordSpaceMultiplier: 100,
+
+    /**
+     * Rounds dimensions and position values based on the coordinate space.
+     *
+     * @method _round
+     * @param {Number} The value for rounding
+     * @return Number
+     * @private
+     */
+    _round:function(val)
+    {
+        val = Math.round(val * 100)/100;
+        return val;
+    },
    
     /**
      * Draws a bezier curve.
@@ -65,21 +107,53 @@ SVGDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        var pathArrayLen,
-            currentArray,
-            w,
+    curveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a bezier curve.
+     *
+     * @method curveTo
+     * @param {Number} cp1x x-coordinate for the first control point.
+     * @param {Number} cp1y y-coordinate for the first control point.
+     * @param {Number} cp2x x-coordinate for the second control point.
+     * @param {Number} cp2y y-coordinate for the second control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeCurveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements curveTo methods.
+     *
+     * @method _curveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _curveTo: function(args, relative) {
+        var w,
             h,
             pts,
             right,
             left,
             bottom,
-            top;
+            top,
+            i = 0,
+            len,
+            pathArrayLen,
+            currentArray,
+            command = relative ? "c" : "C",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
-        if(this._pathType !== "C")
+        if(this._pathType !== command)
         {
-            this._pathType = "C";
-            currentArray = ["C"];
+            this._pathType = command;
+            currentArray = [command];
             this._pathArray.push(currentArray);
         }
         else
@@ -92,17 +166,27 @@ SVGDrawing.prototype = {
             }
         }
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([Math.round(cp1x), Math.round(cp1y), Math.round(cp2x) , Math.round(cp2y), x, y]);
-        right = Math.max(x, Math.max(cp1x, cp2x));
-        bottom = Math.max(y, Math.max(cp1y, cp2y));
-        left = Math.min(x, Math.min(cp1x, cp2x));
-        top = Math.min(y, Math.min(cp1y, cp2y));
-        w = Math.abs(right - left);
-        h = Math.abs(bottom - top);
-        pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
-        this._setCurveBoundingBox(pts, w, h);
-        this._currentX = x;
-        this._currentY = y;
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
+        len = args.length - 5;
+        for(; i < len; i = i + 6)
+        {
+            cp1x = args[i] + relative;
+            cp1y = args[i + 1] + relative;
+            cp2x = args[i + 2] + relative;
+            cp2y = args[i + 3] + relative;
+            x = parseFloat(args[i + 4]) + relativeX;
+            y = parseFloat(args[i + 5]) + relativeY;
+            right = Math.max(x, Math.max(cp1x, cp2x));
+            bottom = Math.max(y, Math.max(cp1y, cp2y));
+            left = Math.min(x, Math.min(cp1x, cp2x));
+            top = Math.min(y, Math.min(cp1y, cp2y));
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._currentX = x;
+            this._currentY = y;
+        }
     },
 
     /**
@@ -371,13 +455,12 @@ SVGDrawing.prototype = {
             i,
             len,
             pathArrayLen,
-            currentArray;
+            currentArray,
+            x,
+            y;
         this._pathArray = this._pathArray || [];
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-        len = args.length;
         this._shapeType = "path";
+        len = args.length;
         if(this._pathType !== "L")
         {
             this._pathType = "L";
@@ -389,12 +472,26 @@ SVGDrawing.prototype = {
             currentArray = this._getCurrentArray();
         }
         pathArrayLen = this._pathArray.length - 1;
-        for (i = 0; i < len; ++i) {
-            this._pathArray[pathArrayLen].push(args[i][0]);
-            this._pathArray[pathArrayLen].push(args[i][1]);
-            this._currentX = args[i][0];
-            this._currentY = args[i][1];
-            this._trackSize.apply(this, args[i]);
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            for (i = 0; i < len; i = i + 2) {
+                x = args[i];
+                y = args[i + 1];
+                this._pathArray[pathArrayLen].push(x);
+                this._pathArray[pathArrayLen].push(y);
+                this._currentX = x;
+                this._currentY = y;
+                this._trackSize.apply(this, [x, y]);
+            }
+        }
+        else
+        {
+            for (i = 0; i < len; ++i) {
+                this._pathArray[pathArrayLen].push(args[i][0]);
+               this._pathArray[pathArrayLen].push(args[i][1]);
+                this._currentX = args[i][0];
+                this._currentY = args[i][1];
+                this._trackSize.apply(this, args[i]);
+            }
         }
     },
 
@@ -413,7 +510,7 @@ SVGDrawing.prototype = {
         currentArray = ["M"];
         this._pathArray.push(currentArray);
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([this._round(x), this._round(y)]);
         this._currentX = x;
         this._currentY = y;
         this._trackSize(x, y);
@@ -466,8 +563,8 @@ SVGDrawing.prototype = {
             i,
             path = "",
             node = this.node,
-            left = this._left,
-            top = this._top,
+            left = this._round(this._left),
+            top = this._round(this._top),
             fill = this.get("fill");
         if(this._pathArray)
         {
@@ -477,13 +574,13 @@ SVGDrawing.prototype = {
                 segmentArray = pathArray.shift();
                 len = segmentArray.length;
                 pathType = segmentArray[0];
-                if(pathType === "A")
+                if(pathType === "A" || pathType == "c" || pathType == "C")
                 {
                     path += pathType + segmentArray[1] + "," + segmentArray[2];
                 }
                 else if(pathType != "z")
                 {
-                    path += " " + pathType + (segmentArray[1] - left);
+                    path += " " + pathType + this._round(segmentArray[1] - left);
                 }
                 else
                 {
@@ -494,26 +591,28 @@ SVGDrawing.prototype = {
                     case "L" :
                     case "M" :
                     case "Q" :
+                    case "l" :
                         for(i = 2; i < len; ++i)
                         {
                             val = (i % 2 === 0) ? top : left;
                             val = segmentArray[i] - val;
-                            path += ", " + val;
+                            path += ", " + this._round(val);
                         }
                     break;
                     case "A" :
-                        val = " " + segmentArray[3] + " " + segmentArray[4];
-                        val += "," + segmentArray[5] + " " + (segmentArray[6] - left);
-                        val += "," + (segmentArray[7] - top);
+                        val = " " + this._round(segmentArray[3]) + " " + this._round(segmentArray[4]);
+                        val += "," + this._round(segmentArray[5]) + " " + this._round(segmentArray[6] - left);
+                        val += "," + this._round(segmentArray[7] - top);
                         path += " " + val;
                     break;
                     case "C" :
-                        for(i = 2; i < len; ++i)
+                    case "c" :
+                        for(i = 3; i < len - 1; i = i + 2)
                         {
-                            val = (i % 2 === 0) ? top : left;
-                            val2 = segmentArray[i];
-                            val2 -= val;
-                            path += " " + val2;
+                            val = this._round(segmentArray[i] - left);
+                            val = val + ", ";
+                            val = val + this._round(segmentArray[i + 1] - top);
+                            path += " " + val;
                         }
                     break;
                 }
@@ -522,6 +621,7 @@ SVGDrawing.prototype = {
             {
                 path += 'z';
             }
+            Y.Lang.trim(path);
             if(path)
             {
                 node.setAttribute("d", path);
@@ -713,11 +813,16 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	initializer: function(cfg)
 	{
 		var host = this,
-            graphic = cfg.graphic;
+            graphic = cfg.graphic,
+            data = this.get("data");
 		host.createNode(); 
 		if(graphic)
         {
             host._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
         }
         host._updateHandler();
 	},
@@ -1407,12 +1512,89 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	getBounds: function()
 	{
 		var type = this._type,
-			w = this.get("width"),
+			stroke = this.get("stroke"),
+            w = this.get("width"),
 			h = this.get("height"),
 			x = type == "path" ? 0 : this._x,
-			y = type == "path" ? 0 : this._y;
+			y = type == "path" ? 0 : this._y,
+            wt = 0;
+        if(type != "path")
+        {
+            if(stroke && stroke.weight)
+            {
+                wt = stroke.weight;
+            }
+            w = (x + w + wt) - (x - wt); 
+            h = (y + h + wt) - (y - wt);
+            x -= wt;
+            y -= wt;
+        }
 		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
+
+    /**
+     * Places the shape above all other shapes.
+     *
+     * @method toFront
+     */
+    toFront: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
+    },
+
+    /**
+     * Places the shape underneath all other shapes.
+     *
+     * @method toFront
+     */
+    toBack: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
+    },
+
+    /**
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i = 0,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1),
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    this[method].apply(this, args);
+                }
+            }
+            this.end();
+        }
+    },
 
     /**
      * Destroys the shape instance.
@@ -1771,6 +1953,23 @@ SVGShape.ATTRS = {
 			return this.node;
 		}
 	},
+
+    /**
+     * Represents an SVG Path string.
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the parent graphic instance
@@ -2507,7 +2706,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             key,
             forceRedraw = false;
 		AttributeLite.prototype.set.apply(host, arguments);	
-        if(host._state.autoDraw === true)
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
             {
@@ -2882,8 +3081,8 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             right = box.right,
             top = box.top,
             bottom = box.bottom,
-            width = box.width,
-            height = box.height,
+            width = right - left,
+            height = bottom - top,
             computedWidth,
             computedHeight,
             computedLeft,
@@ -2985,26 +3184,23 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
     },
@@ -3083,8 +3279,56 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             gradients[key] = gradient;
         }
         return gradient;
-    }
+    },
 
+    /**
+     * Inserts shape on the top of the tree.
+     *
+     * @method _toFront
+     * @param {SVGShape} Shape to add.
+     * @private
+     */
+    _toFront: function(shape)
+    {
+        var contentNode = this._contentNode;
+        if(shape instanceof Y.SVGShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            contentNode.appendChild(shape);
+        }
+    },
+
+    /**
+     * Inserts shape as the first child of the content node.
+     *
+     * @method _toBack
+     * @param {SVGShape} Shape to add.
+     * @private
+     */
+    _toBack: function(shape)
+    {
+        var contentNode = this._contentNode,
+            targetNode;
+        if(shape instanceof Y.SVGShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            targetNode = contentNode.firstChild;
+            if(targetNode)
+            {
+                contentNode.insertBefore(shape, targetNode);
+            }
+            else
+            {
+                contentNode.appendChild(shape);
+            }
+        }
+    }
 });
 
 Y.SVGGraphic = SVGGraphic;

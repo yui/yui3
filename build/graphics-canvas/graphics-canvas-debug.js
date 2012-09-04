@@ -1,6 +1,8 @@
 YUI.add('graphics-canvas', function (Y, NAME) {
 
 var SHAPE = "canvasShape",
+	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
     DOCUMENT = Y.config.doc,
     Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
@@ -36,6 +38,23 @@ function CanvasDrawing()
 }
 
 CanvasDrawing.prototype = {
+    /**
+     * Maps path to methods
+     *
+     * @property _pathSymbolToMethod
+     * @type Object
+     * @private
+     */
+    _pathSymbolToMethod: {
+        M: "moveTo",
+        L: "lineTo",
+        C: "curveTo",
+        c: "relativeCurveTo",
+        Q: "quadraticCurveTo",
+        z: "closePath",
+        Z: "closePath"
+    },
+
     /**
      * Current x position of the drawing.
      *
@@ -222,6 +241,8 @@ CanvasDrawing.prototype = {
      */
     moveTo: function(x, y) {
         var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
+        x = parseFloat(x);
+        y = parseFloat(y);
         this._updateDrawingQueue(["moveTo", x, y]);
         this._trackSize(x - wt, y - wt);
         this._trackSize(x + wt, y + wt);
@@ -241,26 +262,59 @@ CanvasDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
+    curveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a bezier curve.
+     *
+     * @method curveTo
+     * @param {Number} cp1x x-coordinate for the first control point.
+     * @param {Number} cp1y y-coordinate for the first control point.
+     * @param {Number} cp2x x-coordinate for the second control point.
+     * @param {Number} cp2y y-coordinate for the second control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeCurveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), true]);
+    },
+    
+    _curveTo: function(args, relative) {
         var w,
             h,
             pts,
             right,
             left,
             bottom,
-            top;
-        this._updateDrawingQueue(["bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y]);
-        this._drawingComplete = false;
-        right = Math.max(x, Math.max(cp1x, cp2x));
-        bottom = Math.max(y, Math.max(cp1y, cp2y));
-        left = Math.min(x, Math.min(cp1x, cp2x));
-        top = Math.min(y, Math.min(cp1y, cp2y));
-        w = Math.abs(right - left);
-        h = Math.abs(bottom - top);
-        pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
-        this._setCurveBoundingBox(pts, w, h);
-        this._updateCoords(x, y);
-        return this;
+            top,
+            i = 0,
+            len,
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        len = args.length - 5;
+        for(; i < len; i = i + 6)
+        {
+            cp1x = parseFloat(args[i]) + relativeX;
+            cp1y = parseFloat(args[i + 1]) + relativeY;
+            cp2x = parseFloat(args[i + 2]) + relativeX;
+            cp2y = parseFloat(args[i + 3]) + relativeY;
+            x = parseFloat(args[i + 4]) + relativeX;
+            y = parseFloat(args[i + 5]) + relativeY;
+            this._updateDrawingQueue(["bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y]);
+            this._drawingComplete = false;
+            right = Math.max(x, Math.max(cp1x, cp2x));
+            bottom = Math.max(y, Math.max(cp1y, cp2y));
+            left = Math.min(x, Math.min(cp1x, cp2x));
+            top = Math.min(y, Math.min(cp1y, cp2y));
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._currentX = x;
+            this._currentY = y;
+        }
     },
 
     /**
@@ -885,7 +939,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	initializer: function(cfg)
 	{
 		var host = this,
-            graphic = cfg.graphic;
+            graphic = cfg.graphic,
+            data = this.get("data");
         host._initProps();
 		host.createNode(); 
 		host._xcoords = [0];
@@ -893,6 +948,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         if(graphic)
         {
             this._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
         }
 		host._updateHandler();
 	},
@@ -1427,16 +1486,22 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         
         this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
-		node.style.MozTransformOrigin = transformOrigin; 
+		/*
+        node.style.MozTransformOrigin = transformOrigin; 
 		node.style.webkitTransformOrigin = transformOrigin;
 		node.style.msTransformOrigin = transformOrigin;
 		node.style.OTransformOrigin = transformOrigin;
+        */
+        Y_DOM.setStyle(node, "transformOrigin", transformOrigin);
         if(transform)
 		{
+            Y_DOM.setStyle(node, "transform", transform);
+            /*
             node.style.MozTransform = transform;
             node.style.webkitTransform = transform;
             node.style.msTransform = transform;
             node.style.OTransform = transform;
+            */
 		}
         this._transforms = [];
 	},
@@ -1725,6 +1790,70 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         matrix.translate(-transformX, -transformY);
         contentRect = matrix.getContentRect(w, h, x, y);
         return contentRect;
+    },
+
+    /**
+     * Places the shape above all other shapes.
+     *
+     * @method toFront
+     */
+    toFront: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
+    },
+
+    /**
+     * Places the shape underneath all other shapes.
+     *
+     * @method toFront
+     */
+    toBack: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
+    },
+
+    /**
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i = 0,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1),
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    this[method].apply(this, args);
+                }
+            }
+            this.end();
+        }
     },
     
     /**
@@ -2046,6 +2175,23 @@ CanvasShape.ATTRS =  {
 	pointerEvents: {
 		value: "visiblePainted"
 	},
+
+    /**
+     * Represents an SVG Path string.
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the container Graphic.
@@ -2793,7 +2939,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             key,
             forceRedraw = false;
 		AttributeLite.prototype.set.apply(host, arguments);	
-        if(host._state.autoDraw === true)
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
             {
@@ -3168,8 +3314,8 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         {
             if(autoSize == "sizeContentToGraphic")
             {
-                contentWidth = box.width;
-                contentHeight = box.height;
+                contentWidth = box.right - box.left;
+                contentHeight = box.bottom - box.top;
                 w = parseFloat(Y_DOM.getComputedStyle(node, "width"));
                 h = parseFloat(Y_DOM.getComputedStyle(node, "height"));
                 matrix = new Y.Matrix();
@@ -3264,8 +3410,6 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
             box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
             box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
-            box.width = box.right - box.left;
-            box.height = box.bottom - box.top;
             this._contentBounds = box;
         }
         if(this.get("autoDraw")) 
@@ -3287,28 +3431,74 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
+    },
+
+    /**
+     * Inserts shape on the top of the tree.
+     *
+     * @method _toFront
+     * @param {CanvasShape} Shape to add.
+     * @private
+     */
+    _toFront: function(shape)
+    {
+        var contentNode = this.get("node");
+        if(shape instanceof Y.CanvasShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            contentNode.appendChild(shape);
+        }
+    },
+
+    /**
+     * Inserts shape as the first child of the content node.
+     *
+     * @method _toBack
+     * @param {CanvasShape} Shape to add.
+     * @private
+     */
+    _toBack: function(shape)
+    {
+        var contentNode = this.get("node"),
+            targetNode;
+        if(shape instanceof Y.CanvasShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            targetNode = contentNode.firstChild;
+            if(targetNode)
+            {
+                contentNode.insertBefore(shape, targetNode);
+            }
+            else
+            {
+                contentNode.appendChild(shape);
+            }
+        }
     }
 });
 
