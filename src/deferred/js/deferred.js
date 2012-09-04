@@ -1,6 +1,3 @@
-//TODO: deferred.isResolved(), isRejected(), isInProgress(),
-// getStatus(), deferred/promise.wait(n)
-
 /**
 Wraps the execution of synchronous or asynchronous operations, providing a
 promise object that can be used to subscribe to the various ways the operation
@@ -9,9 +6,7 @@ may terminate.
 When the operation completes successfully, call the Deferred's `resolve()`
 method, passing any relevant response data for subscribers.  If the operation
 encounters an error or is unsuccessful in some way, call `reject()`, again
-passing any relevant data for subscribers.  If the operation can be monitored
-in stages, call the Deferred's `notify()` method at these stages with the
-relevant data.
+passing any relevant data for subscribers.
 
 The Deferred object should be shared only with the code resposible for
 resolving or rejecting it. Public access for the Deferred is through its
@@ -20,147 +15,49 @@ Deferred and promise allow subscriptions to the Deferred's state changes, the
 promise may be exposed to non-controlling code. It is the preferable interface
 for adding subscriptions.
 
-Subscriptions can be made against the promise or Deferred in one of two ways:
-
-1. Using `promise.on("resolve", callback)` (and so for "reject" and "progress")
-2. Using `promise.then(resolveCallback, rejectCallback)`
-
-The difference between the two is that `then()` wraps the callbacks in a new
-Deferred, allowing asynchronous operation chaining with
-`promise.then(someAsyncFunc).then(anotherAsyncFunc)` etc.. Subscribing to a
-state event directly does not wrap the callback execution. Also, `then()` does
-not support subscribing to the "progress" event.
+Subscribe to state changes in the Deferred with the promise's
+`then(callback, errback)` method.  `then()` wraps the passed callbacks in a
+new Deferred and returns the corresponding promise, allowing chaining of
+asynchronous or synchronous operations. E.g.
+`promise.then(someAsyncFunc).then(anotherAsyncFunc)`
 
 @module deferred
 @since 3.7.0
 **/
-var slice = [].slice,
-    RESOLVE = 'resolve',
-    REJECT  = 'reject',
-    FUNCTION = 'function',
-
-    eventMap = {
-        resolve : RESOLVE,
-        resolved: RESOLVE,
-        done    : RESOLVE,
-        complete: RESOLVE,
-        success : RESOLVE,
-
-        reject  : REJECT,
-        rejected: REJECT,
-        fail    : REJECT,
-        failed  : REJECT,
-        failure : REJECT,
-
-        progress: 'progress',
-        notify  : 'progress'
-    };
-
-// Custom events are heavy and slow.  Let's keep this simple for now.
-function notify(subs, context, args) {
-    var i, len;
-
-    if (subs) {
-        for (i = 0, len = subs.length; i < len; ++i) {
-            subs[i].apply(context, args);
-        }
-    }
-}
-
+var slice   = [].slice,
+    isArray = Y.Lang.isArray;
+    
 /**
-The public API for a Deferred.  Used to subscribe to the notification events for
-resolution or progress of the operation represented by the Deferred.
-
-This class is mainly a placeholder for type checking (if you're into that sort
-of thing).  It has neither constructor logic, nor prototype methods. Each
-Promise instance is manually created by the Deferred that it represents.
-
-@class Promise
-@constructor
-**/
-Y.Promise = function () {};
-
-/**
-Schedule execution of a callback to either or both of "resolve" and
-"reject" resolutions for the associated Deferred.  Unlike `on()`, the callbacks
-are wrapped in a new Deferred and that Deferred's corresponding promise
-is returned.  This allows operation chaining ala
-`functionA().then(functionB).then(functionC)` where `functionA` returns
-a promise, and `functionB` and `functionC` _may_ return promises.
-
-To subscribe to the progress of the operation wrapped by the current
-Deferred, call `promise.on("progress", callback)`.
-
-@method then
-@param {Function} [resolveFn] function to execute if the Deferred
-            resolves successfully
-@param {Function} [rejectFn] function to execute if the Deferred
-            resolves unsuccessfully
-@return {Promise} The promise of a new Deferred wrapping the resolution
-            of either "resolve" or "reject" callback
-**/
-
-/**
-Subscribe to the Deferred's resolution events "resolve" and "reject", or
-to a "progress" event for notifications during the life of the wrapped
-operation (if that operation supports progress notification).
-
-Supported aliases for event names are:
-
-* "resolved"
-* "done"
-* "complete"
-* "success"
-* "rejected"
-* "fail"
-* "failed"
-* "failure"
-* "notify" (for "progress")
-
-@method on
-@param {String} when Any of the listed event names. Others are ignored.
-@param {Function} callback Function to execute
-@return {Promise} This promise
-@chainable
-**/
-
-/**
-Returns this promise.  Meta, or narcissistic?  Useful to test if an object is a
-Deferred or Promise when the intention is to call its `then()` or `on()` method.
-
-@method promise
-@return {Promise} This.
-**/
-
-
-
-/**
-Factory/Constructor method (can be used with or without `new`) for creating a
-Deferred object and corresponding promise.
-
-If an _executor_ function is provided, it will be called immediately with the
-new Deferred object as its sole parameter. Ostensibly, this function is for
-executing code in which the Deferred object is `resolve()`d or `reject()`ed.
+Represents an operation that may be synchronous or asynchronous.  Provides a
+standard API for subscribing to the moment that the operation completes either
+successfully (`resolve()`) or unsuccessfully (`reject()`).
 
 @class Deferred
 @constructor
-@param {Function} [executor] Function to 
-@return {Deferred}
 **/
-Y.Deferred = function (executor) {
-    var _subs = {
-            resolve : [],
-            reject  : [],
-            progress: []
-        },
+Y.Deferred = function () {
+    this._subs = {
+        resolve: [],
+        reject : []
+    };
 
-        status = 'in progress',
+    this._promise = new Y.Promise(this);
 
-        deferred = Y.Object(Y.Deferred.prototype),
-        promise  = new Y.Promise(),
-        
-        result;
-    
+    this._status = 'in progress';
+
+};
+
+Y.mix(Y.Deferred.prototype, {
+    /**
+    Returns the promise for this Deferred.
+
+    @method promise
+    @return {Promise}
+    **/
+    promise: function () {
+        return this._promise;
+    },
+
     /**
     Resolves the Deferred, signaling successful completion of the
     represented operation. All "resolve" subscriptions are executed with
@@ -173,17 +70,17 @@ Y.Deferred = function (executor) {
     @return {Deferred} the instance
     @chainable
     **/
-    deferred.resolve = function () {
-        result = slice.call(arguments);
+    resolve: function () {
+        this._result = slice.call(arguments);
 
-        notify(_subs.resolve, promise, result);
+        this._notify(this._subs.resolve, this.promise(), this._result);
 
-        _subs = { resolve: [] };
+        this._subs = { resolve: [] };
 
-        status = 'resolved';
+        this._status = 'resolved';
 
-        return deferred;
-    };
+        return this;
+    },
 
     /**
     Resolves the Deferred, signaling *un*successful completion of the
@@ -197,155 +94,119 @@ Y.Deferred = function (executor) {
     @return {Deferred} the instance
     @chainable
     **/
-    deferred.reject = function () {
-        result = slice.call(arguments);
+    reject: function () {
+        this._result = slice.call(arguments);
 
-        notify(_subs.rejected, promise, result);
+        this._notify(this._subs.reject, this.promise(), this._result);
 
-        _subs = { reject: [] };
+        this._subs = { reject: [] };
 
-        status = 'rejected';
+        this._status = 'rejected';
 
-        return deferred;
-    };
-
-    /**
-    If the Deferred is still in progress (not resolved or rejected), this
-    notifies "progress" subscribers with any data passed in.
-
-    @method notify
-    @param {Any} arg* Any data to pass along to the "progress" subscribers
-    @return {Deferred} the instance
-    @chainable
-    **/
-    deferred.notify = function () {
-        if (status === 'in progress') {
-            notify(_subs.progress, promise, arguments);
-        }
-
-        return deferred;
-    };
-
-    /**
-    Subscribe to the Deferred's resolution events "resolve" and "reject", or
-    to a "progress" event for notifications during the life of the wrapped
-    operation (if that operation supports progress notification).
-
-    Supported aliases for event names are:
-    
-    * "resolved"
-    * "done"
-    * "complete"
-    * "success"
-    * "rejected"
-    * "fail"
-    * "failed"
-    * "failure"
-    * "notify" (for "progress")
-
-    @method on
-    @param {String} when Any of the listed event names. Others are ignored.
-    @param {Function} callback Function to execute
-    @return {Promise} the Promise for this Deferred (not a new Deferred)
-    **/
-    deferred.on = function (when, callback) {
-        var event = eventMap[when],
-            subs  = event && _subs[event];
-
-        switch (status) {
-            case 'in progress':
-                if (subs) {
-                    subs.push(callback);
-                } // else bogus value passed to when
-                break;
-            case 'resolved':
-                if (event === 'resolve') {
-                    notify([callback], promise, result);
-                } // else subscribing to unreachable event
-                break;
-            case 'rejected':
-                if (event === 'reject') {
-                    notify([callback], promise, result);
-                } // else subscribing to unreachable event
-                break;
-        }
-
-        // I decided to return `this` instead of a new Deferred promise for
-        // lighter runtime and because I'm going against spec and excluding
-        // the progress callback from the then() implementation.
         return this;
-    };
-
-    /**
-    Returns the promise for this Deferred.
-
-    @method promise
-    @return {Promise}
-    **/
-    deferred.promise = function () {
-        return promise;
-    };
+    },
 
     /**
     Schedule execution of a callback to either or both of "resolve" and
-    "reject" resolutions for the Deferred.  Unlike `on()`, the callbacks
+    "reject" resolutions for the Deferred.  The callbacks
     are wrapped in a new Deferred and that Deferred's corresponding promise
     is returned.  This allows operation chaining ala
     `functionA().then(functionB).then(functionC)` where `functionA` returns
     a promise, and `functionB` and `functionC` _may_ return promises.
 
-    To subscribe to the progress of the operation wrapped by the current
-    Deferred, call `promise.on("progress", callback)`.
-
     @method then
-    @param {Function} [resolveFn] function to execute if the Deferred
+    @param {Function} [callback] function to execute if the Deferred
                 resolves successfully
-    @param {Function} [rejectFn] function to execute if the Deferred
+    @param {Function} [errback] function to execute if the Deferred
                 resolves unsuccessfully
     @return {Promise} The promise of a new Deferred wrapping the resolution
                 of either "resolve" or "reject" callback
     **/
-    deferred.then = function (resolveFn, rejectFn) {
-        var then = new Y.Deferred();
-        
-        function wrap(callback) {
+    then: function (callback, errback) {
+        var then    = new Y.Deferred(),
+            promise = this.promise(),
+            resolveSubs = this._subs.resolve || [],
+            rejectSubs  = this._subs.reject  || [];
+
+        function wrap(fn, method) {
             return function () {
-                var result = callback.apply(promise, arguments);
-                
-                if (result && (typeof result.promise === FUNCTION)) {
-                    result.promise()
-                          .on(RESOLVE, then.resolve)
-                          .on(REJECT,  then.reject);
+                var result = fn.apply(promise, arguments),
+                    resultPromise;
+
+                if (result && typeof result.promise === 'function') {
+                    resultPromise = result.promise();
+
+                    if (resultPromise.getStatus() !== 'in progress') {
+                        then[method].apply(then, resultPromise.getResult());
+                    } else {
+                        result.promise().then(
+                            Y.bind(then.resolve, then), // callback
+                            Y.bind(then.reject, then)); // errback
+                    }
                 } else {
-                    then.resolve(result);
+                    then[method].apply(then,
+                        (isArray(result) ? result : [result]));
                 }
             };
         }
-        
-        if (typeof resolveFn === FUNCTION) {
-            deferred.on(RESOLVE, wrap(resolveFn));
+
+        resolveSubs.push((typeof callback === 'function') ?
+            wrap(callback, 'resolve') : then.resolve);
+
+        rejectSubs.push((typeof errback === 'function') ?
+            wrap(errback, 'reject') : then.reject);
+
+        if (this._status === 'resolved') {
+            this.resolve.apply(this, this._result);
+        } else if (this._status === 'rejected') {
+            this.reject.apply(this, this._result);
         }
 
-        if (typeof rejectFn === FUNCTION) {
-            deferred.on(REJECT, wrap(rejectFn));
-        }
+        resolveSubs = rejectSubs = null;
 
         return then.promise();
-    };
+    },
 
-    // The promise API is limited to subscriptions. Resolution is under the
-    // control of the creator of the Deferred. Passing the Deferred to other
-    // functions should be avoided unless that function is specifically
-    // responsible for resolving the Deferred.
-    promise.on      = deferred.on;
-    promise.then    = deferred.then;
-    promise.promise = deferred.promise;
+    /**
+    Returns the current status of the Deferred as a string "in progress",
+    "resolved", or "rejected".
 
-    // TODO: is this necessary? Seems more pure without it.  It's implementer
-    // code one way or another.
-    if (typeof executor === FUNCTION) {
-        executor.call(promise, deferred);
+    @method getStatus
+    @return {String}
+    **/
+    getStatus: function () {
+        return this._status;
+    },
+
+    /**
+    Returns the result of the Deferred.  Use `getStatus()` to test that the
+    promise is resolved before calling this.
+
+    @method getResult
+    @return {Any[]} Array of values passed to `resolve()` or `reject()`
+    **/
+    getResult: function () {
+        return this._result;
+    },
+
+    /**
+    Executes an array of callbacks from a specified context, passing a set of
+    arguments.
+
+    @method _notify
+    @param {Function[]} subs The array of subscriber callbacks
+    @param {Object} context The `this` object for the callbacks
+    @param {Any[]} args Any arguments to pass the callbacks
+    @protected
+    **/
+    _notify: function (subs, context, args) {
+        var i, len;
+
+        if (subs) {
+            for (i = 0, len = subs.length; i < len; ++i) {
+                subs[i].apply(context, args);
+            }
+        }
     }
 
-    return deferred;
-};
+}, true);

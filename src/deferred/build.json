@@ -2,7 +2,13 @@
     "name": "deferred",
     "builds": {
         "deferred": {
-            "jsfiles": [ "deferred.js" ]
+            "jsfiles": [ "deferred.js", "promise.js" ]
+        },
+        "deferred-extras": {
+            "jsfiles": [ "extras.js", "when.js" ],
+            "config": {
+                "requires": [ "deferred" ]
+            }
         }
     }
 }

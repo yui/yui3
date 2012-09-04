@@ -17,21 +17,30 @@
             deferred: {
                 fullpath: '../../../build/deferred/deferred-min.js'
             },
+            'deferred-extras': {
+                fullpath: '../../../build/deferred-extras/deferred-extras-min.js',
+                requires: ['deferred']
+            },
             'deferred-tests': {
                 fullpath: 'deferred-tests.js',
                 requires: ['deferred', 'test', 'test-console']
             }
         }
-    }).use('deferred', 'deferred-tests', function (Y) {
+    }).use('deferred', 'deferred-extras', 'deferred-tests', function (Y) {
 
+        /*
         new Y.Test.Console().render('#tests');
 
         Y.Test.Runner.run();
-        /*
+        */
         var deferred = new Y.Deferred();
 
         setTimeout(function () {
             deferred.resolve("hello, Martha");
+
+            deferred.then(function (result) {
+                console.log("then() after resolved", result);
+            });
         }, 100);
 
         deferred
@@ -47,8 +56,15 @@
             })
             .then(function () {
                 console.log(this, arguments);
+
+                return "Whazzaaaaaaap";
+                //return [].slice.call(arguments);
+            })
+            .then(function () {
+                console.log("Last one", this, arguments);
             });
-        */
+
+
     });
     </script>
 </body>

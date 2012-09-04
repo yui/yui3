@@ -15,9 +15,36 @@ var slice = [].slice;
 
 Y.mix(Y.Deferred.prototype, {
     /**
-    Executes callbacks registered with `onProgress`, relaying all arguments.  This
-    will only work when the Deferred has not been resolved or rejected (the
-    represented operation is still active).
+    Creates a Y.Deferred that will resolve in the specified amount of
+    milliseconds.  Returns the Deferred's promise to allow sequential chaining
+    of operations after the inserted pause.
+
+    @method wait
+    @param {Number} ms Number of milliseconds to wait before resolving
+    @return {Promise}
+    **/
+    wait: function (ms) {
+        var deferred = new Y.Deferred();
+
+        function relay(method) {
+            return function () {
+                var args = slice.call(arguments);
+
+                setTimeout(function () {
+                    deferred[method].apply(deferred, args);
+                }, ms);
+            };
+        }
+
+        this.then(relay('resolve'), relay('reject'));
+
+        return deferred.promise();
+    },
+
+    /**
+    Executes callbacks registered with `onProgress`, relaying all arguments.
+    This will only work when the Deferred has not been resolved or rejected
+    (the represented operation is still active).
 
     @method notify
     @param {Any} arg* Any arguments to pass to the callbacks
@@ -91,74 +118,44 @@ Y.mix(Y.Deferred.prototype, {
 
 }, true);
 
-Y.mix(Y.Promise.prototype, {
-    /**
-    Registers a callback to be executed with progress updates from the operation
-    represented by this Deferred (if it can and does notify of progress).
+/**
+Registers a callback to be executed with progress updates from the operation
+represented by this Deferred (if it can and does notify of progress).
 
-    @method onProgress
-    @param {Function} callback The callback to notify
-    @return {Promise} The Deferred's promise
-    @for Promise
-    **/
-    onProgress: function (callback) {
-        return this._deferred.onProgress(callback);
-    },
+@method onProgress
+@param {Function} callback The callback to notify
+@return {Promise} The Deferred's promise
+@for Promise
+**/
 
-    /**
-    Creates a Y.Deferred that will resolve in the specified amount of milliseconds.
-    Returns the Deferred's promise to allow sequential chaining of operations.
+/**
+Creates a Y.Deferred that will resolve in the specified amount of milliseconds.
+Returns the Deferred's promise to allow sequential chaining of operations.
 
-    @method wait
-    @param {Number} ms Number of milliseconds to wait before resolving
-    @return {Promise}
-    **/
-    wait: function (ms) {
-        var deferred = new Y.Deferred();
+@method wait
+@param {Number} ms Number of milliseconds to wait before resolving
+@return {Promise}
+**/
 
-        function relay(method) {
-            return function () {
-                var args = slice.call(arguments);
+/**
+Returns `true` if the Deferred has been resolved.
 
-                setTimeout(function () {
-                    deferred[method].apply(deferred, args);
-                }, ms);
-            }
-        }
+@method isResolved
+@return {Boolean}
+**/
 
-        this.then(relay('resolve'), relay('reject'));
+/**
+Returns `true` if the Deferred has been rejected.
 
-        return deferred.promise();
-    },
+@method isRejected
+@return {Boolean}
+**/
 
-    /**
-    Returns `true` if the Deferred has been resolved.
+/**
+Returns `true` if the Deferred has not yet been resolved or rejected.
 
-    @method isResolved
-    @return {Boolean}
-    **/
-    isResolved: function () {
-        return this._deferred.isResolved();
-    },
-
-    /**
-    Returns `true` if the Deferred has been rejected.
-
-    @method isRejected
-    @return {Boolean}
-    **/
-    isRejected: function () {
-        return this._deferred.isRejected();
-    },
-
-    /**
-    Returns `true` if the Deferred has not yet been resolved or rejected.
-
-    @method isInProgress
-    @return {Boolean}
-    **/
-    isInProgress: function () {
-        return this._deferred.isInProgress();
-    }
-
-}, true);
+@method isInProgress
+@return {Boolean}
+**/
+Y.Promise.addMethod(
+    ['wait', 'onProgress', 'isResolved', 'isRejected', 'isInProgress']);

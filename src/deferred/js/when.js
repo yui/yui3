@@ -22,6 +22,7 @@ passed a Y.Deferred that it must `resolve()` when that callback completes.
 Y.when = function () {
     var funcs     = slice.call(arguments),
         allDone   = new Y.Deferred(),
+        failed    = Y.bind('reject', allDone),
         remaining = funcs.length,
         results   = [];
 
@@ -31,21 +32,21 @@ Y.when = function () {
 
             results[i] = args.length > 1 ? args : args[0];
 
-            if (!--remaining) {
+            if (!--remaining && allDone.getStatus() !== 'rejected') {
                 allDone.resolve.apply(allDone, results);
             }
         };
     }
 
     Y.Array.each(funcs, function (fn, i) {
-        var finished = oneDone(i);
+        var finished = oneDone(i),
             deferred;
 
         // accept promises as well as functions
         if (typeof fn === 'function') {
             deferred = new Y.Deferred();
         
-            deferred.then(finished, finished);
+            deferred.then(finished, failed);
             
             // It's up to each passed function to resolve/reject the deferred
             // that is assigned to it.
@@ -54,7 +55,9 @@ Y.when = function () {
         } else if (fn && typeof fn.then === 'function') {
             fn.then(finished, finished);
         }
-    }
+    });
+
+    funcs = null;
 
     return allDone.promise();
 };
