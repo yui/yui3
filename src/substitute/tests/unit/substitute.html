@@ -15,7 +15,7 @@
     YUI({
         filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
         coverage: ['substitute']
-    }).use("dump", "test", "console", "event-custom", "substitute", function(Y) {
+    }).use("substitute", "dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.one('#btnRun'),
             Assert = Y.Assert,
@@ -198,7 +198,7 @@
 				Y.substitute('-{LBRACE}test{RBRACE}-', {test:'test'}, null, true),
 				'replacement of literals {LBRACE} and/or {RBRACE} failed'
 			);
-			
+
 			Assert.areEqual(
 				'done',
 				Y.substitute('{{{three}}}', {

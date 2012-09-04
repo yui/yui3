@@ -6,7 +6,15 @@ YUI.add('overlay-constrain-tests', function(Y) {
         sliderY = Y.one('#y .yui3-slider-rail'),
         sliderX = Y.one('#x .yui3-slider-rail'),
         cBox = Y.one('#constrain-box'),
-        chkBox = Y.one('#constrain');
+        chkBox = Y.one('#constrain'),
+        closeEnough = function(expected, actual) {
+            if (Math.abs(expected - actual) < 2) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
 
         window.scrollTo(0, 0); // this makes sure page is at top so mousedown/up clientX/Y will be predictable
 
@@ -39,7 +47,9 @@ YUI.add('overlay-constrain-tests', function(Y) {
             var expected = parseInt(cBox.getStyle('top'), 10);
             sliderY.simulate("mousedown", { clientX: 5, clientY: 10 });
             sliderY.simulate("mouseup", { clientX: 5, clientY: 10 });
-            Assert.areEqual(expected, parseInt(overlay.getStyle('top'), 10), ' - Failed to move to correct XY');
+
+
+            Assert.isTrue((closeEnough(expected, parseInt(overlay.getStyle('top'), 10))),' - Failed to move to correct X');
             clickCheckbox(chkBox, false);
             Assert.isTrue((expected > parseInt(overlay.getStyle('top'), 10)), ' - Failed to unconstrain');
             clickCheckbox(chkBox, true);
@@ -48,7 +58,8 @@ YUI.add('overlay-constrain-tests', function(Y) {
             var expected = parseInt(cBox.getStyle('top'), 10) + (cBox.get('offsetHeight') - overlay.get('offsetHeight'));
             sliderY.simulate("mousedown", { clientX: 5, clientY: sliderY.getY() + 300 });
             sliderY.simulate("mouseup", { clientX: 5, clientY: sliderY.getY() + 300 });
-            Assert.areEqual( expected, parseInt(overlay.getStyle('top'), 10), ' - Failed to move to correct XY');
+
+            Assert.isTrue((closeEnough(expected, parseInt(overlay.getStyle('top'), 10))),' - Failed to move to correct X');
             clickCheckbox(chkBox, false);
             Assert.isTrue((expected < parseInt(overlay.getStyle('top'), 10)), ' - Failed to unconstrain');
             clickCheckbox(chkBox, true);

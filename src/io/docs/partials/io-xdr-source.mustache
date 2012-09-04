@@ -6,7 +6,7 @@
 </div>
 
 <script language="javascript">
-YUI({ filter:'raw' }).use("io-xdr", "substitute", "json-parse", "node",
+YUI({ filter:'raw' }).use("io-xdr", "json-parse", "node",
     function(Y) {
 
         //Data fetched will be displayed in a UL in the
@@ -33,11 +33,11 @@ YUI({ filter:'raw' }).use("io-xdr", "substitute", "json-parse", "node",
 
                 var s = "<!--begin news stories fetched via Yahoo! Pipes-->",
                     //t in this case is our simple template; this is fed to
-                    //Y.Lang.substitute as we loop through RSS items:
+                    //Y.Lang.sub() as we loop through RSS items:
                     t = "<li><a href='{link}'>{title}</a>, {pubDate}</li>";
 
                 for (var i=0; i<oRSS.count; i++) {
-                    s += Y.Lang.substitute(t, oRSS.value.items[i]);
+                    s += Y.Lang.sub(t, oRSS.value.items[i]);
                 }
 
                 //Output the string to the page:
@@ -77,7 +77,7 @@ YUI({ filter:'raw' }).use("io-xdr", "substitute", "json-parse", "node",
         var handleClick = function(o) {
             Y.log("Click detected; beginning io request to Yahoo! Pipes.", "info", "example");
 	    // Remove the default "X-Requested-With" header as this will
-	    // prevent the request from succeeding; the Pipes 
+	    // prevent the request from succeeding; the Pipes
 	    // resource will not accept user-defined HTTP headers.
 	    Y.io.header('X-Requested-With');
             var obj = Y.io(
