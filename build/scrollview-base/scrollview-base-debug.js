@@ -146,7 +146,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        console.log(ScrollView.MOUSEWHEEL);
         sv._bindMousewheel(ScrollView.MOUSEWHEEL);
         
         sv._bindAttrs();
@@ -1190,6 +1189,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     MOUSEWHEEL: {
         value: true
     }
+    
     // End static properties
 
 });
