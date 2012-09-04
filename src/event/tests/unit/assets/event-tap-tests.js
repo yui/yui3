@@ -23,10 +23,12 @@ YUI.add('event-tap-tests', function(Y) {
 
         _should: {
             ignore: {
-                //'on tap': true,
-                // 'delegate tap': true,
-                // 'touchend not in same area': true,
-                // 'cancel fired': true
+                /*
+                Ignore the touchend test on IE9 because simulated event payloads
+                provide 0,0 for pageX and pageY respectively. Manual testing confirms
+                that this test works. See http://yuilibrary.com/projects/yui3/ticket/2531581
+                */
+                'touchend not in same area': (Y.UA.ie === 9),
             }
         },
 
