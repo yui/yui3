@@ -458,7 +458,7 @@ Color = {
             h = 0;
         } else if (r === max) {
             h = ((60 * (g - b) / sub) + 360) % 360;
-        } else if (g == max) {
+        } else if (g === max) {
             h = (60 * (b - r) / sub) + 120;
         } else {
             h = (60 * (r - g) / sub) + 240;
