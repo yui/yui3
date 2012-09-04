@@ -1,60 +1,25 @@
 YUI.add('event-tap', function (Y, NAME) {
 
-/*
-   Copyright (c) 2012, Yahoo! Inc. All rights reserved.
-
-   Redistribution and use of this software in source and binary forms, 
-   with or without modification, are permitted provided that the following 
-   conditions are met:
-
-   Redistributions of source code must retain the above
-   copyright notice, this list of conditions and the
-   following disclaimer.
-
-   Redistributions in binary form must reproduce the above
-   copyright notice, this list of conditions and the
-   following disclaimer in the documentation and/or other
-   materials provided with the distribution.
-
-   Neither the name of Yahoo! Inc. nor the names of its
-   contributors may be used to endorse or promote products
-   derived from this software without specific prior
-   written permission of Yahoo! Inc.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
-   IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED 
-   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
-   PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
-   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
-   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
-   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
-   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 /**
- * Provides 'tap' functionality for touchscreen devices.  'tap' is like a touchscreen 'click', 
- * only it requires much less finger-down time.
- * 'tap' enables high-usability mobile applications, and more.  Code by Yahoo Engineering.
+ * The tap module provides a gesture events, "tap", which normalizes user interactions
+ * across touch and mouse or pointer based input devices.  This can be used by application developers
+ * to build input device agnostic components which behave the same in response to either touch or mouse based
+ * interaction.
+ *
+ * 'tap' is like a touchscreen 'click', only it requires much less finger-down time since it listens to touch events,
+ * but reverts to mouse events if touch is not supported. 
  * @module event
  * @submodule event-tap
- */
-
-/**
-    * The tap module provides a gesture events, "tap", which normalizes user interactions
-    * across touch and mouse or pointer based input devices.  This can be used by application developers
-    * to build input device agnostic components which behave the same in response to either touch or mouse based
-    * interaction.
-    *
-    */
+ * @author matuzak and tilo mitra
+ * @since 3.7.0 
+ * 
+*/
 var SUPPORTS_TOUCHES = ("createTouch" in document),
-    EVENTS = {
-        START: SUPPORTS_TOUCHES ? 'touchstart' : 'mousedown',
-        MOVE: SUPPORTS_TOUCHES ? 'touchmove' : 'mousemove',
-        END: SUPPORTS_TOUCHES ? 'touchend' : 'mouseup',
-        CANCEL: SUPPORTS_TOUCHES ? 'touchcancel' : 'mousecancel',
+     EVENTS = {
+         START: SUPPORTS_TOUCHES ? 'touchstart' : 'mousedown',
+         MOVE: SUPPORTS_TOUCHES ? 'touchmove' : 'mousemove',
+         END: SUPPORTS_TOUCHES ? 'touchend' : 'mouseup',
+       CANCEL: SUPPORTS_TOUCHES ? 'touchcancel' : 'mousecancel',
         TAP: 'tap'
     },
     HANDLES = {
@@ -88,16 +53,16 @@ function detachHelper(subscription, handles, subset, context) {
 
 
 /**
-    * Sets up a "tap" event, that is fired on touch devices in response to a tap event (finger down, finder up).
-    * This event can be used instead of listening for click events which have a 500ms delay on most touch devices.
-    * This event can also be listened for using node.delegate().
-    *
-    * @event tap
-    * @param type {string} "tap"
-    * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event.
-    *
-    * @return {EventHandle} the detach handle
-    */
+ * Sets up a "tap" event, that is fired on touch devices in response to a tap event (finger down, finder up).
+ * This event can be used instead of listening for click events which have a 500ms delay on most touch devices.
+ * This event can also be listened for using node.delegate().
+ *
+ * @event tap
+ * @param type {string} "tap"
+ * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event.
+ *
+ * @return {EventHandle} the detach handle
+*/
 Y.Event.define(EVENTS.TAP, {
 
     on: function (node, subscription, notifier) {
@@ -130,7 +95,8 @@ Y.Event.define(EVENTS.TAP, {
         }
         context.node = delegate ? event.currentTarget : node;
 
-        //There is a double check in here to support event simulation tests
+        //There is a double check in here to support event simulation tests, in which
+        //event.touches can be undefined when simulating 'touchstart' on touch devices.
         if (SUPPORTS_TOUCHES && event.touches) {
           context.startXY = [ event.touches[0].pageX, event.touches[0].pageY ];
         }
@@ -164,7 +130,8 @@ Y.Event.define(EVENTS.TAP, {
             clientXY,
             handles = delegate ? HANDLES.DELEGATE : HANDLES.ON;
 
-        //There is a double check in here to support event simulation tests
+        //There is a double check in here to support event simulation tests, in which
+        //event.touches can be undefined when simulating 'touchstart' on touch devices.
         if (SUPPORTS_TOUCHES && event.changedTouches) {
           endXY = [ event.changedTouches[0].pageX, event.changedTouches[0].pageY ];
           clientXY = [event.changedTouches[0].clientX, event.changedTouches[0].clientY];
