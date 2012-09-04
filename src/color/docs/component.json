@@ -1,7 +1,6 @@
 {
     "name"       : "color",
     "displayName": "Color",
-    "description": "The Sortable utility provides support for the creation of a sortable list as well as the ability to join lists in various ways.",
     "description": "The Color utility provides methods for converting hex, RGB, and HSL to hex, RGB, and HSL.",
     "author"     : "apipkin",
 
