@@ -1,49 +1,59 @@
 /**
 Color provides static methods for color conversion.
 
-<p>For all cases of option.type, valid types are:</p><dl>
-<dt>keyword</dt>
-    <dd>option.value - must be a keyword in Y.Color.KEYWORDS</dd>
-<dt>hex</dt>
-    <dd>option.value - 3 or 6 character representation with or without a '#' or array of [rr, gg, bb] strings</dd>
-<dt>rgb</dt>
-    <dd>option.value - rgb(r, g, b) string or array of [r, g, b] values</dd>
-<dt>rgba</dt>
-    <dd>option.value - rgba(r, g, b, a) string or array of [r, g, b, a] values</dd>
-<dt>hsl</dt>
-    <dd>option.value - hsl(h, s%, l%) string or array of [h, s, l] values</dd>
-<dt>hsla</dt>
-    <dd>option.value - hsla(h, s%, l%, a) string or array of [h, s, l, a] values</dd>
-</dl>
+For all cases of option.type, valid types are:
 
-<p>For all cases of option.to, valid types are:</p><dl>
-<dt>hex</dt>
-    <dd>returns [rr, gg, bb] or #rrggbb if options.css is true</dd>
-<dt>rgb</dt>
-    <dd>returns [r, g, b] or rgb(r, g, b) if options.css is true</dd>
-<dt>rgba</dt>
-    <dd>returns [r, g, b, a] or rgba(r, g, b, a) if options.css is true</dd>
-<dt>hsl</dt>
-    <dd>returns [h, s, l] or hsl(h, s%, l%) if options.css is true</dd>
-<dt>hsla</dt>
-    <dd>returns [h, s, l, a] or hsla(h, s%, l%, a) if options.css is true</dd>
-</dl>
+- **keyword**:
+option.value - must be a keyword in Y.Color.KEYWORDS
 
-<pre><code>
-Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+- **hex**:
+option.value - 3 or 6 character representation with or without a '#' or array of [rr, gg, bb] strings
 
-Y.Color.toHex({
-    type: 'rgb',
-    value: [255, 255, 0]
-}); // ["ff", "ff", "00"]
+- **rgb**:
+option.value - rgb(r, g, b) string or array of [r, g, b] values
 
-Y.Color.convert({
-    type: 'hsl',
-    value: [240, 100, 50],
-    to: 'hex',
-    css: true
-}); // #0000ff
-</code></pre>
+- **rgba**:
+option.value - rgba(r, g, b, a) string or array of [r, g, b, a] values
+
+- **hsl**:
+option.value - hsl(h, s%, l%) string or array of [h, s, l] values
+
+- **hsla**:
+option.value - hsla(h, s%, l%, a) string or array of [h, s, l, a] values
+
+In all cases of option.to, valid types are:
+
+- **hex**:
+returns [rr, gg, bb] or #rrggbb if options.css is true
+
+- **rgb**:
+returns [r, g, b] or rgb(r, g, b) if options.css is true
+
+- **rgba**:
+returns [r, g, b, a] or rgba(r, g, b, a) if options.css is true
+
+- **hsl**:
+returns [h, s, l] or hsl(h, s%, l%) if options.css is true
+
+- **hsla**:
+returns [h, s, l, a] or hsla(h, s%, l%, a) if options.css is true
+
+The following is an example of how these features can be used:
+
+    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+
+    Y.Color.toHex({
+        type: 'rgb',
+        value: [255, 255, 0]
+    }); // ["ff", "ff", "00"]
+
+    Y.Color.convert({
+        type: 'hsl',
+        value: [240, 100, 50],
+        to: 'hex',
+        css: true
+    }); // #0000ff
+
 
 @module color
 @class Color
