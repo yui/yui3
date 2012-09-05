@@ -190,24 +190,24 @@ Color = {
             matches = REGEX_HEX.exec(val);
             if (matches) {
                 arr = [matches[2], matches[3], matches[4]];
-                break;
-            }
-            matches = REGEX_HEX3.exec(val);
-            if (matches) {
-                arr = [
-                    matches[2].toString() + matches[2],
-                    matches[3].toString() + matches[3],
-                    matches[4].toString() + matches[4]
-                ];
+            } else {
+                matches = REGEX_HEX3.exec(val);
+                if (matches) {
+                    arr = [
+                        matches[2].toString() + matches[2],
+                        matches[3].toString() + matches[3],
+                        matches[4].toString() + matches[4]
+                    ];
+                }
             }
         } else if (type === 'rgb' || type === 'rgbcss') {
             if (Y.Lang.isArray(val) && val.length === 3) {
                 arr = val;
-                break;
-            }
-            matches = REGEX_RGB.exec(val);
-            if (matches) {
-                arr = [ matches[1], matches[2], matches[3] ];
+            } else {
+                matches = REGEX_RGB.exec(val);
+                if (matches) {
+                    arr = [ matches[1], matches[2], matches[3] ];
+                }
             }
         } else {
             Y.log('Type not found.', 'error', 'Y.Color::_toArray');
