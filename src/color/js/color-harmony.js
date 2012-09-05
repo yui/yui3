@@ -355,7 +355,7 @@ var HSL = 'hsl',
 
             for (; i <= 100; i += step) {
                 _c.value = _c.value.concat();
-                _c.value[1] = Math.max(Math.min(i, 100), 0);
+                _c.value[2] = Math.max(Math.min(i, 100), 0);
                 colors.push(_c);
                 _c = Y.mix({}, _c);
             }
