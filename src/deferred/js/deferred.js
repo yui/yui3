@@ -35,7 +35,7 @@ successfully (`resolve()`) or unsuccessfully (`reject()`).
 @class Deferred
 @constructor
 **/
-Y.Deferred = function () {
+function Deferred() {
     this._subs = {
         resolve: [],
         reject : []
@@ -45,9 +45,9 @@ Y.Deferred = function () {
 
     this._status = 'in progress';
 
-};
+}
 
-Y.mix(Y.Deferred.prototype, {
+Y.mix(Deferred.prototype, {
     /**
     Returns the promise for this Deferred.
 
@@ -130,23 +130,33 @@ Y.mix(Y.Deferred.prototype, {
 
         function wrap(fn, method) {
             return function () {
-                var result = fn.apply(promise, arguments),
-                    resultPromise;
+                var args = slice.call(arguments);
 
-                if (result && typeof result.promise === 'function') {
-                    resultPromise = result.promise();
+                // Wrapping all callbacks in setTimeout to guarantee
+                // asynchronicity. Because setTimeout can cause unnecessary
+                // delays that *can* become noticeable in some situations
+                // (especially in Node.js), I'm using Y.soon if available.
+                // As of today, Y.soon is only available in the gallery as
+                // gallery-soon, but maybe it could get promoted to core?
+                (Y.soon || setTimeout)(function () {
+                    var result = fn.apply(promise, args),
+                        resultPromise;
 
-                    if (resultPromise.getStatus() !== 'in progress') {
-                        then[method].apply(then, resultPromise.getResult());
+                    if (result && typeof result.promise === 'function') {
+                        resultPromise = result.promise();
+
+                        if (resultPromise.getStatus() !== 'in progress') {
+                            then[method].apply(then, resultPromise.getResult());
+                        } else {
+                            result.promise().then(
+                                Y.bind(then.resolve, then), // callback
+                                Y.bind(then.reject, then)); // errback
+                        }
                     } else {
-                        result.promise().then(
-                            Y.bind(then.resolve, then), // callback
-                            Y.bind(then.reject, then)); // errback
+                        then[method].apply(then,
+                            (isArray(result) ? result : [result]));
                     }
-                } else {
-                    then[method].apply(then,
-                        (isArray(result) ? result : [result]));
-                }
+                }, 0);
             };
         }
 
@@ -210,3 +220,5 @@ Y.mix(Y.Deferred.prototype, {
     }
 
 }, true);
+
+Y.Deferred = Deferred;

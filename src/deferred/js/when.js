@@ -32,7 +32,9 @@ Y.when = function () {
 
             results[i] = args.length > 1 ? args : args[0];
 
-            if (!--remaining && allDone.getStatus() !== 'rejected') {
+            remaining--;
+
+            if (!remaining && allDone.getStatus() !== 'rejected') {
                 allDone.resolve.apply(allDone, results);
             }
         };
@@ -53,11 +55,20 @@ Y.when = function () {
             fn.apply(Y, deferred);
 
         } else if (fn && typeof fn.then === 'function') {
-            fn.then(finished, finished);
+            fn.then(finished, failed);
+        } else {
+            remaining--;
+            results[i] = fn;
         }
     });
 
     funcs = null;
+
+    // For some crazy reason, only values, not functions or promises were passed
+    // in, so we're done already.
+    if (!remaining) {
+        allDone.resolve.apply(allDone, results);
+    }
 
     return allDone.promise();
 };

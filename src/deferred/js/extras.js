@@ -24,21 +24,27 @@ Y.mix(Y.Deferred.prototype, {
     @return {Promise}
     **/
     wait: function (ms) {
-        var deferred = new Y.Deferred();
+        var deferred = new Y.Deferred(),
+            promise  = deferred.promise(),
+            timeout;
 
-        function relay(method) {
-            return function () {
-                var args = slice.call(arguments);
+        // || 0 catches 0 and NaN
+        ms = Math.max(0, +ms || 0);
 
-                setTimeout(function () {
-                    deferred[method].apply(deferred, args);
-                }, ms);
-            };
-        }
+        this.then(function () {
+            var args = slice.call(arguments);
 
-        this.then(relay('resolve'), relay('reject'));
+            timeout = setTimeout(function () {
+                deferred.resolve.apply(deferred, args);
+            }, ms);
+        });
 
-        return deferred.promise();
+        promise.cancel = function () {
+            clearTimeout(timeout);
+            deferred.reject.apply(deferred, arguments);
+        };
+
+        return promise;
     },
 
     /**

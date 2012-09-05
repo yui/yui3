@@ -6,9 +6,9 @@ resolution or progress of the operation represented by the Deferred.
 @constructor
 @param {Deferred} deferred The Deferred object that the promise represents
 **/
-Y.Promise = function (deferred) {
+function Promise(deferred) {
     this._deferred = deferred;
-};
+}
 
 /**
 Adds a method or array of methods to the Promise prototype to relay to the
@@ -23,13 +23,13 @@ Promise.
                                  the Promise prototype.
 @static
 **/
-Y.Promise.addMethod = function(methods) {
+Promise.addMethod = function(methods) {
     if (!isArray(methods)) {
         methods = [methods];
     }
 
-    Y.Array.forEach(methods, function (method) {
-        Y.Promise.prototype[method] = function () {
+    Y.Array.each(methods, function (method) {
+        Promise.prototype[method] = function () {
             return this._deferred[method].apply(this._deferred, arguments);
         };
     });
@@ -76,4 +76,6 @@ promise is resolved before calling this.
 @method getResult
 @return {Any[]} Array of values passed to `resolve()` or `reject()`
 **/
-Y.Promise.addMethod(['then', 'promise', 'getStatus', 'getResult']);
+Promise.addMethod(['then', 'promise', 'getStatus', 'getResult']);
+
+Y.Promise = Promise;
