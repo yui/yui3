@@ -1,0 +1,12 @@
+{
+    "name": "console",
+    "builds": {
+        "skinnable": "true",
+        "console": {
+            "regex": "",
+            "jsfiles": [
+                "console.js"
+            ]
+        }
+    }
+}

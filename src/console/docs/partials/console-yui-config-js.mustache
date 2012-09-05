@@ -96,7 +96,7 @@ function updatePreview() {
         cfg[Y.one("#incexc").get("value")] = Y.Array.hash(filters.get("value"));
     }
 
-    Y.one("#preview").set("text",Y.substitute(
+    Y.one("#preview").set("text",Y.Lang.sub(
         "// YUI instance configuration\n" +
         "var Y = YUI({cfg});\n\n" +
         "// Log statement\n" +

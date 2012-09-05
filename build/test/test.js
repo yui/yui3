@@ -3683,7 +3683,7 @@ if (!YUI.YUITest) {
                 break;
                 
             case this.COMPLETE_EVENT:
-                message = Y.substitute("Testing completed at " +
+                message = Y.Lang.sub("Testing completed at " +
                     (new Date()).toString() + ".\n" +
                     "Passed:{passed} Failed:{failed} " +
                     "Total:{total} ({ignored} ignored)",
@@ -3712,7 +3712,7 @@ if (!YUI.YUITest) {
                 break;
                 
             case this.TEST_SUITE_COMPLETE_EVENT:
-                message = Y.substitute("Test suite \"" +
+                message = Y.Lang.sub("Test suite \"" +
                     event.testSuite.name + "\" completed" + ".\n" +
                     "Passed:{passed} Failed:{failed} " +
                     "Total:{total} ({ignored} ignored)",
@@ -3726,7 +3726,7 @@ if (!YUI.YUITest) {
                 break;
                 
             case this.TEST_CASE_COMPLETE_EVENT:
-                message = Y.substitute("Test case \"" +
+                message = Y.Lang.sub("Test case \"" +
                     event.testCase.name + "\" completed.\n" +
                     "Passed:{passed} Failed:{failed} " +
                     "Total:{total} ({ignored} ignored)",
@@ -3755,4 +3755,4 @@ if (!YUI.YUITest) {
 } //End if for YUI.YUITest
 
 
-}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "substitute", "json-stringify"]});
+}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "json-stringify"]});

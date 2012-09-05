@@ -66,7 +66,7 @@
 
             if (create) {
                 Y.log('Creating the document from javascript', 'info', 'frame');
-                html = Y.substitute(Frame.PAGE_HTML, {
+                html = Y.Lang.sub(Frame.PAGE_HTML, {
                     DIR: this.get('dir'),
                     LANG: this.get('lang'),
                     TITLE: this.get('title'),
@@ -943,7 +943,7 @@
             */
             use: {
                 writeOnce: true,
-                value: ['substitute', 'node', 'node-style', 'selector-css3']
+                value: ['node', 'node-style', 'selector-css3']
             },
             /**
             * @attribute container
