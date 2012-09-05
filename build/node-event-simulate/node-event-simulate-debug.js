@@ -1,4 +1,4 @@
-YUI.add('node-event-simulate', function(Y) {
+YUI.add('node-event-simulate', function (Y, NAME) {
 
 /**
  * Adds functionality to simulate events.
@@ -186,4 +186,4 @@ Y.Node.prototype.simulateGesture = function (name, options, cb) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-simulate']});
+}, '@VERSION@', {"requires": ["node-base", "event-simulate", "gesture-simulate"]});

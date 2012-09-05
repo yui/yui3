@@ -11,10 +11,10 @@ YUI.add('ac-jsonp-tests', function(Y) {
             Assert.isNotNull(Y.one('.example #demo .yui3-aclist-list'));
         },
 
-        'test type "lsmith" into ac list' : function() {
+        'test type "css" into ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
-                inputStr = "lsmith";
+                inputStr = "css";
             input.focus();
             input.set('value', inputStr);
 

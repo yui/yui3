@@ -1,4 +1,4 @@
-YUI.add('dom-base', function(Y) {
+YUI.add('dom-base', function (Y, NAME) {
 
 /**
 * @for DOM
@@ -681,4 +681,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-core']});
+}, '@VERSION@', {"requires": ["dom-core"]});

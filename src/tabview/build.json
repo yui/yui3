@@ -1,0 +1,21 @@
+{
+    "name": "tabview",
+    "builds": {
+        "tabview": {
+            "jsfiles": [
+                "tabview.js",
+                "tab.js"
+            ]
+        },
+        "tabview-plugin": {
+            "jsfiles": [
+                "tabview-plugin.js"
+            ]
+        },
+        "tabview-base": {
+            "jsfiles": [
+                "tabview-base.js"
+            ]
+        }
+    }
+}

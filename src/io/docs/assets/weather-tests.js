@@ -8,11 +8,11 @@ YUI.add('weather-tests', function(Y) {
         'test Get Weather RSS': function() {
             Y.one('#getWeather').simulate('click');
             var interval = 10,
-                timeout = 10000,
+                timeout = 60000,
                 output = Y.one('.example #weatherModule'),
                 condition = function() {
                     // Return a truthy/falsey result.
-                    return (output.getHTML().indexOf('(provided by') > -1);
+                    return (output.getHTML().indexOf('Current Conditions') > -1);
                     // For example:
                     // return Y.one("#waitForMe") !== null
                 },

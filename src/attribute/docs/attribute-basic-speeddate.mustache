@@ -249,7 +249,7 @@ jane.applySicker("#jane .shirt");
 a commonly used pattern.</p>
 
 <p>The `applyNameTag()` method handles rendering the initial visual representation for a speed dater object's state (in this case a name tag). It uses tokens in an HTML "template" string, which it replaces with the values 
-of attributes using the `substitute()` utility method:</p>
+of attributes using the `Y.Lang.sub()` utility method:</p>
 
 ```
 // A template for the markup representing the SpeedDater object..
@@ -268,7 +268,7 @@ SpeedDater.NAMETAG = '<div class="sd-nametag"> \
 SpeedDater.prototype.applyNameTag = function(where) {
 
     // This example uses an HTML template string containing placeholder 
-    // tokens (SpeedDater.NAMETAG above), and Y.substitute to replace the 
+    // tokens (SpeedDater.NAMETAG above), and Y.Lang.sub() to replace the 
     // tokens with the current attribute values.  
 
     var tokens = {
@@ -279,7 +279,7 @@ SpeedDater.prototype.applyNameTag = function(where) {
     };
 
     // Create a new Node element, from the token substituted string... 
-    this.nameTag = Y.Node.create(Y.substitute(SpeedDater.NAMETAG, tokens));
+    this.nameTag = Y.Node.create(Y.Lang.sub(SpeedDater.NAMETAG, tokens));
 
     // ... and append it to the DOM
     Y.one(where).appendChild(this.nameTag);
