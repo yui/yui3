@@ -293,7 +293,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
             widgetSize = host.get('width');
-            contentSize = host._scrollWidth;
+            contentSize = host._bb.get('scrollWidth');
             translate = TRANSLATE_X;
             scale = SCALE_X;
             current = (current !== undefined) ? current : host.get(SCROLL_X);
@@ -302,7 +302,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset = TOP;
             dimCache = VERT_CACHE;
             widgetSize = host.get('height');
-            contentSize = host._scrollHeight;
+            contentSize = host._bb.get('scrollHeight');
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
             current = (current !== undefined) ? current : host.get(SCROLL_Y);
@@ -314,7 +314,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         if (scrollbarSize > widgetSize) {
             scrollbarSize = 1;
         }
-
+        
         if (scrollbarPos > (widgetSize - scrollbarSize)) {
             scrollbarSize = scrollbarSize - (scrollbarPos - (widgetSize - scrollbarSize));
         } else if (scrollbarPos < 0) {

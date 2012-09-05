@@ -101,6 +101,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * Contains the distance (postive or negative) in pixels by which 
+     * the scrollview was last scrolled. This is useful when setting up 
+     * click listeners on the scrollview content, which on mouse based 
+     * devices are always fired, even after a drag/flick. 
+     * 
+     * <p>Touch based devices don't currently fire a click event, 
+     * if the finger has been moved (beyond a threshold) so this 
+     * check isn't required, if working in a purely touch based environment</p>
+     * 
+     * @property lastScrolledAmt
+     * @type Number
+     * @public
+     */
+    lastScrolledAmt: null,
+
+    /**
      * Designated initializer
      *
      * @method initializer
@@ -128,7 +144,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        sv._bindMousewheel(sv.get(MOUSEWHEEL));
+        sv._bindMousewheel(ScrollView.MOUSEWHEEL);
         
         sv._bindAttrs();
 
@@ -511,6 +527,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // TODO: Review if neccesary (#2530129)
         e.stopPropagation();
 
+        // Reset lastScrolledAmt
+        sv.lastScrolledAmt = 0;
+
         // Stores data for this gesture cycle.  Cleaned up later
         sv._gesture = {
 
@@ -550,6 +569,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMove: function (e) {
+
         var sv = this,
             gesture = sv._gesture,
             svAxis = sv._cAxis,
@@ -592,34 +612,49 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function (e) {
-        var sv = this,
-            gesture = sv._gesture,
-            flick = gesture.flick,
-            clientX = e.clientX,
-            clientY = e.clientY,
-            isOOB;
 
-        if (sv._prevent.end) {
-            e.preventDefault();
-        }
+        // Y.later hack because _onGestureMoveEnd has to fire AFTER _flick,
+        // but that order can vary depending on when they are bound. 
+        // @TODO: Revisit, cause while this works, there's gotta be a better way
+        Y.later(1, this, function () {
+            var sv = this,
+                gesture = sv._gesture,
+                flick = gesture.flick,
+                clientX = e.clientX,
+                clientY = e.clientY,
+                isOOB;
 
-        // Store the end X/Y coordinates
-        gesture.endClientX = clientX;
-        gesture.endClientY = clientY;
-
-        // Only if this gesture wasn't a flick, and there was movement
-        if (!flick && gesture.deltaX !== null && gesture.deltaY !== null) {
-            if (sv._isOOB()) {
-                sv._snapBack();
+            if (sv._prevent.end) {
+                e.preventDefault();
             }
-            else {
-                // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
-                    sv._onTransEnd();
+
+            // Store the end X/Y coordinates
+            gesture.endClientX = clientX;
+            gesture.endClientY = clientY;
+
+            // If this wasn't a flick, wrap up the gesture cycle
+            if (!flick) {
+
+                // If there was movement (_onGestureMove fired)
+                if (gesture.deltaX !== null && gesture.deltaY !== null) {
+
+                    // If we're out-out-bounds, then snapback
+                    if (sv._isOOB()) {
+                        sv._snapBack();
+                    }
+
+                    // Inbounds
+                    else {
+                        // Don't fire scrollEnd on the gesture axis is the same as paginator's
+                        // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                        if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
+                            sv._onTransEnd();
+                        }
+                    }
                 }
             }
-        }
+        });
+
     },
 
     /**
@@ -728,6 +763,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
         if (bb.contains(e.target)) {
+        
+            // Reset lastScrolledAmt
+            sv.lastScrolledAmt = 0;
+
             // Jump to the new offset
             sv.set(SCROLL_Y, scrollToY);
 
@@ -820,6 +859,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             easing = e.easing,
             val = e.newVal,
             scrollToArgs = [];
+
+        // Set the scrolled value
+        sv.lastScrolledAmt = sv.lastScrolledAmt + (e.newVal - e.prevVal);
 
         // Generate the array of args to pass to scrollTo()
         if (e.attrName === SCROLL_X) {
@@ -1065,16 +1107,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          */
         drag: {
             value: true
-        },
-
-        /**
-         * Enable/Disable scrolling the ScrollView content via mousewheel
-         * @attribute mousewheel
-         * @type boolean
-         * @default true
-         */
-        mousewheel: {
-            value: true
         }
     },
 
@@ -1159,6 +1191,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _TRANSITION: {
         DURATION: Y.Transition._VENDOR_PREFIX + 'TransitionDuration',
         PROPERTY: Y.Transition._VENDOR_PREFIX + 'TransitionProperty'
+    },
+
+    /**
+     * Enable/Disable scrolling content via mousewheel
+     * @property mousewheel
+     * @type boolean
+     * @static
+     * @default true
+     */
+    MOUSEWHEEL: {
+        value: true
     }
 
     // End static properties
