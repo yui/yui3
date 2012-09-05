@@ -1,11 +1,10 @@
-DataType Change History
+Number Change History
 =======================
 
 3.6.1
 -----
-* DataType is now an alias for Y.Date, Y.Number and Y.XML modules. The Y.DataType.* module
-  names have been retained for backwards compatibility but may be removed in the future 
-  (a decision which will be forecast sufficiently ahead of time).
+
+* Moved from Y.Datatype.Number to Y.Number
 
 3.6.0
 -----

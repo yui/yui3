@@ -21,12 +21,12 @@ YUI().use("node", "datatype-number", "escape", function (Y) {
 
     function updateNumber (e) {
         e.preventDefault();
-        var number = Y.DataType.Number.parse(Y.one("#demo_number").get("value")),
-            output = Y.DataType.Number.format(number, {
+        var number = Y.Number.parse(Y.one("#demo_number").get("value")),
+            output = Y.Number.format(number, {
                     prefix: Y.one("#demo_prefix").get("value"),
                     thousandsSeparator: Y.one("#demo_thousandsSeparator").get("value"),
                     decimalSeparator:Y.one("#demo_decimalSeparator").get("value"),
-                    decimalPlaces: Y.DataType.Number.parse(Y.one("#demo_decimalPlaces").get("value")),
+                    decimalPlaces: Y.Number.parse(Y.one("#demo_decimalPlaces").get("value")),
                     suffix: Y.one("#demo_suffix").get("value")
                 });
                 
