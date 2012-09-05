@@ -16,50 +16,44 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/build/datatype-xml-format/datatype-xml-format.js"] = {
+_yuitest_coverage["build/datatype-xml-format/datatype-xml-format.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/build/datatype-xml-format/datatype-xml-format.js",
+    path: "build/datatype-xml-format/datatype-xml-format.js",
     code: []
 };
-_yuitest_coverage["/build/datatype-xml-format/datatype-xml-format.js"].code=["YUI.add('datatype-xml-format', function(Y) {","","/**"," * Format XML submodule."," *"," * @module datatype"," * @submodule datatype-xml-format"," */","","/**"," * XML submodule."," *"," * @module datatype"," * @submodule datatype-xml"," */","","/**"," * DataType.XML provides a set of utility functions to operate against XML documents."," *"," * @class DataType.XML"," * @static"," */","var LANG = Y.Lang;","","Y.mix(Y.namespace(\"DataType.XML\"), {","    /**","     * Converts data to type XMLDocument.","     *","     * @method format","     * @param data {XMLDoc} Data to convert.","     * @return {String} String.","     */","    format: function(data) {","        try {","            if(!LANG.isUndefined(XMLSerializer)) {","                return (new XMLSerializer()).serializeToString(data);","            }","        }","        catch(e) {","            if(data && data.xml) {","                return data.xml;","            }","            else {","                return (LANG.isValue(data) && data.toString) ? data.toString() : \"\";","            }","        }","    }","});","","","","}, '@VERSION@' );"];
-_yuitest_coverage["/build/datatype-xml-format/datatype-xml-format.js"].lines = {"1":0,"23":0,"25":0,"34":0,"35":0,"36":0,"40":0,"41":0,"44":0};
-_yuitest_coverage["/build/datatype-xml-format/datatype-xml-format.js"].functions = {"format:33":0,"(anonymous 1):1":0};
-_yuitest_coverage["/build/datatype-xml-format/datatype-xml-format.js"].coveredLines = 9;
-_yuitest_coverage["/build/datatype-xml-format/datatype-xml-format.js"].coveredFunctions = 2;
-_yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 1);
-YUI.add('datatype-xml-format', function(Y) {
+_yuitest_coverage["build/datatype-xml-format/datatype-xml-format.js"].code=["YUI.add('datatype-xml-format', function (Y, NAME) {","","/**"," * The Number Utility provides type-conversion and string-formatting"," * convenience methods for Numbers."," *"," * @module datatype-xml"," * @submodule datatype-xml-format"," */","","/**"," * XML provides a set of utility functions to operate against XML documents."," *"," * @class XML"," * @static"," */","var LANG = Y.Lang;","","Y.mix(Y.namespace(\"XML\"), {","    /**","     * Converts data to type XMLDocument.","     *","     * @method format","     * @param data {XMLDoc} Data to convert.","     * @return {String} String.","     */","    format: function(data) {","        try {","            if(!LANG.isUndefined(XMLSerializer)) {","                return (new XMLSerializer()).serializeToString(data);","            }","        }","        catch(e) {","            if(data && data.xml) {","                return data.xml;","            }","            else {","                return (LANG.isValue(data) && data.toString) ? data.toString() : \"\";","            }","        }","    }","});","","Y.namespace(\"DataType\");","Y.DataType.XML = Y.XML;","","}, '@VERSION@');"];
+_yuitest_coverage["build/datatype-xml-format/datatype-xml-format.js"].lines = {"1":0,"17":0,"19":0,"28":0,"29":0,"30":0,"34":0,"35":0,"38":0,"44":0,"45":0};
+_yuitest_coverage["build/datatype-xml-format/datatype-xml-format.js"].functions = {"format:27":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/datatype-xml-format/datatype-xml-format.js"].coveredLines = 11;
+_yuitest_coverage["build/datatype-xml-format/datatype-xml-format.js"].coveredFunctions = 2;
+_yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 1);
+YUI.add('datatype-xml-format', function (Y, NAME) {
 
 /**
- * Format XML submodule.
+ * The Number Utility provides type-conversion and string-formatting
+ * convenience methods for Numbers.
  *
- * @module datatype
+ * @module datatype-xml
  * @submodule datatype-xml-format
  */
 
 /**
- * XML submodule.
+ * XML provides a set of utility functions to operate against XML documents.
  *
- * @module datatype
- * @submodule datatype-xml
- */
-
-/**
- * DataType.XML provides a set of utility functions to operate against XML documents.
- *
- * @class DataType.XML
+ * @class XML
  * @static
  */
-_yuitest_coverfunc("/build/datatype-xml-format/datatype-xml-format.js", "(anonymous 1)", 1);
-_yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 23);
+_yuitest_coverfunc("build/datatype-xml-format/datatype-xml-format.js", "(anonymous 1)", 1);
+_yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 17);
 var LANG = Y.Lang;
 
-_yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 25);
-Y.mix(Y.namespace("DataType.XML"), {
+_yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 19);
+Y.mix(Y.namespace("XML"), {
     /**
      * Converts data to type XMLDocument.
      *
@@ -68,29 +62,32 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @return {String} String.
      */
     format: function(data) {
-        _yuitest_coverfunc("/build/datatype-xml-format/datatype-xml-format.js", "format", 33);
-_yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 34);
+        _yuitest_coverfunc("build/datatype-xml-format/datatype-xml-format.js", "format", 27);
+_yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 28);
 try {
-            _yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 35);
+            _yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 29);
 if(!LANG.isUndefined(XMLSerializer)) {
-                _yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 36);
+                _yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 30);
 return (new XMLSerializer()).serializeToString(data);
             }
         }
         catch(e) {
-            _yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 40);
+            _yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 34);
 if(data && data.xml) {
-                _yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 41);
+                _yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 35);
 return data.xml;
             }
             else {
-                _yuitest_coverline("/build/datatype-xml-format/datatype-xml-format.js", 44);
+                _yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 38);
 return (LANG.isValue(data) && data.toString) ? data.toString() : "";
             }
         }
     }
 });
 
+_yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 44);
+Y.namespace("DataType");
+_yuitest_coverline("build/datatype-xml-format/datatype-xml-format.js", 45);
+Y.DataType.XML = Y.XML;
 
-
-}, '@VERSION@' );
+}, '@VERSION@');
