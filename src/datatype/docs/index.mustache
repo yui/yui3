@@ -30,7 +30,7 @@
 ```
 YUI({lang:"ko-KR"}).use("datatype-date", function(Y) {
     // display the current date and time in localized format
-    alert(Y.DataType.Date.format(new Date(), {format:"%x %X"}));
+    Y.log(Y.DataType.Date.format(new Date(), {format:"%x %X"}));
 });
 ```
 
@@ -73,7 +73,7 @@ YUI().use("intl", "datatype-date-format", function(Y) {
     // switch to Punjabi
     Y.Intl.setLang("datatype-date-format", "pa-IN");
     // now dates are formatted in Punjabi
-    alert(Y.DataType.Date.format(new Date(), {format:"%A %x %X"}));
+    Y.log(Y.DataType.Date.format(new Date(), {format:"%A %x %X"}));
 });
 ```
 
@@ -105,7 +105,7 @@ var date4 = Y.DataType.Date.parse(948548583);
 </p>
 
 ```
-alert(Y.DataType.Number.format(123123123.176,{
+Y.log(Y.DataType.Number.format(123123123.176,{
     prefix: "€",
     thousandsSeparator: ".",
     decimalSeparator: ",",
