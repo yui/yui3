@@ -3,6 +3,10 @@
     "exec": [
         "./scripts/concat.js"
     ],
+    "shifter": {
+        "coverage": false,
+        "lint": "defaults"
+    },
     "builds": {
         "simpleyui": {
             "name": "yui",
