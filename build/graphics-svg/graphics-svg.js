@@ -37,10 +37,13 @@ SVGDrawing.prototype = {
      */
     _pathSymbolToMethod: {
         M: "moveTo",
+        m: "relativeMoveTo",
         L: "lineTo",
+        l: "relativeLineTo",
         C: "curveTo",
         c: "relativeCurveTo",
         Q: "quadraticCurveTo",
+        q: "relativeQuadraticCurveTo",
         z: "closePath",
         Z: "closePath"
     },
@@ -112,9 +115,9 @@ SVGDrawing.prototype = {
     },
 
     /**
-     * Draws a bezier curve.
+     * Draws a bezier curve relative to the current coordinates.
      *
-     * @method curveTo
+     * @method relativeCurveTo
      * @param {Number} cp1x x-coordinate for the first control point.
      * @param {Number} cp1y y-coordinate for the first control point.
      * @param {Number} cp2x x-coordinate for the second control point.
@@ -170,10 +173,10 @@ SVGDrawing.prototype = {
         len = args.length - 5;
         for(; i < len; i = i + 6)
         {
-            cp1x = args[i] + relative;
-            cp1y = args[i + 1] + relative;
-            cp2x = args[i + 2] + relative;
-            cp2y = args[i + 3] + relative;
+            cp1x = parseFloat(args[i]) + relativeX;
+            cp1y = parseFloat(args[i + 1]) + relativeY;
+            cp2x = parseFloat(args[i + 2]) + relativeX;
+            cp2y = parseFloat(args[i + 3]) + relativeY;
             x = parseFloat(args[i + 4]) + relativeX;
             y = parseFloat(args[i + 5]) + relativeY;
             right = Math.max(x, Math.max(cp1x, cp2x));
@@ -198,8 +201,37 @@ SVGDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-        var pathArrayLen,
+    quadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a quadratic bezier curve relative to the current position.
+     *
+     * @method quadraticCurveTo
+     * @param {Number} cpx x-coordinate for the control point.
+     * @param {Number} cpy y-coordinate for the control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeQuadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+    },
+   
+    /**
+     * Implements quadraticCurveTo methods.
+     *
+     * @method _quadraticCurveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _quadraticCurveTo: function(args, relative) {
+        var cpx, 
+            cpy, 
+            x, 
+            y,
+            pathArrayLen,
             currentArray,
             w,
             h,
@@ -207,11 +239,16 @@ SVGDrawing.prototype = {
             right,
             left,
             bottom,
-            top;
-        if(this._pathType !== "Q")
+            top,
+            i = 0,
+            len,
+            command = relative ? "q" : "Q",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        if(this._pathType !== command)
         {
-            this._pathType = "Q";
-            currentArray = ["Q"];
+            this._pathType = command;
+            currentArray = [command];
             this._pathArray.push(currentArray);
         }
         else
@@ -224,17 +261,25 @@ SVGDrawing.prototype = {
             }
         }
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([Math.round(cpx), Math.round(cpy), Math.round(x), Math.round(y)]);
-        right = Math.max(x, cpx);
-        bottom = Math.max(y, cpy);
-        left = Math.min(x, cpx);
-        top = Math.min(y, cpy);
-        w = Math.abs(right - left);
-        h = Math.abs(bottom - top);
-        pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]]; 
-        this._setCurveBoundingBox(pts, w, h);
-        this._currentX = x;
-        this._currentY = y;
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
+        len = args.length - 3;
+        for(; i < len; i = i + 4)
+        {
+            cpx = parseFloat(args[i]) + relativeX;
+            cpy = parseFloat(args[i + 1]) + relativeY;
+            x = parseFloat(args[i + 2]) + relativeX;
+            y = parseFloat(args[i + 3]) + relativeY;
+            right = Math.max(x, cpx);
+            bottom = Math.max(y, cpy);
+            left = Math.min(x, cpx);
+            top = Math.min(y, cpy);
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._currentX = x;
+            this._currentY = y;
+        }
     },
 
     /**
@@ -442,7 +487,7 @@ SVGDrawing.prototype = {
         this._trackSize(diameter, diameter); 
         return this;
     },
-    
+
     /**
      * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
      * 
@@ -450,21 +495,49 @@ SVGDrawing.prototype = {
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      */
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
+    lineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the relative x and y coordinates.
+     * 
+     * @method relativeLineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
+     */
+    relativeLineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements lineTo methods.
+     *
+     * @method _lineTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _lineTo: function(args, relative) {
+        var point1 = args[0],
             i,
             len,
             pathArrayLen,
             currentArray,
             x,
-            y;
+            y,
+            command = relative ? "l" : "L",
+            relativeX = relative ? this._round(this._currentX) : 0,
+            relativeY = relative ? this._round(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
         this._shapeType = "path";
         len = args.length;
-        if(this._pathType !== "L")
+        if(this._pathType !== command)
         {
-            this._pathType = "L";
-            currentArray = ['L'];
+            this._pathType = command;
+            currentArray = [command];
             this._pathArray.push(currentArray);
         }
         else
@@ -474,10 +547,12 @@ SVGDrawing.prototype = {
         pathArrayLen = this._pathArray.length - 1;
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             for (i = 0; i < len; i = i + 2) {
-                x = args[i];
-                y = args[i + 1];
+                x = this._round(args[i]);
+                y = this._round(args[i + 1]);
                 this._pathArray[pathArrayLen].push(x);
                 this._pathArray[pathArrayLen].push(y);
+                x = x + relativeX;
+                y = y + relativeY;
                 this._currentX = x;
                 this._currentY = y;
                 this._trackSize.apply(this, [x, y]);
@@ -486,11 +561,15 @@ SVGDrawing.prototype = {
         else
         {
             for (i = 0; i < len; ++i) {
-                this._pathArray[pathArrayLen].push(args[i][0]);
-               this._pathArray[pathArrayLen].push(args[i][1]);
-                this._currentX = args[i][0];
-                this._currentY = args[i][1];
-                this._trackSize.apply(this, args[i]);
+                x = this._round(args[i][0]);
+                y = this._round(args[i][1]);
+                this._pathArray[pathArrayLen].push(x);
+                this._pathArray[pathArrayLen].push(y);
+                this._currentX = x;
+                this._currentY = y;
+                x = x + relativeX;
+                y = y + relativeY;
+                this._trackSize.apply(this, [x, y]);
             }
         }
     },
@@ -502,15 +581,47 @@ SVGDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    moveTo: function(x, y) {
+    moveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Moves the current drawing position relative to specified x and y coordinates.
+     *
+     * @method relativeMoveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeMoveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements moveTo methods.
+     *
+     * @method _moveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _moveTo: function(args, relative) {
         var pathArrayLen,
-            currentArray;
+            currentArray,
+            x = this._round(args[0]),
+            y = this._round(args[1]),
+            command = relative ? "m" : "M",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
-        this._pathType = "M";
-        currentArray = ["M"];
+        this._pathType = command;
+        currentArray = [command];
         this._pathArray.push(currentArray);
         pathArrayLen = this._pathArray.length - 1;
-        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([this._round(x), this._round(y)]);
+        this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
+        x = x + relativeX;
+        y = y + relativeY;
         this._currentX = x;
         this._currentY = y;
         this._trackSize(x, y);
@@ -589,9 +700,10 @@ SVGDrawing.prototype = {
                 switch(pathType)
                 {
                     case "L" :
+                    case "l" :
                     case "M" :
                     case "Q" :
-                    case "l" :
+                    case "q" :
                         for(i = 2; i < len; ++i)
                         {
                             val = (i % 2 === 0) ? top : left;
@@ -1589,7 +1701,14 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 method = symbolToMethod[methodSymbol];
                 if(method)
                 {
-                    this[method].apply(this, args);
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
                 }
             }
             this.end();
@@ -3046,7 +3165,6 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
     
