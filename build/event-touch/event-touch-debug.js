@@ -1,11 +1,10 @@
-YUI.add('event-touch', function(Y) {
+YUI.add('event-touch', function (Y, NAME) {
 
 /**
  * Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade
  *
  * @module event-touch
  */
-
 var SCALE = "scale",
     ROTATION = "rotation",
     IDENTIFIER = "identifier";
@@ -111,6 +110,8 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
     }
 };
 
+//Adding MSPointer events to whitelisted DOM Events. MSPointer event payloads
+//have the same properties as mouse events.
 if (Y.Node.DOM_EVENTS) {
     Y.mix(Y.Node.DOM_EVENTS, {
         touchstart:1,
@@ -119,9 +120,12 @@ if (Y.Node.DOM_EVENTS) {
         touchcancel:1,
         gesturestart:1,
         gesturechange:1,
-        gestureend:1
+        gestureend:1,
+        MSPointerDown:1, 
+        MSPointerUp:1,
+        MSPointerMove:1
     });
 }
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});
