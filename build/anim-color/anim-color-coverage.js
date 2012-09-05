@@ -16,23 +16,23 @@ if (typeof _yuitest_coverage == "undefined"){
         coverage.functions[funcId]++;
     };
 }
-_yuitest_coverage["/build/anim-color/anim-color.js"] = {
+_yuitest_coverage["build/anim-color/anim-color.js"] = {
     lines: {},
     functions: {},
     coveredLines: 0,
     calledLines: 0,
     coveredFunctions: 0,
     calledFunctions: 0,
-    path: "/build/anim-color/anim-color.js",
+    path: "build/anim-color/anim-color.js",
     code: []
 };
-_yuitest_coverage["/build/anim-color/anim-color.js"].code=["YUI.add('anim-color', function(Y) {","","/**"," * Adds support for color properties in <code>to</code>"," * and <code>from</code> attributes."," * @module anim"," * @submodule anim-color"," */","","var NUM = Number;","","Y.Anim.behaviors.color = {","    set: function(anim, att, from, to, elapsed, duration, fn) {","        from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));","        to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));","","        if (!from || from.length < 3 || !to || to.length < 3) {","            Y.error('invalid from or to passed to color behavior');","        }","","        anim._node.setStyle(att, 'rgb(' + [","            Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),","            Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),","            Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))","        ].join(', ') + ')');","    },","    ","    // TODO: default bgcolor const","    get: function(anim, att) {","        var val = anim._node.getComputedStyle(att);","        val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;","        return val;","    }","};","","Y.each(['backgroundColor',","        'borderColor',","        'borderTopColor',","        'borderRightColor', ","        'borderBottomColor', ","        'borderLeftColor'],","        function(v, i) {","            Y.Anim.behaviors[v] = Y.Anim.behaviors.color;","        }",");","","","}, '@VERSION@' ,{requires:['anim-base']});"];
-_yuitest_coverage["/build/anim-color/anim-color.js"].lines = {"1":0,"10":0,"12":0,"14":0,"15":0,"17":0,"18":0,"21":0,"30":0,"31":0,"32":0,"36":0,"43":0};
-_yuitest_coverage["/build/anim-color/anim-color.js"].functions = {"set:13":0,"get:29":0,"(anonymous 2):42":0,"(anonymous 1):1":0};
-_yuitest_coverage["/build/anim-color/anim-color.js"].coveredLines = 13;
-_yuitest_coverage["/build/anim-color/anim-color.js"].coveredFunctions = 4;
-_yuitest_coverline("/build/anim-color/anim-color.js", 1);
-YUI.add('anim-color', function(Y) {
+_yuitest_coverage["build/anim-color/anim-color.js"].code=["YUI.add('anim-color', function (Y, NAME) {","","/**"," * Adds support for color properties in <code>to</code>"," * and <code>from</code> attributes."," * @module anim"," * @submodule anim-color"," */","","var NUM = Number;","","Y.Anim.getUpdatedColorValue = function(fromColor, toColor, elapsed, duration,  fn)","{","    fromColor = Y.Color.re_RGB.exec(Y.Color.toRGB(fromColor));","    toColor = Y.Color.re_RGB.exec(Y.Color.toRGB(toColor));","","    if (!fromColor || fromColor.length < 3 || !toColor || toColor.length < 3) {","        Y.error('invalid from or to passed to color behavior');","    }","","    return 'rgb(' + [","        Math.floor(fn(elapsed, NUM(fromColor[1]), NUM(toColor[1]) - NUM(fromColor[1]), duration)),","        Math.floor(fn(elapsed, NUM(fromColor[2]), NUM(toColor[2]) - NUM(fromColor[2]), duration)),","        Math.floor(fn(elapsed, NUM(fromColor[3]), NUM(toColor[3]) - NUM(fromColor[3]), duration))","    ].join(', ') + ')';","};","","Y.Anim.behaviors.color = {","    set: function(anim, att, from, to, elapsed, duration, fn) {","        anim._node.setStyle(att, Y.Anim.getUpdatedColorValue(from, to, elapsed, duration, fn)); ","    },","    ","    // TODO: default bgcolor const","    get: function(anim, att) {","        var val = anim._node.getComputedStyle(att);","        val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;","        return val;","    }","};","","Y.each(['backgroundColor',","        'borderColor',","        'borderTopColor',","        'borderRightColor', ","        'borderBottomColor', ","        'borderLeftColor'],","        function(v, i) {","            Y.Anim.behaviors[v] = Y.Anim.behaviors.color;","        }",");","","","}, '@VERSION@', {\"requires\": [\"anim-base\"]});"];
+_yuitest_coverage["build/anim-color/anim-color.js"].lines = {"1":0,"10":0,"12":0,"14":0,"15":0,"17":0,"18":0,"21":0,"28":0,"30":0,"35":0,"36":0,"37":0,"41":0,"48":0};
+_yuitest_coverage["build/anim-color/anim-color.js"].functions = {"getUpdatedColorValue:12":0,"set:29":0,"get:34":0,"(anonymous 2):47":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/anim-color/anim-color.js"].coveredLines = 15;
+_yuitest_coverage["build/anim-color/anim-color.js"].coveredFunctions = 5;
+_yuitest_coverline("build/anim-color/anim-color.js", 1);
+YUI.add('anim-color', function (Y, NAME) {
 
 /**
  * Adds support for color properties in <code>to</code>
@@ -41,46 +41,54 @@ YUI.add('anim-color', function(Y) {
  * @submodule anim-color
  */
 
-_yuitest_coverfunc("/build/anim-color/anim-color.js", "(anonymous 1)", 1);
-_yuitest_coverline("/build/anim-color/anim-color.js", 10);
+_yuitest_coverfunc("build/anim-color/anim-color.js", "(anonymous 1)", 1);
+_yuitest_coverline("build/anim-color/anim-color.js", 10);
 var NUM = Number;
 
-_yuitest_coverline("/build/anim-color/anim-color.js", 12);
+_yuitest_coverline("build/anim-color/anim-color.js", 12);
+Y.Anim.getUpdatedColorValue = function(fromColor, toColor, elapsed, duration,  fn)
+{
+    _yuitest_coverfunc("build/anim-color/anim-color.js", "getUpdatedColorValue", 12);
+_yuitest_coverline("build/anim-color/anim-color.js", 14);
+fromColor = Y.Color.re_RGB.exec(Y.Color.toRGB(fromColor));
+    _yuitest_coverline("build/anim-color/anim-color.js", 15);
+toColor = Y.Color.re_RGB.exec(Y.Color.toRGB(toColor));
+
+    _yuitest_coverline("build/anim-color/anim-color.js", 17);
+if (!fromColor || fromColor.length < 3 || !toColor || toColor.length < 3) {
+        _yuitest_coverline("build/anim-color/anim-color.js", 18);
+Y.error('invalid from or to passed to color behavior');
+    }
+
+    _yuitest_coverline("build/anim-color/anim-color.js", 21);
+return 'rgb(' + [
+        Math.floor(fn(elapsed, NUM(fromColor[1]), NUM(toColor[1]) - NUM(fromColor[1]), duration)),
+        Math.floor(fn(elapsed, NUM(fromColor[2]), NUM(toColor[2]) - NUM(fromColor[2]), duration)),
+        Math.floor(fn(elapsed, NUM(fromColor[3]), NUM(toColor[3]) - NUM(fromColor[3]), duration))
+    ].join(', ') + ')';
+};
+
+_yuitest_coverline("build/anim-color/anim-color.js", 28);
 Y.Anim.behaviors.color = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
-        _yuitest_coverfunc("/build/anim-color/anim-color.js", "set", 13);
-_yuitest_coverline("/build/anim-color/anim-color.js", 14);
-from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
-        _yuitest_coverline("/build/anim-color/anim-color.js", 15);
-to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
-
-        _yuitest_coverline("/build/anim-color/anim-color.js", 17);
-if (!from || from.length < 3 || !to || to.length < 3) {
-            _yuitest_coverline("/build/anim-color/anim-color.js", 18);
-Y.error('invalid from or to passed to color behavior');
-        }
-
-        _yuitest_coverline("/build/anim-color/anim-color.js", 21);
-anim._node.setStyle(att, 'rgb(' + [
-            Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
-            Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
-            Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
-        ].join(', ') + ')');
+        _yuitest_coverfunc("build/anim-color/anim-color.js", "set", 29);
+_yuitest_coverline("build/anim-color/anim-color.js", 30);
+anim._node.setStyle(att, Y.Anim.getUpdatedColorValue(from, to, elapsed, duration, fn)); 
     },
     
     // TODO: default bgcolor const
     get: function(anim, att) {
-        _yuitest_coverfunc("/build/anim-color/anim-color.js", "get", 29);
-_yuitest_coverline("/build/anim-color/anim-color.js", 30);
+        _yuitest_coverfunc("build/anim-color/anim-color.js", "get", 34);
+_yuitest_coverline("build/anim-color/anim-color.js", 35);
 var val = anim._node.getComputedStyle(att);
-        _yuitest_coverline("/build/anim-color/anim-color.js", 31);
+        _yuitest_coverline("build/anim-color/anim-color.js", 36);
 val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
-        _yuitest_coverline("/build/anim-color/anim-color.js", 32);
+        _yuitest_coverline("build/anim-color/anim-color.js", 37);
 return val;
     }
 };
 
-_yuitest_coverline("/build/anim-color/anim-color.js", 36);
+_yuitest_coverline("build/anim-color/anim-color.js", 41);
 Y.each(['backgroundColor',
         'borderColor',
         'borderTopColor',
@@ -88,11 +96,11 @@ Y.each(['backgroundColor',
         'borderBottomColor', 
         'borderLeftColor'],
         function(v, i) {
-            _yuitest_coverfunc("/build/anim-color/anim-color.js", "(anonymous 2)", 42);
-_yuitest_coverline("/build/anim-color/anim-color.js", 43);
+            _yuitest_coverfunc("build/anim-color/anim-color.js", "(anonymous 2)", 47);
+_yuitest_coverline("build/anim-color/anim-color.js", 48);
 Y.Anim.behaviors[v] = Y.Anim.behaviors.color;
         }
 );
 
 
-}, '@VERSION@' ,{requires:['anim-base']});
+}, '@VERSION@', {"requires": ["anim-base"]});

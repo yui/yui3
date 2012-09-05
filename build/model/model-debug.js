@@ -1,4 +1,4 @@
-YUI.add('model', function(Y) {
+YUI.add('model', function (Y, NAME) {
 
 /**
 Attribute-based data model with APIs for getting, setting, validating, and
@@ -984,4 +984,4 @@ Y.Model = Y.extend(Model, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['base-build', 'escape', 'json-parse']});
+}, '@VERSION@', {"requires": ["base-build", "escape", "json-parse"]});

@@ -1,4 +1,4 @@
-YUI.add('editor-bidi', function(Y) {
+YUI.add('editor-bidi', function (Y, NAME) {
 
 
     /**
@@ -333,4 +333,4 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@', {"requires": ["editor-base"]});

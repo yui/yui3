@@ -1,4 +1,4 @@
-YUI.add('button', function(Y) {
+YUI.add('button', function (Y, NAME) {
 
 /**
 * A Button Widget
@@ -316,4 +316,4 @@ Y.Button = Button;
 Y.ToggleButton = ToggleButton;
 
 
-}, '@VERSION@' ,{requires:['button-core', 'cssbutton', 'widget']});
+}, '@VERSION@', {"requires": ["button-core", "cssbutton", "widget"]});

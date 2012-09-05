@@ -1,4 +1,4 @@
-YUI.add('editor-base', function(Y) {
+YUI.add('editor-base', function (Y, NAME) {
 
 
     /**
@@ -901,4 +901,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'editor-selection'], skinnable:false});
+}, '@VERSION@', {"requires": ["base", "frame", "node", "exec-command", "editor-selection"]});

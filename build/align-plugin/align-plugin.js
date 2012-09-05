@@ -1,4 +1,4 @@
-YUI.add('align-plugin', function(Y) {
+YUI.add('align-plugin', function (Y, NAME) {
 
     /**
      * Provides advanced positioning support for Node via a Plugin
@@ -190,4 +190,4 @@ YUI.add('align-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node-pluginhost', 'node-screen']});
+}, '@VERSION@', {"requires": ["node-screen", "node-pluginhost"]});

@@ -1,4 +1,4 @@
-YUI.add('createlink-base', function(Y) {
+YUI.add('createlink-base', function (Y, NAME) {
 
 
     /**
@@ -82,4 +82,4 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@', {"requires": ["editor-base"]});

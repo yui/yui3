@@ -14,7 +14,7 @@ YUI.add('datasource-io-tests', function(Y) {
         'test json': function() {
             Y.one('.example #demo_json').simulate('click');
             var interval = 10,
-                timeout = 10000,
+                timeout = 20000,
                 output = Y.one('.example #demo_output_json'),
                 condition = function() {
                     // Return a truthy/falsey result.
@@ -37,7 +37,7 @@ YUI.add('datasource-io-tests', function(Y) {
         'test xml': function() {
             Y.one('.example #demo_xml').simulate('click');
             var interval = 10,
-                timeout = 10000,
+                timeout = 20000,
                 output = Y.one('.example #demo_output_xml'),
                 condition = function() {
                     // Return a truthy/falsey result.

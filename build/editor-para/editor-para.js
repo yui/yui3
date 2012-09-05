@@ -1,4 +1,4 @@
-YUI.add('editor-para', function(Y) {
+YUI.add('editor-para', function (Y, NAME) {
 
 
     /**
@@ -296,4 +296,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@', {"requires": ["editor-para-base"]});

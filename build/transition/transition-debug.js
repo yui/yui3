@@ -1,4 +1,4 @@
-YUI.add('transition', function(Y) {
+YUI.add('transition', function (Y, NAME) {
 
 /**
 * Provides the transition method for Node.
@@ -698,4 +698,4 @@ Transition.DEFAULT_TOGGLE = 'fade';
 
 
 
-}, '@VERSION@' ,{requires:['node-style']});
+}, '@VERSION@', {"requires": ["node-style"]});

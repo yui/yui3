@@ -1,4 +1,4 @@
-YUI.add('node-style', function(Y) {
+YUI.add('node-style', function (Y, NAME) {
 
 (function(Y) {
 /**
@@ -103,4 +103,4 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getStyle', 'getComputedStyle', 'setS
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-style', 'node-base']});
+}, '@VERSION@', {"requires": ["dom-style", "node-base"]});

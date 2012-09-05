@@ -1,4 +1,4 @@
-YUI.add('anim-base', function(Y) {
+YUI.add('anim-base', function (Y, NAME) {
 
 /**
 * The Animation Utility provides an API for creating advanced transitions.
@@ -641,7 +641,7 @@ YUI.add('anim-base', function(Y) {
                 }
 
                 attr[name] = {
-                    from: begin,
+                    from: Y.Lang.isObject(begin) ? Y.clone(begin) : begin,
                     to: end,
                     unit: unit
                 };
@@ -680,4 +680,4 @@ YUI.add('anim-base', function(Y) {
     Y.extend(Y.Anim, Y.Base, proto);
 
 
-}, '@VERSION@' ,{requires:['base-base', 'node-style']});
+}, '@VERSION@', {"requires": ["base-base", "node-style"]});

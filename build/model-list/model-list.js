@@ -1,4 +1,4 @@
-YUI.add('model-list', function(Y) {
+YUI.add('model-list', function (Y, NAME) {
 
 /**
 Provides an API for managing an ordered list of Model instances.
@@ -1236,4 +1236,4 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 Y.augment(ModelList, Y.ArrayList);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'escape', 'json-parse', 'model']});
+}, '@VERSION@', {"requires": ["array-extras", "array-invoke", "arraylist", "base-build", "escape", "json-parse", "model"]});
