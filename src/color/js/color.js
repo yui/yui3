@@ -392,7 +392,7 @@ Color = {
     @returns {Object}
     **/
     _convertTo: function(options, to) {
-        var  _options = Y.mix({}, options),
+        var  _options = Y.merge(options),
             from,
             val;
 

@@ -87,7 +87,7 @@ var HSL = 'hsl',
         **/
         getComplementary: function(options) {
             var c = ColorExtras._start(options),
-                c1 = Y.mix({}, c),
+                c1 = Y.merge(c),
                 to = options.to || c.type;
 
             c1.value = c1.value.concat();
@@ -122,11 +122,11 @@ var HSL = 'hsl',
 
             c = ColorExtras.getOffset(c, {h: 180}, true);
 
-            c1 = Y.mix({}, c);
+            c1 = Y.merge(c);
             c1.value = c1.value.concat();
             c1 = ColorExtras.getOffset(c1, {h: SPLIT_OFFSET}, true);
 
-            c2 = Y.mix({}, c);
+            c2 = Y.merge(c);
             c2.value = c2.value.concat();
             c2 = ColorExtras.getOffset(c2, {h: -SPLIT_OFFSET}, true);
 
@@ -167,19 +167,19 @@ var HSL = 'hsl',
                 offset = options.offset || ANALOGOUS_OFFSET,
                 to;
 
-            c1 = Y.mix({}, c);
+            c1 = Y.merge(c);
             c1.value = c1.value.concat();
             c1 = ColorExtras.getOffset(c1, {h: offset}, true);
 
-            c2 = Y.mix({}, c1);
+            c2 = Y.merge(c1);
             c2.value = c2.value.concat();
             c2 = ColorExtras.getOffset(c2, {h: offset}, true);
 
-            c3 = Y.mix({}, c);
+            c3 = Y.merge(c);
             c3.value = c3.value.concat();
             c3 = ColorExtras.getOffset(c3, {h: -offset}, true);
 
-            c4 = Y.mix({}, c3);
+            c4 = Y.merge(c3);
             c4.value = c4.value.concat();
             c4 = ColorExtras.getOffset(c4, {h: -offset}, true);
 
@@ -214,11 +214,11 @@ var HSL = 'hsl',
                 c2,
                 to;
 
-            c1 = Y.mix({}, c);
+            c1 = Y.merge(c);
             c1.value = c1.value.concat();
             c1 = ColorExtras.getOffset(c1, {h: TRIAD_OFFSET}, true);
 
-            c2 = Y.mix({}, c1);
+            c2 = Y.merge(c1);
             c2.value = c2.value.concat();
             c2 = ColorExtras.getOffset(c2, {h: TRIAD_OFFSET}, true);
 
@@ -253,15 +253,15 @@ var HSL = 'hsl',
                 offset = options.offset || TETRAD_OFFSET,
                 to;
 
-            c1 = Y.mix({}, c);
+            c1 = Y.merge(c);
             c1.value = c1.value.concat();
             c1 = ColorExtras.getOffset(c1, {h: offset}, true);
 
-            c2 = Y.mix({}, c);
+            c2 = Y.merge(c);
             c2.value = c2.value.concat();
             c2 = ColorExtras.getOffset(c2, {h: 180}, true);
 
-            c3 = Y.mix({}, c2);
+            c3 = Y.merge(c2);
             c3.value = c3.value.concat();
             c3 = ColorExtras.getOffset(c3, {h: offset}, true);
 
@@ -296,15 +296,15 @@ var HSL = 'hsl',
                 c3,
                 to;
 
-            c1 = Y.mix({}, c);
+            c1 = Y.merge(c);
             c1.value = c1.value.concat();
             c1 = ColorExtras.getOffset(c1, {h: SQUARE_OFFSET}, true);
 
-            c2 = Y.mix({}, c1);
+            c2 = Y.merge(c1);
             c2.value = c2.value.concat();
             c2 = ColorExtras.getOffset(c2, {h: SQUARE_OFFSET}, true);
 
-            c3 = Y.mix({}, c2);
+            c3 = Y.merge(c2);
             c3.value = c3.value.concat();
             c3 = ColorExtras.getOffset(c3, {h: SQUARE_OFFSET}, true);
 
@@ -339,7 +339,7 @@ var HSL = 'hsl',
                 to,
                 count = options.count || DEF_COUNT,
                 step,
-                _c = Y.mix({}, c);
+                _c = Y.merge(c);
 
             if (count < 2) {
                 Y.log('Invalid value: options.count must be greater than 1.', 'error', 'Y.Color.getMonochrome');
@@ -351,7 +351,7 @@ var HSL = 'hsl',
                 _c.value = _c.value.concat();
                 _c.value[2] = Math.max(Math.min(i, 100), 0);
                 colors.push(_c);
-                _c = Y.mix({}, _c);
+                _c = Y.merge(_c);
             }
 
             to = options.to || c.type;
