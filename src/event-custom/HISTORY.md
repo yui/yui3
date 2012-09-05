@@ -1,6 +1,69 @@
 Custom Event Infrastructure Change History
 ==========================================
 
+3.7.0
+-----
+
+ * CustomEvent run-time performance optimizations.
+
+   a. The `subscribers` and `afters` CustomEvent instance properties have 
+      been deprecated, and replaced with private arrays (instead of hashes).
+
+      If you're referring to the `subscribers` or `afters` properties directly,
+      you can set the `Y.CustomEvent.keepDeprecatedSubs` to true, to restore
+      them, but you will incur a performance hit in doing so.
+
+      The rest of the CustomEvent API is driven by the new private arrays, and
+      does not require the `subscribers` and `afters` properties, so you should
+      only enable `keepDeprecatedSubs` if your code is referring to the properties
+      directly.
+
+      If you are using the above properties directly, please file an enhancement
+      request and we'll provide a public way to achieve the same results, without
+      the performance hit before we remove the properties permanently.
+
+   b. Avoid new EventTarget when stoppedFn is not used.
+
+   c. Optimized mixing during the creation of a custom event object.
+   
+   d. Optimized mixing done on the facade, during a fire with payload.
+   
+   Performance results on Chrome 19/MacOS below, for the use case where we're
+   iring with a payload:
+
+   ## Custom Event Lifecycle Numbers (Fix a, b, c)
+
+   BEFORE (3.6.0):
+   EventTarget with attribute style publish, fire, with on/after listeners x 7,623 ops/sec
+    
+   CURRENT (With fixes a, b, c):
+   EventTarget with attribute style publish, fire, with on/after listeners x 23,642 ops/sec
+
+   ## Payload Numbers (Fix d)
+
+   BEFORE (3.6.0):
+   Fire With Payload - 10 listeners x 27,918 ops/sec ±1.32% (54 runs sampled)
+    
+   CURRENT (With fix d):
+   Fire With Payload - 10 listeners x 63,362 ops/sec ±0.37% (58 runs sampled)   
+
+   The benchmark tests can be found in src/event-custom/tests/benchmark
+
+   Log messages for the follow commits have more details:
+
+   e7415e71decf3d921161e8883270e16b433aa150 - subscribers/afters fix.
+   29f63996f8b69a7bb6d2e27f4d350c320998c0b2 - optimized payload mix fix.
+
+ * CustomEvent memory optimizations.
+   
+   * Fixed `_facade` and `firedWith` which were holding onto a reference
+     to the last fired event facade. Now `_facade` is reset to null after 
+     the fire sequence, and `firedWith` is only maintained for `fireOnce` 
+     CustomEvents. i
+
+     This allows the facade from the last fired event to be GC'd whereas 
+     prior to this change it wasn't. 
+
 3.6.0
 -----
 
