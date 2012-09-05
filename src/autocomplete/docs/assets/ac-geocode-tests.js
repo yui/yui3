@@ -11,10 +11,10 @@ YUI.add('ac-geocode-tests', function(Y) {
             Assert.isNotNull(Y.one('.example #demo .yui3-aclist-list'));
         },
 
-        'test type "701 First Avenue" into ac list' : function() {
+        'test type "10 main st" into ac list' : function() {
             var input =  Y.one('.example #demo #ac-input'),
                 list = Y.one('.example #demo .yui3-aclist-list'),
-                inputStr = "701 First Avenue";
+                inputStr = "10 main st";
             input.focus();
             input.set('value', inputStr);
 
@@ -22,13 +22,13 @@ YUI.add('ac-geocode-tests', function(Y) {
                 timeout = 10000,
                 condition = function() {
                     // Return a truthy/falsey result.
-                    return (list.all('li').size() > 6);
+                    return (list.all('li').size() > 3);
                     // For example:
                     // return Y.one("#waitForMe") !== null
                 },
             success = function() {
                 var listItems = list.all('li');
-                Assert.isTrue(listItems.size() > 6, ' - Failed to find more than 6 results for ' + inputStr);
+                Assert.isTrue(listItems.size() > 3, ' - Failed to find more than 3 results for ' + inputStr);
             },
             failure = function() {
                 Y.Assert.fail("#waitForMe never showed up in " + timeout + "ms");

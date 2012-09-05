@@ -1,4 +1,4 @@
-YUI.add('dom-screen', function(Y) {
+YUI.add('dom-screen', function (Y, NAME) {
 
 (function(Y) {
 
@@ -608,4 +608,4 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
+}, '@VERSION@', {"requires": ["dom-base", "dom-style"]});

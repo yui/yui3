@@ -1,4 +1,4 @@
-YUI.add('anim-base', function(Y) {
+YUI.add('anim-base', function (Y, NAME) {
 
 /**
 * The Animation Utility provides an API for creating advanced transitions.
@@ -680,4 +680,4 @@ YUI.add('anim-base', function(Y) {
     Y.extend(Y.Anim, Y.Base, proto);
 
 
-}, '@VERSION@' ,{requires:['base-base', 'node-style']});
+}, '@VERSION@', {"requires": ["base-base", "node-style"]});

@@ -3,31 +3,31 @@
 <div id="exampleContainer"></div>
 
 <script type="text/javascript">
-    YUI({ 
+    YUI({
         modules: {
             "listbox": {
                 fullpath: "{{componentAssets}}/listbox.js",
-                requires: ["substitute", "widget", "widget-parent", "widget-child", "node-focusmanager"]
+                requires: ["widget", "widget-parent", "widget-child", "node-focusmanager"]
             }
         }
      }).use("listbox", function (Y) {
 
-        var listbox = new Y.ListBox({  
-            id:"mylistbox", 
-            width:"13em", 
-            height:"15em", 
-            children: [ 
+        var listbox = new Y.ListBox({
+            id:"mylistbox",
+            width:"13em",
+            height:"15em",
+            children: [
                 { label: "Item One" },
-                { label: "Item Two" } 
+                { label: "Item Two" }
             ]
         });
 
-        listbox.add({ 
-            type: "ListBox", 
-            label: "Item Three", 
-            children: [ 
+        listbox.add({
+            type: "ListBox",
+            label: "Item Three",
+            children: [
                 { label: "Item Three - One" },
-                { label: "Item Three - Two" } 
+                { label: "Item Three - Two" }
             ]
         });
 
@@ -37,10 +37,10 @@
             new Y.Option({ label: "Item Five" })
         );
 
-        listbox.add({ 
-            type: "ListBox", 
-            label: "Item Six", 
-            children: [ 
+        listbox.add({
+            type: "ListBox",
+            label: "Item Six",
+            children: [
                 { label: "Item Six - One" },
                 { label: "Item Six - Two" }
             ]
