@@ -52,7 +52,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Initialize & default
         paginator.optimizeMemory = config.optimizeMemory || false;
         paginator.padding = config.padding || 1;
-        paginator.cards = [];
+        paginator._dims = [];
 
         // Cache some values
         paginator._host = host;
@@ -95,8 +95,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             paginatorAxis = paginator._cAxis,
             pageNodes = paginator._getPageNodes(),
             size = pageNodes.size(),
-            maxScrollX = paginator.cards[index].maxScrollX,
-            maxScrollY = paginator.cards[index].maxScrollY;
+            maxScrollX = paginator._dims[index].maxScrollX,
+            maxScrollY = paginator._dims[index].maxScrollY;
 
         if (paginatorAxis[DIM_Y]) {
             host._maxScrollX = maxScrollX;
@@ -171,9 +171,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                 maxScrollX = Math.max(0, scrollWidth - widgetWidth),
                 maxScrollY = Math.max(0, scrollHeight - widgetHeight);
 
-            // Don't initialize any cards that already have been.
-            if (!paginator.cards[i]) {
-                paginator.cards[i] = {
+            // Don't initialize any _dims that already have been.
+            if (!paginator._dims[i]) {
+                paginator._dims[i] = {
                     maxScrollX: maxScrollX,
                     maxScrollY: maxScrollY,
                     node: node,
@@ -181,8 +181,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                     scrollY: 0
                 };
             } else {
-                paginator.cards[i].maxScrollX = maxScrollX;
-                paginator.cards[i].maxScrollY = maxScrollY;
+                paginator._dims[i].maxScrollX = maxScrollX;
+                paginator._dims[i].maxScrollY = maxScrollY;
             }
 
         });
@@ -219,7 +219,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
             // If they are scrolling against the specified axis, pull out the card as the node to have its own offset
             if (paginatorAxis[gestureAxis] === false) {
-                node = paginator.cards[index].node;
+                node = paginator._dims[index].node;
             }
         }
 
@@ -306,9 +306,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             paginatorAxis = paginator._cAxis;
 
         if (paginatorAxis[DIM_Y]) {
-            paginator.cards[index].scrollX = scrollX;
+            paginator._dims[index].scrollX = scrollX;
         } else {
-            paginator.cards[index].scrollY = scrollY;
+            paginator._dims[index].scrollY = scrollY;
         }
 
         paginator._optimize();
@@ -325,17 +325,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = this._host,
             index = e.newVal,
-            maxScrollX = paginator.cards[index].maxScrollX,
-            maxScrollY = paginator.cards[index].maxScrollY,
+            maxScrollX = paginator._dims[index].maxScrollX,
+            maxScrollY = paginator._dims[index].maxScrollY,
             gesture = host._gesture,
             gestureAxis = gesture && gesture.axis;
 
         if (gestureAxis === DIM_Y) {
             host._maxScrollX = maxScrollX;
-            host.set(SCROLL_X, paginator.cards[index].scrollX, { src: UI });
+            host.set(SCROLL_X, paginator._dims[index].scrollX, { src: UI });
         } else if (gestureAxis === DIM_X) {
             host._maxScrollY = maxScrollY;
-            host.set(SCROLL_Y, paginator.cards[index].scrollY, { src: UI });
+            host.set(SCROLL_Y, paginator._dims[index].scrollY, { src: UI });
         }
 
         // Cache the new index value

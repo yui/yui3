@@ -3,6 +3,8 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Renamed scrollview.pages.cards (added in 3.6.1) to scrollview.pages._dims
+
   * Exposed mousewheel support as a static property at Y.ScrollView.MOUSEWHEEL.  Default: enabled
 
   * Reimplemented lastScrolledAmt (removed between 3.6.0 and 3.6.1)
