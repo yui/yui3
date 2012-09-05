@@ -1,4 +1,4 @@
-YUI.add('event-move', function(Y) {
+YUI.add('event-move', function (Y, NAME) {
 
 /**
  * Adds lower level support for "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to create drag/drop
@@ -9,17 +9,25 @@ YUI.add('event-move', function(Y) {
  * @submodule event-move
  */
 
-var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) ? {
-        start: "touchstart",
-        move: "touchmove",
-        end: "touchend"
-    } : {
-        start: "mousedown",
-        move: "mousemove",
-        end: "mouseup"
-    },
+var EVENT = {};
 
-    START = "start",
+if ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+    EVENT.start = "touchstart";
+    EVENT.end = "touchend";
+    EVENT.move = "touchmove";
+}
+else if ("msPointerEnabled" in Y.config.win) {
+    EVENT.start = "MSPointerDown";
+    EVENT.end = "MSPointerUp";
+    EVENT.move = "MSPointerMove";
+}
+else {
+    EVENT.start = "mousedown";
+    EVENT.end = "mouseup";
+    EVENT.move = "mousemove";
+}
+
+var START = "start",
     MOVE = "move",
     END = "end",
 
@@ -503,5 +511,4 @@ define(GESTURE_MOVE_END, {
     PREVENT_DEFAULT : false
 });
 
-
-}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@', {"requires": ["node-base", "event-touch", "event-synthetic"]});

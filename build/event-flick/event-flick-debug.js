@@ -1,4 +1,4 @@
-YUI.add('event-flick', function(Y) {
+YUI.add('event-flick', function (Y, NAME) {
 
 /**
  * The gestures module provides gesture events such as "flick", which normalize user interactions
@@ -18,17 +18,7 @@ YUI.add('event-flick', function(Y) {
  * @module event-gestures
  * @submodule event-flick
  */
-
-var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) ? {
-        start: "touchstart",
-        end: "touchend",
-        move: "touchmove"
-    } : {
-        start: "mousedown",
-        end: "mouseup",
-        move: "mousemove"
-    },
-
+var EVENT = {},
     START = "start",
     END = "end",
     MOVE = "move",
@@ -44,6 +34,22 @@ var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome
     _FLICK_MOVE_HANDLE = "_fmh",
 
     NODE_TYPE = "nodeType";
+
+    if ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+        EVENT.start = "touchstart";
+        EVENT.end = "touchend";
+        EVENT.move = "touchmove";
+    }
+    else if (window.navigator.msPointerEnabled) {
+        EVENT.start = "MSPointerDown";
+        EVENT.end = "MSPointerUp";
+        EVENT.move = "MSPointerMove";
+    }
+    else {
+        EVENT.start = "mousedown";
+        EVENT.end = "mouseup";
+        EVENT.move = "mousemove";
+    }
 
 /**
  * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
@@ -261,4 +267,4 @@ Y.Event.define('flick', {
 });
 
 
-}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@', {"requires": ["node-base", "event-touch", "event-synthetic"]});
