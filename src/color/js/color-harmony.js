@@ -43,9 +43,9 @@ The following is an example of how these features can be used:
 
     Y.Color.getComplementary(blue); // #ff7700
 
-    Y.Color.getOffset(blue, 'hue', 10); // #2a00ff
+    Y.Color.getOffset(blue, {h: 10}); // #2a00ff
 
-    Y.Color.getOffset(blue, 'luminance', -10); // #0000cc
+    Y.Color.getOffset(blue, {l: -10}); // #0000cc
 
 
 @module color
@@ -56,10 +56,6 @@ The following is an example of how these features can be used:
 */
 var HSL = 'hsl',
     RGB = 'rgb',
-    HUE = 'hue',
-    SATURATION = 'saturation',
-    LIGHTNESS = 'lightness',
-    LUMINANCE = 'luminance',
 
     SPLIT_OFFSET = 15,
     ANALOGOUS_OFFSET = 10,
@@ -95,7 +91,7 @@ var HSL = 'hsl',
                 to = options.to || c.type;
 
             c1.value = c1.value.concat();
-            c1 = ColorExtras.getOffset(c1, HUE, 180, true);
+            c1 = ColorExtras.getOffset(c1, {h: 180}, true);
 
             return [
                     ColorExtras._finish(c, to),
@@ -124,20 +120,18 @@ var HSL = 'hsl',
                 c2,
                 to;
 
-            c.adjust = HUE;
-
-            c = ColorExtras.getOffset(c, HUE, 180, true);
+            c = ColorExtras.getOffset(c, {h: 180}, true);
 
             c1 = Y.mix({}, c);
             c1.value = c1.value.concat();
-            c1 = ColorExtras.getOffset(c1, HUE, SPLIT_OFFSET, true);
+            c1 = ColorExtras.getOffset(c1, {h: SPLIT_OFFSET}, true);
 
             c2 = Y.mix({}, c);
             c2.value = c2.value.concat();
-            c2 = ColorExtras.getOffset(c2, HUE, -SPLIT_OFFSET, true);
+            c2 = ColorExtras.getOffset(c2, {h: -SPLIT_OFFSET}, true);
 
             // set base color back to original value
-            c = ColorExtras.getOffset(c, HUE, 180, true);
+            c = ColorExtras.getOffset(c, {h: 180}, true);
 
             to = options.to || c.type;
 
@@ -175,19 +169,19 @@ var HSL = 'hsl',
 
             c1 = Y.mix({}, c);
             c1.value = c1.value.concat();
-            c1 = ColorExtras.getOffset(c1, HUE, offset, true);
+            c1 = ColorExtras.getOffset(c1, {h: offset}, true);
 
             c2 = Y.mix({}, c1);
             c2.value = c2.value.concat();
-            c2 = ColorExtras.getOffset(c2, HUE, offset, true);
+            c2 = ColorExtras.getOffset(c2, {h: offset}, true);
 
             c3 = Y.mix({}, c);
             c3.value = c3.value.concat();
-            c3 = ColorExtras.getOffset(c3, HUE, -offset, true);
+            c3 = ColorExtras.getOffset(c3, {h: -offset}, true);
 
             c4 = Y.mix({}, c3);
             c4.value = c4.value.concat();
-            c4 = ColorExtras.getOffset(c4, HUE, -offset, true);
+            c4 = ColorExtras.getOffset(c4, {h: -offset}, true);
 
             to = options.to || c.type;
 
@@ -222,11 +216,11 @@ var HSL = 'hsl',
 
             c1 = Y.mix({}, c);
             c1.value = c1.value.concat();
-            c1 = ColorExtras.getOffset(c1, HUE, TRIAD_OFFSET, true);
+            c1 = ColorExtras.getOffset(c1, {h: TRIAD_OFFSET}, true);
 
             c2 = Y.mix({}, c1);
             c2.value = c2.value.concat();
-            c2 = ColorExtras.getOffset(c2, HUE, TRIAD_OFFSET, true);
+            c2 = ColorExtras.getOffset(c2, {h: TRIAD_OFFSET}, true);
 
             to = options.to || c.type;
 
@@ -261,15 +255,15 @@ var HSL = 'hsl',
 
             c1 = Y.mix({}, c);
             c1.value = c1.value.concat();
-            c1 = ColorExtras.getOffset(c1, HUE, offset, true);
+            c1 = ColorExtras.getOffset(c1, {h: offset}, true);
 
             c2 = Y.mix({}, c);
             c2.value = c2.value.concat();
-            c2 = ColorExtras.getOffset(c2, HUE, 180, true);
+            c2 = ColorExtras.getOffset(c2, {h: 180}, true);
 
             c3 = Y.mix({}, c2);
             c3.value = c3.value.concat();
-            c3 = ColorExtras.getOffset(c3, HUE, offset, true);
+            c3 = ColorExtras.getOffset(c3, {h: offset}, true);
 
             to = options.to || c.type;
 
@@ -304,15 +298,15 @@ var HSL = 'hsl',
 
             c1 = Y.mix({}, c);
             c1.value = c1.value.concat();
-            c1 = ColorExtras.getOffset(c1, HUE, SQUARE_OFFSET, true);
+            c1 = ColorExtras.getOffset(c1, {h: SQUARE_OFFSET}, true);
 
             c2 = Y.mix({}, c1);
             c2.value = c2.value.concat();
-            c2 = ColorExtras.getOffset(c2, HUE, SQUARE_OFFSET, true);
+            c2 = ColorExtras.getOffset(c2, {h: SQUARE_OFFSET}, true);
 
             c3 = Y.mix({}, c2);
             c3.value = c3.value.concat();
-            c3 = ColorExtras.getOffset(c3, HUE, SQUARE_OFFSET, true);
+            c3 = ColorExtras.getOffset(c3, {h: SQUARE_OFFSET}, true);
 
             to = options.to || c.type;
 
@@ -395,17 +389,16 @@ var HSL = 'hsl',
                 to,
                 count = options.count || DEF_COUNT,
                 offset = options.offset || DEF_OFFSET,
-                hue = c.value[0],
-                saturation = c.value[1],
-                lightness = c.value[2],
                 _c;
 
             for (; i < count; i++) {
-                _c = Y.mix({}, c);
+                _c = Y.merge(c);
                 _c.value = _c.value.concat();
-                _c = ColorExtras.getOffset(_c, HUE, ( Math.random() * (offset * 2)) - offset, true);
-                _c = ColorExtras.getOffset(_c, SATURATION, ( Math.random() * (offset * 2)) - offset, true);
-                _c = ColorExtras.getOffset(_c, LIGHTNESS, ( Math.random() * (offset * 2)) - offset, true);
+                _c = ColorExtras.getOffset(_c, {
+                    h: ( Math.random() * (offset * 2)) - offset,
+                    s: ( Math.random() * (offset * 2)) - offset,
+                    l: ( Math.random() * (offset * 2)) - offset
+                }, true);
                 colors.push(_c);
             }
 
@@ -430,29 +423,30 @@ var HSL = 'hsl',
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
           @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-        @param {String} adjust (hue|saturation|lightness|luminance)
-        @param {Number} offset Positive or negative number by which to offset the color
+        @param {Object} adjust
+          @param {Number} [adjust.h] Amount to adjust hue positive or negative
+          @param {Number} [adjust.s] Amount to adjust saturation positive or negative
+          @param {Number} [adjust.l] Amount to adjust luminance positive or negative
         @param {Boolean} started Denotes if the options pass have already been processed through _start()
         @returns {String|Array} returns array of values or CSS string if options.css is true
         **/
-        getOffset: function(options, adjust, offset, started) {
+        getOffset: function(options, adjust, started) {
             var c = options;
 
             if (!started) {
                 c = ColorExtras._start(options);
             }
 
-            switch (adjust) {
-                case HUE:
-                    c.value[0] = (c.value[0] + offset) % 360;
-                    break;
-                case SATURATION:
-                    c.value[1] = Math.max(Math.min(c.value[1] + offset, 100), 0);
-                    break;
-                case LIGHTNESS:
-                case LUMINANCE:
-                    c.value[2] = Math.max(Math.min(c.value[2] + offset, 100), 0);
-                    break;
+            if (adjust.h) {
+                c.value[0] = (c.value[0] + adjust.h) % 360;
+            }
+
+            if (adjust.s) {
+                c.value[1] = Math.max(Math.min(c.value[1] + adjust.s, 100), 0);
+            }
+
+            if (adjust.l) {
+                c.value[2] = Math.max(Math.min(c.value[2] + adjust.l, 100), 0);
             }
 
             if (!started) {

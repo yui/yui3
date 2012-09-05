@@ -73,19 +73,19 @@ YUI.add('color-tests', function(Y) {
             },
 
             'hue offset to +10 of "blue"': function() {
-                var c = Y.Color.getOffset(Y.mix({ to: 'hex' }, colors.blue), 'hue', 10);
+                var c = Y.Color.getOffset(Y.mix({ to: 'hex' }, colors.blue), {h: 10});
 
                 Y.Assert.areSame('#2a00ff', c, 'length is greater than 1');
             },
 
             'saturation offset to -10 of "orange"': function() {
-                var c = Y.Color.getOffset(Y.mix({ to: 'hex' }, colors.orange), 'saturation', -10);
+                var c = Y.Color.getOffset(Y.mix({ to: 'hex' }, colors.orange), {s: -10});
 
                 Y.Assert.areSame('#f2800d', c, 'length is greater than 1');
             },
 
             'luminance offset to -10 of "purple"': function() {
-                var c = Y.Color.getOffset(Y.mix({ to: 'hex' }, colors.purple), 'luminance', -10);
+                var c = Y.Color.getOffset(Y.mix({ to: 'hex' }, colors.purple), {l: -10});
 
                 Y.Assert.areSame('#cc00cc', c, 'length is greater than 1');
             },
