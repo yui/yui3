@@ -1170,7 +1170,14 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 method = symbolToMethod[methodSymbol];
                 if(method)
                 {
-                    this[method].apply(this, args);
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
                 }
             }
             this.end();

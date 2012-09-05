@@ -696,9 +696,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 					{
                         if(method == "closePath")
                         {
+                            context.closePath();
                             this._strokeAndFill(context);
                         }
-						if(method && method == "lineTo" && this._dashstyle)
+						else if(method && method == "lineTo" && this._dashstyle)
 						{
 							args.unshift(this._xcoords[i] - this._left, this._ycoords[i] - this._top);
 							this._drawDashedLine.apply(this, args);
@@ -950,7 +951,14 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
                 method = symbolToMethod[methodSymbol];
                 if(method)
                 {
-                    this[method].apply(this, args);
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
                 }
             }
             this.end();

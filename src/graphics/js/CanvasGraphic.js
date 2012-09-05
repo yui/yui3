@@ -615,7 +615,6 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
 

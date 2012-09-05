@@ -45,10 +45,13 @@ CanvasDrawing.prototype = {
      */
     _pathSymbolToMethod: {
         M: "moveTo",
+        m: "relativeMoveTo",
         L: "lineTo",
+        l: "relativeLineTo",
         C: "curveTo",
         c: "relativeCurveTo",
         Q: "quadraticCurveTo",
+        q: "relativeQuadraticCurveTo",
         z: "closePath",
         Z: "closePath"
     },
@@ -190,35 +193,70 @@ CanvasDrawing.prototype = {
     },
     
     /**
-     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     * Draws a line segment from the current drawing position to the specified x and y coordinates.
      * 
      * @method lineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      */
-    lineTo: function(point1, point2, etc) 
+    lineTo: function()
     {
-        var args = arguments, 
-            i = 0, 
+        this._lineTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a line segment from the current drawing position to the relative x and y coordinates.
+     * 
+     * @method lineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
+     */
+    relativeLineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements lineTo methods.
+     *
+     * @method _lineTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _lineTo: function(args, relative) 
+    {
+        var point1 = args[0], 
+            i, 
             len,
             x,
             y,
-            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
         if(!this._lineToMethods)
         {
             this._lineToMethods = [];
         }
+        len = args.length - 1;
         if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
+            for (i = 0; i < len; i = i + 2) {
+                x = parseFloat(args[i]);
+                y = parseFloat(args[i + 1]);
+                x = x + relativeX;
+                y = y + relativeY;
+                this._updateDrawingQueue(["lineTo", x, y]);
+                this._trackSize(x - wt, y - wt);
+                this._trackSize(x + wt, y + wt);
+                this._updateCoords(x, y);
+            }
         }
-
-        len = args.length;
-        for (; i < len; ++i) 
+        else
         {
-            if(args[i])
+            for (i = 0; i < len; i = i + 1) 
             {
-                x = args[i][0];
-                y = args[i][1];
+                x = parseFloat(args[i][0]);
+                y = parseFloat(args[i][1]);
                 this._updateDrawingQueue(["lineTo", x, y]);
                 this._lineToMethods[this._lineToMethods.length] = this._methods[this._methods.length - 1];
                 this._trackSize(x - wt, y - wt);
@@ -237,10 +275,37 @@ CanvasDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    moveTo: function(x, y) {
-        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
-        x = parseFloat(x);
-        y = parseFloat(y);
+    moveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Moves the current drawing position relative to specified x and y coordinates.
+     *
+     * @method relativeMoveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeMoveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements moveTo methods.
+     *
+     * @method _moveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _moveTo: function(args, relative) {
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0,
+            x = parseFloat(args[0]) + relativeX,
+            y = parseFloat(args[1]) + relativeY;
         this._updateDrawingQueue(["moveTo", x, y]);
         this._trackSize(x - wt, y - wt);
         this._trackSize(x + wt, y + wt);
@@ -265,7 +330,7 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Draws a bezier curve.
+     * Draws a bezier curve relative to the current coordinates.
      *
      * @method curveTo
      * @param {Number} cp1x x-coordinate for the first control point.
@@ -279,6 +344,14 @@ CanvasDrawing.prototype = {
         this._curveTo.apply(this, [Y.Array(arguments), true]);
     },
     
+    /**
+     * Implements curveTo methods.
+     *
+     * @method _curveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
     _curveTo: function(args, relative) {
         var w,
             h,
@@ -324,26 +397,66 @@ CanvasDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-        var w,
+    quadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a quadratic bezier curve relative to the current position.
+     *
+     * @method relativeQuadraticCurveTo
+     * @param {Number} cpx x-coordinate for the control point.
+     * @param {Number} cpy y-coordinate for the control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeQuadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements quadraticCurveTo methods.
+     *
+     * @method _quadraticCurveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _quadraticCurveTo: function(args, relative) {
+        var cpx, 
+            cpy, 
+            x, 
+            y,
+            w,
             h,
             pts,
             right,
             left,
             bottom,
             top,
-            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
-        this._updateDrawingQueue(["quadraticCurveTo", cpx, cpy, x, y]);
-        this._drawingComplete = false;
-        right = Math.max(x, cpx);
-        bottom = Math.max(y, cpy);
-        left = Math.min(x, cpx);
-        top = Math.min(y, cpy);
-        w = Math.abs(right - left);
-        h = Math.abs(bottom - top);
-        pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]]; 
-        this._setCurveBoundingBox(pts, w, h);
-        this._updateCoords(x, y);
+            i = 0,
+            len = args.length - 3,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        for(; i < len; i = i + 4)
+        {
+            cpx = parseFloat(args[i]) + relativeX;
+            cpy = parseFloat(args[i + 1]) + relativeY;
+            x = parseFloat(args[i + 2]) + relativeX;
+            y = parseFloat(args[i + 3]) + relativeY;
+            this._drawingComplete = false;
+            right = Math.max(x, cpx);
+            bottom = Math.max(y, cpy);
+            left = Math.min(x, cpx);
+            top = Math.min(y, cpy);
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cpx, cpy], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._updateDrawingQueue(["quadraticCurveTo", cpx, cpy, x, y]);
+            this._updateCoords(x, y);
+        }
         return this;
     },
 

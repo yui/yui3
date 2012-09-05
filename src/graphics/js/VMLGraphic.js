@@ -437,7 +437,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._contentNode;
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic") 
         {
             parentNode.appendChild(node);
         }
@@ -667,7 +667,6 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method.apply();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
     
