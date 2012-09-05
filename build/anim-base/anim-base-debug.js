@@ -642,7 +642,7 @@ YUI.add('anim-base', function(Y) {
                 }
 
                 attr[name] = {
-                    from: begin,
+                    from: Y.Lang.isObject(begin) ? Y.clone(begin) : begin,
                     to: end,
                     unit: unit
                 };
