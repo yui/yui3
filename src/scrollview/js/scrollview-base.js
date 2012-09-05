@@ -569,6 +569,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMove: function (e) {
+
         var sv = this,
             gesture = sv._gesture,
             svAxis = sv._cAxis,
@@ -611,6 +612,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function (e) {
+
         var sv = this,
             gesture = sv._gesture,
             flick = gesture.flick,
@@ -626,19 +628,28 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         gesture.endClientX = clientX;
         gesture.endClientY = clientY;
 
-        // Only if this gesture wasn't a flick, and there was movement
-        if (!flick && gesture.deltaX !== null && gesture.deltaY !== null) {
-            if (sv._isOOB()) {
-                sv._snapBack();
-            }
-            else {
-                // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
-                    sv._onTransEnd();
+        // If this wasn't a flick, wrap up the gesture cycle
+        if (!flick) {
+
+            // If there was movement (_onGestureMove fired)
+            if (gesture.deltaX !== null && gesture.deltaY !== null) {
+
+                // If we're out-out-bounds, then snapback
+                if (sv._isOOB()) {
+                    sv._snapBack();
+                }
+
+                // Inbounds
+                else {
+                    // Don't fire scrollEnd on the gesture axis is the same as paginator's
+                    // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                    if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
+                        sv._onTransEnd();
+                    }
                 }
             }
         }
+
     },
 
     /**
