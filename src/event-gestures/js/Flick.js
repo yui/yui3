@@ -16,17 +16,7 @@
  * @module event-gestures
  * @submodule event-flick
  */
-
-var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) ? {
-        start: "touchstart",
-        end: "touchend",
-        move: "touchmove"
-    } : {
-        start: "mousedown",
-        end: "mouseup",
-        move: "mousemove"
-    },
-
+var EVENT = {},
     START = "start",
     END = "end",
     MOVE = "move",
@@ -42,6 +32,22 @@ var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome
     _FLICK_MOVE_HANDLE = "_fmh",
 
     NODE_TYPE = "nodeType";
+
+    if ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
+        EVENT.start = "touchstart";
+        EVENT.end = "touchend";
+        EVENT.move = "touchmove";
+    }
+    else if ("msPointerEnabled" in Y.config.win) {
+        EVENT.start = "MSPointerDown";
+        EVENT.end = "MSPointerUp";
+        EVENT.move = "MSPointerMove";
+    }
+    else {
+        EVENT.start = "mousedown";
+        EVENT.end = "mouseup";
+        EVENT.move = "mousemove";
+    }
 
 /**
  * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
