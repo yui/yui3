@@ -9,15 +9,34 @@ var suite = new Y.Test.Suite("Graphics: Base"),
     svgTests,
     canvasTests,
     vmlTests,
+    rectClassString, 
+    circleClassString, 
+    ellipseClassString, 
+    pathClassString, 
     DEFAULTENGINE = Y.config.defaultGraphicEngine;
 
 if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
 {
     ENGINE = "canvas";
+    rectClassString = "yui3-shape yui3-canvasShape yui3-rect yui3-canvasRect"; 
+    circleClassString = "yui3-shape yui3-canvasShape yui3-circle yui3-canvasCircle";
+    ellipseClassString = "yui3-shape yui3-canvasShape yui3-ellipse yui3-canvasEllipse";
+    pathClassString = "yui3-shape yui3-canvasShape yui3-path yui3-canvasPath";
 }
 else if(svg)
 {
     ENGINE = "svg";
+    rectClassString = "yui3-shape yui3-svgShape yui3-rect yui3-svgRect"; 
+    circleClassString = "yui3-shape yui3-svgShape yui3-circle yui3-svgCircle";
+    ellipseClassString = "yui3-shape yui3-svgShape yui3-ellipse yui3-svgEllipse";
+    pathClassString = "yui3-shape yui3-svgShape yui3-path yui3-svgPath";
+}
+else
+{
+    rectClassString = "yui3-shape yui3-vmlShape yui3-rect yui3-vmlRect vmlrect"; 
+    circleClassString = "yui3-shape yui3-vmlShape yui3-circle yui3-vmlCircle vmloval";
+    ellipseClassString = "yui3-shape yui3-vmlShape yui3-ellipse yui3-vmlEllipse vmloval";
+    pathClassString = "yui3-shape yui3-vmlShape yui3-path yui3-vmlPath vmlshape";
 }
 
 graphicTests = new Y.Test.Case({
@@ -101,7 +120,14 @@ graphicTests = new Y.Test.Case({
         Y.assert(mycircle instanceof Y.Circle);
         this.mycircle = mycircle;
     },
-   
+  
+    "test mycircleDefaultClassString()" : function()
+    {
+        var node = this.mycircle.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(circleClassString, classString, "The class string should be " + circleClassString + ".");
+    },
+
     "test mycircle.get(radius)": function()
     {
         Y.assert(this.mycircle.get("radius") === 12);
@@ -201,6 +227,13 @@ graphicTests = new Y.Test.Case({
         });
         Y.assert(myrect instanceof Y.Rect);
         this.myrect = myrect;
+    },
+  
+    "test myrectDefaultClassString()" : function()
+    {
+        var node = this.myrect.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(rectClassString, classString, "The class string should be " + rectClassString + ".");
     },
 
     "test myrect.get(width)": function()
@@ -312,6 +345,13 @@ graphicTests = new Y.Test.Case({
         });
         Y.assert(myellipse instanceof Y.Ellipse);
         this.myellipse = myellipse;
+    },
+
+    "test myellipseDefaultClassString()" : function()
+    {
+        var node = this.myellipse.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(ellipseClassString, classString, "The class string should be " + ellipseClassString + ".");
     },
 
     "test myellipse.get(width)": function()
@@ -440,6 +480,13 @@ graphicTests = new Y.Test.Case({
         mypath.end();
         Y.assert(mypath instanceof Y.Path);
         this.mypath = mypath;
+    },
+  
+    "test mypathDefaultClassString()" : function()
+    {
+        var node = this.mypath.get("node"),
+            classString = Y.DOM.getAttribute(node, "class");
+        Y.Assert.areEqual(pathClassString, classString, "The class string should be " + pathClassString + ".");
     },
 
     "test mypath.get(width)": function()
