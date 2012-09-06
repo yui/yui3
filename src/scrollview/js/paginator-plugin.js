@@ -129,21 +129,19 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     _afterHostSyncUI: function (e) {
         var paginator = this,
             host = paginator._host,
-            hostFlick = host.get(FLICK);
+            hostFlick = host.get(FLICK),
+            paginatorAxis;
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator._cAxis === undefined) {
             paginator._set(AXIS, host.get(AXIS));
         }
+
+        paginatorAxis = paginator.get(AXIS);
         
         // Don't allow flicks on the paginated axis
-        if (paginator._cAxis[DIM_X]) {
-            hostFlick.axis = DIM_Y;
-            host.set(FLICK, hostFlick);
-        }
-        else if (paginator._cAxis[DIM_Y]) {
-            hostFlick.axis = DIM_X;
-            host.set(FLICK, hostFlick);
+        if (paginatorAxis[hostFlick.axis]) {
+            host.set(FLICK, false);
         }
     },
 

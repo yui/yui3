@@ -3,23 +3,25 @@ ScrollView Change History
 
 3.7.0
 -----
-  * Renamed scrollview.pages.cards (added in 3.6.1) to scrollview.pages._dims
-
-  * Exposed mousewheel support as a static property at Y.ScrollView.MOUSEWHEEL.  Default: enabled
-
-  * Reimplemented lastScrolledAmt (removed between 3.6.0 and 3.6.1)
-
-  * Moved scrollview.axis and paginator.axis to writeOnce attributes
+  * Renamed: Paginator's _afterHostSyncUI to _afterHostAxisChange
   
-  * Added scrollview._cAxis and scrollview.pages._cAxis as cached axis values
+  * Fix: ScrollView did not obey SNAP_EASING property
+
+  * Fix: Host flick axis was improperly set to opposite axis of paginated axis (#2532723)
+
+  * Fix: Current offset was not stored when canceling a flick (#2532722)
+
+  * Renamed: scrollview.pages.cards (added in 3.6.1) to scrollview.pages._dims
+
+  * Added: Exposed mousewheel support as a static property at Y.ScrollView.MOUSEWHEEL.  Default: enabled
+
+  * Fix: Reimplemented lastScrolledAmt (removed between 3.6.0 and 3.6.1) (#2532724)
+
+  * Moved: scrollview.axis and paginator.axis to writeOnce attributes
   
-  * Removed scrollview._scrollHeight and scrollview._scrollWidth
-
-3.6.1
------
-Detailed overview of all changes (including protected/private) @ https://gist.github.com/3522590
-
-Public API changes/fixes:
+  * Added: scrollview._cAxis and scrollview.pages._cAxis as cached axis values
+  
+  * Removed: scrollview._scrollHeight and scrollview._scrollWidth
 
   * Added: Forced-Axis and Dual-Axis Support - ScrollView now has an optional axis property that can be declared with values: "x", "y", or "xy". (#2532631)
 
@@ -35,10 +37,9 @@ Public API changes/fixes:
 
   * Fix: Bug where scrollview.pages.scrollTo may not actually scroll to the desired page, or may cause a lock-up of the widget.
 
-Additional notes:
+  * Added: Unit test coverage on scrollview-base and scrollview-paginator are both at 80+% (#2532288, #2532287)
 
-  * Unit test coverage on scrollview-base and scrollview-paginator are both at 80+% (#2532288, #2532287)
-
+  * Detailed overview of all 3.7.0pr1 changes (including protected/private) @ https://gist.github.com/3522590
 
 
 3.6.0

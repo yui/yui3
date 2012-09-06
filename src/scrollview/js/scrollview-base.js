@@ -522,6 +522,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // if a flick animation is in progress, cancel it
         if (sv._flickAnim) {
             sv._flickAnim.cancel();
+            sv._onTransEnd();
         }
 
         // TODO: Review if neccesary (#2530129)
@@ -569,7 +570,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMove: function (e) {
-
         var sv = this,
             gesture = sv._gesture,
             svAxis = sv._cAxis,
@@ -827,13 +827,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = sv._maxScrollY,
             newY = _constrain(currentY, minY, maxY),
             newX = _constrain(currentX, minX, maxX),
-            duration = ScrollView.SNAP_DURATION;
+            duration = ScrollView.SNAP_DURATION,
+            easing = ScrollView.SNAP_EASING;
 
         if (newX !== currentX) {
-            sv.set(SCROLL_X, newX, {duration:duration});
+            sv.set(SCROLL_X, newX, {duration:duration, easing:easing});
         }
         else if (newY !== currentY) {
-            sv.set(SCROLL_Y, newY, {duration:duration});
+            sv.set(SCROLL_Y, newY, {duration:duration, easing:easing});
         }
         else {
             // It shouldn't ever get here, but in case it does, fire scrollEnd
@@ -971,7 +972,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             }
             delete sv._flickAnim;
         }
-
+        
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
         // because _gesture is being deleted after the previous one has been overwritten
         // delete sv._gesture; // TODO: Move to sv.prevGesture?
@@ -1140,14 +1141,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     BOUNCE_RANGE: 150,
 
     /**
-     * The interval used when animating the flick
+     * The interval (ms) used when animating the flick
      *
      * @property FRAME_STEP
      * @type Number
      * @static
-     * @default 16
+     * @default 30
      */
-    FRAME_STEP: 16,
+    FRAME_STEP: 30,
 
     /**
      * The default easing used when animating the flick
