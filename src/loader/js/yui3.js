@@ -55,11 +55,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     },
-    "anim-shape-transform": {
+    "anim-shape": {
         "requires": [
             "anim-base",
             "anim-easing",
+            "anim-color",
             "matrix"
+        ]
+    },
+    "anim-shape-transform": {
+        "use": [
+            "anim-shape"
         ]
     },
     "anim-xy": {
@@ -1032,7 +1038,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -2454,4 +2459,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
+YUI.Env[Y.version].md5 = '3a9da1566143f0ffe1de3d677aa79a2d';
