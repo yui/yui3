@@ -3,8 +3,6 @@ ScrollView Change History
 
 3.7.0
 -----
-  * Renamed: Paginator's _afterHostSyncUI to _afterHostAxisChange
-  
   * Fix: ScrollView did not obey SNAP_EASING property
 
   * Fix: Host flick axis was improperly set to opposite axis of paginated axis (#2532723)
