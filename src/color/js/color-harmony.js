@@ -7,36 +7,36 @@ For all cases of option.type, valid types are:
 option.value - must be a keyword in Y.Color.KEYWORDS
 
 - **hex**:
-option.value - 3 or 6 character representation with or without a '#' or array of [rr, gg, bb] strings
+option.value - 3 or 6 character representation with or without a '#' or Array of `[rr, gg, bb]` strings
 
 - **rgb**:
-option.value - rgb(r, g, b) string or array of [r, g, b] values
+option.value - `rgb(r, g, b)` string or Array of `[r, g, b]` values
 
 - **rgba**:
-option.value - rgba(r, g, b, a) string or array of [r, g, b, a] values
+option.value - `rgba(r, g, b, a)` string or Array of `[r, g, b, a]` values
 
 - **hsl**:
-option.value - hsl(h, s%, l%) string or array of [h, s, l] values
+option.value - `hsl(h, s%, l%)` string or Array of `[h, s, l]` values
 
 - **hsla**:
-option.value - hsla(h, s%, l%, a) string or array of [h, s, l, a] values
+option.value - `hsla(h, s%, l%, a)` string or Array of `[h, s, l, a]` values
 
 In all cases of option.to, valid types are:
 
 - **hex**:
-returns [rr, gg, bb] or #rrggbb if options.css is true
+returns `[rr, gg, bb]` or `#rrggbb` if options.css is true
 
 - **rgb**:
-returns [r, g, b] or rgb(r, g, b) if options.css is true
+returns `[r, g, b]` or `rgb(r, g, b)` if options.css is true
 
 - **rgba**:
-returns [r, g, b, a] or rgba(r, g, b, a) if options.css is true
+returns `[r, g, b, a]` or `rgba(r, g, b, a)` if options.css is true
 
 - **hsl**:
-returns [h, s, l] or hsl(h, s%, l%) if options.css is true
+returns `[h, s, l]` or `hsl(h, s%, l%)` if options.css is true
 
 - **hsla**:
-returns [h, s, l, a] or hsla(h, s%, l%, a) if options.css is true
+returns `[h, s, l, a]` or `hsla(h, s%, l%, a)` if options.css is true
 
 The following is an example of how these features can be used:
     var blue = { type: 'hex', value: '#0000ff', css: true };
@@ -57,7 +57,7 @@ The following is an example of how these features can be used:
 var HSL = 'hsl',
     RGB = 'rgb',
 
-    SPLIT_OFFSET = 15,
+    SPLIT_OFFSET = 30,
     ANALOGOUS_OFFSET = 10,
     TRIAD_OFFSET = 360/3,
     TETRAD_OFFSET = 360/6,
@@ -82,8 +82,8 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getComplementary: function(options) {
             var c = ColorExtras._start(options),
@@ -101,7 +101,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Returns an array of three colors. The first color in the array
+        Returns an Array of three colors. The first color in the Array
           will be the color passed in. The second two will be split
           complementary colors.
 
@@ -111,8 +111,8 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getSplit: function(options) {
             var c = ColorExtras._start(options),
@@ -143,7 +143,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Returns an array of five colors. The first color in the array
+        Returns an Array of five colors. The first color in the Array
           will be the color passed in. The remaining four will be
           analogous colors two in either direction from the initially
           provided color.
@@ -154,9 +154,9 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
           @param {Number} options.offset plus or minus maximum to offset for the analogous color
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getAnalogous: function(options) {
             var c = ColorExtras._start(options),
@@ -195,7 +195,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Returns an array of three colors. The first color in the array
+        Returns an Array of three colors. The first color in the Array
           will be the color passed in. The second two will be equidistant
           from the start color and each other.
 
@@ -205,8 +205,8 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getTriad: function(options) {
             var c = ColorExtras._start(options),
@@ -232,7 +232,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Returns an array of four colors. The first color in the array
+        Returns an Array of four colors. The first color in the Array
           will be the color passed in. The remaining three colors are
           equidistant offsets from the starting color and each other.
 
@@ -242,8 +242,8 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getTetrad: function(options) {
             var c = ColorExtras._start(options),
@@ -276,7 +276,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Returns an array of four colors. The first color in the array
+        Returns an Array of four colors. The first color in the Array
           will be the color passed in. The remaining three colors are
           equidistant offsets from the starting color and each other.
 
@@ -286,8 +286,8 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getSquare: function(options) {
             var c = ColorExtras._start(options),
@@ -319,7 +319,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Calculates saturation offsets resulting in a monochromatic array of values.
+        Calculates saturation offsets resulting in a monochromatic Array of values.
 
         @public
         @method getMonochrome
@@ -327,9 +327,9 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-          @param {Number} options.count denotes the requested number of monocromatic values returned
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
+          @param {Number} options.count denotes the requested number of monochromatic values returned
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getMonochrome: function(options) {
             var c = ColorExtras._start(options),
@@ -366,7 +366,7 @@ var HSL = 'hsl',
         },
 
         /**
-        Creates an array of similar colors. Returned array is prepended
+        Creates an Array of similar colors. Returned Array is prepended
            with the color provided followed a number of colors decided
            by options.count
 
@@ -376,10 +376,10 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
           @param {Number} options.count denotes the requested number of similar values returned
           @param {Number} options.offset plus or minus maximum to offset the hue, saturation, and lightness
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getSimilar: function(options) {
             var c = ColorExtras._start(options),
@@ -422,13 +422,13 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
         @param {Object} adjust
           @param {Number} [adjust.h] Amount to adjust hue positive or negative
           @param {Number} [adjust.s] Amount to adjust saturation positive or negative
           @param {Number} [adjust.l] Amount to adjust luminance positive or negative
         @param {Boolean} started Denotes if the options pass have already been processed through _start()
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getOffset: function(options, adjust, started) {
             var c = options;
@@ -491,11 +491,11 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
         @param {Object} match
           @param {String} match.type identifies the type of color provided
           @param {String|Array} match.value color value to be converted
-        @returns {String|Array} returns array of values or CSS string if options.css is true
+        @returns {String|Array} returns Array of values or CSS string if options.css is true
         **/
         getSimilarBrightness: function(options, match){
             var c = Color._convertTo(options, HSL),
@@ -520,12 +520,12 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
         @return {Object} Converted additive HSL color
         */
         _start: function(options) {
             var c = Color._convertTo(options, HSL);
-            c.value = ColorExtras._toAdditive(c.value);
+            c.value = ColorExtras._toSubtractive(c.value);
 
             return c;
         },
@@ -538,11 +538,11 @@ var HSL = 'hsl',
           @param {String} options.type identifies the type of color provided
           @param {String|Array} options.value color value to be converted
           @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
+          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
         @return {Object} Converted subtractive color in the options.to format specified or HSL if non is specified
         */
         _finish: function(options, to) {
-            options.value = ColorExtras._toSubtractive(options.value);
+            options.value = ColorExtras._toAdditive(options.value);
             options.type = HSL;
             options.to = to;
 
@@ -559,13 +559,17 @@ var HSL = 'hsl',
         _toAdditive: function(hsl) {
             var hue = hsl[0];
 
-            if (hue <= 120) {
-                hue = hue * (180 / 120);
+            if (hue <= 180) {
+                hue /= 1.5;
             } else if (hue < 240) {
-                hue = ((hue - 120) * (60 / 120)) + 180;
+                hue = 120 + (hue - 180) * 2;
             }
 
-            hsl[0] = Math.round(hue*10)/10;
+            if (hue < 0) {
+                hue += 360;
+            }
+
+            hsl[0] = Math.round((hue % 360) * 10)/10;
             return hsl;
         },
 
@@ -579,13 +583,17 @@ var HSL = 'hsl',
         _toSubtractive: function(hsl) {
             var hue = hsl[0];
 
-            if (hue <= 180) {
-                hue = hue * (120 / 180);
+            if (hue <= 120) {
+                hue *= 1.5;
             } else if (hue < 240) {
-                hue = ((hue - 180) * (120 / 60)) + 120;
+                hue = 180 + (hue - 120) / 2;
             }
 
-            hsl[0] = Math.round(hue*10)/10;
+            if (hue < 0) {
+                hue += 360;
+            }
+
+            hsl[0] = Math.round((hue % 360) * 10)/10;
             return hsl;
         },
 
