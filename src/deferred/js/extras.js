@@ -81,13 +81,16 @@ Y.mix(Y.Deferred.prototype, {
     onProgress: function (callback) {
         var subs = this._subs;
 
-        // First call, need to supplement the subs collection with an array for
-        // progress listeners
-        if (!subs.progress && this._status === 'in progress') {
-            subs.progress = [];
-        }
+        // no-op subscribers after resolution
+        if (this._status === 'in progress') {
+            // First call, need to supplement the subs collection with an array
+            // for progress listeners
+            if (!subs.progress) {
+                subs.progress = [];
+            }
 
-        subs.progress.push(callback);
+            subs.progress.push(callback);
+        }
 
         return this.promise();
     },

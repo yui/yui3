@@ -52,7 +52,7 @@ Y.when = function () {
             
             // It's up to each passed function to resolve/reject the deferred
             // that is assigned to it.
-            fn.apply(Y, deferred);
+            fn.call(Y, deferred);
 
         } else if (fn && typeof fn.then === 'function') {
             fn.then(finished, failed);
