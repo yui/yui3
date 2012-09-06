@@ -1,6 +1,7 @@
 YUI.add('graphics-svg', function (Y, NAME) {
 
-var SHAPE = "svgShape",
+var IMPLEMENTATION = "svg",
+    SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
@@ -885,7 +886,7 @@ SVGShape = function(cfg)
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
-SVGShape.NAME = "svgShape";
+SVGShape.NAME = "shape";
 
 Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
@@ -1103,11 +1104,14 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
-			id = this.get("id"),
-			pointerEvents = this.get("pointerEvents");
-		this.node = node;
-		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
+		var host = this,
+            node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+			id = host.get("id"),
+            name = host.name,
+            concat = host._camelCaseConcat,
+			pointerEvents = host.get("pointerEvents");
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
         if(id)
 		{
 			node.setAttribute("id", id);
@@ -1116,7 +1120,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             Y.one(node).setStyle("visibility", "hidden");
         }
@@ -2123,7 +2127,7 @@ SVGPath = function(cfg)
 {
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
-SVGPath.NAME = "svgPath";
+SVGPath.NAME = "path";
 Y.extend(SVGPath, Y.SVGShape, {
     /**
      * Left edge of the path
@@ -2240,7 +2244,7 @@ SVGRect = function()
 {
 	SVGRect.superclass.constructor.apply(this, arguments);
 };
-SVGRect.NAME = "svgRect";
+SVGRect.NAME = "rect";
 Y.extend(SVGRect, Y.SVGShape, {
     /**
      * Indicates the type of shape
@@ -2268,7 +2272,7 @@ SVGEllipse = function(cfg)
 	SVGEllipse.superclass.constructor.apply(this, arguments);
 };
 
-SVGEllipse.NAME = "svgEllipse";
+SVGEllipse.NAME = "ellipse";
 
 Y.extend(SVGEllipse, SVGShape, {
 	/**
@@ -2371,7 +2375,7 @@ Y.SVGEllipse = SVGEllipse;
     SVGCircle.superclass.constructor.apply(this, arguments);
  };
     
- SVGCircle.NAME = "svgCircle";
+ SVGCircle.NAME = "circle";
 
  Y.extend(SVGCircle, Y.SVGShape, {    
     

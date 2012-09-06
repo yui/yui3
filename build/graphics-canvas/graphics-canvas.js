@@ -1,6 +1,7 @@
 YUI.add('graphics-canvas', function (Y, NAME) {
 
-var SHAPE = "canvasShape",
+var IMPLEMENTATION = "canvas",
+    SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
     DOCUMENT = Y.config.doc,
@@ -1028,7 +1029,7 @@ CanvasShape = function(cfg)
     CanvasShape.superclass.constructor.apply(this, arguments);
 };
 
-CanvasShape.NAME = "canvasShape";
+CanvasShape.NAME = "shape";
 
 Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     /**
@@ -1268,19 +1269,22 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = Y.config.doc.createElement('canvas'),
-			id = this.get("id");
-		this._context = node.getContext('2d');
+		var host = this,
+            node = Y.config.doc.createElement('canvas'),
+			id = host.get("id"),
+            concat = host._camelCaseConcat,
+            name = host.name;
+		host._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.style.overflow = "visible";
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             node.style.visibility = "hidden";
         }
 		node.setAttribute("id", id);
 		id = "#" + id;
-		this.node = node;
-		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
+	    host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
 	},
 	
 	/**
@@ -1599,22 +1603,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         
         this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
-		/*
-        node.style.MozTransformOrigin = transformOrigin; 
-		node.style.webkitTransformOrigin = transformOrigin;
-		node.style.msTransformOrigin = transformOrigin;
-		node.style.OTransformOrigin = transformOrigin;
-        */
         Y_DOM.setStyle(node, "transformOrigin", transformOrigin);
         if(transform)
 		{
             Y_DOM.setStyle(node, "transform", transform);
-            /*
-            node.style.MozTransform = transform;
-            node.style.webkitTransform = transform;
-            node.style.msTransform = transform;
-            node.style.OTransform = transform;
-            */
 		}
         this._transforms = [];
 	},
@@ -2345,7 +2337,7 @@ CanvasPath = function(cfg)
 {
 	CanvasPath.superclass.constructor.apply(this, arguments);
 };
-CanvasPath.NAME = "canvasPath";
+CanvasPath.NAME = "path";
 Y.extend(CanvasPath, Y.CanvasShape, {
     /**
      * Indicates the type of shape
@@ -2377,17 +2369,20 @@ Y.extend(CanvasPath, Y.CanvasShape, {
 	 */
 	createNode: function()
 	{
-		var node = Y.config.doc.createElement('canvas'),
-			id = this.get("id");
-		this._context = node.getContext('2d');
+		var host = this,
+            node = Y.config.doc.createElement('canvas'),
+			name = host.name,
+            concat = host._camelCaseConcat,
+            id = host.get("id");
+		host._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.setAttribute("pointer-events", "none");
         node.style.pointerEvents = "none";
         node.style.overflow = "visible";
 		node.setAttribute("id", id);
 		id = "#" + id;
-		this.node = node;
-		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
 	},
 
     /**
@@ -2474,7 +2469,7 @@ CanvasRect = function()
 {
 	CanvasRect.superclass.constructor.apply(this, arguments);
 };
-CanvasRect.NAME = "canvasRect";
+CanvasRect.NAME = "rect";
 Y.extend(CanvasRect, Y.CanvasShape, {
 	/**
 	 * Indicates the type of shape
@@ -2518,7 +2513,7 @@ CanvasEllipse = function(cfg)
 	CanvasEllipse.superclass.constructor.apply(this, arguments);
 };
 
-CanvasEllipse.NAME = "canvasEllipse";
+CanvasEllipse.NAME = "ellipse";
 
 Y.extend(CanvasEllipse, CanvasShape, {
 	/**
@@ -2610,7 +2605,7 @@ CanvasCircle = function(cfg)
 	CanvasCircle.superclass.constructor.apply(this, arguments);
 };
     
-CanvasCircle.NAME = "canvasCircle";
+CanvasCircle.NAME = "circle";
 
 Y.extend(CanvasCircle, Y.CanvasShape, {
 	/**

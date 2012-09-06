@@ -1,6 +1,7 @@
 YUI.add('graphics-vml', function (Y, NAME) {
 
-var SHAPE = "vmlShape",
+var IMPLEMENTATION = "vml",
+    SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
@@ -737,7 +738,7 @@ VMLShape = function()
     VMLShape.superclass.constructor.apply(this, arguments);
 };
 
-VMLShape.NAME = "vmlShape";
+VMLShape.NAME = "shape";
 
 Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	/**
@@ -839,13 +840,15 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	createNode: function()
 	{
         var node,
+            concat = this._camelCaseConcat,
 			x = this.get("x"),
 			y = this.get("y"),
             w = this.get("width"),
             h = this.get("height"),
 			id,
 			type,
-			nodestring,
+			name = this.name,
+            nodestring,
             visibility = this.get("visible") ? "visible" : "hidden",
 			strokestring,
 			classString,
@@ -859,7 +862,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fillstring;
 			id = this.get("id");
 			type = this._type == "path" ? "shape" : this._type;
-			classString = 'vml' + type + ' ' + _getClassName(SHAPE) + " " + _getClassName(this.constructor.NAME); 
+		    classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type; 
 			stroke = this._getStrokeProps();
 			fill = this._getFillProps();
 			
@@ -2314,7 +2317,7 @@ VMLPath = function()
 	VMLPath.superclass.constructor.apply(this, arguments);
 };
 
-VMLPath.NAME = "vmlPath";
+VMLPath.NAME = "path";
 Y.extend(VMLPath, Y.VMLShape);
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
@@ -2375,7 +2378,7 @@ VMLRect = function()
 {
 	VMLRect.superclass.constructor.apply(this, arguments);
 };
-VMLRect.NAME = "vmlRect"; 
+VMLRect.NAME = "rect"; 
 Y.extend(VMLRect, Y.VMLShape, {
 	/**
 	 * Indicates the type of shape
@@ -2403,7 +2406,7 @@ VMLEllipse = function()
 	VMLEllipse.superclass.constructor.apply(this, arguments);
 };
 
-VMLEllipse.NAME = "vmlEllipse";
+VMLEllipse.NAME = "ellipse";
 
 Y.extend(VMLEllipse, Y.VMLShape, {
 	/**
@@ -2481,7 +2484,7 @@ VMLCircle = function(cfg)
 	VMLCircle.superclass.constructor.apply(this, arguments);
 };
 
-VMLCircle.NAME = "vmlCircle";
+VMLCircle.NAME = "circle";
 
 Y.extend(VMLCircle, VMLShape, {
 	/**

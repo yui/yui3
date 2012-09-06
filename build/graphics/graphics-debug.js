@@ -270,6 +270,20 @@ var SETTER = "setter",
             });
             this.initializer.apply(this, arguments);
             this.fire("init", {cfg: arguments[0]});
+        },
+
+        /**
+         * Camel case concatanates two strings.
+         *
+         * @method _camelCaseConcat
+         * @param {String} prefix The first string
+         * @param {String} name The second string
+         * @return String
+         * @private
+         */
+        _camelCaseConcat: function(prefix, name)
+        {
+            return prefix + name.charAt(0).toUpperCase() + name.slice(1);
         }
     };
 //Straightup augment, no wrapper functions
