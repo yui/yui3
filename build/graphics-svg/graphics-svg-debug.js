@@ -636,7 +636,6 @@ SVGDrawing.prototype = {
     end: function()
     {
         this._closePath();
-        this._graphic.addToRedrawQueue(this);    
     },
 
     /**
