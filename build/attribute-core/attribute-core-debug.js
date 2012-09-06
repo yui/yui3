@@ -1,4 +1,4 @@
-YUI.add('attribute-core', function(Y) {
+YUI.add('attribute-core', function (Y, NAME) {
 
     /**
      * The State class maintains state for a collection of named items, with
@@ -1036,4 +1036,4 @@ YUI.add('attribute-core', function(Y) {
     Y.AttributeCore = AttributeCore;
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@', {"requires": ["oop"]});
