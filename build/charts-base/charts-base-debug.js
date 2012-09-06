@@ -1,4 +1,4 @@
-YUI.add('charts-base', function(Y) {
+YUI.add('charts-base', function (Y, NAME) {
 
 /**
  * The Charts widget provides an api for displaying data
@@ -16201,4 +16201,4 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 });
 
 
-}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'event-touch', 'widget', 'widget-position', 'widget-stack', 'graphics']});
+}, '@VERSION@', {"requires": ["dom", "datatype-number", "datatype-date", "event-custom", "event-mouseenter", "event-touch", "widget", "widget-position", "widget-stack", "graphics"]});

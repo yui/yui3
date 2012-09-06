@@ -1,1 +1,1 @@
-YUI.add("charts",function(b){function a(c){if(c.type!="pie"){return new b.CartesianChart(c);}else{return new b.PieChart(c);}}b.Chart=a;},"@VERSION@",{requires:["charts-base"]});
+YUI.add("charts",function(c,b){function a(d){if(d.type!="pie"){return new c.CartesianChart(d);}else{return new c.PieChart(d);}}c.Chart=a;},"@VERSION@",{"requires":["charts-base"]});
