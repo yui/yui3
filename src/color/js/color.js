@@ -450,8 +450,13 @@ Color = {
             h,
             s,
             l,
+            isGrayScale = false,
             sub = max - min,
             sum = max + min;
+
+        if (r === g && g === b) {
+            isGrayScale = true;
+        }
 
         // hue
         if (sub === 0) {
@@ -474,6 +479,10 @@ Color = {
             s = sub / sum;
         } else {
             s = sub / (2 - sum);
+        }
+
+        if (isGrayScale) {
+            s = 0;
         }
 
         // clean up hsl
