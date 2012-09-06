@@ -46,13 +46,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator.get(HOST);
 
-        // Default it to an empty object
-        config = config || {};
-
         // Initialize & default
-        paginator.optimizeMemory = config.optimizeMemory || false;
-        paginator.padding = config.padding || 1;
         paginator._pageDims = [];
+        paginator.padding = 1;
+        paginator.optimizeMemory = false;
 
         // Cache some values
         paginator._host = host;
@@ -61,6 +58,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator._cIndex = paginator.get(INDEX);
         paginator._cAxis = paginator.get(AXIS);
 
+        // Apply configs
+        if (config.optimizeMemory) {
+            paginator.optimizeMemory = config.optimizeMemory;
+        }
+
+        if (config.padding) {
+            paginator.padding = config.padding;
+        }
+
+        // Attach event bindings
         paginator._bindAttrs();
     },
 
@@ -127,7 +134,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Add the paginator class
         bb.addClass(CLASS_PAGED);
 
-        // paginator._optimize();
+        // Trigger the optimization process
+        paginator._optimize();
     },
 
     /**
@@ -366,7 +374,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Hides page nodes not near the viewport
+     * Optimization: Hides the pages not near the viewport
      *
      * @method _optimize
      * @protected
@@ -378,19 +386,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
 
         var paginator = this,
-            host = paginator._host,
-            optimizeMemory = paginator.optimizeMemory,
             currentIndex = paginator._cIndex,
-            pageNodes;
+            pageNodes = paginator._getStage(currentIndex);
 
         // Show the pages in/near the viewport & hide the rest
-        pageNodes = paginator._getStage(currentIndex);
         paginator._showNodes(pageNodes.visible);
         paginator._hideNodes(pageNodes.hidden);
     },
 
     /**
-     * Determines which nodes should be visible, and which should be hidden.
+     * Optimization: Determines which nodes should be visible, and which should be hidden.
      *
      * @method _getStage
      * @param index {Number} The page index # intended to be in focus.
@@ -399,8 +404,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _getStage: function (index) {
         var padding = this.padding,
-            pageNodes = this._getPageNodes(),
             pageCount = this.get(TOTAL),
+            pageNodes = this._getPageNodes(),
             start = Math.max(0, index - padding),
             end = Math.min(pageCount, index + 1 + padding); // noninclusive
 
