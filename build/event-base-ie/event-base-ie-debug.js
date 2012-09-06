@@ -38,7 +38,7 @@ if (docElement.doScroll && !GLOBAL_ENV._ieready) {
 }
 
 })();
-YUI.add('event-base-ie', function(Y) {
+YUI.add('event-base-ie', function (Y, NAME) {
 
 /*
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
@@ -300,4 +300,4 @@ if (imp && (!imp.hasFeature('Events', '2.0'))) {
 }
 
 
-}, '@VERSION@' ,{after:['event-base'], requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});

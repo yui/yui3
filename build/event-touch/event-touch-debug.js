@@ -1,4 +1,4 @@
-YUI.add('event-touch', function(Y) {
+YUI.add('event-touch', function (Y, NAME) {
 
 /**
  * Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade
@@ -124,4 +124,4 @@ if (Y.Node.DOM_EVENTS) {
 }
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});
