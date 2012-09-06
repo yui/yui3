@@ -4,7 +4,8 @@ YUI.add('event-tap-tests', function(Y) {
     Assert = Y.Assert,
     noop = function() {},
     body = Y.one('body'),
-    supportsTouch = ("createTouch" in document) ? true : false;
+    doc = Y.config.doc,
+    supportsTouch = !!(doc && doc.createTouch);
 
     Y.Node.prototype.tap = function (startOpts, endOpts) {
         if (supportsTouch) {
@@ -28,7 +29,10 @@ YUI.add('event-tap-tests', function(Y) {
                 provide 0,0 for pageX and pageY respectively. Manual testing confirms
                 that this test works. See http://yuilibrary.com/projects/yui3/ticket/2531581
                 */
-                'touchend not in same area': (Y.UA.ie === 9),
+                'touchend not in same area': (Y.UA.phantomjs),
+                'delegate tap': (Y.UA.phantomjs),
+                'touchmove/mousemove fired': (Y.UA.phantomjs),
+                'touchend not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
             }
         },
 
