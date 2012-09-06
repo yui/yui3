@@ -161,10 +161,10 @@ Y.mix(Deferred.prototype, {
         }
 
         resolveSubs.push((typeof callback === 'function') ?
-            wrap(callback, 'resolve') : then.resolve);
+            wrap(callback, 'resolve') : Y.bind('resolve', then));
 
         rejectSubs.push((typeof errback === 'function') ?
-            wrap(errback, 'reject') : then.reject);
+            wrap(errback, 'reject') : Y.bind('reject', then));
 
         if (this._status === 'resolved') {
             this.resolve.apply(this, this._result);
