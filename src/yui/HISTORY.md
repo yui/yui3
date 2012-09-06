@@ -1,6 +1,13 @@
 YUI Core Change History
 =======================
 
+3.6.1
+-----
+
+* Improved the performance of `Y.merge()` by 10 to 40% (depending on the
+  browser). [Ryan Grove]
+
+
 3.6.0
 -----
 
