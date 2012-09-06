@@ -118,6 +118,10 @@ IO.prototype = {
             // Non-IE  can use XHR level 2 and not rely on an
             // external transport.
             alt = Y.UA.ie ? 'xdr' : null;
+
+            // Prevent 'pre-flighting' of XHR by removing `X-Requested-With`
+            // header for CORS requests
+            io.setHeader('X-Requested-With');
         }
 
         use = alt || form;
