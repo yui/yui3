@@ -1,4 +1,4 @@
-YUI.add('graphics-canvas', function(Y) {
+YUI.add('graphics-canvas', function (Y, NAME) {
 
 var SHAPE = "canvasShape",
     DOCUMENT = Y.config.doc,
@@ -3135,4 +3135,4 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
 Y.CanvasGraphic = CanvasGraphic;
 
 
-}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
+}, '@VERSION@', {"requires": ["graphics"]});

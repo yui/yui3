@@ -1,4 +1,4 @@
-YUI.add('graphics-svg', function(Y) {
+YUI.add('graphics-svg', function (Y, NAME) {
 
 var SHAPE = "svgShape",
 	Y_LANG = Y.Lang,
@@ -3002,4 +3002,4 @@ Y.SVGGraphic = SVGGraphic;
 
 
 
-}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
+}, '@VERSION@', {"requires": ["graphics"]});

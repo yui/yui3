@@ -1,4 +1,4 @@
-YUI.add('graphics-canvas-default', function(Y) {
+YUI.add('graphics-canvas-default', function (Y, NAME) {
 
 Y.Graphic = Y.CanvasGraphic;
 Y.Shape = Y.CanvasShape;
@@ -9,4 +9,4 @@ Y.Path = Y.CanvasPath;
 Y.Drawing = Y.CanvasDrawing;
 
 
-}, '@VERSION@' ,{skinnable:false});
+}, '@VERSION@');

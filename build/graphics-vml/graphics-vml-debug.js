@@ -1,4 +1,4 @@
-YUI.add('graphics-vml', function(Y) {
+YUI.add('graphics-vml', function (Y, NAME) {
 
 Y.log('using VML');
 var SHAPE = "vmlShape",
@@ -2981,4 +2981,4 @@ Y.VMLGraphic = VMLGraphic;
 
 
 
-}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
+}, '@VERSION@', {"requires": ["graphics"]});

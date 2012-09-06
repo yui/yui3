@@ -1,4 +1,4 @@
-YUI.add('graphics', function(Y) {
+YUI.add('graphics', function (Y, NAME) {
 
 /**
  * 
@@ -1124,4 +1124,4 @@ Y.GraphicBase = GraphicBase;
 	 */
 
 
-}, '@VERSION@' ,{requires:['event-custom', 'node', 'pluginhost', 'classnamemanager', 'matrix']});
+}, '@VERSION@', {"requires": ["node", "event-custom", "pluginhost", "matrix", "classnamemanager"]});
