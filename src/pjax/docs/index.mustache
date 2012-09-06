@@ -285,7 +285,7 @@ Since the header and footer are persistent across the site, we only want to disp
 // Extract the contents of the '.episode-content' div from loaded pages and
 // discard the rest.
 new Y.Pjax({
-    container: '#content',
+    container      : '#content',
     contentSelector: '.episode-content'
 });
 ```
@@ -439,6 +439,111 @@ The `titleSelector` attribute allows you to customize how Pjax extracts a page t
         </tr>
     </tbody>
 </table>
+
+<h2>Customizing Pjax</h2>
+
+<p>
+There are many situations where more advanced uses of the Pjax Utility need to customize its default behavior. Adding analytics, changing how content is added to the page, performing some operation before or after the standard behavior, etc. are all cases where Pjax needs to be customized. Fortunately, the hooks are in place to aid customization.
+</p>
+
+<h3>Enhancing Navigation with Pjax Events</h3>
+
+<p>
+One way to enhance the experience for people moving between "pages" of your site or app, is to add a loading indicator while the contents of the page are being loaded from the server via the Pjax utility. This may be especially important for pages which have dynamic content and might take a little while to generate on the server.
+</p>
+
+<p>
+The follow provides a basic example of how to add a loading indicator using the [[#Pjax Events|Pjax's events]]:
+</p>
+
+```javascript
+var pjax = new Y.Pjax({container: '#content'});
+
+// Listen for the `navigate` event and add the "loading" CSS class. The styles
+// for the this CSS class can add a loading spinner or dim the container node.
+pjax.on('navigate', function (e) {
+    this.get('container').addClass('loading');
+});
+
+// Listen for either the `load` or `error` events and remove the "loading" CSS
+// class from the container node.
+pjax.on(['error', 'load'], function (e) {
+    this.get('container').removeClass('loading');
+});
+```
+
+<p>
+If you're looking to page transitions to your application, you might want to look at the <a href="../app/index.html#yapptransitions">App component</a> which builds on the Pjax utility and supports transitions.
+</p>
+
+<h3>Using Specific Routes</h3>
+
+<p>
+By default, any link within a pjax's `container`—when clicked—will be handled via pjax and the content at the link's URL will be loaded and dynamically inserted into the page without a full page load. Sometimes you might need to be more restrictive, you may want only certain portions of your site to be pjax-ified.
+</p>
+
+<p>
+The Pjax utility is build on the <a href="../router/index.html">Router component</a>, this mean that a pjax instance is a router. By specifying a value for the <a href="{{apiDocs}}/classes/Pjax.html#attr_routes">`routes` attribute</a>, you can customize which URL paths you want the Pjax utility to handle. The Pjax utility also provides <a href="{{apiDocs}}/classes/Pjax.html#property_defaultRoute">`Y.Pjax.defaultRoute`</a>, a stack of route middleware which forms the default Pjax route handler.
+</p>
+
+<p>
+The following specifies the routes which the Pjax utility should handle, and uses Pjax's default route handler to load the content from the server and dynamically insert it into the page:
+</p>
+
+```javascript
+new Y.Pjax({
+    container: '#content',
+
+    // This tells the Pjax utility to only handle the About Us and Contact Us
+    // sections of our site by using the default route handler.
+    routes: [
+        {path: '/about',   callbacks: Y.Pjax.defaultRoute},
+        {path: '/contact', callbacks: Y.Pjax.defaultRoute}
+    ]
+});
+```
+
+<p>
+See the <a href="../router/index.html#routing">Routing</a> section of Router's user guide for more information.
+</p>
+
+<h3>Adding Analytics Support</h3>
+
+<p>
+One issue people will quickly run into when using the Pjax utility is needing to report page views to their web analytics system. Even though Pjax removes unnecessary full page loads, we still want to track page views for the content it loads.
+</p>
+
+<p>
+There are several hooks available for tracking page views for content which is loaded via pjax. You could listen to the `load` and `error` events, or specify the `routes` by providing an additional route-specific middleware, but there's a simpler way… Most likely you want your web analytics to track page views for all pages loaded through all pjax instances on the page. The most straight-forward way is to `push()` additional middleware on to Pjax's <a href="{{apiDocs}}/classes/Pjax.html#property_defaultRoute">`defaultRoute`</a>.
+</p>
+
+<p>
+The following shows how you can hook into <a href="http://www.google.com/analytics/">Google Analytics</a>, and track page views for all pages that are handled via the Pjax utility:
+</p>
+
+```javascript
+// This assumes you already have Google Analytics on the page.
+
+// Define the a middleware function which will track page views with GA.
+function trackPageview(req, res, next) {
+    if (Y.config.win._gaq) {
+        _gaq.push(['_trackPageview', res.url]);
+    }
+
+    next();
+}
+
+// Push our `trackPageview()` middleware onto Pjax's `defaultRoute`.
+Y.Pjax.defaultRoute.push(trackPageview);
+
+// Now any pjax instance we create on this page will automatically have
+// page views tracked via Google Analytics.
+new Y.Pjax({container: '#content'});
+```
+
+<p>
+See the <a href="../router/index.html#chaining-routes-and-middleware">Chaining Routes and Middleware</a> section of Router's user guide for more information.
+</p>
 
 <h2>Optimizing Server Responses for Pjax</h2>
 
