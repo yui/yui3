@@ -418,7 +418,7 @@ AppBase = Y.Base.create('app', Y.Base, [View, Router, PjaxBase], {
         // When a value is specified for `options.render`, prefer it because it
         // represents the developer's intent. When no value is specified, the
         // `view` will only be rendered if it was just created.
-        if (options.hasOwnProperty('render')) {
+        if ('render' in options) {
             if (options.render) {
                 view.render();
             }
