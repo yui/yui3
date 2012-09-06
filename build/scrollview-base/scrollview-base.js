@@ -103,6 +103,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * Contains the distance (postive or negative) in pixels by which 
+     * the scrollview was last scrolled. This is useful when setting up 
+     * click listeners on the scrollview content, which on mouse based 
+     * devices are always fired, even after a drag/flick. 
+     * 
+     * <p>Touch based devices don't currently fire a click event, 
+     * if the finger has been moved (beyond a threshold) so this 
+     * check isn't required, if working in a purely touch based environment</p>
+     * 
+     * @property lastScrolledAmt
+     * @type Number
+     * @public
+     */
+    lastScrolledAmt: null,
+
+    /**
      * Designated initializer
      *
      * @method initializer
@@ -114,9 +130,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Cache these values, since they aren't going to change.
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
+
+        // Cache some attributes
+        sv._cAxis = sv.get(AXIS);
         sv._cDecel = sv.get(DECELERATION);
         sv._cBounce = sv.get(BOUNCE);
-        sv._cAxis = sv.get(AXIS);
     },
 
     /**
@@ -128,16 +146,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     bindUI: function () {
         var sv = this;
 
+        // Bind interaction listers
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        sv._bindMousewheel(sv.get(MOUSEWHEEL));
+        sv._bindMousewheel(ScrollView.MOUSEWHEEL);
         
+        // Bind change events
         sv._bindAttrs();
 
         // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
         if (IE) {
             sv._fixIESelect(sv._bb, sv._cb);
         }
+
+        // Recalculate dimension properties
+        // TODO: This should be throttled.
+        Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
     },
 
     /**
@@ -162,9 +186,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             'heightChange': dimChangeHandler,
             'widthChange': dimChangeHandler
         });
-
-        // TODO: This should be throttled.
-        Y.one(WINDOW).after('resize', dimChangeHandler, sv);
     },
 
     /**
@@ -202,6 +223,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (flick) {
             bb.on(FLICK + '|' + FLICK, Y.bind(sv._flick, sv), flick);
+
+            // Rebind Drag, becuase _onGestureMoveEnd always has to fire -after- _flick
+            sv._bindDrag(sv.get(DRAG));
         }
     },
 
@@ -508,10 +532,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // if a flick animation is in progress, cancel it
         if (sv._flickAnim) {
             sv._flickAnim.cancel();
+            sv._onTransEnd();
         }
 
         // TODO: Review if neccesary (#2530129)
         e.stopPropagation();
+
+        // Reset lastScrolledAmt
+        sv.lastScrolledAmt = 0;
 
         // Stores data for this gesture cycle.  Cleaned up later
         sv._gesture = {
@@ -609,19 +637,28 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         gesture.endClientX = clientX;
         gesture.endClientY = clientY;
 
-        // Only if this gesture wasn't a flick, and there was movement
-        if (!flick && gesture.deltaX !== null && gesture.deltaY !== null) {
-            if (sv._isOOB()) {
-                sv._snapBack();
-            }
-            else {
-                // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
-                    sv._onTransEnd();
+        // If this wasn't a flick, wrap up the gesture cycle
+        if (!flick) {
+
+            // If there was movement (_onGestureMove fired)
+            if (gesture.deltaX !== null && gesture.deltaY !== null) {
+
+                // If we're out-out-bounds, then snapback
+                if (sv._isOOB()) {
+                    sv._snapBack();
+                }
+
+                // Inbounds
+                else {
+                    // Don't fire scrollEnd on the gesture axis is the same as paginator's
+                    // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                    if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
+                        sv._onTransEnd();
+                    }
                 }
             }
         }
+
     },
 
     /**
@@ -730,6 +767,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
         if (bb.contains(e.target)) {
+        
+            // Reset lastScrolledAmt
+            sv.lastScrolledAmt = 0;
+
             // Jump to the new offset
             sv.set(SCROLL_Y, scrollToY);
 
@@ -790,13 +831,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = sv._maxScrollY,
             newY = _constrain(currentY, minY, maxY),
             newX = _constrain(currentX, minX, maxX),
-            duration = ScrollView.SNAP_DURATION;
+            duration = ScrollView.SNAP_DURATION,
+            easing = ScrollView.SNAP_EASING;
 
         if (newX !== currentX) {
-            sv.set(SCROLL_X, newX, {duration:duration});
+            sv.set(SCROLL_X, newX, {duration:duration, easing:easing});
         }
         else if (newY !== currentY) {
-            sv.set(SCROLL_Y, newY, {duration:duration});
+            sv.set(SCROLL_Y, newY, {duration:duration, easing:easing});
         }
         else {
             // It shouldn't ever get here, but in case it does, fire scrollEnd
@@ -822,6 +864,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             easing = e.easing,
             val = e.newVal,
             scrollToArgs = [];
+
+        // Set the scrolled value
+        sv.lastScrolledAmt = sv.lastScrolledAmt + (e.newVal - e.prevVal);
 
         // Generate the array of args to pass to scrollTo()
         if (e.attrName === SCROLL_X) {
@@ -1067,16 +1112,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          */
         drag: {
             value: true
-        },
-
-        /**
-         * Enable/Disable scrolling the ScrollView content via mousewheel
-         * @attribute mousewheel
-         * @type boolean
-         * @default true
-         */
-        mousewheel: {
-            value: true
         }
     },
 
@@ -1110,14 +1145,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     BOUNCE_RANGE: 150,
 
     /**
-     * The interval used when animating the flick
+     * The interval (ms) used when animating the flick
      *
      * @property FRAME_STEP
      * @type Number
      * @static
-     * @default 16
+     * @default 30
      */
-    FRAME_STEP: 16,
+    FRAME_STEP: 30,
 
     /**
      * The default easing used when animating the flick
@@ -1161,6 +1196,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _TRANSITION: {
         DURATION: Y.Transition._VENDOR_PREFIX + 'TransitionDuration',
         PROPERTY: Y.Transition._VENDOR_PREFIX + 'TransitionProperty'
+    },
+
+    /**
+     * Enable/Disable scrolling content via mousewheel
+     * @property mousewheel
+     * @type boolean
+     * @static
+     * @default true
+     */
+    MOUSEWHEEL: {
+        value: true
     }
 
     // End static properties
