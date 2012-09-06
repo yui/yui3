@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.08.29-20-10',
+            GALLERY_VERSION = 'gallery-2012.09.05-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -3863,7 +3863,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
