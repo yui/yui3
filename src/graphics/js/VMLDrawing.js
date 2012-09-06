@@ -1,5 +1,5 @@
-Y.log('using VML');
-var SHAPE = "vmlShape",
+var IMPLEMENTATION = "vml",
+    SHAPE = "shape",
 	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
     SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,

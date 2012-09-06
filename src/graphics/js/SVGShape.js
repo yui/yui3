@@ -17,7 +17,7 @@ SVGShape = function(cfg)
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
-SVGShape.NAME = "svgShape";
+SVGShape.NAME = "shape";
 
 Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
@@ -235,11 +235,14 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
-			id = this.get("id"),
-			pointerEvents = this.get("pointerEvents");
-		this.node = node;
-		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
+		var host = this,
+            node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+			id = host.get("id"),
+            name = host.name,
+            concat = host._camelCaseConcat,
+			pointerEvents = host.get("pointerEvents");
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
         if(id)
 		{
 			node.setAttribute("id", id);
@@ -248,7 +251,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             Y.one(node).setStyle("visibility", "hidden");
         }

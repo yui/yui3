@@ -13,7 +13,7 @@ SVGPath = function(cfg)
 {
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
-SVGPath.NAME = "svgPath";
+SVGPath.NAME = "path";
 Y.extend(SVGPath, Y.SVGShape, {
     /**
      * Left edge of the path
