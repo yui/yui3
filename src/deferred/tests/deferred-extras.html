@@ -21,12 +21,12 @@
                 fullpath: '../../../build/deferred-extras/deferred-extras-min.js',
                 requires: ['deferred']
             },
-            'deferred-extra-tests': {
-                fullpath: 'deferred-extra-tests.js',
+            'deferred-extras-tests': {
+                fullpath: 'deferred-extras-tests.js',
                 requires: ['deferred', 'test' ]
             }
         }
-    }).use('deferred-extra-tests', 'test-console', function (Y) {
+    }).use('deferred-extras-tests', 'test-console', function (Y) {
 
         new Y.Test.Console().render('#tests');
 

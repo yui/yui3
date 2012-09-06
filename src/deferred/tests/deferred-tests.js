@@ -29,6 +29,11 @@ YUI.add('deferred-tests', function (Y) {
             Y.Assert.areSame(this.deferred, this.promise._deferred);
         },
 
+        "should be present on the deferred and the promise": function () {
+            Y.Assert.isFunction(this.deferred.promise);
+            Y.Assert.isFunction(this.promise.promise);
+        },
+
         "should relay then() to the associated deferred": function () {
             var called, args;
 
@@ -99,6 +104,11 @@ YUI.add('deferred-tests', function (Y) {
 
         tearDown: function () {
             this.deferred.reject();
+        },
+
+        "should be present on the deferred and the promise": function () {
+            Y.Assert.isFunction(this.deferred.then);
+            Y.Assert.isFunction(this.deferred.promise().then);
         },
 
         "then(callback) should return a promise": function () {
@@ -401,6 +411,48 @@ YUI.add('deferred-tests', function (Y) {
             this.deferred.resolve();
 
             this.wait();
+        },
+
+        "callback should be executed asynchronously": function () {
+            var test = this,
+                called;
+
+            this.deferred.then(function () {
+                called = true;
+            });
+
+            this.deferred.resolve();
+
+            Y.Assert.isUndefined(called);
+
+            this.deferred.then(function () {
+                test.resume(function () {
+                    Y.Assert.isTrue(called);
+                });
+            });
+
+            this.wait();
+        },
+
+        "errback should be executed asynchronously": function () {
+            var test = this,
+                called;
+
+            this.deferred.then(null, function () {
+                called = true;
+            });
+
+            this.deferred.reject();
+
+            Y.Assert.isUndefined(called);
+
+            this.deferred.then(null, function () {
+                test.resume(function () {
+                    Y.Assert.isTrue(called);
+                });
+            });
+
+            this.wait();
         }
     }));
 
@@ -413,6 +465,11 @@ YUI.add('deferred-tests', function (Y) {
 
         tearDown: function () {
             this.deferred.reject();
+        },
+
+        "should be present on the deferred and NOT the promise": function () {
+            Y.Assert.isFunction(this.deferred.resolve);
+            Y.Assert.isUndefined(this.deferred.promise().resolve);
         },
 
         "should call 'resolve' subscribers": function () {
@@ -504,6 +561,11 @@ YUI.add('deferred-tests', function (Y) {
             this.deferred.reject();
         },
 
+        "should be present on the deferred and NOT the promise": function () {
+            Y.Assert.isFunction(this.deferred.reject);
+            Y.Assert.isUndefined(this.deferred.promise().reject);
+        },
+
         "should call 'reject' subscribers": function () {
             var test = this,
                 sub1, sub2, nextSub;
@@ -585,6 +647,13 @@ YUI.add('deferred-tests', function (Y) {
     suite.add(new Y.Test.Case({
         name: "getStatus",
 
+        "should be present on the deferred and the promise": function () {
+            var deferred = new Y.Deferred();
+
+            Y.Assert.isFunction(deferred.getStatus);
+            Y.Assert.isFunction(deferred.promise().getStatus);
+        },
+
         "new Deferreds should be in status 'in progress'": function () {
             Y.Assert.areSame('in progress', new Y.Deferred().getStatus());
         },
@@ -600,6 +669,13 @@ YUI.add('deferred-tests', function (Y) {
 
     suite.add(new Y.Test.Case({
         name: "getResult",
+
+        "should be present on the deferred and the promise": function () {
+            var deferred = new Y.Deferred();
+
+            Y.Assert.isFunction(deferred.getResult);
+            Y.Assert.isFunction(deferred.promise().getResult);
+        },
 
         "new Deferreds should return undefined": function () {
             Y.Assert.isUndefined(new Y.Deferred().getResult());
