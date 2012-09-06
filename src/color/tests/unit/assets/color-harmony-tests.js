@@ -58,6 +58,12 @@ YUI.add('color-tests', function(Y) {
                 Y.Assert.areSame(4, c.length, 'length is greater than 1');
             },
 
+            'square of "purple"': function() {
+                var c = Y.Color.getSquare(colors.purple);
+
+                Y.Assert.areSame(4, c.length, 'length is greater than 1');
+            },
+
             'monochrome of "green"': function() {
                 var c = Y.mix({ count: 5 }, colors.green);
                 c = Y.Color.getMonochrome(c);
@@ -106,7 +112,7 @@ YUI.add('color-tests', function(Y) {
                 Y.Object.each(colors, function(v, k) {
                     Y.Assert.areSame(v.value.join(','), colorsString[k], k + ' is not the same');
                 });
-            },
+            }
 
 
         });
