@@ -179,8 +179,8 @@ YUI().use('color-harmony', function (Y) {
     // Color is available and ready for use with harmony methods added on.
     // Add implementation code here.
 });
+</script>
 ```
-</pre>
 
 For the following examples, we will use these color options to keep the examples concise.
 <pre class="code prettyprint">
@@ -197,14 +197,15 @@ var white =  { value: '#fff', to: 'hex', css: true },
 
 <h3 id="complementary">Complementary</h3>
 <p>A complementary color is the opposite color on the subtractive color wheel.</p>
-<p>`getComplementary` will return an Array of color values or string.</p>
+<p>`getComplementary` will return an Array of two color values or strings. The first being the color provided. The second being the complementary color.</p>
 <img src="../assets/color/complementary-red-w.png">
 <pre class="code prettyprint">
 Y.Color.getComplementary(red); // [ "#ff0000" {{>color-s}}#ff0000{{>color-e}}, "#00ff00" {{>color-s}}#00ff00{{>color-e}}]
 </pre>
 
 <h3 id="split">Split Complementary</h3>
-<p>Split complementary is a similar to complementary, with the exception of getting one color opposite the starting color, you get two colors adjacent to the opposite color.</p>
+<p>Split complementary is a similar to complementary, with the exception of getting one color opposite the starting color, you get two colors adjacent to the complementary color.</p>
+<p>`getSplit` will return an Array of three color values or strings. The first being the color provided. The second being a 30 degree offset from the complementary color. The third being a -30 degree offset from the complementary color.</p>
 <img src="../assets/color/split-red-w.png">
 <pre class="code prettyprint">
 Y.Color.getSplit(red); //["#ff0000" {{>color-s}}#ff0000{{>color-e}}, "#00ffff" {{>color-s}}#00ffff{{>color-e}}, "#55ff00" {{>color-s}}#55ff00{{>color-e}}]
@@ -245,8 +246,8 @@ Y.Color.getTetrad(blue);
 </pre>
 
 <h3 id="monochrome">Monochromatic</h3>
-<p>A monochromatic harmony set takes the hue and luminance of the provided color and returns an Array of colors with adjusted saturations from zero to one hundred percent.</p>
-<p>You can specify the number of colors returned with `options.count`. By default five items are returned.</p>
+<p>A monochromatic harmony set takes the hue and saturation of the provided color and returns an Array of colors with adjusted luminance from zero to one hundred percent.</p>
+<p>You can specify the number of colors returned with `options.count`. The default is `5` resulting in five items returned.</p>
 <img src="../assets/color/monochrome-green.png">
 <pre class="code prettyprint">
 Y.Color.getMonochrome(green);
@@ -263,18 +264,22 @@ Y.Color.getSimilar(purple);
 </pre>
 
 <h3 id="offset">Hue, Saturation, Luminance Offsets</h3>
-<p>You adjust hue, saturation, or luminance individually using `getOffset`. The offset is plus or minus the current value. Saturation and luminance can only go as high as 100 and as low as zero.</p>
+<p>You adjust hue, saturation, or luminance individually using `getOffset`. The offset is plus or minus the current value. Saturation and luminance can only go as high as `100` and as low as `0`.</p>
 <p>To change the maximum offset, set `options.offset`. The offset by default is `10`.</p>
 <pre class="code prettyprint">
-Y.Color.getOffset(yellow, {h: 180}); // #7f00ff {{>color-s}}#7f00ff{{>color-e}}
+Y.Color.getOffset(red, {h: 40}); // #ff6e00 {{>color-s}}#ff6e00{{>color-e}}
 
-Y.Color.getOffset(black, {l: 20}); // #333333 {{>color-s}}#333333{{>color-e}}
+Y.Color.getOffset(red, {l: 20}); // #ff6666 {{>color-s}}#ff6666{{>color-e}}
 
-Y.Color.getOffset(blue, {s: -50}); // #4040bf {{>color-s}}#4040bf{{>color-e}}
+Y.Color.getOffset(red, {s: -50}); // #bf4040 {{>color-s}}#bf4040{{>color-e}}
+</pre>
+<p>You can also offset multiple factors at the same time.</p>
+<pre class="code prettyprint">
+Y.Color.getOffset(red, {h: 40, l: 20, s: -50}); // #d9ad8c {{>color-s}}#d9ad8c{{>color-e}}
 </pre>
 
 <h3 id="brightness">Perceived Brightness</h3>
-<p>Different hues as the same saturation and luminance can be perceived brighter or darker than each other (such as blue and yellow). Brightness is represented as a value from 0 to 1 &mdash; where 0 is black and 1 is white.</p>
+<p>Different hues as the same saturation and luminance can be perceived brighter or darker than each other (such as blue and yellow). Brightness is represented as a value from `0` to `1` &mdash; where `0` is black and `1` is white.</p>
 
 <p>Note: `getBrightness` uses a weighted distance in 3D space algorithm. Traditionally these values are `{r: 0.241, g: 0.691, b: 0.068 }`. These values were adjusted during tests to `{ r: 0.221, g: 0.711, b: 0.068 }`. You can override these values with `Y.Color._brightnessWeights`.</p>
 <pre class="code prettyprint">
@@ -290,7 +295,9 @@ Y.Color.getBrightness(yellow); // 0.9654014708917736
 <p>`getSimiliarBrightness` takes two parameters. The first is the color you wish to adjust. The second is the color you wish to match the perceived brightness to.</p>
 <p>It will return an Array of color values or the color as a string.</p>
 <pre class="code prettyprint">
-Y.Color.getSimilarBrightness(blue, yellow); // #f5f5ff {{>color-s}}#f5f5ff{{>color-e}}
+Y.Color.getSimilarBrightness(orange, blue);
+// adjust orange {{>color-s}}#ff7700{{>color-e}} to match the brightness of blue {{>color-s}}#0000ff{{>color-e}},   returns #703800 {{>color-s}}#703800{{>color-e}}
 
-Y.Color.getSimilarBrightness(white, green); // #d9d9d9 {{>color-s}}#d9d9d9{{>color-e}}
+Y.Color.getSimilarBrightness(white, green);
+// adjust white {{>color-s}}#ffffff{{>color-e}} to match the brightness of green {{>color-s}}#00ff00{{>color-e}},   returns #d9d9d9 {{>color-s}}#d9d9d9{{>color-e}}
 </pre>
