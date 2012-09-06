@@ -39,6 +39,11 @@ App Framework Change History
   ModelList instance in the `items` property of the config object passed to
   ModelList's constructor. This change also applies to LazyModelList.
 
+### View
+
+* Log a warning when a handler function is not present when a view's `events`
+  are being attached. [Ticket #2532326] [Jay Shirley, Jeff Pihach]
+
 
 3.6.0
 -----
