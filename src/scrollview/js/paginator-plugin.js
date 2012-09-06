@@ -58,9 +58,20 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator._host = host;
         paginator._bb = host._bb;
         paginator._cb = host._cb;
-        paginator._cIndex = config.index || 0;
+        paginator._cIndex = paginator.get(INDEX);
         paginator._cAxis = paginator.get(AXIS);
-        paginator._prevent = new Y.Do.Prevent();
+
+        paginator._bindAttrs();
+    },
+
+    /**
+     * 
+     *
+     * @method _bindAttrs
+     * @private
+     */
+    _bindAttrs: function () {
+        var paginator = this;
 
         // Event listeners
         paginator.after({
@@ -138,7 +149,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
 
         paginatorAxis = paginator.get(AXIS);
-        
+
         // Don't allow flicks on the paginated axis
         if (paginatorAxis[hostFlick.axis]) {
             host.set(FLICK, false);
@@ -293,7 +304,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             e.preventDefault();
 
             // Block host._mousewheel from running
-            return paginator._prevent;
+            return new Y.Do.Prevent();
         }
     },
 
@@ -338,6 +349,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             gesture = host._gesture,
             gestureAxis = gesture && gesture.axis;
 
+        // Cache the new index value
+        paginator._cIndex = index;
+
         if (gestureAxis === DIM_Y) {
             host._maxScrollX = maxScrollX;
             host.set(SCROLL_X, paginator._pageDims[index].scrollX, { src: UI });
@@ -345,9 +359,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host._maxScrollY = maxScrollY;
             host.set(SCROLL_Y, paginator._pageDims[index].scrollY, { src: UI });
         }
-
-        // Cache the new index value
-        paginator._cIndex = index;
 
         if (e.src !== UI) {
             paginator.scrollToIndex(index);
@@ -496,7 +507,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @param {String} [easing] The timing function to use in the animation
      */
     scrollToIndex: function (index, duration, easing) {
-
         var paginator = this,
             host = paginator._host,
             pageNode = paginator._getPageNodes().item(index),

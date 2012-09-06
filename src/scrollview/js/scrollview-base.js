@@ -128,6 +128,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Cache these values, since they aren't going to change.
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
+
+        // Cache some attributes
         sv._cDecel = sv.get(DECELERATION);
         sv._cBounce = sv.get(BOUNCE);
         sv._cAxis = sv.get(AXIS);
@@ -142,16 +144,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     bindUI: function () {
         var sv = this;
 
+        // Bind interaction listers
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
         sv._bindMousewheel(ScrollView.MOUSEWHEEL);
         
+        // Bind change events
         sv._bindAttrs();
 
         // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
         if (IE) {
             sv._fixIESelect(sv._bb, sv._cb);
         }
+
+        // Recalculate dimension properties
+        // TODO: This should be throttled.
+        Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
     },
 
     /**
@@ -176,9 +184,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             'heightChange': dimChangeHandler,
             'widthChange': dimChangeHandler
         });
-
-        // TODO: This should be throttled.
-        Y.one(WINDOW).after('resize', dimChangeHandler, sv);
     },
 
     /**
@@ -972,7 +977,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             }
             delete sv._flickAnim;
         }
-        
+
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
         // because _gesture is being deleted after the previous one has been overwritten
         // delete sv._gesture; // TODO: Move to sv.prevGesture?
