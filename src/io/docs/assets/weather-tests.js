@@ -6,10 +6,9 @@ YUI.add('weather-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'Example tests',
         'test Get Weather RSS': function() {
-            Y.one('#zip').set('value', '94089');
             Y.one('#getWeather').simulate('click');
             var interval = 10,
-                timeout = 20000,
+                timeout = 60000,
                 output = Y.one('.example #weatherModule'),
                 condition = function() {
                     // Return a truthy/falsey result.
