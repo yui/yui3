@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Y.Deferred Tests</title>
+    <title>Y.Deferred (extras) Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
-    <h1><code>Y.Deferred</code> Tests</h1>
+    <h1><code>Y.Deferred</code> (extras) Tests</h1>
     <div id="tests"></div>
 
     <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script>
@@ -17,12 +17,16 @@
             deferred: {
                 fullpath: '../../../build/deferred/deferred-min.js'
             },
-            'deferred-tests': {
-                fullpath: 'deferred-tests.js',
+            'deferred-extras': {
+                fullpath: '../../../build/deferred-extras/deferred-extras-min.js',
+                requires: ['deferred']
+            },
+            'deferred-extra-tests': {
+                fullpath: 'deferred-extra-tests.js',
                 requires: ['deferred', 'test' ]
             }
         }
-    }).use('deferred-tests', 'test-console', function (Y) {
+    }).use('deferred-extra-tests', 'test-console', function (Y) {
 
         new Y.Test.Console().render('#tests');
 
