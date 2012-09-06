@@ -1,4 +1,4 @@
-YUI.add('event-flick', function(Y) {
+YUI.add('event-flick', function (Y, NAME) {
 
 /**
  * The gestures module provides gesture events such as "flick", which normalize user interactions
@@ -261,4 +261,4 @@ Y.Event.define('flick', {
 });
 
 
-}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@', {"requires": ["node-base", "event-touch", "event-synthetic"]});

@@ -1,4 +1,4 @@
-YUI.add('event-move', function(Y) {
+YUI.add('event-move', function (Y, NAME) {
 
 /**
  * Adds lower level support for "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to create drag/drop
@@ -513,5 +513,4 @@ define(GESTURE_MOVE_END, {
     PREVENT_DEFAULT : false
 });
 
-
-}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@', {"requires": ["node-base", "event-touch", "event-synthetic"]});
