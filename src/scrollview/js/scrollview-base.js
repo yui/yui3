@@ -130,9 +130,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._cb = sv.get(CONTENT_BOX);
 
         // Cache some attributes
+        sv._cAxis = sv.get(AXIS);
         sv._cDecel = sv.get(DECELERATION);
         sv._cBounce = sv.get(BOUNCE);
-        sv._cAxis = sv.get(AXIS);
     },
 
     /**
@@ -221,6 +221,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (flick) {
             bb.on(FLICK + '|' + FLICK, Y.bind(sv._flick, sv), flick);
+
+            // Rebind Drag, becuase _onGestureMoveEnd always has to fire -after- _flick
+            sv._bindDrag(sv.get(DRAG));
         }
     },
 
@@ -617,48 +620,42 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function (e) {
+        var sv = this,
+            gesture = sv._gesture,
+            flick = gesture.flick,
+            clientX = e.clientX,
+            clientY = e.clientY,
+            isOOB;
 
-        // Y.later hack because _onGestureMoveEnd has to fire AFTER _flick,
-        // but that order can vary depending on when they are bound. 
-        // @TODO: Revisit, cause while this works, there's gotta be a better way
-        Y.later(1, this, function () {
-            var sv = this,
-                gesture = sv._gesture,
-                flick = gesture.flick,
-                clientX = e.clientX,
-                clientY = e.clientY,
-                isOOB;
+        if (sv._prevent.end) {
+            e.preventDefault();
+        }
 
-            if (sv._prevent.end) {
-                e.preventDefault();
-            }
+        // Store the end X/Y coordinates
+        gesture.endClientX = clientX;
+        gesture.endClientY = clientY;
 
-            // Store the end X/Y coordinates
-            gesture.endClientX = clientX;
-            gesture.endClientY = clientY;
+        // If this wasn't a flick, wrap up the gesture cycle
+        if (!flick) {
 
-            // If this wasn't a flick, wrap up the gesture cycle
-            if (!flick) {
+            // If there was movement (_onGestureMove fired)
+            if (gesture.deltaX !== null && gesture.deltaY !== null) {
 
-                // If there was movement (_onGestureMove fired)
-                if (gesture.deltaX !== null && gesture.deltaY !== null) {
+                // If we're out-out-bounds, then snapback
+                if (sv._isOOB()) {
+                    sv._snapBack();
+                }
 
-                    // If we're out-out-bounds, then snapback
-                    if (sv._isOOB()) {
-                        sv._snapBack();
-                    }
-
-                    // Inbounds
-                    else {
-                        // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                        // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                        if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
-                            sv._onTransEnd();
-                        }
+                // Inbounds
+                else {
+                    // Don't fire scrollEnd on the gesture axis is the same as paginator's
+                    // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                    if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
+                        sv._onTransEnd();
                     }
                 }
             }
-        });
+        }
 
     },
 
