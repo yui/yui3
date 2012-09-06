@@ -1,4 +1,4 @@
-YUI.add('charts-legend', function(Y) {
+YUI.add('charts-legend', function (Y, NAME) {
 
 /**
  * Adds legend functionality to charts.
@@ -1692,4 +1692,4 @@ function Chart(cfg)
 Y.Chart = Chart;
 
 
-}, '@VERSION@' ,{requires:['charts-base']});
+}, '@VERSION@', {"requires": ["charts-base"]});
