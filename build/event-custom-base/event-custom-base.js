@@ -1,4 +1,4 @@
-YUI.add('event-custom-base', function(Y) {
+YUI.add('event-custom-base', function (Y, NAME) {
 
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
@@ -2292,4 +2292,4 @@ for that signature.
 **/
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@', {"requires": ["oop"]});

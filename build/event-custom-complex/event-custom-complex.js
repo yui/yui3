@@ -1,4 +1,4 @@
-YUI.add('event-custom-complex', function(Y) {
+YUI.add('event-custom-complex', function (Y, NAME) {
 
 
 /**
@@ -499,5 +499,4 @@ for (key in FACADE) {
     FACADE_KEYS[key] = true;
 }
 
-
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@', {"requires": ["event-custom-base"]});
