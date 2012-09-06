@@ -1,4 +1,4 @@
-YUI.add('matrix', function(Y) {
+YUI.add('matrix', function (Y, NAME) {
 
 var MatrixUtil = {
         /**
@@ -938,4 +938,4 @@ Matrix.prototype = {
 Y.Matrix = Matrix;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});
