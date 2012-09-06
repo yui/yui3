@@ -1,16 +1,25 @@
 /**
- * The tap module provides a gesture events, "tap", which normalizes user interactions
- * across touch and mouse or pointer based input devices.  This can be used by application developers
- * to build input device agnostic components which behave the same in response to either touch or mouse based
- * interaction.
- *
- * 'tap' is like a touchscreen 'click', only it requires much less finger-down time since it listens to touch events,
- * but reverts to mouse events if touch is not supported. 
- * @module event
- * @submodule event-tap
- * @author matuzak and tilo mitra
- * @since 3.7.0 
- * 
+The tap module provides a gesture events, "tap", which normalizes user interactions
+across touch and mouse or pointer based input devices.  This can be used by application developers
+to build input device agnostic components which behave the same in response to either touch or mouse based
+interaction.
+
+'tap' is like a touchscreen 'click', only it requires much less finger-down time since it listens to touch events,
+but reverts to mouse events if touch is not supported. 
+
+Usage:
+
+    YUI().use('event-tap', function (Y) {
+        Y.one('#my-button').on('tap', function (e) {
+            Y.log('Button was tapped on');
+        });
+    });
+
+@module event
+@submodule event-tap
+@author matuzak and tilo mitra
+@since 3.7.0 
+
 */
 var doc = Y.config.doc,
     SUPPORTS_TOUCHES = !!(doc && doc.createTouch),
@@ -55,24 +64,93 @@ function detachHelper(subscription, handles, subset, context) {
 */
 Y.Event.define(EVT_TAP, {
 
+    /**
+    This function should set up the node that will eventually fire the event.
+
+    Usage: 
+
+        node.on('tap', function (e) {
+            Y.log('the node was tapped on');
+        });
+
+    @method on
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @public
+    @static
+    **/
     on: function (node, subscription, notifier) {
         subscription[HANDLES.START] = node.on(EVT_START, this.touchStart, this, node, subscription, notifier);
     },
 
+    /**
+    Detaches all event subscriptions set up by the event-tap module
+
+    @method detach
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @public
+    @static
+    **/
     detach: function (node, subscription, notifier) {
         detachHelper(subscription, HANDLES);
     },
 
+    /**
+    Event delegation for the 'tap' event. The delegated event will use a 
+    supplied selector or filtering function to test if the event references at least one 
+    node that should trigger the subscription callback.
+
+    Usage: 
+
+        node.delegate('tap', function (e) {
+            Y.log('li a inside node was tapped.');
+        }, 'li a');
+
+    @method delegate
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @param {String | Function} filter
+    @public
+    @static
+    **/
     delegate: function (node, subscription, notifier, filter) {
         subscription[HANDLES.START] = node.delegate(EVT_START, function (e) {
             this.touchStart(e, node, subscription, notifier, true);
         }, filter, this);
     },
 
+    /**
+    Detaches the delegated event subscriptions set up by the event-tap module.
+    Only used if you use node.delegate(...) instead of node.on(...);
+
+    @method detachDelegate
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @public
+    @static
+    **/
     detachDelegate: function (node, subscription, notifier) {
         detachHelper(subscription, HANDLES);
     },
 
+
+    /**
+    Called when the monitor(s) are tapped on, either through touchstart or mousedown.
+
+    @method touchStart
+    @param {DOMEventFacade} event
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @param {Boolean} delegate
+    @protected
+    @static
+    **/
     touchStart: function (event, node, subscription, notifier, delegate) {
 
         var context = {
@@ -107,12 +185,40 @@ Y.Event.define(EVT_TAP, {
         subscription[HANDLES.CANCEL] = node.once(EVT_CANCEL, this.touchMove, this, node, subscription, notifier, delegate, context);
     },
 
+    /**
+    Called when the monitor(s) fires a touchmove or touchcancel event (or the mouse equivalent).
+    This method detaches event handlers so that 'tap' is not fired.
+
+    @method touchMove
+    @param {DOMEventFacade} event
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @param {Boolean} delegate
+    @param {Object} context
+    @protected
+    @static
+    **/
     touchMove: function (event, node, subscription, notifier, delegate, context) {
         detachHelper(subscription, [ HANDLES.MOVE, HANDLES.END, HANDLES.CANCEL ], true, context);
         context.cancelled = true;
 
     },
 
+    /**
+    Called when the monitor(s) fires a touchend event (or the mouse equivalent).
+    This method fires the 'tap' event if certain requirements are met.
+
+    @method touchEnd
+    @param {DOMEventFacade} event
+    @param {Y.Node} node
+    @param {Array} subscription
+    @param {Boolean} notifier
+    @param {Boolean} delegate
+    @param {Object} context
+    @protected
+    @static
+    **/
     touchEnd: function (event, node, subscription, notifier, delegate, context) {
         var startXY = context.startXY,
             endXY,
