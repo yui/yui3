@@ -85,7 +85,7 @@ Color = {
     @returns {String|Array} returns array of values or CSS string if options.css is true
     **/
     toHex: function(options) {
-        if (Y.Lang.isString(options)) { // Preserve backwards compatability
+        if (Y.Lang.isString(options)) { // Preserve backwards compatability with Y.DOM's original Y.Color
             options = {
                 value: options,
                 css: true
@@ -110,7 +110,7 @@ Color = {
     @returns {String|Array} returns array of values or CSS string if options.css is true
     **/
     toRGB: function(options) {
-        if (Y.Lang.isString(options)) { // Preserve backwards compatability
+        if (Y.Lang.isString(options)) { // Preserve backwards compatability with Y.DOM's original Y.Color
             options = {
                 value: options,
                 css: true
