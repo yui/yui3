@@ -16,17 +16,12 @@
  * @module event-gestures
  * @submodule event-flick
  */
-
-var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) ? {
-        start: "touchstart",
-        end: "touchend",
-        move: "touchmove"
-    } : {
-        start: "mousedown",
-        end: "mouseup",
-        move: "mousemove"
+var GESTURE_MAP = Y.Event._GESTURE_MAP,
+    EVENT = {
+        start: GESTURE_MAP.start,
+        end: GESTURE_MAP.end,
+        move: GESTURE_MAP.move
     },
-
     START = "start",
     END = "end",
     MOVE = "move",
