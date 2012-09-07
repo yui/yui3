@@ -117,8 +117,9 @@ IO.prototype = {
             // external transport.
             alt = Y.UA.ie ? 'xdr' : null;
 
-            // Prevent 'pre-flighting' of XHR by removing `X-Requested-With`
-            // header for CORS requests
+            // Prevent "pre-flight" OPTIONS request by removing the
+            // `X-Requested-With` HTTP header from CORS requests. This header
+            // can be added back on a per-request basis, if desired.
             io.setHeader('X-Requested-With');
         }
 
