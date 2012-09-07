@@ -39,7 +39,12 @@ var getClassName = Y.ClassNameManager.getClassName,
     END = 'end',
     EMPTY = '',
     ZERO = '0s',
-
+    SNAP_DURATION = 'snapDuration',
+    SNAP_EASING = 'snapEasing', 
+    EASING = 'easing', 
+    FRAME_DURATION = 'frameDuration', 
+    BOUNCE_RANGE = 'bounceRange',
+    
     _constrain = function (val, min, max) {
         return Math.min(Math.max(val, min), max);
     };
@@ -173,6 +178,28 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollChangeHandler = sv._afterScrollChange,
             dimChangeHandler = sv._afterDimChange;
 
+        // Set any deprecated static properties
+        if (ScrollView.SNAP_DURATION) {
+            sv.set(SNAP_DURATION, ScrollView.SNAP_DURATION);
+        }
+
+        if (ScrollView.SNAP_EASING) {
+            sv.set(SNAP_EASING, ScrollView.SNAP_EASING);
+        }
+
+        if (ScrollView.EASING) {
+            sv.set(EASING, ScrollView.EASING);
+        }
+
+        if (ScrollView.FRAME_STEP) {
+            sv.set(FRAME_DURATION, ScrollView.FRAME_STEP);
+        }
+
+        if (ScrollView.BOUNCE_RANGE) {
+            sv.set(BOUNCE_RANGE, ScrollView.BOUNCE_RANGE);
+        }
+
+        // Bind any change event listeners
         sv.after({
             'scrollEnd': sv._afterScrollEnd,
             'disabledChange': sv._afterDisabledChange,
@@ -410,7 +437,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // default the optional arguments
         duration = duration || 0;
-        easing = easing || ScrollView.EASING;
+        easing = easing || sv.get(EASING); // @TODO: Cache this
         node = node || cb;
 
         if (x !== null) {
@@ -681,6 +708,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         gesture.flick = flick;
 
+        // Cache frameDuration
+        sv._cFrameDuration = sv.get(FRAME_DURATION);
+
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if ((flickAxis === DIM_X && svAxisX) || (flickAxis === DIM_Y && svAxisY)) {
             sv._flickFrame(flick.velocity);
@@ -710,9 +740,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             svAxis = sv._cAxis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
-            step = ScrollView.FRAME_STEP,
-            newX = currentX - (velocity * step),
-            newY = currentY - (velocity * step);
+            frameDuration = sv._cFrameDuration,
+            newX = currentX - (velocity * frameDuration),
+            newY = currentY - (velocity * frameDuration);
 
         velocity *= deceleration;
 
@@ -743,7 +773,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             }
 
             // @TODO: maybe use requestAnimationFrame instead
-            sv._flickAnim = Y.later(step, sv, '_flickFrame', [velocity]);
+            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity]);
         }
     },
 
@@ -802,7 +832,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             svAxis = sv._cAxis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
-            currentX = sv.get(SCROLL_X),
+            currentX = sv.get(SCROLL_X), // @TODO: Accept X & Y as args to prevent lookups?
             currentY = sv.get(SCROLL_Y),
             minX = sv._minScrollX,
             minY = sv._minScrollY,
@@ -829,8 +859,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = sv._maxScrollY,
             newY = _constrain(currentY, minY, maxY),
             newX = _constrain(currentX, minX, maxX),
-            duration = ScrollView.SNAP_DURATION,
-            easing = ScrollView.SNAP_EASING;
+            duration = sv.get(SNAP_DURATION),
+            easing = sv.get(SNAP_EASING);
 
         if (newX !== currentX) {
             sv.set(SCROLL_X, newX, {duration:duration, easing:easing});
@@ -1110,6 +1140,61 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          */
         drag: {
             value: true
+        },
+
+        /**
+         * The default duration to use when animating the bounce snap back.
+         *
+         * @attribute snapDuration
+         * @type Number
+         * @default 400
+         */
+        snapDuration: {
+            value: 400
+        },
+
+        /**
+         * The default easing to use when animating the bounce snap back.
+         *
+         * @attribute snapEasing
+         * @type String
+         * @default 'ease-out'
+         */
+        snapEasing: {
+            value: 'ease-out'
+        },
+
+        /**
+         * The default easing used when animating the flick
+         *
+         * @attribute easing
+         * @type String
+         * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
+         */
+        easing: {
+            value: 'cubic-bezier(0, 0.1, 0, 1.0)'
+        },
+
+        /**
+         * The interval (ms) used when animating the flick for JS-timer animations
+         *
+         * @attribute frameDuration
+         * @type Number
+         * @default 15
+         */
+        frameDuration: {
+            value: 15
+        },
+
+        /**
+         * The default bounce distance in pixels
+         *
+         * @attribute bounceRange
+         * @type Number
+         * @default 150
+         */
+        bounceRange: {
+            value: 150
         }
     },
 
@@ -1133,56 +1218,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     UI_SRC: UI,
 
     /**
-     * The default bounce distance in pixels
-     *
-     * @property BOUNCE_RANGE
-     * @type Number
-     * @static
-     * @default 150
-     */
-    BOUNCE_RANGE: 150,
-
-    /**
-     * The interval (ms) used when animating the flick
-     *
-     * @property FRAME_STEP
-     * @type Number
-     * @static
-     * @default 30
-     */
-    FRAME_STEP: 30,
-
-    /**
-     * The default easing used when animating the flick
-     *
-     * @property EASING
-     * @type String
-     * @static
-     * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
-     */
-    EASING: 'cubic-bezier(0, 0.1, 0, 1.0)',
-
-    /**
-     * The default easing to use when animating the bounce snap back.
-     *
-     * @property SNAP_EASING
-     * @type String
-     * @static
-     * @default 'ease-out'
-     */
-    SNAP_EASING: 'ease-out',
-
-    /**
-     * The default duration to use when animating the bounce snap back.
-     *
-     * @property SNAP_DURATION
-     * @type Number
-     * @static
-     * @default 400
-     */
-    SNAP_DURATION: 400,
-
-    /**
      * Object map of style property names used to set transition properties.
      * Defaults to the vendor prefix established by the Transition module.
      * The configured property names are `_TRANSITION.DURATION` (e.g. "WebkitTransitionDuration") and
@@ -1203,9 +1238,62 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @static
      * @default true
      */
-    MOUSEWHEEL: {
-        value: true
-    }
+    MOUSEWHEEL: true,
+
+    /**
+     * The default bounce distance in pixels
+     *
+     * @property BOUNCE_RANGE
+     * @type Number
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    BOUNCE_RANGE: false,
+
+    /**
+     * The interval (ms) used when animating the flick
+     *
+     * @property FRAME_STEP
+     * @type Number
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    FRAME_STEP: false,
+
+    /**
+     * The default easing used when animating the flick
+     *
+     * @property EASING
+     * @type String
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    EASING: false,
+
+    /**
+     * The default easing to use when animating the bounce snap back.
+     *
+     * @property SNAP_EASING
+     * @type String
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    SNAP_EASING: false,
+
+    /**
+     * The default duration to use when animating the bounce snap back.
+     *
+     * @property SNAP_DURATION
+     * @type Number
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    SNAP_DURATION: false
 
     // End static properties
 

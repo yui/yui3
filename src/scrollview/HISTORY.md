@@ -3,6 +3,16 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Moved: SNAP_DURATION static property (deprecated) to 'snapDuration' ATTR
+
+  * Moved: SNAP_EASING static property (deprecated) to 'snapEasing' ATTR
+  
+  * Moved: EASING static property (deprecated) to 'easing' ATTR
+  
+  * Moved: FRAME_STEP static property (deprecated) to 'frameDuration' ATTR
+  
+  * Moved: BOUNCE_RANGE static property (deprecated) to 'bounceRange' ATTR
+
   * Renamed: Renamed ScrollView Paginator's optimizeMemory to _optimizeMemory, and padding to _pageBuffer
 
   * Fix: ScrollView did not obey SNAP_EASING property
