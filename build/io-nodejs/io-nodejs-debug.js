@@ -1,4 +1,4 @@
-YUI.add('io-nodejs', function(Y) {
+YUI.add('io-nodejs', function (Y, NAME) {
 
 /*global Y: false, Buffer: false, clearInterval: false, clearTimeout: false, console: false, exports: false, global: false, module: false, process: false, querystring: false, require: false, setInterval: false, setTimeout: false, __filename: false, __dirname: false */
     /**
@@ -167,4 +167,4 @@ YUI.add('io-nodejs', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@', {"requires": ["io-base"]});

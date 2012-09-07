@@ -1,4 +1,4 @@
-YUI.add('io-base', function(Y) {
+YUI.add('io-base', function (Y, NAME) {
 
 /**
 Base IO functionality. Provides basic XHR transport support.
@@ -998,4 +998,4 @@ Y.mix(Y.IO.prototype, {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base', 'querystring-stringify-simple']});
+}, '@VERSION@', {"requires": ["event-custom-base", "querystring-stringify-simple"]});
