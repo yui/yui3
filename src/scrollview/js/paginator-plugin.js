@@ -48,8 +48,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         // Initialize & default
         paginator._pageDims = [];
-        paginator.padding = 1;
-        paginator.optimizeMemory = false;
+        paginator._pageBuffer = 1;
+        paginator._optimizeMemory = false;
 
         // Cache some values
         paginator._host = host;
@@ -59,12 +59,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         paginator._cAxis = paginator.get(AXIS);
 
         // Apply configs
-        if (config.optimizeMemory) {
-            paginator.optimizeMemory = config.optimizeMemory;
+        if (config._optimizeMemory) {
+            paginator._optimizeMemory = config._optimizeMemory;
         }
 
-        if (config.padding) {
-            paginator.padding = config.padding;
+        if (config._pageBuffer) {
+            paginator._pageBuffer = config._pageBuffer;
         }
 
         // Attach event bindings
@@ -381,7 +381,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _optimize: function () {
 
-        if (!this.optimizeMemory) {
+        if (!this._optimizeMemory) {
             return false;
         }
 
@@ -403,11 +403,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _getStage: function (index) {
-        var padding = this.padding,
+        var _pageBuffer = this._pageBuffer,
             pageCount = this.get(TOTAL),
             pageNodes = this._getPageNodes(),
-            start = Math.max(0, index - padding),
-            end = Math.min(pageCount, index + 1 + padding); // noninclusive
+            start = Math.max(0, index - _pageBuffer),
+            end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive
 
         return {
             visible: pageNodes.splice(start, end - start),

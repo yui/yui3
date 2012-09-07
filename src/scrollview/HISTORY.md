@@ -3,6 +3,8 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Renamed: Renamed ScrollView Paginator's optimizeMemory to _optimizeMemory, and padding to _pageBuffer
+
   * Fix: ScrollView did not obey SNAP_EASING property
 
   * Fix: Host flick axis was improperly set to opposite axis of paginated axis (#2532723)
