@@ -9,25 +9,13 @@ YUI.add('event-move', function (Y, NAME) {
  * @submodule event-move
  */
 
-var EVENT = {};
-
-if ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
-    EVENT.start = "touchstart";
-    EVENT.end = "touchend";
-    EVENT.move = "touchmove";
-}
-else if ("msPointerEnabled" in Y.config.win) {
-    EVENT.start = "MSPointerDown";
-    EVENT.end = "MSPointerUp";
-    EVENT.move = "MSPointerMove";
-}
-else {
-    EVENT.start = "mousedown";
-    EVENT.end = "mouseup";
-    EVENT.move = "mousemove";
-}
-
-var START = "start",
+ var GESTURE_MAP = Y.Event._GESTURE_MAP,
+     EVENT = {
+         start: GESTURE_MAP.start,
+         end: GESTURE_MAP.end,
+         move: GESTURE_MAP.move
+     },
+    START = "start",
     MOVE = "move",
     END = "end",
 
