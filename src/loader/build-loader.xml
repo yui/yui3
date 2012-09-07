@@ -2,11 +2,11 @@
 <project name="YuiBase" default="local">
     <description>Attribute Build File</description>
     <property file="build.properties" />
-    <exec executable="node" failonerror="true">
-        <arg value="${srcdir}/src/loader/scripts/meta_join.js"/>
-    </exec>
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
-    
+    <node failonerror="true">
+        <arg value="${srcdir}/src/loader/scripts/meta_join.js"/>
+    </node>
+
     <import file="loader-extras.xml" description="YUI Core Extras" />
     <target name="local" depends="clean, init, build, loader, minify, lint" description="Build and Deploy to Local Build Directory" />
 </project>

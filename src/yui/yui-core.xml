@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="yuibasebuild" default="local">
     <description>Component Build File</description>
-    <exec executable="node" failonerror="true">
-        <arg value="./scripts/build.js"/>
-    </exec>
     <property file="yui-core.properties" />
     <property file="../loader/loader.meta.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+    <node failonerror="true">
+        <arg value="./scripts/build.js"/>
+    </node>
     <import file="core-extras.xml" description="YUI Core Extras" />
     <target name="local" depends="clean, init, build, core, minify, lint" description="Build and Deploy to Local Build Directory" />
 </project>
