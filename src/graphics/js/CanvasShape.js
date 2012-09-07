@@ -661,7 +661,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
-                argsLen = args[0] == "quadraticCurveTo" ? args.length : 3;
+                argsLen = (args[0] == "quadraticCurveTo" || args[0] == "bezierCurveTo") ? args.length : 3;
 				for(j = 1; j < argsLen; ++j)
 				{
 					if(j % 2 === 0)

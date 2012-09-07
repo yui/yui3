@@ -74,29 +74,6 @@ SVGDrawing.prototype = {
      * @type String
      */
     _type: "path",
-    
-    /**
-     * Value for rounding up to coordsize
-     *
-     * @property _coordSpaceMultiplier
-     * @type Number
-     * @private
-     */
-    _coordSpaceMultiplier: 100,
-
-    /**
-     * Rounds dimensions and position values based on the coordinate space.
-     *
-     * @method _round
-     * @param {Number} The value for rounding
-     * @return Number
-     * @private
-     */
-    _round:function(val)
-    {
-        val = Math.round(val * 100)/100;
-        return val;
-    },
    
     /**
      * Draws a bezier curve.
@@ -140,6 +117,12 @@ SVGDrawing.prototype = {
         var w,
             h,
             pts,
+            cp1x,
+            cp1y,
+            cp2x,
+            cp2y,
+            x,
+            y,
             right,
             left,
             bottom,
@@ -528,8 +511,8 @@ SVGDrawing.prototype = {
             x,
             y,
             command = relative ? "l" : "L",
-            relativeX = relative ? this._round(this._currentX) : 0,
-            relativeY = relative ? this._round(this._currentY) : 0;
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
         this._pathArray = this._pathArray || [];
         this._shapeType = "path";
         len = args.length;
@@ -546,8 +529,8 @@ SVGDrawing.prototype = {
         pathArrayLen = this._pathArray.length - 1;
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             for (i = 0; i < len; i = i + 2) {
-                x = this._round(args[i]);
-                y = this._round(args[i + 1]);
+                x = parseFloat(args[i]);
+                y = parseFloat(args[i + 1]);
                 this._pathArray[pathArrayLen].push(x);
                 this._pathArray[pathArrayLen].push(y);
                 x = x + relativeX;
@@ -560,8 +543,8 @@ SVGDrawing.prototype = {
         else
         {
             for (i = 0; i < len; ++i) {
-                x = this._round(args[i][0]);
-                y = this._round(args[i][1]);
+                x = parseFloat(args[i][0]);
+                y = parseFloat(args[i][1]);
                 this._pathArray[pathArrayLen].push(x);
                 this._pathArray[pathArrayLen].push(y);
                 this._currentX = x;
@@ -608,8 +591,8 @@ SVGDrawing.prototype = {
     _moveTo: function(args, relative) {
         var pathArrayLen,
             currentArray,
-            x = this._round(args[0]),
-            y = this._round(args[1]),
+            x = parseFloat(args[0]),
+            y = parseFloat(args[1]),
             command = relative ? "m" : "M",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
@@ -672,8 +655,8 @@ SVGDrawing.prototype = {
             i,
             path = "",
             node = this.node,
-            left = this._round(this._left),
-            top = this._round(this._top),
+            left = parseFloat(this._left),
+            top = parseFloat(this._top),
             fill = this.get("fill");
         if(this._pathArray)
         {
@@ -683,17 +666,21 @@ SVGDrawing.prototype = {
                 segmentArray = pathArray.shift();
                 len = segmentArray.length;
                 pathType = segmentArray[0];
-                if(pathType === "A" || pathType == "c" || pathType == "C")
+                if(pathType === "A")
                 {
                     path += pathType + segmentArray[1] + "," + segmentArray[2];
                 }
-                else if(pathType != "z")
+                else if(pathType == "z" || pathType == "Z")
                 {
-                    path += " " + pathType + this._round(segmentArray[1] - left);
+                    path += " z ";
+                }
+                else if(pathType == "C" || pathType == "c")
+                {
+                    path += pathType + (segmentArray[1] - left)+ "," + (segmentArray[2] - top);
                 }
                 else
                 {
-                    path += " z ";
+                    path += " " + pathType + parseFloat(segmentArray[1] - left);
                 }
                 switch(pathType)
                 {
@@ -706,22 +693,22 @@ SVGDrawing.prototype = {
                         {
                             val = (i % 2 === 0) ? top : left;
                             val = segmentArray[i] - val;
-                            path += ", " + this._round(val);
+                            path += ", " + parseFloat(val);
                         }
                     break;
                     case "A" :
-                        val = " " + this._round(segmentArray[3]) + " " + this._round(segmentArray[4]);
-                        val += "," + this._round(segmentArray[5]) + " " + this._round(segmentArray[6] - left);
-                        val += "," + this._round(segmentArray[7] - top);
+                        val = " " + parseFloat(segmentArray[3]) + " " + parseFloat(segmentArray[4]);
+                        val += "," + parseFloat(segmentArray[5]) + " " + parseFloat(segmentArray[6] - left);
+                        val += "," + parseFloat(segmentArray[7] - top);
                         path += " " + val;
                     break;
                     case "C" :
                     case "c" :
                         for(i = 3; i < len - 1; i = i + 2)
                         {
-                            val = this._round(segmentArray[i] - left);
+                            val = parseFloat(segmentArray[i] - left);
                             val = val + ", ";
-                            val = val + this._round(segmentArray[i + 1] - top);
+                            val = val + parseFloat(segmentArray[i + 1] - top);
                             path += " " + val;
                         }
                     break;

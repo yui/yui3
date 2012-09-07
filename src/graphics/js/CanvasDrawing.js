@@ -356,6 +356,12 @@ CanvasDrawing.prototype = {
     _curveTo: function(args, relative) {
         var w,
             h,
+            cp1x,
+            cp1y,
+            cp2x,
+            cp2y,
+            x,
+            y,
             pts,
             right,
             left,

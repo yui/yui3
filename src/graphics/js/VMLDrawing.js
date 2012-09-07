@@ -454,8 +454,8 @@ VMLDrawing.prototype = {
             path = relative ? " r " : " l ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        len = args.length;
         if (typeof point1 == "string" || typeof point1 == "number") {
+            len = args.length - 1;
             for (i = 0; i < len; i = i + 2) {
                 x = parseFloat(args[i]);
                 y = parseFloat(args[i + 1]);
@@ -469,6 +469,7 @@ VMLDrawing.prototype = {
         }
         else
         {
+            len = args.length;
             for (i = 0; i < len; i = i + 1) {
                 x = parseFloat(args[i][0]);
                 y = parseFloat(args[i][1]);
@@ -477,7 +478,7 @@ VMLDrawing.prototype = {
                 y = y + relativeY;
                 this._currentX = x;
                 this._currentY = y;
-                this._trackSize.apply([x, y]);
+                this._trackSize.apply(this, [x, y]);
             }
         }
         this._addToPath(path);
