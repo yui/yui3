@@ -1,4 +1,4 @@
-YUI.add('datasource-polling', function(Y) {
+YUI.add('datasource-polling', function (Y, NAME) {
 
 /**
  * Extends DataSource with polling functionality.
@@ -90,4 +90,4 @@ Pollable.prototype = {
 Y.augment(Y.DataSource.Local, Pollable);
 
 
-}, '@VERSION@' ,{requires:['datasource-local']});
+}, '@VERSION@', {"requires": ["datasource-local"]});
