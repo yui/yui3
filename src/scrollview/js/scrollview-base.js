@@ -1047,8 +1047,52 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 y: val.match(/y/i) ? true : false
             };
         }
-    }
+    },
     
+    /**
+    * The scrollX, scrollY setter implementation
+    *
+    * @method _setScroll
+    * @private
+    * @param {Number} val
+    * @param {String} dim
+    *
+    * @return {Number} The value
+    */
+    _setScroll : function(val, dim) {
+
+        // Just ensure the widget is not disabled
+        if (this._cDisabled) {
+            val = Y.Attribute.INVALID_VALUE;
+        } 
+
+        return val;
+    },
+
+    /**
+    * Setter for the scrollX attribute
+    *
+    * @method _setScrollX
+    * @param val {Number} The new scrollX value
+    * @return {Number} The normalized value
+    * @protected
+    */
+    _setScrollX: function(val) {
+        return this._setScroll(val, DIM_X);
+    },
+
+    /**
+    * Setter for the scrollY ATTR
+    *
+    * @method _setScrollY
+    * @param val {Number} The new scrollY value
+    * @return {Number} The normalized value
+    * @protected
+    */
+    _setScrollY: function(val) {
+        return this._setScroll(val, DIM_Y);
+    }
+
     // End prototype properties
 
 }, {
@@ -1090,17 +1134,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the y-axis
-         *
-         * @attribute scrollY
-         * @type Number
-         * @default 0
-         */
-        scrollY: {
-            value: 0
-        },
-
-        /**
          * The scroll position in the x-axis
          *
          * @attribute scrollX
@@ -1108,7 +1141,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default 0
          */
         scrollX: {
-            value: 0
+            value: 0,
+            setter: '_setScrollX'
+        },
+
+        /**
+         * The scroll position in the y-axis
+         *
+         * @attribute scrollY
+         * @type Number
+         * @default 0
+         */
+        scrollY: {
+            value: 0,
+            setter: '_setScrollY'
         },
 
         /**
