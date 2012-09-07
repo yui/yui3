@@ -333,8 +333,8 @@ Plots.prototype = {
             this._groupMarker.destroy();
         }
         graphic = this.get("graphic");
-        graphic.set("autoDraw", true);
         this._groupMarker = graphic.addShape(cfg);
+        graphic._redraw();
     },
 
     /**
