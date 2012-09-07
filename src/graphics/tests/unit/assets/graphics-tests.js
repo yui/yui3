@@ -890,8 +890,7 @@ vmlTests = new Y.Test.Case({
         Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
         var graphic = new Y.Graphic({render: "#graphiccontainer"});
         graphic.on("init", function(e) {
-            Y.Assert.areEqual(graphic.get("node").nodeName.toLowerCase(), "div", "The node instance should be a div.");
-            Y.Assert.areEqual(graphic._contentNode.nodeName, "group", "The contentNode should be a group element.");
+            Y.Assert.areEqual(graphic.get("node").nodeName, "group", "The node should be a group element.");
         });
         this.graphic = graphic;
     },

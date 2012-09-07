@@ -462,7 +462,7 @@ autoSizeContentToGraphic = function(name, w, h)
         testDefault: function()
         {
             var mygraphic = this.graphic,
-                node = (ENGINE == "canvas") ? Y.one(mygraphic.get("node")) : Y.one(mygraphic._contentNode),
+                node = (ENGINE == "svg") ? Y.one(mygraphic._contentNode) : Y.one(mygraphic.get("node")),
                 width,
                 height;
                 rect= mygraphic.addShape({
@@ -503,7 +503,7 @@ autoSizeContentToGraphicOverloadedSetter = function(name, w, h, preserveAspectRa
         testDefault: function()
         {
             var mygraphic = this.graphic,
-                node = (ENGINE == "canvas") ? Y.one(mygraphic.get("node")) : Y.one(mygraphic._contentNode),
+                node = (ENGINE == "svg") ? Y.one(mygraphic._contentNode) : Y.one(mygraphic.get("node")),
                 width,
                 height;
                 rect= mygraphic.addShape({

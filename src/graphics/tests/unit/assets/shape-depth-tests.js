@@ -119,7 +119,7 @@ DepthTests = new Y.Test.Case({
                 color: "#000"
             }
         });
-        this._contentNode = ENGINE == "canvas" ? graphic.get("node") : graphic._contentNode;
+        this._contentNode = ENGINE == "svg" ? graphic._contentNode : graphic.get("node");
     },
 
     destroyShapesAndGraphic: function () {
