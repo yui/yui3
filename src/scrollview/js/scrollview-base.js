@@ -661,6 +661,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         gesture.endClientX = clientX;
         gesture.endClientY = clientY;
 
+        // Cleanup the event handlers
+        gesture.onGestureMove.detach();
+        gesture.onGestureMoveEnd.detach();
+
         // If this wasn't a flick, wrap up the gesture cycle
         if (!flick) {
 
@@ -744,7 +748,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             newY = currentY - (velocity * frameDuration);
 
         velocity *= deceleration;
-        
+
         // If we are out of bounds
         if (sv._isOutOfBounds(currentX, currentY)) {
             // We're past an edge, now bounce back
@@ -990,14 +994,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _afterScrollEnd: function (e) {
         var sv = this,
             gesture = sv._gesture;
-
-        if (gesture && gesture.onGestureMove && gesture.onGestureMove.detach) {
-            gesture.onGestureMove.detach();
-        }
-
-        if (gesture && gesture.onGestureMoveEnd && gesture.onGestureMoveEnd.detach) {
-            gesture.onGestureMoveEnd.detach();
-        }
 
         if (sv._flickAnim) {
             if (sv._flickAnim.cancel) {

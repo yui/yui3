@@ -3,8 +3,10 @@ ScrollView Change History
 
 3.7.0
 -----
-  * Moved: _isOOB to _isOutOfBounds
-  
+  * Fix: Improved gesture event detachment
+
+  * Moved: _isOOB to _isOutOfBounds, along with caching tweak
+
   * Moved: SNAP_DURATION static property (deprecated) to 'snapDuration' ATTR
 
   * Moved: SNAP_EASING static property (deprecated) to 'snapEasing' ATTR
