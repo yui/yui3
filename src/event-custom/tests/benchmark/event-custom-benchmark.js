@@ -3,11 +3,13 @@ YUI.add('event-custom-benchmark', function (Y) {
    var suite = Y.BenchmarkSuite = new Benchmark.Suite();
 
    var ETPUBLISH = new Y.EventTarget({
-      emitFacade:true
+      emitFacade:true,
+      prefix:"etpublish"
    });
 
    var ET10 = new Y.EventTarget({
-         emitFacade:true
+         emitFacade:true,
+         prefix:"et10"
    });
 
    ET10.publish("fooChange", {
@@ -23,7 +25,8 @@ YUI.add('event-custom-benchmark', function (Y) {
    }
 
    var ET2 = new Y.EventTarget({
-         emitFacade:true
+         emitFacade:true,
+         prefix:"et2"
    });
 
    ET2.publish("fooChange", {
@@ -37,7 +40,8 @@ YUI.add('event-custom-benchmark', function (Y) {
    ET2.after("fooChange", function() {});
 
    var ET = new Y.EventTarget({
-      emitFacade:true
+      emitFacade:true,
+      prefix:"et"
    });
 
    var ET_CFG = {
@@ -78,7 +82,8 @@ YUI.add('event-custom-benchmark', function (Y) {
    suite.add('EventTarget Construction + Publish(foo) + Fire(foo) - no listeners', function () {
 
       var et = new Y.EventTarget({
-         emitFacade:true
+         emitFacade:true,
+         prefix:"et"
       });
 
       et.publish("fooChange", {
@@ -95,7 +100,8 @@ YUI.add('event-custom-benchmark', function (Y) {
    suite.add('EventTarget Construction + Publish(foo) + Subscribe(foo) + Fire(foo) - 2 listeners', function () {
 
       var et = new Y.EventTarget({
-         emitFacade:true
+         emitFacade:true,
+         prefix: "et"
       });
 
       et.publish("fooChange", {
@@ -114,7 +120,8 @@ YUI.add('event-custom-benchmark', function (Y) {
    suite.add('EventTarget Construction + Publish(foo) + Subscribe(foo) + Fire(foo) - 10 listeners', function () {
 
       var et = new Y.EventTarget({
-         emitFacade:true
+         emitFacade:true,
+         prefix:"et"
       });
 
       et.publish("fooChange", {
@@ -141,11 +148,9 @@ YUI.add('event-custom-benchmark', function (Y) {
    });
 
    suite.add('Fire - 10 different events, no listeners', function () {
-
       for (var i = 0; i < 10; i++) {
          ET.fire("fooChange" + i);
       }
-
    });
 
    suite.add('Subscribe + Fire - 10 different events', function () {
@@ -168,5 +173,6 @@ YUI.add('event-custom-benchmark', function (Y) {
    suite.add('new BaseCore()', function () {
       var b = new Y.BaseCore();
    });
+
 
 }, '@VERSION@', {requires: ['event-custom', 'widget']});

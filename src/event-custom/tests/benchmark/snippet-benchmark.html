@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Benchmarks</title>
+</head>
+<body>
+
+<p><button id="start">Start Benchmarks</button></p>
+<p id="d"></p>
+
+<applet code="nano" archive="http://localhost/benchmark/nano.jar" style="display: none;"></applet>
+<script src="http://localhost/benchmark/benchmark.js"></script>
+
+<script>
+
+    var suite = new Benchmark.Suite(),
+        start = document.getElementById('start'),
+        d = document.getElementById('d');
+
+    function dump(msg) {
+        d.innerHTML += ('<p>' + msg + '</p>');
+    }
+
+    start.onclick = function () { start.disabled=true; dump("Starting."); suite.run({async:true}); };
+
+    suite.on('cycle', function (event) {
+        dump(String(event.target));
+    });
+
+    suite.on('complete', function () {
+        dump('Finished.');
+    });
+
+   // Expect this to be slower, since we have 2 function hops to add, push with 2 applys
+
+   function QueueOld() {
+      this._q = [];
+      this.add.apply(this, arguments);
+   }
+
+   QueueOld.prototype = {
+
+      next: function() {
+         return this._q.shift();
+      },
+
+      last: function() {
+         return this._q.pop();
+      },
+
+      add: function() {
+         this._q.push.apply(this._q, arguments);
+         return this;
+      },
+
+      size: function() {
+         return this._q.length;
+      }
+   };
+
+   function QueueNew() {
+      this._q = [];
+      if (arguments.length > 0) {
+         this.add.apply(this, arguments);
+      }
+   }
+
+   QueueNew.prototype = {
+
+      next: function() {
+         return this._q.shift();
+      },
+
+      last: function() {
+         return this._q.pop();
+      },
+
+      add: function() {
+         var q = this._q;
+         q.push.apply(q, arguments);
+         return this;
+      },
+
+      size: function() {
+         return this._q.length;
+      }
+   };
+
+   var qn, qo;
+
+   suite.add('Queue with arguments.length > 0 check', function () {
+      qn = new QueueNew();
+   });
+
+   suite.add('Queue with pass through arguments', function () {
+      qo = new QueueOld();
+   });
+</script>
+
+</body>
+</html>
