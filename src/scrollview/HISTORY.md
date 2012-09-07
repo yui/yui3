@@ -3,7 +3,7 @@ ScrollView Change History
 
 3.7.0
 -----
-  * Fix: scrollX and scrollY now have a setter to check if the widget is disabled
+  * Added: scrollX and scrollY now have a setter to check if the widget is disabled
 
   * Fix: Bounded minScrollX, maxScrollX, and maxScrollY so they cannot be invalid numbers when auto-calculated
 
