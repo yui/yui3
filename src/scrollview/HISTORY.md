@@ -3,6 +3,8 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Added: _flickFrame now requires 2nd param (the axis to animate on)
+  
   * Fix: Improved gesture event detachment
 
   * Moved: _isOOB to _isOutOfBounds, along with caching tweak

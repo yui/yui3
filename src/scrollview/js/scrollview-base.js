@@ -593,6 +593,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             // Create some listeners for the rest of the gesture cycle
             onGestureMove: bb.on(DRAG + '|' + GESTURE_MOVE, Y.bind(sv._onGestureMove, sv)),
+            
+            // @TODO: Don't bind gestureMoveEnd if it's a Flick?
             onGestureMoveEnd: bb.on(DRAG + '|' + GESTURE_MOVE + END, Y.bind(sv._onGestureMoveEnd, sv))
         };
     },
@@ -667,6 +669,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // If this wasn't a flick, wrap up the gesture cycle
         if (!flick) {
+            // @TODO: Be more intelligent about this. Look at the Flick attribute to see 
+            // if it is safe to assume _flick did or didn't fire.  
+            // Then, the order _flick and _onGestureMoveEnd fire doesn't matter?
 
             // If there was movement (_onGestureMove fired)
             if (gesture.deltaX !== null && gesture.deltaY !== null) {
@@ -686,7 +691,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 }
             }
         }
-
     },
 
     /**
@@ -716,7 +720,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if ((flickAxis === DIM_X && svAxisX) || (flickAxis === DIM_Y && svAxisY)) {
-            sv._flickFrame(flick.velocity);
+            sv._flickFrame(flick.velocity, flickAxis);
         }
     },
 
@@ -725,13 +729,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      *
      * @method _flickFrame
      * @param velocity {Number} The velocity of this animated frame
+     * @param flickAxis {String} The axis on which to animate
      * @protected
      */
-    _flickFrame: function (velocity) {
+    _flickFrame: function (velocity, flickAxis) {
 
         var sv = this,
-            gesture = sv._gesture,
-            flickAxis = gesture.flick.axis,
             currentX = sv.get(SCROLL_X),
             currentY = sv.get(SCROLL_Y),
             minX = sv._minScrollX,
@@ -776,7 +779,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             }
 
             // @TODO: maybe use requestAnimationFrame instead
-            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity]);
+            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity, flickAxis]);
         }
     },
 
@@ -992,15 +995,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _afterScrollEnd: function (e) {
-        var sv = this,
-            gesture = sv._gesture;
-
-        if (sv._flickAnim) {
-            if (sv._flickAnim.cancel) {
-                sv._flickAnim.cancel(); // Might as well?
-            }
-            delete sv._flickAnim;
-        }
+        var sv = this;
 
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
         // because _gesture is being deleted after the previous one has been overwritten
