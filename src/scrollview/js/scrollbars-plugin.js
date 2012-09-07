@@ -149,7 +149,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this._host = this.get("host");
 
         this.afterHostEvent('scrollEnd', this._hostScrollEnd);
-        this.afterHostMethod('_afterScrollChange', this._update);
+        this.afterHostMethod('scrollTo', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
     },
 
@@ -321,7 +321,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             scrollbarSize = scrollbarPos + scrollbarSize;
             scrollbarPos = 0;
         }
-        
+
         middleChildSize = (scrollbarSize - (firstChildSize + lastChildSize));
 
         if (middleChildSize < 0) {

@@ -719,7 +719,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             startPosition = sv.get(axisAttr);
 
         gesture.flick = flick;
-
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (svAxis[flickAxis]) {
             sv._flickFrame(flickVelocity, flickAxis, startPosition);
@@ -792,7 +791,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Otherwise, animate to the next frame
         else {
-
             // @TODO: maybe use requestAnimationFrame instead
             sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity, flickAxis, newPosition]);
             sv.set(axisAttr, newPosition);
