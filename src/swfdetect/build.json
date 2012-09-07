@@ -1,0 +1,10 @@
+{
+    "name": "swfdetect",
+    "builds": {
+        "swfdetect": {
+            "jsfiles": [
+                "swfdetect.js"
+            ]
+        }
+    }
+}
