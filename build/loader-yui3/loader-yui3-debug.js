@@ -1335,7 +1335,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base",
             "event-base",
-            "event-touch"
+            "event-touch",
+            "event-synthetic"
         ]
     },
     "event-touch": {

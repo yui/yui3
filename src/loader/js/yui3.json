@@ -1274,7 +1274,8 @@
         "requires": [
             "node-base",
             "event-base",
-            "event-touch"
+            "event-touch",
+            "event-synthetic"
         ]
     },
     "event-touch": {
