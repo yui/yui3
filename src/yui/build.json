@@ -62,6 +62,7 @@
     },
     "rollups": {
         "yui-base": {
+            "basefilename": "yui-base",
             "name": "yui",
             "replace": {
                 "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later']"
@@ -85,6 +86,8 @@
                 "yui-later"
             ],
             "build": {
+                "name": "yui-base",
+                "basefilename": "yui-base",
                 "prependfiles": [
                     "js/yui.js"
                 ],
@@ -101,6 +104,7 @@
             }
         },
         "yui-nodejs": {
+            "basefilename": "yui-nodejs",
             "name": "yui",
             "replace": {
                 "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-log-nodejs', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']"
@@ -132,6 +136,7 @@
                 "loader-yui3"
             ],
             "build": {
+                "basefilename": "yui-nodejs",
                 "name": "yui-base",
                 "prependfiles": [
                     "js/yui.js"
@@ -149,6 +154,7 @@
             }
         },
         "yui": {
+            "basefilename": "yui",
             "replace": {
                 "@YUI_CORE@": "['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3']"
             },
@@ -177,6 +183,7 @@
                 "loader-yui3"
             ],
             "build": {
+                "basefilename": "yui",
                 "name": "yui-base",
                 "prependfiles": [
                     "js/yui.js"
