@@ -181,7 +181,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             widgetWidth = bb.get('offsetWidth'),
             widgetHeight = bb.get('offsetHeight'),
             pageNodes = paginator._getPageNodes();
-
+            
         // Inefficient. Should not reinitialize every page every syncUI
         pageNodes.each(function (node, i) {
             var scrollWidth = node.get('scrollWidth'),
