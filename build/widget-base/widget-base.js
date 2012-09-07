@@ -1,4 +1,4 @@
-YUI.add('widget-base', function(Y) {
+YUI.add('widget-base', function (Y, NAME) {
 
 /**
  * Provides the base Widget class, with HTML Parser support
@@ -1261,4 +1261,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});
+}, '@VERSION@', {"requires": ["attribute", "base-base", "base-pluginhost", "classnamemanager", "event-focus", "node-base", "node-style"], "skinnable": true});
