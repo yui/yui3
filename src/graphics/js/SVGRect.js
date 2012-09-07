@@ -12,7 +12,7 @@ SVGRect = function()
 {
 	SVGRect.superclass.constructor.apply(this, arguments);
 };
-SVGRect.NAME = "svgRect";
+SVGRect.NAME = "rect";
 Y.extend(SVGRect, Y.SVGShape, {
     /**
      * Indicates the type of shape

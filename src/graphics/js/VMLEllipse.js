@@ -13,7 +13,7 @@ VMLEllipse = function()
 	VMLEllipse.superclass.constructor.apply(this, arguments);
 };
 
-VMLEllipse.NAME = "vmlEllipse";
+VMLEllipse.NAME = "ellipse";
 
 Y.extend(VMLEllipse, Y.VMLShape, {
 	/**
