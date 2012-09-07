@@ -1,4 +1,4 @@
-YUI.add('datatype-date-math', function(Y) {
+YUI.add('datatype-date-math', function (Y, NAME) {
 
 /**
  * Datatype Date Math submodule.
@@ -200,5 +200,4 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 });
 
-
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

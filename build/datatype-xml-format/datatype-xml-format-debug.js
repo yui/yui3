@@ -1,4 +1,4 @@
-YUI.add('datatype-xml-format', function(Y) {
+YUI.add('datatype-xml-format', function (Y, NAME) {
 
 /**
  * Format XML submodule.
@@ -50,4 +50,4 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@');

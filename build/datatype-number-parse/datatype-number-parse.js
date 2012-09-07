@@ -1,4 +1,4 @@
-YUI.add('datatype-number-parse', function(Y) {
+YUI.add('datatype-number-parse', function (Y, NAME) {
 
 /**
  * Parse number submodule.
@@ -34,4 +34,4 @@ Y.mix(Y.namespace("DataType.Number"), {
 Y.namespace("Parsers").number = Y.DataType.Number.parse;
 
 
-}, '@VERSION@' );
+}, '@VERSION@');

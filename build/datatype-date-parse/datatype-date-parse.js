@@ -1,4 +1,4 @@
-YUI.add('datatype-date-parse', function(Y) {
+YUI.add('datatype-date-parse', function (Y, NAME) {
 
 /**
  * Parse number submodule.
@@ -42,4 +42,4 @@ Y.mix(Y.namespace("DataType.Date"), {
 Y.namespace("Parsers").date = Y.DataType.Date.parse;
 
 
-}, '@VERSION@' );
+}, '@VERSION@');

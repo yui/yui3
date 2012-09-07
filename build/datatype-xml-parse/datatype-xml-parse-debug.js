@@ -1,4 +1,4 @@
-YUI.add('datatype-xml-parse', function(Y) {
+YUI.add('datatype-xml-parse', function (Y, NAME) {
 
 /**
  * Parse XML submodule.
@@ -53,4 +53,4 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@');

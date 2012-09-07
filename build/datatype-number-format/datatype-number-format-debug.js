@@ -1,4 +1,4 @@
-YUI.add('datatype-number-format', function(Y) {
+YUI.add('datatype-number-format', function (Y, NAME) {
 
 /**
  * Number submodule.
@@ -102,4 +102,4 @@ Y.mix(Y.namespace("DataType.Number"), {
 });
 
 
-}, '@VERSION@' );
+}, '@VERSION@');
