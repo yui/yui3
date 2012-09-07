@@ -699,7 +699,7 @@
 
                 if (!modifiedOnly || this._getStateVal(attr) != this._state.get(attr, INIT_VALUE)) {
                     // Go through get, to honor cloning/normalization
-                    obj[attr] = this._getAttr(attr);
+                    obj[attr] = this.get(attr);
                 }
             }
 
