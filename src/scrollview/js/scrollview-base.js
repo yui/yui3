@@ -382,7 +382,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._minScrollX = (rtl) ? -(scrollWidth - width) : 0;
+        sv._minScrollX = (rtl) ? Math.min(0, -(scrollWidth - width)) : 0;
 
         /**
          * Internal state, defines the maximum amount that the scrollview can be scrolled along the X axis
@@ -391,7 +391,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._maxScrollX = (rtl) ? 0 : (scrollWidth - width);
+        sv._maxScrollX = (rtl) ? 0 : Math.max(0, scrollWidth - width);
 
         /**
          * Internal state, defines the minimum amount that the scrollview can be scrolled along the Y axis
@@ -409,7 +409,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._maxScrollY = scrollHeight - height;
+        sv._maxScrollY = Math.max(0, scrollHeight - height);
     },
 
     /**
@@ -755,14 +755,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             max = flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY,
             belowMin       = (newPosition < min),
             belowMax       = (newPosition < max),
+            aboveMin       = (newPosition > min),
+            aboveMax       = (newPosition > max),
             belowMinRange  = (newPosition < (min - bounceRange)),
             belowMaxRange  = (newPosition < (max + bounceRange)),
             withinMinRange = (belowMin && (newPosition > (min - bounceRange))),
             withinMaxRange = (aboveMax && (newPosition < (max + bounceRange))),
-            aboveMin       = (newPosition > min),
-            aboveMax       = (newPosition > max),
-            aboveMaxRange  = (newPosition > (max + bounceRange)),
             aboveMinRange  = (newPosition > (min - bounceRange)),
+            aboveMaxRange  = (newPosition > (max + bounceRange)),
             tooSlow;
 
         // If we're within the range but outside min/max, dampen the velocity
@@ -775,7 +775,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // If the velocity is too slow or we're outside the range
         if (tooslow || belowMinRange || aboveMaxRange) {
-            
             // Cancel and delete sv._flickAnim
             sv._flickAnim && sv._flickAnim.cancel();
             delete sv._flickAnim;
@@ -793,6 +792,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Otherwise, animate to the next frame
         else {
+
             // @TODO: maybe use requestAnimationFrame instead
             sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity, flickAxis, newPosition]);
             sv.set(axisAttr, newPosition);
@@ -1134,7 +1134,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default 0.1
          */
         bounce: {
-            value: 0.1
+            value: .1
         },
 
         /**

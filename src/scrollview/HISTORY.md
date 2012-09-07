@@ -3,8 +3,14 @@ ScrollView Change History
 
 3.7.0
 -----
+  * Fix: Bounded minScrollX, maxScrollX, and maxScrollY so they cannot be invalid numbers when auto-calculated
+
+  * Fix: `bounce` and `bounceRange` are properly supported again (missing in 3.7.0pr1)
+
+  * Fix: Refactored _flickFrame to do less ATTR lookups for performance reasons
+
   * Added: _flickFrame now requires 2nd param (the axis to animate on)
-  
+
   * Fix: Improved gesture event detachment
 
   * Moved: _isOOB to _isOutOfBounds, along with caching tweak
