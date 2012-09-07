@@ -59,7 +59,7 @@
         filter:'raw'
       }).use('event-gestures', 'console', 'transition', function(Y) {
         new Y.Console().render();
-
+        Y.log(Y.Event._GESTURE_MAP.start);
         var circle = Y.one("#circle");
         var square = Y.one("#square");
         var cAnim = {
@@ -74,6 +74,7 @@
         });
 
         circle.on('flick', function(e) {
+          e.preventDefault();
           if (e.flick.axis === 'x') {
             cAnim.left = parseInt(circle.getStyle('left').replace('px', ''), 10) + e.flick.distance + 'px';
           }
@@ -87,12 +88,13 @@
         });
 
         square.on('gesturemovestart', function(e) {
-          console.log(e);
+          e.preventDefault();
           square.addClass('black');
           Y.log('Starting Gesture...');
         });
 
         square.on('gesturemove', function(e) {
+          e.preventDefault();
           sAnim.top = e.clientY - 50 + 'px';
           sAnim.left = e.clientX - 50 +'px';
           sAnim.duration = 0.05;
@@ -100,6 +102,7 @@
         });
 
         square.on('gesturemoveend', function(e) {
+          e.preventDefault();
           square.removeClass("black");
           Y.log('Ending Gesture...');
         });
