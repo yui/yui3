@@ -1,0 +1,41 @@
+{
+    "name": "datatype",
+    "builds": {
+        "datatype-date-parse": {
+            "jsfiles": [
+                "datatype-date-parse.js"
+            ]
+        },
+        "datatype-xml-parse": {
+            "jsfiles": [
+                "datatype-xml-parse.js"
+            ]
+        },
+        "datatype-date-math": {
+            "jsfiles": [
+                "datatype-date-math.js"
+            ]
+        },
+        "datatype-number-parse": {
+            "jsfiles": [
+                "datatype-number-parse.js"
+            ]
+        },
+        "datatype-number-format": {
+            "jsfiles": [
+                "datatype-number-format.js"
+            ]
+        },
+        "datatype-xml-format": {
+            "jsfiles": [
+                "datatype-xml-format.js"
+            ]
+        },
+        "datatype-date-format": {
+            "jsfiles": [
+                "datatype-date-format.js",
+                "datatype-date-locale.js"
+            ]
+        }
+    }
+}
