@@ -167,6 +167,9 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var host = this._host,
             axis = host._cAxis;
 
+        this._scrollHeight = host._bb.get('scrollHeight');
+        this._scrollWidth = host._bb.get('scrollWidth');
+
         this._renderBar(this.get(VERTICAL_NODE), axis.y, 'vert');
         this._renderBar(this.get(HORIZONTAL_NODE), axis.x, 'horiz');
 
@@ -293,7 +296,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
             widgetSize = host.get('width');
-            contentSize = host._bb.get('scrollWidth');
+            contentSize = this._scrollWidth;
             translate = TRANSLATE_X;
             scale = SCALE_X;
             current = (current !== undefined) ? current : host.get(SCROLL_X);
@@ -302,7 +305,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dimOffset = TOP;
             dimCache = VERT_CACHE;
             widgetSize = host.get('height');
-            contentSize = host._bb.get('scrollHeight');
+            contentSize = this._scrollHeight;
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
             current = (current !== undefined) ? current : host.get(SCROLL_Y);
@@ -310,11 +313,10 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
         scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize));
-
         if (scrollbarSize > widgetSize) {
             scrollbarSize = 1;
         }
-        
+
         if (scrollbarPos > (widgetSize - scrollbarSize)) {
             scrollbarSize = scrollbarSize - (scrollbarPos - (widgetSize - scrollbarSize));
         } else if (scrollbarPos < 0) {

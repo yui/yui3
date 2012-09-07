@@ -384,7 +384,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._minScrollX = (rtl) ? -(scrollWidth - width) : 0;
+        sv._minScrollX = (rtl) ? Math.min(0, -(scrollWidth - width)) : 0;
 
         /**
          * Internal state, defines the maximum amount that the scrollview can be scrolled along the X axis
@@ -393,7 +393,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._maxScrollX = (rtl) ? 0 : (scrollWidth - width);
+        sv._maxScrollX = (rtl) ? 0 : Math.max(0, scrollWidth - width);
 
         /**
          * Internal state, defines the minimum amount that the scrollview can be scrolled along the Y axis
@@ -411,7 +411,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._maxScrollY = scrollHeight - height;
+        sv._maxScrollY = Math.max(0, scrollHeight - height);
     },
 
     /**
@@ -560,7 +560,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // if a flick animation is in progress, cancel it
         if (sv._flickAnim) {
+            // Cancel and delete sv._flickAnim
             sv._flickAnim.cancel();
+            delete sv._flickAnim;
             sv._onTransEnd();
         }
 
@@ -719,7 +721,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             startPosition = sv.get(axisAttr);
 
         gesture.flick = flick;
-
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (svAxis[flickAxis]) {
             sv._flickFrame(flickVelocity, flickAxis, startPosition);
@@ -753,16 +754,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             // Some convinience conditions
             min = flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY,
             max = flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY,
-            belowMin = (newPosition < min),
-            belowMax = (newPosition < max),
-            belowMinRange = (newPosition < (min - bounceRange)),
-            belowMaxRange = (newPosition < (max + bounceRange)),
+            belowMin       = (newPosition < min),
+            belowMax       = (newPosition < max),
+            aboveMin       = (newPosition > min),
+            aboveMax       = (newPosition > max),
+            belowMinRange  = (newPosition < (min - bounceRange)),
+            belowMaxRange  = (newPosition < (max + bounceRange)),
             withinMinRange = (belowMin && (newPosition > (min - bounceRange))),
             withinMaxRange = (aboveMax && (newPosition < (max + bounceRange))),
-            aboveMin = (newPosition > min),
-            aboveMax = (newPosition > max),
-            aboveMaxRange = (newPosition > (max + bounceRange)),
-            aboveMinRange = (newPosition > (min - bounceRange)),
+            aboveMinRange  = (newPosition > (min - bounceRange)),
+            aboveMaxRange  = (newPosition > (max + bounceRange)),
             tooSlow;
 
         // If we're within the range but outside min/max, dampen the velocity
@@ -775,7 +776,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // If the velocity is too slow or we're outside the range
         if (tooslow || belowMinRange || aboveMaxRange) {
-            
             // Cancel and delete sv._flickAnim
             sv._flickAnim && sv._flickAnim.cancel();
             delete sv._flickAnim;
@@ -846,8 +846,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Checks to see the current scrollX/scrollY position beyond the min/max boundary
      *
      * @method _isOutOfBounds
-     * @param x {Number} The X position to check
-     * @param y {Number} The Y position to check
+     * @param x {Number} [optional] The X position to check
+     * @param y {Number} [optional] The Y position to check
      * @returns {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
@@ -893,7 +893,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv.set(SCROLL_Y, newY, {duration:duration, easing:easing});
         }
         else {
-            console.log('_onTransEnd');
             // It shouldn't ever get here, but in case it does, fire scrollEnd
             sv._onTransEnd();
         }
@@ -1050,8 +1049,52 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 y: val.match(/y/i) ? true : false
             };
         }
-    }
+    },
     
+    /**
+    * The scrollX, scrollY setter implementation
+    *
+    * @method _setScroll
+    * @private
+    * @param {Number} val
+    * @param {String} dim
+    *
+    * @return {Number} The value
+    */
+    _setScroll : function(val, dim) {
+
+        // Just ensure the widget is not disabled
+        if (this._cDisabled) {
+            val = Y.Attribute.INVALID_VALUE;
+        } 
+
+        return val;
+    },
+
+    /**
+    * Setter for the scrollX attribute
+    *
+    * @method _setScrollX
+    * @param val {Number} The new scrollX value
+    * @return {Number} The normalized value
+    * @protected
+    */
+    _setScrollX: function(val) {
+        return this._setScroll(val, DIM_X);
+    },
+
+    /**
+    * Setter for the scrollY ATTR
+    *
+    * @method _setScrollY
+    * @param val {Number} The new scrollY value
+    * @return {Number} The normalized value
+    * @protected
+    */
+    _setScrollY: function(val) {
+        return this._setScroll(val, DIM_Y);
+    }
+
     // End prototype properties
 
 }, {
@@ -1093,17 +1136,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the y-axis
-         *
-         * @attribute scrollY
-         * @type Number
-         * @default 0
-         */
-        scrollY: {
-            value: 0
-        },
-
-        /**
          * The scroll position in the x-axis
          *
          * @attribute scrollX
@@ -1111,7 +1143,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default 0
          */
         scrollX: {
-            value: 0
+            value: 0,
+            setter: '_setScrollX'
+        },
+
+        /**
+         * The scroll position in the y-axis
+         *
+         * @attribute scrollY
+         * @type Number
+         * @default 0
+         */
+        scrollY: {
+            value: 0,
+            setter: '_setScrollY'
         },
 
         /**
@@ -1135,7 +1180,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default 0.1
          */
         bounce: {
-            value: 0.1
+            value: .1
         },
 
         /**
@@ -1212,10 +1257,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          *
          * @attribute bounceRange
          * @type Number
-         * @default 100
+         * @default 150
          */
         bounceRange: {
-            value: 100
+            value: 150
         }
     },
 
