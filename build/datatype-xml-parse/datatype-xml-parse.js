@@ -1,16 +1,16 @@
-YUI.add('datatype-xml-parse', function(Y) {
+YUI.add('datatype-xml-parse', function (Y, NAME) {
 
 /**
  * Parse XML submodule.
  *
- * @module datatype
+ * @module datatype-xml
  * @submodule datatype-xml-parse
- * @for DataType.XML
+ * @for XML
  */
 
 var LANG = Y.Lang;
 
-Y.mix(Y.namespace("DataType.XML"), {
+Y.mix(Y.namespace("XML"), {
     /**
      * Converts data to type XMLDocument.
      *
@@ -47,8 +47,10 @@ Y.mix(Y.namespace("DataType.XML"), {
 });
 
 // Add Parsers shortcut
-Y.namespace("Parsers").xml = Y.DataType.XML.parse;
+Y.namespace("Parsers").xml = Y.XML.parse;
+
+Y.namespace("DataType");
+Y.DataType.XML = Y.XML;
 
 
-
-}, '@VERSION@' );
+}, '@VERSION@');

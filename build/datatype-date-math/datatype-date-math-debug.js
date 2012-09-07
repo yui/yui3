@@ -1,19 +1,19 @@
-YUI.add('datatype-date-math', function(Y) {
+YUI.add('datatype-date-math', function (Y, NAME) {
 
 /**
- * Datatype Date Math submodule.
+ * Date Math submodule.
  *
- * @module datatype
+ * @module datatype-date
  * @submodule datatype-date-math
- * @for DataType.Date
+ * @for Date
  */
 var LANG = Y.Lang;
 
-Y.mix(Y.namespace("DataType.Date"), {
+Y.mix(Y.namespace("Date"), {
 
 	/**
 	 * Checks whether a native JavaScript Date contains a valid value.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method isValidDate
 	 * @param oDate {Date} Date in the month for which the number of days is desired.
 	 * @return {Boolean} True if the date argument contains a valid value.
@@ -30,7 +30,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 	/**
 	 * Checks whether two dates correspond to the same date and time.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method areEqual
 	 * @param aDate {Date} The first date to compare.
 	 * @param bDate {Date} The second date to compare.
@@ -43,7 +43,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 	/**
 	 * Checks whether the first date comes later than the second.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method isGreater
 	 * @param aDate {Date} The first date to compare.
 	 * @param bDate {Date} The second date to compare.
@@ -56,7 +56,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 	/**
 	 * Checks whether the first date comes later than or is the same as
 	 * the second.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method isGreaterOrEqual
 	 * @param aDate {Date} The first date to compare.
 	 * @param bDate {Date} The second date to compare.
@@ -70,7 +70,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
     /**
 	 * Checks whether the date is between two other given dates.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method isInRange
 	 * @param aDate {Date} The date to check
 	 * @param bDate {Date} Lower bound of the range.
@@ -83,7 +83,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 	/**
 	 * Adds a specified number of days to the given date.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method addDays
 	 * @param oDate {Date} The date to add days to.
 	 * @param numMonths {Number} The number of days to add (can be negative)
@@ -97,7 +97,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 	/**
 	 * Adds a specified number of months to the given date.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method addMonths
 	 * @param oDate {Date} The date to add months to.
 	 * @param numMonths {Number} The number of months to add (can be negative)
@@ -120,7 +120,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 	/**
 	 * Adds a specified number of years to the given date.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method addYears
 	 * @param oDate {Date} The date to add years to.
 	 * @param numYears {Number} The number of years to add (can be negative)
@@ -137,7 +137,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 	/**
 	 * Lists all dates in a given month.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method listOfDatesInMonth
 	 * @param oDate {Date} The date corresponding to the month for
 	 * which a list of dates is required.
@@ -163,7 +163,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 	/**
 	 * Takes a native JavaScript Date and returns the number of days
 	 * in the month that the given date belongs to.
-	 * @for DataType.Date
+	 * @for Date
 	 * @method daysInMonth
 	 * @param oDate {Date} Date in the month for which the number 
 	 * of days is desired.
@@ -201,5 +201,8 @@ Y.mix(Y.namespace("DataType.Date"), {
 
 });
 
+Y.namespace("DataType");
+Y.DataType.Date = Y.Date;
 
-}, '@VERSION@' ,{requires:['yui-base']});
+
+}, '@VERSION@', {"requires": ["yui-base"]});
