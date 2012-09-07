@@ -748,8 +748,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             frameDuration = sv._cFrameDuration,
 
             // Calculate
-            velocity = velocity * deceleration,
-            newPosition = startPosition - (frameDuration * velocity),
+            newVelocity = velocity * deceleration,
+            newPosition = startPosition - (frameDuration * newVelocity),
 
             // Some convinience conditions
             min = flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY,
@@ -768,17 +768,19 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // If we're within the range but outside min/max, dampen the velocity
         if (withinMinRange || withinMaxRange) {
-            velocity *= bounce;
+            newVelocity *= bounce;
         }
 
         // Is the velocity too slow to bother?
-        tooslow = (Math.abs(velocity).toFixed(4) < 0.015);
+        tooSlow = (Math.abs(newVelocity).toFixed(4) < 0.015);
 
         // If the velocity is too slow or we're outside the range
-        if (tooslow || belowMinRange || aboveMaxRange) {
+        if (tooSlow || belowMinRange || aboveMaxRange) {
             // Cancel and delete sv._flickAnim
-            sv._flickAnim && sv._flickAnim.cancel();
-            delete sv._flickAnim;
+            if (sv._flickAnim) {
+                sv._flickAnim.cancel();
+                delete sv._flickAnim;
+            }
 
             // If we're inside the scroll area, just end
             if (aboveMin && belowMax) {
@@ -794,7 +796,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Otherwise, animate to the next frame
         else {
             // @TODO: maybe use requestAnimationFrame instead
-            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity, flickAxis, newPosition]);
+            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [newVelocity, flickAxis, newPosition]);
             sv.set(axisAttr, newPosition);
         }
     },
@@ -1013,12 +1015,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _afterScrollEnd: function (e) {
         var sv = this;
 
-        // Cancel the flick (if it exists)
         // @TODO: Move to sv._cancelFlick()
-        sv._flickAnim && sv._flickAnim.cancel();
+        if (sv._flickAnim) {
+            // Cancel the flick (if it exists)
+            sv._flickAnim.cancel();
 
-        // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
-        delete sv._flickAnim;
+            // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
+            delete sv._flickAnim;
+        }
 
         // If for some reason we're OOB, snapback
         if (sv._isOutOfBounds()) {
@@ -1180,7 +1184,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default 0.1
          */
         bounce: {
-            value: .1
+            value: 0.1
         },
 
         /**

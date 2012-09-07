@@ -47,7 +47,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     initializer: function (config) {
         var paginator = this,
             host = paginator.get(HOST);
-            
+
         // Initialize & default
         paginator._pageDims = [];
         paginator._pageBuffer = 1;
