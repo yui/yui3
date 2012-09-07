@@ -66,6 +66,7 @@
     <li><strong>The relative URLs to the target server are resolved differently in the Flash mode</strong> than they are in the HTML5 mode. In Flash mode, the URLs
     are resolved relatively to the location of the SWF file, whereas in HTML5 mode, they are resolved relatively to the location of the web page. It is best to
     avoid using relative URLs for upload targets and use absolute URLs instead.</li>
+    <li>The body of the server response to the Flash upload must be greater than 0 bytes. If its length is 0, then the upload is not registered as complete.</li>
 	<li>Because of limitations of the Flash Player, the <strong>Uploader in Flash mode does not transmit session data (cookies)</strong> in the header of the POST requests it sends to the server. In order to transmit the session data, the developer will need to programmatically extract it from the DOM and send as part of the body of the POST request.</li>
   	<li>The <strong>Uploader SWF should always be served from an HTTP server</strong> due to Flash Player's restricted local security model.</li>
     <li>The <strong>Uploader control should not be placed in a container with `visibility` set to `hidden`, or `display` set to `none`</strong>, whether at initialization of the page, or at any subsequent time. Because of how the Flash Player is instantiated, setting these properties to these values will result in the loss of communication between the Flash player and the DOM. If it's necessary to hide the instance of the Uploader on the page, its width and height should be set to 0.</li>
@@ -152,7 +153,7 @@ YUI({...}).use('uploader', function (Y) {
    var uploader = new Y.Uploader(...);
 
    if (Y.Uploader.TYPE == "html5") {
-       uploader.dragAndDropArea = "#divContainer";
+       uploader.set("dragAndDropArea", "#divContainer");
        uploader.render("#selectFilesButtonContainer");
    }
    else if (Y.Uploader.TYPE == "flash") {
