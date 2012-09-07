@@ -1,4 +1,4 @@
-YUI.add('io-xdr', function(Y) {
+YUI.add('io-xdr', function (Y, NAME) {
 
 /**
 Extends IO to provide an alternate, Flash transport, for making
@@ -308,4 +308,4 @@ event is fired, this value will be set to 0.
 Y.io.xdr = { delay : 100 };
 
 
-}, '@VERSION@' ,{requires:['io-base','datatype-xml-parse']});
+}, '@VERSION@', {"requires": ["io-base", "datatype-xml-parse"]});
