@@ -456,8 +456,8 @@ VMLDrawing.prototype = {
             path = relative ? " r " : " l ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        len = args.length;
         if (typeof point1 == "string" || typeof point1 == "number") {
+            len = args.length - 1;
             for (i = 0; i < len; i = i + 2) {
                 x = parseFloat(args[i]);
                 y = parseFloat(args[i + 1]);
@@ -471,6 +471,7 @@ VMLDrawing.prototype = {
         }
         else
         {
+            len = args.length;
             for (i = 0; i < len; i = i + 1) {
                 x = parseFloat(args[i][0]);
                 y = parseFloat(args[i][1]);
@@ -479,7 +480,7 @@ VMLDrawing.prototype = {
                 y = y + relativeY;
                 this._currentX = x;
                 this._currentY = y;
-                this._trackSize.apply([x, y]);
+                this._trackSize.apply(this, [x, y]);
             }
         }
         this._addToPath(path);
@@ -2992,18 +2993,11 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             right: 0,
             bottom: 0
         };
-        this._node = DOCUMENT.createElement('div');
-        this._node.style.position = "absolute";
+        this._node = this._createGraphic();
         this._node.style.left = this.get("x") + "px";
         this._node.style.top = this.get("y") + "px";
         this._node.style.visibility = visibility;
         this._node.setAttribute("id", this.get("id"));
-        this._contentNode = this._createGraphic();
-        this._contentNode.style.position = "absolute";
-        this._contentNode.style.left = "0px";
-        this._contentNode.style.top = "0px";
-        this._contentNode.style.visibility = visibility;
-        this._node.appendChild(this._contentNode);
         if(render)
         {
             this.render(render);
@@ -3070,7 +3064,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     _appendShape: function(shape)
     {
         var node = shape.node,
-            parentNode = this._frag || this._contentNode;
+            parentNode = this._frag || this._node;
         if(this.get("autoDraw") || this.get("autoSize") == "sizeContentToGraphic") 
         {
             parentNode.appendChild(node);
@@ -3155,7 +3149,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     clear: function() {
         this.removeAllShapes();
-        this._removeChildren(this._contentNode);
+        this._removeChildren(this._node);
     },
 
     /**
@@ -3180,9 +3174,9 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
                 }
             }
         }
-        if(this._contentNode)
+        if(this._node)
         {
-            this._contentNode.style.visibility = visibility;
+            this._node.style.visibility = visibility;
         }
         if(this._node)
         {
@@ -3226,7 +3220,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      * @private
      */
     _createGraphic: function() {
-        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
+        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);padding:0px 0px 0px 0px;display:block;position:absolute;top:0px;left:0px;zoom:1;" />');
         return group;
     },
 
@@ -3360,8 +3354,9 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
     {
         var autoSize = this.get("autoSize"),
             preserveAspectRatio,
-            nodeWidth,
-            nodeHeight,
+            node = this.parentNode,
+            nodeWidth = parseFloat(node.getComputedStyle("width")),
+            nodeHeight = parseFloat(node.getComputedStyle("height")),
             xCoordOrigin = 0,
             yCoordOrigin = 0,
             box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
@@ -3377,14 +3372,12 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
             scaledWidth,
             scaledHeight,
             visible = this.get("visible");
-        this._contentNode.style.visibility = "hidden";
+        this._node.style.visibility = "hidden";
         if(autoSize)
         {
             if(autoSize == "sizeContentToGraphic")
             {
                 preserveAspectRatio = this.get("preserveAspectRatio");
-                nodeWidth = this.get("width");
-                nodeHeight = this.get("height");
                 if(preserveAspectRatio == "none" || contentWidth/contentHeight === nodeWidth/nodeHeight)
                 {
                     xCoordOrigin = left;
@@ -3415,41 +3408,36 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
                         yCoordOrigin = top;
                     }
                 }
-                this._contentNode.style.width = nodeWidth + "px";
-                this._contentNode.style.height = nodeHeight + "px";
-                this._contentNode.coordOrigin = xCoordOrigin + ", " + yCoordOrigin;
+                this._node.style.width = nodeWidth + "px";
+                this._node.style.height = nodeHeight + "px";
+                this._node.coordOrigin = xCoordOrigin + ", " + yCoordOrigin;
             }
             else 
             {
                 xCoordSize = contentWidth;
                 yCoordSize = contentHeight;
-                this._contentNode.style.width = contentWidth + "px";
-                this._contentNode.style.height = contentHeight + "px";
+                this._node.style.width = contentWidth + "px";
+                this._node.style.height = contentHeight + "px";
                 this._state.width = contentWidth;
                 this._state.height =  contentHeight;
-                if(this._node)
-                {
-                    this._node.style.width = contentWidth + "px";
-                    this._node.style.height = contentHeight + "px";
-                }
 
             }
-            this._contentNode.coordSize = xCoordSize + ", " + yCoordSize;
+            this._node.coordSize = xCoordSize + ", " + yCoordSize;
         }
         else
         {
-            this._contentNode.style.width = right + "px";
-            this._contentNode.style.height = bottom + "px";
-            this._contentNode.coordSize = right + ", " + bottom;
+            this._node.style.width = nodeWidth + "px";
+            this._node.style.height = nodeHeight + "px";
+            this._node.coordSize = nodeWidth + ", " + nodeHeight;
         }
         if(this._frag)
         {
-            this._contentNode.appendChild(this._frag);
+            this._node.appendChild(this._frag);
             this._frag = null;
         }
         if(visible)
         {
-            this._contentNode.style.visibility = "visible";
+            this._node.style.visibility = "visible";
         }
     },
     
@@ -3524,7 +3512,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     _toFront: function(shape)
     {
-        var contentNode = this._contentNode;
+        var contentNode = this._node;
         if(shape instanceof Y.VMLShape)
         {
             shape = shape.get("node");
@@ -3544,7 +3532,7 @@ Y.extend(VMLGraphic, Y.GraphicBase, {
      */
     _toBack: function(shape)
     {
-        var contentNode = this._contentNode,
+        var contentNode = this._node,
             targetNode;
         if(shape instanceof Y.VMLShape)
         {
