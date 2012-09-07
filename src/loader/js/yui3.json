@@ -1151,7 +1151,8 @@
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ]
     },
     "event-base": {
@@ -1267,6 +1268,14 @@
         "requires": [
             "node-base",
             "event-custom-complex"
+        ]
+    },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch",
+            "event-synthetic"
         ]
     },
     "event-touch": {

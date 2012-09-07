@@ -1,6 +1,12 @@
 Event Infrastructure Change History
 ===================================
 
+3.7.0
+-----
+
+* 'event-tap' added to support fast-click on touch devices
+
+
 3.6.1
 -----
 
