@@ -310,7 +310,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._uiDimensionsChange();
 
         // If we're out-of-bounds, snap back.
-        if (sv._isOOB()) {
+        if (sv._isOutOfBounds()) {
             sv._snapBack();
         }
     },
@@ -651,8 +651,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             gesture = sv._gesture,
             flick = gesture.flick,
             clientX = e.clientX,
-            clientY = e.clientY,
-            isOOB;
+            clientY = e.clientY;
 
         if (sv._prevent.end) {
             e.preventDefault();
@@ -669,7 +668,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             if (gesture.deltaX !== null && gesture.deltaY !== null) {
 
                 // If we're out-out-bounds, then snapback
-                if (sv._isOOB()) {
+                if (sv._isOutOfBounds()) {
                     sv._snapBack();
                 }
 
@@ -745,9 +744,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             newY = currentY - (velocity * frameDuration);
 
         velocity *= deceleration;
-
+        
         // If we are out of bounds
-        if (sv._isOOB()) {
+        if (sv._isOutOfBounds(currentX, currentY)) {
             // We're past an edge, now bounce back
             sv._snapBack();
         }
@@ -821,19 +820,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Checks to see the current scrollX/scrollY position is out of bounds
+     * Checks to see the current scrollX/scrollY position beyond the min/max boundary
      *
-     * @method _isOOB
+     * @method _isOutOfBounds
+     * @param x {Number} The X position to check
+     * @param y {Number} The Y position to check
      * @returns {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
-    _isOOB: function () {
+    _isOutOfBounds: function (x, y) {
         var sv = this,
             svAxis = sv._cAxis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
-            currentX = sv.get(SCROLL_X), // @TODO: Accept X & Y as args to prevent lookups?
-            currentY = sv.get(SCROLL_Y),
+            currentX = x || sv.get(SCROLL_X),
+            currentY = y || sv.get(SCROLL_Y),
             minX = sv._minScrollX,
             minY = sv._minScrollY,
             maxX = sv._maxScrollX,
