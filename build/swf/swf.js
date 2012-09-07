@@ -1,4 +1,4 @@
-YUI.add('swf', function(Y) {
+YUI.add('swf', function (Y, NAME) {
 
 /**
  * Embed a Flash applications in a standard manner and communicate with it
@@ -199,4 +199,4 @@ Y.augment(SWF, Y.EventTarget);
 Y.SWF = SWF;
 
 
-}, '@VERSION@' ,{requires:['event-custom','node','swfdetect','escape']});
+}, '@VERSION@', {"requires": ["event-custom", "node", "swfdetect", "escape"]});
