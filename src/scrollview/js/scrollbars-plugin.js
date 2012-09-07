@@ -168,8 +168,13 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         this._scrollHeight = host._bb.get('scrollHeight');
         this._scrollWidth = host._bb.get('scrollWidth');
 
-        this._renderBar(this.get(VERTICAL_NODE), axis.y, 'vert');
-        this._renderBar(this.get(HORIZONTAL_NODE), axis.x, 'horiz');
+        if (axis && axis.y) {
+            this._renderBar(this.get(VERTICAL_NODE), true, 'vert');
+        }
+
+        if (axis && axis.x) {
+            this._renderBar(this.get(HORIZONTAL_NODE), true, 'horiz');
+        }
 
         this._update();
 
@@ -433,11 +438,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this.show();
         }
 
-        if (axis.y && vNode) {
+        if (axis && axis.y && vNode) {
             this._updateBar(vNode, y, duration, false);
         }
 
-        if (axis.x && hNode) {
+        if (axis && axis.x && hNode) {
             this._updateBar(hNode, x, duration, true);
         }
     },

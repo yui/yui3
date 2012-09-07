@@ -295,11 +295,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // If the axis is undefined, auto-calculate it
         if (sv._cAxis === undefined) {
             // This should only ever be run once (for now).
-            // In the future SV might post-loaded axis changes
-            sv._set(AXIS, {
+            // In the future SV might post-load axis changes
+            sv._cAxis = {
                 x: (scrollWidth > width),
                 y: (scrollHeight > height)
-            });
+            };
+
+            sv._set(AXIS, sv._cAxis);
         }
 
         // get text direction on or inherited by scrollview node
@@ -363,15 +365,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight,
             rtl = sv.rtl,
-            svAxis = sv._cAxis,
-            svAxisX = svAxis.x,
-            svAxisY = svAxis.y;
-
-        if (svAxisX) {
+            svAxis = sv._cAxis;
+            
+        if (svAxis && svAxis.x) {
             bb.addClass(CLASS_NAMES.horizontal);
         }
 
-        if (svAxisY) {
+        if (svAxis && svAxis.y) {
             bb.addClass(CLASS_NAMES.vertical);
         }
 
