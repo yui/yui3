@@ -27,7 +27,7 @@ YUI.add('transport-tests', function(Y) {
 
             // IE must use a form of external transport
             if (Y.UA.ie) {
-                Y.Assert.isTrue(o.notify);
+                Y.Assert.isTrue(o.xdr);
             }
             else {
                 Y.Assert.isFalse(o.notify);
