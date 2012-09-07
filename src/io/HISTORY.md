@@ -1,6 +1,19 @@
 IO Utility Change History
 =========================
 
+3.6.1
+-----
+
+* Prevent IO from maintaining cookies across requests in Node.js.
+  [Ticket #2532676]
+
+* Remove "X-Requested-With" header from cross-domain XHRs. Setting any
+  non-standard HTTP headers when performing a cross-domain request using CORS
+  results in a _required_ pre-flight OPTIONS request. Not adding this header by
+  default allows the browser to communicate with a server which is not
+  CORS-ready. [Ticket #2532673] [Clarence Leung]
+
+
 3.6.0
 -----
 
