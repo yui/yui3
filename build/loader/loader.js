@@ -4038,7 +4038,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ]
     },
     "event-base": {
@@ -4157,6 +4158,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base",
             "event-custom-complex"
+        ]
+    },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch"
         ]
     },
     "event-touch": {
@@ -5284,7 +5292,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
+YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
