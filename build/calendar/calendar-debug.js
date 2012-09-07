@@ -1,4 +1,4 @@
-YUI.add('calendar', function(Y) {
+YUI.add('calendar', function (Y, NAME) {
 
 /**
  * The Calendar component is a UI widget that allows users
@@ -544,5 +544,4 @@ Y.Calendar = Y.extend(Calendar, Y.CalendarBase, {
   }
 });
 
-
-}, '@VERSION@' ,{requires:['calendar-base', 'calendarnavigator'], lang:['de', 'en', 'fr', 'ja', 'nb-NO', 'pt-BR', 'ru', 'zh-HANT-TW']});
+}, '@VERSION@', {"requires": ["calendar-base", "calendarnavigator"], "lang": ["de", "en", "fr", "ja", "nb-NO", "pt-BR", "ru", "zh-HANT-TW"], "skinnable": true});

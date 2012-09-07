@@ -1,1 +1,1 @@
-YUI.add("scrollview",function(a){a.Base.plug(a.ScrollView,a.Plugin.ScrollViewScrollbars);},"@VERSION@",{requires:["scrollview-base","scrollview-scrollbars"]});
+YUI.add("scrollview",function(b,a){b.Base.plug(b.ScrollView,b.Plugin.ScrollViewScrollbars);},"@VERSION@",{"requires":["scrollview-base","scrollview-scrollbars"]});

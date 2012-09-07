@@ -1,4 +1,4 @@
-YUI.add('anim-node-plugin', function(Y) {
+YUI.add('anim-node-plugin', function (Y, NAME) {
 
 /**
  *  Binds an Anim instance to a Node instance
@@ -23,4 +23,4 @@ Y.namespace('Plugin');
 Y.Plugin.NodeFX = NodeFX;
 
 
-}, '@VERSION@' ,{requires:['node-pluginhost', 'anim-base']});
+}, '@VERSION@', {"requires": ["node-pluginhost", "anim-base"]});

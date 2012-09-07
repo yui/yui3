@@ -1,4 +1,4 @@
-YUI.add('tabview-base', function(Y) {
+YUI.add('tabview-base', function (Y, NAME) {
 
 var getClassName = Y.ClassNameManager.getClassName,
     TABVIEW = 'tabview',
@@ -141,4 +141,4 @@ Y.mix(TabviewBase.prototype, {
 Y.TabviewBase = TabviewBase;
 
 
-}, '@VERSION@' ,{requires:['node-event-delegate', 'classnamemanager', 'skin-sam-tabview']});
+}, '@VERSION@', {"requires": ["node-event-delegate", "classnamemanager", "skin-sam-tabview"]});

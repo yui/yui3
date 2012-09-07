@@ -1,1 +1,1 @@
-YUI.add("dd-drop-plugin",function(a){var b=function(c){c.node=c.host;b.superclass.constructor.apply(this,arguments);};b.NAME="dd-drop-plugin";b.NS="drop";a.extend(b,a.DD.Drop);a.namespace("Plugin");a.Plugin.Drop=b;},"@VERSION@",{requires:["dd-drop"],skinnable:false});
+YUI.add("dd-drop-plugin",function(b,a){var c=function(d){d.node=d.host;c.superclass.constructor.apply(this,arguments);};c.NAME="dd-drop-plugin";c.NS="drop";b.extend(c,b.DD.Drop);b.namespace("Plugin");b.Plugin.Drop=c;},"@VERSION@",{"requires":["dd-drop"]});

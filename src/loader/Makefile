@@ -1,13 +1,13 @@
 all: build test
 
 build:
-	ant all -q
+	shifter --lint defaults
 
 buildloud:
-	ant all
+	shifter
 
 meta:
-	./scripts/meta_join.py
+	./scripts/meta_join.js
 
 check:
 	./scripts/meta_check.js

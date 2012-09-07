@@ -1,4 +1,4 @@
-YUI.add('anim-xy', function(Y) {
+YUI.add('anim-xy', function (Y, NAME) {
 
 /**
  * Adds support for the <code>xy</code> property in <code>from</code> and 
@@ -23,4 +23,4 @@ Y.Anim.behaviors.xy = {
 
 
 
-}, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
+}, '@VERSION@', {"requires": ["anim-base", "node-screen"]});

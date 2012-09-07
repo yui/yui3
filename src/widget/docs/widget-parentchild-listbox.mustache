@@ -11,7 +11,7 @@
     }
 
     .yui3-listbox {
-        padding:0;       
+        padding:0;
         margin: .25em;
         border: solid 1px #000;
         background-color:#fff;
@@ -24,7 +24,7 @@
         border: none;
     }
 
-    .yui3-listbox .yui3-option, 
+    .yui3-listbox .yui3-option,
     .yui3-listbox .yui3-listbox-option {
         margin:0;
         padding:0;
@@ -76,7 +76,7 @@
 
 <h3>The WidgetParent and WidgetChild Extensions</h3>
 
-<p><a href="{{apiDocs}}/WidgetParent.html">WidgetParent</a> is an extension, designed to be used with `Base.build` to create a class of Widget which is designed to contain child Widgets (for example a Tree widget, which contains TreeNode children). 
+<p><a href="{{apiDocs}}/WidgetParent.html">WidgetParent</a> is an extension, designed to be used with `Base.build` to create a class of Widget which is designed to contain child Widgets (for example a Tree widget, which contains TreeNode children).
 WidgetParent itself augments <a href="{{apiDocs}}/ArrayList.html">ArrayList</a> providing a convenient set of array iteration and convenience methods, allowing users of your class to easily work with parent's list of children.</p>
 
 <p><a href="{{apiDocs}}/WidgetChild.html">WidgetChild</a> is also an extension, designed to be used with `Base.build` to create a class of Widget which is designed to nested inside parent Widgets (for example a TreeNode widget, which sits inside a Tree widget).</p>
@@ -91,7 +91,7 @@ WidgetParent itself augments <a href="{{apiDocs}}/ArrayList.html">ArrayList</a> 
 
 ```
 
-// Create a new class, ListBox, which extends Widget, and mixes in both the WidgetParent and WidgetChild 
+// Create a new class, ListBox, which extends Widget, and mixes in both the WidgetParent and WidgetChild
 // extensions since we want to be able to nest one ListBox inside another, to create heirarchical listboxes
 
 Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], {
@@ -118,12 +118,12 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
 
             // Setup custom focus handling, using the NodeFocusManager plugin
             // This will help us easily crete next/previous item handling using the arrow keys
-        
+
             this.get("boundingBox").plug(Y.Plugin.NodeFocusManager, {
                 descendants: ".yui3-option",
                 keys: {
                     next: "down:40",    // Down arrow
-                    previous: "down:38" // Up arrow 
+                    previous: "down:38" // Up arrow
                 },
                 circular: true
             });
@@ -179,7 +179,7 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
         });
     },
 
-    // Helper Method, to find the correct next sibling, taking into account nested ListBoxes    
+    // Helper Method, to find the correct next sibling, taking into account nested ListBoxes
     _selectNextSibling : function(item, direction) {
 
         var parent = item.get("parent"),
@@ -204,7 +204,7 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
         }
     },
 
-    // The markup template we use internally to render nested ListBox children    
+    // The markup template we use internally to render nested ListBox children
     NESTED_TEMPLATE : '<li class="{nestedOptionClassName}"><em class="{labelClassName}">{label}</em></li>',
 
     renderUI: function () {
@@ -217,7 +217,7 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
                     nestedOptionClassName : this.getClassName("option"),
                     label : this.get("label")
                 },
-                liHtml = Y.substitute(this.NESTED_TEMPLATE, tokens),
+                liHtml = Y.Lang.sub(this.NESTED_TEMPLATE, tokens),
                 li = Y.Node.create(liHtml),
 
                 boundingBox = this.get("boundingBox"),
@@ -237,18 +237,18 @@ Y.ListBox = Y.Base.create("listbox", Y.Widget, [Y.WidgetParent, Y.WidgetChild], 
 <p>The only static property we're interested in defining for the ListBox class is the `ATTRS` property. Comments inline below provide the background:</p>
 
 ```
-{ 
+{
     // Define any new attributes, or override existing ones
     ATTRS : {
 
         // We need to define the default child class to use,
-        // when we need to create children from the configuration 
+        // when we need to create children from the configuration
         // object passed to add or to the "children" attribute (which is provided by WidgetParent)
 
         // In this case, when a configuration object (e.g. { label:"My Option" }),
         // is passed into the add method,or as the value of the "children"
         // attribute, we want to create instances of Y.Option
-        defaultChildType: {  
+        defaultChildType: {
             value: "Option"
         },
 
@@ -304,12 +304,12 @@ Y.Option = Y.Base.create("option", Y.Widget, [Y.WidgetChild], {
 
 ```
 YUI.add('listbox', function(Y) {
- 
+
   Y.ListBox = ...
 
   Y.Option = ...
- 
-}, '3.1.0' ,{requires:['substitute', 'widget', 'widget-parent', 'widget-child', 'node-focusmanager']});
+
+}, '3.1.0' ,{requires:['widget', 'widget-parent', 'widget-child', 'node-focusmanager']});
 ```
 
 <h3>Using the Custom "listbox" Module</h3>
@@ -317,26 +317,26 @@ YUI.add('listbox', function(Y) {
 <p>To create an instance of a ListBox, we ask for the "listbox" module we packaged in the previous step, through `YUI().use("listbox")`:</p>
 
 ```
-    YUI({ 
+    YUI({
         modules: {
             "listbox": {
                 fullpath: "listbox.js",
-                requires: ["substitute", "widget", "widget-parent", "widget-child", "node-focusmanager"]
+                requires: ["widget", "widget-parent", "widget-child", "node-focusmanager"]
             }
         }
      }).use("listbox", function (Y) {
 
         // Create the top level ListBox instance, and start it off with
-        // 2 children (the defaultChildType will be used to create instances of Y.Option with the 
+        // 2 children (the defaultChildType will be used to create instances of Y.Option with the
         // children configuration passed in below).
 
-        var listbox = new Y.ListBox({  
-            id:"mylistbox", 
-            width:"13em", 
-            height:"15em", 
-            children: [ 
+        var listbox = new Y.ListBox({
+            id:"mylistbox",
+            width:"13em",
+            height:"15em",
+            children: [
                 { label: "Item One" },
-                { label: "Item Two" } 
+                { label: "Item Two" }
             ]
         });
 
@@ -347,36 +347,36 @@ YUI.add('listbox', function(Y) {
 <p>We can also use the `add` method provided by WidgetParent, to add children after contruction, and then render to the DOM:</p>
 
 ```
-    // Then we add a nested ListBox which itself has 2 children, using 
+    // Then we add a nested ListBox which itself has 2 children, using
     // the add API provided by WidgetParent
-    
-    listbox.add({ 
-        type: "ListBox", 
-        label: "Item Three", 
-        children: [ 
+
+    listbox.add({
+        type: "ListBox",
+        label: "Item Three",
+        children: [
             { label: "Item Three - One" },
-            { label: "Item Three - Two" } 
+            { label: "Item Three - Two" }
         ]
     });
 
     // One more Option child
-    
+
     listbox.add({ label: "Item Four" });
 
     // One more Option child, using providing an actual
     // instance, as opposed to just the configuration
-    
+
     listbox.add(
         new Y.Option({ label: "Item Five" })
     );
 
     // And finally, a last nested ListBox, again with
     // 2 children
-    
-    listbox.add({ 
-        type: "ListBox", 
-        label: "Item Six", 
-        children: [ 
+
+    listbox.add({
+        type: "ListBox",
+        label: "Item Six",
+        children: [
             { label: "Item Six - One" },
             { label: "Item Six - Two" }
         ]
@@ -408,7 +408,7 @@ YUI.add('listbox', function(Y) {
 
 ```
     .yui3-listbox {
-        padding:0;       
+        padding:0;
         margin: .25em;
         border: solid 1px #000;
         background-color:#fff;
@@ -421,7 +421,7 @@ YUI.add('listbox', function(Y) {
         border: none;
     }
 
-    .yui3-listbox .yui3-option, 
+    .yui3-listbox .yui3-option,
     .yui3-listbox .yui3-listbox-option {
         margin:0;
         padding:0;

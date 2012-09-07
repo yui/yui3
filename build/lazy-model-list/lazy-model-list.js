@@ -1,4 +1,4 @@
-YUI.add('lazy-model-list', function(Y) {
+YUI.add('lazy-model-list', function (Y, NAME) {
 
 /**
 Provides the LazyModelList class, which is a ModelList subclass that manages
@@ -480,4 +480,4 @@ Y.LazyModelList = Y.Base.create('lazyModelList', Y.ModelList, [], {
 });
 
 
-}, '@VERSION@' ,{requires:['model-list']});
+}, '@VERSION@', {"requires": ["model-list"]});

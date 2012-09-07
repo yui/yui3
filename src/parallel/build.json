@@ -1,0 +1,10 @@
+{
+    "name": "parallel",
+    "builds": {
+        "parallel": {
+            "jsfiles": [
+                "parallel.js"
+            ]
+        }
+    }
+}

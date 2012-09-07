@@ -1,4 +1,4 @@
-YUI.add('selector-css2', function(Y) {
+YUI.add('selector-css2', function (Y, NAME) {
 
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
@@ -442,4 +442,4 @@ if (Y.Selector.useNative && Y.config.doc.querySelector) {
 
 
 
-}, '@VERSION@' ,{requires:['selector-native']});
+}, '@VERSION@', {"requires": ["selector-native"]});

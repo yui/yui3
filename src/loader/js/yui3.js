@@ -1032,7 +1032,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -2192,8 +2191,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom",
             "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [
@@ -2455,4 +2453,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';

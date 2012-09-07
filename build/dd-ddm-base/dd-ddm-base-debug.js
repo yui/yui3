@@ -1,4 +1,4 @@
-YUI.add('dd-ddm-base', function(Y) {
+YUI.add('dd-ddm-base', function (Y, NAME) {
 
 
     /**
@@ -351,4 +351,4 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle', 'classnamemanager'], skinnable:false});
+}, '@VERSION@', {"requires": ["node", "base", "yui-throttle", "classnamemanager"]});

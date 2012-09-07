@@ -1,4 +1,4 @@
-YUI.add('dom-style', function(Y) {
+YUI.add('dom-style', function (Y, NAME) {
 
 (function(Y) {
 /** 
@@ -324,4 +324,4 @@ Y.Color = {
 
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@', {"requires": ["dom-base"]});

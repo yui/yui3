@@ -1,4 +1,4 @@
-YUI.add('pjax', function(Y) {
+YUI.add('pjax', function (Y, NAME) {
 
 /**
 Provides seamless, gracefully degrading Pjax (pushState + Ajax) functionality,
@@ -331,4 +331,4 @@ Y.Pjax = Y.Base.create('pjax', Y.Router, [Y.PjaxBase], {
 });
 
 
-}, '@VERSION@' ,{requires:['pjax-base', 'io-base']});
+}, '@VERSION@', {"requires": ["pjax-base", "io-base"]});

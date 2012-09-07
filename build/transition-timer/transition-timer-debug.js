@@ -1,4 +1,4 @@
-YUI.add('transition-timer', function(Y) {
+YUI.add('transition-timer', function (Y, NAME) {
 
 /**
 * Provides the base Transition class, for animating numeric properties.
@@ -331,4 +331,4 @@ Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.ri
 Y.Transition = Transition;
 
 
-}, '@VERSION@' ,{requires:['transition']});
+}, '@VERSION@', {"requires": ["transition"]});

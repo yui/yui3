@@ -327,7 +327,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3'],
+                core: ['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
@@ -1966,7 +1966,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function(Y) {
+YUI.add('yui-base', function (Y, NAME) {
 
 /*
  * YUI stub
@@ -2767,13 +2767,20 @@ use `clone()`.
 @return {Object} A new merged object.
 **/
 Y.merge = function () {
-    var args   = arguments,
-        i      = 0,
-        len    = args.length,
-        result = {};
+    var i      = 0,
+        len    = arguments.length,
+        result = {},
+        key,
+        obj;
 
     for (; i < len; ++i) {
-        Y.mix(result, args[i], true);
+        obj = arguments[i];
+
+        for (key in obj) {
+            if (hasOwn.call(obj, key)) {
+                result[key] = obj[key];
+            }
+        }
     }
 
     return result;
@@ -3830,8 +3837,8 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@' );
-YUI.add('get', function(Y) {
+}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
 
@@ -5098,8 +5105,8 @@ Transaction.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('features', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('features', function (Y, NAME) {
 
 var feature_tests = {};
 
@@ -5432,9 +5439,8 @@ add('load', '17', {
     "ua": "ie"
 });
 
-
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('intl-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('intl-base', function (Y, NAME) {
 
 /**
  * The Intl utility provides a central location for managing sets of
@@ -5521,8 +5527,8 @@ Y.mix(Y.namespace('Intl'), {
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-log', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
@@ -5631,8 +5637,8 @@ INSTANCE.message = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-later', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-later', function (Y, NAME) {
 
 /**
  * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
@@ -5708,8 +5714,8 @@ Y.Lang.later = Y.later;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('loader-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('loader-base', function (Y, NAME) {
 
 /**
  * The YUI loader core
@@ -5724,7 +5730,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.08.08-20-03',
+            GALLERY_VERSION = 'gallery-2012.09.05-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7121,7 +7127,7 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this, m, i, a, v, len, len2,
+        var self = this, m, m2, i, a, v, len, len2,
         r = self.required;
 
         if (!self.allowRollup) {
@@ -7131,11 +7137,11 @@ Y.Loader.prototype = {
                     if (m && m.use) {
                         len = m.use.length;
                         for (a = 0; a < len; a++) {
-                            m = self.getModule(m.use[a]);
-                            if (m && m.use) {
-                                len2 = m.use.length;
+                            m2 = self.getModule(m.use[a]);
+                            if (m2 && m2.use) {
+                                len2 = m2.use.length;
                                 for (v = 0; v < len2; v++) {
-                                    r[m.use[v]] = true;
+                                    r[m2.use[v]] = true;
                                 }
                             } else {
                                 r[m.use[a]] = true;
@@ -8477,8 +8483,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
 
-}, '@VERSION@' ,{requires:['get', 'features']});
-YUI.add('loader-rollup', function(Y) {
+}, '@VERSION@', {"requires": ["get", "features"]});
+YUI.add('loader-rollup', function (Y, NAME) {
 
 /**
  * Optional automatic rollup logic for reducing http connections
@@ -8579,8 +8585,8 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
-YUI.add('loader-yui3', function(Y) {
+}, '@VERSION@', {"requires": ["loader-base"]});
+YUI.add('loader-yui3', function (Y, NAME) {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.js */
 
@@ -9616,7 +9622,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -10776,8 +10781,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom",
             "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [
@@ -11039,11 +11043,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
-
-
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3']});
-
+}, '@VERSION@', {"requires": ["loader-base"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
