@@ -33,6 +33,7 @@ YUI.add('event-tap-tests', function(Y) {
                 'delegate tap': (Y.UA.phantomjs),
                 'touchmove/mousemove fired': (Y.UA.phantomjs),
                 'touchend not in same area': (Y.UA.ie === 9 || Y.UA.phantomjs),
+                'on tap': Y.UA.phantomjs
             }
         },
 
