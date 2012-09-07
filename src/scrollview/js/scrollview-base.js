@@ -136,8 +136,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Cache some attributes
         sv._cAxis = sv.get(AXIS);
-        sv._cDecel = sv.get(DECELERATION);
         sv._cBounce = sv.get(BOUNCE);
+        sv._cBounceRange = sv.get(BOUNCE_RANGE);
+        sv._cDeceleration = sv.get(DECELERATION);
+        sv._cFrameDuration = sv.get(FRAME_DURATION);
     },
 
     /**
@@ -556,7 +558,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // if a flick animation is in progress, cancel it
         if (sv._flickAnim) {
+            // Cancel and delete sv._flickAnim
             sv._flickAnim.cancel();
+            delete sv._flickAnim;
             sv._onTransEnd();
         }
 
@@ -708,19 +712,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var sv = this,
             gesture = sv._gesture,
             svAxis = sv._cAxis,
-            svAxisX = svAxis.x,
-            svAxisY = svAxis.y,
             flick = e.flick,
-            flickAxis = flick.axis;
+            flickAxis = flick.axis,
+            flickVelocity = flick.velocity,
+            axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
+            startPosition = sv.get(axisAttr);
 
         gesture.flick = flick;
 
-        // Cache frameDuration
-        sv._cFrameDuration = sv.get(FRAME_DURATION);
-
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
-        if ((flickAxis === DIM_X && svAxisX) || (flickAxis === DIM_Y && svAxisY)) {
-            sv._flickFrame(flick.velocity, flickAxis);
+        if (svAxis[flickAxis]) {
+            sv._flickFrame(flickVelocity, flickAxis, startPosition);
         }
     },
 
@@ -730,56 +732,70 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @method _flickFrame
      * @param velocity {Number} The velocity of this animated frame
      * @param flickAxis {String} The axis on which to animate
+     * @param startPosition {Number} The starting X/Y point to flick from
      * @protected
      */
-    _flickFrame: function (velocity, flickAxis) {
+    _flickFrame: function (velocity, flickAxis, startPosition) {
 
         var sv = this,
-            currentX = sv.get(SCROLL_X),
-            currentY = sv.get(SCROLL_Y),
-            minX = sv._minScrollX,
-            maxX = sv._maxScrollX,
-            minY = sv._minScrollY,
-            maxY = sv._maxScrollY,
-            deceleration = sv._cDecel,
+            axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
+
+            // Localize cached values
             bounce = sv._cBounce,
-            svAxis = sv._cAxis,
-            svAxisX = svAxis.x,
-            svAxisY = svAxis.y,
+            bounceRange = sv._cBounceRange,
+            deceleration = sv._cDeceleration,
             frameDuration = sv._cFrameDuration,
-            newX = currentX - (velocity * frameDuration),
-            newY = currentY - (velocity * frameDuration);
 
-        velocity *= deceleration;
+            // Calculate
+            velocity = velocity * deceleration,
+            newPosition = startPosition - (frameDuration * velocity),
 
-        // If we are out of bounds
-        if (sv._isOutOfBounds(currentX, currentY)) {
-            // We're past an edge, now bounce back
-            sv._snapBack();
+            // Some convinience conditions
+            min = flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY,
+            max = flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY,
+            belowMin       = (newPosition < min),
+            belowMax       = (newPosition < max),
+            belowMinRange  = (newPosition < (min - bounceRange)),
+            belowMaxRange  = (newPosition < (max + bounceRange)),
+            withinMinRange = (belowMin && (newPosition > (min - bounceRange))),
+            withinMaxRange = (aboveMax && (newPosition < (max + bounceRange))),
+            aboveMin       = (newPosition > min),
+            aboveMax       = (newPosition > max),
+            aboveMaxRange  = (newPosition > (max + bounceRange)),
+            aboveMinRange  = (newPosition > (min - bounceRange)),
+            tooSlow;
+
+        // If we're within the range but outside min/max, dampen the velocity
+        if (withinMinRange || withinMaxRange) {
+            velocity *= bounce;
         }
-        
-        // If the velocity gets slow enough, just stop
-        else if (Math.abs(velocity).toFixed(4) <= 0.015) {
-            sv._onTransEnd();
+
+        // Is the velocity too slow to bother?
+        tooslow = (Math.abs(velocity).toFixed(4) < 0.015);
+
+        // If the velocity is too slow or we're outside the range
+        if (tooslow || belowMinRange || aboveMaxRange) {
+            
+            // Cancel and delete sv._flickAnim
+            sv._flickAnim && sv._flickAnim.cancel();
+            delete sv._flickAnim;
+
+            // If we're inside the scroll area, just end
+            if (aboveMin && belowMax) {
+                sv._onTransEnd();
+            }
+
+            // We're outside the scroll area, so we need to snap back
+            else {
+                sv._snapBack();
+            }
         }
 
         // Otherwise, animate to the next frame
         else {
-            if (flickAxis === DIM_X && svAxisX) {
-                if (newX < minX || newX > maxX) {
-                    velocity *= bounce;
-                }
-                sv.set(SCROLL_X, newX);
-            }
-            else if (flickAxis === DIM_Y && svAxisY) {
-                if (newY < minY || newY > maxY) {
-                    velocity *= bounce;
-                }
-                sv.set(SCROLL_Y, newY);
-            }
-
             // @TODO: maybe use requestAnimationFrame instead
-            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity, flickAxis]);
+            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [velocity, flickAxis, newPosition]);
+            sv.set(axisAttr, newPosition);
         }
     },
 
@@ -830,8 +846,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * Checks to see the current scrollX/scrollY position beyond the min/max boundary
      *
      * @method _isOutOfBounds
-     * @param x {Number} The X position to check
-     * @param y {Number} The Y position to check
+     * @param x {Number} [optional] The X position to check
+     * @param y {Number} [optional] The Y position to check
      * @returns {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
@@ -996,6 +1012,18 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _afterScrollEnd: function (e) {
         var sv = this;
+
+        // Cancel the flick (if it exists)
+        // @TODO: Move to sv._cancelFlick()
+        sv._flickAnim && sv._flickAnim.cancel();
+
+        // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
+        delete sv._flickAnim;
+
+        // If for some reason we're OOB, snapback
+        if (sv._isOutOfBounds()) {
+            sv._snapBack();
+        }
 
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
         // because _gesture is being deleted after the previous one has been overwritten
