@@ -16,7 +16,12 @@
  * @module event-gestures
  * @submodule event-flick
  */
-var EVENT = {},
+var GESTURE_MAP = Y.Event._GESTURE_MAP,
+    EVENT = {
+        start: GESTURE_MAP.start,
+        end: GESTURE_MAP.end,
+        move: GESTURE_MAP.move
+    },
     START = "start",
     END = "end",
     MOVE = "move",
@@ -32,22 +37,6 @@ var EVENT = {},
     _FLICK_MOVE_HANDLE = "_fmh",
 
     NODE_TYPE = "nodeType";
-
-    if ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
-        EVENT.start = "touchstart";
-        EVENT.end = "touchend";
-        EVENT.move = "touchmove";
-    }
-    else if ("msPointerEnabled" in Y.config.win) {
-        EVENT.start = "MSPointerDown";
-        EVENT.end = "MSPointerUp";
-        EVENT.move = "MSPointerMove";
-    }
-    else {
-        EVENT.start = "mousedown";
-        EVENT.end = "mouseup";
-        EVENT.move = "mousemove";
-    }
 
 /**
  * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
