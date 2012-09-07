@@ -67,7 +67,7 @@
                 bubbleTarget: del,
                 groups: del.dd.get('groups')
             });
-            this.drop.on('drop:over', Y.bind(this._onDropOver, this));
+            this.drop.on('drop:enter', Y.bind(this._onDropEnter, this));
             
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
@@ -92,14 +92,17 @@
         },
         /**
         * @private
-        * @method _onDropOver
+        * @method _onDropEnter
         * @param Event e The Event Object
-        * @description Handles the DropOver event to append a drop node to an empty target
+        * @description Handles the DropEnter event to append a new node to a target.
         */
-        _onDropOver: function(e) {
-            if (!e.drop.get(NODE).test(this.get(NODES))) {
-                var nodes = e.drop.get(NODE).all(this.get(NODES));
-                e.drop.get(NODE).append(e.drag.get(NODE));
+        _onDropEnter: function(e) {
+            var dropNode = e.drop.get(NODE),
+                dragNode = e.drag.get(NODE);
+
+            if (!dropNode.test(this.get(NODES)) &&
+                !dragNode.get(PARENT_NODE).compareTo(dropNode)) {
+                dropNode.append(dragNode);
             }
         },
         /**
