@@ -1,0 +1,30 @@
+{
+    "name": "collection",
+    "builds": {
+        "arraylist-filter": {
+            "jsfiles": [
+                "arraylist-filter.js"
+            ]
+        },
+        "arraylist": {
+            "jsfiles": [
+                "arraylist.js"
+            ]
+        },
+        "arraylist-add": {
+            "jsfiles": [
+                "arraylist-add.js"
+            ]
+        },
+        "array-extras": {
+            "jsfiles": [
+                "array-extras.js"
+            ]
+        },
+        "array-invoke": {
+            "jsfiles": [
+                "invoke.js"
+            ]
+        }
+    }
+}

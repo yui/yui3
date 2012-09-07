@@ -1,4 +1,4 @@
-YUI.add('recordset-indexer', function(Y) {
+YUI.add('recordset-indexer', function (Y, NAME) {
 
 /**
  * Provides the ability to store multiple custom hash tables referencing records in the recordset.
@@ -224,4 +224,4 @@ Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
 
 
 
-}, '@VERSION@' ,{requires:['recordset-base','plugin']});
+}, '@VERSION@', {"requires": ["recordset-base", "plugin"]});

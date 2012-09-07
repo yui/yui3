@@ -3570,6 +3570,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datatable-core",
             "datatable-table",
+            "datatable-head",
+            "datatable-body",
             "base-build",
             "widget"
         ],

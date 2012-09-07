@@ -1,4 +1,4 @@
-YUI.add('datatable-base', function(Y) {
+YUI.add('datatable-base', function (Y, NAME) {
 
 /**
 A Widget for displaying tabular data.  The base implementation of DataTable
@@ -680,4 +680,4 @@ Y.DataTable = Y.mix(
     Y.DataTable); // Migrate static and namespaced classes
 
 
-}, '@VERSION@' ,{requires:['datatable-core', 'base-build', 'widget', 'datatable-head', 'datatable-body']});
+}, '@VERSION@', {"requires": ["datatable-core", "datatable-table", "datatable-head", "datatable-body", "base-build", "widget"], "skinnable": true});

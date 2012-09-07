@@ -1,4 +1,4 @@
-YUI.add('datatable-core', function(Y) {
+YUI.add('datatable-core', function (Y, NAME) {
 
 /**
 The core implementation of the `DataTable` and `DataTable.Base` Widgets.
@@ -912,4 +912,4 @@ Y.mix(Table.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['escape','model-list','node-event-delegate']});
+}, '@VERSION@', {"requires": ["escape", "model-list", "node-event-delegate"]});

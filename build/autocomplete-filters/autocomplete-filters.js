@@ -1,4 +1,4 @@
-YUI.add('autocomplete-filters', function(Y) {
+YUI.add('autocomplete-filters', function (Y, NAME) {
 
 /**
 Provides pre-built result matching filters for AutoComplete.
@@ -236,4 +236,4 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'text-wordbreak']});
+}, '@VERSION@', {"requires": ["array-extras", "text-wordbreak"]});
