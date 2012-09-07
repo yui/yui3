@@ -3642,18 +3642,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "datatype": {
         "use": [
-            "datatype-number",
             "datatype-date",
+            "datatype-number",
             "datatype-xml"
         ]
     },
     "datatype-date": {
-        "supersedes": [
-            "datatype-date-format"
-        ],
         "use": [
             "datatype-date-parse",
-            "datatype-date-format"
+            "datatype-date-format",
+            "datatype-date-math"
         ]
     },
     "datatype-date-format": {
@@ -5293,7 +5291,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
+YUI.Env[Y.version].md5 = 'd8f930703362b77832eb9eaa4f3ce411';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
