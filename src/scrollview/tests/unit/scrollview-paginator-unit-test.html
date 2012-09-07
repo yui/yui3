@@ -234,6 +234,46 @@
 					});
 
 					Test.wait(2000);
+				},
+
+				"optimizeMemory should hide nodes not near the viewport": function() {
+
+					var Test = this,
+						scrollview = renderNewScrollview(false, 0, true),
+						distance = 100;
+
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							var index = scrollview.pages.get('index'),
+								total = scrollview.pages.get('total'),
+								pageNodes = scrollview.pages._getPageNodes();
+
+							if (node = pageNodes.item(index-3)) { Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden')); }
+							if (node = pageNodes.item(index-2)) { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
+							if (node = pageNodes.item(index-1)) { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
+							if (node = pageNodes.item(index))   { Y.Assert.isFalse(node.hasClass('yui3-scrollview-hidden')); }
+							if (node = pageNodes.item(index+1)) { Y.Assert.isTrue(node.hasClass('yui3-scrollview-hidden')); }
+
+							if (index+1 < total) {
+								scrollview.get('contentBox').simulateGesture('move', {
+			                        path: {
+			                            xdist: -5
+			                        },
+			                        duration: DURATION
+								});
+								Test.wait(500);
+							}
+						})
+					});
+
+					scrollview.get('contentBox').simulateGesture('move', {
+						path: {
+							xdist: -1
+						},
+						duration: DURATION
+					});
+
+					Test.wait(500);
 				}
 
 				/*
@@ -257,7 +297,7 @@
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
-			function renderNewScrollview (vertical, startIndex) {
+			function renderNewScrollview (vertical, startIndex, optimizeMemory) {
 
 				var config = {},
 					guid = Y.guid(),
@@ -283,7 +323,7 @@
                     fn:Y.Plugin.ScrollViewPaginator,
                     cfg:{
                     	index: startIndex || 0,
-                        optimizeMemory: false,
+                        _optimizeMemory: optimizeMemory || false,
                         axis: axis,
                         selector:">ul>li"
                     }
