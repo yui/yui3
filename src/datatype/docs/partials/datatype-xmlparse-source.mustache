@@ -17,7 +17,7 @@ YUI().use("node", "datatype-xml", function (Y) {
     Y.on("click", function(e){
         e.preventDefault();
         var input = Y.one("#demo_input").get("value"),
-            output = Y.DataType.XML.parse(input);
+            output = Y.XML.parse(input);
                 
         if(output === "") {
             output += "(Invalid value)"

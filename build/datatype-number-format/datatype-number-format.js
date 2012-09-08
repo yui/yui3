@@ -1,28 +1,29 @@
-YUI.add('datatype-number-format', function(Y) {
+YUI.add('datatype-number-format', function (Y, NAME) {
 
 /**
- * Number submodule.
+ * The Number Utility provides type-conversion and string-formatting
+ * convenience methods for Numbers.
  *
- * @module datatype
- * @submodule datatype-number
+ * @module datatype-number
+ * @main datatype-number
  */
 
 /**
  * Format number submodule.
  *
- * @module datatype
+ * @module datatype-number
  * @submodule datatype-number-format
  */
  
 /**
- * DataType.Number provides a set of utility functions to operate against Number objects.
+ * Number provides a set of utility functions to operate against Number objects.
  *
- * @class DataType.Number
+ * @class Number
  * @static
  */
 var LANG = Y.Lang;
 
-Y.mix(Y.namespace("DataType.Number"), {
+Y.mix(Y.namespace("Number"), {
      /**
      * Takes a Number and formats to string for display to user.
      *
@@ -100,5 +101,8 @@ Y.mix(Y.namespace("DataType.Number"), {
     }
 });
 
+Y.namespace("DataType");
+Y.DataType.Number = Y.Number;
 
-}, '@VERSION@' );
+
+}, '@VERSION@');

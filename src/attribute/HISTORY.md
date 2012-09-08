@@ -1,6 +1,12 @@
 Attribute Change History
 ========================
 
+3.7.0
+-----
+
+ * Contributed by rgrove: Removed unused call to `get` in `getAttrs()`,
+   improving `getAttrs()` performance.
+
 3.6.0
 -----
 
