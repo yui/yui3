@@ -16,7 +16,7 @@ Links
   * [Contributor Info](http://yuilibrary.com/contribute/)
   * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
   * [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
-  * [Shifter, for building YUI](https://github.com/davglass/shifter)
+  * [Shifter, for building YUI](http://yui.github.com/yui/shifter)
 
 
 Source Info
@@ -67,9 +67,7 @@ The YUI source tree includes the following directories:
      modifications to the library and its documentation should take place in
      this directory.
 
-The individual component directories under the `src` directory contain either
-Ant build files (`build.xml`) or the newer `build.json` file. To build YUI
-components, download and install [Shifter](https://github.com/davglass/shifter)
+To build YUI components install [Shifter](http://yui.github.com/shifter) (`npm -g install shifter`)
 and then simply run `shifter` in that components directory.
 
 Shifter also allows you to rebuild the entire YUI src tree:
