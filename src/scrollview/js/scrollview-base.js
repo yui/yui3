@@ -166,7 +166,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Recalculate dimension properties
         // TODO: This should be throttled.
-        Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
+        // Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
     },
 
     /**
