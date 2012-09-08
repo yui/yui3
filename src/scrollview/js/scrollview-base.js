@@ -164,22 +164,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._fixIESelect(sv._bb, sv._cb);
         }
 
-        // Recalculate dimension properties
-        // TODO: This should be throttled.
-        // Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
-    },
-
-    /**
-     * 
-     *
-     * @method _bindAttrs
-     * @private
-     */
-    _bindAttrs: function () {
-        var sv = this,
-            scrollChangeHandler = sv._afterScrollChange,
-            dimChangeHandler = sv._afterDimChange;
-
         // Set any deprecated static properties
         if (ScrollView.SNAP_DURATION) {
             sv.set(SNAP_DURATION, ScrollView.SNAP_DURATION);
@@ -200,6 +184,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (ScrollView.BOUNCE_RANGE) {
             sv.set(BOUNCE_RANGE, ScrollView.BOUNCE_RANGE);
         }
+
+        // Recalculate dimension properties
+        // TODO: This should be throttled.
+        // Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
+    },
+
+    /**
+     * Bind event listeners
+     *
+     * @method _bindAttrs
+     * @private
+     */
+    _bindAttrs: function () {
+        var sv = this,
+            scrollChangeHandler = sv._afterScrollChange,
+            dimChangeHandler = sv._afterDimChange;
 
         // Bind any change event listeners
         sv.after({
