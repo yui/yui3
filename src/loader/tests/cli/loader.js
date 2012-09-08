@@ -2377,6 +2377,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1, "Module (node-screen) not found in sorted array");
         },
+     "Testing node-scroll-info": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-scroll-info"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-scroll-info")) > -1, "Module (node-scroll-info) not found in sorted array");
+        },
      "Testing node-style": function(data) {
             var loader = new Y.Loader({
                 require: ["node-style"],
