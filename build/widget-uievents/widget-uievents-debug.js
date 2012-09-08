@@ -1,4 +1,4 @@
-YUI.add('widget-uievents', function(Y) {
+YUI.add('widget-uievents', function (Y, NAME) {
 
 /**
  * Support for Widget UI Events (Custom Events fired by the widget, which wrap the underlying DOM events - e.g. widget:click, widget:mousedown)
@@ -224,4 +224,4 @@ Y.mix(Widget.prototype, {
 }, true); // overwrite existing EventTarget methods
 
 
-}, '@VERSION@' ,{requires:['widget-base', 'node-event-delegate']});
+}, '@VERSION@', {"requires": ["node-event-delegate", "widget-base"]});

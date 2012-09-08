@@ -1,4 +1,4 @@
-YUI.add('widget-base-ie', function(Y) {
+YUI.add('widget-base-ie', function (Y, NAME) {
 
 /**
  * IE specific support for the widget-base module.
@@ -46,4 +46,4 @@ Y.Widget.prototype._uiSizeCB = function(expand) {
 };
 
 
-}, '@VERSION@' ,{requires:['widget-base']});
+}, '@VERSION@', {"requires": ["widget-base"]});
