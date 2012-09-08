@@ -4,6 +4,7 @@ Event Infrastructure Change History
 3.7.0
 -----
 
+<<<<<<< HEAD
 * Changed event-synthetic, to support CustomEvent performance optimizations.
 
   Mainly the deprecation of CustomEvent subscribers and afters instance properties,
@@ -11,6 +12,10 @@ Event Infrastructure Change History
   by a public API method call.
 
   See src/event-custom/HISTORY.md for more details about the deprecated properties.
+=======
+* 'event-tap' added to support fast-click on touch devices
+
+>>>>>>> master
 
 3.6.1
 -----

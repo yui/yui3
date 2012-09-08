@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <meta name="viewport" content="width=device-width">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #log {
+            background: #fff;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            width: 99%;
+            _position: absolute;
+        }
+
+        .buffer {
+            height: 10000px;
+            width: 10000px;
+        }
+
+        .container {
+            height: 100px;
+            overflow: scroll;
+            position: absolute;
+            visibility: hidden;
+            width: 100px;
+        }
+
+        .marker {
+            background: #666;
+            border: 1px solid #000;
+            height: 16px;
+            font-size: 0;
+            position: absolute;
+            width: 16px;
+            visibility: hidden;
+        }
+
+        .bottom { bottom: 10000px; }
+        .right { left: 9950px; }
+
+        .positioned {
+            height: 142px;
+            left: 42px;
+            margin: 0;
+            position: absolute;
+            width: 142px;
+            top: 42px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div id="scroll-test" class="container">
+    <div id="scroll-test-top" class="marker test top"></div>
+    <div id="scroll-test-left" class="marker test left"></div>
+    <div id="scroll-test-right" class="marker test right">right</div>
+    <div class="buffer test"></div>
+    <div id="scroll-test-bottom" class="marker test bottom"></div>
+</div>
+
+<div id="body-test-top" class="marker body top"></div>
+<div id="body-test-left" class="marker body left"></div>
+<div id="body-test-right" class="marker body right"></div>
+<div class="buffer body"></div>
+<div id="body-test-bottom" class="marker body bottom"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'node-scroll-info-test': {
+            fullpath: './assets/node-scroll-info-test.js',
+            requires: ['node-scroll-info', 'test']
+        }
+    },
+    useBrowserConsole: false
+}).use('node-scroll-info-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.setName('ScrollInfo');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

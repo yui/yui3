@@ -1,20 +1,14 @@
 {
     "name": "uploader",
     "builds": {
+        "uploader": {
+            "jsfiles": [
+                "uploader.js"
+            ]
+        },
         "uploader-queue": {
             "jsfiles": [
                 "uploader-queue.js"
-            ]
-        },
-        "uploader": {
-            "copy": [
-                [
-                    "as/flashuploader.swf",
-                    "../../build/uploader/assets/flashuploader.swf"
-                ]
-            ],
-            "jsfiles": [
-                "uploader.js"
             ]
         },
         "uploader-html5": {

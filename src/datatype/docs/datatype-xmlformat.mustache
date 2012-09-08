@@ -11,7 +11,7 @@
     {{>datatype-xmlformat-source}}
 </div>
 
-<p>To output an XML document as a string, simply call the <code>format()</code> function of the DataType.XML class:</p>
+<p>To output an XML document as a string, simply call the <code>format()</code> function of the Y.XML class:</p>
 
 ```
 YUI().use("datatype-xml", function(Y) {
@@ -31,8 +31,8 @@ YUI().use("datatype-xml", function(Y) {
             '</item>' +
         '</myroot>';
 
-    var myXMLDoc = Y.DataType.XML.parse(xmlString);
+    var myXMLDoc = Y.XML.parse(xmlString);
 
-    alert(Y.DataType.XML.format(myXMLDoc));
+    alert(Y.XML.format(myXMLDoc));
 });
 ```

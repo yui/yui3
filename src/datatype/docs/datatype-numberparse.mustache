@@ -12,11 +12,11 @@
     {{>datatype-numberparse-source}}
 </div>
 
-<p>To convert a data value to a number, simply call the `parse()` function of the DataType.Number class:</p>
+<p>To convert a data value to a number, simply call the `parse()` function of the Y.Number class:</p>
 
 ```
 YUI().use("datatype-number", function(Y) {
-    var output = Y.DataType.Number.parse("123123.123");
+    var output = Y.Number.parse("123123.123");
     // output is the number 123123.123
 });
 ```
@@ -25,16 +25,16 @@ YUI().use("datatype-number", function(Y) {
 
 ```
 YUI().use("datatype-number", function(Y) {
-    var output = Y.DataType.Number.parse("$100");
+    var output = Y.Number.parse("$100");
     // output is null
 
-    output = Y.DataType.Number.parse("20 dollars");
+    output = Y.Number.parse("20 dollars");
     // output is null
 
-    output = Y.DataType.Number.parse("3,000,000.12");
+    output = Y.Number.parse("3,000,000.12");
     // output is null (it's the commas)
 
-    output = Y.DataType.Number.parse(new Date("Jan 1, 2000"));
+    output = Y.Number.parse(new Date("Jan 1, 2000"));
     // output is 946713600000
 
 });

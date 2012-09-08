@@ -1,14 +1,14 @@
 {
     "name": "event-gestures",
     "builds": {
-        "event-flick": {
-            "jsfiles": [
-                "Flick.js"
-            ]
-        },
         "event-move": {
             "jsfiles": [
                 "Move.js"
+            ]
+        },
+        "event-flick": {
+            "jsfiles": [
+                "Flick.js"
             ]
         }
     }

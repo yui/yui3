@@ -1,14 +1,19 @@
 {
     "name": "event",
     "builds": {
-        "event-hover": {
+        "event-touch": {
             "jsfiles": [
-                "hover.js"
+                "event-facade-dom-touch.js"
             ]
         },
-        "event-delegate": {
+        "event-tap": {
             "jsfiles": [
-                "delegate.js"
+                "tap.js"
+            ]
+        },
+        "event-synthetic": {
+            "jsfiles": [
+                "synthetic.js"
             ]
         },
         "event-resize": {
@@ -16,14 +21,9 @@
                 "resize-window.js"
             ]
         },
-        "event-focus": {
+        "event-outside": {
             "jsfiles": [
-                "focusblur.js"
-            ]
-        },
-        "event-touch": {
-            "jsfiles": [
-                "event-facade-dom-touch.js"
+                "outside.js"
             ]
         },
         "event-mousewheel": {
@@ -36,27 +36,29 @@
                 "mouseentermouseleave.js"
             ]
         },
+        "event-key": {
+            "jsfiles": [
+                "key.js"
+            ]
+        },
+        "event-hover": {
+            "jsfiles": [
+                "hover.js"
+            ]
+        },
+        "event-focus": {
+            "jsfiles": [
+                "focusblur.js"
+            ]
+        },
+        "event-delegate": {
+            "jsfiles": [
+                "delegate.js"
+            ]
+        },
         "event-contextmenu": {
             "jsfiles": [
                 "contextmenu.js"
-            ]
-        },
-        "event-outside": {
-            "jsfiles": [
-                "outside.js"
-            ]
-        },
-        "event-base-ie": {
-            "prependfiles": [
-                "js/event-ready-base-ie.js"
-            ],
-            "jsfiles": [
-                "event-facade-dom-ie.js"
-            ]
-        },
-        "event-synthetic": {
-            "jsfiles": [
-                "synthetic.js"
             ]
         },
         "event-base": {
@@ -70,9 +72,12 @@
                 "available.js"
             ]
         },
-        "event-key": {
+        "event-base-ie": {
+            "prependfiles": [
+                "js/event-ready-base-ie.js"
+            ],
             "jsfiles": [
-                "key.js"
+                "event-facade-dom-ie.js"
             ]
         }
     }
