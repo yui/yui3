@@ -3,68 +3,35 @@ ScrollView Change History
 
 3.7.0
 -----
-  * Added: scrollX and scrollY now have a setter to check if the widget is disabled
 
-  * Fix: Bounded minScrollX, maxScrollX, and maxScrollY so they cannot be invalid numbers when auto-calculated
-
-  * Fix: `bounce` and `bounceRange` are properly supported again (missing in 3.7.0pr1)
-
-  * Fix: Refactored _flickFrame to do less ATTR lookups for performance reasons
-
-  * Added: _flickFrame now requires 2nd param (the axis to animate on)
-
-  * Fix: Improved gesture event detachment
-
-  * Moved: _isOOB to _isOutOfBounds, along with caching tweak
-
-  * Moved: SNAP_DURATION static property (deprecated) to 'snapDuration' ATTR
-
-  * Moved: SNAP_EASING static property (deprecated) to 'snapEasing' ATTR
-  
-  * Moved: EASING static property (deprecated) to 'easing' ATTR
-  
-  * Moved: FRAME_STEP static property (deprecated) to 'frameDuration' ATTR
-  
-  * Moved: BOUNCE_RANGE static property (deprecated) to 'bounceRange' ATTR
-
-  * Renamed: Renamed ScrollView Paginator's optimizeMemory to _optimizeMemory, and padding to _pageBuffer
-
-  * Fix: ScrollView did not obey SNAP_EASING property
-
-  * Fix: Host flick axis was improperly set to opposite axis of paginated axis (#2532723)
-
-  * Fix: Current offset was not stored when canceling a flick (#2532722)
-
-  * Renamed: scrollview.pages.cards (added in 3.6.1) to scrollview.pages._dims
-
-  * Added: Exposed mousewheel support as a static property at Y.ScrollView.MOUSEWHEEL.  Default: enabled
-
-  * Fix: Reimplemented lastScrolledAmt (removed between 3.6.0 and 3.6.1) (#2532724)
-
-  * Moved: scrollview.axis and paginator.axis to writeOnce attributes
-  
-  * Added: scrollview._cAxis and scrollview.pages._cAxis as cached axis values
-  
-  * Removed: scrollview._scrollHeight and scrollview._scrollWidth
-
-  * Added: Forced-Axis and Dual-Axis Support - ScrollView now has an optional axis property that can be declared with values: "x", "y", or "xy". (#2532631)
+  * Added Forced-Axis and Dual-Axis Support. ScrollView now has an (optional) `axis` 
+    property that can be declared with values: `x`, `y`, or `xy`. (#2532631)
 
   * Added: Initial support for RTL (Right-To-Left) layouts (#2531874).
 
+  * Added: Unit test coverage for scrollview-base and scrollview-paginator (#2532288, #2532287)
+
   * Moved: Paginator’s scrollTo() method has been deprecated and replaced with scrollToIndex. (##2530145)
 
-  * Fix: Improved reliability of the scrollEnd event. It now only fires once per scrolling sequence, instead of multiple times. 
+  * Moved the following ScrollView static properties (now deprecated) to instance attributes for more control
+    SNAP_DURATION to 'snapDuration'
+    SNAP_EASING to 'snapEasing'
+    EASING to 'easing'
+    FRAME_STEP to 'frameDuration'
+    BOUNCE_RANGE to 'bounceRange'
 
-  * Fix: Multiple listeners could sometimes be added for drag and flick events.
+  * Fix: Mousewheel events now properly update the `scrollY` attribute.
+  
+  * Fix: Improved reliability of the scrollEnd event. Now it now only fires 
+    once per scrolling sequence, instead of sometimes twice. 
 
-  * Fix: Mousewheel events now properly update the 'scrollY' attribute.
+  * Fix: Resolved issue where multiple listeners could sometimes be added for drag and flick events.
+  
+  * Fix: Improved gesture event detachment
 
-  * Fix: Bug where scrollview.pages.scrollTo may not actually scroll to the desired page, or may cause a lock-up of the widget.
+  * Fix: Refactored _flickFrame to do less attribute lookups, helpful for performance reasons
 
-  * Added: Unit test coverage on scrollview-base and scrollview-paginator are both at 80+% (#2532288, #2532287)
-
-  * Detailed overview of all 3.7.0pr1 changes (including protected/private) @ https://gist.github.com/3522590
-
+  * Fix: Resolved issue where scrollview.pages.scrollTo may not actually scroll to the desired page, or may cause a lock-up of the widget.
 
 3.6.0
 -----
@@ -80,6 +47,7 @@ ScrollView Change History
 -----
 
   * Allow scrollbar to work with non-px width scrollviews
+  
   * Added mousewheel support (#2529136)
 
 3.4.1
