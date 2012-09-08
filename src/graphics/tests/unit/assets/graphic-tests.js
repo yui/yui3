@@ -1,6 +1,20 @@
 YUI.add('graphic-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Graphics: RoundedRect");
+var suite = new Y.Test.Suite("Graphics: Graphic");
+    ENGINE = "vml",
+    DOCUMENT = Y.config.doc,
+	svg = DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"),
+    canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+    DEFAULTENGINE = Y.config.defaultGraphicEngine;
+
+if((canvas && canvas.getContext && canvas.getContext("2d")) && (DEFAULTENGINE == "canvas" || !svg))
+{
+    ENGINE = "canvas";
+}
+else if(svg)
+{
+    ENGINE = "svg";
+}
 
 function RoundedRect()
 {
@@ -54,9 +68,13 @@ var GraphicTestTemplate = function(cfg, globalCfg) {
 };
 
 Y.extend(GraphicTestTemplate, Y.Test.Case, {
+    graphicWidth: 500,
+
+    graphicHeight: 400,
+
     setUp: function () {
         Y.one("body").append('<div id="testbed"></div>');
-        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:500px;height:400px" id="graphiccontainer"></div>');
+        Y.one("#testbed").setContent('<div style="position:absolute;top:0px;left:0px;width:' + this.graphicWidth + 'px;height:' + this.graphicHeight + 'px" id="graphiccontainer"></div>');
         this.graphic = new Y.Graphic(this.attrCfg);
     },
 
@@ -390,7 +408,128 @@ graphicTestXY = new Y.GraphicTestTemplate({}, {
         Y.Assert.areEqual(testX, xy[0], "The page x coordinate should be " + testX + ".");
         Y.Assert.areEqual(testY, xy[1], "The page y coordinate should be " + testY + ".");
     }
-});
+}),
+
+GETDIMENSIONS = function(graphic)
+{
+    var node,
+        dimensions,
+        bounds,
+        w,
+        h,
+        transform,
+        matrix;
+    if(ENGINE == "anvas")
+    {
+        node = Y.one(graphic.get("node"));
+        transform = node.getStyle("transform");
+        w = parseFloat(node.getComputedStyle("width"));
+        h = parseFloat(node.getComputedStyle("height"));
+        matrix = new Y.Matrix();
+        matrix.applyCSSText(transform);
+        bounds = matrix.getContentRect(w, h);
+        dimensions = {
+            //width: bounds.right - bounds.left,
+            //height: bounds.bottom - bounds.top
+            width: node.get("offsetWidth"),
+            height: node.get("offsetHeight")
+        }
+    }
+    else
+    {
+        node = Y.one(graphic._contentNode);
+        w = parseFloat(node.getComputedStyle("width"));
+        h = parseFloat(node.getComputedStyle("height"));
+        dimensions = {
+            width: w,
+            height : h
+        }
+    }
+    return dimensions;
+},
+
+autoSizeContentToGraphic = function(name, w, h)
+{
+
+    return new Y.GraphicTestTemplate({
+    }, {
+        graphicWidth: w,
+
+        graphicHeight: h,
+
+        name: name,
+
+        testDefault: function()
+        {
+            var mygraphic = this.graphic,
+                node = (ENGINE == "svg") ? Y.one(mygraphic._contentNode) : Y.one(mygraphic.get("node")),
+                width,
+                height;
+                rect= mygraphic.addShape({
+                    type: "rect",
+                    width: 800,
+                    height: 800,
+                    fill: {
+                        color: "#f00"
+                    },
+                    stroke: {
+                        color: "#00f",
+                        weight: 1
+                    }
+                });
+            mygraphic.set("autoSize", "sizeContentToGraphic");
+            width = parseFloat(node.getComputedStyle("width"));
+            height = parseFloat(node.getComputedStyle("height"));
+            Y.Assert.areEqual(this.graphicWidth, width, "The graphic width should be " + this.graphicWidth + ". The actual value is " + width + ".");
+            Y.Assert.areEqual(this.graphicHeight, height, "The graphic height should be " + this.graphicHeight + ". The actual value is " + height + ".");
+        }
+    });
+},
+
+autoSizeContentToGraphicOverloadedSetter = function(name, w, h, preserveAspectRatio, resizeDown)
+{
+    return new Y.GraphicTestTemplate({
+    }, {
+        graphicWidth: w,
+
+        graphicHeight: h,
+
+        name: name,
+
+        resizeDown: resizeDown,
+
+        preserveAspectRatio: preserveAspectRatio,
+
+        testDefault: function()
+        {
+            var mygraphic = this.graphic,
+                node = (ENGINE == "svg") ? Y.one(mygraphic._contentNode) : Y.one(mygraphic.get("node")),
+                width,
+                height;
+                rect= mygraphic.addShape({
+                    type: "rect",
+                    width: 800,
+                    height: 800,
+                    fill: {
+                        color: "#f00"
+                    },
+                    stroke: {
+                        color: "#00f",
+                        weight: 1
+                    }
+                });
+            mygraphic.set({
+                autoSize: "sizeContentToGraphic",
+                resizeDown: this.resizeDown,
+                preserveAspectRatio: this.preserveAspectRatio
+            });
+            width = parseFloat(node.getComputedStyle("width"));
+            height = parseFloat(node.getComputedStyle("height"));
+            Y.Assert.areEqual(this.graphicWidth, width, "The graphic width should be " + this.graphicWidth + ". The actual value is " + width + ".");
+            Y.Assert.areEqual(this.graphicHeight, height, "The graphic height should be " + this.graphicHeight + ". The actual value is " + height + ".");
+        }
+    });
+};
 
 
 suite.add(batchTest("rect"));
@@ -418,6 +557,48 @@ suite.add(addAndRemoveShapes("AddAndRemoveShapes", {visible: false}));
 suite.add(addAndRemoveShapesById("AddAndRemoveShapesById", {resizeDown: false}));
 suite.add(toggleVisibleTest("ToggleVisibleTest"));
 suite.add(addAndRemoveShapesAndTestIds("TestGraphic.getShapeById()"));
+suite.add(autoSizeContentToGraphic("SizeDownWide", 400, 300));
+suite.add(autoSizeContentToGraphic("SizeDownTall", 300, 400));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioNone", 400, 300, "none", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioNoneResizeDown", 400, 300, "none", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMinYMin", 400, 300, "xMinYMin", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMinYMinResizeDown", 400, 300, "xMinYMin", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMidYMin", 400, 300, "xMidYMin", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMidYMinResizeDown", 400, 300, "xMidYMin", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMaxYMin", 400, 300, "xMaxYMin", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMaxYMinResizeDown", 400, 300, "xMaxYMin", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMinYMid", 400, 300, "xMinYMid", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMinYMidResizeDown", 400, 300, "xMinYMid", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMidYMid", 400, 300, "xMidYMid", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMidYMidResizeDown", 400, 300, "xMidYMid", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMaxYMid", 400, 300, "xMaxYMid", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMaxYMidResizeDown", 400, 300, "xMaxYMid", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMinYMax", 400, 300, "xMinYMax", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMinYMaxResizeDown", 400, 300, "xMinYMax", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMidYMax", 400, 300, "xMidYMax", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMidYMaxResizeDown", 400, 300, "xMidYMax", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMaxYMax", 400, 300, "xMaxYMax", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownWideAspectRatioXMaxYMaxResizeDown", 400, 300, "xMaxYMax", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioNone", 300, 400, "none", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioNoneResizeDown", 300, 400, "none", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMinYMin", 300, 400, "xMinYMin", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMinYMinResizeDown", 300, 400, "xMinYMin", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMidYMin", 300, 400, "xMidYMin", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMidYMinResizeDown", 300, 400, "xMidYMin", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMaxYMin", 300, 400, "xMaxYMin", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMaxYMinResizeDown", 300, 400, "xMaxYMin", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMinYMid", 300, 400, "xMinYMid", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMinYMidResizeDown", 300, 400, "xMinYMid", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMidYMid", 300, 400, "xMidYMid", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMidYMidResizeDown", 300, 400, "xMidYMid", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMaxYMid", 300, 400, "xMaxYMid", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMaxYMidResizeDown", 300, 400, "xMaxYMid", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMinYMax", 300, 400, "xMinYMax", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMinYMaxResizeDown", 300, 400, "xMinYMax", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMidYMax", 300, 400, "xMidYMax", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMidYMaxResizeDown", 300, 400, "xMidYMax", true));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMaxYMax", 300, 400, "xMaxYMax", false));
+suite.add(autoSizeContentToGraphicOverloadedSetter("SizeDownTallAspectRatioXMaxYMaxResizeDown", 300, 400, "xMaxYMax", true));
 
 Y.Test.Runner.add( suite );
 

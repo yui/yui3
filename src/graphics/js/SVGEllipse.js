@@ -13,7 +13,7 @@ SVGEllipse = function(cfg)
 	SVGEllipse.superclass.constructor.apply(this, arguments);
 };
 
-SVGEllipse.NAME = "svgEllipse";
+SVGEllipse.NAME = "ellipse";
 
 Y.extend(SVGEllipse, SVGShape, {
 	/**
