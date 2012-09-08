@@ -254,7 +254,6 @@ Y.mix(Y.IO.prototype, {
         if (c.data) {
             io._removeData(f, fields);
         }
-        // Restore HTML form attributes to their original values.
 
         return {
             id: o.id,
