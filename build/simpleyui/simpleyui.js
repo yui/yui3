@@ -14663,7 +14663,7 @@ if (!GLOBAL_ENV._ready) {
     GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
 }
 })();
-YUI.add('event-base', function(Y) {
+YUI.add('event-base', function (Y, NAME) {
 
 /*
  * DOM event listener abstraction layer
@@ -16019,7 +16019,7 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@', {"requires": ["event-custom-base"]});
 YUI.add('pluginhost-base', function(Y) {
 
     /**
@@ -16331,7 +16331,7 @@ YUI.add('pluginhost-config', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['pluginhost-base']});
-YUI.add('event-delegate', function(Y) {
+YUI.add('event-delegate', function (Y, NAME) {
 
 /**
  * Adds event delegation support to the library.
@@ -16652,7 +16652,7 @@ delegate._applyFilter = function (filter, args, ce) {
 Y.delegate = Y.Event.delegate = delegate;
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});
 YUI.add('node-event-delegate', function (Y, NAME) {
 
 /**
@@ -17318,6 +17318,11 @@ IO.prototype = {
             // Non-IE  can use XHR level 2 and not rely on an
             // external transport.
             alt = Y.UA.ie ? 'xdr' : null;
+
+            // Prevent "pre-flight" OPTIONS request by removing the
+            // `X-Requested-With` HTTP header from CORS requests. This header
+            // can be added back on a per-request basis, if desired.
+            io.setHeader('X-Requested-With');
         }
 
         use = alt || form;

@@ -14,7 +14,7 @@ YUI().use("node", "datatype-date", function (Y) {
     Y.on("click", function(e){
         
         var input = Y.one("#demo_input").get("value"),
-            output = Y.DataType.Date.parse(input);
+            output = Y.Date.parse(input);
                 
         if(output === null) {
             output = "null"

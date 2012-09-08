@@ -6,8 +6,8 @@
 <script>
 YUI().use("node", "datatype-xml", function (Y) {
     Y.on("click", function(e){
-        var myXMLDoc = Y.DataType.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghhi</name><rank>3</rank></item></myroot>"),
-            output = Y.DataType.XML.format(myXMLDoc);
+        var myXMLDoc = Y.XML.parse("<myroot><item type='foo'><name>Abc</name><rank>1</rank></item><item type='bar'><name>Def</name><rank>2</rank></item><item type='bat'><name>Ghhi</name><rank>3</rank></item></myroot>"),
+            output = Y.XML.format(myXMLDoc);
 
         if(output === "") {
             output += "(Invalid XML document)"

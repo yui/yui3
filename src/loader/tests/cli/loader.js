@@ -1094,11 +1094,12 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             //Testing A rollup of a rollup module ( datatype )
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
-            //Testing A rollup of a rollup module ( datatype )
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-math")) > -1, "Module (datatype-date-math) not found in sorted array");
+            //Testing A rollup of a rollup module ( datatype )
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
             //Testing A rollup of a rollup module ( datatype )
             Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1, "Module (datatype-xml-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1, "Module (datatype-xml-format) not found in sorted array");
@@ -1113,6 +1114,7 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-math")) > -1, "Module (datatype-date-math) not found in sorted array");
         },
      "Testing datatype-date-format": function(data) {
             var loader = new Y.Loader({
@@ -1578,6 +1580,7 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("event-move")) > -1, "Module (event-move) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1, "Module (event-flick) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("event-valuechange")) > -1, "Module (event-valuechange) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-tap")) > -1, "Module (event-tap) not found in sorted array");
         },
      "Testing event-base": function(data) {
             var loader = new Y.Loader({
@@ -1770,6 +1773,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1, "Module (event-synthetic) not found in sorted array");
+        },
+     "Testing event-tap": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-tap"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-tap")) > -1, "Module (event-tap) not found in sorted array");
         },
      "Testing event-touch": function(data) {
             var loader = new Y.Loader({

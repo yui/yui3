@@ -14,7 +14,8 @@
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ],
         "after": ["node-base"],
         "submodules": {
@@ -68,6 +69,14 @@
             },
             "event-outside": {
                 "requires": [
+                    "event-synthetic"
+                ]
+            },
+            "event-tap": {
+                "requires": [
+                    "node-base",
+                    "event-base",
+                    "event-touch",
                     "event-synthetic"
                 ]
             },

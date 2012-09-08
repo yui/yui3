@@ -1,4 +1,4 @@
-YUI.add('event-key', function(Y) {
+YUI.add('event-key', function (Y, NAME) {
 
 /**
  * Functionality to listen for one or more specific key combinations.
@@ -168,4 +168,4 @@ eventDef.detachDelegate = eventDef.detach;
 Y.Event.define('key', eventDef, true);
 
 
-}, '@VERSION@' ,{requires:['event-synthetic']});
+}, '@VERSION@', {"requires": ["event-synthetic"]});

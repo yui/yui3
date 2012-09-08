@@ -1,4 +1,4 @@
-YUI.add('event-synthetic', function(Y) {
+YUI.add('event-synthetic', function (Y, NAME) {
 
 /**
  * Define new DOM events that can be subscribed to from Nodes.
@@ -829,4 +829,4 @@ Y.Event.define = function (type, config, force) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-custom-complex']});
+}, '@VERSION@', {"requires": ["node-base", "event-custom-complex"]});
