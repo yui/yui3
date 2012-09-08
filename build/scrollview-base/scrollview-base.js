@@ -120,8 +120,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @property lastScrolledAmt
      * @type Number
      * @public
+     * @default 0
      */
-    lastScrolledAmt: null,
+    lastScrolledAmt: 0,
 
     /**
      * Designated initializer
@@ -156,7 +157,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Bind interaction listers
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        sv._bindMousewheel(ScrollView.MOUSEWHEEL);
+        sv._bindMousewheel(true);
         
         // Bind change events
         sv._bindAttrs();
@@ -165,22 +166,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (IE) {
             sv._fixIESelect(sv._bb, sv._cb);
         }
-
-        // Recalculate dimension properties
-        // TODO: This should be throttled.
-        Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
-    },
-
-    /**
-     * 
-     *
-     * @method _bindAttrs
-     * @private
-     */
-    _bindAttrs: function () {
-        var sv = this,
-            scrollChangeHandler = sv._afterScrollChange,
-            dimChangeHandler = sv._afterDimChange;
 
         // Set any deprecated static properties
         if (ScrollView.SNAP_DURATION) {
@@ -202,6 +187,22 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (ScrollView.BOUNCE_RANGE) {
             sv.set(BOUNCE_RANGE, ScrollView.BOUNCE_RANGE);
         }
+
+        // Recalculate dimension properties
+        // TODO: This should be throttled.
+        // Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
+    },
+
+    /**
+     * Bind event listeners
+     *
+     * @method _bindAttrs
+     * @private
+     */
+    _bindAttrs: function () {
+        var sv = this,
+            scrollChangeHandler = sv._afterScrollChange,
+            dimChangeHandler = sv._afterDimChange;
 
         // Bind any change event listeners
         sv.after({
@@ -984,17 +985,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * After listener for changes to the drag attribute
-     *
-     * @method _afterDragChange
-     * @param e {Event.Facade} The event facade
-     * @protected
-     */
-    _afterMousewheelChange: function (e) {
-        this._bindMousewheel(e.newVal);
-    },
-
-    /**
      * After listener for the height or width attribute
      *
      * @method _afterDimChange
@@ -1300,15 +1290,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         DURATION: Y.Transition._VENDOR_PREFIX + 'TransitionDuration',
         PROPERTY: Y.Transition._VENDOR_PREFIX + 'TransitionProperty'
     },
-
-    /**
-     * Enable/Disable scrolling content via mousewheel
-     * @property mousewheel
-     * @type boolean
-     * @static
-     * @default true
-     */
-    MOUSEWHEEL: true,
 
     /**
      * The default bounce distance in pixels
