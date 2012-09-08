@@ -1,7 +1,8 @@
-YUI.add('datatype-date-format', function(Y) {
+YUI.add('datatype-date-format', function (Y, NAME) {
 
 /**
- * The DataType Utility provides type-conversion and string-formatting
+ * The `datatype` module is an alias for three utilities, Y.Date, 
+ * Y.Number and Y.XML, that provide type-conversion and string-formatting
  * convenience methods for various JavaScript object types.
  *
  * @module datatype
@@ -9,26 +10,33 @@ YUI.add('datatype-date-format', function(Y) {
  */
 
 /**
- * Date submodule.
+ * The Date Utility provides type-conversion and string-formatting
+ * convenience methods for Dates.
  *
- * @module datatype
- * @submodule datatype-date
+ * @module datatype-date
+ * @main datatype-date
  */
 
 /**
- * Format date submodule implements strftime formatters for javascript based on the
+ * Date module.
+ *
+ * @module datatype-date
+ */
+
+/**
+ * Format date module implements strftime formatters for javascript based on the
  * Open Group specification defined at
  * http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html
  * This implementation does not include modified conversion specifiers (i.e., Ex and Ox)
  *
- * @module datatype
+ * @module datatype-date
  * @submodule datatype-date-format
  */
 
 /**
- * DataType.Date provides a set of utility functions to operate against Date objects.
+ * Date provides a set of utility functions to operate against Date objects.
  *
- * @class DataType.Date
+ * @class Date
  * @static
  */
 
@@ -163,7 +171,7 @@ var Dt = {
 	 /**
 	 * Takes a native JavaScript Date and formats it as a string for display to user.
 	 *
-	 * @for DataType.Date
+	 * @for Date
 	 * @method format
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
@@ -180,7 +188,6 @@ var Dt = {
 	 *   </p>
 	 *   <p>
 	 *   If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.
-     *   This may be overridden by the deprecated Y.config.dateFormat property.
 	 *   </p>
 	 *   <dl>
 	 *	<dt>%a</dt> <dd>abbreviated weekday name according to the current locale</dd>
@@ -230,25 +237,6 @@ var Dt = {
 	 *	<dt>%%</dt> <dd>a literal "%" character</dd>
 	 *   </dl>
 	 *  </dd>
-	 *  <dt>locale {String} (Deprecated, optional)</dt>
-	 *  <dd>
-     *   <b>Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.</b>
-	 *   The locale to use when displaying days of week, months of the year, and other locale specific
-	 *   strings. If not specified, this defaults to "en" (though this may be overridden by the deprecated Y.config.locale).
-	 *   The following locales are built in:
-	 *   <dl>
-	 *    <dt>en</dt>
-	 *    <dd>English</dd>
-	 *    <dt>en-US</dt>
-	 *    <dd>US English</dd>
-	 *    <dt>en-GB</dt>
-	 *    <dd>British English</dd>
-	 *    <dt>en-AU</dt>
-	 *    <dd>Australian English (identical to British English)</dd>
-	 *   </dl>
-	 *   More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale["en"].
-	 *   See Y.DataType.Date.Locale for more information.
-	 *  </dd>
 	 * </dl>
 	 * @return {HTML} Formatted date for display.
 	 */
@@ -256,39 +244,15 @@ var Dt = {
 		oConfig = oConfig || {};
 		
 		if(!Y.Lang.isDate(oDate)) {
-			Y.log("format called without a date", "WARN", "datatype-date");
+			Y.log("format called without a date", "WARN", "date");
 			return Y.Lang.isValue(oDate) ? oDate : "";
 		}
 
 		var format, resources, compatMode, sLocale, LOCALE;
 
-        // Y.config.dateFormat is deprecated - remove from YUI 3.2
-        format = oConfig.format || Y.config.dateFormat  || "%Y-%m-%d";
-        // compatMode supports deprecated features - remove from YUI 3.2
-        compatMode = Y.Lang.isUndefined(Y.config.lang) && (Y.Lang.isValue(oConfig.locale) || Y.Lang.isValue(Y.config.locale));
-        if (compatMode) {
-			sLocale = oConfig.locale || Y.config.locale;
-			LOCALE = Y.DataType.Date.Locale;
-            sLocale = sLocale.replace(/_/g, "-");
-            
-            // Make sure we have a definition for the requested locale, or default to en.
-            if(!LOCALE[sLocale]) {
-                Y.log("selected locale " + sLocale + " not found, trying alternatives", "WARN", "datatype-date");
-                var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, "");
-                if(tmpLocale in LOCALE) {
-                    sLocale = tmpLocale;
-                } else if(Y.config.locale in LOCALE) {
-                    sLocale = Y.config.locale;
-                } else {
-                    sLocale = "en";
-                }
-                Y.log("falling back to " + sLocale, "INFO", "datatype-date");
-            }
-    
-            resources = LOCALE[sLocale];
-        } else {
-            resources = Y.Intl.get('datatype-date-format');
-        }
+        format = oConfig.format || "%Y-%m-%d";
+
+        resources = Y.Intl.get('datatype-date-format');
 
 		var replace_aggs = function (m0, m1) {
 			if (compatMode && m1 === "r") {
@@ -310,8 +274,7 @@ var Dt = {
 						return xPad(oDate[f[0]](), f[1]);
 					} // no break; (fall through to default:)
 				default:
-                    // Y.config.dateFormat is deprecated - remove from YUI 3.2
-					Y.log("unrecognised replacement type, please file a bug (format: " + oConfig.format || Y.config.dateFormat + ")", "WARN", "datatype-date");
+					Y.log("unrecognised replacement type, please file a bug (format: " + oConfig.format + ")", "WARN", "date");
 					return m1;
 			}
 		};
@@ -330,106 +293,11 @@ var Dt = {
 	}
 };
 
-Y.mix(Y.namespace("DataType.Date"), Dt);
-/**
- * @module datatype
-*/
-
-/**
- * The Date.Locale class is a container for all localised date strings
- * used by Y.DataType.Date. It is used internally, but may be extended
- * to provide new date localisations.
- *
- * To create your own Locale, follow these steps:
- * <ol>
- *  <li>Find an existing locale that matches closely with your needs</li>
- *  <li>Use this as your base class.  Use Y.DataType.Date.Locale["en"] if nothing
- *   matches.</li>
- *  <li>Create your own class as an extension of the base class using
- *   Y.merge, and add your own localisations where needed.</li>
- * </ol>
- * See the Y.DataType.Date.Locale["en-US"] and Y.DataType.Date.Locale["en-GB"]
- * classes which extend Y.DataType.Date.Locale["en"].
- *
- * For example, to implement locales for French french and Canadian french,
- * we would do the following:
- * <ol>
- *  <li>For French french, we have no existing similar locale, so use
- *   Y.DataType.Date.Locale["en"] as the base, and extend it:
- *   <pre>
- *      Y.DataType.Date.Locale["fr"] = Y.merge(Y.DataType.Date.Locale["en"], {
- *          a: ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"],
- *          A: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
- *          b: ["jan", "f&eacute;v", "mar", "avr", "mai", "jun", "jui", "ao&ucirc;", "sep", "oct", "nov", "d&eacute;c"],
- *          B: ["janvier", "f&eacute;vrier", "mars", "avril", "mai", "juin", "juillet", "ao&ucirc;t", "septembre", "octobre", "novembre", "d&eacute;cembre"],
- *          c: "%a %d %b %Y %T %Z",
- *          p: ["", ""],
- *          P: ["", ""],
- *          x: "%d.%m.%Y",
- *          X: "%T"
- *      });
- *   </pre>
- *  </li>
- *  <li>For Canadian french, we start with French french and change the meaning of \%x:
- *   <pre>
- *      Y.DataType.Date.Locale["fr-CA"] = Y.merge(Y.DataType.Date.Locale["fr"], {
- *          x: "%Y-%m-%d"
- *      });
- *   </pre>
- *  </li>
- * </ol>
- *
- * With that, you can use your new locales:
- * <pre>
- *    var d = new Date("2008/04/22");
- *    Y.DataType.Date.format(d, { format: "%A, %d %B == %x", locale: "fr" });
- * </pre>
- * will return:
- * <pre>
- *    mardi, 22 avril == 22.04.2008
- * </pre>
- * And
- * <pre>
- *    Y.DataType.Date.format(d, {format: "%A, %d %B == %x", locale: "fr-CA" });
- * </pre>
- * Will return:
- * <pre>
- *   mardi, 22 avril == 2008-04-22
- * </pre>
- * @requires oop
- * @class DataType.Date.Locale
- * @static
- * @deprecated - use Y.config.lang to request one of many built-in languages instead.
- */
-var YDateEn = {
-	a: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-	A: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-	b: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-	B: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-	c: "%a %d %b %Y %T %Z",
-	p: ["AM", "PM"],
-	P: ["am", "pm"],
-	r: "%I:%M:%S %p",
-	x: "%d/%m/%y",
-	X: "%T"
-};
-
-Y.namespace("DataType.Date.Locale");
-
-Y.DataType.Date.Locale["en"] = YDateEn;
-
-Y.DataType.Date.Locale["en-US"] = Y.merge(YDateEn, {
-	c: "%a %d %b %Y %I:%M:%S %p %Z",
-	x: "%m/%d/%Y",
-	X: "%I:%M:%S %p"
-});
-
-Y.DataType.Date.Locale["en-GB"] = Y.merge(YDateEn, {
-	r: "%l:%M:%S %P %Z"
-});
-Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
+Y.mix(Y.namespace("Date"), Dt);
 
 
+Y.namespace("DataType");
+Y.DataType.Date = Y.Date;
 
 
-}, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
+}, '@VERSION@', {"lang": ["ar", "ar-JO", "ca", "ca-ES", "da", "da-DK", "de", "de-AT", "de-DE", "el", "el-GR", "en", "en-AU", "en-CA", "en-GB", "en-IE", "en-IN", "en-JO", "en-MY", "en-NZ", "en-PH", "en-SG", "en-US", "es", "es-AR", "es-BO", "es-CL", "es-CO", "es-EC", "es-ES", "es-MX", "es-PE", "es-PY", "es-US", "es-UY", "es-VE", "fi", "fi-FI", "fr", "fr-BE", "fr-CA", "fr-FR", "hi", "hi-IN", "id", "id-ID", "it", "it-IT", "ja", "ja-JP", "ko", "ko-KR", "ms", "ms-MY", "nb", "nb-NO", "nl", "nl-BE", "nl-NL", "pl", "pl-PL", "pt", "pt-BR", "ro", "ro-RO", "ru", "ru-RU", "sv", "sv-SE", "th", "th-TH", "tr", "tr-TR", "vi", "vi-VN", "zh-Hans", "zh-Hans-CN", "zh-Hant", "zh-Hant-HK", "zh-Hant-TW"]});

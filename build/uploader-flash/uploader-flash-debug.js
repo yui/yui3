@@ -1,4 +1,4 @@
-YUI.add('uploader-flash', function(Y) {
+YUI.add('uploader-flash', function (Y, NAME) {
 
 
     /**
@@ -1032,4 +1032,4 @@ Y.UploaderFlash.Queue = UploaderQueue;
 
 
 
-}, '@VERSION@' ,{requires:['swf', 'widget', 'substitute', 'base', 'cssbutton', 'node', 'event-custom', 'file-flash', 'uploader-queue']});
+}, '@VERSION@', {"requires": ["swf", "widget", "substitute", "base", "cssbutton", "node", "event-custom", "file-flash", "uploader-queue"]});

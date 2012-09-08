@@ -1,0 +1,15 @@
+{
+    "name": "datatype-number",
+    "builds": {
+        "datatype-number-parse": {
+            "jsfiles": [
+                "number-parse.js"
+            ]
+        },
+        "datatype-number-format": {
+            "jsfiles": [
+                "number-format.js"
+            ]
+        }
+    }
+}
