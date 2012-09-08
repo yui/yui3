@@ -21,7 +21,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'oop-test': {
-                fullpath: path.join(__dirname, '../oop-test.js'),
+                fullpath: path.join(__dirname, '../unit/assets/oop-test.js'),
                 requires: ['oop', 'test', 'attribute']
             }
         }

@@ -1,4 +1,4 @@
-YUI.add('uploader-queue', function(Y) {
+YUI.add('uploader-queue', function (Y, NAME) {
 
 
     /**
@@ -652,5 +652,4 @@ YUI.add('uploader-queue', function(Y) {
     Y.namespace('Uploader');
     Y.Uploader.Queue = UploaderQueue;
 
-
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@', {"requires": ["base"]});

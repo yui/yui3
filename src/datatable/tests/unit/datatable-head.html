@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>datatable-head Tests</title>
+</head>
+<body lang="en" class="yui3-skin-sam">
+
+    <div id="testbed"></div>
+
+	<script src="../../../../build/yui/yui.js"></script>
+    <script src="./assets/datatable-head-tests.js"></script>
+	<script>
+		YUI({
+            coverage: ['datatable-head'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+		}).use('test-console', 'datatable-head-tests', function (Y) {
+			
+			new Y.Test.Console().render();
+
+			Y.Test.Runner.run();
+		});
+	</script>
+</body>
+</html>

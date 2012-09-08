@@ -38,7 +38,12 @@
 <p>
     The complete markup of a Slider is as follows:
 </p>
-                
+
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+
 ```
 <!-- boundingBox -->
 <span class="yui3-widget yui3-sliderbase yui-slider">
@@ -329,15 +334,9 @@ slider.syncUI();
 
 <h3 id="skinning">Skinning</h3>
 
-<p>
-    Like all widgets in YUI, Slider is skinnable and ships by default with the
-    Sam skin.  To apply the skin CSS, assign the skin's class name to a parent
-    element of the Slider.  Typically it's adequate to just add the class to
-    the <code>&lt;body&gt;</code> tag.
-</p>
-
+{{>need-skin-note}}
 ```
-<body class="yui3-skin-sam">
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
 ```
 
 <h4 id="skin_thumbUrl">Using custom thumb or rail images</h4>

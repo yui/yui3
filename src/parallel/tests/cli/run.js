@@ -19,8 +19,8 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'parallel-tests': {
-                fullpath: path.join(__dirname, '../parallel-tests.js'),
-                requires: [ 'test']
+                fullpath: path.join(__dirname, '../unit/assets/parallel-tests.js'),
+                requires: [ 'test', 'parallel' ]
             }
         }
     });

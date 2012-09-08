@@ -59,6 +59,12 @@ YUI({...}).use("overlay", function(Y) {
 
 <p>Note, using the `overlay` module, will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
 
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+
+
 <h3>Creating the Overlay From Markup</h3>
 
 <p>For this example, we'll create the overlay instance from markup which already exists on the page, and is shown below. We mark the existing markup with the `yui3-overlay-loading` class, so that we can hide it while the rich control is being instantiated:</p>
@@ -127,9 +133,15 @@ Y.on("click", function(e) {
 {{>overlay-css}}
 ```
 
-<p><strong>NOTE:</strong> As discussed on the <a href="../widget/index.html#widget-markup-diagram">Widget user guide</a>, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and its children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.</p>
+<p><strong>Note:</strong> As discussed on the <a href="../widget/index.html#widget-markup-diagram">Widget user guide</a>, all widgets are enclosed in 2 containing elements - the boundingBox is the outer(most) element, and the contentBox is the inner element into which the widget's content is added. It is advised to apply any look/feel CSS for the widget to the content box and its children. This leaves the bounding box without padding/borders, allowing for consistent positioning/sizing across box models.</p>
 
 <h2>Complete Example Source</h2>
+
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+
 ```
 {{>overlay-xy-source}}
 ```

@@ -1,0 +1,35 @@
+{
+    "name": "scrollview",
+    "builds": {
+        "scrollview": {
+            "jsfiles": [
+                "scrollview.js"
+            ]
+        },
+        "scrollview-scrollbars": {
+            "jsfiles": [
+                "scrollbars-plugin.js"
+            ]
+        },
+        "scrollview-paginator": {
+            "jsfiles": [
+                "paginator-plugin.js"
+            ]
+        },
+        "scrollview-list": {
+            "jsfiles": [
+                "list-plugin.js"
+            ]
+        },
+        "scrollview-base": {
+            "jsfiles": [
+                "scrollview-base.js"
+            ]
+        },
+        "scrollview-base-ie": {
+            "jsfiles": [
+                "ScrollViewBaseIE.js"
+            ]
+        }
+    }
+}

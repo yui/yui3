@@ -617,6 +617,10 @@ Y.Loader.prototype = {
         DEBUG: {
             'searchExp': '-min\\.js',
             'replaceStr': '-debug.js'
+        },
+        COVERAGE: {
+            'searchExp': '-min\\.js',
+            'replaceStr': '-coverage.js'
         }
     },
     /*
@@ -801,6 +805,26 @@ Y.Loader.prototype = {
             self.filter = self.FILTER_DEFS[f];
             if (f == 'DEBUG') {
                 self.require('yui-log', 'dump');
+            }
+        }
+
+        if (self.filterName && self.coverage) {
+            if (self.filterName == 'COVERAGE' && L.isArray(self.coverage) && self.coverage.length) {
+                var mods = [];
+                for (i = 0; i < self.coverage.length; i++) {
+                    var mod = self.coverage[i];
+                    if (self.moduleInfo[mod] && self.moduleInfo[mod].use) {
+                        mods = [].concat(mods, self.moduleInfo[mod].use);
+                    } else {
+                        mods.push(mod);
+                    }
+                }
+                self.filters = self.filters || {};
+                Y.Array.each(mods, function(mod) {
+                    self.filters[mod] = self.FILTER_DEFS.COVERAGE;
+                });
+                self.filterName = 'RAW';
+                self.filter = self.FILTER_DEFS[self.filterName];
             }
         }
         
@@ -1286,7 +1310,7 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this, m, i, a, v, len, len2,
+        var self = this, m, m2, i, a, v, len, len2,
         r = self.required;
 
         if (!self.allowRollup) {
@@ -1296,11 +1320,11 @@ Y.Loader.prototype = {
                     if (m && m.use) {
                         len = m.use.length;
                         for (a = 0; a < len; a++) {
-                            m = self.getModule(m.use[a]);
-                            if (m && m.use) {
-                                len2 = m.use.length;
+                            m2 = self.getModule(m.use[a]);
+                            if (m2 && m2.use) {
+                                len2 = m2.use.length;
                                 for (v = 0; v < len2; v++) {
-                                    r[m.use[v]] = true;
+                                    r[m2.use[v]] = true;
                                 }
                             } else {
                                 r[m.use[a]] = true;

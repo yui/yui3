@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Y.Object tests (core)</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<span id="test"></span>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
+    modules: {
+        'object-test': {
+            fullpath: './assets/object-test.js',
+            requires: ['test']
+        }
+    }
+}).use('object-test', 'test-console', function (Y) {
+    new Y.Test.Console().render('#log');
+    Y.Test.Runner.run();
+});
+</script>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-YUI.add('model-list', function(Y) {
+YUI.add('model-list', function (Y, NAME) {
 
 /**
 Provides an API for managing an ordered list of Model instances.
@@ -25,6 +25,10 @@ defined, models are sorted in insertion order).
 @extends Base
 @uses ArrayList
 @constructor
+@param {Object} config Config options.
+    @param {Model|Model[]|ModelList|Object|Object[]} config.items Model
+        instance, array of model instances, or ModelList to add to this list on
+        init. The `add` event will not be fired for models added on init.
 @since 3.4.0
 **/
 
@@ -191,6 +195,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.after('*:idChange', this._afterIdChange);
 
         this._clear();
+
+        if (config.items) {
+            this.add(config.items, {silent: true});
+        }
     },
 
     destructor: function () {
@@ -601,7 +609,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
                     });
                 }
 
-                parsed = facade.parsed = self.parse(response);
+                parsed = facade.parsed = self._parse(response);
 
                 self.reset(parsed, options);
                 self.fire(EVT_LOAD, facade);
@@ -1045,6 +1053,24 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Calls the public, overrideable `parse()` method and returns the result.
+
+    Override this method to provide a custom pre-parsing implementation. This
+    provides a hook for custom persistence implementations to "prep" a response
+    before calling the `parse()` method.
+
+    @method _parse
+    @param {Any} response Server response.
+    @return {Object[]} Array of model attribute hashes.
+    @protected
+    @see ModelList.parse()
+    @since 3.6.1
+    **/
+    _parse: function (response) {
+        return this.parse(response);
+    },
+
+    /**
     Removes the specified _model_ if it's in this list.
 
     @method _remove
@@ -1210,4 +1236,4 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 Y.augment(ModelList, Y.ArrayList);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'escape', 'json-parse', 'model']});
+}, '@VERSION@', {"requires": ["array-extras", "array-invoke", "arraylist", "base-build", "escape", "json-parse", "model"]});

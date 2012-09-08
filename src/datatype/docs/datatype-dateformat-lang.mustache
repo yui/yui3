@@ -42,14 +42,14 @@
 // Default (no language specified)
 YUI().use("datatype-date", function (Y) {
     Y.one("#default_lang_output").setHTML(
-        Y.DataType.Date.format(new Date(), {format:"%x"})
+        Y.Date.format(new Date(), {format:"%x"})
     );
 });
 
 // Format Date For fr-FR
 YUI({lang:"fr-FR"}).use("datatype-date", function (Y) {
     Y.one("#single_lang_output").setHTML(
-        Y.DataType.Date.format(new Date(), {format:"%x"})
+        Y.Date.format(new Date(), {format:"%x"})
     );
 });
 ```
@@ -74,7 +74,7 @@ YUI({lang:"fr-FR"}).use("datatype-date", function (Y) {
         // It is not required for the single language use case shown previously.
         Y.Intl.setLang("datatype-date-format", lang);
 
-        formattedDate = Y.DataType.Date.format(new Date(), {format:"%c"});
+        formattedDate = Y.Date.format(new Date(), {format:"%c"});
 
     });
     ...

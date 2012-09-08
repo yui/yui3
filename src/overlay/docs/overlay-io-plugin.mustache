@@ -29,20 +29,25 @@
 
 <h3>Setting Up The YUI Instance</h3>
 
-<p>For this example, we'll start from the Widget IO plugin (gallery-io-plugin) created in the <a href="../widget/widget-plugin.html">widget plugin example</a>, pull in `overlay`; `json` and `substitute` utility modules 
-and the `plugin` module. The Widget IO plugin will pull in the dependencies it needs, the main one being `io` to provide the XHR support. 
+<p>For this example, we'll start from the Widget IO plugin (gallery-io-plugin) created in the <a href="../widget/widget-plugin.html">widget plugin example</a>, pull in `overlay`, `json` utility module,
+and the `plugin` module. The Widget IO plugin will pull in the dependencies it needs, the main one being `io` to provide the XHR support.
 
-The `json` and `substitute` modules provide the support we need to parse/transform JSON responses into HTML.The code to set up our sandbox instance is shown below:</p>
+The `json` and modules provide the support we need to parse/transform JSON responses into HTML.The code to set up our sandbox instance is shown below:</p>
 
 ```
-YUI({...}).use("overlay", "substitute", "json", "gallery-io-plugin", "escape", function(Y) {
-    // We'll write our code here, after pulling in the default Overlay widget, 
-    // the IO utility, the Plugin.WidgetIO base class along with the 
+YUI({...}).use("overlay", "json", "gallery-io-plugin", "escape", function(Y) {
+    // We'll write our code here, after pulling in the default Overlay widget,
+    // the IO utility, the Plugin.WidgetIO base class along with the
     // Substitute and JSON utilities
 });
 ```
 
 <p>Using the `overlay` module will also pull down the default CSS required for overlay, on top of which we only need to add our required look/feel CSS for the example.</p>
+
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
 
 <h3>StdModIO Class Structure</h3>
 
@@ -98,8 +103,8 @@ methods on the host Overlay instance, or monitor any Overlay events
         section: {
             value:StdMod.BODY,
             validator: function(val) {
-                return (!val || val == StdMod.BODY 
-                             || val == StdMod.HEADER 
+                return (!val || val == StdMod.BODY
+                             || val == StdMod.HEADER
                              || val == StdMod.FOOTER);
             }
         }
@@ -119,8 +124,8 @@ plugin is able to dispatch both in-domain and cross-domain requests
 
 ```
 initializer: function() {
-    // We setup a flag, so that we know if 
-    // flash is available to make the 
+    // We setup a flag, so that we know if
+    // flash is available to make the
     // XDR request.
     Y.on('io:xdrReady', function() {
         transportAvailable = true;
@@ -136,7 +141,7 @@ initializer: function() {
 
 <h3>Using the Plugin</h3>
 
-<p>All objects derived from <a href="{{apiDocs}}/Base.html">Base</a> are <a href="{{apiDocs}}/Plugin.Host.html">Plugin Hosts</a>. They provide <a href="{{apiDocs}}/Plugin.Host.html#method_plug">`plug`</a> and <a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug`</a> methods to allow users to add/remove plugins to/from existing instances. 
+<p>All objects derived from <a href="{{apiDocs}}/Base.html">Base</a> are <a href="{{apiDocs}}/Plugin.Host.html">Plugin Hosts</a>. They provide <a href="{{apiDocs}}/Plugin.Host.html#method_plug">`plug`</a> and <a href="{{apiDocs}}/Plugin.Host.html#method_unplug">`unplug`</a> methods to allow users to add/remove plugins to/from existing instances.
 They also allow the user to specify the set of plugins to be applied to a new instance, along with their configurations, as part of the constructor arguments.</p>
 
 <p>In this example, we'll create a new instance of an Overlay:</p>
@@ -160,8 +165,8 @@ var overlay = new Y.Overlay({
 
 ```
 /*
- * Add the Standard Module IO Plugin, and configure it to use flash, 
- * and a formatter specific to the pipes response we're expecting 
+ * Add the Standard Module IO Plugin, and configure it to use flash,
+ * and a formatter specific to the pipes response we're expecting
  * from the uri request we'll send out.
  */
 overlay.plug(StdModIO, {
@@ -208,13 +213,13 @@ var pipes = {
     ...
 ```
 
-<p>The data structure also holds the default formatter (`pipes.formatter`) required to convert the JSON responses from the above URIs to HTML. The JSON utility is first used to parse the json response string. The resulting object is iterated around, using Y.each, and substitute is used to generate the list markup:</p>
+<p>The data structure also holds the default formatter (`pipes.formatter`) required to convert the JSON responses from the above URIs to HTML. The JSON utility is first used to parse the json response string. The resulting object is iterated around, using `Y.each()`, and `Y.Lang.sub()` is used to generate the list markup:</p>
 
 ```
 ...
 
 // The default formatter, responsible for converting the JSON responses received,
-// into HTML. JSON is used for the parsing step, and substitute for some basic 
+// into HTML. JSON is used for the parsing step, and substitute for some basic
 // templating functionality
 
 formatter : function (val) {
@@ -223,14 +228,14 @@ formatter : function (val) {
         var json = Y.JSON.parse(val);
         if (json && json.count) {
             var html = ['<ul class="yui3-feed-data">'];
-            var linkTemplate = 
+            var linkTemplate =
                 '<li><a href="{link}" target="_blank">{title}</a></li>';
 
-            // Loop around all the items returned, and feed 
-            // them into the template above, using substitute.
+            // Loop around all the items returned, and feed
+            // them into the template above, using substitution.
             Y.each(json.value.items, function(v, i) {
                 if (i < 10) {
-                    html.push(Y.substitute(linkTemplate, v));
+                    html.push(Y.Lang.sub(linkTemplate, v));
                 }
             });
             html.push("</ul>");

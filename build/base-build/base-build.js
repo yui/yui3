@@ -289,7 +289,7 @@ YUI.add('base-build', function(Y) {
      * @method build
      * @deprecated Use the more convenient Base.create and Base.mix methods instead
      * @static
-     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.
+     * @param {Function} name The name of the new class. Used to define the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
@@ -357,7 +357,7 @@ YUI.add('base-build', function(Y) {
      *
      * @method create
      * @static
-     * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
+     * @param {Function} name The name of the newly created class. Used to define the NAME property for the new class.
      * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).
      * @param {Function[]} extensions The list of extensions which will be mixed into the built class.
      * @param {Object} px The set of prototype properties/methods to add to the built class.

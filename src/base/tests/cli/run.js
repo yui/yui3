@@ -19,11 +19,11 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'base-core-tests': {
-                fullpath: path.join(__dirname, '../base-core-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/base-core-tests.js'),
                 requires: ['base-core', 'dump', 'test']
             },
             'base-tests': {
-                fullpath: path.join(__dirname, '../base-tests.js'),
+                fullpath: path.join(__dirname, '../unit/assets/base-tests.js'),
                 requires: ['base', 'test']
             }
         }

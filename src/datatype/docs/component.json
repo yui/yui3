@@ -21,7 +21,7 @@
 
         {
             "name": "datatype-dateparse",
-            "displayName": "DataType.Date.parse()",
+            "displayName": "Y.Date.parse()",
             "modules": ["datatype"],
             "description": "Parsing data into dates.",
 	        "useModules": ["node", "datatype-date"],
@@ -31,7 +31,7 @@
 
         {
             "name": "datatype-numberformat",
-            "displayName": "DataType.Number.format()",
+            "displayName": "Y.Number.format()",
             "modules": ["datatype"],
             "description": "Formatting numbers into strings.",
 	        "useModules": ["node", "datatype-number", "escape"],
@@ -41,7 +41,7 @@
 
         {
             "name": "datatype-numberparse",
-            "displayName": "DataType.Number.parse()",
+            "displayName": "Y.Number.parse()",
             "modules": ["datatype"],
             "description": "Parsing data into numbers.",
 	        "useModules": ["node", "datatype-number"],
@@ -51,7 +51,7 @@
 
         {
             "name": "datatype-xmlformat",
-            "displayName": "DataType.XML.format()",
+            "displayName": "Y.XML.format()",
             "modules": ["datatype"],
             "description": "Formatting XML documents into strings.",
 	        "useModules": ["node", "datatype-xml"],
@@ -61,7 +61,7 @@
 
         {
             "name": "datatype-xmlparse",
-            "displayName": "DataType.XML.parse()",
+            "displayName": "Y.XML.parse()",
             "modules": ["datatype"],
             "description": "Parsing strings into XML documents.",
 	        "useModules": ["node", "datatype-xml"],

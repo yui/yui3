@@ -1,4 +1,4 @@
-YUI.add('cache-plugin', function(Y) {
+YUI.add('cache-plugin', function (Y, NAME) {
 
 /**
  * Provides support to use Cache as a Plugin to a Base-based class.
@@ -50,4 +50,4 @@ Y.mix(CachePlugin, {
 Y.namespace("Plugin").Cache = CachePlugin;
 
 
-}, '@VERSION@' ,{requires:['plugin','cache-base']});
+}, '@VERSION@', {"requires": ["plugin", "cache-base"]});

@@ -1,4 +1,4 @@
-YUI.add('editor-lists', function(Y) {
+YUI.add('editor-lists', function (Y, NAME) {
 
 
     /**
@@ -117,4 +117,4 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@', {"requires": ["editor-base"]});
