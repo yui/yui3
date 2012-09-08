@@ -15,9 +15,9 @@
         "request": "2.9.202"
     },
     "devDependencies": {
-        "yuitest": "*",
         "yuidocjs": "*",
-        "grover": "*"
+        "shifter": "*",
+        "yogi": "*"
     },
     "licenses":[
         {

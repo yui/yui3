@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{htmlTitle}}</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic">
+    <link rel="stylesheet" href="{{yuiGridsUrl}}">
+    <link rel="stylesheet" href="{{projectAssets}}/css/main.css">
+    <link rel="stylesheet" href="{{projectAssets}}/vendor/prettify/prettify-min.css">
+    <link rel="shortcut icon" type="image/png" href="{{projectAssets}}/favicon.png">
+    <script src="{{yuiSeedUrl}}"></script>
+    {{>selleck-head}}
+</head>
+<body>
+<!--
+<a href="https://github.com/yui/yui3"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+-->
+<div id="doc">
+    <div id="hd">
+        <h1><img src="http://yuilibrary.com/img/yui-logo.png"></h1>
+    </div>
+    {{^hideTableOfContents}}
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    {{/hideTableOfContents}}
+
+            <h1>{{title}}</h1>
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content">{{>layout_content}}</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                {{^hideTableOfContents}}
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            {{toc}}
+                        </div>
+                    </div>
+                {{/hideTableOfContents}}
+
+                {{#if hasOwnExamples}}
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                {{#examples}}
+                                    {{#unless inherited}}
+                                        <li data-description="{{description}}">
+                                            <a href="{{name}}.html">{{displayName}}</a>
+                                        </li>
+                                    {{/unless}}
+                                {{/examples}}
+                            </ul>
+                        </div>
+                    </div>
+                {{/if}}
+
+                {{#if hasInheritedExamples}}
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples That Use This Component</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                {{#examples}}
+                                    {{#if inherited}}
+                                        <li data-description="{{description}}">
+                                            <a href="../{{componentName}}/{{name}}.html">{{displayName}}</a>
+                                        </li>
+                                    {{/if}}
+                                {{/examples}}
+                            </ul>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{projectAssets}}/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+{{>selleck-foot}}
+</body>
+</html>

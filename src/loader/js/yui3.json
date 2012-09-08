@@ -158,7 +158,7 @@
     },
     "attribute-core": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "attribute-events": {
@@ -168,7 +168,7 @@
     },
     "attribute-extras": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "autocomplete": {
@@ -782,18 +782,16 @@
     },
     "datatype": {
         "use": [
-            "datatype-number",
             "datatype-date",
+            "datatype-number",
             "datatype-xml"
         ]
     },
     "datatype-date": {
-        "supersedes": [
-            "datatype-date-format"
-        ],
         "use": [
             "datatype-date-parse",
-            "datatype-date-format"
+            "datatype-date-format",
+            "datatype-date-math"
         ]
     },
     "datatype-date-format": {
@@ -1001,7 +999,6 @@
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -1152,7 +1149,8 @@
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ]
     },
     "event-base": {
@@ -1270,6 +1268,14 @@
             "event-custom-complex"
         ]
     },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch",
+            "event-synthetic"
+        ]
+    },
     "event-touch": {
         "requires": [
             "node-base"
@@ -1314,6 +1320,13 @@
             "selector-css3",
             "substitute",
             "yui-throttle"
+        ]
+    },
+    "gesture-simulate": {
+        "requires": [
+            "async-queue",
+            "event-simulate",
+            "node-screen"
         ]
     },
     "get": {
@@ -1653,7 +1666,8 @@
     "node-event-simulate": {
         "requires": [
             "node-base",
-            "event-simulate"
+            "event-simulate",
+            "gesture-simulate"
         ]
     },
     "node-flick": {
@@ -2081,8 +2095,7 @@
             "event-custom",
             "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [

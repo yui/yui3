@@ -12,7 +12,11 @@ from this script so that it can dynamically run the tests.
 
 */
 
-var out = require('./parse');
+var json = require('./parse').parse(function(line) {
+    return (line.indexOf('coverage') === -1);
+});
+var out = require('./parse').paths(json);
+
 
 out.forEach(function(line, k) {
     //Here we could do some filtering if we want to limit the tests

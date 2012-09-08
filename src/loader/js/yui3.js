@@ -174,7 +174,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "attribute-core": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "attribute-events": {
@@ -184,7 +184,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "attribute-extras": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
     },
     "autocomplete": {
@@ -811,18 +811,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "datatype": {
         "use": [
-            "datatype-number",
             "datatype-date",
+            "datatype-number",
             "datatype-xml"
         ]
     },
     "datatype-date": {
-        "supersedes": [
-            "datatype-date-format"
-        ],
         "use": [
             "datatype-date-parse",
-            "datatype-date-format"
+            "datatype-date-format",
+            "datatype-date-math"
         ]
     },
     "datatype-date-format": {
@@ -1032,7 +1030,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -1208,7 +1205,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ]
     },
     "event-base": {
@@ -1329,6 +1327,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom-complex"
         ]
     },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch",
+            "event-synthetic"
+        ]
+    },
     "event-touch": {
         "requires": [
             "node-base"
@@ -1373,6 +1379,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "selector-css3",
             "substitute",
             "yui-throttle"
+        ]
+    },
+    "gesture-simulate": {
+        "requires": [
+            "async-queue",
+            "event-simulate",
+            "node-screen"
         ]
     },
     "get": {
@@ -1751,7 +1764,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "node-event-simulate": {
         "requires": [
             "node-base",
-            "event-simulate"
+            "event-simulate",
+            "gesture-simulate"
         ]
     },
     "node-flick": {
@@ -2184,8 +2198,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom",
             "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [
@@ -2447,4 +2460,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';

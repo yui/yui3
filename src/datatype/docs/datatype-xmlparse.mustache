@@ -13,11 +13,11 @@
     {{>datatype-xmlparse-source}}
 </div>
 
-<p>To convert a string to an XML document, simply call the <code>parse()</code> function of the DataType.XML class:</p>
+<p>To convert a string to an XML document, simply call the <code>parse()</code> function of the Y.XML class:</p>
 
 ```
 YUI().use("datatype-xml", function(Y) {
-    var output = Y.DataType.XML.parse("<myroot><item type='foo'>...</item></myroot>");
+    var output = Y.XML.parse("<myroot><item type='foo'>...</item></myroot>");
     // output is an XML document
 });
 ```

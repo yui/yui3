@@ -19,7 +19,7 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.applyConfig({
         modules: {
             'yql-tests': {
-                fullpath: path.join(__dirname, '../yql.js'),
+                fullpath: path.join(__dirname, '../unit/assets/yql-tests.js'),
                 requires: ['yql', 'test']
             }
         }

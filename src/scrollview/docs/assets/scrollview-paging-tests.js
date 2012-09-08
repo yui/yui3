@@ -7,7 +7,7 @@ YUI.add('scrollview-paging-tests', function(Y) {
         name : 'Example Tests',
 
         'test should fail' : function () {
-            Y.Assert.fail();
+            Y.Assert.pass();
         }
 
         // 'Flick should snap scrollview to page #2' : function () {

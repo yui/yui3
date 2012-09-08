@@ -1,0 +1,15 @@
+{
+    "name": "npm",
+    "builds": {
+        "npm": {
+            "postexec": [
+                "./scripts/npm_package.js"
+            ],
+            "copy": [
+                [ "../../build", "../../build-npm" ],
+                [ "../../package.json", "../../build-npm/package.json"],
+                [ "./scripts/npm_package_shim.js", "../../build-npm/index.js" ]
+            ]
+        }
+    }
+}

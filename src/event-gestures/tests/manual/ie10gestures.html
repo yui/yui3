@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+
+      html {
+        font-family: sans-serif;
+        color: #333;
+        line-height: 1.6em;
+        -ms-touch-action: none; /* Shunt all pointer events to JavaScript code. */
+      }
+      #circle, #square {
+        width:100px;
+        height:100px;
+        position:absolute;
+      }
+      #circle {
+        border-radius:100px;
+        background: #3071A6;
+        top:10px;
+        left:10px;
+        border:5px solid #81BBEB;
+      }
+      #square {
+        background: #DB4E46;
+        top:10px;
+        left:150px;
+        border:5px solid #F78E88;
+      }
+      .black {
+        background: black !important;
+      }
+      #log {
+        float:left;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        width:100%;
+        top:450px;
+        overflow-x: scroll;
+      }
+    </style>
+  </head>
+  <body class="yui3-skin-sam">
+
+    <div id="circle"></div>
+    <div id="square"></div>
+
+    <ul id="log" unselectable="on">
+
+    </ul>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script>
+      YUI({
+        filter:'raw'
+      }).use('event-gestures', 'console', 'transition', function(Y) {
+        new Y.Console().render();
+        Y.log(Y.Event._GESTURE_MAP.start);
+        var circle = Y.one("#circle");
+        var square = Y.one("#square");
+        var cAnim = {
+          easing: 'ease-in-out'
+        };
+        var sAnim = {
+          easing: 'ease-in'
+        };
+
+        circle.on("MSPointerDown", function(e) {
+          Y.log('circle pointer down');
+        });
+
+        circle.on('flick', function(e) {
+          e.preventDefault();
+          if (e.flick.axis === 'x') {
+            cAnim.left = parseInt(circle.getStyle('left').replace('px', ''), 10) + e.flick.distance + 'px';
+          }
+          else if (e.flick.axis === 'y') {
+            cAnim.top = parseInt(circle.getStyle('top').replace('px', ''), 10) + e.flick.distance + 'px';
+          }
+          cAnim.duration = e.flick.time/800;
+
+          circle.transition(cAnim);
+          Y.log('Flicked');
+        });
+
+        square.on('gesturemovestart', function(e) {
+          e.preventDefault();
+          square.addClass('black');
+          Y.log('Starting Gesture...');
+        });
+
+        square.on('gesturemove', function(e) {
+          e.preventDefault();
+          sAnim.top = e.clientY - 50 + 'px';
+          sAnim.left = e.clientX - 50 +'px';
+          sAnim.duration = 0.05;
+          square.transition(sAnim);
+        });
+
+        square.on('gesturemoveend', function(e) {
+          e.preventDefault();
+          square.removeClass("black");
+          Y.log('Ending Gesture...');
+        });
+
+
+
+      });
+
+
+    </script>
+  </body>
+</html>

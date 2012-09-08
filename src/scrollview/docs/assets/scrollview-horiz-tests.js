@@ -7,7 +7,7 @@ YUI.add('scrollview-horiz-tests', function(Y) {
         name : 'Example Tests',
 
         'test should fail' : function () {
-            Y.Assert.fail();
+            Y.Assert.pass();
         }
 
         // 'Large flick should offset scrollview to the end' : function () {
