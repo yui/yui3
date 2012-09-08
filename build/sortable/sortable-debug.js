@@ -79,7 +79,7 @@ YUI.add('sortable', function (Y, NAME) {
             });
 
             this.delegate = del;
-            Sortable.reg(this);
+            Sortable.reg(this, id);
         },
         _up: null,
         _y: null,
@@ -239,7 +239,7 @@ YUI.add('sortable', function (Y, NAME) {
         destructor: function() {
             this.drop.destroy();
             this.delegate.destroy();
-            Sortable.unreg(this);
+            Sortable.unreg(this, this.get(ID));
         },
         /**
         * @method join
@@ -401,10 +401,10 @@ YUI.add('sortable', function (Y, NAME) {
         * @static
         * @property _sortables
         * @private
-        * @type Array
+        * @type Object
         * @description Hash map of all Sortables on the page.
         */
-        _sortables: [],
+        _sortables: {},
         /**
         * @static
         * @method _test
@@ -426,9 +426,14 @@ YUI.add('sortable', function (Y, NAME) {
         * @description Get a Sortable instance back from a node reference or a selector string.
         */
         getSortable: function(node) {
-            var s = null;
+            var s = null,
+                id = null;
             node = Y.one(node);
-            Y.each(Y.Sortable._sortables, function(v) {
+            id = node.get(ID);
+            if(id && Y.Sortable._sortables[id]) {
+                return Y.Sortable._sortables[id];
+            }
+            Y.Object.each(Y.Sortable._sortables, function(v) {
                 if (Y.Sortable._test(node, v.get(CONT))) {
                     s = v;
                 }
@@ -439,21 +444,32 @@ YUI.add('sortable', function (Y, NAME) {
         * @static
         * @method reg
         * @param Sortable s A Sortable instance.
+        * @param String id (optional) The id of the sortable instance.
         * @description Register a Sortable instance with the singleton to allow lookups later.
         */
-        reg: function(s) {
-            Y.Sortable._sortables.push(s);
+        reg: function(s, id) {
+            if (!id) {
+                id = s.get(ID);
+            }
+            Y.Sortable._sortables[id] = s;
         },
         /**
         * @static
         * @method unreg
         * @param Sortable s A Sortable instance.
+        * @param String id (optional) The id of the sortable instance.
         * @description Unregister a Sortable instance with the singleton.
         */
-        unreg: function(s) {
-            Y.each(Y.Sortable._sortables, function(v, k) {
+        unreg: function(s, id) {
+            if (!id) {
+                id = s.get(ID);
+            }
+            if (id && Y.Sortable._sortables[id]) {
+                delete Y.Sortable._sortables[id];
+                return;
+            }
+            Y.Object.each(Y.Sortable._sortables, function(v, k) {
                 if (v === s) {
-                    Y.Sortable._sortables[k] = null;
                     delete Sortable._sortables[k];
                 }
             });
