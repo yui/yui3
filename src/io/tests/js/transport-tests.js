@@ -21,16 +21,33 @@ YUI.add('transport-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: 'Native Transport Test',
-        'test': function() {
+        'Non-IE browsers should be able to use XHR level 2': function() {
             var io = new Y.IO(),
                 o = io._create({ xdr: { use:'native' } });
 
+            // IE must use a form of external transport
             if (Y.UA.ie) {
-                Y.Assert.isTrue(o.notify);
+                Y.Assert.isTrue(o.xdr);
             }
             else {
                 Y.Assert.isFalse(o.notify);
             }
+        },
+
+        'X-Requested-With header should be removed for native XDR': function() {
+            var io = new Y.IO(),
+                o = io._create({ xdr: { use:'native' } });
+
+            Y.Assert.areSame(undefined, io._headers['X-Requested-With']);
+        },
+
+        'X-Requested-With header should be capable of being re-added': function() {
+            var io = new Y.IO(),
+                o = io._create({ xdr: { use:'native' } });
+
+            io.setHeader('X-Requested-With', 'XMLHttpRequest');
+
+            Y.Assert.areSame('XMLHttpRequest', io._headers['X-Requested-With']);
         }
     }));
 

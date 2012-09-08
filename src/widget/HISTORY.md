@@ -1,6 +1,21 @@
 Widget Change History
 =====================
 
+3.6.1
+-----
+
+ * Fixed regression in `Widget.getByNode()`, introduced in 3.5.0, where the 
+   Widget would not be found if the user changed the id of the boundingBox node,
+   after the widget was rendered.
+
+   We go back to using the Node's guid for caching instead of the DOM node id.
+
+   The change was originally made to lay the groundwork for string based rendering,
+   where a boundingBox node reference would not be present during initialization.
+
+   This can still be achieved post-render by populating the instance map, after a 
+   Node reference has been established/added to the DOM (when we get there).
+
 3.6.0
 -----
 

@@ -116,7 +116,7 @@ function isRTL(lang) {
 YUI().use("node", "datatype-date", function (Y) {
     
     Y.one("#default_lang_output").setHTML(
-        Y.DataType.Date.format(new Date(), {format:"%x"})
+        Y.Date.format(new Date(), {format:"%x"})
     );
 
 });
@@ -125,7 +125,7 @@ YUI().use("node", "datatype-date", function (Y) {
 YUI({lang:"fr-FR"}).use("node", "datatype-date", function (Y) {
 
     Y.one("#single_lang_output").setHTML(
-        Y.DataType.Date.format(new Date(), {format:"%x"})
+        Y.Date.format(new Date(), {format:"%x"})
     );
     
 });
@@ -165,7 +165,7 @@ YUI().use("node", "datatype-date", function (Y) {
             var currentDateAtNoon = new Date();
                 currentDateAtNoon.setHours(12,0,0,0);
 
-            var formattedDate = Y.DataType.Date.format(currentDateAtNoon, {format:"%c"}),
+            var formattedDate = Y.Date.format(currentDateAtNoon, {format:"%c"}),
                 rtl = isRTL(lang);
 
             output.set("text", formattedDate);

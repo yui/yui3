@@ -1,4 +1,4 @@
-YUI.add('widget-base', function(Y) {
+YUI.add('widget-base', function (Y, NAME) {
 
 /**
  * Provides the base Widget class, with HTML Parser support
@@ -341,15 +341,13 @@ _getWidgetClassName = Widget.getClassName;
  */
 Widget.getByNode = function(node) {
     var widget,
-        nodeid,
         widgetMarker = _getWidgetClassName();
 
     node = Node.one(node);
     if (node) {
         node = node.ancestor("." + widgetMarker, true);
         if (node) {
-            nodeid = node.get(ID);
-            widget = _instances[nodeid];
+            widget = _instances[Y.stamp(node, true)];
         }
     }
 
@@ -391,8 +389,9 @@ Y.extend(Widget, Y.Base, {
     initializer: function(config) {
 
         var bb = this.get(BOUNDING_BOX);
+
         if (bb instanceof Node) {
-            this._mapInstance(bb.get(ID));
+            this._mapInstance(Y.stamp(bb));
         }
 
         /**
@@ -422,9 +421,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _mapInstance : function(id) {
-        if (!(_instances[id])) {
-            _instances[id] = this;
-        }
+        _instances[id] = this;
     },
 
     /**
@@ -438,13 +435,13 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
 
         var boundingBox = this.get(BOUNDING_BOX),
-            bbid;
+            bbGuid;
 
         if (boundingBox instanceof Node) {
-            bbid = boundingBox.get(ID);
+            bbGuid = Y.stamp(boundingBox,true);
 
-            if (bbid in _instances) {
-                delete _instances[bbid];
+            if (bbGuid in _instances) {
+                delete _instances[bbGuid];
             }
 
             this._destroyBox();
@@ -1261,4 +1258,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'classnamemanager']});
+}, '@VERSION@', {"requires": ["attribute", "base-base", "base-pluginhost", "classnamemanager", "event-focus", "node-base", "node-style"], "skinnable": true});
