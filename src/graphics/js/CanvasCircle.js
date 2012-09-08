@@ -14,7 +14,7 @@ CanvasCircle = function(cfg)
 	CanvasCircle.superclass.constructor.apply(this, arguments);
 };
     
-CanvasCircle.NAME = "canvasCircle";
+CanvasCircle.NAME = "circle";
 
 Y.extend(CanvasCircle, Y.CanvasShape, {
 	/**

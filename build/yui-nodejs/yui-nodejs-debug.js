@@ -7661,11 +7661,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     },
-    "anim-shape-transform": {
+    "anim-shape": {
         "requires": [
             "anim-base",
             "anim-easing",
+            "anim-color",
             "matrix"
+        ]
+    },
+    "anim-shape-transform": {
+        "use": [
+            "anim-shape"
         ]
     },
     "anim-xy": {

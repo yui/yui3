@@ -14,7 +14,7 @@ CanvasEllipse = function(cfg)
 	CanvasEllipse.superclass.constructor.apply(this, arguments);
 };
 
-CanvasEllipse.NAME = "canvasEllipse";
+CanvasEllipse.NAME = "ellipse";
 
 Y.extend(CanvasEllipse, CanvasShape, {
 	/**

@@ -73,3 +73,4 @@ and then simply run `shifter` in that components directory.
 Shifter also allows you to rebuild the entire YUI src tree:
 
     cd yui3/src && shifter --walk
+

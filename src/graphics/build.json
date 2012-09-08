@@ -1,6 +1,16 @@
 {
     "name": "graphics",
     "builds": {
+        "graphics": {
+            "jsfiles": [
+                "GraphicBase.js"
+            ]
+        },
+        "graphics-canvas-default": {
+            "jsfiles": [
+                "CanvasDefault.js"
+            ]
+        },
         "graphics-canvas": {
             "jsfiles": [
                 "CanvasDrawing.js",
@@ -13,19 +23,9 @@
                 "CanvasGraphic.js"
             ]
         },
-        "graphics-canvas-default": {
-            "jsfiles": [
-                "CanvasDefault.js"
-            ]
-        },
         "graphics-vml-default": {
             "jsfiles": [
                 "VMLDefault.js"
-            ]
-        },
-        "graphics": {
-            "jsfiles": [
-                "GraphicBase.js"
             ]
         },
         "graphics-vml": {

@@ -206,29 +206,13 @@ Matrix.prototype = {
      */
     toCSSText: function() {
         var matrix = this,
-            dx = matrix.dx,
-            dy = matrix.dy,
-            text = 'matrix(';
-
-
-        if (Y.UA.gecko) { // requires unit
-            if (!isNaN(dx)) {
-                dx += 'px';
-            }
-            if (!isNaN(dy)) {
-                dy += 'px';
-            }
-        }
-
-        text +=     matrix.a + ',' + 
+            text = 'matrix(' +
+                    matrix.a + ',' + 
                     matrix.b + ',' + 
                     matrix.c + ',' + 
                     matrix.d + ',' + 
-                    dx + ',' +
-                    dy;
-
-        text += ')';
-
+                    matrix.dx + ',' +
+                    matrix.dy + ')';
         return text;
     },
 

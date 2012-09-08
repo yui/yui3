@@ -41,7 +41,12 @@ var getClassName = Y.ClassNameManager.getClassName,
     END = 'end',
     EMPTY = '',
     ZERO = '0s',
-
+    SNAP_DURATION = 'snapDuration',
+    SNAP_EASING = 'snapEasing', 
+    EASING = 'easing', 
+    FRAME_DURATION = 'frameDuration', 
+    BOUNCE_RANGE = 'bounceRange',
+    
     _constrain = function (val, min, max) {
         return Math.min(Math.max(val, min), max);
     };
@@ -103,6 +108,23 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
+     * Contains the distance (postive or negative) in pixels by which 
+     * the scrollview was last scrolled. This is useful when setting up 
+     * click listeners on the scrollview content, which on mouse based 
+     * devices are always fired, even after a drag/flick. 
+     * 
+     * <p>Touch based devices don't currently fire a click event, 
+     * if the finger has been moved (beyond a threshold) so this 
+     * check isn't required, if working in a purely touch based environment</p>
+     * 
+     * @property lastScrolledAmt
+     * @type Number
+     * @public
+     * @default 0
+     */
+    lastScrolledAmt: 0,
+
+    /**
      * Designated initializer
      *
      * @method initializer
@@ -114,9 +136,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Cache these values, since they aren't going to change.
         sv._bb = sv.get(BOUNDING_BOX);
         sv._cb = sv.get(CONTENT_BOX);
-        sv._cDecel = sv.get(DECELERATION);
-        sv._cBounce = sv.get(BOUNCE);
+
+        // Cache some attributes
         sv._cAxis = sv.get(AXIS);
+        sv._cBounce = sv.get(BOUNCE);
+        sv._cBounceRange = sv.get(BOUNCE_RANGE);
+        sv._cDeceleration = sv.get(DECELERATION);
+        sv._cFrameDuration = sv.get(FRAME_DURATION);
     },
 
     /**
@@ -128,20 +154,47 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     bindUI: function () {
         var sv = this;
 
+        // Bind interaction listers
         sv._bindFlick(sv.get(FLICK));
         sv._bindDrag(sv.get(DRAG));
-        sv._bindMousewheel(sv.get(MOUSEWHEEL));
+        sv._bindMousewheel(true);
         
+        // Bind change events
         sv._bindAttrs();
 
         // IE SELECT HACK. See if we can do this non-natively and in the gesture for a future release.
         if (IE) {
             sv._fixIESelect(sv._bb, sv._cb);
         }
+
+        // Set any deprecated static properties
+        if (ScrollView.SNAP_DURATION) {
+            sv.set(SNAP_DURATION, ScrollView.SNAP_DURATION);
+        }
+
+        if (ScrollView.SNAP_EASING) {
+            sv.set(SNAP_EASING, ScrollView.SNAP_EASING);
+        }
+
+        if (ScrollView.EASING) {
+            sv.set(EASING, ScrollView.EASING);
+        }
+
+        if (ScrollView.FRAME_STEP) {
+            sv.set(FRAME_DURATION, ScrollView.FRAME_STEP);
+        }
+
+        if (ScrollView.BOUNCE_RANGE) {
+            sv.set(BOUNCE_RANGE, ScrollView.BOUNCE_RANGE);
+        }
+
+        // Recalculate dimension properties
+        // TODO: This should be throttled.
+        // Y.one(WINDOW).after('resize', sv._afterDimChange, sv);
     },
 
     /**
-     * 
+     * Bind event listeners
      *
      * @method _bindAttrs
      * @private
@@ -151,6 +204,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollChangeHandler = sv._afterScrollChange,
             dimChangeHandler = sv._afterDimChange;
 
+        // Bind any change event listeners
         sv.after({
             'scrollEnd': sv._afterScrollEnd,
             'disabledChange': sv._afterDisabledChange,
@@ -162,9 +216,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             'heightChange': dimChangeHandler,
             'widthChange': dimChangeHandler
         });
-
-        // TODO: This should be throttled.
-        Y.one(WINDOW).after('resize', dimChangeHandler, sv);
     },
 
     /**
@@ -202,6 +253,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         if (flick) {
             bb.on(FLICK + '|' + FLICK, Y.bind(sv._flick, sv), flick);
+
+            // Rebind Drag, becuase _onGestureMoveEnd always has to fire -after- _flick
+            sv._bindDrag(sv.get(DRAG));
         }
     },
 
@@ -244,11 +298,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // If the axis is undefined, auto-calculate it
         if (sv._cAxis === undefined) {
             // This should only ever be run once (for now).
-            // In the future SV might post-loaded axis changes
-            sv._set(AXIS, {
+            // In the future SV might post-load axis changes
+            sv._cAxis = {
                 x: (scrollWidth > width),
                 y: (scrollHeight > height)
-            });
+            };
+
+            sv._set(AXIS, sv._cAxis);
         }
 
         // get text direction on or inherited by scrollview node
@@ -261,7 +317,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv._uiDimensionsChange();
 
         // If we're out-of-bounds, snap back.
-        if (sv._isOOB()) {
+        if (sv._isOutOfBounds()) {
             sv._snapBack();
         }
     },
@@ -312,15 +368,13 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight,
             rtl = sv.rtl,
-            svAxis = sv._cAxis,
-            svAxisX = svAxis.x,
-            svAxisY = svAxis.y;
-
-        if (svAxisX) {
+            svAxis = sv._cAxis;
+            
+        if (svAxis && svAxis.x) {
             bb.addClass(CLASS_NAMES.horizontal);
         }
 
-        if (svAxisY) {
+        if (svAxis && svAxis.y) {
             bb.addClass(CLASS_NAMES.vertical);
         }
 
@@ -331,7 +385,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._minScrollX = (rtl) ? -(scrollWidth - width) : 0;
+        sv._minScrollX = (rtl) ? Math.min(0, -(scrollWidth - width)) : 0;
 
         /**
          * Internal state, defines the maximum amount that the scrollview can be scrolled along the X axis
@@ -340,7 +394,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._maxScrollX = (rtl) ? 0 : (scrollWidth - width);
+        sv._maxScrollX = (rtl) ? 0 : Math.max(0, scrollWidth - width);
 
         /**
          * Internal state, defines the minimum amount that the scrollview can be scrolled along the Y axis
@@ -358,7 +412,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @type number
          * @protected
          */
-        sv._maxScrollY = scrollHeight - height;
+        sv._maxScrollY = Math.max(0, scrollHeight - height);
     },
 
     /**
@@ -368,8 +422,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param x {Number} The x-position to scroll to. (null for no movement)
      * @param y {Number} The y-position to scroll to. (null for no movement)
      * @param {Number} [duration] ms of the scroll animation. (default is 0)
-     * @param {String} [easing] An easing equation if duration is set. (defaults to ScrollView.EASING)
-     * @param {String} [node] The node to move.
+     * @param {String} [easing] An easing equation if duration is set. (default is `easing` attribute)
+     * @param {String} [node] The node to transform.  Setting this can be useful in dual-axis paginated instances. (default is the instance's contentBox)
      */
     scrollTo: function (x, y, duration, easing, node) {
         // Check to see if widget is disabled
@@ -388,7 +442,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // default the optional arguments
         duration = duration || 0;
-        easing = easing || ScrollView.EASING;
+        easing = easing || sv.get(EASING); // @TODO: Cache this
         node = node || cb;
 
         if (x !== null) {
@@ -507,11 +561,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // if a flick animation is in progress, cancel it
         if (sv._flickAnim) {
+            // Cancel and delete sv._flickAnim
             sv._flickAnim.cancel();
+            delete sv._flickAnim;
+            sv._onTransEnd();
         }
 
         // TODO: Review if neccesary (#2530129)
         e.stopPropagation();
+
+        // Reset lastScrolledAmt
+        sv.lastScrolledAmt = 0;
 
         // Stores data for this gesture cycle.  Cleaned up later
         sv._gesture = {
@@ -540,6 +600,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             // Create some listeners for the rest of the gesture cycle
             onGestureMove: bb.on(DRAG + '|' + GESTURE_MOVE, Y.bind(sv._onGestureMove, sv)),
+            
+            // @TODO: Don't bind gestureMoveEnd if it's a Flick?
             onGestureMoveEnd: bb.on(DRAG + '|' + GESTURE_MOVE + END, Y.bind(sv._onGestureMoveEnd, sv))
         };
     },
@@ -598,8 +660,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             gesture = sv._gesture,
             flick = gesture.flick,
             clientX = e.clientX,
-            clientY = e.clientY,
-            isOOB;
+            clientY = e.clientY;
 
         if (sv._prevent.end) {
             e.preventDefault();
@@ -609,16 +670,31 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         gesture.endClientX = clientX;
         gesture.endClientY = clientY;
 
-        // Only if this gesture wasn't a flick, and there was movement
-        if (!flick && gesture.deltaX !== null && gesture.deltaY !== null) {
-            if (sv._isOOB()) {
-                sv._snapBack();
-            }
-            else {
-                // Don't fire scrollEnd on the gesture axis is the same as paginator's
-                // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
-                if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
-                    sv._onTransEnd();
+        // Cleanup the event handlers
+        gesture.onGestureMove.detach();
+        gesture.onGestureMoveEnd.detach();
+
+        // If this wasn't a flick, wrap up the gesture cycle
+        if (!flick) {
+            // @TODO: Be more intelligent about this. Look at the Flick attribute to see 
+            // if it is safe to assume _flick did or didn't fire.  
+            // Then, the order _flick and _onGestureMoveEnd fire doesn't matter?
+
+            // If there was movement (_onGestureMove fired)
+            if (gesture.deltaX !== null && gesture.deltaY !== null) {
+
+                // If we're out-out-bounds, then snapback
+                if (sv._isOutOfBounds()) {
+                    sv._snapBack();
+                }
+
+                // Inbounds
+                else {
+                    // Don't fire scrollEnd on the gesture axis is the same as paginator's
+                    // Not totally confident this is ideal to access a plugin's properties from a host, @TODO revisit
+                    if (sv.pages && !sv.pages.get(AXIS)[gesture.axis]) {
+                        sv._onTransEnd();
+                    }
                 }
             }
         }
@@ -639,16 +715,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var sv = this,
             gesture = sv._gesture,
             svAxis = sv._cAxis,
-            svAxisX = svAxis.x,
-            svAxisY = svAxis.y,
             flick = e.flick,
-            flickAxis = flick.axis;
+            flickAxis = flick.axis,
+            flickVelocity = flick.velocity,
+            axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
+            startPosition = sv.get(axisAttr);
 
         gesture.flick = flick;
-
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
-        if ((flickAxis === DIM_X && svAxisX) || (flickAxis === DIM_Y && svAxisY)) {
-            sv._flickFrame(flick.velocity);
+        if (svAxis[flickAxis]) {
+            sv._flickFrame(flickVelocity, flickAxis, startPosition);
         }
     },
 
@@ -657,58 +733,72 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      *
      * @method _flickFrame
      * @param velocity {Number} The velocity of this animated frame
+     * @param flickAxis {String} The axis on which to animate
+     * @param startPosition {Number} The starting X/Y point to flick from
      * @protected
      */
-    _flickFrame: function (velocity) {
+    _flickFrame: function (velocity, flickAxis, startPosition) {
 
         var sv = this,
-            gesture = sv._gesture,
-            flickAxis = gesture.flick.axis,
-            currentX = sv.get(SCROLL_X),
-            currentY = sv.get(SCROLL_Y),
-            minX = sv._minScrollX,
-            maxX = sv._maxScrollX,
-            minY = sv._minScrollY,
-            maxY = sv._maxScrollY,
-            deceleration = sv._cDecel,
+            axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
+
+            // Localize cached values
             bounce = sv._cBounce,
-            svAxis = sv._cAxis,
-            svAxisX = svAxis.x,
-            svAxisY = svAxis.y,
-            step = ScrollView.FRAME_STEP,
-            newX = currentX - (velocity * step),
-            newY = currentY - (velocity * step);
+            bounceRange = sv._cBounceRange,
+            deceleration = sv._cDeceleration,
+            frameDuration = sv._cFrameDuration,
 
-        velocity *= deceleration;
+            // Calculate
+            newVelocity = velocity * deceleration,
+            newPosition = startPosition - (frameDuration * newVelocity),
 
-        // If we are out of bounds
-        if (sv._isOOB()) {
-            // We're past an edge, now bounce back
-            sv._snapBack();
+            // Some convinience conditions
+            min = flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY,
+            max = flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY,
+            belowMin       = (newPosition < min),
+            belowMax       = (newPosition < max),
+            aboveMin       = (newPosition > min),
+            aboveMax       = (newPosition > max),
+            belowMinRange  = (newPosition < (min - bounceRange)),
+            belowMaxRange  = (newPosition < (max + bounceRange)),
+            withinMinRange = (belowMin && (newPosition > (min - bounceRange))),
+            withinMaxRange = (aboveMax && (newPosition < (max + bounceRange))),
+            aboveMinRange  = (newPosition > (min - bounceRange)),
+            aboveMaxRange  = (newPosition > (max + bounceRange)),
+            tooSlow;
+
+        // If we're within the range but outside min/max, dampen the velocity
+        if (withinMinRange || withinMaxRange) {
+            newVelocity *= bounce;
         }
-        
-        // If the velocity gets slow enough, just stop
-        else if (Math.abs(velocity).toFixed(4) <= 0.015) {
-            sv._onTransEnd();
+
+        // Is the velocity too slow to bother?
+        tooSlow = (Math.abs(newVelocity).toFixed(4) < 0.015);
+
+        // If the velocity is too slow or we're outside the range
+        if (tooSlow || belowMinRange || aboveMaxRange) {
+            // Cancel and delete sv._flickAnim
+            if (sv._flickAnim) {
+                sv._flickAnim.cancel();
+                delete sv._flickAnim;
+            }
+
+            // If we're inside the scroll area, just end
+            if (aboveMin && belowMax) {
+                sv._onTransEnd();
+            }
+
+            // We're outside the scroll area, so we need to snap back
+            else {
+                sv._snapBack();
+            }
         }
 
         // Otherwise, animate to the next frame
         else {
-            if (flickAxis === DIM_X && svAxisX) {
-                if (newX < minX || newX > maxX) {
-                    velocity *= bounce;
-                }
-                sv.set(SCROLL_X, newX);
-            }
-            else if (flickAxis === DIM_Y && svAxisY) {
-                if (newY < minY || newY > maxY) {
-                    velocity *= bounce;
-                }
-                sv.set(SCROLL_Y, newY);
-            }
-
             // @TODO: maybe use requestAnimationFrame instead
-            sv._flickAnim = Y.later(step, sv, '_flickFrame', [velocity]);
+            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [newVelocity, flickAxis, newPosition]);
+            sv.set(axisAttr, newPosition);
         }
     },
 
@@ -730,6 +820,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
         if (bb.contains(e.target)) {
+        
+            // Reset lastScrolledAmt
+            sv.lastScrolledAmt = 0;
+
             // Jump to the new offset
             sv.set(SCROLL_Y, scrollToY);
 
@@ -752,19 +846,21 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * Checks to see the current scrollX/scrollY position is out of bounds
+     * Checks to see the current scrollX/scrollY position beyond the min/max boundary
      *
-     * @method _isOOB
+     * @method _isOutOfBounds
+     * @param x {Number} [optional] The X position to check
+     * @param y {Number} [optional] The Y position to check
      * @returns {boolen} Whether the current X/Y position is out of bounds (true) or not (false)
      * @private
      */
-    _isOOB: function () {
+    _isOutOfBounds: function (x, y) {
         var sv = this,
             svAxis = sv._cAxis,
             svAxisX = svAxis.x,
             svAxisY = svAxis.y,
-            currentX = sv.get(SCROLL_X),
-            currentY = sv.get(SCROLL_Y),
+            currentX = x || sv.get(SCROLL_X),
+            currentY = y || sv.get(SCROLL_Y),
             minX = sv._minScrollX,
             minY = sv._minScrollY,
             maxX = sv._maxScrollX,
@@ -790,13 +886,14 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             maxY = sv._maxScrollY,
             newY = _constrain(currentY, minY, maxY),
             newX = _constrain(currentX, minX, maxX),
-            duration = ScrollView.SNAP_DURATION;
+            duration = sv.get(SNAP_DURATION),
+            easing = sv.get(SNAP_EASING);
 
         if (newX !== currentX) {
-            sv.set(SCROLL_X, newX, {duration:duration});
+            sv.set(SCROLL_X, newX, {duration:duration, easing:easing});
         }
         else if (newY !== currentY) {
-            sv.set(SCROLL_Y, newY, {duration:duration});
+            sv.set(SCROLL_Y, newY, {duration:duration, easing:easing});
         }
         else {
             // It shouldn't ever get here, but in case it does, fire scrollEnd
@@ -822,6 +919,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             easing = e.easing,
             val = e.newVal,
             scrollToArgs = [];
+
+        // Set the scrolled value
+        sv.lastScrolledAmt = sv.lastScrolledAmt + (e.newVal - e.prevVal);
 
         // Generate the array of args to pass to scrollTo()
         if (e.attrName === SCROLL_X) {
@@ -885,17 +985,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     },
 
     /**
-     * After listener for changes to the drag attribute
-     *
-     * @method _afterDragChange
-     * @param e {Event.Facade} The event facade
-     * @protected
-     */
-    _afterMousewheelChange: function (e) {
-        this._bindMousewheel(e.newVal);
-    },
-
-    /**
      * After listener for the height or width attribute
      *
      * @method _afterDimChange
@@ -914,22 +1003,20 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _afterScrollEnd: function (e) {
-        var sv = this,
-            gesture = sv._gesture;
+        var sv = this;
 
-        if (gesture && gesture.onGestureMove && gesture.onGestureMove.detach) {
-            gesture.onGestureMove.detach();
-        }
-
-        if (gesture && gesture.onGestureMoveEnd && gesture.onGestureMoveEnd.detach) {
-            gesture.onGestureMoveEnd.detach();
-        }
-
+        // @TODO: Move to sv._cancelFlick()
         if (sv._flickAnim) {
-            if (sv._flickAnim.cancel) {
-                sv._flickAnim.cancel(); // Might as well?
-            }
+            // Cancel the flick (if it exists)
+            sv._flickAnim.cancel();
+
+            // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
             delete sv._flickAnim;
+        }
+
+        // If for some reason we're OOB, snapback
+        if (sv._isOutOfBounds()) {
+            sv._snapBack();
         }
 
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
@@ -956,8 +1043,52 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
                 y: val.match(/y/i) ? true : false
             };
         }
-    }
+    },
     
+    /**
+    * The scrollX, scrollY setter implementation
+    *
+    * @method _setScroll
+    * @private
+    * @param {Number} val
+    * @param {String} dim
+    *
+    * @return {Number} The value
+    */
+    _setScroll : function(val, dim) {
+
+        // Just ensure the widget is not disabled
+        if (this._cDisabled) {
+            val = Y.Attribute.INVALID_VALUE;
+        } 
+
+        return val;
+    },
+
+    /**
+    * Setter for the scrollX attribute
+    *
+    * @method _setScrollX
+    * @param val {Number} The new scrollX value
+    * @return {Number} The normalized value
+    * @protected
+    */
+    _setScrollX: function(val) {
+        return this._setScroll(val, DIM_X);
+    },
+
+    /**
+    * Setter for the scrollY ATTR
+    *
+    * @method _setScrollY
+    * @param val {Number} The new scrollY value
+    * @return {Number} The normalized value
+    * @protected
+    */
+    _setScrollY: function(val) {
+        return this._setScroll(val, DIM_Y);
+    }
+
     // End prototype properties
 
 }, {
@@ -999,25 +1130,27 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the y-axis
-         *
-         * @attribute scrollY
-         * @type Number
-         * @default 0
-         */
-        scrollY: {
-            value: 0
-        },
-
-        /**
-         * The scroll position in the x-axis
+         * The current scroll position in the x-axis
          *
          * @attribute scrollX
          * @type Number
          * @default 0
          */
         scrollX: {
-            value: 0
+            value: 0,
+            setter: '_setScrollX'
+        },
+
+        /**
+         * The current scroll position in the y-axis
+         *
+         * @attribute scrollY
+         * @type Number
+         * @default 0
+         */
+        scrollY: {
+            value: 0,
+            setter: '_setScrollY'
         },
 
         /**
@@ -1070,13 +1203,58 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * Enable/Disable scrolling the ScrollView content via mousewheel
-         * @attribute mousewheel
-         * @type boolean
-         * @default true
+         * The default duration to use when animating the bounce snap back.
+         *
+         * @attribute snapDuration
+         * @type Number
+         * @default 400
          */
-        mousewheel: {
-            value: true
+        snapDuration: {
+            value: 400
+        },
+
+        /**
+         * The default easing to use when animating the bounce snap back.
+         *
+         * @attribute snapEasing
+         * @type String
+         * @default 'ease-out'
+         */
+        snapEasing: {
+            value: 'ease-out'
+        },
+
+        /**
+         * The default easing used when animating the flick
+         *
+         * @attribute easing
+         * @type String
+         * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
+         */
+        easing: {
+            value: 'cubic-bezier(0, 0.1, 0, 1.0)'
+        },
+
+        /**
+         * The interval (ms) used when animating the flick for JS-timer animations
+         *
+         * @attribute frameDuration
+         * @type Number
+         * @default 15
+         */
+        frameDuration: {
+            value: 15
+        },
+
+        /**
+         * The default bounce distance in pixels
+         *
+         * @attribute bounceRange
+         * @type Number
+         * @default 150
+         */
+        bounceRange: {
+            value: 150
         }
     },
 
@@ -1100,56 +1278,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     UI_SRC: UI,
 
     /**
-     * The default bounce distance in pixels
-     *
-     * @property BOUNCE_RANGE
-     * @type Number
-     * @static
-     * @default 150
-     */
-    BOUNCE_RANGE: 150,
-
-    /**
-     * The interval used when animating the flick
-     *
-     * @property FRAME_STEP
-     * @type Number
-     * @static
-     * @default 16
-     */
-    FRAME_STEP: 16,
-
-    /**
-     * The default easing used when animating the flick
-     *
-     * @property EASING
-     * @type String
-     * @static
-     * @default 'cubic-bezier(0, 0.1, 0, 1.0)'
-     */
-    EASING: 'cubic-bezier(0, 0.1, 0, 1.0)',
-
-    /**
-     * The default easing to use when animating the bounce snap back.
-     *
-     * @property SNAP_EASING
-     * @type String
-     * @static
-     * @default 'ease-out'
-     */
-    SNAP_EASING: 'ease-out',
-
-    /**
-     * The default duration to use when animating the bounce snap back.
-     *
-     * @property SNAP_DURATION
-     * @type Number
-     * @static
-     * @default 400
-     */
-    SNAP_DURATION: 400,
-
-    /**
      * Object map of style property names used to set transition properties.
      * Defaults to the vendor prefix established by the Transition module.
      * The configured property names are `_TRANSITION.DURATION` (e.g. "WebkitTransitionDuration") and
@@ -1161,7 +1289,62 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _TRANSITION: {
         DURATION: Y.Transition._VENDOR_PREFIX + 'TransitionDuration',
         PROPERTY: Y.Transition._VENDOR_PREFIX + 'TransitionProperty'
-    }
+    },
+
+    /**
+     * The default bounce distance in pixels
+     *
+     * @property BOUNCE_RANGE
+     * @type Number
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    BOUNCE_RANGE: false,
+
+    /**
+     * The interval (ms) used when animating the flick
+     *
+     * @property FRAME_STEP
+     * @type Number
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    FRAME_STEP: false,
+
+    /**
+     * The default easing used when animating the flick
+     *
+     * @property EASING
+     * @type String
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    EASING: false,
+
+    /**
+     * The default easing to use when animating the bounce snap back.
+     *
+     * @property SNAP_EASING
+     * @type String
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    SNAP_EASING: false,
+
+    /**
+     * The default duration to use when animating the bounce snap back.
+     *
+     * @property SNAP_DURATION
+     * @type Number
+     * @static
+     * @default false
+     * @deprecated (in 3.7.0)
+     */
+    SNAP_DURATION: false
 
     // End static properties
 
