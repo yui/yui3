@@ -26,6 +26,7 @@
         _deactivateTargets: function() {},
         _startDrag: function() {
             if (this.activeDrag && this.activeDrag.get('useShim')) {
+                this._shimming = true;
                 this._pg_activate();
                 this._activateTargets();
             }
@@ -58,7 +59,7 @@
             if (cur == 'auto') {
                 cur = this.get('dragCursor');
             }
-            
+
             this._pg_size();
             this._pg.setStyles({
                 top: 0,
@@ -109,11 +110,11 @@
             this._pg = pg;
             this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             this._pg.on('mouseup', Y.bind(this._end, this));
-            
+
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));
             win.on('scroll', Y.bind(this._pg_size, this));
-        }   
+        }
     }, true);
 
 
