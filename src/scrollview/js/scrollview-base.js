@@ -118,8 +118,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @property lastScrolledAmt
      * @type Number
      * @public
+     * @default 0
      */
-    lastScrolledAmt: null,
+    lastScrolledAmt: 0,
 
     /**
      * Designated initializer
