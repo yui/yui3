@@ -175,9 +175,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         var paginator = this,
             host = paginator._host,
-            bb = paginator._bb,
-            widgetWidth = bb.get('offsetWidth'),
-            widgetHeight = bb.get('offsetHeight'),
+            dims = host._getScrollDims(),
+            widgetWidth = dims.offsetWidth,
+            widgetHeight = dims.offsetHeight,
             pageNodes = paginator._getPageNodes();
             
         // Inefficient. Should not reinitialize every page every syncUI
