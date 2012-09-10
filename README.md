@@ -16,6 +16,7 @@ Links
   * [Contributor Info](http://yuilibrary.com/contribute/)
   * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
   * [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
+  * [Shifter, for building YUI](http://yui.github.com/yui/shifter)
 
 
 Source Info
@@ -66,10 +67,10 @@ The YUI source tree includes the following directories:
      modifications to the library and its documentation should take place in
      this directory.
 
-The individual component directories under the `src` directory contain Ant
-build files (`build.xml` and others) which can be used to build individual
-modules using the YUI Builder. The YUI Builder is part of the "builder" project,
-also available on GitHub at <https://github.com/yui/builder>
+To build YUI components install [Shifter](http://yui.github.com/shifter) (`npm -g install shifter`)
+and then simply run `shifter` in that components directory.
 
-The `README` file in the `componentbuild` directory of the Builder project
-covers the installation and use of the build tool.
+Shifter also allows you to rebuild the entire YUI src tree:
+
+    cd yui3/src && shifter --walk
+
