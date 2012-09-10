@@ -743,7 +743,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         var sv = this,
-            gesture = sv._gesture,
             svAxis = sv._cAxis,
             flick = e.flick,
             flickAxis = flick.axis,
@@ -751,7 +750,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
             startPosition = sv.get(axisAttr);
 
-        gesture.flick = flick;
+        // Sometimes flick is enabled, but drag is disabled
+        if (sv._gesture) {
+            sv._gesture.flick = flick;
+        }
+
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (svAxis[flickAxis]) {
             sv._flickFrame(flickVelocity, flickAxis, startPosition);
