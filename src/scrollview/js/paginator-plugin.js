@@ -149,13 +149,19 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             hostFlick = host.get(FLICK),
+            pageNodes = paginator._getPageNodes(),
+            size = pageNodes.size(),
             paginatorAxis;
+
+        // Set the page count
+        paginator.set(TOTAL, size);
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator._cAxis === undefined) {
             paginator._set(AXIS, host.get(AXIS));
         }
 
+        // Get the paginator's axis
         paginatorAxis = paginator.get(AXIS);
 
         // Don't allow flicks on the paginated axis
