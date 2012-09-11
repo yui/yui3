@@ -151,13 +151,19 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             hostFlick = host.get(FLICK),
+            pageNodes = paginator._getPageNodes(),
+            size = pageNodes.size(),
             paginatorAxis;
+
+        // Set the page count
+        paginator.set(TOTAL, size);
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator._cAxis === undefined) {
             paginator._set(AXIS, host.get(AXIS));
         }
 
+        // Get the paginator's axis
         paginatorAxis = paginator.get(AXIS);
 
         // Don't allow flicks on the paginated axis
@@ -177,9 +183,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         var paginator = this,
             host = paginator._host,
-            bb = paginator._bb,
-            widgetWidth = bb.get('offsetWidth'),
-            widgetHeight = bb.get('offsetHeight'),
+            dims = host._getScrollDims(),
+            widgetWidth = dims.offsetWidth,
+            widgetHeight = dims.offsetHeight,
             pageNodes = paginator._getPageNodes();
             
         // Inefficient. Should not reinitialize every page every syncUI
@@ -461,7 +467,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to the next page in the scrollview, with animation
+     * Scroll to the next page, with animation
      *
      * @method next
      */
@@ -480,7 +486,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to the previous page in the scrollview, with animation
+     * Scroll to the previous page, with animation
      *
      * @method prev
      */
@@ -607,7 +613,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     ATTRS: {
 
         /**
-         * Specifies ability to scroll on x, y, or x and y axis/axes.
+         * Specifies ability to scroll on x, y, or x and y axis/axes. 
+         * If unspecified, it inherits from the host instance.
          *
          * @attribute axis
          * @type String

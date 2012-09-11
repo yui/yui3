@@ -334,6 +334,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb = sv._cb,
             bb = sv._bb,
             TRANS = ScrollView._TRANSITION,
+            // Ideally using CSSMatrix - don't think we have it normalized yet though.
+            // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e,
+            // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f,
+            origX = sv.get(SCROLL_X),
+            origY = sv.get(SCROLL_Y),
+            HWTransform,
             dims;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.
@@ -342,12 +348,19 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb.setStyle(TRANS.PROPERTY, EMPTY);
         }
 
+        origHWTransform = sv._forceHWTransforms;
+        sv._forceHWTransforms = false; // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
+
+        sv._moveTo(cb, 0, 0);
         dims = {
             'offsetWidth': bb.get('offsetWidth'),
             'offsetHeight': bb.get('offsetHeight'),
             'scrollWidth': bb.get('scrollWidth'),
             'scrollHeight': bb.get('scrollHeight')
         };
+        sv._moveTo(cb, -(origX), -(origY));
+
+        sv._forceHWTransforms = origHWTransform;
 
         return dims;
     },
@@ -422,8 +435,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param x {Number} The x-position to scroll to. (null for no movement)
      * @param y {Number} The y-position to scroll to. (null for no movement)
      * @param {Number} [duration] ms of the scroll animation. (default is 0)
-     * @param {String} [easing] An easing equation if duration is set. (defaults to ScrollView.EASING)
-     * @param {String} [node] The node to move.
+     * @param {String} [easing] An easing equation if duration is set. (default is `easing` attribute)
+     * @param {String} [node] The node to transform.  Setting this can be useful in dual-axis paginated instances. (default is the instance's contentBox)
      */
     scrollTo: function (x, y, duration, easing, node) {
         // Check to see if widget is disabled
@@ -515,6 +528,25 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         return prop;
     },
+
+    /**
+    * Utility method, to move the given element to the given xy position
+    *
+    * @method _moveTo
+    * @param node {Node} The node to move
+    * @param x {Number} The x-position to move to
+    * @param y {Number} The y-position to move to
+    * @private
+    */
+    _moveTo : function(node, x, y) {
+        if (NATIVE_TRANSITIONS) {
+            node.setStyle('transform', this._transform(x, y));
+        } else {
+            node.setStyle(LEFT, x + PX);
+            node.setStyle(TOP, y + PX);
+        }
+    },
+
 
     /**
      * Content box transition callback
@@ -713,7 +745,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         var sv = this,
-            gesture = sv._gesture,
             svAxis = sv._cAxis,
             flick = e.flick,
             flickAxis = flick.axis,
@@ -721,7 +752,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
             startPosition = sv.get(axisAttr);
 
-        gesture.flick = flick;
+        // Sometimes flick is enabled, but drag is disabled
+        if (sv._gesture) {
+            sv._gesture.flick = flick;
+        }
+
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (svAxis[flickAxis]) {
             sv._flickFrame(flickVelocity, flickAxis, startPosition);
@@ -1130,7 +1165,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the x-axis
+         * The current scroll position in the x-axis
          *
          * @attribute scrollX
          * @type Number
@@ -1142,7 +1177,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the y-axis
+         * The current scroll position in the y-axis
          *
          * @attribute scrollY
          * @type Number
