@@ -549,7 +549,7 @@ proto = {
 Registers a module with the YUI global.  The easiest way to create a
 first-class YUI module is to use the YUI component build tool.
 
-http://yuilibrary.com/projects/builder
+https://github.com/yui/shifter
 
 The build system will produce the `YUI.add` wrapper for you module, along
 with any configuration info required for the module.
