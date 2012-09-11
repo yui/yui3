@@ -2778,7 +2778,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         {
             matrix.translate(x, y);
             matrix.rotate(rot);
-            Y_DOM.setStyle(label, (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%");
+            Y_DOM.setStyle(label, "transformOrigin", (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%");
             Y_DOM.setStyle(label, "transform", matrix.toCSSText());
         }
         else
