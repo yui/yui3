@@ -16,7 +16,7 @@ Links
   * [Contributor Info](http://yuilibrary.com/contribute/)
   * [Report a Bug](http://yuilibrary.com/yui/docs/tutorials/report-bugs/)
   * [![Build Status](https://secure.travis-ci.org/yui/yui3.png?branch=master)](http://travis-ci.org/yui/yui3)
-  * [Shifter, for building YUI](http://yui.github.com/yui/shifter/)
+  * [Shifter, for building YUI](http://yui.github.com/shifter/)
 
 
 Source Info
