@@ -117,13 +117,18 @@
 					Y.Assert.areEqual(10, li.size());
 
 					// Check the default values
-					Y.Assert.areEqual(0.1, scrollview.get('bounce'));
-					Y.Assert.areEqual(0.93, scrollview.get('deceleration'));
-					Y.Assert.isTrue(scrollview.get('drag'));
-					Y.Assert.areEqual(10, scrollview.get('flick').minDistance);
-					Y.Assert.areEqual(.3, scrollview.get('flick').minVelocity);
-					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					Y.Assert.areEqual(0, scrollview.get('scrollY'));
+					Y.Assert.areEqual(0, sv.get('scrollX'));
+					Y.Assert.areEqual(0, sv.get('scrollY'));
+					Y.Assert.areEqual(0.93, sv.get('deceleration'));
+					Y.Assert.areEqual(0.1, sv.get('bounce'));
+					Y.Assert.areEqual(10, sv.get('flick').minDistance);
+					Y.Assert.areEqual(.3, sv.get('flick').minVelocity);
+					Y.Assert.isTrue(sv.get('drag'));
+					Y.Assert.areEqual(400, sv.get('snapDuration'));
+					Y.Assert.areEqual('ease-out', sv.get('snapEasing'));
+					Y.Assert.areEqual('cubic-bezier(0, 0.1, 0, 1.0)', sv.get('easing'));
+					Y.Assert.areEqual(15, sv.get('frameDuration'));
+					Y.Assert.areEqual(150, sv.get('bounceRange'));
 				},
 
 				"Ensure set('scrollX') works properly": function() {
