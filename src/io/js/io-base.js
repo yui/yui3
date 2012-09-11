@@ -632,7 +632,7 @@ IO.prototype = {
             u = uri,
             response = {};
 
-        config = config ? Y.Object(config) : {};
+        config = Y.merge(config);
         transaction = io._create(config, id);
         method = config.method ? config.method.toUpperCase() : 'GET';
         sync = config.sync;
