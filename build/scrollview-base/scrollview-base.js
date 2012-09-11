@@ -422,8 +422,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param x {Number} The x-position to scroll to. (null for no movement)
      * @param y {Number} The y-position to scroll to. (null for no movement)
      * @param {Number} [duration] ms of the scroll animation. (default is 0)
-     * @param {String} [easing] An easing equation if duration is set. (defaults to ScrollView.EASING)
-     * @param {String} [node] The node to move.
+     * @param {String} [easing] An easing equation if duration is set. (default is `easing` attribute)
+     * @param {String} [node] The node to transform.  Setting this can be useful in dual-axis paginated instances. (default is the instance's contentBox)
      */
     scrollTo: function (x, y, duration, easing, node) {
         // Check to see if widget is disabled
@@ -819,8 +819,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
-        if (bb.contains(e.target)) {
-        
+        // Because Mousewheel events fire off 'document', every ScrollView widget will react
+        // to any mousewheel anywhere on the page. This check will ensure that the mouse is currently
+        // over this specific ScrollView.  Also, only allow mousewheel scrolling on Y-axis, 
+        // becuase otherwise the 'prevent' will block page scrolling.
+        if (bb.contains(e.target) && sv._cAxis[DIM_Y]) {
+
             // Reset lastScrolledAmt
             sv.lastScrolledAmt = 0;
 
@@ -1130,7 +1134,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the x-axis
+         * The current scroll position in the x-axis
          *
          * @attribute scrollX
          * @type Number
@@ -1142,7 +1146,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         },
 
         /**
-         * The scroll position in the y-axis
+         * The current scroll position in the y-axis
          *
          * @attribute scrollY
          * @type Number

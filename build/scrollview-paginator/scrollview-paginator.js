@@ -461,7 +461,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to the next page in the scrollview, with animation
+     * Scroll to the next page, with animation
      *
      * @method next
      */
@@ -480,7 +480,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to the previous page in the scrollview, with animation
+     * Scroll to the previous page, with animation
      *
      * @method prev
      */
@@ -607,7 +607,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     ATTRS: {
 
         /**
-         * Specifies ability to scroll on x, y, or x and y axis/axes.
+         * Specifies ability to scroll on x, y, or x and y axis/axes. 
+         * If unspecified, it inherits from the host instance.
          *
          * @attribute axis
          * @type String
