@@ -1,6 +1,11 @@
 Charts Change History
 =====================
 
+3.7.0
+-----
+
+  * #2532713 Addressed issue in which updating the dataProvider on a chart with a legend threw an error.
+
 3.6.0
 -----
 
