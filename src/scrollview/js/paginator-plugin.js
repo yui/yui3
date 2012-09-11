@@ -89,6 +89,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Host method listeners
         paginator.beforeHostMethod('scrollTo', paginator._beforeHostScrollTo);
         paginator.beforeHostMethod('_mousewheel', paginator._beforeHostMousewheel);
+        paginator.beforeHostMethod('_flick', paginator._beforeHostFlick);
         paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
         paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
@@ -159,14 +160,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator._cAxis === undefined) {
             paginator._set(AXIS, host.get(AXIS));
-        }
-
-        // Get the paginator's axis
-        paginatorAxis = paginator.get(AXIS);
-
-        // Don't allow flicks on the paginated axis
-        if (paginatorAxis[hostFlick.axis]) {
-            host.set(FLICK, false);
         }
     },
 
@@ -318,6 +311,25 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             e.preventDefault();
 
             // Block host._mousewheel from running
+            return new Y.Do.Prevent();
+        }
+    },
+
+    /**
+     * Executed before host._flick
+     * Prevents flick events in some conditions
+     *
+     * @method _beforeHostFlick
+     * @param {Event.Facade}
+     * @protected
+     */
+    _beforeHostFlick: function (e) {
+        var paginator = this,
+            paginatorAxis = paginator.get(AXIS),
+            flickAxis = e.flick.axis || false;
+
+        // Prevent flicks on the paginated axis
+        if (paginatorAxis[flickAxis]) {
             return new Y.Do.Prevent();
         }
     },
