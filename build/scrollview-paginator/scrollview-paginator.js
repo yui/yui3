@@ -91,6 +91,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Host method listeners
         paginator.beforeHostMethod('scrollTo', paginator._beforeHostScrollTo);
         paginator.beforeHostMethod('_mousewheel', paginator._beforeHostMousewheel);
+        paginator.beforeHostMethod('_flick', paginator._beforeHostFlick);
         paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
         paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
@@ -149,20 +150,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterHostSyncUI: function (e) {
         var paginator = this,
-            host = paginator._host,
-            hostFlick = host.get(FLICK),
-            paginatorAxis;
+            host = paginator._host;
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator._cAxis === undefined) {
             paginator._set(AXIS, host.get(AXIS));
-        }
-
-        paginatorAxis = paginator.get(AXIS);
-
-        // Don't allow flicks on the paginated axis
-        if (paginatorAxis[hostFlick.axis]) {
-            host.set(FLICK, false);
         }
     },
 
@@ -319,6 +311,25 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
+     * Executed before host._flick
+     * Prevents flick events in some conditions
+     *
+     * @method _beforeHostFlick
+     * @param {Event.Facade}
+     * @protected
+     */
+    _beforeHostFlick: function (e) {
+        var paginator = this,
+            paginatorAxis = paginator.get(AXIS),
+            flickAxis = e.flick.axis || false;
+
+        // Prevent flicks on the paginated axis
+        if (paginatorAxis[flickAxis]) {
+            return new Y.Do.Prevent();
+        }
+    },
+
+    /**
      * Executes after host's 'scrollEnd' event
      * Runs cleanup operations
      *
@@ -461,7 +472,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to the next page in the scrollview, with animation
+     * Scroll to the next page, with animation
      *
      * @method next
      */
@@ -480,7 +491,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Scroll to the previous page in the scrollview, with animation
+     * Scroll to the previous page, with animation
      *
      * @method prev
      */
@@ -607,7 +618,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     ATTRS: {
 
         /**
-         * Specifies ability to scroll on x, y, or x and y axis/axes.
+         * Specifies ability to scroll on x, y, or x and y axis/axes. 
+         * If unspecified, it inherits from the host instance.
          *
          * @attribute axis
          * @type String
