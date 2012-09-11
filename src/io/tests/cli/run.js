@@ -10,10 +10,10 @@ var YUITest = require('yuitest'),
     YUI = require(dir).YUI,
     json;
 
-var modules = require(path.join(__dirname, '../modules'));
+var modules = require(path.join(__dirname, '../unit/modules'));
 
 Object.keys(modules).forEach(function(name) {
-    modules[name].fullpath = path.join(__dirname, '../', modules[name].fullpath);
+    modules[name].fullpath = path.join(__dirname, '../unit', modules[name].fullpath);
 });
 
 modules['nodejs-tests'] = {

@@ -143,7 +143,7 @@ YUI.add('requests-tests', function(Y) {
             var t = this;
             this.handler = function() {
                 Y.Assert.areSame(200, t.status);
-                Y.Assert.areSame(0, t.response, 'POST message and response do not match.');
+                Y.Assert.areSame(0, parseInt(t.response, 0), 'POST message and response do not match.');
 
             };
 
