@@ -817,8 +817,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
-        if (bb.contains(e.target)) {
-        
+        // Because Mousewheel events fire off 'document', every ScrollView widget will react
+        // to any mousewheel anywhere on the page. This check will ensure that the mouse is currently
+        // over this specific ScrollView.  Also, only allow mousewheel scrolling on Y-axis, 
+        // becuase otherwise the 'prevent' will block page scrolling.
+        if (bb.contains(e.target) && sv._cAxis[DIM_Y]) {
+
             // Reset lastScrolledAmt
             sv.lastScrolledAmt = 0;
 
