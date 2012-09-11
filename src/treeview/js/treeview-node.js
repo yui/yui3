@@ -18,8 +18,8 @@ Represents a tree node in a `TreeView.Tree` data structure.
     @param {Boolean} [config.canHaveChildren=false] Whether or not this node can
         contain child nodes. Will be automatically set to `true` if not
         specified and `config.children` contains one or more children.
-    @param {Object[]|TreeView.Node[]} [config.children] Array of node configs
-        or `TreeView.Node` instances for child nodes of this node.
+    @param {TreeView.Node[]} [config.children] Array of `TreeView.Node`
+        instances for child nodes of this node.
     @param {Object} [config.data] Implementation-specific data related to this
         node. You may add arbitrary properties to this hash for your own use.
     @param {String} [config.id] Unique id for this node. This id must be unique
@@ -235,32 +235,36 @@ TreeNode.prototype = {
     },
 
     /**
-    Returns the numerical index of this node within its parent node, or
-    `undefined` if this node doesn't have a parent node.
+    Returns the numerical index of this node within its parent node, or `-1` if
+    this node doesn't have a parent node.
 
     @method index
-    @return {Number} Index of this node within its parent node, or `undefined`
-        if this node doesn't have a parent node.
+    @return {Number} Index of this node within its parent node, or `-1` if this
+        node doesn't have a parent node.
     **/
     index: function () {
-        return this.parent ? this.parent.indexOf(this) : undefined;
+        return this.parent ? this.parent.indexOf(this) : -1;
     },
 
     /**
-    Returns the numerical index of the given child node, or `undefined` if the
-    node is not a child of this node.
+    Returns the numerical index of the given child node, or `-1` if the node is
+    not a child of this node.
 
     @method indexOf
     @param {TreeView.Node} node Child node.
-    @return {Number} Index of the child, or `undefined` if the node is not a
-        child of this node.
+    @return {Number} Index of the child, or `-1` if the node is not a child of
+        this node.
     **/
     indexOf: function (node) {
+        var index;
+
         if (this._isIndexStale) {
             this._reindex();
         }
 
-        return this._indexMap[node.id];
+        index = this._indexMap[node.id];
+
+        return typeof index === 'undefined' ? -1 : index;
     },
 
     /**
@@ -426,10 +430,13 @@ TreeNode.prototype = {
     Toggles the open/closed state of this node.
 
     @method toggle
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, events will be
+            suppressed.
     @chainable
     **/
-    toggle: function () {
-        this.tree.toggleNode(this);
+    toggle: function (options) {
+        this.tree.toggleNode(this, options);
         return this;
     },
 

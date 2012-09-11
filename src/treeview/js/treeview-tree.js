@@ -555,10 +555,14 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
 
     @method toggleNode
     @param {TreeView.Node} node Node to toggle.
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, events will be
+            suppressed.
     @chainable
     **/
-    toggleNode: function (node) {
-        return node.isOpen() ? this.closeNode(node) : this.openNode(node);
+    toggleNode: function (node, options) {
+        return node.isOpen() ? this.closeNode(node, options) :
+            this.openNode(node, options);
     },
 
     /**
@@ -693,12 +697,17 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     @protected
     **/
     _removeNodeFromParent: function (node) {
-        var parent = node.parent;
+        var parent = node.parent,
+            index;
 
         if (parent) {
-            parent.children.splice(parent.indexOf(node), 1);
-            parent._isIndexStale = true;
-            delete node.parent;
+            index = parent.indexOf(node);
+
+            if (index > -1) {
+                parent.children.splice(index, 1);
+                parent._isIndexStale = true;
+                delete node.parent;
+            }
         }
     },
 

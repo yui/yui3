@@ -2,6 +2,7 @@ YUI.add('treeview-test', function (Y) {
 
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
+    Mock        = Y.Mock,
     TreeView    = Y.TreeView,
 
     mainSuite = Y.TreeViewTestSuite = new Y.Test.Suite('TreeView');
@@ -735,7 +736,6 @@ treeSuite.add(new Y.Test.Case({
 
         this.tree.openNode(node);
         Assert.isTrue(fired, 'event should fire');
-
     },
 
     'openNode() should not fire an `open` event if options.silent is truthy': function () {
@@ -776,83 +776,258 @@ treeSuite.add(new Y.Test.Case({
     },
 
     'prependNode() should fire an `add` event with src "prepend"': function () {
+        var node = this.tree.createNode({label: 'prepended'}),
+            test = this,
+            fired;
 
+        this.tree.once('add', function (e) {
+            fired = true;
+
+            Assert.areSame('prepend', e.src, 'src should be "prepend"');
+            Assert.areSame(0, e.index, 'index should be 0');
+            Assert.areSame(node, e.node, 'node should be the added node');
+            Assert.areSame(test.tree.rootNode, e.parent, 'parent should be the root node');
+        });
+
+        this.tree.prependNode(this.tree.rootNode, node);
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'prependNode() should not fire an `add` event if options.silent is truthy': function () {
+        this.tree.once('add', function () {
+            Assert.fail('add event should not fire');
+        });
 
+        this.tree.prependNode(this.tree.rootNode, {label: 'prepended'}, {silent: true});
     },
 
     'insertNode() should fire an `add` event with src "insert"': function () {
+        var node = this.tree.createNode({label: 'inserted'}),
+            test = this,
+            fired;
 
+        this.tree.once('add', function (e) {
+            fired = true;
+
+            Assert.areSame('insert', e.src, 'src should be "insert"');
+            Assert.areSame(3, e.index, 'index should be 0');
+            Assert.areSame(node, e.node, 'node should be the added node');
+            Assert.areSame(test.tree.rootNode, e.parent, 'parent should be the root node');
+        });
+
+        this.tree.insertNode(this.tree.rootNode, node);
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'insertNode() should fire an `add` event with a custom src': function () {
+        var node = this.tree.createNode({label: 'inserted'}),
+            test = this,
+            fired;
 
+        this.tree.once('add', function (e) {
+            fired = true;
+            Assert.areSame('kittens', e.src, 'src should be "kittens"');
+        });
+
+        this.tree.insertNode(this.tree.rootNode, node, {src: 'kittens'});
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'insertNode() should not fire an `add` event if options.silent is truthy': function () {
+        this.tree.once('add', function () {
+            Assert.fail('add event should not fire');
+        });
 
+        this.tree.insertNode(this.tree.rootNode, {label: 'inserted'}, {silent: true});
     },
 
     'removeNode() should fire a `remove` event': function () {
+        var node = this.tree.rootNode.children[1],
+            test = this,
+            fired;
 
+        this.tree.once('remove', function (e) {
+            fired = true;
+
+            Assert.isUndefined(e.destroyed, 'destroyed should be undefined');
+            Assert.areSame(node, e.node, 'node should be the removed node');
+            Assert.areSame(test.tree.rootNode, e.parent, 'parent should be the parent of the removed node');
+        });
+
+        this.tree.removeNode(node);
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'removeNode() should not fire a `remove` event if options.silent is truthy': function () {
+        this.tree.once('remove', function () {
+            Assert.fail('event should not fire');
+        });
 
+        this.tree.removeNode(this.tree.rootNode.children[1], {silent: true});
     },
 
     'selectNode() should fire a `select` event': function () {
+        var node = this.tree.rootNode.children[0],
+            fired;
 
+        this.tree.once('select', function (e) {
+            fired = true;
+            Assert.areSame(node, e.node, 'node should be the selected node');
+        });
+
+        this.tree.selectNode(node);
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'selectNode() should not fire a `select` event if the specified node is already selected': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.selectNode(node);
+
+        this.tree.once('select', function (e) {
+            Assert.fail('event should not fire');
+        });
+
+        this.tree.selectNode(node);
     },
 
     'selectNode() should not fire a `select` event if options.silent is truthy': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.once('select', function () {
+            Assert.fail('event should not fire');
+        });
+
+        this.tree.selectNode(node, {silent: true});
+    },
+
+    'toggleNode() should not fire any events if options.silent is truthy': function () {
+        var node = this.tree.rootNode.children[0];
+
+        this.tree.once('close', function () {
+            Assert.fail('close event should not fire');
+        });
+
+        this.tree.once('open', function () {
+            Assert.fail('open event should not fire');
+        });
+
+        this.tree.toggleNode(node, {silent: true});
+        this.tree.toggleNode(node, {silent: true});
     },
 
     'unselectNode() should fire an `unselect` event': function () {
+        var node = this.tree.rootNode.children[0],
+            fired;
 
+        this.tree.selectNode(node);
+
+        this.tree.once('unselect', function (e) {
+            fired = true;
+            Assert.areSame(node, e.node, 'node should be the unselected node');
+        });
+
+        this.tree.unselectNode(node);
+        Assert.isTrue(fired, 'event should fire');
     },
 
     'unselectNode() should not fire an `unselect` event if the specified node is not selected': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.once('unselect', function () {
+            Assert.fail('event should not fire');
+        });
+
+        this.tree.unselectNode(node);
     },
 
     'unselectNode() should not fire an `unselect` event if options.silent is truthy': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.selectNode(node);
+
+        this.tree.once('unselect', function () {
+            Assert.fail('event should not fire');
+        });
+
+        this.tree.unselectNode(node, {silent: true});
     },
 
     '`add` event should be preventable': function () {
+        this.tree.once('add', function (e) {
+            e.preventDefault();
+        });
 
+        this.tree.insertNode(this.tree.rootNode, {label: 'added'});
+        Assert.areSame(6, this.tree.size(), 'node should not have been added');
     },
 
     '`clear` event should be preventable': function () {
+        this.tree.once('clear', function (e) {
+            e.preventDefault();
+        });
 
+        this.tree.clear();
+        Assert.areSame(6, this.tree.size(), 'tree should not have been cleared');
     },
 
     '`close` event should be preventable': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.openNode(node);
+
+        this.tree.once('close', function (e) {
+            e.preventDefault();
+        });
+
+        this.tree.closeNode(node);
+        Assert.isTrue(node.isOpen(), 'node should not be closed');
     },
 
     '`open` event should be preventable': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.closeNode(node);
+
+        this.tree.once('open', function (e) {
+            e.preventDefault();
+        });
+
+        this.tree.openNode(node);
+        Assert.isFalse(node.isOpen(), 'node should not be open');
     },
 
     '`remove` event should be preventable': function () {
+        this.tree.once('remove', function (e) {
+            e.preventDefault();
+        });
 
+        this.tree.removeNode(this.tree.rootNode.children[0]);
+        Assert.areSame(6, this.tree.size(), 'node should not have been removed');
     },
 
     '`select` event should be preventable': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.once('select', function (e) {
+            e.preventDefault();
+        });
+
+        this.tree.selectNode(node);
+        Assert.isFalse(node.isSelected(), 'node should not be selected');
     },
 
     '`unselect` event should be preventable': function () {
+        var node = this.tree.rootNode.children[0];
 
+        this.tree.selectNode(node);
+
+        this.tree.once('unselect', function (e) {
+            e.preventDefault();
+        });
+
+        this.tree.unselectNode(node);
+        Assert.isTrue(node.isSelected(), 'node should be selected');
     }
 }));
 
@@ -862,17 +1037,414 @@ mainSuite.add(nodeSuite);
 
 // -- Lifecycle ----------------------------------------------------------------
 nodeSuite.add(new Y.Test.Case({
-    name: 'Lifecycle'
+    name: 'Lifecycle',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree();
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+        delete this.tree;
+    },
+
+    'constructor should accept a TreeView.Tree instance as the first argument': function () {
+        var node = new TreeView.Node(this.tree);
+        Assert.areSame(this.tree, node.tree);
+    },
+
+    'constructor should accept a config object as the second argument': function () {
+        var child = new TreeView.Node(this.tree),
+
+            node = new TreeView.Node(this.tree, {
+                canHaveChildren: true,
+                children       : [child],
+                data           : {foo: 'bar'},
+                id             : 'mynode',
+                label          : 'pants',
+                state          : {tested: true}
+            });
+
+        Assert.isTrue(node.canHaveChildren, 'canHaveChildren should be true');
+        Assert.areSame(child, node.children[0], 'child 0 should exist');
+        Assert.areSame('bar', node.data.foo, 'data should be set');
+        Assert.areSame('mynode', node.id, 'custom id should be set');
+        Assert.areSame('pants', node.label, 'custom label should be set');
+        Assert.isTrue(node.state.tested, 'custom state should be set');
+    }
 }));
 
 // -- Properties ---------------------------------------------------------------
 nodeSuite.add(new Y.Test.Case({
-    name: 'Properties'
+    name: 'Properties',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree();
+        this.node = this.tree.createNode();
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+        delete this.tree;
+        delete this.node;
+    },
+
+    '_isYUITreeNode should be true': function () {
+        Assert.isTrue(this.node._isYUITreeNode);
+    },
+
+    'canHaveChildren should be undefined by default': function () {
+        Assert.isUndefined(this.node.canHaveChildren);
+    },
+
+    'canHaveChildren should be true if children are added at instantiation': function () {
+        var node = this.tree.createNode({children: [{}]});
+        Assert.isTrue(node.canHaveChildren);
+    },
+
+    'children should be an empty array by default': function () {
+        Assert.isArray(this.node.children, 'should be an array');
+        ArrayAssert.isEmpty(this.node.children, 'should be empty');
+    },
+
+    'data should be an empty object by default': function () {
+        Assert.isObject(this.node.data, 'should be an object');
+        Assert.areSame(0, Y.Object.size(this.node.data), 'should be empty');
+    },
+
+    'id should be a unique guid by default': function () {
+        var otherNode = this.tree.createNode();
+
+        Assert.isString(this.node.id, 'should be a string');
+        Assert.isTrue(this.node.id.length > 0, 'should not be empty');
+        Assert.areNotSame(this.node.id, otherNode.id, 'should be unique');
+    },
+
+    'label should be an empty string by default': function () {
+        Assert.areSame('', this.node.label);
+    },
+
+    'parent should be the parent node of this node, if any': function () {
+        this.tree.rootNode.append(this.node);
+
+        Assert.areSame(this.tree.rootNode, this.node.parent, 'parent should be the root node');
+        Assert.isUndefined(this.tree.rootNode.parent, 'root node should not have a parent');
+    },
+
+    'state should be an empty object by default': function () {
+        Assert.isObject(this.node.state, 'should be an object');
+        Assert.areSame(0, Y.Object.size(this.node.state), 'should be empty');
+    },
+
+    'tree should be the TreeView that contains the node': function () {
+        Assert.areSame(this.tree, this.node.tree);
+    }
 }));
 
 // -- Methods ------------------------------------------------------------------
 nodeSuite.add(new Y.Test.Case({
-    name: 'Methods'
+    name: 'Methods',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree();
+        this.node = this.tree.rootNode.append({label: 'one'});
+        this.unattachedNode = this.tree.createNode();
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+
+        delete this.tree;
+        delete this.node;
+        delete this.unattachedNode;
+    },
+
+    'append() should wrap TreeView.Tree#appendNode()': function () {
+        var child   = this.tree.createNode(),
+            mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'appendNode',
+            args   : [this.node, child, options],
+            run    : Y.bind(this.tree.appendNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        Assert.areSame(child, this.node.append(child, options), 'should return the child');
+
+        Mock.verify(mock);
+    },
+
+    'close() should wrap TreeView.Tree#closeNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'closeNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.closeNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.close(options);
+
+        Mock.verify(mock);
+    },
+
+    'close() should be chainable': function () {
+        Assert.areSame(this.node, this.node.close());
+    },
+
+    'empty() should wrap TreeView.Tree#emptyNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'emptyNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.emptyNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        Assert.isArray(this.node.empty(options), 'should return an array');
+
+        Mock.verify(mock);
+    },
+
+    'hasChildren() should return `true` if the node has children, `false` otherwise': function () {
+        Assert.isFalse(this.node.hasChildren(), 'should be false when empty');
+
+        this.node.append({});
+        Assert.isTrue(this.node.hasChildren(), 'should be true when not empty');
+    },
+
+    'index() should return the numerical index of this node within its parent node': function () {
+        Assert.areSame(0, this.node.index(), 'index should be 0')
+    },
+
+    'index() should return -1 if this node has no parent': function () {
+        Assert.areSame(-1, this.unattachedNode.index());
+    },
+
+    'indexOf() should return the numerical index of the given child node': function () {
+        var childZero = this.node.append({}),
+            childOne  = this.node.append({});
+
+        Assert.areSame(0, this.node.indexOf(childZero), 'index of childZero should be 0');
+        Assert.areSame(1, this.node.indexOf(childOne), 'index of childOne should be 1');
+    },
+
+    'indexOf() should return -1 if the given node is not a direct child of this node': function () {
+        Assert.areSame(-1, this.node.indexOf(this.unattachedNode));
+    },
+
+    'insert() should wrap TreeView.Tree#insertNode()': function () {
+        var child   = this.tree.createNode(),
+            mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'insertNode',
+            args   : [this.node, child, options],
+            run    : Y.bind(this.tree.insertNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        Assert.areSame(child, this.node.insert(child, options), 'should return the child');
+
+        Mock.verify(mock);
+    },
+
+    'isInTree() should return `true` if this node has been inserted into a tree, `false` otherwise': function () {
+        Assert.isTrue(this.node.isInTree(), 'should be true for an attached node');
+        Assert.isFalse(this.unattachedNode.isInTree(), 'should be false for an unattached node');
+    },
+
+    'isOpen() should return `true` if this node is open, `false` otherwise': function () {
+        Assert.isFalse(this.node.isOpen(), 'should return false if not open');
+
+        this.node.append({});
+        this.node.open();
+
+        Assert.isTrue(this.node.isOpen(), 'should return true if open');
+    },
+
+    'isOpen() should always return `true` for a root node': function () {
+        Assert.isTrue(this.tree.rootNode.isOpen());
+        this.tree.rootNode.close();
+        Assert.isTrue(this.tree.rootNode.isOpen());
+    },
+
+    'isRoot() should return `true` if this node is the root of a tree, `false` otherwise': function () {
+        Assert.isTrue(this.tree.rootNode.isRoot(), 'should be true for root node');
+        Assert.isFalse(this.node.isRoot(), 'should be false for non-root node');
+        Assert.isFalse(this.unattachedNode.isRoot(), 'should be false for an unattached node');
+    },
+
+    'isSelected() should return `true` if this node is selected, `false` otherwise': function () {
+        Assert.isFalse(this.node.isSelected(), 'should be false if not selected');
+        this.node.select();
+        Assert.isTrue(this.node.isSelected(), 'should be true if selected');
+    },
+
+    'open() should wrap TreeView.Tree#openNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'openNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.openNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.open(options);
+
+        Mock.verify(mock);
+    },
+
+    'open() should be chainable': function () {
+        Assert.areSame(this.node, this.node.open());
+    },
+
+    'prepend() should wrap TreeView.Tree#prependNode()': function () {
+        var child   = this.tree.createNode(),
+            mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'prependNode',
+            args   : [this.node, child, options],
+            run    : Y.bind(this.tree.prependNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        Assert.areSame(child, this.node.prepend(child, options), 'should return the child');
+
+        Mock.verify(mock);
+    },
+
+    'remove() should wrap TreeView.Tree#removeNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'removeNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.removeNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.remove(options);
+
+        Mock.verify(mock);
+    },
+
+    'remove() should be chainable': function () {
+        Assert.areSame(this.node, this.node.remove());
+    },
+
+    'select() should wrap TreeView.Tree#selectNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'selectNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.selectNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.select(options);
+
+        Mock.verify(mock);
+    },
+
+    'select() should be chainable': function () {
+        Assert.areSame(this.node, this.node.select());
+    },
+
+    'size() should return the total number of descendants contained within this node': function () {
+        Assert.areSame(0, this.node.size(), 'should be 0');
+
+        this.node.append({});
+        Assert.areSame(1, this.node.size(), 'should be 1');
+
+        this.node.children[0].append([{}, {}, {}]);
+        Assert.areSame(4, this.node.size(), 'should be 4');
+    },
+
+    'toggle() should wrap TreeView.Tree#toggleNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'toggleNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.toggleNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.toggle(options);
+
+        Mock.verify(mock);
+    },
+
+    'toggle() should be chainable': function () {
+        Assert.areSame(this.node, this.node.toggle());
+    },
+
+    'toJSON() should return a serializable object representing this node': function () {
+        this.node.append([{label: 'child one'}, {label: 'child two'}, {label: 'child three'}]);
+
+        var obj = this.node.toJSON();
+
+        // Basic checks.
+        Assert.isObject(obj, 'should be an object');
+        Assert.isString(Y.JSON.stringify(obj), 'should be serializable (no cyclic structures, etc.)');
+
+        // Now the tedious stuff.
+        function verifyNode(node, jsonObj) {
+            Assert.areSame(node.canHaveChildren, jsonObj.canHaveChildren, node.label + ': canHaveChildren should be serialized');
+            Assert.isObject(jsonObj.data, node.label + ': data should be serialized');
+            Assert.areSame(node.id, jsonObj.id, node.label + ': id should be serialized');
+            Assert.areSame(node.label, jsonObj.label, node.label + ': label should be serialized');
+            Assert.isObject(jsonObj.state, node.label + ': state should be serialized');
+
+            if (node.hasChildren()) {
+                Assert.isArray(jsonObj.children, node.label + ': children should be an array');
+
+                for (var i = 0, len = node.children.length; i < len; i++) {
+                    verifyNode(node.children[i], jsonObj.children[i]);
+                }
+            } else {
+                Assert.isUndefined(jsonObj.children, node.label + ': children should not be defined for node without children');
+            }
+        }
+
+        verifyNode(this.node, obj);
+    },
+
+    'unselect() should wrap TreeView.Tree#unselectNode()': function () {
+        var mock    = Mock(),
+            options = {};
+
+        Mock.expect(mock, {
+            method : 'unselectNode',
+            args   : [this.node, options],
+            run    : Y.bind(this.tree.unselectNode, this.tree)
+        });
+
+        this.node.tree = mock;
+        this.node.unselect(options);
+
+        Mock.verify(mock);
+    },
+
+    'unselect() should be chainable': function () {
+        Assert.areSame(this.node, this.node.unselect());
+    }
 }));
 
 // -- Y.TreeView ---------------------------------------------------------------
