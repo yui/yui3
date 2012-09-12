@@ -1,0 +1,29 @@
+{
+    "name": "treeview",
+
+    "builds": {
+        "treeview": {
+            "jsfiles": [
+                "treeview.js"
+            ]
+        },
+
+        "treeview-node": {
+            "jsfiles": [
+                "treeview-node.js"
+            ]
+        },
+
+        "treeview-templates": {
+            "jsfiles": [
+                "treeview-templates.js"
+            ]
+        },
+
+        "treeview-tree": {
+            "jsfiles": [
+                "treeview-tree.js"
+            ]
+        }
+    }
+}
