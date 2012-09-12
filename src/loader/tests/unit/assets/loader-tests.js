@@ -33,7 +33,8 @@ YUI.add('loader-tests', function(Y) {
                 test_group_filters: Y.UA.nodejs,
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
-                test_cond_with_test_function: Y.UA.nodejs
+                test_cond_with_test_function: Y.UA.nodejs,
+                'test external lang 1': Y.UA.nodejs
             }
         },
         'test: skin overrides double loading': function() {
@@ -2083,6 +2084,33 @@ YUI.add('loader-tests', function(Y) {
             });
             Assert.isTrue(hasYQLCoverage, 'Failed to filter yql-coverage.js');
             Assert.isTrue(hasOOPNoCoverage, 'Failed to filter oop.js');
+        },
+        'test external lang 1': function() {
+            var test = this;
+            YUI({
+                useSync: false,
+                filter: 'raw',
+                lang: ['en'],
+                groups: {
+                    test: {
+                        base: resolvePath('../assets/'),
+                        patterns: {
+                            'test-': {              
+                                configFn: function(me) {
+                                    //Nothing here, used for pattern matching
+                                }
+                            }
+                        }
+                    }
+                }
+            }).use('test-payload-view', function(Y) {
+                test.resume(function() {
+                    Assert.isObject(Y.TEST, 'failed to load module');
+                    var strings = Y.Intl.get('test-payload-view');
+                    Assert.areEqual('It worked!', strings.TEST, 'Failed to resolve language pack');
+                });
+            });
+            test.wait();
         }
     });
     
