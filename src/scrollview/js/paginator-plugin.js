@@ -196,12 +196,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                     scrollY: 0,
 
                     // Minimum scrollable values
+                    //@TODO What are these for?
                     _minScrollX: 0,
                     _minScrollY: 0,
 
                     // Maximum scrollable values
                     maxScrollX: maxScrollX,
-                    maxScrollY: maxScrollY
+                    maxScrollY: maxScrollY,
+
+                    // Height & width of the page
+                    width: scrollWidth,
+                    height: scrollHeight
                 };
 
             } else {
@@ -262,17 +267,38 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _afterHostGestureMoveEnd: function (e) {
+
+        // This was a flick, so we don't need to do anything here
+        if (this._host._gesture.flick) {
+            return false;
+        }
+
         var paginator = this,
             host = paginator._host,
             gesture = host._gesture,
+            index = paginator._cIndex,
+            pageNodes = paginator._getPageNodes(),
+            pageNode = pageNodes.item(index),
+            isFlick = (gesture.flick ? true : false),
             paginatorAxis = paginator._cAxis,
-            gestureAxis = gesture && gesture.axis;
+            gestureAxis = gesture.axis,
+            isHorizontal = (gestureAxis === DIM_X),
+            delta = gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')],
+            isForward = (delta > 0),
+            pageDims = paginator._pageDims[index],
+            halfway = pageDims[(isHorizontal ? 'width' : 'height')] / 2,
+            isHalfway = (Math.abs(delta) >= halfway),
+            canScroll = paginatorAxis[gestureAxis],
+            rtl = host.rtl;
 
-        if (paginatorAxis[gestureAxis]) {
-            if (gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')] > 0) {
-                paginator[host.rtl ? 'prev' : 'next']();
-            } else {
-                paginator[host.rtl ? 'next' : 'prev']();
+        if (canScroll) {
+            if (isHalfway) {
+                // Fire next()/prev()
+                paginator[rtl === isForward ? 'prev' : 'next']();
+            }
+            // Scrollback
+            else {
+                paginator.scrollToIndex(paginator.get(INDEX));
             }
         }
     },
@@ -289,7 +315,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             bb = host._bb,
-            isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.
+            isForward = (e.wheelDelta < 0), // down (negative) is forward. @TODO Should revisit.
             paginatorAxis = paginator._cAxis;
 
         // Set the axis for this event.
@@ -301,11 +327,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Only if the mousewheel event occurred on a DOM node inside the BB
         if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
 
-            if (isForward) {
-                paginator.next();
-            } else {
-                paginator.prev();
-            }
+            // Fire next()/prev()
+            paginator[isForward ? 'next' : 'prev']();
 
             // prevent browser default behavior on mousewheel
             e.preventDefault();
@@ -324,12 +347,36 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _beforeHostFlick: function (e) {
-        var paginator = this,
-            paginatorAxis = paginator.get(AXIS),
-            flickAxis = e.flick.axis || false;
 
-        // Prevent flicks on the paginated axis
-        if (paginatorAxis[flickAxis]) {
+        // The drag was out of bounds, so do nothing (which will cause a snapback)
+        if (this._host._isOutOfBounds()){
+            return new Y.Do.Prevent();
+        }
+        
+        var paginator = this,
+            host = paginator._host,
+            gesture = host._gesture,
+            index = paginator._cIndex,
+            paginatorAxis = paginator.get(AXIS),
+            flick = e.flick,
+            velocity = flick.velocity,
+            flickAxis = flick.axis,
+            isForward = (velocity < 0),
+            canScroll = paginatorAxis[flickAxis],
+            rtl = host.rtl;
+
+        // Store the flick data in the this._host._gesture object so it knows this was a flick
+        if (gesture) {
+            gesture.flick = flick;
+        }
+
+        // Can we scroll along this axis?
+        if (canScroll) {
+
+            // Fire next()/prev()
+            paginator[rtl === isForward ? 'prev' : 'next']();
+
+            // Prevent flick animations on the paginated axis.
             return new Y.Do.Prevent();
         }
     },
@@ -381,7 +428,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (gestureAxis === DIM_Y) {
             host._maxScrollX = maxScrollX;
             host.set(SCROLL_X, paginator._pageDims[index].scrollX, { src: UI });
-        } else if (gestureAxis === DIM_X) {
+        }
+        else if (gestureAxis === DIM_X) {
             host._maxScrollY = maxScrollY;
             host.set(SCROLL_Y, paginator._pageDims[index].scrollY, { src: UI });
         }
