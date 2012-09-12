@@ -4,4 +4,4 @@ YUI.add('test-payload-view', function(Y) {
 Y.namespace('TEST').PayloadView = {};
 
 
-}, '${module.version}' ,{lang:['en'], requires:['view', 'intl']});
+}, '${module.version}' ,{lang:['en'], requires:['view']});
