@@ -4716,7 +4716,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.05-20-01',
+            GALLERY_VERSION = 'gallery-2012.09.12-20-02',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7018,7 +7018,7 @@ Y.Loader.prototype = {
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
