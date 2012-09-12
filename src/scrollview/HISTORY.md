@@ -20,6 +20,8 @@ ScrollView Change History
     FRAME_STEP to 'frameDuration'
     BOUNCE_RANGE to 'bounceRange'
 
+  * Fix: Mousewheel events on a horizontally scrolling instance no longer prevent page scrolling (#2532739)
+
   * Fix: Mousewheel events now properly update the `scrollY` attribute.
   
   * Fix: Improved reliability of the scrollEnd event. Now it now only fires 
