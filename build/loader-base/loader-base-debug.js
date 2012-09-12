@@ -2376,7 +2376,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         for (o = 0; o < deps.length; o++) {
                             if (!self.inserted[deps[o]]) {
                                 //We wouldn't be to this point without the module being here
-                                mods[deps[o]] = deps[0];
+                                mods[deps[o]] = deps[o];
                             }
                         }
                     }
