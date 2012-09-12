@@ -306,7 +306,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
             sv._set(AXIS, sv._cAxis);
         }
-
+        
         // get text direction on or inherited by scrollview node
         sv.rtl = (sv._cb.getComputedStyle('direction') === 'rtl');
 
@@ -334,6 +334,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb = sv._cb,
             bb = sv._bb,
             TRANS = ScrollView._TRANSITION,
+            // Ideally using CSSMatrix - don't think we have it normalized yet though.
+            // origX = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).e,
+            // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f,
+            origX = sv.get(SCROLL_X),
+            origY = sv.get(SCROLL_Y),
+            HWTransform,
             dims;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.
@@ -342,12 +348,19 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             cb.setStyle(TRANS.PROPERTY, EMPTY);
         }
 
+        origHWTransform = sv._forceHWTransforms;
+        sv._forceHWTransforms = false; // the z translation was causing issues with picking up accurate scrollWidths in Chrome/Mac.
+
+        sv._moveTo(cb, 0, 0);
         dims = {
             'offsetWidth': bb.get('offsetWidth'),
             'offsetHeight': bb.get('offsetHeight'),
             'scrollWidth': bb.get('scrollWidth'),
             'scrollHeight': bb.get('scrollHeight')
         };
+        sv._moveTo(cb, -(origX), -(origY));
+
+        sv._forceHWTransforms = origHWTransform;
 
         return dims;
     },
@@ -515,6 +528,25 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         return prop;
     },
+
+    /**
+    * Utility method, to move the given element to the given xy position
+    *
+    * @method _moveTo
+    * @param node {Node} The node to move
+    * @param x {Number} The x-position to move to
+    * @param y {Number} The y-position to move to
+    * @private
+    */
+    _moveTo : function(node, x, y) {
+        if (NATIVE_TRANSITIONS) {
+            node.setStyle('transform', this._transform(x, y));
+        } else {
+            node.setStyle(LEFT, x + PX);
+            node.setStyle(TOP, y + PX);
+        }
+    },
+
 
     /**
      * Content box transition callback
@@ -713,7 +745,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         var sv = this,
-            gesture = sv._gesture,
             svAxis = sv._cAxis,
             flick = e.flick,
             flickAxis = flick.axis,
@@ -721,7 +752,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
             startPosition = sv.get(axisAttr);
 
-        gesture.flick = flick;
+        // Sometimes flick is enabled, but drag is disabled
+        if (sv._gesture) {
+            sv._gesture.flick = flick;
+        }
+
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (svAxis[flickAxis]) {
             sv._flickFrame(flickVelocity, flickAxis, startPosition);
@@ -819,8 +854,12 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         scrollToY = _constrain(scrollToY, sv._minScrollY, sv._maxScrollY);
 
-        if (bb.contains(e.target)) {
-        
+        // Because Mousewheel events fire off 'document', every ScrollView widget will react
+        // to any mousewheel anywhere on the page. This check will ensure that the mouse is currently
+        // over this specific ScrollView.  Also, only allow mousewheel scrolling on Y-axis, 
+        // becuase otherwise the 'prevent' will block page scrolling.
+        if (bb.contains(e.target) && sv._cAxis[DIM_Y]) {
+
             // Reset lastScrolledAmt
             sv.lastScrolledAmt = 0;
 
