@@ -2241,7 +2241,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
