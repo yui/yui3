@@ -1,6 +1,11 @@
 {
     "name": "editor",
     "builds": {
+        "content-editable": {
+            "jsfiles": [
+                "content-editable.js"
+            ]
+        },
         "editor-tab": {
             "jsfiles": [
                 "editor-tab.js"
