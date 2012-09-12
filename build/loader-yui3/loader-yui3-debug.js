@@ -2221,6 +2221,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base"
         ]
     },
+    "template": {
+        "use": [
+            "template-base",
+            "template-micro"
+        ]
+    },
+    "template-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "template-micro": {
+        "requires": [
+            "escape"
+        ]
+    },
     "test": {
         "requires": [
             "event-simulate",
@@ -2286,6 +2302,32 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         },
         "requires": [
             "transition"
+        ]
+    },
+    "treeview": {
+        "requires": [
+            "base-build",
+            "classnamemanager",
+            "treeview-templates",
+            "treeview-tree",
+            "view"
+        ],
+        "skinnable": true
+    },
+    "treeview-node": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "treeview-templates": {
+        "requires": [
+            "template-micro"
+        ]
+    },
+    "treeview-tree": {
+        "requires": [
+            "base-build",
+            "treeview-node"
         ]
     },
     "uploader": {
@@ -2488,7 +2530,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
+YUI.Env[Y.version].md5 = 'a2857f1be37a1ef62628b4847bbe74d8';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
