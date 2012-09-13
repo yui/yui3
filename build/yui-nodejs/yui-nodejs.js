@@ -6153,7 +6153,7 @@ Y.Loader.prototype = {
                     for (o = 0; o < mod.use.length; o++) {
                         //Must walk the other modules in case a module is a rollup of rollups (datatype)
                         m = this.getModule(mod.use[o]);
-                        if (m && m.use) {
+                        if (m && m.use && (m.name !== mod.name)) {
                             c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
                         } else {
                             c.push(mod.use[o]);
@@ -10056,4 +10056,4 @@ YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
