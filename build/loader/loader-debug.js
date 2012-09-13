@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.08.29-20-10',
+            GALLERY_VERSION = 'gallery-2012.09.05-20-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -2928,11 +2928,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     },
-    "anim-shape-transform": {
+    "anim-shape": {
         "requires": [
             "anim-base",
             "anim-easing",
+            "anim-color",
             "matrix"
+        ]
+    },
+    "anim-shape-transform": {
+        "use": [
+            "anim-shape"
         ]
     },
     "anim-xy": {
@@ -3684,18 +3690,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "datatype": {
         "use": [
-            "datatype-number",
             "datatype-date",
+            "datatype-number",
             "datatype-xml"
         ]
     },
     "datatype-date": {
-        "supersedes": [
-            "datatype-date-format"
-        ],
         "use": [
             "datatype-date-parse",
-            "datatype-date-format"
+            "datatype-date-format",
+            "datatype-date-math"
         ]
     },
     "datatype-date-format": {
@@ -3905,7 +3909,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -4081,7 +4084,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ]
     },
     "event-base": {
@@ -4200,6 +4204,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base",
             "event-custom-complex"
+        ]
+    },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch",
+            "event-synthetic"
         ]
     },
     "event-touch": {

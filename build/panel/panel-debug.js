@@ -1,4 +1,4 @@
-YUI.add('panel', function(Y) {
+YUI.add('panel', function (Y, NAME) {
 
 // TODO: Change this description!
 /**
@@ -96,4 +96,4 @@ Y.Panel = Y.Base.create('panel', Y.Widget, [
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'widget-autohide', 'widget-buttons',  'widget-modality', 'widget-position', 'widget-position-align', 'widget-position-constrain', 'widget-stack', 'widget-stdmod'], skinnable:true});
+}, '@VERSION@', {"requires": ["widget", "widget-autohide", "widget-buttons", "widget-modality", "widget-position", "widget-position-align", "widget-position-constrain", "widget-stack", "widget-stdmod"], "skinnable": true});

@@ -864,14 +864,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         {
             matrix.translate(x, y);
             matrix.rotate(rot);
-            label.style.MozTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.MozTransform = matrix.toCSSText();
-            label.style.webkitTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.webkitTransform = matrix.toCSSText();
-            label.style.msTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.msTransform = matrix.toCSSText();
-            label.style.OTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.OTransform = matrix.toCSSText();
+            Y_DOM.setStyle(label, "transformOrigin", (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%");
+            Y_DOM.setStyle(label, "transform", matrix.toCSSText());
         }
         else
         {

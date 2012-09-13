@@ -131,15 +131,49 @@ CanvasGraphic.ATTRS = {
     },
 
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
      */
     autoSize: {
         value: false
+    },
+
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
+     */
+    preserveAspectRatio: {
+        value: "xMidYMid"
     },
 
     /**
@@ -150,20 +184,7 @@ CanvasGraphic.ATTRS = {
      * @type Boolean
      */
     resizeDown: {
-        getter: function()
-        {
-            return this._resizeDown;
-        },
-
-        setter: function(val)
-        {
-            this._resizeDown = val;
-            if(this._node)
-            {
-                this._redraw();
-            }
-            return val;
-        }
+        value: false
     },
 
 	/**
@@ -244,6 +265,51 @@ CanvasGraphic.ATTRS = {
 
 Y.extend(CanvasGraphic, Y.GraphicBase, {
     /**
+     * Sets the value of an attribute.
+     *
+     * @method set
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * be passed in to set multiple attributes at once.
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * the name param.
+     */
+	set: function(attr, value) 
+	{
+		var host = this,
+            redrawAttrs = {
+                autoDraw: true,
+                autoSize: true,
+                preserveAspectRatio: true,
+                resizeDown: true
+            },
+            key,
+            forceRedraw = false;
+		AttributeLite.prototype.set.apply(host, arguments);	
+        if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
+        {
+            if(Y_LANG.isString && redrawAttrs[attr])
+            {
+                forceRedraw = true;
+            }
+            else if(Y_LANG.isObject(attr))
+            {
+                for(key in redrawAttrs)
+                {
+                    if(redrawAttrs.hasOwnProperty(key) && attr[key])
+                    {
+                        forceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if(forceRedraw)
+        {
+            host._redraw();
+        }
+	},
+
+    /**
      * Storage for `x` attribute.
      *
      * @property _x
@@ -277,15 +343,6 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         }
         return xy;
     },
-
-    /**
-     * Storage for `resizeDown` attribute.
-     *
-     * @property _resizeDown 
-     * @type Boolean
-     * @private
-     */
-    _resizeDown: false,
     
 	/**
      * Initializes the class.
@@ -558,7 +615,6 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
-        this._redraw();
         this.set("autoDraw", autoDraw);
     },
 
@@ -586,11 +642,61 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      */
     _redraw: function()
     {
-        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
-        if(this.get("autoSize"))
+        var autoSize = this.get("autoSize"),
+            preserveAspectRatio = this.get("preserveAspectRatio"),
+            box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds,
+            contentWidth,
+            contentHeight,
+            w,
+            h,
+            xScale,
+            yScale,
+            translateX = 0,
+            translateY = 0,
+            matrix,
+            node = this.get("node");
+        if(autoSize)
         {
-            this.set("width", box.right);
-            this.set("height", box.bottom);
+            if(autoSize == "sizeContentToGraphic")
+            {
+                contentWidth = box.right - box.left;
+                contentHeight = box.bottom - box.top;
+                w = parseFloat(Y_DOM.getComputedStyle(node, "width"));
+                h = parseFloat(Y_DOM.getComputedStyle(node, "height"));
+                matrix = new Y.Matrix();
+                if(preserveAspectRatio == "none")
+                {
+                    xScale = w/contentWidth;
+                    yScale = h/contentHeight;
+                }
+                else
+                {
+                    if(contentWidth/contentHeight !== w/h) 
+                    {
+                        if(contentWidth * h/contentHeight > w)
+                        {
+                            xScale = yScale = w/contentWidth;
+                            translateY = this._calculateTranslate(preserveAspectRatio.slice(5).toLowerCase(), contentHeight * w/contentWidth, h);
+                        }
+                        else
+                        {
+                            xScale = yScale = h/contentHeight;
+                            translateX = this._calculateTranslate(preserveAspectRatio.slice(1, 4).toLowerCase(), contentWidth * h/contentHeight, w);
+                        }
+                    }
+                }
+                Y_DOM.setStyle(node, "transformOrigin", "0% 0%");
+                translateX = translateX - (box.left * xScale);
+                translateY = translateY - (box.top * yScale);
+                matrix.translate(translateX, translateY);
+                matrix.scale(xScale, yScale);
+                Y_DOM.setStyle(node, "transform", matrix.toCSSText());
+            }
+            else
+            {
+                this.set("width", box.right);
+                this.set("height", box.bottom);
+            }
         }
         if(this._frag)
         {
@@ -598,7 +704,36 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             this._frag = null;
         }
     },
-
+    
+    /**
+     * Determines the value for either an x or y value to be used for the <code>translate</code> of the Graphic.
+     *
+     * @method _calculateTranslate
+     * @param {String} position The position for placement. Possible values are min, mid and max.
+     * @param {Number} contentSize The total size of the content.
+     * @param {Number} boundsSize The total size of the Graphic.
+     * @return Number
+     * @private
+     */
+    _calculateTranslate: function(position, contentSize, boundsSize)
+    {
+        var ratio = boundsSize - contentSize,
+            coord;
+        switch(position)
+        {
+            case "mid" :
+                coord = ratio * 0.5;
+            break;
+            case "max" :
+                coord = ratio;
+            break;
+            default :
+                coord = 0;
+            break;
+        }
+        return coord;
+    },
+    
     /**
      * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
      * by `Shape` instances.
@@ -620,8 +755,6 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
             box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
             box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
-            box.width = box.right - box.left;
-            box.height = box.bottom - box.top;
             this._contentBounds = box;
         }
         if(this.get("autoDraw")) 
@@ -643,28 +776,74 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             i,
             shape,
             queue = this._shapes,
-            box = {
-                left: 0,
-                top: 0,
-                right: 0,
-                bottom: 0
-            };
+            box = {};
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(box.left, bounds.left);
-                box.top = Math.min(box.top, bounds.top);
-                box.right = Math.max(box.right, bounds.right);
-                box.bottom = Math.max(box.bottom, bounds.bottom);
+                box.left = Y_LANG.isNumber(box.left) ? Math.min(box.left, bounds.left) : bounds.left;
+                box.top = Y_LANG.isNumber(box.top) ? Math.min(box.top, bounds.top) : bounds.top;
+                box.right = Y_LANG.isNumber(box.right) ? Math.max(box.right, bounds.right) : bounds.right;
+                box.bottom = Y_LANG.isNumber(box.bottom) ? Math.max(box.bottom, bounds.bottom) : bounds.bottom;
             }
         }
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
+        box.left = Y_LANG.isNumber(box.left) ? box.left : 0;
+        box.top = Y_LANG.isNumber(box.top) ? box.top : 0;
+        box.right = Y_LANG.isNumber(box.right) ? box.right : 0;
+        box.bottom = Y_LANG.isNumber(box.bottom) ? box.bottom : 0;
         this._contentBounds = box;
         return box;
+    },
+
+    /**
+     * Inserts shape on the top of the tree.
+     *
+     * @method _toFront
+     * @param {CanvasShape} Shape to add.
+     * @private
+     */
+    _toFront: function(shape)
+    {
+        var contentNode = this.get("node");
+        if(shape instanceof Y.CanvasShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            contentNode.appendChild(shape);
+        }
+    },
+
+    /**
+     * Inserts shape as the first child of the content node.
+     *
+     * @method _toBack
+     * @param {CanvasShape} Shape to add.
+     * @private
+     */
+    _toBack: function(shape)
+    {
+        var contentNode = this.get("node"),
+            targetNode;
+        if(shape instanceof Y.CanvasShape)
+        {
+            shape = shape.get("node");
+        }
+        if(contentNode && shape)
+        {
+            targetNode = contentNode.firstChild;
+            if(targetNode)
+            {
+                contentNode.insertBefore(shape, targetNode);
+            }
+            else
+            {
+                contentNode.appendChild(shape);
+            }
+        }
     }
 });
 

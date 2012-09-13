@@ -1,4 +1,4 @@
-YUI.add('charts', function(Y) {
+YUI.add('charts', function (Y, NAME) {
 
 /**
  * The Chart class is the basic application used to create a chart.
@@ -21,4 +21,4 @@ function Chart(cfg)
 Y.Chart = Chart;
 
 
-}, '@VERSION@' ,{requires:['charts-base']});
+}, '@VERSION@', {"requires": ["charts-base"]});

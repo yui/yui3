@@ -1,1 +1,1 @@
-YUI.add("graphics-svg-default",function(a){a.Graphic=a.SVGGraphic;a.Shape=a.SVGShape;a.Circle=a.SVGCircle;a.Rect=a.SVGRect;a.Ellipse=a.SVGEllipse;a.Path=a.SVGPath;a.Drawing=a.SVGDrawing;},"@VERSION@",{skinnable:false});
+YUI.add("graphics-svg-default",function(b,a){b.Graphic=b.SVGGraphic;b.Shape=b.SVGShape;b.Circle=b.SVGCircle;b.Rect=b.SVGRect;b.Ellipse=b.SVGEllipse;b.Path=b.SVGPath;b.Drawing=b.SVGDrawing;},"@VERSION@");

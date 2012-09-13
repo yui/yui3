@@ -439,4 +439,4 @@ var solidTest = function()
 
 Y.Test.Runner.add( suite );
 
-}, '@VERSION@' ,{requires:['graphics', 'shape-fill', 'test']});
+}, '@VERSION@' ,{requires:['graphics', 'test']});

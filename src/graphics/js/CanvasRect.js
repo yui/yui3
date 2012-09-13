@@ -13,7 +13,7 @@ CanvasRect = function()
 {
 	CanvasRect.superclass.constructor.apply(this, arguments);
 };
-CanvasRect.NAME = "canvasRect";
+CanvasRect.NAME = "rect";
 Y.extend(CanvasRect, Y.CanvasShape, {
 	/**
 	 * Indicates the type of shape

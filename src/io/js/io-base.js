@@ -116,6 +116,11 @@ IO.prototype = {
             // Non-IE  can use XHR level 2 and not rely on an
             // external transport.
             alt = Y.UA.ie ? 'xdr' : null;
+
+            // Prevent "pre-flight" OPTIONS request by removing the
+            // `X-Requested-With` HTTP header from CORS requests. This header
+            // can be added back on a per-request basis, if desired.
+            io.setHeader('X-Requested-With');
         }
 
         use = alt || form;

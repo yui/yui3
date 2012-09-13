@@ -1,4 +1,4 @@
-YUI.add('charts-base', function(Y) {
+YUI.add('charts-base', function (Y, NAME) {
 
 /**
  * The Charts widget provides an api for displaying data
@@ -19,6 +19,7 @@ var CONFIG = Y.config,
     DOCUMENT = CONFIG.doc,
     Y_Lang = Y.Lang,
     IS_STRING = Y_Lang.isString,
+    Y_DOM = Y.DOM,
     LeftAxisLayout,
     RightAxisLayout,
     BottomAxisLayout,
@@ -2777,14 +2778,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         {
             matrix.translate(x, y);
             matrix.rotate(rot);
-            label.style.MozTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.MozTransform = matrix.toCSSText();
-            label.style.webkitTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.webkitTransform = matrix.toCSSText();
-            label.style.msTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.msTransform = matrix.toCSSText();
-            label.style.OTransformOrigin = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
-            label.style.OTransform = matrix.toCSSText();
+            Y_DOM.setStyle(label, "transformOrigin", (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%");
+            Y_DOM.setStyle(label, "transform", matrix.toCSSText());
         }
         else
         {
@@ -7126,8 +7121,8 @@ Plots.prototype = {
             this._groupMarker.destroy();
         }
         graphic = this.get("graphic");
-        graphic.set("autoDraw", true);
         this._groupMarker = graphic.addShape(cfg);
+        graphic._redraw();
     },
 
     /**
@@ -16201,4 +16196,4 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
 });
 
 
-}, '@VERSION@' ,{requires:['dom', 'datatype-number', 'datatype-date', 'event-custom', 'event-mouseenter', 'event-touch', 'widget', 'widget-position', 'widget-stack', 'graphics']});
+}, '@VERSION@', {"requires": ["dom", "datatype-number", "datatype-date", "event-custom", "event-mouseenter", "event-touch", "widget", "widget-position", "widget-stack", "graphics"]});

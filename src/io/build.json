@@ -1,0 +1,39 @@
+{
+    "name": "io",
+    "builds": {
+        "io-xdr": {
+            "jsfiles": [
+                "io-xdr.js"
+            ]
+        },
+        "io-upload-iframe": {
+            "meta": {},
+            "jsfiles": [
+                "io-upload-iframe.js"
+            ]
+        },
+        "io-queue": {
+            "meta": {},
+            "jsfiles": [
+                "io-queue.js"
+            ]
+        },
+        "io-nodejs": {
+            "jsfiles": [
+                "io-nodejs.js"
+            ]
+        },
+        "io-form": {
+            "meta": {},
+            "jsfiles": [
+                "io-form.js"
+            ]
+        },
+        "io-base": {
+            "jsfiles": [
+                "io-base.js",
+                "transports.js"
+            ]
+        }
+    }
+}

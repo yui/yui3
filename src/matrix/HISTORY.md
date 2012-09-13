@@ -1,6 +1,11 @@
 Matrix Change History
 =====================
 
+3.7.0
+-----
+
+  * #2532709 Firefox 16 no longer supports units for tx/ty of a transform matrix. Updated toCSSText() method to no longer add them for Firefox browsers. 
+  
 3.6.0
 -----
 

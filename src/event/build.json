@@ -1,0 +1,84 @@
+{
+    "name": "event",
+    "builds": {
+        "event-touch": {
+            "jsfiles": [
+                "event-facade-dom-touch.js"
+            ]
+        },
+        "event-tap": {
+            "jsfiles": [
+                "tap.js"
+            ]
+        },
+        "event-synthetic": {
+            "jsfiles": [
+                "synthetic.js"
+            ]
+        },
+        "event-resize": {
+            "jsfiles": [
+                "resize-window.js"
+            ]
+        },
+        "event-outside": {
+            "jsfiles": [
+                "outside.js"
+            ]
+        },
+        "event-mousewheel": {
+            "jsfiles": [
+                "mousewheel.js"
+            ]
+        },
+        "event-mouseenter": {
+            "jsfiles": [
+                "mouseentermouseleave.js"
+            ]
+        },
+        "event-key": {
+            "jsfiles": [
+                "key.js"
+            ]
+        },
+        "event-hover": {
+            "jsfiles": [
+                "hover.js"
+            ]
+        },
+        "event-focus": {
+            "jsfiles": [
+                "focusblur.js"
+            ]
+        },
+        "event-delegate": {
+            "jsfiles": [
+                "delegate.js"
+            ]
+        },
+        "event-contextmenu": {
+            "jsfiles": [
+                "contextmenu.js"
+            ]
+        },
+        "event-base": {
+            "prependfiles": [
+                "js/event-ready-base.js"
+            ],
+            "jsfiles": [
+                "event-ready.js",
+                "event-facade-dom.js",
+                "event-dom.js",
+                "available.js"
+            ]
+        },
+        "event-base-ie": {
+            "prependfiles": [
+                "js/event-ready-base-ie.js"
+            ],
+            "jsfiles": [
+                "event-facade-dom-ie.js"
+            ]
+        }
+    }
+}
