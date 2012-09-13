@@ -415,23 +415,26 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterIndexChange: function (e) {
         var paginator = this,
-            host = this._host,
+            host = paginator._host,
             index = e.newVal,
-            maxScrollX = paginator._pageDims[index].maxScrollX,
-            maxScrollY = paginator._pageDims[index].maxScrollY,
+            pageDims = paginator._pageDims[index],
+            hostAxis = host._cAxis;
             paginatorAxis = paginator._cAxis;
 
         // Cache the new index value
         paginator._cIndex = index;
-        
-        // @TODO: This seems like it is only for dual-axis paginators, yet it is exectured on single-axis instances. Hmm.
-        if (paginatorAxis[DIM_Y]) {
-            host._maxScrollX = maxScrollX;
-            host.set(SCROLL_X, paginator._pageDims[index].scrollX, { src: UI });
-        }
-        else if (paginatorAxis[DIM_X]) {
-            host._maxScrollY = maxScrollY;
-            host.set(SCROLL_Y, paginator._pageDims[index].scrollY, { src: UI });
+
+        // For dual-axis instances, we need to hack some host properties to the
+        // current page's max height/width and current stored offset
+        if (hostAxis[DIM_X] && hostAxis[DIM_Y]) {
+            if (paginatorAxis[DIM_Y]) {
+                host._maxScrollX = pageDims.maxScrollX;
+                host.set(SCROLL_X, pageDims.scrollX, { src: UI });
+            }
+            else if (paginatorAxis[DIM_X]) {
+                host._maxScrollY = pageDims.maxScrollY;
+                host.set(SCROLL_Y, pageDims.scrollY, { src: UI });
+            }
         }
 
         if (e.src !== UI) {
