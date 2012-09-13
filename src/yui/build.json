@@ -67,7 +67,6 @@
             },
             "config": {
                 "use": [
-                    "yui-base",
                     "get",
                     "features",
                     "intl-base",
@@ -163,7 +162,6 @@
             "name": "yui",
             "config": {
                 "use": [
-                    "yui-base",
                     "get",
                     "features",
                     "intl-base",
@@ -185,7 +183,6 @@
             "name": "yui",
             "config": {
                 "use": [
-                    "yui-base",
                     "get",
                     "features",
                     "intl-base",
