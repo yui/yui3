@@ -1,4 +1,4 @@
-YUI.add('file', function(Y) {
+YUI.add('file', function (Y, NAME) {
 
     /**
      * The File class provides a wrapper for a file pointer, either through an HTML5 
@@ -27,5 +27,4 @@ YUI.add('file', function(Y) {
     Y.File = Y.FileFlash;
  }
 
-
-}, '@VERSION@' ,{requires:['file-flash', 'file-html5']});
+}, '@VERSION@', {"requires": ["file-flash", "file-html5"]});

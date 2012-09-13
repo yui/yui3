@@ -1,4 +1,4 @@
-YUI.add('widget-stdmod', function(Y) {
+YUI.add('widget-stdmod', function (Y, NAME) {
 
 /**
  * Provides standard module support for Widgets through an extension.
@@ -776,4 +776,4 @@ YUI.add('widget-stdmod', function(Y) {
     Y.WidgetStdMod = StdMod;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'widget']});
+}, '@VERSION@', {"requires": ["base-build", "widget"]});

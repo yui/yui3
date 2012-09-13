@@ -1,4 +1,4 @@
-YUI.add('arraysort', function(Y) {
+YUI.add('arraysort', function (Y, NAME) {
 
 /**
 Provides a case-insenstive comparator which can be used for array sorting.
@@ -62,4 +62,4 @@ Y.ArraySort = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

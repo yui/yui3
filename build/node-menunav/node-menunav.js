@@ -1,4 +1,4 @@
-YUI.add('node-menunav', function(Y) {
+YUI.add('node-menunav', function (Y, NAME) {
 
 /**
 * <p>The MenuNav Node Plugin makes it easy to transform existing list-based 
@@ -2181,4 +2181,4 @@ Y.namespace('Plugin');
 Y.Plugin.NodeMenuNav = NodeMenuNav;
 
 
-}, '@VERSION@' ,{requires:['node', 'classnamemanager', 'node-focusmanager', 'plugin']});
+}, '@VERSION@', {"requires": ["node", "classnamemanager", "plugin", "node-focusmanager"], "skinnable": true});

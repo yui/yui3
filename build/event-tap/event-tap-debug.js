@@ -9,7 +9,7 @@ interaction.
 'tap' is like a touchscreen 'click', only it requires much less finger-down time since it listens to touch events,
 but reverts to mouse events if touch is not supported. 
 
-Usage:
+@example
 
     YUI().use('event-tap', function (Y) {
         Y.one('#my-button').on('tap', function (e) {
@@ -54,15 +54,15 @@ function detachHelper(subscription, handles, subset, context) {
 
 
 /**
- * Sets up a "tap" event, that is fired on touch devices in response to a tap event (finger down, finder up).
- * This event can be used instead of listening for click events which have a 500ms delay on most touch devices.
- * This event can also be listened for using node.delegate().
- *
- * @event tap
- * @param type {string} "tap"
- * @param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event.
- *
- * @return {EventHandle} the detach handle
+Sets up a "tap" event, that is fired on touch devices in response to a tap event (finger down, finder up).
+This event can be used instead of listening for click events which have a 500ms delay on most touch devices.
+This event can also be listened for using node.delegate().
+
+@event tap
+@param type {string} "tap"
+@param fn {function} The method the event invokes. It receives the event facade of the underlying DOM event.
+@for Event
+@return {EventHandle} the detach handle
 */
 Y.Event.define(EVT_TAP, {
 

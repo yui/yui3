@@ -1,4 +1,4 @@
-YUI.add('datatable-body', function(Y) {
+YUI.add('datatable-body', function (Y, NAME) {
 
 /**
 View class responsible for rendering the `<tbody>` section of a table. Used as
@@ -862,4 +862,4 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
 });
 
 
-}, '@VERSION@' ,{requires:['datatable-core', 'view', 'classnamemanager']});
+}, '@VERSION@', {"requires": ["datatable-core", "view", "classnamemanager"]});

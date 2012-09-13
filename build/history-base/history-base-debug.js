@@ -1,4 +1,4 @@
-YUI.add('history-base', function(Y) {
+YUI.add('history-base', function (Y, NAME) {
 
 /**
  * Provides browser history management functionality using a simple
@@ -637,4 +637,4 @@ Y.mix(HistoryBase.prototype, {
 Y.HistoryBase = HistoryBase;
 
 
-}, '@VERSION@' ,{requires:['event-custom-complex']});
+}, '@VERSION@', {"requires": ["event-custom-complex"]});

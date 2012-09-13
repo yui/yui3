@@ -1,0 +1,10 @@
+{
+    "name": "intl",
+    "builds": {
+        "intl": {
+            "jsfiles": [
+                "Intl.js"
+            ]
+        }
+    }
+}
