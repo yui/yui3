@@ -234,7 +234,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             gesture = host._gesture,
             index = paginator._cIndex,
             paginatorAxis = paginator._cAxis,
-            pageNodes = this._getPageNodes(),
+            pageNodes = paginator._getPageNodes(),
             gestureAxis;
 
         if (gesture) {
@@ -472,9 +472,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _getStage: function (index) {
-        var _pageBuffer = this._pageBuffer,
-            pageCount = this.get(TOTAL),
-            pageNodes = this._getPageNodes(),
+        var paginator = this,
+            _pageBuffer = paginator._pageBuffer,
+            pageCount = paginator.get(TOTAL),
+            pageNodes = paginator._getPageNodes(),
             start = Math.max(0, index - _pageBuffer),
             end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive
 
@@ -536,7 +537,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             index = paginator._cIndex,
             target = index + 1,
-            total = this.get(TOTAL);
+            total = paginator.get(TOTAL);
 
         if (target >= total) {
             return;
