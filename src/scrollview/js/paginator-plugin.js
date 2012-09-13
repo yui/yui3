@@ -114,14 +114,13 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             paginatorAxis = paginator._cAxis,
             pageNodes = paginator._getPageNodes(),
             size = pageNodes.size(),
-            maxScrollX = paginator._pageDims[index].maxScrollX,
-            maxScrollY = paginator._pageDims[index].maxScrollY;
+            pageDim = paginator._pageDims[index];
 
         if (paginatorAxis[DIM_Y]) {
-            host._maxScrollX = maxScrollX;
+            host._maxScrollX = pageDim.maxScrollX;
         }
         else if (paginatorAxis[DIM_X]) {
-            host._maxScrollY = maxScrollY;
+            host._maxScrollY = pageDim.maxScrollY;
         }
 
         // Set the page count
@@ -194,11 +193,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
                     // Current scrollX & scrollY positions (default to 0)
                     scrollX: 0,
                     scrollY: 0,
-
-                    // Minimum scrollable values
-                    //@TODO What are these for?
-                    _minScrollX: 0,
-                    _minScrollY: 0,
 
                     // Maximum scrollable values
                     maxScrollX: maxScrollX,
@@ -293,7 +287,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (canScroll) {
             if (isHalfway) { // TODO: This condition should probably be configurable
                 // Fire next()/prev()
-                paginator[rtl === isForward ? 'prev' : 'next']();
+                paginator[(rtl === isForward ? 'prev' : 'next')]();
             }
             // Scrollback
             else {
@@ -327,7 +321,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
 
             // Fire next()/prev()
-            paginator[isForward ? 'next' : 'prev']();
+            paginator[(isForward ? 'next' : 'prev')]();
 
             // prevent browser default behavior on mousewheel
             e.preventDefault();
@@ -373,7 +367,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         if (canScroll) {
 
             // Fire next()/prev()
-            paginator[rtl === isForward ? 'prev' : 'next']();
+            paginator[(rtl === isForward ? 'prev' : 'next')]();
 
             // Prevent flick animations on the paginated axis.
             return new Y.Do.Prevent();
@@ -522,7 +516,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             cb = host._cb,
             pageSelector = paginator.get(SELECTOR),
-            pageNodes = pageSelector ? cb.all(pageSelector) : cb.get('children');
+            pageNodes = (pageSelector ? cb.all(pageSelector) : cb.get('children'));
 
         return pageNodes;
     },
@@ -587,8 +581,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             scrollAxis = (paginator._cAxis[DIM_X] ? SCROLL_X : SCROLL_Y),
             scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');
 
-        duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;
-        easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing;
+        duration = ((duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration);
+        easing = ((easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing);
 
         // Set the index ATTR to the specified index value
         paginator.set(INDEX, index);
@@ -618,8 +612,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Turn a string into an axis object
         if (Y.Lang.isString(val)) {
             return {
-                x: val.match(/x/i) ? true : false,
-                y: val.match(/y/i) ? true : false
+                x: (val.match(/x/i) ? true : false),
+                y: (val.match(/y/i) ? true : false)
             };
         }
     },
@@ -705,12 +699,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
          * @default 0
          */
         index: {
-            value: 0,
-            validator: function (val) {
-                // TODO: Remove this?
-                // return val >= 0 && val < this.get(TOTAL);
-                return true;
-            }
+            value: 0
         },
 
         /**
