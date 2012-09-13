@@ -270,7 +270,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         // This was a flick, so we don't need to do anything here
         if (this._host._gesture.flick) {
-            return false;
+            return;
         }
 
         var paginator = this,
@@ -282,7 +282,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             paginatorAxis = paginator._cAxis,
             gestureAxis = gesture.axis,
             isHorizontal = (gestureAxis === DIM_X),
-            delta = gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')],
+            delta = gesture[(isHorizontal ? 'deltaX' : 'deltaY')],
             isForward = (delta > 0),
             pageDims = paginator._pageDims[index],
             halfway = pageDims[(isHorizontal ? 'width' : 'height')] / 2,
