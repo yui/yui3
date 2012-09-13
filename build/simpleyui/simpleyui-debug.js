@@ -547,12 +547,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -3837,7 +3837,7 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later"]});
+}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-later"]});
 YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
@@ -5715,7 +5715,7 @@ Y.Lang.later = Y.later;
 
 
 }, '@VERSION@', {"requires": ["yui-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-later"]});
 YUI.add('oop', function (Y, NAME) {
 
 /**
@@ -7004,7 +7004,7 @@ if (!testFeature('value-set', 'select')) {
                 break;
             }
         }
-    }
+    };
 }
 
 Y.mix(Y_DOM.VALUE_GETTERS, {
@@ -7444,7 +7444,7 @@ if (!testFeature('innerhtml-div', 'script')) {
         frag.innerHTML = '-' + html;
         frag.removeChild(frag.firstChild);
         return frag;
-    }
+    };
 
     creators.link = creators.style = creators.script;
 }
@@ -8966,7 +8966,7 @@ var Selector = {
             attrs: attrs,
             pseudos: pseudos,
             selector: selector
-        }
+        };
     },
 
     _restoreSelector: function(replaced) {

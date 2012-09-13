@@ -547,12 +547,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -5730,7 +5730,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.05-20-01',
+            GALLERY_VERSION = 'gallery-2012.09.12-20-02',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7174,7 +7174,7 @@ Y.Loader.prototype = {
                     for (o = 0; o < mod.use.length; o++) {
                         //Must walk the other modules in case a module is a rollup of rollups (datatype)
                         m = this.getModule(mod.use[o]);
-                        if (m && m.use) {
+                        if (m && m.use && (m.name !== mod.name)) {
                             c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
                         } else {
                             c.push(mod.use[o]);
@@ -7881,7 +7881,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * @private
     */
     _onProgress: function(e) {
-        var self = this;
+        var self = this, i;
+        //set the internal cache to what just came in.
+        if (e.data && e.data.length) {
+            for (i = 0; i < e.data.length; i++) {
+                e.data[i] = self.getModule(e.data[i].name);
+            }
+        }
         if (self.onProgress) {
             self.onProgress.call(self.context, {
                 name: e.url,
@@ -8032,7 +8038,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         var modules = this.resolve(!skipcalc),
-            self = this, comp = 0, actions = 0;
+            self = this, comp = 0, actions = 0,
+            mods = {}, deps;
+
+        self._refetch = [];
 
         if (type) {
             //Filter out the opposite type and reset the array so the checks later work
@@ -8049,7 +8058,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -8065,12 +8074,37 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
+                    //If the external module has a skin or a lang, reprocess it
+                    if (d.data[i].lang || d.data[i].skinnable) {
+                        delete self.inserted[d.data[i].name];
+                        self._refetch.push(d.data[i].name);
+                    }
                 }
             }
 
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
+                if (self._refetch.length) {
+                    //Get the deps for the new meta-data and reprocess
+                    Y.log('Found potential modules to refetch', 'info', 'loader');
+                    for (i = 0; i < self._refetch.length; i++) {
+                        deps = self.getRequires(self.getModule(self._refetch[i]));
+                        for (o = 0; o < deps.length; o++) {
+                            if (!self.inserted[deps[o]]) {
+                                //We wouldn't be to this point without the module being here
+                                mods[deps[o]] = deps[o];
+                            }
+                        }
+                    }
+                    mods = Y.Object.keys(mods);
+                    if (mods.length) {
+                        Y.log('Refetching modules with new meta-data', 'info', 'loader');
+                        self.require(mods);
+                        d = null; //bail
+                        self._insert(); //insert the new deps
+                    }
+                }
                 if (d && d.fn) {
                     Y.log('Firing final Loader callback!', 'info', 'loader');
                     fn = d.fn;
