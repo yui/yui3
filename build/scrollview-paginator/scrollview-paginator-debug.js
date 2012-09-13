@@ -281,7 +281,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             index = paginator._cIndex,
             pageNodes = paginator._getPageNodes(),
             pageNode = pageNodes.item(index),
-            isFlick = (gesture.flick ? true : false),
             paginatorAxis = paginator._cAxis,
             gestureAxis = gesture.axis,
             isHorizontal = (gestureAxis === DIM_X),
@@ -294,7 +293,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             rtl = host.rtl;
 
         if (canScroll) {
-            if (isHalfway) {
+            if (isHalfway) { // TODO: This condition should probably be configurable
                 // Fire next()/prev()
                 paginator[rtl === isForward ? 'prev' : 'next']();
             }
