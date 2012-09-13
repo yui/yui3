@@ -418,7 +418,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             host = paginator._host,
             index = e.newVal,
             pageDims = paginator._pageDims[index],
-            hostAxis = host._cAxis;
+            hostAxis = host._cAxis,
             paginatorAxis = paginator._cAxis;
 
         // Cache the new index value
@@ -473,11 +473,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _getStage: function (index) {
         var paginator = this,
-            _pageBuffer = paginator._pageBuffer,
+            pageBuffer = paginator._pageBuffer,
             pageCount = paginator.get(TOTAL),
             pageNodes = paginator._getPageNodes(),
-            start = Math.max(0, index - _pageBuffer),
-            end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive
+            start = Math.max(0, index - pageBuffer),
+            end = Math.min(pageCount, index + 1 + pageBuffer); // noninclusive
 
         return {
             visible: pageNodes.splice(start, end - start),
