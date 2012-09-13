@@ -1,1 +1,1 @@
-YUI.add("arraylist-filter",function(b,a){b.mix(b.ArrayList.prototype,{filter:function(d){var c=[];b.Array.each(this._items,function(f,e){f=this.item(e);if(d(f)){c.push(f);}},this);return new this.constructor(c);}});},"@VERSION@",{"requires":["arraylist"]});
+YUI.add("arraylist-filter",function(e,t){e.mix(e.ArrayList.prototype,{filter:function(t){var n=[];return e.Array.each(this._items,function(e,r){e=this.item(r),t(e)&&n.push(e)},this),new this.constructor(n)}})},"@VERSION@",{requires:["arraylist"]});
