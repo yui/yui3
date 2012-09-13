@@ -252,7 +252,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         bb.detach(FLICK + '|*');
 
         if (flick) {
-            bb.on(FLICK + '|' + FLICK, Y.bind(sv._flick, sv), flick);
+            bb.on(FLICK + '|' + FLICK, Y.bind(sv._onFlick, sv), flick);
 
             // Rebind Drag, becuase _onGestureMoveEnd always has to fire -after- _flick
             sv._bindDrag(sv.get(DRAG));
@@ -276,7 +276,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         // Only enable for vertical scrollviews
         if (mousewheel) {
             // Bound to document, because that's where mousewheel events fire off of.
-            Y.one(DOCUMENT).on(MOUSEWHEEL, Y.bind(sv._mousewheel, sv));
+            Y.one(DOCUMENT).on(MOUSEWHEEL, Y.bind(sv._onMousewheel, sv));
         }
     },
 
@@ -595,7 +595,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (sv._flickAnim) {
             // Cancel and delete sv._flickAnim
             sv._flickAnim.cancel();
-            delete sv._flickAnim;
+            sv._flickAnim = false;
             sv._onTransEnd();
         }
 
@@ -739,102 +739,73 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param e {Event.Facade} The Flick event facade
      * @private
      */
-    _flick: function (e) {
+    _onFlick: function (e) {
         if (this._cDisabled) {
             return false;
         }
 
         var sv = this,
+            bounce = sv._cBounce,
+            bounceRange = sv._cBounceRange,
+            deceleration = sv._cDeceleration,
+            frameDuration = sv._cFrameDuration,
             svAxis = sv._cAxis,
             flick = e.flick,
             flickAxis = flick.axis,
             flickVelocity = flick.velocity,
-            axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
-            startPosition = sv.get(axisAttr);
+            velocity = flickVelocity,
+            axisAttr = (flickAxis === DIM_X ? SCROLL_X : SCROLL_Y),
+            position = sv.get(axisAttr),
+            minScroll = (flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY),
+            maxScroll = (flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY),
+            minBounce = minScroll - bounceRange,
+            maxBounce = maxScroll - bounceRange,
+            transition = {},
+            scrollToArgs = [],
+            frameCount = 0,
+            tooSlow = false,
+            easing = null,
+            duration;
 
         // Sometimes flick is enabled, but drag is disabled
         if (sv._gesture) {
             sv._gesture.flick = flick;
         }
 
+        sv._flick = flick;
+
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
-        if (svAxis[flickAxis]) {
-            sv._flickFrame(flickVelocity, flickAxis, startPosition);
-        }
-    },
-
-    /**
-     * Execute a single frame in the flick animation
-     *
-     * @method _flickFrame
-     * @param velocity {Number} The velocity of this animated frame
-     * @param flickAxis {String} The axis on which to animate
-     * @param startPosition {Number} The starting X/Y point to flick from
-     * @protected
-     */
-    _flickFrame: function (velocity, flickAxis, startPosition) {
-
-        var sv = this,
-            axisAttr = flickAxis === DIM_X ? SCROLL_X : SCROLL_Y,
-
-            // Localize cached values
-            bounce = sv._cBounce,
-            bounceRange = sv._cBounceRange,
-            deceleration = sv._cDeceleration,
-            frameDuration = sv._cFrameDuration,
-
-            // Calculate
-            newVelocity = velocity * deceleration,
-            newPosition = startPosition - (frameDuration * newVelocity),
-
-            // Some convinience conditions
-            min = flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY,
-            max = flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY,
-            belowMin       = (newPosition < min),
-            belowMax       = (newPosition < max),
-            aboveMin       = (newPosition > min),
-            aboveMax       = (newPosition > max),
-            belowMinRange  = (newPosition < (min - bounceRange)),
-            belowMaxRange  = (newPosition < (max + bounceRange)),
-            withinMinRange = (belowMin && (newPosition > (min - bounceRange))),
-            withinMaxRange = (aboveMax && (newPosition < (max + bounceRange))),
-            aboveMinRange  = (newPosition > (min - bounceRange)),
-            aboveMaxRange  = (newPosition > (max + bounceRange)),
-            tooSlow;
-
-        // If we're within the range but outside min/max, dampen the velocity
-        if (withinMinRange || withinMaxRange) {
-            newVelocity *= bounce;
+        if (!svAxis[flickAxis]) {
+            return false;
         }
 
-        // Is the velocity too slow to bother?
-        tooSlow = (Math.abs(newVelocity).toFixed(4) < 0.015);
+        while(!tooSlow) {
+            var velocity = velocity * deceleration,
+                position = position - (frameDuration * velocity),
+                tooSlow = (Math.abs(velocity).toFixed(4) < 0.015);
 
-        // If the velocity is too slow or we're outside the range
-        if (tooSlow || belowMinRange || aboveMaxRange) {
-            // Cancel and delete sv._flickAnim
-            if (sv._flickAnim) {
-                sv._flickAnim.cancel();
-                delete sv._flickAnim;
-            }
-
-            // If we're inside the scroll area, just end
-            if (aboveMin && belowMax) {
-                sv._onTransEnd();
-            }
-
-            // We're outside the scroll area, so we need to snap back
-            else {
-                sv._snapBack();
-            }
+            frameCount++;
         }
 
-        // Otherwise, animate to the next frame
+        if ((position < minBounce) || (position > maxBounce)) {
+            // easing = 'cubic-bezier(0,0,0.4,1)';
+            position = _constrain(position, (minScroll), (maxScroll))
+        }
+
+        // Generate the array of args to pass to scrollTo()
+        if (flickAxis === DIM_X) {
+            scrollToArgs.push(position);
+            scrollToArgs.push(null);
+        }
         else {
-            // @TODO: maybe use requestAnimationFrame instead
-            sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [newVelocity, flickAxis, newPosition]);
-            sv.set(axisAttr, newPosition);
+            scrollToArgs.push(null);
+            scrollToArgs.push(position);
         }
+
+        scrollToArgs.push(frameDuration * (frameCount * .5));
+        scrollToArgs.push(easing);
+
+        sv.scrollTo.apply(sv, scrollToArgs);
     },
 
     /**
@@ -844,7 +815,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @param e {Event.Facade} The mousewheel event facade
      * @private
      */
-    _mousewheel: function (e) {
+    _onMousewheel: function (e) {
         var sv = this,
             scrollY = sv.get(SCROLL_Y),
             bb = sv._bb,
@@ -1044,14 +1015,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _afterScrollEnd: function (e) {
         var sv = this;
 
-        // @TODO: Move to sv._cancelFlick()
-        if (sv._flickAnim) {
-            // Cancel the flick (if it exists)
-            sv._flickAnim.cancel();
-
-            // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
-            delete sv._flickAnim;
-        }
+        // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
+        sv._flick = false;
 
         // If for some reason we're OOB, snapback
         if (sv._isOutOfBounds()) {
@@ -1290,10 +1255,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          *
          * @attribute bounceRange
          * @type Number
-         * @default 150
+         * @default 15
          */
         bounceRange: {
-            value: 150
+            value: 15
         }
     },
 
