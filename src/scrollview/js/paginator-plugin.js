@@ -419,17 +419,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             index = e.newVal,
             maxScrollX = paginator._pageDims[index].maxScrollX,
             maxScrollY = paginator._pageDims[index].maxScrollY,
-            gesture = host._gesture,
-            gestureAxis = gesture && gesture.axis;
+            paginatorAxis = paginator._cAxis;
 
         // Cache the new index value
         paginator._cIndex = index;
-
-        if (gestureAxis === DIM_Y) {
+        
+        // @TODO: This seems like it is only for dual-axis paginators, yet it is exectured on single-axis instances. Hmm.
+        if (paginatorAxis[DIM_Y]) {
             host._maxScrollX = maxScrollX;
             host.set(SCROLL_X, paginator._pageDims[index].scrollX, { src: UI });
         }
-        else if (gestureAxis === DIM_X) {
+        else if (paginatorAxis[DIM_X]) {
             host._maxScrollY = maxScrollY;
             host.set(SCROLL_Y, paginator._pageDims[index].scrollY, { src: UI });
         }
