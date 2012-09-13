@@ -236,7 +236,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             gesture = host._gesture,
             index = paginator._cIndex,
             paginatorAxis = paginator._cAxis,
-            pageNodes = this._getPageNodes(),
+            pageNodes = paginator._getPageNodes(),
             gestureAxis;
 
         if (gesture) {
@@ -417,16 +417,17 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterIndexChange: function (e) {
         var paginator = this,
-            host = this._host,
+            host = paginator._host,
             index = e.newVal,
             pageDims = paginator._pageDims[index],
-            hostAxis = host._cAxis;
+            hostAxis = host._cAxis,
             paginatorAxis = paginator._cAxis;
 
         // Cache the new index value
         paginator._cIndex = index;
 
-        // For dual-axis instances, we need to update host to the current and max height/width of the current pages we're on
+        // For dual-axis instances, we need to hack some host properties to the
+        // current page's max height/width and current stored offset
         if (hostAxis[DIM_X] && hostAxis[DIM_Y]) {
             if (paginatorAxis[DIM_Y]) {
                 host._maxScrollX = pageDims.maxScrollX;
@@ -473,11 +474,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      * @protected
      */
     _getStage: function (index) {
-        var _pageBuffer = this._pageBuffer,
-            pageCount = this.get(TOTAL),
-            pageNodes = this._getPageNodes(),
-            start = Math.max(0, index - _pageBuffer),
-            end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive
+        var paginator = this,
+            pageBuffer = paginator._pageBuffer,
+            pageCount = paginator.get(TOTAL),
+            pageNodes = paginator._getPageNodes(),
+            start = Math.max(0, index - pageBuffer),
+            end = Math.min(pageCount, index + 1 + pageBuffer); // noninclusive
 
         return {
             visible: pageNodes.splice(start, end - start),
@@ -537,7 +539,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             index = paginator._cIndex,
             target = index + 1,
-            total = this.get(TOTAL);
+            total = paginator.get(TOTAL);
 
         if (target >= total) {
             return;
