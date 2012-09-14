@@ -1454,16 +1454,22 @@ mainSuite.add(treeViewSuite);
 // -- Lifecycle ----------------------------------------------------------------
 treeViewSuite.add(new Y.Test.Case({
     name: 'Lifecycle'
+
+    // TODO: moar tests!
 }));
 
 // -- Properties and Attributes ------------------------------------------------
 treeViewSuite.add(new Y.Test.Case({
     name: 'Properties & Attributes'
+
+    // TODO: moar tests!
 }));
 
 // -- Methods ------------------------------------------------------------------
 treeViewSuite.add(new Y.Test.Case({
     name: 'Methods'
+
+    // TODO: moar tests!
 }));
 
 }, '@VERSION@', {
