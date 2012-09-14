@@ -17,7 +17,7 @@ but reverts to mouse events if touch is not supported.
 
 @module event
 @submodule event-tap
-@author matuzak and tilo mitra
+@author Andres Garza, matuzak and tilo mitra
 @since 3.7.0 
 
 */
