@@ -271,6 +271,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             bb = sv._bb;
 
         // Unbind any previous 'mousewheel' listeners
+        // TODO: This doesn't actually appear to work properly. Fix. #2532743
         bb.detach(MOUSEWHEEL + '|*');
 
         // Only enable for vertical scrollviews
@@ -339,7 +340,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f,
             origX = sv.get(SCROLL_X),
             origY = sv.get(SCROLL_Y),
-            HWTransform,
+            origHWTransform,
             dims;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.
