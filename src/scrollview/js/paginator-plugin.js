@@ -308,9 +308,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             bb = host._bb,
-            isForward = (e.wheelDelta < 0), // down (negative) is forward. @TODO Should revisit.
+            isForward = (e.wheelDelta < 0),
             paginatorAxis = paginator._cAxis;
-
+            
         // Set the axis for this event.
         // @TODO: This is hacky, it's not a gesture. Find a better way
         host._gesture = {
