@@ -739,7 +739,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _onFlick: function (e) {
         if (this._cDisabled) {
-            return false;
+            return;
         }
 
         var sv = this,
@@ -747,47 +747,37 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             bounceRange = sv._cBounceRange,
             deceleration = sv._cDeceleration,
             frameDuration = sv._cFrameDuration,
+            minSpeed = 0.15,
             svAxis = sv._cAxis,
             flick = e.flick,
             flickAxis = flick.axis,
-            flickVelocity = flick.velocity,
-            velocity = flickVelocity,
-            axisAttr = (flickAxis === DIM_X ? SCROLL_X : SCROLL_Y),
-            position = sv.get(axisAttr),
-            minScroll = (flickAxis === DIM_X ? sv._minScrollX : sv._minScrollY),
-            maxScroll = (flickAxis === DIM_X ? sv._maxScrollX : sv._maxScrollY),
+            velocity = flick.velocity,
+            isVertical = (flickAxis === DIM_Y),
+            axisAttr = (isVertical ? SCROLL_Y : SCROLL_X),
+            duration = Math.round(Math.log(minSpeed / Math.abs(velocity) ) / Math.log(deceleration)),
+            distance = velocity * (1 - Math.pow(deceleration, duration + 1)) / (1 - deceleration),
+            currPos = sv.get(axisAttr),
+            position = currPos - distance,
+            minScroll = (isVertical ? sv._minScrollY : sv._minScrollX),
+            maxScroll = (isVertical ? sv._maxScrollY : sv._maxScrollX),
             minBounce = minScroll - bounceRange,
             maxBounce = maxScroll - bounceRange,
-            transition = {},
-            scrollToArgs = [],
-            frameCount = 0,
-            tooSlow = false,
-            easing = null,
-            duration;
+            easing = 'ease-out',
+            scrollToArgs = [];
 
         // Sometimes flick is enabled, but drag is disabled
         if (sv._gesture) {
             sv._gesture.flick = flick;
         }
 
-        sv._flick = flick;
-
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (!svAxis[flickAxis]) {
             return false;
         }
 
-        while(!tooSlow) {
-            var velocity = velocity * deceleration,
-                position = position - (frameDuration * velocity),
-                tooSlow = (Math.abs(velocity).toFixed(4) < 0.015);
-
-            frameCount++;
-        }
-
         if ((position < minBounce) || (position > maxBounce)) {
-            // easing = 'cubic-bezier(0,0,0.4,1)';
-            position = _constrain(position, (minScroll), (maxScroll))
+            position = _constrain(position, minBounce, maxBounce);
+            easing = 'cubic-bezier(0,0,0.4,1)';
         }
 
         // Generate the array of args to pass to scrollTo()
@@ -800,7 +790,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollToArgs.push(position);
         }
 
-        scrollToArgs.push(frameDuration * (frameCount * .5));
+        scrollToArgs.push(duration);
         scrollToArgs.push(easing);
 
         sv.scrollTo.apply(sv, scrollToArgs);
@@ -1163,7 +1153,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * @default 0.93
          */
         deceleration: {
-            value: 0.93
+            value: 0.998
         },
 
         /**
