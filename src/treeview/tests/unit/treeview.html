@@ -12,11 +12,16 @@
 <script>
 var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
-    coverage: [ 'treeview', 'treeview-node', 'treeview-templates', 'treeview-tree' ],
+
+    coverage: [
+        'treeview', 'treeview-lazy', 'treeview-node', 'treeview-templates',
+        'treeview-tree'
+    ],
+
     modules: {
         'treeview-test': {
             fullpath: 'assets/treeview-test.js',
-            requires: ['json', 'treeview', 'test']
+            requires: ['json', 'treeview', 'treeview-lazy', 'test']
         }
     },
     useBrowserConsole: false

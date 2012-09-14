@@ -146,6 +146,8 @@ Y.namespace('Plugin.TreeView').Lazy = Y.Base.create('lazyTreeViewPlugin', Y.Plug
         node.state.loading = true;
 
         this.load(node, function (err) {
+            delete node.state.loading;
+
             if (err) {
                 self.fire(EVT_ERROR, {
                     error: err,
@@ -155,7 +157,6 @@ Y.namespace('Plugin.TreeView').Lazy = Y.Base.create('lazyTreeViewPlugin', Y.Plug
                 return;
             }
 
-            delete node.state.loading;
             node.state.loaded = true;
 
             self.fire(EVT_LOADED, {node: node});

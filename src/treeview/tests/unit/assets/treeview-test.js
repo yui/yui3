@@ -1472,6 +1472,252 @@ treeViewSuite.add(new Y.Test.Case({
     // TODO: moar tests!
 }));
 
+// -- Y.Plugin.TreeView.Lazy ---------------------------------------------------
+var lazySuite = new Y.Test.Suite('Plugin.TreeView.Lazy');
+mainSuite.add(lazySuite);
+
+// -- Lifecycle ----------------------------------------------------------------
+lazySuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree();
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+        delete this.tree;
+    },
+
+    'plugin instance should be available in the `lazy` namespace': function () {
+        this.tree.plug(Y.Plugin.TreeView.Lazy);
+        Assert.isInstanceOf(Y.Plugin.TreeView.Lazy, this.tree.lazy);
+    },
+
+    'constructor should accept a custom `load()` function in `config.load`': function () {
+        function load() {}
+
+        this.tree.plug(Y.Plugin.TreeView.Lazy, {
+            load: load
+        });
+
+        Assert.areSame(load, this.tree.lazy.load);
+    }
+}));
+
+// -- Methods ------------------------------------------------------------------
+lazySuite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree();
+        this.tree.plug(Y.Plugin.TreeView.Lazy);
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+        delete this.tree;
+    },
+
+    'default `load()` method should pass an error to the callback': function () {
+        var called;
+
+        this.tree.lazy.load(this.tree.rootNode, function (err) {
+            called = true;
+            Assert.isInstanceOf(Error, err, '`err` should be an instance of `Error`');
+        });
+
+        Assert.isTrue(called, 'load() method should be called');
+    }
+}));
+
+// -- Events -------------------------------------------------------------------
+lazySuite.add(new Y.Test.Case({
+    name: 'Events',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree({
+            nodes: [
+                {
+                    label: 'test node',
+                    canHaveChildren: true
+                }
+            ]
+        });
+
+        this.tree.plug(Y.Plugin.TreeView.Lazy, {
+            load: function (node, callback) {
+                if (node.data.error) {
+                    callback(new Error('Oh noes!'));
+                    return;
+                }
+
+                callback();
+            }
+        });
+
+        this.lazy = this.tree.lazy;
+        this.node = this.tree.rootNode.children[0];
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+
+        delete this.lazy;
+        delete this.node;
+        delete this.tree;
+    },
+
+    '`error` event should fire when an error is passed to the `load()` callback': function () {
+        var fired;
+
+        this.lazy.on('error', function (e) {
+            fired = true;
+            Assert.isInstanceOf(Error, e.error, 'error property should be an instance of Error');
+            Assert.areSame('load', e.src, 'src should be "load"');
+        });
+
+        this.node.data.error = true;
+        this.node.open();
+
+        Assert.isTrue(fired, 'error event should fire');
+    },
+
+    '`loading` event should fire just before the `load()` callback is called': function () {
+        var test = this,
+            fired,
+            loadCalled;
+
+        this.lazy.on('loading', function (e) {
+            fired = true;
+
+            if (loadCalled) {
+                Assert.fail('loading event should fire before the load() callback is called');
+            }
+
+            Assert.areSame(test.node, e.node, 'node should be the the node whose children are being loaded');
+        });
+
+        this.lazy.load = function (node, callback) {
+            loadCalled = true;
+            callback();
+        };
+
+        this.node.open();
+
+        Assert.isTrue(fired, 'loading event should fire');
+        Assert.isTrue(loadCalled, 'load() callback should be called');
+    },
+
+    '`loading` event should be preventable': function () {
+        var test = this,
+            fired,
+            loadCalled;
+
+        this.lazy.on('loading', function (e) {
+            fired = true;
+            e.preventDefault();
+        });
+
+        this.lazy.load = function (node, callback) {
+            loadCalled = true;
+            callback();
+        };
+
+        this.node.open();
+
+        Assert.isTrue(fired, 'loading event should fire');
+        Assert.isUndefined(loadCalled, 'load() callback should not be called');
+    },
+
+    '`loaded` event should fire after the `load()` callback is called without an error': function () {
+        var test = this,
+            fired;
+
+        this.lazy.on('loaded', function (e) {
+            fired = true;
+            Assert.areSame(test.node, e.node, 'node should be the the node whose children were loaded');
+        });
+
+        this.node.open();
+
+        Assert.isTrue(fired, 'loaded event should fire');
+    }
+}));
+
+// -- General Functionality ----------------------------------------------------
+lazySuite.add(new Y.Test.Case({
+    name: 'Functionality',
+
+    setUp: function () {
+        this.tree = new TreeView.Tree({
+            nodes: [
+                {
+                    label: 'test node',
+                    canHaveChildren: true
+                }
+            ]
+        });
+
+        this.tree.plug(Y.Plugin.TreeView.Lazy, {
+            load: function (node, callback) {
+                if (node.data.error) {
+                    callback(new Error('Oh noes!'));
+                    return;
+                }
+
+                callback();
+            }
+        });
+
+        this.lazy = this.tree.lazy;
+        this.node = this.tree.rootNode.children[0];
+    },
+
+    tearDown: function () {
+        this.tree.destroy();
+
+        delete this.lazy;
+        delete this.node;
+        delete this.tree;
+    },
+
+    "node's `state.loading` property should be true while loading": function () {
+        var called;
+
+        this.lazy.load = function (node, callback) {
+            called = true;
+            Assert.isTrue(node.state.loading, 'node.state.loading should be true');
+            callback();
+        };
+
+        this.node.open();
+
+        Assert.isTrue(called, 'load() should be called');
+    },
+
+    "node's `state.loading` property should be removed after load success or failure": function () {
+        Assert.isUndefined(this.node.state.loading, 'sanity check');
+
+        this.node.data.error = true;
+        this.node.open().close();
+
+        Assert.isUndefined(this.node.state.loading, 'state.loading should be undefined after error');
+
+        this.node.data.error = false;
+        this.node.open();
+
+        Assert.isUndefined(this.node.state.loading, 'state.loading should be undefined after success');
+    },
+
+    "node's `state.loaded` property should be true after successful load": function () {
+        Assert.isUndefined(this.node.state.loaded, 'sanity check');
+
+        this.node.open();
+        Assert.isTrue(this.node.state.loaded, 'state.loaded should be true');
+    }
+}));
+
 }, '@VERSION@', {
-    requires: ['json', 'treeview', 'test']
+    requires: ['json', 'treeview', 'treeview-lazy', 'test']
 });
