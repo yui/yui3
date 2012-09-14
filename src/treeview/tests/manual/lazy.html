@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Lazy TreeView manual test</title>
+
+    <link rel="stylesheet" href="../../assets/treeview-core.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/treeview-skin.css">
+    <link rel="stylesheet" href="../../assets/skins/sam/treeview-skin-2x.css"
+            media="only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2)">
+
+    <style>
+    body {
+        color: #333;
+        font: 13px 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+    }
+
+    .yui3-treeview {
+        border: 1px solid #efefef;
+        border-radius: 2px;
+        margin: 0 5px;
+        width: 295px;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="treeview"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    fetchCSS: false
+}).use('escape', 'jsonp', 'treeview', function (Y) {
+
+var treeview = window.treeview = new Y.TreeView({
+    container: '#treeview'
+});
+
+treeview.on('open', function (e) {
+    var node = e.node;
+
+    // Nothing to do if this node can't have children or if its children have
+    // already been loaded.
+    if (!node.canHaveChildren || node.state.loaded) {
+        return;
+    }
+
+    var submodules = encodeURIComponent(node.data.submodules.join(';'));
+
+    node.state.loaded = true;
+
+    // Request the data for this node's children.
+    Y.jsonp('http://yuilibrary.com/api/v1/modules/' + submodules + '/submodules?sort=name&callback={callback}', function (res) {
+        // Append the children to the node.
+        Y.Array.each(res.modules, function (module) {
+            // debugger;
+            node.append({
+                label: Y.Escape.html(module.name),
+                data : module,
+
+                canHaveChildren: !!module.submodules
+            });
+        });
+    });
+});
+
+Y.jsonp('http://yuilibrary.com/api/v1/modules/*/submodules?submodule=false&sort=name&callback={callback}', function (res) {
+    Y.Array.each(res.modules, function (module) {
+        treeview.rootNode.append({
+            label: Y.Escape.html(module.name),
+            data : module,
+
+            canHaveChildren: !!module.submodules
+        });
+    });
+
+    treeview.render();
+});
+
+});
+</script>
+
+</body>
+</html>
