@@ -32,43 +32,46 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script>
 var Y = YUI({
-    filter: 'raw',
+    filter  : 'raw',
     fetchCSS: false
-}).use('escape', 'jsonp', 'treeview', function (Y) {
+}).use('escape', 'jsonp', 'treeview', 'treeview-lazy', function (Y) {
+
+var URL_MODULES    = 'http://yuilibrary.com/api/v1/modules/*/submodules?submodule=false&sort=name&callback={callback}',
+    URL_SUBMODULES = 'http://yuilibrary.com/api/v1/modules/{submodules}/submodules?sort=name&callback={callback}';
 
 var treeview = window.treeview = new Y.TreeView({
     container: '#treeview'
 });
 
-treeview.on('open', function (e) {
-    var node = e.node;
-
-    // Nothing to do if this node can't have children or if its children have
-    // already been loaded.
-    if (!node.canHaveChildren || node.state.loaded) {
-        return;
-    }
-
-    var submodules = encodeURIComponent(node.data.submodules.join(';'));
-
-    node.state.loaded = true;
-
-    // Request the data for this node's children.
-    Y.jsonp('http://yuilibrary.com/api/v1/modules/' + submodules + '/submodules?sort=name&callback={callback}', function (res) {
-        // Append the children to the node.
-        Y.Array.each(res.modules, function (module) {
-            // debugger;
-            node.append({
-                label: Y.Escape.html(module.name),
-                data : module,
-
-                canHaveChildren: !!module.submodules
+treeview.plug(Y.Plugin.TreeView.Lazy, {
+    load: function (node, callback) {
+        var url = Y.Lang.sub(URL_SUBMODULES, {
+                submodules: encodeURIComponent(node.data.submodules.join(';'))
             });
+
+        // Request the data for this node's children.
+        Y.jsonp(url, function (res) {
+            // Append the children to the node.
+            Y.Array.each(res.modules, function (module) {
+                node.append({
+                    label: Y.Escape.html(module.name),
+                    data: module,
+                    canHaveChildren: !!module.submodules
+                });
+            });
+
+            callback();
         });
-    });
+    },
+
+    on: {
+        error  : function (e) { console.log('error'); },
+        loading: function (e) { console.log('loading'); },
+        loaded : function (e) { console.log('loaded'); }
+    }
 });
 
-Y.jsonp('http://yuilibrary.com/api/v1/modules/*/submodules?submodule=false&sort=name&callback={callback}', function (res) {
+Y.jsonp(URL_MODULES, function (res) {
     Y.Array.each(res.modules, function (module) {
         treeview.rootNode.append({
             label: Y.Escape.html(module.name),

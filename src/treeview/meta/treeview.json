@@ -8,25 +8,37 @@
             "view"
         ],
 
-        "skinnable": true
-    },
+        "skinnable": true,
 
-    "treeview-node": {
-        "requires": [
-            "yui-base"
-        ]
-    },
+        "submodules": {
+            "treeview-node": {
+                "requires": [
+                    "yui-base"
+                ]
+            },
 
-    "treeview-templates": {
-        "requires": [
-            "template-micro"
-        ]
-    },
+            "treeview-templates": {
+                "requires": [
+                    "template-micro"
+                ]
+            },
 
-    "treeview-tree": {
-        "requires": [
-            "base-build",
-            "treeview-node"
-        ]
+            "treeview-tree": {
+                "requires": [
+                    "base-build",
+                    "treeview-node"
+                ],
+
+                "plugins": {
+                    "treeview-lazy": {
+                        "requires": [
+                            "base-pluginhost",
+                            "plugin",
+                            "treeview-tree"
+                        ]
+                    }
+                }
+            }
+        }
     }
 }

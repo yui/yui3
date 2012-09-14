@@ -8,6 +8,12 @@
             ]
         },
 
+        "treeview-lazy": {
+            "jsfiles": [
+                "plugins/treeview-lazy.js"
+            ]
+        },
+
         "treeview-node": {
             "jsfiles": [
                 "treeview-node.js"
