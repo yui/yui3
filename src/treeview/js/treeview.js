@@ -125,7 +125,9 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
             container.addClass(this.classNames.noTouch);
         }
 
-        this._childrenNode = this.renderChildren(this.rootNode, container);
+        this._childrenNode = this.renderChildren(this.rootNode, {
+            container: container
+        });
 
         if (!container.inDoc()) {
             Y.one('body').append(container);
@@ -136,8 +138,25 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
         return this;
     },
 
-    renderChildren: function (treeNode, container) {
-        var childrenNode = container && container.one('.' + this.classNames.children);
+    /**
+    Renders the children of the specified tree node.
+
+    If a container is specified, it will be assumed to be an existing rendered
+    tree node, and the children will be rendered (or re-rendered) inside it.
+
+    @method renderChildren
+    @param {TreeView.Node} treeNode Tree node whose children should be rendered.
+    @param {Object} [options] Options.
+        @param {Node} [options.container] `Y.Node` instance of a container into
+            which the children should be rendered. If the container already
+            contains rendered children, they will be re-rendered in place.
+    @return {Node} `Y.Node` instance containing the rendered children.
+    **/
+    renderChildren: function (treeNode, options) {
+        options || (options = {});
+
+        var container    = options.container,
+            childrenNode = container && container.one('.' + this.classNames.children);
 
         if (!childrenNode) {
             childrenNode = Y.Node.create(TreeView.Templates.children({
@@ -159,7 +178,10 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
         }
 
         for (var i = 0, len = treeNode.children.length; i < len; i++) {
-            this.renderNode(treeNode.children[i], childrenNode);
+            this.renderNode(treeNode.children[i], {
+                container     : childrenNode,
+                renderChildren: true
+            });
         }
 
         if (container) {
@@ -169,7 +191,23 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
         return childrenNode;
     },
 
-    renderNode: function (treeNode, container) {
+    /**
+    Renders the specified tree node and its children (if any).
+
+    If a container is specified, the rendered node will be appended to it.
+
+    @method renderNode
+    @param {TreeView.Node} treeNode Tree node to render.
+    @param {Object} [options] Options.
+        @param {Node} [options.container] `Y.Node` instance of a container to
+            which the rendered tree node should be appended.
+        @param {Boolean} [options.renderChildren=false] Whether or not to render
+            this node's children.
+    @return {Node} `Y.Node` instance of the rendered tree node.
+    **/
+    renderNode: function (treeNode, options) {
+        options || (options = {});
+
         var classNames = this.classNames,
             htmlNode   = treeNode._htmlNode;
 
@@ -200,12 +238,17 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
 
             if (treeNode.hasChildren()) {
                 htmlNode.addClass(classNames.hasChildren);
-                this.renderChildren(treeNode, htmlNode);
+
+                if (options.renderChildren) {
+                    this.renderChildren(treeNode, {
+                        container: htmlNode
+                    });
+                }
             }
         }
 
-        if (container) {
-            container.append(htmlNode);
+        if (options.container) {
+            options.container.append(htmlNode);
         }
 
         return htmlNode;
@@ -236,7 +279,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
 
             container.delegate('click', this._onIndicatorClick, '.' + classNames.indicator, this),
             container.delegate('click', this._onRowClick, '.' + classNames.row, this),
-            container.delegate('dblclick', this._onRowDoubleClick, '.' + classNames.hasChildren + ' > .' + classNames.row, this)
+            container.delegate('dblclick', this._onRowDoubleClick, '.' + classNames.canHaveChildren + ' > .' + classNames.row, this)
         );
     },
 
@@ -252,7 +295,32 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
             return;
         }
 
-        this._childrenNode.insert(this.renderNode(e.node), e.index);
+        var parent = e.parent,
+            htmlChildrenNode,
+            htmlNode;
+
+        if (parent === this.rootNode) {
+            htmlChildrenNode = this._childrenNode;
+        } else {
+            htmlNode = this.getHTMLNode(parent);
+            htmlChildrenNode = htmlNode && htmlNode.one('.' + this.classNames.children);
+
+            if (!htmlChildrenNode) {
+                // Parent node hasn't been rendered yet, or hasn't yet been
+                // rendered with children. Render it.
+                htmlNode || (htmlNode = this.renderNode(parent));
+
+                this.renderChildren(parent, {
+                    container: htmlNode
+                });
+
+                return;
+            }
+        }
+
+        htmlChildrenNode.insert(this.renderNode(e.node, {
+            renderChildren: true
+        }), e.index);
     },
 
     _afterClear: function (e) {

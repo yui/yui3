@@ -53,7 +53,7 @@
 }
 
 /* -- Node states ----------------------------------------------------------- */
-.yui3-treeview-has-children > .yui3-treeview-row > .yui3-treeview-indicator { visibility: visible; }
+.yui3-treeview-can-have-children > .yui3-treeview-row > .yui3-treeview-indicator { visibility: visible; }
 
 .yui3-treeview-open > .yui3-treeview-row > .yui3-treeview-indicator s {
     border-left-color: transparent;
