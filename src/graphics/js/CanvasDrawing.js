@@ -367,12 +367,12 @@ CanvasDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
         len = args.length - 5;
-        for(; i < len; i = i + 6)
+        for(i = 0; i < len; i = i + 6)
         {
             cp1x = parseFloat(args[i]) + relativeX;
             cp1y = parseFloat(args[i + 1]) + relativeY;
@@ -441,12 +441,12 @@ CanvasDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len = args.length - 3,
             wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        for(; i < len; i = i + 4)
+        for(i = 0; i < len; i = i + 4)
         {
             cpx = parseFloat(args[i]) + relativeX;
             cpy = parseFloat(args[i + 1]) + relativeY;
@@ -529,7 +529,7 @@ CanvasDrawing.prototype = {
             angleMid,
             radius = w/2,
             yRadius = h/2,
-            i = 0,
+            i,
             centerX = x + radius,
             centerY = y + yRadius,
             ax, ay, bx, by, cx, cy,
@@ -538,7 +538,7 @@ CanvasDrawing.prototype = {
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
         this.moveTo(ax, ay);
-        for(; i < l; i++)
+        for(i = 0; i < l; i++)
         {
             angle += theta;
             angleMid = angle - (theta / 2);
@@ -663,7 +663,7 @@ CanvasDrawing.prototype = {
             ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
             this.lineTo(ax, ay);
             // Loop for drawing curve segments
-            for(; i < segs; ++i)
+            for(i = 0; i < segs; ++i)
             {
                 angle += theta;
                 angleMid = angle - (theta / 2);
@@ -676,7 +676,7 @@ CanvasDrawing.prototype = {
             // close the wedge by drawing a line to the center
             this._updateDrawingQueue(["lineTo", x, y]);
         }
-        this._trackSize(0 - wt , 0 - wt);
+        this._trackSize(-wt , -wt);
         this._trackSize((radius * 2) + wt, (radius * 2) + wt);
         return this;
     },
@@ -722,7 +722,7 @@ CanvasDrawing.prototype = {
             opacity,
             color,
             stop,
-            i = 0,
+            i,
             len = stops.length,
             gradient,
             x = 0,
@@ -767,7 +767,7 @@ CanvasDrawing.prototype = {
             y2 = ((tanRadians * (cx - x2)) - cy) * -1;
         }
         gradient = this._context.createLinearGradient(x1, y1, x2, y2);
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             stop = stops[i];
             opacity = stop.opacity;
@@ -805,7 +805,7 @@ CanvasDrawing.prototype = {
             opacity,
             color,
             stop,
-            i = 0,
+            i,
             len = stops.length,
             gradient,
             x = 0,
@@ -854,7 +854,7 @@ CanvasDrawing.prototype = {
             gradient = this._context.createRadialGradient(x1, y1, r, x2, y2, w/2);
             stopMultiplier = r * 2;
         }
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             stop = stops[i];
             opacity = stop.opacity;
@@ -970,7 +970,7 @@ CanvasDrawing.prototype = {
             t = 1/len,
             wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
