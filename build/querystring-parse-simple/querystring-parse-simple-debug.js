@@ -1,4 +1,4 @@
-YUI.add('querystring-parse-simple', function(Y) {
+YUI.add('querystring-parse-simple', function (Y, NAME) {
 
 // @TODO this looks like we are requiring the user to extract the querystring
 // portion of the url, which isn't good.  The majority use case will be to
@@ -76,4 +76,4 @@ QueryString.unescape = function (s) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

@@ -1,0 +1,10 @@
+{
+    "name": "event-valuechange",
+    "builds": {
+        "event-valuechange": {
+            "jsfiles": [
+                "event-valuechange.js"
+            ]
+        }
+    }
+}

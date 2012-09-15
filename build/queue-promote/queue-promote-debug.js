@@ -1,4 +1,4 @@
-YUI.add('queue-promote', function(Y) {
+YUI.add('queue-promote', function (Y, NAME) {
 
 /**
  * Adds methods promote, remove, and indexOf to Queue instances.
@@ -50,4 +50,4 @@ Y.mix(Y.Queue.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

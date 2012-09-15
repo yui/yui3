@@ -1,4 +1,4 @@
-YUI.add('querystring-parse', function(Y) {
+YUI.add('querystring-parse', function (Y, NAME) {
 
 /**
  * The QueryString module adds support for serializing JavaScript objects into
@@ -156,4 +156,4 @@ QueryString.unescape = function (s) {
 
 
 
-}, '@VERSION@' ,{supersedes:['querystring-parse-simple'], requires:['array-extras', 'yui-base']});
+}, '@VERSION@', {"requires": ["yui-base", "array-extras"]});

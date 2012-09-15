@@ -1,0 +1,10 @@
+{
+    "name": "widget-autohide",
+    "builds": {
+        "widget-autohide": {
+            "jsfiles": [
+                "Widget-Autohide.js"
+            ]
+        }
+    }
+}

@@ -47,6 +47,8 @@
                 "requires": [
                     "datatable-core",
                     "datatable-table",
+                    "datatable-head",
+                    "datatable-body",
                     "base-build",
                     "widget"
                 ],

@@ -1,4 +1,4 @@
-YUI.add('autocomplete-highlighters-accentfold', function(Y) {
+YUI.add('autocomplete-highlighters-accentfold', function (Y, NAME) {
 
 /**
 Provides pre-built accent-folding result highlighters for AutoComplete.
@@ -104,4 +104,4 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'highlight-accentfold']});
+}, '@VERSION@', {"requires": ["array-extras", "highlight-accentfold"]});

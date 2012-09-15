@@ -1,4 +1,4 @@
-YUI.add('highlight-base', function(Y) {
+YUI.add('highlight-base', function (Y, NAME) {
 
 /**
 Provides methods for highlighting strings within other strings by wrapping
@@ -309,4 +309,4 @@ Highlight = {
 Y.Highlight = Highlight;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'classnamemanager', 'escape', 'text-wordbreak']});
+}, '@VERSION@', {"requires": ["array-extras", "classnamemanager", "escape", "text-wordbreak"]});

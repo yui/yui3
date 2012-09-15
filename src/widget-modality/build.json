@@ -1,0 +1,10 @@
+{
+    "name": "widget-modality",
+    "builds": {
+        "widget-modality": {
+            "jsfiles": [
+                "Widget-Modality.js"
+            ]
+        }
+    }
+}

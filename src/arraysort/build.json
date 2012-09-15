@@ -1,0 +1,10 @@
+{
+    "name": "arraysort",
+    "builds": {
+        "arraysort": {
+            "jsfiles": [
+                "arraysort.js"
+            ]
+        }
+    }
+}

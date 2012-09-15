@@ -1,4 +1,4 @@
-YUI.add('event-simulate', function(Y) {
+YUI.add('event-simulate', function (Y, NAME) {
 
 (function() {
 /**
@@ -943,4 +943,4 @@ Y.Event.simulate = function(target, type, options){
 
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@', {"requires": ["event-base"]});

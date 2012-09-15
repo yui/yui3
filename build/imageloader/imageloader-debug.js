@@ -1,4 +1,4 @@
-YUI.add('imageloader', function(Y) {
+YUI.add('imageloader', function (Y, NAME) {
 
 /**
  * The ImageLoader Utility is a framework to dynamically load images according to certain triggers,
@@ -662,4 +662,4 @@ YUI.add('imageloader', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base-base', 'node-style', 'node-screen']});
+}, '@VERSION@', {"requires": ["base-base", "node-style", "node-screen"]});

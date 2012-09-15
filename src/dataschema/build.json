@@ -1,0 +1,30 @@
+{
+    "name": "dataschema",
+    "builds": {
+        "dataschema-xml": {
+            "jsfiles": [
+                "dataschema-xml.js"
+            ]
+        },
+        "dataschema-json": {
+            "jsfiles": [
+                "dataschema-json.js"
+            ]
+        },
+        "dataschema-text": {
+            "jsfiles": [
+                "dataschema-text.js"
+            ]
+        },
+        "dataschema-array": {
+            "jsfiles": [
+                "dataschema-array.js"
+            ]
+        },
+        "dataschema-base": {
+            "jsfiles": [
+                "dataschema-base.js"
+            ]
+        }
+    }
+}

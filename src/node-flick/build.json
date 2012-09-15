@@ -1,0 +1,10 @@
+{
+    "name": "node-flick",
+    "builds": {
+        "node-flick": {
+            "jsfiles": [
+                "NodeFlick.js"
+            ]
+        }
+    }
+}

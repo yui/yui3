@@ -1,0 +1,25 @@
+{
+    "name": "text",
+    "builds": {
+        "text-data-accentfold": {
+            "jsfiles": [
+                "text-data-accentfold.js"
+            ]
+        },
+        "text-data-wordbreak": {
+            "jsfiles": [
+                "text-data-wordbreak.js"
+            ]
+        },
+        "text-wordbreak": {
+            "jsfiles": [
+                "text-wordbreak.js"
+            ]
+        },
+        "text-accentfold": {
+            "jsfiles": [
+                "text-accentfold.js"
+            ]
+        }
+    }
+}
