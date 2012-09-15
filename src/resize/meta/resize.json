@@ -19,7 +19,6 @@
                 "requires": [
 					"base",
 					"widget",
-					"substitute",
 					"event",
 					"oop",
 					"dd-drag",

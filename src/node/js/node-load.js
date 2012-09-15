@@ -57,4 +57,4 @@ Y.Node.prototype.load = function(url, selector, callback) {
 
     Y.io(url, config);
     return this;
-}
+};

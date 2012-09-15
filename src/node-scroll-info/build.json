@@ -1,0 +1,10 @@
+{
+    "name": "node-scroll-info",
+    "builds": {
+        "node-scroll-info": {
+            "jsfiles": [
+                "node-scroll-info.js"
+            ]
+        }
+    }
+}

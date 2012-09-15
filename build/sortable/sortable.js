@@ -412,11 +412,13 @@ YUI.add('sortable', function (Y, NAME) {
         * @description Test a Node or a selector for the container
         */
         _test: function(node, test) {
+            var ret;
             if (test instanceof Y.Node) {
-                return (test === node);
+                ret = (test === node);
             } else {
-                return node.test(test);
+                ret = node.test(test);
             }
+            return ret;
         },
         /**
         * @static

@@ -1,4 +1,4 @@
-YUI.add('arraylist-add', function(Y) {
+YUI.add('arraylist-add', function (Y, NAME) {
 
 /**
  * Collection utilities beyond what is provided in the YUI core
@@ -84,4 +84,4 @@ Y.mix(Y.ArrayList.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['arraylist']});
+}, '@VERSION@', {"requires": ["arraylist"]});

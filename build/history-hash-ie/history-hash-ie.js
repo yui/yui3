@@ -1,4 +1,4 @@
-YUI.add('history-hash-ie', function(Y) {
+YUI.add('history-hash-ie', function (Y, NAME) {
 
 /**
  * Improves IE6/7 support in history-hash by using a hidden iframe to create
@@ -131,4 +131,4 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 }
 
 
-}, '@VERSION@' ,{requires:['history-hash', 'node-base']});
+}, '@VERSION@', {"requires": ["history-hash", "node-base"]});

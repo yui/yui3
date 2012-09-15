@@ -306,7 +306,7 @@ if (!testFeature('innerhtml-div', 'script')) {
         frag.innerHTML = '-' + html;
         frag.removeChild(frag.firstChild);
         return frag;
-    }
+    };
 
     creators.link = creators.style = creators.script;
 }

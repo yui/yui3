@@ -1,4 +1,4 @@
-YUI.add('datasource-io', function(Y) {
+YUI.add('datasource-io', function (Y, NAME) {
 
 /**
  * Provides a DataSource implementation which can be used to retrieve data via the IO Utility.
@@ -198,4 +198,4 @@ Y.extend(DSIO, Y.DataSource.Local, {
 Y.DataSource.IO = DSIO;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'io-base']});
+}, '@VERSION@', {"requires": ["datasource-local", "io-base"]});

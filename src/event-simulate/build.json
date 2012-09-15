@@ -1,0 +1,10 @@
+{
+    "name": "event-simulate",
+    "builds": {
+        "event-simulate": {
+            "jsfiles": [
+                "event-simulate.js"
+            ]
+        }
+    }
+}

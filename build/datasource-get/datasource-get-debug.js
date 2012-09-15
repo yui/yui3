@@ -1,4 +1,4 @@
-YUI.add('datasource-get', function(Y) {
+YUI.add('datasource-get', function (Y, NAME) {
 
 /**
  * Provides a DataSource implementation which can be used to retrieve data via the Get Utility.
@@ -210,4 +210,4 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
 YUI.namespace("Env.DataSource.callbacks");
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'get']});
+}, '@VERSION@', {"requires": ["datasource-local", "get"]});

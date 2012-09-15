@@ -178,7 +178,7 @@ var Selector = {
             attrs: attrs,
             pseudos: pseudos,
             selector: selector
-        }
+        };
     },
 
     _restoreSelector: function(replaced) {

@@ -1070,6 +1070,222 @@ The following is the list of `options` which affect how the app will switch its 
 Refer to App's API docs</a> for more details about the <a href="{{apiDocs}}/classes/App.html#method_showView">`showView()` method</a>.
 </p>
 
+<h4>Server Rendered Views</h4>
+
+<p>
+There are certain situations where an app needs to show a view which is not rendered in the browser, instead the content is rendered server side. The App component provides a few features for working with pre-rendered views:
+</p>
+
+<dl>
+  <dt>`showContent()`</dt>
+  <dd>
+    <p>
+    Method which provides an easy way to view-ify HTML content which should be shown as an app's active/visible view.
+    </p>
+  </dd>
+
+  <dt>`loadContent()`</dt>
+  <dd>
+    <p>
+    Route middleware which load content from a server. This makes an Ajax request for the requested URL, parses the returned content and puts it on the route's response object.
+    </p>
+  </dd>
+
+  <dt>`Y.App.Content.route`</dt>
+  <dd>
+    <p>
+    A stack of middleware which forms a pjax-style content route. This provides a standard convention which uses `loadContent()` and `showContent()` to load and show server rendered content as views for an app.
+    </p>
+  </dd>
+</dl>
+
+<h5>Progressively Enhanced Views</h5>
+
+<p>
+When a person first accesses an app, the initial rendering of the UI might be done by the server; in this situation, when the app "boots up" in the browser, the `showContent()` method can be used to view-ify this pre-rendered content and make it the app's `activeView`. Using the server to render the initial state of the app in the HTML it sends to the browser is a general best practice. See [[#Progressively-enhanced vs. Client-only Apps]] for more details.
+</p>
+
+<p>
+The following is a basic example of using `showContent()` during the initialization of an app:
+</p>
+
+<p>
+Assume the page contains the following HTML:
+</p>
+
+```html
+...
+<body>
+    <div id="wrapper">
+
+        <div class="view">
+            <h1>Some Page</h1>
+            <p>With some content.</p>
+        </div>
+
+    </div>
+</body>
+...
+```
+
+<p>
+The `Y.App` instance can be setup to use this initial content as its `activeView`:
+</p>
+
+```javascript
+var app = new Y.App();
+
+// Renders the app and shows the content which matches the specified selector.
+app.render().showContent('#wrapper > .view');
+
+Y.log(Y.one('#wrapper > .view') === app.get('activeView').get('container'));
+// => true
+```
+
+<p>
+When calling the `showContent()` method here, a new `Y.View` instance will be created and the `<div class="view">` node will be its `container`; and we can see this by checking the app's `activeView`.
+</p>
+
+<p>
+The `showContent()` method becomes more powerful when it's called with `options`. The following is a list of options in addition to any [[#Understanding `showView()` Options|`showView()` options]]:
+</p>
+
+<dl>
+  <dt>`view`</dt>
+  <dd>
+    <p>
+    The name of a view defined in this app's `views`, or an object with the following properties:
+    </p>
+
+    <dl>
+      <dt>`name`</dt>
+      <dd>
+        <p>
+        The name of a view defined in this app's `views`.
+        </p>
+      </dd>
+
+      <dt>`config`</dt>
+      <dd>
+        <p>
+        Optional configuration to use when creating the new view instance. This config object can also be used to update an existing or preserved view's attributes when `options.update` is `true`. <strong>Note:</strong> If a `container` is specified, it will be overridden by the content specified in the first argument of `showContent()`.
+        </p>
+      </dd>
+    </dl>
+  </dd>
+</dl>
+
+<p>
+Let's look at a more interesting example which specifies a `view` name registered with the app:
+</p>
+
+<p>
+Assume the page contains the following HTML:
+</p>
+
+```html
+...
+<body>
+    <div id="wrapper">
+
+        <div class="view" data-view="foo">
+            <h1>Foo Page</h1>
+            <p>With some content.</p>
+            <p>
+                <button>Close</button>
+            </p>
+        </div>
+
+    </div>
+</body>
+...
+```
+
+<p>
+This time, the `Y.App` instance will be setup to use a `Y.FooView` with the initial content as its `activeView`:
+</p>
+
+```javascript
+Y.FooView = Y.Base.create('foo', Y.View, [], {
+    events: {
+        'button': {click: 'handleButtonClick'}
+    },
+
+    handleButtonClick: function (e) {
+        alert('You click the button, and alerts are annoying.');
+    }
+});
+
+var app, content;
+
+app = new Y.App({
+    // The example assumes there's support for rendering on the server. That's
+    // the whole point with progressive enhancement.
+    serverRouting: true,
+
+    views: {
+        foo: {type: Y.FooView}
+    }
+});
+
+content = Y.one('#wrapper > .view');
+
+// Renders the app and shows the `content` node _and_ specifies which view
+// should be created.
+app.render().showContent(content, {view: content.getData('view')});
+
+Y.log(app.get('activeView') instanceof Y.FooView); // => true
+```
+
+<p>
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_showContent">`showContent()` method</a>.
+</p>
+
+<h5>Loading Static Content</h5>
+
+<p>
+Another common use of server rendered views is static content pages. While the interesting parts of an app are using models, views, and templates to render content dynamically in the browser, the app might also contain static content pages; e.g. "About Us". Instead of giving the client side of the app the smarts to render this type of static content, `Y.App.Content.route`—which is a stack of middleware that forms a pjax-style content route—can be used. This route uses a convention of loading HTML from the server via an XHR, and making that content the app's `activeView` by calling into the `showContent()` method.
+</p>
+
+<p>
+The following example uses both the `Y.App.Content.route` for the `"/about/"` page, and the `loadContent()` middleware for the `"/about/people/"`, allowing for more control over which view is used:
+</p>
+
+```javascript
+Y.PeopleView = Y.Base.create('people', Y.View, [], {
+    events: {
+        '.person': {click: showPersonOverlay}
+    },
+
+    showPersonOverlay: function (e) {
+        // Show an overlay with the all info about the person...
+    }
+});
+
+var app = new Y.App({
+    views: {
+        people: {type: Y.PeopleView}
+    }
+});
+
+// Uses the convenient content route to load the "/about/" pjax-style.
+app.route('/about/', Y.App.Content.route);
+
+// Uses the `loadContent()` middleware to load the HTML from the server, but
+// specifies a custom route callback to control which view is created.
+app.route('/about/people/', 'loadContent', function (req, res, next) {
+    Y.config.doc.title = res.content.title;
+    this.showContent(res.content.node, {view: 'people'});
+});
+
+// Render the app and dispatch to the route handlers.
+app.render().dispatch();
+```
+
+<p>
+Refer to App's API Docs for more details about the <a href="{{apiDocs}}/classes/App.html#method_loadContent">`loadContent()` middleware</a>, and the <a href="{{apiDocs}}/classes/App.Content.html#property_route">`Y.App.Content.route` route</a>.
+</p>
+
 <h3>Navigating Between "Pages"</h3>
 
 <p>
@@ -1259,7 +1475,11 @@ The `Y.App` class is intended to be mutable insofar as being the host for <em>al
 <h3>Mixing-In Features</h3>
 
 <p>
-Additional class extensions can be automatically mixed-into `Y.App`, doing so will dynamically extend the functionality of the App class making these new features available to all of its instances and subclasses. The [[#`Y.App.Transitions`]] class extension, provided by the `app-transitions` module, uses this pattern to add transitions support to `Y.App`.
+Additional class extensions can be automatically mixed-into `Y.App`, doing so will dynamically extend the functionality of the App class making these new features available to all of its instances and subclasses. The [[#`Y.App.Content`]] and [[#`Y.App.Transitions`]] class extensions, provided by the `app-content` and `app-transitions` modules respectively, use this pattern to add features `Y.App`.
+</p>
+
+<p>
+The following shows a simplified view of how the transitions feature is added to `Y.App`:
 </p>
 
 ```
@@ -1373,9 +1593,9 @@ Y.CustomApp = Y.Base.create('customApp', Y.App, [], {
         // Share these routes with all CustomApp instances.
         routes: {
             value: [
-                {path: '/',             callback: 'handleHome'},
-                {path: '/users/',       callback: 'handleUsers'},
-                {path: '/users/:name/', callback: 'handleUser'}
+                {path: '/',             callbacks: 'handleHome'},
+                {path: '/users/',       callbacks: 'handleUsers'},
+                {path: '/users/:name/', callbacks: 'handleUser'}
             ]
         }
     }
@@ -1406,13 +1626,21 @@ Before you subclass `Y.App`, you should refer to <a href="{{apiDocs}}/modules/ap
 
 <h2>App Extensions</h2>
 
+<h3>`Y.App.Content`</h3>
+
+<p>
+The <a href="{{apiDocs}}/classes/App.Content.html">Content</a> extension provides pjax-style content fetching and handling. This makes it easy to fetch server rendered content for URLs using Ajax. The HTML content returned from the server will be view-ified and set as the app's main content, making it seamless to use a mixture of server and client rendered views.
+</p>
+
+
+
 <h3>`Y.App.Transitions`</h3>
 
 <p>
 The <a href="{{apiDocs}}/classes/App.Transitions.html">Transitions</a> extension provides view transitions for apps in browsers which support native CSS3 transitions. View transitions visually enhance the change from one "page" to the next that is both pleasant to the user and helps to communicate a hierarchy between sections of an application.
 </p>
 
-<h4 class="no-toc">Enabling Transitions</h4>
+<h4>Enabling Transitions</h4>
 
 <p>
 Enabling transitions for an app just requires <em>opting-in</em>. The following will create a new `Y.App` instance with the default transitions enabled:
@@ -1426,7 +1654,7 @@ var app = new Y.App({transitions: true});
 With transitions enabled for an app, anytime the app's `activeView` changes, there will be a visual transition from the old to the new active view. How an app's `views` are configured effects which transition will be used, e.g. when changing between views which have a hierarchical relationship a sliding transition will be used.
 </p>
 
-<h4 class="no-toc">Types of `activeView` Changes</h4>
+<h4>Types of `activeView` Changes</h4>
 
 <p>
 The following are the types of `activeView` changes for which transitions can be defined that correspond to the relationship between the new and old `activeView`:
@@ -1455,7 +1683,7 @@ The following are the types of `activeView` changes for which transitions can be
   </dd>
 </dl>
 
-<h4 class="no-toc">Overriding Default Transitions</h4>
+<h4>Overriding Default Transitions</h4>
 
 <p>
 The default transitions can be overridden in the following ways:
@@ -1536,7 +1764,7 @@ app.route('/about/team/', function () {
 app.render().dispatch();
 ```
 
-<h4 class="no-toc">Transition-Aiding CSS</h4>
+<h4>Transition-Aiding CSS</h4>
 
 <p>
 Some structural CSS is required to setup an app's `container` and `viewContainer` nodes so the app's views transition properly. While an app's views are transitioning, the CSS class: <strong>`yui3-app-transitioning`</strong> will be added to the app's `container` node.

@@ -1,4 +1,4 @@
-YUI.add('event-hover', function(Y) {
+YUI.add('event-hover', function (Y, NAME) {
 
 /**
  * Adds support for a "hover" event.  The event provides a convenience wrapper
@@ -67,4 +67,4 @@ conf.detachDelegate = conf.detach;
 Y.Event.define("hover", conf);
 
 
-}, '@VERSION@' ,{requires:['event-mouseenter']});
+}, '@VERSION@', {"requires": ["event-mouseenter"]});

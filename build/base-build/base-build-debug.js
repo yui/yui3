@@ -1,4 +1,4 @@
-YUI.add('base-build', function(Y) {
+YUI.add('base-build', function (Y, NAME) {
 
     /**
      * The base-build submodule provides Base.build functionality, which
@@ -419,4 +419,4 @@ YUI.add('base-build', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['base-base']});
+}, '@VERSION@', {"requires": ["base-base"]});

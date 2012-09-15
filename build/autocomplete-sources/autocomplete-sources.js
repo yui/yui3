@@ -1,4 +1,4 @@
-YUI.add('autocomplete-sources', function(Y) {
+YUI.add('autocomplete-sources', function (Y, NAME) {
 
 /**
 Mixes support for JSONP and YQL result sources into AutoCompleteBase.
@@ -472,4 +472,4 @@ Y.mix(ACBase.SOURCE_TYPES, {
 }, true);
 
 
-}, '@VERSION@' ,{optional:['io-base', 'json-parse', 'jsonp', 'yql'], requires:['autocomplete-base']});
+}, '@VERSION@', {"optional": ["io-base", "json-parse", "jsonp", "yql"], "requires": ["autocomplete-base"]});
