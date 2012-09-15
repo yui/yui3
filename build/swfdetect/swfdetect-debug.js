@@ -1,4 +1,4 @@
-YUI.add('swfdetect', function(Y) {
+YUI.add('swfdetect', function (Y, NAME) {
 
 /**
  * Utility for Flash version detection
@@ -113,4 +113,4 @@ Y.SWFDetect = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

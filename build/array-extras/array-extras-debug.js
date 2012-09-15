@@ -1,4 +1,4 @@
-YUI.add('array-extras', function(Y) {
+YUI.add('array-extras', function (Y, NAME) {
 
 /**
 Adds additional utility methods to the `Y.Array` class.
@@ -397,4 +397,4 @@ A.flatten = function(a) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

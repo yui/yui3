@@ -1,4 +1,4 @@
-YUI.add('event-mouseenter', function(Y) {
+YUI.add('event-mouseenter', function (Y, NAME) {
 
 /**
  * <p>Adds subscription and delegation support for mouseenter and mouseleave
@@ -126,4 +126,4 @@ Y.Event.define("mouseleave", Y.merge(config, {
 }), true);
 
 
-}, '@VERSION@' ,{requires:['event-synthetic']});
+}, '@VERSION@', {"requires": ["event-synthetic"]});

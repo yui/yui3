@@ -1,4 +1,4 @@
-YUI.add('clickable-rail', function(Y) {
+YUI.add('clickable-rail', function (Y, NAME) {
 
 /**
  * Adds support for mouse interaction with the Slider rail triggering thumb
@@ -209,4 +209,4 @@ Y.ClickableRail = Y.mix(ClickableRail, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['slider-base']});
+}, '@VERSION@', {"requires": ["slider-base"]});

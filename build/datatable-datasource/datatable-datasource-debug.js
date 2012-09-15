@@ -1,4 +1,4 @@
-YUI.add('datatable-datasource', function(Y) {
+YUI.add('datatable-datasource', function (Y, NAME) {
 
 /**
  * Plugs DataTable with DataSource integration.
@@ -177,4 +177,4 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
 Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
 
 
-}, '@VERSION@' ,{requires:['datatable-base','plugin','datasource-local']});
+}, '@VERSION@', {"requires": ["datatable-base", "plugin", "datasource-local"]});

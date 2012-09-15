@@ -1,4 +1,4 @@
-YUI.add('datatable-message', function(Y) {
+YUI.add('datatable-message', function (Y, NAME) {
 
 /**
 Adds support for a message container to appear in the table.  This can be used
@@ -287,4 +287,4 @@ if (Y.Lang.isFunction(Y.DataTable)) {
 }
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['datatable-base'], skinnable:true});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en"], "skinnable": true});

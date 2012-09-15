@@ -1,4 +1,4 @@
-YUI.add('event-valuechange', function(Y) {
+YUI.add('event-valuechange', function (Y, NAME) {
 
 /**
 Adds a synthetic `valuechange` event that fires when the `value` property of an
@@ -458,4 +458,4 @@ Y.Event.define('valueChange', config); // deprecated, but supported for backcomp
 Y.ValueChange = VC;
 
 
-}, '@VERSION@' ,{requires:['event-focus', 'event-synthetic']});
+}, '@VERSION@', {"requires": ["event-focus", "event-synthetic"]});

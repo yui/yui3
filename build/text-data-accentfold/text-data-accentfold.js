@@ -1,4 +1,4 @@
-YUI.add('text-data-accentfold', function(Y) {
+YUI.add('text-data-accentfold', function (Y, NAME) {
 
 // The following tool was very helpful in creating these mappings:
 // http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:toNFKD%3D/^a/:]&abb=on
@@ -43,4 +43,4 @@ Y.namespace('Text.Data').AccentFold = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

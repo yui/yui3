@@ -1,0 +1,10 @@
+{
+    "name": "oop",
+    "builds": {
+        "oop": {
+            "jsfiles": [
+                "oop.js"
+            ]
+        }
+    }
+}

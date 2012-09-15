@@ -1,4 +1,4 @@
-YUI.add('text-accentfold', function(Y) {
+YUI.add('text-accentfold', function (Y, NAME) {
 
 /**
  * Text utilities.
@@ -159,4 +159,4 @@ AccentFold = {
 Text.AccentFold = AccentFold;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'text-data-accentfold']});
+}, '@VERSION@', {"requires": ["array-extras", "text-data-accentfold"]});

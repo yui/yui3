@@ -1,4 +1,4 @@
-YUI.add('attribute-complex', function(Y) {
+YUI.add('attribute-complex', function (Y, NAME) {
 
     /**
      * Adds support for attribute providers to handle complex attributes in the constructor
@@ -130,4 +130,4 @@ YUI.add('attribute-complex', function(Y) {
     Y.AttributeComplex = Y.Attribute.Complex;
 
 
-}, '@VERSION@' ,{requires:['attribute-base']});
+}, '@VERSION@', {"requires": ["attribute-base"]});

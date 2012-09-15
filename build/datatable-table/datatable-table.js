@@ -1,4 +1,4 @@
-YUI.add('datatable-table', function(Y) {
+YUI.add('datatable-table', function (Y, NAME) {
 
 /**
 View class responsible for rendering a `<table>` from provided data.  Used as
@@ -751,4 +751,4 @@ Y.namespace('DataTable').TableView = Y.Base.create('table', Y.View, [], {
 
 
 
-}, '@VERSION@' ,{requires:['datatable-core', 'datatable-head', 'datatable-body', 'view', 'classnamemanager']});
+}, '@VERSION@', {"requires": ["datatable-core", "datatable-head", "datatable-body", "view", "classnamemanager"]});

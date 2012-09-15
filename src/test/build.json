@@ -2,7 +2,7 @@
     "name": "test",
     "builds": {
         "test": {
-            "regex": "SHOULD_MATCH_NOTHING",
+            "regex": "",
             "jsfiles": [
                 "YUITest.js",
                 "YTestWrap.js",

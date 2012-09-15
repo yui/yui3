@@ -1,4 +1,4 @@
-YUI.add('recordset-base', function(Y) {
+YUI.add('recordset-base', function (Y, NAME) {
 
 /**
  * Provides a wrapper around a standard javascript object. Can be inserted into a Recordset instance.
@@ -647,4 +647,4 @@ Y.Recordset = Recordset;
 
 
 
-}, '@VERSION@' ,{requires:['base','arraylist']});
+}, '@VERSION@', {"requires": ["base", "arraylist"]});
