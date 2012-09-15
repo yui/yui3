@@ -153,6 +153,8 @@ VMLDrawing.prototype = {
     _curveTo: function(args, relative) {
         var w,
             h,
+            x,
+            y,
             cp1x,
             cp1y,
             cp2x,
@@ -162,7 +164,7 @@ VMLDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             path,
             command = relative ? " v " : " c ",
@@ -170,7 +172,7 @@ VMLDrawing.prototype = {
             relativeY = relative ? parseFloat(this._currentY) : 0;
         len = args.length - 5;
         path = command; 
-        for(; i < len; i = i + 6)
+        for(i = 0; i < len; i = i + 6)
         {
             cp1x = parseFloat(args[i]);
             cp1y = parseFloat(args[i + 1]);
@@ -248,12 +250,12 @@ VMLDrawing.prototype = {
             y,
             currentX = this._currentX,
             currentY = this._currentY,
-            i = 0,
+            i,
             len = args.length - 3,
             bezierArgs = [],
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        for(; i < len; i = i + 4)
+        for(i = 0; i < len; i = i + 4)
         {
             cpx = parseFloat(args[i]) + relativeX;
             cpy = parseFloat(args[i + 1]) + relativeY;
@@ -263,9 +265,9 @@ VMLDrawing.prototype = {
             cp1y = currentY + 0.67*(cpy - currentY);
             cp2x = cp1x + (x - currentX) * 0.34;
             cp2y = cp1y + (y - currentY) * 0.34;
-            bezierArgs.push(cp1x),
-            bezierArgs.push(cp1y),
-            bezierArgs.push(cp2x),
+            bezierArgs.push(cp1x);
+            bezierArgs.push(cp1y);
+            bezierArgs.push(cp2x);
             bezierArgs.push(cp2y);
             bezierArgs.push(x);
             bezierArgs.push(y);
@@ -520,7 +522,7 @@ VMLDrawing.prototype = {
      * @private
      */
     _moveTo: function(args, relative) {
-        var x = parseFloat(args[0]);
+        var x = parseFloat(args[0]),
             y = parseFloat(args[1]),
             command = relative ? " t " : " m ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
@@ -655,7 +657,7 @@ VMLDrawing.prototype = {
      */
     _setCurveBoundingBox: function(pts, w, h)
     {
-        var i = 0,
+        var i,
             left = this._currentX,
             right = left,
             top = this._currentY,
@@ -663,7 +665,7 @@ VMLDrawing.prototype = {
             len = Math.round(Math.sqrt((w * w) + (h * h))),
             t = 1/len,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
@@ -1350,7 +1352,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			len = stops.length,
 			opacity,
 			color,
-			i = 0,
+			i,
 			oi,
 			colorstring = "",
 			cx = fill.cx,
@@ -1391,7 +1393,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			gradientProps.focus = "100%";
 			gradientProps.focusposition = Math.round(fx * 100) + "% " + Math.round(fy * 100) + "%";
 		}
-		for(;i < len; ++i) {
+		for(i = 0;i < len; ++i) {
 			stop = stops[i];
 			color = stop.color;
 			opacity = stop.opacity;
@@ -1450,7 +1452,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             matrix = this.matrix,
             normalizedMatrix = this._normalizedMatrix,
             isPathShape = this instanceof Y.VMLPath,
-            i = 0,
+            i,
             len = this._transforms.length;
         if(this._transforms && this._transforms.length > 0)
 		{
@@ -1468,7 +1470,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             //ensure the values are within the appropriate range to avoid errors
             tx = Math.max(-0.5, Math.min(0.5, tx));
             ty = Math.max(-0.5, Math.min(0.5, ty));
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -1719,6 +1721,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	_getDefaultFill: function() {
 		return {
 			type: "solid",
+			opacity: 1,
 			cx: 0.5,
 			cy: 0.5,
 			fx: 0.5,
@@ -1806,7 +1809,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             transformY = transformOrigin[1] * h,
 		    transforms = this.matrix.getTransformArray(this.get("transform")),
             matrix = new Y.Matrix(),
-            i = 0,
+            i,
             len = transforms.length,
             transform,
             key,
@@ -1819,7 +1822,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         transformX = !isNaN(transformX) ? transformX : 0;
         transformY = !isNaN(transformY) ? transformY : 0;
         matrix.translate(transformX, transformY);
-        for(; i < len; i = i + 1)
+        for(i = 0; i < len; i = i + 1)
         {
             transform = transforms[i];
             key = transform.shift();
@@ -1878,7 +1881,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             methodSymbol,
             args,
             commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
-            i = 0,
+            i,
             len, 
             str,
             symbolToMethod = this._pathSymbolToMethod;
@@ -1886,10 +1889,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         {
             this.clear();
             len = commandArray.length || 0;
-            for(; i < len; i = i + 1)
+            for(i = 0; i < len; i = i + 1)
             {
                 str = commandArray[i];
-                methodSymbol = str.substr(0, 1),
+                methodSymbol = str.substr(0, 1);
                 args = str.substr(1).match(SPLITARGSPATTERN);
                 method = symbolToMethod[methodSymbol];
                 if(method)
@@ -1998,14 +2001,14 @@ VMLShape.ATTRS = {
 	transform: {
 		setter: function(val)
 		{
-            var i = 0,
+            var i,
                 len,
                 transform;
             this.matrix.init();	
             this._normalizedMatrix.init();	
             this._transforms = this.matrix.getTransformArray(val);
             len = this._transforms.length;
-            for(;i < len; ++i)
+            for(i = 0;i < len; ++i)
             {
                 transform = this._transforms[i];
             }
