@@ -678,6 +678,13 @@ Y.GraphicBase = GraphicBase;
 	 * @type HTMLElement
 	 * @readOnly
 	 */
+    /**
+     * Represents an SVG Path string. This will be parsed through and added to shape's API to represent the SVG data accross all implementations.
+     * Note that part of this content will be attached to the DOM. Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a> to escape content.
+     *
+     * @config data
+     * @type String
+     */
 	/**
 	 * Reference to the parent graphic instance
 	 *
