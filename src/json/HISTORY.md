@@ -1,6 +1,12 @@
 JSON Utility Change History
 ===========================
 
+3.6.1
+-----
+
+* Changed the way the native JSON object is captured so it actually uses the
+  native JSON methods in Node.js
+
 3.6.0
 -----
 
