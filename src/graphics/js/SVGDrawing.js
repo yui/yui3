@@ -127,7 +127,7 @@ SVGDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             pathArrayLen,
             currentArray,
@@ -153,7 +153,7 @@ SVGDrawing.prototype = {
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
         len = args.length - 5;
-        for(; i < len; i = i + 6)
+        for(i = 0; i < len; i = i + 6)
         {
             cp1x = parseFloat(args[i]) + relativeX;
             cp1y = parseFloat(args[i + 1]) + relativeY;
@@ -222,7 +222,7 @@ SVGDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             command = relative ? "q" : "Q",
             relativeX = relative ? parseFloat(this._currentX) : 0,
@@ -245,7 +245,7 @@ SVGDrawing.prototype = {
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
         len = args.length - 3;
-        for(; i < len; i = i + 4)
+        for(i = 0; i < len; i = i + 4)
         {
             cpx = parseFloat(args[i]) + relativeX;
             cpy = parseFloat(args[i + 1]) + relativeY;
@@ -399,7 +399,7 @@ SVGDrawing.prototype = {
             by,
             cx,
             cy,
-            i = 0,
+            i,
             diameter = radius * 2,
             currentArray,
             pathArrayLen;
@@ -450,7 +450,7 @@ SVGDrawing.prototype = {
             pathArrayLen++; 
             this._pathType = "Q";
             this._pathArray[pathArrayLen] = ["Q"];
-            for(; i < segs; ++i)
+            for(i = 0; i < segs; ++i)
             {
                 angle += theta;
                 angleMid = angle - (theta / 2);
@@ -798,7 +798,7 @@ SVGDrawing.prototype = {
      */
     _setCurveBoundingBox: function(pts, w, h)
     {
-        var i = 0,
+        var i,
             left = this._currentX,
             right = left,
             top = this._currentY,
@@ -806,7 +806,7 @@ SVGDrawing.prototype = {
             len = Math.round(Math.sqrt((w * w) + (h * h))),
             t = 1/len,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
