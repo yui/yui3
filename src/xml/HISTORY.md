@@ -1,7 +1,7 @@
 XML Change History
 ==================
 
-3.6.1
+3.7.0
 -----
 
 * Moved from Y.Datatype.XML to Y.XML
