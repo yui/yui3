@@ -37,7 +37,7 @@
 
 // All internals kept private for security reasons
 function fromGlobal(ref) {
-    return (Y.config.win || this || {})[ref];
+    return (Y.config.win || (function () { return this; }()))[ref];
 }
 
 
