@@ -2296,11 +2296,12 @@ CanvasShape.ATTRS =  {
 	},
 
     /**
-     * Represents an SVG Path string. This will be parsed through and added to shape's API to represent the SVG data accross all implementations.
-     * Note that part of this content will be attached to the DOM. Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a> to escape content.
+     * represents an svg path string. this will be parsed and added to shape's api to represent the svg data across all implementations. note that when using vml or svg 
+     * implementations, part of this content will be added to the dom using respective vml/svg attributes. if your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
      *
      * @config data
-     * @type String
+     * @type string
      */
     data: {
         setter: function(val)
