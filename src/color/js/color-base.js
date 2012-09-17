@@ -1,71 +1,15 @@
-/**
-Color provides static methods for color conversion.
+var REGEX_HEX = /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/,
+    REGEX_HEX3 = /^#?([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/,
+    REGEX_RGB = /rgba?\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3}),? ?([.0-9]{1,3})?\)/;
 
-For all cases of option.type, valid types are:
+Y.Color = {
+    KEYWORDS: {'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff', 'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f', 'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0', 'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'},
 
-- **keyword**:
-option.value - must be a keyword in Y.Color.KEYWORDS
+    REGEX_HEX: REGEX_HEX,
 
-- **hex**:
-option.value - 3 or 6 character representation with or without a '#' or array of [rr, gg, bb] strings
+    REGEX_HEX3: REGEX_HEX3,
 
-- **rgb**:
-option.value - rgb(r, g, b) string or array of [r, g, b] values
-
-- **rgba**:
-option.value - rgba(r, g, b, a) string or array of [r, g, b, a] values
-
-- **hsl**:
-option.value - hsl(h, s%, l%) string or array of [h, s, l] values
-
-- **hsla**:
-option.value - hsla(h, s%, l%, a) string or array of [h, s, l, a] values
-
-In all cases of option.to, valid types are:
-
-- **hex**:
-returns [rr, gg, bb] or #rrggbb if options.css is true
-
-- **rgb**:
-returns [r, g, b] or rgb(r, g, b) if options.css is true
-
-- **rgba**:
-returns [r, g, b, a] or rgba(r, g, b, a) if options.css is true
-
-- **hsl**:
-returns [h, s, l] or hsl(h, s%, l%) if options.css is true
-
-- **hsla**:
-returns [h, s, l, a] or hsla(h, s%, l%, a) if options.css is true
-
-The following is an example of how these features can be used:
-    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
-
-    Y.Color.toHex({
-        type: 'rgb',
-        value: [255, 255, 0]
-    }); // ["ff", "ff", "00"]
-
-
-@module color
-@submodule color-base
-@class Base
-@namespace Color
-@since 3.6.1
-**/
-var KEYWORDS = {'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff', 'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f', 'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0', 'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'},
-    // regular expressions used for validation and identification
-    REGEX_HEX = /^(#?)([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/,
-    REGEX_HEX3 = /^(#?)([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})/,
-    REGEX_RGB = /^rgb\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3})\)/,
-
-    HEX = 'hex',
-    RGB = 'rgb',
-    HSL = 'hsl',
-
-Color = {
-
-    KEYWORDS: KEYWORDS,
+    REGEX_RGB: REGEX_RGB,
 
     re_RGB: REGEX_RGB,
 
@@ -73,237 +17,211 @@ Color = {
 
     re_hex3: REGEX_HEX3,
 
-    /**
-    Converts provided color value to an array of hex values or hash prepended string
+    TEMP_HEX: '#{*}{*}{*}',
 
-    @public
-    @method toHex
-    @param {Object} options
-      @param {String} options.type identifies the type of color provided
-      @param {String|Array} options.value color value to be converted
-      @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-    @returns {String|Array} returns array of values or CSS string if options.css is true
-    **/
-    toHex: function(options) {
-        if (Y.Lang.isString(options)) { // Preserve backwards compatability with Y.DOM's original Y.Color
-            options = {
-                value: options,
-                css: true
-            };
-        }
-        options = Color._convertTo(options, HEX);
-        if (options.css) {
-            return '#' + options.value.join('');
-        }
-        return options.value;
+    TEMP_RGB: 'rgb({*}, {*}, {*})',
+
+    TEMP_RGBA: 'rgba({*}, {*}, {*}, {*})',
+
+    convert: function (str, to) {
+        to = to.toLowerCase();
+        to[0] = to[0].toUpperCase();
+        var clr = Y.Color['to' + to](str);
+        return clr.toLowerCase();
     },
 
-    /**
-    Converts provided color value to an array of RGB values or rgb() string
-
-    @public
-    @method toRGB
-    @param {Object} options
-      @param {String} options.type identifies the type of color provided
-      @param {String|Array} options.value color value to be converted
-      @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an array of color values
-    @returns {String|Array} returns array of values or CSS string if options.css is true
-    **/
-    toRGB: function(options) {
-        if (Y.Lang.isString(options)) { // Preserve backwards compatability with Y.DOM's original Y.Color
-            options = {
-                value: options,
-                css: true
-            };
-        }
-        options = Color._convertTo(options, RGB);
-        if (options.css) {
-            return 'rgb(' + options.value.join(', ') + ')';
-        }
-        return options.value;
+    toHex: function (str) {
+        var clr = Y.Color._convertTo(str, 'hex');
+        return clr.toLowerCase();
     },
 
-    //----------------------------
-    // P R O T E C T E D
-    //---------------------------
-
-
-    /**
-    Attempts to find the type of the provided color value. Updates the
-      options object if found.
-
-    @protected
-    @method _findType
-    @param {Object} options
-      @param {String} options.type identifies the type of color provided
-      @param {Array} options.value color value to be converted
-      @param {String} options.to desired converted color type
-    @returns {Object}
-    **/
-    _findType: function(options) {
-        var val = options.value,
-            type = options.type;
-
-        if (KEYWORDS[val]) {
-            type = 'keyword';
-        } else if (REGEX_RGB.exec(val)) {
-            type = RGB;
-        } else if (REGEX_HEX.exec(val) || REGEX_HEX3.exec(val)) {
-            type = HEX;
-        }
-
-        options.type = type;
-        return options;
+    toRGB: function (str) {
+        return Y.Color.toRgb(str);
     },
 
-    /**
-    Converts string and makes any adjustments to values array if
-      needed. Prepares value to be used with _convertTo.
-      Modifies the options object.
+    toRgb: function (str) {
+        var clr = Y.Color._convertTo(str, 'rgb');
+        return clr.toLowerCase();
+    },
 
-    @protected
-    @method _toArray
-    @param {Object} options
-      @param {String} options.type identifies the type of color provided
-      @param {Array} options.value color value to be converted
-      @param {String} options.to desired converted color type
-    @returns {Object}
-    **/
-    _toArray: function(options) {
-        var arr = [],
-            matches = null,
-            type = null,
-            val = options.value;
+    toRGBA: function (str) {
+        return Y.Color.toRgba(str);
+    },
 
-        if (options.type === 'auto' || typeof options.type === 'undefined') {
-            options = Color._findType(options);
-        }
-        type = options.type.toLowerCase();
-        val = (Y.Lang.isString(val)) ? val.toLowerCase() : val;
+    toRgba: function (str) {
+        var clr = Y.Color._convertTo(str, 'rgba' );
+        return clr.toLowerCase();
+    },
 
-        if (type === 'keyword') {
-            val = KEYWORDS[val];
-            type = 'hex';
+    toArray: function(str) {
+        // parse with regex and return "matches" array
+        var type = Y.Color.findType(str).toUpperCase(),
+            arr;
+
+        if (type === 'HEX' && str.length < 5) {
+            type = 'HEX3';
         }
 
-        if (type === 'hex') {
-            matches = REGEX_HEX.exec(val);
-            if (matches) {
-                arr = [matches[2], matches[3], matches[4]];
-            } else {
-                matches = REGEX_HEX3.exec(val);
-                if (matches) {
-                    arr = [
-                        matches[2].toString() + matches[2],
-                        matches[3].toString() + matches[3],
-                        matches[4].toString() + matches[4]
-                    ];
-                }
+        if (type[type.length - 1] === 'A') {
+            type = type.slice(0, -1);
+        }
+        if (Y.Color['REGEX_' + type]) {
+            arr = Y.Color['REGEX_' + type].exec(str);
+            arr.shift();
+
+            if (typeof arr[arr.length -1] === 'undefined') {
+                arr[arr.length - 1] = 1;
             }
-        } else if (type === 'rgb' || type === 'rgbcss') {
-            if (Y.Lang.isArray(val) && val.length === 3) {
-                arr = val;
-            } else {
-                matches = REGEX_RGB.exec(val);
-                if (matches) {
-                    arr = [ matches[1], matches[2], matches[3] ];
-                }
-            }
+            return arr;
+        }
+
+    },
+
+    fromArray: function(arr, template, replace) {
+        arr = arr.concat();
+
+        if (typeof template === 'undefined') {
+            return arr.join(', ');
+        }
+
+        replace = replace || '{*}';
+
+        var index;
+
+        if (arr.length === 3 && template.match(/\{\*\}/g).length === 4) {
+            arr.push(1);
+        }
+
+        while ( template.indexOf(replace) >= 0 && arr.length > 0) {
+            template = template.replace(replace, arr.shift());
+        }
+
+        return template;
+    },
+
+    findType: function (str) {
+        if (Y.Color.KEYWORDS[str]) {
+            return 'keyword';
+        }
+
+        if (str.indexOf('rgba') === 0) {
+            return 'rgba';
+        } else if (str.indexOf('rgb') === 0) {
+            return 'rgb';
         } else {
-            Y.log('Type not found.', 'error', 'Y.Color::_toArray');
-            return options;
+            return 'hex';
+        }
+    }, // return 'keyword', 'hex', 'rgb', 'hsl'
+
+    _getAlpha: function (clr) {
+        var alpha,
+            arr = Y.Color.toArray(clr);
+
+        if (arr.length > 3) {
+            alpha = arr.pop();
         }
 
-
-        options.type = type.replace(/a?(css)?$/,'');
-        options.value = arr;
-
-        return options;
+        return alpha || 1;
     },
 
-    /**
-    Converts the color value from the adjusted type to desired return
-      values. Updates options.type with converted type. Updates
-      options.value with new value array.
+    _keywordToHex: function (clr) {
+        if (Color.KEYWORDS[clr]) {
+            return Color.KEYWORDS[clr];
+        }
+    },
 
-    @protected
-    @method _convertTo
-    @param {Object} options
-      @param {String} options.type identifies the type of color provided
-      @param {Array} options.value color value to be converted
-      @param {String} options.to desired converted color type
-    @param {String} [to] (Optional) Overrides options.to if defined
-    @returns {Object}
-    **/
-    _convertTo: function(options, to) {
-        var  _options = Y.merge(options),
-            from,
-            val;
+    _convertTo: function(clr, to) {
+        var from = Y.Color.findType(clr),
+            originalTo = to,
+            needsAlpha,
+            alpha;
 
-        _options.to = to || _options.to;
-        _options = Color._toArray(_options);
+        if (from === 'keyword') {
+            clr = Y.Color._keywordToHex(clr);
+            from = 'hex';
+        }
 
-        from = _options.type;
-        val = _options.value;
-        to = _options.to;
+        if (from === 'hex' && clr.length < 5) {
+            if (clr[0] === '#') {
+                clr = clr.substr(1);
+            }
+
+            clr = '#' + clr[0] + clr [0] + clr[1] + clr[1] + clr[2] + clr[2];
+        }
 
         if (from === to) {
-            return _options;
+            return clr;
         }
 
-        if (from === HEX) {
-            if (to === RGB) {
-                val = Color._fromHexToRGB(val);
-            }
-        } else if (from === RGB) {
-            if (to === HEX) {
-                val = Color._fromRGBToHex(val);
-            }
+        if (from[from.length - 1] === 'a') {
+            from = from.slice(0, -1);
         }
 
-        _options.type = to;
-        _options.value = val;
-        return _options;
+        needsAlpha = (to[to.length - 1] === 'a');
+        if (needsAlpha) {
+            to = to.slice(0, -1);
+            alpha = Y.Color._getAlpha(clr);
+        }
+
+        // check to see if need conversion to rgb first
+        // convertions are: hex <-> rgb <-> hsl
+        if (from !== 'rgb' && to !== 'rgb') {
+            clr = Y.Color['_' + from + 'ToRgb'](clr);
+            from = 'rgb';
+        }
+
+        var ucTo = to.toLowerCase();
+        ucTo = ucTo[0].toUpperCase() + ucTo.substr(1);
+
+        if (Y.Color['_' + from + 'To' + ucTo ]) {
+            clr = Y.Color['_' + from + 'To' + ucTo](clr, needsAlpha);
+        }
+
+        // process clr from arrays to strings after conversions if alpha is needed
+        if (needsAlpha && Y.Color['TEMP_' + originalTo.toUpperCase()]) {
+            clr.push(alpha);
+            clr = Y.Color.fromArray(clr, Y.Color['TEMP_' + originalTo.toUpperCase()]);
+        }
+
+        return clr;
     },
 
-    /**
-    Creates an array ([r,g,b]) from the provided value array ([rr,gg,bb])
+    _hexToRgb: function (str, toArray) {
+        var r, g, b;
 
-    @protected
-    @method _fromHexToRGB
-    @param {array} [val] color value to be converted
-    @returns {array}
-    **/
-    _fromHexToRGB: function(val) {
-        // assume val is [rr,gg,bb]
-        return [
-            parseInt(val[0], 16),
-            parseInt(val[1], 16),
-            parseInt(val[2], 16)
-        ];
+        if (str.charAt(0) === '#') {
+            str = str.substr(1);
+        }
+
+        str = parseInt(str, 16);
+
+        r = str >> 16;
+        g = str >> 8 & 0xFF;
+        b = str & 0xFF;
+
+        if (toArray) {
+            return [r, g, b];
+        }
+
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
     },
 
-    /**
-    Creates an array ([rr,gg,bb]) from the provided value array ([r,g,b])
+    _rgbToHex: function (str, toArray) {
+        var rgb = Y.Color.toArray(str),
+            hex = rgb[2] | (rgb[1] << 8) | (rgb[0] << 16);
 
-    @protected
-    @method _fromRGBToHex
-    @param {array} [val] color value to be converted
-    @returns {array}
-    **/
-    _fromRGBToHex: function(val) {
-        // assume val is [r,g,b]
-        var r = parseInt(val[0], 10).toString(16),
-            g = parseInt(val[1], 10).toString(16),
-            b = parseInt(val[2], 10).toString(16);
+        hex = (+hex).toString(16);
 
-        while (r.length < 2) { r = '0' + r; }
-        while (g.length < 2) { g = '0' + g; }
-        while (b.length < 2) { b = '0' + b; }
+        while (hex.length < 6) {
+            hex = '0' + hex;
+        }
 
-        return [r, g, b];
+        if (toArray) {
+            return [hex.substr(0,2), hex.substr(2,2), hex.substr(4,2)];
+        }
+
+        return '#' + hex;
     }
 
 };
 
-Y.Color = Color;
