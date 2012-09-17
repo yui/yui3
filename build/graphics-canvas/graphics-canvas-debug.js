@@ -369,12 +369,12 @@ CanvasDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
         len = args.length - 5;
-        for(; i < len; i = i + 6)
+        for(i = 0; i < len; i = i + 6)
         {
             cp1x = parseFloat(args[i]) + relativeX;
             cp1y = parseFloat(args[i + 1]) + relativeY;
@@ -443,12 +443,12 @@ CanvasDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len = args.length - 3,
             wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        for(; i < len; i = i + 4)
+        for(i = 0; i < len; i = i + 4)
         {
             cpx = parseFloat(args[i]) + relativeX;
             cpy = parseFloat(args[i + 1]) + relativeY;
@@ -531,7 +531,7 @@ CanvasDrawing.prototype = {
             angleMid,
             radius = w/2,
             yRadius = h/2,
-            i = 0,
+            i,
             centerX = x + radius,
             centerY = y + yRadius,
             ax, ay, bx, by, cx, cy,
@@ -540,7 +540,7 @@ CanvasDrawing.prototype = {
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
         this.moveTo(ax, ay);
-        for(; i < l; i++)
+        for(i = 0; i < l; i++)
         {
             angle += theta;
             angleMid = angle - (theta / 2);
@@ -665,7 +665,7 @@ CanvasDrawing.prototype = {
             ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
             this.lineTo(ax, ay);
             // Loop for drawing curve segments
-            for(; i < segs; ++i)
+            for(i = 0; i < segs; ++i)
             {
                 angle += theta;
                 angleMid = angle - (theta / 2);
@@ -678,7 +678,7 @@ CanvasDrawing.prototype = {
             // close the wedge by drawing a line to the center
             this._updateDrawingQueue(["lineTo", x, y]);
         }
-        this._trackSize(0 - wt , 0 - wt);
+        this._trackSize(-wt , -wt);
         this._trackSize((radius * 2) + wt, (radius * 2) + wt);
         return this;
     },
@@ -724,7 +724,7 @@ CanvasDrawing.prototype = {
             opacity,
             color,
             stop,
-            i = 0,
+            i,
             len = stops.length,
             gradient,
             x = 0,
@@ -769,7 +769,7 @@ CanvasDrawing.prototype = {
             y2 = ((tanRadians * (cx - x2)) - cy) * -1;
         }
         gradient = this._context.createLinearGradient(x1, y1, x2, y2);
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             stop = stops[i];
             opacity = stop.opacity;
@@ -807,7 +807,7 @@ CanvasDrawing.prototype = {
             opacity,
             color,
             stop,
-            i = 0,
+            i,
             len = stops.length,
             gradient,
             x = 0,
@@ -856,7 +856,7 @@ CanvasDrawing.prototype = {
             gradient = this._context.createRadialGradient(x1, y1, r, x2, y2, w/2);
             stopMultiplier = r * 2;
         }
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             stop = stops[i];
             opacity = stop.opacity;
@@ -972,7 +972,7 @@ CanvasDrawing.prototype = {
             t = 1/len,
             wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
@@ -1205,6 +1205,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	_getDefaultFill: function() {
 		return {
 			type: "solid",
+			opacity: 1,
 			cx: 0.5,
 			cy: 0.5,
 			fx: 0.5,
@@ -1591,12 +1592,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			transform,
 			transformOrigin = this.get("transformOrigin"),
             matrix = this.matrix,
-            i = 0,
+            i,
             len = this._transforms.length;
         
         if(this._transforms && this._transforms.length > 0)
         {
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -1662,7 +1663,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			context = this._context,
 			methods = [],
 			cachedMethods = this._methods.concat(),
-			i = 0,
+			i,
 			j,
 			method,
 			args,
@@ -1676,7 +1677,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			{
 				return;
 			}
-			for(; i < len; ++i)
+			for(i = 0; i < len; ++i)
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
@@ -1877,7 +1878,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             transformY = transformOrigin[1] * h,
 		    transforms = this.matrix.getTransformArray(this.get("transform")),
             matrix = new Y.Matrix(),
-            i = 0,
+            i,
             len = transforms.length,
             transform,
             key,
@@ -1890,7 +1891,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         transformX = !isNaN(transformX) ? transformX : 0;
         transformY = !isNaN(transformY) ? transformY : 0;
         matrix.translate(transformX, transformY);
-        for(; i < len; i = i + 1)
+        for(i = 0; i < len; i = i + 1)
         {
             transform = transforms[i];
             key = transform.shift();
@@ -1945,7 +1946,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             methodSymbol,
             args,
             commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
-            i = 0,
+            i,
             len, 
             str,
             symbolToMethod = this._pathSymbolToMethod;
@@ -1953,10 +1954,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         {
             this.clear();
             len = commandArray.length || 0;
-            for(; i < len; i = i + 1)
+            for(i = 0; i < len; i = i + 1)
             {
                 str = commandArray[i];
-                methodSymbol = str.substr(0, 1),
+                methodSymbol = str.substr(0, 1);
                 args = str.substr(1).match(SPLITARGSPATTERN);
                 method = symbolToMethod[methodSymbol];
                 if(method)
