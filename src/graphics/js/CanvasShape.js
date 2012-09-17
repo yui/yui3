@@ -1277,12 +1277,12 @@ CanvasShape.ATTRS =  {
 	},
 
     /**
-     * represents an svg path string. this will be parsed and added to shape's api to represent the svg data across all implementations. note that when using vml or svg 
-     * implementations, part of this content will be added to the dom using respective vml/svg attributes. if your content comes from an untrusted source, you will need 
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
      * to ensure that no malicious code is included in that content. 
      *
      * @config data
-     * @type string
+     * @type String
      */
     data: {
         setter: function(val)
