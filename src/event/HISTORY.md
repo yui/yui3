@@ -15,7 +15,7 @@ Event Infrastructure Change History
 * `event-tap` was migrated from Gallery and it supports "fast-click" on touch
   devices.
 
-3.6.1
+3.7.0
 -----
 
 * Added try/catch around the internal window unload listener event-base adds,

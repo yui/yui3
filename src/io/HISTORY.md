@@ -1,7 +1,7 @@
 IO Utility Change History
 =========================
 
-3.6.1
+3.7.0
 -----
 
 * Prevent IO from maintaining cookies across requests in Node.js.
