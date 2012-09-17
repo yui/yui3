@@ -1209,8 +1209,9 @@ SVGShape.ATTRS = {
 	},
 
     /**
-     * Represents an SVG Path string. This will be parsed through and added to shape's API to represent the SVG data accross all implementations.
-     * Note that part of this content will be attached to the DOM. Use <a href="../classes/Escape.html#method_html">`Y.Escape.html()`</a> to escape content.
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
      *
      * @config data
      * @type String
