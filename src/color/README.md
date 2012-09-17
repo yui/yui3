@@ -8,7 +8,7 @@ Color contains three modules:
 color-base
     Contains toHex and toRGB as well as KEYWORDS and REGEX
 
-color
+color-shl
     Extends color-base to provide HSL conversion methods and REGEX
 
 color-harmony

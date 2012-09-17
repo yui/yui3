@@ -1,7 +1,7 @@
 {
     "color": {
         "requires": [
-            "color-base"
+            "color-base", "color-hsl", "color-harmony"
         ]
     },
     "color-base": {
@@ -9,9 +9,14 @@
             "yui-base"
         ]
     },
+    "color-hsl": {
+        "requires": [
+            "color-base"
+        ]
+    },
     "color-harmony": {
         "requires": [
-            "color"
+            "color-hsl"
         ]
     }
 }
