@@ -1,29 +1,108 @@
+/**
+Color provides static methods for color conversion.
+
+    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+
+    Y.Color.toHex('rgb(255, 255, 0'); // ["ff", "ff", "00"]
+
+    Y.Color.convert('hsl(240, 100%, 50%)', 'hex'); // #0000ff
+
+
+@module color
+@submodule color-hsl
+@class HSL
+@namespace Color
+@since 3.x
+**/
 Color = {
 
+    /**
+    @static
+    @property REGEX_HSL
+    @type RegExp
+    @default /hsla?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/
+    @since 3.x
+    **/
     REGEX_HSL: /hsla?\(([.\d]*), ?([.\d]*)%, ?([.\d]*)%,? ?([.\d]*)?\)/,
 
-    TEMP_HSL: 'hsl({*}, {*}%, {*}%)',
+    /**
+    @static
+    @property STR_HSL
+    @type String
+    @default hsl({*}, {*}%, {*}%)
+    @since 3.x
+    **/
+    STR_HSL: 'hsl({*}, {*}%, {*}%)',
 
-    TEMP_HSLA: 'hsla({*}, {*}%, {*}%, {*})',
+    /**
+    @static
+    @property STR_HSLA
+    @type String
+    @default hsla({*}, {*}%, {*}%, {*})
+    @since 3.x
+    **/
+    STR_HSLA: 'hsla({*}, {*}%, {*}%, {*})',
 
+    /**
+    Alias for toHsl
+    @public
+    @method toHSL
+    @param {String} str
+    @returns {String}
+    @see toHsl
+    @since 3.x
+    **/
     toHSL: function (str) {
         return Y.Color.toHsl(str);
     },
 
+    /**
+    Converts provided color value to an HSL string.
+    @public
+    @method toHsl
+    @param {String} str
+    @returns {String}
+    @since 3.x
+    **/
     toHsl: function (str) {
         var clr = Y.Color._convertTo(str, 'hsl');
         return clr.toLowerCase();
     },
 
+    /**
+    Alias for toHsla
+    @public
+    @method toHSLA
+    @param {String} str
+    @returns {String}
+    @see toHsla
+    @since 3.x
+    **/
     toHSLA: function (str) {
         return Y.Color.toHsla(str);
     },
 
+    /**
+    Converts provided color value to an HSLA string.
+    @public
+    @method toHsla
+    @param {String} str
+    @returns {String}
+    @since 3.x
+    **/
     toHsla: function (str) {
         var clr = Y.Color._convertTo(str, 'hsla');
         return clr.toLowerCase();
     },
 
+    /**
+    Parses the provided string and returns the type of color value provided.
+    @public
+    @method findType
+    @param {String} str
+    @returns {String}
+    @since 3.x
+    **/
     findType: function (str) {
         if (Y.Color.KEYWORDS[str]) {
             return 'keyword';
@@ -42,6 +121,16 @@ Color = {
         }
     }, // return 'keyword', 'hex', 'rgb', 'rgba', 'hsl', 'hsla'
 
+    /**
+    Parses the RGB string into h, s, l values. Will return an Array
+        of values or an HSL string.
+    @protected
+    @method _rgbToHsl
+    @param {String} str
+    @param {Boolean} [toArray]
+    @returns {String|Array}
+    @since 3.x
+    **/
     _rgbToHsl: function (str, toArray) {
         var h, s, l,
             rgb = Y.Color.REGEX_RGB.exec(str),
@@ -98,6 +187,16 @@ Color = {
         return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     },
 
+    /**
+    Parses the HSL string into r, b, g values. Will return an Array
+        of values or an RGB string.
+    @protected
+    @method _hslToRgb
+    @param {String} str
+    @param {Boolean} [toArray]
+    @returns {String|Array}
+    @since 3.x
+    **/
     _hslToRgb: function (str, toArray) {
         var rgb = [];
 
@@ -137,10 +236,11 @@ Color = {
 
     @protected
     @method _hueToRGB
-    @param {Number} [p]
-    @param {Number} [q]
-    @param {Number} [hue]
+    @param {Number} p
+    @param {Number} q
+    @param {Number} hue
     @return {Number} value for requested channel
+    @since 3.x
     **/
     _hueToRGB: function(p, q, hue) {
         // TODO: Find legals for use of formula

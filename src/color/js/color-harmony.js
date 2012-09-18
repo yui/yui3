@@ -26,7 +26,14 @@ var HSL = 'hsl',
 
         // Color Groups
         /**
-        Returns the complementary color of the color provided
+        Returns an Array of two colors. The first color in the Array
+          will be the color passed in. The second will be the
+          complementary color of the color provided
+        @public
+        @method getComplementary
+        @param {String} str
+        @param {String} [to]
+        @returns {String}
         **/
         getComplementary: function(str, to) {
             var c = Harmony._start(str),
@@ -47,6 +54,11 @@ var HSL = 'hsl',
         Returns an Array of three colors. The first color in the Array
           will be the color passed in. The second two will be split
           complementary colors.
+        @public
+        @method getSplit
+        @param {String} str
+        @param {String} [to]
+        @returns {String}
         **/
         getSplit: function(str, to) {
             var c = Harmony._start(str),
@@ -78,6 +90,12 @@ var HSL = 'hsl',
           will be the color passed in. The remaining four will be
           analogous colors two in either direction from the initially
           provided color.
+        @public
+        @method getAnalogous
+        @param {String} str
+        @param {Number} [offset]
+        @param {String} [to]
+        @returns {String}
         **/
         getAnalogous: function(str, offset, to) {
             var c = Harmony._start(str),
@@ -114,6 +132,11 @@ var HSL = 'hsl',
         Returns an Array of three colors. The first color in the Array
           will be the color passed in. The second two will be equidistant
           from the start color and each other.
+        @public
+        @method getTriad
+        @param {String} str
+        @param {String} [to]
+        @returns {String}
         **/
         getTriad: function(str, to) {
             var c = Harmony._start(str),
@@ -139,6 +162,12 @@ var HSL = 'hsl',
         Returns an Array of four colors. The first color in the Array
           will be the color passed in. The remaining three colors are
           equidistant offsets from the starting color and each other.
+        @public
+        @method getTetrad
+        @param {String} str
+        @param {Number} [offset]
+        @param {String} [to]
+        @returns {String}
         **/
         getTetrad: function(str, offset, to) {
             var c = Harmony._start(str),
@@ -170,6 +199,11 @@ var HSL = 'hsl',
         Returns an Array of four colors. The first color in the Array
           will be the color passed in. The remaining three colors are
           equidistant offsets from the starting color and each other.
+        @public
+        @method getSquare
+        @param {String} str
+        @param {String} [to]
+        @returns {String}
         **/
         getSquare: function(str, to) {
             var c = Harmony._start(str),
@@ -197,7 +231,14 @@ var HSL = 'hsl',
         },
 
         /**
-        Calculates saturation offsets resulting in a monochromatic Array of values.
+        Calculates lightness offsets resulting in a monochromatic Array
+          of values.
+        @public
+        @method getMonochrome
+        @param {String} str
+        @param {Number} [count]
+        @param {String} [to]
+        @returns {String}
         **/
         getMonochrome: function(str, count, to) {
             var c = Harmony._start(str),
@@ -235,7 +276,14 @@ var HSL = 'hsl',
         /**
         Creates an Array of similar colors. Returned Array is prepended
            with the color provided followed a number of colors decided
-           by options.count
+           by count
+        @public
+        @method getSimilar
+        @param {String} str
+        @param {Number} [offset]
+        @param {Number} [count]
+        @param {String} [to]
+        @returns {String}
         **/
         getSimilar: function(str, offset, count, to) {
             var c = Harmony._start(str),
@@ -267,7 +315,17 @@ var HSL = 'hsl',
         },
 
         /**
-        Converts provided color value to the desired return type
+        Adjusts the provided color by the offset(s) given. You may
+          adjust hue, saturation, and/or luminance in one step.
+        @public
+        @method getOffset
+        @param {String} str
+        @param {Object} adjust
+          @param {Number} [adjust.h]
+          @param {Number} [adjust.s]
+          @param {Number} [adjust.l]
+        @param {String} [to]
+        @returns {String}
         **/
         getOffset: function(str, adjust, to) {
             var started = Y.Lang.isArray(str),
@@ -304,15 +362,19 @@ var HSL = 'hsl',
         },
 
         /**
-        Returns 0 - 1 percentage of brightness from black (0) being the
-          darkest to white (1) being the brightest.
+        Returns 0 - 1 percentage of brightness from `0` (black) being the
+          darkest to `1` (white) being the brightest.
+        @public
+        @method getBrightness
+        @param {String} str
+        @returns {Number}
         **/
         getBrightness: function(str) {
             var c = Color.toArray(Color._convertTo(str, RGB)),
                 r = c[0],
                 g = c[1],
                 b = c[2],
-                weights = Harmony._brightnessWeights;
+                weights = Y.Color._brightnessWeights;
 
 
             return (Math.sqrt(
@@ -323,7 +385,15 @@ var HSL = 'hsl',
         },
 
         /**
-        Converts provided color value to the desired return type
+        Returns a new color value with adjusted luminance so that the
+          brightness of the return color matches the perceived brightness
+          of the `match` color provided.
+        @public
+        @method getSimilarBrightness
+        @param {String} str
+        @param {String} match
+        @param {String} [to]
+        @returns {String}
         **/
         getSimilarBrightness: function(str, match, to){
             var c = Color.toArray(Color._convertTo(str, HSL)),
@@ -337,7 +407,7 @@ var HSL = 'hsl',
 
             c[2] = Harmony._searchLuminanceForBrightness(c, b, 0, 100);
 
-            str = Color.fromArray(c, Color.TEMP_HSLA);
+            str = Color.fromArray(c, Color.STR_HSLA);
 
             return Color._convertTo(str, to);
         },
@@ -346,7 +416,12 @@ var HSL = 'hsl',
         // PRIVATE
         //--------------------
         /**
-        Copy and converts color to additive as most methods need to be additive to begin conversion
+        Converts the provided color from additive to subtractive returning
+          an Array of HSLA values
+        @private
+        @method _start
+        @param {String} str
+        @returns {Array}
         */
         _start: function(str) {
             var hsla = Color.toArray(Color._convertTo(str, HSL));
@@ -356,15 +431,13 @@ var HSL = 'hsl',
         },
 
         /**
-        Converts color to subtractive then convert to the provided 'to' or back to what it started as
+        Converts the provided HSLA values from subtractive to additive
+          returning a converted color string
         @private
         @method _finish
-        @param {Object} options
-          @param {String} options.type identifies the type of color provided
-          @param {String|Array} options.value color value to be converted
-          @param {String} options.to desired converted color type
-          @param {Boolean} options.css denotes if the returned value should be a CSS string (true) or an Array of color values
-        @return {Object} Converted subtractive color in the options.to format specified or HSL if non is specified
+        @param {Array} hsla
+        @param {String} [to]
+        @returns {String}
         */
         _finish: function(hsla, to) {
             hsla[0] = Harmony._toAdditive(hsla[0]);
@@ -381,8 +454,8 @@ var HSL = 'hsl',
         Adjusts the hue degree from subtractive to additive
         @private
         @method _toAdditive
-        @param {Array} hue, saturation, luminance
-        @return {Array} Converted additive HSL color
+        @param {Number} hue
+        @return {Number} Converted additive hue
         */
         _toAdditive: function(hue) {
             if (hue <= 180) {
@@ -403,8 +476,8 @@ var HSL = 'hsl',
         Adjusts the hue degree from additive to subtractive
         @private
         @method _toSubtractive
-        @param {Array} hue, saturation, luminance
-        @return {Array} Converted subtractive HSL color
+        @param {Number} hue
+        @return {Number} Converted subtractive hue
         */
         _toSubtractive: function(hue) {
             if (hue <= 120) {
@@ -436,13 +509,23 @@ var HSL = 'hsl',
             b: 0.068
         },
 
-
+        /**
+        Calculates the luminance as a mid range between the min and max
+          to match the brightness level provided
+        @private
+        @method _searchLuminanceForBrightness
+        @param {Array} color HSLA values
+        @param {Number} brightness Brightness to be matched
+        @param {Number} min Minimum range for luminance
+        @param {Number} max Maximum range for luminance
+        @returns {Number} Found luminance to achieve requested brightness
+        **/
         _searchLuminanceForBrightness: function(color, brightness, min, max) {
             var luminance = (max + min) / 2,
                 b;
 
             color[2] = luminance;
-            b = Harmony.getBrightness(Color.fromArray(color, Color.TEMP_HSL));
+            b = Harmony.getBrightness(Color.fromArray(color, Color.STR_HSL));
 
             if (b + 0.01 > brightness && b - 0.01 < brightness) {
                 return luminance;
