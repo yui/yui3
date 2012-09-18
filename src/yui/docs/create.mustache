@@ -83,14 +83,17 @@ out of Loader.</p>
             module1.js
             module1-min.js
             module1-debug.js
+            module1-coverage.js
         module2/
             module2.js
             module2-min.js
             module2-debug.js
+            module2-coverage.js
         module3/
             module3.js
             module3-min.js
             module3-debug.js
+            module3-coverage.js
 ```
 
 <p>Now that your files are structed in a parsable manner, `Loader` can handle them without much of a configuration.</p>
@@ -168,10 +171,10 @@ YUI.GlobalConfig: {
 <p>Now you have a flexible, scalable and dynamic module loading system that will let you build large scale
 applications or simple websites.</p>
 
-<h2>Builder</h2>
+<h2>Shifter</h2>
 
-<p>If you want to dynamically create the `-min`, `-debug` files inside your project, take a look
-at our `Ant` based build system tool called <a href="https://github.com/yui/builder/">builder</a>.</p>
+<p>If you want to dynamically create the `-min`, `-debug`, `-coverage` files inside your project, take a look
+at our Node.js based build system tool called <a href="http://yui.github.com/shifter/">Shifter</a>.</p>
 
 <h2>Custom Aliases</h2>
 

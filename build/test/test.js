@@ -3393,7 +3393,7 @@ YUITest.Results = function(name){
      * @property duration
      */
     this.duration = 0;
-}
+};
 
 /**
  * Includes results from another results object into this one.
@@ -3407,7 +3407,8 @@ YUITest.Results.prototype.include = function(results){
     this.ignored += results.ignored;
     this.total += results.total;
     this.errors += results.errors;
-};/**
+};
+/**
  * ShouldError is subclass of Error that is thrown whenever
  * a test is expected to throw an error but doesn't.
  *
@@ -3741,7 +3742,7 @@ if (!YUI.YUITest) {
         if (Y.Test.Runner._log) {
             Y.log(message, messageType, "TestRunner");
         }
-    }
+    };
 
     var i, name;
 

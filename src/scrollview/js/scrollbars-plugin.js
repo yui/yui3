@@ -165,8 +165,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var host = this._host,
             axis = host._cAxis;
 
-        this._scrollHeight = host._bb.get('scrollHeight');
-        this._scrollWidth = host._bb.get('scrollWidth');
+        this._dims = host._getScrollDims();
 
         if (axis && axis.y) {
             this._renderBar(this.get(VERTICAL_NODE), true, 'vert');
@@ -298,8 +297,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = WIDTH;
             dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
-            widgetSize = host.get('width');
-            contentSize = this._scrollWidth;
+            widgetSize = this._dims.offsetWidth;
+            contentSize = this._dims.scrollWidth;
             translate = TRANSLATE_X;
             scale = SCALE_X;
             current = (current !== undefined) ? current : host.get(SCROLL_X);
@@ -307,8 +306,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = HEIGHT;
             dimOffset = TOP;
             dimCache = VERT_CACHE;
-            widgetSize = host.get('height');
-            contentSize = this._scrollHeight;
+            widgetSize = this._dims.offsetHeight;
+            contentSize = this._dims.scrollHeight;
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
             current = (current !== undefined) ? current : host.get(SCROLL_Y);

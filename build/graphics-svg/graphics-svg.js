@@ -129,7 +129,7 @@ SVGDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             pathArrayLen,
             currentArray,
@@ -155,7 +155,7 @@ SVGDrawing.prototype = {
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
         len = args.length - 5;
-        for(; i < len; i = i + 6)
+        for(i = 0; i < len; i = i + 6)
         {
             cp1x = parseFloat(args[i]) + relativeX;
             cp1y = parseFloat(args[i + 1]) + relativeY;
@@ -224,7 +224,7 @@ SVGDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             command = relative ? "q" : "Q",
             relativeX = relative ? parseFloat(this._currentX) : 0,
@@ -247,7 +247,7 @@ SVGDrawing.prototype = {
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat(args);
         len = args.length - 3;
-        for(; i < len; i = i + 4)
+        for(i = 0; i < len; i = i + 4)
         {
             cpx = parseFloat(args[i]) + relativeX;
             cpy = parseFloat(args[i + 1]) + relativeY;
@@ -401,7 +401,7 @@ SVGDrawing.prototype = {
             by,
             cx,
             cy,
-            i = 0,
+            i,
             diameter = radius * 2,
             currentArray,
             pathArrayLen;
@@ -452,7 +452,7 @@ SVGDrawing.prototype = {
             pathArrayLen++; 
             this._pathType = "Q";
             this._pathArray[pathArrayLen] = ["Q"];
-            for(; i < segs; ++i)
+            for(i = 0; i < segs; ++i)
             {
                 angle += theta;
                 angleMid = angle - (theta / 2);
@@ -800,7 +800,7 @@ SVGDrawing.prototype = {
      */
     _setCurveBoundingBox: function(pts, w, h)
     {
-        var i = 0,
+        var i,
             left = this._currentX,
             right = left,
             top = this._currentY,
@@ -808,7 +808,7 @@ SVGDrawing.prototype = {
             len = Math.round(Math.sqrt((w * w) + (h * h))),
             t = 1/len,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);
@@ -1508,7 +1508,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             ty,
             matrix = this.matrix,
             normalizedMatrix = this._normalizedMatrix,
-            i = 0,
+            i,
             len = this._transforms.length;
 
         if(isPath || (this._transforms && this._transforms.length > 0))
@@ -1530,7 +1530,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -1675,7 +1675,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             methodSymbol,
             args,
             commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
-            i = 0,
+            i,
             len, 
             str,
             symbolToMethod = this._pathSymbolToMethod;
@@ -1683,10 +1683,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         {
             this.clear();
             len = commandArray.length || 0;
-            for(; i < len; i = i + 1)
+            for(i = 0; i < len; i = i + 1)
             {
                 str = commandArray[i];
-                methodSymbol = str.substr(0, 1),
+                methodSymbol = str.substr(0, 1);
                 args = str.substr(1).match(SPLITARGSPATTERN);
                 method = symbolToMethod[methodSymbol];
                 if(method)
@@ -2064,7 +2064,9 @@ SVGShape.ATTRS = {
 	},
 
     /**
-     * Represents an SVG Path string.
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
      *
      * @config data
      * @type String

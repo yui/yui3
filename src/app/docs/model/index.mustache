@@ -820,19 +820,26 @@ Y.User = Y.Base.create('user', Y.Model, [Y.ModelSync.REST], {
     root: '/users'
 });
 
-var currentUser, newUser;
+var existingUser = new Y.User({id: '1'}),
+    oldUser      = new Y.User({id: '2'}),
+    newUser      = new Y.User({name: 'Eric Ferraiuolo'});
 
-// GET the user data from: "/users/123"
-currentUser = new Y.User({id: '123'}).load();
+// GET the existing user data from: "/users/1"
+existingUser.load(function () {
+    Y.log(existingUser.get('name')); // => "Ron Swannson"
 
-// PUT the updated user data at: "/users/123"
-currentUser.set('name', 'Ron Swanson').save();
+    // Correct the user's `name` and PUT the updated user at: "/users/1"
+    existingUser.set('name', 'Ron Swanson').save();
+});
 
-// DELETE the user data at: "/users/123"
-currentUser.destroy({remove: true});
+// DELETE the old user data at: "/users/2"
+oldUser.destroy({remove: true});
 
 // POST the new user data to: "/users"
-newUser = new Y.User({name: 'Eric Ferraiuolo'}).save();
+newUser.save(function () {
+    // The server can return the user data with an `id` assigned.
+    Y.log(newUser.get('id')); // => "3"
+});
 ```
 
 <p>
@@ -865,7 +872,7 @@ var users = new Y.Users();
 users.load(function () {
     var firstUser = users.item(0);
 
-    firstUser.get('id'); // => "1"
+    Y.log(firstUser.get('id')); // => "1"
 
     // PUT updated user data at: "/users/1"
     firstUser.set('name', 'Eric').save();

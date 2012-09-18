@@ -678,6 +678,14 @@ Y.GraphicBase = GraphicBase;
 	 * @type HTMLElement
 	 * @readOnly
 	 */
+    /**
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
+     *
+     * @config data
+     * @type String
+     */
 	/**
 	 * Reference to the parent graphic instance
 	 *

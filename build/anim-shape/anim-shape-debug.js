@@ -1,4 +1,4 @@
-YUI.add('anim-shape', function(Y) {
+YUI.add('anim-shape', function (Y, NAME) {
 
 /**
  * Adds support for the <code>transform</code> attribute of <code>Graphic</code>
@@ -186,4 +186,4 @@ YUI.add('anim-shape', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['anim-base','anim-color','matrix']});
+}, '@VERSION@', {"requires": ["anim-base", "anim-easing", "anim-color", "matrix"]});
