@@ -34,7 +34,7 @@ YUI.add('color-harmony-tests', function(Y) {
             },
 
             'split complementary of "blue"': function() {
-                var c = Y.Color.getSplit('blue', 'hsl');
+                var c = Y.Color.getSplit('blue');
 
                 Y.Assert.areSame(3, c.length, 'length is greater than 1');
                 addOutput('split complementary of "blue"', "blue", c);
