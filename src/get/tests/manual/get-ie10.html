@@ -8,21 +8,22 @@
     </head>
     <body>
         <script type="text/javascript">
-            YUI().use("get", function(Y) {
+            YUI({filter:"raw"}).use("get", function(Y) {
 
-                Y.Get.css([
-                        "a.css",
+                var t1 = Y.Get.css([
+                        "a.css"
                     ], {
 
                     onSuccess: function(o) {
                         console.log("css success");
                     },
+
                     onFailure: function(o) {
                         console.log("css failure");
                     }
                 });
 
-                Y.Get.js([
+                var t2 = Y.Get.js([
                         "a.js",                   // 304
                         "b.js?t=" + (+new Date()) // 200
                     ], {
@@ -32,6 +33,7 @@
                     onSuccess: function(o) {
                         console.log("js success");
                     },
+
                     onFailure: function(o) {
                         console.log("js failure");
                     }
