@@ -1,4 +1,4 @@
-YUI.add('json-parse', function(Y) {
+YUI.add('json-parse', function (Y, NAME) {
 
 /**
  * <p>The JSON module adds support for serializing JavaScript objects into
@@ -227,4 +227,4 @@ if ( Native ) {
 Y.JSON.useNativeParse = useNative;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

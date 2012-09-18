@@ -1,0 +1,25 @@
+{
+    "name": "history",
+    "builds": {
+        "history-hash": {
+            "jsfiles": [
+                "history-hash.js"
+            ]
+        },
+        "history-html5": {
+            "jsfiles": [
+                "history-html5.js"
+            ]
+        },
+        "history-hash-ie": {
+            "jsfiles": [
+                "history-hash-ie.js"
+            ]
+        },
+        "history-base": {
+            "jsfiles": [
+                "history-base.js"
+            ]
+        }
+    }
+}

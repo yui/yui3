@@ -151,6 +151,8 @@ VMLDrawing.prototype = {
     _curveTo: function(args, relative) {
         var w,
             h,
+            x,
+            y,
             cp1x,
             cp1y,
             cp2x,
@@ -160,7 +162,7 @@ VMLDrawing.prototype = {
             left,
             bottom,
             top,
-            i = 0,
+            i,
             len,
             path,
             command = relative ? " v " : " c ",
@@ -168,7 +170,7 @@ VMLDrawing.prototype = {
             relativeY = relative ? parseFloat(this._currentY) : 0;
         len = args.length - 5;
         path = command; 
-        for(; i < len; i = i + 6)
+        for(i = 0; i < len; i = i + 6)
         {
             cp1x = parseFloat(args[i]);
             cp1y = parseFloat(args[i + 1]);
@@ -246,12 +248,12 @@ VMLDrawing.prototype = {
             y,
             currentX = this._currentX,
             currentY = this._currentY,
-            i = 0,
+            i,
             len = args.length - 3,
             bezierArgs = [],
             relativeX = relative ? parseFloat(this._currentX) : 0,
             relativeY = relative ? parseFloat(this._currentY) : 0;
-        for(; i < len; i = i + 4)
+        for(i = 0; i < len; i = i + 4)
         {
             cpx = parseFloat(args[i]) + relativeX;
             cpy = parseFloat(args[i + 1]) + relativeY;
@@ -261,9 +263,9 @@ VMLDrawing.prototype = {
             cp1y = currentY + 0.67*(cpy - currentY);
             cp2x = cp1x + (x - currentX) * 0.34;
             cp2y = cp1y + (y - currentY) * 0.34;
-            bezierArgs.push(cp1x),
-            bezierArgs.push(cp1y),
-            bezierArgs.push(cp2x),
+            bezierArgs.push(cp1x);
+            bezierArgs.push(cp1y);
+            bezierArgs.push(cp2x);
             bezierArgs.push(cp2y);
             bezierArgs.push(x);
             bezierArgs.push(y);
@@ -518,7 +520,7 @@ VMLDrawing.prototype = {
      * @private
      */
     _moveTo: function(args, relative) {
-        var x = parseFloat(args[0]);
+        var x = parseFloat(args[0]),
             y = parseFloat(args[1]),
             command = relative ? " t " : " m ",
             relativeX = relative ? parseFloat(this._currentX) : 0,
@@ -653,7 +655,7 @@ VMLDrawing.prototype = {
      */
     _setCurveBoundingBox: function(pts, w, h)
     {
-        var i = 0,
+        var i,
             left = this._currentX,
             right = left,
             top = this._currentY,
@@ -661,7 +663,7 @@ VMLDrawing.prototype = {
             len = Math.round(Math.sqrt((w * w) + (h * h))),
             t = 1/len,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);

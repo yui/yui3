@@ -160,7 +160,7 @@ if (!testFeature('value-set', 'select')) {
                 break;
             }
         }
-    }
+    };
 }
 
 Y.mix(Y_DOM.VALUE_GETTERS, {

@@ -51,6 +51,11 @@
                 "app-transitions.css"
             ]
         },
+        "app-content": {
+            "jsfiles": [
+                "app-extensions/app-content.js"
+            ]
+        },
         "app-base": {
             "jsfiles": [
                 "app-base.js"

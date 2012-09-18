@@ -1,0 +1,10 @@
+{
+    "name": "console-filters",
+    "builds": {
+        "console-filters": {
+            "jsfiles": [
+                "console-filters.js"
+            ]
+        }
+    }
+}

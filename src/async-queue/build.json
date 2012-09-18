@@ -1,0 +1,10 @@
+{
+    "name": "async-queue",
+    "builds": {
+        "async-queue": {
+            "jsfiles": [
+                "async-queue.js"
+            ]
+        }
+    }
+}

@@ -1,4 +1,4 @@
-YUI.add('gesture-simulate', function(Y) {
+YUI.add('gesture-simulate', function (Y, NAME) {
 
 /**
  * Simulate high-level user gestures by generating a set of native DOM events.
@@ -1322,4 +1322,4 @@ Y.Event.simulateGesture = function(node, name, options, cb) {
 };
 
 
-}, '@VERSION@' ,{requires:['event-simulate', 'async-queue', 'node-screen']});
+}, '@VERSION@', {"requires": ["async-queue", "event-simulate", "node-screen"]});

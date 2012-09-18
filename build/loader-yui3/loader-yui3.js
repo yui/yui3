@@ -79,6 +79,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base",
+            "app-content",
             "app-transitions",
             "lazy-model-list",
             "model",
@@ -95,6 +96,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "pjax-base",
             "router",
             "view"
+        ]
+    },
+    "app-content": {
+        "requires": [
+            "app-base",
+            "pjax-content"
         ]
     },
     "app-transitions": {
@@ -482,8 +489,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ],
         "requires": [
             "yui-log",
-            "widget",
-            "substitute"
+            "widget"
         ],
         "skinnable": true
     },
@@ -699,6 +705,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datatable-core",
             "datatable-table",
+            "datatable-head",
+            "datatable-body",
             "base-build",
             "widget"
         ],
@@ -1385,7 +1393,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base",
             "node",
             "selector-css3",
-            "substitute",
             "yui-throttle"
         ]
     },
@@ -1822,6 +1829,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     },
+    "node-scroll-info": {
+        "requires": [
+            "base-build",
+            "dom-screen",
+            "event-resize",
+            "node-pluginhost",
+            "plugin"
+        ]
+    },
     "node-style": {
         "requires": [
             "dom-style",
@@ -1866,13 +1882,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "pjax": {
         "requires": [
             "pjax-base",
-            "io-base"
+            "pjax-content"
         ]
     },
     "pjax-base": {
         "requires": [
             "classnamemanager",
             "node-event-delegate",
+            "router"
+        ]
+    },
+    "pjax-content": {
+        "requires": [
+            "io-base",
+            "node-base",
             "router"
         ]
     },
@@ -1993,7 +2016,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "base",
             "widget",
-            "substitute",
             "event",
             "oop",
             "dd-drag",
@@ -2128,7 +2150,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-constrain",
-            "substitute",
             "event-key"
         ],
         "skinnable": true
@@ -2204,7 +2225,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-simulate",
             "event-custom",
-            "substitute",
             "json-stringify"
         ]
     },

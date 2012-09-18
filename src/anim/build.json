@@ -6,9 +6,9 @@
                 "anim-xy.js"
             ]
         },
-        "anim-shape-transform": {
+        "anim-shape": {
             "jsfiles": [
-                "anim-shape-transform.js"
+                "anim-shape.js"
             ]
         },
         "anim-scroll": {

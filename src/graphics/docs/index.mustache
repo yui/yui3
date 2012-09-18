@@ -153,8 +153,13 @@ have to interact directly with the underlying technologies or their correspondin
 	<tr>
 	    <td>`autoSize`</td>
 	    <td>`boolean`</td>
-        <td>Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents. If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions. The default value is false.</td>
+        <td>Determines the sizing of the graphic. See the <a href="{{apiDocs}}/classes/Graphic.html#attr_autoSize">API Docs</a> for possible values and associated behaviors.</td>
 	</tr>
+    <tr>
+        <td>`preserveAspectRatio`</td>
+        <td>`String`</td>
+        <td> Determines how content is sized when `autoSize` is set to `sizeContentToGraphic`. See the <a href="{{apiDocs}}/classes/Graphic.html#attr_preserveAspectRatio">API Docs</a> for possible values.</td> 
+    </tr>
 	<tr>
 	    <td>`resizeDown`</td>
 	    <td>`boolean`</td>
@@ -241,6 +246,11 @@ have to interact directly with the underlying technologies or their correspondin
             <td>`node`</td>
             <td>`HTMLElement`</td>
             <td>HTMLElement of the `Shape` instance. (read-only)</td>
+        </tr>
+        <tr>
+            <td>`data`</td>
+            <td>`String`</td>
+            <td>Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need to ensure that no malicious code is included in that content. 
         </tr>
         <tr>
             <td>`x`</td>
