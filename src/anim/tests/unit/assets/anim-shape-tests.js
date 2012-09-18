@@ -1,6 +1,6 @@
 YUI.add('anim-shape-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.AnimShape"),
+var suite = new Y.Test.Suite("Anim: Shape"),
 ShapeTestTemplate = function(cfg, globalCfg) {
     var i;
     ShapeTestTemplate.superclass.constructor.apply(this);
