@@ -337,7 +337,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             // origY = (new WebKitCSSMatrix(cb.getComputedStyle("transform"))).f,
             origX = sv.get(SCROLL_X),
             origY = sv.get(SCROLL_Y),
-            HWTransform,
+            origHWTransform,
             dims;
 
         // TODO: Is this OK? Just in case it's called 'during' a transition.

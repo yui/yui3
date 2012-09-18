@@ -519,7 +519,8 @@ The following is a simple <a href="http://nodejs.org/">Node.js</a> <a href="http
 <h5 class="no-toc">server.js - The Node.js Express server</h5>
 
 ```
-var server = require('express').createServer();
+var express = require('express'),
+    server  = express();
 
 // Handles requests to the root path ("/") my simply sending the "shell" page
 // which creates the `Y.App` instance.
@@ -530,7 +531,7 @@ server.get('/', function (req, res) {
 // Handles all other requests by redirecting the browser back to the root path
 // and tacking on URL's path as the fragment; e.g. "/foo/" => "/#/foo/".
 server.get('*', function (req, res) {
-    res.redirect('/#' + req.url, 302);
+    res.redirect('/#' + req.url);
 });
 
 server.listen(process.env.PORT || 3000);
