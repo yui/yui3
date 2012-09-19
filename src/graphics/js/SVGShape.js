@@ -17,7 +17,7 @@ SVGShape = function(cfg)
     SVGShape.superclass.constructor.apply(this, arguments);
 };
 
-SVGShape.NAME = "svgShape";
+SVGShape.NAME = "shape";
 
 Y.extend(SVGShape, Y.GraphicBase, Y.mix({
     /**
@@ -57,11 +57,16 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	initializer: function(cfg)
 	{
 		var host = this,
-            graphic = cfg.graphic;
+            graphic = cfg.graphic,
+            data = this.get("data");
 		host.createNode(); 
 		if(graphic)
         {
             host._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
         }
         host._updateHandler();
 	},
@@ -230,11 +235,14 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
-			id = this.get("id"),
-			pointerEvents = this.get("pointerEvents");
-		this.node = node;
-		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
+		var host = this,
+            node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+			id = host.get("id"),
+            name = host.name,
+            concat = host._camelCaseConcat,
+			pointerEvents = host.get("pointerEvents");
+		host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
         if(id)
 		{
 			node.setAttribute("id", id);
@@ -243,7 +251,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 		{
 			node.setAttribute("pointer-events", pointerEvents);
 		}
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             Y.one(node).setStyle("visibility", "hidden");
         }
@@ -645,7 +653,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             ty,
             matrix = this.matrix,
             normalizedMatrix = this._normalizedMatrix,
-            i = 0,
+            i,
             len = this._transforms.length;
 
         if(isPath || (this._transforms && this._transforms.length > 0))
@@ -667,7 +675,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -751,22 +759,96 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	getBounds: function()
 	{
 		var type = this._type,
-            stroke = this.get("stroke"),
-			w = this.get("width"),
+			stroke = this.get("stroke"),
+            w = this.get("width"),
 			h = this.get("height"),
 			x = type == "path" ? 0 : this._x,
 			y = type == "path" ? 0 : this._y,
             wt = 0;
-        if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-		}
-        w = (x + w + wt) - (x - wt); 
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
+        if(type != "path")
+        {
+            if(stroke && stroke.weight)
+            {
+                wt = stroke.weight;
+            }
+            w = (x + w + wt) - (x - wt); 
+            h = (y + h + wt) - (y - wt);
+            x -= wt;
+            y -= wt;
+        }
 		return this._normalizedMatrix.getContentRect(w, h, x, y);
 	},
+
+    /**
+     * Places the shape above all other shapes.
+     *
+     * @method toFront
+     */
+    toFront: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
+    },
+
+    /**
+     * Places the shape underneath all other shapes.
+     *
+     * @method toFront
+     */
+    toBack: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
+    },
+
+    /**
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(i = 0; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1);
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
+                }
+            }
+            this.end();
+        }
+    },
 
     /**
      * Destroys the shape instance.
@@ -1125,6 +1207,25 @@ SVGShape.ATTRS = {
 			return this.node;
 		}
 	},
+
+    /**
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the parent graphic instance

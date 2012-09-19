@@ -129,10 +129,10 @@
         <url>datatable/tests/unit/datatable-scroll.html</url>
         <url>datatable/tests/unit/datatable-sort.html</url>
         <url>datatable/tests/unit/datatable-table.html</url>
-        <url>datatype/tests/unit/datatype-date-math.html</url>
-        <url>datatype/tests/unit/date.html</url>
-        <url>datatype/tests/unit/number.html</url>
-        <url>datatype/tests/unit/xml.html</url>
+        <url>date/tests/unit/date-math.html</url>
+        <url>date/tests/unit/date.html</url>
+        <url>number/tests/unit/number.html</url>
+        <url>xml/tests/unit/xml.html</url>
         <url>dd/tests/unit/index.html</url>
         <url>dial/tests/unit/dial.html</url>
         <url>dom/tests/unit/dom-base.html</url>

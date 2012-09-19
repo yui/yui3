@@ -16,10 +16,12 @@ without Loader on the page, so Loader is fetched before tests are executed. -->
 <script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript">
 
+var filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw';
+
 var YUI_config = {
-    loaderPath: 'loader/loader.js',
+    loaderPath: 'loader/loader' + ((filter !== 'raw') ? '-' + filter : '') + '.js',
     gconfig: true,
-    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    gfilter: filter
 };
 
 var TestName = 'Loader: Fetch';

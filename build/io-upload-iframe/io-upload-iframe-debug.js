@@ -1,4 +1,4 @@
-YUI.add('io-upload-iframe', function(Y) {
+YUI.add('io-upload-iframe', function (Y, NAME) {
 
 /**
 Extends the IO  to enable file uploads, with HTML forms 
@@ -288,4 +288,4 @@ Y.mix(Y.IO.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base']});
+}, '@VERSION@', {"requires": ["io-base", "node-base"]});

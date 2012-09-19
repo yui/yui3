@@ -1,16 +1,16 @@
-YUI.add('datatype-number-parse', function(Y) {
+YUI.add('datatype-number-parse', function (Y, NAME) {
 
 /**
  * Parse number submodule.
  *
- * @module datatype
+ * @module datatype-number
  * @submodule datatype-number-parse
- * @for DataType.Number
+ * @for Number
  */
 
 var LANG = Y.Lang;
 
-Y.mix(Y.namespace("DataType.Number"), {
+Y.mix(Y.namespace("Number"), {
     /**
      * Converts data to type Number.
      *
@@ -25,14 +25,16 @@ Y.mix(Y.namespace("DataType.Number"), {
             return number;
         }
         else {
-            Y.log("Could not parse data to type Number", "warn", "datatype-number");
+            Y.log("Could not parse data to type Number", "warn", "number");
             return null;
         }
     }
 });
 
 // Add Parsers shortcut
-Y.namespace("Parsers").number = Y.DataType.Number.parse;
+Y.namespace("Parsers").number = Y.Number.parse;
+Y.namespace("DataType");
+Y.DataType.Number = Y.Number;
 
 
-}, '@VERSION@' );
+}, '@VERSION@');

@@ -1,4 +1,4 @@
-YUI.add('graphics', function(Y) {
+YUI.add('graphics', function (Y, NAME) {
 
 /**
  * 
@@ -270,6 +270,20 @@ var SETTER = "setter",
             });
             this.initializer.apply(this, arguments);
             this.fire("init", {cfg: arguments[0]});
+        },
+
+        /**
+         * Camel case concatanates two strings.
+         *
+         * @method _camelCaseConcat
+         * @param {String} prefix The first string
+         * @param {String} name The second string
+         * @return String
+         * @private
+         */
+        _camelCaseConcat: function(prefix, name)
+        {
+            return prefix + name.charAt(0).toUpperCase() + name.slice(1);
         }
     };
 //Straightup augment, no wrapper functions
@@ -664,6 +678,14 @@ Y.GraphicBase = GraphicBase;
 	 * @type HTMLElement
 	 * @readOnly
 	 */
+    /**
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
+     *
+     * @config data
+     * @type String
+     */
 	/**
 	 * Reference to the parent graphic instance
 	 *
@@ -992,12 +1014,42 @@ Y.GraphicBase = GraphicBase;
 	 * @type Number
 	 */
     /**
-     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
-     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *  Determines the sizing of the Graphic. 
+     *
+     *  <dl>
+     *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
+     *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
+     *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
+     *      attributes or are determined by the dimensions of the parent element. The contents of the Graphic instance are not affected by this setting.</dd>
+     *  </dl>
+     *
      *
      *  @config autoSize
-     *  @type Boolean
+     *  @type Boolean | String
      *  @default false
+     */
+    /**
+     * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
+     *
+     *  <dl>
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
+     *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
+     *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
+     *      <dt>xMaxYMin</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the top.</dd>
+     *      <dt>xMinYMid</dt>Force uniform scaling positioned horizontally from the left and vertically centered.</dd>
+     *      <dt>xMidYMid (the default)</dt><dd>Force uniform scaling with the content centered.</dd>
+     *      <dt>xMaxYMid</dt><dd>Force uniform scaling positioned horizontally from the right and vertically centered.</dd>
+     *      <dt>xMinYMax</dt><dd>Force uniform scaling positioned horizontally from the left and vertically from the bottom.</dd>
+     *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
+     *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
+     *  </dl>
+     * 
+     * @config preserveAspectRatio
+     * @type String
+     * @default xMidYMid
      */
     /**
      * The contentBounds will resize to greater values but not to smaller values. (for performance)
@@ -1124,4 +1176,4 @@ Y.GraphicBase = GraphicBase;
 	 */
 
 
-}, '@VERSION@' ,{requires:['event-custom', 'node', 'pluginhost', 'classnamemanager', 'matrix']});
+}, '@VERSION@', {"requires": ["node", "event-custom", "pluginhost", "matrix", "classnamemanager"]});

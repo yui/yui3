@@ -871,7 +871,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Object} Attribute hash.
     @protected
     @see Model.parse()
-    @since 3.6.1
+    @since 3.7.0
     **/
     _parse: function (response) {
         return this.parse(response);

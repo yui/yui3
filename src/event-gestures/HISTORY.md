@@ -1,6 +1,11 @@
 Gestures Change History
 =======================
 
+3.7.0
+-----
+
+* 'event-gestures' supports MSPointer events (IE10 on Windows 8).
+
 3.6.0
 -----
 

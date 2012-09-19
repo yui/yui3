@@ -1,4 +1,4 @@
-YUI.add('event-flick', function(Y) {
+YUI.add('event-flick', function (Y, NAME) {
 
 /**
  * The gestures module provides gesture events such as "flick", which normalize user interactions
@@ -18,17 +18,12 @@ YUI.add('event-flick', function(Y) {
  * @module event-gestures
  * @submodule event-flick
  */
-
-var EVENT = ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) ? {
-        start: "touchstart",
-        end: "touchend",
-        move: "touchmove"
-    } : {
-        start: "mousedown",
-        end: "mouseup",
-        move: "mousemove"
+var GESTURE_MAP = Y.Event._GESTURE_MAP,
+    EVENT = {
+        start: GESTURE_MAP.start,
+        end: GESTURE_MAP.end,
+        move: GESTURE_MAP.move
     },
-
     START = "start",
     END = "end",
     MOVE = "move",
@@ -261,4 +256,4 @@ Y.Event.define('flick', {
 });
 
 
-}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@', {"requires": ["node-base", "event-touch", "event-synthetic"]});

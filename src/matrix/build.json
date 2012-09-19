@@ -1,0 +1,11 @@
+{
+    "name": "matrix",
+    "builds": {
+        "matrix": {
+            "jsfiles": [
+                "MatrixUtil.js",
+                "Matrix.js"
+            ]
+        }
+    }
+}

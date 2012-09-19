@@ -1,4 +1,4 @@
-YUI.add('datatable-head', function(Y) {
+YUI.add('datatable-head', function (Y, NAME) {
 
 /**
 View class responsible for rendering the `<thead>` section of a table. Used as
@@ -523,4 +523,4 @@ Y.namespace('DataTable').HeaderView = Y.Base.create('tableHeader', Y.View, [], {
 });
 
 
-}, '@VERSION@' ,{requires:['datatable-core', 'view', 'classnamemanager']});
+}, '@VERSION@', {"requires": ["datatable-core", "view", "classnamemanager"]});

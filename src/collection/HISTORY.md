@@ -1,7 +1,7 @@
 Collection Change History
 =========================
 
-3.6.1
+3.7.0
 -----
 
 * Added `Y.Array.flatten()`. This method flattens arrays of arrays into a single

@@ -1,0 +1,10 @@
+{
+    "name": "widget-position",
+    "builds": {
+        "widget-position": {
+            "jsfiles": [
+                "Widget-Position.js"
+            ]
+        }
+    }
+}

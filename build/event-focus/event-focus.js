@@ -1,4 +1,4 @@
-YUI.add('event-focus', function(Y) {
+YUI.add('event-focus', function (Y, NAME) {
 
 /**
  * Adds bubbling and delegation support to DOM events focus and blur.
@@ -239,4 +239,4 @@ if (useActivate) {
 }
 
 
-}, '@VERSION@' ,{requires:['event-synthetic']});
+}, '@VERSION@', {"requires": ["event-synthetic"]});

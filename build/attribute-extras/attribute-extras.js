@@ -1,4 +1,4 @@
-YUI.add('attribute-extras', function(Y) {
+YUI.add('attribute-extras', function (Y, NAME) {
 
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
@@ -140,4 +140,4 @@ YUI.add('attribute-extras', function(Y) {
     Y.AttributeExtras = AttributeExtras;
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@', {"requires": ["oop"]});

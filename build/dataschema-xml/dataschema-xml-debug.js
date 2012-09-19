@@ -1,4 +1,4 @@
-YUI.add('dataschema-xml', function(Y) {
+YUI.add('dataschema-xml', function (Y, NAME) {
 
 /**
 Provides a DataSchema implementation which can be used to work with XML data.
@@ -378,4 +378,4 @@ SchemaXML = {
 Y.DataSchema.XML = Y.mix(SchemaXML, Y.DataSchema.Base);
 
 
-}, '@VERSION@' ,{requires:['dataschema-base']});
+}, '@VERSION@', {"requires": ["dataschema-base"]});

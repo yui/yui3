@@ -1,4 +1,4 @@
-YUI.add('widget-child', function(Y) {
+YUI.add('widget-child', function (Y, NAME) {
 
 /**
  * Extension enabling a Widget to be a child of another Widget.
@@ -373,5 +373,4 @@ Child.prototype = {
 
 Y.WidgetChild = Child;
 
-
-}, '@VERSION@' ,{requires:['base-build', 'widget']});
+}, '@VERSION@', {"requires": ["base-build", "widget"]});

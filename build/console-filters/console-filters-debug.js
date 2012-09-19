@@ -1,4 +1,4 @@
-YUI.add('console-filters', function(Y) {
+YUI.add('console-filters', function (Y, NAME) {
 
 /**
  * <p>Provides Plugin.ConsoleFilters plugin class.</p>
@@ -139,13 +139,13 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
             html;
 
         if (foot) {
-            html = Y.substitute(
+            html = Y.Lang.sub(
                         ConsoleFilters.CATEGORIES_TEMPLATE,
                         ConsoleFilters.CHROME_CLASSES);
 
             this._categories = foot.appendChild(Y.Node.create(html));
 
-            html = Y.substitute(
+            html = Y.Lang.sub(
                         ConsoleFilters.SOURCES_TEMPLATE,
                         ConsoleFilters.CHROME_CLASSES);
 
@@ -516,7 +516,7 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
                         filter_class : getCN(CONSOLE, FILTER, name)
                    }),
             node = Y.Node.create(
-                        Y.substitute(ConsoleFilters.FILTER_TEMPLATE, info));
+                        Y.Lang.sub(ConsoleFilters.FILTER_TEMPLATE, info));
 
         container.appendChild(node);
     },
@@ -720,4 +720,4 @@ Y.namespace('Plugin').ConsoleFilters = Y.extend(ConsoleFilters, Y.Plugin.Base,
 });
 
 
-}, '@VERSION@' ,{requires:['console','plugin']});
+}, '@VERSION@', {"requires": ["plugin", "console"], "skinnable": true});

@@ -1,1 +1,1 @@
-YUI.add("anim-xy",function(c,b){var a=Number;c.Anim.behaviors.xy={set:function(g,e,j,i,d,h,f){g._node.setXY([f(d,a(j[0]),a(i[0])-a(j[0]),h),f(d,a(j[1]),a(i[1])-a(j[1]),h)]);},get:function(d){return d._node.getXY();}};},"@VERSION@",{"requires":["anim-base","node-screen"]});
+YUI.add("anim-xy",function(e,t){var n=Number;e.Anim.behaviors.xy={set:function(e,t,r,i,s,o,u){e._node.setXY([u(s,n(r[0]),n(i[0])-n(r[0]),o),u(s,n(r[1]),n(i[1])-n(r[1]),o)])},get:function(e){return e._node.getXY()}}},"@VERSION@",{requires:["anim-base","node-screen"]});

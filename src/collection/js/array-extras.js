@@ -369,7 +369,7 @@ array.
 @param {Array} a Array with nested arrays to flatten.
 @return {Array} An array whose nested arrays have been flattened.
 @static
-@since 3.6.1
+@since 3.7.0
 **/
 A.flatten = function(a) {
     var result = [],

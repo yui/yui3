@@ -12,7 +12,7 @@ VMLRect = function()
 {
 	VMLRect.superclass.constructor.apply(this, arguments);
 };
-VMLRect.NAME = "vmlRect"; 
+VMLRect.NAME = "rect"; 
 Y.extend(VMLRect, Y.VMLShape, {
 	/**
 	 * Indicates the type of shape

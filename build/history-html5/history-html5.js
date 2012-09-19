@@ -1,4 +1,4 @@
-YUI.add('history-html5', function(Y) {
+YUI.add('history-html5', function (Y, NAME) {
 
 /**
  * Provides browser history management using the HTML5 history API.
@@ -180,4 +180,4 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
+}, '@VERSION@', {"optional": ["json"], "requires": ["event-base", "history-base", "node-base"]});

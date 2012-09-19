@@ -27,10 +27,10 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
-    YArray = Y.Array,
+    WILD_TYPE_RE = /(.*?)(:)(.*?)/,
 
     _wildType = Y.cached(function(type) {
-        return type.replace(/(.*)(:)(.*)/, "*$2$3");
+        return type.replace(WILD_TYPE_RE, "*$2$3");
     }),
 
     /**
@@ -42,7 +42,7 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
@@ -118,7 +118,6 @@ var L = Y.Lang,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
-
     };
 
 
@@ -220,7 +219,8 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
+        var yuievt = this._yuievt,
+            parts = _parseType(type, yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
 
@@ -239,7 +239,7 @@ ET.prototype = {
 
             f = fn;
             c = context;
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             ret = [];
 
             if (L.isArray(type)) {
@@ -266,8 +266,7 @@ ET.prototype = {
 
             }, this);
 
-            return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
-
+            return (yuievt.chain) ? this : new Y.EventHandle(ret);
         }
 
         detachcategory = parts[0];
@@ -276,7 +275,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && Y.instanceOf(this, Node) && (shorttype in Node.DOM_EVENTS)) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             args.splice(2, 0, Node.getDOMNode(this));
             // Y.log("Node detected, redirecting with these args: " + args);
             return Y.on.apply(Y, args);
@@ -287,7 +286,7 @@ ET.prototype = {
         if (Y.instanceOf(this, YUI)) {
 
             adapt = Y.Env.evt.plugins[type];
-            args  = YArray(arguments, 0, true);
+            args  = nativeSlice.call(arguments, 0);
             args[0] = shorttype;
 
             if (Node) {
@@ -318,8 +317,8 @@ ET.prototype = {
         }
 
         if (!handle) {
-            ce = this._yuievt.events[type] || this.publish(type);
-            handle = ce._on(fn, context, (arguments.length > 3) ? YArray(arguments, 3, true) : null, (after) ? 'after' : true);
+            ce = yuievt.events[type] || this.publish(type);
+            handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -328,7 +327,7 @@ ET.prototype = {
             store[detachcategory][type].push(handle);
         }
 
-        return (this._yuievt.chain) ? this : handle;
+        return (yuievt.chain) ? this : handle;
 
     },
 
@@ -420,7 +419,7 @@ ET.prototype = {
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             args[2] = Node.getDOMNode(this);
             Y.detach.apply(Y, args);
             return this;
@@ -430,7 +429,7 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (Y.instanceOf(this, YUI)) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
                 adapt.detach.apply(Y, args);
@@ -554,8 +553,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     publish: function(type, opts) {
         var events, ce, ret, defaults,
-            edata    = this._yuievt,
-            pre      = edata.config.prefix;
+            edata = this._yuievt,
+            pre = edata.config.prefix;
 
         if (L.isObject(type)) {
             ret = {};
@@ -568,25 +567,28 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
+        events = edata.events;
+        ce = events[type];
+
         this._monitor('publish', type, {
             args: arguments
         });
 
-        events = edata.events;
-        ce = events[type];
-
         if (ce) {
-// ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
+            // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
             if (opts) {
                 ce.applyConfig(opts, true);
             }
         } else {
-
+            // TODO: Lazy publish goes here.
             defaults = edata.defaults;
 
             // apply defaults
-            ce = new Y.CustomEvent(type,
-                                  (opts) ? Y.merge(defaults, opts) : defaults);
+            ce = new Y.CustomEvent(type, defaults);
+            if (opts) {
+                ce.applyConfig(opts, true);
+            }
+
             events[type] = ce;
         }
 
@@ -611,18 +613,28 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      * @method _monitor
      * @param what {String} 'attach', 'detach', 'fire', or 'publish'
-     * @param type {String} Name of the event being monitored
+     * @param eventType {String|CustomEvent} The prefixed name of the event being monitored, or the CustomEvent object.
      * @param o {Object} Information about the event interaction, such as
      *                  fire() args, subscription category, publish config
      * @private
      */
-    _monitor: function(what, type, o) {
-        var monitorevt, ce = this.getEvent(type);
-        if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
-            monitorevt = type + '_' + what;
-            // Y.log('monitoring: ' + monitorevt);
-            o.monitored = what;
-            this.fire.call(this, monitorevt, o);
+    _monitor: function(what, eventType, o) {
+        var monitorevt, ce, type;
+
+        if (eventType) {
+            if (typeof eventType === "string") {
+                type = eventType;
+                ce = this.getEvent(eventType, true);
+            } else {
+                ce = eventType;
+                type = eventType.type;
+            }
+
+            if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+                monitorevt = type + '_' + what;
+                o.monitored = what;
+                this.fire.call(this, monitorevt, o);
+            }
         }
     },
 
@@ -652,20 +664,18 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * parameter after the properties the object literal contains are copied to
      * the event facade.
      * @return {EventTarget} the event host
-     *
      */
     fire: function(type) {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre = this._yuievt.config.prefix, ce2,
-            args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
+            yuievt = this._yuievt,
+            pre = yuievt.config.prefix, 
+            ce, ret, 
+            ce2,
+            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
-
-        this._monitor('fire', t, {
-            args: args
-        });
 
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
@@ -674,9 +684,13 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ce = this.publish(t);
         }
 
+        this._monitor('fire', (ce || t), {
+            args: args
+        });
+
         // this event has not been published or subscribed to
         if (!ce) {
-            if (this._yuievt.hasTargets) {
+            if (yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
@@ -687,7 +701,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ret = ce.fire.apply(ce, args);
         }
 
-        return (this._yuievt.chain) ? this : ret;
+        return (yuievt.chain) ? this : ret;
     },
 
     getSibling: function(type, ce) {
@@ -743,7 +757,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     after: function(type, fn) {
 
-        var a = YArray(arguments, 0, true);
+        var a = nativeSlice.call(arguments, 0);
 
         switch (L.type(type)) {
             case 'function':

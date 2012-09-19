@@ -1064,7 +1064,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Object[]} Array of model attribute hashes.
     @protected
     @see ModelList.parse()
-    @since 3.6.1
+    @since 3.7.0
     **/
     _parse: function (response) {
         return this.parse(response);

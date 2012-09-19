@@ -1,4 +1,4 @@
-YUI.add('datasource-arrayschema', function(Y) {
+YUI.add('datasource-arrayschema', function (Y, NAME) {
 
 /**
  * Extends DataSource with schema-parsing on array data.
@@ -103,4 +103,4 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-array']});
+}, '@VERSION@', {"requires": ["datasource-local", "plugin", "dataschema-array"]});

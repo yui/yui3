@@ -1,0 +1,10 @@
+{
+    "name": "overlay",
+    "builds": {
+        "overlay": {
+            "jsfiles": [
+                "Overlay.js"
+            ]
+        }
+    }
+}

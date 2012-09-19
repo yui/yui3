@@ -1,0 +1,10 @@
+{
+    "name": "widget-child",
+    "builds": {
+        "widget-child": {
+            "jsfiles": [
+                "Widget-Child.js"
+            ]
+        }
+    }
+}

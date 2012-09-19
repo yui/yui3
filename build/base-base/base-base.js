@@ -1,4 +1,4 @@
-YUI.add('base-base', function(Y) {
+YUI.add('base-base', function (Y, NAME) {
 
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
@@ -343,4 +343,4 @@ YUI.add('base-base', function(Y) {
     Y.Base = Base;
 
 
-}, '@VERSION@' ,{requires:['base-core', 'attribute-base']});
+}, '@VERSION@', {"requires": ["base-core", "attribute-base"]});

@@ -1,0 +1,10 @@
+{
+    "name": "widget-buttons",
+    "builds": {
+        "widget-buttons": {
+            "jsfiles": [
+                "widget-buttons.js"
+            ]
+        }
+    }
+}

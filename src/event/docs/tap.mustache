@@ -1,0 +1,78 @@
+<div class="intro">
+    <p>The `event-tap` module creates a synthetic 'tap' event, that allows for fast-click on touch devices, while supporting mouse events as well.</p>
+
+    <p>On touch devices (especially iOS), listening to 'click' events usually results in a 300ms delay, as the browser waits to see if the user executes a double-click. This slight delay can result in a worsened user-experience. This module aims to correct that by providing the synthetic 'tap' event to listen to. By listening to 'tap', application developers can develop against touch events when they are supported, and fall back to pointer-based input devices.</p>
+
+</div>
+
+<h2>Using Tap</h2>
+
+<p>To have access to the `tap` event, you will need to include `event-tap` in your use statement. Optionally, you could include the entire `event` module, although this isn't recommended unless you need all the functionality that `event` provides.</p>
+
+<p>The `tap` synthetic event listens to the following DOM events:</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Touch supported</th>
+        <th>Touch not supported</th>
+    </th>
+</thead>
+<tbody>
+    <tr>
+        <td>`touchstart`</td>
+        <td>`mousedown`</td>
+    </tr>
+    <tr>
+        <td>`touchmove`</td>
+        <td>`mousemove`</td>
+    </tr>
+    <tr>
+        <td>`touchend`</td>
+        <td>`mouseup`</td>
+    </tr>
+    <tr>
+        <td>`touchcancel`</td>
+        <td>`mousecancel`</td>
+    </tr>
+</tbody>
+</table>
+
+<p>The easiest way to use `tap` is to convert your 'click' event listeners to listen for 'tap' instead.</p>
+
+```
+node.on("tap", function (event) {
+    this.addClass("tapped");
+});
+```
+
+<p>Tap allows for fast-clicking on touch devices and reverts to mouse events, so it behaves the same way as 'click' on pointer-based devices.</p>
+
+<h2>Delegating Taps</h2>
+
+<p>The `event-tap` module supports event delegation, so you can set up a single event listener to listen for events on all child elements.</p>
+
+```
+myParentNode.delegate("tap", function (event) {
+    this.addClass("tapped");
+}, 'li a');
+```
+
+<h2>Features</h2>
+
+<p>The `event-tap` module has the following functionality baked in to it:</p>
+
+<ul>
+    <li>`'tap'` only fires if there is one finger on the touchscreen.</li>
+    <li>`'tap'` does not fire if a 'touchmove' or 'mousemove' is fired. This means that if there is any movement of the finger or pointer, 'tap' will not fire.</li>
+    <li>`'tap'` does not fire for right mouse button clicks.</li>
+</ul>
+
+<h2>Caveats and other information</h2>
+
+As of now, `event-tap` does not work on Windows 8 Tablets. Windows 8 does not support 'touchstart', 'touchmove', 'touchend', and 'touchcancel'. Instead, it uses MSPointer events. 
+
+<h3>Click Events on Touch Devices</h3>
+A `click` event is still fired after the `tap` event on touch devices. This can be useful to developers since input elements will not reflect their true value on `tap`. For example, a radio button will not reflect the correct state on `tap`, but will on `click`. 
+
+For this reason, it's best to use the `tap` event callback as a way to improve your user experience, and use the click event callback to listen for DOM updates. On mouse-based devices, the `click` event and `tap` event are fired simultaneously since `tap` falls back to mouse events in the absence of touch support.  

@@ -167,8 +167,15 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var host = this._host,
             axis = host._cAxis;
 
-        this._renderBar(this.get(VERTICAL_NODE), axis.y, 'vert');
-        this._renderBar(this.get(HORIZONTAL_NODE), axis.x, 'horiz');
+        this._dims = host._getScrollDims();
+
+        if (axis && axis.y) {
+            this._renderBar(this.get(VERTICAL_NODE), true, 'vert');
+        }
+
+        if (axis && axis.x) {
+            this._renderBar(this.get(HORIZONTAL_NODE), true, 'horiz');
+        }
 
         this._update();
 
@@ -292,8 +299,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = WIDTH;
             dimOffset = LEFT;
             dimCache = HORIZ_CACHE;
-            widgetSize = host.get('width');
-            contentSize = host._scrollWidth;
+            widgetSize = this._dims.offsetWidth;
+            contentSize = this._dims.scrollWidth;
             translate = TRANSLATE_X;
             scale = SCALE_X;
             current = (current !== undefined) ? current : host.get(SCROLL_X);
@@ -301,8 +308,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             dim = HEIGHT;
             dimOffset = TOP;
             dimCache = VERT_CACHE;
-            widgetSize = host.get('height');
-            contentSize = host._scrollHeight;
+            widgetSize = this._dims.offsetHeight;
+            contentSize = this._dims.scrollHeight;
             translate = TRANSLATE_Y;
             scale = SCALE_Y;
             current = (current !== undefined) ? current : host.get(SCROLL_Y);
@@ -310,7 +317,6 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 
         scrollbarSize = Math.floor(widgetSize * (widgetSize/contentSize));
         scrollbarPos = Math.floor((current/(contentSize - widgetSize)) * (widgetSize - scrollbarSize));
-
         if (scrollbarSize > widgetSize) {
             scrollbarSize = 1;
         }
@@ -433,11 +439,11 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             this.show();
         }
 
-        if (axis.y && vNode) {
+        if (axis && axis.y && vNode) {
             this._updateBar(vNode, y, duration, false);
         }
 
-        if (axis.x && hNode) {
+        if (axis && axis.x && hNode) {
             this._updateBar(hNode, x, duration, true);
         }
     },

@@ -1,4 +1,4 @@
-YUI.add('event-synthetic', function(Y) {
+YUI.add('event-synthetic', function (Y, NAME) {
 
 /**
  * Define new DOM events that can be subscribed to from Nodes.
@@ -6,7 +6,8 @@ YUI.add('event-synthetic', function(Y) {
  * @module event
  * @submodule event-synthetic
  */
-var DOMMap   = Y.Env.evt.dom_map,
+var CustomEvent = Y.CustomEvent,
+    DOMMap   = Y.Env.evt.dom_map,
     toArray  = Y.Array,
     YLang    = Y.Lang,
     isObject = YLang.isObject,
@@ -261,8 +262,11 @@ Y.mix(SyntheticEvent, {
             var synth = this.eventDef,
                 method = (sub.filter) ? 'detachDelegate' : 'detach';
 
-            this.subscribers = {};
-            this.subCount = 0;
+            this._subscribers = [];
+
+            if (CustomEvent.keepDeprecatedSubs) {
+                this.subscribers = {};
+            }
 
             synth[method](sub.node, sub, this.notifier, sub.filter);
             this.registry.unregister(sub);
@@ -825,4 +829,4 @@ Y.Event.define = function (type, config, force) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-custom-complex']});
+}, '@VERSION@', {"requires": ["node-base", "event-custom-complex"]});
