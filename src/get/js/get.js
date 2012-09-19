@@ -521,14 +521,18 @@ Y.Get = Get = {
         // feasible to load test files on every pageview just to perform a
         // feature test. I'm sorry if this makes you sad.
         return (this._env = {
+
             // True if this is a browser that supports disabling async mode on
             // dynamically created script nodes. See
             // https://developer.mozilla.org/En/HTML/Element/Script#Attributes
-            async: doc && doc.createElement('script').async === true,
+
+            // IE10 doesn't return true for the MDN feature test, so setting it explicitly,
+            // because it is async by default, and allows you to disable async by setting it to false
+            async: (doc && doc.createElement('script').async === true) || (ue.ie >= 10),
 
             // True if this browser fires an event when a dynamically injected
             // link node fails to load. This is currently true for Firefox 9+
-            // and WebKit 535.24+.
+            // and WebKit 535.24+
             cssFail: ua.gecko >= 9 || ua.compareVersions(ua.webkit, 535.24) >= 0,
 
             // True if this browser fires an event when a dynamically injected
@@ -545,7 +549,7 @@ Y.Get = Get = {
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
             // attribute is set to false to explicitly disable async execution.
-            preservesScriptOrder: !!(ua.gecko || ua.opera)
+            preservesScriptOrder: !!(ua.gecko || ua.opera || (ua.ie && ua.ie >= 10))
         });
     },
 
@@ -639,6 +643,8 @@ Y.Get = Get = {
         options || (options = {});
         options.type = type;
 
+        options._onFinish = Get._onTransactionFinish;
+
         if (!this._env) {
             this._getEnv();
         }
@@ -655,6 +661,11 @@ Y.Get = Get = {
         return transaction;
     },
 
+    _onTransactionFinish : function() {
+        Get._pending = null;
+        Get._next();
+    },
+
     _next: function () {
         var item;
 
@@ -666,13 +677,7 @@ Y.Get = Get = {
 
         if (item) {
             this._pending = item;
-
-            item.transaction.execute(function () {
-                item.callback && item.callback.apply(this, arguments);
-
-                Get._pending = null;
-                Get._next();
-            });
+            item.transaction.execute(item.callback);
         }
     },
 
@@ -738,7 +743,7 @@ Get.Transaction = Transaction = function (requests, options) {
 
     self._callbacks = []; // callbacks to call after execution finishes
     self._queue     = [];
-    self._waiting   = 0;
+    self._reqsWaiting   = 0;
 
     // Deprecated pre-3.5.0 properties.
     self.tId = self.id; // Use `id` instead.
@@ -836,7 +841,7 @@ Transaction.prototype = {
         this._pendingCSS = null;
         this._pollTimer  = clearTimeout(this._pollTimer);
         this._queue      = [];
-        this._waiting    = 0;
+        this._reqsWaiting    = 0;
 
         this.errors.push({error: msg || 'Aborted'});
         this._finish();
@@ -886,8 +891,10 @@ Transaction.prototype = {
             }, self.options.timeout);
         }
 
+        self._reqsWaiting = requests.length;
+
         for (i = 0, len = requests.length; i < len; ++i) {
-            req = self.requests[i];
+            req = requests[i];
 
             if (req.async || req.type === 'css') {
                 // No need to queue CSS or fully async JS.
@@ -973,6 +980,10 @@ Transaction.prototype = {
 
         if (options.onEnd) {
             options.onEnd.call(thisObj, data);
+        }
+
+        if (options._onFinish) {
+            options._onFinish();
         }
     },
 
@@ -1064,7 +1075,6 @@ Transaction.prototype = {
             self._progress(null, req);
         }
 
-
         // Deal with script asynchronicity.
         if (isScript) {
             node.setAttribute('src', req.url);
@@ -1132,8 +1142,6 @@ Transaction.prototype = {
             }
         }
 
-        this._waiting += 1;
-
         this.nodes.push(node);
         insertBefore.parentNode.insertBefore(node, insertBefore);
     },
@@ -1149,7 +1157,7 @@ Transaction.prototype = {
         // for anything to load, then we're done!
         if (this._queue.length) {
             this._insert(this._queue.shift());
-        } else if (!this._waiting) {
+        } else if (!this._reqsWaiting) {
             this._finish();
         }
     },
@@ -1257,7 +1265,8 @@ Transaction.prototype = {
             this._pending = null;
         }
 
-        this._waiting -= 1;
+        this._reqsWaiting -= 1;
+
         this._next();
     }
 };
