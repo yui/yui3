@@ -707,7 +707,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Nulls internal node references, removes any plugins and event listeners.
      * Note that destroy() will not remove the node from its parent or from the DOM. For that
-     * functionality, call remove(true)
+     * functionality, call remove(true).
      * @method destroy
      * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
      * node's subtree (default is false)
