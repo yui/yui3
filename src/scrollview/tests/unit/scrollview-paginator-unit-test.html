@@ -185,10 +185,39 @@
 					Test.wait(2000);
 				},
 
+				/*
+				The default anim duration is 300ms so these tests are designed to
+				check that the duration can be changed
+				*/
+				"scrollToIndex should animate with a shorter anim duration": function () {
+					var Test = this,
+						sv = renderNewScrollview(true),
+						startTime = Y.Lang.now();
 
+					sv.on('scrollEnd', function () {
+						Test.resume(function () {
+							Y.Assert.isTrue(Y.Lang.now() - startTime < 250, 'Animation took more time than expected');
+						});
+					});
 
+					sv.pages.scrollToIndex(5, 100);
+					Test.wait(150);
+				},
 
+				"scrollToIndex should animate with a longer anim duration": function () {
+					var Test = this,
+						sv = renderNewScrollview(true),
+						startTime = Y.Lang.now();
 
+					sv.on('scrollEnd', function () {
+						Test.resume(function () {
+							Y.Assert.isTrue(Y.Lang.now() - startTime > 1000, 'Animation took less time than expected');
+						});
+					});
+
+					sv.pages.scrollToIndex(5, 1500);
+					Test.wait(2000);
+				},
 
 
 				"Move x should advance 1 page right": function() {
