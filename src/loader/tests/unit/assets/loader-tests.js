@@ -34,7 +34,8 @@ YUI.add('loader-tests', function(Y) {
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
                 test_cond_with_test_function: Y.UA.nodejs,
-                'test external lang 1': Y.UA.nodejs
+                'test external lang 1': Y.UA.nodejs,
+                'testing fetchCSS false': !Y.config.win
             }
         },
         'test: skin overrides double loading': function() {
@@ -723,6 +724,21 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        'testing fetchCSS false': function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+
+            YUI({
+                fetchCSS: false
+            }).use('panel', function(Y) {
+                test.resume(function() {
+                    var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+                    Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
+                });
+            });
+
+            test.wait();
         },
         test_forcemap: function() {
             var test = this;
