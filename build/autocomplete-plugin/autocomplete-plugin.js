@@ -1,4 +1,4 @@
-YUI.add('autocomplete-plugin', function(Y) {
+YUI.add('autocomplete-plugin', function (Y, NAME) {
 
 /**
 Binds an AutoCompleteList instance to a Node instance.
@@ -45,4 +45,4 @@ Plugin.AutoComplete     = ACListPlugin;
 Plugin.AutoCompleteList = ACListPlugin;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-list', 'node-pluginhost']});
+}, '@VERSION@', {"requires": ["autocomplete-list", "node-pluginhost"]});

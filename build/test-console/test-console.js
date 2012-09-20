@@ -1,4 +1,4 @@
-YUI.add('test-console', function(Y) {
+YUI.add('test-console', function (Y, NAME) {
 
 /**
 Provides a specialized log console widget that's pre-configured to display YUI
@@ -143,4 +143,4 @@ Y.namespace('Test').Console = Y.extend(TestConsole, Y.Console, {
 });
 
 
-}, '@VERSION@' ,{requires:['console-filters', 'test'], skinnable:true});
+}, '@VERSION@', {"requires": ["console-filters", "test"], "skinnable": true});

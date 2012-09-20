@@ -1,4 +1,4 @@
-YUI.add('querystring-stringify', function(Y) {
+YUI.add('querystring-stringify', function (Y, NAME) {
 
 /**
  * Provides Y.QueryString.stringify method for converting objects to Query Strings.
@@ -109,4 +109,4 @@ QueryString.stringify = function (obj, c, name) {
 };
 
 
-}, '@VERSION@' ,{supersedes:['querystring-stringify-simple'], requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

@@ -1,4 +1,4 @@
-YUI.add('resize-proxy', function(Y) {
+YUI.add('resize-proxy', function (Y, NAME) {
 
 var ACTIVE_HANDLE_NODE = 'activeHandleNode',
 	CURSOR = 'cursor',
@@ -163,4 +163,4 @@ Y.namespace('Plugin');
 Y.Plugin.ResizeProxy = ResizeProxy;
 
 
-}, '@VERSION@' ,{requires:['resize-base', 'plugin'], skinnable:false});
+}, '@VERSION@', {"requires": ["plugin", "resize-base"]});

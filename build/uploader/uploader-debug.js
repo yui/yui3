@@ -1,4 +1,4 @@
-YUI.add('uploader', function(Y) {
+YUI.add('uploader', function (Y, NAME) {
 
 /**
  * Provides UI for selecting multiple files and functionality for 
@@ -49,5 +49,4 @@ YUI.add('uploader', function(Y) {
     Y.Uploader.TYPE = "none";
  }
 
-
-}, '@VERSION@' ,{requires:['uploader-flash', 'uploader-html5']});
+}, '@VERSION@', {"requires": ["uploader-html5", "uploader-flash"]});

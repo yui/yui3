@@ -1,5 +1,7 @@
-Y.log('using VML');
-var SHAPE = "vmlShape",
+var IMPLEMENTATION = "vml",
+    SHAPE = "shape",
+	SPLITPATHPATTERN = /[a-z][^a-z]*/ig,
+    SPLITARGSPATTERN = /[-]?[0-9]*[0-9|\.][0-9]*/g,
     Y_LANG = Y.Lang,
     IS_NUM = Y_LANG.isNumber,
     IS_ARRAY = Y_LANG.isArray,
@@ -30,6 +32,26 @@ function VMLDrawing() {}
  * @constructor
  */
 VMLDrawing.prototype = {
+    /**
+     * Maps path to methods
+     *
+     * @property _pathSymbolToMethod
+     * @type Object
+     * @private
+     */
+    _pathSymbolToMethod: {
+        M: "moveTo",
+        m: "relativeMoveTo",
+        L: "lineTo",
+        l: "relativeLineTo",
+        C: "curveTo",
+        c: "relativeCurveTo",
+        Q: "quadraticCurveTo",
+        q: "relativeQuadraticCurveTo",
+        z: "closePath",
+        Z: "closePath"
+    },
+
     /**
      * Value for rounding up to coordsize
      *
@@ -87,7 +109,7 @@ VMLDrawing.prototype = {
      * @private
      */
     _currentY: 0,
-
+    
     /**
      * Draws a bezier curve.
      *
@@ -99,25 +121,86 @@ VMLDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
+    curveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a bezier curve.
+     *
+     * @method relativeCurveTo
+     * @param {Number} cp1x x-coordinate for the first control point.
+     * @param {Number} cp1y y-coordinate for the first control point.
+     * @param {Number} cp2x x-coordinate for the second control point.
+     * @param {Number} cp2y y-coordinate for the second control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeCurveTo: function() {
+        this._curveTo.apply(this, [Y.Array(arguments), true]);
+    },
+    
+    /**
+     * Implements curveTo methods.
+     *
+     * @method _curveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _curveTo: function(args, relative) {
         var w,
             h,
+            x,
+            y,
+            cp1x,
+            cp1y,
+            cp2x,
+            cp2y,
             pts,
             right,
             left,
             bottom,
-            top;
-        this._addToPath(" c " + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y));
-        right = Math.max(x, Math.max(cp1x, cp2x));
-        bottom = Math.max(y, Math.max(cp1y, cp2y));
-        left = Math.min(x, Math.min(cp1x, cp2x));
-        top = Math.min(y, Math.min(cp1y, cp2y));
-        w = Math.abs(right - left);
-        h = Math.abs(bottom - top);
-        pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
-        this._setCurveBoundingBox(pts, w, h);
-        this._currentX = x;
-        this._currentY = y;
+            top,
+            i,
+            len,
+            path,
+            command = relative ? " v " : " c ",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        len = args.length - 5;
+        path = command; 
+        for(i = 0; i < len; i = i + 6)
+        {
+            cp1x = parseFloat(args[i]);
+            cp1y = parseFloat(args[i + 1]);
+            cp2x = parseFloat(args[i + 2]);
+            cp2y = parseFloat(args[i + 3]);
+            x = parseFloat(args[i + 4]);
+            y = parseFloat(args[i + 5]);
+            if(i > 0)
+            {
+                path = path + ", ";
+            }
+            path = path + this._round(cp1x) + ", " + this._round(cp1y) + ", " + this._round(cp2x) + ", " + this._round(cp2y) + ", " + this._round(x) + ", " + this._round(y); 
+            cp1x = cp1x + relativeX;
+            cp1y = cp1y + relativeY;
+            cp2x = cp2x + relativeX;
+            cp2y = cp2y + relativeY;
+            x = x + relativeX;
+            y = y + relativeY;
+            right = Math.max(x, Math.max(cp1x, cp2x));
+            bottom = Math.max(y, Math.max(cp1y, cp2y));
+            left = Math.min(x, Math.min(cp1x, cp2x));
+            top = Math.min(y, Math.min(cp1y, cp2y));
+            w = Math.abs(right - left);
+            h = Math.abs(bottom - top);
+            pts = [[this._currentX, this._currentY] , [cp1x, cp1y], [cp2x, cp2y], [x, y]]; 
+            this._setCurveBoundingBox(pts, w, h);
+            this._currentX = x;
+            this._currentY = y;
+        }
+        this._addToPath(path);
     },
 
     /**
@@ -129,14 +212,65 @@ VMLDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    quadraticCurveTo: function(cpx, cpy, x, y) {
-        var currentX = this._currentX,
+    quadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a quadratic bezier curve relative to the current position.
+     *
+     * @method relativeQuadraticCurveTo
+     * @param {Number} cpx x-coordinate for the control point.
+     * @param {Number} cpy y-coordinate for the control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeQuadraticCurveTo: function() {
+        this._quadraticCurveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements quadraticCurveTo methods.
+     *
+     * @method _quadraticCurveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _quadraticCurveTo: function(args, relative) {
+        var cpx, 
+            cpy,
+            cp1x,
+            cp1y,
+            cp2x,
+            cp2y,
+            x, 
+            y,
+            currentX = this._currentX,
             currentY = this._currentY,
-            cp1x = currentX + 0.67*(cpx - currentX),
-            cp1y = currentY + 0.67*(cpy - currentY),
-            cp2x = cp1x + (x - currentX) * 0.34,
+            i,
+            len = args.length - 3,
+            bezierArgs = [],
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        for(i = 0; i < len; i = i + 4)
+        {
+            cpx = parseFloat(args[i]) + relativeX;
+            cpy = parseFloat(args[i + 1]) + relativeY;
+            x = parseFloat(args[i + 2]) + relativeX;
+            y = parseFloat(args[i + 3]) + relativeY;
+            cp1x = currentX + 0.67*(cpx - currentX);
+            cp1y = currentY + 0.67*(cpy - currentY);
+            cp2x = cp1x + (x - currentX) * 0.34;
             cp2y = cp1y + (y - currentY) * 0.34;
-        this.curveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+            bezierArgs.push(cp1x);
+            bezierArgs.push(cp1y);
+            bezierArgs.push(cp2x);
+            bezierArgs.push(cp2y);
+            bezierArgs.push(x);
+            bezierArgs.push(y);
+        }
+        this._curveTo.apply(this, [bezierArgs, false]);
     },
 
     /**
@@ -282,31 +416,77 @@ VMLDrawing.prototype = {
     },
 
     /**
-     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     * Draws a line segment from the current drawing position to the specified x and y coordinates.
      * 
      * @method lineTo
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      */
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
+    lineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the relative x and y coordinates.
+     * 
+     * @method relativeLineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
+     */
+    relativeLineTo: function()
+    {
+        this._lineTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements lineTo methods.
+     *
+     * @method _lineTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _lineTo: function(args, relative) {
+        var point1 = args[0],
             i,
             len,
-            path = ' l ';
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
+            x,
+            y,
+            path = relative ? " r " : " l ",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        if (typeof point1 == "string" || typeof point1 == "number") {
+            len = args.length - 1;
+            for (i = 0; i < len; i = i + 2) {
+                x = parseFloat(args[i]);
+                y = parseFloat(args[i + 1]);
+                path += ' ' + this._round(x) + ', ' + this._round(y);
+                x = x + relativeX;
+                y = y + relativeY;
+                this._currentX = x;
+                this._currentY = y;
+                this._trackSize.apply(this, [x, y]);
+            }
         }
-        len = args.length;
-        for (i = 0; i < len; ++i) {
-            path += ' ' + this._round(args[i][0]) + ', ' + this._round(args[i][1]);
-            this._trackSize.apply(this, args[i]);
-            this._currentX = args[i][0];
-            this._currentY = args[i][1];
+        else
+        {
+            len = args.length;
+            for (i = 0; i < len; i = i + 1) {
+                x = parseFloat(args[i][0]);
+                y = parseFloat(args[i][1]);
+                path += ' ' + this._round(x) + ', ' + this._round(y);
+                x = x + relativeX;
+                y = y + relativeY;
+                this._currentX = x;
+                this._currentY = y;
+                this._trackSize.apply(this, [x, y]);
+            }
         }
         this._addToPath(path);
         return this;
     },
-
+    
     /**
      * Moves the current drawing position to specified x and y coordinates.
      *
@@ -314,8 +494,40 @@ VMLDrawing.prototype = {
      * @param {Number} x x-coordinate for the end point.
      * @param {Number} y y-coordinate for the end point.
      */
-    moveTo: function(x, y) {
-        this._movePath = " m " + this._round(x) + ", " + this._round(y);
+    moveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), false]);
+    },
+
+    /**
+     * Moves the current drawing position relative to specified x and y coordinates.
+     *
+     * @method relativeMoveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
+     */
+    relativeMoveTo: function()
+    {
+        this._moveTo.apply(this, [Y.Array(arguments), true]);
+    },
+
+    /**
+     * Implements moveTo methods.
+     *
+     * @method _moveTo
+     * @param {Array} args The arguments to be used.
+     * @param {Boolean} relative Indicates whether or not to use relative coordinates.
+     * @private
+     */
+    _moveTo: function(args, relative) {
+        var x = parseFloat(args[0]),
+            y = parseFloat(args[1]),
+            command = relative ? " t " : " m ",
+            relativeX = relative ? parseFloat(this._currentX) : 0,
+            relativeY = relative ? parseFloat(this._currentY) : 0;
+        this._movePath = command + this._round(x) + ", " + this._round(y);
+        x = x + relativeX;
+        y = y + relativeY;
         this._trackSize(x, y);
         this._currentX = x;
         this._currentY = y;
@@ -443,7 +655,7 @@ VMLDrawing.prototype = {
      */
     _setCurveBoundingBox: function(pts, w, h)
     {
-        var i = 0,
+        var i,
             left = this._currentX,
             right = left,
             top = this._currentY,
@@ -451,7 +663,7 @@ VMLDrawing.prototype = {
             len = Math.round(Math.sqrt((w * w) + (h * h))),
             t = 1/len,
             xy;
-        for(; i < len; ++i)
+        for(i = 0; i < len; ++i)
         {
             xy = this.getBezierData(pts, t * i);
             left = isNaN(left) ? xy[0] : Math.min(xy[0], left);

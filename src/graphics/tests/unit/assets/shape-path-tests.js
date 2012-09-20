@@ -26,6 +26,10 @@ fillNoStroke = {
     stroke: null
 },
 
+pathData = "M5, 0l100, 215 c 150 60 150 60 300 0z",
+
+pathData2 = "M100,250 q150,-150 300,0z",
+
 PathTestTemplate = function(cfg, globalCfg) {
     var i;
     PathTestTemplate.superclass.constructor.apply(this);
@@ -413,6 +417,23 @@ drawMultipleDiamondsTest = function(name, attrs)
             Y.Assert.areEqual(h, mypath.get("height"), "The height of the path should be " + h + ".");
         }
     });
+},
+
+setPathDataTest = function(name, attrs, pathData) 
+{
+    return new Y.PathTestTemplate({}, {
+        pathAttrs: attrs,
+
+        pathData: pathData,
+
+        testDefault: function()
+        {
+            var pathData = this.pathData,
+                mypath = this.path,
+                pathAttr = mypath.get("path");
+            Y.Assert.areEqual(pathData, mypath.get("data"), "The path data should be " + pathData);
+        }
+    });
 };
  
 suite.add(drawRectTest("DrawRectTestStrokeAndFill", strokeAndFill));
@@ -454,6 +475,9 @@ suite.add(drawCubicCurvesTest("DrawCubicCurvesTestFillNoStroke", fillNoStroke));
 suite.add(drawWedgeTest("DrawWedgeTestStrokeAndFill", strokeAndFill));
 suite.add(drawWedgeTest("DrawWedgeTestStrokeNoFill", strokeNoFill));
 suite.add(drawWedgeTest("DrawWedgeTestFillNoStroke", fillNoStroke));
+suite.add(setPathDataTest("TestPathDataAttr", {data: pathData}, pathData));
+suite.add(setPathDataTest("TestPathDataAttr", {data: pathData2}, pathData2));
+
 
 Y.Test.Runner.add( suite );
 

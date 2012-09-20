@@ -1,4 +1,4 @@
-YUI.add('node-event-html5', function(Y) {
+YUI.add('node-event-html5', function (Y, NAME) {
 
 /**
  * Adds HTML5 event support to Node.
@@ -49,4 +49,4 @@ Y.mix(Y.Node.DOM_EVENTS, {
 });
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});

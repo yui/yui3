@@ -15,7 +15,7 @@ YUI({
     modules: {
         'parallel-tests': {
             fullpath: './assets/parallel-tests.js',
-            requires: [ 'test']
+            requires: [ 'test', 'parallel']
         }
     }
 }).use('parallel-tests', 'test-console', 'test', function(Y) {

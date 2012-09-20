@@ -1,4 +1,4 @@
-YUI.add('event-contextmenu', function(Y) {
+YUI.add('event-contextmenu', function (Y, NAME) {
 
 /**
  * Provides extended keyboard support for the "contextmenu" event such that:
@@ -182,4 +182,4 @@ conf.detachDelegate = conf.detach;
 Event.define("contextmenu", conf, true);
 
 
-}, '@VERSION@' ,{requires:['event-synthetic', 'dom-screen']});
+}, '@VERSION@', {"requires": ["event-synthetic", "dom-screen"]});

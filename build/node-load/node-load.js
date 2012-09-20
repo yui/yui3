@@ -1,4 +1,4 @@
-YUI.add('node-load', function(Y) {
+YUI.add('node-load', function (Y, NAME) {
 
 /**
  * Extended Node interface with a basic IO API.
@@ -59,7 +59,7 @@ Y.Node.prototype.load = function(url, selector, callback) {
 
     Y.io(url, config);
     return this;
-}
+};
 
 
-}, '@VERSION@' ,{requires:['node-base', 'io-base']});
+}, '@VERSION@', {"requires": ["node-base", "io-base"]});

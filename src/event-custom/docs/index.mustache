@@ -15,6 +15,20 @@
         `extend` or `augment` your classes with `EventTarget` directly.
     </p>
 
+    <p><strong>DEPRECATION NOTE:</strong> The `subscribers` and `afters` properties which
+       used to sit on `CustomEvent` object instances have been deprecated and 
+       removed for performance reasons as of the 3.7.0 release.
+    </p>
+
+    <p>If you're referring to the `subscribers` or `afters` properties directly just
+       to access the set of subscribers,  consider switching to the public `getSubs()` 
+       method instead which hides you from the implementation details.</p>
+
+    <p>If you have a use case which requires you to access the above properties 
+       directly you can set `Y.CustomEvent.keepDeprecatedSubs` to true, to restore 
+       them, but you will incur a performance hit if you enable this flag.
+    </p>
+
     <!--p>
         Bundled with `EventTarget` are <a
         href="http://en.wikipedia.org/wiki/Aspect_oriented_programming">Aspect

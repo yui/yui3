@@ -1,8 +1,0 @@
-{
-    "datatype-date-math": {
-    	"requires": [
-        	"yui-base"
-    	]
-    }
-
-}

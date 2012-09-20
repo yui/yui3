@@ -1,6 +1,5 @@
-YUI.add('selector', function(Y) {
+YUI.add('selector', function (Y, NAME) {
 
 
 
-
-}, '@VERSION@' ,{requires:['selector-native']});
+}, '@VERSION@', {"requires": ["selector-native"]});

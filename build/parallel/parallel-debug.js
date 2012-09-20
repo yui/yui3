@@ -1,4 +1,4 @@
-YUI.add('parallel', function(Y) {
+YUI.add('parallel', function (Y, NAME) {
 
 
 /**
@@ -67,13 +67,16 @@ Y.Parallel.prototype = {
     * @param {Function} fn The function callback we are waiting for
     */
     add: function (fn) {
-        var self = this;
+        var self = this,
+            index = self.total;
+
         self.total += 1;
+
         return function () {
             self.finished++;
-            self.results.push(
-                (fn && fn.apply(self.context, arguments)) ||
-                (arguments.length === 1 ? arguments[0] : Y.Array(arguments)));
+            self.results[index] = (fn && fn.apply(self.context, arguments)) ||
+                (arguments.length === 1 ? arguments[0] : Y.Array(arguments));
+
             self.test();
         };
     },
@@ -103,4 +106,4 @@ Y.Parallel.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

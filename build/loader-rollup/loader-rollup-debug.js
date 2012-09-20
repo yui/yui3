@@ -1,4 +1,4 @@
-YUI.add('loader-rollup', function(Y) {
+YUI.add('loader-rollup', function (Y, NAME) {
 
 /**
  * Optional automatic rollup logic for reducing http connections
@@ -99,4 +99,4 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
+}, '@VERSION@', {"requires": ["loader-base"]});

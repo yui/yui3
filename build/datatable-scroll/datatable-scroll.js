@@ -1,4 +1,4 @@
-YUI.add('datatable-scroll', function(Y) {
+YUI.add('datatable-scroll', function (Y, NAME) {
 
 /**
 Adds the ability to make the table rows scrollable while preserving the header
@@ -1380,4 +1380,4 @@ Y.mix(Scrollable.prototype, {
 Y.Base.mix(Y.DataTable, [Scrollable]);
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['datatable-base', 'dom-screen']});
+}, '@VERSION@', {"requires": ["datatable-base", "datatable-column-widths", "dom-screen"], "skinnable": true});

@@ -1,4 +1,4 @@
-YUI.add('widget-buttons', function(Y) {
+YUI.add('widget-buttons', function (Y, NAME) {
 
 /**
 Provides header/body/footer button support for Widgets that use the
@@ -1287,4 +1287,4 @@ WidgetButtons.prototype = {
 Y.WidgetButtons = WidgetButtons;
 
 
-}, '@VERSION@' ,{requires:['button-plugin', 'cssbutton', 'widget-stdmod']});
+}, '@VERSION@', {"requires": ["button-plugin", "cssbutton", "widget-stdmod"]});

@@ -10,7 +10,6 @@
                     "base",
                     "node",
                     "selector-css3",
-                    "substitute",
                     "yui-throttle"
                 ]
             },

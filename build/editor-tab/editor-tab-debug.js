@@ -1,4 +1,4 @@
-YUI.add('editor-tab', function(Y) {
+YUI.add('editor-tab', function (Y, NAME) {
 
 
     /**
@@ -66,4 +66,4 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@', {"requires": ["editor-base"]});

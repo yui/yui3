@@ -1,4 +1,4 @@
-YUI.add('file-html5', function(Y) {
+YUI.add('file-html5', function (Y, NAME) {
 
     /**
      * The FileHTML5 class provides a wrapper for a file pointer in an HTML5 The File wrapper 
@@ -492,5 +492,4 @@ YUI.add('file-html5', function(Y) {
 
     Y.FileHTML5 = FileHTML5;
 
-
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@', {"requires": ["base"]});

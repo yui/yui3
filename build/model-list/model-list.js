@@ -1,4 +1,4 @@
-YUI.add('model-list', function(Y) {
+YUI.add('model-list', function (Y, NAME) {
 
 /**
 Provides an API for managing an ordered list of Model instances.
@@ -1064,7 +1064,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Object[]} Array of model attribute hashes.
     @protected
     @see ModelList.parse()
-    @since 3.6.1
+    @since 3.7.0
     **/
     _parse: function (response) {
         return this.parse(response);
@@ -1236,4 +1236,4 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 Y.augment(ModelList, Y.ArrayList);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'escape', 'json-parse', 'model']});
+}, '@VERSION@', {"requires": ["array-extras", "array-invoke", "arraylist", "base-build", "escape", "json-parse", "model"]});

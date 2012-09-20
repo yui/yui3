@@ -1,4 +1,4 @@
-YUI.add('dd-plugin', function(Y) {
+YUI.add('dd-plugin', function (Y, NAME) {
 
 
 
@@ -202,4 +202,4 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@', {"optional": ["dd-constrain", "dd-proxy"], "requires": ["dd-drag"]});

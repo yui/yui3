@@ -1,4 +1,4 @@
-YUI.add('button-group', function(Y) {
+YUI.add('button-group', function (Y, NAME) {
 
 /**
 * A Widget to create groups of buttons
@@ -184,4 +184,4 @@ Y.ButtonGroup = Y.extend(ButtonGroup, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['button-plugin', 'cssbutton', 'widget']});
+}, '@VERSION@', {"requires": ["button-plugin", "cssbutton", "widget"]});

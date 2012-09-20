@@ -327,7 +327,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3'],
+                core: ['get', 'features', 'intl-base', 'yui-log', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
@@ -390,7 +390,7 @@ proto = {
                         path = {
                             filter: filter,
                             path: path
-                        }
+                        };
                     }
                     return path;
                 },
@@ -547,12 +547,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -1966,7 +1966,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function(Y) {
+YUI.add('yui-base', function (Y, NAME) {
 
 /*
  * YUI stub
@@ -2767,13 +2767,20 @@ use `clone()`.
 @return {Object} A new merged object.
 **/
 Y.merge = function () {
-    var args   = arguments,
-        i      = 0,
-        len    = args.length,
-        result = {};
+    var i      = 0,
+        len    = arguments.length,
+        result = {},
+        key,
+        obj;
 
     for (; i < len; ++i) {
-        Y.mix(result, args[i], true);
+        obj = arguments[i];
+
+        for (key in obj) {
+            if (hasOwn.call(obj, key)) {
+                result[key] = obj[key];
+            }
+        }
     }
 
     return result;
@@ -3792,7 +3799,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -3830,8 +3837,8 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@' );
-YUI.add('get', function(Y) {
+}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
 
@@ -5098,8 +5105,8 @@ Transaction.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('features', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('features', function (Y, NAME) {
 
 var feature_tests = {};
 
@@ -5432,9 +5439,8 @@ add('load', '17', {
     "ua": "ie"
 });
 
-
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('intl-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('intl-base', function (Y, NAME) {
 
 /**
  * The Intl utility provides a central location for managing sets of
@@ -5521,8 +5527,8 @@ Y.mix(Y.namespace('Intl'), {
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-log', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
@@ -5631,8 +5637,8 @@ INSTANCE.message = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-later', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-later', function (Y, NAME) {
 
 /**
  * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
@@ -5708,8 +5714,8 @@ Y.Lang.later = Y.later;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('loader-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('loader-base', function (Y, NAME) {
 
 /**
  * The YUI loader core
@@ -5724,7 +5730,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.08.08-20-03',
+            GALLERY_VERSION = 'gallery-2012.09.19-20-07',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -7168,7 +7174,7 @@ Y.Loader.prototype = {
                     for (o = 0; o < mod.use.length; o++) {
                         //Must walk the other modules in case a module is a rollup of rollups (datatype)
                         m = this.getModule(mod.use[o]);
-                        if (m && m.use) {
+                        if (m && m.use && (m.name !== mod.name)) {
                             c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
                         } else {
                             c.push(mod.use[o]);
@@ -7875,7 +7881,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * @private
     */
     _onProgress: function(e) {
-        var self = this;
+        var self = this, i;
+        //set the internal cache to what just came in.
+        if (e.data && e.data.length) {
+            for (i = 0; i < e.data.length; i++) {
+                e.data[i] = self.getModule(e.data[i].name);
+            }
+        }
         if (self.onProgress) {
             self.onProgress.call(self.context, {
                 name: e.url,
@@ -8026,7 +8038,10 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         var modules = this.resolve(!skipcalc),
-            self = this, comp = 0, actions = 0;
+            self = this, comp = 0, actions = 0,
+            mods = {}, deps;
+
+        self._refetch = [];
 
         if (type) {
             //Filter out the opposite type and reset the array so the checks later work
@@ -8043,7 +8058,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -8059,12 +8074,37 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
+                    //If the external module has a skin or a lang, reprocess it
+                    if (d.data[i].lang || d.data[i].skinnable) {
+                        delete self.inserted[d.data[i].name];
+                        self._refetch.push(d.data[i].name);
+                    }
                 }
             }
 
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
+                if (self._refetch.length) {
+                    //Get the deps for the new meta-data and reprocess
+                    Y.log('Found potential modules to refetch', 'info', 'loader');
+                    for (i = 0; i < self._refetch.length; i++) {
+                        deps = self.getRequires(self.getModule(self._refetch[i]));
+                        for (o = 0; o < deps.length; o++) {
+                            if (!self.inserted[deps[o]]) {
+                                //We wouldn't be to this point without the module being here
+                                mods[deps[o]] = deps[o];
+                            }
+                        }
+                    }
+                    mods = Y.Object.keys(mods);
+                    if (mods.length) {
+                        Y.log('Refetching modules with new meta-data', 'info', 'loader');
+                        self.require(mods);
+                        d = null; //bail
+                        self._insert(); //insert the new deps
+                    }
+                }
                 if (d && d.fn) {
                     Y.log('Firing final Loader callback!', 'info', 'loader');
                     fn = d.fn;
@@ -8477,8 +8517,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
 
-}, '@VERSION@' ,{requires:['get', 'features']});
-YUI.add('loader-rollup', function(Y) {
+}, '@VERSION@', {"requires": ["get", "features"]});
+YUI.add('loader-rollup', function (Y, NAME) {
 
 /**
  * Optional automatic rollup logic for reducing http connections
@@ -8579,8 +8619,8 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
-YUI.add('loader-yui3', function(Y) {
+}, '@VERSION@', {"requires": ["loader-base"]});
+YUI.add('loader-yui3', function (Y, NAME) {
 
 /* This file is auto-generated by src/loader/scripts/meta_join.js */
 
@@ -8639,11 +8679,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-base"
         ]
     },
-    "anim-shape-transform": {
+    "anim-shape": {
         "requires": [
             "anim-base",
             "anim-easing",
+            "anim-color",
             "matrix"
+        ]
+    },
+    "anim-shape-transform": {
+        "use": [
+            "anim-shape"
         ]
     },
     "anim-xy": {
@@ -8655,6 +8701,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "use": [
             "app-base",
+            "app-content",
             "app-transitions",
             "lazy-model-list",
             "model",
@@ -8671,6 +8718,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "pjax-base",
             "router",
             "view"
+        ]
+    },
+    "app-content": {
+        "requires": [
+            "app-base",
+            "pjax-content"
         ]
     },
     "app-transitions": {
@@ -9058,8 +9111,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ],
         "requires": [
             "yui-log",
-            "widget",
-            "substitute"
+            "widget"
         ],
         "skinnable": true
     },
@@ -9275,6 +9327,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datatable-core",
             "datatable-table",
+            "datatable-head",
+            "datatable-body",
             "base-build",
             "widget"
         ],
@@ -9395,18 +9449,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     },
     "datatype": {
         "use": [
-            "datatype-number",
             "datatype-date",
+            "datatype-number",
             "datatype-xml"
         ]
     },
     "datatype-date": {
-        "supersedes": [
-            "datatype-date-format"
-        ],
         "use": [
             "datatype-date-parse",
-            "datatype-date-format"
+            "datatype-date-format",
+            "datatype-date-math"
         ]
     },
     "datatype-date-format": {
@@ -9616,7 +9668,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-drag",
-            "substitute",
             "event-mouseenter",
             "event-move",
             "event-key",
@@ -9792,7 +9843,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-touch",
             "event-move",
             "event-flick",
-            "event-valuechange"
+            "event-valuechange",
+            "event-tap"
         ]
     },
     "event-base": {
@@ -9913,6 +9965,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom-complex"
         ]
     },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch",
+            "event-synthetic"
+        ]
+    },
     "event-touch": {
         "requires": [
             "node-base"
@@ -9955,7 +10015,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "base",
             "node",
             "selector-css3",
-            "substitute",
             "yui-throttle"
         ]
     },
@@ -10392,6 +10451,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base"
         ]
     },
+    "node-scroll-info": {
+        "requires": [
+            "base-build",
+            "dom-screen",
+            "event-resize",
+            "node-pluginhost",
+            "plugin"
+        ]
+    },
     "node-style": {
         "requires": [
             "dom-style",
@@ -10436,13 +10504,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "pjax": {
         "requires": [
             "pjax-base",
-            "io-base"
+            "pjax-content"
         ]
     },
     "pjax-base": {
         "requires": [
             "classnamemanager",
             "node-event-delegate",
+            "router"
+        ]
+    },
+    "pjax-content": {
+        "requires": [
+            "io-base",
+            "node-base",
             "router"
         ]
     },
@@ -10563,7 +10638,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "base",
             "widget",
-            "substitute",
             "event",
             "oop",
             "dd-drag",
@@ -10698,7 +10772,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget",
             "dd-constrain",
-            "substitute",
             "event-key"
         ],
         "skinnable": true
@@ -10774,10 +10847,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "event-simulate",
             "event-custom",
-            "substitute",
             "json-stringify"
-        ],
-        "skinnable": true
+        ]
     },
     "test-console": {
         "requires": [
@@ -11039,11 +11110,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5a681478005a2bdc375c61ddfa610d1e';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
-
-
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3']});
-
+}, '@VERSION@', {"requires": ["loader-base"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});

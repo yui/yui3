@@ -1,0 +1,15 @@
+{
+    "name": "sortable",
+    "builds": {
+        "sortable-scroll": {
+            "jsfiles": [
+                "sortable-scroll.js"
+            ]
+        },
+        "sortable": {
+            "jsfiles": [
+                "sortable.js"
+            ]
+        }
+    }
+}

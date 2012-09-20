@@ -1,18 +1,10 @@
-all: aliases build docmods simple
-
-simple:
-	cd ../simpleyui && make
+all: build docmods
 
 build:
-	ant all -q -Djshint.skip=true
-
-alias: aliases
-
-aliases:
-	./scripts/build.js
+	shifter --lint defaults
 
 docmods:
 	./scripts/build_doc_modules.js
 
 npm:
-	ant -f npm.xml
+	shifter --config build-npm.json

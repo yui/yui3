@@ -16,7 +16,7 @@ CanvasShape = function(cfg)
     CanvasShape.superclass.constructor.apply(this, arguments);
 };
 
-CanvasShape.NAME = "canvasShape";
+CanvasShape.NAME = "shape";
 
 Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
     /**
@@ -40,7 +40,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	initializer: function(cfg)
 	{
 		var host = this,
-            graphic = cfg.graphic;
+            graphic = cfg.graphic,
+            data = this.get("data");
         host._initProps();
 		host.createNode(); 
 		host._xcoords = [0];
@@ -48,6 +49,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         if(graphic)
         {
             this._setGraphic(graphic);
+        }
+        if(data)
+        {
+            host._parsePathData(data);
         }
 		host._updateHandler();
 	},
@@ -181,6 +186,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	_getDefaultFill: function() {
 		return {
 			type: "solid",
+			opacity: 1,
 			cx: 0.5,
 			cy: 0.5,
 			fx: 0.5,
@@ -251,19 +257,22 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	createNode: function()
 	{
-		var node = Y.config.doc.createElement('canvas'),
-			id = this.get("id");
-		this._context = node.getContext('2d');
+		var host = this,
+            node = Y.config.doc.createElement('canvas'),
+			id = host.get("id"),
+            concat = host._camelCaseConcat,
+            name = host.name;
+		host._context = node.getContext('2d');
 		node.setAttribute("overflow", "visible");
         node.style.overflow = "visible";
-        if(!this.get("visible"))
+        if(!host.get("visible"))
         {
             node.style.visibility = "hidden";
         }
 		node.setAttribute("id", id);
 		id = "#" + id;
-		this.node = node;
-		this.addClass(_getClassName(SHAPE) + " " + _getClassName(this.name)); 
+	    host.node = node;
+		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name))); 
 	},
 	
 	/**
@@ -564,12 +573,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			transform,
 			transformOrigin = this.get("transformOrigin"),
             matrix = this.matrix,
-            i = 0,
+            i,
             len = this._transforms.length;
         
         if(this._transforms && this._transforms.length > 0)
         {
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -582,16 +591,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         
         this._graphic.addToRedrawQueue(this);    
 		transformOrigin = (100 * transformOrigin[0]) + "% " + (100 * transformOrigin[1]) + "%";
-		node.style.MozTransformOrigin = transformOrigin; 
-		node.style.webkitTransformOrigin = transformOrigin;
-		node.style.msTransformOrigin = transformOrigin;
-		node.style.OTransformOrigin = transformOrigin;
+        Y_DOM.setStyle(node, "transformOrigin", transformOrigin);
         if(transform)
 		{
-            node.style.MozTransform = transform;
-            node.style.webkitTransform = transform;
-            node.style.msTransform = transform;
-            node.style.OTransform = transform;
+            Y_DOM.setStyle(node, "transform", transform);
 		}
         this._transforms = [];
 	},
@@ -641,7 +644,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			context = this._context,
 			methods = [],
 			cachedMethods = this._methods.concat(),
-			i = 0,
+			i,
 			j,
 			method,
 			args,
@@ -655,11 +658,11 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			{
 				return;
 			}
-			for(; i < len; ++i)
+			for(i = 0; i < len; ++i)
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
-                argsLen = args[0] == "quadraticCurveTo" ? args.length : 3;
+                argsLen = (args[0] == "quadraticCurveTo" || args[0] == "bezierCurveTo") ? args.length : 3;
 				for(j = 1; j < argsLen; ++j)
 				{
 					if(j % 2 === 0)
@@ -685,9 +688,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 					{
                         if(method == "closePath")
                         {
+                            context.closePath();
                             this._strokeAndFill(context);
                         }
-						if(method && method == "lineTo" && this._dashstyle)
+						else if(method && method == "lineTo" && this._dashstyle)
 						{
 							args.unshift(this._xcoords[i] - this._left, this._ycoords[i] - this._top);
 							this._drawDashedLine.apply(this, args);
@@ -823,23 +827,136 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 */
 	getBounds: function()
 	{
-		var stroke = this.get("stroke"),
+		var type = this._type,
 			w = this.get("width"),
 			h = this.get("height"),
 			x = this.get("x"),
-			y = this.get("y"),
-            wt = 0;
-		if(stroke && stroke.weight)
-		{
-			wt = stroke.weight;
-		}
-        w = (x + w + wt) - (x - wt); 
-        h = (y + h + wt) - (y - wt);
-        x -= wt;
-        y -= wt;
-		return this.matrix.getContentRect(w, h, x, y);
+			y = this.get("y");
+        if(type == "path")
+        {
+            x = x + this._left;
+            y = y + this._top;
+            w = this._right - this._left;
+            h = this._bottom - this._top;
+        }
+        return this._getContentRect(w, h, x, y);
 	},
 
+    /**
+     * Calculates the bounding box for the shape.
+     *
+     * @method _getContentRect
+     * @param {Number} w width of the shape
+     * @param {Number} h height of the shape
+     * @param {Number} x x-coordinate of the shape
+     * @param {Number} y y-coordinate of the shape
+     * @private
+     */
+    _getContentRect: function(w, h, x, y)
+    {
+        var transformOrigin = this.get("transformOrigin"),
+            transformX = transformOrigin[0] * w,
+            transformY = transformOrigin[1] * h,
+		    transforms = this.matrix.getTransformArray(this.get("transform")),
+            matrix = new Y.Matrix(),
+            i,
+            len = transforms.length,
+            transform,
+            key,
+            contentRect;
+        if(this._type == "path")
+        {
+            transformX = transformX + x;
+            transformY = transformY + y;
+        }
+        transformX = !isNaN(transformX) ? transformX : 0;
+        transformY = !isNaN(transformY) ? transformY : 0;
+        matrix.translate(transformX, transformY);
+        for(i = 0; i < len; i = i + 1)
+        {
+            transform = transforms[i];
+            key = transform.shift();
+            if(key)
+            {
+                matrix[key].apply(matrix, transform); 
+            }
+        }
+        matrix.translate(-transformX, -transformY);
+        contentRect = matrix.getContentRect(w, h, x, y);
+        return contentRect;
+    },
+
+    /**
+     * Places the shape above all other shapes.
+     *
+     * @method toFront
+     */
+    toFront: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toFront(this);
+        }
+    },
+
+    /**
+     * Places the shape underneath all other shapes.
+     *
+     * @method toFront
+     */
+    toBack: function()
+    {
+        var graphic = this.get("graphic");
+        if(graphic)
+        {
+            graphic._toBack(this);
+        }
+    },
+
+    /**
+     * Parses path data string and call mapped methods.
+     *
+     * @method _parsePathData
+     * @param {String} val The path data
+     * @private
+     */
+    _parsePathData: function(val)
+    {
+        var method,
+            methodSymbol,
+            args,
+            commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
+            i,
+            len, 
+            str,
+            symbolToMethod = this._pathSymbolToMethod;
+        if(commandArray)
+        {
+            this.clear();
+            len = commandArray.length || 0;
+            for(i = 0; i < len; i = i + 1)
+            {
+                str = commandArray[i];
+                methodSymbol = str.substr(0, 1);
+                args = str.substr(1).match(SPLITARGSPATTERN);
+                method = symbolToMethod[methodSymbol];
+                if(method)
+                {
+                    if(args)
+                    {
+                        this[method].apply(this, args);
+                    }
+                    else
+                    {
+                        this[method].apply(this);
+                    }
+                }
+            }
+            this.end();
+        }
+    },
+    
     /**
      * Destroys the shape instance.
      *
@@ -1159,6 +1276,25 @@ CanvasShape.ATTRS =  {
 	pointerEvents: {
 		value: "visiblePainted"
 	},
+
+    /**
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
+     *
+     * @config data
+     * @type String
+     */
+    data: {
+        setter: function(val)
+        {
+            if(this.get("node"))
+            {
+                this._parsePathData(val);
+            }
+            return val;
+        }
+    },
 
 	/**
 	 * Reference to the container Graphic.

@@ -327,7 +327,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['get','intl-base'],
+                core: ['intl-base'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
@@ -390,7 +390,7 @@ proto = {
                         path = {
                             filter: filter,
                             path: path
-                        }
+                        };
                     }
                     return path;
                 },
@@ -547,12 +547,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -1966,7 +1966,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function(Y) {
+YUI.add('yui-base', function (Y, NAME) {
 
 /*
  * YUI stub
@@ -2767,13 +2767,20 @@ use `clone()`.
 @return {Object} A new merged object.
 **/
 Y.merge = function () {
-    var args   = arguments,
-        i      = 0,
-        len    = args.length,
-        result = {};
+    var i      = 0,
+        len    = arguments.length,
+        result = {},
+        key,
+        obj;
 
     for (; i < len; ++i) {
-        Y.mix(result, args[i], true);
+        obj = arguments[i];
+
+        for (key in obj) {
+            if (hasOwn.call(obj, key)) {
+                result[key] = obj[key];
+            }
+        }
     }
 
     return result;
@@ -3792,7 +3799,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -3830,4 +3837,4 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@');

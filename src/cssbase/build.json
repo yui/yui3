@@ -1,0 +1,15 @@
+{
+    "name": "cssbase",
+    "builds": {
+        "cssbase": {
+            "cssfiles": [
+                "cssbase.css"
+            ]
+        },
+        "cssbase-context": {
+            "cssfiles": [
+                "cssbase-context.css"
+            ]
+        }
+    }
+}

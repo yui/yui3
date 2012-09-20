@@ -13,7 +13,7 @@ VMLPath = function()
 	VMLPath.superclass.constructor.apply(this, arguments);
 };
 
-VMLPath.NAME = "vmlPath";
+VMLPath.NAME = "path";
 Y.extend(VMLPath, Y.VMLShape);
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**

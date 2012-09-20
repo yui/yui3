@@ -1,4 +1,4 @@
-YUI.add('intl', function(Y) {
+YUI.add('intl', function (Y, NAME) {
 
 var _mods = {},
 
@@ -147,4 +147,4 @@ Y.augment(Y.Intl, Y.EventTarget);
 Y.Intl.publish("intl:langChange", {emitFacade:true});
 
 
-}, '@VERSION@' ,{requires:['event-custom', 'intl-base']});
+}, '@VERSION@', {"requires": ["intl-base", "event-custom"]});

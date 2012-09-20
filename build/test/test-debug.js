@@ -1,4 +1,4 @@
-YUI.add('test', function(Y) {
+YUI.add('test', function (Y, NAME) {
 
 
 
@@ -2726,8 +2726,7 @@ YUITest.AssertionError.prototype = {
         return this.name + ": " + this.getMessage();
     }
 
-};
-/**
+};/**
  * ComparisonFailure is subclass of Error that is thrown whenever
  * a comparison between two values fails. It provides mechanisms to retrieve
  * both the expected and actual value.
@@ -2830,7 +2829,6 @@ YUITest.CoverageFormat = {
 
 };
 
-
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
  * for a variety of cases.
@@ -2914,8 +2912,7 @@ YUITest.DateAssert = {
         }
     }
     
-};
-/**
+};/**
  * Creates a new mock object.
  * @namespace Test
  * @module test
@@ -3396,7 +3393,7 @@ YUITest.Results = function(name){
      * @property duration
      */
     this.duration = 0;
-}
+};
 
 /**
  * Includes results from another results object into this one.
@@ -3687,7 +3684,7 @@ if (!YUI.YUITest) {
                 break;
                 
             case this.COMPLETE_EVENT:
-                message = Y.substitute("Testing completed at " +
+                message = Y.Lang.sub("Testing completed at " +
                     (new Date()).toString() + ".\n" +
                     "Passed:{passed} Failed:{failed} " +
                     "Total:{total} ({ignored} ignored)",
@@ -3716,7 +3713,7 @@ if (!YUI.YUITest) {
                 break;
                 
             case this.TEST_SUITE_COMPLETE_EVENT:
-                message = Y.substitute("Test suite \"" +
+                message = Y.Lang.sub("Test suite \"" +
                     event.testSuite.name + "\" completed" + ".\n" +
                     "Passed:{passed} Failed:{failed} " +
                     "Total:{total} ({ignored} ignored)",
@@ -3730,7 +3727,7 @@ if (!YUI.YUITest) {
                 break;
                 
             case this.TEST_CASE_COMPLETE_EVENT:
-                message = Y.substitute("Test case \"" +
+                message = Y.Lang.sub("Test case \"" +
                     event.testCase.name + "\" completed.\n" +
                     "Passed:{passed} Failed:{failed} " +
                     "Total:{total} ({ignored} ignored)",
@@ -3745,7 +3742,7 @@ if (!YUI.YUITest) {
         if (Y.Test.Runner._log) {
             Y.log(message, messageType, "TestRunner");
         }
-    }
+    };
 
     var i, name;
 
@@ -3759,4 +3756,4 @@ if (!YUI.YUITest) {
 } //End if for YUI.YUITest
 
 
-}, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
+}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "json-stringify"]});

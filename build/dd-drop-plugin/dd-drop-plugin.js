@@ -1,4 +1,4 @@
-YUI.add('dd-drop-plugin', function(Y) {
+YUI.add('dd-drop-plugin', function (Y, NAME) {
 
 
        /**
@@ -41,4 +41,4 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-drop"]});

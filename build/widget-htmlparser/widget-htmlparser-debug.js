@@ -1,4 +1,4 @@
-YUI.add('widget-htmlparser', function(Y) {
+YUI.add('widget-htmlparser', function (Y, NAME) {
 
 /**
  * Adds HTML Parser support to the base Widget class
@@ -174,4 +174,4 @@ Y.mix(Widget.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget-base']});
+}, '@VERSION@', {"requires": ["widget-base"]});

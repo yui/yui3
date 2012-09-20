@@ -43,7 +43,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      */
     bindUI: function()
     {
-        this.get("chart").after("seriesCollectionChange", this._updateHandler);
+        this.get("chart").after("seriesCollectionChange", Y.bind(this._updateHandler, this));
         this.after("stylesChange", this._updateHandler);
         this.after("positionChange", this._positionChangeHandler);
         this.after("widthChange", this._handleSizeChange);
@@ -83,7 +83,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * Handles position changes.
      *
      * @method _positionChangeHandler
-     * @parma {Object} e Event object
+     * @param {Object} e Event object
      * @private
      */
     _positionChangeHandler: function(e)

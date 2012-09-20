@@ -1,4 +1,4 @@
-YUI.add('datasource-jsonschema', function(Y) {
+YUI.add('datasource-jsonschema', function (Y, NAME) {
 
 /**
  * Extends DataSource with schema-parsing on JSON data.
@@ -100,4 +100,4 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-json']});
+}, '@VERSION@', {"requires": ["datasource-local", "plugin", "dataschema-json"]});
