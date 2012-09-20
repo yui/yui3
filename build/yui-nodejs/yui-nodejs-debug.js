@@ -7063,6 +7063,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             //Filter out the opposite type and reset the array so the checks later work
             modules[((type === JS) ? CSS : JS)] = [];
         }
+        if (!self.fetchCSS) {
+            modules.css = [];
+        }
         if (modules.js.length) {
             comp++;
         }
