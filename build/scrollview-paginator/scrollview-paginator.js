@@ -546,7 +546,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing;
 
         // Set the index ATTR to the specified index value
-        paginator.set(INDEX, index);
+        paginator.set(INDEX, index, { src: UI });
 
         // Makes sure the viewport nodes are visible
         paginator._showNodes(pageNode);
