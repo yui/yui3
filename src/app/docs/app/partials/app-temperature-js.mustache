@@ -1,0 +1,151 @@
+YUI().use('model', 'view', function (Y) {
+    var TemperatureModel,
+        TemperatureView,
+        myTemperatureModel,
+        myTemperatureView;
+
+    TemperatureModel = Y.Base.create('temperatureModel', Y.Model, [], {
+        // A method to check the validity of the value in the model.
+        check: function (value) {
+            var isOK = false;
+
+            if (Y.Lang.isNumber(value)) {
+                isOK = true;
+            } else {
+                isOK = false;
+            }
+
+            return isOK;
+        },
+
+        // We need to round the value to avoid an infinite loop when 
+        // the value of the attribute changes.
+        round: function (value) {
+            return Math.round(value * 1000) / 1000;
+        }
+    }, {
+        // The attributes of the model with the default value and
+        // the validation method, called when the attribute is modified.
+        ATTRS: {
+            fahrenheit: {
+                value: 0,
+                validator: function (value, what) {
+                    return this.check(value, what);
+                }
+            },
+            celsius: {
+                value: 0,
+                validator: function (value, what) {
+                    return this.check(value, what);
+                }
+            },
+            kelvin: {
+                value: 0,
+                validator: function (value, what) {
+                    return this.check(value, what);
+                }
+            }
+        }
+    });
+
+    TemperatureView = Y.Base.create('temperatureView', Y.View, [], {
+        // The references of the DOM objects
+        fahrenheitNode: Y.one("#fahrenheit"),
+        celsiusNode: Y.one("#celsius"),
+        kelvinNode: Y.one("#kelvin"),
+
+        // This is where we attach DOM events for the view. The `events` object
+        // is a mapping of selectors to an object containing one or more events
+        // to attach to the node(s) matching each selector.
+        events: {
+            '#fahrenheit': { keydown: 'convertFahrenheit' },
+            '#celsius': { keydown: 'convertCelsius' },
+            '#kelvin': { keydown: 'convertKelvin' }
+        },
+
+        // The initializer runs when a TodoAppView instance is created, and
+        // gives us an opportunity to set up the view.
+        initializer: function () {
+            var model = this.get('model');
+
+            // Update the attributes of the model when a temperature is changed,
+            // calculating the conversion.
+            model.after('fahrenheitChange', function (e) {
+                var value = e.newVal;
+                this.set('celsius', this.round((value - 32) * 5 / 9));
+                this.set('kelvin', this.round((value + 459.67) * 5 / 9));
+            });
+            model.after('celsiusChange', function (e) {
+                var value = e.newVal;
+                this.set('fahrenheit', this.round((value * 9 / 5) + 32));
+                this.set('kelvin', this.round(value + 273.15));
+            });
+            model.after('kelvinChange', function (e) {
+                var value = e.newVal;
+                this.set('fahrenheit', this.round((value * 9 / 5) - 459.67));
+                this.set('celsius', this.round(value - 273.15));
+            });
+
+            // Update the display when a temperature is changed, calculating
+            // the conversion.
+            model.after("change", this.render, this);
+
+            // Clear the fields.
+            this.fahrenheitNode.set("value", "");
+            this.celsiusNode.set("value", "");
+            this.kelvinNode.set("value", "");
+        },
+
+        // The render function is called whenever a temperature item is changed,
+        // thanks to the list event handler we attached in the initializer
+        // above.
+        render: function () {
+            var model = this.get('model');
+
+            this.fahrenheitNode.set("value", model.get('fahrenheit'));
+            this.celsiusNode.set("value", model.get('celsius'));
+            this.kelvinNode.set("value", model.get('kelvin'));
+        },
+
+        // The common method of the event handlers.
+        convert: function (e, node) {
+            var what, value;
+
+            // If the enter or tab key is pressed, the content of the field is
+            // parsed and the attribute of the model is set.
+            if (e.keyCode === 13 || e.keyCode === 9) {
+                what = node.get('id');
+                value = Y.Lang.trim(node.get('value'));
+
+                if (!value) {
+                    return;
+                }
+
+                this.get('model').set(what, parseFloat(value));
+            }
+        },
+
+        // Event handlers for the event 'keydown'.
+        convertFahrenheit: function (e) {
+            this.convert(e, this.fahrenheitNode);
+        },
+
+        convertCelsius: function (e) {
+            this.convert(e, this.celsiusNode);
+        },
+
+        convertKelvin: function (e) {
+            this.convert(e, this.kelvinNode);
+        }
+    });
+
+    myTemperatureModel = new TemperatureModel();
+    myTemperatureView = new TemperatureView({
+        container: Y.one("#temperatureView"),
+        model: myTemperatureModel
+    });
+
+    // Events are attached lazily.
+    // They will be attached on the first call to getting the container node.
+    myTemperatureView.get('container');
+});
