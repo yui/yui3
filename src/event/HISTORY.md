@@ -1,6 +1,12 @@
 Event Infrastructure Change History
 ===================================
 
+3.8.0
+-----
+
+* Changed onbeforeactivate feature test to account for Win 8 packaged Apps, which
+  don't allow inline JS code in innerHTML.
+
 3.7.0
 -----
 
