@@ -7,16 +7,41 @@ YUI.add('event-focus', function (Y, NAME) {
  * @submodule event-focus
  */
 var Event    = Y.Event,
+
     YLang    = Y.Lang,
+
     isString = YLang.isString,
+
     arrayIndex = Y.Array.indexOf,
-    useActivate = YLang.isFunction(
-        Y.DOM.create('<p onbeforeactivate=";"/>').onbeforeactivate);
+
+    useActivate = (function() {
+
+        // Changing the structure of this test, so that it doesn't use inline JS in HTML,
+        // which throws an exception in Win8 packaged apps, due to additional security restrictions:
+        // http://msdn.microsoft.com/en-us/library/windows/apps/hh465380.aspx#differences
+
+        var p = document.createElement("p"),
+            listener;
+
+        p.setAttribute("onbeforeactivate", ";");
+        listener = p.onbeforeactivate;
+
+        // listener is a function in IE8+.
+        // listener is a string in IE6,7.
+        // listener is a function in IE10, in a Win8 App environment (no exception running the test).
+
+        // listener is undefined in Webkit/Gecko.
+        // listener is a function in Webkit/Gecko if it's a supported event (e.g. onclick).
+
+        return (listener !== undefined);
+    }());
 
 function define(type, proxy, directEvent) {
     var nodeDataKey = '_' + type + 'Notifiers';
 
     Y.Event.define(type, {
+
+        _useActivate : useActivate,
 
         _attach: function (el, notifier, delegate) {
             if (Y.DOM.isWindow(el)) {
