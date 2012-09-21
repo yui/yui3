@@ -1,31 +1,6 @@
 YUI Core Change History
 =======================
 
-3.8.0
------
-
-* Fixed Get issues, highlighted by IE10. 
-
-  1) IE10 seems to interrupt JS execution, in the case of a 304'ing script to invoke
-  the onLoad handler. If this happened inside the transaction execute loop, the transaction
-  would terminate early (call onSuccess before all scripts were done), because the _waiting
-  count would only reflect the number of scripts added to the DOM, when the loop was
-  interrupted. Changed the logic so that we only finish a transaction when the expected 
-  number of requests are accounted for.
-
-  2) transaction._finish() would move on to the next transaction, before the current 
-  transaction's onSuccess/Finish/End listeners were invoked, since the logic to move to 
-  the next transaction was invoked before the `on` listeners were invoked. This meant that
-  for all browsers, when issuing a CSS transaction followed by a JS transaction, the CSS
-  success callback wouldn't be invoked until the JS transaction was initiated.
-
-  ---
-
-  Get should work OK with IE10 now aside from one pending issue. If you issue 2 Get 
-  requests to the same 404ing script, IE10 doesn't call the success handler for the 
-  subsequent valid (200 etc.) request. This seems to be an IE10 issue but needs 
-  investigation, ideally a standalone test case to share with MS.
-
 3.7.0
 -----
 
