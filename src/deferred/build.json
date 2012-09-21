@@ -8,7 +8,7 @@
             }
         },
         "deferred-extras": {
-            "jsfiles": [ "extras.js", "when.js" ],
+            "jsfiles": [ "extras.js", "batch.js" ],
             "config": {
                 "requires": [ "deferred" ]
             }

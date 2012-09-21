@@ -11,7 +11,8 @@ Adds additional functionality to Y.Deferred and Y.Promise.
 @for Deferred
 **/
 
-var slice = [].slice;
+var slice = [].slice,
+    isFunction = Y.Lang.isFunction;
 
 Y.mix(Y.Deferred.prototype, {
     /**

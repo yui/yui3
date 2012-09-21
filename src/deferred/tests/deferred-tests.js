@@ -568,12 +568,9 @@ YUI.add('deferred-tests', function (Y) {
 
         "should call 'reject' subscribers": function () {
             var test = this,
-                sub1, sub2, nextSub;
+                sub1, nextSub;
 
             this.deferred
-                .then(null, function () {
-                    sub1 = true;
-                })
                 .then(null, function () {
                     nextSub = true;
 
@@ -581,14 +578,13 @@ YUI.add('deferred-tests', function (Y) {
                     setTimeout(function () {
                         test.resume(function () {
                             Y.Assert.isTrue(sub1);
-                            Y.Assert.isTrue(sub2);
                             Y.Assert.isTrue(nextSub);
                         });
                     }, 300);
                 });
 
             this.deferred.then(null, function () {
-                sub2 = true;
+                sub1 = true;
             });
 
             this.deferred.reject();
@@ -611,6 +607,67 @@ YUI.add('deferred-tests', function (Y) {
             });
 
             this.deferred.reject(1, true, "done");
+
+            this.wait();
+        },
+ 
+        "test continuation from errback": function () {
+            var test = this,
+                subA, subB, subC;
+
+            // not returning a failed promise in an errback should result in
+            // then()'s wrapping promise resolving to next callback, not
+            // errback
+            function finish() {
+                test.resume(function () {
+                    Y.Assert.isTrue(subA);
+                    Y.Assert.isTrue(subB);
+                    Y.Assert.isUndefined(subC);
+                });
+            }
+
+            this.deferred.then(null, function () {
+                    subA = true;
+                })
+                .then(function () { // callback
+                    subB = true; // Working
+                }, function () {
+                    subC = true; // OOPS! Shouldn't go here.
+                })
+                .then(finish, finish);
+
+            this.deferred.reject();
+
+            this.wait();
+        },
+
+        "returning failed promise from errback should reject to next errback": function () {
+            var test = this,
+                subA, subB, subC;
+
+            // Returning a failed promise in an errback should result in
+            // then()'s wrapping promise rejecting to next errback, not
+            // callback
+            function finish() {
+                test.resume(function () {
+                    Y.Assert.isTrue(subA);
+                    Y.Assert.isTrue(subC);
+                    Y.Assert.isUndefined(subB);
+                });
+            }
+
+            this.deferred.then(null, function () {
+                    subA = true;
+                    return new Y.Deferred().reject().promise();
+                })
+                .then(function () { // callback
+                    subB = true; // OOPS! Shouldn't go here.
+                }, function () {
+                    subC = true; // Working
+                })
+                .then(finish, finish);
+
+            this.deferred.reject();
 
             this.wait();
         },
@@ -742,6 +799,148 @@ YUI.add('deferred-tests', function (Y) {
             Y.Assert.isTrue(calledFoo);
             Y.Assert.isTrue(calledBar);
             Y.Assert.isTrue(calledBar);
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: "Y.defer",
+
+        "Y.defer should pass a Deferred to the input callback": function () {
+            var test = this;
+
+            Y.defer(function (deferred) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Y.Assert.isInstanceOf(Y.Deferred, deferred);
+                        deferred.resolve();
+                    });
+                }, 0);
+            });
+
+            this.wait();
+        },
+
+        "Y.defer should return a promise": function () {
+            var test = this,
+                promise;
+
+            promise = Y.defer(function (deferred) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Y.Assert.isInstanceOf(Y.Promise, promise);
+                        deferred.resolve();
+                    });
+                }, 0);
+            });
+
+            this.wait();
+        },
+
+        "callback passed to Y.defer should be executed asynchronously": function () {
+            var test = this,
+                sub;
+
+            Y.defer(function (deferred) {
+                sub = true;
+                test.resume(function () {
+                    Y.Assert.isTrue(sub);
+                    deferred.resolve();
+                });
+            });
+
+            Y.Assert.isUndefined(sub);
+
+            this.wait();
+        },
+
+        "passing a non-function to Y.defer will result in a new Deferred resolving with that value": function () {
+            var test = this;
+
+            Y.defer(12345)
+             .then(function (val) {
+                test.resume(function () {
+                    Y.Assert.areSame(12345, val);
+                });
+            });
+
+            this.wait();
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: "Y.when",
+
+        "Y.when(promise, callback, errback) should equate to promise.then(callback, errback)": function () {
+            var test = this,
+                promise;
+
+            promise = Y.defer(function (deferred) {
+                setTimeout(function () {
+                    deferred.resolve(12345);
+                }, 100);
+            });
+
+            function callback(val) {
+                test.resume(function () {
+                    Y.Assert.areSame(12345, val);
+                });
+            }
+
+            Y.when(promise, callback, Y.Assert.fail);
+
+            this.wait();
+        },
+
+        "Y.when(value, callback, errback) should wrap the value in a Deferred that will resolve with that value": function () {
+            var test = this;
+
+            Y.when(12345, function (val) {
+                test.resume(function () {
+                    Y.Assert.areSame(12345, val);
+                })
+            }, Y.Assert.fail);
+
+            this.wait();
+        },
+
+        "Y.when should return a promise": function () {
+            var test = this,
+                promiseA, promiseB;
+
+            promiseA = Y.defer(function (deferred) {
+                setTimeout(function () {
+                    deferred.resolve(12345);
+                }, 100);
+            });
+
+            function callback(val) {
+                test.resume(function () {
+                    Y.Assert.areSame(12345, val);
+                    Y.Assert.areNotSame(promiseA, promiseB);
+                });
+            }
+
+            promiseB = Y.when(promiseA, callback, Y.Assert.fail);
+
+            this.wait();
+        },
+
+        "Not passing either callback or errback should return same promise": function () {
+            var test = this,
+                promiseA, promiseB;
+
+            promiseA = Y.defer(function (deferred) {
+                setTimeout(function () {
+                    test.resume(function () {
+                        Y.Assert.areSame(promiseA, promiseB);
+                        deferred.resolve();
+                    });
+                }, 100);
+            });
+
+            promiseB = Y.when(promiseA);
+
+            this.wait();
         }
     }));
 

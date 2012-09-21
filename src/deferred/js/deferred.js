@@ -25,8 +25,9 @@ asynchronous or synchronous operations. E.g.
 @since 3.7.0
 **/
 var slice   = [].slice,
-    isArray = Y.Lang.isArray;
-    
+    isArray = Y.Lang.isArray,
+    isFunction = Y.Lang.isFunction;
+
 /**
 Represents an operation that may be synchronous or asynchronous.  Provides a
 standard API for subscribing to the moment that the operation completes either
@@ -123,13 +124,24 @@ Y.mix(Deferred.prototype, {
                 of either "resolve" or "reject" callback
     **/
     then: function (callback, errback) {
+        // When the current promise is resolved or rejected, either the
+        // callback or errback will be executed via the function pushed onto
+        // this._subs.resolve or this._sub.reject.  However, to allow then()
+        // chaining, the execution of either function needs to be represented
+        // by a Deferred (the same Deferred can represent both flow paths), and
+        // its promise returned.
         var then    = new Y.Deferred(),
             promise = this.promise(),
             resolveSubs = this._subs.resolve || [],
             rejectSubs  = this._subs.reject  || [];
 
-        function wrap(fn, method) {
+        // Because the callback and errback are represented by a Deferred, it
+        // must be resolved or rejected to propagate through the then() chain.
+        // The same logic applies to resolve() and reject() for fulfillment.
+        function wrap(fn) {
             return function () {
+                // The args coming in to the callback/errback from the
+                // resolution of the parent promise.
                 var args = slice.call(arguments);
 
                 // Wrapping all callbacks in setTimeout to guarantee
@@ -139,21 +151,60 @@ Y.mix(Deferred.prototype, {
                 // As of today, Y.soon is only available in the gallery as
                 // gallery-soon, but maybe it could get promoted to core?
                 (Y.soon || setTimeout)(function () {
+                    // Call the callback/errback with promise as `this` to
+                    // preserve the contract that access to the deferred is
+                    // only for code that may resolve/reject it.
+                    // Another option would be call the function from the
+                    // global context, but it seemed less useful.
                     var result = fn.apply(promise, args),
                         resultPromise;
 
+                    // If the callback returned a promise (or deferred), only
+                    // resolve the deferred if the returned promise is resolved
+                    // or rejected. Otherwise, wait for it.
                     if (result && typeof result.promise === 'function') {
                         resultPromise = result.promise();
+                        result        = resultPromise.getResult();
 
-                        if (resultPromise.getStatus() !== 'in progress') {
-                            then[method].apply(then, resultPromise.getResult());
-                        } else {
-                            result.promise().then(
-                                Y.bind(then.resolve, then), // callback
-                                Y.bind(then.reject, then)); // errback
+                        switch (resultPromise.getStatus()) {
+                            // Proceed twiddling thumbs until the promise is
+                            // fulfilled.
+                            case 'in progress':
+                                resultPromise.then(
+                                    Y.bind(then.resolve, then), // callback
+                                    Y.bind(then.reject, then)); // errback
+                                break;
+                            case 'resolved':
+                                // The promise returned from the callback/errback
+                                // is fulfilled, so the deferred wrapping the
+                                // callback can be resolved. For errbacks
+                                // returning a promise, this signals that the
+                                // parent promise's rejection was repaired, so
+                                // rejected.then(..., errback).then(A, B) will
+                                // continue on to A if errback's promise is
+                                // resolved.
+                                then.resolve.apply(then, result);
+                                break;
+                            case 'rejected':
+                                // For callbacks, promise rejection indicates
+                                // something went wrong, so the subsequent
+                                // errback (if applicable) should be executed.
+                                // For errbacks, promise rejection indicates
+                                // either something went wrong while trying to
+                                // recover from the parent promise's rejection,
+                                // or the errback didn't attempt to recover
+                                // from the rejection, so it is appropriate to
+                                // continue to the subsequent deferred's
+                                // errback.
+                                then.reject.apply(then, result);
+                                break;
                         }
                     } else {
-                        then[method].apply(then,
+                        // Non-promise return values always trigger resolve()
+                        // because callback is affirmative, and errback is
+                        // recovery.  To continue on the rejection path, errbacks
+                        // must return rejected promises.
+                        then.resolve.apply(then,
                             (isArray(result) ? result : [result]));
                     }
                 }, 0);
@@ -222,3 +273,59 @@ Y.mix(Deferred.prototype, {
 }, true);
 
 Y.Deferred = Deferred;
+
+/**
+Factory method to create a Deferred that will be resolved or rejected by a
+provided _executor_ callback.  The callback is executed asynchronously.
+
+The associated promise is returned.
+
+@for YUI
+@method defer
+@param {Function} executor The function responsible for resolving or rejecting
+                        the Deferred.
+@return {Promise}
+**/
+Y.defer = function (executor) {
+    var deferred = new Y.Deferred();
+
+    (Y.soon || setTimeout)(function () {
+        if (isFunction(executor)) {
+            executor(deferred);
+        } else {
+            deferred.resolve(executor);
+        }
+    }, 0);
+
+    return deferred.promise();
+};
+
+/**
+Abstraction API allowing you to interact with promises or raw values as if they
+were promises. If a non-promise object is passed in, a new Deferred is created
+and scheduled to resolve asynchronously with the provided value.
+
+In either case, a promise is returned.  If either _callback_ or _errback_ are
+provided, the promise returned is the one returned from calling
+`promise.then(callback, errback)` on the provided or created promise.  If neither
+are provided, the original promise is returned.
+
+@method when
+@param {Any} promise Promise object or value to wrap in a resolved promise
+@param {Function} [callback] callback to execute if the promise is resolved
+@param {Function} [errback] callback to execute if the promise is rejected
+@return {Promise}
+**/
+Y.when = function (promise, callback, errback) {
+    var value;
+
+    if (!isFunction(promise.then)) {
+        value = promise;
+
+        promise = Y.defer(function (deferred) {
+            deferred.resolve(value);
+        });
+    }
+
+    return (callback || errback) ? promise.then(callback, errback) : promise;
+};

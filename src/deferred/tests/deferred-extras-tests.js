@@ -306,25 +306,25 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name: "Y.when",
+    name: "Y.batch",
 
-    "Y.when() should return a promise": function () {
-        Y.Assert.isInstanceOf(Y.Promise, Y.when(function () {}));
+    "Y.batch() should return a promise": function () {
+        Y.Assert.isInstanceOf(Y.Promise, Y.batch(function () {}));
     },
 
     "callbacks should be passed a Y.Deferred for them to resolve": function () {
-        Y.when(function (deferred) {
+        Y.batch(function (deferred) {
             Y.Assert.isInstanceOf(Y.Deferred, deferred);
 
             deferred.resolve();
         });
     },
 
-    "Y.when(fnA, fnB)'s promise should resolve after fnA and fnB deferreds have resolved": function () {
+    "Y.batch(fnA, fnB)'s promise should resolve after fnA and fnB deferreds have resolved": function () {
         var test = this,
             fnAResolved, fnBResolved;
 
-        Y.when(
+        Y.batch(
             function (deferredA) {
                 setTimeout(function () {
                     fnAResolved = true;
@@ -347,13 +347,13 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
-    "Y.when(promiseA)'s deferred should resolve after promiseA resolves": function () {
+    "Y.batch(promiseA)'s deferred should resolve after promiseA resolves": function () {
         var test = this,
             deferred = new Y.Deferred(),
             promise  = deferred.promise(),
             start = +(new Date());
 
-        Y.when(promise).then(function () {
+        Y.batch(promise).then(function () {
             var now = +(new Date());
 
             test.resume(function () {
@@ -368,7 +368,7 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
-    "Y.when(promiseA, promiseB)'s deferred should resolve after A and B resolve": function () {
+    "Y.batch(promiseA, promiseB)'s deferred should resolve after A and B resolve": function () {
         var test = this,
             deferredA = new Y.Deferred(),
             promiseA  = deferredA.promise(),
@@ -377,7 +377,7 @@ suite.add(new Y.Test.Case({
             start = +(new Date()),
             aResolved, bResolved;
 
-        Y.when(promiseA, promiseB).then(function () {
+        Y.batch(promiseA, promiseB).then(function () {
             var now = +(new Date());
 
             test.resume(function () {
@@ -400,12 +400,12 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
-    "rejecting a callback's deferred should reject the when()'s deferred": function () {
+    "rejecting a callback's deferred should reject the batch()'s deferred": function () {
         var test = this,
             start = +(new Date()),
             called;
 
-        Y.when(
+        Y.batch(
             function (deferredA) {
                 setTimeout(function () {
 
@@ -444,12 +444,12 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
-    "rejecting promiseA's deferred from Y.when(promiseA) should reject the when()'s deferred": function () {
+    "rejecting promiseA's deferred from Y.batch(promiseA) should reject the batch()'s deferred": function () {
         var test = this,
             deferred = new Y.Deferred(),
             promise  = deferred.promise();
 
-        Y.when(promise).then(
+        Y.batch(promise).then(
             // callback == boom
             function () {
                 test.resume(function () {
@@ -479,7 +479,7 @@ suite.add(new Y.Test.Case({
             }, 300);
         }
 
-        Y.when(fnA, fnB)
+        Y.batch(fnA, fnB)
             .then(function (aResults, bResults) {
                 test.resume(function () {
                     Y.Assert.areSame("A", aResults);
@@ -490,10 +490,10 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
-    "Y.when(fnA, nonPromiseValue) should resolve when fnA resolves": function () {
+    "Y.batch(fnA, nonPromiseValue) should resolve batch fnA resolves": function () {
         var test = this;
 
-        Y.when(
+        Y.batch(
             function (deferred) {
                 setTimeout(function () {
                     deferred.resolve("A");
@@ -510,11 +510,23 @@ suite.add(new Y.Test.Case({
         this.wait();
     },
 
-    "Y.when(value, value) should resolve immediately": function () {
-        var promise = Y.when("A", "B", "C");
+    "Y.batch(value, value) should resolve immediately": function () {
+        var test = this,
+            promise = Y.batch("A", "B", "C");
 
-        Y.Assert.isTrue(promise.isResolved());
-        Y.ArrayAssert.itemsAreSame(["A", "B", "C"], promise.getResult());
+        Y.Assert.isFalse(promise.isResolved());
+
+        promise.then(function () {
+            var args = Y.Array(arguments, 0, true);
+
+            test.resume(function () {
+                Y.ArrayAssert.itemsAreSame(["A", "B", "C"], args);
+            });
+        });
+
+        Y.Assert.isFalse(promise.isResolved());
+
+        this.wait();
     }
 }));
 
