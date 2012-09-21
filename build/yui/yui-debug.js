@@ -4370,7 +4370,7 @@ Y.Get = Get = {
 
             // IE10 doesn't return true for the MDN feature test, so setting it explicitly,
             // because it is async by default, and allows you to disable async by setting it to false
-            async: (doc && doc.createElement('script').async === true) || (ue.ie >= 10),
+            async: (doc && doc.createElement('script').async === true) || (ua.ie >= 10),
 
             // True if this browser fires an event when a dynamically injected
             // link node fails to load. This is currently true for Firefox 9+
@@ -11119,7 +11119,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
+YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
