@@ -39,9 +39,9 @@
             "name"       : "app-temperature",
             "displayName": "Temperature Converter",
             "description": "A basic temperature converter between Celsius, Fahrenheit and Kelvin.",
-            "modules"    : ["model", "view"],
+            "modules"    : ["model", "view", "event-valuechange"],
             "tags"       : [
-                "model", "view"
+                "model", "view", "event-valuechange"
             ]
         }
     ]
