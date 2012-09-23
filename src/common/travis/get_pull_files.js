@@ -8,6 +8,10 @@ var spawn = require('child_process').spawn;
 var base = path.join(__dirname, '../../');
 var mods = {};
 
+if (!ID) {
+    process.exit(0);
+}
+
 https.get({
     hostname: 'api.github.com',
     path: '/repos/yui/yui3/pulls/' + ID + '/files'
