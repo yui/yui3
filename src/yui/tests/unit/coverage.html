@@ -120,7 +120,18 @@ YUI({
 
     //This is a YUITest hack to rename this test for reporting
     Y.Test.Runner.setName('YUI: Coverage');
-    Y.Test.Runner.run();
+    var timer,
+        check = function() {
+            var f = document.getElementById('xframe');
+            if (f && f.contentWindow && f.contentWindow._xframeLoaded) {
+                clearInterval(timer);
+                Y.Test.Runner.run();
+                return true;
+            }
+            return false;
+        };
+
+    timer = setInterval(check, 100);
 });
 
 </script>

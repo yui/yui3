@@ -215,8 +215,9 @@ YUI.add('core-tests', function(Y) {
                     return 'foo';
                 }
             },
-
             p = Y.merge(o);
+            console.log(o.valueOf());
+            console.log(p.valueOf());
             Y.Assert.areEqual('foo', p.valueOf());
         },
         test_guid: function() {
