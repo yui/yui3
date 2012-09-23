@@ -28,13 +28,18 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             var value = e.newVal,
                 fahrenheitToKelvin = (value + 459.67) * 5 / 9,
                 fahrenheitToCelsius = (value - 32) * 5 / 9,
-                conversion = this.get('_CONVERSION');
+                // The clientID variable contains a costant value used in
+                // `src` property of the set method. The built-in attribute
+                // clientId is an unique ID automatically generated for
+                // identifying model instances. Any constant value would be
+                // fine.
+                clientId = this.get('clientId');
 
             // The `src` property identifies who initiated the `set()` action
             // and prevent infinite loops or other similar situations.
-            if (e.src !== conversion) {
-                this.set('kelvin', fahrenheitToKelvin, {src: conversion});
-                this.set('celsius', fahrenheitToCelsius, {src: conversion});
+            if (e.src !== clientId) {
+                this.set('kelvin', fahrenheitToKelvin, {src: clientId});
+                this.set('celsius', fahrenheitToCelsius, {src: clientId});
             }
         },
 
@@ -42,11 +47,11 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             var value = e.newVal,
                 celsiusToFahrenheit = (value * 9 / 5) + 32,
                 celsiusToKelvin = value + 273.15,
-                conversion = this.get('_CONVERSION');
+                clientId = this.get('clientId');
 
-            if (e.src !== conversion) {
-                this.set('fahrenheit', celsiusToFahrenheit, {src: conversion});
-                this.set('kelvin', celsiusToKelvin, {src: conversion});
+            if (e.src !== clientId) {
+                this.set('fahrenheit', celsiusToFahrenheit, {src: clientId});
+                this.set('kelvin', celsiusToKelvin, {src: clientId});
             }
         },
 
@@ -54,11 +59,11 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             var value = e.newVal,
                 kelvinToFahrenheit = (value * 9 / 5) - 459.67,
                 kelvinToCelsius = value - 273.15,
-                conversion = this.get('_CONVERSION');
+                clientId = this.get('clientId');
 
-            if (e.src !== conversion) {
-                this.set('fahrenheit', kelvinToFahrenheit, {src: conversion});
-                this.set('celsius', kelvinToCelsius, {src: conversion});
+            if (e.src !== clientId) {
+                this.set('fahrenheit', kelvinToFahrenheit, {src: clientId});
+                this.set('celsius', kelvinToCelsius, {src: clientId});
             }
         }
 
@@ -66,7 +71,8 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
         // The attributes of the model with the default value and the validation
         // method, called when the attribute is modified. The default value is
         // not zero because the first conversion would not work if the input
-        // user would be zero.
+        // user would be zero: the new value would be equal to the old value,
+        // the default one.
         ATTRS: {
             fahrenheit: {
                 value: NaN,
@@ -79,12 +85,6 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             kelvin: {
                 value: NaN,
                 validator: Y.Lang.isNumber
-            },
-            // This attribute would be a private variable if the model would be
-            // contained in a module, used as value in the `src` attribute of
-            // the `set` method.
-            _CONVERSION: {
-                value: 'conversion'
             }
         }
     });
