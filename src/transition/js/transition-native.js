@@ -25,11 +25,13 @@ var CAMEL_VENDOR_PREFIX = '',
 
     VENDORS = [
         'Webkit',
-        'Moz'
+        'Moz',
+        'ms'
     ],
 
     VENDOR_TRANSITION_END = {
-        Webkit: 'webkitTransitionEnd'
+        Webkit: 'webkitTransitionEnd',
+        ms: 'MSTransitionEnd'
     },
 
 /**
