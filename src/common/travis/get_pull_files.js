@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var ID = process.env.TRAVIS_PULL_REQUEST_NUMBER;
+var USER = process.env.USER || 'yui';
 var fs = require('fs');
 var path = require('path');
 var https = require('https');
@@ -12,9 +13,11 @@ if (!ID) {
     process.exit(0);
 }
 
+console.log('Fetching files from pull request #' + ID, 'from user', USER);
+
 https.get({
     hostname: 'api.github.com',
-    path: '/repos/yui/yui3/pulls/' + ID + '/files'
+    path: '/repos/' + USER + '/yui3/pulls/' + ID + '/files'
 }, function(res) {
     var data = '';
     res.on('data', function(c) {
@@ -22,6 +25,7 @@ https.get({
     });
 
     res.on('end', function() {
+        console.log('processing files');
         var json = JSON.parse(data);
         var files = {};
         json.forEach(function(item) {
