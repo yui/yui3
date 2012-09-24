@@ -112,11 +112,11 @@
         },
 
         /**
-         * The constraining box relative to which the flick animation and bounds should be calculated.
+         * Time between flick animation frames.
          *
-         * @attribute boundingBox
-         * @type Node
-         * @default parentNode
+         * @attribute step
+         * @type Number
+         * @default 10
          */
         step : {
             value:10
