@@ -10,7 +10,7 @@ var base = path.join(__dirname, '../../');
 var mods = {};
 
 if (base.indexOf('/home/travis/builds/') > -1) 
-    USER = base.replace('/home/travis/builds/').split('/')[0];
+    USER = base.replace('/home/travis/builds/', '').split('/')[0];
 }
 
 if (!ID) {
