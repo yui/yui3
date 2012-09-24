@@ -12,16 +12,24 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
         // The initializer runs when a TemperatureModel instance is created and
         // gives us an opportunity to set up the events for the attributes.
         initializer: function () {
-            this.after('fahrenheitChange', this._afterFahrenheitChange);
-            this.after('celsiusChange', this._afterCelsiusChange);
-            this.after('kelvinChange', this._afterKelvinChange);
+            this.after([
+                'fahrenheitChange',
+                'celsiusChange',
+                'kelvinChange'
+            ], this._afterUnitChange);
         },
 
-        // Event handlers for the event 'change'.
-        _afterFahrenheitChange: function (e) {
+        // Event handler for the 'change' event.
+        _afterUnitChange: function (e) {
             var value = e.newVal,
-                fahrenheitToKelvin = (value + 459.67) * 5 / 9,
-                fahrenheitToCelsius = (value - 32) * 5 / 9,
+                attrName = e.attrName,
+                // The variables containing the math of the conversion.
+                fahrenheitToKelvin,
+                fahrenheitToCelsius,
+                celsiusToFahrenheit,
+                celsiusToKelvin,
+                kelvinToFahrenheit,
+                kelvinToCelsius,
                 // The clientID variable contains a costant value used in
                 // `src` property of the set method. The built-in attribute
                 // clientId is an unique ID automatically generated for
@@ -31,32 +39,24 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
 
             // The `src` property identifies who initiated the `set()` action
             // and prevent infinite loops or other similar situations.
-            if (e.src !== clientId) {
+            if (e.src !== clientId && attrName === 'fahrenheit') {
+                fahrenheitToKelvin = (value + 459.67) * 5 / 9;
                 this.set('kelvin', fahrenheitToKelvin, {src: clientId});
+                fahrenheitToCelsius = (value - 32) * 5 / 9;
                 this.set('celsius', fahrenheitToCelsius, {src: clientId});
             }
-        },
 
-        _afterCelsiusChange: function (e) {
-            var value = e.newVal,
-                celsiusToFahrenheit = (value * 9 / 5) + 32,
-                celsiusToKelvin = value + 273.15,
-                clientId = this.get('clientId');
-
-            if (e.src !== clientId) {
+            if (e.src !== clientId && attrName === 'celsius') {
+                celsiusToFahrenheit = (value * 9 / 5) + 32;
                 this.set('fahrenheit', celsiusToFahrenheit, {src: clientId});
+                celsiusToKelvin = value + 273.15;
                 this.set('kelvin', celsiusToKelvin, {src: clientId});
             }
-        },
 
-        _afterKelvinChange: function (e) {
-            var value = e.newVal,
-                kelvinToFahrenheit = (value * 9 / 5) - 459.67,
-                kelvinToCelsius = value - 273.15,
-                clientId = this.get('clientId');
-
-            if (e.src !== clientId) {
+            if (e.src !== clientId && attrName === 'kelvin') {
+                kelvinToFahrenheit = (value * 9 / 5) - 459.67;
                 this.set('fahrenheit', kelvinToFahrenheit, {src: clientId});
+                kelvinToCelsius = value - 273.15;
                 this.set('celsius', kelvinToCelsius, {src: clientId});
             }
         }
