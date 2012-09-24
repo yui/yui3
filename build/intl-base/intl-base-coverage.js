@@ -123,28 +123,4 @@ return result;
 index = language.lastIndexOf('-');
                     _yuitest_coverline("build/intl-base/intl-base.js", 68);
 if (index >= 0) {
-                        _yuitest_coverline("build/intl-base/intl-base.js", 69);
-language = language.substring(0, index);
-                        // one-character subtags get cut along with the
-                        // following subtag
-                        _yuitest_coverline("build/intl-base/intl-base.js", 72);
-if (index >= 2 && language.charAt(index - 2) === '-') {
-                            _yuitest_coverline("build/intl-base/intl-base.js", 73);
-language = language.substring(0, index - 2);
-                        }
-                    } else {
-                        // nothing available for this language
-                        _yuitest_coverline("build/intl-base/intl-base.js", 77);
-break;
-                    }
-                }
-            }
-        }
-
-        _yuitest_coverline("build/intl-base/intl-base.js", 83);
-return '';
-    }
-});
-
-
-}, '@VERSION@', {"requires": ["yui-base"]});
+                       

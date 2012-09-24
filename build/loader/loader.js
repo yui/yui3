@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.12-20-02',
+            GALLERY_VERSION = 'gallery-2012.09.19-20-07',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -2304,6 +2304,9 @@ Y.Loader.prototype = {
             //Filter out the opposite type and reset the array so the checks later work
             modules[((type === JS) ? CSS : JS)] = [];
         }
+        if (!self.fetchCSS) {
+            modules.css = [];
+        }
         if (modules.js.length) {
             comp++;
         }
@@ -2315,7 +2318,8 @@ Y.Loader.prototype = {
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, o = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn,
+                modName, resMods;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -2355,6 +2359,19 @@ Y.Loader.prototype = {
                     mods = Y.Object.keys(mods);
                     if (mods.length) {
                         self.require(mods);
+                        resMods = self.resolve(true);
+                        if (resMods.cssMods.length) {
+                            for (i=0; i <  resMods.cssMods.length; i++) {
+                                modName = resMods.cssMods[i].name;
+                                delete YUI.Env._cssLoaded[modName];
+                                if (self.isCSSLoaded(modName)) {
+                                    self.inserted[modName] = true;
+                                    delete self.required[modName];
+                                }
+                            }
+                            self.sorted = [];
+                            self._sort();
+                        }
                         d = null; //bail
                         self._insert(); //insert the new deps
                     }
@@ -5349,7 +5366,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
+YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
