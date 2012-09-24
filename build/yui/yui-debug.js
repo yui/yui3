@@ -5730,7 +5730,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.12-20-02',
+            GALLERY_VERSION = 'gallery-2012.09.19-20-07',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -8047,6 +8047,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             //Filter out the opposite type and reset the array so the checks later work
             modules[((type === JS) ? CSS : JS)] = [];
         }
+        if (!self.fetchCSS) {
+            modules.css = [];
+        }
         if (modules.js.length) {
             comp++;
         }
@@ -8058,7 +8061,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, o = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn,
+                modName, resMods;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -8101,6 +8105,19 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                     if (mods.length) {
                         Y.log('Refetching modules with new meta-data', 'info', 'loader');
                         self.require(mods);
+                        resMods = self.resolve(true);
+                        if (resMods.cssMods.length) {
+                            for (i=0; i <  resMods.cssMods.length; i++) {
+                                modName = resMods.cssMods[i].name;
+                                delete YUI.Env._cssLoaded[modName];
+                                if (self.isCSSLoaded(modName)) {
+                                    self.inserted[modName] = true;
+                                    delete self.required[modName];
+                                }
+                            }
+                            self.sorted = [];
+                            self._sort();
+                        }
                         d = null; //bail
                         self._insert(); //insert the new deps
                     }

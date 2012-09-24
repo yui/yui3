@@ -34,7 +34,9 @@ YUI.add('loader-tests', function(Y) {
                 test_cond_no_test_or_ua: Y.UA.nodejs,
                 test_condpattern: Y.UA.nodejs,
                 test_cond_with_test_function: Y.UA.nodejs,
-                'test external lang 1': Y.UA.nodejs
+                'test external lang 1': Y.UA.nodejs,
+                'testing fetchCSS false': !Y.config.win,
+                'testing duplicate CSS loading': !Y.config.win
             }
         },
         'test: skin overrides double loading': function() {
@@ -723,6 +725,60 @@ YUI.add('loader-tests', function(Y) {
 
             test.wait();
 
+        },
+        'testing duplicate CSS loading': function() {
+            var test = this,
+                links = document.getElementsByTagName('link'),
+                sheets = document.getElementsByTagName('style'),
+                holder = {
+                    'console': 0,
+                    'console-filters': 0,
+                    'test-console': 0
+                };
+            
+            Y.Array.each(links, function(item) {
+                var href = item.href;
+                if (/\/sam\/console\.css/.test(href)) {
+                    holder['console']++;
+                }
+                if (/console-filters\.css/.test(href)) {
+                    holder['console-filters']++;
+                }
+                if (/test-console\.css/.test(href)) {
+                    holder['test-console']++;
+                }
+            });
+            //Older Gecko's
+            Y.Array.each(sheets, function(item) {
+                var html = item.innerHTML;
+                if (/\/sam\/console\.css/.test(html)) {
+                    holder['console']++;
+                }
+                if (/console-filters\.css/.test(html)) {
+                    holder['console-filters']++;
+                }
+                if (/test-console\.css/.test(html)) {
+                    holder['test-console']++;
+                }
+            });
+            Y.Object.each(holder, function(count, name) {
+                Y.Assert.areEqual(1, count, 'Too many of ' + name + '.css');
+            });
+        },
+        'testing fetchCSS false': function() {
+            var test = this,
+                links = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+
+            YUI({
+                fetchCSS: false
+            }).use('panel', function(Y) {
+                test.resume(function() {
+                    var links2 = document.getElementsByTagName('link').length + document.getElementsByTagName('style').length;
+                    Assert.areEqual(links, links2, 'A new link tag was injected into the page.');
+                });
+            });
+
+            test.wait();
         },
         test_forcemap: function() {
             var test = this;
