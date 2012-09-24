@@ -21,44 +21,40 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
 
         // Event handler for the 'change' event.
         _afterUnitChange: function (e) {
-            var value = e.newVal,
+            var newVal = e.newVal,
                 attrName = e.attrName,
                 // The variables containing the math of the conversion.
-                fahrenheitToKelvin,
-                fahrenheitToCelsius,
-                celsiusToFahrenheit,
-                celsiusToKelvin,
-                kelvinToFahrenheit,
-                kelvinToCelsius,
-                // The `src` property identifies who initiated the `set()`
-                // action and prevent infinite loops or other similar
-                // situations.
-                conversion = 'conversion';
+                fahrenheit,
+                celsius,
+                kelvin;
 
-            if (e.src === conversion) {
+            // The `src` property identifies who initiated the `set()` action
+            // and prevent infinite loops or other similar situations.
+            if (e.src === 'conversion') {
                 return;
             }
 
             if (attrName === 'fahrenheit') {
-                fahrenheitToKelvin = (value + 459.67) * 5 / 9;
-                this.set('kelvin', fahrenheitToKelvin, {src: conversion});
-                fahrenheitToCelsius = (value - 32) * 5 / 9;
-                this.set('celsius', fahrenheitToCelsius, {src: conversion});
+                fahrenheit = newVal;
+                celsius = (fahrenheit - 32) * 5 / 9;
+                kelvin = (fahrenheit + 459.67) * 5 / 9;
+            } else if (attrName === 'celsius') {
+                celsius = newVal;
+                fahrenheit = (celsius * 9 / 5) + 32;
+                kelvin = celsius + 273.15;
+            } else if (attrName === 'kelvin') {
+                kelvin = newVal;
+                fahrenheit = (kelvin * 9 / 5) - 459.67;
+                celsius = kelvin - 273.15;
             }
 
-            if (attrName === 'celsius') {
-                celsiusToFahrenheit = (value * 9 / 5) + 32;
-                this.set('fahrenheit', celsiusToFahrenheit, {src: conversion});
-                celsiusToKelvin = value + 273.15;
-                this.set('kelvin', celsiusToKelvin, {src: conversion});
-            }
-
-            if (attrName === 'kelvin') {
-                kelvinToFahrenheit = (value * 9 / 5) - 459.67;
-                this.set('fahrenheit', kelvinToFahrenheit, {src: conversion});
-                kelvinToCelsius = value - 273.15;
-                this.set('celsius', kelvinToCelsius, {src: conversion});
-            }
+            this.setAttrs({
+                fahrenheit: fahrenheit,
+                celsius: celsius,
+                kelvin: kelvin
+            }, {
+                src: 'conversion'
+            })
         }
 
     }, {
