@@ -1,0 +1,17 @@
+{
+    "name": "deferred",
+    "builds": {
+        "deferred": {
+            "jsfiles": [ "deferred.js", "promise.js" ],
+            "config": {
+                "requires": [ "oop" ]
+            }
+        },
+        "deferred-extras": {
+            "jsfiles": [ "extras.js", "batch.js" ],
+            "config": {
+                "requires": [ "deferred" ]
+            }
+        }
+    }
+}

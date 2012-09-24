@@ -1,0 +1,11 @@
+{
+    "deferred": {
+        "requires": ["oop"],
+
+        "submodules": {
+            "deferred-extras": {
+                "requires": ["deferred"]
+            }
+        }
+    }
+}
