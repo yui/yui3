@@ -1,11 +1,5 @@
 YUI().use('model', 'view', 'event-valuechange', function (Y) {
-    // Usually the TemperatureModel and TemperatureView classes should be
-    // implemented in separate files as modules. For the sake of the simplicity
-    // those classes are here as local variables and not in a namespace as
-    // Y.TemperatureModel and Y.TemperatureView.
-    var TemperatureModel,
-        TemperatureView,
-        myTemperatureModel,
+    var myTemperatureModel,
         myTemperatureView;
 
 // -- Model --------------------------------------------------------------------
@@ -14,7 +8,7 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
     // changes of the properties, setting the value of the conversion for the
     // rest of the temperature properties.
 
-    TemperatureModel = Y.Base.create('temperatureModel', Y.Model, [], {
+    Y.TemperatureModel = Y.Base.create('temperatureModel', Y.Model, [], {
         // The initializer runs when a TemperatureModel instance is created and
         // gives us an opportunity to set up the events for the attributes.
         initializer: function () {
@@ -95,7 +89,7 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
     // the form containing the input fields of the temperatures. It also handles
     // DOM events to allow the conversion.
 
-    TemperatureView = Y.Base.create('temperatureView', Y.View, [], {
+    Y.TemperatureView = Y.Base.create('temperatureView', Y.View, [], {
         // These are custom attribute that we will use to hold a reference to
         // the DOM input field.
         fahrenheitNode: Y.one('#fahrenheit'),
@@ -198,8 +192,8 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
 
 // -- Start your engines! ------------------------------------------------------
 
-    myTemperatureModel = new TemperatureModel();
-    myTemperatureView = new TemperatureView({
+    myTemperatureModel = new Y.TemperatureModel();
+    myTemperatureView = new Y.TemperatureView({
         container: Y.one('#temperatureView'),
         model: myTemperatureModel
     });
