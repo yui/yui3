@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 
 var ID = process.env.TRAVIS_PULL_REQUEST_NUMBER;
-var USER = process.env.USER || 'yui';
+var USER = 'yui';
 var fs = require('fs');
 var path = require('path');
 var https = require('https');
 var spawn = require('child_process').spawn;
 var base = path.join(__dirname, '../../');
 var mods = {};
+
+if (base.indexOf('/home/travis/builds/') > -1) 
+    USER = base.replace('/home/travis/builds/').split('/')[0];
+}
 
 if (!ID) {
     process.exit(0);
