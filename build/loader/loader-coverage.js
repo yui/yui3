@@ -4894,6 +4894,11 @@ return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y
             "dd-drag"
         ]
     },
+    "deferred": {
+        "requires": [
+            "yui-base"
+        ]
+    },
     "dial": {
         "lang": [
             "en",

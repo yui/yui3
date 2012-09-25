@@ -1038,6 +1038,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drag"
         ]
     },
+    "deferred": {
+        "requires": [
+            "yui-base"
+        ]
+    },
     "dial": {
         "lang": [
             "en",
