@@ -39,12 +39,8 @@
           <td>Adds support for the <code>scroll</code> property in <code>to</code></td>
       </tr>
       <tr>
-          <td>`anim-shape`</td>
-          <td>Adds support for the <code>transform</code>, <code>fill</code>, and <code> attributes of <code>Graphic</code></td>
-      </tr>
-      <tr>
           <td>`anim-shape-transform`</td>
-          <td>Alias module for: `anim-shape`</td>
+          <td>Adds support for the <code>transform</code> attribute of <code>Graphic</code></td>
       </tr>
       <tr>
           <td>`anim-xy`</td>
@@ -59,12 +55,8 @@
           <td>Provides a top-level application component which manages navigation and views.</td>
       </tr>
       <tr>
-          <td>`app-content`</td>
-          <td>`Y.App` extension that provides pjax-style content fetching and handling.</td>
-      </tr>
-      <tr>
           <td>`app-transitions`</td>
-          <td>`Y.App` extension that provides view transitions in browsers which support</td>
+          <td>Provides view transitions for `Y.App` in browsers which support native CSS3</td>
       </tr>
       <tr>
           <td>`app-transitions-native`</td>
@@ -404,19 +396,19 @@
       </tr>
       <tr>
           <td>`datatype`</td>
-          <td>Alias module for: `datatype-date, datatype-number, datatype-xml`</td>
+          <td>Alias module for: `datatype-number, datatype-date, datatype-xml`</td>
       </tr>
       <tr>
           <td>`datatype-date`</td>
-          <td>Alias module for: `datatype-date-parse, datatype-date-format, datatype-date-math`</td>
+          <td>Alias module for: `datatype-date-parse, datatype-date-format`</td>
       </tr>
       <tr>
           <td>`datatype-date-format`</td>
-          <td>Format date module implements strftime formatters for javascript based on the</td>
+          <td>Format date submodule implements strftime formatters for javascript based on the</td>
       </tr>
       <tr>
           <td>`datatype-date-math`</td>
-          <td>Date Math submodule.</td>
+          <td>Datatype Date Math submodule.</td>
       </tr>
       <tr>
           <td>`datatype-date-parse`</td>
@@ -440,7 +432,7 @@
       </tr>
       <tr>
           <td>`datatype-xml-format`</td>
-          <td>The Number Utility provides type-conversion and string-formatting</td>
+          <td>Format XML submodule.</td>
       </tr>
       <tr>
           <td>`datatype-xml-parse`</td>
@@ -497,18 +489,6 @@
       <tr>
           <td>`dd-scroll`</td>
           <td>Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.</td>
-      </tr>
-      <tr>
-          <td>`deferred`</td>
-          <td>Wraps the execution of synchronous or asynchronous operations, providing a</td>
-      </tr>
-      <tr>
-          <td>`deferred-extras`</td>
-          <td>Adds additional functionality to Y.Deferred and Y.Promise.</td>
-      </tr>
-      <tr>
-          <td>`deferred-when`</td>
-          <td>Adds a `Y.batch()` method to wrap any number of callbacks or promises in a</td>
       </tr>
       <tr>
           <td>`dial`</td>
@@ -576,7 +556,7 @@
       </tr>
       <tr>
           <td>`event`</td>
-          <td>Alias module for: `event-base, event-delegate, event-synthetic, event-mousewheel, event-mouseenter, event-key, event-focus, event-resize, event-hover, event-outside, event-touch, event-move, event-flick, event-valuechange, event-tap`</td>
+          <td>Alias module for: `event-base, event-delegate, event-synthetic, event-mousewheel, event-mouseenter, event-key, event-focus, event-resize, event-hover, event-outside, event-touch, event-move, event-flick, event-valuechange`</td>
       </tr>
       <tr>
           <td>`event-base`</td>
@@ -651,12 +631,8 @@
           <td>Define new DOM events that can be subscribed to from Nodes.</td>
       </tr>
       <tr>
-          <td>`event-tap`</td>
-          <td>The tap module provides a gesture events, "tap", which normalizes user interactions</td>
-      </tr>
-      <tr>
           <td>`event-touch`</td>
-          <td>Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade. Adds</td>
+          <td>Adds touch event facade normalization properties (touches, changedTouches, targetTouches etc.) to the DOM event facade</td>
       </tr>
       <tr>
           <td>`event-valuechange`</td>
@@ -685,10 +661,6 @@
       <tr>
           <td>`frame`</td>
           <td>Creates a wrapper around an iframe. It loads the content either from a local</td>
-      </tr>
-      <tr>
-          <td>`gesture-simulate`</td>
-          <td>Simulate high-level user gestures by generating a set of native DOM events.</td>
       </tr>
       <tr>
           <td>`get`</td>
@@ -887,10 +859,6 @@
           <td>Extended Node interface for managing regions and screen positioning.</td>
       </tr>
       <tr>
-          <td>`node-scroll-info`</td>
-          <td>Provides the ScrollInfo Node plugin, which exposes convenient events and methods</td>
-      </tr>
-      <tr>
           <td>`node-style`</td>
           <td>Extended Node interface for managing node styles.</td>
       </tr>
@@ -917,10 +885,6 @@
       <tr>
           <td>`pjax-base`</td>
           <td>`Y.Router` extension that provides the core plumbing for enhanced navigation</td>
-      </tr>
-      <tr>
-          <td>`pjax-content`</td>
-          <td>`Y.Router` extension that provides the content fetching and handling needed to</td>
       </tr>
       <tr>
           <td>`pjax-plugin`</td>
@@ -1036,7 +1000,7 @@
       </tr>
       <tr>
           <td>`scrollview-paginator`</td>
-          <td>Provides a plugin that adds pagination support to ScrollView instances</td>
+          <td>Provides a plugin, which adds pagination support to ScrollView instances</td>
       </tr>
       <tr>
           <td>`scrollview-scrollbars`</td>
@@ -1103,18 +1067,6 @@
           <td>The TabView module</td>
       </tr>
       <tr>
-          <td>`template`</td>
-          <td>Alias module for: `template-base, template-micro`</td>
-      </tr>
-      <tr>
-          <td>`template-base`</td>
-          <td>Provides a generic API for using template engines such as Handlebars and</td>
-      </tr>
-      <tr>
-          <td>`template-micro`</td>
-          <td>Adds the `Y.Template.Micro` template engine, which provides fast, simple</td>
-      </tr>
-      <tr>
           <td>`test`</td>
           <td>YUI Test Framework</td>
       </tr>
@@ -1141,18 +1093,6 @@
       <tr>
           <td>`transition-timer`</td>
           <td>Provides the base Transition class, for animating numeric properties.</td>
-      </tr>
-      <tr>
-          <td>`treeview`</td>
-          <td>Provides the `Y.TreeView` widget.</td>
-      </tr>
-      <tr>
-          <td>`treeview-node`</td>
-          <td>Provides the `TreeView.Node` class, which represents a tree node contained in a</td>
-      </tr>
-      <tr>
-          <td>`treeview-tree`</td>
-          <td>Provides the `Y.TreeView.Tree` class, which is the underlying data structure for</td>
       </tr>
       <tr>
           <td>`uploader`</td>

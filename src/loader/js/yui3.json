@@ -1005,16 +1005,6 @@
             "dd-drag"
         ]
     },
-    "deferred": {
-        "requires": [
-            "oop"
-        ]
-    },
-    "deferred-extras": {
-        "requires": [
-            "deferred"
-        ]
-    },
     "dial": {
         "lang": [
             "en",
