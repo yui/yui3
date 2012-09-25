@@ -270,7 +270,7 @@ YUI.add('imageloader-tests', function(Y) {
         },
         _should: {
             fail: {
-                'testFoldChecks': Y.UA.ie
+                'testFoldChecks': Y.UA.ie < 10
             }
         }
     });
