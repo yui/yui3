@@ -332,6 +332,12 @@ There's <a href="#more">a lot more you can do</a>, though, so read on!</p>
             <a href="contextmenu.html">Fixes bugs and inconstancies</a> that can occur when the "contextmenu" event is fired via the keyboard.  <a href="contextmenu.html#the-value-of-the-contextmenu-synthetic-event">Adds sugar for working with the "contextmenu" event</a>.
         </td>
     </tr>
+    <tr>
+        <td><a href="{{apiDocs}}/module_event-tap.html">`event-tap`</a></td>
+        <td>
+            Adds a synthetic <a href="tap.html">"tap" event</a> that allows for fast-click on touch devices, while supporting mouse events as well.
+        </td>
+    </tr>
 </tbody>
 </table>
 
@@ -1096,6 +1102,13 @@ nodelist.each(function (node) {
     <a href="contextmenu.html">Read more...</a>
 </p>
 
+<h3><a href="tap.html">The `tap` Event</a></h3>
+
+<p>
+    Using the `event-tap` module for fast-click on touch devices.
+    <a href="tap.html">Read more...</a>
+</p>
+
 <h2 id="event-whitelist">Appendix A: Whitelisted DOM events</h2>
 
 <div id="events">
@@ -1270,6 +1283,10 @@ nodelist.each(function (node) {
     <tr>
         <td>scroll</td>
         <td>node-base</td>
+    </tr>
+    <tr>
+        <td>tap</td>
+        <td>event-tap</td>
     </tr>
     <tr>
         <td>textInput</td>

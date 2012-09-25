@@ -10,17 +10,6 @@ App Framework Change History
   and handling, making it seamless to use a mixture of server and client
   rendered views.
 
-### Router
-
-* Added support for route-based middleware to Router. The `route()` method now
-  accepts an arbitrary number of callbacks enabling more reuse of routing code.
-  For people familiar with Express.js' route middleware, this behaves the same.
-  [Ticket #2532620]
-
-
-3.6.1
------
-
 ### Model
 
 * Added custom response parsing to ModelSync.REST to make it easy for developers
@@ -38,6 +27,13 @@ App Framework Change History
   Object, array of Objects, Model instance, array of Model instances, or another
   ModelList instance in the `items` property of the config object passed to
   ModelList's constructor. This change also applies to LazyModelList.
+
+### Router
+
+* Added support for route-based middleware to Router. The `route()` method now
+  accepts an arbitrary number of callbacks enabling more reuse of routing code.
+  For people familiar with Express.js' route middleware, this behaves the same.
+  [Ticket #2532620]
 
 ### View
 

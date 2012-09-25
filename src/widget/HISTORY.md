@@ -1,7 +1,7 @@
 Widget Change History
 =====================
 
-3.6.1
+3.7.0
 -----
 
  * Fixed regression in `Widget.getByNode()`, introduced in 3.5.0, where the 

@@ -96,7 +96,7 @@ var EVT_SCROLL = 'scroll',
     This event provides the same event facade as the `scroll` event. See that
     event for details.
 
-    @event scrollDown
+    @event scrollRight
     @see scroll
     **/
     EVT_SCROLL_RIGHT = 'scrollRight',
@@ -435,7 +435,7 @@ Y.Plugin.ScrollInfo = Y.Base.create('scrollInfoPlugin', Y.Plugin.Base, [], {
 
     /**
     Mixes detailed scroll information into the given DOM `scroll` event facade
-    and fires approprate local events.
+    and fires appropriate local events.
 
     @method _triggerScroll
     @param {EventFacade} e Event facade from the DOM `scroll` event.
