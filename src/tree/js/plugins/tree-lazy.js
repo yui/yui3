@@ -1,25 +1,24 @@
 /**
-Provides `Plugin.TreeView.Lazy`, a plugin for `TreeView.Tree` that makes it easy
-to lazily load and populate the contents of tree nodes the first time they're
-opened.
+Provides `Plugin.Tree.Lazy`, a plugin for `Tree` that makes it easy to lazily
+load and populate the contents of tree nodes the first time they're opened.
 
-@module treeview
-@submodule treeview-lazy
+@module tree
+@submodule tree-lazy
 **/
 
 /**
-A plugin for `TreeView.Tree` that makes it easy to lazily load and populate the
-contents of tree nodes the first time they're opened.
+A plugin for `Tree` that makes it easy to lazily load and populate the contents
+of tree nodes the first time they're opened.
 
 ### Example
 
-    YUI().use('jsonp', 'treeview', 'treeview-lazy', function (Y) {
-        var treeview = new Y.TreeView();
+    YUI().use('jsonp', 'tree', 'tree-lazy', function (Y) {
+        var tree = new Y.Tree();
 
-        treeview.plug(Y.Plugin.TreeView.Lazy, {
+        tree.plug(Y.Plugin.Tree.Lazy, {
 
-            // Custom function that Plugin.TreeView.Lazy will call when it needs
-            // to load the children for a node.
+            // Custom function that Plugin.Tree.Lazy will call when it needs to
+            // load the children for a node.
             load: function (node, callback) {
                 // Request the data for this node's children via JSONP.
                 Y.jsonp('http://example.com/api/data?callback={callback}', function (data) {
@@ -33,18 +32,16 @@ contents of tree nodes the first time they're opened.
                     // an array of child node data for the sake of this example).
                     node.append(data.children);
 
-                    // Call the callback function to tell Plugin.TreeView.Lazy
-                    // that we're done loading data.
+                    // Call the callback function to tell Plugin.Tree.Lazy that
+                    // we're done loading data.
                     callback();
                 });
             }
 
         });
-
-        treeview.render();
     });
 
-@class Plugin.TreeView.Lazy
+@class Plugin.Tree.Lazy
 @param {Object} config Config object.
 
     @param {Function} config.load Custom `load()` function that will be called
@@ -76,7 +73,7 @@ var EVT_ERROR = 'error';
 Fired after child nodes have finished loading and have been added to the tree.
 
 @event loaded
-@param {TreeView.Node} node Tree node whose children have been loaded.
+@param {Tree.Node} node Tree node whose children have been loaded.
 **/
 var EVT_LOADED  = 'loaded';
 
@@ -88,12 +85,12 @@ Calling `preventDefault()` on this event's facade will cancel the load action
 and prevent the `load()` method from being called.
 
 @event loading
-@param {TreeView.Node} node Tree node whose children will be loaded.
+@param {Tree.Node} node Tree node whose children will be loaded.
 @preventable _defLoadingFn
 **/
 var EVT_LOADING = 'loading';
 
-Y.namespace('Plugin.TreeView').Lazy = Y.Base.create('lazyTreeViewPlugin', Y.Plugin.Base, [], {
+Y.namespace('Plugin.Tree').Lazy = Y.Base.create('lazyTreePlugin', Y.Plugin.Base, [], {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         this._host = config.host;
@@ -108,7 +105,7 @@ Y.namespace('Plugin.TreeView').Lazy = Y.Base.create('lazyTreeViewPlugin', Y.Plug
 
     // -- Public Methods -------------------------------------------------------
     load: function (node, callback) {
-        callback(new Error('Plugin.TreeView.Lazy: Please provide a custom `load` method when instantiating this plugin.'));
+        callback(new Error('Plugin.Tree.Lazy: Please provide a custom `load` method when instantiating this plugin.'));
     },
 
     // -- Protected Methods ----------------------------------------------------

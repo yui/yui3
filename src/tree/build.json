@@ -1,0 +1,23 @@
+{
+    "name": "tree",
+
+    "builds": {
+        "tree": {
+            "jsfiles": [
+                "tree.js"
+            ]
+        },
+
+        "tree-lazy": {
+            "jsfiles": [
+                "plugins/tree-lazy.js"
+            ]
+        },
+
+        "tree-node": {
+            "jsfiles": [
+                "tree-node.js"
+            ]
+        }
+    }
+}

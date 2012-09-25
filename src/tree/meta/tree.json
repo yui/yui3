@@ -1,0 +1,26 @@
+{
+    "tree": {
+        "requires": [
+            "base-build",
+            "tree-node"
+        ],
+
+        "plugins": {
+            "tree-lazy": {
+                "requires": [
+                    "base-pluginhost",
+                    "plugin",
+                    "tree"
+                ]
+            }
+        },
+
+        "submodules": {
+            "tree-node": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
+        }
+    }
+}

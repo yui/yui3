@@ -13,18 +13,18 @@
 var Y = YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
 
-    coverage: ['treeview', 'treeview-templates'],
+    coverage: ['tree', 'tree-lazy', 'tree-node'],
 
     modules: {
-        'treeview-test': {
-            fullpath: 'assets/treeview-test.js',
-            requires: ['treeview', 'test']
+        'tree-test': {
+            fullpath: 'assets/tree-test.js',
+            requires: ['json', 'tree', 'tree-lazy', 'test']
         }
     },
     useBrowserConsole: false
-}).use('treeview-test', 'test-console', function (Y) {
+}).use('tree-test', 'test-console', function (Y) {
     new Y.Test.Console().render('#log');
-    Y.Test.Runner.add(Y.TreeViewTestSuite);
+    Y.Test.Runner.add(Y.TreeTestSuite);
     Y.Test.Runner.run();
 });
 </script>

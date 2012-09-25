@@ -11,12 +11,12 @@ TreeView widget.
 @class TreeView
 @constructor
 @extends View
-@uses TreeView.Tree
+@uses Tree
 **/
 
 var getClassName = Y.ClassNameManager.getClassName,
 
-TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
+TreeView = Y.Base.create('treeView', Y.View, [Y.Tree], {
     // -- Public Properties ----------------------------------------------------
 
     /**
@@ -89,10 +89,10 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
 
     /**
     Returns the HTML node (as a `Y.Node` instance) associated with the specified
-    `TreeView.Node` instance, if any.
+    `Tree.Node` instance, if any.
 
     @method getHTMLNode
-    @param {TreeView.Node} treeNode Tree node.
+    @param {Tree.Node} treeNode Tree node.
     @return {Node} `Y.Node` instance associated with the given tree node, or
         `undefined` if one was not found.
     **/
@@ -145,7 +145,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
     tree node, and the children will be rendered (or re-rendered) inside it.
 
     @method renderChildren
-    @param {TreeView.Node} treeNode Tree node whose children should be rendered.
+    @param {Tree.Node} treeNode Tree node whose children should be rendered.
     @param {Object} [options] Options.
         @param {Node} [options.container] `Y.Node` instance of a container into
             which the children should be rendered. If the container already
@@ -197,7 +197,7 @@ TreeView = Y.Base.create('treeView', Y.View, [Y.TreeView.Tree], {
     If a container is specified, the rendered node will be appended to it.
 
     @method renderNode
-    @param {TreeView.Node} treeNode Tree node to render.
+    @param {Tree.Node} treeNode Tree node to render.
     @param {Object} [options] Options.
         @param {Node} [options.container] `Y.Node` instance of a container to
             which the rendered tree node should be appended.

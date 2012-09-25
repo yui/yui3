@@ -34,7 +34,7 @@
 var Y = YUI({
     filter  : 'raw',
     fetchCSS: false
-}).use('escape', 'jsonp', 'treeview', 'treeview-lazy', function (Y) {
+}).use('escape', 'jsonp', 'treeview', 'tree-lazy', function (Y) {
 
 var URL_MODULES    = 'http://yuilibrary.com/api/v1/modules/*/submodules?submodule=false&sort=name&callback={callback}',
     URL_SUBMODULES = 'http://yuilibrary.com/api/v1/modules/{submodules}/submodules?sort=name&callback={callback}';
@@ -43,7 +43,7 @@ var treeview = window.treeview = new Y.TreeView({
     container: '#treeview'
 });
 
-treeview.plug(Y.Plugin.TreeView.Lazy, {
+treeview.plug(Y.Plugin.Tree.Lazy, {
     load: function (node, callback) {
         var url = Y.Lang.sub(URL_SUBMODULES, {
                 submodules: encodeURIComponent(node.data.submodules.join(';'))
