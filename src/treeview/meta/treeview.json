@@ -3,30 +3,19 @@
         "requires": [
             "base-build",
             "classnamemanager",
+            "tree",
             "treeview-templates",
-            "treeview-tree",
             "view"
         ],
 
-        "skinnable": true
-    },
+        "skinnable": true,
 
-    "treeview-node": {
-        "requires": [
-            "yui-base"
-        ]
-    },
-
-    "treeview-templates": {
-        "requires": [
-            "template-micro"
-        ]
-    },
-
-    "treeview-tree": {
-        "requires": [
-            "base-build",
-            "treeview-node"
-        ]
+        "submodules": {
+            "treeview-templates": {
+                "requires": [
+                    "template-micro"
+                ]
+            }
+        }
     }
 }
