@@ -1036,6 +1036,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drag"
         ]
     },
+    "deferred": {
+        "requires": [
+            "oop"
+        ]
+    },
+    "deferred-extras": {
+        "requires": [
+            "deferred"
+        ]
+    },
     "dial": {
         "lang": [
             "en",
@@ -2528,4 +2538,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a2857f1be37a1ef62628b4847bbe74d8';
+YUI.Env[Y.version].md5 = '228d1cf1b66db176ea3dd00a9b5b0cce';
