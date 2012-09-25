@@ -15,6 +15,12 @@ YUI.add('test', function (Y, NAME) {
 //So we only ever have one YUITest object that's shared
 if (YUI.YUITest) {
     Y.Test = YUI.YUITest;
+
+    if (Y.Test.prototype.debugWinJS === true) {
+        var winJS = new Y.Test.WinJS();
+    }
+
+
 } else { //Ends after the YUITest definitions
 
     //Make this global for back compat
@@ -3766,11 +3772,12 @@ if (!YUI.YUITest) {
  * @constructor
  */
 YUITest.WinJS = function (jsonObj) {
-    this.tests = jsonObj.tests || [];
+
+    this.tests = (jsonObj && jsonObj.tests) ? jsonObj.tests : [];
     this.results = {};
 
     this.listen();
-    
+
 };
     
 YUITest.WinJS.prototype = {
