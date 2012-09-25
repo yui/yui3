@@ -26,7 +26,8 @@
                 "UnexpectedError.js",
                 "UnexpectedValue.js",
                 "Wait.js",
-                "YTestWrapAfter.js"
+                "YTestWrapAfter.js",
+                "WinJS.js"
             ]
         }
     }
