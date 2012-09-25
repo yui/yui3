@@ -55,26 +55,33 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             }, {
                 src: 'conversion'
             });
+        },
+
+        // This is a method used in the initialization of the attributes.
+        _unitSetter: function (val) {
+            return Y.Lang.isNumber(val) ? val : NaN;
         }
 
     }, {
-        // The attributes of the model with the default value and the validation
+        // The attributes of the model with the default value and the setter
         // method, called when the attribute is modified. The default value is
-        // not zero because the first conversion would not work if the input
-        // user would be zero: the new value would be equal to the old value,
-        // the default one.
+        // not a number because the first conversion would not work if the user
+        // input would be that number: the new value would be equal to the old
+        // value, the default one. It is used a setter (vs. validation) method
+        // because the default value would not pass the validation process, not
+        // allowing the reset of the model.
         ATTRS: {
             fahrenheit: {
                 value: NaN,
-                validator: Y.Lang.isNumber
+                setter: this._unitSetter
             },
             celsius: {
                 value: NaN,
-                validator: Y.Lang.isNumber
+                setter: this._unitSetter
             },
             kelvin: {
                 value: NaN,
-                validator: Y.Lang.isNumber
+                setter: this._unitSetter
             }
         }
     });
@@ -101,13 +108,6 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             '#kelvin': { valuechange: 'kelvinChange' }
         },
 
-        // Clear the input fields.
-        clear: function () {
-            this.fahrenheitNode.set("value", "");
-            this.celsiusNode.set("value", "");
-            this.kelvinNode.set("value", "");
-        },
-
         // The initializer runs when a TemperatureView instance is created and
         // gives us an opportunity to set up the view.
         initializer: function () {
@@ -118,17 +118,18 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             // Update the display when a temperature in the model is changed.
             temperature.after("change", this.render, this);
 
-            // Clear the input fields.
-            this.clear();
-
             // Events are attached lazily. They will be attached on the first
             // call to getting the container node.
             this.get('container');
         },
 
-        // We round the value to display.
-        round: function (value) {
-            return Math.round(value * 1000) / 1000;
+        // We format the value to display.
+        format: function (value) {
+            // If the value to display contained in the model is the default
+            // value, that is NaN, the return value is an empty string, clearing
+            // the input field.
+            return Y.Lang.isNumber(value) ?
+                    Math.round(value * 1000) / 1000 : '';
         },
 
         // The render function is called whenever a temperature item is changed,
@@ -142,9 +143,9 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
                 kelvin = temperatureModel.get('kelvin');
 
             // The temperatures are displayed.
-            this.fahrenheitNode.set('value', this.round(fahrenheit));
-            this.celsiusNode.set('value', this.round(celsius));
-            this.kelvinNode.set('value', this.round(kelvin));
+            this.fahrenheitNode.set('value', this.format(fahrenheit));
+            this.celsiusNode.set('value', this.format(celsius));
+            this.kelvinNode.set('value', this.format(kelvin));
         },
 
         // The common method of the event handlers.
@@ -159,9 +160,10 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             temperatureValue = parseFloat(Y.Lang.trim(node.get('value')));
 
             if (!Y.Lang.isNumber(temperatureValue)) {
-                // If an input field is empty or is not a number, all the input
-                // fields are cleared.
-                this.clear();
+                // If an input field is empty or is not a number, the model is
+                // reset and the view is rendered because the attributes are
+                // changed.
+                temperatureModel.reset();
             } else {
                 // The type values are the following: fahrenheit, celsius or
                 // kelvin.
