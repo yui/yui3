@@ -21,9 +21,9 @@ suite.add(new Y.Test.Case({
         fahrenheitNode.set('value', '32');
 
         this.wait(function () {
-            Assert.areSame(0, parseFloat(celsiusNode.get('value'), 10),
+            Assert.areSame(0, parseFloat(celsiusNode.get('value')),
                 'Conversion from Fahrenheit to Celsius');
-            Assert.areSame(273.15, parseFloat(kelvinNode.get('value'), 10),
+            Assert.areSame(273.15, parseFloat(kelvinNode.get('value')),
                 'Conversion from Fahrenheit to Kelvin');
         }, 500);
     },
@@ -35,9 +35,9 @@ suite.add(new Y.Test.Case({
         celsiusNode.set('value', '30');
 
         this.wait(function () {
-            Assert.areSame(86, parseFloat(fahrenheitNode.get('value'), 10),
+            Assert.areSame(86, parseFloat(fahrenheitNode.get('value')),
                 'Conversion from Celsius to Fahrenheit');
-            Assert.areSame(303.15, parseFloat(kelvinNode.get('value'), 10),
+            Assert.areSame(303.15, parseFloat(kelvinNode.get('value')),
                 'Conversion from Celsius to Kelvin');
         }, 500);
     },
@@ -49,9 +49,9 @@ suite.add(new Y.Test.Case({
         kelvinNode.set('value', '273.15');
 
         this.wait(function () {
-            Assert.areSame(32, parseFloat(fahrenheitNode.get('value'), 10),
+            Assert.areSame(32, parseFloat(fahrenheitNode.get('value')),
                 'Conversion from Kelvin to Fahrenheit');
-            Assert.areSame(0, parseFloat(celsiusNode.get('value'), 10),
+            Assert.areSame(0, parseFloat(celsiusNode.get('value')),
                 'Conversion from Kelvin to Celsius');
         }, 500);
     }
