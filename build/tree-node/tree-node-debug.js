@@ -1,38 +1,41 @@
-YUI.add('treeview-node', function (Y, NAME) {
+YUI.add('tree-node', function (Y, NAME) {
 
 /**
-Provides the `TreeView.Node` class, which represents a tree node contained in a
-`TreeView.Tree` data structure.
+Provides the `Tree.Node` class, which represents a tree node contained in a
+`Tree` data structure.
 
-@module treeview
-@submodule treeview-node
+@module tree
+@submodule tree-node
 **/
 
 /**
-Represents a tree node in a `TreeView.Tree` data structure.
+Represents a tree node in a `Tree` data structure.
 
-@class TreeView.Node
-@param {TreeView.Tree} tree `TreeView.Tree` instance with which this node should
-    be associated.
-
+@class Tree.Node
+@param {Tree} tree `Tree` instance with which this node should be associated.
 @param {Object} [config] Configuration hash for this node.
 
     @param {Boolean} [config.canHaveChildren=false] Whether or not this node can
         contain child nodes. Will be automatically set to `true` if not
         specified and `config.children` contains one or more children.
-    @param {TreeView.Node[]} [config.children] Array of `TreeView.Node`
-        instances for child nodes of this node.
+
+    @param {Tree.Node[]} [config.children] Array of `Tree.Node` instances
+        for child nodes of this node.
+
     @param {Object} [config.data] Implementation-specific data related to this
         node. You may add arbitrary properties to this hash for your own use.
+
     @param {String} [config.id] Unique id for this node. This id must be unique
-        among all TreeView nodes on the entire page, and will also be used as
-        this node's DOM id when it's rendered. A unique id will be automatically
-        generated unless you specify a custom value.
+        among all tree nodes on the entire page, and will also be used as this
+        node's DOM id when it's rendered by a TreeView. A unique id will be
+        automatically generated unless you specify a custom value.
+
     @param {HTML} [config.label=''] User-visible HTML label for this node.
+
     @param {Object} [config.state] State hash for this node. You may add
         arbitrary state properties to this hash for your own use. See the
-        docs for `TreeView.Node`'s `state` property for details on state values
-        used internally by `TreeView.Node`.
+        docs for `Tree.Node`'s `state` property for details on state values used
+        internally by `Tree.Node`.
 
 @constructor
 **/
@@ -79,15 +82,16 @@ TreeNode.prototype = {
     /**
     Child nodes contained within this node.
 
-    @property {TreeView.Node[]} children
+    @property {Tree.Node[]} children
     @default []
+    @readOnly
     **/
 
     /**
     Arbitrary implementation-specific data related to this node.
 
     This property is created by setting a `data` property in the config object
-    passed to TreeView.Node's constructor. It may contain any serializable data
+    passed to Tree.Node's constructor. It may contain any serializable data
     you want to store on this node instance.
 
     @property {Object} data
@@ -98,12 +102,13 @@ TreeNode.prototype = {
     Unique id for this node.
 
     @property {String} id
+    @readOnly
     **/
 
     /**
     User-visible HTML label for this node.
 
-    This value is rendered as HTML without sanitization, so *do not* put
+    This value may be rendered as HTML without sanitization, so *do not* put
     untrusted user input here without escaping it first using `Y.Escape.html()`.
 
     @property {HTML} label
@@ -115,7 +120,8 @@ TreeNode.prototype = {
     Parent node of this node, or `undefined` if this is an unattached node or
     the root node.
 
-    @property {TreeView.Node} parent
+    @property {Tree.Node} parent
+    @readOnly
     **/
 
     /**
@@ -127,9 +133,10 @@ TreeNode.prototype = {
     **/
 
     /**
-    The TreeView.Tree instance with which this node is associated.
+    The Tree instance with which this node is associated.
 
-    @property {TreeView.Tree} tree
+    @property {Tree} tree
+    @readOnly
     **/
 
     // -- Protected Properties -------------------------------------------------
@@ -151,7 +158,7 @@ TreeNode.prototype = {
     _isIndexStale: true,
 
     /**
-    Simple way to type-check that this is an instance of TreeView.Node.
+    Simple way to type-check that this is an instance of Tree.Node.
 
     @property {Boolean} _isYUITreeNode
     @default true
@@ -178,15 +185,14 @@ TreeNode.prototype = {
     children.
 
     @method append
-    @param {Object|Object[]|TreeView.Node|TreeView.Node[]} node Child node,
-        node config object, array of child nodes, or array of node config
-        objects to append to the given parent. Node config objects will
-        automatically be converted into node instances.
+    @param {Object|Object[]|Tree.Node|Tree.Node[]} node Child node, node config
+        object, array of child nodes, or array of node config objects to append
+        to the given parent. Node config objects will automatically be converted
+        into node instances.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
-    @return {TreeView.Node|TreeView.Node[]} Node or array of nodes that were
-        appended.
+    @return {Tree.Node|Tree.Node[]} Node or array of nodes that were appended.
     **/
     append: function (node, options) {
         return this.tree.appendNode(this, node, options);
@@ -219,7 +225,7 @@ TreeNode.prototype = {
             and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
-    @return {TreeView.Node[]} Array of removed child nodes.
+    @return {Tree.Node[]} Array of removed child nodes.
     **/
     empty: function (options) {
         return this.tree.emptyNode(this, options);
@@ -253,7 +259,7 @@ TreeNode.prototype = {
     not a child of this node.
 
     @method indexOf
-    @param {TreeView.Node} node Child node.
+    @param {Tree.Node} node Child node.
     @return {Number} Index of the child, or `-1` if the node is not a child of
         this node.
     **/
@@ -277,10 +283,10 @@ TreeNode.prototype = {
     be removed from that tree and moved to this one.
 
     @method insert
-    @param {Object|Object[]|TreeView.Node|TreeView.Node[]} node Child node,
-        node config object, array of child nodes, or array of node config
-        objects to insert under the given parent. Node config objects will
-        automatically be converted into node instances.
+    @param {Object|Object[]|Tree.Node|Tree.Node[]} node Child node, node config
+        object, array of child nodes, or array of node config objects to insert
+        under the given parent. Node config objects will automatically be
+        converted into node instances.
 
     @param {Object} [options] Options.
         @param {Number} [options.index] Index at which to insert the child node.
@@ -289,7 +295,7 @@ TreeNode.prototype = {
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
 
-    @return {TreeView.Node[]} Node or array of nodes that were inserted.
+    @return {Tree.Node[]} Node or array of nodes that were inserted.
     **/
     insert: function (node, options) {
         return this.tree.insertNode(this, node, options);
@@ -364,15 +370,14 @@ TreeNode.prototype = {
     be removed from that tree and moved to this one.
 
     @method prepend
-    @param {Object|Object[]|TreeView.Node|TreeView.Node[]} node Child node,
-        node config object, array of child nodes, or array of node config
-        objects to prepend to this node. Node config objects will automatically
-        be converted into node instances.
+    @param {Object|Object[]|Tree.Node|Tree.Node[]} node Child node, node config
+        object, array of child nodes, or array of node config objects to prepend
+        to this node. Node config objects will automatically be converted into
+        node instances.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
-    @return {TreeView.Node|TreeView.Node[]} Node or array of nodes that were
-        prepended.
+    @return {Tree.Node|Tree.Node[]} Node or array of nodes that were prepended.
     **/
     prepend: function (node, options) {
         return this.tree.prependNode(this, node, options);
@@ -519,7 +524,7 @@ TreeNode.prototype = {
     }
 };
 
-Y.namespace('TreeView').Node = TreeNode;
+Y.namespace('Tree').Node = TreeNode;
 
 
 }, '@VERSION@', {"requires": ["yui-base"]});

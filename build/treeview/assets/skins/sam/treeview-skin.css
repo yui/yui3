@@ -18,6 +18,7 @@ Licensed under a Creative Commons Attribution 3.0 License.
 /* Page icon for all nodes by default. */
 .yui3-skin-sam .yui3-treeview-label {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABUUlEQVQ4jY2Sv2rDMBDGT3JKl/oB2kdI3sJ7lwx9hvYZQkkIDXQuhWYOeCvdS6DP4D3dstsUZArWH/dOsRQnlk0F8onT3U/fJ2tU1zXQuFssbjFcw/D4MsZ8G63hY7WyiZHbwY2bzXy+rnBT0jQGNMLdAVmWwWa7vcclw7lzfUeA1sxQk5SgEVBhrJQChTmCCCHgfblcT2ezh6ZldwLAJkZojt+LKDqKbiB5nsNrmkIyHr+9pOkj7jydK+DUzC0GOpAkSaySOI7hM8uKjgVFClqAEISUuNoOQCvlLbTHOYQOodoQ4GCBc/olvZDoAOBdC5j0CgYgEUbVA7B3YO+BEj2QCPMqaEFKr4Da+iDWAtaGLZAC/FVDENbUhi04BQMQygct/JalXbs76IOwVu0J4KcoLr3M5kHRy2NNtFCEMJztWg8ohdhfTSbP8I+BkL1b/wF76M1c9BEbZwAAAABJRU5ErkJggg==);
+    background-position: left center;
     padding-left: 22px;
 }
 

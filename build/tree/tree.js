@@ -1,23 +1,26 @@
-YUI.add('treeview-tree', function (Y, NAME) {
+YUI.add('tree', function (Y, NAME) {
 
 /**
-Provides the `Y.TreeView.Tree` class, which is the underlying data structure for
-`Y.TreeView`.
+Provides the `Tree` class.
 
-@module treeview
-@submodule treeview-tree
+@module tree
 **/
 
 /**
-Underlying UI-agnostic data structure and API for `Y.TreeView`.
+The `Tree` class represents a generic tree data structure. A tree has a root
+node, which may contain any number of child nodes, which may themselves contain
+child nodes, ad infinitum.
 
-@class TreeView.Tree
+This class doesn't expose any UI, but is extended by the `TreeView` class, which
+does.
+
+@class Tree
 @param {Object} [config] Config options.
-    @param {Object[]|TreeView.Node[]} [config.nodes] Array of tree node config
-        objects or `TreeView.Node` instances to add to this tree at
-        initialization time.
-    @param {Object|TreeView.Node} [config.rootNode] Node to use as the root node
-        of this tree.
+    @param {Object[]|Tree.Node[]} [config.nodes] Array of tree node config
+        objects or `Tree.Node` instances to add to this tree at initialization
+        time.
+    @param {Object|Tree.Node} [config.rootNode] Node to use as the root node of
+        this tree.
 @constructor
 @extends Base
 **/
@@ -25,13 +28,13 @@ Underlying UI-agnostic data structure and API for `Y.TreeView`.
 var Lang = Y.Lang,
 
     /**
-    Fired when a node is added to the TreeView. The `src` property will indicate
+    Fired when a node is added to this Tree. The `src` property will indicate
     how the node was added ("append", "insert", "prepend", etc.).
 
     @event add
     @param {Number} index Index at which the node will be added.
-    @param {TreeView.Node} node Node being added.
-    @param {TreeView.Node} parent Parent node to which the node will be added.
+    @param {Tree.Node} node Node being added.
+    @param {Tree.Node} parent Parent node to which the node will be added.
     @param {String} src Source of the event ("append", "insert", "prepend",
         etc.).
     @preventable _defAddFn
@@ -39,11 +42,11 @@ var Lang = Y.Lang,
     EVT_ADD = 'add',
 
     /**
-    Fired when the TreeView is cleared.
+    Fired when this Tree is cleared.
 
     @event clear
-    @param {TreeView.Node} rootNode New root node of the tree (the old root node
-        is always destroyed when a tree is cleared).
+    @param {Tree.Node} rootNode New root node of this tree (the old root node is
+        always destroyed when a tree is cleared).
     @preventable _defClearFn
     **/
     EVT_CLEAR = 'clear',
@@ -52,7 +55,7 @@ var Lang = Y.Lang,
     Fired when a node is closed.
 
     @event close
-    @param {TreeView.Node} node Node being closed.
+    @param {Tree.Node} node Node being closed.
     @preventable _defCloseFn
     **/
     EVT_CLOSE = 'close',
@@ -61,20 +64,19 @@ var Lang = Y.Lang,
     Fired when a node is opened.
 
     @event open
-    @param {TreeView.Node} node Node being opened.
+    @param {Tree.Node} node Node being opened.
     @preventable _defOpenFn
     **/
     EVT_OPEN = 'open',
 
     /**
-    Fired when a node is removed from the TreeView.
+    Fired when a node is removed from this Tree.
 
     @event remove
     @param {Boolean} destroy Whether or not the node will be destroyed after
-        being removed from the tree.
-    @param {TreeView.Node} node Node being removed.
-    @param {TreeView.Node} parent Parent node from which the node will be
-        removed.
+        being removed from this tree.
+    @param {Tree.Node} node Node being removed.
+    @param {Tree.Node} parent Parent node from which the node will be removed.
     @preventable _defRemoveFn
     **/
     EVT_REMOVE = 'remove',
@@ -83,7 +85,7 @@ var Lang = Y.Lang,
     Fired when a node is selected.
 
     @event select
-    @param {TreeView.Node} node Node being selected.
+    @param {Tree.Node} node Node being selected.
     @preventable _defSelectFn
     **/
     EVT_SELECT = 'select',
@@ -92,25 +94,25 @@ var Lang = Y.Lang,
     Fired when a node is unselected.
 
     @event unselect
-    @param {TreeView.Node} node Node being unselected.
+    @param {Tree.Node} node Node being unselected.
     @preventable _defUnselectFn
     **/
     EVT_UNSELECT = 'unselect';
 
-Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
+var Tree = Y.Base.create('tree', Y.Base, [], {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Root node of the tree.
+    Root node of this Tree.
 
-    @property {TreeView.Node} rootNode
+    @property {Tree.Node} rootNode
     @readOnly
     **/
 
     // -- Protected Properties -------------------------------------------------
 
     /**
-    Simple way to type-check that this is a TreeView.Tree instance.
+    Simple way to type-check that this is a Tree instance.
 
     @property {Boolean} _isYUITree
     @default true
@@ -185,15 +187,15 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     be removed from that tree and moved to this one.
 
     @method appendNode
-    @param {TreeView.Node} parent Parent node.
-    @param {Object|Object[]|TreeView.Node|TreeView.Node[]} node Child node,
-        node config object, array of child nodes, or array of node config
-        objects to append to the given parent. Node config objects will
-        automatically be converted into node instances.
+    @param {Tree.Node} parent Parent node.
+    @param {Object|Object[]|Tree.Node|Tree.Node[]} node Child node, node config
+        object, array of child nodes, or array of node config objects to append
+        to the given parent. Node config objects will automatically be converted
+        into node instances.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
-    @return {TreeView.Node|TreeView.Node[]} Node or array of nodes that were
+    @return {Tree.Node|Tree.Node[]} Node or array of nodes that were
         appended.
     **/
     appendNode: function (parent, node, options) {
@@ -209,8 +211,8 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     tree; otherwise, a new root node will be created.
 
     @method clear
-    @param {Object|TreeView.Node} [rootNode] If specified, this node will be
-        used as the new root node.
+    @param {Object|Tree.Node} [rootNode] If specified, this node will be used as
+        the new root node.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `clear` event
             will be suppressed.
@@ -246,15 +248,15 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     },
 
     /**
-    Creates and returns a new `TreeView.Node` instance associated with (but not
+    Creates and returns a new `Tree.Node` instance associated with (but not
     yet appended to) this tree.
 
     @method createNode
-    @param {Object|TreeView.Node} [config] Node configuration. If a
-        `TreeView.Node` instance is specified instead of a config object, that
-        node will be adopted into this tree (if it doesn't already belong to
-        this tree) and removed from any other tree to which it belongs.
-    @return {TreeView.Node} New node.
+    @param {Object|Tree.Node} [config] Node configuration. If a `Tree.Node`
+        instance is specified instead of a config object, that node will be
+        adopted into this tree (if it doesn't already belong to this tree) and
+        removed from any other tree to which it belongs.
+    @return {Tree.Node} New node.
     **/
     createNode: function (config) {
         config || (config = {});
@@ -277,7 +279,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
             config = Y.merge(config, {children: children});
         }
 
-        var node = new Y.TreeView.Node(this, config);
+        var node = new Y.Tree.Node(this, config);
         return this._nodeMap[node.id] = node;
     },
 
@@ -287,7 +289,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     tree.
 
     @method destroyNode
-    @param {TreeView.Node} node Node to destroy.
+    @param {Tree.Node} node Node to destroy.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
@@ -333,14 +335,14 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     still be reusable unless the `destroy` option is truthy.
 
     @method emptyNode
-    @param {TreeView.Node} node Node to empty.
+    @param {Tree.Node} node Node to empty.
     @param {Object} [options] Options.
         @param {Boolean} [options.destroy=false] If `true`, the children will
             also be destroyed, which makes them available for garbage collection
             and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, `remove` events will
             be suppressed.
-    @return {TreeView.Node[]} Array of removed child nodes.
+    @return {Tree.Node[]} Array of removed child nodes.
     **/
     emptyNode: function (node, options) {
         var removed = [];
@@ -358,7 +360,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
 
     @method getNodeById
     @param {String} id Node id.
-    @return {TreeView.Node} Node, or `undefined` if not found.
+    @return {Tree.Node} Node, or `undefined` if not found.
     **/
     getNodeById: function (id) {
         return this._nodeMap[id];
@@ -368,7 +370,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     Returns an array of nodes that are currently selected.
 
     @method getSelectedNodes
-    @return {TreeView.Node[]} Array of selected nodes.
+    @return {Tree.Node[]} Array of selected nodes.
     **/
     getSelectedNodes: function () {
         return Y.Object.values(this._selectedMap);
@@ -382,11 +384,11 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     be removed from that tree and moved to this one.
 
     @method insertNode
-    @param {TreeView.Node} parent Parent node.
-    @param {Object|Object[]|TreeView.Node|TreeView.Node[]} node Child node,
-        node config object, array of child nodes, or array of node config
-        objects to insert under the given parent. Node config objects will
-        automatically be converted into node instances.
+    @param {Tree.Node} parent Parent node.
+    @param {Object|Object[]|Tree.Node|Tree.Node[]} node Child node, node config
+        object, array of child nodes, or array of node config objects to insert
+        under the given parent. Node config objects will automatically be
+        converted into node instances.
 
     @param {Object} [options] Options.
         @param {Number} [options.index] Index at which to insert the child node.
@@ -395,7 +397,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
 
-    @return {TreeView.Node[]} Node or array of nodes that were inserted.
+    @return {Tree.Node[]} Node or array of nodes that were inserted.
     **/
     insertNode: function (parent, node, options) {
         options || (options = {});
@@ -467,15 +469,15 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     be removed from that tree and moved to this one.
 
     @method prependNode
-    @param {TreeView.Node} parent Parent node.
-    @param {Object|Object[]|TreeView.Node|TreeView.Node[]} node Child node,
+    @param {Tree.Node} parent Parent node.
+    @param {Object|Object[]|Tree.Node|Tree.Node[]} node Child node,
         node config object, array of child nodes, or array of node config
         objects to prepend to the given parent. Node config objects will
         automatically be converted into node instances.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `add` event will
             be suppressed.
-    @return {TreeView.Node|TreeView.Node[]} Node or array of nodes that were
+    @return {Tree.Node|Tree.Node[]} Node or array of nodes that were
         prepended.
     **/
     prependNode: function (parent, node, options) {
@@ -490,14 +492,14 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     be reusable unless the `destroy` option is truthy.
 
     @method removeNode
-    @param {TreeView.Node} node Node to remove.
+    @param {Tree.Node} node Node to remove.
     @param {Object} [options] Options.
         @param {Boolean} [options.destroy=false] If `true`, the node and all its
             children will also be destroyed, which makes them available for
             garbage collection and means they can't be reused.
         @param {Boolean} [options.silent=false] If `true`, the `remove` event
             will be suppressed.
-    @return {TreeView.Node} Node that was removed.
+    @return {Tree.Node} Node that was removed.
     **/
     removeNode: function (node, options) {
         options || (options = {});
@@ -519,7 +521,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     Selects the specified node.
 
     @method selectNode
-    @param {TreeView.Node} node Node to select.
+    @param {Tree.Node} node Node to select.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `select` event
             will be suppressed.
@@ -556,7 +558,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     Toggles the open/closed state of the specified node.
 
     @method toggleNode
-    @param {TreeView.Node} node Node to toggle.
+    @param {Tree.Node} node Node to toggle.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, events will be
             suppressed.
@@ -600,7 +602,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     Unselects the specified node.
 
     @method unselectNode
-    @param {TreeView.Node} node Node to unselect.
+    @param {Tree.Node} node Node to unselect.
     @param {Object} [options] Options.
         @param {Boolean} [options.silent=false] If `true`, the `unselect` event
             will be suppressed.
@@ -624,7 +626,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     tree.
 
     @method _adoptNode
-    @param {TreeView.Node} node Node to adopt.
+    @param {Tree.Node} node Node to adopt.
     @param {Object} [options] Options to pass along to `removeNode()`.
     @protected
     **/
@@ -695,7 +697,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     Removes the specified node from its parent node if it has one.
 
     @method _removeNodeFromParent
-    @param {TreeView.Node} node Node to remove.
+    @param {Tree.Node} node Node to remove.
     @protected
     **/
     _removeNodeFromParent: function (node) {
@@ -804,7 +806,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
         /**
         Root node of this treeview.
 
-        @attribute {TreeView.Node} rootNode
+        @attribute {Tree.Node} rootNode
         @readOnly
         **/
         rootNode: {
@@ -817,5 +819,7 @@ Y.namespace('TreeView').Tree = Y.Base.create('tree', Y.Base, [], {
     }
 });
 
+Y.Tree = Y.mix(Tree, Y.Tree);
 
-}, '@VERSION@', {"requires": ["base-build", "treeview-node"]});
+
+}, '@VERSION@', {"requires": ["base-build", "tree-node"]});

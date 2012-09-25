@@ -2312,30 +2312,37 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "transition"
         ]
     },
-    "treeview": {
+    "tree": {
         "requires": [
             "base-build",
-            "classnamemanager",
-            "treeview-templates",
-            "treeview-tree",
-            "view"
-        ],
-        "skinnable": true
+            "tree-node"
+        ]
     },
-    "treeview-node": {
+    "tree-lazy": {
+        "requires": [
+            "base-pluginhost",
+            "plugin",
+            "tree"
+        ]
+    },
+    "tree-node": {
         "requires": [
             "yui-base"
         ]
     },
+    "treeview": {
+        "requires": [
+            "base-build",
+            "classnamemanager",
+            "tree",
+            "treeview-templates",
+            "view"
+        ],
+        "skinnable": true
+    },
     "treeview-templates": {
         "requires": [
             "template-micro"
-        ]
-    },
-    "treeview-tree": {
-        "requires": [
-            "base-build",
-            "treeview-node"
         ]
     },
     "uploader": {
@@ -2538,4 +2545,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '228d1cf1b66db176ea3dd00a9b5b0cce';
+YUI.Env[Y.version].md5 = 'a2857f1be37a1ef62628b4847bbe74d8';
