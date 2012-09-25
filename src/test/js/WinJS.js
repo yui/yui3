@@ -10,11 +10,12 @@
  * @constructor
  */
 YUITest.WinJS = function (jsonObj) {
-    this.tests = jsonObj.tests || [];
+
+    this.tests = (jsonObj && jsonObj.tests) ? jsonObj.tests : [];
     this.results = {};
 
     this.listen();
-    
+
 };
     
 YUITest.WinJS.prototype = {
