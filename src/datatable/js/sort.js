@@ -506,7 +506,7 @@ Y.mix(Sortable.prototype, {
                     // FIXME? Requires columns without sortFns to have key
                     aa = a.get(col.key) || '';
                     bb = b.get(col.key) || '';
-                    if (!cs && Y.Lang.isString(aa) && Y.Lang.isString(bb)){// Not case sensitive
+                    if (!cs && typeof(aa) === "string" && typeof(bb) === "string"){// Not case sensitive
                         aa = aa.toLowerCase();
                         bb = bb.toLowerCase();
                     }

@@ -1,6 +1,14 @@
 DataTable Change History
 ========================
 
+3.7.1
+-----
+ * Default sort for text columns is now case insensitive.
+   Added `caseSensitive` attribute to table columns config.
+   (Setting caseSensitive:true will bypass the case insensitive sort
+   speeding up sort in large data sets, where case insensitivity is not required)
+
+
 3.6.0
 -----
 
