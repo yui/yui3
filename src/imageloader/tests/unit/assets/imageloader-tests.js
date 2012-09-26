@@ -250,9 +250,12 @@ YUI.add('imageloader-tests', function(Y) {
 
         testFoldChecks: function() {
             // override DOM's viewportRegion function so that the real browser viewport is not a variable in this test
+            var bottomVal = 320;
             Y.DOM.viewportRegion = function() {
-                return { bottom: 320 };
+                return { bottom: bottomVal };
             };
+            Y.one('.fold-bottom-visual-indicator').setStyle('top', bottomVal);
+
             // fold is at position where only the top image is loaded
             this.foldGroup._foldCheck();
             Y.Assert.areEqual(this.groupTopImage.src, this.imageUrl);
@@ -260,9 +263,12 @@ YUI.add('imageloader-tests', function(Y) {
             Y.Assert.areEqual(this.groupBotImage.src, '');
 
             // extend viewport down so that middle image is within distance of the fold and loads
+            bottomVal = 355;
             Y.DOM.viewportRegion = function() {
-                return { bottom: 340 };
+                return { bottom: bottomVal };
             };
+            Y.one('.fold-bottom-visual-indicator').setStyle('top', bottomVal);
+
             this.foldGroup._foldCheck();
             Y.Assert.areEqual(this.groupTopImage.src, this.imageUrl);
             Y.Assert.areEqual(this.groupMidImage.src, this.imageUrl);
@@ -270,7 +276,7 @@ YUI.add('imageloader-tests', function(Y) {
         },
         _should: {
             fail: {
-                'testFoldChecks': Y.UA.ie < 10
+                'testFoldChecks': (Y.UA.ie && Y.UA.ie < 9)
             }
         }
     });

@@ -1,5 +1,7 @@
+<!DOCTYPE HTML>
 <html>
 <head>
+<meta charset="utf-8">
 <title>ImageLoader Unit Tests</title>
 
 <style>
@@ -14,6 +16,14 @@
 .sizer { position:absolute; top:450px; left:20px; height:150px; width:200px; }
 .sharedTrigger1 { position:absolute; top:10px; left:420px; height:72px; width:100px; }
 .sharedTrigger2 { position:absolute; top:10px; left:550px; height:67px; width:100px; }
+#everything .fold-bottom-visual-indicator {
+    position: absolute;
+    border: none;
+    border-top: solid 1px #f00;
+    width: 800px;
+    left: 0;
+    top: 0;
+}
 .fold-top { position:absolute; top:130px; left:420px; height:75px; width:100px; }
 .fold-middle { position:absolute; top:350px; left:420px; height:75px; width:100px; }
 .fold-bottom { position:absolute; top:500px; left:420px; height:75px; width:100px; }
@@ -34,7 +44,6 @@
 </head>
 
 <body class='yui3-skin-sam'>
-
     <div id="log"></div>
 
 <div class='everything' id='everything'>
@@ -55,6 +64,8 @@
 	</div>
 	<div class='sharedTrigger1' id='sharedTrigger1'></div>
 	<div class='sharedTrigger2' id='sharedTrigger2'></div>
+
+    <div class='fold-bottom-visual-indicator'></div>
 	<div class='fold-top'>
 		<img id='foldImgTop' />
 	</div>
@@ -70,11 +81,11 @@
 		<img id='timeImg' />
 	</div>
 </div>
-
+hello this is text jeff added and (Y.UA.ie && Y.UA.ie < 9) foldDistance 30
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
 <script type="text/javascript">
-window.resizeTo(500, 500);
+/* window.resizeTo(500, 500); */
 YUI({
     coverage: ['imageloader'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
