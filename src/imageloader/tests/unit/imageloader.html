@@ -23,10 +23,28 @@
     width: 800px;
     left: 0;
     top: 0;
+    background-color: rgba(255, 0, 0, 0.1);
+}
+#everything .fold-bottom-visual-indicator .label{
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 50%;
+    font-family: verdana;
+    border: none;
 }
 .fold-top { position:absolute; top:130px; left:420px; height:75px; width:100px; }
 .fold-middle { position:absolute; top:350px; left:420px; height:75px; width:100px; }
 .fold-bottom { position:absolute; top:500px; left:420px; height:75px; width:100px; }
+.img-label {
+    font-size: 70%;
+    position: absolute;
+    top: 0;
+    left: -75px;
+    text-align: right;
+    border: none !important;
+    width: 70px;
+}
 .customTrigger { position:absolute; top:250px; left:420px; height:67px; width:100px; }
 .customTrigger2 { position:absolute; top:250px; left:550px; height:67px; width:100px; }
 .time { position:absolute; top:130px; left:550px; height:75px; width:100px; }
@@ -65,16 +83,20 @@
 	<div class='sharedTrigger1' id='sharedTrigger1'></div>
 	<div class='sharedTrigger2' id='sharedTrigger2'></div>
 
-    <div class='fold-bottom-visual-indicator'></div>
 	<div class='fold-top'>
 		<img id='foldImgTop' />
+        <div class="img-label">foldImgTop</div>
 	</div>
 	<div class='fold-middle'>
 		<img id='foldImgMiddle' />
+        <div class="img-label">foldImgMiddle</div>
 	</div>
 	<div class='fold-bottom'>
 		<img id='foldImgBottom' />
+        <div class="img-label">foldImgBottom</div>
 	</div>
+    <div class='fold-bottom-visual-indicator'><div class="label">Red is "fold". pink is within "foldDistance" of the fold</div></div>
+
 	<div class='customTrigger' id='customTrigger'></div>
 	<div class='customTrigger2' id='customTrigger2'></div>
 	<div class='time'>
