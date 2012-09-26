@@ -1,6 +1,6 @@
 {
     "color": {
-        "requires": [
+        "use": [
             "color-base", "color-hsl", "color-harmony"
         ]
     },
