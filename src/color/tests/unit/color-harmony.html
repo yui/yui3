@@ -15,13 +15,20 @@
     vertical-align: top;
     margin: 0 0.3em;
 }
+#output dl {
+    height: 50px;
+    overflow: hidden;
+}
+#output:focus dl {
+    height: auto;
+}
 </style>
 
 </head>
 
 <body class="yui3-skin-sam">
 <h1>Color Tests</h1>
-<div id="output"><dl></dl></div>
+<div id="output" tabindex="1"><dl></dl></div>
 
 <div id="log"></div>
 
