@@ -653,7 +653,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             ty,
             matrix = this.matrix,
             normalizedMatrix = this._normalizedMatrix,
-            i = 0,
+            i,
             len = this._transforms.length;
 
         if(isPath || (this._transforms && this._transforms.length > 0))
@@ -675,7 +675,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
                 normalizedMatrix.init({dx: x + this._left, dy: y + this._top});
             }
             normalizedMatrix.translate(tx, ty);
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -820,7 +820,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             methodSymbol,
             args,
             commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
-            i = 0,
+            i,
             len, 
             str,
             symbolToMethod = this._pathSymbolToMethod;
@@ -828,10 +828,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         {
             this.clear();
             len = commandArray.length || 0;
-            for(; i < len; i = i + 1)
+            for(i = 0; i < len; i = i + 1)
             {
                 str = commandArray[i];
-                methodSymbol = str.substr(0, 1),
+                methodSymbol = str.substr(0, 1);
                 args = str.substr(1).match(SPLITARGSPATTERN);
                 method = symbolToMethod[methodSymbol];
                 if(method)
@@ -1209,7 +1209,9 @@ SVGShape.ATTRS = {
 	},
 
     /**
-     * Represents an SVG Path string.
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
      *
      * @config data
      * @type String

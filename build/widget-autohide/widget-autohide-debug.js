@@ -1,4 +1,4 @@
-YUI.add('widget-autohide', function(Y) {
+YUI.add('widget-autohide', function (Y, NAME) {
 
 /**
  * A widget-level extension that provides ability to hide widget when
@@ -234,4 +234,4 @@ WidgetAutohide.prototype = {
 Y.WidgetAutohide = WidgetAutohide;
 
 
-}, '@VERSION@' ,{requires:['base-build','widget','event-outside','event-key']});
+}, '@VERSION@', {"requires": ["base-build", "event-key", "event-outside", "widget"]});

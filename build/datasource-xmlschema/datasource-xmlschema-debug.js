@@ -1,4 +1,4 @@
-YUI.add('datasource-xmlschema', function(Y) {
+YUI.add('datasource-xmlschema', function (Y, NAME) {
 
 /**
  * Extends DataSource with schema-parsing on XML data.
@@ -99,4 +99,4 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-xml']});
+}, '@VERSION@', {"requires": ["datasource-local", "plugin", "dataschema-xml"]});

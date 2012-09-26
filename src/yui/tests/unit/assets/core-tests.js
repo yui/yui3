@@ -208,17 +208,6 @@ YUI.add('core-tests', function(Y) {
             Y.Assert.areEqual(a, 'foo');
 
         },
-
-        test_ie_enum_bug: function() {
-            var o = {
-                valueOf: function() {
-                    return 'foo';
-                }
-            },
-
-            p = Y.merge(o);
-            Y.Assert.areEqual('foo', p.valueOf());
-        },
         test_guid: function() {
             var id, id2, i;
             for (i = 0; i < 1000; i++) {

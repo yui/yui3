@@ -1,7 +1,7 @@
 GestureSimulation Change History
 ================================
 
-3.6.1
+3.7.0
 -----
 
 * Initial release.

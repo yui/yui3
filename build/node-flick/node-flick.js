@@ -1,4 +1,4 @@
-YUI.add('node-flick', function(Y) {
+YUI.add('node-flick', function (Y, NAME) {
 
 /**
  * Provide a simple Flick plugin, which can be used along with the "flick" gesture event, to 
@@ -520,4 +520,4 @@ YUI.add('node-flick', function(Y) {
     Y.Plugin.Flick = Flick;
 
 
-}, '@VERSION@' ,{requires:['classnamemanager', 'transition', 'event-flick', 'plugin']});
+}, '@VERSION@', {"requires": ["classnamemanager", "transition", "event-flick", "plugin"], "skinnable": true});

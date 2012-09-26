@@ -1,0 +1,10 @@
+{
+    "name": "widget-stack",
+    "builds": {
+        "widget-stack": {
+            "jsfiles": [
+                "Widget-Stack.js"
+            ]
+        }
+    }
+}

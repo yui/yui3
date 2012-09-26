@@ -1,4 +1,4 @@
-YUI.add('attribute-events', function(Y) {
+YUI.add('attribute-events', function (Y, NAME) {
 
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
@@ -192,4 +192,4 @@ YUI.add('attribute-events', function(Y) {
     Y.AttributeEvents = AttributeEvents;
 
 
-}, '@VERSION@' ,{requires:['event-custom']});
+}, '@VERSION@', {"requires": ["event-custom"]});

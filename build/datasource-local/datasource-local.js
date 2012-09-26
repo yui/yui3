@@ -1,4 +1,4 @@
-YUI.add('datasource-local', function(Y) {
+YUI.add('datasource-local', function (Y, NAME) {
 
 /**
  * The DataSource utility provides a common configurable interface for widgets to
@@ -395,4 +395,4 @@ Y.extend(DSLocal, Y.Base, {
 Y.namespace("DataSource").Local = DSLocal;
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@', {"requires": ["base"]});

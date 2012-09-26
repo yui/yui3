@@ -81,7 +81,7 @@
             background:#eee;
             font-size:150px;
             text-align:center;
-            vertical-align:middle;
+            vertical-align:top;
         }
 
         #state div {
@@ -100,6 +100,15 @@
             color:#000;
         }
 
+
+        #sv-horiz-paged-dualaxis-content ul li:nth-child(1) {
+            height:500px;
+        }
+
+        #sv-vert-paged-dualaxis-content ul li:nth-child(1) {
+            width:500px;
+        }
+
         </style>
         <script src="../../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
         <!--script src="http://yui.yahooapis.com/3.4.0/build/yui/yui.js" type="text/javascript" charset="utf-8"></script-->
@@ -115,15 +124,6 @@
             </div>
         </div>
 
-        <div class="container horiz-container">
-            <div class="hd">Horizonal</div>
-
-            <!-- SV starts here -->
-            <div id="sv-horiz-content" class="horiz-content yui3-scrollview-loading">
-                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
-            </div>
-        </div>
-
         <div class="container vert-container">
             <div class="hd">Vertical Paged</div>
 
@@ -133,11 +133,38 @@
             </div>
         </div>
 
+        <div class="container vert-container">
+            <div class="hd">Vertical Paged Dual</div>
+
+            <!-- SV starts here -->
+            <div id="sv-vert-paged-dualaxis-content" class="vert-content yui3-scrollview-loading dualaxis">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div class="container horiz-container">
+            <div class="hd">Horizonal</div>
+
+            <!-- SV starts here -->
+            <div id="sv-horiz-content" class="horiz-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
         <div class="container horiz-container">
             <div class="hd">Horizonal Paged</div>
 
             <!-- SV starts here -->
             <div id="sv-horiz-paged-content" class="horiz-content yui3-scrollview-loading">
+                <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+            </div>
+        </div>
+
+        <div class="container horiz-container">
+            <div class="hd">Horizonal Paged Dual</div>
+
+            <!-- SV starts here -->
+            <div id="sv-horiz-paged-dualaxis-content" class="horiz-content yui3-scrollview-loading dualaxis">
                 <ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>
             </div>
         </div>
@@ -240,11 +267,54 @@
                     }],                    
                     render:true
                 });
+                svHorizPagedDA = new Y.ScrollView({
+                    id:"svHorizPagedDA",
+                    srcNode:"#sv-horiz-paged-dualaxis-content",
+                    height:200,
+                    width:300,
+                    axis:"xy",
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"y"
+                    },
+                    plugins: [{
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            axis:"x",
+                            selector:">ul>li"
+                        }
+                    }],    
+                    render:true
+                });
+
+                svVertPagedDA = new Y.ScrollView({
+                    id:"svVertPaged",
+                    srcNode:"#sv-vert-paged-dualaxis-content",
+                    height:300,
+                    width:200,
+                    axis:"xy",
+                    flick: {
+                        minDistance: 10,
+                        minVelocity:0.3,
+                        axis:"x"
+                    },
+                    plugins: [{
+                        fn:Y.Plugin.ScrollViewPaginator, 
+                        cfg:{
+                            axis:"y",
+                            selector:">ul>li"
+                        }
+                    }],                    
+                    render:true
+                });
                 
                 svHoriz._origFlick = svHoriz.get("flick");
                 svVert._origFlick = svVert.get("flick");
                 svVertPaged._origFlick = svVertPaged.get("flick");
                 svHorizPaged._origFlick = svHorizPaged.get("flick");
+                svVertPagedDA._origFlick = svVertPaged.get("flick");
+                svHorizPagedDA._origFlick = svHorizPaged.get("flick");
 
                 var state = Y.one("#state");
 
@@ -253,7 +323,7 @@
                     _scrollPositions : [ 200, 75, 450, 600, 0 ],
 
                     _scrollToNonZero : function(sv) {
-                        var scrollDim = (sv._scrollsHorizontal) ?  "scrollX" : "scrollY",
+                        var scrollDim = (sv.get('axis').x) ?  "scrollX" : "scrollY",
                             position = sv.get(scrollDim);
 
                         position = (position === 250) ? 100 : 250;
@@ -318,7 +388,7 @@
                             position = this._scrollPositions[(i % positions)];
                             sv._scrollPositionIndex = i+1;
 
-                        if (sv._scrollsHorizontal) {
+                        if (sv.get('axis').x) {
                             sv.set("scrollX", position, {duration:350});    
                         } else {
                             sv.set("scrollY", position, {duration:350});
@@ -350,6 +420,8 @@
 
                     pagedClickMap[method](svVertPaged);
                     pagedClickMap[method](svHorizPaged);
+                    pagedClickMap[method](svVertPagedDA);
+                    pagedClickMap[method](svHorizPagedDA);
 
                 }, "button");
 

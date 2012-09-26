@@ -1,4 +1,4 @@
-YUI.add('escape', function(Y) {
+YUI.add('escape', function (Y, NAME) {
 
 /**
 Provides utility methods for escaping strings.
@@ -89,4 +89,4 @@ Escape.regexp = Escape.regex;
 Y.Escape = Escape;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

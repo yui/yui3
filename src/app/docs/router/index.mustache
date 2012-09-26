@@ -178,9 +178,9 @@ When instantiating Router, you may optionally pass in a config object containing
             String or regex representing the path to match. See [[#Routing]] for more details.
           </dd>
 
-          <dt>`callback`</dt>
+          <dt>`callbacks`</dt>
           <dd>
-            A function or a string representing the name of a function on the Router instance that should be called when the route is triggered. See [[#Routing]] for more details.
+            A function or a string representing the name of a function on the Router instance that should be called when the route is triggered. An array of functions and/or strings may also be provided. See [[#Routing]] for more details.
           </dd>
         </dl>
       </td>
@@ -198,8 +198,8 @@ var router = new Y.Router({
   root : '/mysite',
 
   routes: [
-    {path: '/',    callback: function () { alert('Hello!'); }},
-    {path: '/pie', callback: function () { alert('Mmm. Pie.'); }}
+    {path: '/',    callbacks: function () { alert('Hello!'); }},
+    {path: '/pie', callbacks: function () { alert('Mmm. Pie.'); }}
   ]
 });
 ```
@@ -219,7 +219,7 @@ This is where the `root` config attribute comes in. If you set `root` to `'/mysi
 </p>
 
 <p>
-The `root` must be an absolute path.
+<strong>Note:</strong> The `root` must be an absolute path.
 </p>
 
 <table>
@@ -298,8 +298,8 @@ Y.CustomRouter = Y.Base.create('customRouter', Y.Router, [], {
     // Share these default routes with all CustomRouter instances.
     routes: {
       value: [
-        {path: '/',    callback: 'index'},
-        {path: '/pie', callback: 'pie'}
+        {path: '/',    callbacks: 'index'},
+        {path: '/pie', callbacks: 'pie'}
       ]
     },
   }
@@ -321,7 +321,7 @@ Now all instances of `Y.CustomRouter` will inherit all the custom defaults and c
 <h3>Routing</h3>
 
 <p>
-Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, and the second parameter is a callback function or function name to execute when the route is matched.
+Use the `route()` method to add a new route to a Router instance. The first parameter is a path specification or regular expression that the URL path must match, and the remaining parameters are callback functions, function names, or arrays of either to execute (middleware) when the route is matched.
 </p>
 
 ```
@@ -339,7 +339,7 @@ router.route(/^\/cake$/, function () {
 ```
 
 <p>
-Routes are always evaluated in the order they're added. The first route that matches a given URL is executed, and any subsequent routes that also match the URL will not be executed unless the first route passes control to the next route. See [[#Chaining Routes]] for more info on executing more than one route for a given URL.
+Routes are always evaluated in the order they're added. The first route that matches a given URL is executed, and any subsequent routes that also match the URL will not be executed unless the first route passes control to the next callback (middleware) or route. See [[#Chanining Routes and Middleware]] for more info on executing more than one route callback for a given URL.
 </p>
 
 <p>
@@ -364,11 +364,11 @@ As an alternative to using the `route()` method, routes may be added at instanti
 ```
 var router = new Y.Router({
   routes: [
-    {path: '/pie', callback: function () {
+    {path: '/pie', callbacks: function () {
       Y.log('You visited http://example.com/pie');
     }},
 
-    {path: /^\/cake$/, callback: function () {
+    {path: /^\/cake$/, callbacks: function () {
       Y.log('You visited http://example.com/cake');
     }}
   ]
@@ -472,7 +472,7 @@ router.save('/pie/maple+custard/infinity');
 <h4>Route Callbacks</h4>
 
 <p>
-When a route is matched, the callback function associated with that route will be executed, and will receive three parameters:
+When a route is matched, the callback functions associated with that route will be executed, and will receive three parameters:
 </p>
 
 <dl>
@@ -501,7 +501,14 @@ When a route is matched, the callback function associated with that route will b
         </p>
       </dd>
 
-      <dt><strong>`pendingRoutes` (String)</strong></dt>
+      <dt><strong>`pendingCallbacks` (Number)</strong></dt>
+      <dd>
+        <p>
+        Number of remaining callbacks the route handler has after this one in the dispatch chain.
+        </p>
+      </dd>
+
+      <dt><strong>`pendingRoutes` (Number)</strong></dt>
       <dd>
         <p>
         Number of matching routes after the current route in the dispatch chain.
@@ -562,8 +569,16 @@ When a route is matched, the callback function associated with that route will b
   <dt><strong>`next` (Function)</strong></dt>
   <dd>
     <p>
-    A function that will pass control to the next matching route (if any) when called. If not called, no further routes will be executed.
+    A function to pass control to the next callback or the next matching route if no more callbacks (middleware) exist for the current route handler. If you don't call this function, then no further callbacks or route handlers will be executed, even if there are more that match. If you do call this function, then the next callback (if any) or matching route handler (if any) will be called. All of these functions will receive the same `req` and `res` objects that were passed to this route (so you can use these objects to pass data along to subsequent callbacks and routes).
     </p>
+
+    <dl>
+      <dt><strong>`err` (String)</strong></dt>
+      <dd>
+        <p>
+        Optional error which will stop the dispatch chaining for this `req`, unless the value is `"route"`, which is special cased to jump skip past any callbacks for the current route and pass control the next route handler.
+        </p>
+      </dd>
   </dd>
 </dl>
 
@@ -571,10 +586,10 @@ When a route is matched, the callback function associated with that route will b
 Inside a route callback, the `this` keyword will always refer to the Router instance that executed that route.
 </p>
 
-<h4>Chaining Routes</h4>
+<h4>Chaining Routes and Middleware</h4>
 
 <p>
-By default, only the first route that matches a URL will be executed, even if there are several routes that match. However, when a route is executed, it will receive a `next()` function as its third parameter. Calling this function will execute the next matching route if there is one.
+By default, only the first route that matches a URL will be executed, even if there are several routes that match. Similarly, if a route has multiple callbacks (i.e. middleware), only the first callback will be executed by default. However, when a route is executed, it will receive a <strong>`next()`</strong> function as its third parameter. Calling this function will execute either the next callback (if any) for that route or the next matching route (if any).
 </p>
 
 ```
@@ -597,25 +612,81 @@ router.save('/pie');
 ```
 
 <p>
-If you want the first route callback to pass some data along to subsequent callbacks, you can attach that data to either the `req` object or the `res` object, which are shared between all routes that are executed during a single request.
+If you want the first route callback to pass some data along to subsequent callbacks, you can attach that data to either the `req` object or the `res` object, which are shared between all callbacks and routes that are executed during a single request.
+</p>
+
+<p>
+In the following example, both middleware and multiple routes are used. The `handleFlavor` middleware function is executed first, and the `flavor` data it adds to the `req` is passed along to every route callback.
 </p>
 
 ```
-router.route('/ice-cream', function (req, res, next) {
+// Used as route middleware to put the `flavor` on the `req`.
+router.handleFlavor = function (req, res, next) {
   req.flavor = 'cookie dough';
+  next();
+};
+
+router.route('/ice-cream', 'handleFlavor', function (req, res, next) {
+  Y.log("I sure do like " + req.flavor + " ice cream.");
   next();
 });
 
 router.route('/ice-cream', function (req) {
-  Y.log("I sure do like " + req.flavor + " ice cream.");
+  Y.log("Everyone likes ice cream, especially " + req.flavor + ".");
 });
 
 router.save('/ice-cream');
 // => "I sure do like cookie dough ice cream."
+// => "Everyone likes ice cream, especially cookie dough."
 ```
 
 <p>
 Whether to store data on `req` or `res` is up to you, but by convention, data pertaining to the request should be stored on `req`, and data pertaining to a response or to some other result of that request should be stored on `res`.
+</p>
+
+<p>
+Route-based middleware provides the ability to specify an arbitrary number of callbacks per route. This enables you to break down the logic of handling a request into distinct parts that can be reused with multiple routes. Middleware can be specified in a very flexible manner, and it can be grouped in arrays of arbitrary depth. Consider the following example:
+</p>
+
+```
+var users = {
+  ericf : {name: 'Eric Ferraiuolo', isAdmin: true},
+  rgrove: {name: 'Ryan Grove',      isAdmin: false}
+};
+
+router.findUser = function (req, res, next) {
+  req.user = users[req.param.user];
+  next();
+};
+
+router.logUserName = function (req, res, next) {
+  Y.log('Current user: ' + req.user.name);
+  next();
+};
+
+router.logUserAdmin = function (req, res, next) {
+  Y.log('Current user is admin: ' + req.user.isAdmin);
+  next();
+};
+
+// Define collections of middleware. Notice how `logAdmin` middleware nests the
+// `logUser` middleware array.
+var logUser  = ['findUser', 'logUserName'],
+    logAdmin = [logUser, 'logUserAdmin'];
+
+router.route('/users/:user',  logUser);
+router.route('/admins/:user', logAdmin);
+
+router.save('/users/rgrove');
+// => "Current user: Ryan Grove"
+
+router.save('/admins/ericf');
+// => "Current user: Eric Ferraiuolo"
+// => "Current user is admin: true"
+```
+
+<p>
+For a less contrived usage, checkout the <a href="../app/app-contributors.html">GitHub Contributors</a> example app which uses middleware for its <a href="../app/app-contributors.html#routes">advanced routing</a>.
 </p>
 
 <h3>Updating the URL</h3>

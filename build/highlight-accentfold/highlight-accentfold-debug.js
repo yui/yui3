@@ -1,4 +1,4 @@
-YUI.add('highlight-accentfold', function(Y) {
+YUI.add('highlight-accentfold', function (Y, NAME) {
 
 /**
 Adds accent-folding highlighters to `Y.Highlight`.
@@ -141,4 +141,4 @@ Highlight = Y.mix(Y.Highlight, {
 });
 
 
-}, '@VERSION@' ,{requires:['highlight-base', 'text-accentfold']});
+}, '@VERSION@', {"requires": ["highlight-base", "text-accentfold"]});

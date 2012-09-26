@@ -1,0 +1,15 @@
+{
+    "name": "highlight",
+    "builds": {
+        "highlight-base": {
+            "jsfiles": [
+                "highlight-base.js"
+            ]
+        },
+        "highlight-accentfold": {
+            "jsfiles": [
+                "highlight-accentfold.js"
+            ]
+        }
+    }
+}

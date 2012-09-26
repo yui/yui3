@@ -327,7 +327,7 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['get','features','intl-base','yui-log','yui-later'],
+                core: ['get', 'features', 'intl-base', 'yui-log', 'yui-later'],
                 loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
@@ -390,7 +390,7 @@ proto = {
                         path = {
                             filter: filter,
                             path: path
-                        }
+                        };
                     }
                     return path;
                 },
@@ -547,12 +547,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -1966,7 +1966,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function(Y) {
+YUI.add('yui-base', function (Y, NAME) {
 
 /*
  * YUI stub
@@ -2767,13 +2767,20 @@ use `clone()`.
 @return {Object} A new merged object.
 **/
 Y.merge = function () {
-    var args   = arguments,
-        i      = 0,
-        len    = args.length,
-        result = {};
+    var i      = 0,
+        len    = arguments.length,
+        result = {},
+        key,
+        obj;
 
     for (; i < len; ++i) {
-        Y.mix(result, args[i], true);
+        obj = arguments[i];
+
+        for (key in obj) {
+            if (hasOwn.call(obj, key)) {
+                result[key] = obj[key];
+            }
+        }
     }
 
     return result;
@@ -3792,7 +3799,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -3830,8 +3837,8 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@' );
-YUI.add('get', function(Y) {
+}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-later"]});
+YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
 
@@ -5098,8 +5105,8 @@ Transaction.prototype = {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('features', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('features', function (Y, NAME) {
 
 var feature_tests = {};
 
@@ -5432,9 +5439,8 @@ add('load', '17', {
     "ua": "ie"
 });
 
-
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('intl-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('intl-base', function (Y, NAME) {
 
 /**
  * The Intl utility provides a central location for managing sets of
@@ -5521,8 +5527,8 @@ Y.mix(Y.namespace('Intl'), {
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-log', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
@@ -5631,8 +5637,8 @@ INSTANCE.message = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-later', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-later', function (Y, NAME) {
 
 /**
  * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
@@ -5708,12 +5714,9 @@ Y.Lang.later = Y.later;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-
-
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','features','intl-base','yui-log','yui-later']});
-
-YUI.add('oop', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-later"]});
+YUI.add('oop', function (Y, NAME) {
 
 /**
 Adds object inheritance and manipulation utilities to the YUI instance. This
@@ -5955,6 +5958,17 @@ Y.some = function(o, f, c, proto) {
  * function can be provided to handle other data types,
  * filter keys, validate values, etc.
  *
+ * NOTE: Cloning a non-trivial object is a reasonably heavy operation, due to
+ * the need to recurrsively iterate down non-primitive properties. Clone
+ * should be used only when a deep clone down to leaf level properties
+ * is explicitly required.
+ *
+ * In many cases (for example, when trying to isolate objects used as 
+ * hashes for configuration properties), a shallow copy, using Y.merge is 
+ * normally sufficient. If more than one level of isolation is required, 
+ * Y.merge can be used selectively at each level which needs to be 
+ * isolated from the original without going all the way to leaf properties.
+ *
  * @method clone
  * @param {object} o what to clone.
  * @param {boolean} safe if true, objects will not have prototype
@@ -6102,8 +6116,8 @@ Y.rbind = function(f, c) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('features', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('features', function (Y, NAME) {
 
 var feature_tests = {};
 
@@ -6436,9 +6450,8 @@ add('load', '17', {
     "ua": "ie"
 });
 
-
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('dom-core', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('dom-core', function (Y, NAME) {
 
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
@@ -6452,6 +6465,19 @@ var NODE_TYPE = 'nodeType',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_ARRAY = [],
+    
+    // IE < 8 throws on node.contains(textNode)
+    supportsContainsTextNode = (function() {
+        var node = Y.config.doc.createElement('div'),
+            textNode = node.appendChild(Y.config.doc.createTextNode('')),
+            result = false;
+        
+        try {
+            result = node.contains(textNode);
+        } catch(e) {}
+
+        return result;
+    })(),
 
 /** 
  * The DOM utility provides a cross-browser abtraction layer
@@ -6588,16 +6614,19 @@ Y_DOM = {
 
         if ( !needle || !element || !needle[NODE_TYPE] || !element[NODE_TYPE]) {
             ret = false;
-        } else if (element[CONTAINS])  {
-            if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fail if needle not an ELEMENT_NODE
+        } else if (element[CONTAINS] &&
+                // IE < 8 throws on node.contains(textNode) so fall back to brute.
+                // Falling back for other nodeTypes as well.
+                (needle[NODE_TYPE] === 1 || supportsContainsTextNode)) {
                 ret = element[CONTAINS](needle);
-            } else {
-                ret = Y_DOM._bruteContains(element, needle); 
-            }
-        } else if (element[COMPARE_DOCUMENT_POSITION]) { // gecko
+        } else if (element[COMPARE_DOCUMENT_POSITION]) {
+            // Match contains behavior (node.contains(node) === true).
+            // Needed for Firefox < 4.
             if (element === needle || !!(element[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
                 ret = true;
             }
+        } else {
+            ret = Y_DOM._bruteContains(element, needle);
         }
 
         return ret;
@@ -6810,8 +6839,8 @@ Y_DOM = {
 Y.DOM = Y_DOM;
 
 
-}, '@VERSION@' ,{requires:['oop','features']});
-YUI.add('dom-base', function(Y) {
+}, '@VERSION@', {"requires": ["oop", "features"]});
+YUI.add('dom-base', function (Y, NAME) {
 
 /**
 * @for DOM
@@ -6975,7 +7004,7 @@ if (!testFeature('value-set', 'select')) {
                 break;
             }
         }
-    }
+    };
 }
 
 Y.mix(Y_DOM.VALUE_GETTERS, {
@@ -7415,7 +7444,7 @@ if (!testFeature('innerhtml-div', 'script')) {
         frag.innerHTML = '-' + html;
         frag.removeChild(frag.firstChild);
         return frag;
-    }
+    };
 
     creators.link = creators.style = creators.script;
 }
@@ -7498,8 +7527,8 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-core']});
-YUI.add('dom-style', function(Y) {
+}, '@VERSION@', {"requires": ["dom-core"]});
+YUI.add('dom-style', function (Y, NAME) {
 
 (function(Y) {
 /** 
@@ -7527,10 +7556,12 @@ var DOCUMENT_ELEMENT = 'documentElement',
     Y_DOM = Y.DOM,
 
     TRANSFORM = 'transform',
+    TRANSFORMORIGIN = 'transformOrigin',
     VENDOR_TRANSFORM = [
         'WebkitTransform',
         'MozTransform',
-        'OTransform'
+        'OTransform',
+        'msTransform'
     ],
 
     re_color = /color$/i,
@@ -7539,6 +7570,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
     if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
         TRANSFORM = val;
+        TRANSFORMORIGIN = val + "Origin";
     }
 });
 
@@ -7747,6 +7779,16 @@ Y_DOM.CUSTOM_STYLES.transform = {
     }
 };
 
+Y_DOM.CUSTOM_STYLES.transformOrigin = {
+    set: function(node, val, style) {
+        style[TRANSFORMORIGIN] = val;
+    },
+
+    get: function(node, style) {
+        return Y_DOM[GET_COMPUTED_STYLE](node, TRANSFORMORIGIN);
+    }
+};
+
 
 })(Y);
 (function(Y) {
@@ -7825,8 +7867,8 @@ Y.Color = {
 
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
-YUI.add('dom-style-ie', function(Y) {
+}, '@VERSION@', {"requires": ["dom-base"]});
+YUI.add('dom-style-ie', function (Y, NAME) {
 
 (function(Y) {
 var HAS_LAYOUT = 'hasLayout',
@@ -8131,8 +8173,8 @@ if (!testFeature('style', 'computedStyle')) {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-style']});
-YUI.add('dom-screen', function(Y) {
+}, '@VERSION@', {"requires": ["dom-style"]});
+YUI.add('dom-screen', function (Y, NAME) {
 
 (function(Y) {
 
@@ -8742,8 +8784,8 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
-YUI.add('selector-native', function(Y) {
+}, '@VERSION@', {"requires": ["dom-base", "dom-style"]});
+YUI.add('selector-native', function (Y, NAME) {
 
 (function(Y) {
 /**
@@ -8924,7 +8966,7 @@ var Selector = {
             attrs: attrs,
             pseudos: pseudos,
             selector: selector
-        }
+        };
     },
 
     _restoreSelector: function(replaced) {
@@ -9117,14 +9159,13 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
-YUI.add('selector', function(Y) {
+}, '@VERSION@', {"requires": ["dom-base"]});
+YUI.add('selector', function (Y, NAME) {
 
 
 
-
-}, '@VERSION@' ,{requires:['selector-native']});
-YUI.add('event-custom-base', function(Y) {
+}, '@VERSION@', {"requires": ["selector-native"]});
+YUI.add('event-custom-base', function (Y, NAME) {
 
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
@@ -9530,7 +9571,9 @@ DO.Error = DO.Halt;
 
 
 // var onsubscribeType = "_event:onsub",
-var AFTER = 'after',
+var YArray = Y.Array,
+
+    AFTER = 'after',
     CONFIGS = [
         'broadcast',
         'monitored',
@@ -9554,8 +9597,24 @@ var AFTER = 'after',
         'type'
     ],
 
+    CONFIGS_HASH = YArray.hash(CONFIGS),
+
+    nativeSlice = Array.prototype.slice, 
+
     YUI3_SIGNATURE = 9,
-    YUI_LOG = 'yui:log';
+    YUI_LOG = 'yui:log',
+
+    mixConfigs = function(r, s, ov) {
+        var p;
+
+        for (p in s) {
+            if (CONFIGS_HASH[p] && (ov || !(p in r))) { 
+                r[p] = s[p];
+            }
+        }
+
+        return r;
+    };
 
 /**
  * The CustomEvent class lets you define events for your application
@@ -9569,9 +9628,7 @@ var AFTER = 'after',
  */
 Y.CustomEvent = function(type, o) {
 
-    // if (arguments.length > 2) {
-// this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
-    // }
+    this._kds = Y.CustomEvent.keepDeprecatedSubs;
 
     o = o || {};
 
@@ -9634,15 +9691,36 @@ Y.CustomEvent = function(type, o) {
      * The subscribers to this event
      * @property subscribers
      * @type Subscriber {}
+     * @deprecated
      */
-    this.subscribers = {};
+    if (this._kds) {
+        this.subscribers = {};
+    }
+
+    /**
+     * The subscribers to this event
+     * @property _subscribers
+     * @type Subscriber []
+     * @private
+     */
+    this._subscribers = [];
 
     /**
      * 'After' subscribers
      * @property afters
      * @type Subscriber {}
      */
-    this.afters = {};
+    if (this._kds) {
+        this.afters = {};
+    }
+
+    /**
+     * 'After' subscribers
+     * @property _afters
+     * @type Subscriber []
+     * @private
+     */
+    this._afters = [];
 
     /**
      * This event has fired if true
@@ -9762,11 +9840,10 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
-    this.subCount = 0;
-    this.afterCount = 0;
+    // this.subCount = 0;
+    // this.afterCount = 0;
 
     // this.hasSubscribers = false;
-
     // this.hasAfters = false;
 
     /**
@@ -9784,7 +9861,35 @@ Y.CustomEvent = function(type, o) {
 
 };
 
+/**
+ * Static flag to enable population of the <a href="#property_subscribers">`subscribers`</a>
+ * and  <a href="#property_subscribers">`afters`</a> properties held on a `CustomEvent` instance.
+ * 
+ * These properties were changed to private properties (`_subscribers` and `_afters`), and 
+ * converted from objects to arrays for performance reasons. 
+ *
+ * Setting this property to true will populate the deprecated `subscribers` and `afters` 
+ * properties for people who may be using them (which is expected to be rare). There will
+ * be a performance hit, compared to the new array based implementation.
+ *
+ * If you are using these deprecated properties for a use case which the public API
+ * does not support, please file an enhancement request, and we can provide an alternate 
+ * public implementation which doesn't have the performance cost required to maintiain the
+ * properties as objects.
+ *
+ * @property keepDeprecatedSubs
+ * @static
+ * @for CustomEvent
+ * @type boolean
+ * @default false
+ * @deprecated
+ */
+Y.CustomEvent.keepDeprecatedSubs = false;
+
+Y.CustomEvent.mixConfigs = mixConfigs;
+
 Y.CustomEvent.prototype = {
+
     constructor: Y.CustomEvent,
 
     /**
@@ -9795,11 +9900,11 @@ Y.CustomEvent.prototype = {
      * @return Number
      */
     hasSubs: function(when) {
-        var s = this.subCount, a = this.afterCount, sib = this.sibling;
+        var s = this._subscribers.length, a = this._afters.length, sib = this.sibling;
 
         if (sib) {
-            s += sib.subCount;
-            a += sib.afterCount;
+            s += sib._subscribers.length;
+            a += sib._afters.length;
         }
 
         if (when) {
@@ -9820,7 +9925,7 @@ Y.CustomEvent.prototype = {
     monitor: function(what) {
         this.monitored = true;
         var type = this.id + '|' + this.type + '_' + what,
-            args = Y.Array(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
         args[0] = type;
         return this.host.on.apply(this.host, args);
     },
@@ -9831,12 +9936,10 @@ Y.CustomEvent.prototype = {
      * @return {Array} first item is the on subscribers, second the after.
      */
     getSubs: function() {
-        var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
+        var s = this._subscribers, a = this._afters, sib = this.sibling;
 
-        if (sib) {
-            Y.mix(s, sib.subscribers);
-            Y.mix(a, sib.afters);
-        }
+        s = (sib) ? s.concat(sib._subscribers) : s.concat();
+        a = (sib) ? a.concat(sib._afters) : a.concat();
 
         return [s, a];
     },
@@ -9849,9 +9952,7 @@ Y.CustomEvent.prototype = {
      * will be overwritten.
      */
     applyConfig: function(o, force) {
-        if (o) {
-            Y.mix(this, o, force, CONFIGS);
-        }
+        mixConfigs(this, o, force);
     },
 
     /**
@@ -9869,9 +9970,7 @@ Y.CustomEvent.prototype = {
      */
     _on: function(fn, context, args, when) {
 
-        if (!fn) {
-            this.log('Invalid callback for CE: ' + this.type);
-        }
+        if (!fn) { this.log('Invalid callback for CE: ' + this.type); }
 
         var s = new Y.Subscriber(fn, context, args, when);
 
@@ -9884,15 +9983,20 @@ Y.CustomEvent.prototype = {
         }
 
         if (when == AFTER) {
-            this.afters[s.id] = s;
-            this.afterCount++;
+            this._afters.push(s);
         } else {
-            this.subscribers[s.id] = s;
-            this.subCount++;
+            this._subscribers.push(s);
+        }
+
+        if (this._kds) {
+            if (when == AFTER) {
+                this.afters[s.id] = s;
+            } else {
+                this.subscribers[s.id] = s;
+            }
         }
 
         return new Y.EventHandle(this, s);
-
     },
 
     /**
@@ -9904,10 +10008,10 @@ Y.CustomEvent.prototype = {
      */
     subscribe: function(fn, context) {
         Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, true);
     },
-
+ 
     /**
      * Listen for this event
      * @method on
@@ -9918,9 +10022,10 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} An object with a detach method to detch the handler(s).
      */
     on: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
-        if (this.host) {
-            this.host._monitor('attach', this.type, {
+        var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
+
+        if (this.monitored && this.host) {
+            this.host._monitor('attach', this, {
                 args: arguments
             });
         }
@@ -9939,7 +10044,7 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} handle Unsubscribe handle.
      */
     after: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? nativeSlice.call(arguments, 2) : null;
         return this._on(fn, context, a, AFTER);
     },
 
@@ -9956,18 +10061,25 @@ Y.CustomEvent.prototype = {
         if (fn && fn.detach) {
             return fn.detach();
         }
-
+        
         var i, s,
             found = 0,
-            subs = Y.merge(this.subscribers, this.afters);
+            subs = this._subscribers,
+            afters = this._afters;
 
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                s = subs[i];
-                if (s && (!fn || fn === s.fn)) {
-                    this._delete(s);
-                    found++;
-                }
+        for (i = subs.length; i >= 0; i--) {
+            s = subs[i];
+            if (s && (!fn || fn === s.fn)) {
+                this._delete(s, subs, i);
+                found++;
+            }
+        }
+
+        for (i = afters.length; i >= 0; i--) {
+            s = afters[i];
+            if (s && (!fn || fn === s.fn)) {
+                this._delete(s, afters, i);
+                found++;
             }
         }
 
@@ -10017,9 +10129,7 @@ Y.CustomEvent.prototype = {
      * @param {string} cat log category.
      */
     log: function(msg, cat) {
-        if (!this.silent) {
-            Y.log(this.id + ': ' + msg, cat || 'info', 'event');
-        }
+        if (!this.silent) { Y.log(this.id + ': ' + msg, cat || 'info', 'event'); }
     },
 
     /**
@@ -10045,13 +10155,16 @@ Y.CustomEvent.prototype = {
             return true;
         } else {
 
-            var args = Y.Array(arguments, 0, true);
+            var args = nativeSlice.call(arguments, 0);
 
             // this doesn't happen if the event isn't published
             // this.host._monitor('fire', this.type, args);
 
             this.fired = true;
-            this.firedWith = args;
+
+            if (this.fireOnce) {
+                this.firedWith = args;
+            }
 
             if (this.emitFacade) {
                 return this.fireComplex(args);
@@ -10073,7 +10186,6 @@ Y.CustomEvent.prototype = {
         this.stopped = 0;
         this.prevented = 0;
         if (this.hasSubs()) {
-            // this._procSubs(Y.merge(this.subscribers, this.afters), args);
             var subs = this.getSubs();
             this._procSubs(subs[0], args);
             this._procSubs(subs[1], args);
@@ -10084,7 +10196,7 @@ Y.CustomEvent.prototype = {
 
     // Requires the event-custom-complex module for full funcitonality.
     fireComplex: function(args) {
-        Y.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
+        this.log('Missing event-custom-complex needed to emit a facade for: ' + this.type);
         args[0] = args[0] || {};
         return this.fireSimple(args);
     },
@@ -10102,17 +10214,16 @@ Y.CustomEvent.prototype = {
      * @private
      */
     _procSubs: function(subs, args, ef) {
-        var s, i;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                s = subs[i];
-                if (s && s.fn) {
-                    if (false === this._notify(s, args, ef)) {
-                        this.stopped = 2;
-                    }
-                    if (this.stopped == 2) {
-                        return false;
-                    }
+        var s, i, l;
+
+        for (i = 0, l = subs.length; i < l; i++) {
+            s = subs[i];
+            if (s && s.fn) {
+                if (false === this._notify(s, args, ef)) {
+                    this.stopped = 2;
+                }
+                if (this.stopped == 2) {
+                    return false;
                 }
             }
         }
@@ -10131,7 +10242,7 @@ Y.CustomEvent.prototype = {
     _broadcast: function(args) {
         if (!this.stopped && this.broadcast) {
 
-            var a = Y.Array(args);
+            var a = args.concat();
             a.unshift(this.type);
 
             if (this.host !== Y) {
@@ -10168,31 +10279,39 @@ Y.CustomEvent.prototype = {
      * subscribers.
      *
      * @method _delete
-     * @param subscriber object.
+     * @param s subscriber object.
+     * @param subs (optional) on or after subscriber array
+     * @param index (optional) The index found.
      * @private
      */
-    _delete: function(s) {
-        if (s) {
-            if (this.subscribers[s.id]) {
-                delete this.subscribers[s.id];
-                this.subCount--;
-            }
-            if (this.afters[s.id]) {
+    _delete: function(s, subs, i) {
+        var when = s._when;
+
+        if (!subs) {
+            subs = (when === AFTER) ? this._afters : this._subscribers; 
+            i = YArray.indexOf(subs, s, 0);
+        }
+
+        if (s && subs[i] === s) {
+            subs.splice(i, 1);
+        }
+
+        if (this._kds) {
+            if (when === AFTER) {
                 delete this.afters[s.id];
-                this.afterCount--;
+            } else {
+                delete this.subscribers[s.id];
             }
         }
 
-        if (this.host) {
-            this.host._monitor('detach', this.type, {
+        if (this.monitored && this.host) {
+            this.host._monitor('detach', this, {
                 ce: this,
                 sub: s
             });
         }
 
         if (s) {
-            // delete s.fn;
-            // delete s.context;
             s.deleted = true;
         }
     }
@@ -10206,7 +10325,7 @@ Y.CustomEvent.prototype = {
  * @class Subscriber
  * @constructor
  */
-Y.Subscriber = function(fn, context, args) {
+Y.Subscriber = function(fn, context, args, when) {
 
     /**
      * The callback that will be execute when the event fires
@@ -10236,6 +10355,8 @@ Y.Subscriber = function(fn, context, args) {
      * @type Array
      */
     this.args = args;
+
+    this._when = when;
 
     /**
      * Custom events for a given fire transaction.
@@ -10334,6 +10455,10 @@ Y.Subscriber.prototype = {
         } else {
             return (this.fn == fn);
         }
+    },
+    
+    valueOf : function() {
+        return this.id;
     }
 
 };
@@ -10437,10 +10562,10 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
-    YArray = Y.Array,
+    WILD_TYPE_RE = /(.*?)(:)(.*?)/,
 
     _wildType = Y.cached(function(type) {
-        return type.replace(/(.*)(:)(.*)/, "*$2$3");
+        return type.replace(WILD_TYPE_RE, "*$2$3");
     }),
 
     /**
@@ -10452,7 +10577,7 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || (typeof type !== "string") || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
@@ -10528,7 +10653,6 @@ var L = Y.Lang,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
-
     };
 
 
@@ -10630,7 +10754,8 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
+        var yuievt = this._yuievt,
+            parts = _parseType(type, yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
 
@@ -10649,7 +10774,7 @@ ET.prototype = {
 
             f = fn;
             c = context;
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             ret = [];
 
             if (L.isArray(type)) {
@@ -10676,8 +10801,7 @@ ET.prototype = {
 
             }, this);
 
-            return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
-
+            return (yuievt.chain) ? this : new Y.EventHandle(ret);
         }
 
         detachcategory = parts[0];
@@ -10686,7 +10810,7 @@ ET.prototype = {
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && Y.instanceOf(this, Node) && (shorttype in Node.DOM_EVENTS)) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             args.splice(2, 0, Node.getDOMNode(this));
             // Y.log("Node detected, redirecting with these args: " + args);
             return Y.on.apply(Y, args);
@@ -10697,7 +10821,7 @@ ET.prototype = {
         if (Y.instanceOf(this, YUI)) {
 
             adapt = Y.Env.evt.plugins[type];
-            args  = YArray(arguments, 0, true);
+            args  = nativeSlice.call(arguments, 0);
             args[0] = shorttype;
 
             if (Node) {
@@ -10728,8 +10852,8 @@ ET.prototype = {
         }
 
         if (!handle) {
-            ce = this._yuievt.events[type] || this.publish(type);
-            handle = ce._on(fn, context, (arguments.length > 3) ? YArray(arguments, 3, true) : null, (after) ? 'after' : true);
+            ce = yuievt.events[type] || this.publish(type);
+            handle = ce._on(fn, context, (arguments.length > 3) ? nativeSlice.call(arguments, 3) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -10738,7 +10862,7 @@ ET.prototype = {
             store[detachcategory][type].push(handle);
         }
 
-        return (this._yuievt.chain) ? this : handle;
+        return (yuievt.chain) ? this : handle;
 
     },
 
@@ -10830,7 +10954,7 @@ ET.prototype = {
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             args[2] = Node.getDOMNode(this);
             Y.detach.apply(Y, args);
             return this;
@@ -10840,7 +10964,7 @@ ET.prototype = {
 
         // The YUI instance handles DOM events and adaptors
         if (Y.instanceOf(this, YUI)) {
-            args = YArray(arguments, 0, true);
+            args = nativeSlice.call(arguments, 0);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
                 adapt.detach.apply(Y, args);
@@ -10964,8 +11088,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     publish: function(type, opts) {
         var events, ce, ret, defaults,
-            edata    = this._yuievt,
-            pre      = edata.config.prefix;
+            edata = this._yuievt,
+            pre = edata.config.prefix;
 
         if (L.isObject(type)) {
             ret = {};
@@ -10978,25 +11102,28 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
+        events = edata.events;
+        ce = events[type];
+
         this._monitor('publish', type, {
             args: arguments
         });
 
-        events = edata.events;
-        ce = events[type];
-
         if (ce) {
-// ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
+            // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
             if (opts) {
                 ce.applyConfig(opts, true);
             }
         } else {
-
+            // TODO: Lazy publish goes here.
             defaults = edata.defaults;
 
             // apply defaults
-            ce = new Y.CustomEvent(type,
-                                  (opts) ? Y.merge(defaults, opts) : defaults);
+            ce = new Y.CustomEvent(type, defaults);
+            if (opts) {
+                ce.applyConfig(opts, true);
+            }
+
             events[type] = ce;
         }
 
@@ -11021,18 +11148,28 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      * @method _monitor
      * @param what {String} 'attach', 'detach', 'fire', or 'publish'
-     * @param type {String} Name of the event being monitored
+     * @param eventType {String|CustomEvent} The prefixed name of the event being monitored, or the CustomEvent object.
      * @param o {Object} Information about the event interaction, such as
      *                  fire() args, subscription category, publish config
      * @private
      */
-    _monitor: function(what, type, o) {
-        var monitorevt, ce = this.getEvent(type);
-        if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
-            monitorevt = type + '_' + what;
-            // Y.log('monitoring: ' + monitorevt);
-            o.monitored = what;
-            this.fire.call(this, monitorevt, o);
+    _monitor: function(what, eventType, o) {
+        var monitorevt, ce, type;
+
+        if (eventType) {
+            if (typeof eventType === "string") {
+                type = eventType;
+                ce = this.getEvent(eventType, true);
+            } else {
+                ce = eventType;
+                type = eventType.type;
+            }
+
+            if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+                monitorevt = type + '_' + what;
+                o.monitored = what;
+                this.fire.call(this, monitorevt, o);
+            }
         }
     },
 
@@ -11062,20 +11199,18 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * parameter after the properties the object literal contains are copied to
      * the event facade.
      * @return {EventTarget} the event host
-     *
      */
     fire: function(type) {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre = this._yuievt.config.prefix, ce2,
-            args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
+            yuievt = this._yuievt,
+            pre = yuievt.config.prefix, 
+            ce, ret, 
+            ce2,
+            args = (typeIncluded) ? nativeSlice.call(arguments, 1) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
-
-        this._monitor('fire', t, {
-            args: args
-        });
 
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
@@ -11084,9 +11219,13 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ce = this.publish(t);
         }
 
+        this._monitor('fire', (ce || t), {
+            args: args
+        });
+
         // this event has not been published or subscribed to
         if (!ce) {
-            if (this._yuievt.hasTargets) {
+            if (yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
@@ -11097,7 +11236,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             ret = ce.fire.apply(ce, args);
         }
 
-        return (this._yuievt.chain) ? this : ret;
+        return (yuievt.chain) ? this : ret;
     },
 
     getSibling: function(type, ce) {
@@ -11153,7 +11292,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     after: function(type, fn) {
 
-        var a = YArray(arguments, 0, true);
+        var a = nativeSlice.call(arguments, 0);
 
         switch (L.type(type)) {
             case 'function':
@@ -11338,8 +11477,8 @@ for that signature.
 **/
 
 
-}, '@VERSION@' ,{requires:['oop']});
-YUI.add('event-custom-complex', function(Y) {
+}, '@VERSION@', {"requires": ["oop"]});
+YUI.add('event-custom-complex', function (Y, NAME) {
 
 
 /**
@@ -11351,9 +11490,20 @@ YUI.add('event-custom-complex', function(Y) {
 
 var FACADE,
     FACADE_KEYS,
+    key,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype;
+    ETProto = Y.EventTarget.prototype, 
+
+    mixFacadeProps = function(facade, payload) {
+        var p;
+
+        for (p in payload) {
+            if (!(FACADE_KEYS.hasOwnProperty(p))) {
+                facade[p] = payload[p];
+            }
+        }
+    };
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -11416,7 +11566,7 @@ Y.EventFacade = function(e, currentTarget) {
 
 };
 
-Y.extend(Y.EventFacade, Object, {
+Y.mix(Y.EventFacade.prototype, {
 
     /**
      * Stops the propagation to the next bubble target
@@ -11498,14 +11648,14 @@ CEProto.fireComplex = function(args) {
 
     self.target = self.target || host;
 
-    events = new Y.EventTarget({
-        fireOnce: true,
-        context: host
-    });
-
-    self.events = events;
-
     if (self.stoppedFn) {
+        events = new Y.EventTarget({
+            fireOnce: true,
+            context: host
+        });
+        
+        self.events = events;
+
         events.on('stopped', self.stoppedFn);
     }
 
@@ -11526,9 +11676,7 @@ CEProto.fireComplex = function(args) {
         args.unshift(ef);
     }
 
-    // if (subCount) {
     if (subs[0]) {
-        // self._procSubs(Y.merge(self.subscribers), args, ef);
         self._procSubs(subs[0], args, ef);
     }
 
@@ -11537,10 +11685,8 @@ CEProto.fireComplex = function(args) {
 
         oldbubble = es.bubbling;
 
-        // self.bubbling = true;
         es.bubbling = self.type;
 
-        // if (host !== ef.target || es.type != self.type) {
         if (es.type != self.type) {
             es.stopped = 0;
             es.prevented = 0;
@@ -11551,9 +11697,7 @@ CEProto.fireComplex = function(args) {
         self.stopped = Math.max(self.stopped, es.stopped);
         self.prevented = Math.max(self.prevented, es.prevented);
 
-        // self.bubbling = false;
         es.bubbling = oldbubble;
-
     }
 
     if (self.prevented) {
@@ -11617,12 +11761,16 @@ CEProto.fireComplex = function(args) {
         self.prevented = 0;
     }
 
+    // Kill the cached facade to free up memory.
+    // Otherwise we have the facade from the last fire, sitting around forever.
+    self._facade = null;
+
     return ret;
 };
 
 CEProto._getFacade = function() {
 
-    var ef = this._facade, o, o2,
+    var ef = this._facade, o,
     args = this.details;
 
     if (!ef) {
@@ -11635,16 +11783,8 @@ CEProto._getFacade = function() {
 
     if (Y.Lang.isObject(o, true)) {
 
-        o2 = {};
-
         // protect the event facade properties
-        Y.mix(o2, ef, true, FACADE_KEYS);
-
-        // mix the data
-        Y.mix(ef, o, true);
-
-        // restore ef
-        Y.mix(ef, o2, true, FACADE_KEYS);
+        mixFacadeProps(ef, o);
 
         // Allow the event type to be faked
         // http://yuilibrary.com/projects/yui3/ticket/2528376
@@ -11677,7 +11817,9 @@ CEProto.stopPropagation = function() {
     if (this.stack) {
         this.stack.stopped = 1;
     }
-    this.events.fire('stopped', this);
+    if (this.events) {
+        this.events.fire('stopped', this);
+    }
 };
 
 /**
@@ -11690,7 +11832,9 @@ CEProto.stopImmediatePropagation = function() {
     if (this.stack) {
         this.stack.stopped = 2;
     }
-    this.events.fire('stopped', this);
+    if (this.events) {
+        this.events.fire('stopped', this);
+    }
 };
 
 /**
@@ -11817,7 +11961,6 @@ ETProto.bubble = function(evt, args, target, es) {
                     ce.broadcast = bc;
                     ce.originalTarget = null;
 
-
                     // stopPropagation() was called
                     if (ce.stopped) {
                         break;
@@ -11833,12 +11976,15 @@ ETProto.bubble = function(evt, args, target, es) {
 };
 
 FACADE = new Y.EventFacade();
-FACADE_KEYS = Y.Object.keys(FACADE);
+FACADE_KEYS = {};
 
+// Flatten whitelist
+for (key in FACADE) {
+    FACADE_KEYS[key] = true;
+}
 
-
-}, '@VERSION@' ,{requires:['event-custom-base']});
-YUI.add('node-core', function(Y) {
+}, '@VERSION@', {"requires": ["event-custom-base"]});
+YUI.add('node-core', function (Y, NAME) {
 
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
@@ -12384,6 +12530,7 @@ Y.mix(Y_Node.prototype, {
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * If fn is not passed as an argument, the parent node will be returned.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @param {String | Function} stopFn optional A selector string or boolean
      * method to indicate when the search should stop. The search bails when the function
@@ -13433,8 +13580,8 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['dom-core', 'selector']});
-YUI.add('node-base', function(Y) {
+}, '@VERSION@', {"requires": ["dom-core", "selector"]});
+YUI.add('node-base', function (Y, NAME) {
 
 /**
  * @module node
@@ -14591,7 +14738,7 @@ Y.mix(Y.NodeList.prototype, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'node-core', 'event-base']});
+}, '@VERSION@', {"requires": ["event-base", "node-core", "dom-base"]});
 (function () {
 var GLOBAL_ENV = YUI.Env;
 
@@ -14604,7 +14751,7 @@ if (!GLOBAL_ENV._ready) {
     GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
 }
 })();
-YUI.add('event-base', function(Y) {
+YUI.add('event-base', function (Y, NAME) {
 
 /*
  * DOM event listener abstraction layer
@@ -15029,7 +15176,7 @@ var _eventenv = Y.Env.evt,
     _deleteAndClean = function(s) {
         var ret = _ceProtoDelete.apply(this, arguments);
 
-        if (!this.subCount && !this.afterCount) {
+        if (!this.hasSubs()) {
             Y.Event._clean(this);
         }
 
@@ -15972,8 +16119,8 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
-YUI.add('pluginhost-base', function(Y) {
+}, '@VERSION@', {"requires": ["event-custom-base"]});
+YUI.add('pluginhost-base', function (Y, NAME) {
 
     /**
      * Provides the augmentable PluginHost interface, which can be added to any class.
@@ -16155,8 +16302,8 @@ YUI.add('pluginhost-base', function(Y) {
     Y.namespace("Plugin").Host = PluginHost;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('pluginhost-config', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('pluginhost-config', function (Y, NAME) {
 
     /**
      * Adds pluginhost constructor configuration and static configuration support
@@ -16285,8 +16432,8 @@ YUI.add('pluginhost-config', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['pluginhost-base']});
-YUI.add('event-delegate', function(Y) {
+}, '@VERSION@', {"requires": ["pluginhost-base"]});
+YUI.add('event-delegate', function (Y, NAME) {
 
 /**
  * Adds event delegation support to the library.
@@ -16608,8 +16755,8 @@ delegate._applyFilter = function (filter, args, ce) {
 Y.delegate = Y.Event.delegate = delegate;
 
 
-}, '@VERSION@' ,{requires:['node-base']});
-YUI.add('node-event-delegate', function(Y) {
+}, '@VERSION@', {"requires": ["node-base"]});
+YUI.add('node-event-delegate', function (Y, NAME) {
 
 /**
  * Functionality to make the node a delegated event container
@@ -16662,8 +16809,8 @@ Y.Node.prototype.delegate = function(type) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
-YUI.add('node-pluginhost', function(Y) {
+}, '@VERSION@', {"requires": ["node-base", "event-delegate"]});
+YUI.add('node-pluginhost', function (Y, NAME) {
 
 /**
  * @module node
@@ -16748,8 +16895,8 @@ Y.NodeList.prototype.unplug = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
-YUI.add('node-screen', function(Y) {
+}, '@VERSION@', {"requires": ["node-base", "pluginhost"]});
+YUI.add('node-screen', function (Y, NAME) {
 
 /**
  * Extended Node interface for managing regions and screen positioning.
@@ -16988,8 +17135,8 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'dom-screen']});
-YUI.add('node-style', function(Y) {
+}, '@VERSION@', {"requires": ["dom-screen", "node-base"]});
+YUI.add('node-style', function (Y, NAME) {
 
 (function(Y) {
 /**
@@ -17094,8 +17241,8 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getStyle', 'getComputedStyle', 'setS
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-style', 'node-base']});
-YUI.add('querystring-stringify-simple', function(Y) {
+}, '@VERSION@', {"requires": ["dom-style", "node-base"]});
+YUI.add('querystring-stringify-simple', function (Y, NAME) {
 
 /*global Y */
 /**
@@ -17155,8 +17302,8 @@ QueryString.stringify = function (obj, c) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('io-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('io-base', function (Y, NAME) {
 
 /**
 Base IO functionality. Provides basic XHR transport support.
@@ -17276,6 +17423,11 @@ IO.prototype = {
             // Non-IE  can use XHR level 2 and not rely on an
             // external transport.
             alt = Y.UA.ie ? 'xdr' : null;
+
+            // Prevent "pre-flight" OPTIONS request by removing the
+            // `X-Requested-With` HTTP header from CORS requests. This header
+            // can be added back on a per-request basis, if desired.
+            io.setHeader('X-Requested-With');
         }
 
         use = alt || form;
@@ -18151,8 +18303,8 @@ Y.mix(Y.IO.prototype, {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base', 'querystring-stringify-simple']});
-YUI.add('json-parse', function(Y) {
+}, '@VERSION@', {"requires": ["event-custom-base", "querystring-stringify-simple"]});
+YUI.add('json-parse', function (Y, NAME) {
 
 /**
  * <p>The JSON module adds support for serializing JavaScript objects into
@@ -18381,8 +18533,8 @@ if ( Native ) {
 Y.JSON.useNativeParse = useNative;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('transition', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('transition', function (Y, NAME) {
 
 /**
 * Provides the transition method for Node.
@@ -19082,8 +19234,8 @@ Transition.DEFAULT_TOGGLE = 'fade';
 
 
 
-}, '@VERSION@' ,{requires:['node-style']});
-YUI.add('selector-css2', function(Y) {
+}, '@VERSION@', {"requires": ["node-style"]});
+YUI.add('selector-css2', function (Y, NAME) {
 
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
@@ -19527,8 +19679,8 @@ if (Y.Selector.useNative && Y.config.doc.querySelector) {
 
 
 
-}, '@VERSION@' ,{requires:['selector-native']});
-YUI.add('selector-css3', function(Y) {
+}, '@VERSION@', {"requires": ["selector-native"]});
+YUI.add('selector-css3', function (Y, NAME) {
 
 /**
  * The selector css3 module provides support for css3 selectors.
@@ -19679,8 +19831,8 @@ Y.Selector.combinators['~'] = {
 };
 
 
-}, '@VERSION@' ,{requires:['selector-native', 'selector-css2']});
-YUI.add('yui-log', function(Y) {
+}, '@VERSION@', {"requires": ["selector-native", "selector-css2"]});
+YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
@@ -19789,8 +19941,8 @@ INSTANCE.message = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('dump', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('dump', function (Y, NAME) {
 
 /**
  * Returns a simple string representation of the object or array.
@@ -19894,8 +20046,8 @@ YUI.add('dump', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('transition-timer', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('transition-timer', function (Y, NAME) {
 
 /**
 * Provides the base Transition class, for animating numeric properties.
@@ -20228,8 +20380,8 @@ Transition.behaviors.top = Transition.behaviors.bottom = Transition.behaviors.ri
 Y.Transition = Transition;
 
 
-}, '@VERSION@' ,{requires:['transition']});
-YUI.add('simpleyui', function (Y, NAME) {
+}, '@VERSION@', {"requires": ["transition"]});
+YUI.add('yui', function (Y, NAME) {
 
 // empty
 

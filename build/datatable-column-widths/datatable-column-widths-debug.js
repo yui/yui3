@@ -1,4 +1,4 @@
-YUI.add('datatable-column-widths', function(Y) {
+YUI.add('datatable-column-widths', function (Y, NAME) {
 
 /**
 Adds basic, programmatic column width support to DataTable via column
@@ -296,4 +296,4 @@ Y.DataTable.ColumnWidths = ColumnWidths;
 Y.Base.mix(Y.DataTable, [ColumnWidths]);
 
 
-}, '@VERSION@' ,{requires:['datatable-base']});
+}, '@VERSION@', {"requires": ["datatable-base"]});

@@ -1,4 +1,4 @@
-YUI.add('attribute-base', function(Y) {
+YUI.add('attribute-base', function (Y, NAME) {
 
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
@@ -101,5 +101,4 @@ YUI.add('attribute-base', function(Y) {
 
     Y.Attribute = Attribute;
 
-
-}, '@VERSION@' ,{requires:['attribute-core', 'attribute-events', 'attribute-extras']});
+}, '@VERSION@', {"requires": ["attribute-core", "attribute-events", "attribute-extras"]});

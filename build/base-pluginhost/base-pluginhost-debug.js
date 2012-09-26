@@ -1,4 +1,4 @@
-YUI.add('base-pluginhost', function(Y) {
+YUI.add('base-pluginhost', function (Y, NAME) {
 
     /**
      * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with 
@@ -33,4 +33,4 @@ YUI.add('base-pluginhost', function(Y) {
     Base.unplug = PluginHost.unplug;
 
 
-}, '@VERSION@' ,{requires:['base-base', 'pluginhost']});
+}, '@VERSION@', {"requires": ["base-base", "pluginhost"]});

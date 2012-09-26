@@ -955,7 +955,7 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
      * Handles position changes.
      *
      * @method _positionChangeHandler
-     * @parma {Object} e Event object
+     * @param {Object} e Event object
      * @private
      */
     _positionChangeHandler: function(e)
