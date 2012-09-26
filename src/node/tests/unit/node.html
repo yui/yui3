@@ -182,7 +182,7 @@ button {
 
 <div id="test-ancestor-stop">
     <div>
-        <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em>
+        <div id="test-element-by-axis">foo<div></div>bar<span></span>baz<em></em></div>
     </div>
 </div>
 
@@ -1058,9 +1058,7 @@ YUI({
                 "Y.all(window)");
 */
 
-            Assert.isNotUndefined(Y.all(window)._nodes[0].alert,
-                "Y.all(window)");
-
+            Assert.isTrue(Y.DOM.isWindow(Y.all(window)._nodes[0], "Y.all(window)");
         },
 
         test_isEmpty: function() {
@@ -1890,9 +1888,19 @@ YUI({
 
     Y.Test.Runner.add(suite);
 
-    Y.on('load', function() {
+    // TODO: Temp, so we can collect test results for Win8 packaged apps.
+    //
+    // Need to:
+    // - Expose Y.UA.winjsapp or something similar (http://yuilibrary.com/projects/yui3/ticket/2532797).
+    // - Look into why Y.on(load) is not firing in Win8 packaged apps.
+    // - Look into whether or not we really need onload for this test to begin with.
+    if (typeof Windows !== undefined && Windows.System) {
+        Y.Test.Runner.run();
+    } else {
+        Y.on('load', function() {
             Y.Test.Runner.run();
-    }, window);
+        }, window);
+    }
 });
 </script>
 </body>
