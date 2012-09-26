@@ -1,4 +1,4 @@
-YUI.add('cache-base', function(Y) {
+YUI.add('cache-base', function (Y, NAME) {
 
 /**
  * The Cache utility provides a common configurable interface for components to
@@ -439,4 +439,4 @@ Y.extend(Cache, Y.Base, {
 Y.Cache = Cache;
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@', {"requires": ["base"]});

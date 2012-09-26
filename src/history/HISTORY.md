@@ -4,7 +4,12 @@ History Change History
 3.6.0
 -----
 
-* No changes.
+* Fixed issue with `hashchange` listeners being called once for every YUI
+  instance which uses history-hash when the `hashchange` event would fire.
+  [Ticket #2532596]
+
+* HistoryHTML5 now treats empty `window.history.state` objects as `null` when
+  seeding its initial state value on construction. [Ticket #2532340]
 
 3.5.1
 -----

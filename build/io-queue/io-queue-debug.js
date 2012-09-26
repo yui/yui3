@@ -1,4 +1,4 @@
-YUI.add('io-queue', function(Y) {
+YUI.add('io-queue', function (Y, NAME) {
 
 /**
 Extends IO to implement Queue for synchronous
@@ -156,4 +156,4 @@ _queue.size = function () { io.qSize(); };
 Y.io.queue = _queue;
 
 
-}, '@VERSION@' ,{requires:['io-base','queue-promote']});
+}, '@VERSION@', {"requires": ["io-base", "queue-promote"]});

@@ -5,6 +5,11 @@
 
 {{>getting-started}}
 
+{{>need-skin-note}}
+```
+<body class="yui3-skin-sam"> {{>need-skin-comment}}
+```
+
 <h2 id="using">Using ScrollView</h2>
 
 <h3 id="instantiating">Instantiating A ScrollView</h3>
@@ -66,21 +71,15 @@ from native overflow handling. In the above example the widget is given a fixed 
 
 <table>
     <tr><th>Attribute</th><th>Description</th><th>Default</th></tr>
-    <tr><td>`flick`</td><td>An object which specifies the minimum distance and minimum velocity (in pixels/ms - generally around 0.5) which should constitute a flick gesture. Can be set to false to disable flick support, in which case the ScrollView content can only be dragged to scroll it.</td><td>`{minDistance:10, minVelocity:0.3}`</td></tr>
-    <tr><td>`deceleration`</td><td>A drag coefficient, which defines how quickly the velocity of the scrollview content decreases after a flick, when it's still with in the min and max bounds for the widget. The closer this is to 1, the less friction there is after a flick.</td><td>`0.98`</td></tr>
+    <tr><td>`axis`</td><td>A string which specifies the axis (or axes) should be scrolled on. Valid values are `x`, `y`, or `xy`.  This is an optional attribute, so if unspecified, ScrollView will attempt to determine the desired scroll axis based off the overflow of content.</td><td>`auto calculation`</td></tr>
     <tr><td>`bounce`</td><td>A drag coefficient, which defines how quickly the velocity of the scrollview content decreases after a flick, when it's past the min and max bounds for the widget. Can be set to 0 to disable bounce behavior.</td><td>`0.1`</td></tr>
-</table>
-
-<h3>Static Properties Controlling Scroll Dynamics</h3>
-
-<p>The following properties are provided as static properties and can be used to define default values affecting scroll dynamics for all ScrollViews on the page:</p>
-
-<table>
-    <tr><th>Static Property</th><th>Description</th><th>Default</th></tr>
-    <tr><td>`Y.ScrollView.BOUNCE_RANGE`</td><td>The default bounce distance in pixels.</td><td>`150`</td></tr>
-    <tr><td>`Y.ScrollView.FRAME_STEP`</td><td>The default time interval used when animating the flick deceleration.</td><td>`30`</td></tr>
-    <tr><td>`Y.ScrollView.EASING`</td><td>The default easing used when scrolling to a given X or Y.</td><td>`cubic-bezier(0, 0.1, 0, 1.0)`</td></tr>
-    <tr><td>`Y.ScrollView.SNAP_EASING`</td><td>The default easing used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr>                
+    <tr><td>`bounceRange`</td><td>The default bounce distance in pixels.</td><td>`150`</td></tr>
+    <tr><td>`deceleration`</td><td>A drag coefficient, which defines how quickly the velocity of the scrollview content decreases after a flick, when it's still with in the min and max bounds for the widget. The closer this is to 1, the less friction there is after a flick.</td><td>`0.98`</td></tr>
+    <tr><td>`easing`</td><td>The default easing used when scrolling to a given X or Y.</td><td>`cubic-bezier(0, 0.1, 0, 1.0)`</td></tr>
+    <tr><td>`flick`</td><td>An object which specifies the minimum distance and minimum velocity (in pixels/ms - generally around 0.5) which should constitute a flick gesture. Can be set to false to disable flick support, in which case the ScrollView content can only be dragged to scroll it.</td><td>`{minDistance:10, minVelocity:0.3}`</td></tr>
+    <tr><td>`frameDuration`</td><td>The default time interval used when animating the flick deceleration.</td><td>`30`</td></tr>
+    <tr><td>`snapDuration`</td><td>The default duration (in ms) used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr> 
+    <tr><td>`snapEasing`</td><td>The default easing used for the snap back animation when scrolled past the min or max bounds for the widget.</td><td>`ease-out`</td></tr> 
 </table>
 
 <h3 id="markup">Markup Structure</h3>

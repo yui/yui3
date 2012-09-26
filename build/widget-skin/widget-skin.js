@@ -1,4 +1,4 @@
-YUI.add('widget-skin', function(Y) {
+YUI.add('widget-skin', function (Y, NAME) {
 
 /**
  * Provides skin related utlility methods.
@@ -40,4 +40,4 @@ Y.Widget.prototype.getSkinName = function () {
 };
 
 
-}, '@VERSION@' ,{requires:['widget-base']});
+}, '@VERSION@', {"requires": ["widget-base"]});

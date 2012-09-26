@@ -1,4 +1,4 @@
-YUI.add('array-extras', function(Y) {
+YUI.add('array-extras', function (Y, NAME) {
 
 /**
 Adds additional utility methods to the `Y.Array` class.
@@ -80,7 +80,7 @@ A.unique = function (array, testFn) {
     var i       = 0,
         len     = array.length,
         results = [],
-        j, match, result, resultLen, value;
+        j, result, resultLen, value;
 
     // Note the label here. It's used to jump out of the inner loop when a value
     // is not unique.
@@ -363,5 +363,38 @@ A.zip = function(a, a2) {
     return results;
 };
 
+/**
+Flattens an array of nested arrays at any abitrary depth into a single, flat
+array.
 
-}, '@VERSION@' ,{requires:['yui-base']});
+@method flatten
+@param {Array} a Array with nested arrays to flatten.
+@return {Array} An array whose nested arrays have been flattened.
+@static
+@since 3.7.0
+**/
+A.flatten = function(a) {
+    var result = [],
+        i, len, val;
+
+    // Always return an array.
+    if (!a) {
+        return result;
+    }
+
+    for (i = 0, len = a.length; i < len; ++i) {
+        val = a[i];
+
+        if (L.isArray(val)) {
+            // Recusively flattens any nested arrays.
+            result.push.apply(result, A.flatten(val));
+        } else {
+            result.push(val);
+        }
+    }
+
+    return result;
+};
+
+
+}, '@VERSION@', {"requires": ["yui-base"]});

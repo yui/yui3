@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <title>Anim Shape Transform Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="../../../graphics/tests/unit/assets/shape-anim-tests.js"></script>
+<script>
+YUI({
+    coverage: ['anim-shape'],
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+}).use('test-console', 'shape-anim-tests', function (Y) {
+
+    (new Y.Test.Console()).render( "#log" );
+
+    Y.Test.Runner.setName('Anim: Shape-Transform');
+
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

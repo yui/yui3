@@ -1,0 +1,33 @@
+{
+    "name": "test",
+    "builds": {
+        "test": {
+            "regex": "",
+            "jsfiles": [
+                "YUITest.js",
+                "YTestWrap.js",
+                "EventTarget.js",
+                "TestSuite.js",
+                "TestCase.js",
+                "TestFormat.js",
+                "Reporter.js",
+                "TestRunner.js",
+                "ArrayAssert.js",
+                "Assert.js",
+                "AssertionError.js",
+                "ComparisonFailure.js",
+                "CoverageFormat.js",
+                "DateAssert.js",
+                "Mock.js",
+                "ObjectAssert.js",
+                "Results.js",
+                "ShouldError.js",
+                "ShouldFail.js",
+                "UnexpectedError.js",
+                "UnexpectedValue.js",
+                "Wait.js",
+                "YTestWrapAfter.js"
+            ]
+        }
+    }
+}

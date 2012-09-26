@@ -76,8 +76,7 @@ To make our app look nice, we'll add some CSS to style the markup we've setup in
 
 <div class="scrollable">
 ```
-<link rel="stylesheet" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssgrids/grids-min.css" />
-
+{{>css-yui-grids}}
 {{>app-contributors-css}}
 ```
 </div>
@@ -112,9 +111,7 @@ All of these things will live inside the following YUI instance:
 </p>
 
 ```
-<!-- Include YUI on the page if you haven't already. -->
-<script src="http://yui.yahooapis.com/{{yuiVersion}}/build/yui/yui-min.js"></script>
-
+{{>js-yui-seed}}
 {{>app-contributors-js-yui-start}}
     // ... Add the code from the following sections here! ...
 {{>app-contributors-js-yui-end}}
@@ -131,7 +128,7 @@ We have this ability to create mixable feature extensions, like this sync implem
 </p>
 
 ```
-{{>app-contributors-js-githubsync}}
+{{>app-contributors-js-github-sync}}
 ```
 
 <h3>Models &amp; Model Lists</h3>
@@ -394,17 +391,17 @@ With our app grouped into three "pages", we need to make these pages accessible 
 </ul>
 
 <p>
-Notice how our `/github/:user/` and `/github/:user/:repo/` routes have very similar data requirements, specifically steps 1–4, we can use the routing infrastructure provided by `Y.App` to chain our route-handlers so they can build on each other.
+Notice how our `/github/:user/` and `/github/:user/:repo/` routes have very similar data requirements, specifically steps 1–4, we can use the routing infrastructure provided by `Y.App` to create reusable "middleware" which both of these routes can use. Each piece of middleware can be responsible for fetching a single data object we'll need, essentially building up the request object with everything needed to fulfill the request.
 </p>
 
 <p>
-Let's see how our page-level views and route-handlers work together by looking at `ContributorsApp`:
+Let's see how our page-level views and route handlers work together by looking at `ContributorsApp`:
 </p>
 
 <h4>ContributorsApp</h4>
 
 <p>
-Here is our subclass of `Y.App` where we have defined our three page-level views, our app's URL-space, and our route-handlers. The infrastructure provided by `Y.App` will take care of managing our page-views and dispatching to our route-handlers as our users navigate through our app.
+Here is our subclass of `Y.App` where we have defined our three page-level views, our app's URL-space, and our route handlers. The infrastructure provided by `Y.App` will take care of managing our page-views and dispatching to our route handlers as our users navigate through our app.
 </p>
 
 ```
@@ -425,7 +422,9 @@ Finally we can create a new instance of our `ContributorsApp`, render it to the 
 <h2>Complete Example Source</h2>
 
 ```
+{{>css-yui-grids}}
 {{>app-contributors-css}}
 {{>app-contributors-templates}}
+{{>js-yui-seed}}
 {{>app-contributors-js}}
 ```

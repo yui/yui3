@@ -1,4 +1,4 @@
-YUI.add('autocomplete-filters-accentfold', function(Y) {
+YUI.add('autocomplete-filters-accentfold', function (Y, NAME) {
 
 /**
 Provides pre-built accent-folding result matching filters for AutoComplete.
@@ -133,4 +133,4 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'text-accentfold', 'text-wordbreak']});
+}, '@VERSION@', {"requires": ["array-extras", "text-accentfold", "text-wordbreak"]});

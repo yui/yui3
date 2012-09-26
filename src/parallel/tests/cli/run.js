@@ -15,12 +15,13 @@ YUI({useSync: true }).use('test', function(Y) {
     Y.Test.Case = YUITest.TestCase;
     Y.Test.Suite = YUITest.TestSuite;
     Y.Assert = YUITest.Assert;
+    Y.ArrayAssert = YUITest.ArrayAssert;
 
     Y.applyConfig({
         modules: {
             'parallel-tests': {
-                fullpath: path.join(__dirname, '../parallel-tests.js'),
-                requires: [ 'test']
+                fullpath: path.join(__dirname, '../unit/assets/parallel-tests.js'),
+                requires: [ 'test', 'parallel' ]
             }
         }
     });

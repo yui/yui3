@@ -1,0 +1,10 @@
+{
+    "name": "cookie",
+    "builds": {
+        "cookie": {
+            "jsfiles": [
+                "Cookie.js"
+            ]
+        }
+    }
+}

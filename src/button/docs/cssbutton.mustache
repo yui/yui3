@@ -1,4 +1,5 @@
-<link rel="stylesheet" href='{{yuiBuildUrl}}/cssbutton/cssbutton.css'></link>
+<!-- Include the cssbutton stylesheet -->
+<link rel="stylesheet" href='{{yuiBuildUrl}}/cssbutton/cssbutton.css'>
 <style>{{>cssbutton-source-css}}</style>
 
 <div class="intro">
@@ -8,6 +9,15 @@
 <div class="example">
     {{>cssbutton-source}}
 </div>
+
+
+<p>YUI's Button component was designed with the idea in mind that sometimes you may only want button styles, without the need for any JavaScript functionality.  Instead of `use('button', ...)`, you can just include the `cssbutton` module.  This can be done dynamically with `use('cssbutton')`, or statically with a `link` tag.</p>
+```
+<link rel="stylesheet" href="http://yui.yahooapis.com/{{yuiVersion}}/build/cssbutton/cssbutton.css">
+```
+
+
+
 
 <h4>Source: HTML</h4>
 ```

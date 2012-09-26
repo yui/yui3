@@ -109,7 +109,7 @@ function Box(cfg) {
         "x" : {
             setter: function(val, name) {
                 // Pass through x value to xy
-                this.set("xy", [parseInt(val), this.get("y")]);
+                this.set("xy", [val, this.get("y")]);
             },
 
             getter: function(val, name) {
@@ -121,7 +121,7 @@ function Box(cfg) {
         "y" : {
             setter: function(val, name) {
                 // Pass through y value to xy
-                this.set("xy", [this.get("x"), parseInt(val)]);
+                this.set("xy", [this.get("x"), val]);
             },
 
             getter: function() {
@@ -163,20 +163,28 @@ function Box(cfg) {
 <p>The `xy` attribute also has a `setter` function configured, which makes sure that the box is always constrained to it's parent element. The `constrain` method which it delegates to, takes the xy value the user is trying to set and returns a constrained value if the x or y values fall outside the parent box. The value which is returned by the `setter` is the value which is ultimately stored for the `xy` attribute:</p>
 
 ```
-// Get min, max unconstrained values for X. 
-// Using Math.round to handle FF3's sub-pixel region values
+// Get min, max unconstrained values for X.
 Box.prototype.getXConstraints = function() {
-    var parentRegion = this.get("parent").get("region");
-    return [Math.round(parentRegion.left + Box.BUFFER), 
-            Math.round(parentRegion.right - this._node.get("offsetWidth") - Box.BUFFER)];
+
+    var parentRegion = this.get("parent").get("region"),
+        nodeRegion = this._node.get("region"),
+        nodeWidth = nodeRegion.right-nodeRegion.left;
+
+    // Ceil/Floor to account for browsers which have sub-pixel values.
+
+    return [Math.ceil(parentRegion.left + Box.BUFFER), Math.floor(parentRegion.right - nodeWidth - Box.BUFFER)];
 };
 
-// Get min, max unconstrained values for Y.  
-// Using Math.round to handle FF3's sub-pixel region values
+// Get min, max unconstrained values for Y.
 Box.prototype.getYConstraints = function() {
-    var parentRegion = this.get("parent").get("region");
-    return [Math.round(parentRegion.top + Box.BUFFER), 
-            Math.round(parentRegion.bottom - this._node.get("offsetHeight") - Box.BUFFER)];
+
+    var parentRegion = this.get("parent").get("region"),
+        nodeRegion = this._node.get("region"),
+        nodeHeight = nodeRegion.bottom-nodeRegion.top;
+
+    // Ceil/Floor to account for browsers which have sub-pixel values.
+
+    return [Math.ceil(parentRegion.top + Box.BUFFER), Math.floor(parentRegion.bottom - nodeHeight - Box.BUFFER)];
 };
 
 // Constrains given x,y values

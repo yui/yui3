@@ -1,0 +1,25 @@
+{
+    "name": "base",
+    "builds": {
+        "base-pluginhost": {
+            "jsfiles": [
+                "BasePluginHost.js"
+            ]
+        },
+        "base-core": {
+            "jsfiles": [
+                "BaseCore.js"
+            ]
+        },
+        "base-base": {
+            "jsfiles": [
+                "Base.js"
+            ]
+        },
+        "base-build": {
+            "jsfiles": [
+                "BaseBuild.js"
+            ]
+        }
+    }
+}

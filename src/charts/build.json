@@ -1,0 +1,69 @@
+{
+    "name": "charts",
+    "builds": {
+        "charts-base": {
+            "jsfiles": [
+                "ShapeGroup.js",
+                "CircleGroup.js",
+                "RectGroup.js",
+                "DiamondGroup.js",
+                "EllipseGroup.js",
+                "Renderer.js",
+                "LeftAxisLayout.js",
+                "RightAxisLayout.js",
+                "BottomAxisLayout.js",
+                "TopAxisLayout.js",
+                "Axis.js",
+                "AxisType.js",
+                "NumericAxis.js",
+                "StackedAxis.js",
+                "TimeAxis.js",
+                "CategoryAxis.js",
+                "CurveUtil.js",
+                "StackingUtil.js",
+                "Lines.js",
+                "Fills.js",
+                "Plots.js",
+                "Histogram.js",
+                "CartesianSeries.js",
+                "MarkerSeries.js",
+                "LineSeries.js",
+                "SplineSeries.js",
+                "StackedSplineSeries.js",
+                "StackedMarkerSeries.js",
+                "ColumnSeries.js",
+                "BarSeries.js",
+                "AreaSeries.js",
+                "AreaSplineSeries.js",
+                "StackedAreaSplineSeries.js",
+                "ComboSeries.js",
+                "StackedComboSeries.js",
+                "ComboSplineSeries.js",
+                "StackedComboSplineSeries.js",
+                "StackedLineSeries.js",
+                "StackedAreaSeries.js",
+                "StackedColumnSeries.js",
+                "StackedBarSeries.js",
+                "PieSeries.js",
+                "Gridlines.js",
+                "Graph.js",
+                "ChartBase.js",
+                "CartesianChart.js",
+                "PieChart.js"
+            ]
+        },
+        "charts-legend": {
+            "jsfiles": [
+                "CartesianChartLegend.js",
+                "PieChartLegend.js",
+                "ChartLegend.js",
+                "Chart.js"
+            ]
+        },
+        "charts": {
+            "jsfiles": [
+                "Chart.js"
+            ]
+        }
+    }
+}

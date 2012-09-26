@@ -11,11 +11,12 @@
     "examples": [
 
         {
-            "name": "stylesheet-theme",
+            "newWindow"  : "true",
+            "name"       : "stylesheet-theme",
 	        "displayName": "Adjusting a Page Theme on the Fly",
-	        "modules": ["stylesheet","overlay","slider","dd"],
+	        "modules"    : ["stylesheet","overlay","slider","dd"],
 	        "description": "Use StyleSheet to adjust the CSS rules applying a page theme from user input",
-	        "useModules": ["stylesheet","overlay","slider","dd-plugin"],
+	        "useModules" : ["stylesheet","overlay","slider","dd-plugin"],
 
                 "hideTableOfContents": true
         }
@@ -24,6 +25,7 @@
 
     "pages": {
         "stylesheet-theme-example": {
+            "name"       : "stylesheet-theme",
             "displayName": "Adjusting a Page Theme on the Fly",
             "layout"     : "stylesheet-example"
         }

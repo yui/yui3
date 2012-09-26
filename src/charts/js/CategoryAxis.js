@@ -2,6 +2,7 @@
  * CategoryAxis manages category data on an axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class CategoryAxis
  * @constructor
  * @param {Object} config (optional) Configuration parameters for the Chart.

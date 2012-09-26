@@ -1,0 +1,10 @@
+{
+    "name": "panel",
+    "builds": {
+        "panel": {
+            "jsfiles": [
+                "panel.js"
+            ]
+        }
+    }
+}

@@ -10,7 +10,7 @@ if (!GLOBAL_ENV._ready) {
     GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
 }
 })();
-YUI.add('event-base', function(Y) {
+YUI.add('event-base', function (Y, NAME) {
 
 /*
  * DOM event listener abstraction layer
@@ -434,7 +434,7 @@ var _eventenv = Y.Env.evt,
     _deleteAndClean = function(s) {
         var ret = _ceProtoDelete.apply(this, arguments);
 
-        if (!this.subCount && !this.afterCount) {
+        if (!this.hasSubs()) {
             Y.Event._clean(this);
         }
 
@@ -1298,7 +1298,10 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll);
 }
 
-add(win, "unload", onUnload);
+try {
+    add(win, "unload", onUnload);
+} catch(e) {
+}
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
@@ -1363,4 +1366,4 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@', {"requires": ["event-custom-base"]});

@@ -7,20 +7,25 @@
 
 var NUM = Number;
 
+Y.Anim.getUpdatedColorValue = function(fromColor, toColor, elapsed, duration,  fn)
+{
+    fromColor = Y.Color.re_RGB.exec(Y.Color.toRGB(fromColor));
+    toColor = Y.Color.re_RGB.exec(Y.Color.toRGB(toColor));
+
+    if (!fromColor || fromColor.length < 3 || !toColor || toColor.length < 3) {
+        Y.error('invalid from or to passed to color behavior');
+    }
+
+    return 'rgb(' + [
+        Math.floor(fn(elapsed, NUM(fromColor[1]), NUM(toColor[1]) - NUM(fromColor[1]), duration)),
+        Math.floor(fn(elapsed, NUM(fromColor[2]), NUM(toColor[2]) - NUM(fromColor[2]), duration)),
+        Math.floor(fn(elapsed, NUM(fromColor[3]), NUM(toColor[3]) - NUM(fromColor[3]), duration))
+    ].join(', ') + ')';
+};
+
 Y.Anim.behaviors.color = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
-        from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
-        to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
-
-        if (!from || from.length < 3 || !to || to.length < 3) {
-            Y.error('invalid from or to passed to color behavior');
-        }
-
-        anim._node.setStyle(att, 'rgb(' + [
-            Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
-            Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
-            Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
-        ].join(', ') + ')');
+        anim._node.setStyle(att, Y.Anim.getUpdatedColorValue(from, to, elapsed, duration, fn)); 
     },
     
     // TODO: default bgcolor const

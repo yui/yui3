@@ -1,4 +1,4 @@
-YUI.add('selector-native', function(Y) {
+YUI.add('selector-native', function (Y, NAME) {
 
 (function(Y) {
 /**
@@ -179,7 +179,7 @@ var Selector = {
             attrs: attrs,
             pseudos: pseudos,
             selector: selector
-        }
+        };
     },
 
     _restoreSelector: function(replaced) {
@@ -372,4 +372,4 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@', {"requires": ["dom-base"]});

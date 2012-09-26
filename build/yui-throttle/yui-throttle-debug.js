@@ -1,4 +1,4 @@
-YUI.add('yui-throttle', function(Y) {
+YUI.add('yui-throttle', function (Y, NAME) {
 
 /**
 Throttles a call to a method based on the time between calls. This method is attached
@@ -51,4 +51,4 @@ Y.throttle = function(fn, ms) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

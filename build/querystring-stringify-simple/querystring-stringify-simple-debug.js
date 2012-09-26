@@ -1,4 +1,4 @@
-YUI.add('querystring-stringify-simple', function(Y) {
+YUI.add('querystring-stringify-simple', function (Y, NAME) {
 
 /*global Y */
 /**
@@ -58,4 +58,4 @@ QueryString.stringify = function (obj, c) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

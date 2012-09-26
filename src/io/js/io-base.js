@@ -1,7 +1,8 @@
 /**
 Base IO functionality. Provides basic XHR transport support.
-@module io-base
-@main io-base
+
+@module io
+@submodule io-base
 @for IO
 **/
 
@@ -115,6 +116,11 @@ IO.prototype = {
             // Non-IE  can use XHR level 2 and not rely on an
             // external transport.
             alt = Y.UA.ie ? 'xdr' : null;
+
+            // Prevent "pre-flight" OPTIONS request by removing the
+            // `X-Requested-With` HTTP header from CORS requests. This header
+            // can be added back on a per-request basis, if desired.
+            io.setHeader('X-Requested-With');
         }
 
         use = alt || form;
@@ -126,7 +132,7 @@ IO.prototype = {
         }
 
         if (!use) {
-            if (win && win.FormData && config.data instanceof FormData) {
+            if (win && win.FormData && config.data instanceof win.FormData) {
                 transaction.c.upload.onprogress = function (e) {
                     io.progress(transaction, e, config);
                 };

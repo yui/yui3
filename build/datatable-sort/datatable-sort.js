@@ -1,4 +1,4 @@
-YUI.add('datatable-sort', function(Y) {
+YUI.add('datatable-sort', function (Y, NAME) {
 
 /**
 Adds support for sorting the table data by API methods `table.sort(...)` or
@@ -889,4 +889,4 @@ Y.DataTable.Sortable = Sortable;
 Y.Base.mix(Y.DataTable, [Sortable]);
 
 
-}, '@VERSION@' ,{requires:['datatable-base'], lang:['en']});
+}, '@VERSION@', {"requires": ["datatable-base"], "lang": ["en"], "skinnable": true});

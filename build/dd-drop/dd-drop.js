@@ -1,4 +1,4 @@
-YUI.add('dd-drop', function(Y) {
+YUI.add('dd-drop', function (Y, NAME) {
 
 
     /**
@@ -554,4 +554,4 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
+}, '@VERSION@', {"requires": ["dd-drag", "dd-ddm-drop"]});

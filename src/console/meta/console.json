@@ -1,18 +1,8 @@
 {
     "console": {
-        "plugins": {
-            "console-filters": {
-                "requires": [
-                    "plugin", 
-                    "console"
-                ], 
-                "skinnable": true
-            }
-        }, 
         "requires": [
             "yui-log", 
-            "widget", 
-            "substitute"
+            "widget"
         ], 
         "skinnable": true,
         "lang": ["en", "es", "ja"]

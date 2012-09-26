@@ -1,4 +1,4 @@
-YUI.add('datasource-textschema', function(Y) {
+YUI.add('datasource-textschema', function (Y, NAME) {
 
 /**
  * Extends DataSource with schema-parsing on text data.
@@ -99,4 +99,4 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-text']});
+}, '@VERSION@', {"requires": ["datasource-local", "plugin", "dataschema-text"]});

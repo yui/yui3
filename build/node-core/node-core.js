@@ -1,4 +1,4 @@
-YUI.add('node-core', function(Y) {
+YUI.add('node-core', function (Y, NAME) {
 
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
@@ -62,6 +62,7 @@ var DOT = '.',
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
+         * @type DOMNode
          * @private
          */
         this._node = node;
@@ -110,6 +111,7 @@ Y_Node._fromString = function(node) {
 /**
  * The name of the component
  * @static
+ * @type String
  * @property NAME
  */
 Y_Node.NAME = 'node';
@@ -125,6 +127,7 @@ Y_Node.HIDE_TRANSITION = 'fadeOut';
 /**
  * A list of Node instances that have been created
  * @private
+ * @type Object
  * @property _instances
  * @static
  *
@@ -540,6 +543,7 @@ Y.mix(Y_Node.prototype, {
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
+     * If fn is not passed as an argument, the parent node will be returned.
      * @param {Boolean} testSelf optional Whether or not to include the element in the scan
      * @param {String | Function} stopFn optional A selector string or boolean
      * method to indicate when the search should stop. The search bails when the function
@@ -703,7 +707,9 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Nulls internal node references, removes any plugins and event listeners
+     * Nulls internal node references, removes any plugins and event listeners.
+     * Note that destroy() will not remove the node from its parent or from the DOM. For that
+     * functionality, call remove(true).
      * @method destroy
      * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
      * node's subtree (default is false)
@@ -840,6 +846,7 @@ Y.one = Y_Node.one;
  *
  * @class NodeList
  * @constructor
+ * @param nodes {String|element|Node|Array} A selector, DOM element, Node, list of DOM elements, or list of Nodes with which to populate this NodeList.
  */
 
 var NodeList = function(nodes) {
@@ -1585,4 +1592,4 @@ Y.NodeList.importMethod(Y.Node.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['dom-core', 'selector']});
+}, '@VERSION@', {"requires": ["dom-core", "selector"]});

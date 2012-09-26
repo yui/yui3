@@ -1,6 +1,17 @@
 Drag and Drop Change History
 ============================
 
+3.6.0
+-----
+
+* 2531340 DDConstrained broken when using DDNodeScroll plugin
+* 2532009 Drag examples could use some Jeff polish
+* 2532106 Drag handles aren't well explained in the example.
+* 2532216 DDConstrained does not remove event listeners on destroy properly
+* 2532291 DD Delegate ignores dragNode configuration option
+* 2532500 Y.Plugin.Drag interferes with browser's native handling of dragged links, even when those links aren...
+
+
 3.5.1
 -----
 

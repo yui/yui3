@@ -1,0 +1,10 @@
+{
+    "name": "swf",
+    "builds": {
+        "swf": {
+            "jsfiles": [
+                "swf.js"
+            ]
+        }
+    }
+}

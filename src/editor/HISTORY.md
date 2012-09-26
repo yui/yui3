@@ -1,6 +1,13 @@
 Rich Text Editor Change History
 ===============================
 
+3.6.0
+-----
+
+* 2532376 bz #5540030 - Indent/Outdent button doestn't work properly in Chrome/IE when in RTL mode
+* 2532395 nodeChange event's command key loses both the underline and strikethrough property if both are appli...
+
+
 3.5.1
 -----
 

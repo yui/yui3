@@ -1,1 +1,1 @@
-YUI.add("graphics-canvas-default",function(a){a.Graphic=a.CanvasGraphic;a.Shape=a.CanvasShape;a.Circle=a.CanvasCircle;a.Rect=a.CanvasRect;a.Ellipse=a.CanvasEllipse;a.Path=a.CanvasPath;a.Drawing=a.CanvasDrawing;},"@VERSION@",{skinnable:false});
+YUI.add("graphics-canvas-default",function(e,t){e.Graphic=e.CanvasGraphic,e.Shape=e.CanvasShape,e.Circle=e.CanvasCircle,e.Rect=e.CanvasRect,e.Ellipse=e.CanvasEllipse,e.Path=e.CanvasPath,e.Drawing=e.CanvasDrawing},"@VERSION@");

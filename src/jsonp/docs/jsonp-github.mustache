@@ -16,16 +16,16 @@
 
 ```
 {
-    user: {
-        gravatar_id: "fc2cca...",
+    data: {
+        avatar_id: "fc2cca...",
         login: "username"
         name: "User's Name",
         ...,
 
-        public_repo_count: 10,
-        public_gist_count: 20,
-        following_count: 30,
-        followers_count: 40
+        public_repos: 10,
+        public_gists: 20,
+        following: 30,
+        followers: 40
     }
 }
 ```
@@ -39,21 +39,21 @@
 
 ```
 // BEFORE
-var url = "http://github.com/api/v2/json/user/show/yui?callback=handleJSONP";
+var url = "https://api.github.com/users/yui?callback=handleJSONP";
 
 //AFTER
-var url = "http://github.com/api/v2/json/user/show/yui?callback={callback}";
+var url = "https://api.github.com/users/yui?callback={callback}";
 ```
 
 <p>Then simply pass the url and the function that should handle the JSONP response object to `Y.jsonp(<em>url</em>, <em>handleJSONP</em>)`.</p>
 
 ```
 function handleJSONP(response) {
-    Y.one("#out").setHTML(Y.Lang.sub(template, response.user));
+    Y.one("#out").setHTML(Y.Lang.sub(template, response.data));
 }
 
 Y.one("#demo_btn").on("click", function (e) {
-    // e.g. http://github.com/api/v2/json/user/show/yui?callback={callback}
+    // e.g. https://api.github.com/users/yui?callback={callback}
     var url = githubAPI + user.get("value") + "?callback={callback}";
 
     Y.jsonp(url, handleJSONP);

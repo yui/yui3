@@ -30,7 +30,7 @@ var win = Y.config.win,
       even in browsers without HTML5 history.
     @param {String} [hash] The hash-fragment (including "#") of the `url`. This
       will be present when the `url` differs from the current URL only by its
-      hash and `navigateOnHash` has ben set to `true`.
+      hash and `navigateOnHash` has been set to `true`.
     @param {Event} [originEvent] The event that caused the navigation. Usually
       this would be a click event from a "pjax" anchor element.
     @param {Boolean} [replace] Whether or not the current history entry will be
@@ -157,6 +157,55 @@ PjaxBase.prototype = {
     // -- Protected Methods ----------------------------------------------------
 
     /**
+    Utility method to test whether a specified link/anchor node's `href` is of
+    the same origin as the page's current location.
+
+    This normalize browser inconsistencies with how the `port` is reported for
+    anchor elements (IE reports a value for the default port, e.g. "80").
+
+    @method _isLinkSameOrigin
+    @param {Node} link The anchor element to test whether its `href` is of the
+        same origin as the page's current location.
+    @return {Boolean} Whether or not the link's `href` is of the same origin as
+        the page's current location.
+    @protected
+    @since 3.6.0
+    **/
+    _isLinkSameOrigin: function (link) {
+        var location = Y.getLocation(),
+            protocol = location.protocol,
+            hostname = location.hostname,
+            port     = parseInt(location.port, 10) || null,
+            linkPort;
+
+        // Link must have the same `protocol` and `hostname` as the page's
+        // currrent location.
+        if (link.get('protocol') !== protocol ||
+                link.get('hostname') !== hostname) {
+
+            return false;
+        }
+
+        linkPort = parseInt(link.get('port'), 10) || null;
+
+        // Normalize ports. In most cases browsers use an empty string when the
+        // port is the default port, but IE does weird things with anchor
+        // elements, so to be sure, this will re-assign the default ports before
+        // they are compared.
+        if (protocol === 'http:') {
+            port     || (port     = 80);
+            linkPort || (linkPort = 80);
+        } else if (protocol === 'https:') {
+            port     || (port     = 443);
+            linkPort || (linkPort = 443);
+        }
+
+        // Finally, to be from the same origin, the link's `port` must match the
+        // page's current `port`.
+        return linkPort === port;
+    },
+
+    /**
     Underlying implementation for `navigate()`.
 
     @method _navigate
@@ -185,7 +234,7 @@ PjaxBase.prototype = {
         // Make a copy of `options` before modifying it.
         options = Y.merge(options, {url: url});
 
-        var currentURL = this._upgradeURL(this._getURL()),
+        var currentURL = this._getURL(),
             hash, hashlessURL;
 
         // Captures the `url`'s hash and returns a URL without that hash.
@@ -290,14 +339,13 @@ PjaxBase.prototype = {
     @since 3.5.0
     **/
     _onLinkClick: function (e) {
-        var location, link, url;
+        var link, url;
 
         // Allow the native behavior on middle/right-click, or when Ctrl or
         // Command are pressed.
         if (e.button !== 1 || e.ctrlKey || e.metaKey) { return; }
 
-        location = Y.getLocation(),
-        link     = e.currentTarget;
+        link = e.currentTarget;
 
         // Only allow anchor elements because we need access to its `protocol`,
         // `host`, and `href` attributes.
@@ -308,14 +356,12 @@ PjaxBase.prototype = {
 
         // Same origin check to prevent trying to navigate to URLs from other
         // sites or things like mailto links.
-        if (link.get('protocol') !== location.protocol ||
-                link.get('host') !== location.host) {
-
+        if (!this._isLinkSameOrigin(link)) {
             return;
         }
 
         // All browsers fully resolve an anchor's `href` property.
-        url = e.currentTarget.get('href');
+        url = link.get('href');
 
         // Try and navigate to the URL via the router, and prevent the default
         // link-click action if we do.

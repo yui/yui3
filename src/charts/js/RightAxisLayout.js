@@ -2,6 +2,7 @@
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
  * @module charts
+ * @submodule charts-base
  * @class RightAxisLayout
  * @constructor
  */

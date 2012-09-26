@@ -1,4 +1,4 @@
-YUI.add('model', function(Y) {
+YUI.add('model', function (Y, NAME) {
 
 /**
 Attribute-based data model with APIs for getting, setting, validating, and
@@ -419,7 +419,7 @@ Y.Model = Y.extend(Model, Y.Base, {
                     });
                 }
 
-                parsed = facade.parsed = self.parse(response);
+                parsed = facade.parsed = self._parse(response);
 
                 self.setAttrs(parsed, options);
                 self.changed = {};
@@ -534,7 +534,7 @@ Y.Model = Y.extend(Model, Y.Base, {
                     }
 
                     if (response) {
-                        parsed = facade.parsed = self.parse(response);
+                        parsed = facade.parsed = self._parse(response);
                         self.setAttrs(parsed, options);
                     }
 
@@ -860,6 +860,24 @@ Y.Model = Y.extend(Model, Y.Base, {
     },
 
     /**
+    Calls the public, overrideable `parse()` method and returns the result.
+
+    Override this method to provide a custom pre-parsing implementation. This
+    provides a hook for custom persistence implementations to "prep" a response
+    before calling the `parse()` method.
+
+    @method _parse
+    @param {Any} response Server response.
+    @return {Object} Attribute hash.
+    @protected
+    @see Model.parse()
+    @since 3.7.0
+    **/
+    _parse: function (response) {
+        return this.parse(response);
+    },
+
+    /**
     Calls the public, overridable `validate()` method and fires an `error` event
     if validation fails.
 
@@ -964,4 +982,4 @@ Y.Model = Y.extend(Model, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['base-build', 'escape', 'json-parse']});
+}, '@VERSION@', {"requires": ["base-build", "escape", "json-parse"]});

@@ -1,17 +1,22 @@
 <div id="demo">
     <div id="container">
-        <p>Click for Hello World alert.</p>
+        <p>Click for Hello World test.</p>
     </div>
     <p><a href="http://yuilibrary.com" id="firstA">The YUI Library. (Link navigates away from page.)</a></p>
 
-    <p><a href="http://yuilibrary.com" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a></p>
+    <a href="http://yuilibrary.com" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a>
+    <div class="message">
+        When you clicked on the second link, *preventDefault* was called, so it did not navigate away from the page.
+    </div>
+
 </div>
 
 <script>
 YUI().use('node', function (Y) {
-    // A function that pops up a "Hello World" alert:
+    // A function that gives hello world feedback:
     var helloWorld = function(e) {
-        alert("Hello World!");
+        e.target.setHTML("<p>Hello World!</p>");
+        Y.one('#container').addClass('hello');
     }
 
     // subscribe the helloWorld function as an event handler for the click
@@ -20,11 +25,11 @@ YUI().use('node', function (Y) {
 
     node.on("click", helloWorld);
 
-    // A function that pops up an alert and prevents the default behavior of
+    // A function that displays a message and prevents the default behavior of
     // the event for which it is a handler:
     var interceptLink = function(e) {
         e.preventDefault();
-        alert("You clicked on the second YUI link.  Because *preventDefault* was called, this link will not navigate away from the page.");
+        Y.one('.message').setStyle('visibility', 'visible');
     }
 
     // subscribe our interceptLink function as a click handler for the second

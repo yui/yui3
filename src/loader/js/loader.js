@@ -617,6 +617,10 @@ Y.Loader.prototype = {
         DEBUG: {
             'searchExp': '-min\\.js',
             'replaceStr': '-debug.js'
+        },
+        COVERAGE: {
+            'searchExp': '-min\\.js',
+            'replaceStr': '-coverage.js'
         }
     },
     /*
@@ -801,6 +805,26 @@ Y.Loader.prototype = {
             self.filter = self.FILTER_DEFS[f];
             if (f == 'DEBUG') {
                 self.require('yui-log', 'dump');
+            }
+        }
+
+        if (self.filterName && self.coverage) {
+            if (self.filterName == 'COVERAGE' && L.isArray(self.coverage) && self.coverage.length) {
+                var mods = [];
+                for (i = 0; i < self.coverage.length; i++) {
+                    var mod = self.coverage[i];
+                    if (self.moduleInfo[mod] && self.moduleInfo[mod].use) {
+                        mods = [].concat(mods, self.moduleInfo[mod].use);
+                    } else {
+                        mods.push(mod);
+                    }
+                }
+                self.filters = self.filters || {};
+                Y.Array.each(mods, function(mod) {
+                    self.filters[mod] = self.FILTER_DEFS.COVERAGE;
+                });
+                self.filterName = 'RAW';
+                self.filter = self.FILTER_DEFS[self.filterName];
             }
         }
         
@@ -1063,7 +1087,7 @@ Y.Loader.prototype = {
             };
         }
 
-        if (o.skinnable && o.ext) {
+        if (o.skinnable && o.ext && o.temp) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -1286,7 +1310,7 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this, m, i, a, v, len, len2,
+        var self = this, m, m2, i, a, v, len, len2,
         r = self.required;
 
         if (!self.allowRollup) {
@@ -1296,11 +1320,11 @@ Y.Loader.prototype = {
                     if (m && m.use) {
                         len = m.use.length;
                         for (a = 0; a < len; a++) {
-                            m = self.getModule(m.use[a]);
-                            if (m && m.use) {
-                                len2 = m.use.length;
+                            m2 = self.getModule(m.use[a]);
+                            if (m2 && m2.use) {
+                                len2 = m2.use.length;
                                 for (v = 0; v < len2; v++) {
-                                    r[m.use[v]] = true;
+                                    r[m2.use[v]] = true;
                                 }
                             } else {
                                 r[m.use[a]] = true;
@@ -1333,7 +1357,7 @@ Y.Loader.prototype = {
                     for (o = 0; o < mod.use.length; o++) {
                         //Must walk the other modules in case a module is a rollup of rollups (datatype)
                         m = this.getModule(mod.use[o]);
-                        if (m && m.use) {
+                        if (m && m.use && (m.name !== mod.name)) {
                             c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
                         } else {
                             c.push(mod.use[o]);
@@ -1595,7 +1619,7 @@ Y.Loader.prototype = {
 
         
         if (mod !== undefined) {
-            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            //Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
             return mod;
         }
 
@@ -1876,7 +1900,7 @@ Y.Loader.prototype = {
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
-        if (!m) {
+        if (!m || (m && m.ext)) {
            // Y.log('testing patterns ' + YObject.keys(patterns));
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
@@ -1897,7 +1921,9 @@ Y.Loader.prototype = {
                     }
                 }
             }
+        }
 
+        if (!m) {
             if (found) {
                 if (p.action) {
                     // Y.log('executing pattern action: ' + pname);
@@ -1907,8 +1933,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
+                    if (found.configFn) {
+                        m.configFn = found.configFn;
+                    }
                     m.temp = true;
                 }
+            }
+        } else {
+            if (found && m && found.configFn && !m.configFn) {
+                m.configFn = found.configFn;
+                m.configFn(m);
             }
         }
 
@@ -2030,7 +2064,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * @private
     */
     _onProgress: function(e) {
-        var self = this;
+        var self = this, i;
+        //set the internal cache to what just came in.
+        if (e.data && e.data.length) {
+            for (i = 0; i < e.data.length; i++) {
+                e.data[i] = self.getModule(e.data[i].name);
+            }
+        }
         if (self.onProgress) {
             self.onProgress.call(self.context, {
                 name: e.url,
@@ -2181,11 +2221,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         var modules = this.resolve(!skipcalc),
-            self = this, comp = 0, actions = 0;
+            self = this, comp = 0, actions = 0,
+            mods = {}, deps;
+
+        self._refetch = [];
 
         if (type) {
             //Filter out the opposite type and reset the array so the checks later work
             modules[((type === JS) ? CSS : JS)] = [];
+        }
+        if (!self.fetchCSS) {
+            modules.css = [];
         }
         if (modules.js.length) {
             comp++;
@@ -2198,7 +2244,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn,
+                modName, resMods;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -2214,12 +2261,50 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
+                    //If the external module has a skin or a lang, reprocess it
+                    if (d.data[i].lang || d.data[i].skinnable) {
+                        delete self.inserted[d.data[i].name];
+                        self._refetch.push(d.data[i].name);
+                    }
                 }
             }
 
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
+                if (self._refetch.length) {
+                    //Get the deps for the new meta-data and reprocess
+                    Y.log('Found potential modules to refetch', 'info', 'loader');
+                    for (i = 0; i < self._refetch.length; i++) {
+                        deps = self.getRequires(self.getModule(self._refetch[i]));
+                        for (o = 0; o < deps.length; o++) {
+                            if (!self.inserted[deps[o]]) {
+                                //We wouldn't be to this point without the module being here
+                                mods[deps[o]] = deps[o];
+                            }
+                        }
+                    }
+                    mods = Y.Object.keys(mods);
+                    if (mods.length) {
+                        Y.log('Refetching modules with new meta-data', 'info', 'loader');
+                        self.require(mods);
+                        resMods = self.resolve(true);
+                        if (resMods.cssMods.length) {
+                            for (i=0; i <  resMods.cssMods.length; i++) {
+                                modName = resMods.cssMods[i].name;
+                                delete YUI.Env._cssLoaded[modName];
+                                if (self.isCSSLoaded(modName)) {
+                                    self.inserted[modName] = true;
+                                    delete self.required[modName];
+                                }
+                            }
+                            self.sorted = [];
+                            self._sort();
+                        }
+                        d = null; //bail
+                        self._insert(); //insert the new deps
+                    }
+                }
                 if (d && d.fn) {
                     Y.log('Firing final Loader callback!', 'info', 'loader');
                     fn = d.fn;

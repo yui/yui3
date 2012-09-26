@@ -1,4 +1,4 @@
-YUI.add('frame', function(Y) {
+YUI.add('frame', function (Y, NAME) {
 
 
     /**
@@ -68,7 +68,7 @@ YUI.add('frame', function(Y) {
 
             if (create) {
                 Y.log('Creating the document from javascript', 'info', 'frame');
-                html = Y.substitute(Frame.PAGE_HTML, {
+                html = Y.Lang.sub(Frame.PAGE_HTML, {
                     DIR: this.get('dir'),
                     LANG: this.get('lang'),
                     TITLE: this.get('title'),
@@ -945,7 +945,7 @@ YUI.add('frame', function(Y) {
             */
             use: {
                 writeOnce: true,
-                value: ['substitute', 'node', 'node-style', 'selector-css3']
+                value: ['node', 'node-style', 'selector-css3']
             },
             /**
             * @attribute container
@@ -1028,4 +1028,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute', 'yui-throttle'], skinnable:false});
+}, '@VERSION@', {"requires": ["base", "node", "selector-css3", "yui-throttle"]});

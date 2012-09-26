@@ -1,13 +1,16 @@
+{{#unless skipTesting}}
 <script>
 YUI.Env.Tests = {
     examples: [],
     project: '{{projectAssets}}',
     assets: '{{componentAssets}}',
     name: '{{name}}',
-    newWindow: "{{newWindow}}",
+    title: '{{displayName}}',
+    newWindow: '{{newWindow}}',
     auto: {{#if dist}} false {{else}} true {{/if}}
 };
 {{#each examples}}YUI.Env.Tests.examples.push('{{name}}');
 {{/each}}
 </script>
 <script src="{{projectAssets}}/yui/test-runner.js"></script>
+{{/unless}}

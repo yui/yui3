@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ModelList Profile</title>
+</head>
+<body>
+    <h1>ModelList Profile</h1>
+
+    <button id="create">Create List</button>
+    <button id="destroy">Destory List</button>
+
+    <script src="../../../../../build/yui/yui.js"></script>
+    <script>
+    // Hang var out in global scope so it isn't GC'd.
+    var list;
+
+    YUI({filter: 'raw'}).use('node-base', 'model-list', function (Y) {
+
+        Y.one('#create').on('click', function (e) {
+            var items = [],
+                i;
+
+            for (i = 0; i < 1000; i += 1) {
+                items.push({
+                    foo: 'foo',
+                    bar: 1,
+                    baz: false,
+                    zee: [1, 2, 3, 4, 5]
+                });
+            }
+
+            list = new Y.ModelList();
+            list.reset(items);
+        });
+
+        Y.one('#destroy').on('click', function (e) {
+            list.destroy();
+        });
+
+    });
+    </script>
+</body>
+</html>

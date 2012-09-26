@@ -200,7 +200,11 @@ properties.
             }
         },
         getLoader = function(Y, o) {
-            var loader = Y.Env._loader;
+            var loader = Y.Env._loader,
+                lCore = [ 'loader-base' ],
+                G_ENV = YUI.Env,
+                mods = G_ENV.mods;
+
             if (loader) {
                 //loader._config(Y.config);
                 loader.ignoreRegistered = false;
@@ -212,7 +216,10 @@ properties.
                 loader = new Y.Loader(Y.config);
                 Y.Env._loader = loader;
             }
-            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, [ 'loader-base', 'loader-rollup', 'loader-yui3' ]));
+            if (mods && mods.loader) {
+                lCore = [].concat(lCore, YUI.Env.loaderExtras);
+            }
+            YUI.Env.core = Y.Array.dedupe([].concat(YUI.Env.core, lCore));
 
             return loader;
         },
@@ -320,7 +327,8 @@ proto = {
 
         if (!Env) {
             Y.Env = {
-                core: ['get','features','intl-base','yui-log', 'yui-log-nodejs', 'yui-later','loader-base', 'loader-rollup', 'loader-yui3'],
+                core: ['get', 'features', 'intl-base', 'yui-log', 'yui-log-nodejs', 'yui-later', 'loader-base', 'loader-rollup', 'loader-yui3'],
+                loaderExtras: ['loader-rollup', 'loader-yui3'],
                 mods: {}, // flat module map
                 versions: {}, // version module map
                 base: BASE,
@@ -382,7 +390,7 @@ proto = {
                         path = {
                             filter: filter,
                             path: path
-                        }
+                        };
                     }
                     return path;
                 },
@@ -417,7 +425,7 @@ proto = {
             if (G_ENV && Y !== YUI) {
                 Env._yidx = ++G_ENV._yidx;
                 Env._guidp = ('yui_' + VERSION + '_' +
-                             Env._yidx + '_' + time).replace(/\./g, '_');
+                             Env._yidx + '_' + time).replace(/\./g, '_').replace(/-/g, '_');
             } else if (YUI._YUI) {
 
                 G_ENV = YUI._YUI.Env;
@@ -487,7 +495,6 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            //extras = Y.config.core || ['get','features','intl-base','yui-log', 'yui-log-nodejs', 'yui-later','loader-base', 'loader-rollup', 'loader-yui3'];
             extras = Y.config.core || [].concat(YUI.Env.core); //Clone it..
 
         for (i = 0; i < extras.length; i++) {
@@ -540,12 +547,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -582,7 +589,9 @@ with any configuration info required for the module.
                 version: version,
                 details: details
             },
-            loader,
+            //Instance hash so we don't apply it to the same instance twice
+            applied = {},
+            loader, inst,
             i, versions = env.versions;
 
         env.mods[name] = mod;
@@ -591,10 +600,14 @@ with any configuration info required for the module.
 
         for (i in instances) {
             if (instances.hasOwnProperty(i)) {
-                loader = instances[i].Env._loader;
-                if (loader) {
-                    if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
-                        loader.addModule(details, name);
+                inst = instances[i];
+                if (!applied[inst.id]) {
+                    applied[inst.id] = true;
+                    loader = inst.Env._loader;
+                    if (loader) {
+                        if (!loader.moduleInfo[name] || loader.moduleInfo[name].temp) {
+                            loader.addModule(details, name);
+                        }
                     }
                 }
             }
@@ -1082,9 +1095,9 @@ with any configuration info required for the module.
             return Y;
         }
 
-        if (mods['loader'] && !Y.Loader) {
+        if ((mods.loader || mods['loader-base']) && !Y.Loader) {
             Y.log('Loader was found in meta, but it is not attached. Attaching..', 'info', 'yui');
-            Y._attach(['loader']);
+            Y._attach(['loader' + ((!mods.loader) ? '-base' : '')]);
         }
 
         // Y.log('before loader requirements: ' + args, 'info', 'yui');
@@ -1953,7 +1966,7 @@ Or you can delay until a node is available (with `available` or `contentready`):
     
 
 */
-YUI.add('yui-base', function(Y) {
+YUI.add('yui-base', function (Y, NAME) {
 
 /*
  * YUI stub
@@ -2754,13 +2767,20 @@ use `clone()`.
 @return {Object} A new merged object.
 **/
 Y.merge = function () {
-    var args   = arguments,
-        i      = 0,
-        len    = args.length,
-        result = {};
+    var i      = 0,
+        len    = arguments.length,
+        result = {},
+        key,
+        obj;
 
     for (; i < len; ++i) {
-        Y.mix(result, args[i], true);
+        obj = arguments[i];
+
+        for (key in obj) {
+            if (hasOwn.call(obj, key)) {
+                result[key] = obj[key];
+            }
+        }
     }
 
     return result;
@@ -3650,7 +3670,7 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
 
-            m = ua.match(/(Chrome|CrMo)\/([^\s]*)/);
+            m = ua.match(/(Chrome|CrMo|CriOS)\/([^\s]*)/);
             if (m && m[1] && m[2]) {
                 o.chrome = numberify(m[2]); // Chrome
                 o.safari = 0; //Reset safari back to 0
@@ -3779,7 +3799,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
-    "app": ["app-base","app-transitions","model","model-list","router","view"],
+    "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
     "base": ["base-base","base-pluginhost","base-build"],
@@ -3817,8 +3837,8 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@' );
-YUI.add('get', function(Y) {
+}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});
+YUI.add('get', function (Y, NAME) {
 
     /**
     * NodeJS specific Get module used to load remote resources. It contains the same signature as the default Get module so there is no code change needed.
@@ -4021,8 +4041,8 @@ YUI.add('get', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('features', function(Y) {
+}, '@VERSION@');
+YUI.add('features', function (Y, NAME) {
 
 var feature_tests = {};
 
@@ -4137,29 +4157,26 @@ Y.mix(Y.namespace('Features'), {
 // Y.Features.test("load", "1");
 // caps=1:1;2:0;3:1;
 
-/* This file is auto-generated by src/loader/scripts/meta_join.py */
+/* This file is auto-generated by src/loader/scripts/meta_join.js */
 var add = Y.Features.add;
-// io-nodejs
+// app-transitions-native
 add('load', '0', {
-    "name": "io-nodejs", 
-    "trigger": "io-base", 
-    "ua": "nodejs"
-});
-// graphics-canvas-default
-add('load', '1', {
-    "name": "graphics-canvas-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-}, 
-    "trigger": "graphics"
+    "name": "app-transitions-native",
+    "test": function (Y) {
+    var doc  = Y.config.doc,
+        node = doc ? doc.documentElement : null;
+
+    if (node && node.style) {
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    }
+
+    return false;
+},
+    "trigger": "app-transitions"
 });
 // autocomplete-list-keys
-add('load', '2', {
-    "name": "autocomplete-list-keys", 
+add('load', '1', {
+    "name": "autocomplete-list-keys",
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
     // be an iOS or Android-based mobile device.
@@ -4173,82 +4190,20 @@ add('load', '2', {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-}, 
+},
     "trigger": "autocomplete-list"
 });
-// graphics-svg
-add('load', '3', {
-    "name": "graphics-svg", 
+// dd-gestures
+add('load', '2', {
+    "name": "dd-gestures",
     "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// editor-para-ie
-add('load', '4', {
-    "name": "editor-para-ie", 
-    "trigger": "editor-para", 
-    "ua": "ie", 
-    "when": "instead"
-});
-// graphics-vml-default
-add('load', '5', {
-    "name": "graphics-vml-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
-    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
-    "trigger": "graphics"
-});
-// graphics-svg-default
-add('load', '6', {
-    "name": "graphics-svg-default", 
-    "test": function(Y) {
-    var DOCUMENT = Y.config.doc,
-        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
-		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
-        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
-    
-    return svg && (useSVG || !canvas);
-}, 
-    "trigger": "graphics"
-});
-// history-hash-ie
-add('load', '7', {
-    "name": "history-hash-ie", 
-    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-    "trigger": "history-hash"
-});
-// transition-timer
-add('load', '8', {
-    "name": "transition-timer", 
-    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
-        ret = true;
-
-    if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
-
-    return ret;
-}, 
-    "trigger": "transition"
+    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
+},
+    "trigger": "dd-drag"
 });
 // dom-style-ie
-add('load', '9', {
-    "name": "dom-style-ie", 
+add('load', '3', {
+    "name": "dom-style-ie",
     "test": function (Y) {
 
     var testFeature = Y.Features.test,
@@ -4274,90 +4229,154 @@ add('load', '9', {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-}, 
+},
     "trigger": "dom-style"
 });
-// selector-css2
-add('load', '10', {
-    "name": "selector-css2", 
-    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
-
-    return ret;
-}, 
-    "trigger": "selector"
-});
-// widget-base-ie
-add('load', '11', {
-    "name": "widget-base-ie", 
-    "trigger": "widget-base", 
-    "ua": "ie"
+// editor-para-ie
+add('load', '4', {
+    "name": "editor-para-ie",
+    "trigger": "editor-para",
+    "ua": "ie",
+    "when": "instead"
 });
 // event-base-ie
-add('load', '12', {
-    "name": "event-base-ie", 
+add('load', '5', {
+    "name": "event-base-ie",
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-}, 
+},
     "trigger": "node-base"
 });
-// dd-gestures
-add('load', '13', {
-    "name": "dd-gestures", 
-    "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-}, 
-    "trigger": "dd-drag"
-});
-// scrollview-base-ie
-add('load', '14', {
-    "name": "scrollview-base-ie", 
-    "trigger": "scrollview-base", 
-    "ua": "ie"
-});
-// app-transitions-native
-add('load', '15', {
-    "name": "app-transitions-native", 
-    "test": function (Y) {
-    var doc  = Y.config.doc,
-        node = doc ? doc.documentElement : null;
-
-    if (node && node.style) {
-        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    }
-
-    return false;
-}, 
-    "trigger": "app-transitions"
-});
 // graphics-canvas
-add('load', '16', {
-    "name": "graphics-canvas", 
+add('load', '6', {
+    "name": "graphics-canvas",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-}, 
+},
+    "trigger": "graphics"
+});
+// graphics-canvas-default
+add('load', '7', {
+    "name": "graphics-canvas-default",
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
+},
+    "trigger": "graphics"
+});
+// graphics-svg
+add('load', '8', {
+    "name": "graphics-svg",
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+},
+    "trigger": "graphics"
+});
+// graphics-svg-default
+add('load', '9', {
+    "name": "graphics-svg-default",
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+        useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
+        svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+    
+    return svg && (useSVG || !canvas);
+},
     "trigger": "graphics"
 });
 // graphics-vml
-add('load', '17', {
-    "name": "graphics-vml", 
+add('load', '10', {
+    "name": "graphics-vml",
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
+},
     "trigger": "graphics"
 });
+// graphics-vml-default
+add('load', '11', {
+    "name": "graphics-vml-default",
+    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+},
+    "trigger": "graphics"
+});
+// history-hash-ie
+add('load', '12', {
+    "name": "history-hash-ie",
+    "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
 
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+},
+    "trigger": "history-hash"
+});
+// io-nodejs
+add('load', '13', {
+    "name": "io-nodejs",
+    "trigger": "io-base",
+    "ua": "nodejs"
+});
+// scrollview-base-ie
+add('load', '14', {
+    "name": "scrollview-base-ie",
+    "trigger": "scrollview-base",
+    "ua": "ie"
+});
+// selector-css2
+add('load', '15', {
+    "name": "selector-css2",
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('intl-base', function(Y) {
+    return ret;
+},
+    "trigger": "selector"
+});
+// transition-timer
+add('load', '16', {
+    "name": "transition-timer",
+    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        node = (DOCUMENT) ? DOCUMENT.documentElement: null,
+        ret = true;
+
+    if (node && node.style) {
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
+    } 
+
+    return ret;
+},
+    "trigger": "transition"
+});
+// widget-base-ie
+add('load', '17', {
+    "name": "widget-base-ie",
+    "trigger": "widget-base",
+    "ua": "ie"
+});
+
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('intl-base', function (Y, NAME) {
 
 /**
  * The Intl utility provides a central location for managing sets of
@@ -4444,8 +4463,8 @@ Y.mix(Y.namespace('Intl'), {
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-log', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-log', function (Y, NAME) {
 
 /**
  * Provides console log capability and exposes a custom event for
@@ -4554,8 +4573,8 @@ INSTANCE.message = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('yui-log-nodejs', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('yui-log-nodejs', function (Y, NAME) {
 
 var sys = require(process.binding('natives').util ? 'util' : 'sys'),
     hasColor = false;
@@ -4634,8 +4653,8 @@ if (!Y.config.logFn) {
 
 
 
-}, '@VERSION@' ,{requires:['yui-log']});
-YUI.add('yui-later', function(Y) {
+}, '@VERSION@');
+YUI.add('yui-later', function (Y, NAME) {
 
 /**
  * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
@@ -4711,8 +4730,8 @@ Y.Lang.later = Y.later;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('loader-base', function(Y) {
+}, '@VERSION@', {"requires": ["yui-base"]});
+YUI.add('loader-base', function (Y, NAME) {
 
 /**
  * The YUI loader core
@@ -4727,10 +4746,10 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = '${loader.gallery}',
+            GALLERY_VERSION = 'gallery-2012.09.19-20-07',
             TNT = '2in3',
-            TNT_VERSION = '${loader.tnt}',
-            YUI2_VERSION = '${loader.yui2}',
+            TNT_VERSION = '4',
+            YUI2_VERSION = '2.9.0',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -5431,6 +5450,10 @@ Y.Loader.prototype = {
         DEBUG: {
             'searchExp': '-min\\.js',
             'replaceStr': '-debug.js'
+        },
+        COVERAGE: {
+            'searchExp': '-min\\.js',
+            'replaceStr': '-coverage.js'
         }
     },
     /*
@@ -5615,6 +5638,26 @@ Y.Loader.prototype = {
             self.filter = self.FILTER_DEFS[f];
             if (f == 'DEBUG') {
                 self.require('yui-log', 'dump');
+            }
+        }
+
+        if (self.filterName && self.coverage) {
+            if (self.filterName == 'COVERAGE' && L.isArray(self.coverage) && self.coverage.length) {
+                var mods = [];
+                for (i = 0; i < self.coverage.length; i++) {
+                    var mod = self.coverage[i];
+                    if (self.moduleInfo[mod] && self.moduleInfo[mod].use) {
+                        mods = [].concat(mods, self.moduleInfo[mod].use);
+                    } else {
+                        mods.push(mod);
+                    }
+                }
+                self.filters = self.filters || {};
+                Y.Array.each(mods, function(mod) {
+                    self.filters[mod] = self.FILTER_DEFS.COVERAGE;
+                });
+                self.filterName = 'RAW';
+                self.filter = self.FILTER_DEFS[self.filterName];
             }
         }
         
@@ -5877,7 +5920,7 @@ Y.Loader.prototype = {
             };
         }
 
-        if (o.skinnable && o.ext) {
+        if (o.skinnable && o.ext && o.temp) {
             skinname = this._addSkin(this.skin.defaultSkin, name);
             o.requires.unshift(skinname);
         }
@@ -6100,7 +6143,7 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this, m, i, a, v, len, len2,
+        var self = this, m, m2, i, a, v, len, len2,
         r = self.required;
 
         if (!self.allowRollup) {
@@ -6110,11 +6153,11 @@ Y.Loader.prototype = {
                     if (m && m.use) {
                         len = m.use.length;
                         for (a = 0; a < len; a++) {
-                            m = self.getModule(m.use[a]);
-                            if (m && m.use) {
-                                len2 = m.use.length;
+                            m2 = self.getModule(m.use[a]);
+                            if (m2 && m2.use) {
+                                len2 = m2.use.length;
                                 for (v = 0; v < len2; v++) {
-                                    r[m.use[v]] = true;
+                                    r[m2.use[v]] = true;
                                 }
                             } else {
                                 r[m.use[a]] = true;
@@ -6147,7 +6190,7 @@ Y.Loader.prototype = {
                     for (o = 0; o < mod.use.length; o++) {
                         //Must walk the other modules in case a module is a rollup of rollups (datatype)
                         m = this.getModule(mod.use[o]);
-                        if (m && m.use) {
+                        if (m && m.use && (m.name !== mod.name)) {
                             c = Y.Array.dedupe([].concat(c, this.filterRequires(m.use)));
                         } else {
                             c.push(mod.use[o]);
@@ -6409,7 +6452,7 @@ Y.Loader.prototype = {
 
         
         if (mod !== undefined) {
-            Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
+            //Y.log('isCSSLoaded was cached for ' + name, 'warn', 'loader');
             return mod;
         }
 
@@ -6690,7 +6733,7 @@ Y.Loader.prototype = {
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
-        if (!m) {
+        if (!m || (m && m.ext)) {
            // Y.log('testing patterns ' + YObject.keys(patterns));
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
@@ -6711,7 +6754,9 @@ Y.Loader.prototype = {
                     }
                 }
             }
+        }
 
+        if (!m) {
             if (found) {
                 if (p.action) {
                     // Y.log('executing pattern action: ' + pname);
@@ -6721,8 +6766,16 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
+                    if (found.configFn) {
+                        m.configFn = found.configFn;
+                    }
                     m.temp = true;
                 }
+            }
+        } else {
+            if (found && m && found.configFn && !m.configFn) {
+                m.configFn = found.configFn;
+                m.configFn(m);
             }
         }
 
@@ -6844,7 +6897,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     * @private
     */
     _onProgress: function(e) {
-        var self = this;
+        var self = this, i;
+        //set the internal cache to what just came in.
+        if (e.data && e.data.length) {
+            for (i = 0; i < e.data.length; i++) {
+                e.data[i] = self.getModule(e.data[i].name);
+            }
+        }
         if (self.onProgress) {
             self.onProgress.call(self.context, {
                 name: e.url,
@@ -6995,11 +7054,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         var modules = this.resolve(!skipcalc),
-            self = this, comp = 0, actions = 0;
+            self = this, comp = 0, actions = 0,
+            mods = {}, deps;
+
+        self._refetch = [];
 
         if (type) {
             //Filter out the opposite type and reset the array so the checks later work
             modules[((type === JS) ? CSS : JS)] = [];
+        }
+        if (!self.fetchCSS) {
+            modules.css = [];
         }
         if (modules.js.length) {
             comp++;
@@ -7012,7 +7077,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn,
+                modName, resMods;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -7028,12 +7094,50 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             if (d && d.data && d.data.length && (d.type === 'success')) {
                 for (i = 0; i < d.data.length; i++) {
                     self.inserted[d.data[i].name] = true;
+                    //If the external module has a skin or a lang, reprocess it
+                    if (d.data[i].lang || d.data[i].skinnable) {
+                        delete self.inserted[d.data[i].name];
+                        self._refetch.push(d.data[i].name);
+                    }
                 }
             }
 
             if (actions === comp) {
                 self._loading = null;
                 Y.log('Loader actions complete!', 'info', 'loader');
+                if (self._refetch.length) {
+                    //Get the deps for the new meta-data and reprocess
+                    Y.log('Found potential modules to refetch', 'info', 'loader');
+                    for (i = 0; i < self._refetch.length; i++) {
+                        deps = self.getRequires(self.getModule(self._refetch[i]));
+                        for (o = 0; o < deps.length; o++) {
+                            if (!self.inserted[deps[o]]) {
+                                //We wouldn't be to this point without the module being here
+                                mods[deps[o]] = deps[o];
+                            }
+                        }
+                    }
+                    mods = Y.Object.keys(mods);
+                    if (mods.length) {
+                        Y.log('Refetching modules with new meta-data', 'info', 'loader');
+                        self.require(mods);
+                        resMods = self.resolve(true);
+                        if (resMods.cssMods.length) {
+                            for (i=0; i <  resMods.cssMods.length; i++) {
+                                modName = resMods.cssMods[i].name;
+                                delete YUI.Env._cssLoaded[modName];
+                                if (self.isCSSLoaded(modName)) {
+                                    self.inserted[modName] = true;
+                                    delete self.required[modName];
+                                }
+                            }
+                            self.sorted = [];
+                            self._sort();
+                        }
+                        d = null; //bail
+                        self._insert(); //insert the new deps
+                    }
+                }
                 if (d && d.fn) {
                     Y.log('Firing final Loader callback!', 'info', 'loader');
                     fn = d.fn;
@@ -7446,8 +7550,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
 
 
-}, '@VERSION@' ,{requires:['get', 'features']});
-YUI.add('loader-rollup', function(Y) {
+}, '@VERSION@', {"requires": ["get", "features"]});
+YUI.add('loader-rollup', function (Y, NAME) {
 
 /**
  * Optional automatic rollup logic for reducing http connections
@@ -7548,10 +7652,10 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
-YUI.add('loader-yui3', function(Y) {
+}, '@VERSION@', {"requires": ["loader-base"]});
+YUI.add('loader-yui3', function (Y, NAME) {
 
-/* This file is auto-generated by src/loader/scripts/meta_join.py */
+/* This file is auto-generated by src/loader/scripts/meta_join.js */
 
 /**
  * YUI 3 module metadata
@@ -7561,95 +7665,111 @@ YUI.add('loader-yui3', function(Y) {
 YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "align-plugin": {
         "requires": [
-            "node-screen", 
+            "node-screen",
             "node-pluginhost"
         ]
-    }, 
+    },
     "anim": {
         "use": [
-            "anim-base", 
-            "anim-color", 
-            "anim-curve", 
-            "anim-easing", 
-            "anim-node-plugin", 
-            "anim-scroll", 
+            "anim-base",
+            "anim-color",
+            "anim-curve",
+            "anim-easing",
+            "anim-node-plugin",
+            "anim-scroll",
             "anim-xy"
         ]
-    }, 
+    },
     "anim-base": {
         "requires": [
-            "base-base", 
+            "base-base",
             "node-style"
         ]
-    }, 
+    },
     "anim-color": {
         "requires": [
             "anim-base"
         ]
-    }, 
+    },
     "anim-curve": {
         "requires": [
             "anim-xy"
         ]
-    }, 
+    },
     "anim-easing": {
         "requires": [
             "anim-base"
         ]
-    }, 
+    },
     "anim-node-plugin": {
         "requires": [
-            "node-pluginhost", 
+            "node-pluginhost",
             "anim-base"
         ]
-    }, 
+    },
     "anim-scroll": {
         "requires": [
             "anim-base"
         ]
-    }, 
-    "anim-shape-transform": {
+    },
+    "anim-shape": {
         "requires": [
-            "anim-base", 
-            "anim-easing", 
+            "anim-base",
+            "anim-easing",
+            "anim-color",
             "matrix"
         ]
-    }, 
+    },
+    "anim-shape-transform": {
+        "use": [
+            "anim-shape"
+        ]
+    },
     "anim-xy": {
         "requires": [
-            "anim-base", 
+            "anim-base",
             "node-screen"
         ]
-    }, 
+    },
     "app": {
         "use": [
-            "app-base", 
-            "app-transitions", 
-            "model", 
-            "model-list", 
-            "router", 
-            "view"
+            "app-base",
+            "app-content",
+            "app-transitions",
+            "lazy-model-list",
+            "model",
+            "model-list",
+            "model-sync-rest",
+            "router",
+            "view",
+            "view-node-map"
         ]
-    }, 
+    },
     "app-base": {
         "requires": [
-            "classnamemanager", 
-            "pjax-base", 
-            "router", 
+            "classnamemanager",
+            "pjax-base",
+            "router",
             "view"
         ]
-    }, 
+    },
+    "app-content": {
+        "requires": [
+            "app-base",
+            "pjax-content"
+        ]
+    },
     "app-transitions": {
         "requires": [
             "app-base"
         ]
-    }, 
+    },
     "app-transitions-css": {
         "type": "css"
-    }, 
+    },
     "app-transitions-native": {
         "condition": {
-            "name": "app-transitions-native", 
+            "name": "app-transitions-native",
             "test": function (Y) {
     var doc  = Y.config.doc,
         node = doc ? doc.documentElement : null;
@@ -7659,151 +7779,151 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 
     return false;
-}, 
+},
             "trigger": "app-transitions"
-        }, 
+        },
         "requires": [
-            "app-transitions", 
-            "app-transitions-css", 
-            "parallel", 
+            "app-transitions",
+            "app-transitions-css",
+            "parallel",
             "transition"
         ]
-    }, 
+    },
     "array-extras": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "array-invoke": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "arraylist": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "arraylist-add": {
         "requires": [
             "arraylist"
         ]
-    }, 
+    },
     "arraylist-filter": {
         "requires": [
             "arraylist"
         ]
-    }, 
+    },
     "arraysort": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "async-queue": {
         "requires": [
             "event-custom"
         ]
-    }, 
+    },
     "attribute": {
         "use": [
-            "attribute-base", 
+            "attribute-base",
             "attribute-complex"
         ]
-    }, 
+    },
     "attribute-base": {
         "requires": [
-            "attribute-core", 
-            "attribute-events", 
+            "attribute-core",
+            "attribute-events",
             "attribute-extras"
         ]
-    }, 
+    },
     "attribute-complex": {
         "requires": [
             "attribute-base"
         ]
-    }, 
+    },
     "attribute-core": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
-    }, 
+    },
     "attribute-events": {
         "requires": [
             "event-custom"
         ]
-    }, 
+    },
     "attribute-extras": {
         "requires": [
-            "yui-base"
+            "oop"
         ]
-    }, 
+    },
     "autocomplete": {
         "use": [
-            "autocomplete-base", 
-            "autocomplete-sources", 
-            "autocomplete-list", 
+            "autocomplete-base",
+            "autocomplete-sources",
+            "autocomplete-list",
             "autocomplete-plugin"
         ]
-    }, 
+    },
     "autocomplete-base": {
         "optional": [
             "autocomplete-sources"
-        ], 
+        ],
         "requires": [
-            "array-extras", 
-            "base-build", 
-            "escape", 
-            "event-valuechange", 
+            "array-extras",
+            "base-build",
+            "escape",
+            "event-valuechange",
             "node-base"
         ]
-    }, 
+    },
     "autocomplete-filters": {
         "requires": [
-            "array-extras", 
+            "array-extras",
             "text-wordbreak"
         ]
-    }, 
+    },
     "autocomplete-filters-accentfold": {
         "requires": [
-            "array-extras", 
-            "text-accentfold", 
+            "array-extras",
+            "text-accentfold",
             "text-wordbreak"
         ]
-    }, 
+    },
     "autocomplete-highlighters": {
         "requires": [
-            "array-extras", 
+            "array-extras",
             "highlight-base"
         ]
-    }, 
+    },
     "autocomplete-highlighters-accentfold": {
         "requires": [
-            "array-extras", 
+            "array-extras",
             "highlight-accentfold"
         ]
-    }, 
+    },
     "autocomplete-list": {
         "after": [
             "autocomplete-sources"
-        ], 
+        ],
         "lang": [
             "en"
-        ], 
+        ],
         "requires": [
-            "autocomplete-base", 
-            "event-resize", 
-            "node-screen", 
-            "selector-css3", 
-            "shim-plugin", 
-            "widget", 
-            "widget-position", 
+            "autocomplete-base",
+            "event-resize",
+            "node-screen",
+            "selector-css3",
+            "shim-plugin",
+            "widget",
+            "widget-position",
             "widget-position-align"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "autocomplete-list-keys": {
         "condition": {
-            "name": "autocomplete-list-keys", 
+            "name": "autocomplete-list-keys",
             "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
     // be an iOS or Android-based mobile device.
@@ -7817,819 +7937,817 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     // no point loading the -keys module even when a bluetooth keyboard may be
     // available.
     return !(Y.UA.ios || Y.UA.android);
-}, 
+},
             "trigger": "autocomplete-list"
-        }, 
+        },
         "requires": [
-            "autocomplete-list", 
+            "autocomplete-list",
             "base-build"
         ]
-    }, 
+    },
     "autocomplete-plugin": {
         "requires": [
-            "autocomplete-list", 
+            "autocomplete-list",
             "node-pluginhost"
         ]
-    }, 
+    },
     "autocomplete-sources": {
         "optional": [
-            "io-base", 
-            "json-parse", 
-            "jsonp", 
+            "io-base",
+            "json-parse",
+            "jsonp",
             "yql"
-        ], 
+        ],
         "requires": [
             "autocomplete-base"
         ]
-    }, 
+    },
     "base": {
         "use": [
-            "base-base", 
-            "base-pluginhost", 
+            "base-base",
+            "base-pluginhost",
             "base-build"
         ]
-    }, 
+    },
     "base-base": {
         "after": [
             "attribute-complex"
-        ], 
+        ],
         "requires": [
-            "base-core", 
+            "base-core",
             "attribute-base"
         ]
-    }, 
+    },
     "base-build": {
         "requires": [
             "base-base"
         ]
-    }, 
+    },
     "base-core": {
         "requires": [
             "attribute-core"
         ]
-    }, 
+    },
     "base-pluginhost": {
         "requires": [
-            "base-base", 
+            "base-base",
             "pluginhost"
         ]
-    }, 
+    },
     "button": {
         "requires": [
-            "button-core", 
-            "cssbutton", 
+            "button-core",
+            "cssbutton",
             "widget"
         ]
-    }, 
+    },
     "button-core": {
         "requires": [
-            "attribute-core", 
-            "classnamemanager", 
+            "attribute-core",
+            "classnamemanager",
             "node-base"
         ]
-    }, 
+    },
     "button-group": {
         "requires": [
-            "button-plugin", 
-            "cssbutton", 
+            "button-plugin",
+            "cssbutton",
             "widget"
         ]
-    }, 
+    },
     "button-plugin": {
         "requires": [
-            "button-core", 
-            "cssbutton", 
+            "button-core",
+            "cssbutton",
             "node-pluginhost"
         ]
-    }, 
+    },
     "cache": {
         "use": [
-            "cache-base", 
-            "cache-offline", 
+            "cache-base",
+            "cache-offline",
             "cache-plugin"
         ]
-    }, 
+    },
     "cache-base": {
         "requires": [
             "base"
         ]
-    }, 
+    },
     "cache-offline": {
         "requires": [
-            "cache-base", 
+            "cache-base",
             "json"
         ]
-    }, 
+    },
     "cache-plugin": {
         "requires": [
-            "plugin", 
+            "plugin",
             "cache-base"
         ]
-    }, 
+    },
     "calendar": {
         "lang": [
-            "de", 
-            "en", 
-            "fr", 
-            "ja", 
-            "nb-NO", 
-            "pt-BR", 
-            "ru", 
+            "de",
+            "en",
+            "fr",
+            "ja",
+            "nb-NO",
+            "pt-BR",
+            "ru",
             "zh-HANT-TW"
-        ], 
+        ],
         "requires": [
-            "calendar-base", 
+            "calendar-base",
             "calendarnavigator"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "calendar-base": {
         "lang": [
-            "de", 
-            "en", 
-            "fr", 
-            "ja", 
-            "nb-NO", 
-            "pt-BR", 
-            "ru", 
+            "de",
+            "en",
+            "fr",
+            "ja",
+            "nb-NO",
+            "pt-BR",
+            "ru",
             "zh-HANT-TW"
-        ], 
+        ],
         "requires": [
-            "widget", 
-            "substitute", 
-            "datatype-date", 
-            "datatype-date-math", 
+            "widget",
+            "substitute",
+            "datatype-date",
+            "datatype-date-math",
             "cssgrids"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "calendarnavigator": {
         "requires": [
-            "plugin", 
-            "classnamemanager", 
-            "datatype-date", 
-            "node", 
+            "plugin",
+            "classnamemanager",
+            "datatype-date",
+            "node",
             "substitute"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "charts": {
         "requires": [
             "charts-base"
         ]
-    }, 
+    },
     "charts-base": {
         "requires": [
-            "dom", 
-            "datatype-number", 
-            "datatype-date", 
-            "event-custom", 
-            "event-mouseenter", 
-            "event-touch", 
-            "widget", 
-            "widget-position", 
-            "widget-stack", 
+            "dom",
+            "datatype-number",
+            "datatype-date",
+            "event-custom",
+            "event-mouseenter",
+            "event-touch",
+            "widget",
+            "widget-position",
+            "widget-stack",
             "graphics"
         ]
-    }, 
+    },
     "charts-legend": {
         "requires": [
             "charts-base"
         ]
-    }, 
+    },
     "classnamemanager": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "clickable-rail": {
         "requires": [
             "slider-base"
         ]
-    }, 
+    },
     "collection": {
         "use": [
-            "array-extras", 
-            "arraylist", 
-            "arraylist-add", 
-            "arraylist-filter", 
+            "array-extras",
+            "arraylist",
+            "arraylist-add",
+            "arraylist-filter",
             "array-invoke"
         ]
-    }, 
+    },
     "console": {
         "lang": [
-            "en", 
-            "es", 
+            "en",
+            "es",
             "ja"
-        ], 
+        ],
         "requires": [
-            "yui-log", 
-            "widget", 
-            "substitute"
-        ], 
+            "yui-log",
+            "widget"
+        ],
         "skinnable": true
-    }, 
+    },
     "console-filters": {
         "requires": [
-            "plugin", 
+            "plugin",
             "console"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "controller": {
         "use": [
             "router"
         ]
-    }, 
+    },
     "cookie": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "createlink-base": {
         "requires": [
             "editor-base"
         ]
-    }, 
+    },
     "cssbase": {
         "after": [
-            "cssreset", 
-            "cssfonts", 
-            "cssgrids", 
-            "cssreset-context", 
-            "cssfonts-context", 
+            "cssreset",
+            "cssfonts",
+            "cssgrids",
+            "cssreset-context",
+            "cssfonts-context",
             "cssgrids-context"
-        ], 
+        ],
         "type": "css"
-    }, 
+    },
     "cssbase-context": {
         "after": [
-            "cssreset", 
-            "cssfonts", 
-            "cssgrids", 
-            "cssreset-context", 
-            "cssfonts-context", 
+            "cssreset",
+            "cssfonts",
+            "cssgrids",
+            "cssreset-context",
+            "cssfonts-context",
             "cssgrids-context"
-        ], 
+        ],
         "type": "css"
-    }, 
+    },
     "cssbutton": {
         "type": "css"
-    }, 
+    },
     "cssfonts": {
         "type": "css"
-    }, 
+    },
     "cssfonts-context": {
         "type": "css"
-    }, 
+    },
     "cssgrids": {
         "optional": [
-            "cssreset", 
+            "cssreset",
             "cssfonts"
-        ], 
+        ],
         "type": "css"
-    }, 
+    },
     "cssgrids-base": {
         "optional": [
-            "cssreset", 
+            "cssreset",
             "cssfonts"
-        ], 
+        ],
         "type": "css"
-    }, 
+    },
     "cssgrids-units": {
         "optional": [
-            "cssreset", 
+            "cssreset",
             "cssfonts"
-        ], 
+        ],
         "requires": [
             "cssgrids-base"
-        ], 
+        ],
         "type": "css"
-    }, 
+    },
     "cssreset": {
         "type": "css"
-    }, 
+    },
     "cssreset-context": {
         "type": "css"
-    }, 
+    },
     "dataschema": {
         "use": [
-            "dataschema-base", 
-            "dataschema-json", 
-            "dataschema-xml", 
-            "dataschema-array", 
+            "dataschema-base",
+            "dataschema-json",
+            "dataschema-xml",
+            "dataschema-array",
             "dataschema-text"
         ]
-    }, 
+    },
     "dataschema-array": {
         "requires": [
             "dataschema-base"
         ]
-    }, 
+    },
     "dataschema-base": {
         "requires": [
             "base"
         ]
-    }, 
+    },
     "dataschema-json": {
         "requires": [
-            "dataschema-base", 
+            "dataschema-base",
             "json"
         ]
-    }, 
+    },
     "dataschema-text": {
         "requires": [
             "dataschema-base"
         ]
-    }, 
+    },
     "dataschema-xml": {
         "requires": [
             "dataschema-base"
         ]
-    }, 
+    },
     "datasource": {
         "use": [
-            "datasource-local", 
-            "datasource-io", 
-            "datasource-get", 
-            "datasource-function", 
-            "datasource-cache", 
-            "datasource-jsonschema", 
-            "datasource-xmlschema", 
-            "datasource-arrayschema", 
-            "datasource-textschema", 
+            "datasource-local",
+            "datasource-io",
+            "datasource-get",
+            "datasource-function",
+            "datasource-cache",
+            "datasource-jsonschema",
+            "datasource-xmlschema",
+            "datasource-arrayschema",
+            "datasource-textschema",
             "datasource-polling"
         ]
-    }, 
+    },
     "datasource-arrayschema": {
         "requires": [
-            "datasource-local", 
-            "plugin", 
+            "datasource-local",
+            "plugin",
             "dataschema-array"
         ]
-    }, 
+    },
     "datasource-cache": {
         "requires": [
-            "datasource-local", 
-            "plugin", 
+            "datasource-local",
+            "plugin",
             "cache-base"
         ]
-    }, 
+    },
     "datasource-function": {
         "requires": [
             "datasource-local"
         ]
-    }, 
+    },
     "datasource-get": {
         "requires": [
-            "datasource-local", 
+            "datasource-local",
             "get"
         ]
-    }, 
+    },
     "datasource-io": {
         "requires": [
-            "datasource-local", 
+            "datasource-local",
             "io-base"
         ]
-    }, 
+    },
     "datasource-jsonschema": {
         "requires": [
-            "datasource-local", 
-            "plugin", 
+            "datasource-local",
+            "plugin",
             "dataschema-json"
         ]
-    }, 
+    },
     "datasource-local": {
         "requires": [
             "base"
         ]
-    }, 
+    },
     "datasource-polling": {
         "requires": [
             "datasource-local"
         ]
-    }, 
+    },
     "datasource-textschema": {
         "requires": [
-            "datasource-local", 
-            "plugin", 
+            "datasource-local",
+            "plugin",
             "dataschema-text"
         ]
-    }, 
+    },
     "datasource-xmlschema": {
         "requires": [
-            "datasource-local", 
-            "plugin", 
+            "datasource-local",
+            "plugin",
             "dataschema-xml"
         ]
-    }, 
+    },
     "datatable": {
         "use": [
-            "datatable-core", 
-            "datatable-table", 
-            "datatable-head", 
-            "datatable-body", 
-            "datatable-base", 
-            "datatable-column-widths", 
-            "datatable-message", 
-            "datatable-mutable", 
-            "datatable-sort", 
+            "datatable-core",
+            "datatable-table",
+            "datatable-head",
+            "datatable-body",
+            "datatable-base",
+            "datatable-column-widths",
+            "datatable-message",
+            "datatable-mutable",
+            "datatable-sort",
             "datatable-datasource"
         ]
-    }, 
+    },
     "datatable-base": {
         "requires": [
-            "datatable-core", 
-            "datatable-table", 
-            "base-build", 
+            "datatable-core",
+            "datatable-table",
+            "datatable-head",
+            "datatable-body",
+            "base-build",
             "widget"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "datatable-base-deprecated": {
         "requires": [
-            "recordset-base", 
-            "widget", 
-            "substitute", 
+            "recordset-base",
+            "widget",
+            "substitute",
             "event-mouseenter"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "datatable-body": {
         "requires": [
-            "datatable-core", 
-            "view", 
+            "datatable-core",
+            "view",
             "classnamemanager"
         ]
-    }, 
+    },
     "datatable-column-widths": {
         "requires": [
             "datatable-base"
         ]
-    }, 
+    },
     "datatable-core": {
         "requires": [
-            "escape", 
-            "model-list", 
+            "escape",
+            "model-list",
             "node-event-delegate"
         ]
-    }, 
+    },
     "datatable-datasource": {
         "requires": [
-            "datatable-base", 
-            "plugin", 
+            "datatable-base",
+            "plugin",
             "datasource-local"
         ]
-    }, 
+    },
     "datatable-datasource-deprecated": {
         "requires": [
-            "datatable-base-deprecated", 
-            "plugin", 
+            "datatable-base-deprecated",
+            "plugin",
             "datasource-local"
         ]
-    }, 
+    },
     "datatable-deprecated": {
         "use": [
-            "datatable-base-deprecated", 
-            "datatable-datasource-deprecated", 
-            "datatable-sort-deprecated", 
+            "datatable-base-deprecated",
+            "datatable-datasource-deprecated",
+            "datatable-sort-deprecated",
             "datatable-scroll-deprecated"
         ]
-    }, 
+    },
     "datatable-head": {
         "requires": [
-            "datatable-core", 
-            "view", 
+            "datatable-core",
+            "view",
             "classnamemanager"
         ]
-    }, 
+    },
     "datatable-message": {
         "lang": [
             "en"
-        ], 
+        ],
         "requires": [
             "datatable-base"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "datatable-mutable": {
         "requires": [
             "datatable-base"
         ]
-    }, 
+    },
     "datatable-scroll": {
         "requires": [
-            "datatable-base", 
-            "datatable-column-widths", 
+            "datatable-base",
+            "datatable-column-widths",
             "dom-screen"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "datatable-scroll-deprecated": {
         "requires": [
-            "datatable-base-deprecated", 
+            "datatable-base-deprecated",
             "plugin"
         ]
-    }, 
+    },
     "datatable-sort": {
         "lang": [
             "en"
-        ], 
+        ],
         "requires": [
             "datatable-base"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "datatable-sort-deprecated": {
         "lang": [
             "en"
-        ], 
+        ],
         "requires": [
-            "datatable-base-deprecated", 
-            "plugin", 
+            "datatable-base-deprecated",
+            "plugin",
             "recordset-sort"
         ]
-    }, 
+    },
     "datatable-table": {
         "requires": [
-            "datatable-core", 
-            "datatable-head", 
-            "datatable-body", 
-            "view", 
+            "datatable-core",
+            "datatable-head",
+            "datatable-body",
+            "view",
             "classnamemanager"
         ]
-    }, 
+    },
     "datatype": {
         "use": [
-            "datatype-number", 
-            "datatype-date", 
+            "datatype-date",
+            "datatype-number",
             "datatype-xml"
         ]
-    }, 
+    },
     "datatype-date": {
-        "supersedes": [
-            "datatype-date-format"
-        ], 
         "use": [
-            "datatype-date-parse", 
-            "datatype-date-format"
+            "datatype-date-parse",
+            "datatype-date-format",
+            "datatype-date-math"
         ]
-    }, 
+    },
     "datatype-date-format": {
         "lang": [
-            "ar", 
-            "ar-JO", 
-            "ca", 
-            "ca-ES", 
-            "da", 
-            "da-DK", 
-            "de", 
-            "de-AT", 
-            "de-DE", 
-            "el", 
-            "el-GR", 
-            "en", 
-            "en-AU", 
-            "en-CA", 
-            "en-GB", 
-            "en-IE", 
-            "en-IN", 
-            "en-JO", 
-            "en-MY", 
-            "en-NZ", 
-            "en-PH", 
-            "en-SG", 
-            "en-US", 
-            "es", 
-            "es-AR", 
-            "es-BO", 
-            "es-CL", 
-            "es-CO", 
-            "es-EC", 
-            "es-ES", 
-            "es-MX", 
-            "es-PE", 
-            "es-PY", 
-            "es-US", 
-            "es-UY", 
-            "es-VE", 
-            "fi", 
-            "fi-FI", 
-            "fr", 
-            "fr-BE", 
-            "fr-CA", 
-            "fr-FR", 
-            "hi", 
-            "hi-IN", 
-            "id", 
-            "id-ID", 
-            "it", 
-            "it-IT", 
-            "ja", 
-            "ja-JP", 
-            "ko", 
-            "ko-KR", 
-            "ms", 
-            "ms-MY", 
-            "nb", 
-            "nb-NO", 
-            "nl", 
-            "nl-BE", 
-            "nl-NL", 
-            "pl", 
-            "pl-PL", 
-            "pt", 
-            "pt-BR", 
-            "ro", 
-            "ro-RO", 
-            "ru", 
-            "ru-RU", 
-            "sv", 
-            "sv-SE", 
-            "th", 
-            "th-TH", 
-            "tr", 
-            "tr-TR", 
-            "vi", 
-            "vi-VN", 
-            "zh-Hans", 
-            "zh-Hans-CN", 
-            "zh-Hant", 
-            "zh-Hant-HK", 
+            "ar",
+            "ar-JO",
+            "ca",
+            "ca-ES",
+            "da",
+            "da-DK",
+            "de",
+            "de-AT",
+            "de-DE",
+            "el",
+            "el-GR",
+            "en",
+            "en-AU",
+            "en-CA",
+            "en-GB",
+            "en-IE",
+            "en-IN",
+            "en-JO",
+            "en-MY",
+            "en-NZ",
+            "en-PH",
+            "en-SG",
+            "en-US",
+            "es",
+            "es-AR",
+            "es-BO",
+            "es-CL",
+            "es-CO",
+            "es-EC",
+            "es-ES",
+            "es-MX",
+            "es-PE",
+            "es-PY",
+            "es-US",
+            "es-UY",
+            "es-VE",
+            "fi",
+            "fi-FI",
+            "fr",
+            "fr-BE",
+            "fr-CA",
+            "fr-FR",
+            "hi",
+            "hi-IN",
+            "id",
+            "id-ID",
+            "it",
+            "it-IT",
+            "ja",
+            "ja-JP",
+            "ko",
+            "ko-KR",
+            "ms",
+            "ms-MY",
+            "nb",
+            "nb-NO",
+            "nl",
+            "nl-BE",
+            "nl-NL",
+            "pl",
+            "pl-PL",
+            "pt",
+            "pt-BR",
+            "ro",
+            "ro-RO",
+            "ru",
+            "ru-RU",
+            "sv",
+            "sv-SE",
+            "th",
+            "th-TH",
+            "tr",
+            "tr-TR",
+            "vi",
+            "vi-VN",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-Hant-TW"
         ]
-    }, 
+    },
     "datatype-date-math": {
         "requires": [
             "yui-base"
         ]
-    }, 
-    "datatype-date-parse": {}, 
+    },
+    "datatype-date-parse": {},
     "datatype-number": {
         "use": [
-            "datatype-number-parse", 
+            "datatype-number-parse",
             "datatype-number-format"
         ]
-    }, 
-    "datatype-number-format": {}, 
-    "datatype-number-parse": {}, 
+    },
+    "datatype-number-format": {},
+    "datatype-number-parse": {},
     "datatype-xml": {
         "use": [
-            "datatype-xml-parse", 
+            "datatype-xml-parse",
             "datatype-xml-format"
         ]
-    }, 
-    "datatype-xml-format": {}, 
-    "datatype-xml-parse": {}, 
+    },
+    "datatype-xml-format": {},
+    "datatype-xml-parse": {},
     "dd": {
         "use": [
-            "dd-ddm-base", 
-            "dd-ddm", 
-            "dd-ddm-drop", 
-            "dd-drag", 
-            "dd-proxy", 
-            "dd-constrain", 
-            "dd-drop", 
-            "dd-scroll", 
+            "dd-ddm-base",
+            "dd-ddm",
+            "dd-ddm-drop",
+            "dd-drag",
+            "dd-proxy",
+            "dd-constrain",
+            "dd-drop",
+            "dd-scroll",
             "dd-delegate"
         ]
-    }, 
+    },
     "dd-constrain": {
         "requires": [
             "dd-drag"
         ]
-    }, 
+    },
     "dd-ddm": {
         "requires": [
-            "dd-ddm-base", 
+            "dd-ddm-base",
             "event-resize"
         ]
-    }, 
+    },
     "dd-ddm-base": {
         "requires": [
-            "node", 
-            "base", 
-            "yui-throttle", 
+            "node",
+            "base",
+            "yui-throttle",
             "classnamemanager"
         ]
-    }, 
+    },
     "dd-ddm-drop": {
         "requires": [
             "dd-ddm"
         ]
-    }, 
+    },
     "dd-delegate": {
         "requires": [
-            "dd-drag", 
-            "dd-drop-plugin", 
+            "dd-drag",
+            "dd-drop-plugin",
             "event-mouseenter"
         ]
-    }, 
+    },
     "dd-drag": {
         "requires": [
             "dd-ddm-base"
         ]
-    }, 
+    },
     "dd-drop": {
         "requires": [
-            "dd-drag", 
+            "dd-drag",
             "dd-ddm-drop"
         ]
-    }, 
+    },
     "dd-drop-plugin": {
         "requires": [
             "dd-drop"
         ]
-    }, 
+    },
     "dd-gestures": {
         "condition": {
-            "name": "dd-gestures", 
+            "name": "dd-gestures",
             "test": function(Y) {
     return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-}, 
+},
             "trigger": "dd-drag"
-        }, 
+        },
         "requires": [
-            "dd-drag", 
-            "event-synthetic", 
+            "dd-drag",
+            "event-synthetic",
             "event-gestures"
         ]
-    }, 
+    },
     "dd-plugin": {
         "optional": [
-            "dd-constrain", 
+            "dd-constrain",
             "dd-proxy"
-        ], 
+        ],
         "requires": [
             "dd-drag"
         ]
-    }, 
+    },
     "dd-proxy": {
         "requires": [
             "dd-drag"
         ]
-    }, 
+    },
     "dd-scroll": {
         "requires": [
             "dd-drag"
         ]
-    }, 
+    },
     "dial": {
         "lang": [
-            "en", 
+            "en",
             "es"
-        ], 
+        ],
         "requires": [
-            "widget", 
-            "dd-drag", 
-            "substitute", 
-            "event-mouseenter", 
-            "event-move", 
-            "event-key", 
-            "transition", 
+            "widget",
+            "dd-drag",
+            "event-mouseenter",
+            "event-move",
+            "event-key",
+            "transition",
             "intl"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "dom": {
         "use": [
-            "dom-base", 
-            "dom-screen", 
-            "dom-style", 
-            "selector-native", 
+            "dom-base",
+            "dom-screen",
+            "dom-style",
+            "selector-native",
             "selector"
         ]
-    }, 
+    },
     "dom-base": {
         "requires": [
             "dom-core"
         ]
-    }, 
+    },
     "dom-core": {
         "requires": [
-            "oop", 
+            "oop",
             "features"
         ]
-    }, 
+    },
     "dom-deprecated": {
         "requires": [
             "dom-base"
         ]
-    }, 
+    },
     "dom-screen": {
         "requires": [
-            "dom-base", 
+            "dom-base",
             "dom-style"
         ]
-    }, 
+    },
     "dom-style": {
         "requires": [
             "dom-base"
         ]
-    }, 
+    },
     "dom-style-ie": {
         "condition": {
-            "name": "dom-style-ie", 
+            "name": "dom-style-ie",
             "test": function (Y) {
 
     var testFeature = Y.Features.test,
@@ -8655,322 +8773,337 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             !testFeature('style', 'computedStyle'));
 
     return ret;
-}, 
+},
             "trigger": "dom-style"
-        }, 
+        },
         "requires": [
             "dom-style"
         ]
-    }, 
+    },
     "dump": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "editor": {
         "use": [
-            "frame", 
-            "editor-selection", 
-            "exec-command", 
-            "editor-base", 
-            "editor-para", 
-            "editor-br", 
-            "editor-bidi", 
-            "editor-tab", 
+            "frame",
+            "editor-selection",
+            "exec-command",
+            "editor-base",
+            "editor-para",
+            "editor-br",
+            "editor-bidi",
+            "editor-tab",
             "createlink-base"
         ]
-    }, 
+    },
     "editor-base": {
         "requires": [
-            "base", 
-            "frame", 
-            "node", 
-            "exec-command", 
+            "base",
+            "frame",
+            "node",
+            "exec-command",
             "editor-selection"
         ]
-    }, 
+    },
     "editor-bidi": {
         "requires": [
             "editor-base"
         ]
-    }, 
+    },
     "editor-br": {
         "requires": [
             "editor-base"
         ]
-    }, 
+    },
     "editor-lists": {
         "requires": [
             "editor-base"
         ]
-    }, 
+    },
     "editor-para": {
         "requires": [
             "editor-para-base"
         ]
-    }, 
+    },
     "editor-para-base": {
         "requires": [
             "editor-base"
         ]
-    }, 
+    },
     "editor-para-ie": {
         "condition": {
-            "name": "editor-para-ie", 
-            "trigger": "editor-para", 
-            "ua": "ie", 
+            "name": "editor-para-ie",
+            "trigger": "editor-para",
+            "ua": "ie",
             "when": "instead"
-        }, 
+        },
         "requires": [
             "editor-para-base"
         ]
-    }, 
+    },
     "editor-selection": {
         "requires": [
             "node"
         ]
-    }, 
+    },
     "editor-tab": {
         "requires": [
             "editor-base"
         ]
-    }, 
+    },
     "escape": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "event": {
         "after": [
             "node-base"
-        ], 
+        ],
         "use": [
-            "event-base", 
-            "event-delegate", 
-            "event-synthetic", 
-            "event-mousewheel", 
-            "event-mouseenter", 
-            "event-key", 
-            "event-focus", 
-            "event-resize", 
-            "event-hover", 
-            "event-outside", 
-            "event-touch", 
-            "event-move", 
-            "event-flick", 
-            "event-valuechange"
+            "event-base",
+            "event-delegate",
+            "event-synthetic",
+            "event-mousewheel",
+            "event-mouseenter",
+            "event-key",
+            "event-focus",
+            "event-resize",
+            "event-hover",
+            "event-outside",
+            "event-touch",
+            "event-move",
+            "event-flick",
+            "event-valuechange",
+            "event-tap"
         ]
-    }, 
+    },
     "event-base": {
         "after": [
             "node-base"
-        ], 
+        ],
         "requires": [
             "event-custom-base"
         ]
-    }, 
+    },
     "event-base-ie": {
         "after": [
             "event-base"
-        ], 
+        ],
         "condition": {
-            "name": "event-base-ie", 
+            "name": "event-base-ie",
             "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
-}, 
+},
             "trigger": "node-base"
-        }, 
+        },
         "requires": [
             "node-base"
         ]
-    }, 
+    },
     "event-contextmenu": {
         "requires": [
-            "event-synthetic", 
+            "event-synthetic",
             "dom-screen"
         ]
-    }, 
+    },
     "event-custom": {
         "use": [
-            "event-custom-base", 
+            "event-custom-base",
             "event-custom-complex"
         ]
-    }, 
+    },
     "event-custom-base": {
         "requires": [
             "oop"
         ]
-    }, 
+    },
     "event-custom-complex": {
         "requires": [
             "event-custom-base"
         ]
-    }, 
+    },
     "event-delegate": {
         "requires": [
             "node-base"
         ]
-    }, 
+    },
     "event-flick": {
         "requires": [
-            "node-base", 
-            "event-touch", 
+            "node-base",
+            "event-touch",
             "event-synthetic"
         ]
-    }, 
+    },
     "event-focus": {
         "requires": [
             "event-synthetic"
         ]
-    }, 
+    },
     "event-gestures": {
         "use": [
-            "event-flick", 
+            "event-flick",
             "event-move"
         ]
-    }, 
+    },
     "event-hover": {
         "requires": [
             "event-mouseenter"
         ]
-    }, 
+    },
     "event-key": {
         "requires": [
             "event-synthetic"
         ]
-    }, 
+    },
     "event-mouseenter": {
         "requires": [
             "event-synthetic"
         ]
-    }, 
+    },
     "event-mousewheel": {
         "requires": [
             "node-base"
         ]
-    }, 
+    },
     "event-move": {
         "requires": [
-            "node-base", 
-            "event-touch", 
+            "node-base",
+            "event-touch",
             "event-synthetic"
         ]
-    }, 
+    },
     "event-outside": {
         "requires": [
             "event-synthetic"
         ]
-    }, 
+    },
     "event-resize": {
         "requires": [
-            "node-base", 
+            "node-base",
             "event-synthetic"
         ]
-    }, 
+    },
     "event-simulate": {
         "requires": [
             "event-base"
         ]
-    }, 
+    },
     "event-synthetic": {
         "requires": [
-            "node-base", 
+            "node-base",
             "event-custom-complex"
         ]
-    }, 
+    },
+    "event-tap": {
+        "requires": [
+            "node-base",
+            "event-base",
+            "event-touch",
+            "event-synthetic"
+        ]
+    },
     "event-touch": {
         "requires": [
             "node-base"
         ]
-    }, 
+    },
     "event-valuechange": {
         "requires": [
-            "event-focus", 
+            "event-focus",
             "event-synthetic"
         ]
-    }, 
+    },
     "exec-command": {
         "requires": [
             "frame"
         ]
-    }, 
+    },
     "features": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "file": {
         "requires": [
-            "file-flash", 
+            "file-flash",
             "file-html5"
         ]
-    }, 
+    },
     "file-flash": {
         "requires": [
             "base"
         ]
-    }, 
+    },
     "file-html5": {
         "requires": [
             "base"
         ]
-    }, 
+    },
     "frame": {
         "requires": [
-            "base", 
-            "node", 
-            "selector-css3", 
-            "substitute", 
+            "base",
+            "node",
+            "selector-css3",
             "yui-throttle"
         ]
-    }, 
+    },
+    "gesture-simulate": {
+        "requires": [
+            "async-queue",
+            "event-simulate",
+            "node-screen"
+        ]
+    },
     "get": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "graphics": {
         "requires": [
-            "node", 
-            "event-custom", 
-            "pluginhost", 
-            "matrix", 
+            "node",
+            "event-custom",
+            "pluginhost",
+            "matrix",
             "classnamemanager"
         ]
-    }, 
+    },
     "graphics-canvas": {
         "condition": {
-            "name": "graphics-canvas", 
+            "name": "graphics-canvas",
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-}, 
+},
             "trigger": "graphics"
-        }, 
+        },
         "requires": [
             "graphics"
         ]
-    }, 
+    },
     "graphics-canvas-default": {
         "condition": {
-            "name": "graphics-canvas-default", 
+            "name": "graphics-canvas-default",
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useCanvas = Y.config.defaultGraphicEngine && Y.config.defaultGraphicEngine == "canvas",
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas"),
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     return (!svg || useCanvas) && (canvas && canvas.getContext && canvas.getContext("2d"));
-}, 
+},
             "trigger": "graphics"
         }
-    }, 
+    },
     "graphics-svg": {
         "condition": {
-            "name": "graphics-svg", 
+            "name": "graphics-svg",
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
@@ -8978,16 +9111,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-}, 
+},
             "trigger": "graphics"
-        }, 
+        },
         "requires": [
             "graphics"
         ]
-    }, 
+    },
     "graphics-svg-default": {
         "condition": {
-            "name": "graphics-svg-default", 
+            "name": "graphics-svg-default",
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
         useSVG = !Y.config.defaultGraphicEngine || Y.config.defaultGraphicEngine != "canvas",
@@ -8995,779 +9128,804 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         svg = (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
     
     return svg && (useSVG || !canvas);
-}, 
+},
             "trigger": "graphics"
         }
-    }, 
+    },
     "graphics-vml": {
         "condition": {
-            "name": "graphics-vml", 
+            "name": "graphics-vml",
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
+},
             "trigger": "graphics"
-        }, 
+        },
         "requires": [
             "graphics"
         ]
-    }, 
+    },
     "graphics-vml-default": {
         "condition": {
-            "name": "graphics-vml-default", 
+            "name": "graphics-vml-default",
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
 		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
-}, 
+},
             "trigger": "graphics"
         }
-    }, 
+    },
     "handlebars": {
         "use": [
             "handlebars-compiler"
         ]
-    }, 
+    },
     "handlebars-base": {
         "requires": [
             "escape"
         ]
-    }, 
+    },
     "handlebars-compiler": {
         "requires": [
             "handlebars-base"
         ]
-    }, 
+    },
     "highlight": {
         "use": [
-            "highlight-base", 
+            "highlight-base",
             "highlight-accentfold"
         ]
-    }, 
+    },
     "highlight-accentfold": {
         "requires": [
-            "highlight-base", 
+            "highlight-base",
             "text-accentfold"
         ]
-    }, 
+    },
     "highlight-base": {
         "requires": [
-            "array-extras", 
-            "classnamemanager", 
-            "escape", 
+            "array-extras",
+            "classnamemanager",
+            "escape",
             "text-wordbreak"
         ]
-    }, 
+    },
     "history": {
         "use": [
-            "history-base", 
-            "history-hash", 
-            "history-hash-ie", 
+            "history-base",
+            "history-hash",
+            "history-hash-ie",
             "history-html5"
         ]
-    }, 
+    },
     "history-base": {
         "requires": [
             "event-custom-complex"
         ]
-    }, 
+    },
     "history-hash": {
         "after": [
             "history-html5"
-        ], 
+        ],
         "requires": [
-            "event-synthetic", 
-            "history-base", 
+            "event-synthetic",
+            "history-base",
             "yui-later"
         ]
-    }, 
+    },
     "history-hash-ie": {
         "condition": {
-            "name": "history-hash-ie", 
+            "name": "history-hash-ie",
             "test": function (Y) {
     var docMode = Y.config.doc && Y.config.doc.documentMode;
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
-}, 
+},
             "trigger": "history-hash"
-        }, 
+        },
         "requires": [
-            "history-hash", 
+            "history-hash",
             "node-base"
         ]
-    }, 
+    },
     "history-html5": {
         "optional": [
             "json"
-        ], 
+        ],
         "requires": [
-            "event-base", 
-            "history-base", 
+            "event-base",
+            "history-base",
             "node-base"
         ]
-    }, 
+    },
     "imageloader": {
         "requires": [
-            "base-base", 
-            "node-style", 
+            "base-base",
+            "node-style",
             "node-screen"
         ]
-    }, 
+    },
     "intl": {
         "requires": [
-            "intl-base", 
+            "intl-base",
             "event-custom"
         ]
-    }, 
+    },
     "intl-base": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "io": {
         "use": [
-            "io-base", 
-            "io-xdr", 
-            "io-form", 
-            "io-upload-iframe", 
+            "io-base",
+            "io-xdr",
+            "io-form",
+            "io-upload-iframe",
             "io-queue"
         ]
-    }, 
+    },
     "io-base": {
         "requires": [
-            "event-custom-base", 
+            "event-custom-base",
             "querystring-stringify-simple"
         ]
-    }, 
+    },
     "io-form": {
         "requires": [
-            "io-base", 
+            "io-base",
             "node-base"
         ]
-    }, 
+    },
     "io-nodejs": {
         "condition": {
-            "name": "io-nodejs", 
-            "trigger": "io-base", 
+            "name": "io-nodejs",
+            "trigger": "io-base",
             "ua": "nodejs"
-        }, 
+        },
         "requires": [
             "io-base"
         ]
-    }, 
+    },
     "io-queue": {
         "requires": [
-            "io-base", 
+            "io-base",
             "queue-promote"
         ]
-    }, 
+    },
     "io-upload-iframe": {
         "requires": [
-            "io-base", 
+            "io-base",
             "node-base"
         ]
-    }, 
+    },
     "io-xdr": {
         "requires": [
-            "io-base", 
+            "io-base",
             "datatype-xml-parse"
         ]
-    }, 
+    },
     "json": {
         "use": [
-            "json-parse", 
+            "json-parse",
             "json-stringify"
         ]
-    }, 
+    },
     "json-parse": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "json-stringify": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "jsonp": {
         "requires": [
-            "get", 
+            "get",
             "oop"
         ]
-    }, 
+    },
     "jsonp-url": {
         "requires": [
             "jsonp"
         ]
-    }, 
+    },
+    "lazy-model-list": {
+        "requires": [
+            "model-list"
+        ]
+    },
     "loader": {
         "use": [
-            "loader-base", 
-            "loader-rollup", 
+            "loader-base",
+            "loader-rollup",
             "loader-yui3"
         ]
-    }, 
+    },
     "loader-base": {
         "requires": [
-            "get", 
+            "get",
             "features"
         ]
-    }, 
+    },
     "loader-rollup": {
         "requires": [
             "loader-base"
         ]
-    }, 
+    },
     "loader-yui3": {
         "requires": [
             "loader-base"
         ]
-    }, 
+    },
     "matrix": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "model": {
         "requires": [
-            "base-build", 
-            "escape", 
+            "base-build",
+            "escape",
             "json-parse"
         ]
-    }, 
+    },
     "model-list": {
         "requires": [
-            "array-extras", 
-            "array-invoke", 
-            "arraylist", 
-            "base-build", 
-            "escape", 
-            "json-parse", 
+            "array-extras",
+            "array-invoke",
+            "arraylist",
+            "base-build",
+            "escape",
+            "json-parse",
             "model"
         ]
-    }, 
+    },
+    "model-sync-rest": {
+        "requires": [
+            "model",
+            "io-base",
+            "json-stringify"
+        ]
+    },
     "node": {
         "use": [
-            "node-base", 
-            "node-event-delegate", 
-            "node-pluginhost", 
-            "node-screen", 
+            "node-base",
+            "node-event-delegate",
+            "node-pluginhost",
+            "node-screen",
             "node-style"
         ]
-    }, 
+    },
     "node-base": {
         "requires": [
-            "event-base", 
-            "node-core", 
+            "event-base",
+            "node-core",
             "dom-base"
         ]
-    }, 
+    },
     "node-core": {
         "requires": [
-            "dom-core", 
+            "dom-core",
             "selector"
         ]
-    }, 
+    },
     "node-deprecated": {
         "requires": [
             "node-base"
         ]
-    }, 
+    },
     "node-event-delegate": {
         "requires": [
-            "node-base", 
+            "node-base",
             "event-delegate"
         ]
-    }, 
+    },
     "node-event-html5": {
         "requires": [
             "node-base"
         ]
-    }, 
+    },
     "node-event-simulate": {
         "requires": [
-            "node-base", 
-            "event-simulate"
+            "node-base",
+            "event-simulate",
+            "gesture-simulate"
         ]
-    }, 
+    },
     "node-flick": {
         "requires": [
-            "classnamemanager", 
-            "transition", 
-            "event-flick", 
+            "classnamemanager",
+            "transition",
+            "event-flick",
             "plugin"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "node-focusmanager": {
         "requires": [
-            "attribute", 
-            "node", 
-            "plugin", 
-            "node-event-simulate", 
-            "event-key", 
+            "attribute",
+            "node",
+            "plugin",
+            "node-event-simulate",
+            "event-key",
             "event-focus"
         ]
-    }, 
+    },
     "node-load": {
         "requires": [
-            "node-base", 
+            "node-base",
             "io-base"
         ]
-    }, 
+    },
     "node-menunav": {
         "requires": [
-            "node", 
-            "classnamemanager", 
-            "plugin", 
+            "node",
+            "classnamemanager",
+            "plugin",
             "node-focusmanager"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "node-pluginhost": {
         "requires": [
-            "node-base", 
+            "node-base",
             "pluginhost"
         ]
-    }, 
+    },
     "node-screen": {
         "requires": [
-            "dom-screen", 
+            "dom-screen",
             "node-base"
         ]
-    }, 
+    },
+    "node-scroll-info": {
+        "requires": [
+            "base-build",
+            "dom-screen",
+            "event-resize",
+            "node-pluginhost",
+            "plugin"
+        ]
+    },
     "node-style": {
         "requires": [
-            "dom-style", 
+            "dom-style",
             "node-base"
         ]
-    }, 
+    },
     "oop": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "overlay": {
         "requires": [
-            "widget", 
-            "widget-stdmod", 
-            "widget-position", 
-            "widget-position-align", 
-            "widget-stack", 
+            "widget",
+            "widget-stdmod",
+            "widget-position",
+            "widget-position-align",
+            "widget-stack",
             "widget-position-constrain"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "panel": {
         "requires": [
-            "widget", 
-            "widget-autohide", 
-            "widget-buttons", 
-            "widget-modality", 
-            "widget-position", 
-            "widget-position-align", 
-            "widget-position-constrain", 
-            "widget-stack", 
+            "widget",
+            "widget-autohide",
+            "widget-buttons",
+            "widget-modality",
+            "widget-position",
+            "widget-position-align",
+            "widget-position-constrain",
+            "widget-stack",
             "widget-stdmod"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "parallel": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "pjax": {
         "requires": [
-            "pjax-base", 
-            "io-base"
+            "pjax-base",
+            "pjax-content"
         ]
-    }, 
+    },
     "pjax-base": {
         "requires": [
-            "classnamemanager", 
-            "node-event-delegate", 
+            "classnamemanager",
+            "node-event-delegate",
             "router"
         ]
-    }, 
+    },
+    "pjax-content": {
+        "requires": [
+            "io-base",
+            "node-base",
+            "router"
+        ]
+    },
     "pjax-plugin": {
         "requires": [
-            "node-pluginhost", 
-            "pjax", 
+            "node-pluginhost",
+            "pjax",
             "plugin"
         ]
-    }, 
+    },
     "plugin": {
         "requires": [
             "base-base"
         ]
-    }, 
+    },
     "pluginhost": {
         "use": [
-            "pluginhost-base", 
+            "pluginhost-base",
             "pluginhost-config"
         ]
-    }, 
+    },
     "pluginhost-base": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "pluginhost-config": {
         "requires": [
             "pluginhost-base"
         ]
-    }, 
+    },
     "profiler": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "querystring": {
         "use": [
-            "querystring-parse", 
+            "querystring-parse",
             "querystring-stringify"
         ]
-    }, 
+    },
     "querystring-parse": {
         "requires": [
-            "yui-base", 
+            "yui-base",
             "array-extras"
         ]
-    }, 
+    },
     "querystring-parse-simple": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "querystring-stringify": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "querystring-stringify-simple": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "queue-promote": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "range-slider": {
         "requires": [
-            "slider-base", 
-            "slider-value-range", 
+            "slider-base",
+            "slider-value-range",
             "clickable-rail"
         ]
-    }, 
+    },
     "recordset": {
         "use": [
-            "recordset-base", 
-            "recordset-sort", 
-            "recordset-filter", 
+            "recordset-base",
+            "recordset-sort",
+            "recordset-filter",
             "recordset-indexer"
         ]
-    }, 
+    },
     "recordset-base": {
         "requires": [
-            "base", 
+            "base",
             "arraylist"
         ]
-    }, 
+    },
     "recordset-filter": {
         "requires": [
-            "recordset-base", 
-            "array-extras", 
+            "recordset-base",
+            "array-extras",
             "plugin"
         ]
-    }, 
+    },
     "recordset-indexer": {
         "requires": [
-            "recordset-base", 
+            "recordset-base",
             "plugin"
         ]
-    }, 
+    },
     "recordset-sort": {
         "requires": [
-            "arraysort", 
-            "recordset-base", 
+            "arraysort",
+            "recordset-base",
             "plugin"
         ]
-    }, 
+    },
     "resize": {
         "use": [
-            "resize-base", 
-            "resize-proxy", 
+            "resize-base",
+            "resize-proxy",
             "resize-constrain"
         ]
-    }, 
+    },
     "resize-base": {
         "requires": [
-            "base", 
-            "widget", 
-            "substitute", 
-            "event", 
-            "oop", 
-            "dd-drag", 
-            "dd-delegate", 
+            "base",
+            "widget",
+            "event",
+            "oop",
+            "dd-drag",
+            "dd-delegate",
             "dd-drop"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "resize-constrain": {
         "requires": [
-            "plugin", 
+            "plugin",
             "resize-base"
         ]
-    }, 
+    },
     "resize-plugin": {
         "optional": [
             "resize-constrain"
-        ], 
+        ],
         "requires": [
-            "resize-base", 
+            "resize-base",
             "plugin"
         ]
-    }, 
+    },
     "resize-proxy": {
         "requires": [
-            "plugin", 
+            "plugin",
             "resize-base"
         ]
-    }, 
+    },
     "router": {
         "optional": [
             "querystring-parse"
-        ], 
+        ],
         "requires": [
-            "array-extras", 
-            "base-build", 
+            "array-extras",
+            "base-build",
             "history"
         ]
-    }, 
+    },
     "scrollview": {
         "requires": [
-            "scrollview-base", 
+            "scrollview-base",
             "scrollview-scrollbars"
         ]
-    }, 
+    },
     "scrollview-base": {
         "requires": [
-            "widget", 
-            "event-gestures", 
-            "event-mousewheel", 
+            "widget",
+            "event-gestures",
+            "event-mousewheel",
             "transition"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "scrollview-base-ie": {
         "condition": {
-            "name": "scrollview-base-ie", 
-            "trigger": "scrollview-base", 
+            "name": "scrollview-base-ie",
+            "trigger": "scrollview-base",
             "ua": "ie"
-        }, 
+        },
         "requires": [
             "scrollview-base"
         ]
-    }, 
+    },
     "scrollview-list": {
         "requires": [
-            "plugin", 
+            "plugin",
             "classnamemanager"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "scrollview-paginator": {
         "requires": [
-            "plugin", 
+            "plugin",
             "classnamemanager"
         ]
-    }, 
+    },
     "scrollview-scrollbars": {
         "requires": [
-            "classnamemanager", 
-            "transition", 
+            "classnamemanager",
+            "transition",
             "plugin"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "selector": {
         "requires": [
             "selector-native"
         ]
-    }, 
+    },
     "selector-css2": {
         "condition": {
-            "name": "selector-css2", 
+            "name": "selector-css2",
             "test": function (Y) {
     var DOCUMENT = Y.config.doc,
         ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
 
     return ret;
-}, 
+},
             "trigger": "selector"
-        }, 
+        },
         "requires": [
             "selector-native"
         ]
-    }, 
+    },
     "selector-css3": {
         "requires": [
-            "selector-native", 
+            "selector-native",
             "selector-css2"
         ]
-    }, 
+    },
     "selector-native": {
         "requires": [
             "dom-base"
         ]
-    }, 
+    },
     "shim-plugin": {
         "requires": [
-            "node-style", 
+            "node-style",
             "node-pluginhost"
         ]
-    }, 
+    },
     "slider": {
         "use": [
-            "slider-base", 
-            "slider-value-range", 
-            "clickable-rail", 
+            "slider-base",
+            "slider-value-range",
+            "clickable-rail",
             "range-slider"
         ]
-    }, 
+    },
     "slider-base": {
         "requires": [
-            "widget", 
-            "dd-constrain", 
-            "substitute", 
+            "widget",
+            "dd-constrain",
             "event-key"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "slider-value-range": {
         "requires": [
             "slider-base"
         ]
-    }, 
+    },
     "sortable": {
         "requires": [
-            "dd-delegate", 
-            "dd-drop-plugin", 
+            "dd-delegate",
+            "dd-drop-plugin",
             "dd-proxy"
         ]
-    }, 
+    },
     "sortable-scroll": {
         "requires": [
-            "dd-scroll", 
+            "dd-scroll",
             "sortable"
         ]
-    }, 
+    },
     "stylesheet": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "substitute": {
         "optional": [
             "dump"
-        ], 
+        ],
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "swf": {
         "requires": [
-            "event-custom", 
-            "node", 
-            "swfdetect", 
+            "event-custom",
+            "node",
+            "swfdetect",
             "escape"
         ]
-    }, 
+    },
     "swfdetect": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "tabview": {
         "requires": [
-            "widget", 
-            "widget-parent", 
-            "widget-child", 
-            "tabview-base", 
-            "node-pluginhost", 
+            "widget",
+            "widget-parent",
+            "widget-child",
+            "tabview-base",
+            "node-pluginhost",
             "node-focusmanager"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "tabview-base": {
         "requires": [
-            "node-event-delegate", 
-            "classnamemanager", 
+            "node-event-delegate",
+            "classnamemanager",
             "skin-sam-tabview"
         ]
-    }, 
+    },
     "tabview-plugin": {
         "requires": [
             "tabview-base"
         ]
-    }, 
+    },
     "test": {
         "requires": [
-            "event-simulate", 
-            "event-custom", 
-            "substitute", 
+            "event-simulate",
+            "event-custom",
             "json-stringify"
-        ], 
-        "skinnable": true
-    }, 
+        ]
+    },
     "test-console": {
         "requires": [
-            "console-filters", 
+            "console-filters",
             "test"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "text": {
         "use": [
-            "text-accentfold", 
+            "text-accentfold",
             "text-wordbreak"
         ]
-    }, 
+    },
     "text-accentfold": {
         "requires": [
-            "array-extras", 
+            "array-extras",
             "text-data-accentfold"
         ]
-    }, 
+    },
     "text-data-accentfold": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "text-data-wordbreak": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "text-wordbreak": {
         "requires": [
-            "array-extras", 
+            "array-extras",
             "text-data-wordbreak"
         ]
-    }, 
+    },
     "transition": {
         "requires": [
             "node-style"
         ]
-    }, 
+    },
     "transition-timer": {
         "condition": {
-            "name": "transition-timer", 
+            "name": "transition-timer",
             "test": function (Y) {
     var DOCUMENT = Y.config.doc,
         node = (DOCUMENT) ? DOCUMENT.documentElement: null,
@@ -9778,218 +9936,215 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     } 
 
     return ret;
-}, 
+},
             "trigger": "transition"
-        }, 
+        },
         "requires": [
             "transition"
         ]
-    }, 
+    },
     "uploader": {
         "requires": [
-            "uploader-html5", 
+            "uploader-html5",
             "uploader-flash"
         ]
-    }, 
+    },
     "uploader-deprecated": {
         "requires": [
-            "event-custom", 
-            "node", 
-            "base", 
+            "event-custom",
+            "node",
+            "base",
             "swf"
         ]
-    }, 
+    },
     "uploader-flash": {
         "requires": [
-            "swf", 
-            "widget", 
-            "substitute", 
-            "base", 
-            "cssbutton", 
-            "node", 
-            "event-custom", 
-            "file-flash", 
+            "swf",
+            "widget",
+            "substitute",
+            "base",
+            "cssbutton",
+            "node",
+            "event-custom",
+            "file-flash",
             "uploader-queue"
         ]
-    }, 
+    },
     "uploader-html5": {
         "requires": [
-            "widget", 
-            "node-event-simulate", 
-            "substitute", 
-            "file-html5", 
+            "widget",
+            "node-event-simulate",
+            "substitute",
+            "file-html5",
             "uploader-queue"
         ]
-    }, 
+    },
     "uploader-queue": {
         "requires": [
             "base"
         ]
-    }, 
+    },
     "view": {
         "requires": [
-            "base-build", 
+            "base-build",
             "node-event-delegate"
         ]
-    }, 
+    },
     "view-node-map": {
         "requires": [
             "view"
         ]
-    }, 
+    },
     "widget": {
         "use": [
-            "widget-base", 
-            "widget-htmlparser", 
-            "widget-skin", 
+            "widget-base",
+            "widget-htmlparser",
+            "widget-skin",
             "widget-uievents"
         ]
-    }, 
+    },
     "widget-anim": {
         "requires": [
-            "anim-base", 
-            "plugin", 
+            "anim-base",
+            "plugin",
             "widget"
         ]
-    }, 
+    },
     "widget-autohide": {
         "requires": [
-            "base-build", 
-            "event-key", 
-            "event-outside", 
+            "base-build",
+            "event-key",
+            "event-outside",
             "widget"
         ]
-    }, 
+    },
     "widget-base": {
         "requires": [
-            "attribute", 
-            "base-base", 
-            "base-pluginhost", 
-            "classnamemanager", 
-            "event-focus", 
-            "node-base", 
+            "attribute",
+            "base-base",
+            "base-pluginhost",
+            "classnamemanager",
+            "event-focus",
+            "node-base",
             "node-style"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "widget-base-ie": {
         "condition": {
-            "name": "widget-base-ie", 
-            "trigger": "widget-base", 
+            "name": "widget-base-ie",
+            "trigger": "widget-base",
             "ua": "ie"
-        }, 
+        },
         "requires": [
             "widget-base"
         ]
-    }, 
+    },
     "widget-buttons": {
         "requires": [
-            "button-plugin", 
-            "cssbutton", 
+            "button-plugin",
+            "cssbutton",
             "widget-stdmod"
         ]
-    }, 
+    },
     "widget-child": {
         "requires": [
-            "base-build", 
+            "base-build",
             "widget"
         ]
-    }, 
+    },
     "widget-htmlparser": {
         "requires": [
             "widget-base"
         ]
-    }, 
+    },
     "widget-locale": {
         "requires": [
             "widget-base"
         ]
-    }, 
+    },
     "widget-modality": {
         "requires": [
-            "base-build", 
-            "event-outside", 
+            "base-build",
+            "event-outside",
             "widget"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "widget-parent": {
         "requires": [
-            "arraylist", 
-            "base-build", 
+            "arraylist",
+            "base-build",
             "widget"
         ]
-    }, 
+    },
     "widget-position": {
         "requires": [
-            "base-build", 
-            "node-screen", 
+            "base-build",
+            "node-screen",
             "widget"
         ]
-    }, 
+    },
     "widget-position-align": {
         "requires": [
             "widget-position"
         ]
-    }, 
+    },
     "widget-position-constrain": {
         "requires": [
             "widget-position"
         ]
-    }, 
+    },
     "widget-skin": {
         "requires": [
             "widget-base"
         ]
-    }, 
+    },
     "widget-stack": {
         "requires": [
-            "base-build", 
+            "base-build",
             "widget"
-        ], 
+        ],
         "skinnable": true
-    }, 
+    },
     "widget-stdmod": {
         "requires": [
-            "base-build", 
+            "base-build",
             "widget"
         ]
-    }, 
+    },
     "widget-uievents": {
         "requires": [
-            "node-event-delegate", 
+            "node-event-delegate",
             "widget-base"
         ]
-    }, 
+    },
     "yql": {
         "requires": [
-            "jsonp", 
+            "jsonp",
             "jsonp-url"
         ]
-    }, 
-    "yui": {}, 
-    "yui-base": {}, 
+    },
+    "yui": {},
+    "yui-base": {},
     "yui-later": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "yui-log": {
         "requires": [
             "yui-base"
         ]
-    }, 
+    },
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5415290572140b1a40708a1ba1e554a6';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
-}, '@VERSION@' ,{requires:['loader-base']});
-
-
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','features','intl-base','yui-log','yui-log-nodejs','yui-later','loader-base', 'loader-rollup', 'loader-yui3']});
-
+}, '@VERSION@', {"requires": ["loader-base"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-log-nodejs", "yui-later", "loader-base", "loader-rollup", "loader-yui3"]});

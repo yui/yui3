@@ -1,0 +1,50 @@
+{
+    "name": "autocomplete",
+    "builds": {
+        "autocomplete-base": {
+            "jsfiles": [
+                "autocomplete-base.js"
+            ]
+        },
+        "autocomplete-list": {
+            "jsfiles": [
+                "autocomplete-list.js"
+            ]
+        },
+        "autocomplete-highlighters": {
+            "jsfiles": [
+                "autocomplete-highlighters.js"
+            ]
+        },
+        "autocomplete-list-keys": {
+            "jsfiles": [
+                "autocomplete-list-keys.js"
+            ]
+        },
+        "autocomplete-sources": {
+            "jsfiles": [
+                "autocomplete-sources.js"
+            ]
+        },
+        "autocomplete-filters-accentfold": {
+            "jsfiles": [
+                "autocomplete-filters-accentfold.js"
+            ]
+        },
+        "autocomplete-highlighters-accentfold": {
+            "jsfiles": [
+                "autocomplete-highlighters-accentfold.js"
+            ]
+        },
+        "autocomplete-plugin": {
+            "jsfiles": [
+                "autocomplete-plugin.js"
+            ]
+        },
+        "autocomplete-filters": {
+            "jsfiles": [
+                "autocomplete-filters.js"
+            ]
+        }
+    }
+}

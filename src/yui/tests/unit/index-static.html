@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html class="foo">
+<head>
+<title>YUI Seed Tests</title>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+
+<div id="tester" style="visibility: hidden;">
+    <span>test</span>
+    <span>test</span>
+    <span>test</span>
+</div>
+
+<span id="test"></span>
+
+<iframe name="xframe" id="xframe" src="assets/xframe.html" style="visibility: hidden;"></iframe>
+
+
+<script>
+var YUI = {};
+</script>
+<!-- This is the main test file, notice it's using the `yui-base` seed file 
+without Loader on the page, so Loader is fetched before tests are executed. -->
+<script type="text/javascript" src="../../../../build/yui-core/yui-core.js"></script>
+<script type="text/javascript" src="../../../../build/get/get.js"></script>
+<script type="text/javascript" src="../../../../build/features/features.js"></script>
+<script type="text/javascript" src="../../../../build/intl-base/intl-base.js"></script>
+<script type="text/javascript" src="../../../../build/yui-log/yui-log.js"></script>
+<script type="text/javascript" src="../../../../build/yui-later/yui-later.js"></script>
+<!--script type="text/javascript" src="../../../build/loader/loader.js"></script-->
+<script type="text/javascript">
+
+YUI.GlobalConfig = {
+    globalConfig: true,
+    modules: {
+        'global-mod': {
+            fullpath: './assets/globalmod.js'
+        }
+    },
+    groups: {
+        //Just for code coverage..
+        noop: {
+            modules: {
+                noop: {
+                    fullpath: './assets/noop.js'
+                }
+            }
+        }
+    }
+};
+
+var YUI_config = {
+    loaderPath: 'loader/loader.js',
+    gconfig: true,
+    core: ['get', 'features','intl-base','yui-log','yui-later','loader-base','loader-rollup','loader-yui3' ],
+    gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+};
+
+var TestName = 'YUI: All';
+
+YUI({
+    allowRollup: false,
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true },    
+    filter: YUI_config.gfilter,
+    modules: {
+        'array-test': {
+            fullpath: './assets/array-test.js',
+            requires: ['test']
+        },
+        'object-test': {
+            fullpath: './assets/object-test.js',
+            requires: ['test']
+        },
+        'lang-test': {
+            fullpath: './assets/lang-test.js',
+            requires: ['test']
+        },        
+        'seed-tests': {
+            fullpath: './assets/seed-tests.js',
+            requires: [ 'test']
+        },
+        'core-tests': {
+            fullpath: './assets/core-tests.js',
+            requires: [ 'classnamemanager']
+        },
+
+        'config-test': {
+            fullpath: './assets/config-test.js'
+        },
+
+        'later-test': {
+            fullpath: './assets/later-test.js'
+        },
+
+        'browser-tests': {
+            fullpath: './assets/browser-tests.js'
+        },
+        'namespace-test': {
+            fullpath: './assets/namespace-test.js'
+        },
+        'ua-data': {
+            fullpath: './assets/ua-data.js'
+        },
+        'ua-yui-data': {
+            fullpath: './assets/ua-yui-data.js',
+            requires: [ 'ua-data' ]
+        },
+        'ua-tests': {
+            fullpath: './assets/ua-tests.js',
+            requires: [ 'ua-data', 'ua-yui-data', 'test' ]
+        }
+        
+    }
+}).use('ua-tests', 'seed-tests', 'core-tests', 'config-test', 'later-test', 'namespace-test', 'array-test', 'object-test', 'lang-test', 'test-console', 'test', function(Y) {
+    new Y.Test.Console().render('#log');
+    
+    Y.Test.Runner.setName(TestName);
+    if (window && window.$yetify) {
+        var timer,
+            check = function() {
+                var f = document.getElementById('xframe');
+                if (f && f.contentWindow && f.contentWindow._xframeLoaded) {
+                    clearInterval(timer);
+                    Y.Test.Runner.run();
+                    return true;
+                }
+                return false;
+            };
+
+        timer = setInterval(check, 100);
+    } else {
+        Y.Test.Runner.run();
+    }
+});
+
+</script>
+</body>
+</html>

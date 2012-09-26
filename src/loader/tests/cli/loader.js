@@ -129,6 +129,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1, "Module (anim-scroll) not found in sorted array");
         },
+     "Testing anim-shape": function(data) {
+            var loader = new Y.Loader({
+                require: ["anim-shape"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("anim-shape")) > -1, "Module (anim-shape) not found in sorted array");
+        },
      "Testing anim-shape-transform": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-shape-transform"],
@@ -136,8 +146,8 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-shape-transform")) > -1, "Module (anim-shape-transform) not found in sorted array");
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("anim-shape")) > -1, "Module (anim-shape) not found in sorted array");
         },
      "Testing anim-xy": function(data) {
             var loader = new Y.Loader({
@@ -158,11 +168,15 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("app-content")) > -1, "Module (app-content) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("app-transitions")) > -1, "Module (app-transitions) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("lazy-model-list")) > -1, "Module (lazy-model-list) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("model-sync-rest")) > -1, "Module (model-sync-rest) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("router")) > -1, "Module (router) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("view-node-map")) > -1, "Module (view-node-map) not found in sorted array");
         },
      "Testing app-base": function(data) {
             var loader = new Y.Loader({
@@ -173,6 +187,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("app-base")) > -1, "Module (app-base) not found in sorted array");
+        },
+     "Testing app-content": function(data) {
+            var loader = new Y.Loader({
+                require: ["app-content"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("app-content")) > -1, "Module (app-content) not found in sorted array");
         },
      "Testing app-transitions": function(data) {
             var loader = new Y.Loader({
@@ -1080,11 +1104,12 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             //Testing A rollup of a rollup module ( datatype )
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
-            //Testing A rollup of a rollup module ( datatype )
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-math")) > -1, "Module (datatype-date-math) not found in sorted array");
+            //Testing A rollup of a rollup module ( datatype )
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
             //Testing A rollup of a rollup module ( datatype )
             Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1, "Module (datatype-xml-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1, "Module (datatype-xml-format) not found in sorted array");
@@ -1099,6 +1124,7 @@ suite.add(new YUITest.TestCase({
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-math")) > -1, "Module (datatype-date-math) not found in sorted array");
         },
      "Testing datatype-date-format": function(data) {
             var loader = new Y.Loader({
@@ -1564,6 +1590,7 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("event-move")) > -1, "Module (event-move) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1, "Module (event-flick) not found in sorted array");
             Assert.isTrue((loader.sorted.indexOf("event-valuechange")) > -1, "Module (event-valuechange) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-tap")) > -1, "Module (event-tap) not found in sorted array");
         },
      "Testing event-base": function(data) {
             var loader = new Y.Loader({
@@ -1757,6 +1784,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1, "Module (event-synthetic) not found in sorted array");
         },
+     "Testing event-tap": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-tap"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-tap")) > -1, "Module (event-tap) not found in sorted array");
+        },
      "Testing event-touch": function(data) {
             var loader = new Y.Loader({
                 require: ["event-touch"],
@@ -1826,6 +1863,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
+        },
+     "Testing gesture-simulate": function(data) {
+            var loader = new Y.Loader({
+                require: ["gesture-simulate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("gesture-simulate")) > -1, "Module (gesture-simulate) not found in sorted array");
         },
      "Testing graphics": function(data) {
             var loader = new Y.Loader({
@@ -2156,6 +2203,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("jsonp-url")) > -1, "Module (jsonp-url) not found in sorted array");
         },
+     "Testing lazy-model-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["lazy-model-list"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("lazy-model-list")) > -1, "Module (lazy-model-list) not found in sorted array");
+        },
      "Testing matrix": function(data) {
             var loader = new Y.Loader({
                 require: ["matrix"],
@@ -2185,6 +2242,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+        },
+     "Testing model-sync-rest": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-sync-rest"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-sync-rest")) > -1, "Module (model-sync-rest) not found in sorted array");
         },
      "Testing node": function(data) {
             var loader = new Y.Loader({
@@ -2320,6 +2387,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1, "Module (node-screen) not found in sorted array");
         },
+     "Testing node-scroll-info": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-scroll-info"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-scroll-info")) > -1, "Module (node-scroll-info) not found in sorted array");
+        },
      "Testing node-style": function(data) {
             var loader = new Y.Loader({
                 require: ["node-style"],
@@ -2389,6 +2466,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("pjax-base")) > -1, "Module (pjax-base) not found in sorted array");
+        },
+     "Testing pjax-content": function(data) {
+            var loader = new Y.Loader({
+                require: ["pjax-content"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pjax-content")) > -1, "Module (pjax-content) not found in sorted array");
         },
      "Testing pjax-plugin": function(data) {
             var loader = new Y.Loader({

@@ -1,0 +1,35 @@
+{
+    "name": "widget",
+    "builds": {
+        "widget-locale": {
+            "jsfiles": [
+                "WidgetLocale.js"
+            ]
+        },
+        "widget-uievents": {
+            "jsfiles": [
+                "WidgetUIEvents.js"
+            ]
+        },
+        "widget-skin": {
+            "jsfiles": [
+                "WidgetSkin.js"
+            ]
+        },
+        "widget-base": {
+            "jsfiles": [
+                "Widget.js"
+            ]
+        },
+        "widget-base-ie": {
+            "jsfiles": [
+                "WidgetBaseIE.js"
+            ]
+        },
+        "widget-htmlparser": {
+            "jsfiles": [
+                "WidgetHTMLParser.js"
+            ]
+        }
+    }
+}

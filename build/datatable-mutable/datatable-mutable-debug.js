@@ -1,4 +1,4 @@
-YUI.add('datatable-mutable', function(Y) {
+YUI.add('datatable-mutable', function (Y, NAME) {
 
 /**
 Adds mutation convenience methods such as `table.addRow(data)` to `Y.DataTable`. (or other built class).
@@ -632,4 +632,4 @@ Fired by the `moveColumn` method.
 
 
 
-}, '@VERSION@' ,{requires:['datatable-base']});
+}, '@VERSION@', {"requires": ["datatable-base"]});

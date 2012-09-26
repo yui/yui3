@@ -2,7 +2,7 @@
     "name"       : "node-menunav",
     "displayName": "MenuNav Node Plugin",
     "description": "Easily transform a list into an accessible and customizable drop-down menu.",
-    "author"     : ["kloots", "rgrove"],
+    "author"     : "drgath",
 
     "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown"],
     "use" : ["node-menunav"],
@@ -13,7 +13,7 @@
             "displayName": "Basic Left Nav",
             "description": "Creating left navigation using the MenuNav Node Plugin.",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         },
 
@@ -22,7 +22,7 @@
             "displayName": "Basic Top Nav",
             "description": "Creating top navigation using the MenuNav Node Plugin",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         },
 
@@ -31,7 +31,7 @@
             "displayName": "Menu Button Top Nav",
             "description": "Creating menu button navigation using the MenuNav Node Plugin",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         },
 
@@ -40,7 +40,7 @@
             "displayName": "Split Button Top Nav",
             "description": "Creating split button navigation using the MenuNav Node Plugin",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         },
 
@@ -49,7 +49,7 @@
             "displayName": "Left Nav with Submenus with Shadows",
             "description": "Adding shadows to submenus of a left nav using the MenuNav Node Plugin",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         },
 
@@ -58,7 +58,7 @@
             "displayName": "Left Nav With Submenus With Rounded Corners",
             "description": "Adding rounded corners to submenus of a left nav using the MenuNav Node Plugin",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         },
 
@@ -67,43 +67,50 @@
             "displayName": "Skinning Menus Created Using the MenuNav Node Plugin",
             "description": "Skining a menu built using the MenuNav Node Plugin to look like the menus on Flickr",
             "modules"    : ["node-menunav", "cssgrids"],
-
+            "newWindow"  : true,
             "hideTableOfContents": true
         }
     ],
 
     "pages": {
         "menunav-leftnav-example": {
+            "name"       : "menunav-leftnav",
             "displayName": "MenuNav: Basic Left Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-2-example": {
+            "name"       : "node-menunav-2",
             "displayName": "MenuNav: Basic Top Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-3-example": {
+            "name"       : "node-menunav-3",
             "displayName": "MenuNav: Menu Button Top Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-4-example": {
+            "name"       : "node-menunav-4",
             "displayName": "MenuNav: Split Button Top Nav Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-5-example": {
+            "name"       : "node-menunav-5",
             "displayName": "MenuNav: Left Nav with Submenus with Shadows Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-6-example": {
+            "name"       : "node-menunav-6",
             "displayName": "MenuNav: Left Nav With Submenus With Rounded Corners Example",
             "layout"     : "menunav-example"
         },
 
         "node-menunav-7-example": {
+            "name"       : "node-menunav-7",
             "displayName": "MenuNav: Skinning Menus Created Using the MenuNav Node Plugin Example",
             "layout"     : "menunav-example"
         }

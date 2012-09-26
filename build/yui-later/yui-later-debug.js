@@ -1,4 +1,4 @@
-YUI.add('yui-later', function(Y) {
+YUI.add('yui-later', function (Y, NAME) {
 
 /**
  * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
@@ -74,4 +74,4 @@ Y.Lang.later = Y.later;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

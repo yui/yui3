@@ -1,4 +1,6 @@
-YUI.add('test', function(Y) {
+YUI.add('test', function (Y, NAME) {
+
+
 
 /**
  * YUI Test Framework
@@ -10,10 +12,18 @@ YUI.add('test', function(Y) {
  * The root namespace for YUI Test.
  */
 
-var YUITest = {
-    version: "@VERSION@"
-};
+//So we only ever have one YUITest object that's shared
+if (YUI.YUITest) {
+    Y.Test = YUI.YUITest;
+} else { //Ends after the YUITest definitions
 
+    //Make this global for back compat
+    YUITest = {
+        version: "@VERSION@",
+        guid: function(pre) {
+            return Y.guid(pre);
+        }
+    };
 
 Y.namespace('Test');
 
@@ -25,7 +35,6 @@ YUITest.Util = {
     mix: Y.mix,
     JSON: Y.JSON
 };
-
 
 /**
  * Simple custom event implementation.
@@ -143,7 +152,6 @@ YUITest.EventTarget.prototype = {
 
 };
 
-
     
 /**
  * A test suite that can contain a collection of TestCase and TestSuite objects.
@@ -183,8 +191,8 @@ YUITest.TestSuite = function (data) {
     }
 
     //double-check name
-    if (this.name === ""){
-        this.name = "testSuite" + (+new Date());
+    if (this.name === "" || !this.name) {
+        this.name = YUITest.guid("testSuite_");
     }
 
 };
@@ -228,7 +236,6 @@ YUITest.TestSuite.prototype = {
     }
     
 };
-
 /**
  * Test case containing various tests to run.
  * @param template An object containing any number of test methods, other methods,
@@ -238,6 +245,9 @@ YUITest.TestSuite.prototype = {
  * @namespace Test
  * @constructor
  */
+
+
+
 YUITest.TestCase = function (template) {
     
     /*
@@ -253,11 +263,12 @@ YUITest.TestCase = function (template) {
     }    
     
     //check for a valid name
-    if (typeof this.name != "string"){
-        this.name = "testCase" + (+new Date());
+    if (typeof this.name != "string") {
+        this.name = YUITest.guid("testCase_");
     }
 
 };
+
         
 YUITest.TestCase.prototype = {  
 
@@ -377,7 +388,6 @@ YUITest.TestCase.prototype = {
         //noop
     }
 };
-
 /**
  * An object object containing test result formatting methods.
  * @namespace Test
@@ -622,7 +632,6 @@ YUITest.TestFormat = function(){
     
     };
 }();
-
     
     /**
      * An object capable of sending test results to a server.
@@ -789,7 +798,6 @@ YUITest.TestFormat = function(){
         }
     
     };
-
     
     /**
      * Runs test suites and test cases, providing events to allowing for the
@@ -929,7 +937,7 @@ YUITest.TestFormat = function(){
              * @static
              * @private
              */
-            this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());        
+            this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
     
             /**
              * Pointer to the current node in the test tree.
@@ -1659,7 +1667,7 @@ YUITest.TestFormat = function(){
              * @static
              */
             clear : function () {
-                this.masterSuite = new YUITest.TestSuite("yuitests" + (new Date()).getTime());
+                this.masterSuite = new YUITest.TestSuite(YUITest.guid('testSuite_'));
             },
             
             /**
@@ -1808,7 +1816,6 @@ YUITest.TestFormat = function(){
         return new TestRunner();
         
     }();
-
 
 /**
  * The ArrayAssert object provides functions to test JavaScript array objects
@@ -2185,7 +2192,6 @@ YUITest.ArrayAssert = {
     }
     
 };
-
   
 /**
  * The Assert object provides functions to test JavaScript values against
@@ -2668,7 +2674,6 @@ YUITest.Assert = {
     }
 
 };
-
 /**
  * Error is thrown whenever an assertion fails. It provides methods
  * to more easily get at error information and also provides a base class
@@ -2721,9 +2726,7 @@ YUITest.AssertionError.prototype = {
         return this.name + ": " + this.getMessage();
     }
 
-};
-
-/**
+};/**
  * ComparisonFailure is subclass of Error that is thrown whenever
  * a comparison between two values fails. It provides mechanisms to retrieve
  * both the expected and actual value.
@@ -2781,7 +2784,6 @@ YUITest.ComparisonFailure.prototype.getMessage = function(){
     return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
             "\nActual: " + this.actual + " (" + (typeof this.actual) + ")";
 };
-
 /**
  * An object object containing coverage result formatting methods.
  * @namespace Test
@@ -2826,8 +2828,6 @@ YUITest.CoverageFormat = {
     }
 
 };
-
-
 
 /**
  * The DateAssert object provides functions to test JavaScript Date objects
@@ -2912,9 +2912,7 @@ YUITest.DateAssert = {
         }
     }
     
-};
-
-/**
+};/**
  * Creates a new mock object.
  * @namespace Test
  * @module test
@@ -2964,9 +2962,16 @@ YUITest.Mock = function(template){
  * calls and changes, respectively.
  * @param {Object} mock The object to add the expectation to.
  * @param {Object} expectation An object defining the expectation. For
- *      a method, the keys "method" and "args" are required with
- *      an optional "returns" key available. For properties, the keys
- *      "property" and "value" are required.
+ *      properties, the keys "property" and "value" are required. For a
+ *      method the "method" key defines the method's name, the optional "args"
+ *      key provides an array of argument types. The "returns" key provides
+ *      an optional return value. An optional "run" key provides a function
+ *      to be used as the method body. The return value of a mocked method is
+ *      determined first by the "returns" key, then the "run" function's return
+ *      value. If neither "returns" nor "run" is provided undefined is returned.
+ *      An optional 'error' key defines an error type to be thrown in all cases.
+ *      The "callCount" key provides an optional number of times the method is
+ *      expected to be called (the default is 1).
  * @return {void}
  * @method expect
  * @static
@@ -2986,8 +2991,9 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
             callCount = (typeof expectation.callCount == "number") ? expectation.callCount : 1,
             error = expectation.error,
             run = expectation.run || function(){},
+            runResult,
             i;
-            
+
         //save expectations
         mock.__expectations[name] = expectation;
         expectation.callCount = callCount;
@@ -3010,7 +3016,7 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                         args[i].verify(arguments[i]);
                     }                
 
-                    run.apply(this, arguments);
+                    runResult = run.apply(this, arguments);
                     
                     if (error){
                         throw error;
@@ -3019,8 +3025,10 @@ YUITest.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
                     //route through TestRunner for proper handling
                     YUITest.TestRunner._handleError(ex);
                 }
-                
-                return result;
+
+                // Any value provided for 'returns' overrides any value returned
+                // by our 'run' function. 
+                return expectation.hasOwnProperty('returns') ? result : runResult;
             };
         } else {
         
@@ -3138,7 +3146,6 @@ YUITest.Mock.Value.Object     = YUITest.Mock.Value(YUITest.Assert.isObject);
  * @type Function
  */
 YUITest.Mock.Value.Function   = YUITest.Mock.Value(YUITest.Assert.isFunction);
-
 
 /**
  * The ObjectAssert object provides functions to test JavaScript objects
@@ -3326,7 +3333,6 @@ YUITest.ObjectAssert = {
         }
     }    
 };
-
 /**
  * Convenience type for storing and aggregating
  * test result information.
@@ -3387,7 +3393,7 @@ YUITest.Results = function(name){
      * @property duration
      */
     this.duration = 0;
-}
+};
 
 /**
  * Includes results from another results object into this one.
@@ -3402,7 +3408,6 @@ YUITest.Results.prototype.include = function(results){
     this.total += results.total;
     this.errors += results.errors;
 };
-
 /**
  * ShouldError is subclass of Error that is thrown whenever
  * a test is expected to throw an error but doesn't.
@@ -3433,7 +3438,6 @@ YUITest.ShouldError.prototype = new YUITest.AssertionError();
 
 //restore constructor
 YUITest.ShouldError.prototype.constructor = YUITest.ShouldError;
-
 /**
  * ShouldFail is subclass of AssertionError that is thrown whenever
  * a test was expected to fail but did not.
@@ -3464,7 +3468,6 @@ YUITest.ShouldFail.prototype = new YUITest.AssertionError();
 
 //restore constructor
 YUITest.ShouldFail.prototype.constructor = YUITest.ShouldFail;
-
 /**
  * UnexpectedError is subclass of AssertionError that is thrown whenever
  * an error occurs within the course of a test and the test was not expected
@@ -3511,7 +3514,6 @@ YUITest.UnexpectedError.prototype = new YUITest.AssertionError();
 
 //restore constructor
 YUITest.UnexpectedError.prototype.constructor = YUITest.UnexpectedError;
-
 /**
  * UnexpectedValue is subclass of Error that is thrown whenever
  * a value was unexpected in its scope. This typically means that a test
@@ -3563,7 +3565,6 @@ YUITest.UnexpectedValue.prototype.getMessage = function(){
     return this.message + "\nUnexpected: " + this.unexpected + " (" + (typeof this.unexpected) + ") ";
 };
 
-
 /**
  * Represents a stoppage in test execution to wait for an amount of time before
  * continuing.
@@ -3593,13 +3594,14 @@ YUITest.Wait = function (segment, delay) {
 };
 
 
-
 //Setting up our aliases..
 Y.Test = YUITest;
 Y.Object.each(YUITest, function(item, name) {
     var name = name.replace('Test', '');
     Y.Test[name] = item;
 });
+
+} //End of else in top wrapper
 
 Y.Assert = YUITest.Assert;
 Y.Assert.Error = Y.Test.AssertionError;
@@ -3643,88 +3645,6 @@ Y.assert = function(condition, message){
  */
 Y.fail = Y.Assert.fail; 
 
-var logEvent = function(event) {
-    
-    //data variables
-    var message = "";
-    var messageType = "";
-    
-    switch(event.type){
-        case this.BEGIN_EVENT:
-            message = "Testing began at " + (new Date()).toString() + ".";
-            messageType = "info";
-            break;
-            
-        case this.COMPLETE_EVENT:
-            message = Y.substitute("Testing completed at " +
-                (new Date()).toString() + ".\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-            
-        case this.TEST_FAIL_EVENT:
-            message = event.testName + ": failed.\n" + event.error.getMessage();
-            messageType = "fail";
-            break;
-            
-        case this.TEST_IGNORE_EVENT:
-            message = event.testName + ": ignored.";
-            messageType = "ignore";
-            break;
-            
-        case this.TEST_PASS_EVENT:
-            message = event.testName + ": passed.";
-            messageType = "pass";
-            break;
-            
-        case this.TEST_SUITE_BEGIN_EVENT:
-            message = "Test suite \"" + event.testSuite.name + "\" started.";
-            messageType = "info";
-            break;
-            
-        case this.TEST_SUITE_COMPLETE_EVENT:
-            message = Y.substitute("Test suite \"" +
-                event.testSuite.name + "\" completed" + ".\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-            
-        case this.TEST_CASE_BEGIN_EVENT:
-            message = "Test case \"" + event.testCase.name + "\" started.";
-            messageType = "info";
-            break;
-            
-        case this.TEST_CASE_COMPLETE_EVENT:
-            message = Y.substitute("Test case \"" +
-                event.testCase.name + "\" completed.\n" +
-                "Passed:{passed} Failed:{failed} " +
-                "Total:{total} ({ignored} ignored)",
-                event.results);
-            messageType = "info";
-            break;
-        default:
-            message = "Unexpected event " + event.type;
-            message = "info";
-    }
-    
-    if (Y.Test.Runner._log) {
-        Y.log(message, messageType, "TestRunner");
-    }
-}
-
-var i, name;
-
-for (i in Y.Test.Runner) {
-    name = Y.Test.Runner[i];
-    if (i.indexOf('_EVENT') > -1) {
-        Y.Test.Runner.subscribe(name, logEvent);
-    }
-};
-
 Y.Test.Runner.once = Y.Test.Runner.subscribe;
 
 Y.Test.Runner.disableLogging = function() {
@@ -3740,11 +3660,100 @@ Y.Test.Runner._log = true;
 
 Y.Test.Runner.on = Y.Test.Runner.attach;
 
-if (Y.config.win) {
-    Y.config.win.YUITest = YUITest;
-}
+//Only allow one instance of YUITest
+if (!YUI.YUITest) {
+
+    if (Y.config.win) {
+        Y.config.win.YUITest = YUITest;
+    }
+
+    YUI.YUITest = Y.Test;
+
+    
+    //Only setup the listeners once.
+    var logEvent = function(event) {
+        
+        //data variables
+        var message = "";
+        var messageType = "";
+        
+        switch(event.type){
+            case this.BEGIN_EVENT:
+                message = "Testing began at " + (new Date()).toString() + ".";
+                messageType = "info";
+                break;
+                
+            case this.COMPLETE_EVENT:
+                message = Y.Lang.sub("Testing completed at " +
+                    (new Date()).toString() + ".\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+                
+            case this.TEST_FAIL_EVENT:
+                message = event.testName + ": failed.\n" + event.error.getMessage();
+                messageType = "fail";
+                break;
+                
+            case this.TEST_IGNORE_EVENT:
+                message = event.testName + ": ignored.";
+                messageType = "ignore";
+                break;
+                
+            case this.TEST_PASS_EVENT:
+                message = event.testName + ": passed.";
+                messageType = "pass";
+                break;
+                
+            case this.TEST_SUITE_BEGIN_EVENT:
+                message = "Test suite \"" + event.testSuite.name + "\" started.";
+                messageType = "info";
+                break;
+                
+            case this.TEST_SUITE_COMPLETE_EVENT:
+                message = Y.Lang.sub("Test suite \"" +
+                    event.testSuite.name + "\" completed" + ".\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+                
+            case this.TEST_CASE_BEGIN_EVENT:
+                message = "Test case \"" + event.testCase.name + "\" started.";
+                messageType = "info";
+                break;
+                
+            case this.TEST_CASE_COMPLETE_EVENT:
+                message = Y.Lang.sub("Test case \"" +
+                    event.testCase.name + "\" completed.\n" +
+                    "Passed:{passed} Failed:{failed} " +
+                    "Total:{total} ({ignored} ignored)",
+                    event.results);
+                messageType = "info";
+                break;
+            default:
+                message = "Unexpected event " + event.type;
+                message = "info";
+        }
+        
+        if (Y.Test.Runner._log) {
+            Y.log(message, messageType, "TestRunner");
+        }
+    };
+
+    var i, name;
+
+    for (i in Y.Test.Runner) {
+        name = Y.Test.Runner[i];
+        if (i.indexOf('_EVENT') > -1) {
+            Y.Test.Runner.subscribe(name, logEvent);
+        }
+    };
+
+} //End if for YUI.YUITest
 
 
-
-
-}, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
+}, '@VERSION@', {"requires": ["event-simulate", "event-custom", "json-stringify"]});

@@ -3,6 +3,7 @@
  * series' contribution to a cumulative total.
  *
  * @module charts
+ * @submodule charts-base
  * @class StackedMarkerSeries
  * @constructor
  * @extends MarkerSeries

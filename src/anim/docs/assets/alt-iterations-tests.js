@@ -40,7 +40,7 @@ YUI.add('alt-iterations-tests', function(Y) {
             setTimeout(function() {
                 node.simulate('mouseover');
             }, 0);
-            test.wait(1000);
+            test.wait(1200);
         },
 
         'should end at "from" values on mouseout': function() {

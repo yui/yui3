@@ -6,26 +6,30 @@
 <input type="button" value="Remove Value" id="yui-cookie-btn3">
 </p>
 
-<script>
-YUI().use('cookie', 'console', 'node', function (Y) {
+<pre id="results"></pre>
 
-    //used just to show logging output
-    (new Y.Console({style: 'block'})).render('.example');
+<script>
+YUI().use('cookie', 'node', function (Y) {
+    
+    var pre = Y.one('#results'),
+        log = function(str) {
+            pre.append(str + '\n<br>');
+        }
 
     Y.one("#yui-cookie-btn1").on("click", function () {
         var value = Y.Cookie.get("example");
-        Y.log("Cookie 'example' has a value of '" + value + "'");
+        log("Cookie 'example' has a value of '" + value + "'");
     });
 
     Y.one("#yui-cookie-btn2").on("click", function () {
         var newValue = "yui" + Math.round(Math.random() * Math.PI * 1000);
         Y.Cookie.set("example", newValue);
-        Y.log("Set cookie 'example' to '" + newValue + "'");
+        log("Set cookie 'example' to '" + newValue + "'");
     });
 
     Y.one("#yui-cookie-btn3").on("click", function () {
         Y.Cookie.remove("example");
-        Y.log("Removed cookie 'example'.");
+        log("Removed cookie 'example'.");
     });
 
 });

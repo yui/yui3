@@ -2,7 +2,7 @@
     "name"       : "handlebars",
     "displayName": "Handlebars",
     "description": "A simple template language inspired by Mustache.",
-    "author"     : ["rgrove"],
+    "author"     : "davglass",
 
     "tags": [
         "utility", "beta", "handlebars", "template", "templating", "mustache",

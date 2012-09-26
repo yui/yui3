@@ -1,0 +1,10 @@
+{
+    "name": "gesture-simulate",
+    "builds": {
+        "gesture-simulate": {
+            "jsfiles": [
+                "gesture-simulate.js"
+            ]
+        }
+    }
+}

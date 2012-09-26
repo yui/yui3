@@ -1,12 +1,28 @@
 YUI Core Change History
 =======================
 
+3.7.0
+-----
+
+* Improved the performance of `Y.merge()` by 10 to 40% (depending on the
+  browser). [Ryan Grove]
+
+
 3.6.0
 -----
 
 * Changed the default `throwFail` behavior to act like it sounds, see ticket #2531679
     If `throwFail` is `true` (default) we will not wrap modules or the use callback in
     a try catch. If it's `false`, they will be wrapped (the old behavior).
+
+* 2528334 YUI configuration to delay use() callback until domready or window load
+* 2529742 Y[UI()].use() callback's 2nd parameter: 2 issues
+* 2531647 div is appended precedent to <head> node
+* 2531679 Module/use callback load errors do not provide useful stacktrace
+* 2532215 Y.Parallel should push arguments if fn is not specified
+* 2532344 Missing requirements sometimes return in wrong order
+* 2532397 Automate Testing for OOP examples
+
 
 
 3.5.1

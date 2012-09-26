@@ -1,4 +1,4 @@
-YUI.add('exec-command', function(Y) {
+YUI.add('exec-command', function (Y, NAME) {
 
 
     /**
@@ -715,4 +715,4 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@', {"requires": ["frame"]});

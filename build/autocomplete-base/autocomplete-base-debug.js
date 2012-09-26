@@ -1,4 +1,4 @@
-YUI.add('autocomplete-base', function(Y) {
+YUI.add('autocomplete-base', function (Y, NAME) {
 
 /**
 Provides automatic input completion or suggestions for text input fields and
@@ -1543,4 +1543,4 @@ AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});
+}, '@VERSION@', {"optional": ["autocomplete-sources"], "requires": ["array-extras", "base-build", "escape", "event-valuechange", "node-base"]});

@@ -1,4 +1,4 @@
-YUI.add('widget-position-align', function(Y) {
+YUI.add('widget-position-align', function (Y, NAME) {
 
 /**
 Provides extended/advanced XY positioning support for Widgets, through an
@@ -650,4 +650,4 @@ PositionAlign.prototype = {
 Y.WidgetPositionAlign = PositionAlign;
 
 
-}, '@VERSION@' ,{requires:['widget-position']});
+}, '@VERSION@', {"requires": ["widget-position"]});

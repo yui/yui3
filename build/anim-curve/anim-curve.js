@@ -1,4 +1,4 @@
-YUI.add('anim-curve', function(Y) {
+YUI.add('anim-curve', function (Y, NAME) {
 
 /**
  * Adds support for the <code>curve</code> property for the <code>to</code> 
@@ -54,4 +54,4 @@ Y.Anim.getBezier = function(points, t) {
 };
 
 
-}, '@VERSION@' ,{requires:['anim-xy']});
+}, '@VERSION@', {"requires": ["anim-xy"]});

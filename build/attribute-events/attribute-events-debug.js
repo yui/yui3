@@ -1,4 +1,4 @@
-YUI.add('attribute-events', function(Y) {
+YUI.add('attribute-events', function (Y, NAME) {
 
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
@@ -105,7 +105,8 @@ YUI.add('attribute-events', function(Y) {
          * @chainable
          */
         _setAttrs : function(attrs, opts) {
-            for (var attr in attrs) {
+            var attr;
+            for (attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
                     this.set(attr, attrs[attr], opts);
                 }
@@ -191,4 +192,4 @@ YUI.add('attribute-events', function(Y) {
     Y.AttributeEvents = AttributeEvents;
 
 
-}, '@VERSION@' ,{requires:['event-custom']});
+}, '@VERSION@', {"requires": ["event-custom"]});

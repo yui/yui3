@@ -2,12 +2,12 @@
     "name"       : "intl",
     "displayName": "Internationalization",
     "description": "The Internationalization utility supports the management of localized resources such as strings and formatting patterns.",
-    "author"     : "sdesai",
+    "author"     : ["sdesai", "allenrabinovich"],
 
     "tags": ["intl", "utility"],
     "use" : ["intl"],
     "apiPath": "/classes/Intl.html",
-    
+
     "examples": [
         {
             "name"       : "intl-basic",

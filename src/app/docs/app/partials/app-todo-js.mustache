@@ -1,0 +1,51 @@
+{{>app-todo-js-yui-start}}
+// -- Model --------------------------------------------------------------------
+
+// The TodoModel class extends Y.Model and customizes it to use a localStorage
+// sync provider (the source for that is further below) and to provide
+// attributes and methods useful for todo items.
+
+{{>app-todo-js-todo}}
+
+// -- ModelList ----------------------------------------------------------------
+
+// The TodoList class extends Y.ModelList and customizes it to hold a list of
+// TodoModel instances, and to provide some convenience methods for getting
+// information about the todo items in the list.
+
+{{>app-todo-js-todolist}}
+
+// -- Todo App View ------------------------------------------------------------
+
+// The TodoAppView class extends Y.View and customizes it to represent the
+// main shell of the application, including the new item input field and the
+// list of todo items.
+//
+// This class also takes care of initializing a TodoList instance and creating
+// and rendering a TodoView instance for each todo item when the list is
+// initially loaded or reset.
+
+{{>app-todo-js-app-view}}
+
+// -- Todo item view -----------------------------------------------------------
+
+// The TodoView class extends Y.View and customizes it to represent the content
+// of a single todo item in the list. It also handles DOM events on the item to
+// allow it to be edited and removed from the list.
+
+{{>app-todo-js-todo-view}}
+
+// -- localStorage Sync Implementation -----------------------------------------
+
+// This is a simple factory function that returns a `sync()` function that can
+// be used as a sync layer for either a Model or a ModelList instance. The
+// TodoModel and TodoList instances above use it to save and load items.
+
+{{>app-todo-js-localstorage-sync}}
+
+// -- Start your engines! ------------------------------------------------------
+
+// Finally, all we have to do is instantiate a new TodoAppView to set everything
+// in motion and bring our todo list into existence.
+{{>app-todo-js-init}}
+{{>app-todo-js-yui-end}}

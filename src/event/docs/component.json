@@ -33,7 +33,7 @@
             "description": "Supporting cross-device swipe gestures, using the event-move gesture events",
             "useModules": ["node-base", "node-event-delegate", "transition", "event-move"],
             "modules": ["event"],
-
+            "newWindow" : true,
             "hideTableOfContents": true
         }
     ],
@@ -69,6 +69,9 @@
         "touch": {
             "displayName": "Touch Events and Abstractions"
         },
+        "tap": {
+            "displayName": "The tap Event"
+        },
         "valuechange": {
             "displayName": "The valuechange Event"
         },
@@ -79,6 +82,7 @@
             "displayName": "The contextmenu Event Fix"
         },
         "swipe-example-content": {
+            "name" : "swipe-example",
             "displayName": "Supporting a Swipe Left Gesture",
             "layout": "empty-layout"
         }

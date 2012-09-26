@@ -13,7 +13,7 @@
     SVGCircle.superclass.constructor.apply(this, arguments);
  };
     
- SVGCircle.NAME = "svgCircle";
+ SVGCircle.NAME = "circle";
 
  Y.extend(SVGCircle, Y.SVGShape, {    
     

@@ -2,6 +2,7 @@
  * Utility class used for drawing markers.
  *
  * @module charts
+ * @submodule charts-base
  * @class Plots
  * @constructor
  */
@@ -332,8 +333,8 @@ Plots.prototype = {
             this._groupMarker.destroy();
         }
         graphic = this.get("graphic");
-        graphic.set("autoDraw", true);
         this._groupMarker = graphic.addShape(cfg);
+        graphic._redraw();
     },
 
     /**

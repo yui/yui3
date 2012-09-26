@@ -7,9 +7,9 @@
     {{>simple-sortable-source-css}}
     {{>sortable-indent-css}}
     </style>
-    
+
     {{>simple-sortable-source-indent-html}}
-    
+
     <script>
     {{>simple-sortable-source-js}}
     </script>
@@ -32,7 +32,9 @@
 <p>Now we need to create our YUI instance and tell it to load the `sortable` module.</p>
 
 ```
-YUI().use('sortable'
+YUI().use('sortable', function (Y) {
+    // Code Here.
+});
 ```
 
 

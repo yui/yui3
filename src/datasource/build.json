@@ -1,0 +1,55 @@
+{
+    "name": "datasource",
+    "builds": {
+        "datasource-jsonschema": {
+            "jsfiles": [
+                "datasource-jsonschema.js"
+            ]
+        },
+        "datasource-textschema": {
+            "jsfiles": [
+                "datasource-textschema.js"
+            ]
+        },
+        "datasource-cache": {
+            "jsfiles": [
+                "datasource-cache.js"
+            ]
+        },
+        "datasource-arrayschema": {
+            "jsfiles": [
+                "datasource-arrayschema.js"
+            ]
+        },
+        "datasource-io": {
+            "jsfiles": [
+                "datasource-io.js"
+            ]
+        },
+        "datasource-polling": {
+            "jsfiles": [
+                "datasource-polling.js"
+            ]
+        },
+        "datasource-local": {
+            "jsfiles": [
+                "datasource-local.js"
+            ]
+        },
+        "datasource-function": {
+            "jsfiles": [
+                "datasource-function.js"
+            ]
+        },
+        "datasource-get": {
+            "jsfiles": [
+                "datasource-get.js"
+            ]
+        },
+        "datasource-xmlschema": {
+            "jsfiles": [
+                "datasource-xmlschema.js"
+            ]
+        }
+    }
+}

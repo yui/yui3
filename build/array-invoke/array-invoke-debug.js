@@ -1,4 +1,4 @@
-YUI.add('array-invoke', function(Y) {
+YUI.add('array-invoke', function (Y, NAME) {
 
 /**
 @module collection
@@ -37,4 +37,4 @@ Y.Array.invoke = function(items, name) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});
