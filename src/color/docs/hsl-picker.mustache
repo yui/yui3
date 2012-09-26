@@ -1,0 +1,69 @@
+<div class="intro">
+<p>{{description}}</p>
+</div>
+
+<div id="demo" class="example">
+    <style>
+    {{>picker-source-css}}
+    {{>hue-picker-output-css}}
+    </style>
+
+    {{>picker-source-html}}
+    {{>hue-picker-output-html}}
+
+    <script>
+    YUI().use('dial', 'slider', 'event-valuechange', 'color', function(Y){
+        {{>picker-source-js}}
+        {{>hue-picker-output-js}}
+    });
+    </script>
+</div>
+
+<h3>Setting Up the HSL Picker UI</h3>
+<p>This example takes advantage of the `dial` and `slider` widgets. We will use the dial widget to represent and select the hue from the 360 degree color wheel.</p>
+<p>Next we will use two sliders to select the saturation and luminance.</p>
+
+```
+{{>picker-source-html}}
+{{>hue-picker-output-html}}
+```
+
+<p>This layout could use some CSS TLC, so let's get to that next.</p>
+
+```
+{{>picker-source-css}}
+{{>hue-picker-output-css}}
+```
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `color`, `slider`, `dial` and `event-valuechange` modules.</p>
+
+```
+YUI().use('dial', 'slider', 'event-valuechange', 'color', function (Y) {
+    // Code Here.
+});
+```
+{{>build-color-picker-doc-js}}
+
+<h4>Building The Picker's Output</h4>
+<h5>Initializing Output Variables</h5>
+```
+{{>hue-picker-output-js-vars}}
+```
+
+<h5>Binding Output UI</h5>
+```
+{{>hue-picker-output-js-bind}}
+```
+
+<h5>Ouput Functions</h5>
+```
+{{>hue-picker-output-js-func}}
+```
+
+
+<h4>Get It Started</h4>
+<p>Our last step is to make sure we set the initial view of the UI when everything has loaded. We can do this by simply calling `updatePickerUI`.</p>
+```
+{{>picker-source-js-start}}
+```
