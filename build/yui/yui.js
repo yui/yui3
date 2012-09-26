@@ -7984,6 +7984,9 @@ Y.Loader.prototype = {
             //Filter out the opposite type and reset the array so the checks later work
             modules[((type === JS) ? CSS : JS)] = [];
         }
+        if (!self.fetchCSS) {
+            modules.css = [];
+        }
         if (modules.js.length) {
             comp++;
         }
@@ -7995,7 +7998,8 @@ Y.Loader.prototype = {
 
         var complete = function(d) {
             actions++;
-            var errs = {}, i = 0, o = 0, u = '', fn;
+            var errs = {}, i = 0, o = 0, u = '', fn,
+                modName, resMods;
 
             if (d && d.errors) {
                 for (i = 0; i < d.errors.length; i++) {
@@ -8035,6 +8039,19 @@ Y.Loader.prototype = {
                     mods = Y.Object.keys(mods);
                     if (mods.length) {
                         self.require(mods);
+                        resMods = self.resolve(true);
+                        if (resMods.cssMods.length) {
+                            for (i=0; i <  resMods.cssMods.length; i++) {
+                                modName = resMods.cssMods[i].name;
+                                delete YUI.Env._cssLoaded[modName];
+                                if (self.isCSSLoaded(modName)) {
+                                    self.inserted[modName] = true;
+                                    delete self.required[modName];
+                                }
+                            }
+                            self.sorted = [];
+                            self._sort();
+                        }
                         d = null; //bail
                         self._insert(); //insert the new deps
                     }

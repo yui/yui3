@@ -4,7 +4,7 @@
  * to build input device agnostic components which behave the same in response to either touch or mouse based  
  * interaction.
  *
- * <p>Documentation for events added by this module can be found in the event document for the <a href="YUI.html#events">YUI</a> global.</p>
+ * <p>Documentation for events added by this module can be found in the event document for the <a href="../classes/YUI.html#events">YUI</a> global.</p>
  *
  * @module event-gestures
  */
@@ -12,6 +12,9 @@
 /**
  * Adds support for a "flick" event, which is fired at the end of a touch or mouse based flick gesture, and provides 
  * velocity of the flick, along with distance and time information.
+ *
+ * <p>Documentation for the flick event can be found on the <a href="../classes/YUI.html#event_flick">YUI</a> global, 
+ * along with the other supported events.</p>
  *
  * @module event-gestures
  * @submodule event-flick
