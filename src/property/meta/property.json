@@ -1,0 +1,21 @@
+{
+    "property": {
+        "requires": [
+            "event-custom",
+            "oop",
+            "property-base"
+        ],
+
+        "submodules": {
+            "property-base": {},
+
+            "property-base-shim": {
+                "condition": {
+                    "trigger": "property-base",
+                    "test": "property-feature-detect.js",
+                    "when": "instead"
+                }
+            }
+        }
+    }
+}

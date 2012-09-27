@@ -1,0 +1,23 @@
+{
+    "name": "property",
+
+    "builds": {
+        "property-base": {
+            "jsfiles": [
+                "property-base.js"
+            ]
+        },
+
+        "property-base-shim": {
+            "jsfiles": [
+                "property-base-shim.js"
+            ]
+        },
+
+        "property": {
+            "jsfiles": [
+                "property.js"
+            ]
+        }
+    }
+}
