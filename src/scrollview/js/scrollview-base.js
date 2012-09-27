@@ -598,9 +598,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // if a flick animation is in progress, cancel it
         if (sv._flickAnim) {
-            // Cancel and delete sv._flickAnim
-            sv._flickAnim.cancel();
-            delete sv._flickAnim;
+            sv._cancelFlick();
             sv._onTransEnd();
         }
 
@@ -819,8 +817,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         if (tooSlow || belowMinRange || aboveMaxRange) {
             // Cancel and delete sv._flickAnim
             if (sv._flickAnim) {
-                sv._flickAnim.cancel();
-                delete sv._flickAnim;
+                sv._cancelFlick();
             }
 
             // If we're inside the scroll area, just end
@@ -840,6 +837,19 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._flickAnim = Y.later(frameDuration, sv, '_flickFrame', [newVelocity, flickAxis, newPosition]);
             sv.set(axisAttr, newPosition);
         }
+    },
+
+    _cancelFlick: function () {
+        var sv = this;
+
+        if (sv._flickAnim) {
+            // Cancel the flick (if it exists)
+            sv._flickAnim.cancel();
+
+            // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
+            delete sv._flickAnim;
+        }
+
     },
 
     /**
@@ -1048,13 +1058,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _afterScrollEnd: function (e) {
         var sv = this;
 
-        // @TODO: Move to sv._cancelFlick()
         if (sv._flickAnim) {
-            // Cancel the flick (if it exists)
-            sv._flickAnim.cancel();
-
-            // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
-            delete sv._flickAnim;
+            sv._cancelFlick();
         }
 
         // If for some reason we're OOB, snapback
