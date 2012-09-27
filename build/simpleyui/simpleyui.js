@@ -3536,7 +3536,14 @@ YUI.Env.parseUA = function(subUA) {
          * @default 0
          * @static
          */
-        nodejs: 0
+        nodejs: 0,
+        /*
+        * Window8/IE10 Application host environment
+        * @property winjs
+        * @type Boolean
+        * @static
+        */
+        winjs: ((typeof Windows !== "undefined") && Windows.System)
     },
 
     ua = subUA || nav && nav.userAgent,
