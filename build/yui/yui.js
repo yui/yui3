@@ -3441,13 +3441,6 @@ YUI.Env.parseUA = function(subUA) {
          */
         phantomjs: 0,
         /**
-         * Adobe AIR version number or 0.  Only populated if webkit is detected.
-         * Example: 1.0
-         * @property air
-         * @type float
-         */
-        air: 0,
-        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -10789,7 +10782,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "test-console": {
         "requires": [
             "console-filters",
-            "test"
+            "test",
+            "array-extras"
         ],
         "skinnable": true
     },
