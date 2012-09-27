@@ -222,6 +222,15 @@
 					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 				},
 
+
+
+
+
+
+
+
+
+
 				"Ensure the 'scrollEnd' event fires": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false),
@@ -421,6 +430,8 @@
 					Test.wait(2000);
 				},
 
+
+// Disabled
 				"Disabled scrollview should not scroll": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false);
@@ -434,6 +445,33 @@
 					});
 					Test.wait(2000);
 				},
+
+				"Disabled scrollview should not move on gesture": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 100;
+
+					scrollview.set('disabled', true);
+
+					scrollview.get('contentBox').simulateGesture('move', {
+                        path: {
+                            ydist: -(distance)
+                        },
+                        duration: DURATION
+					});
+
+					Y.later(100, this, function () {
+						Test.resume(function () {
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+
+					Test.wait(2000);
+				},
+
+
+
+
 
 				"Widget resize should trigger heightChange": function() {
 					var Test = this,
