@@ -101,6 +101,7 @@
 				// Instantiation
 				// ---------------------------------------------
 
+// Initialization
 				"Ensure initial state is correct": function() {
 					var scrollview = renderNewScrollview(false),
 						attrs = Y.ScrollView.ATTRS;
@@ -154,8 +155,10 @@
 					Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
 					
 				},
+// end Initialization
 
-// scroll setters
+
+// Scroll{X/Y} setters
 				"set('scrollX') to a positive distance should move it that distance": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false),
@@ -221,16 +224,12 @@
 					scrollview.set('scrollY', distance);
 					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 				},
+// end Scroll{X/Y} setters
 
 
 
 
-
-
-
-
-
-
+// Events
 				"Ensure the 'scrollEnd' event fires": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false),
@@ -248,27 +247,32 @@
 					scrollview.scrollTo(distance, 0, 1); // args = x, y, duration, easing
 				},
 
-				"Flick x should provide the correct reaction": function() {
-					
+				"Widget resize should trigger heightChange": function() {
 					var Test = this,
-						scrollview = renderNewScrollview(false);
+						scrollview = renderNewScrollview(false),
+						eventsFired = 0;
 
-					scrollview.on('scrollEnd', function(){
-						Test.resume(function(){
-							// depending on browser activity, scrollX won't always be exactly at the end (sometimes a few pixels shy), so we'll give it a large buffer
-							(scrollview.get('scrollX') > 2000) ? Y.Assert.pass() : Y.Assert.fail();
-							Y.Assert.areEqual(0, scrollview.get('scrollY'));
-						});
+					// Ensure scrollEnd fires
+					scrollview.after('heightChange', function(){
+						Y.later(100, scrollview, function () {
+							Test.resume(function () {
+								eventsFired++;
+								Y.Assert.areEqual(1, eventsFired);
+							})
+						})
 					});
 
-					scrollview.get('contentBox').simulateGesture('flick', {
-						distance: -15000,
-						axis: 'x'
-					});
+					Y.later(10, scrollview, function () {
+						scrollview.set('height', 123);
+					})
 
-					Test.wait(4000);
+					Test.wait(2000);
 				},
+// end Events
 
+
+
+// Properties
 				"lastScrolledAmt should be correct": function() {
 					
 					var Test = this,
@@ -285,27 +289,10 @@
 
 					Test.wait(2000);
 				},
+// end Properties
 
-				"Disabled flick should not scroll": function() {
-					
-					var Test = this,
-						scrollview = renderNewScrollview(false);
 
-					scrollview.set('flick', false);
-					scrollview.get('contentBox').simulateGesture('flick', {
-						distance: -100,
-						axis: 'x'
-					});
-
-					Y.later(200, this, function () {
-						Test.resume(function(){
-							Y.Assert.areEqual(0, scrollview.get('scrollX'));
-						})
-					});
-
-					Test.wait(2000);
-				},
-
+// Gesture: move
 				"Move right on X should move the content right": function() {
 					
 					var Test = this,
@@ -407,7 +394,57 @@
 
 					Test.wait(2000);
 				},
+// Gesture: move
 
+
+
+// Gesture: flick
+				"Flick x should provide the correct reaction": function() {
+					
+					var Test = this,
+						scrollview = renderNewScrollview(false);
+
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							// depending on browser activity, scrollX won't always be exactly at the end (sometimes a few pixels shy), so we'll give it a large buffer
+							(scrollview.get('scrollX') > 2000) ? Y.Assert.pass() : Y.Assert.fail();
+							Y.Assert.areEqual(0, scrollview.get('scrollY'));
+						});
+					});
+
+					scrollview.get('contentBox').simulateGesture('flick', {
+						distance: -15000,
+						axis: 'x'
+					});
+
+					Test.wait(4000);
+				},
+
+				"Disabled flick should not scroll": function() {
+					
+					var Test = this,
+						scrollview = renderNewScrollview(false);
+
+					scrollview.set('flick', false);
+					scrollview.get('contentBox').simulateGesture('flick', {
+						distance: -100,
+						axis: 'x'
+					});
+
+					Y.later(200, this, function () {
+						Test.resume(function(){
+							Y.Assert.areEqual(0, scrollview.get('scrollX'));
+						})
+					});
+
+					Test.wait(2000);
+				},
+// end Gesture:flick
+
+
+
+
+// Disabled
 				"Disabled drag should not scroll": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(true),
@@ -430,8 +467,6 @@
 					Test.wait(2000);
 				},
 
-
-// Disabled
 				"Disabled scrollview should not scroll": function() {
 					var Test = this,
 						scrollview = renderNewScrollview(false);
@@ -467,33 +502,12 @@
 					});
 
 					Test.wait(2000);
-				},
-
-
-
-
-
-				"Widget resize should trigger heightChange": function() {
-					var Test = this,
-						scrollview = renderNewScrollview(false),
-						eventsFired = 0;
-
-					// Ensure scrollEnd fires
-					scrollview.after('heightChange', function(){
-						Y.later(100, scrollview, function () {
-							Test.resume(function () {
-								eventsFired++;
-								Y.Assert.areEqual(1, eventsFired);
-							})
-						})
-					});
-
-					Y.later(10, scrollview, function () {
-						scrollview.set('height', 123);
-					})
-
-					Test.wait(2000);
 				}
+// end Disabled
+
+
+
+
 
 /* These tests are not possible until mousewheel simulation is available
 
@@ -517,6 +531,7 @@
 				- Make sure scrollEnd only fires once
 				- setScroll after disabling
 				- Flick while flicking
+				- swipe to OOB
 */
 	        });
 
