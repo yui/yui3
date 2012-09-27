@@ -1058,7 +1058,7 @@ YUI({
                 "Y.all(window)");
 */
 
-            Assert.isTrue(Y.DOM.isWindow(Y.all(window)._nodes[0], "Y.all(window)");
+            Assert.isTrue(Y.DOM.isWindow(Y.all(window)._nodes[0], "Y.all(window)"));
         },
 
         test_isEmpty: function() {
@@ -1894,7 +1894,7 @@ YUI({
     // - Expose Y.UA.winjsapp or something similar (http://yuilibrary.com/projects/yui3/ticket/2532797).
     // - Look into why Y.on(load) is not firing in Win8 packaged apps.
     // - Look into whether or not we really need onload for this test to begin with.
-    if (typeof Windows !== undefined && Windows.System) {
+    if ((typeof Windows !== "undefined") && Windows.System) {
         Y.Test.Runner.run();
     } else {
         Y.on('load', function() {
