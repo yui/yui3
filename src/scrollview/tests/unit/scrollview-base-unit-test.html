@@ -157,6 +157,28 @@
 // end Initialization
 
 
+// Axis setters
+
+				"Axis setters should work": function() {
+					var scrollview = renderNewScrollview(false, {axis:'x'});
+					
+					Y.ObjectAssert.areEqual({x:true,y:false}, scrollview.get('axis'));
+				},
+
+				"Axis setters should work": function() {
+					var scrollview = renderNewScrollview(false, {axis:'y'});
+
+					Y.ObjectAssert.areEqual({x:false,y:true}, scrollview.get('axis'));
+				},
+
+				"Axis setters should work": function() {
+					var scrollview = renderNewScrollview(false, {axis:'xy'});
+
+					Y.ObjectAssert.areEqual({x:true,y:true}, scrollview.get('axis'));
+				},
+
+// end Axis setters
+
 // Scroll{X/Y} setters
 				"set('scrollX') to a positive distance should move it that distance": function() {
 					var Test = this,
@@ -226,6 +248,27 @@
 // end Scroll{X/Y} setters
 
 
+// scrollTo
+
+				"scrollTo() on X should scroll": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 500;
+console.log(Y.Transition.useNative);
+					scrollview.on('scrollEnd', function(){
+						Test.resume(function(){
+							Y.Assert.areEqual(distance, scrollview.get('scrollX'));
+						})
+					});
+
+					scrollview.scrollTo(distance, null, DURATION);
+
+					Test.wait(2000);
+				},
+
+
+// end scrollTo
+
 
 
 // Events
@@ -243,7 +286,7 @@
 						Y.Assert.areEqual(1, eventsFired);
 					});
 
-					scrollview.scrollTo(distance, 0, 1); // args = x, y, duration, easing
+					scrollview.scrollTo(distance, 0, DURATION); // args = x, y, duration, easing
 				},
 
 				"Widget resize should trigger heightChange": function() {
@@ -284,7 +327,7 @@
 						})
 					});
 
-					scrollview.set('scrollX', distance, {duration: 1});
+					scrollview.set('scrollX', distance, {duration: DURATION});
 
 					Test.wait(2000);
 				},
@@ -540,9 +583,9 @@
 	        Y.Test.Runner.add(suite);
 	        Y.Test.Runner.run();
 
-			function renderNewScrollview (vertical) {
+			function renderNewScrollview (vertical, config) {
 
-				var config = {},
+				var config = config || {},
 					guid = Y.guid(),
 					html,
 					scrollview,
