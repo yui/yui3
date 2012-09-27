@@ -12,11 +12,10 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            // IE doesn't simulate focus/blur events properly because
-            // IE reliese on focusin/focusout, so these tests fail. Have
-            // to rely on manual testing.
-            // TODO: See if we can simulate focusin/focusout instead of
-            // ignoring test cases
+            // TODO: Ignoring these tests for now, until we can look
+            // into simulating focusin/focusout event-focus and event-blur
+            // rely on focusin/focusout for all IE versions - so simulating
+            // focus doesn't invoke the event-focus or event-blur listeners.
             'valuechange should stop polling on blur': ignoreFocus,
             'valuechange should start polling on focus': ignoreFocus,
             'valuechange should not report stale changes that occurred while a node was not focused': ignoreFocus
