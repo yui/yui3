@@ -105,7 +105,21 @@ Y.mix(Y.IO.prototype, {
         this._q.remove(o);
     },
 
-    qStart: function() {
+   /**
+    * Method for flushing all pending transaction from
+    * the queue.
+    *
+    * @method flush
+    * @private
+    * @static
+    */
+
+   qFlush: function(o) {
+		this._q = new Y.Queue();
+		this.qActiveId = null;		
+	},
+
+   qStart: function() {
         var io = this;
         io._qState = 1;
 
@@ -149,6 +163,7 @@ _queue.start = function () { io.qStart(); };
 _queue.stop = function () { io.qStop(); };
 _queue.promote = function (o) { io.qPromote(o); };
 _queue.remove = function (o) { io.qRemove(o); };
+_queue.flush = function (o) { io.qFlush(); };
 _queue.size = function () { io.qSize(); };
 Y.io.queue = _queue;
 
