@@ -114,10 +114,10 @@ Y.mix(Y.IO.prototype, {
     * @static
     */
 
-   qFlush: function(o) {
-		this._q = new Y.Queue();
-		this.qActiveId = null;		
-	},
+   qFlush: function() {
+	this._q = new Y.Queue();
+	this.qActiveId = null;		
+   },
 
    qStart: function() {
         var io = this;
