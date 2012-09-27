@@ -2005,8 +2005,26 @@ pies.on('pie:slicesChange', function (e) {
                     user sorting by clicking on the header.
                 </p>
                 <p>
-                    If the instance's `sortable` attribute is set, this
+                    If the instance's `key` attribute is not set, this
                     configuration is ignored.
+                </p>
+            </td>
+            <td>`datatable-sort`</td>
+        </tr>
+        <tr>
+            <td>caseSensitive</td>
+            <td>
+                ```
+                { key: 'lastLogin', sortable: true, caseSensitive: true }
+                ```
+
+                <p>
+                    When the instance's `caseSensitive` attribute is set to
+                    "true" a case sensitive sort is performed (relevant to string columns only).
+                </p>
+                <p>
+                    Case sensitive sort is marginally more efficient and should be considered
+                    for large data sets when case insensitive sort is not required.
                 </p>
             </td>
             <td>`datatable-sort`</td>

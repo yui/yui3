@@ -71,7 +71,6 @@ YUI.add('datatable-sort-tests', function(Y) {
             tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after Number sort');
 
-
             ths.item(1).simulate('click');
             tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('1', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after DATE sort');
@@ -80,7 +79,7 @@ YUI.add('datatable-sort-tests', function(Y) {
             tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after DATE sort');
 
-
+            // should be AaBbCcZz
             ths.item(2).simulate('click');
             tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('2', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String sort');
@@ -89,14 +88,14 @@ YUI.add('datatable-sort-tests', function(Y) {
             tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String sort');
 
+            // should be ABCZabcz
+            ths.item(3).simulate('click');
+            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
+            Assert.areEqual('1', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String case sensitive sort');
 
             ths.item(3).simulate('click');
             tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
-            Assert.areEqual('2', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String case sensitive sort');
-
-            ths.item(3).simulate('click');
-            tds = Y.all(tableSortableSelector + 'td'); // refresh the nodeList
-            Assert.areEqual('3', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String case sensitive sort');
+            Assert.areEqual('4', tds.item(0).getHTML(), ' - Wrong text in col 1 row 1 after String case sensitive sort');
 
             ths.item(0).simulate('click');
         }

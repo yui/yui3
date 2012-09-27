@@ -32,11 +32,11 @@ YUI().use("datatable-sort", function (Y) {
         {Company:"Industrial Industries", Phone:"408-555-5678", Contact:"Robin Smith"}
     ],
     dataSortable = [
-        {Number:1, Date:new Date(2001, 8, 16), String:"a", StringSensitive:"a"},
-        {Number:2, Date:new Date(2003, 8, 16), String:"A", StringSensitive:"A"},
-        {Number:3, Date:new Date(2005, 8, 16), String:"z", StringSensitive:"z"},
-        {Number:4, Date:new Date(2007, 8, 16), String:"Z", StringSensitive:"Z"}
-    ],dt1,dt2;
+        {Number:1, Date:new Date(2001, 8, 16), String:"A", StringSensitive:"A"},
+        {Number:2, Date:new Date(2003, 8, 16), String:"a", StringSensitive:"a"},
+		{Number:3, Date:new Date(2005, 8, 16), String:"Z", StringSensitive:"Z"},
+		{Number:4, Date:new Date(2007, 8, 16), String:"z", StringSensitive:"z"}
+	],dt1,dt2;
     /*
     presortedData = [
         {Company:"Acme Company", Phone:"415-555-1234", Contact:"John Jones"},
@@ -56,7 +56,7 @@ YUI().use("datatable-sort", function (Y) {
         columns:sortableCols,
         data:dataSortable,
         summary:"Sortable test data",
-        caption:"Table with simple column sorting"
+        caption:"Table with column sorting by data type"
     }).render("#sortSensitive");
     
     /*
