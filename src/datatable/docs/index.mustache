@@ -1235,6 +1235,10 @@ YUI({ filter: 'raw' }).use('datatable-sort', function (Y) {
 <p>
     Disable header-click sorting by setting `sortable` to `false`.
 </p>
+<p>
+    The default sort order is case insensitive, the sort order can be set to case sensitive
+    by using the `caseSensitive` attribute, see <a href="#column-config">Appendix A</a> below.
+</p>
 
 <h4 id="customsort">Custom Sorting</h4>
 
@@ -2020,7 +2024,7 @@ pies.on('pie:slicesChange', function (e) {
 
                 <p>
                     When the instance's `caseSensitive` attribute is set to
-                    "true" a case sensitive sort is performed (relevant to string columns only).
+                    "true" the sort order is case sensitive (relevant to string columns only).
                 </p>
                 <p>
                     Case sensitive sort is marginally more efficient and should be considered
