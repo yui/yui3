@@ -3,7 +3,7 @@ YUI.add('event-valuechange-test', function (Y) {
 var Assert      = Y.Assert,
     ArrayAssert = Y.ArrayAssert,
 
-    ignoreFocus = Y.UA.ie && Y.UA.ie < 10,
+    ignoreFocus = Y.UA.ie,
     suite       = new Y.Test.Suite('Event: ValueChange');
 
 // -- Basic Subscriptions ------------------------------------------------------
@@ -12,8 +12,11 @@ suite.add(new Y.Test.Case({
 
     _should: {
         ignore: {
-            // IE doesn't simulate focus/blur events properly, so these tests
-            // fail. Have to rely on manual testing.
+            // IE doesn't simulate focus/blur events properly because
+            // IE reliese on focusin/focusout, so these tests fail. Have
+            // to rely on manual testing.
+            // TODO: See if we can simulate focusin/focusout instead of
+            // ignoring test cases
             'valuechange should stop polling on blur': ignoreFocus,
             'valuechange should start polling on focus': ignoreFocus,
             'valuechange should not report stale changes that occurred while a node was not focused': ignoreFocus
@@ -104,6 +107,31 @@ suite.add(new Y.Test.Case({
         }, 200);
     },
 
+    'valuechange should stop polling on blur - with blur()': function () {
+        var fired;
+
+        this.textInput.on('valuechange', function (e) {
+            fired = true;
+        });
+
+        this.textInput.focus(); // must focus in order to blur
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
+
+        this.wait(function () {
+            Assert.isTrue(fired);
+            fired = false;
+
+            this.textInput.blur();
+
+            this.textInput.set('value', 'bar');
+
+            this.wait(function () {
+                Assert.isFalse(fired);
+            }, 200);
+        }, 200);
+    },
+
     'valuechange should start polling on focus': function () {
         var test = this;
 
@@ -112,6 +140,19 @@ suite.add(new Y.Test.Case({
         });
 
         this.textInput.simulate('focus');
+        this.textInput.set('value', 'foo');
+
+        this.wait(200);
+    },
+
+    'valuechange should start polling on focus - with focus()': function () {
+        var test = this;
+
+        this.textInput.once('valuechange', function (e) {
+            test.resume();
+        });
+
+        this.textInput.focus();
         this.textInput.set('value', 'foo');
 
         this.wait(200);
@@ -130,6 +171,26 @@ suite.add(new Y.Test.Case({
         this.textInput.simulate('blur');
         this.textInput.set('value', 'bar');
         this.textInput.simulate('focus');
+        this.textInput.simulate('mousedown');
+
+        this.wait(function () {
+            Assert.isFalse(fired);
+        }, 200);
+    },
+
+    'valuechange should not report stale changes that occurred while a node was not focused - with focus() and blur()': function () {
+        var fired = false;
+
+        this.textInput.simulate('mousedown');
+        this.textInput.set('value', 'foo');
+
+        this.textInput.on('valuechange', function (e) {
+            fired = true;
+        });
+
+        this.textInput.blur();
+        this.textInput.set('value', 'bar');
+        this.textInput.focus();
         this.textInput.simulate('mousedown');
 
         this.wait(function () {
