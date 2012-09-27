@@ -101,7 +101,44 @@
 				// Instantiation
 				// ---------------------------------------------
 
-				"Ensure rendering & initial state are correct": function() {
+				"Ensure initial state is correct": function() {
+					var scrollview = renderNewScrollview(false),
+						attrs = Y.ScrollView.ATTRS;
+
+					// Loop through each ATTR and ensure its value matches the default to ensure any setters work properly.
+					Y.Object.each(attrs, function (data, attr) {
+						var val;
+
+						if (data.value !== undefined) {
+							val = data.value;
+							if (Y.Lang.isObject(val)) {
+								Y.ObjectAssert.areEqual(val, scrollview.get(attr));  // areEqual is deprecated, but still works
+							}
+							else {
+								Y.Assert.areEqual(val, scrollview.get(attr));
+							}
+						}
+					});
+				},
+
+				"Deprecated static values should set appropriate ATTRs": function() {
+
+					Y.ScrollView.FRAME_STEP = 1;
+					Y.ScrollView.SNAP_DURATION = 2;
+					Y.ScrollView.SNAP_EASING = 3;
+					Y.ScrollView.EASING = 4;
+					Y.ScrollView.BOUNCE_RANGE = 5;
+
+					var scrollview = renderNewScrollview(false);
+
+					Y.Assert.areEqual(Y.ScrollView.FRAME_STEP, scrollview.get('frameDuration'));
+					Y.Assert.areEqual(Y.ScrollView.SNAP_DURATION, scrollview.get('snapDuration'));
+					Y.Assert.areEqual(Y.ScrollView.SNAP_EASING, scrollview.get('snapEasing'));
+					Y.Assert.areEqual(Y.ScrollView.EASING, scrollview.get('easing'));
+					Y.Assert.areEqual(Y.ScrollView.BOUNCE_RANGE, scrollview.get('bounceRange'));
+				},
+
+				"Ensure initial rendering is correct": function() {
 					var scrollview = renderNewScrollview(false),
 						bb = scrollview.get('boundingBox'),
 						cb = scrollview.get('contentBox'),
@@ -109,39 +146,80 @@
 						ul = cb.all('> ul'),
 						li = cb.all('> ul > li');
 
+					Y.Assert.areEqual(10, li.size());
+
 					Y.Assert.isTrue(bb.hasClass('yui3-scrollview'), "BoundingBox does not contain class 'yui3-scrollview'");
 					Y.Assert.isTrue(cb.hasClass('yui3-scrollview-content'), "ContentBox does not contain class 'yui3-scrollview-content'");
 					// @TODO:  False-positive. This is having issues in IE7, fix
-					// Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
+					Y.Assert.isTrue(bb.hasClass('yui3-scrollview-horiz'), "BoundingBox does not contain class 'yui3-scrollview-horiz'");
 					
-					Y.Assert.areEqual(10, li.size());
-
-					// Check the default values
-					Y.Assert.areEqual(0, sv.get('scrollX'));
-					Y.Assert.areEqual(0, sv.get('scrollY'));
-					Y.Assert.areEqual(0.93, sv.get('deceleration'));
-					Y.Assert.areEqual(0.1, sv.get('bounce'));
-					Y.Assert.areEqual(10, sv.get('flick').minDistance);
-					Y.Assert.areEqual(.3, sv.get('flick').minVelocity);
-					Y.Assert.isTrue(sv.get('drag'));
-					Y.Assert.areEqual(400, sv.get('snapDuration'));
-					Y.Assert.areEqual('ease-out', sv.get('snapEasing'));
-					Y.Assert.areEqual('cubic-bezier(0, 0.1, 0, 1.0)', sv.get('easing'));
-					Y.Assert.areEqual(15, sv.get('frameDuration'));
-					Y.Assert.areEqual(150, sv.get('bounceRange'));
 				},
 
-				"Ensure set('scrollX') works properly": function() {
-					var scrollview = renderNewScrollview(false),
-						distance = 20,
-						maxX = scrollview._maxScrollX;
+// scroll setters
+				"set('scrollX') to a positive distance should move it that distance": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = 20;
 
 					// Assume it starts @ 0
 					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-
-					// Set it to a valid value
 					scrollview.set('scrollX', distance);
 					Y.Assert.areEqual(distance, scrollview.get('scrollX'));
+				},
+				
+				"set('scrollX') above the max distance should move it the max X": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						max = scrollview._maxScrollX;
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollX'));
+					scrollview.set('scrollX', max+1);
+					Y.Assert.areEqual(max, scrollview.get('scrollX'));
+				},
+
+				"set('scrollX') to a negative distance should not move it": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(false),
+						distance = -20;
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollX'));
+					scrollview.set('scrollX', distance);
+					Y.Assert.areEqual(0, scrollview.get('scrollX'));
+				},				
+
+				"set('scrollY') to a positive distance should move it that distance": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true),
+						distance = 20;
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollY'));
+					scrollview.set('scrollY', distance);
+					Y.Assert.areEqual(distance, scrollview.get('scrollY'));
+				},
+				
+				"set('scrollY') above the max distance should move it the max X": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true),
+						max = scrollview._maxScrollY;
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollY'));
+					scrollview.set('scrollY', max+1);
+					Y.Assert.areEqual(max, scrollview.get('scrollY'));
+				},
+
+				"set('scrollY') to a negative distance should not move it": function() {
+					var Test = this,
+						scrollview = renderNewScrollview(true),
+						distance = -20;
+
+					// Assume it starts @ 0
+					Y.Assert.areEqual(0, scrollview.get('scrollY'));
+					scrollview.set('scrollY', distance);
+					Y.Assert.areEqual(0, scrollview.get('scrollY'));
 				},
 
 				"Ensure the 'scrollEnd' event fires": function() {
@@ -379,34 +457,6 @@
 					Test.wait(2000);
 				}
 
-
-/* These tests are not possible until constraints are added
-
-				"Ensure scrolling below the range isn't allowed": function() {
-					var scrollview = renderNewScrollview(false);
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollX'));
-					
-					// Try to set it to a values outside the range
-					scrollview.set('scrollX', -1);
-					Y.Assert.areEqual(0, scrollview.get('scrollX')); // @TODO: fix
-				},
-
-				"Ensure scrolling above the range isn't allowed": function() {
-					var scrollview = renderNewScrollview(true),
-						maxY = scrollview._maxScrollY;
-
-					// Assume it starts @ 0
-					Y.Assert.areEqual(0, scrollview.get('scrollY'));
-					
-					// Try to set it to a values outside the range
-					scrollview.set('scrollY', maxY+1);
-					Y.Assert.areEqual(maxY, scrollview.get('scrollY')); // @TODO: fix
-				},
-*/
-
-
 /* These tests are not possible until mousewheel simulation is available
 
 				"Mousewheel event provides the correct reaction": function() {
@@ -417,16 +467,19 @@
 					Y.Assert.isTrue(true, "is true");
 				}
 */
-				// Additional tests
-				// - Don't scroll Y if a X axis
-				// - Don't scroll X if a Y axis
-				// - sv._prevent.start
-				// - sv._prevent.end
-				// - Flick while already executing a flick
-				// - Forced axis vs auto-detection
-				// - Make sure scrollEnd only fires once
-				// - setScroll after disabling
 
+/*
+				Additional tests
+				- Don't scroll Y if a X axis
+				- Don't scroll X if a Y axis
+				- sv._prevent.start
+				- sv._prevent.end
+				- Flick while already executing a flick
+				- Forced axis vs auto-detection
+				- Make sure scrollEnd only fires once
+				- setScroll after disabling
+				- Flick while flicking
+*/
 	        });
 
 	        var suite = new Y.Test.Suite("Scrollview: Base");

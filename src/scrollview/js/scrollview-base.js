@@ -4,6 +4,8 @@
  * @module scrollview
  * @submodule scrollview-base
  */
+
+ // Local vars
 var getClassName = Y.ClassNameManager.getClassName,
     DOCUMENT = Y.config.doc,
     WINDOW = Y.config.win,
@@ -44,7 +46,6 @@ var getClassName = Y.ClassNameManager.getClassName,
     EASING = 'easing', 
     FRAME_DURATION = 'frameDuration', 
     BOUNCE_RANGE = 'bounceRange',
-    
     _constrain = function (val, min, max) {
         return Math.min(Math.max(val, min), max);
     };
@@ -122,6 +123,42 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     lastScrolledAmt: 0,
 
+    /**
+     * Internal state, defines the minimum amount that the scrollview can be scrolled along the X axis
+     *
+     * @property _minScrollX
+     * @type number
+     * @protected
+     */
+    _minScrollX: null,
+
+    /**
+     * Internal state, defines the maximum amount that the scrollview can be scrolled along the X axis
+     *
+     * @property _maxScrollX
+     * @type number
+     * @protected
+     */
+    _maxScrollX: null,
+
+    /**
+     * Internal state, defines the minimum amount that the scrollview can be scrolled along the Y axis
+     *
+     * @property _minScrollY
+     * @type number
+     * @protected
+     */
+    _minScrollY: null,
+
+    /**
+     * Internal state, defines the maximum amount that the scrollview can be scrolled along the Y axis
+     *
+     * @property _maxScrollY
+     * @type number
+     * @protected
+     */
+    _maxScrollY: null,
+    
     /**
      * Designated initializer
      *
@@ -390,40 +427,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             bb.addClass(CLASS_NAMES.vertical);
         }
 
-        /**
-         * Internal state, defines the minimum amount that the scrollview can be scrolled along the X axis
-         *
-         * @property _minScrollX
-         * @type number
-         * @protected
-         */
         sv._minScrollX = (rtl) ? Math.min(0, -(scrollWidth - width)) : 0;
-
-        /**
-         * Internal state, defines the maximum amount that the scrollview can be scrolled along the X axis
-         *
-         * @property _maxScrollX
-         * @type number
-         * @protected
-         */
         sv._maxScrollX = (rtl) ? 0 : Math.max(0, scrollWidth - width);
-
-        /**
-         * Internal state, defines the minimum amount that the scrollview can be scrolled along the Y axis
-         *
-         * @property _minScrollY
-         * @type number
-         * @protected
-         */
         sv._minScrollY = 0;
-
-        /**
-         * Internal state, defines the maximum amount that the scrollview can be scrolled along the Y axis
-         *
-         * @property _maxScrollY
-         * @type number
-         * @protected
-         */
         sv._maxScrollY = Math.max(0, scrollHeight - height);
     },
 
@@ -947,7 +953,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @protected
      */
     _afterScrollChange: function (e) {
-
         if (e.src === ScrollView.UI_SRC) {
             return false;
         }
@@ -1112,7 +1117,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @protected
     */
     _setScrollX: function(val) {
-        return this._setScroll(val, DIM_X);
+        var sv = this,
+            min = sv._minScrollX,
+            max = sv._maxScrollX;
+
+        return sv._setScroll(_constrain(val, min, max), DIM_X);
     },
 
     /**
@@ -1124,7 +1133,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @protected
     */
     _setScrollY: function(val) {
-        return this._setScroll(val, DIM_Y);
+        var sv = this,
+            min = sv._minScrollY,
+            max = sv._maxScrollY;
+        
+        return sv._setScroll(_constrain(val, min, max), DIM_Y);
     }
 
     // End prototype properties
