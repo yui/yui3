@@ -112,4 +112,60 @@ continue;
 c = 0;
 
                     // check the threshold
-                    _yuitest_coverline("build/loader-rollup/loader-rollup.js"
+                    _yuitest_coverline("build/loader-rollup/loader-rollup.js", 59);
+for (j = 0; j < s.length; j++) {
+                        _yuitest_coverline("build/loader-rollup/loader-rollup.js", 60);
+smod = info[s[j]];
+
+                        // if the superseded module is loaded, we can't
+                        // load the rollup unless it has been forced.
+                        _yuitest_coverline("build/loader-rollup/loader-rollup.js", 64);
+if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
+                            _yuitest_coverline("build/loader-rollup/loader-rollup.js", 65);
+roll = false;
+                            _yuitest_coverline("build/loader-rollup/loader-rollup.js", 66);
+break;
+                        // increment the counter if this module is required.
+                        // if we are beyond the rollup threshold, we will
+                        // use the rollup module
+                        } else {_yuitest_coverline("build/loader-rollup/loader-rollup.js", 70);
+if (r[s[j]] && m.type == smod.type) {
+                            _yuitest_coverline("build/loader-rollup/loader-rollup.js", 71);
+c++;
+                            _yuitest_coverline("build/loader-rollup/loader-rollup.js", 72);
+roll = (c >= m.rollup);
+                            _yuitest_coverline("build/loader-rollup/loader-rollup.js", 73);
+if (roll) {
+                                _yuitest_coverline("build/loader-rollup/loader-rollup.js", 74);
+break;
+                            }
+                        }}
+                    }
+
+                    _yuitest_coverline("build/loader-rollup/loader-rollup.js", 79);
+if (roll) {
+                        // add the rollup
+                        _yuitest_coverline("build/loader-rollup/loader-rollup.js", 81);
+r[i] = true;
+                        _yuitest_coverline("build/loader-rollup/loader-rollup.js", 82);
+rolled = true;
+
+                        // expand the rollup's dependencies
+                        _yuitest_coverline("build/loader-rollup/loader-rollup.js", 85);
+this.getRequires(m);
+                    }
+                }
+            }
+        }
+
+        // if we made it here w/o rolling up something, we are done
+        _yuitest_coverline("build/loader-rollup/loader-rollup.js", 92);
+if (!rolled) {
+            _yuitest_coverline("build/loader-rollup/loader-rollup.js", 93);
+break;
+        }
+    }
+};
+
+
+}, '@VERSION@', {"requires": ["loader-base"]});

@@ -22,6 +22,38 @@ YUI.add('ua-tests', function(Y) {
     }));
 
     suite.add(new Y.Test.Case({
+        name: 'IE 10/Windows 8 App',
+        _should: {
+            ignore: {
+                'test: win8 app': !Y.config.win,
+                'test: not win8 app': (!Y.config.win || !Y.UA.winjs)
+            }
+        },
+        setUp: function() {
+            if (!window.Windows && !this.skip) {
+                window.Windows = {
+                    System: true,
+                    YUI: true
+                };
+            }
+        },
+        tearDown: function() {
+            if (window && window.Windows && window.Windows.YUI) {
+                delete window.Windows;
+            }
+        },
+        'test: win8 app': function() {
+            var ua = YUI.Env.parseUA();
+            Assert.isTrue(ua.winjs);
+            this.skip = true;
+        },
+        'test: not win8 app': function() {
+            var ua = YUI.Env.parseUA();
+            Assert.isFalse(ua.winjs);
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
         name: 'General',
 
         'compareVersions() should compare major versions': function () {

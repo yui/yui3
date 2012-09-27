@@ -1,5 +1,7 @@
 YUI.add('get-test', function (Y) {
+
     Y.GetTests = new Y.Test.Suite("Get");
+
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
 
     var ArrayAssert  = Y.ArrayAssert,
@@ -7,9 +9,12 @@ YUI.add('get-test', function (Y) {
         ObjectAssert = Y.ObjectAssert,
 
         FILENAME = /[abc]\.js/,
-        ua       = Y.UA,
 
+        ua       = Y.UA,
         env      = Y.Get._getEnv(),
+
+        // Win8 JS packaged apps currently hang on async:false and 404s - http://connect.microsoft.com/IE/feedback/details/763466/ie10-dynamic-script-loading-bug-async-404s
+        winJSOnErrorBug = ((typeof Windows !== "undefined") && Windows.System),
 
         supports = {
             // True if this browser should call an onFailure callback on a link
@@ -17,8 +22,7 @@ YUI.add('get-test', function (Y) {
             // 19) support this.
             cssFailure: env.cssFail,
 
-            // True if this browser should call an onFailure callback on a
-            // script that 404s.
+            // True if this browser should call an onFailure callback on a script that 404s.
             jsFailure: !((ua.ie && ua.ie < 9) || (ua.opera && ua.compareVersions(ua.opera, 11.6) < 0) || (ua.webkit && ua.compareVersions(ua.webkit, 530.17) < 0))
         };
 
@@ -79,15 +83,10 @@ YUI.add('get-test', function (Y) {
                 // an explicit delay on the 404 response, even with timeout:1ms.
                 'test: single script timeout callback': Y.UA.phantomjs || (Y.UA.ie && Y.UA.ie >= 10),
 
-                // Need to look into this for IE10 support: Currently if we issue a Get transaction 
-                // with [bogus.js, bogus.js], we get 2 onerror callbacks and we call onFailure correctly, 
-                // but subsequent Get transactions for 304 resources don't fire the onload handler. 
-                // I can't replicate this outside of Get yet.
-                '`errors` property should contain an array of error objects' : Y.UA.ie && Y.UA.ie >= 10,
-                'test: single script, failure': !supports.jsFailure,
-                'test: single script failure, end': !supports.jsFailure,
-                'test: multiple scripts, one failure': !supports.jsFailure,
-                'test: multiple scripts, failure, end': !supports.jsFailure,
+                'test: single script, failure': !supports.jsFailure || winJSOnErrorBug,
+                'test: single script failure, end': !supports.jsFailure || winJSOnErrorBug,
+                'test: multiple scripts, one failure': !supports.jsFailure || winJSOnErrorBug,
+                'test: multiple scripts, failure, end': !supports.jsFailure || winJSOnErrorBug,
                 'test: async multiple script, failure': !supports.jsFailure,
                 'test: async multiple script, failure, end': !supports.jsFailure
             }
@@ -496,44 +495,49 @@ YUI.add('get-test', function (Y) {
                 failure:0
             };
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
-                data: {a:1, b:2, c:3},
-                context: {bar:"foo"},
+                var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+                    data: {a:1, b:2, c:3},
+                    context: {bar:"foo"},
 
-                onFailure: function(o) {
-                    test.resume(function() {
-                        Assert.fail("onFailure shouldn't have been called");
-                        test.o = o;
-                    });
-                },
+                    onFailure: function(o) {
+                        test.resume(function() {
+                            Assert.fail("onFailure shouldn't have been called");
+                            test.o = o;
+                        });
+                    },
 
-                onProgress: function(o) {
-                    var file = o.url.match(/[abc]\.js/);
-                    progress.push(file[0]);
-                },
+                    onProgress: function(o) {
+                        var file = o.url.match(/[abc]\.js/);
+                        progress.push(file[0]);
+                    },
 
-                onSuccess: function(o) {
-                    var context = this;
+                    onSuccess: function(o) {
+                        var context = this;
 
-                    test.resume(function() {
-                        counts.success++;
-                        Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
-                        ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
-                        ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
-                        Assert.areEqual(1, counts.success, "onSuccess called more than once");
+                        // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                        // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                        // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
 
-                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
-                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        setTimeout(function() {
+                            test.resume(function() {
+                                counts.success++;
+                                Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                                ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+                                ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
+                                Assert.areEqual(1, counts.success, "onSuccess called more than once");
 
-                        Assert.areEqual("foo", context.bar, "Callback context not set");
+                                areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                                Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                                Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        test.o = o;
-                    });
-                },
+                                Assert.areEqual("foo", context.bar, "Callback context not set");
 
-                async:true
-            });
+                                test.o = o;
+                            });
+                        }, 0);
+                    },
+                    async:true
+                });
 
             this.wait();
         },
@@ -564,19 +568,25 @@ YUI.add('get-test', function (Y) {
                 onEnd: function(o) {
                     var context = this;
 
-                    test.resume(function() {
-                        counts.end++;
-                        Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                    // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                    // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                    // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
+                    setTimeout(function() {
 
-                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
-                        Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
+                        test.resume(function() {
+                            counts.end++;
+                            Assert.areEqual(1, counts.end,"onEnd called more than once");
+                            Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
 
-                        Assert.areEqual("foo", context.bar, "Callback context not set");
+                            areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                            Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                            Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
-                        test.o = o;
-                    });
+                            Assert.areEqual("foo", context.bar, "Callback context not set");
+
+                            test.o = o;
+                        });
+                    }, 0);
                 },
                 async:true
             });
@@ -608,19 +618,26 @@ YUI.add('get-test', function (Y) {
                 onEnd: function(o) {
                     var context = this;
 
-                    test.resume(function() {
-                        counts.end++;
-                        Assert.areEqual(1, counts.end,"onEnd called more than once");
-                        Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
-                        Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
-                        ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
+                    // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                    // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                    // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
+                    setTimeout(function() {
 
-                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
-                        Assert.areEqual("foo", context.bar, "Callback context not set");
+                        test.resume(function() {
+                            counts.end++;
+                            Assert.areEqual(1, counts.end,"onEnd called more than once");
+                            Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                            Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
+                            ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
 
-                        test.o = o;
-                    });
+                            areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                            Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                            Assert.areEqual("foo", context.bar, "Callback context not set");
+
+                            test.o = o;
+                        });
+
+                    }, 0);
                 },
                 async:true
             });
@@ -700,17 +717,23 @@ YUI.add('get-test', function (Y) {
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
-                    test.resume(function() {
-                        var insertBefore = Y.Node.one("#insertBeforeMe");
 
-                        for (var i = o.nodes.length-1; i >= 0; i--) {
-                            var n = Y.Node.one(o.nodes[i]);
-                            Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
-                            insertBefore = n;
-                        }
+                    // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                    // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                    // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
+                    setTimeout(function() {
+                        test.resume(function() {
+                            var insertBefore = Y.Node.one("#insertBeforeMe");
 
-                        test.o = o;
-                    });
+                            for (var i = o.nodes.length-1; i >= 0; i--) {
+                                var n = Y.Node.one(o.nodes[i]);
+                                Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
+                                insertBefore = n;
+                            }
+
+                            test.o = o;
+                        });
+                    }, 0);
                 },
 
                 onFailure: function(o) {
@@ -793,18 +816,24 @@ YUI.add('get-test', function (Y) {
                 charset: "ISO-8859-1",
 
                 onSuccess: function(o) {
-                    test.resume(function() {
-                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
-                        for (var i = 0; i < o.nodes.length; i++) {
-                            var node = document.getElementById(o.nodes[i].id);
+                    // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                    // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                    // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
+                    setTimeout(function() {
+                        test.resume(function() {
+                            Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
-                            Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
-                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                        }
+                            for (var i = 0; i < o.nodes.length; i++) {
+                                var node = document.getElementById(o.nodes[i].id);
 
-                        test.o = o;
-                    });
+                                Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                                Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            }
+
+                            test.o = o;
+                        });
+                    }, 0);
                 },
 
                 onFailure: function(o) {
@@ -905,21 +934,28 @@ YUI.add('get-test', function (Y) {
                 },
 
                 onSuccess: function(o) {
-                    test.resume(function() {
-                        Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
-                        for (var i = 0; i < o.nodes.length; i++) {
-                            var node = document.getElementById(o.nodes[i].id);
+                    // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                    // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                    // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
+                    
+                    setTimeout(function() {
+                        test.resume(function() {
+                            Assert.areEqual(3, o.nodes.length, "Unexpected node count");
 
-                            Assert.areEqual("myscripts", node.title, "title property not set");
-                            Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            for (var i = 0; i < o.nodes.length; i++) {
+                                var node = document.getElementById(o.nodes[i].id);
 
-                            Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
-                            Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
-                        }
+                                Assert.areEqual("myscripts", node.title, "title property not set");
+                                Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
 
-                        test.o = o;
-                    });
+                                Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                                Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            }
+
+                            test.o = o;
+                        });
+                    }, 0);
                 },
 
                 onFailure: function(o) {
@@ -1041,18 +1077,24 @@ YUI.add('get-test', function (Y) {
                 onFailure: function(o) {
                     var context = this;
 
-                    test.resume(function() {
-                        counts.failure++;
-                        Assert.areEqual(1, counts.failure, "onFailure called more than once");
-                        Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
-                        ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
+                    // This is to account for IE10 and WinJS RT, which invokes onSuccess synchronously if the file is cached (leading to resume() before wait() errors).
+                    // This way the wait() is always hit - regardless of whether or not onSuccess is called synchronously (IE10, WinJS RT behavior) or asychronously (normal browser behavior)
+                    // See: https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload#details
+                    setTimeout(function() {
 
-                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                        Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
-                        Assert.areEqual("foo", context.bar, "Callback context not set");
+                        test.resume(function() {
+                            counts.failure++;
+                            Assert.areEqual(1, counts.failure, "onFailure called more than once");
+                            Assert.areEqual(2, G_SCRIPTS.length, "More/fewer than 2 scripts loaded");
+                            ArrayAssert.containsItems(["a.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
 
-                        test.o = o;
-                    });
+                            areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                            Assert.areEqual(trans.id, o.id, "Payload has unexpected id");
+                            Assert.areEqual("foo", context.bar, "Callback context not set");
+
+                            test.o = o;
+                        });
+                    }, 0);
                 },
                 async:true
             });
@@ -1088,7 +1130,18 @@ YUI.add('get-test', function (Y) {
         },
 
         createInsertBeforeNode: function() {
-            this.ib = Y.Node.create('<link id="insertBeforeMe" href="' + path("ib.css?delay=0") + '" rel="stylesheet" type="text/css" charset="utf-8">');
+
+            // Not using innerHTML because of WinJS RT. 
+
+            var link = Y.config.doc.createElement("link");
+            link.setAttribute("id", "insertBeforeMe");
+            link.setAttribute("rel", "stylesheet");
+            link.setAttribute("type", "text/css");
+            link.setAttribute("charset", "utf-8");
+            link.setAttribute("href", path("ib.css?delay=0"));
+
+            this.ib = Y.Node.one(link);
+
             Y.Node.one("head").appendChild(this.ib);
         },
 
@@ -2207,7 +2260,18 @@ YUI.add('get-test', function (Y) {
 
     // -- TODO: Y.Get.Transaction properties -----------------------------------------
     Y.GetTests.TransactionProperties = new Y.Test.Case({
+
         name: 'Transaction properties',
+
+        _should : {
+            ignore : {
+                // Need to look into this for IE10 support: Currently if we issue a Get transaction 
+                // with [bogus.js, bogus.js], we get 2 onerror callbacks and we call onFailure correctly, 
+                // but subsequent Get transactions for 304 resources don't fire the onload handler. 
+                // I can't replicate this outside of Get yet.
+                '`errors` property should contain an array of error objects' : Y.UA.ie && Y.UA.ie >= 10
+            }
+        },
 
         tearDown: function () {
             this.t && this.t.purge();
@@ -2235,7 +2299,7 @@ YUI.add('get-test', function (Y) {
         '`errors` property should contain an array of error objects': function () {
             var test = this;
 
-            this.t = Y.Get.js(['bogus.js', 'bogus1.js'], function (err, t) {
+            this.t = Y.Get.js(['bogus.js', 'bogus.js'], function (err, t) {
                 test.resume(function () {
                     Assert.isArray(t.errors, '`errors` should be an array');
 

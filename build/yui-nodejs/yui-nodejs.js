@@ -3536,7 +3536,14 @@ YUI.Env.parseUA = function(subUA) {
          * @default 0
          * @static
          */
-        nodejs: 0
+        nodejs: 0,
+        /*
+        * Window8/IE10 Application host environment
+        * @property winjs
+        * @type Boolean
+        * @static
+        */
+        winjs: ((typeof Windows !== "undefined") && Windows.System)
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -10069,7 +10076,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
