@@ -35,13 +35,13 @@ function setUp() {
     testbed.setContent(
     '<ul id="items">' +
         '<li id="item1">' +
-            '<div id="div1"><input type="text" id="text1" name="text1"></div>' +
+            '<div id="div1"><input type="text" id="text1"></div>' +
         '</li>' +
         '<li id="item2">' +
-            '<div id="div2"><input type="text" id="text2" name="text2"></div>' +
+            '<div id="div2"><input type="text" id="text2"></div>' +
         '</li>' +
         '<li id="item3">' +
-            '<div id="div3"><textarea id="area1" name="area1"></textarea></div>' +
+            '<div id="div3"><textarea id="area1" rows="5" cols="5"></textarea></div>' +
         '</li>' +
     '</ul>');
 }
