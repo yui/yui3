@@ -122,6 +122,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     lastScrolledAmt: 0,
 
+    _gesture: false,
+    _flick: false,
+
     /**
      * Designated initializer
      *
@@ -580,6 +583,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         var sv = this,
             bb = sv._bb,
+            gesture = sv._gesture,
+            flick = sv._flick,
             currentX = sv.get(SCROLL_X),
             currentY = sv.get(SCROLL_Y),
             clientX = e.clientX,
@@ -589,12 +594,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             e.preventDefault();
         }
 
-        // if a flick animation is in progress, cancel it
-        if (sv._flickAnim) {
-            // Cancel and delete sv._flickAnim
-            sv._flickAnim.cancel();
-            sv._flickAnim = false;
-            sv._onTransEnd();
+        if (flick) {
+            sv._flickCancel();
         }
 
         // TODO: Review if neccesary (#2530129)
@@ -688,7 +689,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _onGestureMoveEnd: function (e) {
         var sv = this,
             gesture = sv._gesture,
-            flick = gesture.flick,
+            flick = sv._flick,
             clientX = e.clientX,
             clientY = e.clientY;
 
@@ -765,10 +766,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             easing = 'ease-out',
             scrollToArgs = [];
 
-        // Sometimes flick is enabled, but drag is disabled
-        if (sv._gesture) {
-            sv._gesture.flick = flick;
-        }
+        sv._flick = flick;
 
         // Prevent unneccesary firing of _flickFrame if we can't scroll on the flick axis
         if (!svAxis[flickAxis]) {
@@ -776,7 +774,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         if ((position < minBounce) || (position > maxBounce)) {
-            position = _constrain(position, minBounce, maxBounce);
+            position = _constrain(position, minScroll, maxScroll);
             easing = 'cubic-bezier(0,0,0.4,1)';
         }
 
@@ -794,6 +792,17 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         scrollToArgs.push(easing);
 
         sv.scrollTo.apply(sv, scrollToArgs);
+    },
+
+    _flickCancel: function () {
+        var sv = this,
+            cb = sv._cb,
+            matrix = cb.getStyle('transform'),
+            values = matrix.substring(7, (matrix.length-1)).split(','),
+            x = parseInt(values[4], 10).toFixed(0),
+            y = parseInt(values[5], 10).toFixed(0);
+
+        sv.scrollTo(-(x), -(y), 0);
     },
 
     /**
@@ -1003,9 +1012,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     _afterScrollEnd: function (e) {
         var sv = this;
 
-        // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
-        sv._flick = false;
-
         // If for some reason we're OOB, snapback
         if (sv._isOutOfBounds()) {
             sv._snapBack();
@@ -1013,7 +1019,9 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 
         // Ideally this should be removed, but doing so causing some JS errors with fast swiping 
         // because _gesture is being deleted after the previous one has been overwritten
-        // delete sv._gesture; // TODO: Move to sv.prevGesture?
+        // sv._gesture = false;
+
+        sv._flick = false;
     },
 
     /**
