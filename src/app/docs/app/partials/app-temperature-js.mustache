@@ -55,11 +55,6 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
             }, {
                 src: 'conversion'
             });
-        },
-
-        // This is a method used in the initialization of the attributes.
-        _unitSetter: function (val) {
-            return Y.Lang.isNumber(val) ? val : NaN;
         }
 
     }, {
@@ -67,22 +62,11 @@ YUI().use('model', 'view', 'event-valuechange', function (Y) {
         // method, called when the attribute is modified. The default value is
         // not a number because the first conversion would not work if the user
         // input would be that number: the new value would be equal to the old
-        // value, the default one. It is used a setter (vs. validation) method
-        // because the default value would not pass the validation process, not
-        // allowing the reset of the model.
+        // value, the default one.
         ATTRS: {
-            fahrenheit: {
-                value: NaN,
-                setter: this._unitSetter
-            },
-            celsius: {
-                value: NaN,
-                setter: this._unitSetter
-            },
-            kelvin: {
-                value: NaN,
-                setter: this._unitSetter
-            }
+            fahrenheit: {value: NaN},
+            celsius: {value: NaN},
+            kelvin: {value: NaN}
         }
     });
 
