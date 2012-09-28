@@ -696,6 +696,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _onGestureMoveEnd: function (e) {
+
         var sv = this,
             gesture = sv._gesture,
             flick = sv._flick,
@@ -771,8 +772,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             minScroll = (isVertical ? sv._minScrollY : sv._minScrollX),
             maxScroll = (isVertical ? sv._maxScrollY : sv._maxScrollX),
             minBounce = minScroll - bounceRange,
-            maxBounce = maxScroll - bounceRange,
-            easing = 'ease-out',
+            maxBounce = maxScroll + bounceRange,
             scrollToArgs = [];
 
         sv._flick = flick;
@@ -782,9 +782,15 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             return false;
         }
 
-        if ((position < minBounce) || (position > maxBounce)) {
-            position = _constrain(position, minScroll, maxScroll);
-            easing = 'cubic-bezier(0,0,0.4,1)';
+        // If the current position is outside an edge, then just snap back
+        if ((currPos < minScroll) || (currPos > maxScroll)) {
+            sv._onTransEnd();
+            return;
+        }
+
+        // Or, if current position is in bounds, but the target is out of bounds, contrain it to the bounce range
+        else if ((position < minBounce) || (position > maxBounce)) {
+            position = _constrain(position, minBounce, maxBounce);
         }
 
         // Generate the array of args to pass to scrollTo()
@@ -798,20 +804,26 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         }
 
         scrollToArgs.push(duration);
-        scrollToArgs.push(easing);
 
         sv.scrollTo.apply(sv, scrollToArgs);
     },
 
+    /**
+     * Cancel a flick animation
+     *
+     * @method _cancelFlick
+     * @protected
+     */
     _cancelFlick: function () {
+        // Instead, use https://github.com/sdesai/yui3/blob/b75138257e5e3ab102da9d67ed22b2a42e75a58a/src/scrollview/js/scrollview-base.js
         var sv = this,
             cb = sv._cb,
             matrix = cb.getStyle('transform'),
             values = matrix.substring(7, (matrix.length-1)).split(','),
-            x = parseInt(values[4], 10).toFixed(0),
-            y = parseInt(values[5], 10).toFixed(0);
-            
-        sv.scrollTo(-(x), -(y), 0);
+            x = (-1 * parseInt(values[4], 10).toFixed(0)),
+            y = (-1 * parseInt(values[5], 10).toFixed(0));
+
+        sv.scrollTo(x, y, 0);
     },
 
     /**
@@ -1086,7 +1098,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             min = sv._minScrollX,
             max = sv._maxScrollX;
 
-        return sv._setScroll(_constrain(val, min, max), DIM_X);
+        return sv._setScroll(val, DIM_X);
     },
 
     /**
@@ -1102,7 +1114,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             min = sv._minScrollY,
             max = sv._maxScrollY;
         
-        return sv._setScroll(_constrain(val, min, max), DIM_Y);
+        return sv._setScroll(val, DIM_Y);
     }
 
     // End prototype properties
@@ -1174,10 +1186,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          * value is, the less friction during scrolling.
          *
          * @attribute deceleration
-         * @default 0.93
+         * @default 0.994
          */
         deceleration: {
-            value: 0.998
+            value: 0.994
         },
 
         /**
@@ -1234,10 +1246,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          *
          * @attribute snapEasing
          * @type String
-         * @default 'ease-out'
+         * @default 'ease-in'
          */
         snapEasing: {
-            value: 'ease-out'
+            value: 'ease-in'
         },
 
         /**
@@ -1267,10 +1279,10 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
          *
          * @attribute bounceRange
          * @type Number
-         * @default 15
+         * @default 20
          */
         bounceRange: {
-            value: 15
+            value: 20
         }
     },
 
