@@ -803,28 +803,15 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         sv.scrollTo.apply(sv, scrollToArgs);
     },
 
-    _flickCancel: function () {
+    _cancelFlick: function () {
         var sv = this,
             cb = sv._cb,
             matrix = cb.getStyle('transform'),
             values = matrix.substring(7, (matrix.length-1)).split(','),
             x = parseInt(values[4], 10).toFixed(0),
             y = parseInt(values[5], 10).toFixed(0);
-
+            
         sv.scrollTo(-(x), -(y), 0);
-    },
-
-    _cancelFlick: function () {
-        var sv = this;
-
-        if (sv._flickAnim) {
-            // Cancel the flick (if it exists)
-            sv._flickAnim.cancel();
-
-            // Also delete it, otherwise _onGestureMoveStart will think we're still flicking
-            delete sv._flickAnim;
-        }
-
     },
 
     /**
@@ -1032,7 +1019,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      */
     _afterScrollEnd: function (e) {
         var sv = this;
-        
+
         // If for some reason we're OOB, snapback
         if (sv._isOutOfBounds()) {
             sv._snapBack();
