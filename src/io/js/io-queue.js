@@ -103,6 +103,19 @@ Y.mix(Y.IO.prototype, {
     qRemove: function(o) {
         this._q.remove(o);
     },
+    
+   /**
+    * Method for cancel all pending transaction from
+    * the queue.
+    *
+    * @method empty
+    * @private
+    * @static
+    */
+    
+    qEmpty: function() {
+	     this._q = new Y.Queue();
+	 },
 
     qStart: function() {
         var io = this;
@@ -151,4 +164,5 @@ _queue.stop = function () { io.qStop(); };
 _queue.promote = function (o) { io.qPromote(o); };
 _queue.remove = function (o) { io.qRemove(o); };
 _queue.size = function () { io.qSize(); };
+_queue.empty = function () { io.qEmpty(); };
 Y.io.queue = _queue;
