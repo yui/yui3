@@ -1,4 +1,4 @@
-YUI.add('json-stringify', function(Y) {
+YUI.add('json-stringify', function (Y, NAME) {
 
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
@@ -345,4 +345,4 @@ Y.mix(Y.namespace('JSON'),{
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

@@ -186,6 +186,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	_getDefaultFill: function() {
 		return {
 			type: "solid",
+			opacity: 1,
 			cx: 0.5,
 			cy: 0.5,
 			fx: 0.5,
@@ -572,12 +573,12 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			transform,
 			transformOrigin = this.get("transformOrigin"),
             matrix = this.matrix,
-            i = 0,
+            i,
             len = this._transforms.length;
         
         if(this._transforms && this._transforms.length > 0)
         {
-            for(; i < len; ++i)
+            for(i = 0; i < len; ++i)
             {
                 key = this._transforms[i].shift();
                 if(key)
@@ -643,7 +644,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			context = this._context,
 			methods = [],
 			cachedMethods = this._methods.concat(),
-			i = 0,
+			i,
 			j,
 			method,
 			args,
@@ -657,7 +658,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			{
 				return;
 			}
-			for(; i < len; ++i)
+			for(i = 0; i < len; ++i)
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
@@ -858,7 +859,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             transformY = transformOrigin[1] * h,
 		    transforms = this.matrix.getTransformArray(this.get("transform")),
             matrix = new Y.Matrix(),
-            i = 0,
+            i,
             len = transforms.length,
             transform,
             key,
@@ -871,7 +872,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         transformX = !isNaN(transformX) ? transformX : 0;
         transformY = !isNaN(transformY) ? transformY : 0;
         matrix.translate(transformX, transformY);
-        for(; i < len; i = i + 1)
+        for(i = 0; i < len; i = i + 1)
         {
             transform = transforms[i];
             key = transform.shift();
@@ -926,7 +927,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             methodSymbol,
             args,
             commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
-            i = 0,
+            i,
             len, 
             str,
             symbolToMethod = this._pathSymbolToMethod;
@@ -934,10 +935,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         {
             this.clear();
             len = commandArray.length || 0;
-            for(; i < len; i = i + 1)
+            for(i = 0; i < len; i = i + 1)
             {
                 str = commandArray[i];
-                methodSymbol = str.substr(0, 1),
+                methodSymbol = str.substr(0, 1);
                 args = str.substr(1).match(SPLITARGSPATTERN);
                 method = symbolToMethod[methodSymbol];
                 if(method)
@@ -1277,7 +1278,9 @@ CanvasShape.ATTRS =  {
 	},
 
     /**
-     * Represents an SVG Path string.
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
+     * to ensure that no malicious code is included in that content. 
      *
      * @config data
      * @type String

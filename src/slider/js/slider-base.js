@@ -139,7 +139,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
             maxCapClass = this.getClassName( 'rail', 'cap', this._key.maxEdge );
 
         return Y.Node.create(
-            Y.substitute( this.RAIL_TEMPLATE, {
+            Y.Lang.sub( this.RAIL_TEMPLATE, {
                 railClass      : this.getClassName( 'rail' ),
                 railMinCapClass: minCapClass,
                 railMaxCapClass: maxCapClass
@@ -171,7 +171,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         var imageUrl = this.get( 'thumbUrl' );
 
         return Y.Node.create(
-            Y.substitute( this.THUMB_TEMPLATE, {
+            Y.Lang.sub( this.THUMB_TEMPLATE, {
                 thumbClass      : this.getClassName( 'thumb' ),
                 thumbShadowClass: this.getClassName( 'thumb', 'shadow' ),
                 thumbImageClass : this.getClassName( 'thumb', 'image' ),

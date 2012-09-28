@@ -1,4 +1,4 @@
-YUI.add('recordset-sort', function(Y) {
+YUI.add('recordset-sort', function (Y, NAME) {
 
 /**
  * Adds default and custom sorting functionality to the Recordset utility
@@ -203,4 +203,4 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 
-}, '@VERSION@' ,{requires:['arraysort','recordset-base','plugin']});
+}, '@VERSION@', {"requires": ["arraysort", "recordset-base", "plugin"]});

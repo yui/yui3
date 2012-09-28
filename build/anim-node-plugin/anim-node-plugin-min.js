@@ -1,1 +1,1 @@
-YUI.add("anim-node-plugin",function(c,b){var a=function(d){d=(d)?c.merge(d):{};d.node=d.host;a.superclass.constructor.apply(this,arguments);};a.NAME="nodefx";a.NS="fx";c.extend(a,c.Anim);c.namespace("Plugin");c.Plugin.NodeFX=a;},"@VERSION@",{"requires":["node-pluginhost","anim-base"]});
+YUI.add("anim-node-plugin",function(e,t){var n=function(t){t=t?e.merge(t):{},t.node=t.host,n.superclass.constructor.apply(this,arguments)};n.NAME="nodefx",n.NS="fx",e.extend(n,e.Anim),e.namespace("Plugin"),e.Plugin.NodeFX=n},"@VERSION@",{requires:["node-pluginhost","anim-base"]});

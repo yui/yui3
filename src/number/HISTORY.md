@@ -1,7 +1,7 @@
 Number Change History
-=======================
+=====================
 
-3.6.1
+3.7.0
 -----
 
 * Moved from Y.Datatype.Number to Y.Number
@@ -31,7 +31,7 @@ Number Change History
     the `datatype-date-format` module:
 
         var availLangs = Y.Intl.getAvailableLangs("datatype-date-format");
-    
+
 3.3.0
 -----
 
@@ -49,7 +49,7 @@ Number Change History
 
 3.1.0
 -----
-    
+
   * Changed to use YUI language resource bundles rather than proprietary
     infrastructure.
 

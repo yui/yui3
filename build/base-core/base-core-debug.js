@@ -1,4 +1,4 @@
-YUI.add('base-core', function(Y) {
+YUI.add('base-core', function (Y, NAME) {
 
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
@@ -616,4 +616,4 @@ YUI.add('base-core', function(Y) {
     Y.BaseCore = BaseCore;
 
 
-}, '@VERSION@' ,{requires:['attribute-core']});
+}, '@VERSION@', {"requires": ["attribute-core"]});

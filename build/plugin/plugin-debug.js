@@ -1,4 +1,4 @@
-YUI.add('plugin', function(Y) {
+YUI.add('plugin', function (Y, NAME) {
 
     /**
      * Provides the base Plugin class, which plugin developers should extend, when creating custom plugins
@@ -226,4 +226,4 @@ YUI.add('plugin', function(Y) {
     Y.namespace("Plugin").Base = Plugin;
 
 
-}, '@VERSION@' ,{requires:['base-base']});
+}, '@VERSION@', {"requires": ["base-base"]});

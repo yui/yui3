@@ -1,4 +1,4 @@
-YUI.add('widget-modality', function(Y) {
+YUI.add('widget-modality', function (Y, NAME) {
 
 /**
  * Provides modality support for Widgets, though an extension
@@ -563,4 +563,4 @@ var WIDGET       = 'widget',
 
 
 
-}, '@VERSION@' ,{requires:['base-build', 'event-outside', 'widget'], skinnable:true});
+}, '@VERSION@', {"requires": ["base-build", "event-outside", "widget"], "skinnable": true});

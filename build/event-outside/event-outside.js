@@ -1,4 +1,4 @@
-YUI.add('event-outside', function(Y) {
+YUI.add('event-outside', function (Y, NAME) {
 
 /**
  * Outside events are synthetic DOM events that fire when a corresponding native
@@ -104,4 +104,4 @@ Y.Array.each(nativeEvents, function (event) {
 });
 
 
-}, '@VERSION@' ,{requires:['event-synthetic']});
+}, '@VERSION@', {"requires": ["event-synthetic"]});

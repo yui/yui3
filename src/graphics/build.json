@@ -1,9 +1,14 @@
 {
     "name": "graphics",
     "builds": {
-        "graphics-vml-default": {
+        "graphics": {
             "jsfiles": [
-                "VMLDefault.js"
+                "GraphicBase.js"
+            ]
+        },
+        "graphics-canvas-default": {
+            "jsfiles": [
+                "CanvasDefault.js"
             ]
         },
         "graphics-canvas": {
@@ -16,6 +21,11 @@
                 "CanvasCircle.js",
                 "CanvasPieSlice.js",
                 "CanvasGraphic.js"
+            ]
+        },
+        "graphics-vml-default": {
+            "jsfiles": [
+                "VMLDefault.js"
             ]
         },
         "graphics-vml": {
@@ -35,11 +45,6 @@
                 "SVGDefault.js"
             ]
         },
-        "graphics": {
-            "jsfiles": [
-                "GraphicBase.js"
-            ]
-        },
         "graphics-svg": {
             "jsfiles": [
                 "SVGDrawing.js",
@@ -50,11 +55,6 @@
                 "SVGCircle.js",
                 "SVGPieSlice.js",
                 "SVGGraphic.js"
-            ]
-        },
-        "graphics-canvas-default": {
-            "jsfiles": [
-                "CanvasDefault.js"
             ]
         }
     }

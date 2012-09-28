@@ -1,0 +1,10 @@
+{
+    "name": "node-focusmanager",
+    "builds": {
+        "node-focusmanager": {
+            "jsfiles": [
+                "node-focusmanager.js"
+            ]
+        }
+    }
+}

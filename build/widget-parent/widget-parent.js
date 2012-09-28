@@ -1,4 +1,4 @@
-YUI.add('widget-parent', function(Y) {
+YUI.add('widget-parent', function (Y, NAME) {
 
 /**
  * Extension enabling a Widget to be a parent of another Widget.
@@ -866,4 +866,4 @@ Y.augment(Parent, Y.ArrayList);
 Y.WidgetParent = Parent;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'arraylist', 'widget']});
+}, '@VERSION@', {"requires": ["arraylist", "base-build", "widget"]});

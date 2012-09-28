@@ -892,7 +892,7 @@ Y.Resize = Y.extend(
 			var instance = this;
 
 			return Y.Node.create(
-				Y.substitute(instance.HANDLE_TEMPLATE, {
+				Y.Lang.sub(instance.HANDLE_TEMPLATE, {
 					handle: handle
 				})
 			);

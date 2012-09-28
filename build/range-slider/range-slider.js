@@ -1,4 +1,4 @@
-YUI.add('range-slider', function(Y) {
+YUI.add('range-slider', function (Y, NAME) {
 
 /**
  * Create a sliding value range input visualized as a draggable thumb on a
@@ -25,4 +25,4 @@ Y.Slider = Y.Base.build( 'slider', Y.SliderBase,
     [ Y.SliderValueRange, Y.ClickableRail ] );
 
 
-}, '@VERSION@' ,{requires:['slider-base', 'clickable-rail', 'slider-value-range']});
+}, '@VERSION@', {"requires": ["slider-base", "slider-value-range", "clickable-rail"]});

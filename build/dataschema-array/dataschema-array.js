@@ -1,4 +1,4 @@
-YUI.add('dataschema-array', function(Y) {
+YUI.add('dataschema-array', function (Y, NAME) {
 
 /**
  * Provides a DataSchema implementation which can be used to work with data
@@ -183,4 +183,4 @@ var LANG = Y.Lang,
 Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 
-}, '@VERSION@' ,{requires:['dataschema-base']});
+}, '@VERSION@', {"requires": ["dataschema-base"]});

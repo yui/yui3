@@ -1,6 +1,11 @@
 {
     "name": "widget",
     "builds": {
+        "widget-locale": {
+            "jsfiles": [
+                "WidgetLocale.js"
+            ]
+        },
         "widget-uievents": {
             "jsfiles": [
                 "WidgetUIEvents.js"
@@ -11,16 +16,6 @@
                 "WidgetSkin.js"
             ]
         },
-        "widget-locale": {
-            "jsfiles": [
-                "WidgetLocale.js"
-            ]
-        },
-        "widget-htmlparser": {
-            "jsfiles": [
-                "WidgetHTMLParser.js"
-            ]
-        },
         "widget-base": {
             "jsfiles": [
                 "Widget.js"
@@ -29,6 +24,11 @@
         "widget-base-ie": {
             "jsfiles": [
                 "WidgetBaseIE.js"
+            ]
+        },
+        "widget-htmlparser": {
+            "jsfiles": [
+                "WidgetHTMLParser.js"
             ]
         }
     }

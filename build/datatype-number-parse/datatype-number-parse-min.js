@@ -1,1 +1,1 @@
-YUI.add("datatype-number-parse",function(c,b){var a=c.Lang;c.mix(c.namespace("Number"),{parse:function(e){var d=(e===null)?e:+e;if(a.isNumber(d)){return d;}else{return null;}}});c.namespace("Parsers").number=c.Number.parse;c.namespace("DataType");c.DataType.Number=c.Number;},"@VERSION@");
+YUI.add("datatype-number-parse",function(e,t){var n=e.Lang;e.mix(e.namespace("Number"),{parse:function(e){var t=e===null?e:+e;return n.isNumber(t)?t:null}}),e.namespace("Parsers").number=e.Number.parse,e.namespace("DataType"),e.DataType.Number=e.Number},"@VERSION@");

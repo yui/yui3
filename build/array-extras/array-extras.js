@@ -1,4 +1,4 @@
-YUI.add('array-extras', function(Y) {
+YUI.add('array-extras', function (Y, NAME) {
 
 /**
 Adds additional utility methods to the `Y.Array` class.
@@ -371,7 +371,7 @@ array.
 @param {Array} a Array with nested arrays to flatten.
 @return {Array} An array whose nested arrays have been flattened.
 @static
-@since 3.6.1
+@since 3.7.0
 **/
 A.flatten = function(a) {
     var result = [],
@@ -397,4 +397,4 @@ A.flatten = function(a) {
 };
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@', {"requires": ["yui-base"]});

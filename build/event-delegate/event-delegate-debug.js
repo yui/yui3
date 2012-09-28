@@ -1,4 +1,4 @@
-YUI.add('event-delegate', function(Y) {
+YUI.add('event-delegate', function (Y, NAME) {
 
 /**
  * Adds event delegation support to the library.
@@ -320,4 +320,4 @@ delegate._applyFilter = function (filter, args, ce) {
 Y.delegate = Y.Event.delegate = delegate;
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@', {"requires": ["node-base"]});

@@ -1,4 +1,4 @@
-YUI.add('dataschema-json', function(Y) {
+YUI.add('dataschema-json', function (Y, NAME) {
 
 /**
 Provides a DataSchema implementation which can be used to work with JSON data.
@@ -440,4 +440,4 @@ SchemaJSON = {
 Y.DataSchema.JSON = Y.mix(SchemaJSON, Base);
 
 
-}, '@VERSION@' ,{requires:['dataschema-base','json']});
+}, '@VERSION@', {"requires": ["dataschema-base", "json"]});
