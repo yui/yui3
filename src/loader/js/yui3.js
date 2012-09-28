@@ -2229,7 +2229,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "test-console": {
         "requires": [
             "console-filters",
-            "test"
+            "test",
+            "array-extras"
         ],
         "skinnable": true
     },
@@ -2486,4 +2487,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
+YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';

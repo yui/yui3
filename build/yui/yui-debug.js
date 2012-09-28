@@ -3460,13 +3460,6 @@ YUI.Env.parseUA = function(subUA) {
          */
         phantomjs: 0,
         /**
-         * Adobe AIR version number or 0.  Only populated if webkit is detected.
-         * Example: 1.0
-         * @property air
-         * @type float
-         */
-        air: 0,
-        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -10886,7 +10879,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "test-console": {
         "requires": [
             "console-filters",
-            "test"
+            "test",
+            "array-extras"
         ],
         "skinnable": true
     },
@@ -11143,7 +11137,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
+YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
