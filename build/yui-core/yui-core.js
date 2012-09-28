@@ -3543,7 +3543,7 @@ YUI.Env.parseUA = function(subUA) {
         * @type Boolean
         * @static
         */
-        winjs: ((typeof Windows !== "undefined") && Windows.System)
+        winjs: !!((typeof Windows !== "undefined") && Windows.System)
     },
 
     ua = subUA || nav && nav.userAgent,

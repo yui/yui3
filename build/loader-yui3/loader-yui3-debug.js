@@ -2488,7 +2488,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
+YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
