@@ -5153,7 +5153,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "test-console": {
         "requires": [
             "console-filters",
-            "test"
+            "test",
+            "array-extras"
         ],
         "skinnable": true
     },
