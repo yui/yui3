@@ -7,13 +7,23 @@ YUI.add('hsl-harmony-tests', function(Y) {
         sSlider = Y.one('#sat-slider .yui3-slider-rail'),
         lSlider = Y.one('#lum-slider .yui3-slider-rail'),
 
-        hVal = Y.one('#hue-dial .yui3-dial-value-string'),
-        sVal = Y.one('#sat-slider strong span'),
-        lVal = Y.one('#lum-slider strong span'),
+        complementary = Y.one('#h-complementary'),
+        split = Y.one('#h-split-complementary'),
+        analogous = Y.one('#h-analogous'),
+        triad = Y.one('#h-triad'),
+        square = Y.one('#h-square'),
+        tetrad = Y.one('#h-tetrad'),
+        mono = Y.one('#h-monochromatic'),
+        similar = Y.one('#h-similar'),
 
-        hexVal = Y.one('#hex-output'),
-        rgbVal = Y.one('#rgb-output'),
-        hslVal = Y.one('#hsl-output'),
+        COMPLEMENTARY_COUNT = 2,
+        SPLIT_COUNT = 3,
+        ANALOGOUS_COUNT = 5,
+        TRIAD_COUNT = 3,
+        SQUARE_COUNT = 4,
+        TETRAD_COUNT = 4,
+        MONO_COUNT = 5,
+        SIMILAR_COUNT = 6;
 
         suite = new Y.Test.Suite('hsl-harmony-tests');
 
@@ -35,13 +45,14 @@ YUI.add('hsl-harmony-tests', function(Y) {
             Assert.isNotNull(sSlider, '#g-slider not on page.');
             Assert.isNotNull(lSlider, '#b-slider not on page.');
 
-            Assert.isNotNull(hVal, '#r-val not on page.');
-            Assert.isNotNull(sVal, '#g-val not on page.');
-            Assert.isNotNull(lVal, '#b-val not on page.');
-
-            Assert.isNotNull(hexVal, '#hex not on page.');
-            Assert.isNotNull(rgbVal, '#rgb not on page.');
-            Assert.isNotNull(hslVal, '#hsl not on page.');
+            Assert.isNotNull(complementary, '#h-complementary not on page.'),
+            Assert.isNotNull(split, '#h-split-complementary not on page.'),
+            Assert.isNotNull(analogous, '#h-analogous not on page.'),
+            Assert.isNotNull(triad, '#h-triad not on page.'),
+            Assert.isNotNull(square, '#h-square not on page.'),
+            Assert.isNotNull(tetrad, '#h-tetrad not on page.'),
+            Assert.isNotNull(mono, '#h-monochromatic not on page.'),
+            Assert.isNotNull(similar, '#h-similar not on page.');
         },
 
         'set hue and test outputs': function() {
@@ -65,61 +76,34 @@ YUI.add('hsl-harmony-tests', function(Y) {
                 sSlider.simulate('mouseup');
 
                 lSlider.simulate('mousedown', {
-                    clientX: lSlider.getX() + sliderXAtVal(lSlider, 100, 100),
+                    clientX: lSlider.getX() + sliderXAtVal(lSlider, 100, 75),
                     clientY: lSlider.getY() + 10
                 });
 
                 lSlider.simulate('mouseup');
 
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
-
-                Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
-                Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
+                Assert.areSame(COMPLEMENTARY_COUNT, complementary.all('.swatch').size(), '#complementary does not have correct number of swatches.');
+                Assert.areSame(SPLIT_COUNT, split.all('.swatch').size(), '#split does not have correct number of swatches.');
+                Assert.areSame(ANALOGOUS_COUNT, analogous.all('.swatch').size(), '#analogous does not have correct number of swatches.');
+                Assert.areSame(TRIAD_COUNT, triad.all('.swatch').size(), '#triad does not have correct number of swatches.');
+                Assert.areSame(SQUARE_COUNT, square.all('.swatch').size(), '#square does not have correct number of swatches.');
+                Assert.areSame(TETRAD_COUNT, tetrad.all('.swatch').size(), '#tetrad does not have correct number of swatches.');
+                Assert.areSame(MONO_COUNT, mono.all('.swatch').size(), '#mono does not have correct number of swatches.');
+                Assert.areSame(SIMILAR_COUNT, similar.all('.swatch').size(), '#similar does not have correct number of swatches.');
             }, 500);
         },
 
-        'set hex and check values': function() {
-            hexVal.simulate('mousedown');
-            hexVal.set('value', '#ff00ff');
+        'check for tooltip hide and show': function() {
+            var swatch = complementary.one('.swatch');
 
-            this.wait(function() {
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
+            swatch.simulate('click');
 
-                Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
-                Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
-            }, 500);
-        },
+            Assert.isNotNull(swatch.one('.tooltip'), 'No tooltip found.');
 
-        'set rgb and check values': function() {
-            rgbVal.simulate('mousedown');
-            rgbVal.set('value', 'rgb(50, 50, 50)');
+            swatch.simulate('click');
 
-            this.wait(function() {
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
-
-                Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
-                Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
-            }, 500);
-        },
-
-        'set hsl and check values': function() {
-            var hsl = 'hsl(200, 75%, 50%)';
-
-            hslVal.simulate('mousedown');
-            hslVal.set('value', 'hsl(200, 75%, 50%)');
-
-            this.wait(function() {
-                var hsl = Y.Color.fromArray([hVal.get('text'), sVal.get('text').replace('%',''), lVal.get('text').replace('%', '')], Y.Color.STR_HSL);
-
-                Y.Assert.areSame(Y.Color.toHex(hsl), hexVal.get('value'), 'hexVal is not correct');
-                Y.Assert.areSame(Y.Color.toRgb(hsl), rgbVal.get('value'), 'rgbVal is not correct');
-                Y.Assert.areSame(hsl, hslVal.get('value'), 'hslVal is not correct');
-            }, 500);
+            Assert.isNull(swatch.one('.tooltip'), 'Tooltip is found.');
         }
-
 
     }));
 
