@@ -112,10 +112,9 @@ Y.mix(Y.IO.prototype, {
     * @private
     * @static
     */
-    
     qEmpty: function() {
-	     this._q = new Y.Queue();
-	 },
+        this._q = new Y.Queue();
+    },
 
     qStart: function() {
         var io = this;

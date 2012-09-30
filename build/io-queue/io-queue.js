@@ -1,4 +1,4 @@
-YUI.add('io-queue', function(Y) {
+YUI.add('io-queue', function (Y, NAME) {
 
 /**
 Extends IO to implement Queue for synchronous
@@ -104,22 +104,20 @@ Y.mix(Y.IO.prototype, {
     qRemove: function(o) {
         this._q.remove(o);
     },
-
+    
    /**
-    * Method for flushing all pending transaction from
+    * Method for cancel all pending transaction from
     * the queue.
     *
-    * @method flush
+    * @method empty
     * @private
     * @static
     */
+    qEmpty: function() {
+        this._q = new Y.Queue();
+    },
 
-   qFlush: function() {
-	this._q = new Y.Queue();
-	this.qActiveId = null;		
-   },
-
-   qStart: function() {
+    qStart: function() {
         var io = this;
         io._qState = 1;
 
@@ -163,9 +161,9 @@ _queue.start = function () { io.qStart(); };
 _queue.stop = function () { io.qStop(); };
 _queue.promote = function (o) { io.qPromote(o); };
 _queue.remove = function (o) { io.qRemove(o); };
-_queue.flush = function (o) { io.qFlush(); };
 _queue.size = function () { io.qSize(); };
+_queue.empty = function () { io.qEmpty(); };
 Y.io.queue = _queue;
 
 
-}, '@VERSION@' ,{requires:['io-base','queue-promote']});
+}, '@VERSION@', {"requires": ["io-base", "queue-promote"]});
