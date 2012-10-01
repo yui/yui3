@@ -4,6 +4,9 @@ YUI.add('event-move', function (Y, NAME) {
  * Adds lower level support for "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to create drag/drop
  * interactions which work across touch and mouse input devices. They correspond to "touchstart", "touchmove" and "touchend" on a touch input
  * device, and "mousedown", "mousemove", "mouseup" on a mouse based input device.
+ * 
+ * <p>Documentation for the gesturemove triplet of events can be found on the <a href="../classes/YUI.html#event_gesturemove">YUI</a> global, 
+ * along with the other supported events.</p>
  *
  * @module event-gestures
  * @submodule event-move
@@ -498,5 +501,6 @@ define(GESTURE_MOVE_END, {
 
     PREVENT_DEFAULT : false
 });
+
 
 }, '@VERSION@', {"requires": ["node-base", "event-touch", "event-synthetic"]});
