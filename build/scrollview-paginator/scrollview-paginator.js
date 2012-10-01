@@ -294,12 +294,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.
             paginatorAxis = paginator._cAxis;
 
-        // Set the axis for this event.
-        // @TODO: This is hacky, it's not a gesture. Find a better way
-        host._gesture = {
-            axis: DIM_Y
-        };
-
         // Only if the mousewheel event occurred on a DOM node inside the BB
         if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
 
