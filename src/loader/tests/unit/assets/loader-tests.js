@@ -26,7 +26,7 @@ YUI.add('loader-tests', function(Y) {
                 test_global_attrs: Y.UA.nodejs,
                 test_iter: Y.UA.nodejs || Y.UA.winjs,
                 test_progress: Y.UA.nodejs || Y.UA.winjs,
-                'test: gallery skinnable': Y.UA.nodejs || || Y.UA.winjs,
+                'test: gallery skinnable': Y.UA.nodejs || Y.UA.winjs,
                 test_load: Y.UA.nodejs,
                 test_async: Y.UA.nodejs,
                 test_css_stamp: Y.UA.nodejs,
