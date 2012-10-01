@@ -5464,7 +5464,8 @@ add('load', '17', {
 add('load', '18', {
     "name": "yql-winjs",
     "trigger": "yql",
-    "ua": "winjs"
+    "ua": "winjs",
+    "when": "after"
 });
 
 }, '@VERSION@', {"requires": ["yui-base"]});

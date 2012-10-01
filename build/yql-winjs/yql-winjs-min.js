@@ -1,1 +1,1 @@
-YUI.add("yql-winjs",function(e,t){e.YQLRequest.prototype._send=function(t,n){e.io(t,n)}},"@VERSION@",{requires:["yql","io-base"]});
+YUI.add("yql-winjs",function(e,t){e.YQLRequest.prototype._send=function(t,n){e.io(t,{on:{complete:function(t,r){n.on.success(e.JSON.parse(r.responseText))}}})}},"@VERSION@",{requires:["io-base","json-parse"]});

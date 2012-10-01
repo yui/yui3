@@ -4378,7 +4378,8 @@ add('load', '17', {
 add('load', '18', {
     "name": "yql-winjs",
     "trigger": "yql",
-    "ua": "winjs"
+    "ua": "winjs",
+    "when": "after"
 });
 
 }, '@VERSION@', {"requires": ["yui-base"]});
@@ -10136,11 +10137,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "condition": {
             "name": "yql-winjs",
             "trigger": "yql",
-            "ua": "winjs"
+            "ua": "winjs",
+            "when": "after"
         },
         "requires": [
-            "yql",
-            "io-base"
+            "io-base",
+            "json-parse"
         ]
     },
     "yui": {},
