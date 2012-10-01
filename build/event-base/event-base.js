@@ -397,7 +397,8 @@ Y.DOMEventFacade = DOMEventFacade;
 Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
-var _eventenv = Y.Env.evt,
+var YDOM = Y.DOM,
+    _eventenv = Y.Env.evt,
     config = Y.config,
     win = config.win,
     add = YUI.Env.add,
@@ -419,12 +420,11 @@ var _eventenv = Y.Env.evt,
 
     shouldIterate = function(o) {
         try {
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
-                    !o.tagName && !o.alert);
+            // TODO: See if there's a more performant way to return true early on this, for the common case
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !YDOM.isWindow(o));
         } catch(ex) {
             return false;
         }
-
     },
 
     // aliases to support DOM event subscription clean up when the last
@@ -788,7 +788,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
                 if (compat) {
-                    oEl = Y.DOM.byId(el);
+                    oEl = YDOM.byId(el);
                 } else {
 
                     oEl = Y.Selector.query(el);
@@ -902,7 +902,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 if (compat) {
-                    el = Y.DOM.byId(el);
+                    el = YDOM.byId(el);
                 } else {
                     el = Y.Selector.query(el);
                     l = el.length;
@@ -976,7 +976,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @static
          */
         generateId: function(el) {
-            return Y.DOM.generateID(el);
+            return YDOM.generateID(el);
         },
 
         /**
@@ -1083,7 +1083,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && !item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         executeItem(el, item);
@@ -1100,7 +1100,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -1151,9 +1151,8 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             if (recurse && oEl) {
                 lis = lis || [];
                 children = Y.Selector.query('*', oEl);
-                i = 0;
                 len = children.length;
-                for (; i < len; ++i) {
+                for (i = 0; i < len; ++i) {
                     child = Event.getListeners(children[i], type);
                     if (child) {
                         lis = lis.concat(child);
@@ -1311,7 +1310,7 @@ Event.Facade = Y.EventFacade;
 
 Event._poll();
 
-})();
+}());
 
 /**
  * DOM event listener abstraction layer

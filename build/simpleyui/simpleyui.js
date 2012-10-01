@@ -2554,10 +2554,10 @@ YArray.test = function (obj) {
         result = 1;
     } else if (Lang.isObject(obj)) {
         try {
-            // indexed, but no tagName (element) or alert (window),
+            // indexed, but no tagName (element) or scrollTo/document (window. From DOM.isWindow test which we can't use here),
             // or functions without apply/call (Safari
             // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+            if ('length' in obj && !obj.tagName && !(obj.scrollTo && obj.document) && !obj.apply) {
                 result = 2;
             }
         } catch (ex) {}
@@ -3440,13 +3440,6 @@ YUI.Env.parseUA = function(subUA) {
          * @type float
          */
         phantomjs: 0,
-        /**
-         * Adobe AIR version number or 0.  Only populated if webkit is detected.
-         * Example: 1.0
-         * @property air
-         * @type float
-         */
-        air: 0,
         /**
          * Detects Apple iPad's OS version
          * @property ipad
@@ -4946,8 +4939,21 @@ Transaction.prototype = {
         } else {
             // Script or CSS on everything else. Using DOM 0 events because that
             // evens the playing field with older IEs.
-            node.onerror = onError;
-            node.onload  = onLoad;
+
+            if (ua.ie >= 10) {
+
+                // We currently need to introduce a timeout for IE10, since it 
+                // calls onerror/onload synchronously for 304s - messing up existing
+                // program flow. 
+
+                // Remove this block if the following bug gets fixed by GA
+                // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
+                node.onerror = function() { setTimeout(onError, 0); };
+                node.onload  = function() { setTimeout(onLoad, 0); };
+            } else {
+                node.onerror = onError;
+                node.onload  = onLoad;
+            }
 
             // If this browser doesn't fire an event when CSS fails to load,
             // fail after a timeout to avoid blocking the transaction queue.
@@ -12640,7 +12646,9 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Nulls internal node references, removes any plugins and event listeners
+     * Nulls internal node references, removes any plugins and event listeners.
+     * Note that destroy() will not remove the node from its parent or from the DOM. For that
+     * functionality, call remove(true).
      * @method destroy
      * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
      * node's subtree (default is false)
@@ -15079,7 +15087,8 @@ Y.DOMEventFacade = DOMEventFacade;
 Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
-var _eventenv = Y.Env.evt,
+var YDOM = Y.DOM,
+    _eventenv = Y.Env.evt,
     config = Y.config,
     win = config.win,
     add = YUI.Env.add,
@@ -15101,12 +15110,11 @@ var _eventenv = Y.Env.evt,
 
     shouldIterate = function(o) {
         try {
-            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) &&
-                    !o.tagName && !o.alert);
+            // TODO: See if there's a more performant way to return true early on this, for the common case
+            return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !YDOM.isWindow(o));
         } catch(ex) {
             return false;
         }
-
     },
 
     // aliases to support DOM event subscription clean up when the last
@@ -15470,7 +15478,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
                 if (compat) {
-                    oEl = Y.DOM.byId(el);
+                    oEl = YDOM.byId(el);
                 } else {
 
                     oEl = Y.Selector.query(el);
@@ -15584,7 +15592,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 if (compat) {
-                    el = Y.DOM.byId(el);
+                    el = YDOM.byId(el);
                 } else {
                     el = Y.Selector.query(el);
                     l = el.length;
@@ -15658,7 +15666,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @static
          */
         generateId: function(el) {
-            return Y.DOM.generateID(el);
+            return YDOM.generateID(el);
         },
 
         /**
@@ -15765,7 +15773,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && !item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         executeItem(el, item);
@@ -15782,7 +15790,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                 if (item && item.checkReady) {
 
                     // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
-                    el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
+                    el = (item.compat) ? YDOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
                         // The element is available, but not necessarily ready
@@ -15833,9 +15841,8 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             if (recurse && oEl) {
                 lis = lis || [];
                 children = Y.Selector.query('*', oEl);
-                i = 0;
                 len = children.length;
-                for (; i < len; ++i) {
+                for (i = 0; i < len; ++i) {
                     child = Event.getListeners(children[i], type);
                     if (child) {
                         lis = lis.concat(child);
@@ -15993,7 +16000,7 @@ Event.Facade = Y.EventFacade;
 
 Event._poll();
 
-})();
+}());
 
 /**
  * DOM event listener abstraction layer

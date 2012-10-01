@@ -1132,8 +1132,21 @@ Transaction.prototype = {
         } else {
             // Script or CSS on everything else. Using DOM 0 events because that
             // evens the playing field with older IEs.
-            node.onerror = onError;
-            node.onload  = onLoad;
+
+            if (ua.ie >= 10) {
+
+                // We currently need to introduce a timeout for IE10, since it 
+                // calls onerror/onload synchronously for 304s - messing up existing
+                // program flow. 
+
+                // Remove this block if the following bug gets fixed by GA
+                // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
+                node.onerror = function() { setTimeout(onError, 0); };
+                node.onload  = function() { setTimeout(onLoad, 0); };
+            } else {
+                node.onerror = onError;
+                node.onload  = onLoad;
+            }
 
             // If this browser doesn't fire an event when CSS fails to load,
             // fail after a timeout to avoid blocking the transaction queue.

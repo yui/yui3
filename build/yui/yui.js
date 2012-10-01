@@ -2554,10 +2554,10 @@ YArray.test = function (obj) {
         result = 1;
     } else if (Lang.isObject(obj)) {
         try {
-            // indexed, but no tagName (element) or alert (window),
+            // indexed, but no tagName (element) or scrollTo/document (window. From DOM.isWindow test which we can't use here),
             // or functions without apply/call (Safari
             // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+            if ('length' in obj && !obj.tagName && !(obj.scrollTo && obj.document) && !obj.apply) {
                 result = 2;
             }
         } catch (ex) {}
@@ -3440,13 +3440,6 @@ YUI.Env.parseUA = function(subUA) {
          * @type float
          */
         phantomjs: 0,
-        /**
-         * Adobe AIR version number or 0.  Only populated if webkit is detected.
-         * Example: 1.0
-         * @property air
-         * @type float
-         */
-        air: 0,
         /**
          * Detects Apple iPad's OS version
          * @property ipad
@@ -4946,8 +4939,21 @@ Transaction.prototype = {
         } else {
             // Script or CSS on everything else. Using DOM 0 events because that
             // evens the playing field with older IEs.
-            node.onerror = onError;
-            node.onload  = onLoad;
+
+            if (ua.ie >= 10) {
+
+                // We currently need to introduce a timeout for IE10, since it 
+                // calls onerror/onload synchronously for 304s - messing up existing
+                // program flow. 
+
+                // Remove this block if the following bug gets fixed by GA
+                // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
+                node.onerror = function() { setTimeout(onError, 0); };
+                node.onload  = function() { setTimeout(onLoad, 0); };
+            } else {
+                node.onerror = onError;
+                node.onload  = onLoad;
+            }
 
             // If this browser doesn't fire an event when CSS fails to load,
             // fail after a timeout to avoid blocking the transaction queue.
@@ -10805,7 +10811,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "test-console": {
         "requires": [
             "console-filters",
-            "test"
+            "test",
+            "array-extras"
         ],
         "skinnable": true
     },
