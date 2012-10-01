@@ -26,10 +26,10 @@ _yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"] = {
     path: "build/scrollview-paginator/scrollview-paginator.js",
     code: []
 };
-_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].code=["YUI.add('scrollview-paginator', function (Y, NAME) {","","/**"," * Provides a plugin that adds pagination support to ScrollView instances"," *"," * @module scrollview-paginator"," */","var getClassName = Y.ClassNameManager.getClassName,","    SCROLLVIEW = 'scrollview',","    CLASS_HIDDEN = getClassName(SCROLLVIEW, 'hidden'),","    CLASS_PAGED = getClassName(SCROLLVIEW, 'paged'),","    UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : 'ui',","    INDEX = 'index',","    SCROLL_X = 'scrollX',","    SCROLL_Y = 'scrollY',","    TOTAL = 'total',","    HOST = 'host',","    BOUNDING_BOX = 'boundingBox',","    CONTENT_BOX = 'contentBox',","    SELECTOR = 'selector',","    FLICK = 'flick',","    DRAG = 'drag',","    AXIS = 'axis',","    DIM_X = 'x',","    DIM_Y = 'y';","","/**"," * Scrollview plugin that adds support for paging"," *"," * @class ScrollViewPaginator"," * @namespace Plugin"," * @extends Plugin.Base"," * @constructor"," */","function PaginatorPlugin() {","    PaginatorPlugin.superclass.constructor.apply(this, arguments);","}","","Y.extend(PaginatorPlugin, Y.Plugin.Base, {","","    /**","     * Designated initializer","     *","     * @method initializer","     * @param {config} Configuration object for the plugin","     */","    initializer: function (config) {","        var paginator = this,","            host = paginator.get(HOST);","","        // Initialize & default","        paginator._pageDims = [];","        paginator._pageBuffer = 1;","        paginator._optimizeMemory = false;","","        // Cache some values","        paginator._host = host;","        paginator._bb = host._bb;","        paginator._cb = host._cb;","        paginator._cIndex = paginator.get(INDEX);","        paginator._cAxis = paginator.get(AXIS);","","        // Apply configs","        if (config._optimizeMemory) {","            paginator._optimizeMemory = config._optimizeMemory;","        }","","        if (config._pageBuffer) {","            paginator._pageBuffer = config._pageBuffer;","        }","","        // Attach event bindings","        paginator._bindAttrs();","    },","","    /**","     * ","     *","     * @method _bindAttrs","     * @private","     */","    _bindAttrs: function () {","        var paginator = this;","","        // Event listeners","        paginator.after({","            'indexChange': paginator._afterIndexChange,","            'axisChange': paginator._afterAxisChange","        });","","        // Host method listeners","        paginator.beforeHostMethod('scrollTo', paginator._beforeHostScrollTo);","        paginator.beforeHostMethod('_mousewheel', paginator._beforeHostMousewheel);","        paginator.beforeHostMethod('_flick', paginator._beforeHostFlick);","        paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);","        paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);","        paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);","        ","        // Host event listeners","        paginator.afterHostEvent('render', paginator._afterHostRender);","        paginator.afterHostEvent('scrollEnd', paginator._afterHostScrollEnded);","    },","","    /**","     * After host render","     *","     * @method _afterHostRender","     * @param {Event.Facade}","     * @protected","     */","    _afterHostRender: function (e) {","        var paginator = this,","            bb = paginator._bb,","            host = paginator._host,","            index = paginator._cIndex,","            paginatorAxis = paginator._cAxis,","            pageNodes = paginator._getPageNodes(),","            size = pageNodes.size(),","            maxScrollX = paginator._pageDims[index].maxScrollX,","            maxScrollY = paginator._pageDims[index].maxScrollY;","","        if (paginatorAxis[DIM_Y]) {","            host._maxScrollX = maxScrollX;","        }","        else if (paginatorAxis[DIM_X]) {","            host._maxScrollY = maxScrollY;","        }","","        // Set the page count","        paginator.set(TOTAL, size);","","        // Jump to the index","        if (index !== 0) {","            paginator.scrollToIndex(index, 0);","        }","","        // Add the paginator class","        bb.addClass(CLASS_PAGED);","","        // Trigger the optimization process","        paginator._optimize();","    },","","    /**","     * After host syncUI","     *","     * @method _afterHostSyncUI","     * @param {Event.Facade}","     * @protected","     */","    _afterHostSyncUI: function (e) {","        var paginator = this,","            host = paginator._host,","            hostFlick = host.get(FLICK),","            pageNodes = paginator._getPageNodes(),","            size = pageNodes.size(),","            paginatorAxis;","","        // Set the page count","        paginator.set(TOTAL, size);","","        // If paginator's 'axis' property is to be automatically determined, inherit host's property","        if (paginator._cAxis === undefined) {","            paginator._set(AXIS, host.get(AXIS));","        }","    },","","    /**","     * After host _uiDimensionsChange","     *","     * @method _afterHostUIDimensionsChange","     * @param {Event.Facade}","     * @protected","     */","    _afterHostUIDimensionsChange: function (e) {","","        var paginator = this,","            host = paginator._host,","            dims = host._getScrollDims(),","            widgetWidth = dims.offsetWidth,","            widgetHeight = dims.offsetHeight,","            pageNodes = paginator._getPageNodes();","            ","        // Inefficient. Should not reinitialize every page every syncUI","        pageNodes.each(function (node, i) {","            var scrollWidth = node.get('scrollWidth'),","                scrollHeight = node.get('scrollHeight'),","                maxScrollX = Math.max(0, scrollWidth - widgetWidth), // Math.max to ensure we don't set it to a negative value","                maxScrollY = Math.max(0, scrollHeight - widgetHeight);","","            // Don't initialize any page _pageDims that already have been.","            if (!paginator._pageDims[i]) {","","                paginator._pageDims[i] = {","","                    // Current scrollX & scrollY positions (default to 0)","                    scrollX: 0,","                    scrollY: 0,","","                    // Minimum scrollable values","                    _minScrollX: 0,","                    _minScrollY: 0,","","                    // Maximum scrollable values","                    maxScrollX: maxScrollX,","                    maxScrollY: maxScrollY","                };","","            } else {","                paginator._pageDims[i].maxScrollX = maxScrollX;","                paginator._pageDims[i].maxScrollY = maxScrollY;","            }","","        });","    },","","    /**","     * Executed before host.scrollTo","     *","     * @method _beforeHostScrollTo","     * @param x {Number} The x-position to scroll to. (null for no movement)","     * @param y {Number} The y-position to scroll to. (null for no movement)","     * @param {Number} [duration] Duration, in ms, of the scroll animation (default is 0)","     * @param {String} [easing] An easing equation if duration is set","     * @param {String} [node] The node to move","     * @protected","     */","    _beforeHostScrollTo: function (x, y, duration, easing, node) {","        var paginator = this,","            host = paginator._host,","            gesture = host._gesture,","            index = paginator._cIndex,","            paginatorAxis = paginator._cAxis,","            pageNodes = this._getPageNodes(),","            gestureAxis;","","        if (gesture) {","            gestureAxis = gesture.axis;","","            // Null the opposite axis so it won't be modified by host.scrollTo","            if (gestureAxis === DIM_Y) {","                x = null;","            } else {","                y = null;","            }","","            // If they are scrolling against the specified axis, pull out the page's node to have its own offset","            if (paginatorAxis[gestureAxis] === false) {","                node = pageNodes.item(index);","            }","","        }","","        // Return the modified argument list","        return new Y.Do.AlterArgs(\"new args\", [x, y, duration, easing, node]);","    },","","    /**","     * Executed after host._gestureMoveEnd","     * Determines if the gesture should page prev or next (if at all)","     *","     * @method _afterHostGestureMoveEnd","     * @param {Event.Facade}","     * @protected","     */","    _afterHostGestureMoveEnd: function (e) {","        var paginator = this,","            host = paginator._host,","            gesture = host._gesture,","            paginatorAxis = paginator._cAxis,","            gestureAxis = gesture && gesture.axis;","","        if (paginatorAxis[gestureAxis]) {","            if (gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')] > 0) {","                paginator[host.rtl ? 'prev' : 'next']();","            } else {","                paginator[host.rtl ? 'next' : 'prev']();","            }","        }","    },","","    /**","     * Executed before host._mousewheel","     * Prevents mousewheel events in some conditions","     *","     * @method _beforeHostMousewheel","     * @param {Event.Facade}","     * @protected","     */","    _beforeHostMousewheel: function (e) {","        var paginator = this,","            host = paginator._host,","            bb = host._bb,","            isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.","            paginatorAxis = paginator._cAxis;","","        // Set the axis for this event.","        // @TODO: This is hacky, it's not a gesture. Find a better way","        host._gesture = {","            axis: DIM_Y","        };","","        // Only if the mousewheel event occurred on a DOM node inside the BB","        if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {","","            if (isForward) {","                paginator.next();","            } else {","                paginator.prev();","            }","","            // prevent browser default behavior on mousewheel","            e.preventDefault();","","            // Block host._mousewheel from running","            return new Y.Do.Prevent();","        }","    },","","    /**","     * Executed before host._flick","     * Prevents flick events in some conditions","     *","     * @method _beforeHostFlick","     * @param {Event.Facade}","     * @protected","     */","    _beforeHostFlick: function (e) {","        var paginator = this,","            paginatorAxis = paginator.get(AXIS),","            flickAxis = e.flick.axis || false;","","        // Prevent flicks on the paginated axis","        if (paginatorAxis[flickAxis]) {","            return new Y.Do.Prevent();","        }","    },","","    /**","     * Executes after host's 'scrollEnd' event","     * Runs cleanup operations","     *","     * @method _afterHostScrollEnded","     * @param {Event.Facade}","     * @protected","     */","    _afterHostScrollEnded: function (e) {","        var paginator = this,","            host = paginator._host,","            index = paginator._cIndex,","            scrollX = host.get(SCROLL_X),","            scrollY = host.get(SCROLL_Y),","            paginatorAxis = paginator._cAxis;","","        if (paginatorAxis[DIM_Y]) {","            paginator._pageDims[index].scrollX = scrollX;","        } else {","            paginator._pageDims[index].scrollY = scrollY;","        }","","        paginator._optimize();","    },","","    /**","     * index attr change handler","     *","     * @method _afterIndexChange","     * @param {Event.Facade}","     * @protected","     */","    _afterIndexChange: function (e) {","        var paginator = this,","            host = paginator._host,","            index = e.newVal,","            pageDims = paginator._pageDims[index],","            hostAxis = host._cAxis,","            paginatorAxis = paginator._cAxis;","","        // Cache the new index value","        paginator._cIndex = index;","","        // For dual-axis instances, we need to hack some host properties to the","        // current page's max height/width and current stored offset","        if (hostAxis[DIM_X] && hostAxis[DIM_Y]) {","            if (paginatorAxis[DIM_Y]) {","                host._maxScrollX = pageDims.maxScrollX;","                host.set(SCROLL_X, pageDims.scrollX, { src: UI });","            }","            else if (paginatorAxis[DIM_X]) {","                host._maxScrollY = pageDims.maxScrollY;","                host.set(SCROLL_Y, pageDims.scrollY, { src: UI });","            }","        }","","        if (e.src !== UI) {","            paginator.scrollToIndex(index);","        }","    },","","    /**","     * Optimization: Hides the pages not near the viewport","     *","     * @method _optimize","     * @protected","     */","    _optimize: function () {","","        if (!this._optimizeMemory) {","            return false;","        }","","        var paginator = this,","            currentIndex = paginator._cIndex,","            pageNodes = paginator._getStage(currentIndex);","","        // Show the pages in/near the viewport & hide the rest","        paginator._showNodes(pageNodes.visible);","        paginator._hideNodes(pageNodes.hidden);","    },","","    /**","     * Optimization: Determines which nodes should be visible, and which should be hidden.","     *","     * @method _getStage","     * @param index {Number} The page index # intended to be in focus.","     * @returns {object}","     * @protected","     */","    _getStage: function (index) {","        var _pageBuffer = this._pageBuffer,","            pageCount = this.get(TOTAL),","            pageNodes = this._getPageNodes(),","            start = Math.max(0, index - _pageBuffer),","            end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive","","        return {","            visible: pageNodes.splice(start, end - start),","            hidden: pageNodes","        };","    },","","    /**","     * A utility method to show node(s)","     *","     * @method _showNodes","     * @param nodeList {Object} The list of nodes to show","     * @protected","     */","    _showNodes: function (nodeList) {","        if (nodeList) {","            nodeList.removeClass(CLASS_HIDDEN).setStyle('visibility', '');","        }","    },","","    /**","     * A utility method to hide node(s)","     *","     * @method _hideNodes","     * @param nodeList {Object} The list of nodes to hide","     * @protected","     */","    _hideNodes: function (nodeList) {","        if (nodeList) {","            nodeList.addClass(CLASS_HIDDEN).setStyle('visibility', 'hidden');","        }","    },","","    /**","     * Gets a nodeList for the \"pages\"","     *","     * @method _getPageNodes","     * @protected","     * @returns {nodeList}","     */","    _getPageNodes: function () {","        var paginator = this,","            host = paginator._host,","            cb = host._cb,","            pageSelector = paginator.get(SELECTOR),","            pageNodes = pageSelector ? cb.all(pageSelector) : cb.get('children');","","        return pageNodes;","    },","","    /**","     * Scroll to the next page, with animation","     *","     * @method next","     */","    next: function () {","        var paginator = this,","            index = paginator._cIndex,","            target = index + 1,","            total = this.get(TOTAL);","","        if (target >= total) {","            return;","        }","","        // Update the index","        paginator.set(INDEX, target);","    },","","    /**","     * Scroll to the previous page, with animation","     *","     * @method prev","     */","    prev: function () {","        var paginator = this,","            index = paginator._cIndex,","            target = index - 1;","","        if (target < 0) {","            return;","        }","","        // Update the index","        paginator.set(INDEX, target);","    },","    ","    /** ","     * Deprecated for 3.7.0.","     * @deprecated","     */","    scrollTo: function () {","        return this.scrollToIndex.apply(this, arguments);","    },","","    /**","     * Scroll to a given page in the scrollview","     *","     * @method scrollToIndex","     * @param index {Number} The index of the page to scroll to","     * @param {Number} [duration] The number of ms the animation should last","     * @param {String} [easing] The timing function to use in the animation","     */","    scrollToIndex: function (index, duration, easing) {","        var paginator = this,","            host = paginator._host,","            pageNode = paginator._getPageNodes().item(index),","            scrollAxis = (paginator._cAxis[DIM_X] ? SCROLL_X : SCROLL_Y),","            scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');","","        duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;","        easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing;","","        // Set the index ATTR to the specified index value","        paginator.set(INDEX, index, { src: UI });","","        // Makes sure the viewport nodes are visible","        paginator._showNodes(pageNode);","","        // Scroll to the offset","        host.set(scrollAxis, scrollOffset, {","            duration: duration,","            easing: easing","        });","    },","","    /**","     * Setter for 'axis' attribute","     *","     * @method _axisSetter","     * @param val {Mixed} A string ('x', 'y', 'xy') to specify which axis/axes to allow scrolling on","     * @param name {String} The attribute name","     * @return {Object} An object to specify scrollability on the x & y axes","     * ","     * @protected","     */","    _axisSetter: function (val, name) {","","        // Turn a string into an axis object","        if (Y.Lang.isString(val)) {","            return {","                x: val.match(/x/i) ? true : false,","                y: val.match(/y/i) ? true : false","            };","        }","    },"," ","","    /**","     * After listener for the axis attribute","     *","     * @method _afterAxisChange","     * @param e {Event.Facade} The event facade","     * @protected","     */","    _afterAxisChange: function (e) {","        this._cAxis = e.newVal;","    }","","    // End prototype properties","","}, {","    ","    // Static properties","","    /**","     * The identity of the plugin","     *","     * @property NAME","     * @type String","     * @default 'pluginScrollViewPaginator'","     * @readOnly","     * @protected","     * @static","     */","    NAME: 'pluginScrollViewPaginator',","","    /**","     * The namespace on which the plugin will reside","     *","     * @property NS","     * @type String","     * @default 'pages'","     * @static","     */","    NS: 'pages',","","    /**","     * The default attribute configuration for the plugin","     *","     * @property ATTRS","     * @type {Object}","     * @static","     */","    ATTRS: {","","        /**","         * Specifies ability to scroll on x, y, or x and y axis/axes. ","         * If unspecified, it inherits from the host instance.","         *","         * @attribute axis","         * @type String","         */","        axis: {","            setter: '_axisSetter',","            writeOnce: 'initOnly'","        },","","        /**","         * CSS selector for a page inside the scrollview. The scrollview","         * will snap to the closest page.","         *","         * @attribute selector","         * @type {String}","         * @default null","         */","        selector: {","            value: null","        },","","        /**","         * The active page number for a paged scrollview","         *","         * @attribute index","         * @type {Number}","         * @default 0","         */","        index: {","            value: 0,","            validator: function (val) {","                // TODO: Remove this?","                // return val >= 0 && val < this.get(TOTAL);","                return true;","            }","        },","","        /**","         * The total number of pages","         *","         * @attribute total","         * @type {Number}","         * @default 0","         */","        total: {","            value: 0","        }","    },","        ","    /**","     * The default snap to current duration and easing values used on scroll end.","     *","     * @property SNAP_TO_CURRENT","     * @static","     */","    TRANSITION: {","        duration: 300,","        easing: 'ease-out'","    }","","    // End static properties","","});","","Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;","","}, '@VERSION@', {\"requires\": [\"plugin\", \"classnamemanager\"]});"];
-_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].lines = {"1":0,"8":0,"35":0,"36":0,"39":0,"48":0,"52":0,"53":0,"54":0,"57":0,"58":0,"59":0,"60":0,"61":0,"64":0,"65":0,"68":0,"69":0,"73":0,"83":0,"86":0,"92":0,"93":0,"94":0,"95":0,"96":0,"97":0,"100":0,"101":0,"112":0,"122":0,"123":0,"125":0,"126":0,"130":0,"133":0,"134":0,"138":0,"141":0,"152":0,"160":0,"163":0,"164":0,"177":0,"185":0,"186":0,"192":0,"194":0,"210":0,"211":0,"229":0,"237":0,"238":0,"241":0,"242":0,"244":0,"248":0,"249":0,"255":0,"267":0,"273":0,"274":0,"275":0,"277":0,"291":0,"299":0,"304":0,"306":0,"307":0,"309":0,"313":0,"316":0,"329":0,"334":0,"335":0,"348":0,"355":0,"356":0,"358":0,"361":0,"372":0,"380":0,"384":0,"385":0,"386":0,"387":0,"389":0,"390":0,"391":0,"395":0,"396":0,"408":0,"409":0,"412":0,"417":0,"418":0,"430":0,"436":0,"450":0,"451":0,"463":0,"464":0,"476":0,"482":0,"491":0,"496":0,"497":0,"501":0,"510":0,"514":0,"515":0,"519":0,"527":0,"539":0,"545":0,"546":0,"549":0,"552":0,"555":0,"574":0,"575":0,"591":0,"667":0,"698":0};
-_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].functions = {"PaginatorPlugin:35":0,"initializer:47":0,"_bindAttrs:82":0,"_afterHostRender:111":0,"_afterHostSyncUI:151":0,"(anonymous 2):185":0,"_afterHostUIDimensionsChange:175":0,"_beforeHostScrollTo:228":0,"_afterHostGestureMoveEnd:266":0,"_beforeHostMousewheel:290":0,"_beforeHostFlick:328":0,"_afterHostScrollEnded:347":0,"_afterIndexChange:371":0,"_optimize:406":0,"_getStage:429":0,"_showNodes:449":0,"_hideNodes:462":0,"_getPageNodes:475":0,"next:490":0,"prev:509":0,"scrollTo:526":0,"scrollToIndex:538":0,"_axisSetter:571":0,"_afterAxisChange:590":0,"validator:664":0,"(anonymous 1):1":0};
-_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].coveredLines = 124;
+_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].code=["YUI.add('scrollview-paginator', function (Y, NAME) {","","/**"," * Provides a plugin that adds pagination support to ScrollView instances"," *"," * @module scrollview-paginator"," */","var getClassName = Y.ClassNameManager.getClassName,","    SCROLLVIEW = 'scrollview',","    CLASS_HIDDEN = getClassName(SCROLLVIEW, 'hidden'),","    CLASS_PAGED = getClassName(SCROLLVIEW, 'paged'),","    UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : 'ui',","    INDEX = 'index',","    SCROLL_X = 'scrollX',","    SCROLL_Y = 'scrollY',","    TOTAL = 'total',","    HOST = 'host',","    BOUNDING_BOX = 'boundingBox',","    CONTENT_BOX = 'contentBox',","    SELECTOR = 'selector',","    FLICK = 'flick',","    DRAG = 'drag',","    AXIS = 'axis',","    DIM_X = 'x',","    DIM_Y = 'y';","","/**"," * Scrollview plugin that adds support for paging"," *"," * @class ScrollViewPaginator"," * @namespace Plugin"," * @extends Plugin.Base"," * @constructor"," */","function PaginatorPlugin() {","    PaginatorPlugin.superclass.constructor.apply(this, arguments);","}","","Y.extend(PaginatorPlugin, Y.Plugin.Base, {","","    /**","     * Designated initializer","     *","     * @method initializer","     * @param {config} Configuration object for the plugin","     */","    initializer: function (config) {","        var paginator = this,","            host = paginator.get(HOST);","","        // Initialize & default","        paginator._pageDims = [];","        paginator._pageBuffer = 1;","        paginator._optimizeMemory = false;","","        // Cache some values","        paginator._host = host;","        paginator._bb = host._bb;","        paginator._cb = host._cb;","        paginator._cIndex = paginator.get(INDEX);","        paginator._cAxis = paginator.get(AXIS);","","        // Apply configs","        if (config._optimizeMemory) {","            paginator._optimizeMemory = config._optimizeMemory;","        }","","        if (config._pageBuffer) {","            paginator._pageBuffer = config._pageBuffer;","        }","","        // Attach event bindings","        paginator._bindAttrs();","    },","","    /**","     * ","     *","     * @method _bindAttrs","     * @private","     */","    _bindAttrs: function () {","        var paginator = this;","","        // Event listeners","        paginator.after({","            'indexChange': paginator._afterIndexChange,","            'axisChange': paginator._afterAxisChange","        });","","        // Host method listeners","        paginator.beforeHostMethod('scrollTo', paginator._beforeHostScrollTo);","        paginator.beforeHostMethod('_mousewheel', paginator._beforeHostMousewheel);","        paginator.beforeHostMethod('_flick', paginator._beforeHostFlick);","        paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);","        paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);","        paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);","        ","        // Host event listeners","        paginator.afterHostEvent('render', paginator._afterHostRender);","        paginator.afterHostEvent('scrollEnd', paginator._afterHostScrollEnded);","    },","","    /**","     * After host render","     *","     * @method _afterHostRender","     * @param {Event.Facade}","     * @protected","     */","    _afterHostRender: function (e) {","        var paginator = this,","            bb = paginator._bb,","            host = paginator._host,","            index = paginator._cIndex,","            paginatorAxis = paginator._cAxis,","            pageNodes = paginator._getPageNodes(),","            size = pageNodes.size(),","            maxScrollX = paginator._pageDims[index].maxScrollX,","            maxScrollY = paginator._pageDims[index].maxScrollY;","","        if (paginatorAxis[DIM_Y]) {","            host._maxScrollX = maxScrollX;","        }","        else if (paginatorAxis[DIM_X]) {","            host._maxScrollY = maxScrollY;","        }","","        // Set the page count","        paginator.set(TOTAL, size);","","        // Jump to the index","        if (index !== 0) {","            paginator.scrollToIndex(index, 0);","        }","","        // Add the paginator class","        bb.addClass(CLASS_PAGED);","","        // Trigger the optimization process","        paginator._optimize();","    },","","    /**","     * After host syncUI","     *","     * @method _afterHostSyncUI","     * @param {Event.Facade}","     * @protected","     */","    _afterHostSyncUI: function (e) {","        var paginator = this,","            host = paginator._host,","            hostFlick = host.get(FLICK),","            pageNodes = paginator._getPageNodes(),","            size = pageNodes.size(),","            paginatorAxis;","","        // Set the page count","        paginator.set(TOTAL, size);","","        // If paginator's 'axis' property is to be automatically determined, inherit host's property","        if (paginator._cAxis === undefined) {","            paginator._set(AXIS, host.get(AXIS));","        }","    },","","    /**","     * After host _uiDimensionsChange","     *","     * @method _afterHostUIDimensionsChange","     * @param {Event.Facade}","     * @protected","     */","    _afterHostUIDimensionsChange: function (e) {","","        var paginator = this,","            host = paginator._host,","            dims = host._getScrollDims(),","            widgetWidth = dims.offsetWidth,","            widgetHeight = dims.offsetHeight,","            pageNodes = paginator._getPageNodes();","            ","        // Inefficient. Should not reinitialize every page every syncUI","        pageNodes.each(function (node, i) {","            var scrollWidth = node.get('scrollWidth'),","                scrollHeight = node.get('scrollHeight'),","                maxScrollX = Math.max(0, scrollWidth - widgetWidth), // Math.max to ensure we don't set it to a negative value","                maxScrollY = Math.max(0, scrollHeight - widgetHeight);","","            // Don't initialize any page _pageDims that already have been.","            if (!paginator._pageDims[i]) {","","                paginator._pageDims[i] = {","","                    // Current scrollX & scrollY positions (default to 0)","                    scrollX: 0,","                    scrollY: 0,","","                    // Minimum scrollable values","                    _minScrollX: 0,","                    _minScrollY: 0,","","                    // Maximum scrollable values","                    maxScrollX: maxScrollX,","                    maxScrollY: maxScrollY","                };","","            } else {","                paginator._pageDims[i].maxScrollX = maxScrollX;","                paginator._pageDims[i].maxScrollY = maxScrollY;","            }","","        });","    },","","    /**","     * Executed before host.scrollTo","     *","     * @method _beforeHostScrollTo","     * @param x {Number} The x-position to scroll to. (null for no movement)","     * @param y {Number} The y-position to scroll to. (null for no movement)","     * @param {Number} [duration] Duration, in ms, of the scroll animation (default is 0)","     * @param {String} [easing] An easing equation if duration is set","     * @param {String} [node] The node to move","     * @protected","     */","    _beforeHostScrollTo: function (x, y, duration, easing, node) {","        var paginator = this,","            host = paginator._host,","            gesture = host._gesture,","            index = paginator._cIndex,","            paginatorAxis = paginator._cAxis,","            pageNodes = this._getPageNodes(),","            gestureAxis;","","        if (gesture) {","            gestureAxis = gesture.axis;","","            // Null the opposite axis so it won't be modified by host.scrollTo","            if (gestureAxis === DIM_Y) {","                x = null;","            } else {","                y = null;","            }","","            // If they are scrolling against the specified axis, pull out the page's node to have its own offset","            if (paginatorAxis[gestureAxis] === false) {","                node = pageNodes.item(index);","            }","","        }","","        // Return the modified argument list","        return new Y.Do.AlterArgs(\"new args\", [x, y, duration, easing, node]);","    },","","    /**","     * Executed after host._gestureMoveEnd","     * Determines if the gesture should page prev or next (if at all)","     *","     * @method _afterHostGestureMoveEnd","     * @param {Event.Facade}","     * @protected","     */","    _afterHostGestureMoveEnd: function (e) {","        var paginator = this,","            host = paginator._host,","            gesture = host._gesture,","            paginatorAxis = paginator._cAxis,","            gestureAxis = gesture && gesture.axis;","","        if (paginatorAxis[gestureAxis]) {","            if (gesture[(gestureAxis === DIM_X ? 'deltaX' : 'deltaY')] > 0) {","                paginator[host.rtl ? 'prev' : 'next']();","            } else {","                paginator[host.rtl ? 'next' : 'prev']();","            }","        }","    },","","    /**","     * Executed before host._mousewheel","     * Prevents mousewheel events in some conditions","     *","     * @method _beforeHostMousewheel","     * @param {Event.Facade}","     * @protected","     */","    _beforeHostMousewheel: function (e) {","        var paginator = this,","            host = paginator._host,","            bb = host._bb,","            isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.","            paginatorAxis = paginator._cAxis;","","        // Only if the mousewheel event occurred on a DOM node inside the BB","        if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {","","            if (isForward) {","                paginator.next();","            } else {","                paginator.prev();","            }","","            // prevent browser default behavior on mousewheel","            e.preventDefault();","","            // Block host._mousewheel from running","            return new Y.Do.Prevent();","        }","    },","","    /**","     * Executed before host._flick","     * Prevents flick events in some conditions","     *","     * @method _beforeHostFlick","     * @param {Event.Facade}","     * @protected","     */","    _beforeHostFlick: function (e) {","        var paginator = this,","            paginatorAxis = paginator.get(AXIS),","            flickAxis = e.flick.axis || false;","","        // Prevent flicks on the paginated axis","        if (paginatorAxis[flickAxis]) {","            return new Y.Do.Prevent();","        }","    },","","    /**","     * Executes after host's 'scrollEnd' event","     * Runs cleanup operations","     *","     * @method _afterHostScrollEnded","     * @param {Event.Facade}","     * @protected","     */","    _afterHostScrollEnded: function (e) {","        var paginator = this,","            host = paginator._host,","            index = paginator._cIndex,","            scrollX = host.get(SCROLL_X),","            scrollY = host.get(SCROLL_Y),","            paginatorAxis = paginator._cAxis;","","        if (paginatorAxis[DIM_Y]) {","            paginator._pageDims[index].scrollX = scrollX;","        } else {","            paginator._pageDims[index].scrollY = scrollY;","        }","","        paginator._optimize();","    },","","    /**","     * index attr change handler","     *","     * @method _afterIndexChange","     * @param {Event.Facade}","     * @protected","     */","    _afterIndexChange: function (e) {","        var paginator = this,","            host = paginator._host,","            index = e.newVal,","            pageDims = paginator._pageDims[index],","            hostAxis = host._cAxis,","            paginatorAxis = paginator._cAxis;","","        // Cache the new index value","        paginator._cIndex = index;","","        // For dual-axis instances, we need to hack some host properties to the","        // current page's max height/width and current stored offset","        if (hostAxis[DIM_X] && hostAxis[DIM_Y]) {","            if (paginatorAxis[DIM_Y]) {","                host._maxScrollX = pageDims.maxScrollX;","                host.set(SCROLL_X, pageDims.scrollX, { src: UI });","            }","            else if (paginatorAxis[DIM_X]) {","                host._maxScrollY = pageDims.maxScrollY;","                host.set(SCROLL_Y, pageDims.scrollY, { src: UI });","            }","        }","","        if (e.src !== UI) {","            paginator.scrollToIndex(index);","        }","    },","","    /**","     * Optimization: Hides the pages not near the viewport","     *","     * @method _optimize","     * @protected","     */","    _optimize: function () {","","        if (!this._optimizeMemory) {","            return false;","        }","","        var paginator = this,","            currentIndex = paginator._cIndex,","            pageNodes = paginator._getStage(currentIndex);","","        // Show the pages in/near the viewport & hide the rest","        paginator._showNodes(pageNodes.visible);","        paginator._hideNodes(pageNodes.hidden);","    },","","    /**","     * Optimization: Determines which nodes should be visible, and which should be hidden.","     *","     * @method _getStage","     * @param index {Number} The page index # intended to be in focus.","     * @returns {object}","     * @protected","     */","    _getStage: function (index) {","        var _pageBuffer = this._pageBuffer,","            pageCount = this.get(TOTAL),","            pageNodes = this._getPageNodes(),","            start = Math.max(0, index - _pageBuffer),","            end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive","","        return {","            visible: pageNodes.splice(start, end - start),","            hidden: pageNodes","        };","    },","","    /**","     * A utility method to show node(s)","     *","     * @method _showNodes","     * @param nodeList {Object} The list of nodes to show","     * @protected","     */","    _showNodes: function (nodeList) {","        if (nodeList) {","            nodeList.removeClass(CLASS_HIDDEN).setStyle('visibility', '');","        }","    },","","    /**","     * A utility method to hide node(s)","     *","     * @method _hideNodes","     * @param nodeList {Object} The list of nodes to hide","     * @protected","     */","    _hideNodes: function (nodeList) {","        if (nodeList) {","            nodeList.addClass(CLASS_HIDDEN).setStyle('visibility', 'hidden');","        }","    },","","    /**","     * Gets a nodeList for the \"pages\"","     *","     * @method _getPageNodes","     * @protected","     * @returns {nodeList}","     */","    _getPageNodes: function () {","        var paginator = this,","            host = paginator._host,","            cb = host._cb,","            pageSelector = paginator.get(SELECTOR),","            pageNodes = pageSelector ? cb.all(pageSelector) : cb.get('children');","","        return pageNodes;","    },","","    /**","     * Scroll to the next page, with animation","     *","     * @method next","     */","    next: function () {","        var paginator = this,","            index = paginator._cIndex,","            target = index + 1,","            total = this.get(TOTAL);","","        if (target >= total) {","            return;","        }","","        // Update the index","        paginator.set(INDEX, target);","    },","","    /**","     * Scroll to the previous page, with animation","     *","     * @method prev","     */","    prev: function () {","        var paginator = this,","            index = paginator._cIndex,","            target = index - 1;","","        if (target < 0) {","            return;","        }","","        // Update the index","        paginator.set(INDEX, target);","    },","    ","    /** ","     * Deprecated for 3.7.0.","     * @deprecated","     */","    scrollTo: function () {","        return this.scrollToIndex.apply(this, arguments);","    },","","    /**","     * Scroll to a given page in the scrollview","     *","     * @method scrollToIndex","     * @param index {Number} The index of the page to scroll to","     * @param {Number} [duration] The number of ms the animation should last","     * @param {String} [easing] The timing function to use in the animation","     */","    scrollToIndex: function (index, duration, easing) {","        var paginator = this,","            host = paginator._host,","            pageNode = paginator._getPageNodes().item(index),","            scrollAxis = (paginator._cAxis[DIM_X] ? SCROLL_X : SCROLL_Y),","            scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');","","        duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;","        easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing;","","        // Set the index ATTR to the specified index value","        paginator.set(INDEX, index, { src: UI });","","        // Makes sure the viewport nodes are visible","        paginator._showNodes(pageNode);","","        // Scroll to the offset","        host.set(scrollAxis, scrollOffset, {","            duration: duration,","            easing: easing","        });","    },","","    /**","     * Setter for 'axis' attribute","     *","     * @method _axisSetter","     * @param val {Mixed} A string ('x', 'y', 'xy') to specify which axis/axes to allow scrolling on","     * @param name {String} The attribute name","     * @return {Object} An object to specify scrollability on the x & y axes","     * ","     * @protected","     */","    _axisSetter: function (val, name) {","","        // Turn a string into an axis object","        if (Y.Lang.isString(val)) {","            return {","                x: val.match(/x/i) ? true : false,","                y: val.match(/y/i) ? true : false","            };","        }","    },"," ","","    /**","     * After listener for the axis attribute","     *","     * @method _afterAxisChange","     * @param e {Event.Facade} The event facade","     * @protected","     */","    _afterAxisChange: function (e) {","        this._cAxis = e.newVal;","    }","","    // End prototype properties","","}, {","    ","    // Static properties","","    /**","     * The identity of the plugin","     *","     * @property NAME","     * @type String","     * @default 'pluginScrollViewPaginator'","     * @readOnly","     * @protected","     * @static","     */","    NAME: 'pluginScrollViewPaginator',","","    /**","     * The namespace on which the plugin will reside","     *","     * @property NS","     * @type String","     * @default 'pages'","     * @static","     */","    NS: 'pages',","","    /**","     * The default attribute configuration for the plugin","     *","     * @property ATTRS","     * @type {Object}","     * @static","     */","    ATTRS: {","","        /**","         * Specifies ability to scroll on x, y, or x and y axis/axes. ","         * If unspecified, it inherits from the host instance.","         *","         * @attribute axis","         * @type String","         */","        axis: {","            setter: '_axisSetter',","            writeOnce: 'initOnly'","        },","","        /**","         * CSS selector for a page inside the scrollview. The scrollview","         * will snap to the closest page.","         *","         * @attribute selector","         * @type {String}","         * @default null","         */","        selector: {","            value: null","        },","","        /**","         * The active page number for a paged scrollview","         *","         * @attribute index","         * @type {Number}","         * @default 0","         */","        index: {","            value: 0,","            validator: function (val) {","                // TODO: Remove this?","                // return val >= 0 && val < this.get(TOTAL);","                return true;","            }","        },","","        /**","         * The total number of pages","         *","         * @attribute total","         * @type {Number}","         * @default 0","         */","        total: {","            value: 0","        }","    },","        ","    /**","     * The default snap to current duration and easing values used on scroll end.","     *","     * @property SNAP_TO_CURRENT","     * @static","     */","    TRANSITION: {","        duration: 300,","        easing: 'ease-out'","    }","","    // End static properties","","});","","Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;","","}, '@VERSION@', {\"requires\": [\"plugin\", \"classnamemanager\"]});"];
+_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].lines = {"1":0,"8":0,"35":0,"36":0,"39":0,"48":0,"52":0,"53":0,"54":0,"57":0,"58":0,"59":0,"60":0,"61":0,"64":0,"65":0,"68":0,"69":0,"73":0,"83":0,"86":0,"92":0,"93":0,"94":0,"95":0,"96":0,"97":0,"100":0,"101":0,"112":0,"122":0,"123":0,"125":0,"126":0,"130":0,"133":0,"134":0,"138":0,"141":0,"152":0,"160":0,"163":0,"164":0,"177":0,"185":0,"186":0,"192":0,"194":0,"210":0,"211":0,"229":0,"237":0,"238":0,"241":0,"242":0,"244":0,"248":0,"249":0,"255":0,"267":0,"273":0,"274":0,"275":0,"277":0,"291":0,"298":0,"300":0,"301":0,"303":0,"307":0,"310":0,"323":0,"328":0,"329":0,"342":0,"349":0,"350":0,"352":0,"355":0,"366":0,"374":0,"378":0,"379":0,"380":0,"381":0,"383":0,"384":0,"385":0,"389":0,"390":0,"402":0,"403":0,"406":0,"411":0,"412":0,"424":0,"430":0,"444":0,"445":0,"457":0,"458":0,"470":0,"476":0,"485":0,"490":0,"491":0,"495":0,"504":0,"508":0,"509":0,"513":0,"521":0,"533":0,"539":0,"540":0,"543":0,"546":0,"549":0,"568":0,"569":0,"585":0,"661":0,"692":0};
+_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].functions = {"PaginatorPlugin:35":0,"initializer:47":0,"_bindAttrs:82":0,"_afterHostRender:111":0,"_afterHostSyncUI:151":0,"(anonymous 2):185":0,"_afterHostUIDimensionsChange:175":0,"_beforeHostScrollTo:228":0,"_afterHostGestureMoveEnd:266":0,"_beforeHostMousewheel:290":0,"_beforeHostFlick:322":0,"_afterHostScrollEnded:341":0,"_afterIndexChange:365":0,"_optimize:400":0,"_getStage:423":0,"_showNodes:443":0,"_hideNodes:456":0,"_getPageNodes:469":0,"next:484":0,"prev:503":0,"scrollTo:520":0,"scrollToIndex:532":0,"_axisSetter:565":0,"_afterAxisChange:584":0,"validator:658":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].coveredLines = 123;
 _yuitest_coverage["build/scrollview-paginator/scrollview-paginator.js"].coveredFunctions = 26;
 _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 1);
 YUI.add('scrollview-paginator', function (Y, NAME) {
@@ -403,32 +403,25 @@ var paginator = this,
             isForward = e.wheelDelta < 0, // down (negative) is forward. @TODO Should revisit.
             paginatorAxis = paginator._cAxis;
 
-        // Set the axis for this event.
-        // @TODO: This is hacky, it's not a gesture. Find a better way
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 299);
-host._gesture = {
-            axis: DIM_Y
-        };
-
         // Only if the mousewheel event occurred on a DOM node inside the BB
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 304);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 298);
 if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
 
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 306);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 300);
 if (isForward) {
-                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 307);
+                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 301);
 paginator.next();
             } else {
-                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 309);
+                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 303);
 paginator.prev();
             }
 
             // prevent browser default behavior on mousewheel
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 313);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 307);
 e.preventDefault();
 
             // Block host._mousewheel from running
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 316);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 310);
 return new Y.Do.Prevent();
         }
     },
@@ -442,16 +435,16 @@ return new Y.Do.Prevent();
      * @protected
      */
     _beforeHostFlick: function (e) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_beforeHostFlick", 328);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 329);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_beforeHostFlick", 322);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 323);
 var paginator = this,
             paginatorAxis = paginator.get(AXIS),
             flickAxis = e.flick.axis || false;
 
         // Prevent flicks on the paginated axis
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 334);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 328);
 if (paginatorAxis[flickAxis]) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 335);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 329);
 return new Y.Do.Prevent();
         }
     },
@@ -465,8 +458,8 @@ return new Y.Do.Prevent();
      * @protected
      */
     _afterHostScrollEnded: function (e) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_afterHostScrollEnded", 347);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 348);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_afterHostScrollEnded", 341);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 342);
 var paginator = this,
             host = paginator._host,
             index = paginator._cIndex,
@@ -474,16 +467,16 @@ var paginator = this,
             scrollY = host.get(SCROLL_Y),
             paginatorAxis = paginator._cAxis;
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 355);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 349);
 if (paginatorAxis[DIM_Y]) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 356);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 350);
 paginator._pageDims[index].scrollX = scrollX;
         } else {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 358);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 352);
 paginator._pageDims[index].scrollY = scrollY;
         }
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 361);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 355);
 paginator._optimize();
     },
 
@@ -495,8 +488,8 @@ paginator._optimize();
      * @protected
      */
     _afterIndexChange: function (e) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_afterIndexChange", 371);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 372);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_afterIndexChange", 365);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 366);
 var paginator = this,
             host = paginator._host,
             index = e.newVal,
@@ -505,32 +498,32 @@ var paginator = this,
             paginatorAxis = paginator._cAxis;
 
         // Cache the new index value
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 380);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 374);
 paginator._cIndex = index;
 
         // For dual-axis instances, we need to hack some host properties to the
         // current page's max height/width and current stored offset
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 384);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 378);
 if (hostAxis[DIM_X] && hostAxis[DIM_Y]) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 385);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 379);
 if (paginatorAxis[DIM_Y]) {
-                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 386);
+                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 380);
 host._maxScrollX = pageDims.maxScrollX;
-                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 387);
+                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 381);
 host.set(SCROLL_X, pageDims.scrollX, { src: UI });
             }
-            else {_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 389);
+            else {_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 383);
 if (paginatorAxis[DIM_X]) {
-                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 390);
+                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 384);
 host._maxScrollY = pageDims.maxScrollY;
-                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 391);
+                _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 385);
 host.set(SCROLL_Y, pageDims.scrollY, { src: UI });
             }}
         }
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 395);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 389);
 if (e.src !== UI) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 396);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 390);
 paginator.scrollToIndex(index);
         }
     },
@@ -543,22 +536,22 @@ paginator.scrollToIndex(index);
      */
     _optimize: function () {
 
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_optimize", 406);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 408);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_optimize", 400);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 402);
 if (!this._optimizeMemory) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 409);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 403);
 return false;
         }
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 412);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 406);
 var paginator = this,
             currentIndex = paginator._cIndex,
             pageNodes = paginator._getStage(currentIndex);
 
         // Show the pages in/near the viewport & hide the rest
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 417);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 411);
 paginator._showNodes(pageNodes.visible);
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 418);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 412);
 paginator._hideNodes(pageNodes.hidden);
     },
 
@@ -571,15 +564,15 @@ paginator._hideNodes(pageNodes.hidden);
      * @protected
      */
     _getStage: function (index) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_getStage", 429);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 430);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_getStage", 423);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 424);
 var _pageBuffer = this._pageBuffer,
             pageCount = this.get(TOTAL),
             pageNodes = this._getPageNodes(),
             start = Math.max(0, index - _pageBuffer),
             end = Math.min(pageCount, index + 1 + _pageBuffer); // noninclusive
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 436);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 430);
 return {
             visible: pageNodes.splice(start, end - start),
             hidden: pageNodes
@@ -594,10 +587,10 @@ return {
      * @protected
      */
     _showNodes: function (nodeList) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_showNodes", 449);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 450);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_showNodes", 443);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 444);
 if (nodeList) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 451);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 445);
 nodeList.removeClass(CLASS_HIDDEN).setStyle('visibility', '');
         }
     },
@@ -610,10 +603,10 @@ nodeList.removeClass(CLASS_HIDDEN).setStyle('visibility', '');
      * @protected
      */
     _hideNodes: function (nodeList) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_hideNodes", 462);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 463);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_hideNodes", 456);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 457);
 if (nodeList) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 464);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 458);
 nodeList.addClass(CLASS_HIDDEN).setStyle('visibility', 'hidden');
         }
     },
@@ -626,15 +619,15 @@ nodeList.addClass(CLASS_HIDDEN).setStyle('visibility', 'hidden');
      * @returns {nodeList}
      */
     _getPageNodes: function () {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_getPageNodes", 475);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 476);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_getPageNodes", 469);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 470);
 var paginator = this,
             host = paginator._host,
             cb = host._cb,
             pageSelector = paginator.get(SELECTOR),
             pageNodes = pageSelector ? cb.all(pageSelector) : cb.get('children');
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 482);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 476);
 return pageNodes;
     },
 
@@ -644,21 +637,21 @@ return pageNodes;
      * @method next
      */
     next: function () {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "next", 490);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 491);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "next", 484);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 485);
 var paginator = this,
             index = paginator._cIndex,
             target = index + 1,
             total = this.get(TOTAL);
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 496);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 490);
 if (target >= total) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 497);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 491);
 return;
         }
 
         // Update the index
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 501);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 495);
 paginator.set(INDEX, target);
     },
 
@@ -668,20 +661,20 @@ paginator.set(INDEX, target);
      * @method prev
      */
     prev: function () {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "prev", 509);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 510);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "prev", 503);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 504);
 var paginator = this,
             index = paginator._cIndex,
             target = index - 1;
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 514);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 508);
 if (target < 0) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 515);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 509);
 return;
         }
 
         // Update the index
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 519);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 513);
 paginator.set(INDEX, target);
     },
     
@@ -690,8 +683,8 @@ paginator.set(INDEX, target);
      * @deprecated
      */
     scrollTo: function () {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "scrollTo", 526);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 527);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "scrollTo", 520);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 521);
 return this.scrollToIndex.apply(this, arguments);
     },
 
@@ -704,29 +697,29 @@ return this.scrollToIndex.apply(this, arguments);
      * @param {String} [easing] The timing function to use in the animation
      */
     scrollToIndex: function (index, duration, easing) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "scrollToIndex", 538);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 539);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "scrollToIndex", 532);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 533);
 var paginator = this,
             host = paginator._host,
             pageNode = paginator._getPageNodes().item(index),
             scrollAxis = (paginator._cAxis[DIM_X] ? SCROLL_X : SCROLL_Y),
             scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');
 
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 545);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 539);
 duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 546);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 540);
 easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing;
 
         // Set the index ATTR to the specified index value
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 549);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 543);
 paginator.set(INDEX, index, { src: UI });
 
         // Makes sure the viewport nodes are visible
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 552);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 546);
 paginator._showNodes(pageNode);
 
         // Scroll to the offset
-        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 555);
+        _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 549);
 host.set(scrollAxis, scrollOffset, {
             duration: duration,
             easing: easing
@@ -746,10 +739,10 @@ host.set(scrollAxis, scrollOffset, {
     _axisSetter: function (val, name) {
 
         // Turn a string into an axis object
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_axisSetter", 571);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 574);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_axisSetter", 565);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 568);
 if (Y.Lang.isString(val)) {
-            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 575);
+            _yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 569);
 return {
                 x: val.match(/x/i) ? true : false,
                 y: val.match(/y/i) ? true : false
@@ -766,8 +759,8 @@ return {
      * @protected
      */
     _afterAxisChange: function (e) {
-        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_afterAxisChange", 590);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 591);
+        _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "_afterAxisChange", 584);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 585);
 this._cAxis = e.newVal;
     }
 
@@ -844,8 +837,8 @@ this._cAxis = e.newVal;
             validator: function (val) {
                 // TODO: Remove this?
                 // return val >= 0 && val < this.get(TOTAL);
-                _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "validator", 664);
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 667);
+                _yuitest_coverfunc("build/scrollview-paginator/scrollview-paginator.js", "validator", 658);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 661);
 return true;
             }
         },
@@ -877,7 +870,7 @@ return true;
 
 });
 
-_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 698);
+_yuitest_coverline("build/scrollview-paginator/scrollview-paginator.js", 692);
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
 
 }, '@VERSION@', {"requires": ["plugin", "classnamemanager"]});
