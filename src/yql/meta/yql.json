@@ -8,11 +8,12 @@
             "yql-winjs": {
                 "condition": {
                     "trigger": "yql",
-                    "ua": "winjs"
+                    "ua": "winjs",
+                    "when": "after"
                 },
                 "requires": [
-                    "yql",
-                    "io-base"
+                    "io-base",
+                    "json-parse"
                 ]
             }
         }
