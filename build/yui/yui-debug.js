@@ -5460,6 +5460,12 @@ add('load', '17', {
     "trigger": "widget-base",
     "ua": "ie"
 });
+// yql-winjs
+add('load', '18', {
+    "name": "yql-winjs",
+    "trigger": "yql",
+    "ua": "winjs"
+});
 
 }, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('intl-base', function (Y, NAME) {
@@ -11132,6 +11138,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp-url"
         ]
     },
+    "yql-winjs": {
+        "condition": {
+            "name": "yql-winjs",
+            "trigger": "yql",
+            "ua": "winjs"
+        },
+        "requires": [
+            "yql",
+            "io-base"
+        ]
+    },
     "yui": {},
     "yui-base": {},
     "yui-later": {
@@ -11150,7 +11167,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8167a05694cccfa8b829b85c2caae54e';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

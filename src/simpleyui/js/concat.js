@@ -5460,6 +5460,12 @@ add('load', '17', {
     "trigger": "widget-base",
     "ua": "ie"
 });
+// yql-winjs
+add('load', '18', {
+    "name": "yql-winjs",
+    "trigger": "yql",
+    "ua": "winjs"
+});
 
 }, '@VERSION@', {"requires": ["yui-base"]});
 YUI.add('intl-base', function (Y, NAME) {
@@ -6470,6 +6476,12 @@ add('load', '17', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
+});
+// yql-winjs
+add('load', '18', {
+    "name": "yql-winjs",
+    "trigger": "yql",
+    "ua": "winjs"
 });
 
 }, '@VERSION@', {"requires": ["yui-base"]});

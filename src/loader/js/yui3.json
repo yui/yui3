@@ -2356,6 +2356,17 @@
             "jsonp-url"
         ]
     },
+    "yql-winjs": {
+        "condition": {
+            "name": "yql-winjs",
+            "trigger": "yql",
+            "ua": "winjs"
+        },
+        "requires": [
+            "yql",
+            "io-base"
+        ]
+    },
     "yui": {},
     "yui-base": {},
     "yui-later": {
