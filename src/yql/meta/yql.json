@@ -3,6 +3,18 @@
         "requires": [
             "jsonp",
             "jsonp-url"
-        ]
+        ],
+        "plugins": {
+            "yql-winjs": {
+                "condition": {
+                    "trigger": "yql",
+                    "ua": "winjs"
+                },
+                "requires": [
+                    "yql",
+                    "io-base"
+                ]
+            }
+        }
     }
 }

@@ -5,6 +5,11 @@
             "jsfiles": [
                 "yql.js"
             ]
+        },
+        "yql-winjs": {
+            "jsfiles": [
+                "yql-winjs.js"
+            ]
         }
     }
 }
