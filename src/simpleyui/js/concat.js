@@ -5399,14 +5399,27 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// property-base-shim
 add('load', '14', {
+    "name": "property-base-shim",
+    "test": function () {
+    // IE8 implements Object.defineProperty(), but it only works on DOM objects.
+    // All browsers that implement both defineProperty() and defineProperties()
+    // should work without a shim, so we check for the existence of both.
+    return typeof Object.defineProperties !== 'function' ||
+            typeof Object.defineProperty !== 'function';
+},
+    "trigger": "property-base",
+    "when": "instead"
+});
+// scrollview-base-ie
+add('load', '15', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '16', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5417,7 +5430,7 @@ add('load', '15', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '17', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -5433,7 +5446,7 @@ add('load', '16', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '18', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
@@ -6410,14 +6423,27 @@ add('load', '13', {
     "trigger": "io-base",
     "ua": "nodejs"
 });
-// scrollview-base-ie
+// property-base-shim
 add('load', '14', {
+    "name": "property-base-shim",
+    "test": function () {
+    // IE8 implements Object.defineProperty(), but it only works on DOM objects.
+    // All browsers that implement both defineProperty() and defineProperties()
+    // should work without a shim, so we check for the existence of both.
+    return typeof Object.defineProperties !== 'function' ||
+            typeof Object.defineProperty !== 'function';
+},
+    "trigger": "property-base",
+    "when": "instead"
+});
+// scrollview-base-ie
+add('load', '15', {
     "name": "scrollview-base-ie",
     "trigger": "scrollview-base",
     "ua": "ie"
 });
 // selector-css2
-add('load', '15', {
+add('load', '16', {
     "name": "selector-css2",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6428,7 +6454,7 @@ add('load', '15', {
     "trigger": "selector"
 });
 // transition-timer
-add('load', '16', {
+add('load', '17', {
     "name": "transition-timer",
     "test": function (Y) {
     var DOCUMENT = Y.config.doc,
@@ -6444,7 +6470,7 @@ add('load', '16', {
     "trigger": "transition"
 });
 // widget-base-ie
-add('load', '17', {
+add('load', '18', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"

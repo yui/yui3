@@ -2558,6 +2558,36 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("profiler")) > -1, "Module (profiler) not found in sorted array");
         },
+     "Testing property": function(data) {
+            var loader = new Y.Loader({
+                require: ["property"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("property")) > -1, "Module (property) not found in sorted array");
+        },
+     "Testing property-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["property-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("property-base")) > -1, "Module (property-base) not found in sorted array");
+        },
+     "Testing property-base-shim": function(data) {
+            var loader = new Y.Loader({
+                require: ["property-base-shim"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("property-base-shim")) > -1, "Module (property-base-shim) not found in sorted array");
+        },
      "Testing querystring": function(data) {
             var loader = new Y.Loader({
                 require: ["querystring"],

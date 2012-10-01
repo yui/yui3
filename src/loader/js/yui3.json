@@ -1842,6 +1842,22 @@
             "yui-base"
         ]
     },
+    "property": {
+        "requires": [
+            "event-custom",
+            "oop",
+            "property-base"
+        ]
+    },
+    "property-base": {},
+    "property-base-shim": {
+        "condition": {
+            "name": "property-base-shim",
+            "test": "property-feature-detect.js",
+            "trigger": "property-base",
+            "when": "instead"
+        }
+    },
     "querystring": {
         "use": [
             "querystring-parse",
