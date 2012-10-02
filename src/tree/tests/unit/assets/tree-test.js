@@ -168,6 +168,33 @@ treeSuite.add(new Y.Test.Case({
         ArrayAssert.isEmpty(this.tree.getSelectedNodes(), 'zero nodes should be selected after changing multiSelect');
     },
 
+    'nodeClass property should allow the use of a custom node class': function () {
+        var MyNode = Y.Base.create('myNode', Tree.Node, [], {
+            _isMyNode: true
+        });
+
+        this.tree.nodeClass = MyNode;
+
+        var node = this.tree.createNode({label: 'foo'});
+
+        Assert.isTrue(node._isMyNode);
+    },
+
+    'nodeClass property should allow specifying a class as a string before init': function () {
+        var MyTree = Y.Base.create('myTree', Tree, [], {
+            nodeClass: 'Foo.Bar.MyNode'
+        });
+
+        Y.namespace('Foo.Bar').MyNode = Y.Base.create('myNode', Tree.Node, [], {
+            _isMyNode: true
+        });
+
+        var tree = new MyTree();
+        var node = tree.createNode({label: 'foo'});
+
+        Assert.isTrue(node._isMyNode);
+    },
+
     'rootNode attribute should be an alias for the rootNode property': function () {
         Assert.areSame(this.tree.rootNode, this.tree.get('rootNode'));
     },
