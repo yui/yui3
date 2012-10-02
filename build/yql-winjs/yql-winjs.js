@@ -27,7 +27,7 @@ Y.YQLRequest.prototype._send = function (url, o) {
     timer = setTimeout(function() {
         req.abort();
         o.on.timeout('script timeout');
-    }, 5000);
+    }, o.timeout || 5000);
 };
 
 
