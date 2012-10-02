@@ -41,7 +41,7 @@ Represents a tree node in a `Tree` data structure.
 function TreeNode(tree, config) {
     config || (config = {});
 
-    this.id   = this._yuid = config.id || Y.guid('treeNode-');
+    this.id   = this._yuid = config.id || this.id || Y.guid('treeNode-');
     this.tree = tree;
 
     if ('label' in config) {
