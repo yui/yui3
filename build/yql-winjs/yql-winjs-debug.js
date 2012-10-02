@@ -22,12 +22,12 @@ Y.YQLRequest.prototype._send = function (url, o) {
         }
     };
     req.send();
-    
+
     //Simple timer to catch no connections
     timer = setTimeout(function() {
         req.abort();
         o.on.timeout('script timeout');
-    }, o.timeout || 5000);
+    }, o.timeout || 30000);
 };
 
 
