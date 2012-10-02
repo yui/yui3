@@ -84,6 +84,30 @@ microSuite.add(new Y.Test.Case({
         Assert.areSame('', compiled({display: false}));
     },
 
+    '<% ... %> should support switch statements': function () {
+        var compiled = Micro.compile(
+            'test' +
+            '<% switch (data.foo) { %>' +
+                '<% case "a": %>' +
+                    'a' +
+                    '<% break; %>' +
+
+                '<% case "b": %>' +
+                    'b' +
+                    '<% break; %>' +
+
+                '<% case "c": %>' +
+                    'c' +
+                    '<% break; %>' +
+            '<% } %>' +
+            'test'
+        );
+
+        Assert.areSame('testatest', compiled({foo: 'a'}));
+        Assert.areSame('testbtest', compiled({foo: 'b'}));
+        Assert.areSame('testctest', compiled({foo: 'c'}));
+    },
+
     '<%= ... %> should be rendered as HTML-escaped output': function () {
         Assert.areSame('at&amp;t', Micro.render('<%= data.name %>', {name: 'at&t'}));
     },
