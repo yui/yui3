@@ -12,7 +12,7 @@ YUI.add('dd-gestures', function (Y, NAME) {
     * @module dd
     * @submodule dd-gestures
     */
-    
+
     Y.DD.Drag.START_EVENT = 'gesturemovestart';
 
     Y.DD.Drag.prototype._prep = function() {
