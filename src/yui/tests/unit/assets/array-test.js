@@ -11,7 +11,9 @@ suite.add(new Y.Test.Case({
     _should: {
         ignore: {
             testArray: Y.UA.nodejs,
-            testTest_dom: Y.UA.nodejs
+            testTest_dom: Y.UA.nodejs,
+            'test Array.test with window' : !Y.config.win,
+            'test Array.test with dom': !Y.config.win
         }
     },
     testArray: function () {
