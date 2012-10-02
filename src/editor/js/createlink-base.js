@@ -1,12 +1,13 @@
 
     /**
-     * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
+     * Adds prompt style link creation. Adds an override for the
+     * <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
      * @class Plugin.CreateLinkBase
      * @static
      * @submodule createlink-base
      * @module editor
      */
-    
+
     var CreateLinkBase = {};
     /**
     * Strings used by the plugin
