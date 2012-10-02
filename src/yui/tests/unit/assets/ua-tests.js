@@ -26,7 +26,7 @@ YUI.add('ua-tests', function(Y) {
         _should: {
             ignore: {
                 'test: win8 app': !Y.config.win,
-                'test: not win8 app': (!Y.config.win || !Y.UA.winjs)
+                'test: not win8 app': (!Y.config.win || Y.UA.winjs)
             }
         },
         setUp: function() {
