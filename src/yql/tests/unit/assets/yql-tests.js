@@ -8,6 +8,11 @@ YUI.add('yql-tests', function(Y) {
 
     //Look for a querystring value of live=xxx
     var live = (!Y.UA.nodejs && window.location.search.match(/[?&]live=([^&]+)/) || [])[1] || null;
+
+    if (Y.UA.winjs) {
+        //Auto set live when in WinJS (for testing)
+        live = true;
+    }
     
     //If live, then don't do the mock, use a real YQL query
     if (!live) {
