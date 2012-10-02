@@ -372,20 +372,32 @@ Y.Loader = function(o) {
     /**
      * Provides the information used to skin the skinnable components.
      * The following skin definition would result in 'skin1' and 'skin2'
-     * being loaded for calendar (if calendar was requested), and
-     * 'sam' for all other skinnable components:
+     * being loaded for calendar (if calendar was requested), 'round' for
+     * components that support it (e.g. slider-base), 'night' for skinnable
+     * components that do not support 'round', but do support 'night', and
+     * 'sam' for other skinnable components that support 'sam' and/or components
+     * that do not explicity declare a list of skins that they support. No skin
+     * will be loaded for components that declare a list of supported skins if that
+     * list does not include one of 'round', 'night', or 'sam':
      *
      *      skin: {
-     *          // The default skin, which is automatically applied if not
-     *          // overriden by a component-specific skin definition.
-     *          // Change this in to apply a different skin globally
-     *          defaultSkin: 'sam',
      *
      *          // This is combined with the loader base property to get
      *          // the default root directory for a skin. ex:
      *          // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
      *          base: 'assets/skins/',
-     *          
+     *
+     *          // The default skin, which is automatically applied if not
+     *          // overriden by a component-specific skin definition.
+     *          // Change this in to apply a different skin globally
+     *          defaultSkin: 'sam',
+     *
+     *          // An order of preference for loading skins. If a module supplies
+     *          // skins metadata, the Loader will apply the first skin from
+     *          // skin.order that the module supports. If not already specified,
+     *          // the `defaultSkin` is automatically appended to the end of the list.
+     *          order: 'round,night'
+     *
      *          // Any component-specific overrides can be specified here,
      *          // making it possible to load different skins for different
      *          // components.  It is possible to load more than one skin
@@ -583,9 +595,9 @@ Y.Loader.prototype = {
                     }
                 }
                 delete mod.langCache;
-                delete mod.skinCache;
                 if (mod.skinnable) {
-                    self._addSkin(self.skin.defaultSkin, mod.name);
+                    self._removeSkins(mod);
+                    self._setSkins(mod);
                 }
             }
         }
@@ -856,6 +868,140 @@ Y.Loader.prototype = {
     },
 
     /**
+     * Returns an array of the skins that the supplied module requires based
+     * on `this.skin.overrides`, `this.skin.order` and `this.skin.defaultSkin`.
+     *
+     * @method _getSkins
+     * @param {Object} mod The module definition from moduleInfo.
+     * @private
+     * @return {String[]} The array of skins this module requires.
+     */
+    _getSkins: function(mod) {
+        var i,
+            name = mod.name,
+            skindef,
+            skinname,
+            skin_order,
+            skinpar,
+            skins = [];
+
+        skindef = this.skin.overrides;
+        for (i in YUI.Env.aliases) {
+            if (YUI.Env.aliases.hasOwnProperty(i)) {
+                if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
+                    skinpar = i;
+                }
+            }
+        }
+
+        if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
+            skinname = name;
+            if (skindef[skinpar]) {
+                skinname = skinpar;
+            }
+            for (i = 0; i < skindef[skinname].length; i++) {
+                skins.push(skindef[skinname][i]);
+            }
+        } else {
+
+            if (!mod.skins && mod.skinnable) {
+                // skinnable:true means use defaultSkin when skins are not explicitly defined.
+                // however, do not add default skin to the module's skins metadata.
+                // this prevents loading an incorrect skin in the case that a module is declared
+                // skinnable, but doesn't provide skins metadata and is used in 2 different loader
+                // instances each using a different defaultSkin
+                skins.push(this.skin.defaultSkin);
+                return skins;
+            }
+
+            if (typeof mod.skins === 'string') {
+                // convert csv to array
+                mod.skins = mod.skins.replace(/\s/g, '').split(',');
+            }
+
+            if (!mod.skins_map) {
+                // skins as keys for fast search
+                mod.skins_map = YArray.hash(mod.skins);
+            }
+
+            // expand skin.order @TODO, move this to _config
+            this.skin.order_expanded = (this.skin.order || '').replace(/\s/g, '').split(',');
+
+            if (YArray.indexOf(this.skin.order_expanded, this.skin.defaultSkin) < 0) {
+                // add the defaultSkin if not already there
+                this.skin.order_expanded.push(this.skin.defaultSkin);
+            }
+
+            skin_order = this.skin.order_expanded;
+
+            // look for the first skin in skin_order that is also listed in
+            // the module's skins
+            for (i = 0; i < skin_order.length; i++) {
+                if (skin_order[i] in mod.skins_map) {
+                    skins.push(skin_order[i]);
+                    break;
+                }
+            }
+
+        }
+
+        return skins;
+    },
+
+    /**
+     * Removes all skin modules from the supplied module's expanded
+     * array.
+     *
+     * @method _removeSkins
+     * @param {Object} mod The module definition from moduleInfo.
+     * @private
+     */
+    _removeSkins: function(mod) {
+        var i,
+            l,
+            reqMod;
+
+        if (mod) {
+            l = mod.expanded && mod.expanded.length : 0;
+            for (i = 0; i < l; i++) {
+                reqMod = this.getModule(mod.expanded[i]);
+                if (reqMod && reqMod.skin) {
+                    // required module is a skin module; remove it
+                    mod.expanded.splice(i, 1);
+                }
+            }
+        }
+    },
+
+    /**
+     * Adds (`_addSkin`) each required skin (from `_getSkins`) to
+     * the supplied module.
+     *
+     * @method _setSkins
+     * @param {Object} mod The module definition from moduleInfo.
+     * @return {Array} Array of required skin modules that have not
+     * already been loaded.
+     */
+    _setSkins: function(mod) {
+        var skinmods = [],
+            skins = this._getSkins(mod),
+            l = skins ? skins.length : 0;
+            i,
+            skinmod;
+
+        if (skins && l) {
+            for (i = 0; i < l; i++) {
+                skinmod = this._addSkin(skins[i], mod.name);
+                if (!this.isCSSLoaded(skinmod, this._boot)) {
+                    skinmods[skinmods.length] = skinmod;
+                }
+            }
+        }
+
+        return skinmods;
+    },
+
+    /**
      * Adds the skin def to the module info
      * @method _addSkin
      * @param {string} skin the name of the skin.
@@ -1031,6 +1177,9 @@ Y.Loader.prototype = {
             return null;
         }
 
+        o.skins = o.skins || MOD_SKINS[o.name];
+        o.skinnable = o.skinnable || !!o.skins;
+
         if (!o.type) {
             //Always assume it's javascript unless the CSS pattern is matched.
             o.type = JS;
@@ -1051,7 +1200,7 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, t, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, when, g,
+            overrides, skinnames, pmod, when, g,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
         
@@ -1088,8 +1237,12 @@ Y.Loader.prototype = {
         }
 
         if (o.skinnable && o.ext && o.temp) {
-            skinname = this._addSkin(this.skin.defaultSkin, name);
-            o.requires.unshift(skinname);
+            this._removeSkins(o);
+            skinnames = this._setSkins(o);
+            l = skinnames ? skinnames.length : 0;
+            for (i = 0; i < len; i++) {
+                o.requires.unshift(skinnames[i]);
+            }
         }
         
         if (o.requires.length) {
@@ -1130,17 +1283,8 @@ Y.Loader.prototype = {
 
                     if (smod.skinnable) {
                         o.skinnable = true;
-                        overrides = this.skin.overrides;
-                        if (overrides && overrides[i]) {
-                            for (j = 0; j < overrides[i].length; j++) {
-                                skinname = this._addSkin(overrides[i][j],
-                                         i, name);
-                                sup.push(skinname);
-                            }
-                        }
-                        skinname = this._addSkin(this.skin.defaultSkin,
-                                        i, name);
-                        sup.push(skinname);
+                        this._removeSkins(o);
+                        sup = sup.concat(this._setSkins(o));
                     }
 
                     // looks like we are expected to work out the metadata
@@ -1215,9 +1359,10 @@ Y.Loader.prototype = {
                     plug.path = plug.path || _path(name, i, o.type);
                     plug.requires = plug.requires || [];
                     plug.group = o.group;
-                    this.addModule(plug, i);
+                    pmod = this.addModule(plug, i);
                     if (o.skinnable) {
-                        this._addSkin(this.skin.defaultSkin, i, name);
+                        this._removeSkins(pmod);
+                        this._setSkins(pmod);
                     }
 
                 }
@@ -1390,7 +1535,7 @@ Y.Loader.prototype = {
             return mod.expanded || NO_REQUIREMENTS;
         }
 
-        //TODO add modue cache here out of scope..
+        //TODO add module cache here out of scope..
 
         var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond,
@@ -1401,7 +1546,8 @@ Y.Loader.prototype = {
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
             ftests = Y.Features && Y.Features.tests.load,
-            hash, reparse;
+            hash,
+            only_redo_skins = false;
 
         // console.log(name);
 
@@ -1415,17 +1561,17 @@ Y.Loader.prototype = {
         }
 
         // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
-        
-        //If a skin or a lang is different, reparse..
-        reparse = !((!this.lang || mod.langCache === this.lang) && (mod.skinCache === this.skin.defaultSkin));
 
-        if (mod.expanded && !reparse) {
-            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
-            return mod.expanded;
+        if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
+            if (mod.skinnable) {
+                only_redo_skins = true;
+                this._removeSkins(mod);
+                d = mod.expanded.slice(0);
+            }
         }
         
 
-        d = [];
+        d = d || [];
         hash = {};
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
@@ -1441,7 +1587,6 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
         mod.langCache = this.lang;
-        mod.skinCache = this.skin.defaultSkin;
 
         for (i = 0; i < r.length; i++) {
             //Y.log(name + ' requiring ' + r[i], 'info', 'loader');
@@ -1449,7 +1594,7 @@ Y.Loader.prototype = {
                 d.push(r[i]);
                 hash[r[i]] = true;
                 m = this.getModule(r[i]);
-                if (m) {
+                if (m && (m.skinnable || !only_redo_skins)) {
                     add = this.getRequires(m);
                     intl = intl || (m.expanded_map &&
                         (INTL in m.expanded_map));
@@ -1476,7 +1621,7 @@ Y.Loader.prototype = {
                     hash[r[i]] = true;
                     m = this.getModule(r[i]);
 
-                    if (m) {
+                    if (m && (m.skinnable || !only_redo_skins)) {
                         add = this.getRequires(m);
                         intl = intl || (m.expanded_map &&
                             (INTL in m.expanded_map));
@@ -1494,7 +1639,7 @@ Y.Loader.prototype = {
                     d.push(o[i]);
                     hash[o[i]] = true;
                     m = info[o[i]];
-                    if (m) {
+                    if (m  && (m.skinnable || !only_redo_skins)) {
                         add = this.getRequires(m);
                         intl = intl || (m.expanded_map &&
                             (INTL in m.expanded_map));
@@ -1536,7 +1681,7 @@ Y.Loader.prototype = {
                                 hash[i] = true;
                                 d.push(i);
                                 m = this.getModule(i);
-                                if (m) {
+                                if (m && (m.skinnable || !only_redo_skins)) {
                                     add = this.getRequires(m);
                                     for (j = 0; j < add.length; j++) {
                                         d.push(add[j]);
@@ -1552,31 +1697,7 @@ Y.Loader.prototype = {
 
         // Create skin modules
         if (mod.skinnable) {
-            skindef = this.skin.overrides;
-            for (i in YUI.Env.aliases) {
-                if (YUI.Env.aliases.hasOwnProperty(i)) {
-                    if (Y.Array.indexOf(YUI.Env.aliases[i], name) > -1) {
-                        skinpar = i;
-                    }
-                }
-            }
-            if (skindef && (skindef[name] || (skinpar && skindef[skinpar]))) {
-                skinname = name;
-                if (skindef[skinpar]) {
-                    skinname = skinpar;
-                }
-                for (i = 0; i < skindef[skinname].length; i++) {
-                    skinmod = this._addSkin(skindef[skinname][i], name);
-                    if (!this.isCSSLoaded(skinmod, this._boot)) {
-                        d.push(skinmod);
-                    }
-                }
-            } else {
-                skinmod = this._addSkin(this.skin.defaultSkin, name);
-                if (!this.isCSSLoaded(skinmod, this._boot)) {
-                    d.push(skinmod);
-                }
-            }
+            d = d.concat(this._setSkins(mod));
         }
 
         mod._parsed = false;
@@ -2504,7 +2625,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             resolved = { js: [], jsMods: [], css: [], cssMods: [] },
             type = self.loadType || 'js';
 
-        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) { 
+        // @TODO find a good way to see if requested modules include erroneous skins, and if so,
+        // reset them
+        if (self.skin.overrides || self.skin.defaultSkin !== DEFAULT_SKIN || self.ignoreRegistered) {
             self._resetModules();
         }
 
