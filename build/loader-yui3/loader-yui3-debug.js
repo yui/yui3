@@ -2477,11 +2477,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "trigger": "yql",
             "ua": "winjs",
             "when": "after"
-        },
-        "requires": [
-            "io-base",
-            "json-parse"
-        ]
+        }
     },
     "yui": {},
     "yui-base": {},

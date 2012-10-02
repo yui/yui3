@@ -2362,11 +2362,7 @@
             "trigger": "yql",
             "ua": "winjs",
             "when": "after"
-        },
-        "requires": [
-            "io-base",
-            "json-parse"
-        ]
+        }
     },
     "yui": {},
     "yui-base": {},

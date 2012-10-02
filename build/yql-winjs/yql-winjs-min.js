@@ -1,1 +1,1 @@
-YUI.add("yql-winjs",function(e,t){e.YQLRequest.prototype._send=function(t,n){e.io(t,{on:{complete:function(t,r){n.on.success(e.JSON.parse(r.responseText))}}})}},"@VERSION@",{requires:["io-base","json-parse"]});
+YUI.add("yql-winjs",function(e,t){e.YQLRequest.prototype._send=function(e,t){var n=new XMLHttpRequest,r;n.open("GET",e,!0),n.onreadystatechange=function(){n.readyState===4&&(clearTimeout(r),t.on.success(JSON.parse(n.responseText)))},n.send(),r=setTimeout(function(){n.abort(),t.on.timeout("script timeout")},5e3)}},"@VERSION@");

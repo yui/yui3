@@ -26,36 +26,58 @@ _yuitest_coverage["build/yql-winjs/yql-winjs.js"] = {
     path: "build/yql-winjs/yql-winjs.js",
     code: []
 };
-_yuitest_coverage["build/yql-winjs/yql-winjs.js"].code=["YUI.add('yql-winjs', function (Y, NAME) {","","/**","* WinJS plugin for YQL to use XHR to make requests","* @module yql","* @submodule yql-winjs","*/","","//Over writes Y.YQLRequest._send to use IO instead of JSONP","Y.YQLRequest.prototype._send = function (url, o) {","    Y.io(url, {","        on: {","            complete: function (id, e) {","                o.on.success(Y.JSON.parse(e.responseText));","            }","        }","    });","};","","","}, '@VERSION@', {\"requires\": [\"io-base\", \"json-parse\"]});"];
-_yuitest_coverage["build/yql-winjs/yql-winjs.js"].lines = {"1":0,"10":0,"11":0,"14":0};
-_yuitest_coverage["build/yql-winjs/yql-winjs.js"].functions = {"complete:13":0,"_send:10":0,"(anonymous 1):1":0};
-_yuitest_coverage["build/yql-winjs/yql-winjs.js"].coveredLines = 4;
-_yuitest_coverage["build/yql-winjs/yql-winjs.js"].coveredFunctions = 3;
+_yuitest_coverage["build/yql-winjs/yql-winjs.js"].code=["YUI.add('yql-winjs', function (Y, NAME) {","","/**","* WinJS plugin for YQL to use native XHR to make requests instead of JSONP.","* Not required by the user, it's conditionally loaded and should \"just work\".","* @module yql","* @submodule yql-winjs","*/","","//Over writes Y.YQLRequest._send to use IO instead of JSONP","Y.YQLRequest.prototype._send = function (url, o) {","    var req = new XMLHttpRequest(),","        timer;","","    req.open('GET', url, true);","    req.onreadystatechange = function () {","        if (req.readyState === 4) { //Complete","            //No status code check here, since the YQL service will return JSON","            clearTimeout(timer);","            //No need to \"call\" this, YQL handles the context","            o.on.success(JSON.parse(req.responseText));","        }","    };","    req.send();","    ","    //Simple timer to catch no connections","    timer = setTimeout(function() {","        req.abort();","        o.on.timeout('script timeout');","    }, 5000);","};","","","}, '@VERSION@');"];
+_yuitest_coverage["build/yql-winjs/yql-winjs.js"].lines = {"1":0,"11":0,"12":0,"15":0,"16":0,"17":0,"19":0,"21":0,"24":0,"27":0,"28":0,"29":0};
+_yuitest_coverage["build/yql-winjs/yql-winjs.js"].functions = {"onreadystatechange:16":0,"(anonymous 2):27":0,"_send:11":0,"(anonymous 1):1":0};
+_yuitest_coverage["build/yql-winjs/yql-winjs.js"].coveredLines = 12;
+_yuitest_coverage["build/yql-winjs/yql-winjs.js"].coveredFunctions = 4;
 _yuitest_coverline("build/yql-winjs/yql-winjs.js", 1);
 YUI.add('yql-winjs', function (Y, NAME) {
 
 /**
-* WinJS plugin for YQL to use XHR to make requests
+* WinJS plugin for YQL to use native XHR to make requests instead of JSONP.
+* Not required by the user, it's conditionally loaded and should "just work".
 * @module yql
 * @submodule yql-winjs
 */
 
 //Over writes Y.YQLRequest._send to use IO instead of JSONP
 _yuitest_coverfunc("build/yql-winjs/yql-winjs.js", "(anonymous 1)", 1);
-_yuitest_coverline("build/yql-winjs/yql-winjs.js", 10);
-Y.YQLRequest.prototype._send = function (url, o) {
-    _yuitest_coverfunc("build/yql-winjs/yql-winjs.js", "_send", 10);
 _yuitest_coverline("build/yql-winjs/yql-winjs.js", 11);
-Y.io(url, {
-        on: {
-            complete: function (id, e) {
-                _yuitest_coverfunc("build/yql-winjs/yql-winjs.js", "complete", 13);
-_yuitest_coverline("build/yql-winjs/yql-winjs.js", 14);
-o.on.success(Y.JSON.parse(e.responseText));
-            }
+Y.YQLRequest.prototype._send = function (url, o) {
+    _yuitest_coverfunc("build/yql-winjs/yql-winjs.js", "_send", 11);
+_yuitest_coverline("build/yql-winjs/yql-winjs.js", 12);
+var req = new XMLHttpRequest(),
+        timer;
+
+    _yuitest_coverline("build/yql-winjs/yql-winjs.js", 15);
+req.open('GET', url, true);
+    _yuitest_coverline("build/yql-winjs/yql-winjs.js", 16);
+req.onreadystatechange = function () {
+        _yuitest_coverfunc("build/yql-winjs/yql-winjs.js", "onreadystatechange", 16);
+_yuitest_coverline("build/yql-winjs/yql-winjs.js", 17);
+if (req.readyState === 4) { //Complete
+            //No status code check here, since the YQL service will return JSON
+            _yuitest_coverline("build/yql-winjs/yql-winjs.js", 19);
+clearTimeout(timer);
+            //No need to "call" this, YQL handles the context
+            _yuitest_coverline("build/yql-winjs/yql-winjs.js", 21);
+o.on.success(JSON.parse(req.responseText));
         }
-    });
+    };
+    _yuitest_coverline("build/yql-winjs/yql-winjs.js", 24);
+req.send();
+    
+    //Simple timer to catch no connections
+    _yuitest_coverline("build/yql-winjs/yql-winjs.js", 27);
+timer = setTimeout(function() {
+        _yuitest_coverfunc("build/yql-winjs/yql-winjs.js", "(anonymous 2)", 27);
+_yuitest_coverline("build/yql-winjs/yql-winjs.js", 28);
+req.abort();
+        _yuitest_coverline("build/yql-winjs/yql-winjs.js", 29);
+o.on.timeout('script timeout');
+    }, 5000);
 };
 
 
-}, '@VERSION@', {"requires": ["io-base", "json-parse"]});
+}, '@VERSION@');
