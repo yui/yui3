@@ -11,7 +11,7 @@
     * @submodule dd-gestures
     */
     Y.log('Drag gesture support loaded', 'info', 'drag-gestures');
-    
+
     Y.DD.Drag.START_EVENT = 'gesturemovestart';
 
     Y.DD.Drag.prototype._prep = function() {

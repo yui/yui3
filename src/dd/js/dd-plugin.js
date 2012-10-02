@@ -26,7 +26,7 @@
         EV_START = 'drag:start',
         EV_DRAG = 'drag:drag',
         EV_DRAG_END = 'drag:end';
-        
+
         /**
         * @property NAME
         * @description dd-plugin
@@ -42,9 +42,9 @@
         Drag.NS = "dd";
 
         Y.extend(Drag, Y.DD.Drag, {
-                
+
                 _widgetHandles: null,
-                
+
                 /**
                 * refers to a Y.Widget if its the host, otherwise = false.
                 *
@@ -53,7 +53,7 @@
                 */
                 _widget: undefined,
 
-                
+
                 /**
                 * refers to the [x,y] coordinate where the drag was stopped last
                 *
@@ -123,12 +123,12 @@
                         //if this thing is a widget, and it uses widgetposition...
                         if (this._usesWidgetPosition(this._widget)) {
                             Y.log('Attaching widget events', 'info', 'dd-plugin');
-                               
+
                                //set the x,y on the widget's ATTRS
                                this._widgetHandles.push(this.on(EV_DRAG, this._setWidgetCoords));
 
                                //store the new position that the widget ends up on
-                               this._widgetHandles.push(this.on(EV_DRAG_END, this._updateStopPosition)); 
+                               this._widgetHandles.push(this.on(EV_DRAG_END, this._updateStopPosition));
                         }
                 },
                 /**
@@ -138,15 +138,15 @@
                 * @protected
                 */
                 initializer: function(config) {
-                        
+
                         this._widgetHandles = [];
 
                         this._widget = config.widget;
 
                         this.on(EV_START, this._checkEvents); //Always run, don't check
-                        
+
                         this._attachWidgetListeners();
-                               
+
                 },
 
                 /**
