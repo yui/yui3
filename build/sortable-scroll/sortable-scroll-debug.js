@@ -11,7 +11,7 @@ YUI.add('sortable-scroll', function (Y, NAME) {
      * @class SortScroll
      * @extends Base
      * @constructor
-     * @namespace Plugin     
+     * @namespace Plugin
      */
     
     var SortScroll = function() {
