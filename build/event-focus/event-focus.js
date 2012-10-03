@@ -20,14 +20,14 @@ var Event    = Y.Event,
         // which throws an exception in Win8 packaged apps, due to additional security restrictions:
         // http://msdn.microsoft.com/en-us/library/windows/apps/hh465380.aspx#differences
 
-        var p = document.createElement("p"),
+        var p = Y.config.doc.createElement("p"),
             listener;
 
         p.setAttribute("onbeforeactivate", ";");
         listener = p.onbeforeactivate;
 
         // listener is a function in IE8+.
-        // listener is a string in IE6,7.
+        // listener is a string in IE6,7 (unfortunate, but that's not going to change. Otherwise we could have just checked for function).
         // listener is a function in IE10, in a Win8 App environment (no exception running the test).
 
         // listener is undefined in Webkit/Gecko.
