@@ -3326,7 +3326,7 @@ YUI.Env.parseUA = function(subUA) {
     var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
-                return (c++ == 1) ? '' : '.';
+                return (c++ === 1) ? '' : '.';
             }));
         },
 
@@ -3706,6 +3706,11 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
         }
+    }
+    
+    //Check for known properties to tell if touch/mspointer events are enabled on this device
+    if (Y.config.win && Y.config.win.navigator && !(o.chrome && o.chrome < 6)) {
+        o.touchEnabled = (("ontouchstart" in Y.config.win) || ("msPointerEnabled" in Y.config.win.navigator));
     }
 
     //It was a parsed UA, do not assign the global value.
