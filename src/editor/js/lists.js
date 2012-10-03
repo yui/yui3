@@ -1,13 +1,15 @@
 
     /**
-     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
+     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support.
+     * Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a>
+     * and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
      * @class Plugin.EditorLists
      * @constructor
      * @extends Base
      * @module editor
      * @submodule editor-lists
      */
-    
+
     var EditorLists = function() {
         EditorLists.superclass.constructor.apply(this, arguments);
     }, LI = 'li', OL = 'ol', UL = 'ul', HOST = 'host';
@@ -20,8 +22,8 @@
         * @param {Event} e The Event facade passed from the host.
         */
         _onNodeChange: function(e) {
-            var inst = this.get(HOST).getInstance(), sel, li, 
-            newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
+            var inst = this.get(HOST).getInstance(), li,
+                newList, sTab, par, moved = false, tag, focusEnd = false;
 
             if (e.changedType === 'tab') {
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
@@ -37,7 +39,7 @@
                         tag = OL;
                     }
                     Y.log('ShiftKey: ' + sTab, 'info', 'editorLists');
-                    
+
                     if (!li.test(LI)) {
                         li = li.ancestor(LI);
                     }

@@ -1,8 +1,8 @@
 {
     "sortable": {
         "requires": [
-            "dd-delegate", 
-            "dd-drop-plugin", 
+            "dd-delegate",
+            "dd-drop-plugin",
             "dd-proxy"
         ],
         "plugins": {

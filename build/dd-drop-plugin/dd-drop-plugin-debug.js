@@ -19,7 +19,7 @@ YUI.add('dd-drop-plugin', function (Y, NAME) {
             config.node = config.host;
             Drop.superclass.constructor.apply(this, arguments);
         };
-        
+
         /**
         * @property NAME
         * @description dd-drop-plugin
