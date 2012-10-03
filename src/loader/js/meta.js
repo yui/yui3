@@ -33,7 +33,7 @@ if (!YUI.Env[Y.version]) {
                               patterns: {} },
             groups = META.groups,
             yui2Update = function(tnt, yui2, config) {
-                    
+
                 var root = TNT + '.' +
                         (tnt || TNT_VERSION) + '/' +
                         (yui2 || YUI2_VERSION) + BUILD,
