@@ -9,7 +9,7 @@
      * @class SortScroll
      * @extends Base
      * @constructor
-     * @namespace Plugin     
+     * @namespace Plugin
      */
     
     var SortScroll = function() {
