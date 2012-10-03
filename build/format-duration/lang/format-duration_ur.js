@@ -1,0 +1,1 @@
+YUI.add("lang/format-duration_ur",function(e){e.Intl.add("format-duration","ur",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"d",days:"دن",hour:"h",hours:"گھنٹے",minute:"min",minutes:"منٹ",month:"m",months:"مہینے",second:"s",seconds:"سیکنڈ",year:"y",years:"سال"})},"@VERSION@");

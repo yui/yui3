@@ -1,0 +1,1 @@
+YUI.add("lang/format-duration_mk",function(e){e.Intl.add("format-duration","mk",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"ден",days:"денови",hour:"час",hours:"часови",minute:"минута",minutes:"минути",month:"месец",months:"месеци",second:"секунда",seconds:"секунди",year:"година",years:"години"})},"@VERSION@");

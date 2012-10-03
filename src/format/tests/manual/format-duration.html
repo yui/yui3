@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>DurationFormat Test</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+        <script src="../../../../build/yui/yui.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            button {
+                clear: left;
+                float: left;
+                margin: 20px;                
+            }
+            label {
+                clear: both;
+                float: left;
+                width: 200px;
+                margin-top: 10px;
+            }
+            input, select {
+                margin-top: 10px;
+            }
+            input[type="text"], select {
+                float:left;
+                width: 200px;
+            }
+            .options {
+                margin: 20px;
+            }
+            #demo-duration-format {
+                border-color: black;
+                border-style: solid;
+                border-width: 1px;
+                width: 500px;
+                float: left;
+                margin: 0;
+                height: 24em;
+                clear: left;
+            }
+            h3 {
+                margin-left: 10px;
+            }
+            .demo-description {
+                margin-left: 20px;
+                font-style: italic;
+            }
+            .demo-description span {
+                margin-left: 30px;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="demo-duration-format">
+            <h3>DurationFormat Test</h3>
+            <div class="demo-description">
+                Duration can be represnted in 3 ways:<br/>
+                <span>timeValueInSeconds</span> <br/>
+                <span>XMLDurationFormat (PnYnMnDTnHnMnS)</span> <br/>
+                <span>hours, minutes, seconds</span> <br/>
+            </div>
+            <div class="options">
+                <label for="duration-value">Duration:</label>
+                <input type="text" id="duration-value"/>
+
+                <label for="duration-style">Style:</label>
+                <select id="duration-style">
+                    <option value="HMS_LONG">HMS_LONG</option>
+                    <option value="HMS_SHORT">HMS_SHORT</option>
+                </select>
+
+                <label for="duration-locale">Locale:</label>
+                <input type="text" id="duration-locale" value="en"/>
+
+                <label for="duration-result">Result:</label>
+                <input type="text" id="duration-result" readonly/>
+
+            </div>
+            <button id="duration-submit">Done</button>
+        </div>
+
+        <script>
+            YUI().use("node", function (Y) {
+
+                //DurationFormat Demo
+                var duration = Y.one("#duration-value");
+                var durationStyle = Y.one("#duration-style");
+                var durationLocale = Y.one("#duration-locale");
+                var durationResult = Y.one("#duration-result");
+                var durationSubmit = Y.one("#duration-submit");
+                
+                durationSubmit.on("click", function(e) {
+                    YUI({lang: durationLocale.get("value"), filter: "raw" }).use("format-duration",/* "format-numbers",*/ function(Y) {
+                        var values = duration.get("value").split(",");
+                        var durationFormat = new Y.DurationFormat(Y.DurationFormat.STYLES[durationStyle.get("value")]);
+                        var result;
+                        if(values.length == 1) {
+                            result = durationFormat.format(values[0]);
+                            durationResult.set("value", result);
+                        } else {
+                            result = durationFormat.format(values[0], values[1], values[2]);
+                            durationResult.set("value", result);
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>YUI Format Library Explorer</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <script src="../../../../build/yui/yui.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            table {
+                border: outset 1px;
+                border-spacing: 0;
+            }
+            table td, table th {
+                border: outset 1px;
+                padding: 2px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Yahoo! Format Library Explorer</h1>
+
+
+        <p>Choose your language: <span id="languagePicker"></span></p>
+
+        <script type="text/javascript">
+            YUI({
+                modules: {
+                    languagePicker: {
+                        fullpath: './assets/languagePicker.js',
+                        requires: ["node"]
+                    }
+                }
+            }).use("intl", "querystring", "languagePicker", function (Y) {
+
+                var locale = Y.QueryString.parse(window.location.search.substr(1)).locale;
+                if(!locale) { locale = "en-US"; }
+                var locales = Y.Intl.getAvailableLangs("format-date");
+                (new Y.LanguagePicker()).install("languagePicker", locales, locale, window.location.pathname);
+            });
+        </script>
+
+        <h2 id="header-absolutes">Absolute Date and Time Formats</h2>
+
+        <h3 id="header-absolute-date-formats">Date Formats</h3>
+
+        <table id="table-absolute-date-formats">
+            <tr>
+                <th>Format</th>
+                <th>Sample</th>
+            </tr>
+            <tr>
+                <td>WYMD long</td>
+                <td dir='ltr' ></td>
+            </tr>
+            <tr>
+                <td>WYMD abbreviated</td>
+                <td dir='ltr' ></td>
+            </tr>
+            <tr>
+                <td>WYMD short</td>
+                <td dir='ltr' ></td>
+            </tr>
+            <tr>
+                <td>WMD long</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>WMD abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>WMD short</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>YMD long</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>YMD abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>YMD short</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>YMD full</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>YM long</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>MD long</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>MD abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>MD short</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>W long</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>W abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>M long</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>M abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <h3 id="header-absolute-date-formats-with-relative">Date Formats With Relative Dates</h3>
+
+        <table id="table-absolute-date-formats-with-relative">
+            <tr>
+                <th>When</th>
+                <th>Sample</th>
+                <th colspan='3'>Additional Time Zones</th>
+            </tr>
+            <tr>
+                <td>in 3 days</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>in 2 days</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>in 1 day</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>today</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>8 hours ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>16 hours ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>1 day ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2 days ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3 days ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>4 days ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5 days ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>6 days ago</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <h3 id="header-time-formats">Time Formats</h3>
+
+        <table id="table-time-formats">
+            <tr>
+                <th>Format</th>
+                <th>Sample</th>
+                <th colspan='3'>Additional Time Zones</th>
+            </tr>
+            <tr>
+                <td>HM abbreviated</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>HM short</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>H abbreviated</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <h3 id="header-timezone-formats">Time Zone Formats</h3>
+
+        <table id="table-timezone-formats">
+            <tr>
+                <th>Format</th>
+                <th>Sample</th>
+                <th colspan='3'>Additional Time Zones</th>
+            </tr>
+            <tr>
+                <td>Z abbreviated</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>Z short</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <h3 id="header-absolute-combinations">Combinations</h3>
+
+        <table id="table-absolute-combinations">
+            <tr>
+                <th>Format</th>
+                <th>Sample</th>
+            </tr>
+            <tr>
+                <td>WYMDHMZ abbreviated/abbreviated/short</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>WYMDHM abbreviated/abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>WMDHMZ abbreviated/abbreviated/short</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>WMDHM abbreviated/abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>MDHM abbreviated/abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>HMZ abbreviated/abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>MDZ abbreviated/abbreviated</td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <h2 id="header-relatives">Relative Time Formats</h2>
+
+        <table id="table-relatives">
+            <tr>
+                <th>Seconds</th>
+                <th>One Unit Long</th>
+                <th>One or Two Units Long</th>
+                <th>One Unit Abbreviated</th>
+                <th>One or Two Units Abbreviated</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>119</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>120</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>121</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>299</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>300</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>301</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3599</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3600</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3601</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>7200</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>7260</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>10799</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>10800</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>10801</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>14400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>86399</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>86400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>86401</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>90000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>93600</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>259199</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>259200</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>259201</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>262800</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2591999</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2592000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2592001</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2678400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2764800</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5184000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5184001</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5270400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>31103999</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>31104000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>31104001</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>33696000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>62208000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <h2 id="header-duration-formats">Duration Formats</h2>
+
+        <table id="table-duration-formats">
+            <tr>
+                <th>Seconds</th>
+                <th>HMS Long</th>
+                <th>HMS Short</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>119</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>120</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>121</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>299</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>300</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>301</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3599</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3600</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>3601</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>7200</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>7260</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>10799</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>10800</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>10801</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>14400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>86399</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>86400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>86401</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>90000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>93600</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>259199</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>259200</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>259201</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>262800</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2592000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2592001</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2678400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>2764800</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5184000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5184001</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>5270400</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>31104000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>31104001</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>33696000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+            <tr>
+                <td>62208000</td>
+                <td dir='ltr'></td>
+                <td dir='ltr'></td>
+            </tr>
+        </table>
+
+        <script type="text/javascript">
+            YUI().use("querystring", function(Y) {
+                var locale = Y.QueryString.parse(window.location.search.substr(1)).locale;
+                if(!locale) { locale = "en-US"; }
+                YUI( { lang: locale } ).use("format", "timezone", "node", function (Y) {
+                    var timeZones = [
+                        "Etc/GMT",
+                        "Asia/Kolkata",
+                        "America/Los_Angeles",                    
+                        "Asia/Shanghai"
+                    ];
+                
+                    if(String.prototype.trim == null) {
+                        String.prototype.trim = function() {
+                            return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                        };
+                    }
+                
+                    //Update the current row with data. Used for tables showing data for all 4 timezones
+                    function updateRow(date, row, dateFormat, timeFormat, timeZoneFormat) {
+                        var absoluteDateFormat = new Y.DateFormat(timeZones[0], dateFormat, timeFormat, timeZoneFormat);
+                        row.one("td + td").setContent(absoluteDateFormat.format(date));
+                            
+                        absoluteDateFormat = new Y.DateFormat(timeZones[1], dateFormat, timeFormat, timeZoneFormat);
+                        row.one("td + td + td").setContent(absoluteDateFormat.format(date));
+                            
+                        absoluteDateFormat = new Y.DateFormat(timeZones[2], dateFormat, timeFormat, timeZoneFormat);
+                        row.one("td + td + td + td").setContent(absoluteDateFormat.format(date));
+                            
+                        absoluteDateFormat = new Y.DateFormat(timeZones[3], dateFormat, timeFormat, timeZoneFormat);
+                        row.one("td + td + td + td + td").setContent(absoluteDateFormat.format(date));
+                    }
+                
+                    //Load data in all tables for the currently selected locale
+                    function loadData() {
+                        var date = new Date();
+                
+                        //Absolute Date formats
+                        var table = Y.one("#table-absolute-date-formats");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null) return;   //Skip header
+                            var style = row.one("td").getContent(); 
+                            style = style.replace(" ", "_").toUpperCase();
+                       
+                            var absoluteDateFormat = new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS[style], 0, 0);
+                            row.one("td + td").setContent(absoluteDateFormat.format(date));
+                        });
+                    
+                        //Absolute Date format with Relative
+                        table = Y.one("#table-absolute-date-formats-with-relative");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null)    return; //Skip header 
+                            var value = row.one("td").getContent();
+                            var style = Y.DateFormat.DATE_FORMATS.WMD_ABBREVIATED | Y.DateFormat.DATE_FORMATS.RELATIVE_DATE;
+                            //in d day(s)
+                            var m = value.match(/in (\d+) day/);
+                            if(m) {
+                                var testDate = new Date(date.getTime() + m[1] * 24 * 60 * 60 * 1000);
+                                updateRow(testDate, row, style, 0, 0);
+                                return;
+                            }
+                        
+                            //today
+                            if(value.match(/today/)) {
+                                updateRow(date, row, style, 0, 0);
+                                return;
+                            }
+                        
+                            //h hours ago
+                            m = value.match(/(\d+) hour(s)? ago/);
+                            if(m) {
+                                var testDate = new Date(date - m[1] * 60 * 60 * 1000);
+                                updateRow(testDate, row, style, 0, 0);
+                                return;
+                            }
+                        
+                            //d days ago
+                            m = value.match(/(\d+) day(s)? ago/);
+                            if(m) {
+                                var testDate = new Date(date - m[1] * 24 * 60 * 60 * 1000);
+                                updateRow(testDate, row, style, 0, 0);
+                                return;
+                            }
+                        });
+                    
+                        //Time Formats
+                        table = Y.one("#table-time-formats");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null) return;   //Skip header
+                            var style = row.one("td").getContent(); 
+                            style = style.replace(" ", "_").toUpperCase();
+                       
+                            updateRow(date, row, 0, Y.DateFormat.TIME_FORMATS[style], 0);
+                        });
+                    
+                        //TimeZone Formats
+                        table = Y.one("#table-timezone-formats");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null) return;   //Skip header
+                            var style = row.one("td").getContent(); 
+                            style = style.replace(" ", "_").toUpperCase();
+                       
+                            updateRow(date, row, 0, 0, Y.DateFormat.TIMEZONE_FORMATS[style]);
+                        });
+                    
+                        //Combinations
+                        table = Y.one("#table-absolute-combinations");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null) return;   //Skip header
+                            var style = row.one("td").getContent().trim();
+                            var result = "";
+                        
+                            if(style == "WYMDHMZ abbreviated/abbreviated/short") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WYMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_SHORT)).format(date);
+                            } else if(style == "WYMDHM abbreviated/abbreviated") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WYMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE)).format(date);
+                            } else if(style == "WMDHMZ abbreviated/abbreviated/short") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_SHORT)).format(date);
+                            } else if(style == "WMDHM abbreviated/abbreviated") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.WMD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE)).format(date);
+                            } else if(style == "MDHM abbreviated/abbreviated") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.MD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.NONE)).format(date);
+                            } else if(style == "HMZ abbreviated/abbreviated") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.NONE, Y.DateFormat.TIME_FORMATS.HM_ABBREVIATED, Y.DateFormat.TIMEZONE_FORMATS.Z_ABBREVIATED)).format(date);
+                            } else if(style == "MDZ abbreviated/abbreviated") {
+                                result = (new Y.DateFormat(timeZones[0], Y.DateFormat.DATE_FORMATS.MD_ABBREVIATED, Y.DateFormat.TIME_FORMATS.NONE, Y.DateFormat.TIMEZONE_FORMATS.Z_ABBREVIATED)).format(date);
+                            }
+                       
+                            row.one("td + td").setContent(result);
+                        });
+                    
+                        //Relative Time
+                        table = Y.one("#table-relatives");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null) return;   //Skip header
+                            var cells = row.all("td").getDOMNodes();
+                            var relativeTo = date.getTime() * 1000;
+                            var timeValue = relativeTo - parseInt(cells[0].innerHTML);
+                        
+                            var styles = [
+                                Y.RelativeTimeFormat.STYLES.ONE_UNIT_LONG,
+                                Y.RelativeTimeFormat.STYLES.ONE_OR_TWO_UNITS_LONG,
+                                Y.RelativeTimeFormat.STYLES.ONE_UNIT_ABBREVIATED,
+                                Y.RelativeTimeFormat.STYLES.ONE_OR_TWO_UNITS_ABBREVIATED
+                            ];
+                        
+                            for(var i=1; i<cells.length; i++) {
+                                var formatter = new Y.RelativeTimeFormat(styles[i-1]);
+                                cells[i].innerHTML = formatter.format(timeValue, relativeTo);
+                            }
+                        
+                        });
+                    
+                        table = Y.one("#table-duration-formats");
+                        table.all("tr").each(function(row) {
+                            if(row.one("td") == null) return;   //Skip header
+                            var timeValue = parseInt(row.one("td").getContent());
+                        
+                            var formatter = new Y.DurationFormat(Y.DurationFormat.STYLES.HMS_LONG);
+                            row.one("td + td").setContent(formatter.format(timeValue));
+                        
+                            formatter = new Y.DurationFormat(Y.DurationFormat.STYLES.HMS_SHORT);
+                            row.one("td + td + td").setContent(formatter.format(timeValue));
+                        });
+                    }
+                
+                    loadData();
+                });
+
+            });
+
+        </script>
+    </body>
+</html>

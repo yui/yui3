@@ -1,0 +1,13 @@
+{
+    "name": "timezone",
+    "builds": {
+        "timezone": {
+            "jsfiles": [
+		"license.js",
+		"timezoneData.js",
+		"timezoneLinks.js",
+                "timezone.js"
+            ]
+        }
+     }
+}

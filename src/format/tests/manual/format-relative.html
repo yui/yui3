@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>RelativeTimeFormat Test</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+	<script src="../../../../build/yui/yui.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            button {
+                clear: left;
+                float: left;
+                margin: 20px;                
+            }
+            label {
+                clear: both;
+                float: left;
+                width: 200px;
+                margin-top: 10px;
+            }
+            input, select {
+                margin-top: 10px;
+            }
+            input[type="text"], select {
+                float:left;
+                width: 200px;
+            }
+            .options {
+                margin: 20px;
+            }
+            #demo-relative-time {
+                border-color: black;
+                border-style: solid;
+                border-width: 1px;
+                width: 500px;
+                float: left;
+                margin: 0;
+                height: 24em;
+            }
+            h3 {
+                margin-left: 10px;
+            }
+            .demo-description {
+                margin-left: 20px;
+                font-style: italic;
+            }
+            .demo-description span {
+                margin-left: 30px;
+            }
+        </style>
+
+    </head>
+    <body>
+	<div id="demo-relative-time">
+            <h3>RelativeTimeFormat Test</h3>
+            <div class="demo-description">
+                Note: RelativeTo time if left empty defaults to current time
+            </div>
+            <div class="options">
+                <label for="relative-time-in-date">Date:</label>
+                <input type="text" id="relative-time-in-date"/>
+
+                <label for="relative-time-relative-to">Relative To:</label>
+                <input type="text" id="relative-time-relative-to"/>
+
+                <label for="relative-time-style">Style:</label>
+                <select id="relative-time-style">
+                    <option value="ONE_OR_TWO_UNITS_ABBREVIATED">ONE_OR_TWO_UNITS_ABBREVIATED</option>
+                    <option value="ONE_OR_TWO_UNITS_LONG">ONE_OR_TWO_UNITS_LONG</option>
+                    <option value="ONE_UNIT_ABBREVIATED">ONE_UNIT_ABBREVIATED</option>
+                    <option value="ONE_UNIT_LONG">ONE_UNIT_LONG</option>
+                </select>
+
+                <label for="relative-time-locale">Locale:</label>
+                <input type="text" id="relative-time-locale" value="en"/>
+
+                <label for="relative-time-result">Result:</label>
+                <input type="text" id="relative-time-result" readonly/>
+
+            </div>
+            <button id="relative-time-submit">Done</button>
+        </div>
+
+        <script>
+            YUI().use("node", function (Y) {
+                //RelativeTimeFormat Demo
+                var relativeTimeInDate = Y.one("#relative-time-in-date");
+                var relativeToDate = Y.one("#relative-time-relative-to");
+                var relativeTimeStyle = Y.one("#relative-time-style");
+                var relativeTimeLocale = Y.one("#relative-time-locale");
+                var relativeTimeSubmit = Y.one("#relative-time-submit");
+                var relativeTimeResult = Y.one("#relative-time-result");
+                
+                if(relativeTimeInDate.get("value") == "") {
+                    relativeTimeInDate.set("value", new Date());
+                }
+                relativeTimeSubmit.on("click", function(e) {
+                    YUI({lang: relativeTimeLocale.get("value"), filter: "raw"}).use("format-relative", function(Y) {
+                        var rtFormat = new Y.RelativeTimeFormat(Y.RelativeTimeFormat.STYLES[relativeTimeStyle.get("value")]);
+                        var inDate = new Date(relativeTimeInDate.get("value"));
+                        var relativeTo = relativeToDate.get("value");
+
+                        var result;
+                        if(relativeTo != "") {
+                            result = rtFormat.format(inDate.getTime()/1000, (new Date(relativeTo)).getTime()/1000);
+                        } else {
+                            result = rtFormat.format(inDate.getTime()/1000);
+                        }
+
+                        relativeTimeResult.set("value", result);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

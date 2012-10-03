@@ -1854,6 +1854,70 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("file-html5")) > -1, "Module (file-html5) not found in sorted array");
         },
+     "Testing format": function(data) {
+            var loader = new Y.Loader({
+                require: ["format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("format-date")) > -1, "Module (format-date) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("format-relative")) > -1, "Module (format-relative) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("format-duration")) > -1, "Module (format-duration) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("format-numbers")) > -1, "Module (format-numbers) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
+        },
+     "Testing format-date": function(data) {
+            var loader = new Y.Loader({
+                require: ["format-date"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("format-date")) > -1, "Module (format-date) not found in sorted array");
+        },
+     "Testing format-duration": function(data) {
+            var loader = new Y.Loader({
+                require: ["format-duration"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("format-duration")) > -1, "Module (format-duration) not found in sorted array");
+        },
+     "Testing format-message": function(data) {
+            var loader = new Y.Loader({
+                require: ["format-message"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("format-message")) > -1, "Module (format-message) not found in sorted array");
+        },
+     "Testing format-numbers": function(data) {
+            var loader = new Y.Loader({
+                require: ["format-numbers"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("format-numbers")) > -1, "Module (format-numbers) not found in sorted array");
+        },
+     "Testing format-relative": function(data) {
+            var loader = new Y.Loader({
+                require: ["format-relative"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("format-relative")) > -1, "Module (format-relative) not found in sorted array");
+        },
      "Testing frame": function(data) {
             var loader = new Y.Loader({
                 require: ["frame"],
@@ -3007,6 +3071,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
+        },
+     "Testing timezone": function(data) {
+            var loader = new Y.Loader({
+                require: ["timezone"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("timezone")) > -1, "Module (timezone) not found in sorted array");
         },
      "Testing transition": function(data) {
             var loader = new Y.Loader({

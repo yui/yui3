@@ -1,0 +1,1 @@
+YUI.add("lang/format-duration_ta",function(e){e.Intl.add("format-duration","ta",{HMS_long:"{0} {1} {2}",HMS_short:"{0}:{1}:{2}",day:"நாள்",days:"நாட்கள்",hour:"மணிநேரம்",hours:"மணிநேரம்",minute:"நிமிடம்",minutes:"நிமிடங்கள்",month:"மாதம்",months:"மாதங்கள்",second:"வினாடி",seconds:"வினாடிகள்",year:"வருடம்",years:"வருடங்கள்"})},"@VERSION@");
