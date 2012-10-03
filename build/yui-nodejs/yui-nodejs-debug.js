@@ -4201,10 +4201,8 @@ add('load', '1', {
 // dd-gestures
 add('load', '2', {
     "name": "dd-gestures",
-    "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-},
-    "trigger": "dd-drag"
+    "trigger": "dd-drag",
+    "ua": "touchEnabled"
 });
 // dom-style-ie
 add('load', '3', {
@@ -8665,10 +8663,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "dd-gestures": {
         "condition": {
             "name": "dd-gestures",
-            "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-},
-            "trigger": "dd-drag"
+            "trigger": "dd-drag",
+            "ua": "touchEnabled"
         },
         "requires": [
             "dd-drag",
