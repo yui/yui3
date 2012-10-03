@@ -3536,7 +3536,14 @@ YUI.Env.parseUA = function(subUA) {
         * @type Boolean
         * @static
         */
-        winjs: !!((typeof Windows !== "undefined") && Windows.System)
+        winjs: !!((typeof Windows !== "undefined") && Windows.System),
+        /**
+        * Are touch/msPointer events available on this device
+        * @property touchEnabled
+        * @type Boolean
+        * @static
+        */
+        touchEnabled: false
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -3709,14 +3716,14 @@ YUI.Env.parseUA = function(subUA) {
     }
     
     //Check for known properties to tell if touch/mspointer events are enabled on this device
-    if (Y.config.win && Y.config.win.navigator && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in Y.config.win) || ("msPointerEnabled" in Y.config.win.navigator));
+    if (win && nav && !(o.chrome && o.chrome < 6)) {
+        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
     }
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
 
-        if (typeof process == 'object') {
+        if (typeof process === 'object') {
 
             if (process.versions && process.versions.node) {
                 //NodeJS
@@ -5725,7 +5732,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.26-20-36',
+            GALLERY_VERSION = 'gallery-2012.10.03-20-02',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
