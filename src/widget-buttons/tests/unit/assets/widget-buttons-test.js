@@ -24,7 +24,10 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         Y.one('#test').empty();
     },
 
@@ -188,7 +191,10 @@ suite.add(new Y.Test.Case({
     name: 'Attributes and Properties',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         Y.one('#test').empty();
     },
 
@@ -269,8 +275,8 @@ suite.add(new Y.Test.Case({
     },
 
     '`buttons` should be able to be specified as an Array of Y.Nodes from another YUI instance': function () {
-        var buttons, 
-            footerButtons, 
+        var buttons,
+            footerButtons,
             test = this,
 
             resumeTest = function() {
@@ -327,6 +333,21 @@ suite.add(new Y.Test.Case({
         Assert.areSame(foo, buttons.header[0], '`foo` was not the first header button.');
         Assert.areSame(bar, buttons.body[0], '`bar` was not the first body button.');
         Assert.areSame(baz, buttons.footer[0], '`baz` was no the first footer button.');
+    },
+
+    '`buttons` should gracefully handle an object with non-array properties': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [{label: 'Foo'}],
+                footer: {label: 'Bar'}
+            },
+
+            render: '#test'
+        });
+
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Did not have 1 header button.');
+        Assert.isUndefined(this.widget.get('buttons.footer'), 'Footer buttons was not `undefined`.');
+        Assert.areSame(1, Y.all('#test button').size(), 'Widget should only have 1 button.');
     },
 
     '`buttons` should be settable to a new value': function () {
@@ -516,6 +537,19 @@ suite.add(new Y.Test.Case({
         Assert.areSame(this.widget.getButton('zee'), this.widget.get('defaultButton'), '`zee` is not the `defaultButton`.');
     },
 
+    'A button should be created using the configured `template`': function () {
+        this.widget = new TestWidget({
+            buttons: [
+                {name: 'a', template: '<a href="#">Anchor</a>'},
+                {name: 'input', template: '<input type="button" value="Input" />'}
+            ]
+        });
+
+        Assert.areSame(2, this.widget.get('buttons.footer').length, 'Widget did not have 2 footer buttons.');
+        Assert.areSame('A', this.widget.getButton('a').get('tagName'), 'Button is not an <a>');
+        Assert.areSame('INPUT', this.widget.getButton('input').get('tagName'), 'Button is not an <input>');
+    },
+
     '`defaultButton` should be read-only': function () {
         var called = 0;
 
@@ -542,21 +576,26 @@ suite.add(new Y.Test.Case({
         var called = 0;
 
         this.widget = new TestWidget({
-            after: {
-                defaultButtonChange: function (e) {
-                    called += 1;
+            buttons: [
+                {
+                    name     : 'foo',
+                    isDefault: true
                 }
-            }
-        });
-
-        Assert.areSame(null, this.widget.get('defaultButton'), '`defaultButton` was not null.');
-
-        this.widget.addButton({
-            name     : 'foo',
-            isDefault: true
+            ]
         });
 
         Assert.areSame(this.widget.getButton('foo'), this.widget.get('defaultButton'), '`foo` is not the `defaultButton`.');
+
+        this.widget.after('defaultButtonChange', function (e) {
+            called += 1;
+        });
+
+        this.widget.addButton({
+            name     : 'bar',
+            isDefault: true
+        });
+
+        Assert.areSame(this.widget.getButton('bar'), this.widget.get('defaultButton'), '`bar` is not the `defaultButton`.');
         Assert.areSame(1, called, '`defaultButtonChange` was not called.');
     },
 
@@ -615,7 +654,10 @@ suite.add(new Y.Test.Case({
     name: 'Methods',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         Y.one('#test').empty();
     },
 
@@ -757,6 +799,21 @@ suite.add(new Y.Test.Case({
         Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'First header button was not "Bar".');
     },
 
+    '`addButton()` should accept a node as the button to add': function () {
+        this.widget = new TestWidget();
+
+        this.widget.addButton(Y.Node.create('<button data-name="foo">Foo</button>'));
+
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Footer did not have the added button.');
+        Assert.areSame('Foo', this.widget.get('buttons.footer')[0].get('text'), 'Footer button was not "Foo".');
+    },
+
+    '`getButton() should return `undefined` when no arguments are passed': function () {
+        this.widget = new TestWidget({});
+
+        Assert.isUndefined(this.widget.getButton(), '`undefined` was not returned.');
+    },
+
     '`getButton()` should return a button by name': function () {
         var button;
 
@@ -827,8 +884,14 @@ suite.add(new Y.Test.Case({
     '`removeButton()` should remove a button by name for a section': function () {
         this.widget = new TestWidget({
             buttons: {
-                header: [{name: 'foo', value: 'Foo1'}],
-                footer: [{name: 'foo', value: 'Foo2'}]
+                header: [
+                    {name: 'foo', value: 'Foo1'}
+                ],
+
+                footer: [
+                    {name: 'foo', value: 'Foo2'},
+                    {name: 'foo', value: 'Foo3'}
+                ]
             }
         });
 
@@ -840,15 +903,15 @@ suite.add(new Y.Test.Case({
         Assert.isUndefined(this.widget.get('buttons.header'), 'Header buttons were not empty.');
 
         this.widget.removeButton('foo');
-        Assert.isUndefined(this.widget.get('buttons.footer'), 'Footer buttons were not empty.');
+        Assert.areSame(1, this.widget.get('buttons.footer').length, 'Footer does not have 1 button.');
     },
 
     '`removeButton()` should remove a button by `index` and default to the footer section': function () {
         this.widget = new TestWidget({
             buttons: {
                 footer: [
-                    {label: 'Foo'},
-                    {label: 'Bar'}
+                    {name: 'foo', label: 'Foo'},
+                    {name: 'foo', label: 'Bar'}
                 ]
             }
         });
@@ -877,6 +940,26 @@ suite.add(new Y.Test.Case({
 
         Assert.areSame(1, this.widget.get('buttons.header').length, 'Header did not have only 1 buttons.');
         Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'The only header button was not "Bar".');
+    },
+
+    '`removeButton() should always return `this`': function () {
+        this.widget = new TestWidget({
+            buttons: {
+                header: [
+                    {label: 'Foo'},
+                    {label: 'Bar'}
+                ]
+            }
+        });
+
+        Assert.areSame(2, this.widget.get('buttons.header').length, 'Header did not have only 2 button.');
+
+        Assert.areSame(this.widget, this.widget.removeButton(0, 'header'), '`this` was not returned.');
+
+        Assert.areSame(1, this.widget.get('buttons.header').length, 'Header did not have only 1 buttons.');
+        Assert.areSame('Bar', this.widget.get('buttons.header')[0].get('text'), 'The only header button was not "Bar".');
+
+        Assert.areSame(this.widget, this.widget.removeButton(), '`this` was not returned when called with no args.');
     }
 }));
 
@@ -891,7 +974,10 @@ suite.add(new Y.Test.Case({
     },
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         Y.one('#test').empty();
     },
 
@@ -1041,7 +1127,10 @@ suite.add(new Y.Test.Case({
     name: 'Events',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         Y.one('#test').empty();
     },
 
@@ -1115,10 +1204,12 @@ suite.add(new Y.Test.Case({
             button;
 
         this.widget = new TestWidget({
-            render : '#test',
             buttons: {
                 footer: [{name: 'foo', value: 'Foo'}]
-            }
+            },
+
+            footerContent: '<p>bla</p>',
+            render       : '#test'
         });
 
         this.widget.after('buttonsChange', function (e) {
