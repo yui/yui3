@@ -18,20 +18,26 @@ var Event    = Y.Event,
         // which throws an exception in Win8 packaged apps, due to additional security restrictions:
         // http://msdn.microsoft.com/en-us/library/windows/apps/hh465380.aspx#differences
 
-        var p = document.createElement("p"),
-            listener;
+        var supported = false,
+            doc = Y.config.doc,
+            p;
 
-        p.setAttribute("onbeforeactivate", ";");
-        listener = p.onbeforeactivate;
+        if (doc) {
 
-        // listener is a function in IE8+.
-        // listener is a string in IE6,7.
-        // listener is a function in IE10, in a Win8 App environment (no exception running the test).
+            p = doc.createElement("p");
+            p.setAttribute("onbeforeactivate", ";");
 
-        // listener is undefined in Webkit/Gecko.
-        // listener is a function in Webkit/Gecko if it's a supported event (e.g. onclick).
+            // onbeforeactivate is a function in IE8+.
+            // onbeforeactivate is a string in IE6,7 (unfortunate, otherwise we could have just checked for function below).
+            // onbeforeactivate is a function in IE10, in a Win8 App environment (no exception running the test).
 
-        return (listener !== undefined);
+            // onbeforeactivate is undefined in Webkit/Gecko.
+            // onbeforeactivate is a function in Webkit/Gecko if it's a supported event (e.g. onclick).
+
+            supported = (p.onbeforeactivate !== undefined);
+        }
+
+        return supported;
     }());
 
 function define(type, proxy, directEvent) {
