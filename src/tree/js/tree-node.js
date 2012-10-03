@@ -57,6 +57,12 @@ function TreeNode(tree, config) {
     } else if (this.children.length) {
         this.canHaveChildren = true;
     }
+
+    // If this node has children, loop through them and ensure their parent
+    // references are all set to this node.
+    for (var i = 0, len = this.children.length; i < len; i++) {
+        this.children[i].parent = this;
+    }
 }
 
 TreeNode.prototype = {
