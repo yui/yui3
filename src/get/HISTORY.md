@@ -11,7 +11,11 @@ Get Utility Change History
   would terminate early (call onSuccess before all scripts were done), because the _waiting
   count would only reflect the number of scripts added to the DOM, when the loop was
   interrupted. Changed the logic so that we only finish a transaction when the expected 
-  number of requests are accounted for.
+  number of requests are accounted for which seems reasonable in general.
+
+  Also wrapped the internal onLoad/onError callbacks in a setTimeout for IE10, so we're 
+  re-introducing asynchronicty for external onSuccess, etc. app code. We can take this out 
+  when/if the bug below gets fixed. 
 
   http://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
 
