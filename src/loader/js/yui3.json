@@ -977,8 +977,8 @@
     "dd-gestures": {
         "condition": {
             "name": "dd-gestures",
-            "test": "dd-gestures-test.js",
-            "trigger": "dd-drag"
+            "trigger": "dd-drag",
+            "ua": "touchEnabled"
         },
         "requires": [
             "dd-drag",

@@ -5,7 +5,7 @@
             "dd-gestures": {
                 "condition": {
                     "trigger": "dd-drag",
-                    "test": "dd-gestures-test.js"
+                    "ua": "touchEnabled"
                 },
                 "requires": [
                     "dd-drag",

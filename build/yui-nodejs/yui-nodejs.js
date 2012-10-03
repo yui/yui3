@@ -3326,7 +3326,7 @@ YUI.Env.parseUA = function(subUA) {
     var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
-                return (c++ == 1) ? '' : '.';
+                return (c++ === 1) ? '' : '.';
             }));
         },
 
@@ -3706,6 +3706,11 @@ YUI.Env.parseUA = function(subUA) {
                 }
             }
         }
+    }
+    
+    //Check for known properties to tell if touch/mspointer events are enabled on this device
+    if (Y.config.win && Y.config.win.navigator && !(o.chrome && o.chrome < 6)) {
+        o.touchEnabled = (("ontouchstart" in Y.config.win) || ("msPointerEnabled" in Y.config.win.navigator));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -4166,10 +4171,8 @@ add('load', '1', {
 // dd-gestures
 add('load', '2', {
     "name": "dd-gestures",
-    "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-},
-    "trigger": "dd-drag"
+    "trigger": "dd-drag",
+    "ua": "touchEnabled"
 });
 // dom-style-ie
 add('load', '3', {
@@ -8586,10 +8589,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "dd-gestures": {
         "condition": {
             "name": "dd-gestures",
-            "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-},
-            "trigger": "dd-drag"
+            "trigger": "dd-drag",
+            "ua": "touchEnabled"
         },
         "requires": [
             "dd-drag",
