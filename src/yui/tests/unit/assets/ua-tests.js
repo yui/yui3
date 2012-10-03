@@ -22,6 +22,30 @@ YUI.add('ua-tests', function(Y) {
     }));
 
     suite.add(new Y.Test.Case({
+        name: 'Touch Enabled Tests',
+        _should: {
+            ignore: {
+                'test: ie10 Windows touchEnabled': !Y.UA.ie,
+                'test: iOS touchEnabled': !Y.UA.ios
+            }
+        },
+        'test: ie10 Windows touchEnabled': function() {
+            if ('msPointerEnabled' in Y.config.win.navigator) {
+                Assert.isTrue(Y.UA.touchEnabled);
+            } else {
+                Assert.isFalse(Y.UA.touchEnabled);
+            }
+        },
+        'test: iOS touchEnabled': function() {
+            if ('ontouchstart' in Y.config.win) {
+                Assert.isTrue(Y.UA.touchEnabled);
+            } else {
+                Assert.isFalse(Y.UA.touchEnabled);
+            }
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
         name: 'IE 10/Windows 8 App',
         _should: {
             ignore: {
