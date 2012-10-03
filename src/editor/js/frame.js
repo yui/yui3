@@ -55,8 +55,10 @@
                 //if the src attr is different than the default, don't create the document
                 create = (this.get('src') === Frame.ATTRS.src.value),
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+            
+            this._iframe = Y.one(Y.config.doc.createElement('iframe'));
+            this._iframe.setAttrs(Frame.IFRAME_ATTRS);
 
-            this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
@@ -808,6 +810,17 @@
         */
         //HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
         HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
+        IFRAME_ATTRS: {
+            border: '0',
+            frameBorder: '0',
+            marginWidth: '0',
+            marginHeight: '0',
+            leftMargin: '0',
+            topMargin: '0',
+            allowTransparency: 'true',
+            width: "100%",
+            height: "99%"
+        },
         /**
         * @static
         * @property PAGE_HTML
