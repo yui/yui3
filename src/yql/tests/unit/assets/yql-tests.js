@@ -9,8 +9,8 @@ YUI.add('yql-tests', function(Y) {
     //Look for a querystring value of live=xxx
     var live = (!Y.UA.nodejs && window.location.search.match(/[?&]live=([^&]+)/) || [])[1] || null;
 
-    if (Y.UA.winjs) {
-        //Auto set live when in WinJS (for testing)
+    if (Y.UA.winjs || Y.UA.nodejs) {
+        //Auto set live when in WinJS and Node (for testing)
         live = true;
     }
     

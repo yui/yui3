@@ -11,6 +11,13 @@
                     "ua": "winjs",
                     "when": "after"
                 }
+            },
+            "yql-nodejs": {
+                "condition": {
+                    "trigger": "yql",
+                    "ua": "nodejs",
+                    "when": "after"
+                }
             }
         }
     }

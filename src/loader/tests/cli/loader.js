@@ -3291,6 +3291,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("yql")) > -1, "Module (yql) not found in sorted array");
         },
+     "Testing yql-nodejs": function(data) {
+            var loader = new Y.Loader({
+                require: ["yql-nodejs"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("yql-nodejs")) > -1, "Module (yql-nodejs) not found in sorted array");
+        },
      "Testing yql-winjs": function(data) {
             var loader = new Y.Loader({
                 require: ["yql-winjs"],
