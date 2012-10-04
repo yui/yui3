@@ -1,7 +1,7 @@
 Get Utility Change History
 ==========================
 
-3.8.0
+3.7.3
 -----
 
 * Fixed Get issues, highlighted by IE10. 
