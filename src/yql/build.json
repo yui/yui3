@@ -10,6 +10,11 @@
             "jsfiles": [
                 "yql-winjs.js"
             ]
+        },
+        "yql-nodejs": {
+            "jsfiles": [
+                "yql-nodejs.js"
+            ]
         }
     }
 }

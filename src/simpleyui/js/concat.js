@@ -5470,8 +5470,15 @@ add('load', '17', {
     "trigger": "widget-base",
     "ua": "ie"
 });
-// yql-winjs
+// yql-nodejs
 add('load', '18', {
+    "name": "yql-nodejs",
+    "trigger": "yql",
+    "ua": "nodejs",
+    "when": "after"
+});
+// yql-winjs
+add('load', '19', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -6486,8 +6493,15 @@ add('load', '17', {
     "trigger": "widget-base",
     "ua": "ie"
 });
-// yql-winjs
+// yql-nodejs
 add('load', '18', {
+    "name": "yql-nodejs",
+    "trigger": "yql",
+    "ua": "nodejs",
+    "when": "after"
+});
+// yql-winjs
+add('load', '19', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
