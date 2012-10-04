@@ -1,6 +1,16 @@
 YQL Change History
 ==================
 
+3.7.3
+-----
+
+* Added yql-winjs and yql-nodejs modules for native interactions in these environment
+
+3.7.0
+-----
+
+* No Changes
+
 3.6.0
 -----
 
