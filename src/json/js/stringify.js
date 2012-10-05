@@ -6,7 +6,13 @@
  * @for JSON
  * @static
  */
-var _JSON     = (Y.config.win || {}).JSON,
+// All internals kept private for security reasons
+function fromGlobal(ref) {
+    var global = Y.config.win || (function () { return this; }());
+    return global && global[ref];
+}
+
+var _JSON     = fromGlobal('JSON'),
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
     isObject  = Lang.isObject,
