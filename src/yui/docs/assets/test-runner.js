@@ -108,7 +108,11 @@
             this._poll(condition, period, timeout, success, failure);
             this.wait(timeout + 1000);
         };
-        
+       
+        Y.Test.Case.prototype.closeEnough = function(expected, actual) { 
+            return (Math.abs(expected - actual) < 2);
+        };
+
         var counter = 0,
         count = function() {
             counter++;
