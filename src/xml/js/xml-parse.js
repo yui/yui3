@@ -28,13 +28,17 @@ Y.mix(Y.namespace("XML"), {
             }
             catch(ee) {
                 try {
-                    if(!LANG.isUndefined(DOMParser)) {
+                    if (!LANG.isUndefined(DOMParser)) {
                         xmlDoc = new DOMParser().parseFromString(data, "text/xml");
+                    }
+                    if (!LANG.isUndefined(Windows.Data.Xml.Dom)) {
+                        xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+                        xmlDoc.loadXml(data);
                     }
                 }
                 catch(e) {
                 }
-                    Y.log(ee.message + " (Could not parse data to type XML Document)", "warn", "xml");
+                    Y.log(ee.message + " (Could not initialize the ActiveX control for XML parsing)", "warn", "xml");
             }
         }
         
