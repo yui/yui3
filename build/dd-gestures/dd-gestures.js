@@ -22,8 +22,8 @@ YUI.add('dd-gestures', function (Y, NAME) {
         node.addClass(DDM.CSS_PREFIX + '-draggable');
 
         node.on(Y.DD.Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this), {
-            minDistance: 0,
-            minTime: 0
+            minDistance: this.get('clickPixelThresh'),
+            minTime: this.get('clickTimeThresh')
         });
 
         node.on('gesturemoveend', Y.bind(this._handleMouseUp, this), { standAlone: true });
@@ -34,9 +34,8 @@ YUI.add('dd-gestures', function (Y, NAME) {
     var _unprep = Y.DD.Drag.prototype._unprep;
 
     Y.DD.Drag.prototype._unprep = function() {
-        var node = this.get(NODE);
+        var node = this.get('node');
         _unprep.call(this);
-        
         node.detachAll('gesturemoveend');
     };
 
