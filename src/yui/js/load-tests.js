@@ -8,7 +8,7 @@ add('load', '0', {
         node = doc ? doc.documentElement : null;
 
     if (node && node.style) {
-        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
     }
 
     return false;
@@ -200,8 +200,8 @@ add('load', '16', {
         ret = true;
 
     if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
+    }
 
     return ret;
 },
