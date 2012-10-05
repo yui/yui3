@@ -168,6 +168,33 @@ treeSuite.add(new Y.Test.Case({
         ArrayAssert.isEmpty(this.tree.getSelectedNodes(), 'zero nodes should be selected after changing multiSelect');
     },
 
+    'nodeClass property should allow the use of a custom node class': function () {
+        var MyNode = Y.Base.create('myNode', Tree.Node, [], {
+            _isMyNode: true
+        });
+
+        this.tree.nodeClass = MyNode;
+
+        var node = this.tree.createNode({label: 'foo'});
+
+        Assert.isTrue(node._isMyNode);
+    },
+
+    'nodeClass property should allow specifying a class as a string before init': function () {
+        var MyTree = Y.Base.create('myTree', Tree, [], {
+            nodeClass: 'Foo.Bar.MyNode'
+        });
+
+        Y.namespace('Foo.Bar').MyNode = Y.Base.create('myNode', Tree.Node, [], {
+            _isMyNode: true
+        });
+
+        var tree = new MyTree();
+        var node = tree.createNode({label: 'foo'});
+
+        Assert.isTrue(node._isMyNode);
+    },
+
     'rootNode attribute should be an alias for the rootNode property': function () {
         Assert.areSame(this.tree.rootNode, this.tree.get('rootNode'));
     },
@@ -1054,11 +1081,13 @@ nodeSuite.add(new Y.Test.Case({
     },
 
     'constructor should accept a config object as the second argument': function () {
-        var child = new Tree.Node(this.tree),
+        var child0 = new Tree.Node(this.tree),
+            child1 = new Tree.Node(this.tree),
+            child2 = new Tree.Node(this.tree),
 
             node = new Tree.Node(this.tree, {
                 canHaveChildren: true,
-                children       : [child],
+                children       : [child0, child1, child2],
                 data           : {foo: 'bar'},
                 id             : 'mynode',
                 label          : 'pants',
@@ -1066,7 +1095,15 @@ nodeSuite.add(new Y.Test.Case({
             });
 
         Assert.isTrue(node.canHaveChildren, 'canHaveChildren should be true');
-        Assert.areSame(child, node.children[0], 'child 0 should exist');
+
+        Assert.areSame(child0, node.children[0], 'child 0 should exist');
+        Assert.areSame(child1, node.children[1], 'child 1 should exist');
+        Assert.areSame(child2, node.children[2], 'child 2 should exist');
+
+        Assert.areSame(node, node.children[0].parent, 'child 0 should have the correct parent reference');
+        Assert.areSame(node, node.children[1].parent, 'child 1 should have the correct parent reference');
+        Assert.areSame(node, node.children[2].parent, 'child 2 should have the correct parent reference');
+
         Assert.areSame('bar', node.data.foo, 'data should be set');
         Assert.areSame('mynode', node.id, 'custom id should be set');
         Assert.areSame('pants', node.label, 'custom label should be set');
