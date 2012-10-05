@@ -977,8 +977,8 @@
     "dd-gestures": {
         "condition": {
             "name": "dd-gestures",
-            "test": "dd-gestures-test.js",
-            "trigger": "dd-drag"
+            "trigger": "dd-drag",
+            "ua": "touchEnabled"
         },
         "requires": [
             "dd-drag",
@@ -2355,6 +2355,22 @@
             "jsonp",
             "jsonp-url"
         ]
+    },
+    "yql-nodejs": {
+        "condition": {
+            "name": "yql-nodejs",
+            "trigger": "yql",
+            "ua": "nodejs",
+            "when": "after"
+        }
+    },
+    "yql-winjs": {
+        "condition": {
+            "name": "yql-winjs",
+            "trigger": "yql",
+            "ua": "winjs",
+            "when": "after"
+        }
     },
     "yui": {},
     "yui-base": {},
