@@ -120,7 +120,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         node = doc ? doc.documentElement : null;
 
     if (node && node.style) {
-        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
     }
 
     return false;
@@ -2276,8 +2276,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ret = true;
 
     if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
+    }
 
     return ret;
 },
@@ -2503,7 +2503,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
+YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
