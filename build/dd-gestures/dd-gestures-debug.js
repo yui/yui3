@@ -33,6 +33,15 @@ YUI.add('dd-gestures', function (Y, NAME) {
 
     };
 
+    var _unprep = Y.DD.Drag.prototype._unprep;
+
+    Y.DD.Drag.prototype._unprep = function() {
+        var node = this.get(NODE);
+        _unprep.call(this);
+        
+        node.detachAll('gesturemoveend');
+    };
+
     Y.DD.DDM._setupListeners = function() {
         var DDM = Y.DD.DDM;
 
