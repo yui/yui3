@@ -127,7 +127,7 @@ Micro.compile = function (text, options) {
         })
 
         .replace(options.code, function (match, code) {
-            return tokenOpen + (blocks.push("';\n" + code + "\n;$t+='") - 1) + tokenClose;
+            return tokenOpen + (blocks.push("';\n" + code + "\n$t+='") - 1) + tokenClose;
         })
 
         .replace(options.stringEscape, "\\$&")
@@ -135,7 +135,10 @@ Micro.compile = function (text, options) {
         // Replace the token placeholders with code.
         .replace(/\ufffe(\d+)\uffff/g, function (match, index) {
             return blocks[parseInt(index, 10)];
-        }) +
+        })
+
+        // Remove noop string concatenations that have been left behind.
+        .replace(/\n\$t\+='';\n/g, '\n') +
 
         "';\nreturn $t;";
 

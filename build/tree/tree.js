@@ -109,6 +109,18 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
     @readOnly
     **/
 
+    /**
+    The `Tree.Node` class or subclass that should be used for nodes created by
+    this tree.
+
+    You may specific an actual class reference or a string that resolves to a
+    class reference at runtime.
+
+    @property {String|Tree.Node} nodeClass
+    @default Y.Tree.Node
+    **/
+    nodeClass: Y.Tree.Node,
+
     // -- Protected Properties -------------------------------------------------
 
     /**
@@ -157,6 +169,15 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
         this._published || (this._published = {});
 
         this._nodeMap = {};
+
+        if (typeof this.nodeClass === 'string') {
+            // Look for a namespaced node class on `Y`.
+            this.nodeClass = Y.Object.getValue(Y, this.nodeClass.split('.'));
+
+            if (!this.nodeClass) {
+                Y.error('Tree: Node class not found: ' + this.nodeClass);
+            }
+        }
 
         this.clear(config.rootNode, {silent: true});
         this._attachTreeEvents();
@@ -279,7 +300,7 @@ var Tree = Y.Base.create('tree', Y.Base, [], {
             config = Y.merge(config, {children: children});
         }
 
-        var node = new Y.Tree.Node(this, config);
+        var node = new this.nodeClass(this, config);
         return this._nodeMap[node.id] = node;
     },
 

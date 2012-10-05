@@ -4759,7 +4759,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.19-20-07',
+            GALLERY_VERSION = 'gallery-2012.09.26-20-36',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -9389,6 +9389,35 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "matrix": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "menu": {
+        "requires": [
+            "classnamemanager",
+            "event-hover",
+            "event-outside",
+            "menu-base",
+            "menu-templates",
+            "node-screen",
+            "view"
+        ],
+        "skinnable": true
+    },
+    "menu-base": {
+        "requires": [
+            "menu-item",
+            "tree"
+        ]
+    },
+    "menu-item": {
+        "requires": [
+            "oop",
+            "tree-node"
+        ]
+    },
+    "menu-templates": {
+        "requires": [
+            "template-micro"
         ]
     },
     "model": {

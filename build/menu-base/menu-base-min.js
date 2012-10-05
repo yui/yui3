@@ -1,0 +1,1 @@
+YUI.add("menu-base",function(e,t){var n=e.Base.create("menuBase",e.Tree,[],{nodeClass:e.Menu.Item,initializer:function(e){e||(e={}),e.items&&this.appendNode(this.rootNode,e.items,{silent:!0})}});e.namespace("Menu").Base=n},"@VERSION@",{requires:["menu-item","tree"]});

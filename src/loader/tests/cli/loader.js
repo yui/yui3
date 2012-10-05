@@ -2243,6 +2243,46 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("matrix")) > -1, "Module (matrix) not found in sorted array");
         },
+     "Testing menu": function(data) {
+            var loader = new Y.Loader({
+                require: ["menu"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("menu")) > -1, "Module (menu) not found in sorted array");
+        },
+     "Testing menu-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["menu-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("menu-base")) > -1, "Module (menu-base) not found in sorted array");
+        },
+     "Testing menu-item": function(data) {
+            var loader = new Y.Loader({
+                require: ["menu-item"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("menu-item")) > -1, "Module (menu-item) not found in sorted array");
+        },
+     "Testing menu-templates": function(data) {
+            var loader = new Y.Loader({
+                require: ["menu-templates"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("menu-templates")) > -1, "Module (menu-templates) not found in sorted array");
+        },
      "Testing model": function(data) {
             var loader = new Y.Loader({
                 require: ["model"],

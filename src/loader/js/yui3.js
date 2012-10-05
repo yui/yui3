@@ -1721,6 +1721,35 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     },
+    "menu": {
+        "requires": [
+            "classnamemanager",
+            "event-hover",
+            "event-outside",
+            "menu-base",
+            "menu-templates",
+            "node-screen",
+            "view"
+        ],
+        "skinnable": true
+    },
+    "menu-base": {
+        "requires": [
+            "menu-item",
+            "tree"
+        ]
+    },
+    "menu-item": {
+        "requires": [
+            "oop",
+            "tree-node"
+        ]
+    },
+    "menu-templates": {
+        "requires": [
+            "template-micro"
+        ]
+    },
     "model": {
         "requires": [
             "base-build",
