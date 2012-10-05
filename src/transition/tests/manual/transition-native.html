@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<head> 
-<style> 
+<head>
+<style>
 #demo {
     background:#ccc;
     width:200px;
@@ -13,28 +13,30 @@
     -webkit-transition-duration: 1s;
     -moz-transition-property: width, height, top, left, opacity;
     -moz-transition-duration: 1s;
+    -ms-transition-property: width, height, top, left, opacity;
+    -ms-transition-duration: 1s;
 }
-</style> 
+</style>
 
 </head>
-<body> 
-<div id="demo">this is a demo</div> 
+<body>
+<div id="demo">this is a demo</div>
 
-<script type="text/javascript"> 
-    var node = document.getElementById('demo'),
-        computed = getComputedStyle(node, ''); 
+<script>
+    var node      = document.getElementById('demo'),
+        computed  = getComputedStyle(node, '')
+        EVENT_END = 'WebkitTransition' in node.style ? 'webkitTransitionEnd' : 'transitionend';
 
-    console.log(computed['MozTransitionProperty']);
-    node.addEventListener('webkitTransitionEnd', function(e) {
+    node.addEventListener(EVENT_END, function (e) {
         console.log(e.propertyName);
         console.log(e.elapsedTime);
         console.log(node.style[e.propertyName]);
     }, false);
 
-    document.onclick = function() {
+    document.onclick = function () {
         var w = parseFloat(computed.width) + 100;
-        node.style.width = w + 'px'; 
+        node.style.width = w + 'px';
     };
- 
-</script> 
-</body></html> 
+
+</script>
+</body></html>
