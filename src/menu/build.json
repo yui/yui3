@@ -1,0 +1,29 @@
+{
+    "name": "menu",
+
+    "builds": {
+        "menu": {
+            "jsfiles": [
+                "menu.js"
+            ]
+        },
+
+        "menu-base": {
+            "jsfiles": [
+                "menu-base.js"
+            ]
+        },
+
+        "menu-item": {
+            "jsfiles": [
+                "menu-item.js"
+            ]
+        },
+
+        "menu-templates": {
+            "jsfiles": [
+                "menu-templates.js"
+            ]
+        }
+    }
+}

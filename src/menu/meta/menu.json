@@ -1,0 +1,37 @@
+{
+    "menu": {
+        "requires": [
+            "classnamemanager",
+            "event-hover",
+            "event-outside",
+            "menu-base",
+            "menu-templates",
+            "node-screen",
+            "view"
+        ],
+
+        "skinnable": true,
+
+        "submodules": {
+            "menu-base": {
+                "requires": [
+                    "menu-item",
+                    "tree"
+                ]
+            },
+
+            "menu-item": {
+                "requires": [
+                    "oop",
+                    "tree-node"
+                ]
+            },
+
+            "menu-templates": {
+                "requires": [
+                    "template-micro"
+                ]
+            }
+        }
+    }
+}
