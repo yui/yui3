@@ -6,7 +6,7 @@ YUI.add('transition-basic-tests', function(Y) {
         'should shrink and fade the element': function() {
             var node = Y.one('#demo a'),
                 test = this,
-                demo = Y.one('#demo');
+                demo = Y.one('#demo'); //setting the variable outside of the click handler prevents win8 metro error. It is still unexplained and should be explored further.
 
             node.on('click', function(e) {
                 setTimeout(function() {
