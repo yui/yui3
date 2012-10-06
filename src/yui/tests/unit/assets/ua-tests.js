@@ -30,7 +30,8 @@ YUI.add('ua-tests', function(Y) {
             }
         },
         'test: ie10 Windows touchEnabled': function() {
-            if ('msPointerEnabled' in Y.config.win.navigator) {
+            var nav = Y.config.win.navigator;
+            if (('msMaxTouchPoints' in nav) && (nav.msMaxTouchPoints)) {
                 Assert.isTrue(Y.UA.touchEnabled);
             } else {
                 Assert.isFalse(Y.UA.touchEnabled);
