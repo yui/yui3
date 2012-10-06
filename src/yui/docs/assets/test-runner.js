@@ -108,7 +108,12 @@
             this._poll(condition, period, timeout, success, failure);
             this.wait(timeout + 1000);
         };
-        
+      
+        //This is a temporary fix for functional tests that are affected by #2532840. The ultimate fix is address subpixel issues with Dom.setXY().  
+        Y.Test.Case.prototype.closeEnough = function(expected, actual) { 
+            return (Math.abs(expected - actual) < 2);
+        };
+
         var counter = 0,
         count = function() {
             counter++;
