@@ -146,7 +146,7 @@ if ((win && ("ontouchstart" in win)) && !(Y.UA.chrome && Y.UA.chrome < 6)) {
 
 
 
-else if (win && ("msPointerEnabled" in win.navigator)) {
+else if (win && (("msMaxTouchPoints" in win.navigator) && (win.navigator.msMaxTouchPoints))) {
     GESTURE_MAP.start = "MSPointerDown";
     GESTURE_MAP.end = "MSPointerUp";
     GESTURE_MAP.move = "MSPointerMove";

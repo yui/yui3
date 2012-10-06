@@ -3736,7 +3736,7 @@ YUI.Env.parseUA = function(subUA) {
     
     //Check for known properties to tell if touch/mspointer events are enabled on this device
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -8354,6 +8354,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
@@ -10173,7 +10174,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = '5fe7d71505fef8108b090c35db73bcde';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

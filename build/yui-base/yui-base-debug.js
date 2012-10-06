@@ -3736,7 +3736,7 @@ YUI.Env.parseUA = function(subUA) {
     
     //Check for known properties to tell if touch/mspointer events are enabled on this device
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints)));
     }
 
     //It was a parsed UA, do not assign the global value.

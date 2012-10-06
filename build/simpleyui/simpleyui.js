@@ -3717,7 +3717,7 @@ YUI.Env.parseUA = function(subUA) {
     
     //Check for known properties to tell if touch/mspointer events are enabled on this device
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -18283,7 +18283,7 @@ YUI.add('json-parse', function (Y, NAME) {
  *
  * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
  * <code>json-stringify</code>.</p>
- * 
+ *
  * <p>As their names suggest, <code>json-parse</code> adds support for parsing
  * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
  * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
@@ -18309,7 +18309,8 @@ YUI.add('json-parse', function (Y, NAME) {
 
 // All internals kept private for security reasons
 function fromGlobal(ref) {
-    return (Y.config.win || this || {})[ref];
+    var g = ((typeof global === 'object') ? global : undefined);
+    return ((Y.UA.nodejs && g) ? g : (Y.config.win || {}))[ref];
 }
 
 
@@ -18379,7 +18380,7 @@ var _JSON  = fromGlobal('JSON'),
      * @private
      */
     _UNSAFE = /[^\],:{}\s]/,
-    
+
     /**
      * Replaces specific unicode characters with their appropriate \unnnn
      * format. Some browsers ignore certain characters during eval.
@@ -18445,7 +18446,7 @@ var _JSON  = fromGlobal('JSON'),
         // incorrectly by some browser implementations.
         // NOTE: This modifies the input if such characters are found!
         s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
-        
+
         // Test for any remaining invalid characters
         if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
                             replace(_VALUES,']').
@@ -18458,7 +18459,7 @@ var _JSON  = fromGlobal('JSON'),
 
         throw new SyntaxError('JSON.parse');
     };
-    
+
 Y.namespace('JSON').parse = function (s,reviver) {
         if (typeof s !== 'string') {
             s += '';
