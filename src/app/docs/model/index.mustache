@@ -683,7 +683,18 @@ An attribute validator will be called whenever that attribute changes, and can p
 </p>
 
 <p>
-The second way to validate changes is to provide a custom `validate()` method when extending `Y.Model`. The `validate()` method will be called automatically when `save()` is called, and will receive a hash of all the attributes in the model. If the `validate()` method returns anything other than `null` or `undefined`, it will be considered a validation failure, an `error` event will be fired with the returned value as the error message, and the `save()` action will be aborted.
+While attribute-specific validators can be used to validate individual attributes, 
+this method gives you a hook to validate a hash of all attributes before the model is saved. 
+This method is called automatically before `save()` takes any action. 
+If validation fails, the `save()` call will be aborted.
+</p>
+
+<p>
+In your validation method, call the provided `callback function 
+with no arguments to indicate success. 
+To indicate failure, pass a single argument, 
+which may contain an error message, an array of error messages, 
+or any other value. This value will be passed along to the error event.
 </p>
 
 ```
@@ -691,24 +702,17 @@ The second way to validate changes is to provide a custom `validate()` method wh
 Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
   // ... prototype methods and properties ...
 
-  validate: function (attributes) {
-    var slices;
-
-    switch (attributes.type) {
-    case 'rhubarb':
-      return 'Eww. No. Not allowed.';
-
-    case 'maple custard':
-      slices = Y.Lang.isValue(attributes.slices) ?
-          attributes.slices : this.get('slices');
-
-      if (slices < 10) {
-        return "Making fewer than 10 slices of maple custard pie would be " +
-            "silly, because I'm just going to eat 8 of them as soon as it's " +
-            "out of the oven.";
+  validate: function (attributes, callback) {
+      if (attributes.type !== 'apple') {
+          // validation error
+          callback('Only apple pies are awesome!');
+          return;
       }
-    }
+
+      // Success!
+      callback();
   }
+
 }, {
   // ... attributes ...
 });
