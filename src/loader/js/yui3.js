@@ -682,6 +682,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
@@ -2501,4 +2502,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = '6437f8e9a390d202e24b01507ee63060';

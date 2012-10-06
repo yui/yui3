@@ -653,6 +653,7 @@
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
