@@ -210,6 +210,12 @@ YUI({
     suite.add( new Y.Test.Case({
         name: 'Y.one',
 
+        _should : {
+            ignore: {
+                test_prependLinkFrag : Y.UA.winjs // Win 8 App env doesn't allow `link` as innerHTML
+            }
+        },
+
         'should cache node': function() {
             var node = Y.Node.create('<div id="test-caching" />');
             node.appendTo('body');
@@ -1249,7 +1255,8 @@ YUI({
 
         },
 
-        test_prependFrag: function() {
+        test_prependLinkFrag: function() {
+            // Using link explicitly as the prepended fragment, because older IEs have edge case issues.
             var html = '<link id="dyn-link-1" href="#" rel="stylesheet"><link id="dyn-link-2" href="#" rel="stylesheet">';
             Y.one('head').prepend(html);
             //Y.one('head').prepend(Y.Node.create(html));
@@ -1259,6 +1266,38 @@ YUI({
             html = '<link id="dyn-link-3" href="#" rel="stylesheet">'
             Y.one('head').prepend(html);
             Assert.isNotNull(document.getElementById('dyn-link-3'));
+        },
+
+        test_prependDivFrag: function() {
+            var html = '<div id="dyn-divfrag-1"></div><div id="dyn-divfrag-2"></div>',
+                nodeOne,
+                nodeTwo,
+                nodeThree;
+
+            Y.one('body').prepend(html);
+
+            nodeOne = Y.Node.one('#dyn-divfrag-1');
+            nodeTwo = Y.Node.one('#dyn-divfrag-2');
+
+            Assert.isNotNull(nodeOne);
+            Assert.isNotNull(nodeTwo);
+
+            Assert.areSame(nodeOne, Y.one('body').get('firstChild'), 'divfrag-1 is in the DOM but not prepended');
+            Assert.areSame(nodeTwo, Y.one('body').get('firstChild').get('nextSibling'), 'divfrag-2 is in the DOM but not prepended');
+
+            html = '<div id="dyn-divfrag-3"></div>'
+
+            Y.one('body').prepend(html);
+
+            nodeThree = Y.Node.one('#dyn-divfrag-3');
+
+            Assert.isNotNull(nodeThree);
+
+            Assert.areSame(nodeThree, Y.one('body').get('firstChild'), 'divfrag-1 is in the DOM but not prepended');
+
+            nodeOne.remove(true);
+            nodeTwo.remove(true);
+            nodeThree.remove(true);
         },
 
         test_focus: function () {
