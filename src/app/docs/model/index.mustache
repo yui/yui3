@@ -703,14 +703,14 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
   // ... prototype methods and properties ...
 
   validate: function (attributes, callback) {
-      if (attributes.type !== 'apple') {
-          // validation error
-          callback('Only apple pies are awesome!');
-          return;
-      }
+    if (attributes.type !== 'apple') {
+      // validation error
+      callback('Only apple pies are awesome!');
+      return;
+    }
 
-      // Success!
-      callback();
+    // Success!
+    callback();
   }
 
 }, {
