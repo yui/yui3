@@ -196,159 +196,159 @@ suite.add(new Y.Test.Case({
     test_failOnEmptyString : function () {
         // parse should throw an error 
         Y.Assert.isString(Y.JSON.parse(""));
-        Y.log("Parsed empty string, but should have failed.","warn","TestRunner");
+       // Y.log("Parsed empty string, but should have failed.","warn","TestRunner");
     },
     test_failOnFunction : function () {
         // parse should throw an error 
         Y.JSON.parse('{"fn":function(){}}');
-        Y.log("Parsed a function, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed a function, but should have failed.","warn","TestRunner");
     },
     test_failOnRegex : function () {
         // parse should throw an error 
         Y.JSON.parse('{"re":/abc/}');
-        Y.log("Parsed regular expression literal, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed regular expression literal, but should have failed.","warn","TestRunner");
     },
     test_failOnNew : function () {
         // parse should throw an error 
         Y.JSON.parse('{"dt":new Date()}');
-        Y.log("Parsed <code>new Date()</code>, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed <code>new Date()</code>, but should have failed.","warn","TestRunner");
     },
     test_failOnUnquotedVal : function () {
         // parse should throw an error 
         Y.JSON.parse('{"foo":bar}');
-        Y.log("Parsed unquoted non-native value, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed unquoted non-native value, but should have failed.","warn","TestRunner");
     },
     test_failOnUnquotedKey : function () {
         // parse should throw an error 
         Y.JSON.parse('{foo:1}');
-        Y.log("Parsed unquoted object key, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed unquoted object key, but should have failed.","warn","TestRunner");
     },
     test_failOnUnclosedObject : function () {
         // parse should throw an error 
         Y.JSON.parse('{"unclosed":"object"');
-        Y.log("Parsed unclosed object, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed unclosed object, but should have failed.","warn","TestRunner");
     },
     test_failOnUnclosedArray : function () {
         // parse should throw an error 
         Y.JSON.parse('["unclosed array"');
-        Y.log("Parsed unclosed array, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed unclosed array, but should have failed.","warn","TestRunner");
     },
     test_failOnExtraCommaInObject : function () {
         // JS validator will allow, FF 3.1b2 native will allow.  IE8 errors.
         // eval will fail in IE6-7, but pass in others
         // Trailing commas are invalid, but not a security risk, so acceptable
         Y.JSON.parse('{"extra":"comma",}');
-        Y.log("Parsed object with extra comma, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed object with extra comma, but should have failed.","warn","TestRunner");
         throw new Error("Parsed object with extra comma, but should have failed.");
     },
     test_failOnDoubleExtraCommaInObject : function () {
         // parse should throw an error 
         Y.JSON.parse('{"extra":"commas",,}');
-        Y.log("Parsed object with two extra commas, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed object with two extra commas, but should have failed.","warn","TestRunner");
     },
     test_failOnExtraCommaInArray : function () {
         // Correct failure in IE6-8.  FF accepts trailing commas without error
         // Trailing commas are invalid, but not a security risk, so acceptable
         Y.JSON.parse('["extra","comma",]');
-        Y.log("Parsed array with extra comma, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed array with extra comma, but should have failed.","warn","TestRunner");
         throw new Error("Parsed array with extra comma, but should have failed.");
     },
     test_failOnDoubleExtraCommaInArray : function () {
         // Correct failure in IE6-8.  FF accepts trailing commas without error
         // Trailing commas are invalid, but not a security risk, so acceptable
         Y.JSON.parse('["extra","commas",,]');
-        Y.log("Parsed array with two extra commas, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed array with two extra commas, but should have failed.","warn","TestRunner");
         throw new Error("Parsed array with two extra commas, but should have failed.");
     },
     test_failOnMissingValue : function () {
         // Correct failure in IE6-8.  FF accepts trailing commas without error
         // Trailing commas are invalid, but not a security risk, so acceptable
         var data = Y.JSON.parse('[,"<-- missing value"]');
-        Y.log("Parsed array with missing value ("+data[0]+"), but should have failed.","warn","TestRunner");
+        //Y.log("Parsed array with missing value ("+data[0]+"), but should have failed.","warn","TestRunner");
         throw new Error("Parsed array with missing value ("+data[0]+"), but should have failed.");
     },
     test_failOnCommaAfterClose : function () {
         // parse should throw an error 
         Y.JSON.parse('["comma","after","close"],');
-        Y.log("Parsed comma after array close, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed comma after array close, but should have failed.","warn","TestRunner");
     },
     test_failOnValueAfterClose : function () {
         // parse should throw an error 
         Y.JSON.parse('{"misplaced":"value"}" after close"');
-        Y.log("Parsed string value after object close, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed string value after object close, but should have failed.","warn","TestRunner");
     },
     test_failOnExtraClose : function () {
         // parse should throw an error 
         var data = Y.JSON.parse('{"foo":1}}');
-        Y.log("Parsed extra closing curly brace on object, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed extra closing curly brace on object, but should have failed.","warn","TestRunner");
         throw new Error("Parsed extra closing curly brace on object, but should have failed.");
     },
     test_failOnExpression : function () {
         // parse should throw an error 
         Y.JSON.parse('{"foo":1+2}');
-        Y.log("Parsed expression, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed expression, but should have failed.","warn","TestRunner");
     },
     test_failOnZeroPrefixedNumber : function () {
         // Correct failure in IE8.  FF accepts leading zeros without error
         // Leading zeros are invalid, but not a security risk, so acceptable
         Y.JSON.parse('{"foo":01}');
-        Y.log("Parsed zero prefixed number, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed zero prefixed number, but should have failed.","warn","TestRunner");
         throw new Error("Parsed zero prefixed number, but should have failed.");
     },
     test_failOnHex : function () {
         // parse should throw an error 
         Y.JSON.parse('{"foo":0x14}');
-        Y.log("Parsed hex value, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed hex value, but should have failed.","warn","TestRunner");
     },
     test_failOnIllegalBackslashEscape : function () {
         // Correctly fails in all but IE8's native parse.
         // The spec does not specify a limitation to the escape characters a
         // decoder supports, so either is acceptable.
         var data = Y.JSON.parse('["illegal backslash escape: \\x15"]');
-        Y.log("Parsed illegal backslash escape \\x15, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed illegal backslash escape \\x15, but should have failed.","warn","TestRunner");
         throw new Error("Parsed illegal backslash escape \\x15, but should have failed.");
     },
     test_failOnMissingColon : function () {
         // parse should throw an error 
         Y.JSON.parse('{"foo" null}');
-        Y.log("Parsed object with missing colon, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed object with missing colon, but should have failed.","warn","TestRunner");
     },
     test_failOnDoubleColon : function () {
         // parse should throw an error 
         Y.JSON.parse('{"foo"::1}');
-        Y.log("Parsed double colon in object, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed double colon in object, but should have failed.","warn","TestRunner");
     },
     test_failOnCommaInsteadOfColon : function () {
         // parse should throw an error 
         Y.JSON.parse('{"foo",1}');
-        Y.log("Parsed comma in place of colon, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed comma in place of colon, but should have failed.","warn","TestRunner");
     },
     test_failOnColonInsteadOfComma : function () {
         // parse should throw an error 
         Y.JSON.parse('["colon instead of":"comma"]');
-        Y.log("Parsed colon in place of comma, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed colon in place of comma, but should have failed.","warn","TestRunner");
     },
     test_failOnSingleQuote : function () {
         // parse should throw an error 
         Y.JSON.parse("{'foo':1}");
-        Y.log("Parsed single quote, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed single quote, but should have failed.","warn","TestRunner");
     },
     test_failOnLineBreakChar : function () {
         // FF3.1b2 currently allows linebreak chars in native implementation
         // Harmless, so permissable
         Y.JSON.parse("[\"line\nbreak\"]");
-        Y.log("Parsed unescaped line break character, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed unescaped line break character, but should have failed.","warn","TestRunner");
         throw new Error("Parsed unescaped line break character, but should have failed.");
     },
     test_failOnMismatchedClose : function () {
         // parse should throw an error 
         Y.JSON.parse('["mismatched"}');
-        Y.log("Parsed curly brace close for array, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed curly brace close for array, but should have failed.","warn","TestRunner");
     },
     test_failOnObjectInput: function () {
         // parse should throw an error 
         Y.JSON.parse({"should": "be treated as [object Object]"});
-        Y.log("Parsed object input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed object input, but should have failed.","warn","TestRunner");
     },
     test_arrayContainingValidJSON: function () {
         // Should be ToString'ed to '{"foo":"bar"}' which is valid
@@ -360,46 +360,46 @@ suite.add(new Y.Test.Case({
     test_failOnArrayInput: function () {
         // parse should throw an error 
         Y.JSON.parse(['x', 'y']); // should be treated as "x,y");
-        Y.log("Parsed array input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed array input, but should have failed.","warn","TestRunner");
     },
     test_failOnDateInput: function () {
         // parse should throw an error 
         Y.JSON.parse(new Date()); // should be treated as date string
-        Y.log("Parsed Date input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed Date input, but should have failed.","warn","TestRunner");
     },
     test_failOnRegExpInput: function () {
         // parse should throw an error 
         Y.JSON.parse(/should fail/); // should ToString to '/should fail/'
         Y.JSON.parse(/true/); // should ToString to '/true/'
-        Y.log("Parsed RegExp input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed RegExp input, but should have failed.","warn","TestRunner");
     },
     test_failOnErrorInput: function () {
         // parse should throw an error 
         Y.JSON.parse(new Error("Boom")); // ToString to 'Error: Boom'
         Y.JSON.parse(new Error("true")); // ToString to 'Error: true'
         Y.JSON.parse(new SyntaxError("true")); // ToString to 'Error: true'
-        Y.log("Parsed Error input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed Error input, but should have failed.","warn","TestRunner");
     },
     test_failOnFunctionInput: function () {
         // parse should throw an error 
         Y.JSON.parse(function () { return "decompiled!"; }); // ToString 'function ...'
-        Y.log("Parsed function input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed function input, but should have failed.","warn","TestRunner");
     },
     test_failOnNaNInput: function () {
         // parse should throw an error 
         Y.JSON.parse(NaN); // ToString to 'NaN', but not a valid JSON number
-        Y.log("Parsed NaN input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed NaN input, but should have failed.","warn","TestRunner");
     },
     test_failOnInfinityInput: function () {
         // parse should throw an error 
         Y.JSON.parse(Infinity); // ToString to 'Infinity', but not valid JSON
-        Y.log("Parsed Infinity input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed Infinity input, but should have failed.","warn","TestRunner");
     },
     test_failOnUndefinedInput: function () {
         // Should be ToString'ed to 'undefined'
         Y.JSON.parse(undefined);
         Y.JSON.parse();
-        Y.log("Parsed undefined input, but should have failed.","warn","TestRunner");
+        //Y.log("Parsed undefined input, but should have failed.","warn","TestRunner");
     },
     test_booleanInput: function () {
         // Should be ToString'ed to 'true'
@@ -517,58 +517,6 @@ suite.add(new Y.Test.Case({
         }
     },
 
-    setUp: function () {
-
-        // `action` is not allowed via innerHTML on Win8 apps.
-        // See: http://msdn.microsoft.com/en-us/library/windows/apps/hh465388.aspx
-
-        var f = Y.Node.one(Y.config.doc.createElement("form"));
-
-        f.set("id", "testbed");
-        f.setAttribute("action", "");
-
-        Y.one("body").append(f);
-
-        f.setHTML(
-            '<p>' +
-            '<input type="text" id="empty_text">' +
-            '<input type="text" id="text" value="text">' +
-            '<input type="radio" id="unchecked_radio" value="unchecked">' +
-            '<input type="radio" id="checked_radio" value="radio" checked="checked">' +
-            '<input type="checkbox" id="unchecked_box" value="unchecked">' +
-            '<input type="checkbox" id="checked_box" value="box" checked="checked">' +
-            '<textarea id="empty_textarea"></textarea>' +
-            '<textarea id="textarea">textarea</textarea>' +
-            '<select id="select">' +
-                '<option value="unselected">Unselected</option>' +
-                '<option value="selected" selected="selected">Selected</option>' +
-            '</select>' +
-            '<select id="multiple_select" multiple="multiple" size="3">' +
-                '<option value="unselected">Unselected</option>' +
-                '<option value="selected" selected="selected">Selected</option>' +
-                '<option value="selected also" selected="selected">Selected also</option>' +
-            '</select>' +
-            '<button id="button" type="button">content; no value</button>' +
-            '<button id="button_with_value" type="button" value="button value">content and value</button>' +
-            '<button id="button_submit" type="submit">content; no value</button>' +
-            '<button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>' +
-            '<input type="button" id="input_button" value="input button">' +
-            '<input type="submit" id="input_submit" value="input submit">' +
-            '</p>');
-
-        // For now, setting `name` outside of innerHTML so we don't fail in Win 8 Apps.
-        // TODO: Clean up based on final resolution of this: https://connect.microsoft.com/IE/feedback/details/765964/win8-app-msapphost-cannot-set-secure-valid-html-using-innerhtml-if-it-contains-form-fields-with-name-set
-
-        Y.one("#unchecked_radio").setAttribute("name", "radio");
-        Y.one("#checked_radio").setAttribute("name", "radio");
-        Y.one("#unchecked_box").setAttribute("name", "box");
-        Y.one("#checked_box").setAttribute("name", "box");
-    },
-
-    tearDown: function () {
-        Y.one("#testbed").remove(true);
-    },
-
     test_stringifyNatives: function () {
         Y.Assert.areSame('[true,false,null,-0.12345,"string",{"object with one member":["array with one element"]}]',
             Y.JSON.stringify([true,false,null,-0.12345,"string",{"object with one member":["array with one element"]}]));
@@ -643,55 +591,94 @@ suite.add(new Y.Test.Case({
             ref = d.toJSON ? d.toJSON() : "1946-07-06T00:00:00Z";
 
         Y.Assert.areSame('{"dt":"'+ref+'"}', Y.JSON.stringify({dt : d}));
-    },
-
-    test_stringifyFormValue : function () {
-        function $(id) { return document.getElementById(id); }
-
-        var data = {
-            empty_text              : $('empty_text').value,
-            text                    : $('text').value,
-            unchecked_radio         : $('unchecked_radio').value,
-            checked_radio           : $('checked_radio').value,
-            unchecked_box           : $('unchecked_box').value,
-            checked_box             : $('checked_box').value,
-            empty_textarea          : $('empty_textarea').value,
-            textarea                : $('textarea').value,
-            select                  : $('select').value,
-            multiple_select         : $('multiple_select').value,
-            // Buttons commented out for now because IE reports values
-            // differently
-            //button                  : $('button').value,
-            //button_with_value       : $('button_with_value').value,
-            //button_submit           : $('button_submit').value,
-            //button_submit_with_value: $('button_submit_with_value').value,
-            input_button            : $('input_button').value,
-            input_submit            : $('input_submit').value//,
-            //input_image             : $('input_image').value
-        };
-
-        Y.Assert.areSame('{'+
-            '"empty_text":"",'+
-            '"text":"text",'+
-            '"unchecked_radio":"unchecked",'+
-            '"checked_radio":"radio",'+
-            '"unchecked_box":"unchecked",'+
-            '"checked_box":"box",'+
-            '"empty_textarea":"",'+
-            '"textarea":"textarea",'+
-            '"select":"selected",'+
-            '"multiple_select":"selected",'+
-            //'"button":"",'+
-            //'"button_with_value":"button value",'+
-            //'"button_submit":"",'+
-            //'"button_submit_with_value":"submit button value",'+
-            '"input_button":"input button",'+
-            '"input_submit":"input submit"}',
-            //'"input_image":"input image"}',
-            Y.JSON.stringify(data));
     }
-
 }));
+
+//Don't add the test if win and doc are not available
+if (Y.config.win && Y.config.doc) {
+    suite.add(new Y.Test.Case({
+        name: "DOM based tests",
+        setUp: function () {
+            Y.one("body").append('<form id="testbed" action="">' +
+                '<h3>Form used for field value extraction, stringification</h3>' +
+                '<input type="text" id="empty_text">' +
+                '<input type="text" id="text" value="text">' +
+                '<input type="radio" name="radio" id="unchecked_radio" value="unchecked">' +
+                '<input type="radio" name="radio" id="checked_radio" value="radio" checked="checked">' +
+                '<input type="checkbox" name="box" id="unchecked_box" value="unchecked">' +
+                '<input type="checkbox" name="box" id="checked_box" value="box" checked="checked">' +
+                '<textarea id="empty_textarea"></textarea>' +
+                '<textarea id="textarea">textarea</textarea>' +
+                '<select id="select">' +
+                    '<option value="unselected">Unselected</option>' +
+                    '<option value="selected" selected="selected">Selected</option>' +
+                '</select>' +
+                '<select id="multiple_select" multiple="multiple" size="3">' +
+                    '<option value="unselected">Unselected</option>' +
+                    '<option value="selected" selected="selected">Selected</option>' +
+                    '<option value="selected also" selected="selected">Selected also</option>' +
+                '</select>' +
+                '<button id="button" type="button">content; no value</button>' +
+                '<button id="button_with_value" type="button" value="button value">content and value</button>' +
+                '<button id="button_submit" type="submit">content; no value</button>' +
+                '<button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>' +
+                '<input type="button" id="input_button" value="input button">' +
+                '<input type="submit" id="input_submit" value="input submit">' +
+                '<!--input type="image" id="input_image" src="404.png" value="input image"-->' +
+            '</form>');
+        },
+
+        tearDown: function () {
+            Y.one("#testbed").remove(true);
+        },
+
+        test_stringifyFormValue : function () {
+            function $(id) { return document.getElementById(id); }
+
+            var data = {
+                empty_text              : $('empty_text').value,
+                text                    : $('text').value,
+                unchecked_radio         : $('unchecked_radio').value,
+                checked_radio           : $('checked_radio').value,
+                unchecked_box           : $('unchecked_box').value,
+                checked_box             : $('checked_box').value,
+                empty_textarea          : $('empty_textarea').value,
+                textarea                : $('textarea').value,
+                select                  : $('select').value,
+                multiple_select         : $('multiple_select').value,
+                // Buttons commented out for now because IE reports values
+                // differently
+                //button                  : $('button').value,
+                //button_with_value       : $('button_with_value').value,
+                //button_submit           : $('button_submit').value,
+                //button_submit_with_value: $('button_submit_with_value').value,
+                input_button            : $('input_button').value,
+                input_submit            : $('input_submit').value//,
+                //input_image             : $('input_image').value
+            };
+
+            Y.Assert.areSame('{'+
+                '"empty_text":"",'+
+                '"text":"text",'+
+                '"unchecked_radio":"unchecked",'+
+                '"checked_radio":"radio",'+
+                '"unchecked_box":"unchecked",'+
+                '"checked_box":"box",'+
+                '"empty_textarea":"",'+
+                '"textarea":"textarea",'+
+                '"select":"selected",'+
+                '"multiple_select":"selected",'+
+                //'"button":"",'+
+                //'"button_with_value":"button value",'+
+                //'"button_submit":"",'+
+                //'"button_submit_with_value":"submit button value",'+
+                '"input_button":"input button",'+
+                '"input_submit":"input submit"}',
+                //'"input_image":"input image"}',
+                Y.JSON.stringify(data));
+        }
+    }));
+}
 
 suite.add(new Y.Test.Case({
     name : "whitelist",
