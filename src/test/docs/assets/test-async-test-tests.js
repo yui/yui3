@@ -14,8 +14,21 @@ YUI.add('test-async-test-tests', function(Y) {
                 Assert.isNotNull(el.one('.yui3-testconsole'), 'Console wrapper failed to load');
             },
             'console has entries': function() {
-                var entries = Y.all('#testLogger .yui3-console-entry');
-                Assert.isTrue((entries.size() > 0), 'Should be at least 1 entry in the console');
+                var test = this,
+                    entries,
+                    condition = function() {
+                        entries = Y.all('#testLogger .yui3-console-entry');
+                        return entries.size() > 0; 
+                    },
+                    interval = 10,
+                    timeout = 10000,
+                    success = function() {
+                        Assert.pass();
+                    },
+                    failure = function() {
+                        Assert.fail('Should be at least 1 entry in the console');
+                    };
+                test.poll(condition, interval, timeout, success, failure);
             },
             'did async test pass': function() {
                 var item = Y.one('#testLogger .yui3-testconsole-entry-pass .yui3-console-entry-content');
