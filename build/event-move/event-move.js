@@ -4,8 +4,8 @@ YUI.add('event-move', function (Y, NAME) {
  * Adds lower level support for "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to create drag/drop
  * interactions which work across touch and mouse input devices. They correspond to "touchstart", "touchmove" and "touchend" on a touch input
  * device, and "mousedown", "mousemove", "mouseup" on a mouse based input device.
- * 
- * <p>Documentation for the gesturemove triplet of events can be found on the <a href="../classes/YUI.html#event_gesturemove">YUI</a> global, 
+ *
+ * <p>Documentation for the gesturemove triplet of events can be found on the <a href="../classes/YUI.html#event_gesturemove">YUI</a> global,
  * along with the other supported events.</p>
  *
  * @module event-gestures
@@ -48,8 +48,10 @@ YUI.add('event-move', function (Y, NAME) {
 
     NODE_TYPE = "nodeType",
 
+    SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
+
     _defArgsProcessor = function(se, args, delegate) {
-        var iConfig = (delegate) ? 4 : 3, 
+        var iConfig = (delegate) ? 4 : 3,
             config = (args.length > iConfig) ? Y.merge(args.splice(iConfig,1)[0]) : {};
 
         if (!(PREVENT_DEFAULT in config)) {
@@ -76,6 +78,33 @@ YUI.add('event-move', function (Y, NAME) {
         touchFacade[BUTTON] = (params && params[BUTTON]) || 1; // default to left (left as per vendors, not W3C which is 0)
     },
 
+    /*
+    In IE10, gestures will not work properly unless the -ms-touch-action CSS property is set to something other than 'auto'. Read http://msdn.microsoft.com/en-us/library/windows/apps/hh767313.aspx for more info. To get around this, we set -ms-touch-action: none which is the same as e.preventDefault(). This tells the browser to fire DOM events for all touch events, and not perform any default behavior.
+
+    The user can over-ride this by setting a more lenient -ms-touch-action property on a node (such as pan-x, pan-y, etc.) via CSS when subscribing to the 'gesturemovestart' event.
+    */
+    _setTouchActions = function (node, subscriber, evtName) {
+        var params = subscriber._extra,
+            elem = node.getDOMNode();
+
+        if (SUPPORTS_POINTER) { //Checks to see if MSPointer events are supported.
+            params[PREVENT_DEFAULT] = true;
+            elem.style.msTouchAction = 'none';
+        }
+    },
+
+    /*
+    Resets the element's -ms-touch-action property back to 'auto', which is the default. This is called on detach() and detachDelegate().
+    */
+    _unsetTouchActions = function (node) {
+        if (SUPPORTS_POINTER) {
+            var elem = node.getDOMNode();
+            if (elem.style.msTouchAction !== 'auto') {
+                elem.style.msTouchAction = 'auto'
+            }
+        }
+    },
+
     _prevent = function(e, preventDefault) {
         if (preventDefault) {
             // preventDefault is a boolean or a function
@@ -92,9 +121,9 @@ YUI.add('event-move', function (Y, NAME) {
  * and on mouse based devices in response to a "mousedown". The subscriber can specify the minimum time
  * and distance thresholds which should be crossed before the "gesturemovestart" is fired and for the mouse,
  * which button should initiate a "gesturemovestart". This event can also be listened for using node.delegate().
- * 
+ *
  * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
- * however if you want to pass the context and arguments as additional signature arguments to on/delegate, 
+ * however if you want to pass the context and arguments as additional signature arguments to on/delegate,
  * you need to provide a null value for the configuration object, e.g: <code>node.on("gesturemovestart", fn, null, context, arg1, arg2, arg3)</code></p>
  *
  * @event gesturemovestart
@@ -111,7 +140,7 @@ YUI.add('event-move', function (Y, NAME) {
  * <dt>button (no default)</dt>
  * <dd>In the case of a mouse input device, if the event should only be fired for a specific mouse button.</dd>
  * <dt>preventDefault (defaults to false)</dt>
- * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart or mousedown is received (that is before minTime or minDistance thresholds are crossed, and so before the gesturemovestart listener is notified) so that things like text selection and context popups (on touch devices) can be 
+ * <dd>Can be set to true/false to prevent default behavior as soon as the touchstart or mousedown is received (that is before minTime or minDistance thresholds are crossed, and so before the gesturemovestart listener is notified) so that things like text selection and context popups (on touch devices) can be
  * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it (for example, DragDrop can determine if the target is a valid handle or not before preventing default).</dd>
  * </dl>
  *
@@ -122,7 +151,10 @@ define(GESTURE_MOVE_START, {
 
     on: function (node, subscriber, ce) {
 
-        subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START], 
+        //Set -ms-touch-action on IE10 and set preventDefault to true
+        _setTouchActions(node, subscriber, EVENT[START]);
+
+        subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START],
             this._onStart,
             this,
             node,
@@ -148,6 +180,8 @@ define(GESTURE_MOVE_START, {
             handle.detach();
             subscriber[_DEL_MOVE_START_HANDLE] = null;
         }
+
+        _unsetTouchActions(node);
     },
 
     detach: function (node, subscriber, ce) {
@@ -157,6 +191,8 @@ define(GESTURE_MOVE_START, {
             startHandle.detach();
             subscriber[_MOVE_START_HANDLE] = null;
         }
+
+        _unsetTouchActions(node);
     },
 
     processArgs : function(args, delegate) {
@@ -228,7 +264,7 @@ define(GESTURE_MOVE_START, {
                             this._start(e, node, ce, params);
                         }
                     }, this));
-                }                        
+                }
             }
         }
     },
@@ -269,18 +305,18 @@ define(GESTURE_MOVE_START, {
 /**
  * Sets up a "gesturemove" event, that is fired on touch devices in response to a single finger "touchmove",
  * and on mouse based devices in response to a "mousemove".
- * 
+ *
  * <p>By default this event is only fired when the same node
  * has received a "gesturemovestart" event. The subscriber can set standAlone to true, in the configuration properties,
  * if they want to listen for this event without an initial "gesturemovestart".</p>
- * 
+ *
  * <p>By default this event sets up it's internal "touchmove" and "mousemove" DOM listeners on the document element. The subscriber
- * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p> 
+ * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p>
  *
  * <p>This event can also be listened for using node.delegate().</p>
  *
  * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
- * however if you want to pass the context and arguments as additional signature arguments to on/delegate, 
+ * however if you want to pass the context and arguments as additional signature arguments to on/delegate,
  * you need to provide a null value for the configuration object, e.g: <code>node.on("gesturemove", fn, null, context, arg1, arg2, arg3)</code></p>
  *
  * @event gesturemove
@@ -302,10 +338,9 @@ define(GESTURE_MOVE_START, {
 define(GESTURE_MOVE, {
 
     on : function (node, subscriber, ce) {
+        var root = _getRoot(node, subscriber, EVENT[MOVE]),
 
-        var root = _getRoot(node, subscriber),
-
-            moveHandle = root.on(EVENT[MOVE], 
+            moveHandle = root.on(EVENT[MOVE],
                 this._onMove,
                 this,
                 node,
@@ -313,6 +348,9 @@ define(GESTURE_MOVE, {
                 ce);
 
         subscriber[_MOVE_HANDLE] = moveHandle;
+
+        //Set -ms-touch-action on Win8 based on config object keys "preventDefault" and "preventTouchAction"
+        _setTouchActions(node, subscriber);
     },
 
     delegate : function(node, subscriber, ce, filter) {
@@ -333,8 +371,10 @@ define(GESTURE_MOVE, {
             moveHandle.detach();
             subscriber[_MOVE_HANDLE] = null;
         }
+
+        _unsetTouchActions(node);
     },
-    
+
     detachDelegate : function(node, subscriber, ce, filter) {
         var handle = subscriber[_DEL_MOVE_HANDLE];
 
@@ -342,6 +382,8 @@ define(GESTURE_MOVE, {
             handle.detach();
             subscriber[_DEL_MOVE_HANDLE] = null;
         }
+
+        _unsetTouchActions(node);
 
     },
 
@@ -363,7 +405,7 @@ define(GESTURE_MOVE, {
 
             if (e.touches) {
                 if (e.touches.length === 1) {
-                    _normTouchFacade(e, e.touches[0]);                    
+                    _normTouchFacade(e, e.touches[0]);
                 } else {
                     fireMove = false;
                 }
@@ -379,25 +421,25 @@ define(GESTURE_MOVE, {
             }
         }
     },
-    
+
     PREVENT_DEFAULT : false
 });
 
 /**
  * Sets up a "gesturemoveend" event, that is fired on touch devices in response to a single finger "touchend",
  * and on mouse based devices in response to a "mouseup".
- * 
+ *
  * <p>By default this event is only fired when the same node
  * has received a "gesturemove" or "gesturemovestart" event. The subscriber can set standAlone to true, in the configuration properties,
  * if they want to listen for this event without a preceding "gesturemovestart" or "gesturemove".</p>
  *
  * <p>By default this event sets up it's internal "touchend" and "mouseup" DOM listeners on the document element. The subscriber
- * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p> 
+ * can set the root configuration property, to specify which node to attach DOM listeners to, if different from the document.</p>
  *
  * <p>This event can also be listened for using node.delegate().</p>
  *
  * <p>It is recommended that you use Y.bind to set up context and additional arguments for your event handler,
- * however if you want to pass the context and arguments as additional signature arguments to on/delegate, 
+ * however if you want to pass the context and arguments as additional signature arguments to on/delegate,
  * you need to provide a null value for the configuration object, e.g: <code>node.on("gesturemoveend", fn, null, context, arg1, arg2, arg3)</code></p>
  *
  *
@@ -423,14 +465,17 @@ define(GESTURE_MOVE_END, {
 
         var root = _getRoot(node, subscriber),
 
-            endHandle = root.on(EVENT[END], 
-                this._onEnd, 
+            endHandle = root.on(EVENT[END],
+                this._onEnd,
                 this,
                 node,
-                subscriber, 
+                subscriber,
                 ce);
 
         subscriber[_MOVE_END_HANDLE] = endHandle;
+
+        //Set -ms-touch-action on Win8 based on config object keys "preventDefault" and "preventTouchAction"
+        _setTouchActions(node, subscriber, EVENT[END]);
     },
 
     delegate : function(node, subscriber, ce, filter) {
@@ -452,15 +497,19 @@ define(GESTURE_MOVE_END, {
             subscriber[_DEL_MOVE_END_HANDLE] = null;
         }
 
+        _unsetTouchActions(node);
+
     },
 
     detach : function (node, subscriber, ce) {
         var endHandle = subscriber[_MOVE_END_HANDLE];
-    
+
         if (endHandle) {
             endHandle.detach();
             subscriber[_MOVE_END_HANDLE] = null;
         }
+
+        _unsetTouchActions(node);
     },
 
     processArgs : function(args, delegate) {
@@ -480,7 +529,7 @@ define(GESTURE_MOVE_END, {
 
             if (e.changedTouches) {
                 if (e.changedTouches.length === 1) {
-                    _normTouchFacade(e, e.changedTouches[0]);                    
+                    _normTouchFacade(e, e.changedTouches[0]);
                 } else {
                     fireMoveEnd = false;
                 }
