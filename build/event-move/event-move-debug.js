@@ -357,8 +357,6 @@ define(GESTURE_MOVE, {
 
         subscriber[_MOVE_HANDLE] = moveHandle;
 
-        //Set -ms-touch-action on Win8 based on config object keys "preventDefault" and "preventTouchAction"
-        _setTouchActions(node, subscriber);
     },
 
     delegate : function(node, subscriber, ce, filter) {
@@ -483,9 +481,6 @@ define(GESTURE_MOVE_END, {
                 ce);
 
         subscriber[_MOVE_END_HANDLE] = endHandle;
-
-        //Set -ms-touch-action on Win8 based on config object keys "preventDefault" and "preventTouchAction"
-        _setTouchActions(node, subscriber, EVENT[END]);
     },
 
     delegate : function(node, subscriber, ce, filter) {
