@@ -48,7 +48,7 @@ YUI.add('event-move', function (Y, NAME) {
 
     NODE_TYPE = "nodeType",
 
-    SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
+    SUPPORTS_POINTER = Y.config.win && (("msMaxTouchPoints" in Y.config.win.navigator) && (Y.config.win.navigator.msMaxTouchPoints)),
 
     _defArgsProcessor = function(se, args, delegate) {
         var iConfig = (delegate) ? 4 : 3,
