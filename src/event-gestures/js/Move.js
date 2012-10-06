@@ -77,7 +77,7 @@
     },
 
     /*
-    In IE10, gestures will not work properly unless the -ms-touch-action CSS property is set to something other than 'auto'. Read http://msdn.microsoft.com/en-us/library/windows/apps/hh767313.aspx for more info. To get around this, we set -ms-touch-action: none which is the same as e.preventDefault(). This tells the browser to fire DOM events for all touch events, and not perform any default behavior.
+    In IE10 touch mode, gestures will not work properly unless the -ms-touch-action CSS property is set to something other than 'auto'. Read http://msdn.microsoft.com/en-us/library/windows/apps/hh767313.aspx for more info. To get around this, we set -ms-touch-action: none which is the same as e.preventDefault() on touch environments. This tells the browser to fire DOM events for all touch events, and not perform any default behavior.
 
     The user can over-ride this by setting a more lenient -ms-touch-action property on a node (such as pan-x, pan-y, etc.) via CSS when subscribing to the 'gesturemovestart' event.
     */
@@ -86,7 +86,6 @@
             elem = node.getDOMNode();
 
         if (SUPPORTS_POINTER) { //Checks to see if MSPointer events are supported.
-            params[PREVENT_DEFAULT] = true;
             elem.style.msTouchAction = 'none';
         }
     },
