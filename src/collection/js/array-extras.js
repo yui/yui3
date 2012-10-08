@@ -397,22 +397,22 @@ A.flatten = function(a) {
 /**
 Intersection of two or more arrays.
 
-@method intersect
-@param {Array}     First array  (or array-like thing - is passed through Y.Array() first.)
-@param {Array}     Second array   (or array-like thing - is passed through Y.Array() first.)
-@param {Function}  Comparison function (optional).  If not passed, intersect
-will use indexOf tests (which should do strict === comparison).  If
-a function is passed, it will be used to compare the items in the
-arrays.  This function will receive two arguments: the first
-will be an item from the first array, the second will be an item
-from the second array.  This might be useful for arrays of objects,
-for example.  Note that the return value may contain duplicate values - you
+Note that the return value may contain duplicate values - you
 will need to use Y.Array.unique(returnedArray, comparisonFunction).  This
 is because there's no prior reason that the comparison function used
 to determine the intersection should also be used as the equality function
 when determining uniqueness of values (although you're into the edge cases
 where they're not).
 
+@method intersect
+@param {Array} arr1 First array 
+@param {Array} arr2* Second array to compare with the first
+@param {Function} [comparison]  Comparison function (optional).  If not passed, 
+  intersect will use indexOf tests (which should do strict === comparison).  
+  If a function is passed, it will be used to compare the items in the
+  arrays.  This function will receive two arguments: 
+    @param {Any} comparison.item1  An item from the first array arr1
+    @param {Any} comparison.item2  An item from the second array.  This 
 @return {Array}    Array of items that appear in both original arrays.
 @static
 @since 3.7.3
@@ -448,11 +448,11 @@ A.intersect = function (arr1, arr2, comparison) {
         };
     }
 
-    a1 = new A(arr1);
-    a2 = new A(arr2);
+    a1 = A(arr1);
+    a2 = A(arr2);
     len1 = a1.length;
 
-    args = new A(arguments);
+    args = A(arguments);
 
     // we've got more than two arrays:
     if ((args.length === 3 && !L.isFunction(comparison)) ||
@@ -483,21 +483,18 @@ A.intersect = function (arr1, arr2, comparison) {
 Returns union of two or more arrays, with duplicates removed
 
 @method union
-@param {Array}
-@param {Array}
-...  (you can pass as many arrays as you like.  Each argument
-will be passed through Y.Array so conversions will happen
-if possible; if not will be skipped.
-@param {Function}   Comparison function to be used in call to unique (optional)
+@param {Array} arr1  First array
+@param {Array} arr2* Second (or more) array to combine with the first
+@param {Function} [comparison]  Comparison function to be used in call to unique (optional)
 @return {Array}
 @static
 @since 3.7.3
 **/
 A.union = function (arr1, arr2, comparison) {
 
-    var args = new A(arguments),
-        a1 = new A(arr1),
-        a2 = new A(arr2),
+    var args = A(arguments),
+        a1 = A(arr1),
+        a2 = A(arr2),
         a3;
 
     // more than 2 arrays passed: do the first two and then recurse.
@@ -516,19 +513,19 @@ A.union = function (arr1, arr2, comparison) {
 };
 
 /**
-Calculates the difference between two arrays: that is,
-the values in arr1 that are not contained in arr2.
+Calculates the difference between two arrays: that is, the values in arr1 
+  that are not contained in arr2.
 
 @method diff
-@param {Array} arr1    Or array-like something - passed through Y.Array first
-@param {Array} arr2    Or array-like something - passed through Y.Array first
-@param {Function} comparison    To tell if two items are equal.  
-The function will receive two arguments: the first is the value from 
-the first array, the second is a value from the second array to compare to.
-The comparison function is optional; if not passed, A.indexOf will be used.  
-If the function returns true they are the same.
+@param {Array} arr1 First array
+@param {Array} arr2 Second array 
+@param {Function} [comparison]  Function used to tell if two items are equal.  
+  The function will receive two arguments: 
+    @param comparison.item1  The value from the first array
+    @param comparison.item2  A value from the second array to compare to.
+  The comparison function is optional; if not passed, A.indexOf will be used.  
+  If the function returns true they are the same.
 @return {Array}
-
 @static
 @since 3.7.3
 **/
@@ -545,8 +542,8 @@ A.diff = function (arr1, arr2, comparison) {
                 false;
 
 
-    a1 = new A(arr1);
-    a2 = new A(arr2);
+    a1 = A(arr1);
+    a2 = A(arr2);
 
     if (fn) {
 
