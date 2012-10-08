@@ -19,14 +19,14 @@
         };
 
         /**
+        * dd-drop-plugin
         * @property NAME
-        * @description dd-drop-plugin
         * @type {String}
         */
         Drop.NAME = "dd-drop-plugin";
         /**
+        * The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
         * @property NS
-        * @description The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
         * @type {String}
         */
         Drop.NS = "drop";
