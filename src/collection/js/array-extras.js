@@ -393,3 +393,180 @@ A.flatten = function(a) {
 
     return result;
 };
+
+/**
+Intersection of two or more arrays.
+
+@method intersect
+@param {Array}     First array  (or array-like thing - is passed through Y.Array() first.)
+@param {Array}     Second array   (or array-like thing - is passed through Y.Array() first.)
+@param {Function}  Comparison function (optional).  If not passed, intersect
+will use indexOf tests (which should do strict === comparison).  If
+a function is passed, it will be used to compare the items in the
+arrays.  This function will receive two arguments: the first
+will be an item from the first array, the second will be an item
+from the second array.  This might be useful for arrays of objects,
+for example.  Note that the return value may contain duplicate values - you
+will need to use Y.Array.unique(returnedArray, comparisonFunction).  This
+is because there's no prior reason that the comparison function used
+to determine the intersection should also be used as the equality function
+when determining uniqueness of values (although you're into the edge cases
+where they're not).
+
+@return {Array}    Array of items that appear in both original arrays.
+@static
+@since 3.7.3
+**/
+A.intersect = function (arr1, arr2, comparison) {
+    var i = 0,
+        args,
+        a1,
+        a2,
+        len1 = 0,
+        ret = [],
+        iO = A.indexOf,
+        fn;
+
+    if (comparison && L.isFunction(comparison)) {
+
+        fn = function (item) {
+            var i;
+            for (i = 0; i < a2.length; i = i + 1) {
+                if (comparison(item, a2[i])) {
+                    ret.push(item, a2[i]);
+                }
+
+            }
+        };
+
+    } else {
+
+        fn = function (item) {
+            if (iO(a2, item) !== -1) {
+                ret.push(item);
+            }
+        };
+    }
+
+    a1 = new A(arr1);
+    a2 = new A(arr2);
+    len1 = a1.length;
+
+    args = new A(arguments);
+
+    // we've got more than two arrays:
+    if ((args.length === 3 && !L.isFunction(comparison)) ||
+            (args.length > 3)) {
+        // intersection of the first two:
+        if (L.isFunction(args[args.length - 1])) {
+            ret = A.intersect(a1, a2, args[args.length - 1]);
+        } else {
+            ret = A.intersect(a1, a2);
+        }
+        // replace the first two with their intersection
+        args.splice(0, 2, ret);
+        // rinse and repeat
+        return A.intersect.apply(this, args);
+
+    }
+
+    for (i = 0; i < len1; i = i + 1) {
+        fn(a1[i]);
+    }
+
+
+    return ret;
+
+};
+
+/**
+Returns union of two or more arrays, with duplicates removed
+
+@method union
+@param {Array}
+@param {Array}
+...  (you can pass as many arrays as you like.  Each argument
+will be passed through Y.Array so conversions will happen
+if possible; if not will be skipped.
+@param {Function}   Comparison function to be used in call to unique (optional)
+@return {Array}
+@static
+@since 3.7.3
+**/
+A.union = function (arr1, arr2, comparison) {
+
+    var args = new A(arguments),
+        a1 = new A(arr1),
+        a2 = new A(arr2),
+        a3;
+
+    // more than 2 arrays passed: do the first two and then recurse.
+    if (args.length > 2 && !L.isFunction(comparison)) {
+        a3 = A.union(arr1, arr2);
+        args.splice(0, 2, a3);
+        return A.union.apply(this, args);
+    }
+
+    // set up arguments for call to apply:
+    a2.unshift(a1.length, 0);
+    a1.splice.apply(a1, a2);
+
+
+    return A.unique(a1, comparison);
+};
+
+/**
+Calculates the difference between two arrays: that is,
+the values in arr1 that are not contained in arr2.
+
+@method diff
+@param {Array} arr1    Or array-like something - passed through Y.Array first
+@param {Array} arr2    Or array-like something - passed through Y.Array first
+@param {Function} comparison    To tell if two items are equal.  
+The function will receive two arguments: the first is the value from 
+the first array, the second is a value from the second array to compare to.
+The comparison function is optional; if not passed, A.indexOf will be used.  
+If the function returns true they are the same.
+@return {Array}
+
+@static
+@since 3.7.3
+**/
+A.diff = function (arr1, arr2, comparison) {
+
+    var i = 0,
+        ret = [],
+        a1,
+        a2,
+        cb,
+        iO = A.indexOf,
+        fn = (comparison && L.isFunction(comparison)) ?
+                comparison :
+                false;
+
+
+    a1 = new A(arr1);
+    a2 = new A(arr2);
+
+    if (fn) {
+
+        cb = function (a) { return fn(a1[i], a); };
+
+        for (i = 0; i < a1.length; i = i + 1) {
+
+            if (A.find(a2, cb) === null) {
+                ret.push(a1[i]);
+            }
+
+        }
+    } else {
+        for (i = 0; i < a1.length; i = i + 1) {
+
+            if (iO(a2, a1[i]) === -1) {
+                ret.push(a1[i]);
+            }
+
+        }
+    }
+    return ret;
+};
