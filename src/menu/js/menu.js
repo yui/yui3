@@ -579,37 +579,34 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         var item = this.getNodeById(e.currentTarget.get('id')),
             self = this;
 
-        clearTimeout(this._timeouts[item.id]);
+        clearTimeout(this._timeouts.item);
 
         if (item.isOpen()) {
             return;
         }
 
-        this._timeouts[item.id] = setTimeout(function () {
-            delete self._timeouts[item.id];
+        this._timeouts.item = setTimeout(function () {
             item.open();
-        }, 200);
+        }, 200); // TODO: make timeouts configurable
     },
 
     _onItemMouseLeave: function (e) {
         var item = this.getNodeById(e.currentTarget.get('id')),
             self = this;
 
-        clearTimeout(this._timeouts[item.id]);
+        clearTimeout(this._timeouts.item);
 
         if (!item.isOpen()) {
             return;
         }
 
-        this._timeouts[item.id] = setTimeout(function () {
-            delete self._timeouts[item.id];
+        this._timeouts.item = setTimeout(function () {
             item.close();
         }, 300);
     },
 
     _onMenuMouseEnter: function () {
         clearTimeout(this._timeouts.menu);
-        delete this._timeouts.menu;
     },
 
     _onMenuMouseLeave: function () {
@@ -618,7 +615,6 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         clearTimeout(this._timeouts.menu);
 
         this._timeouts.menu = setTimeout(function () {
-            delete self._timeouts.menu;
             self.closeSubMenus();
         }, 500);
     },
@@ -628,11 +624,8 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         var item = e.item;
 
         if (item.canHaveChildren) {
-            clearTimeout(this._timeouts[item.id]);
+            clearTimeout(this._timeouts.item);
             clearTimeout(this._timeouts.menu);
-
-            delete this._timeouts[item.id];
-            delete this._timeouts.menu;
 
             e.item.toggle();
         } else {
