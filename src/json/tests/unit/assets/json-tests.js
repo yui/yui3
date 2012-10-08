@@ -508,7 +508,7 @@ var suite = new Y.Test.Suite("Y.JSON.stringify (JavaScript implementation)");
 
 suite.add(new Y.Test.Case({
     name : "stringify",
-        
+
     _should : {
         error : {
             test_failOnStringifyCyclicalRef1    : true,

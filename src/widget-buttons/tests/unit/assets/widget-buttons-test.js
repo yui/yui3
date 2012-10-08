@@ -20,6 +20,10 @@ suite.add(new Y.Test.Case({
         error: {
             'Initialization should fail if `WidgetStdMod` has not been added': true,
             'Initialization should fail if `WidgetStdMod` has been added after `WidgetButtons`': true
+        },
+
+        ignore: {
+            '`buttons` should be parsed from a `srcNode` and use the `name` attribute of the node': !!Y.UA.winjs
         }
     },
 
@@ -80,6 +84,35 @@ suite.add(new Y.Test.Case({
             '<div>' +
                 '<div class="yui3-widget-hd">' +
                     '<span class="yui3-widget-buttons">' +
+                        '<button class="yui3-button" data-name="foo">Foo</button>' +
+                        '<a class="yui3-button" href="#" data-name="a">Anchor</a>' +
+                        '<input class="yui3-button" type="button" data-name="input">Input</a>' +
+                    '</span>' +
+                '</div>' +
+            '</div>';
+
+        Y.one('#test').append(markup);
+
+        var fooButton   = Y.one('#test button[data-name=foo]'),
+            aButton     = Y.one('#test a[data-name=a]'),
+            inputButton = Y.one('#test input[data-name=input]');
+
+        this.widget = new TestWidget({
+            srcNode: '#test div'
+        });
+
+        Assert.areSame(fooButton, this.widget.getButton('foo'), '"foo" button in markup was not used.');
+        Assert.areSame(aButton, this.widget.getButton('a'), '"a" button in markup was not used.');
+        Assert.areSame(inputButton, this.widget.getButton('input'), '"input" button in markup was not used.');
+    },
+
+    // Excluded from WinJS because that runtime doesn't like the use of `name`
+    // attributes on DOM nodes :-/
+    '`buttons` should be parsed from a `srcNode` and use the `name` attribute of the node': function () {
+        var markup = '' +
+            '<div>' +
+                '<div class="yui3-widget-hd">' +
+                    '<span class="yui3-widget-buttons">' +
                         '<button class="yui3-button" name="foo">Foo</button>' +
                     '</span>' +
                 '</div>' +
@@ -110,14 +143,14 @@ suite.add(new Y.Test.Case({
             '<div>' +
                 '<div class="yui3-widget-hd">' +
                     '<span class="yui3-widget-buttons">' +
-                        '<button class="yui3-button" name="foo">Foo</button>' +
+                        '<button class="yui3-button" data-name="foo">Foo</button>' +
                     '</span>' +
                 '</div>' +
             '</div>';
 
         Y.one('#test').append(markup);
 
-        var fooButton = Y.one('#test button[name=foo]'),
+        var fooButton = Y.one('#test button[data-name=foo]'),
             called    = 0;
 
         this.widget = new PanelWidget({
@@ -141,14 +174,14 @@ suite.add(new Y.Test.Case({
             '<div>' +
                 '<div class="yui3-widget-hd">' +
                     '<span class="yui3-widget-buttons">' +
-                        '<button class="yui3-button" name="foo">Foo</button>' +
+                        '<button class="yui3-button" data-name="foo">Foo</button>' +
                     '</span>' +
                 '</div>' +
             '</div>';
 
         Y.one('#test').append(markup);
 
-        var fooButton = Y.one('#test button[name=foo]');
+        var fooButton = Y.one('#test button[data-name=foo]');
 
         this.widget = new TestWidget({
             srcNode: '#test div',
@@ -321,7 +354,7 @@ suite.add(new Y.Test.Case({
             buttons: [
                 {name: 'foo'},
                 {name: 'bar', section: 'body', label: 'Bar'},
-                Y.Node.create('<button name="baz">Baz</button>')
+                Y.Node.create('<button data-name="baz">Baz</button>')
             ]
         });
 
@@ -1044,8 +1077,8 @@ suite.add(new Y.Test.Case({
             '<div>' +
                 '<div class="yui3-widget-hd">' +
                     '<span class="yui3-widget-buttons">' +
-                        '<button class="yui3-button" name="foo">Foo</button>' +
-                        '<button class="yui3-button" name="bar">Bar</button>' +
+                        '<button class="yui3-button" data-name="foo">Foo</button>' +
+                        '<button class="yui3-button" data-name="bar">Bar</button>' +
                     '</span>' +
                 '</div>' +
             '</div>';
@@ -1053,8 +1086,8 @@ suite.add(new Y.Test.Case({
         Y.one('#test').append(markup);
 
         var headerButtons = Y.one('#test .yui3-widget-hd .yui3-widget-buttons'),
-            fooButton     = Y.one('#test button[name=foo]'),
-            barButton     = Y.one('#test button[name=bar]');
+            fooButton     = Y.one('#test button[data-name=foo]'),
+            barButton     = Y.one('#test button[data-name=bar]');
 
         Assert.areSame(fooButton, headerButtons.get('firstChild'), '`foo` button is not the first header button.');
 

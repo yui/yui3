@@ -304,7 +304,7 @@
     * @static
     * @property REG_FONTFAMILY
     */
-    Y.EditorSelection.REG_FONTFAMILY = /font-family: ;/;
+    Y.EditorSelection.REG_FONTFAMILY = /font-family:\s*;/;
 
     /**
     * Regular Expression to determine if a string has a character in it

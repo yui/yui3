@@ -222,3 +222,11 @@ Almost every part of the Editor infrastructure is a plugin or extension. Below y
 </table>
 
 <p><strong>Note:</strong> Either `editor-br` or `editor-para` should be plugged. One, but not both, is required for proper functionality.</p>
+
+<h3 id="knownissues">Known Issues</h3>
+
+<p>
+Editor will currently not function inside of the WinJS Windows 8 application environment. Editor relies on several DOM tricks
+under the hood to deal with the browser's inconsistencies. Due to the security limitations inside of the WinJS environment,
+Editor can not use these techniques and will not function as expected.
+</p>

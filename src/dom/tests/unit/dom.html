@@ -567,7 +567,10 @@
             },
 
             test_position: function() { // basic position tests
-                var node = document.createElement('div');
+                var node = document.createElement('div'),
+                    closeEnough = function(expected, actual) { // compensates for rounding error in setXY ... getXY
+                        return (Math.abs(expected - actual) < 2);
+                    };
                 ArrayAssert.itemsAreEqual([0, 0], Y.DOM.getXY(node), 'off-dom: [0, 0]');
 
                 // off-dom is unreliable due to cascade when appended
@@ -579,7 +582,9 @@
                 document.body.appendChild(node);
                 Y.DOM.setXY(node, [100, 200]);
                 var pos = Y.DOM.getXY(node);
-                ArrayAssert.itemsAreEqual([100, 200], [Math.round(pos[0]), Math.round(pos[1])], 'setXY([100, 200]');
+                //ArrayAssert.itemsAreEqual([100, 200], [Math.round(pos[0]), Math.round(pos[1])], 'setXY([100, 200]');
+                Assert.isTrue((closeEnough(100, pos[0])),' - Failed to move to correct X');
+                Assert.isTrue((closeEnough(200, pos[1])),' - Failed to move to correct Y');
             },
 
             test_region: function() {

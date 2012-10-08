@@ -5,11 +5,11 @@ YUI.add('cache-offline-tests', function(Y) {
             tearDown = function() {
                 this.cache.flush();
             };
-        
+
 
         var testClass = new Y.Test.Case({
             name: "Class Tests",
-            
+
             tearDown : tearDown,
 
             testDefaults: function() {
@@ -25,16 +25,16 @@ YUI.add('cache-offline-tests', function(Y) {
                 ARRAYASSERT.isEmpty(this.cache.get("entries"), "Expected empty array.");
             }
         });
-        
+
         var testBasic = new Y.Test.Case({
             name: "Basic Tests",
-            
+
             tearDown : tearDown,
 
             testMaxDefault: function() {
                 this.cache = new Y.CacheOffline();
                 ASSERT.areSame(null, this.cache.get("max"), "Expected max to be null.");
-                
+
                 this.cache.add(1, "a");
                 ASSERT.areSame(1, this.cache.get("size"), "Expected 1 entries.");
                 ASSERT.isNotNull(this.cache.retrieve(1), "Expected null cached response.");
@@ -43,11 +43,11 @@ YUI.add('cache-offline-tests', function(Y) {
             testMaxConfig: function() {
                 this.cache = new Y.CacheOffline({max:2});
                 ASSERT.isNull(null, this.cache.get("max"), "Expected max to be null.");
-                
+
                 this.cache.add(2, "b");
                 ASSERT.areSame(1, this.cache.get("size"), "Expected 1 entry.");
             },
-        
+
             testMaxSet: function() {
                 this.cache = new Y.CacheOffline();
                 this.cache.set("max", 1);
@@ -108,7 +108,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 var cachedentry = this.cache.retrieve(1);
                 ASSERT.areSame("a", cachedentry.response, "Expected cached response.");
                 ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected cached Date.");
-                
+
                 this.cache.set("expires", 1);
                 this.cache.add(1, "a");
 
@@ -125,7 +125,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 var cachedentry = this.cache.retrieve(1);
                 ASSERT.areSame("a", cachedentry.response, "Expected cached response.");
                 ASSERT.isInstanceOf(Date, cachedentry.expires, "Expected cached Date.");
-                
+
                 this.cache.flush();
                 this.cache.set("expires", new Date(new Date().getTime() - 86400000));
                 this.cache.add(1, "a");
@@ -147,12 +147,12 @@ YUI.add('cache-offline-tests', function(Y) {
                 this.cache.flush();
                 ASSERT.areSame(0, this.cache.get("size"), "Expected empty this.cache.");
             },
-            
+
             testFlushAll: function() {
                 this.cache = new Y.CacheOffline();
                 this.cache.add(1, "a");
                 this.cache.add(2, "b");
-                
+
                 var cache = new Y.CacheOffline({sandbox:"another"});
                 cache.add(1, "a");
                 cache.add(2, "b");
@@ -162,13 +162,13 @@ YUI.add('cache-offline-tests', function(Y) {
                 }
 
                 Y.CacheOffline.flushAll();
-                
+
                 if(window.localStorage) {
                     ASSERT.areSame(0, localStorage.length, "Expected empty localStorage.");
                 }
             }
         });
-    
+
         var testEvents = new Y.Test.Case({
             name: "Event Tests",
 
@@ -190,7 +190,7 @@ YUI.add('cache-offline-tests', function(Y) {
 
                 Y.Mock.verify(mock);
             },
-        
+
             testFlush: function() {
                 var mock = new Y.Mock();
                 Y.Mock.expect(mock, {
@@ -202,7 +202,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 this.cache.on("flush", mock.handleFlush);
                 this.cache.add(1, "a");
                 this.cache.flush();
-                
+
                 Y.Mock.verify(mock);
             },
 
@@ -219,7 +219,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 this.cache.on("request", mock.handleRequest);
                 this.cache.add(1, "a");
                 this.cache.retrieve(2);
-                
+
                 Y.Mock.verify(mock);
             },
 
@@ -237,7 +237,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 this.cache.on("retrieve", mock.handleRetrieve);
                 this.cache.add(1, "a");
                 this.cache.retrieve(1);
-                
+
                 Y.Mock.verify(mock);
             },
 
@@ -253,7 +253,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 this.cache.on("retrieve", mock.handleRetrieve);
                 this.cache.add(1, "a");
                 this.cache.retrieve(2);
-                
+
                 Y.Mock.verify(mock);
             },
 
@@ -263,7 +263,7 @@ YUI.add('cache-offline-tests', function(Y) {
                     e.preventDefault();
                 }, this, true);
                 this.cache.add(1, "a");
-                
+
                 // Test the cancel
                 ASSERT.areSame(0, this.cache.get("size"), "Expected 0 entries.");
             },
@@ -275,7 +275,7 @@ YUI.add('cache-offline-tests', function(Y) {
                 }, this, true);
                 this.cache.add(1, "a");
                 this.cache.flush();
-                
+
                 // Test the cancel
                 ASSERT.areSame(1, this.cache.get("size"), "Expected 1 entry.");
             }
@@ -348,7 +348,45 @@ YUI.add('cache-offline-tests', function(Y) {
             }
         });
 
-        var suite = new Y.Test.Suite("Cache Offline");
+        var suite = new Y.Test.Suite({
+            name: 'Cache Offline',
+
+            setUp: function () {
+                var localStorage, oldItems, i, len, key;
+
+                try {
+                    localStorage = Y.config.win.localStorage;
+                } catch (ex) {}
+
+                if (!localStorage) { return; }
+
+                oldItems = this.oldItems = {};
+
+                for (i = 0, len = localStorage.length; i < len; i +=1) {
+                    key           = localStorage.key(i);
+                    oldItems[key] = localStorage.getItem(key);
+                }
+
+                localStorage.clear();
+            },
+
+            tearDown: function () {
+                var localStorage;
+
+                try {
+                    localStorage = Y.config.win.localStorage;
+                } catch (ex) {}
+
+                if (!localStorage) { return; }
+
+                Y.Object.each(this.oldItems, function (item, key) {
+                    localStorage.setItem(key, item);
+                });
+
+                delete this.oldItems;
+            }
+        });
+
         suite.add(testClass);
         suite.add(testBasic);
         suite.add(testEvents);

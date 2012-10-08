@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Get IE 10 Issue</title>
+        <script type="text/javascript" src="a.js"></script> <!-- to cause the 304 below -->
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            var i = 0;
+
+            document.head.appendChild(document.createTextNode(''));
+
+            var ib = document.head.lastChild;
+
+            function addScript(url, async) {
+
+                var scriptNode = document.createElement("script");
+
+                scriptNode.setAttribute("charset", "utf-8");
+                scriptNode.setAttribute("id", "i" + i++);
+
+                scriptNode.setAttribute("src", url);
+
+                //scriptNode.async = async;
+
+                //scriptNode.onreadystatechange = function(e) {
+                //   console.log("RSC:" + scriptNode.readyState + ": " + url);
+                //};
+
+                scriptNode.onload = function() {
+                    console.log("onload fired:" + url);
+                };
+
+                scriptNode.onerror = function() {
+                    console.log("onerror fired:" + url);
+                };
+
+                console.log("adding to dom:" + url);
+
+                document.head.insertBefore(scriptNode, ib);
+            }
+
+            function addLink(url) {
+
+                var linkNode = document.createElement("link");
+
+                linkNode.setAttribute("charset", "utf-8");
+                linkNode.setAttribute("id", "i" + i++);
+                linkNode.setAttribute("rel", "stylesheet");
+
+                linkNode.setAttribute("href", url);
+
+                //linkNode.onreadystatechange = function(e) {
+                //    console.log("RSC:" + linkNode.readyState + ": " + url);
+                //};
+
+                linkNode.onload = function() {
+                    console.log("onload fired:" + url);
+                };
+
+                linkNode.onerror = function() {
+                    console.log("onerror fired:" + url);
+                };
+
+                console.log("adding css to dom:" + url);
+
+                document.head.appendChild(linkNode);
+            }
+
+            addScript("foobar.js", true);
+            addScript("foobar.js", true);
+            addScript("a.js", true);
+
+            /*
+            for (var i = 0; i < 5000; i++) {
+                console.log(i);
+            }
+            */
+
+        </script>
+    </body>
+</html>

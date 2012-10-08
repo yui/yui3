@@ -13,8 +13,13 @@ YUI.add('anim-xy-tests', function(Y) {
             node.on('click', function(e) {
                 setTimeout(function() {
                     test.resume(function() {
-                        Y.Assert.areEqual(xy[0], Y.one('#demo').getX());
-                        Y.Assert.areEqual(xy[1], Y.one('#demo').getY());
+                        //Y.Assert.areEqual(xy[0], Y.one('#demo').getX());
+                        //Y.Assert.areEqual(xy[1], Y.one('#demo').getY());
+                        var demo = Y.one('#demo'),
+                            x = demo.getX(),
+                            y = demo.getY();
+                        Y.Assert.isTrue(test.closeEnough(xy[0], x), "The value should equal " + x + " instead of " + xy[0] + ".");
+                        Y.Assert.isTrue(test.closeEnough(xy[1], y), "The value should equal " + y + " instead of " + xy[1] + ".");
                     });
                 }, 1200);
             });
