@@ -701,6 +701,7 @@ Y.PieModel = Y.Base.create('pieModel', Y.Model, [], {
     switch (attributes.type) {
     case 'rhubarb':
       callback('Eww. No. Not allowed.');
+
     case 'maple custard':
       slices = Y.Lang.isValue(attributes.slices) ?
           attributes.slices : this.get('slices');
