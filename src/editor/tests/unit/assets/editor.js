@@ -537,9 +537,9 @@ YUI.add('editor-tests', function(Y) {
         _should: {
             fail: {
                 'test: EditorSelection': (Y.UA.chrome),
-                test_bidi_plug: (Y.UA.ie && Y.UA.ie === 9),
+                test_bidi_plug: (Y.UA.ie && Y.UA.ie >= 9),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit) ? true : false),
-                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie === 9) || Y.UA.chrome) ? true : false)
+                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false)
 
             },
             ignore: {
@@ -548,7 +548,7 @@ YUI.add('editor-tests', function(Y) {
             error: { //These tests should error
                 'test: EditorSelection': (Y.UA.chrome || Y.UA.webkit),
                 test_selection_methods: ((Y.UA.ie || Y.UA.webkit || (Y.UA.gecko && Y.UA.gecko >= 12)) ? true : false),
-                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie === 9) || Y.UA.chrome) ? true : false),
+                test_execCommands: ((Y.UA.webkit || (Y.UA.ie && Y.UA.ie >= 9) || Y.UA.chrome) ? true : false),
                 test_double_plug: true,
                 test_double_plug2: true,
                 test_bidi_noplug: true

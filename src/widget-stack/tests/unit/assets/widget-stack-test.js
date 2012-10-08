@@ -13,12 +13,23 @@ TestWidget = Y.Base.create('testWidget', Y.Widget, [Y.WidgetStack]);
 suite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
+    _should: {
+        ignore: {
+            'WidgetStack should add `shim` and `zIndex` attributes': !!Y.UA.winjs
+        }
+    },
+
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         delete this.widget;
         Y.one('#test').empty();
     },
 
+    // Ignored in WinJS because we have dirty iframe issues. Once those are
+    // cleaned up, this test should be re-enabled.
     'WidgetStack should add `shim` and `zIndex` attributes': function () {
         this.widget = new TestWidget({
             zIndex : 10,
@@ -39,7 +50,10 @@ suite.add(new Y.Test.Case({
     name: 'Attributes and Properties',
 
     tearDown: function () {
-        this.widget && this.widget.destroy();
+        if (this.widget) {
+            this.widget.destroy();
+        }
+
         delete this.widget;
         Y.one('#test').empty();
     },

@@ -164,7 +164,7 @@
 					scrollview.on('scrollEnd', function(){
 						Test.resume(function(){
 							// depending on browser activity, scrollX won't always be exactly at the end (sometimes a few pixels shy), so we'll give it a large buffer
-							(scrollview.get('scrollX') > 2000) ? Y.Assert.pass() : Y.Assert.fail();
+							(scrollview.get('scrollX') > 1500) ? Y.Assert.pass() : Y.Assert.fail();
 							Y.Assert.areEqual(0, scrollview.get('scrollY'));
 						});
 					});

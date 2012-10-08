@@ -11,6 +11,56 @@ YUI.add('exec-command', function (Y, NAME) {
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
+        },
+        /**
+        * This method is meant to normalize IE's in ability to exec the proper command on elements with CSS styling.
+        * @method fixIETags
+        * @protected
+        * @param {String} cmd The command to execute
+        * @param {String} tag The tag to create
+        * @param {String} rule The rule that we are looking for.
+        */
+        fixIETags = function(cmd, tag, rule) {
+            var inst = this.getInstance(),
+                doc = inst.config.doc,
+                sel = doc.selection.createRange(),
+                o = doc.queryCommandValue(cmd),
+                html, reg, m, p, d, s, c;
+
+            if (o) {
+                html = sel.htmlText;
+                reg = new RegExp(rule, 'g');
+                m = html.match(reg);
+
+                if (m) {
+                    html = html.replace(rule + ';', '').replace(rule, '');
+
+                    sel.pasteHTML('<var id="yui-ie-bs">');
+
+                    p = doc.getElementById('yui-ie-bs');
+                    d = doc.createElement('div');
+                    s = doc.createElement(tag);
+
+                    d.innerHTML = html;
+                    if (p.parentNode !== inst.config.doc.body) {
+                        p = p.parentNode;
+                    }
+
+                    c = d.childNodes;
+
+                    p.parentNode.replaceChild(s, p);
+
+                    Y.each(c, function(f) {
+                        s.appendChild(f);
+                    });
+                    sel.collapse();
+                    if (sel.moveToElementText) {
+                        sel.moveToElementText(s);
+                    }
+                    sel.select();
+                }
+            }
+            this._command(cmd);
         };
 
         Y.extend(ExecCommand, Y.Base, {
@@ -35,7 +85,7 @@ YUI.add('exec-command', function (Y, NAME) {
             */
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
-                
+
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
                     Y.log('OVERIDE execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
@@ -95,7 +145,7 @@ YUI.add('exec-command', function (Y, NAME) {
             },
             _wrapContent: function(str, override) {
                 var useP = (this.getInstance().host.editorPara && !override ? true : false);
-                
+
                 if (useP) {
                     str = '<p>' + str + '</p>';
                 } else {
@@ -181,11 +231,16 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @static
                 * @param {String} cmd The command executed: insertbr
                 */
-                insertbr: function(cmd) {
+                insertbr: function() {
                     var inst = this.getInstance(),
                         sel = new inst.EditorSelection(),
                         html = '<var>|</var>', last = null,
-                        q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var';
+                        q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var',
+                        insert = function(n) {
+                            var c = inst.Node.create('<br>');
+                            n.insert(c, 'before');
+                            return c;
+                        };
 
                     if (sel._selection.pasteHTML) {
                         sel._selection.pasteHTML(html);
@@ -193,14 +248,9 @@ YUI.add('exec-command', function (Y, NAME) {
                         this._command('inserthtml', html);
                     }
 
-                    var insert = function(n) {
-                        var c = inst.Node.create('<br>');
-                        n.insert(c, 'before');
-                        return c;
-                    };
 
                     inst.all(q).each(function(n) {
-                        var g = true;   
+                        var g = true, s;
                         if (Y.UA.webkit) {
                             g = false;
                             if (n.get('innerHTML') === '|') {
@@ -210,7 +260,7 @@ YUI.add('exec-command', function (Y, NAME) {
                         if (g) {
                             last = insert(n);
                             if ((!last.previous() || !last.previous().test('br')) && Y.UA.gecko) {
-                                var s = last.cloneNode();
+                                s = last.cloneNode();
                                 last.insert(s, 'after');
                                 last = s;
                             }
@@ -300,7 +350,7 @@ YUI.add('exec-command', function (Y, NAME) {
                 backcolor: function(cmd, val) {
                     var inst = this.getInstance(),
                         sel = new inst.EditorSelection(), n;
-                    
+
                     if (Y.UA.gecko || Y.UA.opera) {
                         cmd = 'hilitecolor';
                     }
@@ -313,7 +363,8 @@ YUI.add('exec-command', function (Y, NAME) {
                                 sel.anchorNode.setStyle('backgroundColor', val);
                                 n = sel.anchorNode;
                             } else {
-                                n = this.command('inserthtml', '<span style="background-color: ' + val + '">' + inst.EditorSelection.CURSOR + '</span>');
+                                n = this.command('inserthtml',
+                                    '<span style="background-color: ' + val + '">' + inst.EditorSelection.CURSOR + '</span>');
                                 sel.focusCursor(true, true);
                             }
                             return n;
@@ -348,8 +399,8 @@ YUI.add('exec-command', function (Y, NAME) {
                     this._command('fontname', val);
                     var inst = this.getInstance(),
                         sel = new inst.EditorSelection();
-                    
-                    if (sel.isCollapsed && (this._lastKey != 32)) {
+
+                    if (sel.isCollapsed && (this._lastKey !== 32)) {
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('face', val);
                         }
@@ -368,9 +419,9 @@ YUI.add('exec-command', function (Y, NAME) {
                     this._command('fontsize', val);
 
                     var inst = this.getInstance(),
-                        sel = new inst.EditorSelection();
-                    
-                    if (sel.isCollapsed && sel.anchorNode && (this._lastKey != 32)) {
+                        sel = new inst.EditorSelection(), p;
+
+                    if (sel.isCollapsed && sel.anchorNode && (this._lastKey !== 32)) {
                         if (Y.UA.webkit) {
                             if (sel.anchorNode.getStyle('lineHeight')) {
                                 sel.anchorNode.setStyle('lineHeight', '');
@@ -379,7 +430,7 @@ YUI.add('exec-command', function (Y, NAME) {
                         if (sel.anchorNode.test('font')) {
                             sel.anchorNode.set('size', val);
                         } else if (Y.UA.gecko) {
-                            var p = sel.anchorNode.ancestor(inst.EditorSelection.DEFAULT_BLOCK_TAG);
+                            p = sel.anchorNode.ancestor(inst.EditorSelection.DEFAULT_BLOCK_TAG);
                             if (p) {
                                 p.setStyle('fontSize', '');
                             }
@@ -392,7 +443,7 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @static
                 * @param {String} cmd The command executed: list, ul
                 */
-                insertunorderedlist: function(cmd) {
+                insertunorderedlist: function() {
                     this.command('list', 'ul');
                 },
                 /**
@@ -401,7 +452,7 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @static
                 * @param {String} cmd The command executed: list, ol
                 */
-                insertorderedlist: function(cmd) {
+                insertorderedlist: function() {
                     this.command('list', 'ol');
                 },
                 /**
@@ -415,17 +466,18 @@ YUI.add('exec-command', function (Y, NAME) {
                     var inst = this.getInstance(), html, self = this,
                         /*
                         The yui3- class name below is not a skinnable class,
-                        it's a utility class used internally by editor and 
+                        it's a utility class used internally by editor and
                         stripped when completed, calling getClassName on this
                         is a waste of resources.
                         */
                         DIR = 'dir', cls = 'yui3-touched',
                         dir, range, div, elm, n, str, s, par, list, lis,
-                        useP = (inst.host.editorPara ? true : false),
+                        useP = (inst.host.editorPara ? true : false), tmp,
+                        sdir, hasPParent, fc,
                         sel = new inst.EditorSelection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
-                    
+
                     if (Y.UA.ie && !sel.isCollapsed) {
                         range = sel._selection;
                         html = range.htmlText;
@@ -478,7 +530,7 @@ YUI.add('exec-command', function (Y, NAME) {
                             if (html.indexOf('<br>') > -1) {
                                 html = html.split(/<br>/i);
                             } else {
-                                var tmp = inst.Node.create(html),
+                                tmp = inst.Node.create(html),
                                 ps = tmp ? tmp.all('p') : null;
 
                                 if (ps && ps.size()) {
@@ -521,7 +573,7 @@ YUI.add('exec-command', function (Y, NAME) {
                             }
                             html = Y.EditorSelection.getText(par);
                             if (html === '') {
-                                var sdir = '';
+                                sdir = '';
                                 if (dir) {
                                     sdir = ' dir="' + dir + '"';
                                 }
@@ -549,7 +601,7 @@ YUI.add('exec-command', function (Y, NAME) {
                             dir = par.getAttribute(DIR);
                         }
                         if (par && par.test(tag)) {
-                            var hasPParent = par.ancestor('p');
+                            hasPParent = par.ancestor('p');
                             html = inst.Node.create('<div/>');
                             elm = par.all('li');
                             elm.each(function(h) {
@@ -565,7 +617,7 @@ YUI.add('exec-command', function (Y, NAME) {
                             if (useP) {
                                 html = inst.Node.create(html.get('innerHTML'));
                             }
-                            var fc = html.get('firstChild');
+                            fc = html.get('firstChild');
                             par.replace(html);
                             sel.selectNode(fc);
                         } else {
@@ -597,13 +649,13 @@ YUI.add('exec-command', function (Y, NAME) {
                     if (Y.UA.webkit) {
                         var inst = this.getInstance(),
                             sel = new inst.EditorSelection(),
-                            aNode = sel.anchorNode;
+                            aNode = sel.anchorNode, html,
+                            bgColor = aNode.getStyle('backgroundColor');
 
-                            var bgColor = aNode.getStyle('backgroundColor');
                             this._command(val);
                             sel = new inst.EditorSelection();
                             if (sel.anchorNode.test('div')) {
-                                var html = '<span>' + sel.anchorNode.get('innerHTML') + '</span>';
+                                html = '<span>' + sel.anchorNode.get('innerHTML') + '</span>';
                                 sel.anchorNode.set('innerHTML', html);
                                 sel.anchorNode.one('span').setStyle('backgroundColor', bgColor);
                                 sel.selectNode(sel.anchorNode.one('span'));
@@ -617,7 +669,7 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @method COMMANDS.justifycenter
                 * @static
                 */
-                justifycenter: function(cmd) {
+                justifycenter: function() {
                     this.command('justify', 'justifycenter');
                 },
                 /**
@@ -625,7 +677,7 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @method COMMANDS.justifyleft
                 * @static
                 */
-                justifyleft: function(cmd) {
+                justifyleft: function() {
                     this.command('justify', 'justifyleft');
                 },
                 /**
@@ -633,7 +685,7 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @method COMMANDS.justifyright
                 * @static
                 */
-                justifyright: function(cmd) {
+                justifyright: function() {
                     this.command('justify', 'justifyright');
                 },
                 /**
@@ -641,62 +693,11 @@ YUI.add('exec-command', function (Y, NAME) {
                 * @method COMMANDS.justifyfull
                 * @static
                 */
-                justifyfull: function(cmd) {
+                justifyfull: function() {
                     this.command('justify', 'justifyfull');
                 }
             }
         });
-        
-        /**
-        * This method is meant to normalize IE's in ability to exec the proper command on elements with CSS styling.
-        * @method fixIETags
-        * @protected
-        * @param {String} cmd The command to execute
-        * @param {String} tag The tag to create
-        * @param {String} rule The rule that we are looking for.
-        */
-        var fixIETags = function(cmd, tag, rule) {
-            var inst = this.getInstance(),
-                doc = inst.config.doc,
-                sel = doc.selection.createRange(),
-                o = doc.queryCommandValue(cmd),
-                html, reg, m, p, d, s, c;
-
-            if (o) {
-                html = sel.htmlText;
-                reg = new RegExp(rule, 'g');
-                m = html.match(reg);
-
-                if (m) {
-                    html = html.replace(rule + ';', '').replace(rule, '');
-
-                    sel.pasteHTML('<var id="yui-ie-bs">');
-
-                    p = doc.getElementById('yui-ie-bs');
-                    d = doc.createElement('div');
-                    s = doc.createElement(tag);
-                    
-                    d.innerHTML = html;
-                    if (p.parentNode !== inst.config.doc.body) {
-                        p = p.parentNode;
-                    }
-
-                    c = d.childNodes;
-
-                    p.parentNode.replaceChild(s, p);
-
-                    Y.each(c, function(f) {
-                        s.appendChild(f);
-                    });
-                    sel.collapse();
-                    if (sel.moveToElementText) {
-                        sel.moveToElementText(s);
-                    }
-                    sel.select();
-                }
-            }
-            this._command(cmd);
-        };
 
         if (Y.UA.ie) {
             ExecCommand.COMMANDS.bold = function() {

@@ -2,7 +2,8 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
 
 
     /**
-     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
+     * Extends the dd-ddm Class to add support for the placement of Drop Target
+     * shims inside the viewport shim. It also handles all Drop Target related events and interactions.
      * @module dd
      * @submodule dd-ddm-drop
      * @for DDM
@@ -39,7 +40,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         },
         /**
         * @private
-        * @method _addActiveShim 
+        * @method _addActiveShim
         * @description Adds a Drop Target to the list of active shims
         * @param {Object} d The Drop instance to add to the list.
         */
@@ -48,17 +49,17 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         },
         /**
         * @private
-        * @method _removeActiveShim 
+        * @method _removeActiveShim
         * @description Removes a Drop Target to the list of active shims
         * @param {Object} d The Drop instance to remove from the list.
         */
         _removeActiveShim: function(d) {
             var s = [];
-            Y.each(this._activeShims, function(v, k) {
+            Y.each(this._activeShims, function(v) {
                 if (v._yuid !== d._yuid) {
                     s[s.length] = v;
                 }
-                
+
             });
             this._activeShims = s;
         },
@@ -70,7 +71,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         syncActiveShims: function(force) {
             Y.later(0, this, function(force) {
                 var drops = ((force) ? this.targets : this._lookup());
-                Y.each(drops, function(v, k) {
+                Y.each(drops, function(v) {
                     v.sizeShim.call(v);
                 }, this);
             }, force);
@@ -135,7 +136,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         */
         targets: [],
         /**
-        * @private 
+        * @private
         * @method _addValid
         * @description Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
@@ -147,7 +148,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             return this;
         },
         /**
-        * @private 
+        * @private
         * @method _removeValid
         * @description Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
@@ -156,7 +157,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         */
         _removeValid: function(drop) {
             var drops = [];
-            Y.each(this.validDrops, function(v, k) {
+            Y.each(this.validDrops, function(v) {
                 if (v !== drop) {
                     drops[drops.length] = v;
                 }
@@ -177,11 +178,11 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
                     aRegion, node = drop.shim;
                 if (xy && this.activeDrag) {
                     aRegion = this.activeDrag.region;
-                    if (dMode == this.STRICT) {
+                    if (dMode === this.STRICT) {
                         return this.activeDrag.get('dragNode').inRegion(drop.region, true, aRegion);
                     }
                     if (drop && drop.shim) {
-                        if ((dMode == this.INTERSECT) && this._noShim) {
+                        if ((dMode === this.INTERSECT) && this._noShim) {
                             r = aRegion || this.activeDrag.get('node');
                             return drop.get('node').intersect(r, drop.region).inRegion;
                         }
@@ -192,7 +193,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
                         return node.intersect({
                             top: xy[1],
                             bottom: xy[1],
-                            left: xy[0], 
+                            left: xy[0],
                             right: xy[0]
                         }, drop.region).inRegion;
                     }
@@ -217,26 +218,26 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         _activateTargets: function() {
             this._noShim = true;
             this.clearCache();
-            Y.each(this.targets, function(v, k) {
+            Y.each(this.targets, function(v) {
                 v._activateShim([]);
-                if (v.get('noShim') == true) {
+                if (v.get('noShim') === true) {
                     this._noShim = false;
                 }
             }, this);
             this._handleTargetOver();
-            
+
         },
         /**
         * @method getBestMatch
         * @description This method will gather the area for all potential targets and see which has the hightest covered area and return it.
         * @param {Array} drops An Array of drops to scan for the best match.
         * @param {Boolean} all If present, it returns an Array. First item is best match, second is an Array of the other items in the original Array.
-        * @return {Object or Array} 
+        * @return {Object or Array}
         */
         getBestMatch: function(drops, all) {
             var biggest = null, area = 0, out;
-            
-            Y.each(drops, function(v, k) {
+
+            Y.each(drops, function(v) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
                 v.region.area = inter.area;
 
@@ -250,7 +251,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             if (all) {
                 out = [];
                 //TODO Sort the others in numeric order by area covered..
-                Y.each(drops, function(v, k) {
+                Y.each(drops, function(v) {
                     if (v !== biggest) {
                         out[out.length] = v;
                     }
@@ -268,7 +269,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             var other = [], tmp,
                 activeDrag = this.activeDrag,
                 activeDrop = this.activeDrop;
-            
+
             //TODO why is this check so hard??
             if (activeDrag && activeDrop && this.otherDrops[activeDrop]) {
                 if (!activeDrag.get('dragMode')) {
@@ -289,10 +290,10 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             }
-            
+
             this.activeDrop = null;
 
-            Y.each(this.targets, function(v, k) {
+            Y.each(this.targets, function(v) {
                 v._deactivateShim([]);
             }, this);
         },
@@ -305,7 +306,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             if (this._hasActiveShim()) {
                 this._handleTargetOver();
             } else {
-                Y.each(this.otherDrops, function(v, k) {
+                Y.each(this.otherDrops, function(v) {
                     v._handleOut.apply(v, []);
                 });
             }
@@ -322,13 +323,13 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             }
             var drops = [];
             //Only scan drop shims that are in the Viewport
-            Y.each(this.validDrops, function(v, k) {
+            Y.each(this.validDrops, function(v) {
                 if (v.shim && v.shim.inViewportRegion(false, v.region)) {
                     drops[drops.length] = v;
                 }
             });
             return drops;
-                
+
         },
         /**
         * @private
@@ -337,7 +338,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         */
         _handleTargetOver: function() {
             var drops = this._lookup();
-            Y.each(drops, function(v, k) {
+            Y.each(drops, function(v) {
                 v._handleTargetOver.call(v);
             }, this);
         },
@@ -358,15 +359,15 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
         */
         _unregTarget: function(drop) {
             var targets = [], vdrops;
-            Y.each(this.targets, function(v, k) {
-                if (v != drop) {
+            Y.each(this.targets, function(v) {
+                if (v !== drop) {
                     targets[targets.length] = v;
                 }
             }, this);
             this.targets = targets;
 
             vdrops = [];
-            Y.each(this.validDrops, function(v, k) {
+            Y.each(this.validDrops, function(v) {
                 if (v !== drop) {
                     vdrops[vdrops.length] = v;
                 }
@@ -384,7 +385,7 @@ YUI.add('dd-ddm-drop', function (Y, NAME) {
             var drop = false,
                 n = Y.one(node);
             if (n instanceof Y.Node) {
-                Y.each(this.targets, function(v, k) {
+                Y.each(this.targets, function(v) {
                     if (n.compareTo(v.get('node'))) {
                         drop = v;
                     }

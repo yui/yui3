@@ -1,6 +1,49 @@
 Get Utility Change History
 ==========================
 
+3.7.3
+-----
+
+* Fixed Get issues, highlighted by IE10. 
+
+  1) IE10 seems to interrupt JS execution, in the case of a 304'ing script to invoke
+  the onLoad handler. If this happened inside the transaction execute loop, the transaction
+  would terminate early (call onSuccess before all scripts were done), because the _waiting
+  count would only reflect the number of scripts added to the DOM, when the loop was
+  interrupted. Changed the logic so that we only finish a transaction when the expected 
+  number of requests are accounted for which seems reasonable in general.
+
+  Also wrapped the internal onLoad/onError callbacks in a setTimeout for IE10, so we're 
+  re-introducing asynchronicty for external onSuccess, etc. app code. We can take this out 
+  when/if the bug below gets fixed. 
+
+  http://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
+
+  2) transaction._finish() would move on to the next transaction, before the current 
+  transaction's onSuccess/Finish/End listeners were invoked, since the logic to move to 
+  the next transaction was invoked before the `on` listeners were invoked. This meant that
+  for all browsers, when issuing a CSS transaction followed by a JS transaction, the CSS
+  success callback wouldn't be invoked until the JS transaction was initiated.
+
+  3) Added user-agent to feature test for async support, because IE10 wasn't returning true for it.
+  If IE10 ends up fixing the issue below by GA, we'll pull out the explicit ua test.
+
+  https://connect.microsoft.com/IE/feedback/details/763477/ie10-doesnt-support-the-common-feature-test-for-async-support
+
+  ---
+
+  Get should work OK with IE10 now aside from one pending issue. If you issue 2 Get 
+  requests to the same 404ing script, IE10 doesn't call the success handler for the 
+  subsequent valid (200 etc.) request. This seems to be an IE10 issue, which we cannot
+  control:
+
+  https://connect.microsoft.com/IE/feedback/details/763466/ie10-dynamic-script-loading-bug-async-404s
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
