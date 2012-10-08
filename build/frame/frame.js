@@ -57,8 +57,10 @@ YUI.add('frame', function (Y, NAME) {
                 //if the src attr is different than the default, don't create the document
                 create = (this.get('src') === Frame.ATTRS.src.value),
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
+            
+            this._iframe = Y.one(Y.config.doc.createElement('iframe'));
+            this._iframe.setAttrs(Frame.IFRAME_ATTRS);
 
-            this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
             this._iframe.set('src', this.get('src'));
             this.get('container').append(this._iframe);
@@ -774,13 +776,30 @@ YUI.add('frame', function (Y, NAME) {
         */
         DEFAULT_CSS: 'body { background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         /**
+        * The template string used to create the iframe, deprecated to use DOM instead of innerHTML
         * @static
         * @property HTML
-        * @description The template string used to create the iframe
         * @type String
+        * @deprecated
         */
         //HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
-        HTML: '<iframe border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="99%"></iframe>',
+        /**
+        * Attributes to auto add to the dynamic iframe under the hood
+        * @static
+        * @property IFRAME_ATTRS
+        * @type Object
+        */
+        IFRAME_ATTRS: {
+            border: '0',
+            frameBorder: '0',
+            marginWidth: '0',
+            marginHeight: '0',
+            leftMargin: '0',
+            topMargin: '0',
+            allowTransparency: 'true',
+            width: "100%",
+            height: "99%"
+        },
         /**
         * @static
         * @property PAGE_HTML

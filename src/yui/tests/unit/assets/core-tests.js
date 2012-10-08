@@ -61,7 +61,7 @@ YUI.add('core-tests', function(Y) {
                 'test: window.onload delay': !Y.config.win,
                 'test: contentready delay': !Y.config.win,
                 'test: available delay': !Y.config.win,
-                'test: pattern requires order': !Y.config.win,
+                'test: pattern requires order': !Y.config.win || Y.UA.winjs,
                 'test: fetch with external dependencies redefined in external file': !Y.config.win,
                 'test: double skin loading from seed': !Y.config.win,
                 test_global_config: !Y.config.win,
