@@ -12,6 +12,16 @@
 
         "skinnable": true,
 
+        "plugins": {
+            "menu-plugin": {
+                "requires": [
+                    "menu",
+                    "node-pluginhost",
+                    "plugin"
+                ]
+            }
+        },
+
         "submodules": {
             "menu-base": {
                 "requires": [

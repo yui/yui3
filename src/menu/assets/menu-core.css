@@ -1,7 +1,5 @@
-.yui3-menu {
-    position: relative;
-    z-index: 2;
-}
+.yui3-menu { position: absolute; }
+.yui3-menu.yui3-menu-open { z-index: 2; }
 
 .yui3-menu-children {
     left: -10000px;
