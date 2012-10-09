@@ -3596,7 +3596,7 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
-            
+
             if (/PhantomJS/.test(ua)) {
                 m = ua.match(/PhantomJS\/([^\s]*)/);
                 if (m && m[1]) {
@@ -3714,10 +3714,11 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
     }
-    
-    //Check for known properties to tell if touch/mspointer events are enabled on this device
+
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -8280,6 +8281,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
@@ -10099,7 +10101,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = 'e8d703c81e9f6ffe00d514d00d7adcd7';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
