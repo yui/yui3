@@ -96,5 +96,16 @@
      * @protected
      */
     Attribute._ATTR_CFG = Y.AttributeCore._ATTR_CFG.concat(Y.AttributeEvents._ATTR_CFG);
+    
+    /**
+     * Utility method to protect an attribute configuration hash, by merging the
+     * entire object and the individual attr config objects.
+     *
+     * @method protectAttrs
+     * @static
+     * @param {Object} attrs A hash of attribute to configuration object pairs.
+     * @return {Object} A protected version of the `attrs` argument.
+     */
+    Attribute.protectAttrs = Y.AttributeCore.protectAttrs;
 
     Y.Attribute = Attribute;

@@ -103,6 +103,28 @@
      * @protected
      */
     AttributeCore._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BYPASS_PROXY];
+    
+    /**
+     * Utility method to protect an attribute configuration hash, by merging the
+     * entire object and the individual attr config objects.
+     *
+     * @method protectAttrs
+     * @static
+     * @param {Object} attrs A hash of attribute to configuration object pairs.
+     * @return {Object} A protected version of the `attrs` argument.
+     */
+    AttributeCore.protectAttrs = function (attrs) {
+        if (attrs) {
+            attrs = Y.merge(attrs);
+            for (var attr in attrs) {
+                if (attrs.hasOwnProperty(attr)) {
+                    attrs[attr] = Y.merge(attrs[attr]);
+                }
+            }
+        }
+        
+        return attrs;
+    };
 
     AttributeCore.prototype = {
 
@@ -794,17 +816,7 @@
          * @param {Object} attrs A hash of attribute to configuration object pairs.
          * @return {Object} A protected version of the attrs argument.
          */
-        _protectAttrs : function(attrs) {
-            if (attrs) {
-                attrs = Y.merge(attrs);
-                for (var attr in attrs) {
-                    if (attrs.hasOwnProperty(attr)) {
-                        attrs[attr] = Y.merge(attrs[attr]);
-                    }
-                }
-            }
-            return attrs;
-        },
+        _protectAttrs : AttributeCore.protectAttrs,
 
         /**
          * Utility method to normalize attribute values. The base implementation 
@@ -878,8 +890,8 @@
                 baseInst = (Base && Y.instanceOf(this, Base)),
                 baseCoreInst = (!baseInst && BaseCore && Y.instanceOf(this, BaseCore));
 
-            if ( attrs && !baseInst && !baseCoreInst) {
-                this.addAttrs(this._protectAttrs(attrs), values, lazy);
+            if (attrs && !baseInst && !baseCoreInst) {
+                this.addAttrs(Y.AttributeCore.protectAttrs(attrs), values, lazy);
             }
         }
     };

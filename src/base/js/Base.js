@@ -121,7 +121,7 @@
      * @type Object
      * @static
      */
-    Base.ATTRS = Y.AttributeCore.prototype._protectAttrs(Y.BaseCore.ATTRS);
+    Base.ATTRS = Y.AttributeCore.protectAttrs(Y.BaseCore.ATTRS);
 
     Y.mix(Base, Y.BaseCore, false, null, 1);
 
