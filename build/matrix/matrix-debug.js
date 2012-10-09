@@ -1,5 +1,12 @@
 YUI.add('matrix', function (Y, NAME) {
 
+/**
+ * Matrix utilities.
+ *
+ * @class MatrixUtil
+ * @module matrix
+ **/
+
 var MatrixUtil = {
         /**
          * Used as value for the _rounding method.
