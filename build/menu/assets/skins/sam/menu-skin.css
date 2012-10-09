@@ -14,7 +14,6 @@
 
 .yui3-skin-sam .yui3-menu-can-have-children > .yui3-menu-label::after {
     color: #333;
-    font-family: Helvetica, 'DejaVu Sans', sans-serif;
 }
 
 .yui3-skin-sam .yui3-menu-can-have-children > .yui3-menu-label:hover::after {

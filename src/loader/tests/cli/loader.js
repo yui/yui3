@@ -2273,6 +2273,16 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("menu-item")) > -1, "Module (menu-item) not found in sorted array");
         },
+     "Testing menu-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["menu-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("menu-plugin")) > -1, "Module (menu-plugin) not found in sorted array");
+        },
      "Testing menu-templates": function(data) {
             var loader = new Y.Loader({
                 require: ["menu-templates"],

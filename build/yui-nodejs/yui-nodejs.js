@@ -3780,6 +3780,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
+    "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
@@ -3791,14 +3792,14 @@ YUI.Env.aliases = {
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
-    "datatype": ["datatype-number","datatype-date","datatype-xml"],
-    "datatype-date": ["datatype-date-parse","datatype-date-format"],
+    "datatype": ["datatype-date","datatype-number","datatype-xml"],
+    "datatype-date": ["datatype-date-parse","datatype-date-format","datatype-date-math"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
     "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
     "editor": ["frame","editor-selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
-    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange","event-tap"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
@@ -3813,6 +3814,7 @@ YUI.Env.aliases = {
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
     "resize": ["resize-base","resize-proxy","resize-constrain"],
     "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
+    "template": ["template-base","template-micro"],
     "text": ["text-accentfold","text-wordbreak"],
     "widget": ["widget-base","widget-htmlparser","widget-skin","widget-uievents"]
 };
@@ -4729,7 +4731,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.26-20-36',
+            GALLERY_VERSION = 'gallery-2012.10.03-20-02',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -9339,6 +9341,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "oop",
             "tree-node"
+        ]
+    },
+    "menu-plugin": {
+        "requires": [
+            "menu",
+            "node-pluginhost",
+            "plugin"
         ]
     },
     "menu-templates": {

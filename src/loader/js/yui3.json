@@ -1647,6 +1647,13 @@
             "tree-node"
         ]
     },
+    "menu-plugin": {
+        "requires": [
+            "menu",
+            "node-pluginhost",
+            "plugin"
+        ]
+    },
     "menu-templates": {
         "requires": [
             "template-micro"

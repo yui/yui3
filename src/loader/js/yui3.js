@@ -1745,6 +1745,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tree-node"
         ]
     },
+    "menu-plugin": {
+        "requires": [
+            "menu",
+            "node-pluginhost",
+            "plugin"
+        ]
+    },
     "menu-templates": {
         "requires": [
             "template-micro"

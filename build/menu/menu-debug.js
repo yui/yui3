@@ -116,6 +116,19 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         return item._htmlNode;
     },
 
+    hide: function () {
+        if (this.rendered) {
+            this.get('container').removeClass(this.classNames.open);
+        }
+
+        return this;
+    },
+
+    isVisible: function () {
+        // TODO: maintain state internally rather than relying on the "open" class.
+        return this.rendered && this.get('container').hasClass(this.classNames.open);
+    },
+
     /**
     Renders this Menu into its container.
 
@@ -280,6 +293,22 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         return htmlNode;
     },
 
+    show: function () {
+        if (this.rendered) {
+            this.get('container').addClass(this.classNames.open);
+        }
+
+        return this;
+    },
+
+    toggle: function () {
+        if (this.rendered) {
+            this.get('container').toggleClass(this.classNames.open);
+        }
+
+        return this;
+    },
+
     // -- Protected Methods ----------------------------------------------------
 
     _attachMenuEvents: function () {
@@ -314,9 +343,17 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         (new Y.EventHandle(this._menuEvents)).detach();
     },
 
-    _getAnchorRegion: function (anchor, parentRegion, nodeRegion) {
+    _getAnchorRegion: function (anchor, nodeRegion, parentRegion) {
         switch (anchor) {
-        case 'tr':
+        case 'tl-tr':
+            return {
+                bottom: parentRegion.top + nodeRegion.height,
+                left  : parentRegion.right,
+                right : parentRegion.right + nodeRegion.width,
+                top   : parentRegion.top
+            };
+
+        case 'bl-br':
             return {
                 bottom: parentRegion.bottom,
                 left  : parentRegion.right,
@@ -324,7 +361,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
                 top   : parentRegion.bottom - nodeRegion.height
             };
 
-        case 'bl':
+        case 'tr-tl':
             return {
                 bottom: parentRegion.top + nodeRegion.height,
                 left  : parentRegion.left - nodeRegion.width,
@@ -332,20 +369,12 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
                 top   : parentRegion.top
             };
 
-        case 'tl':
+        case 'br-bl':
             return {
                 bottom: parentRegion.bottom,
                 left  : parentRegion.left - nodeRegion.width,
                 right : parentRegion.left,
                 top   : parentRegion.bottom - nodeRegion.height
-            };
-
-        default: // 'br' is the default anchor
-            return {
-                bottom: parentRegion.top + nodeRegion.height,
-                left  : parentRegion.right,
-                right : parentRegion.right + nodeRegion.width,
-                top   : parentRegion.top
             };
         }
     },
@@ -384,10 +413,10 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         htmlNode || (htmlNode = this.getHTMLNode(item));
 
         var anchors = (item.parent && item.parent.data.menuAnchors) || [
-                {point: 'br'},
-                {point: 'bl'},
-                {point: 'tr'},
-                {point: 'tl'}
+                {point: 'tl-tr'},
+                {point: 'bl-br'},
+                {point: 'tr-tl'},
+                {point: 'br-bl'}
             ],
 
             childrenNode   = htmlNode.one('.' + this.classNames.children),
@@ -398,14 +427,15 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         // Run through each possible anchor point and test whether it would
         // allow the submenu to be displayed fully within the viewport. Stop at
         // the first anchor point that works.
-        var anchor,
-            anchorRegion;
+        var anchor;
 
         for (var i = 0, len = anchors.length; i < len; i++) {
             anchor = anchors[i];
 
-            anchorRegion = anchor.region = this._getAnchorRegion(anchor.point, parentRegion, childrenRegion);
-            anchor.score = this._inRegion(anchorRegion, viewportRegion);
+            anchor.region = this._getAnchorRegion(anchor.point, childrenRegion,
+                    parentRegion);
+
+            anchor.score = this._inRegion(anchor.region, viewportRegion);
         }
 
         // Sort the anchors by score. Unscored regions will be given a low
@@ -427,7 +457,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         item.data.menuAnchors = anchors;
 
         // Position the submenu.
-        anchorRegion = anchors[0].region;
+        var anchorRegion = anchors[0].region;
         childrenNode.setXY([anchorRegion.left, anchorRegion.top]);
     },
 
@@ -581,37 +611,34 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         var item = this.getNodeById(e.currentTarget.get('id')),
             self = this;
 
-        clearTimeout(this._timeouts[item.id]);
+        clearTimeout(this._timeouts.item);
 
         if (item.isOpen()) {
             return;
         }
 
-        this._timeouts[item.id] = setTimeout(function () {
-            delete self._timeouts[item.id];
+        this._timeouts.item = setTimeout(function () {
             item.open();
-        }, 200);
+        }, 200); // TODO: make timeouts configurable
     },
 
     _onItemMouseLeave: function (e) {
         var item = this.getNodeById(e.currentTarget.get('id')),
             self = this;
 
-        clearTimeout(this._timeouts[item.id]);
+        clearTimeout(this._timeouts.item);
 
         if (!item.isOpen()) {
             return;
         }
 
-        this._timeouts[item.id] = setTimeout(function () {
-            delete self._timeouts[item.id];
+        this._timeouts.item = setTimeout(function () {
             item.close();
         }, 300);
     },
 
     _onMenuMouseEnter: function () {
         clearTimeout(this._timeouts.menu);
-        delete this._timeouts.menu;
     },
 
     _onMenuMouseLeave: function () {
@@ -620,7 +647,6 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         clearTimeout(this._timeouts.menu);
 
         this._timeouts.menu = setTimeout(function () {
-            delete self._timeouts.menu;
             self.closeSubMenus();
         }, 500);
     },
@@ -630,11 +656,8 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         var item = e.item;
 
         if (item.canHaveChildren) {
-            clearTimeout(this._timeouts[item.id]);
+            clearTimeout(this._timeouts.item);
             clearTimeout(this._timeouts.menu);
-
-            delete this._timeouts[item.id];
-            delete this._timeouts.menu;
 
             e.item.toggle();
         } else {
