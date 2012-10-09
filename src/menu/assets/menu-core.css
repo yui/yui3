@@ -33,7 +33,7 @@
 
 a.yui3-menu-label { padding-right: 30px; }
 
-.yui3-menu-can-have-children > .yui3-menu-label::after {
+.yui3-menu-can-have-children > .yui3-menu-label:after {
     content: '\25B8';
     float: right;
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', sans-serif; /* These specific fonts have the Unicode char we need. */
