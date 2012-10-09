@@ -114,6 +114,12 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         return item._htmlNode;
     },
 
+    /**
+    Hides this menu.
+
+    @method hide
+    @chainable
+    **/
     hide: function () {
         if (this.rendered) {
             this.get('container').removeClass(this.classNames.open);
@@ -122,13 +128,20 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         return this;
     },
 
+    /**
+    Returns `true` if this menu is currently visible.
+
+    @method isVisible
+    @return {Boolean} `true` if this menu is currently visible, `false`
+        otherwise.
+    **/
     isVisible: function () {
         // TODO: maintain state internally rather than relying on the "open" class.
         return this.rendered && this.get('container').hasClass(this.classNames.open);
     },
 
     /**
-    Renders this Menu into its container.
+    Renders this menu into its container.
 
     If the container hasn't already been added to the current document, it will
     be appended to the `<body>` element.
@@ -291,6 +304,12 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         return htmlNode;
     },
 
+    /**
+    Shows this menu.
+
+    @method show
+    @chainable
+    **/
     show: function () {
         if (this.rendered) {
             this.get('container').addClass(this.classNames.open);
@@ -299,6 +318,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         return this;
     },
 
+    /**
+    Toggles the visibility of this menu, showing it if it's currently hidden or
+    hiding it if it's currently visible.
+
+    @method toggle
+    @chainable
+    **/
     toggle: function () {
         if (this.rendered) {
             this.get('container').toggleClass(this.classNames.open);
@@ -309,6 +335,12 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
 
     // -- Protected Methods ----------------------------------------------------
 
+    /**
+    Attaches menu events.
+
+    @method _attachMenuEvents
+    @protected
+    **/
     _attachMenuEvents: function () {
         this._menuEvents || (this._menuEvents = []);
 
@@ -337,10 +369,42 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         );
     },
 
+    /**
+    Detaches menu events.
+
+    @method _detachMenuEvents
+    @protected
+    **/
     _detachMenuEvents: function () {
         (new Y.EventHandle(this._menuEvents)).detach();
     },
 
+    /**
+    Given an anchor point and the regions currently occupied by a child node
+    (the node being anchored) and a parent node (the node being anchored to),
+    returns a region object representing the coordinates the anchored node will
+    occupy when anchored to the given point on the parent.
+
+    The following anchor points are currently supported:
+
+      * `'bl-br'`: Anchor the bottom left of the child to the bottom right of
+        the parent.
+      * `'br-bl'`: Anchor the bottom right of the child to the bottom left of
+        the parent.
+      * `'tl-tr'`: Anchor the top left of the child to the top right of the
+        parent.
+      * `'tr-tl'`: Anchor the top right of the child to the top left of the
+        parent.
+
+    @method _getAnchorRegion
+    @param {String} anchor Anchor point. See above for supported points.
+    @param {Object} nodeRegion Region object for the node to be anchored (that
+        is, the node that will be repositioned).
+    @param {Object} parentRegion Region object for the node that will be
+        anchored to (that is, the node that will not move).
+    @return {Object} Region that will be occupied by the anchored node.
+    @protected
+    **/
     _getAnchorRegion: function (anchor, nodeRegion, parentRegion) {
         switch (anchor) {
         case 'tl-tr':
@@ -377,6 +441,14 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }
     },
 
+    /**
+    Hides this specified menu item by moving its htmlNode offscreen.
+
+    @method _hideMenu
+    @param {Menu.Item} item Menu item.
+    @param {Node} [htmlNode] HTML node for the menu item.
+    @protected
+    **/
     _hideMenu: function (item, htmlNode) {
         htmlNode || (htmlNode = this.getHTMLNode(item));
 
@@ -386,6 +458,20 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         delete item.data.menuAnchor;
     },
 
+    /**
+    Returns `true` if the given _inner_ region is contained entirely within the
+    given _outer_ region. If it's not a perfect fit, returns a numerical score
+    indicating how much of the _inner_ region fits within the _outer_ region.
+    A higher score indicates a better fit.
+
+    @method _inRegion
+    @param {Object} inner Inner region.
+    @param {Object} outer Outer region.
+    @return {Boolean|Number} `true` if the _inner_ region fits entirely within
+        the _outer_ region or, if not, a numerical score indicating how much of
+        the inner region fits.
+    @protected
+    **/
     _inRegion: function (inner, outer) {
         if (inner.bottom <= outer.bottom
                 && inner.left >= outer.left
@@ -407,6 +493,16 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         );
     },
 
+    /**
+    Intelligently positions the _htmlNode_ of the given submenu _item_ relative
+    to its parent so that as much as possible of the submenu will be visible
+    within the viewport.
+
+    @method _positionMenu
+    @param {Menu.Item} item Menu item to position.
+    @param {Node} [htmlNode] HTML node for the menu item.
+    @protected
+    **/
     _positionMenu: function (item, htmlNode) {
         htmlNode || (htmlNode = this.getHTMLNode(item));
 
@@ -436,8 +532,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
             anchor.score = this._inRegion(anchor.region, viewportRegion);
         }
 
-        // Sort the anchors by score. Unscored regions will be given a low
-        // default score so that they're sorted after scored regions.
+        // Sort the anchors by score.
         anchors.sort(function (a, b) {
             if (a.score === b.score) {
                 return 0;
@@ -461,6 +556,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
 
     // -- Protected Event Handlers ---------------------------------------------
 
+    /**
+    Handles `add` events for this menu.
+
+    @method _afterAdd
+    @param {EventFacade} e
+    @protected
+    **/
     _afterAdd: function (e) {
         // Nothing to do if the menu hasn't been rendered yet.
         if (!this.rendered) {
@@ -495,6 +597,12 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }), e.index);
     },
 
+    /**
+    Handles `clear` events for this menu.
+
+    @method _afterClear
+    @protected
+    **/
     _afterClear: function () {
         this._openMenus = {};
 
@@ -510,6 +618,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         this.render();
     },
 
+    /**
+    Handles `close` events for this menu.
+
+    @method _afterClose
+    @param {EventFacade} e
+    @protected
+    **/
     _afterClose: function (e) {
         var item     = e.node,
             htmlNode = this.getHTMLNode(item);
@@ -528,6 +643,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }
     },
 
+    /**
+    Handles `open` events for this menu.
+
+    @method _afterOpen
+    @param {EventFacade} e
+    @protected
+    **/
     _afterOpen: function (e) {
         var item     = e.node,
             htmlNode = this.getHTMLNode(item),
@@ -560,10 +682,23 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }
     },
 
+    /**
+    Handles `clickoutside` events for this menu.
+
+    @method _afterOutsideClick
+    @protected
+    **/
     _afterOutsideClick: function () {
         this.closeSubMenus();
     },
 
+    /**
+    Handles `remove` events for this menu.
+
+    @method _afterRemove
+    @param {EventFacade} e
+    @protected
+    **/
     _afterRemove: function (e) {
         delete this._openMenus[e.node.id];
 
@@ -579,6 +714,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }
     },
 
+    /**
+    Handles click events on menu items.
+
+    @method _onItemClick
+    @param {EventFacade} e
+    @protected
+    **/
     _onItemClick: function (e) {
         var item       = this.getNodeById(e.currentTarget.getData('item-id')),
             isDisabled = item.isDisabled();
@@ -605,6 +747,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         });
     },
 
+    /**
+    Handles delegated `mouseenter` events on menu items.
+
+    @method _onItemMouseEnter
+    @param {EventFacade} e
+    @protected
+    **/
     _onItemMouseEnter: function (e) {
         var item = this.getNodeById(e.currentTarget.get('id')),
             self = this;
@@ -620,6 +769,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }, 200); // TODO: make timeouts configurable
     },
 
+    /**
+    Handles delegated `mouseleave` events on menu items.
+
+    @method _onItemMouseLeave
+    @param {EventFacade} e
+    @protected
+    **/
     _onItemMouseLeave: function (e) {
         var item = this.getNodeById(e.currentTarget.get('id')),
             self = this;
@@ -635,10 +791,24 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         }, 300);
     },
 
+    /**
+    Handles `mouseenter` events on this menu.
+
+    @method _onMenuMouseEnter
+    @param {EventFacade} e
+    @protected
+    **/
     _onMenuMouseEnter: function () {
         clearTimeout(this._timeouts.menu);
     },
 
+    /**
+    Handles `mouseleave` events on this menu.
+
+    @method _onMenuMouseLeave
+    @param {EventFacade} e
+    @protected
+    **/
     _onMenuMouseLeave: function () {
         var self = this;
 
@@ -650,6 +820,14 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     // -- Default Event Handlers -----------------------------------------------
+
+    /**
+    Default handler for the `itemClick` event.
+
+    @method _defClickFn
+    @param {EventFacade} e
+    @protected
+    **/
     _defClickFn: function (e) {
         var item = e.item;
 
