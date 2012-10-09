@@ -20,6 +20,12 @@
             ]
         },
 
+        "menu-plugin": {
+            "jsfiles": [
+                "plugins/menu-plugin.js"
+            ]
+        },
+
         "menu-templates": {
             "jsfiles": [
                 "menu-templates.js"
