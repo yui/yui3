@@ -687,7 +687,11 @@ While attribute-specific validators can be used to validate individual attribute
 </p>
 
 <p>
-In your validation method, call the provided `callback` function with no arguments to indicate success. To indicate failure, pass a single argument, which may contain an error message, an array of error messages, or any other value. An `error` event will be fired with the passed argument as the error message, and the `save()` action will be aborted.
+To indicate success, call the provided `callback` function with no arguments from your validation method.
+</p>
+
+<p>
+To indicate failure, pass a single argument, which may contain an error message, an array of error messages, or any other value. On failure an `error` event will be fired with the passed argument as the error message, and the `save()` action will be aborted.
 </p>
 
 ```
