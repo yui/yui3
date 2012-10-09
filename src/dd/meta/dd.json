@@ -5,7 +5,7 @@
             "dd-gestures": {
                 "condition": {
                     "trigger": "dd-drag",
-                    "test": "dd-gestures-test.js"
+                    "ua": "touchEnabled"
                 },
                 "requires": [
                     "dd-drag",
@@ -17,49 +17,49 @@
                 "requires": [
                     "dd-drop"
                 ]
-            }, 
+            },
             "dd-plugin": {
                 "optional": [
-                    "dd-constrain", 
+                    "dd-constrain",
                     "dd-proxy"
-                ], 
+                ],
                 "requires": [
                     "dd-drag"
                 ]
-            } 
+            }
         },
         "submodules": {
             "dd-constrain": {
                 "requires": [
                     "dd-drag"
                 ]
-            }, 
+            },
             "dd-ddm": {
                 "requires": [
-                    "dd-ddm-base", 
+                    "dd-ddm-base",
                     "event-resize"
                 ]
-            }, 
+            },
             "dd-ddm-base": {
                 "requires": [
-                    "node", 
-                    "base", 
+                    "node",
+                    "base",
                     "yui-throttle",
                     "classnamemanager"
                 ]
-            }, 
+            },
             "dd-ddm-drop": {
                 "requires": [
                     "dd-ddm"
                 ]
-            }, 
+            },
             "dd-delegate": {
                 "requires": [
-                    "dd-drag", 
+                    "dd-drag",
                     "dd-drop-plugin",
                     "event-mouseenter"
                 ]
-            }, 
+            },
             "dd-drag": {
                 "requires": [
                     "dd-ddm-base"
@@ -70,12 +70,12 @@
                     "dd-drag",
                     "dd-ddm-drop"
                 ]
-            }, 
+            },
             "dd-proxy": {
                 "requires": [
                     "dd-drag"
                 ]
-            }, 
+            },
             "dd-scroll": {
                 "requires": [
                     "dd-drag"

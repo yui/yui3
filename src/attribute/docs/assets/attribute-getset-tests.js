@@ -61,7 +61,8 @@ YUI.add('attribute-getset-tests', function(Y) {
         },
 
         assertPixelsAreEqual : function(posExpected, posActual, msg) {
-            Y.Assert.areEqual(posExpected, posActual, msg);
+   //         Y.Assert.areEqual(posExpected, posActual, msg);
+            Y.Assert.isTrue(this.closeEnough(posExpected, posActual), "The position should be " + posExpected + " instead of " + posActual + ".");
         },
 
         'Initial State' : function() {

@@ -1,6 +1,28 @@
 YUI Loader Change History
 =========================
 
+3.7.3
+-----
+
+* No changes
+
+3.7.2
+-----
+
+* 2532764 - fetchCSS in yui loader not working.
+* 2532773 - Duplicate CSS modules are being loaded
+
+3.7.1
+-----
+
+* Rebuild with shifter for meta-data encoding issues
+
+3.7.0
+-----
+
+* Loader changes for pr2 create infinite loop on server-side builds
+* Y.Intl.get('module') is not requesting local resource files.
+
 3.6.0
 -----
 

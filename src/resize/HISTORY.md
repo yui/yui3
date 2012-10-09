@@ -1,6 +1,16 @@
 Resize Utility Change History
 =============================
 
+3.7.3
+-----
+
+* Should completely pass lint now
+
+3.7.0
+-----
+
+* Removed `Y.substitute` in favor of `Y.Lang.sub`
+
 3.6.0
 -----
 

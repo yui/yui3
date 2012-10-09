@@ -322,4 +322,12 @@ service.send("razass");
         <em>do</em> enforce execution order, so in these browsers a slow
         request may block the execution of subsequent JSONP callbacks.
     </li>
+    <li>
+        In WinJS (Windows 8 application mode), JSONP is not supported
+        due to the security measures enforced in that environment. Making 
+        a JSONP request requires a remote script tag which is prohibited.
+        An alternative is to use the YQL module to query a YQL table that
+        can return the data that you need. The YQL module is supported in
+        this environment because it uses native `XMLHttpRequest` to fetch it's data.
+    </li>
 </ul>

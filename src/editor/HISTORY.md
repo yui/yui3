@@ -1,6 +1,19 @@
 Rich Text Editor Change History
 ===============================
 
+3.7.3
+-----
+
+* 2532807 fixed regex for ie10
+* Converted some tests to work in IE10 better
+* Convert innerHTML iframe creation to DOM for IE 10
+* Should completely pass lint now
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
