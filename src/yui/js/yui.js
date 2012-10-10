@@ -1515,7 +1515,7 @@ overwriting other scripts configs.
  *
  * @property core
  * @type Array
- * @default [ get,features,intl-base,yui-log,yui-later,loader-base, loader-rollup, loader-yui3 ]
+ * @default [ get, features, intl-base, yui-log, yui-later, yui-soon, loader-base, loader-rollup, loader-yui3 ]
  */
 
 /**

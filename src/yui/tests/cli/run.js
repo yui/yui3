@@ -55,9 +55,11 @@ YUI({
         'config-test': {
             fullpath: 'config-test.js'
         },
-
         'later-test': {
             fullpath: 'later-test.js'
+        },
+        'soon-test': {
+            fullpath: 'soon-test.js'
         },
         'namespace-test': {
             fullpath: 'namespace-test.js'
