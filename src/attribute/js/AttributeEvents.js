@@ -31,6 +31,7 @@
     function AttributeEvents() {
         // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
+
         EventTarget.call(this, {emitFacade:true});
     }
 

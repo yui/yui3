@@ -821,22 +821,52 @@
          * @protected
          * @param {Object} attrs A hash of attribute to configuration object pairs.
          * @return {Object} A protected version of the attrs argument.
+         * @deprecated Use `AttributeCore.protectAttrs()` or
+         *   `Attribute.protectAttrs()` which are the same static utility method. 
          */
         _protectAttrs : AttributeCore.protectAttrs,
 
         /**
-         * Utility method to normalize attribute values. The base implementation 
-         * simply merges the hash to protect the original.
+         * Utility method to split out simple attribute name/value pairs ("x") 
+         * from complex attribute name/value pairs ("x.y.z"), so that complex
+         * attributes can be keyed by the top level attribute name.
          *
          * @method _normAttrVals
          * @param {Object} valueHash An object with attribute name/value pairs
          *
-         * @return {Object}
+         * @return {Object} An object literal with 2 properties - "simple" and "complex",
+         * containing simple and complex attribute values respectively keyed 
+         * by the top level attribute name, or null, if valueHash is falsey.
          *
          * @private
          */
         _normAttrVals : function(valueHash) {
-            return (valueHash) ? Y.merge(valueHash) : null;
+            var vals = {},
+                subvals = {},
+                path,
+                attr,
+                v, k;
+
+            if (valueHash) {
+                for (k in valueHash) {
+                    if (valueHash.hasOwnProperty(k)) {
+                        if (k.indexOf(DOT) !== -1) {
+                            path = k.split(DOT);
+                            attr = path.shift();
+                            v = subvals[attr] = subvals[attr] || [];
+                            v[v.length] = {
+                                path : path,
+                                value: valueHash[k]
+                            };
+                        } else {
+                            vals[k] = valueHash[k];
+                        }
+                    }
+                }
+                return { simple:vals, complex:subvals };
+            } else {
+                return null;
+            }
         },
 
         /**
@@ -855,25 +885,52 @@
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-            var val, valFn;
-            // init value is provided by the user if it exists, else, provided by the config
-            if (!cfg.readOnly && initValues && initValues.hasOwnProperty(attr)) {
-                val = initValues[attr];
-            } else {
-                val = cfg.value;
-                valFn = cfg.valueFn;
- 
-                if (valFn) {
-                    if (!valFn.call) {
-                        valFn = this[valFn];
-                    }
-                    if (valFn) {
-                        val = valFn.call(this, attr);
-                    }
+
+            var val = cfg.value,
+                valFn = cfg.valueFn,
+                tmpVal,
+                initValSet = false,
+                simple,
+                complex,
+                i,
+                l,
+                path,
+                subval,
+                subvals;
+
+            if (!cfg.readOnly && initValues) {
+                // Simple Attributes
+                simple = initValues.simple;
+                if (simple && simple.hasOwnProperty(attr)) {
+                    val = simple[attr];
+                    initValSet = true;
                 }
             }
 
-            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
+            if (valFn && !initValSet) {
+                if (!valFn.call) {
+                    valFn = this[valFn];
+                }
+                if (valFn) {
+                    tmpVal = valFn.call(this, attr);
+                    val = tmpVal;
+                }
+            }
+
+            if (!cfg.readOnly && initValues) {
+
+                // Complex Attributes (complex values applied, after simple, in case both are set)
+                complex = initValues.complex;
+
+                if (complex && complex.hasOwnProperty(attr) && (val !== undefined) && (val !== null)) {
+                    subvals = complex[attr];
+                    for (i = 0, l = subvals.length; i < l; ++i) {
+                        path = subvals[i].path;
+                        subval = subvals[i].value;
+                        O.setValue(val, path, subval);
+                    }
+                }
+            }
 
             return val;
         },
