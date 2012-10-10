@@ -123,23 +123,8 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @chainable
     **/
     hide: function () {
-        if (this.rendered) {
-            this.get('container').removeClass(this.classNames.open);
-        }
-
+        this.set('visible', false);
         return this;
-    },
-
-    /**
-    Returns `true` if this menu is currently visible.
-
-    @method isVisible
-    @return {Boolean} `true` if this menu is currently visible, `false`
-        otherwise.
-    **/
-    isVisible: function () {
-        // TODO: maintain state internally rather than relying on the "open" class.
-        return this.rendered && this.get('container').hasClass(this.classNames.open);
     },
 
     /**
@@ -313,10 +298,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @chainable
     **/
     show: function () {
-        if (this.rendered) {
-            this.get('container').addClass(this.classNames.open);
-        }
-
+        this.set('visible', true);
         return this;
     },
 
@@ -328,10 +310,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @chainable
     **/
     toggle: function () {
-        if (this.rendered) {
-            this.get('container').toggleClass(this.classNames.open);
-        }
-
+        this.set('visible', !this.get('visible'));
         return this;
     },
 
@@ -351,11 +330,12 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
 
         this._menuEvents.push(
             this.after({
-                add   : this._afterAdd,
-                clear : this._afterClear,
-                close : this._afterClose,
-                open  : this._afterOpen,
-                remove: this._afterRemove
+                add          : this._afterAdd,
+                clear        : this._afterClear,
+                close        : this._afterClose,
+                open         : this._afterOpen,
+                remove       : this._afterRemove,
+                visibleChange: this._afterVisibleChange
             }),
 
             container.on('hover', this._onMenuMouseEnter,
@@ -367,7 +347,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
             container.delegate('hover', this._onItemMouseEnter, this._onItemMouseLeave,
                     '.' + classNames.canHaveChildren, this),
 
-            container.after('clickoutside', this._afterOutsideClick, this)
+            container.after('clickoutside', this._afterClickOutside, this)
         );
     },
 
@@ -621,6 +601,16 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
+    Handles `clickoutside` events for this menu.
+
+    @method _afterClickOutside
+    @protected
+    **/
+    _afterClickOutside: function () {
+        this.closeSubMenus();
+    },
+
+    /**
     Handles `close` events for this menu.
 
     @method _afterClose
@@ -685,16 +675,6 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
-    Handles `clickoutside` events for this menu.
-
-    @method _afterOutsideClick
-    @protected
-    **/
-    _afterOutsideClick: function () {
-        this.closeSubMenus();
-    },
-
-    /**
     Handles `remove` events for this menu.
 
     @method _afterRemove
@@ -714,6 +694,17 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
             htmlNode.remove(true);
             delete e.node._htmlNode;
         }
+    },
+
+    /**
+    Handles `visibleChange` events for this menu.
+
+    @method _afterVisibleChange
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterVisibleChange: function (e) {
+        this.get('container').toggleClass(this.classNames.open, e.newVal);
     },
 
     /**
@@ -840,6 +831,19 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
             e.item.toggle();
         } else {
             this.closeSubMenus();
+        }
+    }
+}, {
+    ATTRS: {
+        /**
+        Whether or not this menu is visible. Changing this attribute's value
+        will also change the visibility of this menu.
+
+        @attribute {Boolean} visible
+        @default false
+        **/
+        visible: {
+            value: false
         }
     }
 });
