@@ -11,7 +11,6 @@ var request = require('request');
 
 //Over writes Y.YQLRequest._send to use request instead of JSONP
 Y.YQLRequest.prototype._send = function (url, o) {
-    //No need to "call" this, YQL handles the context
     request(url, {
         method: 'GET',
         timeout: o.timeout || (30 * 1000)
