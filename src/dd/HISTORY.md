@@ -1,6 +1,19 @@
 Drag and Drop Change History
 ============================
 
+3.7.3
+-----
+
+* 2532718 don't stop gesture start, but prevent gesture move to allow clicks
+* 2532837 Unreg gesturemoveend on _unprep
+* Switched DD over to Y.UA.touchEnabled
+* DD should completely pass lint now
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
