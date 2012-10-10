@@ -13,7 +13,6 @@
         BUBBLETARGETS = "bubbleTargets",
         _BUBBLETARGETS = "_bubbleTargets",
 
-        Attribute = Y.Attribute,
         AttributeEvents = Y.AttributeEvents;
 
     /**
@@ -22,10 +21,7 @@
 
     @class BaseEvents
     @extensionfor BaseCore
-    @uses Attribute
-    @uses AttributeCore
     @uses AttributeEvents
-    @uses AttributeExtras
     @uses EventTarget
     @since 3.7.0
     **/
@@ -43,7 +39,8 @@
          * @private
          */
         _initAttribute: function(cfg) {
-            Attribute.call(this);
+            Y.BaseCore.prototype._initAttribute.apply(this, arguments);
+            Y.AttributeEvents.call(this);
 
             this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
             this._yuievt.config.prefix = this._eventPrefix;
@@ -195,6 +192,6 @@
         }
     };
 
-    Y.mix(BaseEvents, Attribute, false, null, 1);
+    Y.mix(BaseEvents, AttributeEvents, false, null, 1);
 
     Y.BaseEvents = BaseEvents;

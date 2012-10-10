@@ -213,7 +213,7 @@
          * @private
          */
         _initAttribute: function() {
-            AttributeCore.apply(this);
+            Y.AttributeCore.call(this);
         },
 
         /**
@@ -419,7 +419,7 @@
                 }
 
                 if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG; 
+                    nonAttrsCfg = c._NON_ATTRS_CFG;
                     if (nonAttrsCfg) {
                         for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
                             nonAttrs[nonAttrsCfg[i]] = true;

@@ -9,16 +9,14 @@
             },
             "base-events": {
                 "requires": [
-                    "attribute-base"
+                    "attribute-events"
                 ]
             },
             "base-base": {
                 "requires": [
+                    "attribute-base",
                     "base-core",
                     "base-events"
-                ],
-                "after": [
-                    "attribute-complex"
                 ]
             },
             "base-build": {
