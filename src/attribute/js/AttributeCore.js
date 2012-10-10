@@ -72,7 +72,13 @@
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      */
     function AttributeCore(attrs, values, lazy) {
-        this._initAttrHost(attrs, values, lazy);            
+        // HACK: Fix #2531929
+        // Complete hack, to make sure the first clone of a node value in IE doesn't doesn't hurt state - maintains 3.4.1 behavior.
+        // Too late in the release cycle to do anything about the core problem.
+        // The root issue is that cloning a Y.Node instance results in an object which barfs in IE, when you access it's properties (since 3.3.0).
+        this._yuievt = null;
+        
+        this._initAttrHost(attrs, values, lazy);
     }
 
     /**
