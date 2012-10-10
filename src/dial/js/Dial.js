@@ -613,119 +613,125 @@
          * @private
          */
         _handleMousedown : function(e){ // #2530306
-            var minAng = this._getAngleFromValue(this._minValue),
-            maxAng = this._getAngleFromValue(this._maxValue),
-            newValue, oppositeMidRangeAngle,
-            handleCenterX, handleCenterY,
-            ang;
 
-            // The event was emitted from mousedown on the ring node,
-            // so the center of the handle should be the XY of mousedown.
-            if(Y.UA.ios){  // ios adds the scrollLeft and top onto clientX and Y in a native click
-                handleCenterX = (e.clientX - this._ringNode.getX());
-                handleCenterY = (e.clientY - this._ringNode.getY());
-            }else{
-                handleCenterX = (e.clientX + Y.one('document').get('scrollLeft') - this._ringNode.getX());
-                handleCenterY = (e.clientY + Y.one('document').get('scrollTop') - this._ringNode.getY());
-            }
-            ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
-
-            /* ///////////////////////////////////////////////////////////////////////////////////////////////////////
-            * The next sections of logic
-            * set this._timesWrapped in the different cases of value range
-            * and value range position,
-            * then the Dial value is set at the end of this method
-            */ ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (this._ringNode.compareTo(e.target)) {
+                var minAng = this._getAngleFromValue(this._minValue),
+                maxAng = this._getAngleFromValue(this._maxValue),
+                newValue, oppositeMidRangeAngle,
+                handleCenterX, handleCenterY,
+                ang;
 
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if(this._maxValue - this._minValue > this._stepsPerRevolution){
-            // Case: range min-to-max is greater than stepsPerRevolution (one revolution)
 
-                // This checks the shortest way around the dial between the prevAng and this ang.
-                if(Math.abs(this._prevAng - ang) > 180){ // this crossed a wrapping
-
-                    // Only change the _timesWrapped if it's between minTimesWrapped and maxTimesWrapped
-                    if((this._timesWrapped > this._minTimesWrapped) &&
-                       (this._timesWrapped < this._maxTimesWrapped)
-                    ){
-                        // this checks which direction, clock wise or CCW and incr or decr _timesWrapped
-                        this._timesWrapped = ((this._prevAng - ang) > 0) ? (this._timesWrapped + 1) : (this._timesWrapped - 1);
-                    }
-                // special case of getting un-stuck from a min value case
-                // where timesWrapped is minTimesWrapped but new ang won't trigger a cross wrap boundry
-                // because prevAng is set to 0 or > 0
-                }else if(
-                        (this._timesWrapped === this._minTimesWrapped) &&
-                        (ang - this._prevAng < 180)
-                ){
-                    this._timesWrapped ++;
-                } //it didn't cross a wrapping boundary
-
-            } /////////////////////////////////////////////////////////////////////////////////////////////////////////
-            else if(this._maxValue - this._minValue === this._stepsPerRevolution){
-            // Case: range min-to-max === stepsPerRevolution     (one revolution)
-            // This means min and max will be at same angle
-            // This does not mean they are at "north"
-
-                if(ang < minAng){ // if mousedown angle is < minAng (and maxAng, because they're the same)
-                                  // The only way it can be, is if min and max are not at north
-                    this._timesWrapped = 1;
+                // The event was emitted from mousedown on the ring node,
+                // so the center of the handle should be the XY of mousedown.
+                if(Y.UA.ios){  // ios adds the scrollLeft and top onto clientX and Y in a native click
+                    handleCenterX = (e.clientX - this._ringNode.getX());
+                    handleCenterY = (e.clientY - this._ringNode.getY());
                 }else{
-                    this._timesWrapped = 0;
+                    handleCenterX = (e.clientX + Y.one('document').get('scrollLeft') - this._ringNode.getX());
+                    handleCenterY = (e.clientY + Y.one('document').get('scrollTop') - this._ringNode.getY());
                 }
+                ang = this._getAngleFromHandleCenter(handleCenterX, handleCenterY);
 
-            } //////////////////////////////////////////////////////////////////////////////////////////////////////////
-            else if(minAng > maxAng){
-            // Case: range includes the wrap point (north)
-            // Because of "else if"...
-            // range is < stepsPerRevolution
+                /* ///////////////////////////////////////////////////////////////////////////////////////////////////////
+                * The next sections of logic
+                * set this._timesWrapped in the different cases of value range
+                * and value range position,
+                * then the Dial value is set at the end of this method
+                */ ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                if(
-                   (this._prevAng >= minAng) && // if prev angle was greater than angle of min and...
-                   (ang <= (minAng + maxAng) / 2) // the angle of this click is less than
-                                                  // the angle opposite the mid-range angle, then...
-                ){
-                    this._timesWrapped ++;
-                }else if(
-                    (this._prevAng <= maxAng) &&
-                    // if prev angle is < max angle and...
 
-                    (ang > (minAng + maxAng) / 2)
-                    // the angle of this click is greater than,
-                    // the angle opposite the mid-range angle and...
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                if(this._maxValue - this._minValue > this._stepsPerRevolution){
 
-                ){
-                    this._timesWrapped --;
-                }
+                // Case: range min-to-max is greater than stepsPerRevolution (one revolution)
 
-            } ////////////////////////////////////////////////////////////////////////////////////////////////////
-            else{
-            // "else" Case: min-to-max range doesn't include the wrap point
-            // Because of "else if"...
-            // range is still < stepsPerRevolution
+                    // This checks the shortest way around the dial between the prevAng and this ang.
+                    if(Math.abs(this._prevAng - ang) > 180){ // this crossed a wrapping
 
-                if ((ang < minAng) || (ang > maxAng)){ // angle is out of range
-                    oppositeMidRangeAngle = (((minAng + maxAng) / 2) + 180) % 360;
-                    // This is the bisection of the min-to-max range + 180.  (opposite the bisection)
+                        // Only change the _timesWrapped if it's between minTimesWrapped and maxTimesWrapped
+                        if((this._timesWrapped > this._minTimesWrapped) &&
+                           (this._timesWrapped < this._maxTimesWrapped)
+                        ){
+                            // this checks which direction, clock wise or CCW and incr or decr _timesWrapped
+                            this._timesWrapped = ((this._prevAng - ang) > 0) ? (this._timesWrapped + 1) : (this._timesWrapped - 1);
+                        }
+                    // special case of getting un-stuck from a min value case
+                    // where timesWrapped is minTimesWrapped but new ang won't trigger a cross wrap boundry
+                    // because prevAng is set to 0 or > 0
+                    }else if(
+                            (this._timesWrapped === this._minTimesWrapped) &&
+                            (ang - this._prevAng < 180)
+                    ){
+                        this._timesWrapped ++;
+                    } //it didn't cross a wrapping boundary
 
-                    if(oppositeMidRangeAngle > 180){
-                        newValue = ((maxAng < ang) && (ang < oppositeMidRangeAngle)) ? this.get('max') : this.get('min');
-                    }else{ //oppositeMidRangeAngle <= 180
-                        newValue = ((minAng > ang) && (ang > oppositeMidRangeAngle)) ? this.get('min') : this.get('max');
+                } /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                else if(this._maxValue - this._minValue === this._stepsPerRevolution){
+                // Case: range min-to-max === stepsPerRevolution     (one revolution)
+                // This means min and max will be at same angle
+                // This does not mean they are at "north"
+
+                    if(ang < minAng){ // if mousedown angle is < minAng (and maxAng, because they're the same)
+                                      // The only way it can be, is if min and max are not at north
+                        this._timesWrapped = 1;
+                    }else{
+                        this._timesWrapped = 0;
                     }
-                    this._prevAng = this._getAngleFromValue(newValue);
-                    this.set('value', newValue);
-                    this._setTimesWrappedFromValue(newValue);
-                    return;
+
+                } //////////////////////////////////////////////////////////////////////////////////////////////////////////
+                else if(minAng > maxAng){
+                // Case: range includes the wrap point (north)
+                // Because of "else if"...
+                // range is < stepsPerRevolution
+
+                    if(
+                       (this._prevAng >= minAng) && // if prev angle was greater than angle of min and...
+                       (ang <= (minAng + maxAng) / 2) // the angle of this click is less than
+                                                      // the angle opposite the mid-range angle, then...
+                    ){
+                        this._timesWrapped ++;
+                    }else if(
+                        (this._prevAng <= maxAng) &&
+                        // if prev angle is < max angle and...
+
+                        (ang > (minAng + maxAng) / 2)
+                        // the angle of this click is greater than,
+                        // the angle opposite the mid-range angle and...
+
+                    ){
+                        this._timesWrapped --;
+                    }
+
+                } ////////////////////////////////////////////////////////////////////////////////////////////////////
+                else{
+                // "else" Case: min-to-max range doesn't include the wrap point
+                // Because of "else if"...
+                // range is still < stepsPerRevolution
+
+                    if ((ang < minAng) || (ang > maxAng)){ // angle is out of range
+                        oppositeMidRangeAngle = (((minAng + maxAng) / 2) + 180) % 360;
+                        // This is the bisection of the min-to-max range + 180.  (opposite the bisection)
+
+                        if(oppositeMidRangeAngle > 180){
+                            newValue = ((maxAng < ang) && (ang < oppositeMidRangeAngle)) ? this.get('max') : this.get('min');
+                        }else{ //oppositeMidRangeAngle <= 180
+                            newValue = ((minAng > ang) && (ang > oppositeMidRangeAngle)) ? this.get('min') : this.get('max');
+                        }
+                        this._prevAng = this._getAngleFromValue(newValue);
+                        this.set('value', newValue);
+                        this._setTimesWrappedFromValue(newValue);
+                        return;
+                    }
                 }
+
+                // Now that _timesWrapped is set value .......................................................................
+                newValue = this._getValueFromAngle(ang); // This function needs the correct, current _timesWrapped value.
+                this._prevAng = ang;
+
+                this._handleValuesBeyondMinMax(e, newValue);
             }
-
-            // Now that _timesWrapped is set value .......................................................................
-            newValue = this._getValueFromAngle(ang); // This function needs the correct, current _timesWrapped value.
-            this._prevAng = ang;
-
-            this._handleValuesBeyondMinMax(e, newValue);
         },
 
         /**
