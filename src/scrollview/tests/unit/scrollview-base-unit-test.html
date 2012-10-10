@@ -254,7 +254,7 @@
 					var Test = this,
 						scrollview = renderNewScrollview(false),
 						distance = 500;
-console.log(Y.Transition.useNative);
+						
 					scrollview.on('scrollEnd', function(){
 						Test.resume(function(){
 							Y.Assert.areEqual(distance, scrollview.get('scrollX'));
