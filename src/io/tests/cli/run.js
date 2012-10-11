@@ -15,6 +15,8 @@ if (!port || isNaN(port)) {
     port = 4000;
 }
 
+console.log('Using port', port);
+
 var modules = require(path.join(__dirname, '../unit/modules'));
 
 Object.keys(modules).forEach(function(name) {
@@ -40,7 +42,7 @@ YUI({useSync: true }).use('test', function(Y) {
     
     //Setup the dynamic server urls
     Y.Object.each(Y.IO.URLS, function(url, name) {
-        Y.IO.URLS[name] = 'http://127.0.0.1:' + port + '/src/io/tests/unit/' + url;
+        Y.IO.URLS[name] = 'http://127.0.0.1:' + port + '/tests/src/io/tests/unit/' + url;
     });
 
     Y.Test.Runner.setName('io-base cli tests');
