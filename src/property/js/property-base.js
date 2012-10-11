@@ -15,7 +15,7 @@ Basic ES5 property implementation without events.
 function PropertyBase() {
     /**
     Fast-lookup hash of property names for properties that have been defined on
-    this object through `Y.Property`.
+    this object through `Property.Base`.
 
     @property {Object} _definedProperties
     @protected
@@ -27,8 +27,8 @@ PropertyBase.prototype = {
     // -- Public Prototype Methods ---------------------------------------------
 
     /**
-    Defines new properties (or modifies the definitions of existing properties)
-    on this object.
+    Defines new properties or modifies the definitions of existing properties on
+    this object.
 
     This method is a facade over ES5's [`Object.defineProperties()`][1] method.
     See its documentation for more details.
@@ -108,61 +108,6 @@ PropertyBase.prototype = {
     },
 
     /**
-    Returns the value of the specified property, or `undefined` if the property
-    has not been defined.
-
-    @method get
-    @param {String} name Property name.
-    @return {Any} Property value, or `undefined` if the property has not been
-        defined.
-    **/
-    get: function (name) {
-        return this[name];
-    },
-
-    /**
-    Returns an object hash containing the values of multiple properties.
-
-    The _names_ argument may be omitted and the _options_ argument used in its
-    place if desired.
-
-    @method getProperties
-    @param {String[]} [names] Array of property names to retrieve. If not
-        specified, all own properties of this object (including non-enumerable
-        properties) will be returned.
-    @param {Object} [options] Options.
-        @param {Boolean} [options.definedOnly=false] If `true`, only properties
-            defined on this object via this `Y.Property` instance will be
-            returned.
-    @return {Object} Hash of property names to property values for the requested
-        properties. If a requested property has not been defined, its value will
-        be `undefined`.
-    **/
-    getProperties: function (names, options) {
-        // Allow options as only argument.
-        if (names && !Y.Lang.isArray(names)) {
-            options = names;
-            names   = null;
-        }
-
-        var definedOnly = options && options.definedOnly,
-            properties  = {},
-            i, len, name;
-
-        names || (names = Object.getOwnPropertyNames(this));
-
-        for (i = 0, len = names.length; i < len; i++) {
-            name = names[i];
-
-            if (!definedOnly || this._definedProperties[name]) {
-                properties[name] = this.get(name);
-            }
-        }
-
-        return properties;
-    },
-
-    /**
     Gets the property descriptor for the specified property, or `undefined` if
     the property has not been defined.
 
@@ -176,39 +121,97 @@ PropertyBase.prototype = {
     },
 
     /**
-    Sets the value of the specified property and returns the value that was set.
+    Gets or sets the value of a property.
 
-    Note that the returned value may differ from the value passed in if the
-    property has a setter function that alters the value.
+    If only a _name_ is given, returns the value of the property with that name,
+    or `undefined` if the property has not yet been defined.
 
-    @method set
+    If both a _name_ and a _value_ are given, sets the named property to the
+    given value and returns the value that was set.
+
+    Note that when setting a property, the returned value may differ from the
+    value passed in if the property has a setter function that alters the value.
+
+    @example
+
+        thing.prop('foo'); // Returns the value of thing.foo.
+        thing.prop('foo', 'bar'); // Sets thing.foo to 'bar'.
+
+    @method prop
     @param {String} name Property name.
-    @param {Any} value Value to set.
-    @param {Object} [options] Options. No options are defined in
-        `property-base`, but other modules may add support for options.
-    @return {Any} The value that was set.
+    @param {Any} [value] Value to set.
+    @return {Any} Property value, or `undefined` if the property has not yet
+        been defined and no value was set.
     **/
-    set: function (name, value) {
-        return this[name] = value;
+    prop: function (name, value) {
+        return typeof value === 'undefined' ? this[name] : this[name] = value;
     },
 
     /**
-    Sets the values of multiple properties and returns an object hash containing
-    the values that were set.
+    Gets or sets the values of multiple properties.
 
-    @method setProperties
-    @param {Object} properties Hash of property names to values that should be
-        set.
-    @param {Object} [options] Options. No options are defined in
-        `property-base`, but other modules may add support for options.
-    @return {Object} Hash of property names to the values that were set.
+    If _props_ is `null` or `undefined`, returns an object containing the
+    names and values of all own properties of this object, including
+    non-enumerable properties.
+
+    If _props_ is an array of property names, returns an object containing the
+    names and values of the specified properties.
+
+    If _props_ is an object, sets the properties named in the object to the
+    associated values and returns an object containing the names and the values
+    that were set. Note that the returned values may differ from the values
+    passed in if the properties being set have setter functions that alter the
+    values.
+
+    @example
+
+        thing.props(); // Returns all own properties of thing.
+
+        thing.props(null, {definedOnly: true}); // Returns all own properties that were
+                                                // defined via this object's defineProperty()
+                                                // or defineProperties() methods.
+
+        thing.props(['a', 'b', 'c']); // Returns thing.a, thing.b, and thing.c.
+
+        thing.props({
+            a: 'foo',
+            b: 'bar',
+            c: 'baz'
+        }); // Sets the values of thing.a, thing.b, and thing.c and returns them.
+
+    @method props
+    @param {String[]|Object} properties Array of property names to get, or a
+        hash of property names and values to set.
+    @param {Object} [options] Options.
+        @param {Boolean} [options.definedOnly=false] If `true`, only properties
+            that were defined on this object via this object's
+            `defineProperty()` or `defineProperties()` methods will be returned.
+            This is useful when you want to exclude native properties and
+            functions.
+    @return {Object} Hash of property names and values.
     **/
-    setProperties: function (properties, options) {
-        var results = {};
+    props: function (properties, options) {
+        var results = {},
+            name;
 
-        for (var name in properties) {
-            if (properties.hasOwnProperty(name)) {
-                results[name] = this.set(name, properties[name], options);
+        if (!properties || Y.Lang.isArray(properties)) { // Get.
+            var definedOnly = options && options.definedOnly,
+                i, len;
+
+            properties || (properties = Object.getOwnPropertyNames(this));
+
+            for (i = 0, len = properties.length; i < len; i++) {
+                name = properties[i];
+
+                if (!definedOnly || this._definedProperties[name]) {
+                    results[name] = this.prop(name);
+                }
+            }
+        } else { // Set.
+            for (name in properties) {
+                if (properties.hasOwnProperty(name)) {
+                    results[name] = this.prop(name, properties[name], options);
+                }
             }
         }
 
