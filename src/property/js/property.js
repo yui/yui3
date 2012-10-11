@@ -22,10 +22,10 @@ Benefits over `Y.Attribute`:
     `property-events` module is loaded.
 
   * `Y.Property` uses real JavaScript properties, not an internal hash. For
-    cross-browser support in non-ES5 browsers it's still best to use the
-    `property()` method to get and set property values, but you can also simply
-    get and set the properties directly if you aren't concerned about supporting
-    non-ES5 browsers.
+    cross-browser support in non-ES5 browsers and to get change events, it's
+    best to use the `prop()` method to get and set property values, but you can
+    also simply get and set the properties directly if you aren't concerned
+    about change events or non-ES5 browsers.
 
 Why you might want to use `Y.Attribute` instead:
 
@@ -72,8 +72,8 @@ Why you might want to use `Y.Attribute` instead:
         // defined.
         var instance = new MyClass();
 
-        console.log(instance.property('foo')); // => 'hello!'
-        console.log(instance.property('bar')); // => 'baz'
+        console.log(instance.prop('foo')); // => 'hello!'
+        console.log(instance.prop('bar')); // => 'baz'
     });
 
 [1]: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/defineProperty
@@ -89,7 +89,7 @@ function Property() {
 
 Y.extend(Property, Y.Property.Base, {
     /**
-    Gets or sets the value of the specified property.
+    Gets or sets the value of a property.
 
     If only a _name_ is given, returns the value of the property with that name,
     or `undefined` if the property has not yet been defined.
@@ -106,7 +106,12 @@ Y.extend(Property, Y.Property.Base, {
     may differ from the value passed in if the property has a setter function
     that alters the value.
 
-    @method property
+    @example
+
+        thing.prop('foo'); // Returns the value of thing.foo.
+        thing.prop('foo', 'bar'); // Sets thing.foo to 'bar'.
+
+    @method prop
     @param {String} name Property name.
     @param {Any} [value] Value to set.
     @param {Object} [options] Options. Properties of this object will be mixed
@@ -118,8 +123,8 @@ Y.extend(Property, Y.Property.Base, {
     @return {Any} Property value, or `undefined` if the property has not yet
         been defined and no value was set.
     **/
-    property: function (name, value, options) {
-        var superFn = Y.Property.Base.prototype.property,
+    prop: function (name, value, options) {
+        var superFn = Y.Property.Base.prototype.prop,
             prevVal = superFn.call(this, name);
 
         if (typeof value === 'undefined') {

@@ -68,32 +68,6 @@ PropertyBase.prototype = {
         return this;
     },
 
-    getProperties: function (names, options) {
-        // Allow options as only argument.
-        if (names && !Y.Lang.isArray(names)) {
-            options = names;
-            names   = null;
-        }
-
-        var definedOnly = options && options.definedOnly,
-            properties  = {},
-            i, len, name;
-
-        // Y.Object.keys() only returns enumerable properties, but it's the best
-        // we can do.
-        names || (names = Y.Object.keys(this));
-
-        for (i = 0, len = names.length; i < len; i++) {
-            name = names[i];
-
-            if (!definedOnly || this._definedProperties[name]) {
-                properties[name] = this.property(name);
-            }
-        }
-
-        return properties;
-    },
-
     getPropertyDescriptor: function (name) {
         var descriptor = this._definedProperties[name];
 
@@ -111,18 +85,16 @@ PropertyBase.prototype = {
         return descriptor;
     },
 
-    property: function (name, value) {
+    prop: function (name, value) {
         var descriptor = this.getPropertyDescriptor(name);
 
-        if (typeof value === 'undefined') { // Get
+        if (typeof value === 'undefined') { // Get.
             if (descriptor && descriptor.get) {
                 return descriptor.get(name);
             }
 
             return this[name];
-
-        } else { // Set
-
+        } else { // Set.
             if (descriptor) {
                 if (descriptor.set) {
                     return this[name] = descriptor.set(value);
@@ -135,12 +107,30 @@ PropertyBase.prototype = {
         }
     },
 
-    setProperties: function (properties, options) {
-        var results = {};
+    props: function (properties, options) {
+        var results = {},
+            name;
 
-        for (var name in properties) {
-            if (properties.hasOwnProperty(name)) {
-                results[name] = this.property(name, properties[name], options);
+        if (!properties || Y.Lang.isArray(properties)) { // Get.
+            var definedOnly = options && options.definedOnly,
+                i, len;
+
+            // Y.Object.keys() only returns enumerable properties, but it's the
+            // best we can do.
+            properties || (properties = Y.Object.keys(this));
+
+            for (i = 0, len = properties.length; i < len; i++) {
+                name = properties[i];
+
+                if (!definedOnly || this._definedProperties[name]) {
+                    results[name] = this.prop(name);
+                }
+            }
+        } else { // Set.
+            for (name in properties) {
+                if (properties.hasOwnProperty(name)) {
+                    results[name] = this.prop(name, properties[name], options);
+                }
             }
         }
 

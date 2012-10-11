@@ -37,8 +37,8 @@ baseSuite.add(new Y.Test.Case({
             baz: {value: 'quux'}
         });
 
-        Assert.areSame('bar', this.instance.property('foo'), 'property() should return the value of foo');
-        Assert.areSame('quux', this.instance.property('baz'), 'property() should return the value of baz');
+        Assert.areSame('bar', this.instance.prop('foo'), 'prop() should return the value of foo');
+        Assert.areSame('quux', this.instance.prop('baz'), 'prop() should return the value of baz');
 
         Assert.areSame('bar', this.instance.foo, 'foo should be a real property');
         Assert.areSame('quux', this.instance.baz, 'baz should be a real property');
@@ -47,47 +47,8 @@ baseSuite.add(new Y.Test.Case({
     '#defineProperty() should define a new property on this instance': function () {
         this.instance.defineProperty('test', {value: 'foo'});
 
-        Assert.areSame('foo', this.instance.property('test'), 'property() should return the new property');
+        Assert.areSame('foo', this.instance.prop('test'), 'prop() should return the new property');
         Assert.areSame('foo', this.instance.test, 'test should be a real property');
-    },
-
-    '#getProperties(names) should return a hash containing the values of the specified properties': function () {
-        var result = this.instance.getProperties(['a', 'b']);
-
-        Assert.isObject(result, 'should return an object');
-        Assert.areSame(2, Y.Object.size(result), 'returned object should have two properties');
-        Assert.areSame('a value', result.a, 'should have the correct value for `a`');
-        Assert.areSame('b value', result.b, 'should have the correct value for `b`');
-    },
-
-    '#getProperties() should return values of all properties when no names are specified': function () {
-        var result = this.instance.getProperties();
-
-        Assert.isObject(result, 'should return an object');
-        Assert.isTrue(Y.Object.size(result) > 2, 'returned object should have lots of properties');
-        Assert.areSame('a value', result.a, 'should have the correct value for `a`');
-        Assert.areSame('b value', result.b, 'should have the correct value for `b`');
-    },
-
-    '#getProperties() should only return properties defined via Y.Property when `options.definedOnly` is truthy': function () {
-        var result = this.instance.getProperties({definedOnly: true});
-
-        Assert.isObject(result, 'should return an object');
-        Assert.areSame(2, Y.Object.size(result), 'returned object should have two properties');
-        Assert.areSame('a value', result.a, 'should have the correct value for `a`');
-        Assert.areSame('b value', result.b, 'should have the correct value for `b`');
-    },
-
-    '#getProperties() should include non-enumerable properties when no names are specified': function () {
-        this.instance.defineProperty('noenum', {enumerable: false, value: 'hello'});
-
-        var result = this.instance.getProperties();
-        Assert.areSame('hello', result.noenum);
-    },
-
-    '#getProperties() should return undefined values for nonexistent properties': function () {
-        var result = this.instance.getProperties(['bogus']);
-        Assert.isUndefined(result.bogus);
     },
 
     '#getPropertyDescriptor() should return the descriptor for a property': function () {
@@ -104,36 +65,75 @@ baseSuite.add(new Y.Test.Case({
         Assert.isUndefined(this.instance.getPropertyDescriptor('bogus'));
     },
 
-    '#property(name) should return the value of the named property': function () {
-        Assert.areSame('a value', this.instance.property('a'));
+    '#prop(name) should return the value of the named property': function () {
+        Assert.areSame('a value', this.instance.prop('a'));
     },
 
-    '#property(name) should return `undefined` for a nonexistent property': function () {
-        Assert.isUndefined(this.instance.property('bogus'));
+    '#prop(name) should return `undefined` for a nonexistent property': function () {
+        Assert.isUndefined(this.instance.prop('bogus'));
     },
 
-    '#property(name, value) should set the given property to the given value': function () {
-        this.instance.property('a', 'modified a value');
-        Assert.areSame('modified a value', this.instance.property('a'), 'should modify the value of `a`');
+    '#prop(name, value) should set the given property to the given value': function () {
+        this.instance.prop('a', 'modified a value');
+        Assert.areSame('modified a value', this.instance.prop('a'), 'should modify the value of `a`');
 
-        this.instance.property('c', 'new property');
-        Assert.areSame('new property', this.instance.property('c'), 'should create a new `c` property');
+        this.instance.prop('c', 'new property');
+        Assert.areSame('new property', this.instance.prop('c'), 'should create a new `c` property');
     },
 
-    '#setProperties() should set multiple properties': function () {
-        this.instance.setProperties({
+    '#props() should return values of all properties when no names are specified': function () {
+        var result = this.instance.props();
+
+        Assert.isObject(result, 'should return an object');
+        Assert.isTrue(Y.Object.size(result) > 2, 'returned object should have lots of properties');
+        Assert.areSame('a value', result.a, 'should have the correct value for `a`');
+        Assert.areSame('b value', result.b, 'should have the correct value for `b`');
+    },
+
+    '#props() should include non-enumerable properties when no names are specified': function () {
+        this.instance.defineProperty('noenum', {enumerable: false, value: 'hello'});
+
+        var result = this.instance.props();
+        Assert.areSame('hello', result.noenum);
+    },
+
+    '#props() should return undefined values for nonexistent properties': function () {
+        var result = this.instance.props(['bogus']);
+        Assert.isUndefined(result.bogus);
+    },
+
+    '#props() should only return properties defined via Y.Property when `options.definedOnly` is truthy': function () {
+        var result = this.instance.props(null, {definedOnly: true});
+
+        Assert.isObject(result, 'should return an object');
+        Assert.areSame(2, Y.Object.size(result), 'returned object should have two properties');
+        Assert.areSame('a value', result.a, 'should have the correct value for `a`');
+        Assert.areSame('b value', result.b, 'should have the correct value for `b`');
+    },
+
+    '#props(names) should return a hash containing the values of the specified properties': function () {
+        var result = this.instance.props(['a', 'b']);
+
+        Assert.isObject(result, 'should return an object');
+        Assert.areSame(2, Y.Object.size(result), 'returned object should have two properties');
+        Assert.areSame('a value', result.a, 'should have the correct value for `a`');
+        Assert.areSame('b value', result.b, 'should have the correct value for `b`');
+    },
+
+    '#props(hash) should set multiple properties': function () {
+        this.instance.props({
             a: 'modified a value',
             b: 'modified b value',
             c: 'new property'
         });
 
-        Assert.areSame('modified a value', this.instance.property('a'), '`a` value should be set');
-        Assert.areSame('modified b value', this.instance.property('b'), '`b` value should be set');
-        Assert.areSame('new property', this.instance.property('c'), '`c` value should be set');
+        Assert.areSame('modified a value', this.instance.prop('a'), '`a` value should be set');
+        Assert.areSame('modified b value', this.instance.prop('b'), '`b` value should be set');
+        Assert.areSame('new property', this.instance.prop('c'), '`c` value should be set');
     },
 
-    '#setProperties() should return a hash of the properties that were set': function () {
-        var result = this.instance.setProperties({
+    '#props(hash) should return a hash of the property values that were set': function () {
+        var result = this.instance.props({
             a: 'modified a value',
             b: 'modified b value',
             c: 'new property'
@@ -204,9 +204,9 @@ mainSuite.add(new Y.Test.Case({
         this.instance.defineProperty('test', {value: 'testing', get: function () {}});
     },
 
-    '#property(name, value) should do nothing if the property is not writable': function () {
-        this.instance.property('readOnly', 'new value');
-        Assert.areSame('original value', this.instance.property('readOnly'), 'property should not change');
+    '#prop(name, value) should do nothing if the property is not writable': function () {
+        this.instance.prop('readOnly', 'new value');
+        Assert.areSame('original value', this.instance.prop('readOnly'), 'property should not change');
     }
 }));
 
