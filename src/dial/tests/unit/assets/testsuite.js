@@ -1573,6 +1573,34 @@ suite.add( new Y.Test.Case({
 
 }));
 
+suite.add( new Y.Test.Case({
+    name: "Center button mousedown to reset value",
+
+	setUp: function () {
+		Y.one('body').append('<span id="testbed"></span>');
+	},
+
+	tearDown: function () {
+		Y.one('#testbed').remove(true);
+	},
+
+    "test mousedown on center button": function () {
+        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+        var testbed = Y.one("#dial"),
+            ref     = Y.one("#ref"),
+            dial;
+        dial = new Y.Dial({value: 12, max: 97, min: -52 }).render( testbed );
+        dial.set('value', 50);
+        var input = dial._ringNode;
+		// listeners that bind an event *unused* by Dial to the intended method
+		Y.on('mouseover', Y.bind(dial._resetDial, dial), dial._centerButtonNode); // make mouseover do what a gestureMoveStart does in Dial.js
+        Y.one('.yui3-dial-center-button').simulate('mouseover');
+        Y.Assert.areEqual(12, dial.get('value'), ' -Failed to reset Dial to initial value');
+
+    }
+}));
+
+
 
 
 /*
