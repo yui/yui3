@@ -49,6 +49,8 @@ YUI.add('event-move', function (Y, NAME) {
     NODE_TYPE = "nodeType",
 
     SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
+    TOUCH_ACTION_COUNT = 0,
+    ORIG_TOUCH_ACTION = '',
 
     _defArgsProcessor = function(se, args, delegate) {
         var iConfig = (delegate) ? 4 : 3,
@@ -83,23 +85,30 @@ YUI.add('event-move', function (Y, NAME) {
 
     The user can over-ride this by setting a more lenient -ms-touch-action property on a node (such as pan-x, pan-y, etc.) via CSS when subscribing to the 'gesturemovestart' event.
     */
-    _setTouchActions = function (node, subscriber, evtName) {
-        var params = subscriber._extra,
-            elem = node.getDOMNode();
+    _setTouchActions = function (node) {
+        var elem = node.getDOMNode();
 
-        if (SUPPORTS_POINTER) { //Checks to see if MSPointer events are supported.
+        //Checks to see if MSPointer events are supported. The elem.style check is for events that are
+        //subscribed from Y.config.doc (dd-gestures has this)
+        if (SUPPORTS_POINTER && elem.style) {
+
+            if (TOUCH_ACTION_COUNT === 0) {
+                ORIG_TOUCH_ACTION = elem.style.msTouchAction;
+            }
             elem.style.msTouchAction = 'none';
+            TOUCH_ACTION_COUNT++;
         }
     },
 
     /*
-    Resets the element's -ms-touch-action property back to 'auto', which is the default. This is called on detach() and detachDelegate().
+    Resets the element's -ms-touch-action property back to the original value, This is called on detach() and detachDelegate().
     */
     _unsetTouchActions = function (node) {
-        if (SUPPORTS_POINTER) {
-            var elem = node.getDOMNode();
-            if (elem.style.msTouchAction !== 'auto') {
-                elem.style.msTouchAction = 'auto'
+        var elem = node.getDOMNode();
+        if (SUPPORTS_POINTER && elem.style) {
+            TOUCH_ACTION_COUNT--;
+            if (TOUCH_ACTION_COUNT === 0 && elem.style.msTouchAction !== ORIG_TOUCH_ACTION) {
+                elem.style.msTouchAction = ORIG_TOUCH_ACTION;
             }
         }
     },
@@ -151,7 +160,7 @@ define(GESTURE_MOVE_START, {
     on: function (node, subscriber, ce) {
 
         //Set -ms-touch-action on IE10 and set preventDefault to true
-        _setTouchActions(node, subscriber, EVENT[START]);
+        _setTouchActions(node);
 
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START],
             this._onStart,
@@ -345,6 +354,8 @@ define(GESTURE_MOVE_START, {
 define(GESTURE_MOVE, {
 
     on : function (node, subscriber, ce) {
+
+        _setTouchActions(node);
         var root = _getRoot(node, subscriber, EVENT[MOVE]),
 
             moveHandle = root.on(EVENT[MOVE],
@@ -469,7 +480,7 @@ define(GESTURE_MOVE, {
 define(GESTURE_MOVE_END, {
 
     on : function (node, subscriber, ce) {
-
+        _setTouchActions(node);
         var root = _getRoot(node, subscriber),
 
             endHandle = root.on(EVENT[END],
