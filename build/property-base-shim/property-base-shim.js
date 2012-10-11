@@ -17,6 +17,9 @@ function PropertyBase() {
 PropertyBase.prototype = {
     // -- Public Prototype Methods ---------------------------------------------
 
+    // No doc comments here since we're just shimming methods that are already
+    // documented in property.js.
+
     defineProperties: function (properties) {
         for (var name in properties) {
             if (properties.hasOwnProperty(name)) {
@@ -67,42 +70,6 @@ PropertyBase.prototype = {
         return this;
     },
 
-    get: function (name) {
-        var descriptor = this.getPropertyDescriptor(name);
-
-        if (descriptor && descriptor.get) {
-            return descriptor.get(name);
-        }
-
-        return this[name];
-    },
-
-    getProperties: function (names, options) {
-        // Allow options as only argument.
-        if (names && !Y.Lang.isArray(names)) {
-            options = names;
-            names   = null;
-        }
-
-        var definedOnly = options && options.definedOnly,
-            properties  = {},
-            i, len, name;
-
-        // Y.Object.keys() only returns enumerable properties, but it's the best
-        // we can do.
-        names || (names = Y.Object.keys(this));
-
-        for (i = 0, len = names.length; i < len; i++) {
-            name = names[i];
-
-            if (!definedOnly || this._definedProperties[name]) {
-                properties[name] = this.get(name);
-            }
-        }
-
-        return properties;
-    },
-
     getPropertyDescriptor: function (name) {
         var descriptor = this._definedProperties[name];
 
@@ -120,26 +87,52 @@ PropertyBase.prototype = {
         return descriptor;
     },
 
-    set: function (name, value) {
+    prop: function (name, value) {
         var descriptor = this.getPropertyDescriptor(name);
 
-        if (descriptor) {
-            if (descriptor.set) {
-                return this[name] = descriptor.set(value);
-            } else if (!descriptor.writable) {
-                return;
+        if (typeof value === 'undefined') { // Get.
+            if (descriptor && descriptor.get) {
+                return descriptor.get(name);
             }
-        }
 
-        return this[name] = value;
+            return this[name];
+        } else { // Set.
+            if (descriptor) {
+                if (descriptor.set) {
+                    return this[name] = descriptor.set(value);
+                } else if (!descriptor.writable) {
+                    return;
+                }
+            }
+
+            return this[name] = value;
+        }
     },
 
-    setProperties: function (properties, options) {
-        var results = {};
+    props: function (properties, options) {
+        var results = {},
+            name;
 
-        for (var name in properties) {
-            if (properties.hasOwnProperty(name)) {
-                results[name] = this.set(name, properties[name], options);
+        if (!properties || Y.Lang.isArray(properties)) { // Get.
+            var definedOnly = options && options.definedOnly,
+                i, len;
+
+            // Y.Object.keys() only returns enumerable properties, but it's the
+            // best we can do.
+            properties || (properties = Y.Object.keys(this));
+
+            for (i = 0, len = properties.length; i < len; i++) {
+                name = properties[i];
+
+                if (!definedOnly || this._definedProperties[name]) {
+                    results[name] = this.prop(name);
+                }
+            }
+        } else { // Set.
+            for (name in properties) {
+                if (properties.hasOwnProperty(name)) {
+                    results[name] = this.prop(name, properties[name], options);
+                }
             }
         }
 
