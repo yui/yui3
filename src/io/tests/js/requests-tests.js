@@ -55,7 +55,7 @@ YUI.add('requests-tests', function(Y) {
                     }
                 }
             };
-            Y.io(Y.IO.URLS.delete + '?hello=world&foo=bar', cb);
+            Y.io(Y.IO.URLS['delete'] + '?hello=world&foo=bar', cb);
             this.wait(null, 1000);
         }
     }));
