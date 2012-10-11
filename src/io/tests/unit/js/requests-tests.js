@@ -55,7 +55,7 @@ YUI.add('requests-tests', function(Y) {
                     }
                 }
             };
-            Y.io(Y.IO.URLS.delete + '?hello=world&foo=bar', cb);
+            Y.io(Y.IO.URLS['delete'] + '?hello=world&foo=bar', cb);
             this.wait(null, 1000);
         }
     }));
@@ -122,7 +122,8 @@ YUI.add('requests-tests', function(Y) {
         'testPOST': function() {
             var t = this;
             this.handler = function() {
-                Y.Assert.areSame('world&bar', t.response, 'POST message and response do not match.');
+                Y.Assert.areSame(200, t.status);
+                Y.Assert.areSame('hello=world&foo=bar', t.response, 'POST message and response do not match.');
             };
 
             Y.io(Y.IO.URLS.post, {
@@ -130,6 +131,7 @@ YUI.add('requests-tests', function(Y) {
                 data: 'hello=world&foo=bar',
                 on: { success: function(i, o, a) {
                         t.response = o.responseText;
+                        t.status = o.status;
                         t.resume(t.handler);
                     }
                 }
@@ -141,7 +143,7 @@ YUI.add('requests-tests', function(Y) {
             var t = this;
             this.handler = function() {
                 Y.Assert.areSame(200, t.status);
-                Y.Assert.areSame(0, t.response, 'POST message and response do not match.');
+                Y.Assert.areSame(0, parseInt(t.response, 0), 'POST message and response do not match.');
 
             };
 
@@ -154,7 +156,7 @@ YUI.add('requests-tests', function(Y) {
                     }
                 }
             });
-            this.wait(null, 1000);
+            this.wait(null, 1500);
         }
     }));
 

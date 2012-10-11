@@ -12,7 +12,7 @@ YUI.add('events-tests', function(Y) {
                     Y.Assert.areSame(t.success[i], actual[i]);
                 }
             };
-            Y.io(Y.IO.URLS.http + '?a=200', {
+            Y.io(Y.IO.URLS.http + '200', {
                 on: {
                     start: function() {
                         actual.push('start');
@@ -67,7 +67,7 @@ YUI.add('events-tests', function(Y) {
                     Y.Assert.areSame(t.failure[i], actual[i]);
                 }
             };
-            Y.io(Y.IO.URLS.http + '?a=500', {
+            Y.io(Y.IO.URLS.http + '500', {
                 on: {
                     start: function() {
                         actual.push('start');
@@ -95,7 +95,7 @@ YUI.add('events-tests', function(Y) {
                     Y.Assert.areSame(t.failure[i], actual[i]);
                 }
             };
-            Y.io(Y.IO.URLS.http + '?a=999', {
+            Y.io(Y.IO.URLS.http + '999', {
                 on: {
                     start: function() {
                         actual.push('start');
@@ -123,7 +123,7 @@ YUI.add('events-tests', function(Y) {
                     Y.Assert.areSame(t.success[i], actual[i]);
                 }
             };
-            Y.io(Y.IO.URLS.http + '?a=304', {
+            Y.io(Y.IO.URLS.http + '304', {
                 on: {
                     start: function() {
                         actual.push('start');

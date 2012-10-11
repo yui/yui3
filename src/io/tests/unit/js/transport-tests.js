@@ -21,12 +21,12 @@ YUI.add('transport-tests', function(Y) {
 
     suite.add(new Y.Test.Case({
         name: 'Native Transport Test',
-        'Non-IE browsers should be able to use XHR level 2': function() {
+        'Non-IE browsers and IE >= 10 should be able to use XHR level 2': function() {
             var io = new Y.IO(),
                 o = io._create({ xdr: { use:'native' } });
 
             // IE must use a form of external transport
-            if (Y.UA.ie) {
+            if (Y.UA.ie && Y.UA.ie < 10) {
                 Y.Assert.isTrue(o.xdr);
             }
             else {
