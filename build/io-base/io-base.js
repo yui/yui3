@@ -115,9 +115,9 @@ IO.prototype = {
             use;
 
         if (alt === 'native') {
-            // Non-IE  can use XHR level 2 and not rely on an
+            // Non-IE and IE >= 10  can use XHR level 2 and not rely on an
             // external transport.
-            alt = Y.UA.ie ? 'xdr' : null;
+            alt = Y.UA.ie && !SUPPORTS_CORS ? 'xdr' : null;
 
             // Prevent "pre-flight" OPTIONS request by removing the
             // `X-Requested-With` HTTP header from CORS requests. This header
@@ -706,10 +706,8 @@ IO.prototype = {
 
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
-            if (config.xdr && config.xdr.credentials) {
-                if (!Y.UA.ie) {
-                    transaction.c.withCredentials = true;
-                }
+            if (config.xdr && config.xdr.credentials && SUPPORTS_CORS) {
+                transaction.c.withCredentials = true;
             }
 
             // Using "null" with HTTP POST will result in a request
@@ -906,7 +904,11 @@ Y.IO = IO;
 Y.io._map = {};
 var XHR = win && win.XMLHttpRequest,
     XDR = win && win.XDomainRequest,
-    AX = win && win.ActiveXObject;
+    AX = win && win.ActiveXObject,
+
+    // Checks for the presence of the `withCredentials` in an XHR instance
+    // object, which will be present if the environment supports CORS.
+    SUPPORTS_CORS = XHR && 'withCredentials' in (new XMLHttpRequest());
 
 
 Y.mix(Y.IO, {
