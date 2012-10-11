@@ -15,6 +15,9 @@ function PropertyBase() {
 PropertyBase.prototype = {
     // -- Public Prototype Methods ---------------------------------------------
 
+    // No doc comments here since we're just shimming methods that are already
+    // documented in property.js.
+
     defineProperties: function (properties) {
         for (var name in properties) {
             if (properties.hasOwnProperty(name)) {
@@ -65,16 +68,6 @@ PropertyBase.prototype = {
         return this;
     },
 
-    get: function (name) {
-        var descriptor = this.getPropertyDescriptor(name);
-
-        if (descriptor && descriptor.get) {
-            return descriptor.get(name);
-        }
-
-        return this[name];
-    },
-
     getProperties: function (names, options) {
         // Allow options as only argument.
         if (names && !Y.Lang.isArray(names)) {
@@ -94,7 +87,7 @@ PropertyBase.prototype = {
             name = names[i];
 
             if (!definedOnly || this._definedProperties[name]) {
-                properties[name] = this.get(name);
+                properties[name] = this.property(name);
             }
         }
 
@@ -118,18 +111,28 @@ PropertyBase.prototype = {
         return descriptor;
     },
 
-    set: function (name, value) {
+    property: function (name, value) {
         var descriptor = this.getPropertyDescriptor(name);
 
-        if (descriptor) {
-            if (descriptor.set) {
-                return this[name] = descriptor.set(value);
-            } else if (!descriptor.writable) {
-                return;
+        if (typeof value === 'undefined') { // Get
+            if (descriptor && descriptor.get) {
+                return descriptor.get(name);
             }
-        }
 
-        return this[name] = value;
+            return this[name];
+
+        } else { // Set
+
+            if (descriptor) {
+                if (descriptor.set) {
+                    return this[name] = descriptor.set(value);
+                } else if (!descriptor.writable) {
+                    return;
+                }
+            }
+
+            return this[name] = value;
+        }
     },
 
     setProperties: function (properties, options) {
@@ -137,7 +140,7 @@ PropertyBase.prototype = {
 
         for (var name in properties) {
             if (properties.hasOwnProperty(name)) {
-                results[name] = this.set(name, properties[name], options);
+                results[name] = this.property(name, properties[name], options);
             }
         }
 

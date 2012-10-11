@@ -37,8 +37,8 @@ baseSuite.add(new Y.Test.Case({
             baz: {value: 'quux'}
         });
 
-        Assert.areSame('bar', this.instance.get('foo'), 'get() should return the value of foo');
-        Assert.areSame('quux', this.instance.get('baz'), 'get() should return the value of baz');
+        Assert.areSame('bar', this.instance.property('foo'), 'property() should return the value of foo');
+        Assert.areSame('quux', this.instance.property('baz'), 'property() should return the value of baz');
 
         Assert.areSame('bar', this.instance.foo, 'foo should be a real property');
         Assert.areSame('quux', this.instance.baz, 'baz should be a real property');
@@ -47,19 +47,11 @@ baseSuite.add(new Y.Test.Case({
     '#defineProperty() should define a new property on this instance': function () {
         this.instance.defineProperty('test', {value: 'foo'});
 
-        Assert.areSame('foo', this.instance.get('test'), 'get() should return the new property');
+        Assert.areSame('foo', this.instance.property('test'), 'property() should return the new property');
         Assert.areSame('foo', this.instance.test, 'test should be a real property');
     },
 
-    '#get() should return the value of the given property': function () {
-        Assert.areSame('a value', this.instance.get('a'));
-    },
-
-    '#get() should return `undefined` for a nonexistent property': function () {
-        Assert.isUndefined(this.instance.get('bogus'));
-    },
-
-    '#getProperties() should return a hash containing the values of the specified properties': function () {
+    '#getProperties(names) should return a hash containing the values of the specified properties': function () {
         var result = this.instance.getProperties(['a', 'b']);
 
         Assert.isObject(result, 'should return an object');
@@ -112,12 +104,20 @@ baseSuite.add(new Y.Test.Case({
         Assert.isUndefined(this.instance.getPropertyDescriptor('bogus'));
     },
 
-    '#set() should set the given property to the given value': function () {
-        this.instance.set('a', 'modified a value');
-        Assert.areSame('modified a value', this.instance.get('a'), 'should modify the value of `a`');
+    '#property(name) should return the value of the named property': function () {
+        Assert.areSame('a value', this.instance.property('a'));
+    },
 
-        this.instance.set('c', 'new property');
-        Assert.areSame('new property', this.instance.get('c'), 'should create a new `c` property');
+    '#property(name) should return `undefined` for a nonexistent property': function () {
+        Assert.isUndefined(this.instance.property('bogus'));
+    },
+
+    '#property(name, value) should set the given property to the given value': function () {
+        this.instance.property('a', 'modified a value');
+        Assert.areSame('modified a value', this.instance.property('a'), 'should modify the value of `a`');
+
+        this.instance.property('c', 'new property');
+        Assert.areSame('new property', this.instance.property('c'), 'should create a new `c` property');
     },
 
     '#setProperties() should set multiple properties': function () {
@@ -127,9 +127,9 @@ baseSuite.add(new Y.Test.Case({
             c: 'new property'
         });
 
-        Assert.areSame('modified a value', this.instance.get('a'), '`a` value should be set');
-        Assert.areSame('modified b value', this.instance.get('b'), '`b` value should be set');
-        Assert.areSame('new property', this.instance.get('c'), '`c` value should be set');
+        Assert.areSame('modified a value', this.instance.property('a'), '`a` value should be set');
+        Assert.areSame('modified b value', this.instance.property('b'), '`b` value should be set');
+        Assert.areSame('new property', this.instance.property('c'), '`c` value should be set');
     },
 
     '#setProperties() should return a hash of the properties that were set': function () {
@@ -204,9 +204,9 @@ mainSuite.add(new Y.Test.Case({
         this.instance.defineProperty('test', {value: 'testing', get: function () {}});
     },
 
-    '#set() should do nothing if the property is not writable': function () {
-        this.instance.set('readOnly', 'new value');
-        Assert.areSame('original value', this.instance.get('readOnly'), 'property should not change');
+    '#property(name, value) should do nothing if the property is not writable': function () {
+        this.instance.property('readOnly', 'new value');
+        Assert.areSame('original value', this.instance.property('readOnly'), 'property should not change');
     }
 }));
 

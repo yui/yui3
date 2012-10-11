@@ -22,9 +22,9 @@ Benefits over `Y.Attribute`:
     `property-events` module is loaded.
 
   * `Y.Property` uses real JavaScript properties, not an internal hash. For
-    cross-browser support in non-ES5 browsers it's best to use the `get()` and
-    `set()` methods to get and set property values, but you can also simply get
-    and set the properties directly if you aren't concerned about supporting
+    cross-browser support in non-ES5 browsers it's still best to use the
+    `property()` method to get and set property values, but you can also simply
+    get and set the properties directly if you aren't concerned about supporting
     non-ES5 browsers.
 
 Why you might want to use `Y.Attribute` instead:
@@ -72,8 +72,8 @@ Why you might want to use `Y.Attribute` instead:
         // defined.
         var instance = new MyClass();
 
-        console.log(instance.foo); // => 'hello!'
-        console.log(instance.bar); // => 'baz'
+        console.log(instance.property('foo')); // => 'hello!'
+        console.log(instance.property('bar')); // => 'baz'
     });
 
 [1]: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/defineProperty
@@ -89,42 +89,51 @@ function Property() {
 
 Y.extend(Property, Y.Property.Base, {
     /**
-    Sets the value of the specified property and returns the value that was set.
+    Gets or sets the value of the specified property.
 
-    Also fires a change event with the name `propertyName + 'Change'`, where
-    `propertyName` is the name of the property that was set. For example,
-    setting the `foo` property will fire an event named `fooChange`.
+    If only a _name_ is given, returns the value of the property with that name,
+    or `undefined` if the property has not yet been defined.
+
+    If both a _name_ and a _value_ are given, sets the named property to the
+    given value and returns the value that was set.
+
+    When a property is set, this method will also fire a change event with the
+    name `propertyName + 'Change'`, where `propertyName` is the name of the
+    property that was set. For example, setting the `foo` property will fire an
+    event named `fooChange`.
 
     Note that the returned value and the new value passed to the change event
     may differ from the value passed in if the property has a setter function
     that alters the value.
 
-    @method set
+    @method property
     @param {String} name Property name.
-    @param {Any} value Value to set.
-
+    @param {Any} [value] Value to set.
     @param {Object} [options] Options. Properties of this object will be mixed
         into the event facade of the change event.
 
         @param {Boolean} [options.silent=false] If `true`, no change event will
             be fired.
 
-    @return {Any} The value that was set.
+    @return {Any} Property value, or `undefined` if the property has not yet
+        been defined and no value was set.
     **/
-    set: function (name, value, options) {
-        var newVal = Y.Property.Base.prototype.set.call(this, name, value, options),
-            prevVal;
+    property: function (name, value, options) {
+        var superFn = Y.Property.Base.prototype.property,
+            prevVal = superFn.call(this, name);
 
-        if (!options || !options.silent) {
-            prevVal = this.get(name);
+        if (typeof value === 'undefined') {
+            return prevVal;
+        }
 
-            if (newVal !== prevVal) {
-                this.fire(name + 'Change', Y.merge(options, {
-                    newVal      : newVal,
-                    prevVal     : prevVal,
-                    propertyName: name
-                }));
-            }
+        var newVal = superFn.call(this, name, value, options);
+
+        if ((!options || !options.silent) && newVal !== prevVal) {
+            this.fire(name + 'Change', Y.merge(options, {
+                newVal      : newVal,
+                prevVal     : prevVal,
+                propertyName: name
+            }));
         }
 
         return newVal;

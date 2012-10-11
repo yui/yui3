@@ -108,19 +108,6 @@ PropertyBase.prototype = {
     },
 
     /**
-    Returns the value of the specified property, or `undefined` if the property
-    has not been defined.
-
-    @method get
-    @param {String} name Property name.
-    @return {Any} Property value, or `undefined` if the property has not been
-        defined.
-    **/
-    get: function (name) {
-        return this[name];
-    },
-
-    /**
     Returns an object hash containing the values of multiple properties.
 
     The _names_ argument may be omitted and the _options_ argument used in its
@@ -155,7 +142,7 @@ PropertyBase.prototype = {
             name = names[i];
 
             if (!definedOnly || this._definedProperties[name]) {
-                properties[name] = this.get(name);
+                properties[name] = this.property(name);
             }
         }
 
@@ -176,20 +163,25 @@ PropertyBase.prototype = {
     },
 
     /**
-    Sets the value of the specified property and returns the value that was set.
+    Gets or sets the value of the specified property.
 
-    Note that the returned value may differ from the value passed in if the
-    property has a setter function that alters the value.
+    If only a _name_ is given, returns the value of the property with that name,
+    or `undefined` if the property has not yet been defined.
 
-    @method set
+    If both a _name_ and a _value_ are given, sets the named property to the
+    given value and returns the value that was set.
+
+    Note that when setting a property, the returned value may differ from the
+    value passed in if the property has a setter function that alters the value.
+
+    @method property
     @param {String} name Property name.
-    @param {Any} value Value to set.
-    @param {Object} [options] Options. No options are defined in
-        `property-base`, but other modules may add support for options.
-    @return {Any} The value that was set.
+    @param {Any} [value] Value to set.
+    @return {Any} Property value, or `undefined` if the property has not yet
+        been defined and no value was set.
     **/
-    set: function (name, value) {
-        return this[name] = value;
+    property: function (name, value) {
+        return typeof value === 'undefined' ? this[name] : this[name] = value;
     },
 
     /**
@@ -208,7 +200,7 @@ PropertyBase.prototype = {
 
         for (var name in properties) {
             if (properties.hasOwnProperty(name)) {
-                results[name] = this.set(name, properties[name], options);
+                results[name] = this.property(name, properties[name], options);
             }
         }
 
