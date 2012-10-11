@@ -546,12 +546,12 @@ proto = {
 
 /**
 Registers a module with the YUI global.  The easiest way to create a
-first-class YUI module is to use the YUI component build tool.
+first-class YUI module is to use the YUI component 
+build tool <a href="http://yui.github.com/shifter/">Shifter</a>.
 
-http://yuilibrary.com/projects/builder
-
-The build system will produce the `YUI.add` wrapper for you module, along
+The build system will produce the `YUI.add` wrapper for your module, along
 with any configuration info required for the module.
+
 @method add
 @param name {String} module name.
 @param fn {Function} entry point into the module that is used to bind module to the YUI instance.
@@ -2554,10 +2554,10 @@ YArray.test = function (obj) {
         result = 1;
     } else if (Lang.isObject(obj)) {
         try {
-            // indexed, but no tagName (element) or alert (window),
+            // indexed, but no tagName (element) or scrollTo/document (window. From DOM.isWindow test which we can't use here),
             // or functions without apply/call (Safari
             // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+            if ('length' in obj && !obj.tagName && !(obj.scrollTo && obj.document) && !obj.apply) {
                 result = 2;
             }
         } catch (ex) {}
@@ -3326,7 +3326,7 @@ YUI.Env.parseUA = function(subUA) {
     var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
-                return (c++ == 1) ? '' : '.';
+                return (c++ === 1) ? '' : '.';
             }));
         },
 
@@ -3441,13 +3441,6 @@ YUI.Env.parseUA = function(subUA) {
          */
         phantomjs: 0,
         /**
-         * Adobe AIR version number or 0.  Only populated if webkit is detected.
-         * Example: 1.0
-         * @property air
-         * @type float
-         */
-        air: 0,
-        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -3536,7 +3529,21 @@ YUI.Env.parseUA = function(subUA) {
          * @default 0
          * @static
          */
-        nodejs: 0
+        nodejs: 0,
+        /*
+        * Window8/IE10 Application host environment
+        * @property winjs
+        * @type Boolean
+        * @static
+        */
+        winjs: !!((typeof Windows !== "undefined") && Windows.System),
+        /**
+        * Are touch/msPointer events available on this device
+        * @property touchEnabled
+        * @type Boolean
+        * @static
+        */
+        touchEnabled: false
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -3707,11 +3714,16 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
     }
+    
+    //Check for known properties to tell if touch/mspointer events are enabled on this device
+    if (win && nav && !(o.chrome && o.chrome < 6)) {
+        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+    }
 
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
 
-        if (typeof process == 'object') {
+        if (typeof process === 'object') {
 
             if (process.versions && process.versions.node) {
                 //NodeJS
@@ -3780,6 +3792,7 @@ Y.UA.compareVersions = function (a, b) {
 };
 YUI.Env.aliases = {
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
+    "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
     "attribute": ["attribute-base","attribute-complex"],
     "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
@@ -3791,14 +3804,14 @@ YUI.Env.aliases = {
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-core","datatable-table","datatable-head","datatable-body","datatable-base","datatable-column-widths","datatable-message","datatable-mutable","datatable-sort","datatable-datasource"],
     "datatable-deprecated": ["datatable-base-deprecated","datatable-datasource-deprecated","datatable-sort-deprecated","datatable-scroll-deprecated"],
-    "datatype": ["datatype-number","datatype-date","datatype-xml"],
-    "datatype-date": ["datatype-date-parse","datatype-date-format"],
+    "datatype": ["datatype-date","datatype-number","datatype-xml"],
+    "datatype-date": ["datatype-date-parse","datatype-date-format","datatype-date-math"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
     "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
     "editor": ["frame","editor-selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
-    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside","event-touch","event-move","event-flick","event-valuechange","event-tap"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
     "handlebars": ["handlebars-compiler"],
@@ -3818,7 +3831,7 @@ YUI.Env.aliases = {
 };
 
 
-}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later"]});
+}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-later"]});
 YUI.add('get', function (Y, NAME) {
 
 /*jslint boss:true, expr:true, laxbreak: true */
@@ -4332,14 +4345,18 @@ Y.Get = Get = {
         // feasible to load test files on every pageview just to perform a
         // feature test. I'm sorry if this makes you sad.
         return (this._env = {
+
             // True if this is a browser that supports disabling async mode on
             // dynamically created script nodes. See
             // https://developer.mozilla.org/En/HTML/Element/Script#Attributes
-            async: doc && doc.createElement('script').async === true,
+
+            // IE10 doesn't return true for the MDN feature test, so setting it explicitly,
+            // because it is async by default, and allows you to disable async by setting it to false
+            async: (doc && doc.createElement('script').async === true) || (ua.ie >= 10),
 
             // True if this browser fires an event when a dynamically injected
             // link node fails to load. This is currently true for Firefox 9+
-            // and WebKit 535.24+.
+            // and WebKit 535.24+
             cssFail: ua.gecko >= 9 || ua.compareVersions(ua.webkit, 535.24) >= 0,
 
             // True if this browser fires an event when a dynamically injected
@@ -4356,7 +4373,7 @@ Y.Get = Get = {
             // True if this browser preserves script execution order while
             // loading scripts in parallel as long as the script node's `async`
             // attribute is set to false to explicitly disable async execution.
-            preservesScriptOrder: !!(ua.gecko || ua.opera)
+            preservesScriptOrder: !!(ua.gecko || ua.opera || (ua.ie && ua.ie >= 10))
         });
     },
 
@@ -4446,6 +4463,8 @@ Y.Get = Get = {
         options || (options = {});
         options.type = type;
 
+        options._onFinish = Get._onTransactionFinish;
+
         if (!this._env) {
             this._getEnv();
         }
@@ -4462,6 +4481,11 @@ Y.Get = Get = {
         return transaction;
     },
 
+    _onTransactionFinish : function() {
+        Get._pending = null;
+        Get._next();
+    },
+
     _next: function () {
         var item;
 
@@ -4473,13 +4497,7 @@ Y.Get = Get = {
 
         if (item) {
             this._pending = item;
-
-            item.transaction.execute(function () {
-                item.callback && item.callback.apply(this, arguments);
-
-                Get._pending = null;
-                Get._next();
-            });
+            item.transaction.execute(item.callback);
         }
     },
 
@@ -4545,7 +4563,7 @@ Get.Transaction = Transaction = function (requests, options) {
 
     self._callbacks = []; // callbacks to call after execution finishes
     self._queue     = [];
-    self._waiting   = 0;
+    self._reqsWaiting   = 0;
 
     // Deprecated pre-3.5.0 properties.
     self.tId = self.id; // Use `id` instead.
@@ -4643,7 +4661,7 @@ Transaction.prototype = {
         this._pendingCSS = null;
         this._pollTimer  = clearTimeout(this._pollTimer);
         this._queue      = [];
-        this._waiting    = 0;
+        this._reqsWaiting    = 0;
 
         this.errors.push({error: msg || 'Aborted'});
         this._finish();
@@ -4693,8 +4711,10 @@ Transaction.prototype = {
             }, self.options.timeout);
         }
 
+        self._reqsWaiting = requests.length;
+
         for (i = 0, len = requests.length; i < len; ++i) {
-            req = self.requests[i];
+            req = requests[i];
 
             if (req.async || req.type === 'css') {
                 // No need to queue CSS or fully async JS.
@@ -4780,6 +4800,10 @@ Transaction.prototype = {
 
         if (options.onEnd) {
             options.onEnd.call(thisObj, data);
+        }
+
+        if (options._onFinish) {
+            options._onFinish();
         }
     },
 
@@ -4871,7 +4895,6 @@ Transaction.prototype = {
             self._progress(null, req);
         }
 
-
         // Deal with script asynchronicity.
         if (isScript) {
             node.setAttribute('src', req.url);
@@ -4929,8 +4952,21 @@ Transaction.prototype = {
         } else {
             // Script or CSS on everything else. Using DOM 0 events because that
             // evens the playing field with older IEs.
-            node.onerror = onError;
-            node.onload  = onLoad;
+
+            if (ua.ie >= 10) {
+
+                // We currently need to introduce a timeout for IE10, since it 
+                // calls onerror/onload synchronously for 304s - messing up existing
+                // program flow. 
+
+                // Remove this block if the following bug gets fixed by GA
+                // https://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload
+                node.onerror = function() { setTimeout(onError, 0); };
+                node.onload  = function() { setTimeout(onLoad, 0); };
+            } else {
+                node.onerror = onError;
+                node.onload  = onLoad;
+            }
 
             // If this browser doesn't fire an event when CSS fails to load,
             // fail after a timeout to avoid blocking the transaction queue.
@@ -4938,8 +4974,6 @@ Transaction.prototype = {
                 cssTimeout = setTimeout(onError, req.timeout || 3000);
             }
         }
-
-        this._waiting += 1;
 
         this.nodes.push(node);
         insertBefore.parentNode.insertBefore(node, insertBefore);
@@ -4956,7 +4990,7 @@ Transaction.prototype = {
         // for anything to load, then we're done!
         if (this._queue.length) {
             this._insert(this._queue.shift());
-        } else if (!this._waiting) {
+        } else if (!this._reqsWaiting) {
             this._finish();
         }
     },
@@ -5063,7 +5097,8 @@ Transaction.prototype = {
             this._pending = null;
         }
 
-        this._waiting -= 1;
+        this._reqsWaiting -= 1;
+
         this._next();
     }
 };
@@ -5194,7 +5229,7 @@ add('load', '0', {
         node = doc ? doc.documentElement : null;
 
     if (node && node.style) {
-        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
     }
 
     return false;
@@ -5223,10 +5258,8 @@ add('load', '1', {
 // dd-gestures
 add('load', '2', {
     "name": "dd-gestures",
-    "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-},
-    "trigger": "dd-drag"
+    "trigger": "dd-drag",
+    "ua": "touchEnabled"
 });
 // dom-style-ie
 add('load', '3', {
@@ -5388,8 +5421,8 @@ add('load', '16', {
         ret = true;
 
     if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
+    }
 
     return ret;
 },
@@ -5400,6 +5433,20 @@ add('load', '17', {
     "name": "widget-base-ie",
     "trigger": "widget-base",
     "ua": "ie"
+});
+// yql-nodejs
+add('load', '18', {
+    "name": "yql-nodejs",
+    "trigger": "yql",
+    "ua": "nodejs",
+    "when": "after"
+});
+// yql-winjs
+add('load', '19', {
+    "name": "yql-winjs",
+    "trigger": "yql",
+    "ua": "winjs",
+    "when": "after"
 });
 
 }, '@VERSION@', {"requires": ["yui-base"]});
@@ -5678,4 +5725,4 @@ Y.Lang.later = Y.later;
 
 
 }, '@VERSION@', {"requires": ["yui-base"]});
-YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["yui-base", "get", "features", "intl-base", "yui-log", "yui-later"]});
+YUI.add('yui', function (Y, NAME) {}, '@VERSION@', {"use": ["get", "features", "intl-base", "yui-log", "yui-later"]});

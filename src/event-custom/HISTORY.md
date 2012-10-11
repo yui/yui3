@@ -6,7 +6,7 @@ Custom Event Infrastructure Change History
 
  * CustomEvent run-time performance optimizations.
 
-   a. The `subscribers` and `afters` CustomEvent instance properties have 
+   a. [!] The `subscribers` and `afters` CustomEvent instance properties have 
       been deprecated, and replaced with private arrays (instead of hashes).
 
       If you're referring to the `subscribers` or `afters` properties directly,

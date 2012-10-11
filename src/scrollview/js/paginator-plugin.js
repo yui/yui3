@@ -89,6 +89,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         // Host method listeners
         paginator.beforeHostMethod('scrollTo', paginator._beforeHostScrollTo);
         paginator.beforeHostMethod('_mousewheel', paginator._beforeHostMousewheel);
+        paginator.beforeHostMethod('_flick', paginator._beforeHostFlick);
         paginator.afterHostMethod('_onGestureMoveEnd', paginator._afterHostGestureMoveEnd);
         paginator.afterHostMethod('_uiDimensionsChange', paginator._afterHostUIDimensionsChange);
         paginator.afterHostMethod('syncUI', paginator._afterHostSyncUI);
@@ -149,18 +150,16 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         var paginator = this,
             host = paginator._host,
             hostFlick = host.get(FLICK),
+            pageNodes = paginator._getPageNodes(),
+            size = pageNodes.size(),
             paginatorAxis;
+
+        // Set the page count
+        paginator.set(TOTAL, size);
 
         // If paginator's 'axis' property is to be automatically determined, inherit host's property
         if (paginator._cAxis === undefined) {
             paginator._set(AXIS, host.get(AXIS));
-        }
-
-        paginatorAxis = paginator.get(AXIS);
-
-        // Don't allow flicks on the paginated axis
-        if (paginatorAxis[hostFlick.axis]) {
-            host.set(FLICK, false);
         }
     },
 
@@ -175,9 +174,9 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 
         var paginator = this,
             host = paginator._host,
-            bb = paginator._bb,
-            widgetWidth = bb.get('offsetWidth'),
-            widgetHeight = bb.get('offsetHeight'),
+            dims = host._getScrollDims(),
+            widgetWidth = dims.offsetWidth,
+            widgetHeight = dims.offsetHeight,
             pageNodes = paginator._getPageNodes();
             
         // Inefficient. Should not reinitialize every page every syncUI
@@ -317,6 +316,25 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     },
 
     /**
+     * Executed before host._flick
+     * Prevents flick events in some conditions
+     *
+     * @method _beforeHostFlick
+     * @param {Event.Facade}
+     * @protected
+     */
+    _beforeHostFlick: function (e) {
+        var paginator = this,
+            paginatorAxis = paginator.get(AXIS),
+            flickAxis = e.flick.axis || false;
+
+        // Prevent flicks on the paginated axis
+        if (paginatorAxis[flickAxis]) {
+            return new Y.Do.Prevent();
+        }
+    },
+
+    /**
      * Executes after host's 'scrollEnd' event
      * Runs cleanup operations
      *
@@ -350,22 +368,26 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _afterIndexChange: function (e) {
         var paginator = this,
-            host = this._host,
+            host = paginator._host,
             index = e.newVal,
-            maxScrollX = paginator._pageDims[index].maxScrollX,
-            maxScrollY = paginator._pageDims[index].maxScrollY,
-            gesture = host._gesture,
-            gestureAxis = gesture && gesture.axis;
+            pageDims = paginator._pageDims[index],
+            hostAxis = host._cAxis,
+            paginatorAxis = paginator._cAxis;
 
         // Cache the new index value
         paginator._cIndex = index;
 
-        if (gestureAxis === DIM_Y) {
-            host._maxScrollX = maxScrollX;
-            host.set(SCROLL_X, paginator._pageDims[index].scrollX, { src: UI });
-        } else if (gestureAxis === DIM_X) {
-            host._maxScrollY = maxScrollY;
-            host.set(SCROLL_Y, paginator._pageDims[index].scrollY, { src: UI });
+        // For dual-axis instances, we need to hack some host properties to the
+        // current page's max height/width and current stored offset
+        if (hostAxis[DIM_X] && hostAxis[DIM_Y]) {
+            if (paginatorAxis[DIM_Y]) {
+                host._maxScrollX = pageDims.maxScrollX;
+                host.set(SCROLL_X, pageDims.scrollX, { src: UI });
+            }
+            else if (paginatorAxis[DIM_X]) {
+                host._maxScrollY = pageDims.maxScrollY;
+                host.set(SCROLL_Y, pageDims.scrollY, { src: UI });
+            }
         }
 
         if (e.src !== UI) {

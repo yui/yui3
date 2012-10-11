@@ -1,1 +1,1 @@
-YUI.add("pjax-plugin",function(b,a){b.Plugin.Pjax=b.Base.create("pjaxPlugin",b.Pjax,[b.Plugin.Base],{initializer:function(c){this.set("container",c.host);}},{NS:"pjax"});},"@VERSION@",{"requires":["node-pluginhost","pjax","plugin"]});
+YUI.add("pjax-plugin",function(e,t){e.Plugin.Pjax=e.Base.create("pjaxPlugin",e.Pjax,[e.Plugin.Base],{initializer:function(e){this.set("container",e.host)}},{NS:"pjax"})},"@VERSION@",{requires:["node-pluginhost","pjax","plugin"]});

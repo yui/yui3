@@ -132,7 +132,7 @@
         * @private
         * @method _getVPRegion
         * @description Sets the _vpRegionCache property with an Object containing the dims from the viewport.
-        */        
+        */
         _getVPRegion: function() {
             var r = {},
                 n = this.get(PARENT_SCROLL),
@@ -169,7 +169,7 @@
         * @method _checkWinScroll
         * @description Check to see if we need to fire the scroll timer. If scroll timer is running this will scroll the window.
         * @param {Boolean} move Should we move the window. From Y.later
-        */        
+        */
         _checkWinScroll: function(move) {
             var r = this._getVPRegion(),
                 ho = this.get(HOST),
@@ -190,7 +190,7 @@
                 nl = left,
                 st = sTop,
                 sl = sLeft;
-            
+
             if (this.get('horizontal')) {
                 if (left <= r.left) {
                     scroll = true;
@@ -259,7 +259,7 @@
         * @private
         * @method _initScroll
         * @description Cancel a previous scroll timer and init a new one.
-        */        
+        */
         _initScroll: function() {
             this._cancelScroll();
             this._scrollTimer = Y.Lang.later(this.get('scrollDelay'), this, this._checkWinScroll, [true], true);
@@ -269,7 +269,7 @@
         * @private
         * @method _cancelScroll
         * @description Cancel a currently running scroll timer.
-        */        
+        */
         _cancelScroll: function() {
             this._scrolling = false;
             if (this._scrollTimer) {
@@ -280,7 +280,7 @@
         /**
         * @method align
         * @description Called from the drag:align event to determine if we need to scroll.
-        */        
+        */
         align: function(e) {
             if (this._scrolling) {
                 this._cancelScroll();
@@ -294,7 +294,7 @@
         * @private
         * @method _setDimCache
         * @description Set the cache of the dragNode dims.
-        */        
+        */
         _setDimCache: function() {
             var node = this.get(HOST).get('dragNode');
             this._dimCache = {
@@ -313,7 +313,7 @@
         * @method end
         * @description Called from the drag:end event
         */
-        end: function(xy) {
+        end: function() {
             this._dimCache = null;
             this._cancelScroll();
         }
@@ -321,7 +321,7 @@
 
     Y.namespace('Plugin');
 
-    
+
     /**
      * Extends the Scroll class to make the window scroll while dragging.
      * @class DDWindowScroll
@@ -365,7 +365,7 @@
     */
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
-    
+
 
     /**
      * Extends the Scroll class to make a parent node scroll while dragging.
@@ -417,6 +417,6 @@
     NS.NAME = NS.NS = 'nodescroll';
     Y.Plugin.DDNodeScroll = NS;
 
-    Y.DD.Scroll = S;    
+    Y.DD.Scroll = S;
 
 

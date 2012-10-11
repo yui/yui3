@@ -274,10 +274,10 @@ YArray.test = function (obj) {
         result = 1;
     } else if (Lang.isObject(obj)) {
         try {
-            // indexed, but no tagName (element) or alert (window),
+            // indexed, but no tagName (element) or scrollTo/document (window. From DOM.isWindow test which we can't use here),
             // or functions without apply/call (Safari
             // HTMLElementCollection bug).
-            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+            if ('length' in obj && !obj.tagName && !(obj.scrollTo && obj.document) && !obj.apply) {
                 result = 2;
             }
         } catch (ex) {}

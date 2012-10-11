@@ -1721,12 +1721,19 @@ YUITest.TestFormat = function(){
              *      format is specified, a string representing the results in that format.
              * @method getCoverage
              */
-            getCoverage: function(format){
-                if (!this._running && typeof _yuitest_coverage == "object"){
-                    if (typeof format == "function"){
-                        return format(_yuitest_coverage);                    
+            getCoverage: function(format) {
+                var covObject = null;
+                if (typeof _yuitest_coverage === "object") {
+                    covObject = _yuitest_coverage;
+                }
+                if (typeof __coverage__ === "object") {
+                    covObject = __coverage__;
+                }
+                if (!this._running && typeof covObject == "object"){
+                    if (typeof format == "function") {
+                        return format(covObject);                    
                     } else {
-                        return _yuitest_coverage;
+                        return covObject;
                     }
                 } else {
                     return null;
@@ -3393,7 +3400,7 @@ YUITest.Results = function(name){
      * @property duration
      */
     this.duration = 0;
-}
+};
 
 /**
  * Includes results from another results object into this one.
@@ -3407,7 +3414,8 @@ YUITest.Results.prototype.include = function(results){
     this.ignored += results.ignored;
     this.total += results.total;
     this.errors += results.errors;
-};/**
+};
+/**
  * ShouldError is subclass of Error that is thrown whenever
  * a test is expected to throw an error but doesn't.
  *
@@ -3735,13 +3743,13 @@ if (!YUI.YUITest) {
                 break;
             default:
                 message = "Unexpected event " + event.type;
-                message = "info";
+                messageType = "info";
         }
         
         if (Y.Test.Runner._log) {
             Y.log(message, messageType, "TestRunner");
         }
-    }
+    };
 
     var i, name;
 

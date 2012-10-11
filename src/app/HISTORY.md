@@ -1,6 +1,28 @@
 App Framework Change History
 ============================
 
+3.7.3
+-----
+
+### App
+
+* Add support for App Transitions in browsers which support native CSS3
+  transitions without using vendor prefixes. This change means IE10 and Opera
+  get view transitions.
+
+
+3.7.2
+-----
+
+* No changes.
+
+
+3.7.1
+-----
+
+* No changes.
+
+
 3.7.0
 -----
 
@@ -9,17 +31,6 @@ App Framework Change History
 * Added App.Content, an App extension that provides pjax-style content fetching
   and handling, making it seamless to use a mixture of server and client
   rendered views.
-
-### Router
-
-* Added support for route-based middleware to Router. The `route()` method now
-  accepts an arbitrary number of callbacks enabling more reuse of routing code.
-  For people familiar with Express.js' route middleware, this behaves the same.
-  [Ticket #2532620]
-
-
-3.6.1
------
 
 ### Model
 
@@ -38,6 +49,13 @@ App Framework Change History
   Object, array of Objects, Model instance, array of Model instances, or another
   ModelList instance in the `items` property of the config object passed to
   ModelList's constructor. This change also applies to LazyModelList.
+
+### Router
+
+* Added support for route-based middleware to Router. The `route()` method now
+  accepts an arbitrary number of callbacks enabling more reuse of routing code.
+  For people familiar with Express.js' route middleware, this behaves the same.
+  [Ticket #2532620]
 
 ### View
 
