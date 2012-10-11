@@ -784,12 +784,15 @@ YUI.add('dd-drag', function (Y, NAME) {
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown(ev);
-                if (this.get('haltDown')) {
-                    Y.log('Halting MouseDown', 'info', 'drag');
-                    ev.halt();
-                } else {
-                    Y.log('Preventing Default on MouseDown', 'info', 'drag');
-                    ev.preventDefault();
+                if (Drag.START_EVENT.indexOf('gesture') !== 0) {
+                    //Only do these if it's not a gesture
+                    if (this.get('haltDown')) {
+                        Y.log('Halting MouseDown', 'info', 'drag');
+                        ev.halt();
+                    } else {
+                        Y.log('Preventing Default on MouseDown', 'info', 'drag');
+                        ev.preventDefault();
+                    }
                 }
 
                 this._setStartPosition([ev.pageX, ev.pageY]);
@@ -1225,6 +1228,10 @@ YUI.add('dd-drag', function (Y, NAME) {
                 if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                     this._dragThreshMet = true;
                     this.start();
+                    //This only happens on gestures to stop the page from scrolling
+                    if (ev && ev.preventDefault) {
+                        ev.preventDefault();
+                    }
                     this._alignNode([ev.pageX, ev.pageY]);
                 }
             } else {

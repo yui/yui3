@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Get IE 10 Issue</title>
+        <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+        <script type="text/javascript" src="a.js"></script> <!-- to cause the 304 below -->
+    </head>
+    <body>
+        <script type="text/javascript">
+            YUI({filter:"raw"}).use("get", function(Y) {
+
+                var t1 = Y.Get.css([
+                        "a.css"
+                    ], {
+
+                    onSuccess: function(o) {
+                        console.log("css success");
+                    },
+
+                    onFailure: function(o) {
+                        console.log("css failure");
+                    }
+                });
+
+                var t2 = Y.Get.js([
+                        "a.js",                   // 304
+                        "b.js?t=" + (+new Date()) // 200
+                    ], {
+
+                    async:true,
+
+                    onSuccess: function(o) {
+                        console.log("js success");
+                    },
+
+                    onFailure: function(o) {
+                        console.log("js failure");
+                    }
+                });
+
+            });
+        </script>
+    </body>
+</html>
