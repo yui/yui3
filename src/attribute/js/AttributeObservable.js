@@ -1,5 +1,3 @@
-YUI.add('attribute-events', function (Y, NAME) {
-
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
      * adds configurable attributes and attribute change events to the class being 
@@ -11,11 +9,11 @@ YUI.add('attribute-events', function (Y, NAME) {
      */
 
     /**
-     * The attribute-events submodule provides augmentable attribute change event support 
+     * The `attribute-observable` submodule provides augmentable attribute change event support 
      * for AttributeCore based implementations.
      *
      * @module attribute
-     * @submodule attribute-events
+     * @submodule attribute-observable
      */
     var EventTarget = Y.EventTarget,
 
@@ -27,18 +25,19 @@ YUI.add('attribute-events', function (Y, NAME) {
      * Provides an augmentable implementation of attribute change events for 
      * AttributeCore. 
      *
-     * @class AttributeEvents
+     * @class AttributeObservable
      * @uses EventTarget
      */
-    function AttributeEvents() {
+    function AttributeObservable() {
         // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
+
         EventTarget.call(this, {emitFacade:true});
     }
 
-    AttributeEvents._ATTR_CFG = [BROADCAST];
+    AttributeObservable._ATTR_CFG = [BROADCAST];
 
-    AttributeEvents.prototype = {
+    AttributeObservable.prototype = {
 
         /**
          * Sets the value of an attribute.
@@ -177,6 +176,7 @@ YUI.add('attribute-events', function (Y, NAME) {
          */
         _defAttrChangeFn : function(e) {
             if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
@@ -186,9 +186,18 @@ YUI.add('attribute-events', function (Y, NAME) {
     };
 
     // Basic prototype augment - no lazy constructor invocation.
-    Y.mix(AttributeEvents, EventTarget, false, null, 1);
+    Y.mix(AttributeObservable, EventTarget, false, null, 1);
 
-    Y.AttributeEvents = AttributeEvents;
+    Y.AttributeObservable = AttributeObservable;
 
+    /**
+    The `AttributeEvents` class extension was deprecated in YUI 3.8.0 and is now
+    an alias for the `AttributeObservable` class extension. Use that class
+    extnesion instead. This alias will be removed in a future version of YUI.
 
-}, '@VERSION@', {"requires": ["event-custom"]});
+    @class AttributeEvents
+    @uses EventTarget
+    @deprecated Use `AttributeObservable` instead.
+    @see AttributeObservable
+    **/
+    Y.AttributeEvents = AttributeObservable;
