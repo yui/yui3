@@ -10,6 +10,7 @@
  * @submodule event-move
  */
 
+
  var GESTURE_MAP = Y.Event._GESTURE_MAP,
      EVENT = {
          start: GESTURE_MAP.start,
@@ -47,8 +48,8 @@
     NODE_TYPE = "nodeType",
 
     SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
-    TOUCH_ACTION_COUNT = 0,
-    ORIG_TOUCH_ACTION = '',
+    TOUCH_ACTION_COUNT = {},
+    ORIG_TOUCH_ACTION = {},
 
     _defArgsProcessor = function(se, args, delegate) {
         var iConfig = (delegate) ? 4 : 3,
@@ -63,6 +64,17 @@
 
     _getRoot = function(node, subscriber) {
         return subscriber._extra.root || (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
+    },
+
+    //Checks to see if the node is the document, and if it is, returns the documentElement.
+    _checkDocumentElem = function(node) {
+        var elem = node.getDOMNode();
+        if (node.compareTo(Y.config.doc) && elem.documentElement) {
+            return elem.documentElement;
+        }
+        else {
+            return false;
+        }
     },
 
     _normTouchFacade = function(touchFacade, touch, params) {
@@ -84,17 +96,18 @@
     The user can over-ride this by setting a more lenient -ms-touch-action property on a node (such as pan-x, pan-y, etc.) via CSS when subscribing to the 'gesturemovestart' event.
     */
     _setTouchActions = function (node) {
-        var elem = node.getDOMNode();
+        var elem = _checkDocumentElem(node) || node.getDOMNode(),
+            id = node.get('id');
 
-        //Checks to see if MSPointer events are supported. The elem.style check is for events that are
-        //subscribed from Y.config.doc (dd-gestures has this)
-        if (SUPPORTS_POINTER && elem.style) {
+        //Checks to see if MSPointer events are supported.
+        if (SUPPORTS_POINTER) {
 
-            if (TOUCH_ACTION_COUNT === 0) {
-                ORIG_TOUCH_ACTION = elem.style.msTouchAction;
+            if (!TOUCH_ACTION_COUNT[id]) {
+                TOUCH_ACTION_COUNT[id] = 0;
+                ORIG_TOUCH_ACTION[id] = elem.style.msTouchAction;
             }
-            elem.style.msTouchAction = 'none';
-            TOUCH_ACTION_COUNT++;
+            elem.style.msTouchAction = Y.Event._DEFAULT_TOUCH_ACTION;
+            TOUCH_ACTION_COUNT[id]++;
         }
     },
 
@@ -102,11 +115,13 @@
     Resets the element's -ms-touch-action property back to the original value, This is called on detach() and detachDelegate().
     */
     _unsetTouchActions = function (node) {
-        var elem = node.getDOMNode();
-        if (SUPPORTS_POINTER && elem.style) {
-            TOUCH_ACTION_COUNT--;
-            if (TOUCH_ACTION_COUNT === 0 && elem.style.msTouchAction !== ORIG_TOUCH_ACTION) {
-                elem.style.msTouchAction = ORIG_TOUCH_ACTION;
+        var elem = _checkDocumentElem(node) || node.getDOMNode(),
+            id = node.get('id');
+
+        if (SUPPORTS_POINTER) {
+            TOUCH_ACTION_COUNT[id]--;
+            if (TOUCH_ACTION_COUNT[id] === 0 && elem.style.msTouchAction !== ORIG_TOUCH_ACTION[id]) {
+                elem.style.msTouchAction = ORIG_TOUCH_ACTION[id];
             }
         }
     },
@@ -121,6 +136,7 @@
     },
 
     define = Y.Event.define;
+    Y.Event._DEFAULT_TOUCH_ACTION = 'none';
 
 /**
  * Sets up a "gesturemovestart" event, that is fired on touch devices in response to a single finger "touchstart",
