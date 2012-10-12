@@ -48,8 +48,7 @@ YUI.add('event-move', function (Y, NAME) {
     TARGET = "target",
 
     NODE_TYPE = "nodeType",
-
-    SUPPORTS_TOUCH_ACTION = ("msTouchAction" in Y.one('doc').getDOMNode().documentElement.style),
+    SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
     MS_TOUCH_ACTION_COUNT = 'msTouchActionCount',
     MS_INIT_TOUCH_ACTION = 'msInitTouchAction',
 
@@ -102,7 +101,7 @@ YUI.add('event-move', function (Y, NAME) {
             num = node.getData(MS_TOUCH_ACTION_COUNT);
 
         //Checks to see if msTouchAction is supported.
-        if (SUPPORTS_TOUCH_ACTION) {
+        if (SUPPORTS_POINTER) {
             if (!num) {
                 num = 0;
                 node.setData(MS_INIT_TOUCH_ACTION, elem.style.msTouchAction);
@@ -121,7 +120,7 @@ YUI.add('event-move', function (Y, NAME) {
             num = node.getData(MS_TOUCH_ACTION_COUNT),
             initTouchAction = node.getData(MS_INIT_TOUCH_ACTION);
 
-        if (SUPPORTS_TOUCH_ACTION) {
+        if (SUPPORTS_POINTER) {
             num--;
             node.setData(MS_TOUCH_ACTION_COUNT, num);
             if (num === 0 && elem.style.msTouchAction !== initTouchAction) {
