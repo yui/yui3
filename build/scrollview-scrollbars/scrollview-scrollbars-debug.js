@@ -11,8 +11,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     _classNames,
 
     Transition = Y.Transition,
-    NATIVE_TRANSITIONS = Transition.useNative,    
-    vendorPrefix = Y.Transition._VENDOR_PREFIX,
+    NATIVE_TRANSITIONS = Transition.useNative,
     SCROLLBAR = 'scrollbar',
     SCROLLVIEW = 'scrollview',
 
@@ -31,7 +30,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     HORIZ_CACHE = "_sbh",
     VERT_CACHE = "_sbv",
 
-    TRANSITION_PROPERTY = (vendorPrefix ? vendorPrefix + 'TransitionProperty' : 'transitionProperty'),
+    TRANSITION_PROPERTY = Y.ScrollView._TRANSITION.PROPERTY,
     TRANSFORM = "transform",
 
     TRANSLATE_X = "translateX(",
@@ -150,7 +149,7 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      */    
     initializer: function() {
         this._host = this.get("host");
-
+        
         this.afterHostEvent('scrollEnd', this._hostScrollEnd);
         this.afterHostMethod('scrollTo', this._update);
         this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
