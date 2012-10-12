@@ -25,6 +25,18 @@
         }
     }
 
+    // Utility function used in `_buildCfg` to aggregate `_ATTR_CFG` array
+    // values from the sender constructor into a new array on reciver's
+    // constructor, and clear the cached hash.
+    function attrCfgAggregator(prop, r, s) {
+        if (s._ATTR_CFG) {
+            arrayAggregator.apply(null, arguments);
+
+            // Clear cached hash.
+            r._ATTR_CFG_HASH = null;
+        }
+    }
+
     // Utility function used in `_buildCfg` to aggregate ATTRS configs from one
     // the sender constructor to the reciver constructor.
     function attrsAggregator(prop, r, s) {
@@ -421,7 +433,7 @@
     BaseCore._buildCfg = {
         custom: {
             ATTRS         : attrsAggregator,
-            _ATTR_CFG     : arrayAggregator,
+            _ATTR_CFG     : attrCfgAggregator,
             _NON_ATTRS_CFG: arrayAggregator
         },
 
@@ -432,7 +444,7 @@
     Base._buildCfg = {
         custom: {
             ATTRS         : attrsAggregator,
-            _ATTR_CFG     : arrayAggregator,
+            _ATTR_CFG     : attrCfgAggregator,
             _NON_ATTRS_CFG: arrayAggregator
         },
 

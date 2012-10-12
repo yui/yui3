@@ -1509,6 +1509,31 @@ YUI.add('base-tests', function(Y) {
 
             Y.Assert.areSame('BAZ', foo.get('bar'));
             Y.Assert.areSame(1, calls);
+        },
+
+        "test:base-core-subclass-with-mix-of-base-events-ext": function () {
+            var Foo, foo;
+
+            Foo = Y.Base.create('foo', Y.BaseCore, []);
+
+            // `null` or `undefined`.
+            Y.Assert.isTrue(Foo._ATTR_CFG_HASH == undefined);
+
+            foo = new Foo();
+
+            Y.Assert.isNotNull(Foo._ATTR_CFG_HASH);
+            Y.Assert.isUndefined(Foo._ATTR_CFG_HASH.broadcast);
+
+            Y.Base.mix(Foo, [Y.BaseEvents]);
+
+            // Check that cached hash was cleared.
+            // `null` or `undefined`.
+            Y.Assert.isTrue(Foo._ATTR_CFG_HASH == undefined);
+
+            foo = new Foo();
+
+            Y.Assert.isNotNull(Foo._ATTR_CFG_HASH);
+            Y.Assert.isNotUndefined(Foo._ATTR_CFG_HASH.broadcast);
         }
 
     }));

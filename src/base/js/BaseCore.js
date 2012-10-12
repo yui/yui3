@@ -308,18 +308,6 @@
             return this._attrs;
         },
 
-
-        /**
-         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
-         * this class. 
-         * 
-         * @method _getAttrCfgHash
-         * @private
-         */
-        _getAttrCfgHash: function() {
-            return this._attrCfgHash;
-        },
-
         /**
          * A helper method used when processing ATTRS across the class hierarchy during 
          * initialization. Returns a disposable object with the attributes defined for 
@@ -391,15 +379,20 @@
          * @private
          */
         _initHierarchyData : function() {
-            var c = this.constructor,
+            var ctor = this.constructor,
+                c,
                 i,
                 l,
                 attrCfg,
-                attrCfgHash = {},
+                attrCfgHash,
+                needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
                 nonAttrs = (this._allowAdHocAttrs) ? {} : null,
                 classes = [],
                 attrs = [];
+
+            // Start with `this` instance's constructor.
+            c = ctor;
 
             while (c) {
                 // Add to classes
@@ -411,10 +404,14 @@
                 }
 
                 // Aggregate ATTR cfg whitelist.
-                attrCfg = c._ATTR_CFG;
-                if (attrCfg) {
-                    for (i = 0, l = attrCfg.length; i < l; i += 1) {
-                        attrCfgHash[attrCfg[i]] = true;
+                if (needsAttrCfgHash) {
+                    attrCfg     = c._ATTR_CFG;
+                    attrCfgHash = attrCfgHash || {};
+
+                    if (attrCfg) {
+                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                            attrCfgHash[attrCfg[i]] = true;
+                        }
                     }
                 }
 
@@ -430,10 +427,25 @@
                 c = c.superclass ? c.superclass.constructor : null;
             }
 
+            // Cache computed `_ATTR_CFG_HASH` on the constructor.
+            if (needsAttrCfgHash) {
+                ctor._ATTR_CFG_HASH = attrCfgHash;
+            }
+
             this._classes = classes;
-            this._attrCfgHash = attrCfgHash;
             this._nonAttrs = nonAttrs;
             this._attrs = this._aggregateAttrs(attrs);
+        },
+
+        /**
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for
+         * this class.
+         *
+         * @method _attrCfgHash
+         * @private
+         */
+        _attrCfgHash: function() {
+            return this.constructor._ATTR_CFG_HASH;
         },
 
         /**
@@ -458,7 +470,7 @@
                 path,
                 i,
                 clone,
-                cfgPropsHash = this._getAttrCfgHash(),
+                cfgPropsHash = this._attrCfgHash(),
                 aggAttr,
                 aggAttrs = {};
 
