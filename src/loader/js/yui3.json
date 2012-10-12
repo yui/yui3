@@ -1625,6 +1625,14 @@
     "model": {
         "requires": [
             "base-build",
+            "model-base",
+            "model-observable"
+        ]
+    },
+    "model-base": {
+        "requires": [
+            "attribute-extras",
+            "base-core",
             "escape",
             "json-parse"
         ]
@@ -1638,6 +1646,12 @@
             "escape",
             "json-parse",
             "model"
+        ]
+    },
+    "model-observable": {
+        "requires": [
+            "base-observable",
+            "model-base"
         ]
     },
     "model-sync-rest": {
