@@ -1,9 +1,9 @@
     /**
-    The `base-events` submodule adds observability to Base's lifecycle and
+    The `base-observable` submodule adds observability to Base's lifecycle and
     attributes, and also make it an `EventTarget`.
 
     @module base
-    @submodule base-events
+    @submodule base-observable
     **/
     var L = Y.Lang,
 
@@ -19,18 +19,18 @@
     Provides an augmentable implementation of lifecycle and attribute events for
     `BaseCore`.
 
-    @class BaseEvents
+    @class BaseObservable
     @extensionfor BaseCore
     @uses AttributeObservable
     @uses EventTarget
     @since 3.7.0
     **/
-    function BaseEvents() {}
+    function BaseObservable() {}
 
-    BaseEvents._ATTR_CFG      = AttributeObservable._ATTR_CFG.concat();
-    BaseEvents._NON_ATTRS_CFG = ["on", "after", "bubbleTargets"];
+    BaseObservable._ATTR_CFG      = AttributeObservable._ATTR_CFG.concat();
+    BaseObservable._NON_ATTRS_CFG = ["on", "after", "bubbleTargets"];
 
-    BaseEvents.prototype = {
+    BaseObservable.prototype = {
 
         /**
          * Initializes Attribute
@@ -192,6 +192,6 @@
         }
     };
 
-    Y.mix(BaseEvents, AttributeObservable, false, null, 1);
+    Y.mix(BaseObservable, AttributeObservable, false, null, 1);
 
-    Y.BaseEvents = BaseEvents;
+    Y.BaseObservable = BaseObservable;

@@ -7,7 +7,7 @@
                     "attribute-core"
                 ]
             },
-            "base-events": {
+            "base-observable": {
                 "requires": [
                     "attribute-observable"
                 ]
@@ -16,7 +16,7 @@
                 "requires": [
                     "attribute-base",
                     "base-core",
-                    "base-events"
+                    "base-observable"
                 ]
             },
             "base-build": {

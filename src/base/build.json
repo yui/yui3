@@ -6,9 +6,9 @@
                 "BaseCore.js"
             ]
         },
-        "base-events": {
+        "base-observable": {
             "jsfiles": [
-                "BaseEvents.js"
+                "BaseObservable.js"
             ]
         },
         "base-base": {

@@ -1483,11 +1483,11 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.areSame(1, calls);
         },
 
-        "test:base-core-with-base-events-ext": function () {
+        "test:base-core-with-base-observable-ext": function () {
             var calls = 0,
                 Foo, foo;
 
-            Foo = Y.Base.create('foo', Y.BaseCore, [Y.BaseEvents], {
+            Foo = Y.Base.create('foo', Y.BaseCore, [Y.BaseObservable], {
                 initializer: function () {
                     this.after('barChange', function () {
                         calls += 1;
@@ -1524,7 +1524,7 @@ YUI.add('base-tests', function(Y) {
             Y.Assert.isNotNull(Foo._ATTR_CFG_HASH);
             Y.Assert.isUndefined(Foo._ATTR_CFG_HASH.broadcast);
 
-            Y.Base.mix(Foo, [Y.BaseEvents]);
+            Y.Base.mix(Foo, [Y.BaseObservable]);
 
             // Check that cached hash was cleared.
             // `null` or `undefined`.
