@@ -285,9 +285,9 @@ Transition.prototype = {
     },
 
     _prepDur: function(dur) {
-        dur = parseFloat(dur);
+        dur = parseFloat(dur) * 1000;
 
-        return dur + 's';
+        return dur + 'ms';
     },
 
     _runNative: function(time) {
