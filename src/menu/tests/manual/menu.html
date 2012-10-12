@@ -45,7 +45,7 @@ var menu = new Y.Menu({
 
         {label: 'Item 2', children: [
             {label: 'Submenu', type: 'heading'},
-            {label: 'Item 2.1'},
+            {label: 'Item 2.1', id: 'item2-1'},
             {label: 'Item 2.2'},
 
             {type: 'separator'},
@@ -98,6 +98,10 @@ var menu = new Y.Menu({
 });
 
 menu.render();
+
+menu.on('itemClick#item2-1', function (e) {
+    console.log('click!');
+});
 
 var menuNode = Y.one('#menu');
 

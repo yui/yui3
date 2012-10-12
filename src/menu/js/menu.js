@@ -17,12 +17,15 @@ Menu widget.
 var getClassName = Y.ClassNameManager.getClassName,
 
 /**
-Fired when a clickable menu item is clicked.
+Fired when any clickable menu item is clicked.
+
+You can subscribe to clicks on a specific menu item by subscribing to
+"itemClick#id", where "id" is the item id of the item you want to subscribe to.
 
 @event itemClick
 @param {Menu.Item} item Menu item that was clicked.
 @param {EventFacade} originEvent Original click event.
-@preventable _defClickFn
+@preventable _defItemClickFn
 **/
 EVT_ITEM_CLICK = 'itemClick',
 
@@ -714,6 +717,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     **/
     _onItemClick: function (e) {
         var item       = this.getNodeById(e.currentTarget.getData('item-id')),
+            eventName  = EVT_ITEM_CLICK + '#' + item.id,
             isDisabled = item.isDisabled();
 
         // Avoid navigating to '#' if this item is disabled or doesn't have a
@@ -726,13 +730,19 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
             return;
         }
 
+        if (!this._published[eventName]) {
+            this._published[eventName] = this.publish(eventName, {
+                defaultFn: this._defSpecificItemClickFn
+            }) ;
+        }
+
         if (!this._published[EVT_ITEM_CLICK]) {
             this._published[EVT_ITEM_CLICK] = this.publish(EVT_ITEM_CLICK, {
-                defaultFn: this._defClickFn
+                defaultFn: this._defItemClickFn
             });
         }
 
-        this.fire(EVT_ITEM_CLICK, {
+        this.fire(eventName, {
             originEvent: e,
             item       : item
         });
@@ -813,13 +823,13 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     // -- Default Event Handlers -----------------------------------------------
 
     /**
-    Default handler for the `itemClick` event.
+    Default handler for the generic `itemClick` event.
 
-    @method _defClickFn
+    @method _defItemClickFn
     @param {EventFacade} e
     @protected
     **/
-    _defClickFn: function (e) {
+    _defItemClickFn: function (e) {
         var item = e.item;
 
         if (item.canHaveChildren) {
@@ -830,6 +840,20 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         } else {
             this.closeSubMenus();
         }
+    },
+
+    /**
+    Default handler for item-specific `itemClick#<id>` events.
+
+    @method _defSpecificItemClickFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defSpecificItemClickFn: function (e) {
+        this.fire(EVT_ITEM_CLICK, {
+            originEvent: e.originEvent,
+            item       : e.item
+        });
     }
 }, {
     ATTRS: {
