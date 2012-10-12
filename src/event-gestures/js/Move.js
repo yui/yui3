@@ -47,9 +47,9 @@
 
     NODE_TYPE = "nodeType",
 
-    SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
-    TOUCH_ACTION_COUNT = {},
-    ORIG_TOUCH_ACTION = {},
+    SUPPORTS_TOUCH_ACTION = ("msTouchAction" in Y.one('doc').getDOMNode().documentElement.style),
+    MS_TOUCH_ACTION_COUNT = 'msTouchActionCount',
+    MS_INIT_TOUCH_ACTION = 'msInitTouchAction',
 
     _defArgsProcessor = function(se, args, delegate) {
         var iConfig = (delegate) ? 4 : 3,
@@ -97,17 +97,17 @@
     */
     _setTouchActions = function (node) {
         var elem = _checkDocumentElem(node) || node.getDOMNode(),
-            id = node.get('id');
+            num = node.getData(MS_TOUCH_ACTION_COUNT);
 
-        //Checks to see if MSPointer events are supported.
-        if (SUPPORTS_POINTER) {
-
-            if (!TOUCH_ACTION_COUNT[id]) {
-                TOUCH_ACTION_COUNT[id] = 0;
-                ORIG_TOUCH_ACTION[id] = elem.style.msTouchAction;
+        //Checks to see if msTouchAction is supported.
+        if (SUPPORTS_TOUCH_ACTION) {
+            if (!num) {
+                num = 0;
+                node.setData(MS_INIT_TOUCH_ACTION, elem.style.msTouchAction);
             }
             elem.style.msTouchAction = Y.Event._DEFAULT_TOUCH_ACTION;
-            TOUCH_ACTION_COUNT[id]++;
+            num++;
+            node.setData(MS_TOUCH_ACTION_COUNT, num);
         }
     },
 
@@ -116,12 +116,14 @@
     */
     _unsetTouchActions = function (node) {
         var elem = _checkDocumentElem(node) || node.getDOMNode(),
-            id = node.get('id');
+            num = node.getData(MS_TOUCH_ACTION_COUNT),
+            initTouchAction = node.getData(MS_INIT_TOUCH_ACTION);
 
-        if (SUPPORTS_POINTER) {
-            TOUCH_ACTION_COUNT[id]--;
-            if (TOUCH_ACTION_COUNT[id] === 0 && elem.style.msTouchAction !== ORIG_TOUCH_ACTION[id]) {
-                elem.style.msTouchAction = ORIG_TOUCH_ACTION[id];
+        if (SUPPORTS_TOUCH_ACTION) {
+            num--;
+            node.setData(MS_TOUCH_ACTION_COUNT, num);
+            if (num === 0 && elem.style.msTouchAction !== initTouchAction) {
+                elem.style.msTouchAction = initTouchAction;
             }
         }
     },
