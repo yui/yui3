@@ -9,16 +9,55 @@ YUI.add('base-build', function (Y, NAME) {
      * @submodule base-build
      * @for Base
      */
-    var Base = Y.Base,
-        L = Y.Lang,
+    var BaseCore = Y.BaseCore,
+        Base     = Y.Base,
+        L        = Y.Lang,
+
         INITIALIZER = "initializer",
-        DESTRUCTOR = "destructor",
-        build,
-        arrayAggregator = function (prop, r, s) {
-            if (s[prop]) {
-                r[prop] = (r[prop] || []).concat(s[prop]);
-            }    
-        };
+        DESTRUCTOR  = "destructor",
+        AGGREGATES  = ["_PLUG", "_UNPLUG"],
+
+        build;
+
+    // Utility function used in `_buildCfg` to aggregate array values into a new
+    // array from the sender constructor to the reciver constructor.
+    function arrayAggregator(prop, r, s) {
+        if (s[prop]) {
+            r[prop] = (r[prop] || []).concat(s[prop]);
+        }
+    }
+
+    // Utility function used in `_buildCfg` to aggregate `_ATTR_CFG` array
+    // values from the sender constructor into a new array on reciver's
+    // constructor, and clear the cached hash.
+    function attrCfgAggregator(prop, r, s) {
+        if (s._ATTR_CFG) {
+            arrayAggregator.apply(null, arguments);
+
+            // Clear cached hash.
+            r._ATTR_CFG_HASH = null;
+        }
+    }
+
+    // Utility function used in `_buildCfg` to aggregate ATTRS configs from one
+    // the sender constructor to the reciver constructor.
+    function attrsAggregator(prop, r, s) {
+        var sAttrs, rAttrs, a;
+
+        r.ATTRS = r.ATTRS || {};
+
+        if (s.ATTRS) {
+            sAttrs = s.ATTRS;
+            rAttrs = r.ATTRS;
+
+            for (a in sAttrs) {
+                if (sAttrs.hasOwnProperty(a)) {
+                    rAttrs[a] = rAttrs[a] || {};
+                    Y.mix(rAttrs[a], sAttrs[a], true);
+                }
+            }
+        }
+    }
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
 
@@ -383,9 +422,9 @@ YUI.add('base-build', function (Y, NAME) {
     /**
      * The build configuration for the Base class.
      *
-     * Defines the static fields which need to be aggregated
-     * when the Base class is used as the main class passed to
-     * the <a href="#method_Base.build">Base.build</a> method.
+     * Defines the static fields which need to be aggregated when the Base class
+     * is used as the main class passed to the
+     * <a href="#method_Base.build">Base.build</a> method.
      *
      * @property _buildCfg
      * @type Object
@@ -393,29 +432,25 @@ YUI.add('base-build', function (Y, NAME) {
      * @final
      * @private
      */
-    Base._buildCfg = {
-        custom : {
-            ATTRS : function(prop, r, s) {
-
-                r.ATTRS = r.ATTRS || {};
-
-                if (s.ATTRS) {
-
-                    var sAttrs = s.ATTRS,
-                        rAttrs = r.ATTRS,
-                        a;
-
-                    for (a in sAttrs) {
-                        if (sAttrs.hasOwnProperty(a)) {
-                            rAttrs[a] = rAttrs[a] || {};
-                            Y.mix(rAttrs[a], sAttrs[a], true);
-                        }
-                    }
-                }
-            },
-            _NON_ATTRS_CFG : arrayAggregator
+    BaseCore._buildCfg = {
+        custom: {
+            ATTRS         : attrsAggregator,
+            _ATTR_CFG     : attrCfgAggregator,
+            _NON_ATTRS_CFG: arrayAggregator
         },
-        aggregates : ["_PLUG", "_UNPLUG"]
+
+        aggregates: AGGREGATES.concat()
+    };
+
+    // Makes sure Base and BaseCore use separate `_buildCfg` objects.
+    Base._buildCfg = {
+        custom: {
+            ATTRS         : attrsAggregator,
+            _ATTR_CFG     : attrCfgAggregator,
+            _NON_ATTRS_CFG: arrayAggregator
+        },
+
+        aggregates: AGGREGATES.concat()
     };
 
 

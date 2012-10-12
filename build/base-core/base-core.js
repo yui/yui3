@@ -81,7 +81,6 @@ YUI.add('base-core', function (Y, NAME) {
      * @private
      */
     BaseCore._ATTR_CFG = AttributeCore._ATTR_CFG.concat("cloneDefaultValue");
-    BaseCore._ATTR_CFG_HASH = Y.Array.hash(BaseCore._ATTR_CFG);
 
     /**
      * The array of non-attribute configuration properties supported by this class. 
@@ -213,7 +212,7 @@ YUI.add('base-core', function (Y, NAME) {
          * @private
          */
         _initAttribute: function() {
-            AttributeCore.apply(this);
+            Y.AttributeCore.call(this);
         },
 
         /**
@@ -378,13 +377,20 @@ YUI.add('base-core', function (Y, NAME) {
          * @private
          */
         _initHierarchyData : function() {
-            var c = this.constructor,
+            var ctor = this.constructor,
+                c,
                 i,
                 l,
+                attrCfg,
+                attrCfgHash,
+                needsAttrCfgHash = !ctor._ATTR_CFG_HASH,
                 nonAttrsCfg,
                 nonAttrs = (this._allowAdHocAttrs) ? {} : null,
                 classes = [],
                 attrs = [];
+
+            // Start with `this` instance's constructor.
+            c = ctor;
 
             while (c) {
                 // Add to classes
@@ -395,8 +401,20 @@ YUI.add('base-core', function (Y, NAME) {
                     attrs[attrs.length] = c.ATTRS;
                 }
 
+                // Aggregate ATTR cfg whitelist.
+                if (needsAttrCfgHash) {
+                    attrCfg     = c._ATTR_CFG;
+                    attrCfgHash = attrCfgHash || {};
+
+                    if (attrCfg) {
+                        for (i = 0, l = attrCfg.length; i < l; i += 1) {
+                            attrCfgHash[attrCfg[i]] = true;
+                        }
+                    }
+                }
+
                 if (this._allowAdHocAttrs) {
-                    nonAttrsCfg = c._NON_ATTRS_CFG; 
+                    nonAttrsCfg = c._NON_ATTRS_CFG;
                     if (nonAttrsCfg) {
                         for (i = 0, l = nonAttrsCfg.length; i < l; i++) {
                             nonAttrs[nonAttrsCfg[i]] = true;
@@ -407,20 +425,25 @@ YUI.add('base-core', function (Y, NAME) {
                 c = c.superclass ? c.superclass.constructor : null;
             }
 
+            // Cache computed `_ATTR_CFG_HASH` on the constructor.
+            if (needsAttrCfgHash) {
+                ctor._ATTR_CFG_HASH = attrCfgHash;
+            }
+
             this._classes = classes;
             this._nonAttrs = nonAttrs;
             this._attrs = this._aggregateAttrs(attrs);
         },
 
         /**
-         * Utility method to define the attribute hash used to filter/whitelist property mixes for 
-         * this class. 
-         * 
+         * Utility method to define the attribute hash used to filter/whitelist property mixes for
+         * this class.
+         *
          * @method _attrCfgHash
          * @private
          */
         _attrCfgHash: function() {
-            return BaseCore._ATTR_CFG_HASH;
+            return this.constructor._ATTR_CFG_HASH;
         },
 
         /**
