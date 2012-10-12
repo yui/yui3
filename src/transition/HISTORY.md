@@ -7,6 +7,10 @@ Transition Change History
   * Add support for non-vendor-prefixed syle and CSS properties. `Y.Transition`
     now supports IE10 and Opera.
 
+  * Transition durations are now normalized from seconds to milliseconds before
+    updating the node's style. **Note:** This does _not_ affect the public API
+    which still uses second-based duration times.
+
 
 3.7.2
 -----

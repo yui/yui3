@@ -553,29 +553,42 @@ YUI.add('dd-tests', function(Y) {
             Y.Assert.isInstanceOf(Y.Plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
 
 
-            Y.one(window).set('scrollTop', 0);
-            Y.one(window).set('scrollLeft', 0);
+            window.scrollTo(0, 0);
             _fakeStart(dd);
             var self = this,
-            winHeight = Y.one(window).get('winHeight'),
-            i = (winHeight - dd.get('node').get('offsetHeight') - 100),
-            wait = function() {
-                if (i < (Y.one(window).get('winHeight') - 30)) {
-                    _moveNode(dd, i, true);
-                    i++;
-                    self.wait.call(self, wait, 0);
-                } else {
-                    self.wait.call(self, function() {
-                        _fakeEnd(dd);
-                        Y.Assert.isTrue((Y.one(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
-                        dd.destroy();
-                        Y.one('#drag').setStyles({ top: '', left: '' });
-                        Y.one(window).set('scrollTop', 0);
-                        Y.one(window).set('scrollLeft', 0);
-                        Y.one('body').setStyle('height', '');
-                    }, 1500);
-                }
-            };
+                win = Y.one(window),
+                winHeight = win.get('winHeight'),
+                i = (winHeight - dd.get('node').get('offsetHeight') - 30),
+                hasScrolled = false,
+                wait = function() {
+                    if (win.get('scrollTop')) {
+                        hasScrolled = true;
+                    }
+                    if (i < (Y.one(window).get('winHeight') - 30)) {
+                        _moveNode(dd, i, true);
+                        i++;
+                        self.wait.call(self, wait, 0);
+                    } else {
+                        if (win.get('scrollTop')) {
+                            hasScrolled = true;
+                        }
+                        self.wait.call(self, function() {
+                            _fakeEnd(dd);
+                            if (win.get('scrollTop')) {
+                                hasScrolled = true;
+                            }
+                            Y.Assert.isTrue(hasScrolled, 'window.scrollTop was never greater than 0');
+                            dd.destroy();
+                            Y.one('#drag').setStyles({ top: '', left: '' });
+                            window.scrollTo(0, 0);
+                            Y.one('body').setStyle('height', '');
+                        }, 1500);
+                    }
+                };
+
+            win.on('scroll', function() {
+                hasScrolled = true;
+            });
             this.wait(wait, 0);
         },
         test_delegate: function() {

@@ -11,6 +11,9 @@ var parse = function(filter) {
         json = {};
     
     dirs.forEach(function(dir) {
+        if (dir === 'io') {
+            return;
+        }
         var testBase = path.join(dir, 'tests/unit');
         var unit = path.join(base, testBase);
         if (exists(unit)) {

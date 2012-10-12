@@ -7,6 +7,9 @@ IO Utility Change History
 * Fixed issue in Chrome where form submits with `upload: true` were not working
   properly. [Ticket #2531860]
 
+* Add `empty()` method to io-queue which clears out all requests waiting to be
+  sent. [Pull Request #282] [Julien Sanchez]
+
 
 3.7.2
 -----

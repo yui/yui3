@@ -3596,7 +3596,7 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
-            
+
             if (/PhantomJS/.test(ua)) {
                 m = ua.match(/PhantomJS\/([^\s]*)/);
                 if (m && m[1]) {
@@ -3714,10 +3714,11 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
     }
-    
-    //Check for known properties to tell if touch/mspointer events are enabled on this device
+
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -5740,7 +5741,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.10.03-20-02',
+            GALLERY_VERSION = 'gallery-2012.10.10-19-59',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -6382,7 +6383,8 @@ Y.Loader.prototype = {
     /**
     * Reset modules in the module cache to a pre-processed state so additional
     * computations with a different skin or language will work as expected.
-    * @private _resetModules
+    * @method _resetModules
+    * @private
     */
     _resetModules: function() {
         var self = this, i, o,
@@ -9279,6 +9281,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
@@ -11098,7 +11101,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2631b5fb2c08064b4e8385f1142513e5';
+YUI.Env[Y.version].md5 = 'a28e022ad022130f7a4fb4ac77a2f1df';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

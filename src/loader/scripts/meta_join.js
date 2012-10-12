@@ -96,7 +96,7 @@ fs.writeFileSync(jsonOut, jsonStr, 'utf8');
 
 console.log('Done, processing conditionals.');
 
-md5sum.update(jsonOut);
+md5sum.update(jsonStr);
 var sum = md5sum.digest('hex');
 
 console.log('Using MD5:', sum);
