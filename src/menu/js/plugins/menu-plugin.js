@@ -61,11 +61,15 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
         if (this.get('visible')) {
             this.hide();
         } else {
-            var anchorRegion = this._host.get('region'),
-                container    = this.get('container');
+            var container = this.get('container'),
 
-            // TODO: support more anchoring options beyond bottom left.
-            container.setXY([anchorRegion.left, anchorRegion.bottom]);
+                menuRegion = this._getSortedAnchorRegions(
+                    ['tl-bl', 'bl-tl', 'tr-bl', 'br-tl', 'tl-br', 'bl-tr'],
+                    container.get('region'),
+                    this._host.get('region')
+                )[0].region;
+
+            container.setXY([menuRegion.left, menuRegion.top]);
             this.show();
         }
     },
