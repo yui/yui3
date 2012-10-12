@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Dial Widget Manual Test</title>
+
+<!-- Source File and Seed for YUI3-->
+<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+
+<script src="../../../../build/yui/yui.js"></script>
+
+<style>
+body{
+    padding:30px;
+}
+</style>
+</head>
+<body class="yui3-skin-sam"> 
+    <span id="dial_container"></span>
+<script>
+    YUI({filter:'raw'}).use("dial", function(Y) {          //, filter:'raw'  this make it really hard to clear cache on iPad
+        var dial = new Y.Dial({
+			min:0,
+			max:360,
+			stepsPerRevolution:100,
+			value: 0,
+			diameter: 200,
+			decimalPlaces:0
+        });
+        dial.render("#dial_container");
+    }); 
+</script>
+</body>
+</html>

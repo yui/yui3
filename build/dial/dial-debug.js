@@ -756,10 +756,16 @@ YUI.add('dial', function (Y, NAME) {
                 }
             } else if(newValue > this._maxValue){
                 this.set('value', this._maxValue);
-                this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mousedown on the ring; causes prob for drag
+                // HACK, just for testing. Not the root cause fix
+                if (e.type !== "drag:drag") {
+                    this._prevAng = this._getAngleFromValue(this._maxValue);  // #2530766 need for mousedown on the ring; causes prob for drag
+                }
             } else if(newValue < this._minValue){
                 this.set('value', this._minValue);
-               this._prevAng = this._getAngleFromValue(this._minValue);
+                // HACK, just for testing. Not the root cause fix
+                if (e.type !== "drag:drag") {
+                    this._prevAng = this._getAngleFromValue(this._minValue);
+                }
             }
         },
 
