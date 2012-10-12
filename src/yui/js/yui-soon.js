@@ -33,9 +33,7 @@ var soon = function (callbackFunction) {
             if (!canceled) {
                 callbackFunction();
             }
-        }, 0);
-        // The 0 is required when setTimeout is used, but it should be ignored
-        // by other asynchronizers.
+        });
 
         return {
             cancel: function () {
@@ -131,7 +129,9 @@ var soon = function (callbackFunction) {
 
 // Check for a native or already polyfilled implementation of setImmediate.
 if ('setImmediate' in Y.config.win) {
-    soon._asynchronizer = Y.config.win.setImmediate;
+    soon._asynchronizer = function (callbackFunction) {
+        Y.config.win.setImmediate(callbackFunction);
+    };
     soon._impl = 'setImmediate';
 }
 
@@ -144,7 +144,9 @@ else if (('postMessage' in Y.config.win) && !('importScripts' in Y.config.win)) 
 // The most widely supported asynchronizer is setTimeout so we use that as the
 // fallback.
 else {
-    soon._asynchronizer = setTimeout;
+    soon._asynchronizer = function (callbackFunction) {
+        setTimeout(callbackFunction, 0);
+    };
     soon._impl = 'setTimeout';
 }
 
