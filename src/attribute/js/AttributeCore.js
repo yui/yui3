@@ -62,7 +62,7 @@
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes.</p>
      * 
-     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeEvents.html">AttributeEvents</a> 
+     * <p>Object/Classes based on AttributeCore can augment <a href="AttributeObservable.html">AttributeObservable</a> 
      * (with true for overwrite) and <a href="AttributeExtras.html">AttributeExtras</a> to add attribute event and 
      * additional, less commonly used attribute methods, such as `modifyAttr`, `removeAttr` and `reset`.</p>   
      *
@@ -400,7 +400,7 @@
          * @param {Object} opts (Optional) Optional event data to be mixed into
          * the event facade passed to subscribers of the attribute's change event.
          * This is currently a hack. There's no real need for the AttributeCore implementation
-         * to support this parameter, but breaking it out into AttributeEvents, results in
+         * to support this parameter, but breaking it out into AttributeObservable, results in
          * additional function hops for the critical path.
          * @param {boolean} force If true, allows the caller to set values for 
          * readOnly or writeOnce attributes which have already been set.

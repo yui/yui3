@@ -9,11 +9,11 @@
      */
 
     /**
-     * The attribute-events submodule provides augmentable attribute change event support 
+     * The `attribute-observable` submodule provides augmentable attribute change event support 
      * for AttributeCore based implementations.
      *
      * @module attribute
-     * @submodule attribute-events
+     * @submodule attribute-observable
      */
     var EventTarget = Y.EventTarget,
 
@@ -25,19 +25,19 @@
      * Provides an augmentable implementation of attribute change events for 
      * AttributeCore. 
      *
-     * @class AttributeEvents
+     * @class AttributeObservable
      * @uses EventTarget
      */
-    function AttributeEvents() {
+    function AttributeObservable() {
         // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
         EventTarget.call(this, {emitFacade:true});
     }
 
-    AttributeEvents._ATTR_CFG = [BROADCAST];
+    AttributeObservable._ATTR_CFG = [BROADCAST];
 
-    AttributeEvents.prototype = {
+    AttributeObservable.prototype = {
 
         /**
          * Sets the value of an attribute.
@@ -186,6 +186,18 @@
     };
 
     // Basic prototype augment - no lazy constructor invocation.
-    Y.mix(AttributeEvents, EventTarget, false, null, 1);
+    Y.mix(AttributeObservable, EventTarget, false, null, 1);
 
-    Y.AttributeEvents = AttributeEvents;
+    Y.AttributeObservable = AttributeObservable;
+
+    /**
+    The `AttributeEvents` class extension was deprecated in YUI 3.8.0 and is now
+    an alias for the `AttributeObservable` class extension. Use that class
+    extnesion instead. This alias will be removed in a future version of YUI.
+
+    @class AttributeEvents
+    @uses EventTarget
+    @deprecated Use `AttributeObservable` instead.
+    @see AttributeObservable
+    **/
+    Y.AttributeEvents = AttributeObservable;

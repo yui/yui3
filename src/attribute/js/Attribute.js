@@ -45,13 +45,13 @@
      * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
      * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      * @uses AttributeCore
-     * @uses AttributeEvents
+     * @uses AttributeObservable
      * @uses EventTarget
      * @uses AttributeExtras
      */
     function Attribute() {
         Y.AttributeCore.apply(this, arguments);
-        Y.AttributeEvents.apply(this, arguments);
+        Y.AttributeObservable.apply(this, arguments);
         Y.AttributeExtras.apply(this, arguments);
     }
 
@@ -59,7 +59,7 @@
     Y.mix(Attribute, Y.AttributeExtras, false, null, 1);
 
     // Needs to be "true", to overwrite methods from AttributeCore
-    Y.mix(Attribute, Y.AttributeEvents, true, null, 1);
+    Y.mix(Attribute, Y.AttributeObservable, true, null, 1);
 
     /**
      * <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
@@ -87,7 +87,7 @@
      * @static
      * @protected
      */
-    Attribute._ATTR_CFG = Y.AttributeCore._ATTR_CFG.concat(Y.AttributeEvents._ATTR_CFG);
+    Attribute._ATTR_CFG = Y.AttributeCore._ATTR_CFG.concat(Y.AttributeObservable._ATTR_CFG);
     
     /**
      * Utility method to protect an attribute configuration hash, by merging the

@@ -9,7 +9,7 @@
             },
             "base-events": {
                 "requires": [
-                    "attribute-events"
+                    "attribute-observable"
                 ]
             },
             "base-base": {

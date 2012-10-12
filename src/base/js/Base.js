@@ -35,7 +35,7 @@
      * @uses BaseEvents
      * @uses Attribute
      * @uses AttributeCore
-     * @uses AttributeEvents
+     * @uses AttributeObservable
      * @uses AttributeExtras
      * @uses EventTarget
      *
