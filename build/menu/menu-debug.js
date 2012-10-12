@@ -370,19 +370,23 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     returns a region object representing the coordinates the anchored node will
     occupy when anchored to the given point on the parent.
 
-    The following anchor points are currently supported:
+    An anchor point is a string like "tl-bl", which means "anchor the top left
+    point of _nodeRegion_ to the bottom left point of _parentRegion_".
 
-      * `'bl-br'`: Anchor the bottom left of the child to the bottom right of
-        the parent.
-      * `'br-bl'`: Anchor the bottom right of the child to the bottom left of
-        the parent.
-      * `'tl-tr'`: Anchor the top left of the child to the top right of the
-        parent.
-      * `'tr-tl'`: Anchor the top right of the child to the top left of the
-        parent.
+    Any combination of top/bottom/left/right anchor points may be used as long
+    as they follow this format. Here are a few examples:
+
+      * `'bl-br'`: Anchor the bottom left of _nodeRegion_ to the bottom right of
+        _parentRegion_.
+      * `'br-bl'`: Anchor the bottom right of _nodeRegion_ to the bottom left of
+        _parentRegion_.
+      * `'tl-tr'`: Anchor the top left of _nodeRegion_ to the top right of
+        _parentRegion_.
+      * `'tr-tl'`: Anchor the top right of _nodeRegion_ to the top left of
+        _parentRegion_.
 
     @method _getAnchorRegion
-    @param {String} anchor Anchor point. See above for supported points.
+    @param {String} anchor Anchor point. See above for details.
     @param {Object} nodeRegion Region object for the node to be anchored (that
         is, the node that will be repositioned).
     @param {Object} parentRegion Region object for the node that will be
@@ -391,39 +395,70 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @protected
     **/
     _getAnchorRegion: function (anchor, nodeRegion, parentRegion) {
-        switch (anchor) {
-        case 'tl-tr':
-            return {
-                bottom: parentRegion.top + nodeRegion.height,
-                left  : parentRegion.right,
-                right : parentRegion.right + nodeRegion.width,
-                top   : parentRegion.top
-            };
+        var region = {};
 
-        case 'bl-br':
-            return {
-                bottom: parentRegion.bottom,
-                left  : parentRegion.right,
-                right : parentRegion.right + nodeRegion.width,
-                top   : parentRegion.bottom - nodeRegion.height
-            };
+        anchor.replace(/^([bt])([lr])-([bt])([lr])/i, function (match, p1, p2, p3, p4) {
+            var lookup = {
+                    b: 'bottom',
+                    l: 'left',
+                    r: 'right',
+                    t: 'top'
+                };
 
-        case 'tr-tl':
-            return {
-                bottom: parentRegion.top + nodeRegion.height,
-                left  : parentRegion.left - nodeRegion.width,
-                right : parentRegion.left,
-                top   : parentRegion.top
-            };
+            region[lookup[p1]] = parentRegion[lookup[p3]];
+            region[lookup[p2]] = parentRegion[lookup[p4]];
+        });
 
-        case 'br-bl':
-            return {
-                bottom: parentRegion.bottom,
-                left  : parentRegion.left - nodeRegion.width,
-                right : parentRegion.left,
-                top   : parentRegion.bottom - nodeRegion.height
-            };
+        'bottom' in region || (region.bottom = region.top + nodeRegion.height);
+        'left' in region   || (region.left = region.right - nodeRegion.width);
+        'right' in region  || (region.right = region.left + nodeRegion.width);
+        'top' in region    || (region.top = region.bottom - nodeRegion.height);
+
+        return region;
+    },
+
+    _getSortedAnchorRegions: function (points, nodeRegion, parentRegion, containerRegion) {
+        containerRegion || (containerRegion = Y.DOM.viewportRegion());
+
+        // Run through each possible anchor point and test whether it would
+        // allow the submenu to be displayed fully within the viewport. Stop at
+        // the first anchor point that works.
+        var anchors = [],
+            i, len, point, region;
+
+        for (i = 0, len = points.length; i < len; i++) {
+            point = points[i];
+
+            // Allow arrays of strings or arrays of objects like {point: '...'}.
+            if (point.point) {
+                point = point.point;
+            }
+
+            region = this._getAnchorRegion(point, nodeRegion, parentRegion);
+
+            anchors.push({
+                point : point,
+                region: region,
+                score : this._inRegion(region, containerRegion)
+            });
         }
+
+        // Sort the anchors in descending order by score (higher score is
+        // better).
+        anchors.sort(function (a, b) {
+            if (a.score === b.score) {
+                return 0;
+            } else if (a.score === true) {
+                return -1;
+            } else if (b.score === true) {
+                return 1;
+            } else {
+                return b.score - a.score;
+            }
+        });
+
+        // Return the sorted anchors.
+        return anchors;
     },
 
     /**
@@ -491,44 +526,15 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     _positionMenu: function (item, htmlNode) {
         htmlNode || (htmlNode = this.getHTMLNode(item));
 
-        var anchors = (item.parent && item.parent.data.menuAnchors) || [
-                {point: 'tl-tr'},
-                {point: 'bl-br'},
-                {point: 'tr-tl'},
-                {point: 'br-bl'}
-            ],
+        var childrenNode = htmlNode.one('.' + this.classNames.children),
 
-            childrenNode   = htmlNode.one('.' + this.classNames.children),
-            childrenRegion = childrenNode.get('region'),
-            parentRegion   = htmlNode.get('region'),
-            viewportRegion = htmlNode.get('viewportRegion');
-
-        // Run through each possible anchor point and test whether it would
-        // allow the submenu to be displayed fully within the viewport. Stop at
-        // the first anchor point that works.
-        var anchor;
-
-        for (var i = 0, len = anchors.length; i < len; i++) {
-            anchor = anchors[i];
-
-            anchor.region = this._getAnchorRegion(anchor.point, childrenRegion,
-                    parentRegion);
-
-            anchor.score = this._inRegion(anchor.region, viewportRegion);
-        }
-
-        // Sort the anchors by score.
-        anchors.sort(function (a, b) {
-            if (a.score === b.score) {
-                return 0;
-            } else if (a.score === true) {
-                return -1;
-            } else if (b.score === true) {
-                return 1;
-            } else {
-                return b.score - a.score;
-            }
-        });
+            anchors = this._getSortedAnchorRegions(
+                (item.parent && item.parent.data.menuAnchors) || [
+                    'tl-tr', 'bl-br', 'tr-tl', 'br-bl'
+                ],
+                childrenNode.get('region'),
+                htmlNode.get('region')
+            );
 
         // Remember which anchors we used for this item so that we can default
         // that anchor for submenus of this item if necessary.
