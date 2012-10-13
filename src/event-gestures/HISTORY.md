@@ -1,5 +1,13 @@
 Gestures Change History
 =======================
+3.7.3
+-----
+  * `event-move` supports the -ms-touch-action property in IE10.
+  Nodes subscribing to events defined in event-move will have their
+  styles updated to `-ms-touch-action:none`. It will be reset when
+  listeners are detached.
+
+  http://msdn.microsoft.com/en-us/library/windows/apps/hh767313.aspx
 
 3.7.0
 -----
