@@ -1,6 +1,15 @@
 Attribute Change History
 ========================
 
+3.8.0
+-----
+
+  * [!] The `AttributeEvents` class extension and the `attribute-events` module
+    have been renamed to `AttributeObservable` and `attribute-observable`
+    respectively. The old names are deprecated, but have been retained as 
+    aliases for backwards compatability. They will be removed in a future 
+    version of YUI.
+
 3.7.0
 -----
 
