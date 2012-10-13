@@ -5,7 +5,21 @@
  *
  * <p>Documentation for the gesturemove triplet of events can be found on the <a href="../classes/YUI.html#event_gesturemove">YUI</a> global,
  * along with the other supported events.</p>
- *
+
+ @example
+
+     YUI().use('event-move', function (Y) {
+         Y.one('#myNode').on('gesturemovestart', function (e) {
+             Y.log('gesturemovestart Fired.');
+         });
+         Y.one('#myNode').on('gesturemove', function (e) {
+             Y.log('gesturemove Fired.');
+         });
+         Y.one('#myNode').on('gesturemoveend', function (e) {
+             Y.log('gesturemoveend Fired.');
+         });
+     });
+
  * @module event-gestures
  * @submodule event-move
  */
