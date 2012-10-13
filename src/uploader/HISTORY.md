@@ -1,6 +1,28 @@
 Uploader Utility (New) Change History
 =====================================
 
+3.7.3
+-----
+
+  * No changes.
+
+3.7.2
+-----
+
+  * No changes.
+
+3.7.1
+-----
+
+  * No changes.
+
+3.7.0
+-----
+
+  * Minor documentation fixes
+  * Switched to shifter build system
+  * flashuploader.swf now has its own src/swf folder, from where it gets copied to build/uploader/assets
+
 3.6.0
 -----
   * Bug fix for 2532150 (empty fileList after fileselect event)
