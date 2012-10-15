@@ -1,10 +1,28 @@
 DataSchema Change History
 =========================
 
+3.7.3
+-----
+  * Implemented a partial fix for bug 2532796, allowing XPath access to XML elements in IE10 Desktop,
+    Metro, and WinJS environments. A known issue of IE10 WebView not allowing XPath addressing is still
+    standing.
+
+3.7.2
+-----
+  * No Changes.
+
+3.7.1
+-----
+  * No changes.
+
+3.7.0
+-----
+  * No changes.
+
 3.6.0
 -----
 
-* No changes.
+  * No changes.
 
 3.5.1
 -----
