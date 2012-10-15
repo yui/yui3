@@ -1,15 +1,25 @@
 Parallel Change History
 =======================
 
-3.8.0
+3.7.3
 -----
 
-* Order array of results: https://github.com/yui/yui3/pull/233
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* Guarantee order of results array. [Juan Ignacio Dopazo]
 
 3.7.0
 -----
 
-* No Changes
+* No Changes.
 
 3.6.0
 -----
