@@ -4,7 +4,7 @@ Console Change History
 3.7.3
 -----
 
-* No changes.
+* Try and fix console footer issue for Win8 Apps.
 
 3.7.2
 -----
