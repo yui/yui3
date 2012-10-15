@@ -9,17 +9,17 @@ Parallel Change History
 3.7.2
 -----
 
-* No changes
+* No changes.
 
 3.7.1
 -----
 
-* No changes.
+* Guarantee order of results array. [Juan Ignacio Dopazo]
 
 3.7.0
 -----
 
-* Guarantee order of results array. [Juan Ignacio Dopazo]
+* No changes.
 
 3.6.0
 -----
