@@ -19,7 +19,7 @@ DOM Change History
 3.7.0
 -----
 
-* No changes.
+* Added transformOrigin and msTransform to dom-style.
 
 3.6.0
 -----
