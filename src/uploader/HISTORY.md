@@ -1,6 +1,26 @@
 Uploader Utility (New) Change History
 =====================================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
   * Bug fix for 2532150 (empty fileList after fileselect event)
