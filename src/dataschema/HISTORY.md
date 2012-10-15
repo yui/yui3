@@ -4,7 +4,7 @@ DataSchema Change History
 3.7.3
 -----
 
-* Source changes for dataschema and xml partially fixing 2532796
+* Source changes for dataschema and xml partially fixing [Ticket #2532796]
 
 3.7.2
 -----
