@@ -1,6 +1,7 @@
 YUI.add('property-test', function (Y) {
 
 var Assert       = Y.Assert,
+    ObjectAssert = Y.ObjectAssert,
     PropertyBase = Y.Property.Base,
 
     mainSuite    = Y.PropertyTestSuite = new Y.Test.Suite('Property');
@@ -207,6 +208,71 @@ mainSuite.add(new Y.Test.Case({
     '#prop(name, value) should do nothing if the property is not writable': function () {
         this.instance.prop('readOnly', 'new value');
         Assert.areSame('original value', this.instance.prop('readOnly'), 'property should not change');
+    }
+}));
+
+// -- Inheritance --------------------------------------------------------------
+
+mainSuite.add(new Y.Test.Case({
+    name: 'Inheritance',
+
+    setUp: function () {
+        function Klass() {
+            this.defineProperties({
+                a: {value: 'a value'},
+                b: {value: 'b value'}
+            });
+        }
+
+        Y.augment(Klass, PropertyBase);
+
+        function SubKlass() {
+            this.defineProperties({
+                c: {value: 'c value'},
+                d: {value: 'd value'}
+            });
+
+            SubKlass.superclass.constructor.call(this);
+        }
+
+        Y.extend(SubKlass, Klass);
+
+        function DoubleExtension() {
+            this.defineProperties({
+                e: {value: 'e value'},
+                f: {value: 'f value'}
+            });
+
+            DoubleExtension.superclass.constructor.call(this);
+        }
+
+        Y.augment(DoubleExtension, PropertyBase);
+        Y.extend(DoubleExtension, SubKlass);
+
+        this.doubleExtension  = new DoubleExtension();
+        this.klassInstance    = new Klass();
+        this.subKlassInstance = new SubKlass();
+    },
+
+    tearDown: function () {
+        delete this.doubleExtension;
+        delete this.klassInstance;
+        delete this.subKlassInstance;
+    },
+
+    'defined properties should be shared among the entire inheritance chain': function () {
+        var doubleDefined   = this.doubleExtension.props(null, {definedOnly: true}),
+            klassDefined    = this.klassInstance.props(null, {definedOnly: true}),
+            subKlassDefined = this.subKlassInstance.props(null, {definedOnly: true});
+
+        Assert.areSame(2, Y.Object.size(klassDefined), 'Klass instance should have 2 defined properties.');
+        ObjectAssert.ownsKeys(['a', 'b'], klassDefined, 'Klass instance should have `a` and `b` properties.');
+
+        Assert.areSame(4, Y.Object.size(subKlassDefined), 'SubKlass instance should have 4 defined properties.');
+        ObjectAssert.ownsKeys(['a', 'b', 'c', 'd'], subKlassDefined, 'SubKlass instance should have `a`, `b`, `c`, and `d` properties.');
+
+        Assert.areSame(6, Y.Object.size(doubleDefined), 'DoubleExtension instance should have 4 defined properties.');
+        ObjectAssert.ownsKeys(['a', 'b', 'c', 'd', 'e', 'f'], doubleDefined, 'DoubleExtension instance should have `a`, `b`, `c`, `d`, `e`, and `f` properties.');
     }
 }));
 
