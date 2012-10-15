@@ -4,7 +4,7 @@ string-based micro-templating similar to ERB or Underscore templates.
 
 @module template
 @submodule template-micro
-@since 3.7.0
+@since 3.8.0
 **/
 
 /**
@@ -12,8 +12,8 @@ Fast, simple string-based micro-templating engine similar to ERB or Underscore
 templates.
 
 @class Template.Micro
-@since 3.7.0
 @static
+@since 3.8.0
 **/
 
 // This code was heavily inspired by Underscore.js's _.template() method
@@ -37,7 +37,7 @@ Default options for `Y.Template.Micro`.
         need to be escaped inside single-quoted JavaScript string literals.
 
 @static
-@since 3.7.0
+@since 3.8.0
 **/
 Micro.options = {
     code         : /<%([\s\S]+?)%>/g,
@@ -94,6 +94,7 @@ property using `<%= data.message %>`.
 @return {Function} Compiled template function. Execute this function and pass in
     a data object to render the template with the given data.
 @static
+@since 3.8.0
 **/
 Micro.compile = function (text, options) {
     var blocks     = [],
@@ -165,6 +166,7 @@ to revive and render the template, avoiding the work of the compilation step.
     for that property for details on which options are available.
 @return {String} Source code for the precompiled template.
 @static
+@since 3.8.0
 **/
 Micro.precompile = function (text, options) {
     options || (options = {});
@@ -188,6 +190,7 @@ then simply call the compiled function multiple times to avoid recompiling.
     for that property for details on which options are available.
 @return {String} Rendered result.
 @static
+@since 3.8.0
 **/
 Micro.render = function (text, data, options) {
     return this.compile(text, options)(data);
@@ -203,6 +206,7 @@ have been evaluated to a function -- you can't pass raw JavaScript code to
 @param {Function} precompiled Precompiled template function.
 @return {Function} Revived template function, ready to be rendered.
 @static
+@since 3.8.0
 **/
 Micro.revive = function (precompiled) {
     return function (data) {

@@ -3,7 +3,7 @@ Virtual rollup of the `template-base` and `template-micro` modules.
 
 @module template
 @main template
-@since 3.7.0
+@since 3.8.0
 **/
 
 /**
@@ -12,7 +12,7 @@ Provides a generic API for using template engines such as Handlebars and
 
 @module template
 @submodule template-base
-@since 3.7.0
+@since 3.8.0
 **/
 
 /**
@@ -44,7 +44,7 @@ Using with Handlebars:
     `Y.Template.Micro` or `Y.Handlebars`. Defaults to `Y.Template.Micro` if not
     specified.
 @constructor
-@since 3.7.0
+@since 3.8.0
 **/
 
 function Template(engine) {
@@ -52,6 +52,7 @@ function Template(engine) {
     Template engine class.
 
     @property {Mixed} engine
+    @since 3.8.0
     **/
     this.engine = engine || Y.Template.Micro;
 
@@ -70,6 +71,7 @@ Template.prototype = {
     @param {Object} [options] Options to pass along to the template engine. See
         template engine docs for options supported by each engine.
     @return {Function} Compiled template function.
+    @since 3.8.0
     **/
     compile: function (text, options) {
         return this.engine.compile(text, options);
@@ -84,6 +86,7 @@ Template.prototype = {
     @param {Object} [options] Options to pass along to the template engine. See
         template engine docs for options supported by each engine.
     @return {String} Source code for the precompiled template.
+    @since 3.8.0
     **/
     precompile: function (text, options) {
         return this.engine.precompile(text, options);
@@ -99,6 +102,7 @@ Template.prototype = {
     @param {Object} [options] Options to pass along to the template engine. See
         template engine docs for options supported by each engine.
     @return {String} Rendered result.
+    @since 3.8.0
     **/
     render: function (text, data, options) {
         if (this.engine.render) {
@@ -118,6 +122,7 @@ Template.prototype = {
     @param {Object} [options] Options to pass along to the template engine. See
         template engine docs for options supported by each engine.
     @return {Function} Compiled template function.
+    @since 3.8.0
     **/
     revive: function (precompiled, options) {
         return this.engine.revive ? this.engine.revive(precompiled, options) :
