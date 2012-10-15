@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.09.26-20-36',
+            GALLERY_VERSION = 'gallery-2012.10.10-19-59',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -655,7 +655,8 @@ Y.Loader.prototype = {
     /**
     * Reset modules in the module cache to a pre-processed state so additional
     * computations with a different skin or language will work as expected.
-    * @private _resetModules
+    * @method _resetModules
+    * @private
     */
     _resetModules: function() {
         var self = this, i, o,
@@ -3032,7 +3033,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         node = doc ? doc.documentElement : null;
 
     if (node && node.style) {
-        return ('MozTransition' in node.style || 'WebkitTransition' in node.style);
+        return ('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
     }
 
     return false;
@@ -3596,6 +3597,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "datasource-local",
             "plugin",
+            "datatype-xml",
             "dataschema-xml"
         ]
     },
@@ -3920,10 +3922,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "dd-gestures": {
         "condition": {
             "name": "dd-gestures",
-            "test": function(Y) {
-    return ((Y.config.win && ("ontouchstart" in Y.config.win)) && !(Y.UA.chrome && Y.UA.chrome < 6));
-},
-            "trigger": "dd-drag"
+            "trigger": "dd-drag",
+            "ua": "touchEnabled"
         },
         "requires": [
             "dd-drag",
@@ -6902,8 +6902,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ret = true;
 
     if (node && node.style) {
-        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style);
-    } 
+        ret = !('MozTransition' in node.style || 'WebkitTransition' in node.style || 'transition' in node.style);
+    }
 
     return ret;
 },
@@ -7095,6 +7095,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "jsonp-url"
         ]
     },
+    "yql-nodejs": {
+        "condition": {
+            "name": "yql-nodejs",
+            "trigger": "yql",
+            "ua": "nodejs",
+            "when": "after"
+        }
+    },
+    "yql-winjs": {
+        "condition": {
+            "name": "yql-winjs",
+            "trigger": "yql",
+            "ua": "winjs",
+            "when": "after"
+        }
+    },
     "yui": {},
     "yui-base": {},
     "yui-later": {
@@ -7113,7 +7129,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '41ff93cb8067572d9497be4e6ef1d69e';
+YUI.Env[Y.version].md5 = 'c2eeaf34ef3bd74621d3e4fdee6f6f85';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

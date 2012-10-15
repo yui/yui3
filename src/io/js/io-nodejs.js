@@ -44,7 +44,7 @@
     @method transports.nodejs
     @for IO
     @static
-    @returns {Object} This object contains only a `send` method that accepts a
+    @return {Object} This object contains only a `send` method that accepts a
     `transaction object`, `uri` and the `config object`.
     @example
 

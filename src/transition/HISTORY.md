@@ -1,15 +1,46 @@
 Transition Change History
 =========================
 
+3.7.3
+-----
+
+  * Add support for non-vendor-prefixed syle and CSS properties. `Y.Transition`
+    now supports IE10 and Opera.
+
+  * Transition durations are now normalized from seconds to milliseconds before
+    updating the node's style. **Note:** This does _not_ affect the public API
+    which still uses second-based duration times.
+
+
+3.7.2
+-----
+
+  * No changes.
+
+
+3.7.1
+-----
+
+  * No changes.
+
+
+3.7.0
+-----
+
+  * No changes.
+
+
 3.6.0
 -----
 
   * No changes.
 
+
 3.5.1
 -----
 
   * No changes.
+
 
 3.5.0
 -----
@@ -21,6 +52,7 @@ Transition Change History
 -----
 
   * No changes.
+
 
 3.4.0
 -----
@@ -44,8 +76,8 @@ Transition Change History
   * Bug fix: Timer-based were throwing errors if the node is removed AND
     destroyed. [Ticket 2529519]
 
+
 3.2.0
 -----
 
   * Initial release.
-

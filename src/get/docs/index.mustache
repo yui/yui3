@@ -528,3 +528,24 @@ The basic version of the <a href="../io/index.html">IO Utility</a> (`io-base`) u
 <p>
 The IO Utility also supports cross domain requests through the `io-xdr` module. However, there are specific trust requirements as described in the documentation for the <a href="../io/index.html#xdr">IO Utility</a>. The `io-xdr` submodule may be a better choice than the Get Utility for cross-domain communication if the service you are accessing can be configured to trust the server that is hosting your application.
 </p>
+
+<h2>Known Issues in Win 8/IE10 Impacting Dynamic Script Inclusion</h2>
+
+<p>The following tickets have been filed with Microsoft, and have been identified as being reproducible. However it's unlikely that fixes will make their way into the initial GA release. You may need to register with MS Connect to view them.</p>
+
+<dl>
+    <dt>Multiple async erroring requests cause Get to hang.</dt>
+    <dd>
+       <p>Issuing multiple async Get requests to an erroring URL (404 for example), causes subsequent successful Get requests to hang, without invoking the onload (and hence onSuccess) handler.</p>
+       <p><a href="http://connect.microsoft.com/IE/feedback/details/763466/ie10-dynamic-script-loading-bug-async-404s">MS Connect Ticket #763466</a></p>
+       <p>
+       We don't have a clean way to workaround this issue currently (e.g. blocking subsequent requests to an error'ing URL - since users may be re-issueing them to resolve transient issues such as network problems).
+       If this issue is not addressed in subsequent IE10 releases/patches, we may end up block error'ing URLs in IE10, and provide an API to override the block if required for use cases such as the one above.
+       </p>
+    </dd>
+    <dt>Load handlers for cached scripts (e.g. 304s) are executed synchronously.</dt>
+    <dd>
+       <p>A workaround for this issue has been rolled into Get with the 3.7.3 release, and end users should always see their callbacks invoked asynchronously regardless of whether or not a script comes back with a cached or non-cached response.</p>
+       <p><a href="http://connect.microsoft.com/IE/feedback/details/763871/dynamically-loaded-scripts-with-304s-responses-interrupt-the-currently-executing-js-thread-onload">MS Connect Ticket #763871</a></p>
+    </dd>
+</dl>

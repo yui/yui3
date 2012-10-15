@@ -1180,10 +1180,7 @@ Y.Console = Y.extend(Console, Y.Widget,
     FOOTER_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
-                '<label for="{id_guid}" class="{console_pause_label_class}">'+
-                    '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1" id="{id_guid}"> '+
-                    '{str_pause}</label>' +
+                '<label class="{console_pause_label_class}"><input type="checkbox" class="{console_checkbox_class} {console_pause_class}" value="1" id="{id_guid}"> {str_pause}</label>' +
                 '<button type="button" class="'+
                     '{console_button_class} {console_clear_class}">{str_clear}'+
                 '</button>'+
