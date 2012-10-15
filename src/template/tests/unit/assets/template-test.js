@@ -140,7 +140,7 @@ templateSuite.add(new Y.Test.Case({
 
     'constructor should error if no engine is loaded or supplied': function () {
         YUI().use('template-base', function (Y2) {
-            var template = new new Y2.Template();
+            var template = new Y2.Template();
         });
     },
 
