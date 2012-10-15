@@ -4,7 +4,7 @@ DataSource Change History
 3.7.3
 -----
 
-* No changes.
+* datasource-xmlschema now forces input through the Y.XML parser (#2532838)
 
 3.7.2
 -----
