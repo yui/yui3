@@ -19,7 +19,7 @@ TabView Change History
 3.7.0
 -----
 
-* No changes.
+* Update src/tabview/js/tabview-base.js. [Contributed by trunksye]
 
 3.6.0
 -----
