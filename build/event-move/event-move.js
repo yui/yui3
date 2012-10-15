@@ -7,10 +7,22 @@ YUI.add('event-move', function (Y, NAME) {
  *
  * <p>Documentation for the gesturemove triplet of events can be found on the <a href="../classes/YUI.html#event_gesturemove">YUI</a> global,
  * along with the other supported events.</p>
- *
+
+ @example
+
+     YUI().use('event-move', function (Y) {
+         Y.one('#myNode').on('gesturemovestart', function (e) {
+         });
+         Y.one('#myNode').on('gesturemove', function (e) {
+         });
+         Y.one('#myNode').on('gesturemoveend', function (e) {
+         });
+     });
+
  * @module event-gestures
  * @submodule event-move
  */
+
 
  var GESTURE_MAP = Y.Event._GESTURE_MAP,
      EVENT = {
@@ -47,8 +59,9 @@ YUI.add('event-move', function (Y, NAME) {
     TARGET = "target",
 
     NODE_TYPE = "nodeType",
-
     SUPPORTS_POINTER = Y.config.win && ("msPointerEnabled" in Y.config.win.navigator),
+    MS_TOUCH_ACTION_COUNT = 'msTouchActionCount',
+    MS_INIT_TOUCH_ACTION = 'msInitTouchAction',
 
     _defArgsProcessor = function(se, args, delegate) {
         var iConfig = (delegate) ? 4 : 3,
@@ -63,6 +76,17 @@ YUI.add('event-move', function (Y, NAME) {
 
     _getRoot = function(node, subscriber) {
         return subscriber._extra.root || (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
+    },
+
+    //Checks to see if the node is the document, and if it is, returns the documentElement.
+    _checkDocumentElem = function(node) {
+        var elem = node.getDOMNode();
+        if (node.compareTo(Y.config.doc) && elem.documentElement) {
+            return elem.documentElement;
+        }
+        else {
+            return false;
+        }
     },
 
     _normTouchFacade = function(touchFacade, touch, params) {
@@ -83,23 +107,35 @@ YUI.add('event-move', function (Y, NAME) {
 
     The user can over-ride this by setting a more lenient -ms-touch-action property on a node (such as pan-x, pan-y, etc.) via CSS when subscribing to the 'gesturemovestart' event.
     */
-    _setTouchActions = function (node, subscriber, evtName) {
-        var params = subscriber._extra,
-            elem = node.getDOMNode();
+    _setTouchActions = function (node) {
+        var elem = _checkDocumentElem(node) || node.getDOMNode(),
+            num = node.getData(MS_TOUCH_ACTION_COUNT);
 
-        if (SUPPORTS_POINTER) { //Checks to see if MSPointer events are supported.
-            elem.style.msTouchAction = 'none';
+        //Checks to see if msTouchAction is supported.
+        if (SUPPORTS_POINTER) {
+            if (!num) {
+                num = 0;
+                node.setData(MS_INIT_TOUCH_ACTION, elem.style.msTouchAction);
+            }
+            elem.style.msTouchAction = Y.Event._DEFAULT_TOUCH_ACTION;
+            num++;
+            node.setData(MS_TOUCH_ACTION_COUNT, num);
         }
     },
 
     /*
-    Resets the element's -ms-touch-action property back to 'auto', which is the default. This is called on detach() and detachDelegate().
+    Resets the element's -ms-touch-action property back to the original value, This is called on detach() and detachDelegate().
     */
     _unsetTouchActions = function (node) {
+        var elem = _checkDocumentElem(node) || node.getDOMNode(),
+            num = node.getData(MS_TOUCH_ACTION_COUNT),
+            initTouchAction = node.getData(MS_INIT_TOUCH_ACTION);
+
         if (SUPPORTS_POINTER) {
-            var elem = node.getDOMNode();
-            if (elem.style.msTouchAction !== 'auto') {
-                elem.style.msTouchAction = 'auto'
+            num--;
+            node.setData(MS_TOUCH_ACTION_COUNT, num);
+            if (num === 0 && elem.style.msTouchAction !== initTouchAction) {
+                elem.style.msTouchAction = initTouchAction;
             }
         }
     },
@@ -114,6 +150,7 @@ YUI.add('event-move', function (Y, NAME) {
     },
 
     define = Y.Event.define;
+    Y.Event._DEFAULT_TOUCH_ACTION = 'none';
 
 /**
  * Sets up a "gesturemovestart" event, that is fired on touch devices in response to a single finger "touchstart",
@@ -151,7 +188,7 @@ define(GESTURE_MOVE_START, {
     on: function (node, subscriber, ce) {
 
         //Set -ms-touch-action on IE10 and set preventDefault to true
-        _setTouchActions(node, subscriber, EVENT[START]);
+        _setTouchActions(node);
 
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START],
             this._onStart,
@@ -337,6 +374,8 @@ define(GESTURE_MOVE_START, {
 define(GESTURE_MOVE, {
 
     on : function (node, subscriber, ce) {
+
+        _setTouchActions(node);
         var root = _getRoot(node, subscriber, EVENT[MOVE]),
 
             moveHandle = root.on(EVENT[MOVE],
@@ -459,7 +498,7 @@ define(GESTURE_MOVE, {
 define(GESTURE_MOVE_END, {
 
     on : function (node, subscriber, ce) {
-
+        _setTouchActions(node);
         var root = _getRoot(node, subscriber),
 
             endHandle = root.on(EVENT[END],

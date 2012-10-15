@@ -9,7 +9,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     _classNames,
 
     Transition = Y.Transition,
-    NATIVE_TRANSITIONS = Transition.useNative,    
+    NATIVE_TRANSITIONS = Transition.useNative,
     SCROLLBAR = 'scrollbar',
     SCROLLVIEW = 'scrollview',
 
@@ -28,7 +28,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     HORIZ_CACHE = "_sbh",
     VERT_CACHE = "_sbv",
 
-    TRANSITION_PROPERTY = Transition._VENDOR_PREFIX + "TransitionProperty",
+    TRANSITION_PROPERTY = Y.ScrollView._TRANSITION.PROPERTY,
     TRANSFORM = "transform",
 
     TRANSLATE_X = "translateX(",
