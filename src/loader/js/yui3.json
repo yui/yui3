@@ -2117,6 +2117,22 @@
             "tabview-base"
         ]
     },
+    "template": {
+        "use": [
+            "template-base",
+            "template-micro"
+        ]
+    },
+    "template-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "template-micro": {
+        "requires": [
+            "escape"
+        ]
+    },
     "test": {
         "requires": [
             "event-simulate",

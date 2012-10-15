@@ -2218,6 +2218,22 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "tabview-base"
         ]
     },
+    "template": {
+        "use": [
+            "template-base",
+            "template-micro"
+        ]
+    },
+    "template-base": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "template-micro": {
+        "requires": [
+            "escape"
+        ]
+    },
     "test": {
         "requires": [
             "event-simulate",
@@ -2502,4 +2518,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a28e022ad022130f7a4fb4ac77a2f1df';
+YUI.Env[Y.version].md5 = '4e51b0a2cf96bd893d5b8fb06ac592f0';
