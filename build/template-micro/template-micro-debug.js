@@ -6,7 +6,7 @@ string-based micro-templating similar to ERB or Underscore templates.
 
 @module template
 @submodule template-micro
-@since 3.7.0
+@since 3.8.0
 **/
 
 /**
@@ -14,7 +14,7 @@ Fast, simple string-based micro-templating engine similar to ERB or Underscore
 templates.
 
 @class Template.Micro
-@since 3.7.0
+@since 3.8.0
 @static
 **/
 
@@ -39,7 +39,7 @@ Default options for `Y.Template.Micro`.
         need to be escaped inside single-quoted JavaScript string literals.
 
 @static
-@since 3.7.0
+@since 3.8.0
 **/
 Micro.options = {
     code         : /<%([\s\S]+?)%>/g,
