@@ -4,12 +4,14 @@ DataSchema Change History
 3.7.3
 -----
 
-* Source changes for dataschema and xml partially fixing [Ticket #2532796]
+* Implemented a partial fix for allowing XPath access to XML elements in IE10
+  Desktop, Metro, and WinJS environments. A known issue of IE10 WebView not
+  allowing XPath addressing is still standing. [Ticket #2532796]
 
 3.7.2
 -----
 
-* No changes
+* No Changes.
 
 3.7.1
 -----
@@ -29,19 +31,17 @@ DataSchema Change History
 3.5.1
 -----
 
-  * No changes.
+* No changes.
 
 3.5.0
 -----
 
-  * No changes.
-
+* No changes.
 
 3.4.1
 -----
 
-  * No changes.
-
+* No changes.
 
 3.4.0
 -----
