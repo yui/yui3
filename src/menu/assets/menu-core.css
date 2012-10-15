@@ -1,14 +1,22 @@
-.yui3-menu { position: absolute; }
-.yui3-menu.yui3-menu-open { z-index: 2; }
-
+.yui3-menu,
 .yui3-menu-children {
     left: -10000px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
     position: absolute;
     visibility: hidden;
     top: -10000px;
+}
+
+.yui3-menu.yui3-menu-open {
+    left: normal;
+    top: normal;
+    visibility: visible;
+    z-index: 2;
+}
+
+.yui3-menu-children {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     z-index: 1;
 }
 
