@@ -19,7 +19,8 @@ Anim Change History
 3.7.0
 -----
 
-* Added anim-shape submodule. Allows for animation of all shape attributes in the graphics module. [Ticket #2532612]
+* Added `anim-shape` submodule which allows for animation of all shape
+  attributes in the `graphics` module. [Ticket #2532612]
 
 3.6.0
 -----

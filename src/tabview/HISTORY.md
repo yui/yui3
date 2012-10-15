@@ -19,7 +19,8 @@ TabView Change History
 3.7.0
 -----
 
-* Update src/tabview/js/tabview-base.js. [Contributed by trunksye]
+* Removed trailing space from `tabLabel` selector. This fixes an issue in IE8.
+  [@trunksye]
 
 3.6.0
 -----

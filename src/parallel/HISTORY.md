@@ -19,7 +19,7 @@ Parallel Change History
 3.7.0
 -----
 
-* Guarantee order of results array in Y.Parallel [Juan Ignacio Dopazo]
+* Guarantee order of results array. [Juan Ignacio Dopazo]
 
 3.6.0
 -----
