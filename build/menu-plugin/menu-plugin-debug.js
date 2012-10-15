@@ -66,7 +66,7 @@ Y.namespace('Plugin').Menu = Y.Base.create('menuPlugin', Y.Menu, [Y.Plugin.Base]
             var container = this.get('container'),
 
                 menuRegion = this._getSortedAnchorRegions(
-                    ['tl-bl', 'bl-tl', 'tr-bl', 'br-tl', 'tl-br', 'bl-tr'],
+                    ['tl-bl', 'tr-br', 'bl-tl', 'br-tr'],
                     container.get('region'),
                     this._host.get('region')
                 )[0].region;
