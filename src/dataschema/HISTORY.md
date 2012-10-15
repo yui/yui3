@@ -1,6 +1,26 @@
 DataSchema Change History
 =========================
 
+3.7.3
+-----
+
+* Source changes for dataschema and xml partially fixing [Ticket #2532796]
+
+3.7.2
+-----
+
+* No changes
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
