@@ -1,6 +1,26 @@
 Cookie Change History
 =====================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -63,7 +83,7 @@ Cookie Change History
 
   * Synchronized with the 2.x version of cookie:
     * Changes formatting of date from `toGMTString()` to `toUTCString()` (trac#
-      2527892). 
+      2527892).
     * Updated `remove()` so that it no longer modifies the options object that
       is passed in (trac# 2527838).
     * Changed behavior for Boolean cookies (those that don't contain an equals
@@ -80,7 +100,7 @@ Cookie Change History
       `set()` and `get()`. (trac# 2527953).
     * Changed `get()` to take an options object with `raw` and `converter`
       properties. If a function is passed instead of an object then it is used
-      as the converter for backward compatibility (trac# 2527953).  
+      as the converter for backward compatibility (trac# 2527953).
 
 
 3.0.0pr2

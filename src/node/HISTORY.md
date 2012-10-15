@@ -1,6 +1,26 @@
 Node Change History
 ===================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
   * No changes.
@@ -12,8 +32,8 @@ Node Change History
 3.5.0
 -----
 
-  * Bug fix: Children collection now accessible from documentFragments. [Ticket 2531356] 
-  * Bug fix: The compareTo() method now works across sandboxes. [Ticket 2530381] 
+  * Bug fix: Children collection now accessible from documentFragments. [Ticket 2531356]
+  * Bug fix: The compareTo() method now works across sandboxes. [Ticket 2530381]
 
 
 3.4.1
@@ -33,10 +53,10 @@ Node Change History
 3.4.0
 -----
 
-  * [!] The empty() method now always does a recursive purge. [Ticket 2529829] 
+  * [!] The empty() method now always does a recursive purge. [Ticket 2529829]
 
   * Added the getDOMNode() and getDOMNodes() methods to Node and NodeList
-    prototypes. 
+    prototypes.
 
   * The one() method now accepts IDs that begin with a number. [Ticket 2529376]
 
@@ -66,7 +86,7 @@ Node Change History
   * Added the ancestors() method. [Ticket 2528610]
 
   * The setStyle() method now ignores undefined values.
-  
+
   * Bug fix: Enable querying cloned nodes in IE 6/7. [Ticket 2529487]
 
 
@@ -76,7 +96,7 @@ Node Change History
   * Added the transition() method.
 
   * Bug fix: checked pseudo-class for IE input elements. [Ticket 2528895]
-  
+
   * Bug fix: Fixed IE8 input element rendering. [Ticket 2529035]
 
 

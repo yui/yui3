@@ -81,7 +81,7 @@ YUI.add('globalevents-tests', function(Y) {
             this.end.detach();
         },
         testFailureFlow: function() {
-            Y.io(Y.IO.URLS.http + '?a=404');
+            Y.io(Y.IO.URLS.http + '404');
             this.wait(null, 1000);
         }
     }));

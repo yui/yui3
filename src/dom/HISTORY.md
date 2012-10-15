@@ -1,6 +1,26 @@
 DOM Change History
 ==================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* Added `transformOrigin` and `msTransform` to `dom-style`.
+
 3.6.0
 -----
 
