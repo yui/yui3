@@ -41,7 +41,7 @@ TabView Change History
 3.4.1
 -----
 
-  * No change.
+  * No changes.
 
 
 3.4.0
@@ -53,7 +53,7 @@ TabView Change History
 3.3.0
 -----
 
-  * No change.
+  * No changes.
 
 
 3.2.0
