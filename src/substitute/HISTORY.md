@@ -9,7 +9,7 @@ Substitute Utility Change History
 3.7.2
 -----
 
-* No changes
+* No changes.
 
 3.7.1
 -----
@@ -80,7 +80,7 @@ Substitute Utility Change History
 
 3.0.0
 -----
-    
+
   * No changes.
 
 3.0.0beta1

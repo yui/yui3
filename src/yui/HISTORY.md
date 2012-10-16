@@ -8,17 +8,16 @@ YUI Core Change History
 * Adding Y.UA.touchEnabled boolean to use in conditional modules
 * 2532797 - Added IE10 ua fixing for Windows8 WinJS
 * 2532675 - Remove the second air property
-* 
 
 3.7.2
 -----
 
-* No change
+* No change.
 
 3.7.1
 -----
 
-* No change
+* No change.
 
 3.7.0
 -----
