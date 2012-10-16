@@ -1,10 +1,25 @@
 ScrollView Change History
 =========================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
 3.7.0
 -----
 
-  * Added Forced-Axis and Dual-Axis Support. ScrollView now has an (optional) `axis` 
+  * Added Forced-Axis and Dual-Axis Support. ScrollView now has an (optional) `axis`
     property that can be declared with values: `x`, `y`, or `xy`. (#2532631)
 
   * Added: Initial support for RTL (Right-To-Left) layouts (#2531874).
@@ -23,12 +38,12 @@ ScrollView Change History
   * Fix: Mousewheel events on a horizontally scrolling instance no longer prevent page scrolling (#2532739)
 
   * Fix: Mousewheel events now properly update the `scrollY` attribute.
-  
-  * Fix: Improved reliability of the scrollEnd event. Now it now only fires 
-    once per scrolling sequence, instead of sometimes twice. 
+
+  * Fix: Improved reliability of the scrollEnd event. Now it now only fires
+    once per scrolling sequence, instead of sometimes twice.
 
   * Fix: Resolved issue where multiple listeners could sometimes be added for drag and flick events.
-  
+
   * Fix: Improved gesture event detachment
 
   * Fix: Refactored _flickFrame to do less attribute lookups, helpful for performance reasons
@@ -37,83 +52,83 @@ ScrollView Change History
 
 3.6.0
 -----
-  
+
   * Fixed issue with mousewheel not working when multiple scrollviews are present (#2532377)
 
 3.5.1
 -----
 
   * Fixed issue with scrollview capturing all mousewheel events on a page (#2532214)
-  
+
 3.5.0
 -----
 
   * Allow scrollbar to work with non-px width scrollviews
-  
+
   * Added mousewheel support (#2529136)
 
 3.4.1
 -----
 
   * Fixed incorrect scroll width/height calculations to account for
-    translate (for real this time) on Chrome, and now Safari. 
+    translate (for real this time) on Chrome, and now Safari.
 
-    translateZ applied for h/w acceleration was resulting in the incorrect 
+    translateZ applied for h/w acceleration was resulting in the incorrect
     scroll values.
 
   * Removed fallback to cb.scrollWidth/Height, when determining scroll dimensions.
-    This was masking the real problem with translate impacting boundingBox scroll 
+    This was masking the real problem with translate impacting boundingBox scroll
     width/height calcs mentioned above.
 
   * Fixed scrollbar racing ahead of scroll position on FF 5+ with native transition
     support enabled.
 
   * Added ability to disable scrollview completely, disable flick or disable drag
-   
+
     // Stops SV from moving through flick/drag or the API.
-    sv.set("disabled", true); 
+    sv.set("disabled", true);
 
     // Stops SV from reacting to flick. Can still drag/scroll through API
     sv.set("flick", false);
- 
+
     // Stops SV from reacting to drag. Can still flick, scroll through API
-    sv.set("drag", false);  
+    sv.set("drag", false);
 
   * Resync UI on scrollview-list class application.
 
 3.4.0
 -----
 
-  * Fixed _uiDimensionsChange code which was looking explicitly for 
+  * Fixed _uiDimensionsChange code which was looking explicitly for
     the "width" attribute. Just plain wrong.
 
   * Added vertical paging support.
 
   * Removed DOMSubtreeModified event listening which was only really kicking
-    in for Webkit and was too heavy handed. User now needs to call syncUI() 
-    manually on all browsers, if the content of the scrollview is changed, 
+    in for Webkit and was too heavy handed. User now needs to call syncUI()
+    manually on all browsers, if the content of the scrollview is changed,
     and may potentially result in dimension changes.
 
   * Broke out use of transform3d into a seperate method, and added a protected
-    flag, _forceHWTransforms, to allow for customization if required 
-    (H/W acceleration related glitches or changing the set of browsers for 
+    flag, _forceHWTransforms, to allow for customization if required
+    (H/W acceleration related glitches or changing the set of browsers for
     which we attempt to force it).
 
   * Created Scrollview-List plugin to provide out-of-the-box handling of
-    List (LI) content inside horizontal and vertical ScrollViews. 
+    List (LI) content inside horizontal and vertical ScrollViews.
 
   * Fixed incorrect scroll width/height calculations on Chrome 9+, FF
     when syncUI() [ or _uiDimensionsChange() ] was called when the ScrollView
     was scrolled over.
- 
+
   * Protected state flags are now reset if _uiDimensionsChange results in
     flipped orientation.
 
   * Use the larger of bb.scrollWidth/Height or cb.scrollWidth/Height, to calculate
-    scroll dimensions to account for FF (which clips cb.scrollWidth) and 
-    Chrome/MacOS (which clips bb.scrollWidth when translated even after 
+    scroll dimensions to account for FF (which clips cb.scrollWidth) and
+    Chrome/MacOS (which clips bb.scrollWidth when translated even after
     incorrect scroll calcs above).
-  
+
 3.3.0
 -----
 
@@ -125,12 +140,12 @@ ScrollView Change History
 
   * Refactored for kweight, and broke out scrollview-base-ie conditional module.
 
-  * Don't prevent default on gesturemoveend, so that click listeners on 
-    elements inside the scrollview respond reliably. Panning is still prevented 
+  * Don't prevent default on gesturemoveend, so that click listeners on
+    elements inside the scrollview respond reliably. Panning is still prevented
     by preventing gesturemousemove.
 
-  * Removed generic CSS in scrollview-base.css targeting UL/LI content. The 
-    rules were added to support the common use case, but were too broad, and in 
+  * Removed generic CSS in scrollview-base.css targeting UL/LI content. The
+    rules were added to support the common use case, but were too broad, and in
     general, scrollview is content agnostic.
 
   * The same support can be achieved by adding cssreset to the page (to remove

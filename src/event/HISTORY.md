@@ -9,6 +9,16 @@ Event Infrastructure Change History
 
   http://msdn.microsoft.com/en-us/library/windows/apps/hh465388.aspx
 
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
 3.7.0
 -----
 
@@ -22,9 +32,6 @@ Event Infrastructure Change History
 
 * `event-tap` was migrated from Gallery and it supports "fast-click" on touch
   devices.
-
-3.7.0
------
 
 * Added try/catch around the internal window unload listener event-base adds,
   so that YUI works in Chrome Packaged Apps. They don't support unload,

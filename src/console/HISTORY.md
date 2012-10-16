@@ -1,6 +1,28 @@
 Console Change History
 ======================
 
+3.7.3
+-----
+
+* Remove `for` attribute from Console's HTML templates. There is a bug in the
+  WinJS runtime for Windows 8 apps that causes an error to be thrown incorrectly
+  when certain element attributes used. [Ticket #2532792]
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -46,7 +68,7 @@ Console Change History
 -----
 
   * CSS class references updated from `yui-*` to `yui3-*`.
-  
+
   * Internal reorganization (API and functionality unaffected)
 
   * Fixed double escapement of `&` when used with ConsoleFilters and hiding and
@@ -83,9 +105,9 @@ Console Change History
   * `logSource` attribute added to configure listening for events from a
     specific target. Also useful for subscribing to all log events across
     multiple YUI instances.
-  
+
   * Lowered `consoleLimit` default to 300.
-  
+
   * `printLimit` attribute added to limit the number of entries from the buffer
     to output in a given `printBuffer()` call.
 
