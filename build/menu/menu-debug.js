@@ -19,6 +19,24 @@ Menu widget.
 var getClassName = Y.ClassNameManager.getClassName,
 
 /**
+Fired when a menu item is disabled.
+
+@event disable
+@param {Menu.Item} item Menu item that was disabled.
+@preventable _defDisableFn
+**/
+EVT_DISABLE = 'disable',
+
+/**
+Fired when a menu item is enabled.
+
+@event enable
+@param {Menu.Item} item Menu item that was enabled.
+@preventable _defEnableFn
+**/
+EVT_ENABLE = 'enable',
+
+/**
 Fired when any clickable menu item is clicked.
 
 You can subscribe to clicks on a specific menu item by subscribing to
@@ -98,6 +116,48 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         Y.Object.each(this._openMenus, function (item) {
             item.close();
         }, this);
+
+        return this;
+    },
+
+    /**
+    Disables the specified menu item.
+
+    @method disableItem
+    @param {Menu.Item} item Menu item to disable.
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `disable` event
+            will be suppressed.
+    @chainable
+    **/
+    disableItem: function (item, options) {
+        if (!item.isDisabled()) {
+            this._fire(EVT_DISABLE, {item: item}, {
+                defaultFn: this._defDisableFn,
+                silent   : options && options.silent
+            });
+        }
+
+        return this;
+    },
+
+    /**
+    Enables the specified menu item.
+
+    @method enableItem
+    @param {Menu.Item} item Menu item to enable.
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `enable` event
+            will be suppressed.
+    @chainable
+    **/
+    enableItem: function (item, options) {
+        if (item.isDisabled()) {
+            this._fire(EVT_ENABLE, {item: item}, {
+                defaultFn: this._defEnableFn,
+                silent   : options && options.silent
+            });
+        }
 
         return this;
     },
@@ -336,6 +396,8 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
                 add          : this._afterAdd,
                 clear        : this._afterClear,
                 close        : this._afterClose,
+                disable      : this._afterDisable,
+                enable       : this._afterEnable,
                 open         : this._afterOpen,
                 remove       : this._afterRemove,
                 visibleChange: this._afterVisibleChange
@@ -645,6 +707,36 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
+    Handles `disable` events for this menu.
+
+    @method _afterDisable
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterDisable: function (e) {
+        var htmlNode = this.getHTMLNode(e.item);
+
+        if (htmlNode) {
+            htmlNode.addClass(this.classNames.disabled);
+        }
+    },
+
+    /**
+    Handles `enable` events for this menu.
+
+    @method _afterEnable
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterEnable: function (e) {
+        var htmlNode = this.getHTMLNode(e.item);
+
+        if (htmlNode) {
+            htmlNode.removeClass(this.classNames.disabled);
+        }
+    },
+
+    /**
     Handles `open` events for this menu.
 
     @method _afterOpen
@@ -769,7 +861,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
 
         clearTimeout(this._timeouts.item);
 
-        if (item.isOpen()) {
+        if (item.isOpen() || item.isDisabled()) {
             return;
         }
 
@@ -829,6 +921,28 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     // -- Default Event Handlers -----------------------------------------------
+
+    /**
+    Default handler for the `disable` event.
+
+    @method _defDisableFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defDisableFn: function (e) {
+        e.item.state.disabled = true;
+    },
+
+    /**
+    Default handler for the `enable` event.
+
+    @method _defEnableFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defEnableFn: function (e) {
+        delete e.item.state.disabled;
+    },
 
     /**
     Default handler for the generic `itemClick` event.

@@ -47,10 +47,13 @@ Y.extend(MenuItem, Y.Tree.Node, {
     Disables this menu item. Disabled items are not clickable or selectable.
 
     @method disable
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `disable` event
+            will be suppressed.
     @chainable
     **/
-    disable: function () {
-        this.state.disabled = true;
+    disable: function (options) {
+        this.tree.disableItem(this, options)
         return this;
     },
 
@@ -58,10 +61,13 @@ Y.extend(MenuItem, Y.Tree.Node, {
     Enables this menu item.
 
     @method enable
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `enable` event
+            will be suppressed.
     @chainable
     **/
-    enable: function () {
-        delete this.state.disabled;
+    enable: function (options) {
+        this.tree.enableItem(this, options);
         return this;
     },
 
