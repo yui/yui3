@@ -1,0 +1,17 @@
+{
+    "mod-A" : {
+        "requires" : ["yui-base"]
+    },
+
+    "mod-B" : {
+        "requires" : ["yui-base"]
+    },
+
+    "mod-Z" : {
+        "requires" : ["alias-one"]
+    },
+
+    "alias-one" : {
+        "use" : ["mod-A"]
+    }
+}

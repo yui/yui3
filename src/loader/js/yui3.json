@@ -1,4 +1,9 @@
 {
+    "alias-one": {
+        "use": [
+            "mod-A"
+        ]
+    },
     "align-plugin": {
         "requires": [
             "node-screen",
@@ -1612,6 +1617,21 @@
     "matrix": {
         "requires": [
             "yui-base"
+        ]
+    },
+    "mod-A": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "mod-B": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "mod-Z": {
+        "requires": [
+            "alias-one"
         ]
     },
     "model": {

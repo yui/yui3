@@ -3811,6 +3811,7 @@ Y.UA.compareVersions = function (a, b) {
     return 0;
 };
 YUI.Env.aliases = {
+    "alias-one": ["mod-A"],
     "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
     "anim-shape-transform": ["anim-shape"],
     "app": ["app-base","app-content","app-transitions","lazy-model-list","model","model-list","model-sync-rest","router","view","view-node-map"],
@@ -8686,6 +8687,11 @@ YUI.add('loader-yui3', function (Y, NAME) {
  * @submodule yui3
  */
 YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
+    "alias-one": {
+        "use": [
+            "mod-A"
+        ]
+    },
     "align-plugin": {
         "requires": [
             "node-screen",
@@ -10390,6 +10396,21 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     },
+    "mod-A": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "mod-B": {
+        "requires": [
+            "yui-base"
+        ]
+    },
+    "mod-Z": {
+        "requires": [
+            "alias-one"
+        ]
+    },
     "model": {
         "requires": [
             "base-build",
@@ -11182,7 +11203,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a28e022ad022130f7a4fb4ac77a2f1df';
+YUI.Env[Y.version].md5 = '56b2250496041843a00497b6f0bdf8d4';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});

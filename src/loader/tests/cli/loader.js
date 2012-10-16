@@ -43,7 +43,17 @@ var async = function(fn) {
 */
 suite.add(new YUITest.TestCase({
     name: "Loader Tests",
-         "Testing align-plugin": function(data) {
+         "Testing alias-one": function(data) {
+            var loader = new Y.Loader({
+                require: ["alias-one"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("mod-A")) > -1, "Module (mod-A) not found in sorted array");
+        },
+     "Testing align-plugin": function(data) {
             var loader = new Y.Loader({
                 require: ["align-plugin"],
                 ignoreRegistered: true,
@@ -2222,6 +2232,36 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("matrix")) > -1, "Module (matrix) not found in sorted array");
+        },
+     "Testing mod-A": function(data) {
+            var loader = new Y.Loader({
+                require: ["mod-A"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("mod-A")) > -1, "Module (mod-A) not found in sorted array");
+        },
+     "Testing mod-B": function(data) {
+            var loader = new Y.Loader({
+                require: ["mod-B"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("mod-B")) > -1, "Module (mod-B) not found in sorted array");
+        },
+     "Testing mod-Z": function(data) {
+            var loader = new Y.Loader({
+                require: ["mod-Z"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("mod-Z")) > -1, "Module (mod-Z) not found in sorted array");
         },
      "Testing model": function(data) {
             var loader = new Y.Loader({

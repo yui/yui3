@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+    <script type="text/javascript">
+        YUI.applyConfig({
+
+            filter:"raw",
+
+            filters: {
+                "mod-A" : "debug",
+                "mod-B" : "debug",
+                "mod-Z" : "debug"
+            },
+
+            aliases : {
+                "alias-one" : ["mod-B"]
+            }
+
+        });
+
+        YUI().use('mod-Z', function (Y) {
+
+            Y.log("Failing use (first use callback) \n\n");
+
+            YUI().use('mod-Z', function(Y2) {
+
+                Y2.log("Failing use (second callback) \n\n");
+
+                // Use'ing the alias works fine, even if you comment 
+                // out the above use calls. It's when you use something which
+                // has the alias as a dependency [ e.g. mod-Z ] which caused the 
+                // issues
+                YUI().use("alias-one", function(Y) {
+                    Y.log("Working use (use'ing the alias directly)");
+                });
+
+            });
+
+        });
+
+    </script>
+</head>
+<body>
+    This example logs to console. The expected output is:
+
+    <pre>
+    mod-B loaded
+    mod-Z loaded
+    </pre>
+</body>
+</html>
