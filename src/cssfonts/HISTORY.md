@@ -9,7 +9,7 @@ CSS Fonts Change History
 3.7.2
 -----
 
-* No changes
+* No changes.
 
 3.7.1
 -----
@@ -64,7 +64,7 @@ CSS Fonts Change History
 3.1.0
 -----
   * No change.
-  
+
 3.0.0
 -----
   * Initial release.
@@ -73,7 +73,7 @@ CSS Fonts Change History
 Module Name: "cssfonts"
 Documentation: http://developer.yahoo.com/yui/3/cssfonts
 
-The foundational CSS Fonts provides cross-browser 
-typographical normalization and control while still 
-allowing users to choose and adjust their font size. 
+The foundational CSS Fonts provides cross-browser
+typographical normalization and control while still
+allowing users to choose and adjust their font size.
 Both Standards and Quirks modes are supported in A-grade browsers.

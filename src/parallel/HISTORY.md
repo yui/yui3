@@ -19,7 +19,7 @@ Parallel Change History
 3.7.0
 -----
 
-* No Changes.
+* No changes.
 
 3.6.0
 -----

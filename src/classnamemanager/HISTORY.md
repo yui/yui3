@@ -9,7 +9,7 @@ ClassName Manager Change History
 3.7.2
 -----
 
-* No changes
+* No changes.
 
 3.7.1
 -----

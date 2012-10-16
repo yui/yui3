@@ -9,7 +9,7 @@ MenuNav Change History
 3.7.2
 -----
 
-* No changes
+* No changes.
 
 3.7.1
 -----
@@ -36,7 +36,7 @@ MenuNav Change History
 
   * Added Night skin for MenuNav
   * Removed console logging message (#2531192)
-   
+
 
 3.4.1
 -----
