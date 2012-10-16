@@ -12,12 +12,12 @@ YUI Core Change History
 3.7.2
 -----
 
-* No change.
+* No changes.
 
 3.7.1
 -----
 
-* No change.
+* No changes.
 
 3.7.0
 -----
