@@ -961,6 +961,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
             e.item.toggle();
         } else {
             this.closeSubMenus();
+            this.hide();
         }
     },
 
