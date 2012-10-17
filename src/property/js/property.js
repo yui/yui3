@@ -81,6 +81,7 @@ Why you might want to use `Y.Attribute` instead:
 @class Property
 @constructor
 @extends Property.Base
+@uses EventTarget
 **/
 
 function Property() {
