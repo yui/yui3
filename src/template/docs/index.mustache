@@ -1,0 +1,69 @@
+<div class="intro">
+<p>
+The Template component provides `Y.Template`, a generic template engine API, and `Y.Template.Micro`, a string-based micro-templating language similar to <a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a> and <a href="http://underscorejs.org/#template">Underscore</a> templates.
+</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using `Template`</h2>
+
+<h3>Quick Start</h3>
+
+<p>
+A template engine takes a template&mdash;usually in the form of a string&mdash;and some data, and renders the data into the template to produce an HTML or text string. Using templates to keep markup and structure separate from content encourages reuse and can make code easier to read and maintain, and in many cases faster.
+</p>
+
+<p>
+`Y.Template` provides a common API that can be used to compile and render templates with a variety of template engines. The two template engines included in YUI are <a href="../handlebars/">Handlebars</a> and [[#Using Template.Micro|Template.Micro]].
+</p>
+
+<p>[example of rendering a Template.Micro template]</p>
+
+<p>[example of rendering a Handlebars template]</p>
+
+<h3>Generic Template API</h3>
+
+<p>[overview of the purpose of Y.Template's generic API -- a widget's default templates can be Handlebars templates, but you can override with Micro templates, etc.]</p>
+
+<h3>Instantiating a Template Engine</h3>
+
+<h3>Compiling and Rendering Templates</h3>
+
+<h3>Precompiling and Reviving Templates</h3>
+
+<h3>Creating a Custom Template Engine</h3>
+
+<p>[how to create a template engine that conforms to the `Y.Template` API interface]</p>
+
+<h2>Using `Template.Micro`</h2>
+
+<p>[Overview of what Template.Micro is and what kinds of use cases it's suited for -- when you'd use it vs. Handlebars, etc.]</p>
+
+<h3>Template Syntax</h3>
+
+<h4>Basic Expressions</h4>
+
+<h4>HTML Escaping</h4>
+
+<h4>Inline Code &amp; Code Blocks</h4>
+
+<h3>Compiling and Rendering Templates</h3>
+
+<p>[may be redundant; possibly just refer to the Y.Template section above?]</p>
+
+<h3>Precompiling and Reviving Templates</h3>
+
+<p>[may be redundant; possibly just refer to the Y.Template section above?]</p>
+
+<h3>Customizing Template Syntax</h3>
+
+<p>[describe how to override Y.Template.Micro's regexes to customize the template syntax if desired]</p>
+
+<h2>Using Templates in Custom Components</h2>
+
+<p>[guidelines for bundling templates with custom views, widgets, etc. -- how to build, compile, and make them available on a namespace]</p>
+
+<h2>Best Practices</h2>
+
+<p>[recommended best practices for templates -- don't embed too much logic, don't embed huge template strings in JS, compile once; render often, etc.]</p>
