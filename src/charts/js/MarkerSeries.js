@@ -1,5 +1,5 @@
 /**
- * The MarkerSeries class renders quantitative data by plotting relevant data points 
+ * The MarkerSeries class renders quantitative data by plotting relevant data points
  * on a graph.
  *
  * @module charts
@@ -21,7 +21,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     {
         this.drawPlots();
     },
-    
+
     /**
      * @protected
      *
@@ -40,7 +40,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         val = this._parseMarkerStyles(val);
         return Y.MarkerSeries.superclass._mergeStyles.apply(this, [val, this._getDefaultStyles()]);
     },
-    
+
     /**
      * @protected
      *
@@ -67,7 +67,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         type: {
             value:"marker"
         }
-        
+
         /**
          * Style properties used for drawing markers. This attribute is inherited from `Renderer`. Below are the default values:
          *  <dl>
@@ -91,7 +91,7 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
          *      </dd>
          *      <dt>width</dt><dd>indicates the width of the marker. The default value is 10.</dd>
          *      <dt>height</dt><dd>indicates the height of the marker The default value is 10.</dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
          *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>

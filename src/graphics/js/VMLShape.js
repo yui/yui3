@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Shape.html">`Shape`</a> class. 
- * `VMLShape` is not intended to be used directly. Instead, use the <a href="Shape.html">`Shape`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> 
+ * <a href="http://www.w3.org/TR/NOTE-VML">VML</a> implementation of the <a href="Shape.html">`Shape`</a> class.
+ * `VMLShape` is not intended to be used directly. Instead, use the <a href="Shape.html">`Shape`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> and <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a>
  * capabilities, the <a href="Shape.html">`Shape`</a> class will point to the `VMLShape` class.
  *
  * @module graphics
@@ -9,7 +9,7 @@
  * @constructor
  * @param {Object} cfg (optional) Attribute configs
  */
-VMLShape = function() 
+VMLShape = function()
 {
     this._transforms = [];
     this.matrix = new Y.Matrix();
@@ -28,7 +28,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @private
 	 */
 	_type: "shape",
-    
+
     /**
      * Init method, invoked during construction.
      * Calls `initializer` method.
@@ -63,7 +63,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         }
         this._updateHandler();
 	},
- 
+
     /**
      * Set the Graphic instance for the shape.
      *
@@ -90,7 +90,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this._appendStrokeAndFill();
         }
     },
-    
+
     /**
      * Appends fill and stroke nodes to the shape.
      *
@@ -108,7 +108,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this.node.appendChild(this._fillNode);
         }
     },
-    
+
 	/**
 	 * Creates the dom node for the shape.
 	 *
@@ -141,10 +141,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fillstring;
 			id = this.get("id");
 			type = this._type == "path" ? "shape" : this._type;
-		    classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type; 
+		    classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type;
 			stroke = this._getStrokeProps();
 			fill = this._getFillProps();
-			
+
 			nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;visibility:' + visibility + '"';
 
 		    if(stroke && stroke.weight && stroke.weight > 0)
@@ -155,7 +155,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 				miterlimit = stroke.miterlimit;
 				dashstyle = stroke.dashstyle;
 				nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
-				
+
 				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
 				strokestring += ' opacity="' + opacity + '"';
 				if(endcap)
@@ -195,11 +195,11 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 				}
 				nodestring += ' filled="' + fill.filled + '"';
 			}
-			
-			
+
+
 			nodestring += '>';
 			nodestring += '</' + type + '>';
-			
+
 			node = DOCUMENT.createElement(nodestring);
 
             this.node = node;
@@ -211,7 +211,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * Add a class name to each node.
 	 *
 	 * @method addClass
-	 * @param {String} className the class name to add to the node's class attribute 
+	 * @param {String} className the class name to add to the node's class attribute
 	 */
 	addClass: function(className)
 	{
@@ -262,7 +262,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	},
 
 	/**
-	 * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy. 
+	 * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
 	 *
 	 * @method contains
 	 * @param {VMLShape | HTMLElement} needle The possible node or descendent
@@ -467,7 +467,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 		if(fill)
 		{
 			props = {};
-			
+
 			if(fill.type == "radial" || fill.type == "linear")
 			{
 				fillOpacity = parseFloat(fill.opacity);
@@ -493,7 +493,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 				if(IS_NUM(fillOpacity))
 				{
 					fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
-                    props.opacity = fillOpacity;    
+                    props.opacity = fillOpacity;
 				    if(fillOpacity < 1)
                     {
                         props.node = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
@@ -579,14 +579,14 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 						this._fillNode.opacity = fillOpacity;
 					}
 					else
-					{     
+					{
                         fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
                         this._fillNode = DOCUMENT.createElement(fillstring);
                         node.appendChild(this._fillNode);
 					}
 				}
 				else if(this._fillNode)
-                {   
+                {
                     this._fillNode.opacity = 1;
                     this._fillNode.type = "solid";
 				}
@@ -607,7 +607,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	},
 
     /**
-     * Calculates and returns an object containing gradient properties for a fill node. 
+     * Calculates and returns an object containing gradient properties for a fill node.
      *
      * @method _getGradientFill
      * @param {Object} fill Object containing fill properties.
@@ -708,7 +708,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this._updateTransform();
         }
 	},
-	
+
 	/**
      * Applies all transforms.
      *
@@ -733,7 +733,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         if(this._transforms && this._transforms.length > 0)
 		{
             transformOrigin = this.get("transformOrigin");
-       
+
             if(isPathShape)
             {
                 normalizedMatrix.translate(this._left, this._top);
@@ -742,7 +742,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             //subtract 0.5 from values
             tx = transformOrigin[0] - 0.5;
             ty = transformOrigin[1] - 0.5;
-            
+
             //ensure the values are within the appropriate range to avoid errors
             tx = Math.max(-0.5, Math.min(0.5, tx));
             ty = Math.max(-0.5, Math.min(0.5, ty));
@@ -751,28 +751,28 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
                 key = this._transforms[i].shift();
                 if(key)
                 {
-                    normalizedMatrix[key].apply(normalizedMatrix, this._transforms[i]); 
-                    matrix[key].apply(matrix, this._transforms[i]); 
+                    normalizedMatrix[key].apply(normalizedMatrix, this._transforms[i]);
+                    matrix[key].apply(matrix, this._transforms[i]);
                 }
 			}
             if(isPathShape)
             {
                 normalizedMatrix.translate(-this._left, -this._top);
             }
-            transform = normalizedMatrix.a + "," + 
-                        normalizedMatrix.c + "," + 
-                        normalizedMatrix.b + "," + 
-                        normalizedMatrix.d + "," + 
+            transform = normalizedMatrix.a + "," +
+                        normalizedMatrix.c + "," +
+                        normalizedMatrix.b + "," +
+                        normalizedMatrix.d + "," +
                         0 + "," +
                         0;
 		}
-        this._graphic.addToRedrawQueue(this);    
+        this._graphic.addToRedrawQueue(this);
         if(transform)
         {
             if(!this._skew)
             {
                 this._skew = DOCUMENT.createElement( '<skew class="vmlskew" xmlns="urn:schemas-microsft.com:vml" on="false" style="behavior:url(#default#VML);display:inline-block;" />');
-                this.node.appendChild(this._skew); 
+                this.node.appendChild(this._skew);
             }
             this._skew.matrix = transform;
             this._skew.on = true;
@@ -787,7 +787,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         node.style.left = (x + this._getSkewOffsetValue(normalizedMatrix.dx)) + "px";
         node.style.top =  (y + this._getSkewOffsetValue(normalizedMatrix.dy)) + "px";
     },
-    
+
     /**
      * Normalizes the skew offset values between -32767 and 32767.
      *
@@ -803,7 +803,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         val = Math.min(absVal, 32767) * sign;
         return val;
     },
-	
+
 	/**
 	 * Storage for translateX
 	 *
@@ -821,7 +821,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @private
 	 */
 	_translateY: 0,
-    
+
     /**
      * Storage for the transform attribute.
      *
@@ -830,7 +830,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * @private
      */
     _transform: "",
-	
+
     /**
 	 * Specifies a 2d translation.
 	 *
@@ -928,7 +928,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	},
 
 	/**
-     * Overrides default `on` method. Checks to see if its a dom interaction event. If so, 
+     * Overrides default `on` method. Checks to see if its a dom interaction event. If so,
      * return an event attached to the `node` element. If not, return the normal functionality.
      *
      * @method on
@@ -968,7 +968,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         host._fillChangeHandler();
         host._strokeChangeHandler();
         node.style.width = this.get("width") + "px";
-        node.style.height = this.get("height") + "px"; 
+        node.style.height = this.get("height") + "px";
         this._draw();
 		host._updateTransform();
 	},
@@ -1013,7 +1013,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method _getDefaultStroke
 	 * @return Object
 	 */
-	_getDefaultStroke: function() 
+	_getDefaultStroke: function()
 	{
 		return {
 			weight: 1,
@@ -1027,12 +1027,12 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      * Sets the value of an attribute.
      *
      * @method set
-     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can
      * be passed in to set multiple attributes at once.
-     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function() 
+	set: function()
 	{
 		var host = this;
 		AttributeLite.prototype.set.apply(host, arguments);
@@ -1046,7 +1046,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * Returns the bounds for a shape.
 	 *
      * Calculates the a new bounding box from the original corner coordinates (base on size and position) and the transform matrix.
-     * The calculated bounding box is used by the graphic instance to calculate its viewBox. 
+     * The calculated bounding box is used by the graphic instance to calculate its viewBox.
      *
 	 * @method getBounds
 	 * @return Object
@@ -1104,7 +1104,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             key = transform.shift();
             if(key)
             {
-                matrix[key].apply(matrix, transform); 
+                matrix[key].apply(matrix, transform);
             }
         }
         matrix.translate(-transformX, -transformY);
@@ -1158,7 +1158,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             args,
             commandArray = Y.Lang.trim(val.match(SPLITPATHPATTERN)),
             i,
-            len, 
+            len,
             str,
             symbolToMethod = this._pathSymbolToMethod;
         if(commandArray)
@@ -1186,7 +1186,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
             this.end();
         }
     },
-	
+
     /**
      *  Destroys shape
      *
@@ -1214,7 +1214,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
     _destroy: function()
     {
         if(this.node)
-        {   
+        {
             if(this._fillNode)
             {
                 this.node.removeChild(this._fillNode);
@@ -1232,7 +1232,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 
 VMLShape.ATTRS = {
 	/**
-	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a 
+	 * An array of x, y values which indicates the transformOrigin in which to rotate the shape. Valid values range between 0 and 1 representing a
 	 * fraction of the shape's corresponding bounding box dimension. The default value is [0.5, 0.5].
 	 *
 	 * @config transformOrigin
@@ -1244,10 +1244,10 @@ VMLShape.ATTRS = {
 			return [0.5, 0.5];
 		}
 	},
-	
+
     /**
      * <p>A string containing, in order, transform operations applied to the shape instance. The `transform` string can contain the following values:
-     *     
+     *
      *    <dl>
      *        <dt>rotate</dt><dd>Rotates the shape clockwise around it transformOrigin.</dd>
      *        <dt>translate</dt><dd>Specifies a 2d translation.</dd>
@@ -1257,7 +1257,7 @@ VMLShape.ATTRS = {
      *        <dt>translateY</dt><dd>Translates the shape along the y-axis.</dd>
      *        <dt>skewX</dt><dd>Skews the shape around the x-axis.</dd>
      *        <dt>skewY</dt><dd>Skews the shape around the y-axis.</dd>
-     *        <dt>matrix</dt><dd>Specifies a 2D transformation matrix comprised of the specified six values.</dd>      
+     *        <dt>matrix</dt><dd>Specifies a 2D transformation matrix comprised of the specified six values.</dd>
      *    </dl>
      * </p>
      * <p>Applying transforms through the transform attribute will reset the transform matrix and apply a new transform. The shape class also contains corresponding methods for each transform
@@ -1269,10 +1269,10 @@ VMLShape.ATTRS = {
                 transform: "rotate(45)"
             };
      * <p>The code below would apply `translate` and `rotate` to an existing shape.</p>
-    
+
         myRect.set("transform", "translate(40, 50) rotate(45)");
 	 * @config transform
-     * @type String  
+     * @type String
 	 */
 	transform: {
 		setter: function(val)
@@ -1280,8 +1280,8 @@ VMLShape.ATTRS = {
             var i,
                 len,
                 transform;
-            this.matrix.init();	
-            this._normalizedMatrix.init();	
+            this.matrix.init();
+            this._normalizedMatrix.init();
             this._transforms = this.matrix.getTransformArray(val);
             len = this._transforms.length;
             for(i = 0;i < len; ++i)
@@ -1340,9 +1340,9 @@ VMLShape.ATTRS = {
 			return val;
 		}
 	},
-	
+
 	/**
-	 * 
+	 *
 	 * @config width
 	 */
 	width: {
@@ -1350,7 +1350,7 @@ VMLShape.ATTRS = {
 	},
 
 	/**
-	 * 
+	 *
 	 * @config height
 	 */
 	height: {
@@ -1378,7 +1378,7 @@ VMLShape.ATTRS = {
 	},
 
 	/**
-	 * Contains information about the fill of the shape. 
+	 * Contains information about the fill of the shape.
      *  <dl>
      *      <dt>color</dt><dd>The color of the fill.</dd>
      *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
@@ -1396,7 +1396,7 @@ VMLShape.ATTRS = {
      *          <dl>
      *              <dt>color</dt><dd>The color of the stop.</dd>
      *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE 6 - 8</dd>
-     *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+     *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd>
      *          </dl>
      *      </dd>
      *      <p>Linear gradients also have the following property:</p>
@@ -1415,20 +1415,20 @@ VMLShape.ATTRS = {
      *          <p>The y-coordinate of the center of the gradient circle. Determines where the color stop begins. The default value 0.5.</p>
      *      </dd>
      *  </dl>
-     *  <p>These properties are not currently implemented in `CanvasShape` or `VMLShape`.</p> 
+     *  <p>These properties are not currently implemented in `CanvasShape` or `VMLShape`.</p>
 	 *
 	 * @config fill
-	 * @type Object 
+	 * @type Object
 	 */
 	fill: {
 		valueFn: "_getDefaultFill",
-		
+
 		setter: function(val)
 		{
 			var i,
 				fill,
 				tmpl = this.get("fill") || this._getDefaultFill();
-			
+
 			if(val)
 			{
 				//ensure, fill type is solid if color is explicitly passed.
@@ -1439,7 +1439,7 @@ VMLShape.ATTRS = {
 				for(i in val)
 				{
 					if(val.hasOwnProperty(i))
-					{   
+					{
 						tmpl[i] = val[i];
 					}
 				}
@@ -1487,7 +1487,7 @@ VMLShape.ATTRS = {
 	 */
 	stroke: {
 		valueFn: "_getDefaultStroke",
-		
+
 		setter: function(val)
 		{
 			var i,
@@ -1507,7 +1507,7 @@ VMLShape.ATTRS = {
 				for(i in val)
 				{
 					if(val.hasOwnProperty(i))
-					{   
+					{
 						tmpl[i] = val[i];
 					}
 				}
@@ -1517,7 +1517,7 @@ VMLShape.ATTRS = {
 			return stroke;
 		}
 	},
-	
+
 	//Not used. Remove in future.
     autoSize: {
 		value: false
@@ -1525,7 +1525,7 @@ VMLShape.ATTRS = {
 
 	// Only implemented in SVG
 	// Determines whether the instance will receive mouse events.
-	// 
+	//
 	// @config pointerEvents
 	// @type string
 	//
@@ -1550,9 +1550,9 @@ VMLShape.ATTRS = {
 	},
 
     /**
-     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG 
-     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need 
-     * to ensure that no malicious code is included in that content. 
+     * Represents an SVG Path string. This will be parsed and added to shape's API to represent the SVG data across all implementations. Note that when using VML or SVG
+     * implementations, part of this content will be added to the DOM using respective VML/SVG attributes. If your content comes from an untrusted source, you will need
+     * to ensure that no malicious code is included in that content.
      *
      * @config data
      * @type String

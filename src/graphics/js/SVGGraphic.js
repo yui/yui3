@@ -1,7 +1,7 @@
 /**
- * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Graphic.html">`Graphic`</a> class. 
- * `SVGGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
- * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * <a href="http://www.w3.org/TR/SVG/">SVG</a> implementation of the <a href="Graphic.html">`Graphic`</a> class.
+ * `SVGGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class.
+ * If the browser has <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities, the <a href="Graphic.html">`Graphic`</a>
  * class will point to the `SVGGraphic` class.
  *
  * @module graphics
@@ -17,12 +17,12 @@ SVGGraphic.NAME = "svgGraphic";
 SVGGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
-     * 
+     *
      * @config render
-     * @type Node | String 
+     * @type Node | String
      */
     render: {},
-	
+
     /**
 	 * Unique id for class instance.
 	 *
@@ -66,7 +66,7 @@ SVGGraphic.ATTRS = {
      *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
      *
      *  @config contentBounds
-     *  @type Object 
+     *  @type Object
      *  @readOnly
      */
     contentBounds: {
@@ -93,9 +93,9 @@ SVGGraphic.ATTRS = {
             return this._node;
         }
     },
-    
+
 	/**
-	 * Indicates the width of the `Graphic`. 
+	 * Indicates the width of the `Graphic`.
 	 *
 	 * @config width
 	 * @type Number
@@ -107,14 +107,14 @@ SVGGraphic.ATTRS = {
             {
                 this._node.style.width = val + "px";
             }
-            return val; 
+            return val;
         }
     },
 
 	/**
-	 * Indicates the height of the `Graphic`. 
+	 * Indicates the height of the `Graphic`.
 	 *
-	 * @config height 
+	 * @config height
 	 * @type Number
 	 */
     height: {
@@ -129,11 +129,11 @@ SVGGraphic.ATTRS = {
     },
 
     /**
-     *  Determines the sizing of the Graphic. 
+     *  Determines the sizing of the Graphic.
      *
      *  <dl>
      *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
-     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's
      *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
      *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
      *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
@@ -148,12 +148,12 @@ SVGGraphic.ATTRS = {
     autoSize: {
         value: false
     },
-    
+
     /**
      * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
      *
      *  <dl>
-     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary
      *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
      *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
      *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
@@ -165,7 +165,7 @@ SVGGraphic.ATTRS = {
      *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
      *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
      *  </dl>
-     * 
+     *
      * @config preserveAspectRatio
      * @type String
      * @default xMidYMid
@@ -173,12 +173,12 @@ SVGGraphic.ATTRS = {
     preserveAspectRatio: {
         value: "xMidYMid"
     },
-    
+
     /**
      * The contentBounds will resize to greater values but not to smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @config resizeDown 
+     * @config resizeDown
      * @type Boolean
      */
     resizeDown: {
@@ -243,7 +243,7 @@ SVGGraphic.ATTRS = {
     autoDraw: {
         value: true
     },
-    
+
     visible: {
         value: true,
 
@@ -270,12 +270,12 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * Sets the value of an attribute.
      *
      * @method set
-     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can
      * be passed in to set multiple attributes at once.
-     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value) 
+	set: function(attr, value)
 	{
 		var host = this,
             redrawAttrs = {
@@ -286,7 +286,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             },
             key,
             forceRedraw = false;
-		AttributeLite.prototype.set.apply(host, arguments);	
+		AttributeLite.prototype.set.apply(host, arguments);
         if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
@@ -380,7 +380,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
 
     /**
      * Adds the graphics node to the dom.
-     * 
+     *
      * @method render
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
@@ -452,7 +452,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._contentNode;
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw"))
         {
             parentNode.appendChild(node);
         }
@@ -482,7 +482,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             shape._destroy();
             delete this._shapes[shape.get("id")];
         }
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw"))
         {
             this._redraw();
         }
@@ -507,7 +507,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         }
         this._shapes = {};
     },
-    
+
     /**
      * Removes all child nodes.
      *
@@ -571,11 +571,11 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
     },
 
     /**
-     * Returns a shape class. Used by `addShape`. 
+     * Returns a shape class. Used by `addShape`.
      *
      * @method _getShapeClass
-     * @param {Shape | String} val Indicates which shape class. 
-     * @return Function 
+     * @param {Shape | String} val Indicates which shape class.
+     * @return Function
      * @private
      */
     _getShapeClass: function(val)
@@ -602,7 +602,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         ellipse: Y.SVGEllipse,
         pieslice: Y.SVGPieSlice
     },
-    
+
     /**
      * Returns a shape based on the id of its dom node.
      *
@@ -629,7 +629,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
         method();
         this.set("autoDraw", autoDraw);
     },
-    
+
     /**
      * Returns a document fragment to for attaching shapes.
      *
@@ -678,7 +678,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
                 computedLeft = computedTop = 0;
                 this._contentNode.setAttribute("preserveAspectRatio", preserveAspectRatio);
             }
-            else 
+            else
             {
                 computedWidth = width;
                 computedHeight = height;
@@ -717,11 +717,11 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
                 this._contentNode.appendChild(this._frag);
             }
             this._frag = null;
-        } 
+        }
     },
- 
+
     /**
-     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally
      * by `Shape` instances.
      *
      * @method addToRedrawQueue
@@ -745,7 +745,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
             box.height = box.bottom - box.top;
             this._contentBounds = box;
         }
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw"))
         {
             this._redraw();
         }
@@ -755,7 +755,7 @@ Y.extend(SVGGraphic, Y.GraphicBase, {
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
      * @method _getUpdatedContentBounds
-     * @return {Object} 
+     * @return {Object}
      * @private
      */
     _getUpdatedContentBounds: function()

@@ -1,8 +1,8 @@
 /**
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the `Graphic` class. 
- * `CanvasGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class. 
- * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has 
- * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a> 
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> implementation of the `Graphic` class.
+ * `CanvasGraphic` is not intended to be used directly. Instead, use the <a href="Graphic.html">`Graphic`</a> class.
+ * If the browser lacks <a href="http://www.w3.org/TR/SVG/">SVG</a> capabilities but has
+ * <a href="http://www.w3.org/TR/html5/the-canvas-element.html">Canvas</a> capabilities, the <a href="Graphic.html">`Graphic`</a>
  * class will point to the `CanvasGraphic` class.
  *
  * @module graphics
@@ -10,7 +10,7 @@
  * @constructor
  */
 function CanvasGraphic(config) {
-    
+
     CanvasGraphic.superclass.constructor.apply(this, arguments);
 }
 
@@ -19,12 +19,12 @@ CanvasGraphic.NAME = "canvasGraphic";
 CanvasGraphic.ATTRS = {
     /**
      * Whether or not to render the `Graphic` automatically after to a specified parent node after init. This can be a Node instance or a CSS selector string.
-     * 
+     *
      * @config render
-     * @type Node | String 
+     * @type Node | String
      */
     render: {},
-	
+
     /**
 	 * Unique id for class instance.
 	 *
@@ -67,7 +67,7 @@ CanvasGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the graphic instance's position.
      *
-     *  @config contentBounds 
+     *  @config contentBounds
      *  @type Object
      *  @readOnly
      */
@@ -97,7 +97,7 @@ CanvasGraphic.ATTRS = {
     },
 
 	/**
-	 * Indicates the width of the `Graphic`. 
+	 * Indicates the width of the `Graphic`.
 	 *
 	 * @config width
 	 * @type Number
@@ -107,16 +107,16 @@ CanvasGraphic.ATTRS = {
         {
             if(this._node)
             {
-                this._node.style.width = val + "px";            
+                this._node.style.width = val + "px";
             }
             return val;
         }
     },
 
 	/**
-	 * Indicates the height of the `Graphic`. 
+	 * Indicates the height of the `Graphic`.
 	 *
-	 * @config height 
+	 * @config height
 	 * @type Number
 	 */
     height: {
@@ -131,11 +131,11 @@ CanvasGraphic.ATTRS = {
     },
 
     /**
-     *  Determines the sizing of the Graphic. 
+     *  Determines the sizing of the Graphic.
      *
      *  <dl>
      *      <dt>sizeContentToGraphic</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
-     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's 
+     *      attributes or are determined by the dimensions of the parent element. The content contained in the Graphic will be sized to fit with in the Graphic instance's
      *      dimensions. When using this setting, the <code>preserveAspectRatio</code> attribute will determine how the contents are sized.</dd>
      *      <dt>sizeGraphicToContent</dt><dd>(Also accepts a value of true) The Graphic's width and height are determined by the size and positioning of the content.</dd>
      *      <dt>false</dt><dd>The Graphic's width and height attributes are, either explicitly set through the <code>width</code> and <code>height</code>
@@ -155,7 +155,7 @@ CanvasGraphic.ATTRS = {
      * Determines how content is sized when <code>autoSize</code> is set to <code>sizeContentToGraphic</code>.
      *
      *  <dl>
-     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary 
+     *      <dt>none<dt><dd>Do not force uniform scaling. Scale the graphic content of the given element non-uniformly if necessary
      *      such that the element's bounding box exactly matches the viewport rectangle.</dd>
      *      <dt>xMinYMin</dt><dd>Force uniform scaling position along the top left of the Graphic's node.</dd>
      *      <dt>xMidYMin</dt><dd>Force uniform scaling horizontally centered and positioned at the top of the Graphic's node.<dd>
@@ -167,7 +167,7 @@ CanvasGraphic.ATTRS = {
      *      <dt>xMidYMax</dt><dd>Force uniform scaling horizontally centered and position vertically from the bottom.</dd>
      *      <dt>xMaxYMax</dt><dd>Force uniform scaling positioned horizontally from the right and vertically from the bottom.</dd>
      *  </dl>
-     * 
+     *
      * @config preserveAspectRatio
      * @type String
      * @default xMidYMid
@@ -180,7 +180,7 @@ CanvasGraphic.ATTRS = {
      * The contentBounds will resize to greater values but not smaller values. (for performance)
      * When resizing the contentBounds down is desirable, set the resizeDown value to true.
      *
-     * @config resizeDown 
+     * @config resizeDown
      * @type Boolean
      */
     resizeDown: {
@@ -268,12 +268,12 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * Sets the value of an attribute.
      *
      * @method set
-     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can 
+     * @param {String|Object} name The name of the attribute. Alternatively, an object of key value pairs can
      * be passed in to set multiple attributes at once.
-     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as 
+     * @param {Any} value The value to set the attribute to. This value is ignored if an object is received as
      * the name param.
      */
-	set: function(attr, value) 
+	set: function(attr, value)
 	{
 		var host = this,
             redrawAttrs = {
@@ -284,7 +284,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             },
             key,
             forceRedraw = false;
-		AttributeLite.prototype.set.apply(host, arguments);	
+		AttributeLite.prototype.set.apply(host, arguments);
         if(host._state.autoDraw === true && Y.Object.size(this._shapes) > 0)
         {
             if(Y_LANG.isString && redrawAttrs[attr])
@@ -343,12 +343,12 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         }
         return xy;
     },
-    
+
 	/**
      * Initializes the class.
      *
      * @method initializer
-     * @param {Object} config Optional attributes 
+     * @param {Object} config Optional attributes
      * @private
      */
     initializer: function(config) {
@@ -377,7 +377,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
 
     /**
      * Adds the graphics node to the dom.
-     * 
+     *
      * @method render
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
@@ -444,7 +444,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     {
         var node = shape.node,
             parentNode = this._frag || this._node;
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw"))
         {
             parentNode.appendChild(node);
         }
@@ -474,7 +474,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             shape._destroy();
             delete this._shapes[shape.get("id")];
         }
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw"))
         {
             this._redraw();
         }
@@ -499,7 +499,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         }
         this._shapes = {};
     },
-    
+
     /**
      * Clears the graphics object.
      *
@@ -529,7 +529,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             }
         }
     },
-    
+
     /**
      * Toggles visibility
      *
@@ -559,11 +559,11 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
     },
 
     /**
-     * Returns a shape class. Used by `addShape`. 
+     * Returns a shape class. Used by `addShape`.
      *
      * @method _getShapeClass
-     * @param {Shape | String} val Indicates which shape class. 
-     * @return Function 
+     * @param {Shape | String} val Indicates which shape class.
+     * @return Function
      * @private
      */
     _getShapeClass: function(val)
@@ -575,7 +575,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         }
         return val;
     },
-    
+
     /**
      * Look up for shape classes. Used by `addShape` to retrieve a class for instantiation.
      *
@@ -590,7 +590,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         ellipse: Y.CanvasEllipse,
         pieslice: Y.CanvasPieSlice
     },
-    
+
     /**
      * Returns a shape based on the id of its dom node.
      *
@@ -633,7 +633,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         }
         return this._frag;
     },
-    
+
     /**
      * Redraws all shapes.
      *
@@ -671,7 +671,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
                 }
                 else
                 {
-                    if(contentWidth/contentHeight !== w/h) 
+                    if(contentWidth/contentHeight !== w/h)
                     {
                         if(contentWidth * h/contentHeight > w)
                         {
@@ -704,7 +704,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             this._frag = null;
         }
     },
-    
+
     /**
      * Determines the value for either an x or y value to be used for the <code>translate</code> of the Graphic.
      *
@@ -733,9 +733,9 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
         }
         return coord;
     },
-    
+
     /**
-     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally 
+     * Adds a shape to the redraw queue and calculates the contentBounds. Used internally
      * by `Shape` instances.
      *
      * @method addToRedrawQueue
@@ -757,7 +757,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
             box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
             this._contentBounds = box;
         }
-        if(this.get("autoDraw")) 
+        if(this.get("autoDraw"))
         {
             this._redraw();
         }
@@ -767,7 +767,7 @@ Y.extend(CanvasGraphic, Y.GraphicBase, {
      * Recalculates and returns the `contentBounds` for the `Graphic` instance.
      *
      * @method _getUpdatedContentBounds
-     * @return {Object} 
+     * @return {Object}
      * @private
      */
     _getUpdatedContentBounds: function()

@@ -1,12 +1,12 @@
 /**
  * The ComboSeries class renders a combination of lines, plots and area fills in a single series. Each
- * series type has a corresponding boolean attribute indicating if it is rendered. By default, lines and plots 
- * are rendered and area is not. 
+ * series type has a corresponding boolean attribute indicating if it is rendered. By default, lines and plots
+ * are rendered and area is not.
  *
  * @module charts
  * @submodule charts-base
  * @class ComboSeries
- * @extends CartesianSeries 
+ * @extends CartesianSeries
  * @uses Fills
  * @uses Lines
  * @uses Plots
@@ -15,7 +15,7 @@
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
 	/**
      * @protected
-     * 
+     *
      * Draws the series.
      *
      * @method drawSeries
@@ -26,16 +26,16 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         {
             this.drawFill.apply(this, this._getClosingPoints());
         }
-        if(this.get("showLines")) 
+        if(this.get("showLines"))
         {
             this.drawLines();
         }
         if(this.get("showMarkers"))
         {
             this.drawPlots();
-        }   
+        }
     },
-    
+
     /**
      * Toggles visibility
      *
@@ -164,7 +164,7 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          *      </dd>
          *      <dt>width</dt><dd>indicates the width of the marker. The default value is 10.</dd>
          *      <dt>height</dt><dd>indicates the height of the marker The default value is 10.</dd>
-         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default 
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a `mouseover` event. The default
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
          *      the default value for `marker.over.fill.color` is equivalent to `marker.fill.color`.</dd>
          *  </dl>
@@ -183,20 +183,20 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
                 this.set("styles", {marker:val});
             }
         },
-        
+
         /**
          * Reference to the styles of the lines. These styles can also be accessed through the `styles` attribute.
          * Below are the default values:
          *  <dl>
          *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array: 
+         *      retrieved from the following array:
          *      `["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]`
          *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
-         *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd> 
+         *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd>
          *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default value is 10.</dd>
          *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
-         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd> 
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd>
          *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
          *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default value is 10.</dd>
          *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
@@ -216,13 +216,13 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
                 this.set("styles", {line:val});
             }
         },
-        
+
         /**
          * Reference to the styles of the area fills. These styles can also be accessed through the `styles` attribute.
          * Below are the default values:
          *
          *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be
          *      retrieved from the following array:
          *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *      </dd>
@@ -263,6 +263,6 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 
 
 
-		
 
-		
+
+

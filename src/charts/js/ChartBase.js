@@ -11,7 +11,7 @@ function ChartBase() {}
 ChartBase.ATTRS = {
     /**
      * Data used to generate the chart.
-     * 
+     *
      * @attribute dataProvider
      * @type Array
      */
@@ -41,7 +41,7 @@ ChartBase.ATTRS = {
 
     /**
      * A collection of keys that map to the series axes. If no keys are set,
-     * they will be generated automatically depending on the data structure passed into 
+     * they will be generated automatically depending on the data structure passed into
      * the chart.
      *
      * @attribute seriesKeys
@@ -80,7 +80,7 @@ ChartBase.ATTRS = {
             return val;
         }
     },
-    
+
     /**
      * Sets the aria description for the chart.
      *
@@ -100,7 +100,7 @@ ChartBase.ATTRS = {
             return val;
         }
     },
-    
+
     /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
@@ -112,7 +112,7 @@ ChartBase.ATTRS = {
      *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
      *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
      *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
-     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains 
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains
      *      the following arguments:
      *  <dl>
      *      <dt>categoryItem</dt><dd>An object containing the following:
@@ -128,7 +128,7 @@ ChartBase.ATTRS = {
      *          <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
      *          <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
      *          <dt>key</dt><dd>The key for the series.</dd>
-     *          <dt>value</dt><dd>The value for the series item.</dd> 
+     *          <dt>value</dt><dd>The value for the series item.</dd>
      *      </dl>
      *  </dd>
      *  <dt>itemIndex</dt><dd>The index of the item within the series.</dd>
@@ -147,7 +147,7 @@ ChartBase.ATTRS = {
      *      <dt>key</dt><dd>The key for the series.</dd>
      *      <dt>value</dt><dd>The value for the series item.</dd>
      *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
-     *  </dl> 
+     *  </dl>
      *  </dd>
      *      <dt>index</dt><dd>The index of the item within its series.</dd>
      *      <dt>seriesArray</dt><dd>Array of series instances for each value item.</dd>
@@ -169,7 +169,7 @@ ChartBase.ATTRS = {
      *  </dl>
      * @attribute tooltip
      * @type Object
-     */ 
+     */
     tooltip: {
         valueFn: "_getTooltip",
 
@@ -179,8 +179,8 @@ ChartBase.ATTRS = {
         }
     },
 
-    /** 
-     * The key value used for the chart's category axis. 
+    /**
+     * The key value used for the chart's category axis.
      *
      * @attribute categoryKey
      * @type String
@@ -189,7 +189,7 @@ ChartBase.ATTRS = {
     categoryKey: {
         value: "category"
     },
-        
+
     /**
      * Indicates the type of axis to use for the category axis.
      *
@@ -233,9 +233,9 @@ ChartBase.ATTRS = {
 
     /**
      * Reference to graph instance.
-     * 
+     *
      * @attribute graph
-     * @type Graph 
+     * @type Graph
      */
     graph: {
         valueFn: "_getGraph"
@@ -297,12 +297,12 @@ ChartBase.prototype = {
     {
         var graph = new Y.Graph({
             chart:this,
-            groupMarkers: this.get("groupMarkers")    
+            groupMarkers: this.get("groupMarkers")
         });
         graph.after("chartRendered", Y.bind(function(e) {
             this.fire("chartRendered");
         }, this));
-        return graph; 
+        return graph;
     },
 
     /**
@@ -314,7 +314,7 @@ ChartBase.prototype = {
      */
     getSeries: function(val)
     {
-        var series = null, 
+        var series = null,
             graph = this.get("graph");
         if(graph)
         {
@@ -333,7 +333,7 @@ ChartBase.prototype = {
     /**
      * Returns an `Axis` instance by key reference. If the axis was explicitly set through the `axes` attribute,
      * the key will be the same as the key used in the `axes` object. For default axes, the key for
-     * the category axis is the value of the `categoryKey` (`category`). For the value axis, the default 
+     * the category axis is the value of the `categoryKey` (`category`). For the value axis, the default
      * key is `values`.
      *
      * @method getAxisByKey
@@ -378,7 +378,7 @@ ChartBase.prototype = {
      * @private
      */
     _direction: "horizontal",
-    
+
     /**
      * Storage for the `dataProvider` attribute.
      *
@@ -400,12 +400,12 @@ ChartBase.prototype = {
     {
         if(Y_Lang.isArray(val[0]))
         {
-            var hash, 
-                dp = [], 
-                cats = val[0], 
-                i = 0, 
-                l = cats.length, 
-                n, 
+            var hash,
+                dp = [],
+                cats = val[0],
+                i = 0,
+                l = cats.length,
+                n,
                 sl = val.length;
             for(; i < l; ++i)
             {
@@ -414,7 +414,7 @@ ChartBase.prototype = {
                 {
                     hash["series" + n] = val[n][i];
                 }
-                dp[i] = hash; 
+                dp[i] = hash;
             }
             return dp;
         }
@@ -426,7 +426,7 @@ ChartBase.prototype = {
      *
      * @property _seriesCollection
      * @type Array
-     * @private 
+     * @private
      */
     _seriesCollection: null,
 
@@ -453,9 +453,9 @@ ChartBase.prototype = {
     {
         return this._axisClass[t];
     },
-  
+
     /**
-     * Key value pairs of axis types. 
+     * Key value pairs of axis types.
      *
      * @property _axisClass
      * @type Object
@@ -509,7 +509,7 @@ ChartBase.prototype = {
         }
         this._setAriaElements(bb, cb);
     },
-   
+
     /**
      * Creates an aria `live-region`, `aria-label` and `aria-describedby` for the Chart.
      *
@@ -544,22 +544,22 @@ ChartBase.prototype = {
      * Sets a node offscreen for use as aria-description or aria-live-regin.
      *
      * @method _setOffscreen
-     * @return Node 
+     * @return Node
      * @private
      */
-    _getAriaOffscreenNode: function()  
+    _getAriaOffscreenNode: function()
     {
         var node = Y.Node.create("<div></div>"),
             ie = Y.UA.ie,
             clipRect = (ie && ie < 8) ? "rect(1px 1px 1px 1px)" : "rect(1px, 1px, 1px, 1px)";
         node.setStyle("position", "absolute");
-        node.setStyle("height", "1px"); 
-        node.setStyle("width", "1px"); 
+        node.setStyle("height", "1px");
+        node.setStyle("width", "1px");
         node.setStyle("overflow", "hidden");
-        node.setStyle("clip", clipRect); 
+        node.setStyle("clip", clipRect);
         return node;
     },
-  
+
     /**
      * @method syncUI
      * @private
@@ -681,7 +681,7 @@ ChartBase.prototype = {
             }
         }
     },
-    
+
     /**
      * Event handler for marker events.
      *
@@ -716,7 +716,7 @@ ChartBase.prototype = {
         e.halt();
         /**
          * Broadcasts when `interactionType` is set to `marker` and a series marker has received a mouseover event.
-         * 
+         *
          *
          * @event markerEvent:mouseover
          * @preventable false
@@ -810,15 +810,15 @@ ChartBase.prototype = {
          */
         this.fire("markerEvent:" + type, {
             originEvent: e,
-            pageX:pageX, 
-            pageY:pageY, 
-            categoryItem:items.category, 
-            valueItem:items.value, 
-            node:markerNode, 
-            x:x, 
-            y:y, 
-            series:series, 
-            index:index, 
+            pageX:pageX,
+            pageY:pageY,
+            categoryItem:items.category,
+            valueItem:items.value,
+            node:markerNode,
+            x:x,
+            y:y,
+            series:series,
+            index:index,
             seriesIndex:seriesIndex
         });
     },
@@ -863,11 +863,11 @@ ChartBase.prototype = {
             }
         }
     },
-    
+
     /**
-     * Event listener for toggling the tooltip. If a tooltip is visible, hide it. If not, it 
+     * Event listener for toggling the tooltip. If a tooltip is visible, hide it. If not, it
      * will create and show a tooltip based on the event object.
-     * 
+     *
      * @method toggleTooltip
      * @param {Object} e Event object.
      */
@@ -889,7 +889,7 @@ ChartBase.prototype = {
      *
      * @method _showTooltip
      * @param {String} msg Message to dispaly in the tooltip.
-     * @param {Number} x x-coordinate 
+     * @param {Number} x x-coordinate
      * @param {Number} y y-coordinate
      * @private
      */
@@ -1079,11 +1079,11 @@ ChartBase.prototype = {
      *      <dt>key</dt><dd>The key for the series.</dd>
      *      <dt>value</dt><dd>The value for the series item.</dd>
      *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
-     *  </dl> 
+     *  </dl>
      *  @param {Number} index The index of the item within its series.
      *  @param {Array} seriesArray Array of series instances for each value item.
      *  @param {Number} seriesIndex The index of the series in the `seriesCollection`.
-     *  @return {String | HTML} 
+     *  @return {String | HTML}
      * @private
      */
     _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
@@ -1143,7 +1143,7 @@ ChartBase.prototype = {
      *      <dt>axis</dt><dd>The axis to which the item's series is bound.</dd>
      *      <dt>displayName</dt><dd>The display name of the series. (defaults to key if not provided)</dd>
      *      <dt>key</dt><dd>The key for the series.</dd>
-     *      <dt>value</dt><dd>The value for the series item.</dd> 
+     *      <dt>value</dt><dd>The value for the series item.</dd>
      *  </dl>
      * @param {Number} itemIndex The index of the item within the series.
      * @param {CartesianSeries} series The `CartesianSeries` instance of the item.
@@ -1156,22 +1156,22 @@ ChartBase.prototype = {
         var msg = DOCUMENT.createElement("div"),
             categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
             seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
-        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName)); 
-        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName));
+        msg.appendChild(DOCUMENT.createTextNode(": "));
         if(!Y_Lang.isObject(categoryValue))
         {
             categoryValue = DOCUMENT.createTextNode(categoryValue);
         }
         msg.appendChild(categoryValue);
         msg.appendChild(DOCUMENT.createElement("br"));
-        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName)); 
-        msg.appendChild(DOCUMENT.createTextNode(": ")); 
+        msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
+        msg.appendChild(DOCUMENT.createTextNode(": "));
         if(!Y_Lang.isObject(seriesValue))
         {
             seriesValue = DOCUMENT.createTextNode(seriesValue);
         }
         msg.appendChild(seriesValue);
-        return msg; 
+        return msg;
     },
 
     /**
@@ -1198,10 +1198,10 @@ ChartBase.prototype = {
             }
         }
     },
-    
+
     /**
-     * Updates the content of text field. This method writes a value into a text field using 
-     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first. 
+     * Updates the content of text field. This method writes a value into a text field using
+     * `appendChild`. If the value is a `String`, it is converted to a `TextNode` first.
      *
      * @method _setText
      * @param label {HTMLElement} label to be updated
@@ -1209,7 +1209,7 @@ ChartBase.prototype = {
      * @private
      */
     _setText: function(textField, val)
-    { 
+    {
         textField.setContent("");
         if(Y_Lang.isNumber(val))
         {
@@ -1253,7 +1253,7 @@ ChartBase.prototype = {
         }
         return keys;
     },
-    
+
     /**
      * Constructs seriesKeys if not explicitly specified.
      *

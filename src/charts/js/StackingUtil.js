@@ -24,7 +24,7 @@ StackingUtil.prototype = {
      *
      * @method _stackCoordinates
      */
-    _stackCoordinates: function() 
+    _stackCoordinates: function()
     {
         if(this.get("direction") == "vertical")
         {
@@ -128,7 +128,7 @@ StackingUtil.prototype = {
         var order = this.get("order"),
             type = this.get("type"),
             graph = this.get("graph"),
-            h = graph.get("height"), 
+            h = graph.get("height"),
             seriesCollection = graph.seriesTypes[type],
             i = 0,
             xcoords = this.get("xcoords"),
@@ -200,7 +200,7 @@ StackingUtil.prototype = {
     },
 
     /**
-     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the previous valid x-coordinate with its 
+     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the previous valid x-coordinate with its
      * corresponding y-coordinate and the next valid x-coordinate with its corresponding y-coordinate. If there is no previous or next valid x-coordinate,
      * the value will not be altered.
      *
@@ -293,7 +293,7 @@ StackingUtil.prototype = {
     },
 
     /**
-     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the previous valid y-coordinate with its 
+     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the previous valid y-coordinate with its
      * corresponding x-coordinate and the next valid y-coordinate with its corresponding x-coordinate. If there is no previous or next valid y-coordinate,
      * the value will not be altered.
      *
