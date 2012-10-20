@@ -107,7 +107,7 @@ Y.Color = {
     **/
     convert: function (str, to) {
         to = to.toLowerCase();
-        to[0] = to[0].toUpperCase();
+        to = to[0].toUpperCase() + to.substr(1);
         var clr = Y.Color['to' + to](str);
         return clr.toLowerCase();
     },
@@ -299,8 +299,8 @@ Y.Color = {
     @since 3.x
     **/
     _keywordToHex: function (clr) {
-        if (Color.KEYWORDS[clr]) {
-            return Color.KEYWORDS[clr];
+        if (Y.Color.KEYWORDS[clr]) {
+            return Y.Color.KEYWORDS[clr];
         }
     },
 
@@ -362,6 +362,9 @@ Y.Color = {
 
         // process clr from arrays to strings after conversions if alpha is needed
         if (needsAlpha && Y.Color['STR_' + originalTo.toUpperCase()]) {
+            if (!Y.Lang.isArray(clr)) {
+                clr = Y.Color.toArray(clr);
+            }
             clr.push(alpha);
             clr = Y.Color.fromArray(clr, Y.Color['STR_' + originalTo.toUpperCase()]);
         }
@@ -417,10 +420,6 @@ Y.Color = {
 
         while (hex.length < 6) {
             hex = '0' + hex;
-        }
-
-        if (toArray) {
-            return [hex.substr(0,2), hex.substr(2,2), hex.substr(4,2)];
         }
 
         return '#' + hex;
