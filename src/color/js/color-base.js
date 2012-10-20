@@ -178,7 +178,9 @@ Y.Color = {
     },
 
     /**
-    Converts the provided color string to an array of values
+    Converts the provided color string to an array of values. Will
+        return an empty array if the provided string is not able
+        to be parsed.
     @public
     @method toArray
     @param {String} str
@@ -188,6 +190,7 @@ Y.Color = {
     toArray: function(str) {
         // parse with regex and return "matches" array
         var type = Y.Color.findType(str).toUpperCase(),
+            regex,
             arr;
 
         if (type === 'HEX' && str.length < 5) {
@@ -197,15 +200,20 @@ Y.Color = {
         if (type[type.length - 1] === 'A') {
             type = type.slice(0, -1);
         }
-        if (Y.Color['REGEX_' + type]) {
-            arr = Y.Color['REGEX_' + type].exec(str);
-            arr.shift();
+        regex = Y.Color['REGEX_' + type];
+        if (regex) {
+            arr = regex.exec(str) || [];
 
-            if (typeof arr[arr.length -1] === 'undefined') {
-                arr[arr.length - 1] = 1;
+            if (arr.length) {
+                arr.shift();
+
+                if (typeof arr[arr.length - 1] === 'undefined') {
+                    arr[arr.length - 1] = 1;
+                }
             }
-            return arr;
         }
+
+        return arr;
 
     },
 
@@ -299,8 +307,10 @@ Y.Color = {
     @since 3.x
     **/
     _keywordToHex: function (clr) {
-        if (Y.Color.KEYWORDS[clr]) {
-            return Y.Color.KEYWORDS[clr];
+        var keyword = Y.Color.KEYWORDS[clr];
+
+        if (keyword) {
+            return keyword;
         }
     },
 
@@ -317,7 +327,9 @@ Y.Color = {
         var from = Y.Color.findType(clr),
             originalTo = to,
             needsAlpha,
-            alpha;
+            alpha,
+            method,
+            template;
 
         if (from === 'keyword') {
             clr = Y.Color._keywordToHex(clr);
@@ -356,17 +368,19 @@ Y.Color = {
         var ucTo = to.toLowerCase();
         ucTo = ucTo[0].toUpperCase() + ucTo.substr(1);
 
-        if (Y.Color['_' + from + 'To' + ucTo ]) {
-            clr = Y.Color['_' + from + 'To' + ucTo](clr, needsAlpha);
+        method = Y.Color['_' + from + 'To' + ucTo ];
+        if (method) {
+            clr = ((method)(clr, needsAlpha));
         }
 
         // process clr from arrays to strings after conversions if alpha is needed
-        if (needsAlpha && Y.Color['STR_' + originalTo.toUpperCase()]) {
+        template = Y.Color['STR_' + originalTo.toUpperCase()];
+        if (needsAlpha && template) {
             if (!Y.Lang.isArray(clr)) {
                 clr = Y.Color.toArray(clr);
             }
             clr.push(alpha);
-            clr = Y.Color.fromArray(clr, Y.Color['STR_' + originalTo.toUpperCase()]);
+            clr = Y.Color.fromArray(clr, template);
         }
 
         return clr;

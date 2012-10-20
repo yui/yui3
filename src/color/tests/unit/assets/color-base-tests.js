@@ -39,6 +39,14 @@ YUI.add('color-tests', function(Y) {
 
             },
 
+            'test invalid params or direct calls': function() {
+                Assert.areEqual([].join(''), Y.Color.toArray('bar').join(''), 'toArray should return and empty array');
+
+                Assert.areEqual(undefined, Y.Color._keywordToHex('orange'), 'orange should not be found as a valid keyword');
+
+                Assert.areEqual('rgb(255, 255, 0)', Y.Color._hexToRgb('ffff00'), 'direct call to _hexToRgb');
+            },
+
             'test fromArray conversions': function() {
                 Assert.areEqual('0, 0, 0', Y.Color.fromArray([0,0,0]), 'template undefined');
 
