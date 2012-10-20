@@ -9,15 +9,19 @@
 
 <script>
 YUI({
-    coverage: ['base'],
+    coverage: ['base-core', 'base-build', 'base-base', 'base-pluginhost'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     modules: {
         'base-tests': {
             fullpath: './assets/base-tests.js',
             requires: ['base', 'test']
+        },
+        'base-core-tests': {
+            fullpath: './assets/base-core-tests.js',
+            requires: [ 'base-core', 'dump', 'test' ]
         }
     }
-}).use('base-tests', 'test-console', function (Y) {
+}).use('base-core-tests', 'base-tests', 'test-console', function (Y) {
 
     (new Y.Test.Console()).render('#log');
 

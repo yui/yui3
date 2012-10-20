@@ -8,15 +8,24 @@
 <div id="log"></div>
 <script>
 YUI({
-    coverage: ['attribute'],
+    coverage: ['attribute-core', 'attribute-base', 'attribute-complex', 'attribute-events', 'attribute-extras'],
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     modules: {
         'attribute-tests': {
             fullpath: './assets/attribute-tests.js',
             requires: ['dump','base', 'test']
+        },
+        'attribute-core-tests': {
+            fullpath: './assets/attribute-core-tests.js',
+            requires: ['dump', 'attribute-core', 'test']
+        },
+        'state-tests': {
+            fullpath: './assets/state-tests.js',
+            requires: ['dump','attribute-core', 'test']
         }
     }
-}).use('attribute-tests', 'test-console', function (Y) {
+}).use('state-tests', 'attribute-core-tests', 'attribute-tests', 'test-console', function (Y) {
+
     new Y.Test.Console({render: '#log'});
     Y.Test.Runner.setName('Attribute');
     Y.Test.Runner.run();
