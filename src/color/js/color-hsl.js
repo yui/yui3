@@ -96,32 +96,6 @@ Color = {
     },
 
     /**
-    Parses the provided string and returns the type of color value provided.
-    @public
-    @method findType
-    @param {String} str
-    @returns {String}
-    @since 3.x
-    **/
-    findType: function (str) {
-        if (Y.Color.KEYWORDS[str]) {
-            return 'keyword';
-        }
-
-        if (str.indexOf('hsla') === 0) {
-            return 'hsla';
-        } else if (str.indexOf('hsl') === 0) {
-            return 'hsl';
-        } else if (str.indexOf('rgba') === 0) {
-            return 'rgba';
-        } else if (str.indexOf('rgb') === 0) {
-            return 'rgb';
-        } else {
-            return 'hex';
-        }
-    }, // return 'keyword', 'hex', 'rgb', 'rgba', 'hsl', 'hsla'
-
-    /**
     Parses the RGB string into h, s, l values. Will return an Array
         of values or an HSL string.
     @protected
@@ -265,3 +239,5 @@ Color = {
 };
 
 Y.Color = Y.mix(Color, Y.Color);
+
+Y.Color.TYPES = Y.mix(Y.Color.TYPES, {'hsl':'hsl', 'hsla':'hsla'});

@@ -15,7 +15,9 @@ Color provides static methods for color conversion.
 
 var REGEX_HEX = /^#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/,
     REGEX_HEX3 = /^#?([\da-fA-F]{1})([\da-fA-F]{1})([\da-fA-F]{1})/,
-    REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/;
+    REGEX_RGB = /rgba?\(([\d]{1,3}), ?([\d]{1,3}), ?([\d]{1,3}),? ?([.\d]*)?\)/,
+    TYPES = { 'rgb': 'rgb', 'rgba': 'rgba'};
+
 
 Y.Color = {
     /**
@@ -85,6 +87,15 @@ Y.Color = {
     @since 3.x
     **/
     STR_RGBA: 'rgba({*}, {*}, {*}, {*})',
+
+    /**
+    @static
+    @property TYPES
+    @type Object
+    @default {'rgb':'rgb', 'rgba':'rgba'}
+    @since 3.x
+    **/
+    TYPES: TYPES,
 
     /**
     @public
@@ -244,14 +255,20 @@ Y.Color = {
             return 'keyword';
         }
 
-        if (str.indexOf('rgba') === 0) {
-            return 'rgba';
-        } else if (str.indexOf('rgb') === 0) {
-            return 'rgb';
-        } else {
-            return 'hex';
+        var index = str.indexOf('('),
+            key;
+
+        if (index > 0) {
+            key = str.substr(0, index);
         }
-    }, // return 'keyword', 'hex', 'rgb', 'hsl'
+
+        if (Y.Color.TYPES[key]) {
+            return Y.Color.TYPES[key];
+        }
+
+        return 'hex';
+
+    }, // return 'keyword', 'hex', 'rgb'
 
     /**
     Retrives the alpha channel from the provided string. If no alpha
