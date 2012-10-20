@@ -15,12 +15,16 @@ YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw',
     combine: false,
     modules: {
+        'color-tests': {
+            fullpath: './assets/color-base-tests.js',
+            requires: [ 'test', 'dump', 'color-base' ]
+        },
         'color-hsl-tests': {
             fullpath: './assets/color-hsl-tests.js',
             requires: [ 'test', 'dump', 'color-hsl' ]
         }
     }
-}).use("test-console", "color-hsl-tests", function(Y) {
+}).use("test-console", "color-tests", "color-hsl-tests", function(Y) {
 
     (new Y.Test.Console()).render('#log');
 
