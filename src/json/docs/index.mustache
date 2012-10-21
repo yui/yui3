@@ -377,20 +377,19 @@ try {
     As noted above, the JSON module will leverage native behavior in
     implementing browsers by default.  However, you can choose to opt out of
     leveraging native <code>parse</code> or <code>stringify</code> by setting
-    the <code>Y.JSON.useNativeParse</code> and
-    <code>Y.JSON.useNativeStringify</code> static properties.
+    the <code>useNativeJSONParse</code> and
+    <code>useNativeJSONStringify</code> configuration options.
 </p>
 
 
 ```
-YUI().use('json', function (Y) {
-
+YUI({
     // Always use the JavaScript implementation for parsing
-    Y.JSON.useNativeParse = false;
+    useNativeJSONParse: false,
 
     // Always use the JavaScript implementation for stringifying
-    Y.JSON.useNativeStringify = false;
-
+    useNativeJSONStringify: false
+}).use('json', function (Y) {
     //...
 });
 ```

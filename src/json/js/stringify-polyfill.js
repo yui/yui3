@@ -287,7 +287,7 @@ Y.mix(Y.namespace('JSON'),{
      * <p>Number of occurrences of a special character within a single call to
      * stringify that should trigger promotion of that character to a dedicated
      * preprocess step for future calls.  This is only used in environments
-     * that don't support native JSON, or when useNativeStringify is set to
+     * that don't support native JSON, or when useNativeJSONStringify is set to
      * false.</p>
      *
      * <p>So, if set to 50 and an object is passed to stringify that includes
