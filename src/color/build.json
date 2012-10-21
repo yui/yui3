@@ -11,6 +11,11 @@
                 "color-hsl.js"
             ]
         },
+        "color-hsv": {
+            "jsfiles": [
+                "color-hsv.js"
+            ]
+        },
         "color-harmony": {
             "jsfiles": [
                 "color-harmony.js"
