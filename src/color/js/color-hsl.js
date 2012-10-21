@@ -1,12 +1,9 @@
 /**
-Color provides static methods for color conversion.
+Color provides static methods for color conversion to hsl values.
 
-    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+    Y.Color.toHsl('f00'); // hsl(0, 100%, 50%)
 
-    Y.Color.toHex('rgb(255, 255, 0'); // ["ff", "ff", "00"]
-
-    Y.Color.convert('hsl(240, 100%, 50%)', 'hex'); // #0000ff
-
+    Y.Color.toHsla('rgb(255, 255, 0'); // hsla(60, 100%, 50%, 1)
 
 @module color
 @submodule color-hsl

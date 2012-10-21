@@ -1,6 +1,5 @@
 /**
-Color provides static methods for color conversion.
-
+Color Harmony provides methods useful for color combination discovery.
 
 @module color
 @submodule color-harmony

@@ -1,7 +1,7 @@
 /**
 Color provides static methods for color conversion.
 
-    Y.Color.toRGB('f00'); // rgb(255, 0, 0)
+    Y.Color.toRgb('f00'); // rgb(255, 0, 0)
 
     Y.Color.toHex('rgb(255, 255, 0)'); // #ffff00
 
