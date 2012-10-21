@@ -3,26 +3,6 @@
 <head>
 <title>Color Tests</title>
 <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
-<style>
-.color {
-    border: 1px solid rgba(0,0,0,0.5);
-    box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.3);
-    display: inline-block;
-    zoom: 1;
-    *display: inline;
-    width: 12px;
-    height: 12px;
-    vertical-align: top;
-    margin: 0 0.3em;
-}
-#output dl {
-    height: 50px;
-    overflow: hidden;
-}
-#output:focus dl {
-    height: auto;
-}
-</style>
 
 </head>
 
@@ -42,7 +22,7 @@ YUI({
             requires: [ 'test', 'dump', 'color-harmony' ]
         }
     }
-}).use("test-console", "color-harmony-tests", "charts", function(Y) {
+}).use("test-console", "color-harmony-tests", function(Y) {
 
     (new Y.Test.Console()).render('#log');
 
