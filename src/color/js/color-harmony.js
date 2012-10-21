@@ -458,18 +458,15 @@ var HSL = 'hsl',
         @return {Number} Converted additive hue
         */
         _toAdditive: function(hue) {
+            hue = Y.Color._constrainHue(hue);
+
             if (hue <= 180) {
                 hue /= 1.5;
             } else if (hue < 240) {
                 hue = 120 + (hue - 180) * 2;
             }
 
-            if (hue < 0) {
-                hue += 360;
-            }
-
-            hue = Math.round((hue % 360) * 10)/10;
-            return hue;
+            return Y.Color._constrainHue(hue, 10);
         },
 
         /**
@@ -480,17 +477,37 @@ var HSL = 'hsl',
         @return {Number} Converted subtractive hue
         */
         _toSubtractive: function(hue) {
+            hue = Y.Color._constrainHue(hue);
+
             if (hue <= 120) {
                 hue *= 1.5;
             } else if (hue < 240) {
                 hue = 180 + (hue - 120) / 2;
             }
 
-            if (hue < 0) {
+            return Y.Color._constrainHue(hue, 10);
+        },
+
+        /**
+        Contrain the hue to a value between 0 and 360 for calculations
+            and real color wheel value space. Provide a precision value
+            to round return value to a decimal place
+        @private
+        @method _constrainHue
+        @param {Number} hue
+        @param {Number} [precision]
+        @returns {Number} Constrained hue value
+        **/
+        _constrainHue: function(hue, precision) {
+            while (hue < 0) {
                 hue += 360;
             }
+            hue %= 360;
 
-            hue = Math.round((hue % 360) * 10)/10;
+            if (precision) {
+                hue = Math.round(hue * precision) / precision;
+            }
+
             return hue;
         },
 
