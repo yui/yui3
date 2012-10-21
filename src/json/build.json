@@ -13,6 +13,16 @@
             "jsfiles": [
                 "parse.js"
             ]
+        },
+        "json-stringify-polyfill": {
+            "jsfiles": [
+                "stringify-polyfill.js"
+            ]
+        },
+        "json-parse-polyfill": {
+            "jsfiles": [
+                "parse-polyfill.js"
+            ]
         }
     }
 }
