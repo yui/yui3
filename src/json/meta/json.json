@@ -4,9 +4,29 @@
             "json-parse",
             "json-stringify"
         ],
+        
+        "plugins": {
+            "json-parse-polyfill": {
+                "trigger": "json-parse",
+                "test": "json-native-test.js"
+            },
+            "json-stringify-polyfill": {
+                "trigger": "json-stringify",
+                "test": "json-native-test.js"
+            }
+        },
+        
         "submodules": {
-            "json-parse": { "requires": [ "yui-base" ] },
-            "json-stringify": { "requires": [ "yui-base" ] }
+            "json-parse": {
+                "requires": [
+                    "yui-base"
+                ]
+            },
+            "json-stringify": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
         }
     }
 }
