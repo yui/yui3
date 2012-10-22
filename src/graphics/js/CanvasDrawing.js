@@ -183,8 +183,9 @@ CanvasDrawing.prototype = {
      * Queues up a method to be executed when a shape redraws.
      *
      * @method _updateDrawingQueue
-     * @param {Array} val An array containing data that can be parsed into a method and arguments. The value at zero-index of the array is a string reference of
-     * the drawing method that will be called. All subsequent indices are argument for that method. For example, `lineTo(10, 100)` would be structured as:
+     * @param {Array} val An array containing data that can be parsed into a method and arguments. The value at zero-index
+     * of the array is a string reference of the drawing method that will be called. All subsequent indices are argument for
+     * that method. For example, `lineTo(10, 100)` would be structured as:
      * `["lineTo", 10, 100]`.
      * @private
      */
