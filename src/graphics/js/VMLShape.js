@@ -78,7 +78,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         var graphic;
         if(render instanceof Y.VMLGraphic)
         {
-		    this._graphic = render;
+            this._graphic = render;
         }
         else
         {
@@ -141,71 +141,71 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			fill,
 			fillstring;
 			id = this.get("id");
-			type = this._type == "path" ? "shape" : this._type;
-		    classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type;
-			stroke = this._getStrokeProps();
-			fill = this._getFillProps();
+		type = this._type == "path" ? "shape" : this._type;
+        classString = _getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)) + " " + IMPLEMENTATION + type;
+        stroke = this._getStrokeProps();
+        fill = this._getFillProps();
 
-			nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;visibility:' + visibility + '"';
+		nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;visibility:' + visibility + '"';
 
-		    if(stroke && stroke.weight && stroke.weight > 0)
-			{
-				endcap = stroke.endcap;
-				opacity = parseFloat(stroke.opacity);
-				joinstyle = stroke.joinstyle;
-				miterlimit = stroke.miterlimit;
-				dashstyle = stroke.dashstyle;
-				nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
+        if(stroke && stroke.weight && stroke.weight > 0)
+        {
+            endcap = stroke.endcap;
+            opacity = parseFloat(stroke.opacity);
+            joinstyle = stroke.joinstyle;
+            miterlimit = stroke.miterlimit;
+            dashstyle = stroke.dashstyle;
+            nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
 
-				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
-				strokestring += ' opacity="' + opacity + '"';
-				if(endcap)
-				{
-					strokestring += ' endcap="' + endcap + '"';
-				}
-				if(joinstyle)
-				{
-					strokestring += ' joinstyle="' + joinstyle + '"';
-				}
-				if(miterlimit)
-				{
-					strokestring += ' miterlimit="' + miterlimit + '"';
-				}
-				if(dashstyle)
-				{
-					strokestring += ' dashstyle="' + dashstyle + '"';
-				}
-				strokestring += '></stroke>';
-				this._strokeNode = DOCUMENT.createElement(strokestring);
-				nodestring += ' stroked="t"';
-			}
-			else
-			{
-				nodestring += ' stroked="f"';
-			}
-			if(fill)
-			{
-				if(fill.node)
-				{
-					fillstring = fill.node;
-					this._fillNode = DOCUMENT.createElement(fillstring);
-				}
-				if(fill.color)
-				{
-					nodestring += ' fillcolor="' + fill.color + '"';
-				}
-				nodestring += ' filled="' + fill.filled + '"';
-			}
+            strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
+            strokestring += ' opacity="' + opacity + '"';
+            if(endcap)
+            {
+                strokestring += ' endcap="' + endcap + '"';
+            }
+            if(joinstyle)
+            {
+                strokestring += ' joinstyle="' + joinstyle + '"';
+            }
+            if(miterlimit)
+            {
+                strokestring += ' miterlimit="' + miterlimit + '"';
+            }
+            if(dashstyle)
+            {
+                strokestring += ' dashstyle="' + dashstyle + '"';
+            }
+            strokestring += '></stroke>';
+            this._strokeNode = DOCUMENT.createElement(strokestring);
+            nodestring += ' stroked="t"';
+        }
+        else
+        {
+            nodestring += ' stroked="f"';
+        }
+        if(fill)
+        {
+            if(fill.node)
+            {
+                fillstring = fill.node;
+                this._fillNode = DOCUMENT.createElement(fillstring);
+            }
+            if(fill.color)
+            {
+                nodestring += ' fillcolor="' + fill.color + '"';
+            }
+            nodestring += ' filled="' + fill.filled + '"';
+        }
 
 
-			nodestring += '>';
-			nodestring += '</' + type + '>';
+        nodestring += '>';
+        nodestring += '</' + type + '>';
 
-			node = DOCUMENT.createElement(nodestring);
+        node = DOCUMENT.createElement(nodestring);
 
-            this.node = node;
-            this._strokeFlag = false;
-            this._fillFlag = false;
+        this.node = node;
+        this._strokeFlag = false;
+        this._fillFlag = false;
 	},
 
 	/**
@@ -307,8 +307,8 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
      *
 	 * @private
 	 */
-	 _getStrokeProps: function()
-	 {
+    _getStrokeProps: function()
+    {
 		var props,
 			stroke = this.get("stroke"),
 			strokeOpacity,
@@ -324,10 +324,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 			props = {};
 			linecap = stroke.linecap || "flat";
 			linejoin = stroke.linejoin || "round";
-			if(linecap != "round" && linecap != "square")
-			{
-				linecap = "flat";
-			}
+            if(linecap != "round" && linecap != "square")
+            {
+                linecap = "flat";
+            }
 			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
@@ -362,9 +362,9 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 				}
 			}
 			props.dashstyle = dash;
-		}
-		return props;
-	 },
+        }
+        return props;
+    },
 
 	/**
 	 * Adds a stroke to the shape node.
@@ -495,10 +495,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 				{
 					fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
                     props.opacity = fillOpacity;
-				    if(fillOpacity < 1)
+                    if(fillOpacity < 1)
                     {
                         props.node = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
-				    }
+                    }
                 }
 			}
 			props.filled = filled;
@@ -890,10 +890,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-	 skewX: function(x)
-	 {
-		this._addTransform("skewX", arguments);
-	 },
+     skewX: function(x)
+     {
+        this._addTransform("skewX", arguments);
+     },
 
 	/**
 	 * Skews the shape around the y-axis.
@@ -901,10 +901,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-	 skewY: function(y)
-	 {
-		this._addTransform("skewY", arguments);
-	 },
+     skewY: function(y)
+     {
+        this._addTransform("skewY", arguments);
+     },
 
 	/**
 	 * Rotates the shape clockwise around it transformOrigin.
@@ -912,10 +912,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-	 rotate: function(deg)
-	 {
-		this._addTransform("rotate", arguments);
-	 },
+     rotate: function(deg)
+     {
+        this._addTransform("rotate", arguments);
+     },
 
 	/**
 	 * Specifies a 2d scaling operation.
@@ -923,10 +923,10 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-	scale: function(x, y)
-	{
-		this._addTransform("scale", arguments);
-	},
+    scale: function(x, y)
+    {
+        this._addTransform("scale", arguments);
+    },
 
 	/**
      * Overrides default `on` method. Checks to see if its a dom interaction event. If so,
@@ -1084,7 +1084,7 @@ Y.extend(VMLShape, Y.GraphicBase, Y.mix({
         var transformOrigin = this.get("transformOrigin"),
             transformX = transformOrigin[0] * w,
             transformY = transformOrigin[1] * h,
-		    transforms = this.matrix.getTransformArray(this.get("transform")),
+            transforms = this.matrix.getTransformArray(this.get("transform")),
             matrix = new Y.Matrix(),
             i,
             len = transforms.length,

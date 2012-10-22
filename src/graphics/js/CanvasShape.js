@@ -71,7 +71,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         var graphic;
         if(render instanceof Y.CanvasGraphic)
         {
-		    this._graphic = render;
+            this._graphic = render;
         }
         else
         {
@@ -272,7 +272,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         }
 		node.setAttribute("id", id);
 		id = "#" + id;
-	    host.node = node;
+        host.node = node;
 		host.addClass(_getClassName(SHAPE) + " " + _getClassName(concat(IMPLEMENTATION, SHAPE)) + " " + _getClassName(name) + " " + _getClassName(concat(IMPLEMENTATION, name)));
 	},
 
@@ -309,7 +309,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 			linejoin,
 			linecap,
 			dashstyle;
-	    if(stroke)
+        if(stroke)
         {
             color = stroke.color;
             weight = PARSE_FLOAT(stroke.weight);
@@ -484,10 +484,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-	 skewX: function(x)
-	 {
-		this._addTransform("skewX", arguments);
-	 },
+    skewX: function(x)
+    {
+        this._addTransform("skewX", arguments);
+    },
 
 	/**
 	 * Skews the shape around the y-axis.
@@ -495,10 +495,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-	 skewY: function(y)
-	 {
-		this._addTransform("skewY", arguments);
-	 },
+    skewY: function(y)
+    {
+        this._addTransform("skewY", arguments);
+    },
 
 	/**
 	 * Rotates the shape clockwise around it transformOrigin.
@@ -506,11 +506,11 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-	 rotate: function(deg)
-	 {
-		this._rotation = deg;
-		this._addTransform("rotate", arguments);
-	 },
+    rotate: function(deg)
+    {
+        this._rotation = deg;
+        this._addTransform("rotate", arguments);
+    },
 
 	/**
 	 * Specifies a 2d scaling operation.
@@ -518,10 +518,10 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-	scale: function(x, y)
-	{
-		this._addTransform("scale", arguments);
-	},
+    scale: function(x, y)
+    {
+        this._addTransform("scale", arguments);
+    },
 
     /**
      * Storage for `rotation` atribute.
@@ -652,8 +652,8 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
             argsLen,
 			len = 0;
 		this._context.clearRect(0, 0, node.width, node.height);
-	   if(this._methods)
-	   {
+        if(this._methods)
+        {
 			len = cachedMethods.length;
 			if(!len || len < 1)
 			{
@@ -858,7 +858,7 @@ Y.extend(CanvasShape, Y.GraphicBase, Y.mix({
         var transformOrigin = this.get("transformOrigin"),
             transformX = transformOrigin[0] * w,
             transformY = transformOrigin[1] * h,
-		    transforms = this.matrix.getTransformArray(this.get("transform")),
+            transforms = this.matrix.getTransformArray(this.get("transform")),
             matrix = new Y.Matrix(),
             i,
             len = transforms.length,
@@ -1042,7 +1042,7 @@ CanvasShape.ATTRS =  {
 		setter: function(val)
 		{
             this.matrix.init();
-		    this._transforms = this.matrix.getTransformArray(val);
+            this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
             return val;
 		},

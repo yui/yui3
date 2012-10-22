@@ -94,7 +94,7 @@ var SETTER = "setter",
 							state[i] = fn.apply(host);
 						}
 					}
-			    }
+                }
             }
 			host._state = state;
             for(i in attrConfig)
@@ -212,7 +212,7 @@ var SETTER = "setter",
 					}
 					else
                     {
-					    val = attrConfig[attr].setter.apply(host, args);
+                        val = attrConfig[attr].setter.apply(host, args);
                     }
 				}
 				host._state[attr] = val;
