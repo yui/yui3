@@ -26,6 +26,7 @@
      * AttributeCore. 
      *
      * @class AttributeObservable
+     * @extensionfor AttributeCore
      * @uses EventTarget
      */
     function AttributeObservable() {
