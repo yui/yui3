@@ -13,7 +13,8 @@
         BUBBLETARGETS = "bubbleTargets",
         _BUBBLETARGETS = "_bubbleTargets",
 
-        AttributeObservable = Y.AttributeObservable;
+        AttributeObservable = Y.AttributeObservable,
+        BaseCore            = Y.BaseCore;
 
     /**
     Provides an augmentable implementation of lifecycle and attribute events for
@@ -23,7 +24,7 @@
     @extensionfor BaseCore
     @uses AttributeObservable
     @uses EventTarget
-    @since 3.7.0
+    @since 3.8.0
     **/
     function BaseObservable() {}
 
@@ -39,8 +40,8 @@
          * @private
          */
         _initAttribute: function(cfg) {
-            Y.BaseCore.prototype._initAttribute.apply(this, arguments);
-            Y.AttributeObservable.call(this);
+            BaseCore.prototype._initAttribute.apply(this, arguments);
+            AttributeObservable.call(this);
 
             this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
             this._yuievt.config.prefix = this._eventPrefix;

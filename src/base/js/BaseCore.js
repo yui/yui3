@@ -213,7 +213,7 @@
          * @private
          */
         _initAttribute: function() {
-            Y.AttributeCore.call(this);
+            AttributeCore.call(this);
         },
 
         /**

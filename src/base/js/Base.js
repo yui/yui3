@@ -14,6 +14,11 @@
      * @submodule base-base
      */
 
+    var AttributeCore   = Y.AttributeCore,
+        AttributeExtras = Y.AttributeExtras,
+        BaseCore        = Y.BaseCore,
+        BaseObservable  = Y.BaseObservable;
+
     /**
      * <p>
      * A base class which objects requiring attributes and custom event support can
@@ -33,7 +38,6 @@
      * @constructor
      * @uses BaseCore
      * @uses BaseObservable
-     * @uses Attribute
      * @uses AttributeCore
      * @uses AttributeObservable
      * @uses AttributeExtras
@@ -59,9 +63,9 @@
      * </dl>
      */
     function Base() {
-        Y.BaseCore.apply(this, arguments);
-        Y.BaseObservable.apply(this, arguments);
-        Y.AttributeExtras.apply(this, arguments);
+        BaseCore.apply(this, arguments);
+        BaseObservable.apply(this, arguments);
+        AttributeExtras.apply(this, arguments);
     }
 
     /**
@@ -73,7 +77,7 @@
      * @static
      * @private
      */
-    Base._ATTR_CFG = Y.BaseCore._ATTR_CFG.concat(Y.BaseObservable._ATTR_CFG);
+    Base._ATTR_CFG = BaseCore._ATTR_CFG.concat(BaseObservable._ATTR_CFG);
 
     /**
      * The array of non-attribute configuration properties supported by this class.
@@ -90,7 +94,7 @@
      * @static
      * @private
      */
-    Base._NON_ATTRS_CFG = Y.BaseCore._NON_ATTRS_CFG.concat(Y.BaseObservable._NON_ATTRS_CFG);
+    Base._NON_ATTRS_CFG = BaseCore._NON_ATTRS_CFG.concat(BaseObservable._NON_ATTRS_CFG);
 
     /**
      * <p>
@@ -106,7 +110,7 @@
      * @type String
      * @static
      */
-    Base.NAME = "base";
+    Base.NAME = 'base';
 
     /**
      * The default set of attributes which will be available for instances of this class, and
@@ -122,13 +126,13 @@
      * @type Object
      * @static
      */
-    Base.ATTRS = Y.AttributeCore.protectAttrs(Y.BaseCore.ATTRS);
+    Base.ATTRS = AttributeCore.protectAttrs(BaseCore.ATTRS);
 
-    Y.mix(Base, Y.BaseCore, false, null, 1);
-    Y.mix(Base, Y.AttributeExtras, false, null, 1);
+    Y.mix(Base, BaseCore, false, null, 1);
+    Y.mix(Base, AttributeExtras, false, null, 1);
 
     // Needs to be `true`, to overwrite methods from `BaseCore`.
-    Y.mix(Base, Y.BaseObservable, true, null, 1);
+    Y.mix(Base, BaseObservable, true, null, 1);
 
     // Fix constructor
     Base.prototype.constructor = Base;
