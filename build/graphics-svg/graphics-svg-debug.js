@@ -940,7 +940,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
         var graphic;
         if(render instanceof Y.SVGGraphic)
         {
-		    this._graphic = render;
+            this._graphic = render;
         }
         else
         {
@@ -961,7 +961,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 */
 	addClass: function(className)
 	{
-		var node = this.node;
+        var node = this.node;
 		node.className.baseVal = Y_LANG.trim([node.className.baseVal, className].join(' '));
 	},
 
@@ -1330,7 +1330,7 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
             }
             else
             {
-			    stopNode = graphic._createGraphicNode("stop");
+                stopNode = graphic._createGraphicNode("stop");
                 newStop = true;
             }
 			stop = stops[i];
@@ -1432,10 +1432,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method skewX
 	 * @param {Number} x x-coordinate
 	 */
-	 skewX: function(x)
-	 {
-		this._addTransform("skewX", arguments);
-	 },
+    skewX: function(x)
+    {
+        this._addTransform("skewX", arguments);
+    },
 
 	/**
 	 * Skews the shape around the y-axis.
@@ -1443,10 +1443,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method skewY
 	 * @param {Number} y y-coordinate
 	 */
-	 skewY: function(y)
-	 {
-		this._addTransform("skewY", arguments);
-	 },
+    skewY: function(y)
+    {
+        this._addTransform("skewY", arguments);
+    },
 
 	/**
 	 * Rotates the shape clockwise around it transformOrigin.
@@ -1454,10 +1454,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method rotate
 	 * @param {Number} deg The degree of the rotation.
 	 */
-	 rotate: function(deg)
-	 {
-		this._addTransform("rotate", arguments);
-	 },
+    rotate: function(deg)
+    {
+        this._addTransform("rotate", arguments);
+    },
 
 	/**
 	 * Specifies a 2d scaling operation.
@@ -1465,10 +1465,10 @@ Y.extend(SVGShape, Y.GraphicBase, Y.mix({
 	 * @method scale
 	 * @param {Number} val
 	 */
-	scale: function(x, y)
-	{
-		this._addTransform("scale", arguments);
-	},
+    scale: function(x, y)
+    {
+        this._addTransform("scale", arguments);
+    },
 
     /**
      * Adds a transform to the shape.
@@ -1794,7 +1794,7 @@ SVGShape.ATTRS = {
         {
             this.matrix.init();
             this._normalizedMatrix.init();
-		    this._transforms = this.matrix.getTransformArray(val);
+            this._transforms = this.matrix.getTransformArray(val);
             this._transform = val;
             return val;
 		},
@@ -1835,7 +1835,7 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	x: {
-	    getter: function()
+        getter: function()
         {
             return this._x;
         },
@@ -1858,7 +1858,7 @@ SVGShape.ATTRS = {
 	 * @type Number
 	 */
 	y: {
-	    getter: function()
+        getter: function()
         {
             return this._y;
         },
@@ -2063,10 +2063,10 @@ SVGShape.ATTRS = {
 	node: {
 		readOnly: true,
 
-		getter: function()
-		{
-			return this.node;
-		}
+        getter: function()
+        {
+            return this.node;
+        }
 	},
 
     /**
@@ -2099,10 +2099,10 @@ SVGShape.ATTRS = {
 	graphic: {
 		readOnly: true,
 
-		getter: function()
-		{
-			return this._graphic;
-		}
+        getter: function()
+        {
+            return this._graphic;
+        }
 	}
 };
 Y.SVGShape = SVGShape;
