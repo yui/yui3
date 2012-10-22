@@ -1196,8 +1196,14 @@
         _defDragFn: function(e) {
             if (this.get('move')) {
                 if (e.scroll && e.scroll.node) {
-                    e.scroll.node.set('scrollTop', e.scroll.top);
-                    e.scroll.node.set('scrollLeft', e.scroll.left);
+                    var domNode = e.scroll.node.getDOMNode();
+                    //If it's the window
+                    if (domNode === Y.config.win) {
+                        domNode.scrollTo(e.scroll.left, e.scroll.top);
+                    } else {
+                        e.scroll.node.set('scrollTop', e.scroll.top);
+                        e.scroll.node.set('scrollLeft', e.scroll.left);
+                    }
                 }
                 this.get(DRAG_NODE).setXY([e.pageX, e.pageY]);
                 this.realXY = [e.pageX, e.pageY];
