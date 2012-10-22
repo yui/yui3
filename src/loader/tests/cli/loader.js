@@ -336,8 +336,8 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("attribute-events")) > -1, "Module (attribute-events) not found in sorted array");
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("attribute-observable")) > -1, "Module (attribute-observable) not found in sorted array");
         },
      "Testing attribute-extras": function(data) {
             var loader = new Y.Loader({
@@ -348,6 +348,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("attribute-extras")) > -1, "Module (attribute-extras) not found in sorted array");
+        },
+     "Testing attribute-observable": function(data) {
+            var loader = new Y.Loader({
+                require: ["attribute-observable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("attribute-observable")) > -1, "Module (attribute-observable) not found in sorted array");
         },
      "Testing autocomplete": function(data) {
             var loader = new Y.Loader({
@@ -493,6 +503,16 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-core")) > -1, "Module (base-core) not found in sorted array");
+        },
+     "Testing base-observable": function(data) {
+            var loader = new Y.Loader({
+                require: ["base-observable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("base-observable")) > -1, "Module (base-observable) not found in sorted array");
         },
      "Testing base-pluginhost": function(data) {
             var loader = new Y.Loader({
