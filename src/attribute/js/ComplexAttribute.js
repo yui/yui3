@@ -11,7 +11,7 @@
 
     Attribute.Complex = function() {};
     Attribute.Complex.prototype = {
-        
+
         /**
          * Utility method to split out simple attribute name/value pairs ("x")
          * from complex attribute name/value pairs ("x.y.z"), so that complex
@@ -27,7 +27,7 @@
          * @private
          */
         _normAttrVals : Attribute.prototype._normAttrVals,
-        
+
         /**
          * Returns the initial value of the given attribute from
          * either the default configuration provided, or the
@@ -44,7 +44,7 @@
          * @private
          */
         _getAttrInitVal : Attribute.prototype._getAttrInitVal
-        
+
     };
 
     // Consistency with the rest of the Attribute addons for now.
