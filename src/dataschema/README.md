@@ -31,3 +31,10 @@ for example:
     var results = Y.DataSchema.JSON.apply({ schema config }, dataObject);
 
 See the user guide for details about schema definitions for each processor.
+
+Known Issues
+============
+
+   * XPath addressing for XML elements is currently not available in IE10 WebView mode.
+     This is due to the restrictions placed by that environment on the ActiveX implementation
+     of XMLDocument, as well as the native Windows XMlDocument API.

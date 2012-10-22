@@ -9,6 +9,16 @@ Rich Text Editor Change History
 * Convert innerHTML iframe creation to DOM for IE 10
 * Should completely pass lint now
 
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
 3.7.0
 -----
 
@@ -52,7 +62,7 @@ No changes.
 -----
 
 Third release of EditorBase. Considerable work was done on this component, but there are no
-public tickets associated with the issues that were resolved. This version of EditorBase is the 
+public tickets associated with the issues that were resolved. This version of EditorBase is the
 current version being used in the new Yahoo! Mail. It's production stable and ready to be used with
 the proper skins and GUI.
 

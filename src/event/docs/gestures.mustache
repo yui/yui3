@@ -1,0 +1,108 @@
+<div class="intro">
+    <p>The `event-gestures` rollup module provides gesture events such as "flick" and "gesturemove", which normalize user interactions across touch and mouse or pointer based input devices. `event-gestures` is comprised of two modules - `event-flick` and `event-move`.</p>
+</div>
+
+<h2>Using `event-flick`</h2>
+
+<p>The `event-flick` module provides a "flick" event which notifies users interested in a "flick" gesture, providing distance, time and velocity information. Listening to a "flick" event is easy:</p>
+
+```
+node.on("flick", function (event) {
+    Y.log("I was flicked!");
+});
+```
+
+<h3>Configuring the Flick Event</h3>
+
+<p>To configure the firing of the "flick" event, you can pass in an optional configuration object. Check the <a href="{{apiDocs}}/classes/YUI.html#event_flick" alt="API Docs for Flick">API Docs</a> for a full list of keys that can be supplied into the config object.</p>
+
+<h2>Using `event-move`</h2>
+
+<p>The `event-move` module provides "gesturemovestart", "gesturemove" and "gesturemoveend" events, which can be used to normalize drag type interactions across touch and mouse devices. These are very easy to use, but can be quite powerful.</p>
+
+```
+node.on("gesturemovestart", function (event) {
+    Y.log("gesturemovestart was called");
+});
+
+node.on("gesturemove", function (event) {
+    Y.log("gesturemove was called");
+});
+
+node.on("gesturemoveend", function (event) {
+    Y.log("gesturemoveend was called");
+});
+```
+
+<h3>Gesture events in different environments</h3>
+
+<p>The `event-move` module normalizes gestures across mouse and touch environments.</p>
+
+<table>
+<thead>
+    <tr>
+        <th>Environment</th>
+        <th>`gesturemovestart`</th>
+        <th>`gesturemove`</th>
+        <th>`gesturemoveend`</th>
+    </th>
+</thead>
+<tbody>
+    <tr>
+        <td>Mouse</td>
+        <td>`mousedown`</td>
+        <td>`mousemove`</td>
+        <td>`mouseup`</td>
+    </tr>
+    <tr>
+        <td>Touch</td>
+        <td>`touchstart`</td>
+        <td>`touchmove`</td>
+        <td>`touchend`</td>
+    </tr>
+    <tr>
+        <td>MSPointer</td>
+        <td>`MSPointerDown`</td>
+        <td>`MSPointerMove`</td>
+        <td>`MSPointerUp`</td>
+    </tr>
+</tbody>
+</table>
+
+<h3>Configuring gesture events</h3>
+
+<p>By default, the "gesturemove" and "gesturemoveend" events only fire when the same node has subscribed to the "gesturemovestart" event as well. This can be over-ridden by setting `{standAlone: true}` in the configuration properties when subscribing to these events.</p>
+
+<p>Generally, a "gesturemovestart" and "gesturemoveend" event fires once, while the "gesturemove" event fires repeatedly as the mouse/finger moves across the screen. Each of these events also accept a config object to control their firing. Refer to the <a href="{{apiDocs}}/classes/YUI.html#event_gesturemovestart" alt="Gesture API Docs">API Docs</a> for more information.</p>
+
+<h3>IE10, Gestures, and `-ms-touch-action`</h3>
+
+<p>IE10 introduces the <a href="http://blogs.msdn.com/b/ie/archive/2011/09/20/touch-input-for-ie10-and-metro-style-apps.aspx" alt="MSPointer Events">MSPointer</a> events, which normalize mouse/touch/pen inputs in IE10. `event-move` takes advantage of these new events, and automatically use them on supported environments.</p>
+
+<p>Another new aspect of IE10 is the <a href="http://msdn.microsoft.com/en-us/library/windows/apps/hh767313.aspx" alt="MSTouchAction Property">`ms-touch-action`</a> CSS property. This CSS property tells IE10 whether to permit default touch behavior or not. Examples of default touch behavior include panning the page, pinching, and double-tapping to zoom.</p>
+
+<p>To prevent default behavior, Microsoft suggests setting `-ms-touch-action: none` for elements on which you do not want the default touch behavior to occur. We have <a href="https://connect.microsoft.com/IE/feedback/details/767646/ms-touch-action-does-not-allow-a-way-to-programmatically-prevent-default-touch-behavior" alt="msTouchAction Bug">filed a bug</a>against IE10 regarding the prevention of default touch behavior.</p>
+
+<p>If you want an element to have an `-ms-touch-action` value other than `none`, the current workaround is to set that via JavaScript inside the "gesturemovestart" event:</p>
+
+```
+//On IE10, attaching gesturemovestart will set horizontalScrollingNode's msTouchAction property to none.
+horizontalScrollingNode.on("gesturemovestart", function (e) {
+
+    /*
+     * If we want to be able to swipe horizontally through the element,
+     * but still scroll the page when we swipe horizontally or pinch-zoom,
+     * we can set that via JavaScript in the styles property
+    */
+    horizontalScrollingNode.getDOMNode().style.msTouchAction = 'pan-y | pinch-zoom';
+});
+```
+
+<p>If you wish to change the default `-ms-touch-action` value to be something other than `none`, you can change the default by modifying the `Y.Event._DEFAULT_TOUCH_ACTION`. Please note that this property may be changed in the future, depending on the resolution of and is subject to change based on the resolution of <a href="https://connect.microsoft.com/IE/feedback/details/767646/ms-touch-action-does-not-allow-a-way-to-programmatically-prevent-default-touch-behavior" alt="msTouchAction bug">this ticket</a> or a change in the `-ms-touch-action` implementation.</p>
+
+<h3>Known Issues in IE10 Touch Mode</h3>
+
+<p>If you are using the `event-tap` or `event-flick` modules in IE10 on a touch-enabled device (ie: not mouse-based), you will need to set the `-ms-touch-action` property manually using CSS. Check out this <a href="http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx" alt="Handling Multi-touch in all browsers">example from Microsoft</a>.
+
+<p>You do not need to do this if you are using the `event-move` module, since that has support for -ms-touch-action built-in as of YUI3.7.3. You can follow the respective tickets for <a href="http://yuilibrary.com/projects/yui3/ticket/2532869" alt="event-tap mstouchaction ticket">`event-tap`</a> and <a href="http://yuilibrary.com/projects/yui3/ticket/2532868" alt="eventflick mstouchaction ticket">`event-flick`</a>.</p>
+
