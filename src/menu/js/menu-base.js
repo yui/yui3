@@ -34,6 +34,24 @@ Fired when a menu item is enabled.
 **/
 var EVT_ENABLE = 'enable';
 
+/**
+Fired when a menu item is hidden.
+
+@event hide
+@param {Menu.Item} item Menu item that was hidden.
+@preventable _defHideFn
+**/
+var EVT_HIDE = 'hide';
+
+/**
+Fired when a menu item is shown.
+
+@event show
+@param {Menu.Item} item Menu item that was shown.
+@preventable _defShowFn
+**/
+var EVT_SHOW = 'show';
+
 var MenuBase = Y.Base.create('menuBase', Y.Tree, [], {
     nodeClass: Y.Menu.Item,
 
@@ -105,6 +123,48 @@ var MenuBase = Y.Base.create('menuBase', Y.Tree, [], {
         return this;
     },
 
+    /**
+    Hides the specified menu item.
+
+    @method hideItem
+    @param {Menu.Item} item Menu item to hide.
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `hide` event
+            will be suppressed.
+    @chainable
+    **/
+    hideItem: function (item, options) {
+        if (!item.isHidden()) {
+            this._fire(EVT_HIDE, {item: item}, {
+                defaultFn: this._defHideFn,
+                silent   : options && options.silent
+            });
+        }
+
+        return this;
+    },
+
+    /**
+    Shows the specified menu item.
+
+    @method showItem
+    @param {Menu.Item} item Menu item to show.
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `show` event
+            will be suppressed.
+    @chainable
+    **/
+    showItem: function (item, options) {
+        if (item.isHidden()) {
+            this._fire(EVT_SHOW, {item: item}, {
+                defaultFn: this._defShowFn,
+                silent   : options && options.silent
+            });
+        }
+
+        return this;
+    },
+
     // -- Default Event Handlers -----------------------------------------------
 
     /**
@@ -129,6 +189,26 @@ var MenuBase = Y.Base.create('menuBase', Y.Tree, [], {
         delete e.item.state.disabled;
     },
 
+    /**
+    Default handler for the `hide` event.
+
+    @method _defHideFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defHideFn: function (e) {
+        e.item.state.hidden = true;
+    },
+
+    /**
+    Default handler for the `show` event.
+
+    @method _defShowFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defShowFn: function (e) {
+        delete e.item.state.hidden;
     }
 });
 

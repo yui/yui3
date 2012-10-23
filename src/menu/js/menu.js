@@ -42,6 +42,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         disabled       : getClassName('menu-disabled'),
         hasChildren    : getClassName('menu-has-children'),
         heading        : getClassName('menu-heading'),
+        hidden         : getClassName('menu-hidden'),
         item           : getClassName('menu-item'),
         label          : getClassName('menu-label'),
         menu           : getClassName('menu'),
@@ -216,8 +217,10 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
         options || (options = {});
 
         var classNames = this.classNames,
-            htmlNode   = item._htmlNode;
+            htmlNode   = item._htmlNode,
+            isHidden   = item.isHidden();
 
+        // Create an HTML node for this menu item if one doesn't already exist.
         if (!htmlNode) {
             htmlNode = item._htmlNode = Y.Node.create(Menu.Templates.item({
                 classNames: classNames,
@@ -225,6 +228,10 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
                 menu      : this
             }));
         }
+
+        // Mark the HTML node as hidden if the item is hidden.
+        htmlNode.set('aria-hidden', isHidden);
+        htmlNode.toggleClass(classNames.hidden, isHidden);
 
         switch (item.type) {
             case 'separator':
@@ -321,8 +328,10 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
                 close        : this._afterClose,
                 disable      : this._afterDisable,
                 enable       : this._afterEnable,
+                hide         : this._afterHide,
                 open         : this._afterOpen,
                 remove       : this._afterRemove,
+                show         : this._afterShow,
                 visibleChange: this._afterVisibleChange
             }),
 
@@ -447,7 +456,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
-    Hides this specified menu item by moving its htmlNode offscreen.
+    Hides the specified menu container by moving its htmlNode offscreen.
 
     @method _hideMenu
     @param {Menu.Item} item Menu item.
@@ -660,6 +669,22 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
+    Handles `hide` events for this menu.
+
+    @method _afterHide
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterHide: function (e) {
+        var htmlNode = this.getHTMLNode(e.item);
+
+        if (htmlNode) {
+            htmlNode.addClass(this.classNames.hidden);
+            htmlNode.set('aria-hidden', true);
+        }
+    },
+
+    /**
     Handles `open` events for this menu.
 
     @method _afterOpen
@@ -721,6 +746,22 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     },
 
     /**
+    Handles `show` events for this menu.
+
+    @method _afterShow
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterShow: function (e) {
+        var htmlNode = this.getHTMLNode(e.item);
+
+        if (htmlNode) {
+            htmlNode.removeClass(this.classNames.hidden);
+            htmlNode.set('aria-hidden', false);
+        }
+    },
+
+    /**
     Handles `visibleChange` events for this menu.
 
     @method _afterVisibleChange
@@ -741,7 +782,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     _onItemClick: function (e) {
         var item       = this.getNodeById(e.currentTarget.getData('item-id')),
             eventName  = EVT_ITEM_CLICK + '#' + item.id,
-            isDisabled = item.isDisabled();
+            isDisabled = item.isDisabled() || item.isHidden();
 
         // Avoid navigating to '#' if this item is disabled or doesn't have a
         // custom URL.
@@ -779,8 +820,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @protected
     **/
     _onItemMouseEnter: function (e) {
-        var item = this.getNodeById(e.currentTarget.get('id')),
-            self = this;
+        var item = this.getNodeById(e.currentTarget.get('id'));
 
         clearTimeout(this._timeouts.item);
 
@@ -801,8 +841,7 @@ Menu = Y.Base.create('menu', Y.Menu.Base, [Y.View], {
     @protected
     **/
     _onItemMouseLeave: function (e) {
-        var item = this.getNodeById(e.currentTarget.get('id')),
-            self = this;
+        var item = this.getNodeById(e.currentTarget.get('id'));
 
         clearTimeout(this._timeouts.item);
 

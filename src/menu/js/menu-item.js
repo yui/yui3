@@ -19,6 +19,9 @@ Represents a single menu item in a `Menu`.
         @param {Boolean} [config.state.disabled=false] If `true`, this menu item
             will be disabled, and will not be clickable or selectable.
 
+        @param {Boolean} [config.state.hidden=false] If `true`, this menu item
+            will be hidden.
+
     @param {String} [config.type='item'] Type of this menu item. May be 'item',
         'heading', or 'separator'.
 
@@ -51,7 +54,7 @@ Y.extend(MenuItem, Y.Tree.Node, {
     @chainable
     **/
     disable: function (options) {
-        this.tree.disableItem(this, options)
+        this.tree.disableItem(this, options);
         return this;
     },
 
@@ -70,6 +73,20 @@ Y.extend(MenuItem, Y.Tree.Node, {
     },
 
     /**
+    Hides this menu item.
+
+    @method hide
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `hide` event
+            will be suppressed.
+    @chainable
+    **/
+    hide: function (options) {
+        this.tree.hideItem(this, options);
+        return this;
+    },
+
+    /**
     Returns `true` if this menu item is currently disabled.
 
     @method isDisabled
@@ -78,6 +95,31 @@ Y.extend(MenuItem, Y.Tree.Node, {
     **/
     isDisabled: function () {
         return !!this.state.disabled;
+    },
+
+    /**
+    Returns `true` if this menu item is currently hidden.
+
+    @method isHidden
+    @return {Boolean} `true` if this menu item is currently hidden, `false`
+        otherwise.
+    **/
+    isHidden: function () {
+        return !!this.state.hidden;
+    },
+
+    /**
+    Shows this menu item.
+
+    @method show
+    @param {Object} [options] Options.
+        @param {Boolean} [options.silent=false] If `true`, the `show` event
+            will be suppressed.
+    @chainable
+    **/
+    show: function (options) {
+        this.tree.showItem(this, options);
+        return this;
     }
 });
 
