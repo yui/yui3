@@ -1,5 +1,6 @@
 YUI.add('nodejs-tests', function(Y) {
-
+    
+    var http = require('http');
     var suite = new Y.Test.Suite('NodeJS IO tests');
 
     suite.add(new Y.Test.Case({
@@ -7,12 +8,12 @@ YUI.add('nodejs-tests', function(Y) {
         'test: 404 status Text': function() {
             var test = this;
 
-            Y.io(Y.IO.URLS.http + '?a=404', {
+            Y.io(Y.IO.URLS.http + '404', {
                 on: {
                     complete: function(i, o, a) {
                         test.resume(function() {
                             Y.Assert.areSame(404, o.status);
-                            Y.Assert.areSame('Not Found', o.statusText);
+                            Y.Assert.areSame(http.STATUS_CODES['404'], o.statusText);
                         });
 
                     }

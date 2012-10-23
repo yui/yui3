@@ -1,6 +1,26 @@
 AsyncQueue Change History
 =========================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -50,10 +70,10 @@ AsyncQueue Change History
 -----
 
   * [!] `queue-base` is now part of `yui`.
-  
+
   * [!] `queue-run` was renamed `async-queue` and both `async-queue` and
     `queue-promote` are now independent modules.
-    
+
   * `AsyncQueue` defaults to asynchronous callback execution (again).
 
 3.0.0beta1

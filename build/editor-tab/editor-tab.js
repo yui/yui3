@@ -9,7 +9,7 @@ YUI.add('editor-tab', function (Y, NAME) {
      * @module editor
      * @submodule editor-tab
      */
-    
+
     var EditorTab = function() {
         EditorTab.superclass.constructor.apply(this, arguments);
     }, HOST = 'host';

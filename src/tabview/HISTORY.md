@@ -1,6 +1,27 @@
 TabView Change History
 ======================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* Removed trailing space from `tabLabel` selector. This fixes an issue in IE8.
+  [@trunksye]
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -20,7 +41,7 @@ TabView Change History
 3.4.1
 -----
 
-  * No change.
+  * No changes.
 
 
 3.4.0
@@ -32,7 +53,7 @@ TabView Change History
 3.3.0
 -----
 
-  * No change.
+  * No changes.
 
 
 3.2.0

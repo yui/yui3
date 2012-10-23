@@ -1,6 +1,29 @@
 Drag and Drop Change History
 ============================
 
+3.7.3
+-----
+
+* 2532718 don't stop gesture start, but prevent gesture move to allow clicks
+* 2532837 Unreg gesturemoveend on _unprep
+* Switched DD over to Y.UA.touchEnabled
+* DD should completely pass lint now
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -78,14 +101,14 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
 * #2528395 Add a DD.Drag delegate class
 * #2528457 Add invalid selector check to Delegate
 * #2528488 Delegate errors without Drop plugin
-* #2528509 Drag and drop slow on linux ff3.5.6 
+* #2528509 Drag and drop slow on linux ff3.5.6
 * #2528539 drag:start should fire before drag:enter
 * #2528540 DDConstrained using cacheRegion set to false throws js errors when drag starts
 * #2528560 drag:over event is not firing when useShim is false
 * #2528578 DDConstrained has no default constraining config
 * #2528585 drag:dropmiss being fired on simple click
 * #2528592 Add throttle support to DD mousemove
-* #2528596 Support Node instances as handles in Drag 
+* #2528596 Support Node instances as handles in Drag
 * #2528607 Drop events not firing when attached to a Drag target
 * #2528608 Default Drag throttleTime should be -1
 * #2528613 dragNode XY not sync with the mouse if it has its dimensions changed on drag:start

@@ -36,7 +36,7 @@ YUI.Env.parseUA = function(subUA) {
     var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
-                return (c++ == 1) ? '' : '.';
+                return (c++ === 1) ? '' : '.';
             }));
         },
 
@@ -151,13 +151,6 @@ YUI.Env.parseUA = function(subUA) {
          */
         phantomjs: 0,
         /**
-         * Adobe AIR version number or 0.  Only populated if webkit is detected.
-         * Example: 1.0
-         * @property air
-         * @type float
-         */
-        air: 0,
-        /**
          * Detects Apple iPad's OS version
          * @property ipad
          * @type float
@@ -246,7 +239,21 @@ YUI.Env.parseUA = function(subUA) {
          * @default 0
          * @static
          */
-        nodejs: 0
+        nodejs: 0,
+        /*
+        * Window8/IE10 Application host environment
+        * @property winjs
+        * @type Boolean
+        * @static
+        */
+        winjs: !!((typeof Windows !== "undefined") && Windows.System),
+        /**
+        * Are touch/msPointer events available on this device
+        * @property touchEnabled
+        * @type Boolean
+        * @static
+        */
+        touchEnabled: false
     },
 
     ua = subUA || nav && nav.userAgent,
@@ -299,7 +306,7 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
-            
+
             if (/PhantomJS/.test(ua)) {
                 m = ua.match(/PhantomJS\/([^\s]*)/);
                 if (m && m[1]) {
@@ -418,10 +425,16 @@ YUI.Env.parseUA = function(subUA) {
         }
     }
 
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
+    if (win && nav && !(o.chrome && o.chrome < 6)) {
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
+    }
+
     //It was a parsed UA, do not assign the global value.
     if (!subUA) {
 
-        if (typeof process == 'object') {
+        if (typeof process === 'object') {
 
             if (process.versions && process.versions.node) {
                 //NodeJS

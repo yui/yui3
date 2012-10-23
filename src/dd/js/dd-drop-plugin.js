@@ -17,7 +17,7 @@
             config.node = config.host;
             Drop.superclass.constructor.apply(this, arguments);
         };
-        
+
         /**
         * @property NAME
         * @description dd-drop-plugin

@@ -1,6 +1,28 @@
 App Framework Change History
 ============================
 
+3.7.3
+-----
+
+### App
+
+* Add support for App Transitions in browsers which support native CSS3
+  transitions without using vendor prefixes. This change means IE10 and Opera
+  get view transitions.
+
+
+3.7.2
+-----
+
+* No changes.
+
+
+3.7.1
+-----
+
+* No changes.
+
+
 3.7.0
 -----
 
