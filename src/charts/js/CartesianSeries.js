@@ -173,7 +173,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes and return `true`. Otherwise, return `false`.
+     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes
+     * and return `true`. Otherwise, return `false`.
      *
      * @method _updateAxisData
      * @return Boolean

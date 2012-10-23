@@ -69,12 +69,13 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         }
 
         /**
-         * Style properties used for drawing markers. This attribute is inherited from `Renderer`. Below are the default values:
+         * Style properties used for drawing markers. This attribute is inherited from `Renderer`. Below are the default
+         * values:
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on
+         *              the graph. The color will be retrieved from the below array:<br/>
          *              `["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"]`
          *              </dd>
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
@@ -82,8 +83,8 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
          *      </dd>
          *      <dt>border</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on
+         *              the graph. The color will be retrieved from the below array:<br/>
          *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>

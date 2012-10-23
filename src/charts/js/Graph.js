@@ -222,8 +222,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include attributes for the specific series and a type value which defines the type of
-     * series to be used.
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include
+     * attributes for the specific series and a type value which defines the type of series to be used.
      *
      * @method createSeries
      * @param {Object} seriesData Series attribute key value pairs.
@@ -290,8 +290,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a class. When specifying a key value, the following options
-     * are available:
+     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a
+     * class. When specifying a key value, the following options are available:
      *
      *  <table>
      *      <tr><th>Key Value</th><th>Class</th></tr>
@@ -316,7 +316,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>
      *  </table>
      *
-     * When referencing a class directly, you can specify any of the above classes or any custom class that extends `CartesianSeries` or `PieSeries`.
+     * When referencing a class directly, you can specify any of the above classes or any custom class that extends
+     * `CartesianSeries` or `PieSeries`.
      *
      * @method _getSeries
      * @param {String | Object} type Series type.
@@ -771,13 +772,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
          *              <dt>fill</dt><dd>Defines the style properties for the fill. Contains the following values:
          *                  <dl>
          *                      <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>
-         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill. The default value is 1.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill.
+         *                      The default value is 1.</dd>
          *                  </dl>
          *              </dd>
          *              <dt>border</dt><dd>Defines the style properties for the border. Contains the following values:
          *                  <dl>
          *                      <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>
-         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border. The default value is 1.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border.
+         *                      The default value is 1.</dd>
          *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
          *                  </dl>
          *              </dd>

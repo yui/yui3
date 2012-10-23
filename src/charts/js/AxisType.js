@@ -484,7 +484,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                         }
                     }
                 }
-	            this._updateTotalDataFlag = true;
+                this._updateTotalDataFlag = true;
                 return keys;
             }
         },

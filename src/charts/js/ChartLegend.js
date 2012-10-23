@@ -600,10 +600,13 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included in the layout of the `Chart` that
-         * it references. Under this circumstance, `width` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is determined by the
-         * direction of the legend. If the `position` is `left` or `right` or the `direction` is `vertical`, width is `readOnly`. If the position is `top` or `bottom` or the `direction`
-         * is `horizontal`, width can be explicitly set. If width is not explicitly set, the width will be determined by the width of the legend's parent element.
+         * The width of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`.
+         * By default, the legend is included in the layout of the `Chart` that it references. Under this circumstance,
+         * `width` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is
+         * determined by the direction of the legend. If the `position` is `left` or `right` or the `direction` is
+         * `vertical`, width is `readOnly`. If the position is `top` or `bottom` or the `direction` is `horizontal`,
+         * width can be explicitly set. If width is not explicitly set, the width will be determined by the width of the
+         * legend's parent element.
          *
          * @attribute width
          * @type Number
@@ -639,10 +642,13 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`. By default, the legend is included in the layout of the `Chart` that
-         * it references. Under this circumstance, `height` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is determined by the
-         * direction of the legend. If the `position` is `top` or `bottom` or the `direction` is `horizontal`, height is `readOnly`. If the position is `left` or `right` or the `direction`
-         * is `vertical`, height can be explicitly set. If height is not explicitly set, the height will be determined by the width of the legend's parent element.
+         * The height of the legend. Depending on the implementation of the ChartLegend, this value is `readOnly`.
+         * By default, the legend is included in the layout of the `Chart` that it references. Under this circumstance,
+         * `height` is always `readOnly`. When the legend is rendered in its own dom element, the `readOnly` status is
+         * determined by the direction of the legend. If the `position` is `top` or `bottom` or the `direction` is
+         * `horizontal`, height is `readOnly`. If the position is `left` or `right` or the `direction` is `vertical`,
+         * height can be explicitly set. If height is not explicitly set, the height will be determined by the width of the
+         * legend's parent element.
          *
          * @attribute height
          * @type Number
@@ -753,12 +759,18 @@ Y.ChartLegend = Y.Base.create("chartlegend", Y.Widget, [Y.Renderer], {
         background: {}
 
         /**
-         * Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`. Below are the default values:
+         * Properties used to display and style the ChartLegend.  This attribute is inherited from `Renderer`.
+         * Below are the default values:
          *
          *  <dl>
-         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend` is rendered within a `Chart` instance this value is applied.</dd>
-         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction. This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center or right. The default value is center.</dd>
-         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or bottom. The default value is middle.</dd>
+         *      <dt>gap</dt><dd>Distance, in pixels, between the `ChartLegend` instance and the chart's content. When `ChartLegend`
+         *      is rendered within a `Chart` instance this value is applied.</dd>
+         *      <dt>hAlign</dt><dd>Defines the horizontal alignment of the `items` in a `ChartLegend` rendered in a horizontal direction.
+         *      This value is applied when the instance's `position` is set to top or bottom. This attribute can be set to left, center
+         *      or right. The default value is center.</dd>
+         *      <dt>vAlign</dt><dd>Defines the vertical alignment of the `items` in a `ChartLegend` rendered in vertical direction. This
+         *      value is applied when the instance's `position` is set to left or right. The attribute can be set to top, middle or
+         *      bottom. The default value is middle.</dd>
          *      <dt>item</dt><dd>Set of style properties applied to the `items` of the `ChartLegend`.
          *          <dl>
          *              <dt>hSpacing</dt><dd>Horizontal distance, in pixels, between legend `items`.</dd>

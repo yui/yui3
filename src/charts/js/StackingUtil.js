@@ -200,9 +200,10 @@ StackingUtil.prototype = {
     },
 
     /**
-     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the previous valid x-coordinate with its
-     * corresponding y-coordinate and the next valid x-coordinate with its corresponding y-coordinate. If there is no previous or next valid x-coordinate,
-     * the value will not be altered.
+     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the
+     * previous valid x-coordinate with its corresponding y-coordinate and the next valid x-coordinate with
+     * its corresponding y-coordinate. If there is no previous or next valid x-coordinate, the value will not
+     * be altered.
      *
      * @method _cleanXNaN
      * @param {Array} xcoords An array of x-coordinate values
@@ -293,9 +294,10 @@ StackingUtil.prototype = {
     },
 
     /**
-     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the previous valid y-coordinate with its
-     * corresponding x-coordinate and the next valid y-coordinate with its corresponding x-coordinate. If there is no previous or next valid y-coordinate,
-     * the value will not be altered.
+     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the
+     * previous valid y-coordinate with its corresponding x-coordinate and the next valid y-coordinate with
+     * its corresponding x-coordinate. If there is no previous or next valid y-coordinate, the value will not
+     * be altered.
      *
      * @method _cleanYNaN
      * @param {Array} xcoords An array of x-coordinate values

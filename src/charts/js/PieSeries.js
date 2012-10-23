@@ -697,21 +697,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         slices: null
 
         /**
-         * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are the default values:
+         * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are  the default
+         * values:
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>colors</dt><dd>An array of colors to be used for the marker fills. The color for each marker is retrieved from the
-         *              array below:<br/>
+         *              <dt>colors</dt><dd>An array of colors to be used for the marker fills. The color for each marker  is
+         *              retrieved from the array below:<br/>
          *              `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *              </dd>
-         *              <dt>alphas</dt><dd>An array of alpha references (Number from 0 to 1) indicating the opacity of each marker fill. The default value is [1].</dd>
+         *              <dt>alphas</dt><dd>An array of alpha references (Number from 0 to 1) indicating the opacity of each marker
+         *              fill. The default value is [1].</dd>
          *          </dl>
          *      </dd>
          *      <dt>border</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>An array of colors to be used for the marker borders. The color for each marker is retrieved from the
-         *              array below:<br/>
+         *              <dt>color</dt><dd>An array of colors to be used for the marker borders. The color for each marker is
+         *              retrieved from the array below:<br/>
          *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>

@@ -112,8 +112,8 @@ ChartBase.ATTRS = {
      *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
      *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
      *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
-     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains
-     *      the following arguments:
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text.
+     *      The method contains the following arguments:
      *  <dl>
      *      <dt>categoryItem</dt><dd>An object containing the following:
      *  <dl>
@@ -135,13 +135,14 @@ ChartBase.ATTRS = {
      *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
      *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
      *  </dl>
-     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
-     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose
+     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
      *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
      *  <dl>
      *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.
-     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each
+     *      object contains the following data:
      *  <dl>
      *      <dt>axis</dt><dd>The value axis of the series.</dd>
      *      <dt>key</dt><dd>The key for the series.</dd>
@@ -155,15 +156,15 @@ ChartBase.ATTRS = {
      *  </dl>
      *  </dd>
      *  </dl>
-     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
-     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose
+     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
-     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
-     *  has the following signature:
+     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the
+     *  the tooltip node. Has the following signature:
      *  <dl>
      *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
-     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a
-     *      string.</dd>
+     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used,
+     *      it will be rendered as a string.</dd>
      *  </dl>
      *  </dd>
      *  </dl>
@@ -1073,7 +1074,8 @@ ChartBase.prototype = {
      *
      * @method _planarLabelFunction
      * @param {Axis} categoryAxis Reference to the categoryAxis of the chart.
-     * @param {Array} valueItems Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     * @param {Array} valueItems Array of objects for each series that has a data point in the coordinate plane of the event.
+     * Each object contains the following data:
      *  <dl>
      *      <dt>axis</dt><dd>The value axis of the series.</dd>
      *      <dt>key</dt><dd>The key for the series.</dd>

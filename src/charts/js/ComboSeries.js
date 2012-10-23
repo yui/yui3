@@ -1,7 +1,7 @@
 /**
- * The ComboSeries class renders a combination of lines, plots and area fills in a single series. Each
- * series type has a corresponding boolean attribute indicating if it is rendered. By default, lines and plots
- * are rendered and area is not.
+ * The ComboSeries class renders a combination of lines, plots and area fills in a single series.
+ * Each series type has a corresponding boolean attribute indicating if it is rendered. By default,
+ * lines and plots are rendered and area is not.
  *
  * @module charts
  * @submodule charts-base
@@ -146,8 +146,8 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the
+         *              graph. The color will be retrieved from the below array:<br/>
          *              `["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"]`
          *              </dd>
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
@@ -155,8 +155,8 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          *      </dd>
          *      <dt>border</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph.
+         *              The color will be retrieved from the below array:<br/>
          *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
@@ -188,18 +188,22 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Reference to the styles of the lines. These styles can also be accessed through the `styles` attribute.
          * Below are the default values:
          *  <dl>
-         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array:
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color
+         *      will be retrieved from the following array:
          *      `["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]`
          *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
          *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd>
          *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default value is 10.</dd>
          *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
-         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd>
-         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
-         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default value is 10.</dd>
-         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value
+         *      between points. The default value is true.</dd>
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default
+         *      value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default
+         *      value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default
+         *      value is 10.</dd>
          *  </dl>
          *
          * @attribute line
@@ -222,8 +226,8 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Below are the default values:
          *
          *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array:
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the
+         *      graph. The color will be retrieved from the following array:
          *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *      </dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>

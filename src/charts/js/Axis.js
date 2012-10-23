@@ -1073,9 +1073,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     ATTRS:
     {
         /**
-         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
-         * width attribute is set, the axis will not calculate its width. When the width attribute is explicitly set, axis labels will postion themselves off of the
-         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified width is less than the sum of
+         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based
+         * on their contents. When the width attribute is set, the axis will not calculate its width. When the width
+         * attribute is explicitly set, axis labels will postion themselves off of the the inner edge of the axis and the
+         * title, if present, will position itself off of the outer edge. If a specified width is less than the sum of
          * the axis' contents, excess content will overflow.
          *
          * @attribute width
@@ -1101,9 +1102,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
-         * height attribute is set, the axis will not calculate its height. When the height attribute is explicitly set, axis labels will postion themselves off of the
-         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified height is less than the sum of
+         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based
+         * on their contents. When the height attribute is set, the axis will not calculate its height. When the height
+         * attribute is explicitly set, axis labels will postion themselves off of the the inner edge of the axis and the
+         * title, if present, will position itself off of the outer edge. If a specified height is less than the sum of
          * the axis' contents, excess content will overflow.
          *
          * @attribute height
@@ -1129,7 +1131,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width` attribute is explicitly set, this value will be ignored.
+         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width`
+         * attribute is explicitly set, this value will be ignored.
          *
          * @attribute calculatedWidth
          * @type Number
@@ -1149,7 +1152,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height` attribute is explicitly set, this value will be ignored.
+         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height`
+         * attribute is explicitly set, this value will be ignored.
          *
          * @attribute calculatedHeight
          * @type Number
@@ -1398,8 +1402,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String` or `HTMLElement`.
+         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
+         * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
          * <dl>
          *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
          *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
@@ -1462,8 +1466,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  <dl>
          *      <dt>majorTicks</dt><dd>Properties used for drawing ticks.
          *          <dl>
-         *              <dt>display</dt><dd>Position of the tick. Possible values are `inside`, `outside`, `cross` and `none`. The
-         *              default value is `inside`.</dd>
+         *              <dt>display</dt><dd>Position of the tick. Possible values are `inside`, `outside`, `cross` and `none`.
+         *              The default value is `inside`.</dd>
          *              <dt>length</dt><dd>The length (in pixels) of the tick. The default value is 4.</dd>
          *              <dt>color</dt><dd>The color of the tick. The default value is `#dad8c9`</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the tick. The default value is 1.</dd>
@@ -1479,11 +1483,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *      </dd>
          *      <dt>majorUnit</dt><dd>Properties used to calculate the `majorUnit` for the axis.
          *          <dl>
-         *              <dt>determinant</dt><dd>The algorithm used for calculating distance between ticks. The possible options are `count` and `distance`. If
-         *              the `determinant` is `count`, the axis ticks will spaced so that a specified number of ticks appear on the axis. If the `determinant`
-         *              is `distance`, the axis ticks will spaced out according to the specified distance. The default value is `count`.</dd>
+         *              <dt>determinant</dt><dd>The algorithm used for calculating distance between ticks. The possible options are
+         *              `count` and `distance`. If the `determinant` is `count`, the axis ticks will spaced so that a specified number
+         *              of ticks appear on the axis. If the `determinant` is `distance`, the axis ticks will spaced out according to
+         *              the specified distance. The default value is `count`.</dd>
          *              <dt>count</dt><dd>Number of ticks to appear on the axis when the `determinant` is `count`. The default value is 11.</dd>
-         *              <dt>distance</dt><dd>The distance (in pixels) between ticks when the `determinant` is `distance`. The default value is 75.</dd>
+         *              <dt>distance</dt><dd>The distance (in pixels) between ticks when the `determinant` is `distance`. The default
+         *              value is 75.</dd>
          *          </dl>
          *      </dd>
          *      <dt>label</dt><dd>Properties and styles applied to the axis labels.
@@ -1492,7 +1498,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *              <dt>alpha</dt><dd>Number between 0 and 1 indicating the opacity of the labels. The default value is 1.</dd>
          *              <dt>fontSize</dt><dd>The font-size of the labels. The default value is 85%</dd>
          *              <dt>rotation</dt><dd>The rotation, in degrees (between -90 and 90) of the labels. The default value is 0.</dd>
-         *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the `Axis`, only one of the properties used.
+         *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the `Axis`,
+         *              only one of the properties used.
          *                  <dl>
          *                      <dt>top</dt><dd>Pixel value used for an axis with a `position` of `bottom`. The default value is 4.</dd>
          *                      <dt>right</dt><dd>Pixel value used for an axis with a `position` of `left`. The default value is 4.</dd>
