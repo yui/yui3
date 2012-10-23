@@ -5450,14 +5450,14 @@ add('load', '18', {
     "ua": "ie"
 });
 // yql-nodejs
-add('load', '18', {
+add('load', '19', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '20', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -6485,14 +6485,14 @@ add('load', '18', {
     "ua": "ie"
 });
 // yql-nodejs
-add('load', '18', {
+add('load', '19', {
     "name": "yql-nodejs",
     "trigger": "yql",
     "ua": "nodejs",
     "when": "after"
 });
 // yql-winjs
-add('load', '19', {
+add('load', '20', {
     "name": "yql-winjs",
     "trigger": "yql",
     "ua": "winjs",
@@ -18818,9 +18818,9 @@ Transition.prototype = {
     },
 
     _prepDur: function(dur) {
-        dur = parseFloat(dur);
+        dur = parseFloat(dur) * 1000;
 
-        return dur + 's';
+        return dur + 'ms';
     },
 
     _runNative: function(time) {
