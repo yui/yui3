@@ -2987,9 +2987,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     ATTRS:
     {
         /**
-         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based on their contents. When the
-         * width attribute is set, the axis will not calculate its width. When the width attribute is explicitly set, axis labels will postion themselves off of the
-         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified width is less than the sum of
+         * When set, defines the width of a vertical axis instance. By default, vertical axes automatically size based
+         * on their contents. When the width attribute is set, the axis will not calculate its width. When the width
+         * attribute is explicitly set, axis labels will postion themselves off of the the inner edge of the axis and the
+         * title, if present, will position itself off of the outer edge. If a specified width is less than the sum of
          * the axis' contents, excess content will overflow.
          *
          * @attribute width
@@ -3015,9 +3016,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based on their contents. When the
-         * height attribute is set, the axis will not calculate its height. When the height attribute is explicitly set, axis labels will postion themselves off of the
-         * the inner edge of the axis and the title, if present, will position itself off of the outer edge. If a specified height is less than the sum of
+         * When set, defines the height of a horizontal axis instance. By default, horizontal axes automatically size based
+         * on their contents. When the height attribute is set, the axis will not calculate its height. When the height
+         * attribute is explicitly set, axis labels will postion themselves off of the the inner edge of the axis and the
+         * title, if present, will position itself off of the outer edge. If a specified height is less than the sum of
          * the axis' contents, excess content will overflow.
          *
          * @attribute height
@@ -3043,7 +3045,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width` attribute is explicitly set, this value will be ignored.
+         * Calculated value of an axis' width. By default, the value is used internally for vertical axes. If the `width`
+         * attribute is explicitly set, this value will be ignored.
          *
          * @attribute calculatedWidth
          * @type Number
@@ -3063,7 +3066,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height` attribute is explicitly set, this value will be ignored.
+         * Calculated value of an axis' height. By default, the value is used internally for horizontal axes. If the `height`
+         * attribute is explicitly set, this value will be ignored.
          *
          * @attribute calculatedHeight
          * @type Number
@@ -3312,8 +3316,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         },
 
         /**
-         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-         * to implement the arguments below and return a `String` or `HTMLElement`.
+         * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
+         * The method use would need to implement the arguments below and return a `String` or `HTMLElement`.
          * <dl>
          *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
          *      <dt>format</dt><dd>Template for formatting label. (optional)</dd>
@@ -3376,8 +3380,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *  <dl>
          *      <dt>majorTicks</dt><dd>Properties used for drawing ticks.
          *          <dl>
-         *              <dt>display</dt><dd>Position of the tick. Possible values are `inside`, `outside`, `cross` and `none`. The
-         *              default value is `inside`.</dd>
+         *              <dt>display</dt><dd>Position of the tick. Possible values are `inside`, `outside`, `cross` and `none`.
+         *              The default value is `inside`.</dd>
          *              <dt>length</dt><dd>The length (in pixels) of the tick. The default value is 4.</dd>
          *              <dt>color</dt><dd>The color of the tick. The default value is `#dad8c9`</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the tick. The default value is 1.</dd>
@@ -3393,11 +3397,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *      </dd>
          *      <dt>majorUnit</dt><dd>Properties used to calculate the `majorUnit` for the axis.
          *          <dl>
-         *              <dt>determinant</dt><dd>The algorithm used for calculating distance between ticks. The possible options are `count` and `distance`. If
-         *              the `determinant` is `count`, the axis ticks will spaced so that a specified number of ticks appear on the axis. If the `determinant`
-         *              is `distance`, the axis ticks will spaced out according to the specified distance. The default value is `count`.</dd>
+         *              <dt>determinant</dt><dd>The algorithm used for calculating distance between ticks. The possible options are
+         *              `count` and `distance`. If the `determinant` is `count`, the axis ticks will spaced so that a specified number
+         *              of ticks appear on the axis. If the `determinant` is `distance`, the axis ticks will spaced out according to
+         *              the specified distance. The default value is `count`.</dd>
          *              <dt>count</dt><dd>Number of ticks to appear on the axis when the `determinant` is `count`. The default value is 11.</dd>
-         *              <dt>distance</dt><dd>The distance (in pixels) between ticks when the `determinant` is `distance`. The default value is 75.</dd>
+         *              <dt>distance</dt><dd>The distance (in pixels) between ticks when the `determinant` is `distance`. The default
+         *              value is 75.</dd>
          *          </dl>
          *      </dd>
          *      <dt>label</dt><dd>Properties and styles applied to the axis labels.
@@ -3406,7 +3412,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          *              <dt>alpha</dt><dd>Number between 0 and 1 indicating the opacity of the labels. The default value is 1.</dd>
          *              <dt>fontSize</dt><dd>The font-size of the labels. The default value is 85%</dd>
          *              <dt>rotation</dt><dd>The rotation, in degrees (between -90 and 90) of the labels. The default value is 0.</dd>
-         *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the `Axis`, only one of the properties used.
+         *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the `Axis`,
+         *              only one of the properties used.
          *                  <dl>
          *                      <dt>top</dt><dd>Pixel value used for an axis with a `position` of `bottom`. The default value is 4.</dd>
          *                      <dt>right</dt><dd>Pixel value used for an axis with a `position` of `left`. The default value is 4.</dd>
@@ -3909,7 +3916,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
                         }
                     }
                 }
-	            this._updateTotalDataFlag = true;
+                this._updateTotalDataFlag = true;
                 return keys;
             }
         },
@@ -4163,10 +4170,11 @@ NumericAxis.ATTRS = {
 	},
 
     /**
-     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis'
-     * `appendLabelFunction` to accept html as a `String`.
+     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
+     * The method use would need to implement the arguments below and return a `String` or an `HTMLElement`. The default
+     * implementation of the method returns a `String`. The output of this method will be rendered to the DOM using
+     * `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override
+     * the Axis' `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>Object containing properties used to format the label. (optional)</dd>
@@ -5023,10 +5031,11 @@ TimeAxis.ATTRS =
     },
 
     /**
-     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden. The method use would need
-     * to implement the arguments below and return a `String` or an `HTMLElement`. The default implementation of the method returns a `String`. The output of this method
-     * will be rendered to the DOM using `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override the Axis'
-     * `appendLabelFunction` to accept html as a `String`.
+     * Method used for formatting a label. This attribute allows for the default label formatting method to overridden.
+     * The method use would need to implement the arguments below and return a `String` or an `HTMLElement`. The default
+     * implementation of the method returns a `String`. The output of this method will be rendered to the DOM using
+     * `appendChild`. If you override the `labelFunction` method and return an html string, you will also need to override
+     * the Axis' `appendLabelFunction` to accept html as a `String`.
      * <dl>
      *      <dt>val</dt><dd>Label to be formatted. (`String`)</dd>
      *      <dt>format</dt><dd>STRFTime string used to format the label. (optional)</dd>
@@ -5860,9 +5869,10 @@ StackingUtil.prototype = {
     },
 
     /**
-     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the previous valid x-coordinate with its
-     * corresponding y-coordinate and the next valid x-coordinate with its corresponding y-coordinate. If there is no previous or next valid x-coordinate,
-     * the value will not be altered.
+     * Cleans invalid x-coordinates by calculating their value based on the corresponding y-coordinate, the
+     * previous valid x-coordinate with its corresponding y-coordinate and the next valid x-coordinate with
+     * its corresponding y-coordinate. If there is no previous or next valid x-coordinate, the value will not
+     * be altered.
      *
      * @method _cleanXNaN
      * @param {Array} xcoords An array of x-coordinate values
@@ -5953,9 +5963,10 @@ StackingUtil.prototype = {
     },
 
     /**
-     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the previous valid y-coordinate with its
-     * corresponding x-coordinate and the next valid y-coordinate with its corresponding x-coordinate. If there is no previous or next valid y-coordinate,
-     * the value will not be altered.
+     * Cleans invalid y-coordinates by calculating their value based on the corresponding x-coordinate, the
+     * previous valid y-coordinate with its corresponding x-coordinate and the next valid y-coordinate with
+     * its corresponding x-coordinate. If there is no previous or next valid y-coordinate, the value will not
+     * be altered.
      *
      * @method _cleanYNaN
      * @param {Array} xcoords An array of x-coordinate values
@@ -7695,7 +7706,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes and return `true`. Otherwise, return `false`.
+     * Checks to ensure that both xAxis and yAxis data are available. If so, set the `xData` and `yData` attributes
+     * and return `true`. Otherwise, return `false`.
      *
      * @method _updateAxisData
      * @return Boolean
@@ -8612,12 +8624,13 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         }
 
         /**
-         * Style properties used for drawing markers. This attribute is inherited from `Renderer`. Below are the default values:
+         * Style properties used for drawing markers. This attribute is inherited from `Renderer`. Below are the default
+         * values:
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on
+         *              the graph. The color will be retrieved from the below array:<br/>
          *              `["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"]`
          *              </dd>
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
@@ -8625,8 +8638,8 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
          *      </dd>
          *      <dt>border</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on
+         *              the graph. The color will be retrieved from the below array:<br/>
          *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
@@ -8713,20 +8726,27 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
         }
 
         /**
-         * Style properties used for drawing lines. This attribute is inherited from `Renderer`. Below are the default values:
+         * Style properties used for drawing lines. This attribute is inherited from `Renderer`. Below are the
+         * default values:
          *  <dl>
-         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array:
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series
+         *      on the graph. The color will be retrieved from the following array:
          *      `["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]`
          *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
          *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd>
-         *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default value is 10.</dd>
-         *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
-         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd>
-         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
-         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default value is 10.</dd>
-         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default
+         *      value is 10.</dd>
+         *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default
+         *      value is 10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing
+         *      or null value between points. The default value is true.</dd>
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed.
+         *      The default value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the
+         *      dash. The default value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between
+         *      dashes. The default value is 10.</dd>
          *  </dl>
          *
          * @attribute styles
@@ -8777,20 +8797,27 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Li
         }
 
         /**
-         * Style properties used for drawing lines. This attribute is inherited from `Renderer`. Below are the default values:
+         * Style properties used for drawing lines. This attribute is inherited from `Renderer`.
+         * Below are the default values:
          *  <dl>
-         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array:
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on
+         *      the graph. The color will be retrieved from the following array:
          *      `["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]`
          *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
          *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd>
-         *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default value is 10.</dd>
-         *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
-         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd>
-         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
-         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default value is 10.</dd>
-         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default value
+         *      is 10.</dd>
+         *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default value is
+         *      10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null
+         *      value between points. The default value is true.</dd>
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The
+         *      default value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash.
+         *      The default value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes.
+         *      The default value is 10.</dd>
          *  </dl>
          *
          * @attribute styles
@@ -9376,9 +9403,9 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
 });
 
 /**
- * The ComboSeries class renders a combination of lines, plots and area fills in a single series. Each
- * series type has a corresponding boolean attribute indicating if it is rendered. By default, lines and plots
- * are rendered and area is not.
+ * The ComboSeries class renders a combination of lines, plots and area fills in a single series.
+ * Each series type has a corresponding boolean attribute indicating if it is rendered. By default,
+ * lines and plots are rendered and area is not.
  *
  * @module charts
  * @submodule charts-base
@@ -9523,8 +9550,8 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the
+         *              graph. The color will be retrieved from the below array:<br/>
          *              `["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"]`
          *              </dd>
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
@@ -9532,8 +9559,8 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          *      </dd>
          *      <dt>border</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
-         *              will be retrieved from the below array:<br/>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph.
+         *              The color will be retrieved from the below array:<br/>
          *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
@@ -9565,18 +9592,22 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Reference to the styles of the lines. These styles can also be accessed through the `styles` attribute.
          * Below are the default values:
          *  <dl>
-         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array:
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color
+         *      will be retrieved from the following array:
          *      `["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]`
          *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
          *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd>
          *      <dt>dashLength</dt><dd>When the `lineType` is dashed, indicates the length of the dash. The default value is 10.</dd>
          *      <dt>gapSpace</dt><dd>When the `lineType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
-         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd>
-         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
-         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default value is 10.</dd>
-         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value
+         *      between points. The default value is true.</dd>
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default
+         *      value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the `discontinuousType` is dashed, indicates the length of the dash. The default
+         *      value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the `discontinuousType` is dashed, indicates the distance between dashes. The default
+         *      value is 10.</dd>
          *  </dl>
          *
          * @attribute line
@@ -9599,8 +9630,8 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Below are the default values:
          *
          *  <dl>
-         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be
-         *      retrieved from the following array:
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the
+         *      graph. The color will be retrieved from the following array:
          *      `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *      </dd>
          *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
@@ -11308,21 +11339,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         slices: null
 
         /**
-         * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are the default values:
+         * Style properties used for drawing markers. This attribute is inherited from `MarkerSeries`. Below are  the default
+         * values:
          *  <dl>
          *      <dt>fill</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>colors</dt><dd>An array of colors to be used for the marker fills. The color for each marker is retrieved from the
-         *              array below:<br/>
+         *              <dt>colors</dt><dd>An array of colors to be used for the marker fills. The color for each marker  is
+         *              retrieved from the array below:<br/>
          *              `["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]`
          *              </dd>
-         *              <dt>alphas</dt><dd>An array of alpha references (Number from 0 to 1) indicating the opacity of each marker fill. The default value is [1].</dd>
+         *              <dt>alphas</dt><dd>An array of alpha references (Number from 0 to 1) indicating the opacity of each marker
+         *              fill. The default value is [1].</dd>
          *          </dl>
          *      </dd>
          *      <dt>border</dt><dd>A hash containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>An array of colors to be used for the marker borders. The color for each marker is retrieved from the
-         *              array below:<br/>
+         *              <dt>color</dt><dd>An array of colors to be used for the marker borders. The color for each marker is
+         *              retrieved from the array below:<br/>
          *              `["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]`
          *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
          *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
@@ -11752,8 +11785,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include attributes for the specific series and a type value which defines the type of
-     * series to be used.
+     * Creates a `CartesianSeries` instance from an object containing attribute key value pairs. The key value pairs include
+     * attributes for the specific series and a type value which defines the type of series to be used.
      *
      * @method createSeries
      * @param {Object} seriesData Series attribute key value pairs.
@@ -11820,8 +11853,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a class. When specifying a key value, the following options
-     * are available:
+     * Returns a specific `CartesianSeries` class based on key value from a look up table of a direct reference to a
+     * class. When specifying a key value, the following options are available:
      *
      *  <table>
      *      <tr><th>Key Value</th><th>Class</th></tr>
@@ -11846,7 +11879,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      *      <tr><td>stackedcombospline</td><td>Y.StackedComboSplineSeries</td></tr>
      *  </table>
      *
-     * When referencing a class directly, you can specify any of the above classes or any custom class that extends `CartesianSeries` or `PieSeries`.
+     * When referencing a class directly, you can specify any of the above classes or any custom class that extends
+     * `CartesianSeries` or `PieSeries`.
      *
      * @method _getSeries
      * @param {String | Object} type Series type.
@@ -12301,13 +12335,15 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
          *              <dt>fill</dt><dd>Defines the style properties for the fill. Contains the following values:
          *                  <dl>
          *                      <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>
-         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill. The default value is 1.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill.
+         *                      The default value is 1.</dd>
          *                  </dl>
          *              </dd>
          *              <dt>border</dt><dd>Defines the style properties for the border. Contains the following values:
          *                  <dl>
          *                      <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>
-         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border. The default value is 1.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border.
+         *                      The default value is 1.</dd>
          *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
          *                  </dl>
          *              </dd>
@@ -12434,8 +12470,8 @@ ChartBase.ATTRS = {
      *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
      *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
      *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
-     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text. The method contains
-     *      the following arguments:
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text.
+     *      The method contains the following arguments:
      *  <dl>
      *      <dt>categoryItem</dt><dd>An object containing the following:
      *  <dl>
@@ -12457,13 +12493,14 @@ ChartBase.ATTRS = {
      *  <dt>series</dt><dd> The `CartesianSeries` instance of the item.</dd>
      *  <dt>seriesIndex</dt><dd>The index of the series in the `seriesCollection`.</dd>
      *  </dl>
-     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
-     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose
+     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
      *  <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text
      *  <dl>
      *      <dt>categoryAxis</dt><dd> `CategoryAxis` Reference to the categoryAxis of the chart.
-     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     *      <dt>valueItems</dt><dd>Array of objects for each series that has a data point in the coordinate plane of the event. Each
+     *      object contains the following data:
      *  <dl>
      *      <dt>axis</dt><dd>The value axis of the series.</dd>
      *      <dt>key</dt><dd>The key for the series.</dd>
@@ -12477,15 +12514,15 @@ ChartBase.ATTRS = {
      *  </dl>
      *  </dd>
      *  </dl>
-     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose to return an html string, you
-     *  will also need to override the tooltip's `setTextFunction` method to accept an html string.
+     *  The method returns an `HTMLElement` which is written into the DOM using `appendChild`. If you override this method and choose
+     *  to return an html string, you will also need to override the tooltip's `setTextFunction` method to accept an html string.
      *  </dd>
-     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the the tooltip node.
-     *  has the following signature:
+     *  <dt>setTextFunction</dt><dd>Method that writes content returned from `planarLabelFunction` or `markerLabelFunction` into the
+     *  the tooltip node. Has the following signature:
      *  <dl>
      *      <dt>label</dt><dd>The `HTMLElement` that the content is to be added.</dd>
-     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used, it will be rendered as a
-     *      string.</dd>
+     *      <dt>val</dt><dd>The content to be rendered into tooltip. This can be a `String` or `HTMLElement`. If an HTML string is used,
+     *      it will be rendered as a string.</dd>
      *  </dl>
      *  </dd>
      *  </dl>
@@ -13395,7 +13432,8 @@ ChartBase.prototype = {
      *
      * @method _planarLabelFunction
      * @param {Axis} categoryAxis Reference to the categoryAxis of the chart.
-     * @param {Array} valueItems Array of objects for each series that has a data point in the coordinate plane of the event. Each object contains the following data:
+     * @param {Array} valueItems Array of objects for each series that has a data point in the coordinate plane of the event.
+     * Each object contains the following data:
      *  <dl>
      *      <dt>axis</dt><dd>The value axis of the series.</dd>
      *      <dt>key</dt><dd>The key for the series.</dd>
@@ -13656,8 +13694,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
     },
 
     /**
-     * When `interactionType` is set to `planar`, listens for mouse move events and fires `planarEvent:mouseover` or `planarEvent:mouseout` depending on the position of the mouse in relation to
-     * data points on the `Chart`.
+     * When `interactionType` is set to `planar`, listens for mouse move events and fires `planarEvent:mouseover` or `planarEvent:mouseout`
+     * depending on the position of the mouse in relation to data points on the `Chart`.
      *
      * @method _planarEventDispatcher
      * @param {Object} e Event object.
@@ -13764,8 +13802,10 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
              * @param {EventFacade} e Event facade with the following additional
              *   properties:
              *  <dl>
-             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker whose plane has been intersected.</dd>
-             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose plane has been intersected.</dd>
+             *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category `Axis` of each marker
+             *      whose plane has been intersected.</dd>
+             *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value `Axis` of each marker whose
+             *      plane has been intersected.</dd>
              *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
              *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
              *      <dt>pageX</dt><dd>The x location of the event on the page (including scroll)</dd>
