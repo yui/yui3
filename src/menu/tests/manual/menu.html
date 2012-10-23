@@ -43,6 +43,8 @@ var menu = new Y.Menu({
         {label: 'Test Menu', type: 'heading'},
         {label: 'Item 1', url: 'http://www.smugmug.com/'},
 
+        {label: 'Hidden Item', state: {hidden: true}},
+
         {label: 'Item 2', children: [
             {label: 'Submenu', type: 'heading'},
             {label: 'Item 2.1', id: 'item2-1'},
