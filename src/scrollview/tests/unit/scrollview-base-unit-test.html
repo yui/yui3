@@ -326,8 +326,8 @@
 							Y.Assert.areEqual(distance, scrollview.lastScrolledAmt);
 						})
 					});
-
-					scrollview.set('scrollX', distance, {duration: DURATION});
+					
+					scrollview.set('scrollX', distance, {duration: 10});
 
 					Test.wait(2000);
 				},

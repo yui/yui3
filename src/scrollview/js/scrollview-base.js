@@ -11,6 +11,7 @@ var getClassName = Y.ClassNameManager.getClassName,
     WINDOW = Y.config.win,
     IE = Y.UA.ie,
     NATIVE_TRANSITIONS = Y.Transition.useNative,
+    vendorPrefix = Y.Transition._VENDOR_PREFIX, // Todo: This is a private property, and alternative approaches should be investigated
     SCROLLVIEW = 'scrollview',
     CLASS_NAMES = {
         vertical: getClassName(SCROLLVIEW, 'vert'),
@@ -601,9 +602,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._cancelFlick();
             sv._onTransEnd();
         }
-
-        // TODO: Review if neccesary (#2530129)
-        e.stopPropagation();
 
         // Reset lastScrolledAmt
         sv.lastScrolledAmt = 0;
@@ -1343,8 +1341,8 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * @private
      */
     _TRANSITION: {
-        DURATION: Y.Transition._VENDOR_PREFIX + 'TransitionDuration',
-        PROPERTY: Y.Transition._VENDOR_PREFIX + 'TransitionProperty'
+        DURATION: (vendorPrefix ? vendorPrefix + 'TransitionDuration' : 'transitionDuration'),
+        PROPERTY: (vendorPrefix ? vendorPrefix + 'TransitionProperty' : 'transitionProperty')
     },
 
     /**

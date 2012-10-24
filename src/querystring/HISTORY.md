@@ -1,6 +1,26 @@
 QueryString Utility Change History
 ==================================
 
+3.7.3
+-----
+
+* No changes.
+
+3.7.2
+-----
+
+* No changes.
+
+3.7.1
+-----
+
+* No changes.
+
+3.7.0
+-----
+
+* No changes.
+
 3.6.0
 -----
 
@@ -32,14 +52,14 @@ QueryString Utility Change History
   * The stringify method in querystring-stringify and
     querystring-stringify-simple now accepts a configuration object in the
     second argument. All configuration properties are optional.
-    
+
     For querystring-stringify-simple, the configuration object contains only
     one property: arrayKey.  The default value is false.
-    
+
     For querystring-stringify, the configuration object can be defined with
     three properties (default values are in parenthesis): arrayKey (false),
     eq (=), and sep (&).
-    
+
 3.2.0
 -----
 

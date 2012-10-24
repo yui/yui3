@@ -840,6 +840,53 @@ YUI({
         }));
 
         suite.add(new Y.Test.Case({
+            name: 'Transition Duration Tests',
+
+            'A 1ms `duration` should call the callback async': function() {
+                var node   = Y.one('.demo'),
+                    test   = this,
+                    called = 0;
+
+                node.transition({
+                    height  : 0,
+                    duration: 0.001
+                }, function (e) {
+                    test.resume(function () {
+                        called += 1;
+
+                        Y.Assert.areSame(1, called);
+                    });
+                });
+
+                Y.Assert.areSame(0, called);
+
+                test.wait(1000);
+            },
+
+            'A 0ms `duration` should call the callback async': function() {
+                var node   = Y.one('.demo'),
+                    test   = this,
+                    called = 0;
+
+                node.transition({
+                    height  : 0,
+                    duration: 0
+                }, function (e) {
+                    test.resume(function () {
+                        called += 1;
+
+                        Y.Assert.areSame(1, called);
+                    });
+                });
+
+                Y.Assert.areSame(0, called);
+
+                test.wait(1000);
+            }
+
+        }));
+
+        suite.add(new Y.Test.Case({
             name: 'toggleView Tests',
 
             'should force state with boolean first arg': function() {

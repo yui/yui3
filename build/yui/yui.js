@@ -3530,7 +3530,7 @@ YUI.Env.parseUA = function(subUA) {
          * @static
          */
         nodejs: 0,
-        /*
+        /**
         * Window8/IE10 Application host environment
         * @property winjs
         * @type Boolean
@@ -3596,7 +3596,7 @@ YUI.Env.parseUA = function(subUA) {
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
             o.safari = o.webkit;
-            
+
             if (/PhantomJS/.test(ua)) {
                 m = ua.match(/PhantomJS\/([^\s]*)/);
                 if (m && m[1]) {
@@ -3714,10 +3714,11 @@ YUI.Env.parseUA = function(subUA) {
             }
         }
     }
-    
-    //Check for known properties to tell if touch/mspointer events are enabled on this device
+
+    //Check for known properties to tell if touch events are enabled on this device or if
+    //the number of MSPointer touchpoints on this device is greater than 0.
     if (win && nav && !(o.chrome && o.chrome < 6)) {
-        o.touchEnabled = (("ontouchstart" in win) || ("msPointerEnabled" in nav));
+        o.touchEnabled = (("ontouchstart" in win) || (("msMaxTouchPoints" in nav) && (nav.msMaxTouchPoints > 0)));
     }
 
     //It was a parsed UA, do not assign the global value.
@@ -5740,7 +5741,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2012.10.03-20-02',
+            GALLERY_VERSION = 'gallery-2012.10.17-20-00',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.9.0',
@@ -8991,9 +8992,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -9008,9 +9013,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "lang": [
             "de",
             "en",
+            "es",
+            "es-AR",
             "fr",
+            "it",
             "ja",
             "nb-NO",
+            "nl",
             "pt-BR",
             "ru",
             "zh-HANT-TW"
@@ -11100,7 +11109,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'a28e022ad022130f7a4fb4ac77a2f1df';
+YUI.Env[Y.version].md5 = '8f987f232a73a9c8d5d249cc5962d425';
 
 
 }, '@VERSION@', {"requires": ["loader-base"]});
