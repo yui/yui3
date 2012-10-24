@@ -605,9 +605,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             sv._onTransEnd();
         }
 
-        // TODO: Review if neccesary (#2530129)
-        e.stopPropagation();
-
         // Reset lastScrolledAmt
         sv.lastScrolledAmt = 0;
 
