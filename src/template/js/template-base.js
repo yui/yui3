@@ -24,8 +24,8 @@ Provides a generic API for using template engines such as Handlebars and
 Using with `Y.Template.Micro` (the default template engine):
 
     YUI().use('template', function (Y) {
-        var template = new Y.Template(),
-            html     = template.render('<%= data.message %>', {message: 'hello!'});
+        var micro = new Y.Template(),
+            html  = micro.render('<%= data.message %>', {message: 'hello!'});
 
         // ...
     });
@@ -33,8 +33,8 @@ Using with `Y.Template.Micro` (the default template engine):
 Using with Handlebars:
 
     YUI().use('template-base', 'handlebars', function (Y) {
-        var template = new Y.Template(Y.Handlebars),
-            html     = template.render('{{message}}', {message: 'hello!'});
+        var handlebars = new Y.Template(Y.Handlebars),
+            html       = handlebars.render('{{message}}', {message: 'hello!'});
 
         // ...
     });
