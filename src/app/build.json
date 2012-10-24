@@ -21,6 +21,16 @@
                 "model.js"
             ]
         },
+        "model-base": {
+            "jsfiles": [
+                "model-base.js"
+            ]
+        },
+        "model-observable": {
+            "jsfiles": [
+                "model-extensions/model-observable.js"
+            ]
+        },
         "model-sync-rest": {
             "jsfiles": [
                 "model-extensions/model-sync-rest.js"
