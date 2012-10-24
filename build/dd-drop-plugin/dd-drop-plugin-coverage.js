@@ -26,7 +26,7 @@ _yuitest_coverage["build/dd-drop-plugin/dd-drop-plugin.js"] = {
     path: "build/dd-drop-plugin/dd-drop-plugin.js",
     code: []
 };
-_yuitest_coverage["build/dd-drop-plugin/dd-drop-plugin.js"].code=["YUI.add('dd-drop-plugin', function (Y, NAME) {","","","       /**","        * Simple Drop plugin that can be attached to a Node via the plug method.","        * @module dd","        * @submodule dd-drop-plugin","        */","       /**","        * Simple Drop plugin that can be attached to a Node via the plug method.","        * @class Drop","        * @extends DD.Drop","        * @constructor","        * @namespace Plugin","        */","","","        var Drop = function(config) {","            config.node = config.host;","            Drop.superclass.constructor.apply(this, arguments);","        };","","        /**","        * @property NAME","        * @description dd-drop-plugin","        * @type {String}","        */","        Drop.NAME = \"dd-drop-plugin\";","        /**","        * @property NS","        * @description The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;","        * @type {String}","        */","        Drop.NS = \"drop\";","","","        Y.extend(Drop, Y.DD.Drop);","        Y.namespace('Plugin');","        Y.Plugin.Drop = Drop;","","","","","}, '@VERSION@', {\"requires\": [\"dd-drop\"]});"];
+_yuitest_coverage["build/dd-drop-plugin/dd-drop-plugin.js"].code=["YUI.add('dd-drop-plugin', function (Y, NAME) {","","","       /**","        * Simple Drop plugin that can be attached to a Node via the plug method.","        * @module dd","        * @submodule dd-drop-plugin","        */","       /**","        * Simple Drop plugin that can be attached to a Node via the plug method.","        * @class Drop","        * @extends DD.Drop","        * @constructor","        * @namespace Plugin","        */","","","        var Drop = function(config) {","            config.node = config.host;","            Drop.superclass.constructor.apply(this, arguments);","        };","","        /**","        * dd-drop-plugin","        * @property NAME","        * @type {String}","        */","        Drop.NAME = \"dd-drop-plugin\";","        /**","        * The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;","        * @property NS","        * @type {String}","        */","        Drop.NS = \"drop\";","","","        Y.extend(Drop, Y.DD.Drop);","        Y.namespace('Plugin');","        Y.Plugin.Drop = Drop;","","","","","}, '@VERSION@', {\"requires\": [\"dd-drop\"]});"];
 _yuitest_coverage["build/dd-drop-plugin/dd-drop-plugin.js"].lines = {"1":0,"18":0,"19":0,"20":0,"28":0,"34":0,"37":0,"38":0,"39":0};
 _yuitest_coverage["build/dd-drop-plugin/dd-drop-plugin.js"].functions = {"Drop:18":0,"(anonymous 1):1":0};
 _yuitest_coverage["build/dd-drop-plugin/dd-drop-plugin.js"].coveredLines = 9;
@@ -60,15 +60,15 @@ Drop.superclass.constructor.apply(this, arguments);
         };
 
         /**
+        * dd-drop-plugin
         * @property NAME
-        * @description dd-drop-plugin
         * @type {String}
         */
         _yuitest_coverline("build/dd-drop-plugin/dd-drop-plugin.js", 28);
 Drop.NAME = "dd-drop-plugin";
         /**
+        * The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
         * @property NS
-        * @description The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
         * @type {String}
         */
         _yuitest_coverline("build/dd-drop-plugin/dd-drop-plugin.js", 34);

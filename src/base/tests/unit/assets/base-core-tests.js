@@ -9,7 +9,7 @@ YUI.add('base-core-tests', function(Y) {
         this._lazyAddAttrs = lazy;
         this._silentInit = silentInit;
         Test.superclass.constructor.apply(this, arguments);
-    };
+    }
 
     Test.NAME = 'test';
 
@@ -268,7 +268,7 @@ YUI.add('base-core-tests', function(Y) {
                 this._passthrough = val;
             }
         },
-        
+
         Z : {
             value: "z",
             getter: function(val) {
@@ -286,7 +286,7 @@ YUI.add('base-core-tests', function(Y) {
                 }
                 return true;
         },
-        
+
         _getI : function(val, name) {
             if (name.indexOf(".") == -1) {
                 Y.Assert.areEqual("I", name);
@@ -313,8 +313,8 @@ YUI.add('base-core-tests', function(Y) {
     CoreTestsHost.ATTRS = {
         cloneDefaultObject : {
             value : {
-                a:1, 
-                b:2, 
+                a:1,
+                b:2,
                 c:3
             }
         },
@@ -322,7 +322,7 @@ YUI.add('base-core-tests', function(Y) {
         cloneDefaultArray : {
             value : ["foo", "bar", "foobar"]
         },
-        
+
         cloneDefaultString : {
             value : "foo"
         },
@@ -365,7 +365,7 @@ YUI.add('base-core-tests', function(Y) {
 
         testDestroy : function() {
             var h = new CoreTestsHost();
-            
+
             Y.Assert.isFalse(h.get("destroyed"));
 
             h.destroy();
@@ -378,7 +378,7 @@ YUI.add('base-core-tests', function(Y) {
                 re = /^coreTestsHost\[.*?\]$/,
                 str = h.toString();
 
-            Y.Assert.isTrue(re.test(str));                    
+            Y.Assert.isTrue(re.test(str));
         },
 
         testCloneDefaultValueObject : function() {
@@ -423,7 +423,7 @@ YUI.add('base-core-tests', function(Y) {
 
             Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultShallow.value !== val);
             Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultShallow.value.a === val.a);
-            
+
             Y.ObjectAssert.areEqual({
                 foo:"bar"
             }, val.a);
@@ -435,7 +435,7 @@ YUI.add('base-core-tests', function(Y) {
 
             Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultDeep.value !== val);
             Y.Assert.isTrue(CoreTestsHost.ATTRS.cloneDefaultDeep.value.a !== val.a);
-            
+
             Y.ObjectAssert.areEqual({
                 foo:"bar"
             }, val.a);
@@ -466,7 +466,7 @@ YUI.add('base-core-tests', function(Y) {
                             return 1;
                         }
                     }
-                } 
+                }
             });
 
             var Two = Y.extend(function() {
@@ -478,7 +478,7 @@ YUI.add('base-core-tests', function(Y) {
                     }
                 }
             });
-            
+
             var Three = Y.extend(function() {
                 Three.superclass.constructor.apply(this, arguments);
             }, Two,  null, {
@@ -520,16 +520,16 @@ YUI.add('base-core-tests', function(Y) {
             Y.Assert.areEqual(1, one.get("testMe"));
             Y.Assert.areEqual(2, two.get("testMe"));
             Y.Assert.areEqual(3, three.get("testMe"));
-            Y.Assert.areEqual(3, threeNoVal.get("testMe"));            
+            Y.Assert.areEqual(3, threeNoVal.get("testMe"));
             Y.Assert.areEqual(4, four.get("testMe"));
             Y.Assert.areEqual(4, fourNoVal.get("testMe"));
-            
+
             one.destroy();
             two.destroy();
             three.destroy();
             threeNoVal.destroy();
             four.destroy();
-            fourNoVal.destroy();            
+            fourNoVal.destroy();
         },
 
         testInitializerDestructorInvocation : function() {
@@ -559,7 +559,7 @@ YUI.add('base-core-tests', function(Y) {
                 ATTRS : {
                     "a" : {
                         value: 1
-                    }                        
+                    }
                 }
             });
 
@@ -582,14 +582,14 @@ YUI.add('base-core-tests', function(Y) {
                 ATTRS : {
                     "b" : {
                         value: 2
-                    }                        
+                    }
                 }
             });
-            
+
             var o = new Two(initCfg);
             o.destroy();
 
-            Y.ArrayAssert.itemsAreEqual(expected, actual);                    
+            Y.ArrayAssert.itemsAreEqual(expected, actual);
 
         }
     };
@@ -713,18 +713,18 @@ YUI.add('base-core-tests', function(Y) {
 
             AttrHost.prototype._allowAdHocAttrs = false;
 
-            // Only add AdHoc Attrs       
-            Y.Assert.areEqual("foo", h.get("foo")); 
+            // Only add AdHoc Attrs
+            Y.Assert.areEqual("foo", h.get("foo"));
             Y.Assert.areEqual("bar", h.get("bar"));
-            
+
             // Configured Attrs
             Y.Assert.areEqual("DVal", h.get("D"));
             Y.Assert.areEqual("MyAVal", h.get("A"));
-            
+
             // Not _NON_ATTRS_CFG
             Y.Assert.isUndefined(h.get("plugins"));
         },
-                
+
         testAdHocConstructorDisabled : function() {
 
             var h = this.createHost({
@@ -734,10 +734,10 @@ YUI.add('base-core-tests', function(Y) {
                 plugins : ["not"]
             });
 
-            // Only add AdHoc Attrs       
-            Y.Assert.areEqual(undefined, h.get("foo")); 
+            // Only add AdHoc Attrs
+            Y.Assert.areEqual(undefined, h.get("foo"));
             Y.Assert.areEqual(undefined, h.get("bar"));
-            
+
             // Configured attributes
             Y.Assert.areEqual("DVal", h.get("D"));
             Y.Assert.areEqual("MyAVal", h.get("A"));
@@ -877,7 +877,7 @@ YUI.add('base-core-tests', function(Y) {
             h.set("complex.W.B", 113);
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
- 
+
                     h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
@@ -890,7 +890,7 @@ YUI.add('base-core-tests', function(Y) {
 
         testProtect : function() {
             var h = this.createHost();
-            var q = h._protectAttrs(AttrHost.ATTRS);
+            var q = Y.Attribute.protectAttrs(AttrHost.ATTRS);
 
             Y.Assert.areNotSame(AttrHost.ATTRS, q);
             Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
@@ -1122,7 +1122,7 @@ YUI.add('base-core-tests', function(Y) {
             h.set("complex.W.B", 113);
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
- 
+
                     h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
@@ -1143,7 +1143,7 @@ YUI.add('base-core-tests', function(Y) {
     };
 
     var perfTemplate = {
-        
+
         name: "Performance Tests",
 
         testTimeConstruction: function() {

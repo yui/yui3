@@ -310,12 +310,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             bb = host._bb,
             isForward = (e.wheelDelta < 0),
             paginatorAxis = paginator._cAxis;
-            
-        // Set the axis for this event.
-        // @TODO: This is hacky, it's not a gesture. Find a better way
-        host._gesture = {
-            axis: DIM_Y
-        };
 
         // Only if the mousewheel event occurred on a DOM node inside the BB
         if (bb.contains(e.target) && paginatorAxis[DIM_Y]) {
@@ -585,7 +579,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         easing = ((easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing);
 
         // Set the index ATTR to the specified index value
-        paginator.set(INDEX, index);
+        paginator.set(INDEX, index, { src: UI });
 
         // Makes sure the viewport nodes are visible
         paginator._showNodes(pageNode);

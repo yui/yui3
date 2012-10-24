@@ -1,6 +1,18 @@
 Base Change History
 ===================
 
+3.8.0
+-----
+
+* `Y.Base.create()` can now be used with `Y.BaseCore`, in addition to its
+  existing usage with `Y.Base`. This allows non-observable, BaseCore hierarchies
+  to use class extensions.
+
+* Extracted the `Y.BaseObservable` class extension from `Y.Base`. This is a new
+  class extension for `Y.BaseCore` which adds support for observability. This
+  allows BaseCore subclasses to mix-in BaseObservable at runtime, bringing their
+  functionality up to that of `Y.Base`.
+
 3.7.3
 -----
 

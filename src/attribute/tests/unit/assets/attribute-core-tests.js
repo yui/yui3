@@ -1,4 +1,4 @@
-YUI.add('attribute-core-tests', function(Y) {    
+YUI.add('attribute-core-tests', function(Y) {
 
     function TestAugment(attrs, values) {}
     Y.augment(TestAugment, Y.AttributeCore);
@@ -63,12 +63,12 @@ YUI.add('attribute-core-tests', function(Y) {
 
         initOnly : {
             writeOnce:"initOnly"
-        }    
+        }
     };
 
     // Straightup augment, no wrapper functions
     Y.mix(AttrHost, Y.AttributeCore, false, null, 1);
-    
+
     AttrHost.prototype.DEValueFn = function() {
         return this.get("D") + this.get("E");
     };
@@ -120,7 +120,7 @@ YUI.add('attribute-core-tests', function(Y) {
             var o = {
                 methodOne: function() {}
             };
-            
+
             Y.augment(o, Y.Attribute);
 
             o.set("foo", "bar");
@@ -363,7 +363,7 @@ YUI.add('attribute-core-tests', function(Y) {
             h.set("complex.W.B", 113);
             Y.Assert.areEqual(undefined, h.get("complex.W"));
             Y.Assert.areEqual(undefined, h.get("complex.W.B"));
- 
+
                     h.set("complex.Y", {B:222});
             Y.Assert.areEqual(222, h.get("complex.Y.B"));
             Y.Assert.areEqual(undefined, h.get("complex.Y.A"));
@@ -376,7 +376,7 @@ YUI.add('attribute-core-tests', function(Y) {
 
         testProtect : function() {
             var h = this.createHost();
-            var q = h._protectAttrs(AttrHost.ATTRS);
+            var q = Y.Attribute.protectAttrs(AttrHost.ATTRS);
 
             Y.Assert.areNotSame(AttrHost.ATTRS, q);
             Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
