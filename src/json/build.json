@@ -14,14 +14,14 @@
                 "parse.js"
             ]
         },
-        "json-stringify-polyfill": {
+        "json-stringify-shim": {
             "jsfiles": [
-                "stringify-polyfill.js"
+                "stringify-shim.js"
             ]
         },
-        "json-parse-polyfill": {
+        "json-parse-shim": {
             "jsfiles": [
-                "parse-polyfill.js"
+                "parse-shim.js"
             ]
         }
     }

@@ -6,22 +6,22 @@
         ],
         
         "plugins": {
-            "json-parse-polyfill": {
+            "json-parse-shim": {
                 "requires": [
                     "json-parse"
                 ],
                 "condition": {
                     "trigger": "json-parse",
-                    "test": "json-parse-native-test.js"
+                    "test": "parse-native-test.js"
                 }
             },
-            "json-stringify-polyfill": {
+            "json-stringify-shim": {
                 "requires": [
                     "json-stringify"
                 ],
                 "condition": {
                     "trigger": "json-stringify",
-                    "test": "json-stringify-native-test.js"
+                    "test": "stringify-native-test.js"
                 }
             }
         },
