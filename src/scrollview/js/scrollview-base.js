@@ -418,7 +418,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             scrollWidth = scrollDims.scrollWidth,
             scrollHeight = scrollDims.scrollHeight,
             rtl = sv.rtl,
-            svAxis = sv._cAxis;
+            svAxis = sv._cAxis,
+            minScrollX = (rtl ? Math.min(0, -(scrollWidth - width)) : 0),
+            maxScrollX = (rtl ? 0 : Math.max(0, scrollWidth - width)),
+            minScrollY = 0,
+            maxScrollY = Math.max(0, scrollHeight - height);
             
         if (svAxis && svAxis.x) {
             bb.addClass(CLASS_NAMES.horizontal);
@@ -428,10 +432,33 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             bb.addClass(CLASS_NAMES.vertical);
         }
 
-        sv._minScrollX = (rtl) ? Math.min(0, -(scrollWidth - width)) : 0;
-        sv._maxScrollX = (rtl) ? 0 : Math.max(0, scrollWidth - width);
-        sv._minScrollY = 0;
-        sv._maxScrollY = Math.max(0, scrollHeight - height);
+        sv._setBounds({
+            minScrollX: minScrollX,
+            maxScrollX: maxScrollX,
+            minScrollY: minScrollY,
+            maxScrollY: maxScrollY
+        });
+    },
+
+    /**
+     * Set the bounding dimensions of the ScrollView
+     *
+     * @method _setBounds
+     * @param bounds {Object} [duration] ms of the scroll animation. (default is 0)
+     *   @param {Number} [bounds.minScrollX] The minimum scroll X value
+     *   @param {Number} [bounds.maxScrollX] The maximum scroll X value
+     *   @param {Number} [bounds.minScrollY] The minimum scroll Y value
+     *   @param {Number} [bounds.maxScrollY] The maximum scroll Y value
+     */
+    _setBounds: function (bounds) {
+        var sv = this;
+        
+        // TODO: Do a check to log if the bounds are invalid
+
+        sv._minScrollX = bounds.minScrollX;
+        sv._maxScrollX = bounds.maxScrollX;
+        sv._minScrollY = bounds.minScrollY;
+        sv._maxScrollY = bounds.maxScrollY;
     },
 
     /**
