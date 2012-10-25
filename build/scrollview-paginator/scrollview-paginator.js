@@ -543,7 +543,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');
 
         duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;
-        easing = (easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing;
+        easing = (easing !== undefined) ? easing : PaginatorPlugin.TRANSITION.easing;
 
         // Set the index ATTR to the specified index value
         paginator.set(INDEX, index);
