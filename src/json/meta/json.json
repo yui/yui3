@@ -7,12 +7,22 @@
         
         "plugins": {
             "json-parse-polyfill": {
-                "trigger": "json-parse",
-                "test": "json-native-test.js"
+                "requires": [
+                    "json-parse"
+                ],
+                "condition": {
+                    "trigger": "json-parse",
+                    "test": "json-parse-native-test.js"
+                }
             },
             "json-stringify-polyfill": {
-                "trigger": "json-stringify",
-                "test": "json-native-test.js"
+                "requires": [
+                    "json-stringify"
+                ],
+                "condition": {
+                    "trigger": "json-stringify",
+                    "test": "json-stringify-native-test.js"
+                }
             }
         },
         
