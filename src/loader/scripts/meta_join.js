@@ -11,6 +11,12 @@ var fs = require('fs'),
     crypto = require('crypto'),
     md5sum = crypto.createHash('md5');
 
+var md5 = function(str) {
+    md5sum.update(str);
+    var sum = md5sum.digest('hex');
+    return sum;
+};
+
 var dirs = fs.readdirSync(base);
 
 var metaFiles = [];
@@ -96,8 +102,7 @@ fs.writeFileSync(jsonOut, jsonStr, 'utf8');
 
 console.log('Done, processing conditionals.');
 
-md5sum.update(jsonStr);
-var sum = md5sum.digest('hex');
+var sum = md5(jsonStr);
 
 console.log('Using MD5:', sum);
 
@@ -118,9 +123,9 @@ Object.keys(out).forEach(function(name) {
             file = conds[cName];
             if (exists(file)) {
                 var test = fs.readFileSync(file, 'utf8');
-                mod.condition.test = file;
+                mod.condition.test = md5(file);
                 cond.test = test;
-                tests.push({ key: file, test: test });
+                tests.push({ key: md5(file), test: test });
             } else {
                 console.error('Failed to locate test file: ', file);
                 process.exit(1);
