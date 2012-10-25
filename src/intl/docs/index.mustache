@@ -310,10 +310,11 @@ Here are the same resource bundles as above in YRB format:</p>
 
 <h4 id="packaging">Packaging Resources</h4>
 
-<p>The YUI loader expects resource bundles in a specific format. If you use the YUI Builder
+<p>The YUI loader expects resource bundles in a specific format. If you use <a href="http://yui.github.com/shifter/">Shifter</a>
 to build your module, resource bundles in JSON or YRB format will be automatically
 converted into the format expected by the loader. All you have to do is provide the source
-files in the <code>src/<i>module</i>/lang/</code> directory.
+files in the <code>src/<i>module</i>/lang/</code> directory and add the `lang` keys
+to the JSON file under <code>src/<i>module</i>/meta/</code>.
 
 <p>If you use some other build process, you have to produce JavaScript files in the
 following format:</p>
