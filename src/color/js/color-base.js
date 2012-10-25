@@ -26,7 +26,12 @@ Y.Color = {
     @type Object
     @since 3.x
     **/
-    KEYWORDS: {'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff', 'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f', 'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0', 'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'},
+    KEYWORDS: {
+        'black': '000', 'silver': 'c0c0c0', 'gray': '808080', 'white': 'fff',
+        'maroon': '800000', 'red': 'f00', 'purple': '800080', 'fuchsia': 'f0f',
+        'green': '008000', 'lime': '0f0', 'olive': '808000', 'yellow': 'ff0',
+        'navy': '000080', 'blue': '00f', 'teal': '008080', 'aqua': '0ff'
+    },
 
     /**
     @static
@@ -237,8 +242,6 @@ Y.Color = {
 
         replace = replace || '{*}';
 
-        var index;
-
         if (arr.length === 3 && template.match(/\{\*\}/g).length === 4) {
             arr.push(1);
         }
@@ -329,7 +332,8 @@ Y.Color = {
             needsAlpha,
             alpha,
             method,
-            template;
+            template,
+            ucTo;
 
         if (from === 'keyword') {
             clr = Y.Color._keywordToHex(clr);
@@ -365,7 +369,7 @@ Y.Color = {
             from = 'rgb';
         }
 
-        var ucTo = to.toLowerCase();
+        ucTo = to.toLowerCase();
         ucTo = ucTo[0].toUpperCase() + ucTo.substr(1);
 
         method = Y.Color['_' + from + 'To' + ucTo ];
@@ -399,6 +403,7 @@ Y.Color = {
     _hexToRgb: function (str, toArray) {
         var r, g, b;
 
+        /*jshint bitwise:false*/
         if (str.charAt(0) === '#') {
             str = str.substr(1);
         }
@@ -426,7 +431,8 @@ Y.Color = {
     @return {String|Array}
     @since 3.x
     **/
-    _rgbToHex: function (str, toArray) {
+    _rgbToHex: function (str) {
+        /*jshint bitwise:false*/
         var rgb = Y.Color.toArray(str),
             hex = rgb[2] | (rgb[1] << 8) | (rgb[0] << 16);
 

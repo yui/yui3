@@ -169,8 +169,6 @@ Color = {
     @since 3.x
     **/
     _hslToRgb: function (str, toArray) {
-        var rgb = [];
-
         // assume input is [h, s, l]
         // TODO: Find legals for use of formula
         var hsl = Y.Color.REGEX_HSL.exec(str),

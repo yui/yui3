@@ -287,6 +287,7 @@ var HSL = 'hsl',
         getSimilar: function(str, offset, count, to) {
             var c = Harmony._start(str),
                 colors = [c],
+                slOffset,
                 i = 0,
                 l,
                 _c = c.concat();
@@ -294,13 +295,16 @@ var HSL = 'hsl',
             to = to || Color.findType(str);
             count = count || DEF_COUNT;
             offset = offset || DEF_OFFSET;
+            slOffset = (offset > 100) ? 100 : offset;
 
             for (; i < count; i++) {
-                _c = Harmony.getOffset(_c, {
+                var o = {
                     h: ( Math.random() * (offset * 2)) - offset,
-                    s: ( Math.random() * (offset * 2)) - offset,
-                    l: ( Math.random() * (offset * 2)) - offset
-                });
+                    s: ( Math.random() * (slOffset * 2)),
+                    l: ( Math.random() * (slOffset * 2))
+                };
+                console.log(o.s);
+                _c = Harmony.getOffset(_c, o);
                 colors.push(_c.concat());
             }
 
