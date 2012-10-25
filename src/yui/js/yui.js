@@ -1938,6 +1938,30 @@ overwriting other scripts configs.
  */
 
 /**
+ * Leverage native JSON stringify if the browser has a native
+ * implementation.  In general, this is a good idea.  See the Known Issues
+ * section in the JSON user guide for caveats.  The default value is true
+ * for browsers with native JSON support.
+ *
+ * @property useNativeJSONStringify
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
+
+ /**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeJSONParse
+ * @type Boolean
+ * @default true
+ * @since 3.8.0
+ */
+
+/**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
 @property delayUntil
 @type String|Object
