@@ -459,7 +459,7 @@ proto = {
             useBrowserConsole: true,
             useNativeES5: true,
             win: win,
-            global: (typeof global === 'object' && typeof process === 'object' && process.versions && process.versions.node) ? global : win
+            global: Function('return this')()
         };
 
         //Register the CSS stamp element
