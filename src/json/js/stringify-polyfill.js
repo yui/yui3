@@ -1,11 +1,3 @@
-/**
- * Provides Y.JSON.stringify method for converting objects to JSON strings.
- *
- * @module json
- * @submodule json-stringify
- * @for JSON
- * @static
- */
 // All internals kept private for security reasons
 var Lang      = Y.Lang,
     isFunction= Lang.isFunction,
@@ -112,201 +104,121 @@ function _indent(s,space) {
     return s.replace(/^/gm, space);
 }
 
-Y.mix(Y.namespace('JSON'),{
-    /**
-     * Serializes a Date instance as a UTC date string.  Used internally by
-     * stringify.  Override this method if you need Dates serialized in a
-     * different format.
-     *
-     * @method dateToString
-     * @param d {Date} The Date to serialize
-     * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
-     * @deprecated Use a replacer function
-     * @static
-     */
-    dateToString: function (d) {
-        function _zeroPad(v) {
-            return v < 10 ? '0' + v : v;
+Y.JSON.stringify = function _stringify(o,w,space) {
+    if (o === undefined) {
+        return undefined;
+    }
+
+    var replacer = isFunction(w) ? w : null,
+        format   = _toStr.call(space).match(/String|Number/) || [],
+        _date    = Y.JSON.dateToString,
+        stack    = [],
+        tmp,i,len;
+
+    _CHAR_COUNT      = {};
+    _CACHE_THRESHOLD = Y.JSON.charCacheThreshold;
+
+    if (replacer || !isArray(w)) {
+        w = undefined;
+    }
+
+    // Ensure whitelist keys are unique (bug 2110391)
+    if (w) {
+        tmp = {};
+        for (i = 0, len = w.length; i < len; ++i) {
+            tmp[w[i]] = true;
+        }
+        w = tmp;
+    }
+
+    // Per the spec, strings are truncated to 10 characters and numbers
+    // are converted to that number of spaces (max 10)
+    space = format[0] === 'Number' ?
+                new Array(Math.min(Math.max(0,space),10)+1).join(" ") :
+                (space || EMPTY).slice(0,10);
+
+    function _serialize(h,key) {
+        var value = h[key],
+            t     = _type(value),
+            a     = [],
+            colon = space ? COLON_SP : COLON,
+            arr, i, keys, k, v;
+
+        // Per the ECMA 5 spec, toJSON is applied before the replacer is
+        // called.  Also per the spec, Date.prototype.toJSON has been added, so
+        // Date instances should be serialized prior to exposure to the
+        // replacer.  I disagree with this decision, but the spec is the spec.
+        if (isObject(value) && isFunction(value.toJSON)) {
+            value = value.toJSON(key);
+        } else if (t === DATE) {
+            value = _date(value);
         }
 
-        return d.getUTCFullYear()           + '-' +
-              _zeroPad(d.getUTCMonth() + 1) + '-' +
-              _zeroPad(d.getUTCDate())      + 'T' +
-              _zeroPad(d.getUTCHours())     + COLON +
-              _zeroPad(d.getUTCMinutes())   + COLON +
-              _zeroPad(d.getUTCSeconds())   + 'Z';
-    },
+        if (isFunction(replacer)) {
+            value = replacer.call(h,key,value);
+        }
 
-    /**
-     * <p>Converts an arbitrary value to a JSON string representation.</p>
-     *
-     * <p>Objects with cyclical references will trigger an exception.</p>
-     *
-     * <p>If a whitelist is provided, only matching object keys will be
-     * included.  Alternately, a replacer function may be passed as the
-     * second parameter.  This function is executed on every value in the
-     * input, and its return value will be used in place of the original value.
-     * This is useful to serialize specialized objects or class instances.</p>
-     *
-     * <p>If a positive integer or non-empty string is passed as the third
-     * parameter, the output will be formatted with carriage returns and
-     * indentation for readability.  If a String is passed (such as "\t") it
-     * will be used once for each indentation level.  If a number is passed,
-     * that number of spaces will be used.</p>
-     *
-     * @method stringify
-     * @param o {MIXED} any arbitrary value to convert to JSON string
-     * @param w {Array|Function} (optional) whitelist of acceptable object
-     *                  keys to include, or a replacer function to modify the
-     *                  raw value before serialization
-     * @param ind {Number|String} (optional) indentation character or depth of
-     *                  spaces to format the output.
-     * @return {string} JSON string representation of the input
-     * @static
-     */
-    stringify: function _stringify(o,w,space) {
-        if (o === undefined) {
-            return undefined;
+        if (value !== h[key]) {
+            t = _type(value);
         }
-    
-        var replacer = isFunction(w) ? w : null,
-            format   = _toStr.call(space).match(/String|Number/) || [],
-            _date    = Y.JSON.dateToString,
-            stack    = [],
-            tmp,i,len;
-    
-        _CHAR_COUNT      = {};
-        _CACHE_THRESHOLD = Y.JSON.charCacheThreshold;
-    
-        if (replacer || !isArray(w)) {
-            w = undefined;
+
+        switch (t) {
+            case DATE    : // intentional fallthrough.  Pre-replacer Dates are
+                           // serialized in the toJSON stage.  Dates here would
+                           // have been produced by the replacer.
+            case OBJECT  : break;
+            case STRING  : return _string(value);
+            case NUMBER  : return isFinite(value) ? value+EMPTY : NULL;
+            case BOOLEAN : return value+EMPTY;
+            case NULL    : return NULL;
+            default      : return undefined;
         }
-    
-        // Ensure whitelist keys are unique (bug 2110391)
-        if (w) {
-            tmp = {};
-            for (i = 0, len = w.length; i < len; ++i) {
-                tmp[w[i]] = true;
+
+        // Check for cyclical references in nested objects
+        for (i = stack.length - 1; i >= 0; --i) {
+            if (stack[i] === value) {
+                throw new Error("JSON.stringify. Cyclical reference");
             }
-            w = tmp;
         }
-    
-        // Per the spec, strings are truncated to 10 characters and numbers
-        // are converted to that number of spaces (max 10)
-        space = format[0] === 'Number' ?
-                    new Array(Math.min(Math.max(0,space),10)+1).join(" ") :
-                    (space || EMPTY).slice(0,10);
-    
-        function _serialize(h,key) {
-            var value = h[key],
-                t     = _type(value),
-                a     = [],
-                colon = space ? COLON_SP : COLON,
-                arr, i, keys, k, v;
-    
-            // Per the ECMA 5 spec, toJSON is applied before the replacer is
-            // called.  Also per the spec, Date.prototype.toJSON has been added, so
-            // Date instances should be serialized prior to exposure to the
-            // replacer.  I disagree with this decision, but the spec is the spec.
-            if (isObject(value) && isFunction(value.toJSON)) {
-                value = value.toJSON(key);
-            } else if (t === DATE) {
-                value = _date(value);
+
+        arr = isArray(value);
+
+        // Add the object to the processing stack
+        stack.push(value);
+
+        if (arr) { // Array
+            for (i = value.length - 1; i >= 0; --i) {
+                a[i] = _serialize(value, i) || NULL;
             }
-    
-            if (isFunction(replacer)) {
-                value = replacer.call(h,key,value);
-            }
-    
-            if (value !== h[key]) {
-                t = _type(value);
-            }
-    
-            switch (t) {
-                case DATE    : // intentional fallthrough.  Pre-replacer Dates are
-                               // serialized in the toJSON stage.  Dates here would
-                               // have been produced by the replacer.
-                case OBJECT  : break;
-                case STRING  : return _string(value);
-                case NUMBER  : return isFinite(value) ? value+EMPTY : NULL;
-                case BOOLEAN : return value+EMPTY;
-                case NULL    : return NULL;
-                default      : return undefined;
-            }
-    
-            // Check for cyclical references in nested objects
-            for (i = stack.length - 1; i >= 0; --i) {
-                if (stack[i] === value) {
-                    throw new Error("JSON.stringify. Cyclical reference");
-                }
-            }
-    
-            arr = isArray(value);
-    
-            // Add the object to the processing stack
-            stack.push(value);
-    
-            if (arr) { // Array
-                for (i = value.length - 1; i >= 0; --i) {
-                    a[i] = _serialize(value, i) || NULL;
-                }
-            } else {   // Object
-                // If whitelist provided, take only those keys
-                keys = w || value;
-                i = 0;
-    
-                for (k in keys) {
-                    if (keys.hasOwnProperty(k)) {
-                        v = _serialize(value, k);
-                        if (v) {
-                            a[i++] = _string(k) + colon + v;
-                        }
+        } else {   // Object
+            // If whitelist provided, take only those keys
+            keys = w || value;
+            i = 0;
+
+            for (k in keys) {
+                if (keys.hasOwnProperty(k)) {
+                    v = _serialize(value, k);
+                    if (v) {
+                        a[i++] = _string(k) + colon + v;
                     }
                 }
             }
-    
-            // remove the array from the stack
-            stack.pop();
-    
-            if (space && a.length) {
-                return arr ?
-                    OPEN_A + CR + _indent(a.join(COMMA_CR), space) + CR + CLOSE_A :
-                    OPEN_O + CR + _indent(a.join(COMMA_CR), space) + CR + CLOSE_O;
-            } else {
-                return arr ?
-                    OPEN_A + a.join(COMMA) + CLOSE_A :
-                    OPEN_O + a.join(COMMA) + CLOSE_O;
-            }
         }
-    
-        // process the input
-        return _serialize({'':o},'');
-    },
 
-    /**
-     * <p>Number of occurrences of a special character within a single call to
-     * stringify that should trigger promotion of that character to a dedicated
-     * preprocess step for future calls.  This is only used in environments
-     * that don't support native JSON, or when useNativeJSONStringify is set to
-     * false.</p>
-     *
-     * <p>So, if set to 50 and an object is passed to stringify that includes
-     * strings containing the special character \x07 more than 50 times,
-     * subsequent calls to stringify will process object strings through a
-     * faster serialization path for \x07 before using the generic, slower,
-     * replacement process for all special characters.</p>
-     *
-     * <p>To prime the preprocessor cache, set this value to 1, then call
-     * <code>Y.JSON.stringify("<em>(all special characters to
-     * cache)</em>");</code>, then return this setting to a more conservative
-     * value.</p>
-     *
-     * <p>Special characters \ " \b \t \n \f \r are already cached.</p>
-     *
-     * @property charCacheThreshold
-     * @static
-     * @default 100
-     * @type {Number}
-     */
-    charCacheThreshold: 100
-});
+        // remove the array from the stack
+        stack.pop();
+
+        if (space && a.length) {
+            return arr ?
+                OPEN_A + CR + _indent(a.join(COMMA_CR), space) + CR + CLOSE_A :
+                OPEN_O + CR + _indent(a.join(COMMA_CR), space) + CR + CLOSE_O;
+        } else {
+            return arr ?
+                OPEN_A + a.join(COMMA) + CLOSE_A :
+                OPEN_O + a.join(COMMA) + CLOSE_O;
+        }
+    }
+
+    // process the input
+    return _serialize({'':o},'');
+};
