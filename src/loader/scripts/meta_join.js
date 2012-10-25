@@ -9,13 +9,11 @@ var fs = require('fs'),
     MD5_TOKEN = '{ /* MD5 */ }',
     TEMPLATE_TOKEN = '{ /* METAGEN */ }',
     crypto = require('crypto'),
-    md5sum = crypto.createHash('md5');
-
-var md5 = function(str) {
-    md5sum.update(str);
-    var sum = md5sum.digest('hex');
-    return sum;
-};
+    md5 = function(str) {
+        var md5sum = crypto.createHash('md5');
+        md5sum.update(str);
+        return md5sum.digest('hex');
+    };
 
 var dirs = fs.readdirSync(base);
 
