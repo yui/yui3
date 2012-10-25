@@ -1,7 +1,7 @@
 function (Y) {
     var _JSON = Y.config.global.JSON,
         Native = Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON,
-        nativeSupport = Y.config.useNativeJSONParse && !!Native;
+        nativeSupport = Y.config.useNativeJSONParse !== false && !!Native;
 
     function workingNative( k, v ) {
         return k === "ok" ? true : v;
