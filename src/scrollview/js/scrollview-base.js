@@ -1159,11 +1159,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @protected
     */
     _setScrollX: function(val) {
-        var sv = this,
-            min = sv._minScrollX,
-            max = sv._maxScrollX;
-
-        return sv._setScroll(_constrain(val, min, max), DIM_X);
+        return this._setScroll(val, DIM_X);
     },
 
     /**
@@ -1175,11 +1171,7 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
     * @protected
     */
     _setScrollY: function(val) {
-        var sv = this,
-            min = sv._minScrollY,
-            max = sv._maxScrollY;
-        
-        return sv._setScroll(_constrain(val, min, max), DIM_Y);
+        return this._setScroll(val, DIM_Y);
     }
 
     // End prototype properties
