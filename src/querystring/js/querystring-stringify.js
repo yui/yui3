@@ -3,8 +3,6 @@
  *
  * @module querystring
  * @submodule querystring-stringify
- * @for QueryString
- * @static
  */
 
 var QueryString = Y.namespace("QueryString"),
@@ -17,8 +15,8 @@ var QueryString = Y.namespace("QueryString"),
  * the delimiters would not normally be handled properly by the builtin
  * (en|de)codeURIComponent functions.
  * Default: encodeURIComponent
- * @module querystring
- * @submodule querystring-stringify
+ *
+ * @method escape
  * @for QueryString
  * @static
  **/
@@ -30,6 +28,7 @@ QueryString.escape = encodeURIComponent;
  * <p>Objects with cyclical references will trigger an exception.</p>
  *
  * @method stringify
+ * @for QueryString
  * @public
  * @param obj {Variant} any arbitrary value to convert to query string
  * @param cfg {Object} (optional) Configuration object.  The three
