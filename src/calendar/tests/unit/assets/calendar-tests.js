@@ -96,7 +96,7 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.areEqual(11, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.subtractMonth();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.subtractMonth());   // check @chainable
                 this.firstcalendar.subtractMonth();
 
                 calendarDate = this.firstcalendar.get("date");
@@ -104,21 +104,21 @@ YUI.add('calendar-tests', function(Y) {
                 Y.Assert.areEqual(9, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.addMonth();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.addMonth());        // check @chainable
 
                 calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2011, calendarDate.getFullYear());
                 Y.Assert.areEqual(10, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.addYear();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.addYear());         // check @chainable
 
                 calendarDate = this.firstcalendar.get("date");
                 Y.Assert.areEqual(2012, calendarDate.getFullYear());
                 Y.Assert.areEqual(10, calendarDate.getMonth());
                 Y.Assert.areEqual(1, calendarDate.getDate());
 
-                this.firstcalendar.subtractYear();
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.subtractYear());    // check @chainable
                 this.firstcalendar.subtractYear();
 
                 calendarDate = this.firstcalendar.get("date");
@@ -183,9 +183,9 @@ YUI.add('calendar-tests', function(Y) {
                 };
 
                 this.firstcalendar = new Y.Calendar(cfg);
-                this.firstcalendar.selectDates(new Date(2011,11,7));
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.selectDates(new Date(2011,11,7)));    // check @chainable
                 this.firstcalendar.selectDates(new Date(2011,11,8));
-                this.firstcalendar.deselectDates(new Date(2011,11,8));
+                Y.Assert.isInstanceOf(Y.Calendar, this.firstcalendar.deselectDates(new Date(2011,11,8)));  // check @chainable
                 this.firstcalendar.selectDates([new Date(2011,9,10), new Date(2011,11,13)]);
                 this.firstcalendar.render();
 
