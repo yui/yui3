@@ -577,8 +577,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             scrollAxis = (paginator._cAxis[DIM_X] ? SCROLL_X : SCROLL_Y),
             scrollOffset = pageNode.get(scrollAxis === SCROLL_X ? 'offsetLeft' : 'offsetTop');
 
-        duration = ((duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration);
-        easing = ((easing !== undefined) ? duration : PaginatorPlugin.TRANSITION.easing);
+        duration = (duration !== undefined) ? duration : PaginatorPlugin.TRANSITION.duration;
+        easing = (easing !== undefined) ? easing : PaginatorPlugin.TRANSITION.easing;
 
         // Set the index ATTR to the specified index value
         paginator.set(INDEX, index, { src: UI });
@@ -726,5 +726,6 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 });
 
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
+
 
 }, '@VERSION@', {"requires": ["plugin", "classnamemanager"]});
