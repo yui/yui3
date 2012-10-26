@@ -741,12 +741,8 @@ YUI.add('core-tests', function(Y) {
             test.wait();
         },
         'test Y.config.global': function() {
-            if (Y.UA.nodejs) {
-                Y.Assert.areEqual(global, Y.config.global);
-            } else if (typeof window !== undefined) {
-                Y.Assert.areSame(Y.config.win, Y.config.global);
-                Y.Assert.areSame(window, Y.config.global);
-            }
+            var global = Function('return this')();
+            Y.Assert.areEqual(global, Y.config.global);
         }
     });
 
