@@ -739,6 +739,10 @@ YUI.add('core-tests', function(Y) {
             });
 
             test.wait();
+        },
+        'test Y.config.global': function() {
+            var global = Function('return this')();
+            Y.Assert.areEqual(global, Y.config.global);
         }
     });
 

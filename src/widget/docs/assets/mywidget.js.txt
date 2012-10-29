@@ -1,4 +1,5 @@
-// START WRAPPER: The YUI.add wrapper is added by the build system, when you use YUI Builder to build your component from the raw source in this file
+// START WRAPPER: The YUI.add wrapper is added by the build system, when you
+// use Shifter to build your component from the raw source in this file
 // YUI.add("mywidget", function(Y) {
 
     /* Any frequently used shortcuts, strings and constants */

@@ -12,7 +12,7 @@
 </style>
 
 <div class="intro">
-    <p>This example shows how you can define language resource bundles for your custom module implementations; it also illustrates how YUI Loader can load the correct bundle based on the language you've chosen for your YUI instance.</p>    
+    <p>This example shows how you can define language resource bundles for your custom module implementations; it also illustrates how YUI Loader can load the correct bundle based on the language you've chosen for your YUI instance.</p>
 </div>
 
 <div class="example">
@@ -91,14 +91,7 @@ YUI.add("lang/translator_fr", function(Y) {
 
 <h3>Generating Language Resource Bundles</h3>
 
-<p>YUI Builder will handle the creation of the boiler plate code shown above, from the raw language files found in the module's `src/[module]/lang` subdirectory. The raw files under the `lang` directory contain just the string name/value pairs for each language.</p>
-
-<p>As the component developer, the only thing you need to do is specify the `component.lang` property in the build properties file:</p>
-
-```
-# In your component's build properties file (src/[module]/build.properties for example):
-component.lang=en,fr,es
-```
+<p><a href="http://yui.github.com/shifter">Shifter</a> will handle the creation of the boiler plate code shown above, from the raw language files found in the module's `src/[module]/lang` subdirectory. The raw files under the `lang` directory contain just the string name/value pairs for each language.</p>
 
 <p>Provide the raw string name/value pairs in the `src/[component]/lang` subdirectory in your component's source area:</p>
 
@@ -112,7 +105,7 @@ component.lang=en,fr,es
 
 <p>And whenever you build your component code, the language resource bundles will be built and deployed too.</p>
 
-<p>You can checkout the <a href="http://yuilibrary.com/yui3"></a>YUI 3 Source Code</code> and see the source code and build configuration files for the "console" and "datatype-date-format" modules to see a concrete example of this.</p>
+<p>You can checkout the <a href="http://github.com/yui/yui3"></a>YUI 3 Source Code</code> and see the source code and build configuration files for the "console" and "datatype-date-format" modules to see a concrete example of this.</p>
 
 <h3>Accessing Localized Resources In Your Class</h3>
 
